@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0877AC7EE2E
-	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 16:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A46C7EE37
+	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 16:34:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbjE2Qer (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 29 May 2023 12:34:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37230 "EHLO
+        id S229593AbjE2Qet (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 29 May 2023 12:34:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjE2Qeq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 12:34:46 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E04D3AD;
-        Mon, 29 May 2023 09:34:44 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-30a1fdde3d6so3391953f8f.0;
-        Mon, 29 May 2023 09:34:44 -0700 (PDT)
+        with ESMTP id S229579AbjE2Qes (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 12:34:48 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B43A3;
+        Mon, 29 May 2023 09:34:47 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-30aea656e36so779533f8f.1;
+        Mon, 29 May 2023 09:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685378083; x=1687970083;
+        d=gmail.com; s=20221208; t=1685378085; x=1687970085;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XhNwz9KNlnd7qmSmx8SMut95dFfRtkNAM+nFVwtGeVc=;
-        b=aF5gOIbQR8eYb5W0wqKsv1ikCS4wv3mF3U88FiFDe9rJIMVDznTMSY8q75zN+/eigj
-         Uuzwq4x7FdgaeaPIsFHyDT17bu5C3Gwq6pfof26pEfxxGzMTbmzw73rQCCPx4xhpX3S2
-         nMLd+VlbLPrjEz2pbXobRwZQSjm0nCph0zTX85ydgYbppRwTkhd27dmVZQd0CzHNvCVP
-         4UuS7g839K7nYgBv8kgmy0Ycg9cTyYYmtAmtH5qcTuyWxbW6JZcgWl5w2T42KW1oxmgT
-         BchhictIKZl244mzBZVvJ2dWChjmzMWtlDSTyzCWnDaTUw7SikZ+ukh/fgWkPW8oOwHT
-         CIlA==
+        bh=bow2IlphqQcOV86ezGAfOnUZcJRsC4hY+XSIuwAMdVw=;
+        b=TCNNwKXObS/dWdO1Q1TJ9Uwu5/jmmaVfR96PuYXGr/hq86PhgUbTDRf8mJBJMt1psh
+         ISbW0tAZT6OkzpSWUWlWN2g+asUpzy+xk8vJC56K5F7bI9rooUacXcpIXoKsojKGdQoT
+         6jp+6PJ4rENUtJ1lRvbBdL7iDHVSYPkQjYAupUXWMUp2NzdfCPNb7p1DoMK9MZFefKQP
+         1KegwsFQUoTnEr7e/BhQP2fcFRF7c+mRn4YmpnORXgNsBSeDt/6w6eGQJu8l5PJiaWwT
+         CKtpW4sUYC3+6IuVFMV2upSrO8or+uuGEbs+a5YoPE6g8B1mUoslQ345hsl21d1PQYh8
+         g79w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685378083; x=1687970083;
+        d=1e100.net; s=20221208; t=1685378085; x=1687970085;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XhNwz9KNlnd7qmSmx8SMut95dFfRtkNAM+nFVwtGeVc=;
-        b=l/e3GoCfTYHIW2n/UNDQeV139xOPv644UAVE2pTnfXed7akn03G2M8YwMOHCYlR7DE
-         8zzHjaojl7tlb/fRotCRsShfabBzrVKxhGxdgbQlXHAw9j3HWeje5IL7jeIKblC4zuZx
-         cS5u+0D+VTTDdXcnfK5eGl8LO7q648LbdKwEs2fnikO7RCXet5L/JZKcWh9mmvhwhDWw
-         iPy0iSNhgcLqlDHAtDSu2i0xS+rVRNFZFNoHjiQ+XbcFossGHu0HXp0T0NMUATvS9zZ4
-         Z6H7msuLj5nU8OI+0zUUwqOsBsVF6P1RCt+fZThWUEbqZ417QFSPJlUq9wvbMzf3Qezu
-         8YOA==
-X-Gm-Message-State: AC+VfDwOd0XtKX5iWAdV7py5C+dxek2SUoyK58E8y+b5IUXGeBsrB/ni
-        gPVD3y3shw1IUU/3TQTIXs9q5Ty9+go=
-X-Google-Smtp-Source: ACHHUZ5QghcrT/T+J6Tc//RJ0COllzktPSYbY/p2zzoYVTcwQ/t7ZnG8UmuuFAyu8qjKU8IiQZIz3Q==
-X-Received: by 2002:adf:df12:0:b0:2fe:851c:672f with SMTP id y18-20020adfdf12000000b002fe851c672fmr7961772wrl.8.1685378083010;
-        Mon, 29 May 2023 09:34:43 -0700 (PDT)
+        bh=bow2IlphqQcOV86ezGAfOnUZcJRsC4hY+XSIuwAMdVw=;
+        b=H8aCZhY0siSb7o/AV/bXgvzNMuB9uFM0rcqI5QY2Q939iNncRtnKtj0nIrMt36xBgH
+         8XdH6AYhhVJaCTBsq6iYLKhA044blMg8BFFd9t8HzVXlIY1Wf/5WqNIgPxNQJK1w1vQX
+         H2zh9Irm82poyi0dvEDPvLrIGiJGCPkkhHWDcJrF8TRvcsJhJmPj3V3xDA1RBQUE3r//
+         qx0adzF4eBu1pOuY9jy7PHTjyQKmr7M7XebLUOz7SNrObwRgQHp+CGkBpKamwFIzZpTD
+         SMetl8aRQIbH8oVhKcyVvzNo82XbdH6dwcBFFX47MnX7CW3h5peOsgUP6lGIBXBFgwHQ
+         QVdA==
+X-Gm-Message-State: AC+VfDwVp7eN5M00Akjl8gHCX5Xj9KeywDdyFa/KW5Kh2VcUayw+1Q/D
+        E7Bgar06UpE1SLx+IXO9xT8=
+X-Google-Smtp-Source: ACHHUZ56tanRPzl8lORtX38biVRycR+UuWloQM8mJIJUTmppZGM4bDoqMm4v63Bli1a5jC6JhqFT9Q==
+X-Received: by 2002:a05:6000:1b0a:b0:309:4ba8:86a0 with SMTP id f10-20020a0560001b0a00b003094ba886a0mr8417977wrz.17.1685378085402;
+        Mon, 29 May 2023 09:34:45 -0700 (PDT)
 Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id h14-20020a5d6e0e000000b002ff2c39d072sm417513wrz.104.2023.05.29.09.34.42
+        by smtp.googlemail.com with ESMTPSA id h14-20020a5d6e0e000000b002ff2c39d072sm417513wrz.104.2023.05.29.09.34.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 09:34:42 -0700 (PDT)
+        Mon, 29 May 2023 09:34:44 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
@@ -61,9 +61,9 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [net-next PATCH v4 01/13] leds: add APIs for LEDs hw control
-Date:   Mon, 29 May 2023 18:32:31 +0200
-Message-Id: <20230529163243.9555-2-ansuelsmth@gmail.com>
+Subject: [net-next PATCH v4 03/13] Documentation: leds: leds-class: Document new Hardware driven LEDs APIs
+Date:   Mon, 29 May 2023 18:32:33 +0200
+Message-Id: <20230529163243.9555-4-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230529163243.9555-1-ansuelsmth@gmail.com>
 References: <20230529163243.9555-1-ansuelsmth@gmail.com>
@@ -73,76 +73,113 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Add an option to permit LED driver to declare support for a specific
-trigger to use hw control and setup the LED to blink based on specific
-provided modes.
+Document new Hardware driven LEDs APIs.
 
-Add APIs for LEDs hw control. These functions will be used to activate
-hardware control where a LED will use the provided flags, from an
-unique defined supported trigger, to setup the LED to be driven by
-hardware.
+Some LEDs can be programmed to be driven by hardware. This is not
+limited to blink but also to turn off or on autonomously.
+To support this feature, a LED needs to implement various additional
+ops and needs to declare specific support for the supported triggers.
 
-Add hw_control_is_supported() to ask the LED driver if the requested
-mode by the trigger are supported and the LED can be setup to follow
-the requested modes.
-
-Deactivate hardware blink control by setting brightness to LED_OFF via
-the brightness_set() callback.
+Add documentation for each required value and API to make hw control
+possible and implementable by both LEDs and triggers.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- include/linux/leds.h | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ Documentation/leds/leds-class.rst | 81 +++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index c39bbf17a25b..4caf559b1922 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -183,6 +183,43 @@ struct led_classdev {
+diff --git a/Documentation/leds/leds-class.rst b/Documentation/leds/leds-class.rst
+index cd155ead8703..5db620ed27aa 100644
+--- a/Documentation/leds/leds-class.rst
++++ b/Documentation/leds/leds-class.rst
+@@ -169,6 +169,87 @@ Setting the brightness to zero with brightness_set() callback function
+ should completely turn off the LED and cancel the previously programmed
+ hardware blinking function, if any.
  
- 	/* LEDs that have private triggers have this set */
- 	struct led_hw_trigger_type	*trigger_type;
++Hardware driven LEDs
++====================
 +
-+	/* Unique trigger name supported by LED set in hw control mode */
-+	const char		*hw_control_trigger;
-+	/*
-+	 * Check if the LED driver supports the requested mode provided by the
-+	 * defined supported trigger to setup the LED to hw control mode.
-+	 *
-+	 * Return 0 on success. Return -EOPNOTSUPP when the passed flags are not
-+	 * supported and software fallback needs to be used.
-+	 * Return a negative error number on any other case  for check fail due
-+	 * to various reason like device not ready or timeouts.
-+	 */
-+	int			(*hw_control_is_supported)(struct led_classdev *led_cdev,
-+							   unsigned long flags);
-+	/*
-+	 * Activate hardware control, LED driver will use the provided flags
-+	 * from the supported trigger and setup the LED to be driven by hardware
-+	 * following the requested mode from the trigger flags.
-+	 * Deactivate hardware blink control by setting brightness to LED_OFF via
-+	 * the brightness_set() callback.
-+	 *
-+	 * Return 0 on success, a negative error number on flags apply fail.
-+	 */
-+	int			(*hw_control_set)(struct led_classdev *led_cdev,
-+						  unsigned long flags);
-+	/*
-+	 * Get from the LED driver the current mode that the LED is set in hw
-+	 * control mode and put them in flags.
-+	 * Trigger can use this to get the initial state of a LED already set in
-+	 * hardware blink control.
-+	 *
-+	 * Return 0 on success, a negative error number on failing parsing the
-+	 * initial mode. Error from this function is NOT FATAL as the device
-+	 * may be in a not supported initial state by the attached LED trigger.
-+	 */
-+	int			(*hw_control_get)(struct led_classdev *led_cdev,
-+						  unsigned long *flags);
- #endif
++Some LEDs can be programmed to be driven by hardware. This is not
++limited to blink but also to turn off or on autonomously.
++To support this feature, a LED needs to implement various additional
++ops and needs to declare specific support for the supported triggers.
++
++With hw control we refer to the LED driven by hardware.
++
++LED driver must define the following value to support hw control:
++
++    - hw_control_trigger:
++               unique trigger name supported by the LED in hw control
++               mode.
++
++LED driver must implement the following API to support hw control:
++    - hw_control_is_supported:
++                check if the flags passed by the supported trigger can
++                be parsed and activate hw control on the LED.
++
++                Return 0 if the passed flags mask is supported and
++                can be set with hw_control_set().
++
++                If the passed flags mask is not supported -EOPNOTSUPP
++                must be returned, the LED trigger will use software
++                fallback in this case.
++
++                Return a negative error in case of any other error like
++                device not ready or timeouts.
++
++     - hw_control_set:
++                activate hw control. LED driver will use the provided
++                flags passed from the supported trigger, parse them to
++                a set of mode and setup the LED to be driven by hardware
++                following the requested modes.
++
++                Set LED_OFF via the brightness_set to deactivate hw control.
++
++                Return 0 on success, a negative error number on failing to
++                apply flags.
++
++    - hw_control_get:
++                get active modes from a LED already in hw control, parse
++                them and set in flags the current active flags for the
++                supported trigger.
++
++                Return 0 on success, a negative error number on failing
++                parsing the initial mode.
++                Error from this function is NOT FATAL as the device may
++                be in a not supported initial state by the attached LED
++                trigger.
++
++    - hw_control_get_device:
++                return the device associated with the LED driver in
++                hw control. A trigger might use this to match the
++                returned device from this function with a configured
++                device for the trigger as the source for blinking
++                events and correctly enable hw control.
++                (example a netdev trigger configured to blink for a
++                particular dev match the returned dev from get_device
++                to set hw control)
++
++                Returns a pointer to a struct device or NULL if nothing
++                is currently attached.
++
++LED driver can activate additional modes by default to workaround the
++impossibility of supporting each different mode on the supported trigger.
++Examples are hardcoding the blink speed to a set interval, enable special
++feature like bypassing blink if some requirements are not met.
++
++A trigger should first check if the hw control API are supported by the LED
++driver and check if the trigger is supported to verify if hw control is possible,
++use hw_control_is_supported to check if the flags are supported and only at
++the end use hw_control_set to activate hw control.
++
++A trigger can use hw_control_get to check if a LED is already in hw control
++and init their flags.
++
++When the LED is in hw control, no software blink is possible and doing so
++will effectively disable hw control.
  
- #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+ Known Issues
+ ============
 -- 
 2.39.2
 
