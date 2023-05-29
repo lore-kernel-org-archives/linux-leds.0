@@ -2,59 +2,38 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9414C77B7E
-	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 08:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043F1C77B7E
+	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 14:12:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231667AbjE2IKW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 29 May 2023 04:10:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38612 "EHLO
+        id S229649AbjE2OMt (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 29 May 2023 10:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231612AbjE2IKV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 04:10:21 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A3990;
-        Mon, 29 May 2023 01:10:20 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id 41be03b00d2f7-51b33c72686so1814967a12.1;
-        Mon, 29 May 2023 01:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685347820; x=1687939820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2pERwO8sjUT5j9p5YYisC0BMTaQ2RTVQ8D853PyT37g=;
-        b=bYECe3KqMW1lM6zOmAGWXvj0cOaDsPCsxctfRPcEo4p/JeB95x949LB5kAUF1bR+H/
-         F56e6cfR+8nAzQaxD8Twc7gGspTwP0y0AZX6cIR/rvFNuugjUp1EQWd3KdUAauaIJ5nJ
-         uApAW2760gU2jh/N3xKDyqJS83kggvoux72ctG5wIuNDBUa4C22VO/ba7OWEnbgh3aWF
-         BFcPF3sZvuEwxWGFLeGXmd+AJ0Di8GwgnqZkqCa8lRUU3uQrG0O4bpmMp/jqi++OkvYa
-         5yv1s10D2LKkEOC/nLPi9KPLQ+rfPzCsqu+fe+Dpnl4I+YIrmGpJ6SndSGNp1Gsg/XT9
-         3pOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685347820; x=1687939820;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2pERwO8sjUT5j9p5YYisC0BMTaQ2RTVQ8D853PyT37g=;
-        b=kkWvdEfgw+1hhvQznTF2e3Ry+1YgBH30G024kHAjGoHEwIg2oGrD8zkMhaDU1YVuhO
-         SI602BiyrIo7uAMNA3asoBD4Vt0lwE2xnOII6ziN7xjhat5yNGqAbw3bNa0/kAh3KlH0
-         MwBmJCvV2s29p6g9juzi/clcwK35DGNLotu4zHaVObPQsi4sf3IknRkLlKZWc/+mDkIP
-         uVscKH/wmptwLr7E9Fa6jIXfgLOLLrJbXSXwHcP+i//ReUze2BerqJaAkz36V5DjXq0E
-         zYm44O7XaF4UvcoFRTPifJ4ekJ3l9bkEvbK4VoQyyOprfcVnKudpa7oDyVsArtYHARVy
-         4gsw==
-X-Gm-Message-State: AC+VfDzv0hSqoP0nDZtaMrMntoKfkCrp9YLTsg4KOQNb3GYJpGWKmiL3
-        nclwGTt0QgZpHQ+d9AbSABqWr22FQ7I=
-X-Google-Smtp-Source: ACHHUZ4Q/yuoKlTT7swOYhDurvkAjdXaHTvytax7D+G2AvVL61nR5ycrFcPrtopCWin+AhqNc1DEzg==
-X-Received: by 2002:a17:902:d50c:b0:1b0:4b65:79e4 with SMTP id b12-20020a170902d50c00b001b04b6579e4mr543002plg.20.1685347819642;
-        Mon, 29 May 2023 01:10:19 -0700 (PDT)
-Received: from debian.me (subs02-180-214-232-78.three.co.id. [180.214.232.78])
-        by smtp.gmail.com with ESMTPSA id n19-20020a170902969300b001a527761c31sm7594709plp.79.2023.05.29.01.10.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 01:10:19 -0700 (PDT)
-Received: by debian.me (Postfix, from userid 1000)
-        id 4294B106A11; Mon, 29 May 2023 15:10:16 +0700 (WIB)
-Date:   Mon, 29 May 2023 15:10:15 +0700
-From:   Bagas Sanjaya <bagasdotme@gmail.com>
-To:     Christian Marangi <ansuelsmth@gmail.com>,
+        with ESMTP id S229595AbjE2OMs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 10:12:48 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99AFA7;
+        Mon, 29 May 2023 07:12:46 -0700 (PDT)
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 2729E5CC;
+        Mon, 29 May 2023 14:12:44 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2729E5CC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1685369565; bh=WaLy+ZGIAimUrLNic97W3Ad9vVDRomDNEbSHu/4gO74=;
+        h=From:To:Subject:In-Reply-To:References:Date:From;
+        b=A/tkhRwgquZs94XkiK4CUDnByq+glDYjl3CxEJNSNsnLCnq7XWPnV635euGtSXaBm
+         pu1yKYnFDMYQDwWSxertyqajRZmRuRVoqdNKJt8HDeiM1q6mFDDQMwa0T7Kk3684+S
+         D6qkmxSSKDMUhWTLFHZRbGF8skV1N1h+i9BlxgGxBrAu9DDtDDEuUCR9zoAU7b2VFE
+         ydaFE/WeQ/c+6qHJt/sNVI4cBfhdp2ylT3RYSZypdtkcKIhgLWgzVZtRRpooBSTUUm
+         J+5MVmF6eTIsA03UpA4Gg1OPD+61FI1YNl/pMRSXuQE6jofAKsvzmjWuwZ/eekbaeN
+         hSW5l3yKbpJOw==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Bagas Sanjaya <bagasdotme@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew@lunn.ch>,
+        Andrew Lunn <andrew@lunn.ch>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Vladimir Oltean <olteanv@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
@@ -65,72 +44,33 @@ To:     Christian Marangi <ansuelsmth@gmail.com>,
         netdev@vger.kernel.org
 Subject: Re: [net-next PATCH v3 03/13] Documentation: leds: leds-class:
  Document new Hardware driven LEDs APIs
-Message-ID: <ZHRd5wDnMrWZlwrd@debian.me>
+In-Reply-To: <ZHRd5wDnMrWZlwrd@debian.me>
 References: <20230527112854.2366-1-ansuelsmth@gmail.com>
- <20230527112854.2366-4-ansuelsmth@gmail.com>
+ <20230527112854.2366-4-ansuelsmth@gmail.com> <ZHRd5wDnMrWZlwrd@debian.me>
+Date:   Mon, 29 May 2023 08:12:42 -0600
+Message-ID: <871qiz5iqt.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YTDyO4TcEE14SJFj"
-Content-Disposition: inline
-In-Reply-To: <20230527112854.2366-4-ansuelsmth@gmail.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+Bagas Sanjaya <bagasdotme@gmail.com> writes:
 
---YTDyO4TcEE14SJFj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +    - hw_control_get_device:
+>> +                return the device associated with the LED driver in
+>> +                hw control. A trigger might use this to match the
+>> +                returned device from this function with a configured
+>> +                device for the trigger as the source for blinking
+>> +                events and correctly enable hw control.
+>> +                (example a netdev trigger configured to blink for a
+>> +                particular dev match the returned dev from get_device
+>> +                to set hw control)
+>> +
+>> +                Return a device or NULL if nothing is currently attached.
+> Returns a device name?
 
-On Sat, May 27, 2023 at 01:28:44PM +0200, Christian Marangi wrote:
-> +     - hw_control_set:
-> +                activate hw control. LED driver will use the provided
-> +                flags passed from the supported trigger, parse them to
-> +                a set of mode and setup the LED to be driven by hardware
-> +                following the requested modes.
-> +
-> +                Set LED_OFF via the brightness_set to deactivate hw cont=
-rol.
-> +
-> +                Return 0 on success, a negative error number on flags ap=
-ply
-> +                fail.
-		   "... on failing to apply flags."
+The return type of this function is struct device * - how would you
+expect it to return a name?
 
-> +    - hw_control_get_device:
-> +                return the device associated with the LED driver in
-> +                hw control. A trigger might use this to match the
-> +                returned device from this function with a configured
-> +                device for the trigger as the source for blinking
-> +                events and correctly enable hw control.
-> +                (example a netdev trigger configured to blink for a
-> +                particular dev match the returned dev from get_device
-> +                to set hw control)
-> +
-> +                Return a device or NULL if nothing is currently attached.
-Returns a device name?
-
-> +
-> +LED driver can activate additional modes by default to workaround the
-> +impossibility of supporting each different mode on the supported trigger.
-> +Example are hardcoding the blink speed to a set interval, enable special
-"Examples are hardcoding ..."
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---YTDyO4TcEE14SJFj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZHRd5AAKCRD2uYlJVVFO
-o6OqAPwIkuwDefE/k8PaF3t507mCbalgR2aQkpYignl1vtGOOgD+Ip2BAGGTRs6Q
-B8rCmdw4Nz7QxLypkR+gaHS0rlwbIQ0=
-=wtzq
------END PGP SIGNATURE-----
-
---YTDyO4TcEE14SJFj--
+jon
