@@ -2,30 +2,30 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98003C77B7A
-	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 15:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EE4C77B7A
+	for <linux-leds@archiver.kernel.org>; Mon, 29 May 2023 15:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbjE2PrT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 29 May 2023 11:47:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41078 "EHLO
+        id S230048AbjE2Pwk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 29 May 2023 11:52:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229677AbjE2PrS (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 11:47:18 -0400
+        with ESMTP id S230095AbjE2Pwj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 29 May 2023 11:52:39 -0400
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B0AA3;
-        Mon, 29 May 2023 08:47:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62094A3;
+        Mon, 29 May 2023 08:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
         s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
         Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
         Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=SKJ4N9nq0FEnXlydmVRv6LAm39tc/x6QCJ/lBF2Ow4E=; b=YbWsl/FYw51ix05mJYM88x1RKh
-        jgxNrKVJExPu+0Zl0I5vv257xOUWhWd6z6c6Kg1TWJBN6K0xSlhxxhKP3b/lH91K3FmHbajBB8RIb
-        MuOpODyqDjPpf+M5sbk4Z78+Mnx7q2xRreCiErHlYvSM55Hd3LmoCodVxkHzQ487XE+8=;
+        bh=xIZTgH2myoM1420TKATp086sYZORzhICG+yyqh0mgoI=; b=MHCq04lQIXHwCpRPRrWdnZnE/u
+        9DvAXaYI3HRf+9zEckuPzWyMqxLbFjUC2EKDaBvJIuH8HnR+TLQRO5qszxYfGZrdy87JbOg4yhSEw
+        HkBzZjrT+SivKSv4Vd2VbDfdz3od+nZbdJjVsf8FzZRF5rs4/gHhzuYYS6XK8unYNChI=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
         (envelope-from <andrew@lunn.ch>)
-        id 1q3f5S-00EF59-KY; Mon, 29 May 2023 17:47:10 +0200
-Date:   Mon, 29 May 2023 17:47:10 +0200
+        id 1q3fAc-00EF7p-2H; Mon, 29 May 2023 17:52:30 +0200
+Date:   Mon, 29 May 2023 17:52:30 +0200
 From:   Andrew Lunn <andrew@lunn.ch>
 To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
@@ -38,22 +38,30 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>, linux-leds@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v3 11/13] leds: trigger: netdev: expose netdev
- trigger modes in linux include
-Message-ID: <de1f3097-260b-4290-a865-08a022b7253b@lunn.ch>
+Subject: Re: [net-next PATCH v3 12/13] net: dsa: qca8k: implement hw_control
+ ops
+Message-ID: <63eff2f0-11e1-48f6-a760-9e58c21ab9de@lunn.ch>
 References: <20230527112854.2366-1-ansuelsmth@gmail.com>
- <20230527112854.2366-12-ansuelsmth@gmail.com>
+ <20230527112854.2366-13-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230527112854.2366-12-ansuelsmth@gmail.com>
+In-Reply-To: <20230527112854.2366-13-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sat, May 27, 2023 at 01:28:52PM +0200, Christian Marangi wrote:
-> Expose netdev trigger modes to make them accessible by LED driver that
-> will support netdev trigger for hw control.
+On Sat, May 27, 2023 at 01:28:53PM +0200, Christian Marangi wrote:
+> Implement hw_control ops to drive Switch LEDs based on hardware events.
+> 
+> Netdev trigger is the declared supported trigger for hw control
+> operation and supports the following mode:
+> - tx
+> - rx
+> 
+> When hw_control_set is called, LEDs are set to follow the requested
+> mode.
+> Each LEDs will blink at 4Hz by default.
 > 
 > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
