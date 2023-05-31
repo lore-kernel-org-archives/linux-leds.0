@@ -2,107 +2,61 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F3EC77B7A
-	for <linux-leds@archiver.kernel.org>; Wed, 31 May 2023 09:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1112CC77B73
+	for <linux-leds@archiver.kernel.org>; Wed, 31 May 2023 09:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235384AbjEaJKz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 31 May 2023 05:10:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52550 "EHLO
+        id S232156AbjEaJMZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 31 May 2023 05:12:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235400AbjEaJKo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 31 May 2023 05:10:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62789129;
-        Wed, 31 May 2023 02:10:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F142562FF2;
-        Wed, 31 May 2023 09:10:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 56B50C4339B;
-        Wed, 31 May 2023 09:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685524226;
-        bh=/HXE6Lv70q14EtRVGFTc+yxi8ujb9+Ft28H1V80Qm7s=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=oPnTH7o+o0CmeOFhUFfJzD1ME+nfdJq8O9G6SLQDdQlckMyX7ei9XEljkJx5VKo81
-         WOgpgwTMO19TOSB62ofR0hkONv/Tcarv38i6Bz7E2ZQum90gwIRgkbcrC+VVbGhSev
-         Op1naBJPBV2rIZDJojfGKl52lc17MOT0b6/2etJm2oWhvFkjGrbOBFY89Mq1jJPdpH
-         kYQyHiUdZ6FcE+6Ytv33n3sit9r0QH8H5Hb2Q/+KwwpeTMKtIoyJhsE2OFqjWFcndk
-         Szl8Ucz/Q7SPJHyvRfTUGJe8+9yN44wGOenXcZVOeffuTEvra3HPUPGCX20BL28pqF
-         2YgYyvbUznJAA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 36783E52BFB;
-        Wed, 31 May 2023 09:10:26 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S235446AbjEaJMV (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 31 May 2023 05:12:21 -0400
+X-Greylist: delayed 2899 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 31 May 2023 02:12:11 PDT
+Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2542F1BE
+        for <linux-leds@vger.kernel.org>; Wed, 31 May 2023 02:12:11 -0700 (PDT)
+Received: by mail.ettrick.pl (Postfix, from userid 1002)
+        id DBFB9AC1AE; Wed, 31 May 2023 08:16:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
+        t=1685521040; bh=ZOVeXw1jXE9TbyZP9aLdRwM96AORcRfum8b+rry5JMw=;
+        h=Date:From:To:Subject:From;
+        b=Uabl99pK7cyW7dkPvlv/aktxgGaW/defquH7l+Uu8RqC0g4hTbMrOWepLv0jRIkjo
+         Q12RVFh4phxph/2VXPUO45RJAizbfxEhvbApU6Ir7B0ki0ugTKzdNn4dwBUYa/hdU5
+         CBtax+oXOMsBVhM4e2hGDWhuMhe/tpxBRpWnS9q5ftP0V9VN7ocO47/P+P+wAolM3e
+         dICvwzWPgzsdaqbnOdRJFvZ3/RTCIUe/xpxAQkyGjmHOBabGuSvv+9TqHENfhis77j
+         toxB/peBBSr2yCUdi74nk0bPGp9/KYPKlcfYDA2AhtbuFwzPSjNjrvV/5rPbC016UU
+         ePfErPfK8bYOQ==
+Received: by mail.ettrick.pl for <linux-leds@vger.kernel.org>; Wed, 31 May 2023 08:15:40 GMT
+Message-ID: <20230531064500-0.1.ax.4bm65.0.2dhe81f4zq@ettrick.pl>
+Date:   Wed, 31 May 2023 08:15:40 GMT
+From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
+To:     <linux-leds@vger.kernel.org>
+Subject: Fotowoltaika- propozycja instalacji
+X-Mailer: mail.ettrick.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH v4 00/13] leds: introduce new LED hw control APIs
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168552422621.12579.18364898651664418572.git-patchwork-notify@kernel.org>
-Date:   Wed, 31 May 2023 09:10:26 +0000
-References: <20230529163243.9555-1-ansuelsmth@gmail.com>
-In-Reply-To: <20230529163243.9555-1-ansuelsmth@gmail.com>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     pavel@ucw.cz, lee@kernel.org, corbet@lwn.net, andrew@lunn.ch,
-        f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Mon, 29 May 2023 18:32:30 +0200 you wrote:
-> Since this series is cross subsystem between LED and netdev,
-> a stable branch was created to facilitate merging process.
-> 
-> This is based on top of branch ib-leds-netdev-v6.5 present here [1]
-> and rebased on top of net-next since the LED stable branch got merged.
-> 
-> This is a continue of [2]. It was decided to take a more gradual
-> approach to implement LEDs support for switch and phy starting with
-> basic support and then implementing the hw control part when we have all
-> the prereq done.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v4,01/13] leds: add APIs for LEDs hw control
-    https://git.kernel.org/netdev/net-next/c/ed554d3f9451
-  - [net-next,v4,02/13] leds: add API to get attached device for LED hw control
-    https://git.kernel.org/netdev/net-next/c/052c38eb17e8
-  - [net-next,v4,03/13] Documentation: leds: leds-class: Document new Hardware driven LEDs APIs
-    https://git.kernel.org/netdev/net-next/c/8aa2fd7b6698
-  - [net-next,v4,04/13] leds: trigger: netdev: refactor code setting device name
-    https://git.kernel.org/netdev/net-next/c/28a6a2ef18ad
-  - [net-next,v4,05/13] leds: trigger: netdev: introduce check for possible hw control
-    https://git.kernel.org/netdev/net-next/c/4fd1b6d47a7a
-  - [net-next,v4,06/13] leds: trigger: netdev: add basic check for hw control support
-    https://git.kernel.org/netdev/net-next/c/6352f25f9fad
-  - [net-next,v4,07/13] leds: trigger: netdev: reject interval store for hw_control
-    https://git.kernel.org/netdev/net-next/c/c84c80c7388f
-  - [net-next,v4,08/13] leds: trigger: netdev: add support for LED hw control
-    https://git.kernel.org/netdev/net-next/c/7c145a34ba6e
-  - [net-next,v4,09/13] leds: trigger: netdev: validate configured netdev
-    https://git.kernel.org/netdev/net-next/c/33ec0b53beff
-  - [net-next,v4,10/13] leds: trigger: netdev: init mode if hw control already active
-    https://git.kernel.org/netdev/net-next/c/0316cc5629d1
-  - [net-next,v4,11/13] leds: trigger: netdev: expose netdev trigger modes in linux include
-    https://git.kernel.org/netdev/net-next/c/947acacab5ea
-  - [net-next,v4,12/13] net: dsa: qca8k: implement hw_control ops
-    https://git.kernel.org/netdev/net-next/c/e0256648c831
-  - [net-next,v4,13/13] net: dsa: qca8k: add op to get ports netdev
-    https://git.kernel.org/netdev/net-next/c/4f53c27f772e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Dzie=C5=84 dobry,
+=20
+Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
+=20
+Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
+ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
+sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
+ elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
+d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
+rodowiska naturalnego.
+=20
+Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
+wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
+zak=C5=82adu energetycznego.=20
+=20
+Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
 
 
+Pozdrawiam,
+Norbert Karecki
