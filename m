@@ -2,61 +2,63 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16F7C77B7A
-	for <linux-leds@archiver.kernel.org>; Sat,  3 Jun 2023 08:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72425C77B7A
+	for <linux-leds@archiver.kernel.org>; Sat,  3 Jun 2023 09:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236625AbjFCIZr (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 3 Jun 2023 04:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60886 "EHLO
+        id S231932AbjFCJfC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 3 Jun 2023 05:35:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236222AbjFCIZq (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 3 Jun 2023 04:25:46 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8913CE58;
-        Sat,  3 Jun 2023 01:25:44 -0700 (PDT)
-Received: from g550jk.localnet (84-115-214-73.cable.dynamic.surfer.at [84.115.214.73])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 3B308CFC2A;
-        Sat,  3 Jun 2023 08:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1685780712; bh=NwmIoq/BviZL8sy63sRYrGyMTJQYkX5Kw2FgJgZF01s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=YMkrvc9tWXOzWyX+8ewERFWrN8YH2eLM2UmtB0do+Afqtcn2RuULZlHtFNx17SDrI
-         XjhtAlCOw7wGLhACERpIx/v+4AsQ9Y8dVQ8LXlyIaLH9/BVK2Y5uKGyaEWRf9lfo35
-         A9yCHkTSWqErRHwYE5Ww4m0uIO3ZcSKm9A2Gl+jw=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     open list <linux-kernel@vger.kernel.org>,
-        Raymond Hackley <raymondhackley@protonmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "open list : LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-        "open list : OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Raymond Hackley <raymondhackley@protonmail.com>
-Subject: Re: [RESEND PATCH 0/2] leds: sgm3140: Add richtek,rt5033-led compatible
-Date:   Sat, 03 Jun 2023 10:25:10 +0200
-Message-ID: <5422230.31r3eYUQgx@z3ntu.xyz>
-In-Reply-To: <20230602133533.260502-1-raymondhackley@protonmail.com>
-References: <20230602133533.260502-1-raymondhackley@protonmail.com>
+        with ESMTP id S230028AbjFCJez (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 3 Jun 2023 05:34:55 -0400
+X-Greylist: delayed 89353 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 03 Jun 2023 02:34:53 PDT
+Received: from mail.webtopbits.pl (mail.webtopbits.pl [195.231.64.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8087FE58
+        for <linux-leds@vger.kernel.org>; Sat,  3 Jun 2023 02:34:53 -0700 (PDT)
+Received: by mail.webtopbits.pl (Postfix, from userid 1001)
+        id 43DE7A3872; Fri,  2 Jun 2023 09:45:39 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=webtopbits.pl;
+        s=mail; t=1685695539;
+        bh=Eh8ECMiYd4baGAwPAzhz8mhJACXX7NSRkYjh+plaY18=;
+        h=Date:From:To:Subject:From;
+        b=h59rRVc2it3VHbxOmooIQmjYUWxRynlYDWy/hJUgDI//3pIvWO2dYKvKapj/gFylf
+         wO0ftyb0vPuXAQ91/4AvEbmGSNwqIlmLALiVMmXR+8IfTJZDWLvgIHK9PvgXQiLuq0
+         wsJqEMw0t5inR5qFAts3TMPeXYS6H26dtb0XTmL4dj89fG543duEt8oB870BMXf7/e
+         tzE5oCMFTW6n2ynf/Qe+yu6+qop55ws00Pb4z7HR2qCHskv9BAqT2PxFQ6Rk9M1/+Z
+         l/JJ+tilsUt7NgBgsbNhZC0GlGwHmrjBpi2YpQqJeyqQJnLS5v9vTh6zhw5Qvpz/02
+         T5x4lhlCHv76w==
+Received: by mail.webtopbits.pl for <linux-leds@vger.kernel.org>; Fri,  2 Jun 2023 08:45:39 GMT
+Message-ID: <20230602085530-0.1.8w.5kg9.0.rj4zbz5qp3@webtopbits.pl>
+Date:   Fri,  2 Jun 2023 08:45:39 GMT
+From:   "Kamil Durjasz" <kamil.durjasz@webtopbits.pl>
+To:     <linux-leds@vger.kernel.org>
+Subject: =?UTF-8?Q?Wy=C5=BCsza_konwersja_w_e-sklepie_?=
+X-Mailer: mail.webtopbits.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Raymond,
+Dzie=C5=84 dobry,
 
-On Freitag, 2. Juni 2023 15:36:16 CEST Raymond Hackley wrote:
-> Richtek's rt5033-led has pin configurations similar to sgm3140.
-> Add it to the compatible list.
+w jaki spos=C3=B3b docieraj=C4=85 Pa=C5=84stwo do odbiorc=C3=B3w?
 
-please fix your email setup so that patches also sent to public mailing lists 
-don't get *encrypted*. This is completely pointless and just makes everything 
-more difficult.
+Tworzymy pot=C4=99=C5=BCne narz=C4=99dzia sprzeda=C5=BCy, kt=C3=B3re pozw=
+alaj=C4=85 kompleksowo rozwi=C4=85za=C4=87 problemy potencjalnych klient=C3=
+=B3w i skutecznie wp=C5=82yn=C4=85=C4=87 na ich decyzje zakupowe.=20
 
-Regards
-Luca
+Skupiamy si=C4=99 na Pa=C5=84stwa potrzebach zwi=C4=85zanych z obs=C5=82u=
+g=C4=85 sklepu, oczekiwaniach i planach sprzeda=C5=BCowych. Szczeg=C3=B3=C5=
+=82owo dopasowujemy grafik=C4=99, funkcjonalno=C5=9Bci, struktur=C4=99 i =
+mikrointerakcje do Pa=C5=84stwa grupy docelowej, co przek=C5=82ada si=C4=99=
+ na oczekiwane rezultaty.
+
+Ch=C4=99tnie przedstawi=C4=99 dotychczasowe realizacje, aby mogli Pa=C5=84=
+stwo przekona=C4=87 si=C4=99 o naszych mo=C5=BCliwo=C5=9Bciach. Mog=C4=99=
+ si=C4=99 skontaktowa=C4=87?
 
 
+Pozdrawiam
+Kamil Durjasz
