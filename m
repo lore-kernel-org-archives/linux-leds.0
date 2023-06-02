@@ -2,105 +2,81 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DA4C7EE2C
-	for <linux-leds@archiver.kernel.org>; Fri,  2 Jun 2023 09:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C92FC7EE24
+	for <linux-leds@archiver.kernel.org>; Fri,  2 Jun 2023 11:03:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235081AbjFBJmF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 2 Jun 2023 05:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52870 "EHLO
+        id S234992AbjFBLDb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 2 Jun 2023 07:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234554AbjFBJmB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Jun 2023 05:42:01 -0400
-X-Greylist: delayed 1801 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 02 Jun 2023 02:41:46 PDT
-Received: from mta-04.yadro.com (mta-04.yadro.com [89.207.88.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 706821AB;
-        Fri,  2 Jun 2023 02:41:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-04.yadro.com 358EAC0005
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-        t=1685695598; bh=IyHRJF/zre043k98ZDshtLNWhe8WKi2wLyzTArL8jtA=;
-        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-        b=X1aWV4csjSO2RPP7ImF6gPm9floXV+c11hTO2RkkL5ZpwwzncQKcuUEf6rOTwZED2
-         cK7P4r6MKAnwdXitp+dXJ/sPDFIv26m4F3ZKVirRTZp+8sdiPmromGeQj+zBKl1fbM
-         RVevDZleSvrJ0PAeuaZZgJiXv5s6h3aMm/FPY06osUXdzXKLRDwySvnSvA8lxKyqi3
-         nfIRxMTfyMpPqQE8/zJkFC/tXZa+KBdKHCconvupGk2vkv6otDPX0YncapaIEsP+Du
-         WpfTChvxpL3Buro9euVycxE1eJTNTvEz26vg9vS23G+q82w8RwZMN5GgWGuQDPFbMZ
-         4p+u/R32A8Vbw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-        t=1685695598; bh=IyHRJF/zre043k98ZDshtLNWhe8WKi2wLyzTArL8jtA=;
-        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-        b=wRROsHfNTT80YN/60jvIiKOv3gjfU+1kjKfFYX40vJy0dSOm+PNpuByNgxDVeGt0C
-         PStAyU6eViXSd7KEXZKMc4hh5sUOFk62rMX2MKFy9uBrKLVmN8u9l/CV9wbydrm4eq
-         hjULC5hamswiGAr8RiaI/oR+jk4ESS4sN+QWpDU6hCz0jTc4NKxrQSEsq2snqGH5I6
-         6bbPA9A04v7GyUR0+03X2PKNGmtC9XYiyhXV+3x0JkwuHq1dYsUeBz9hVYK5tJJ4jC
-         Oq9bTdW16BnTPQfa7cyIbkLAkrk2ju6u1dEy/IQ6/1urjMIR06cVxxTQBbR9m/oCfa
-         NJy8vPex3zfKw==
-Message-ID: <b9fc06dd-d9e4-58fc-6252-87590c416ce7@yadro.com>
-Date:   Fri, 2 Jun 2023 11:46:36 +0300
+        with ESMTP id S235023AbjFBLDb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Jun 2023 07:03:31 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C3ACE;
+        Fri,  2 Jun 2023 04:03:29 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 35DCA5FD1D;
+        Fri,  2 Jun 2023 14:03:27 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1685703807;
+        bh=P21ZCO8cvJf6YwlmF8pYgOOnkYfHNy2KTyAlbb0APBE=;
+        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+        b=kmylLnV7Csqk12Xvc0Kg+idFZT1QbN8IU3H1rnWJi24+VlEVvT6mFRIIVlprgmIqm
+         7fjR7BL/zgn0viCj8vWO7Vdw2Kjq66n6NME1f2zxetKrwqJrgWat4ClJGF6Myjw/wN
+         D49WKauAxcUcTUyWslpRrsM+6ZZ0O6TZVUI9A/ZtBA1J9k4cRNoQHnGomjAHLGva78
+         8/s7NJ+4dxuNiX3EeFhMewOPtzyXJ2K8gXCu55KAX5D64nS+7spOzdKA8x3XjE6BZs
+         D84N6D0D3f8NrrghoJv34G83VFDkU6zdKcwzb60Zre1iLn+wIkYxoN7Jygj5F+toX6
+         cEOqA7RhIlkXw==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Fri,  2 Jun 2023 14:03:17 +0300 (MSK)
+Message-ID: <e6302401-7a07-a2fa-621b-29f62ef60261@sberdevices.ru>
+Date:   Fri, 2 Jun 2023 14:03:14 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/2] dt-bindings: leds: Document Awinic AW2016 bindings
-To:     Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux@yadro.com>,
-        <linux-leds@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-References: <20230524113910.196321-1-v.barinov@yadro.com>
- <20230524114056.196518-1-v.barinov@yadro.com>
- <168493088788.3462735.2834416618033227181.robh@kernel.org>
- <20230602080655.GN449117@google.com>
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v1] leds: trigger: pattern: add support for hrtimer
 Content-Language: en-US
-From:   Vladimir Barinov <v.barinov@yadro.com>
-In-Reply-To: <20230602080655.GN449117@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-08.corp.yadro.com (172.17.11.58)
+To:     Lee Jones <lee@kernel.org>, kernel test robot <lkp@intel.com>
+CC:     Pavel Machek <pavel@ucw.cz>, ye xingchen <ye.xingchen@zte.com.cn>,
+        Kalle Valo <kvalo@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <kernel@sberdevices.ru>
+References: <20230522190412.374474-1-mmkurbanov@sberdevices.ru>
+ <202305230549.ekneaQ89-lkp@intel.com> <20230601185116.GL449117@google.com>
+From:   Martin Kurbanov <mmkurbanov@sberdevices.ru>
+In-Reply-To: <20230601185116.GL449117@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/02 03:06:00 #21401484
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Lee,
+Hello Lee,
 
-On 6/2/23 11:06, Lee Jones wrote:
-> «Внимание! Данное письмо от внешнего адресата!»
->
-> On Wed, 24 May 2023, Rob Herring wrote:
->
->> On Wed, 24 May 2023 14:40:56 +0300, Vladimir Barinov wrote:
->>> Add Awinic AW2026 binding documentation
->>>
->>> Signed-off-by: Vladimir Barinov <v.barinov@yadro.com>
->>> ---
->>>   .../bindings/leds/awinic,aw2026.yaml          | 92 +++++++++++++++++++
->>>   1 file changed, 92 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/leds/awinic,aw2026.yaml
->>>
->> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
->> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> Error: Documentation/devicetree/bindings/leds/awinic,aw2026.example.dts:52.3-53.1 syntax error
->> FATAL ERROR: Unable to parse input tree
->> make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/leds/awinic,aw2026.example.dtb] Error 1
->> make[1]: *** Waiting for unfinished jobs....
->> make: *** [Makefile:1512: dt_binding_check] Error 2
-> Taking this set out of my review queue until this is rectified.
+On 01.06.2023 21:51, Lee Jones wrote:
+>>    drivers/leds/trigger/ledtrig-pattern.c: In function 'pattern_init':
+>>>> drivers/leds/trigger/ledtrig-pattern.c:454:74: warning: implicit conversion from 'enum <anonymous>' to 'enum pattern_type' [-Wenum-conversion]
+>>      454 |         err = pattern_trig_store_patterns(led_cdev, NULL, pattern, size, false);
+>>          |                                                                          ^~~~~
+>  
+> Did you fix this already? 
+> 
+> I don't see a subsequent submission?
 
-Thank you for paying attention for this commit.
-
-I've already resent fixes in v2 version:
-
-https://lore.kernel.org/all/20230525101341.2036563-1-v.barinov@yadro.com/
-
->
-> --
-> Lee Jones [李琼斯]
-
+Sure, I intend to send the updated version very soon (hopefully today).
 
 -- 
-Regards
-Vladimir
-
+Best Regards,
+Martin Kurbanov
