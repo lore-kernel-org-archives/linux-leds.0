@@ -2,31 +2,31 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862DCC7EE29
-	for <linux-leds@archiver.kernel.org>; Fri,  2 Jun 2023 13:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DC5C77B7A
+	for <linux-leds@archiver.kernel.org>; Fri,  2 Jun 2023 13:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235456AbjFBNiV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 2 Jun 2023 09:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
+        id S235666AbjFBNiZ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 2 Jun 2023 09:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235354AbjFBNiU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Jun 2023 09:38:20 -0400
+        with ESMTP id S235354AbjFBNiY (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 2 Jun 2023 09:38:24 -0400
 Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E99EC1B5
-        for <linux-leds@vger.kernel.org>; Fri,  2 Jun 2023 06:38:18 -0700 (PDT)
-Date:   Fri, 02 Jun 2023 13:38:12 +0000
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0687137
+        for <linux-leds@vger.kernel.org>; Fri,  2 Jun 2023 06:38:23 -0700 (PDT)
+Date:   Fri, 02 Jun 2023 13:38:08 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail3; t=1685713095; x=1685972295;
-        bh=JFatXUbuyrOmuslFYZorSsbJ/niD1OMN+SFRZ93mUp0=;
+        s=protonmail3; t=1685713100; x=1685972300;
+        bh=bsHSAN20PI+leXRVPAKhT58R/jP9fMKdBTvAX0E8FqU=;
         h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
          Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
          Message-ID:BIMI-Selector;
-        b=P9w9TClBgI+Je7GgWb9dXSFJ7zYBMTvmerw9q0r7kVJi1d6Tyg4s66/YeQKWLcDyY
-         2DeXa+L8HFJrQHSlOoYpsEOajOLRYOLPgu39wxZ8Ul0GceuNcFwTt4fpnKfNrkP2Ue
-         8/Yu3llp6tMKc8TOzLEDhLtJlqNkDZl/AcMdj4VztklFjd9d3wiubaWkRM0VSgghZJ
-         s2yS3fJaYL+G2ZCFAaLTqFI/le2RenOBz5hQ5MIO1Q1+Di+ZRUPKAvxONdbgUACCAM
-         Hxe6Dbwui/HhHSRfM83yHFip4KxSHhr3riO07pwKQMKqbLvINjFZdkB1ZVGQ8NQfuj
-         0hYOt4NiJoD5g==
+        b=DNccUdTJebMvcEBYi5E1OBB0768TRLbkYqrJUHLtZ9tns+jgLFGq9evDSFUyLzmqG
+         G7BCNMchvygYVc1pkDGuBl+ipJwYaaPjpl28ZtqxcS4CyayG2mC1EJ8mh6Y468dH2D
+         27GMl3y45RL4JN9pHalBVka8l2cV4d6vCsdOdlJ35CfKpGVN7yvhKT8DVBPPmb8pWu
+         aBfcUhFki+oRA3xJYAybc9EJSqNLnZEbBW+wVdXiYFD60G1Xi7Jzwh6w0MF3+Xx/72
+         Dotx5FX+ybQXEEv6yK+c3JgMjub153jQBu5WzZ4YRBmiB79mwhe4Tbrniw3mzmGaoV
+         TYJ/dDlbXVAAA==
 To:     open list <linux-kernel@vger.kernel.org>
 From:   Raymond Hackley <raymondhackley@protonmail.com>
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
@@ -36,8 +36,8 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         "open list : LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
         "open list : OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [RESEND PATCH 2/2] leds: sgm3140: Add richtek,rt5033-led compatible
-Message-ID: <20230602133726.260610-1-raymondhackley@protonmail.com>
+Subject: [RESEND PATCH 1/2] dt-bindings: leds: sgm3140: Document richtek,rt5033 compatible
+Message-ID: <20230602133714.260556-1-raymondhackley@protonmail.com>
 In-Reply-To: <20230602133533.260502-1-raymondhackley@protonmail.com>
 References: <20230602133533.260502-1-raymondhackley@protonmail.com>
 Feedback-ID: 49437091:user:proton
@@ -48,27 +48,27 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Richtek's rt5033-led has pin configurations similar to sgm3140.
-Add it to the compatible list.
+Add devicetree binding for Richtek RT5033 Flash LED charge pump used for
+camera flash LEDs.
 
 Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
 ---
- drivers/leds/flash/leds-sgm3140.c | 1 +
+ Documentation/devicetree/bindings/leds/leds-sgm3140.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sg=
-m3140.c
-index d3a30ad94ac4..d3f50dca5136 100644
---- a/drivers/leds/flash/leds-sgm3140.c
-+++ b/drivers/leds/flash/leds-sgm3140.c
-@@ -291,6 +291,7 @@ static int sgm3140_remove(struct platform_device *pdev)
+diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml b/Doc=
+umentation/devicetree/bindings/leds/leds-sgm3140.yaml
+index 4d2ffe5fcfc7..37d2a93780ab 100644
+--- a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+@@ -20,6 +20,7 @@ properties:
+   compatible:
+     enum:
+       - ocs,ocp8110
++      - richtek,rt5033-led
+       - sgmicro,sgm3140
 =20
- static const struct of_device_id sgm3140_dt_match[] =3D {
- =09{ .compatible =3D "ocs,ocp8110" },
-+=09{ .compatible =3D "richtek,rt5033-led" },
- =09{ .compatible =3D "sgmicro,sgm3140" },
- =09{ /* sentinel */ }
- };
+   enable-gpios:
 --=20
 2.30.2
 
