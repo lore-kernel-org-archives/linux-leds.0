@@ -2,87 +2,70 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4D2C7EE23
-	for <linux-leds@archiver.kernel.org>; Thu,  8 Jun 2023 12:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F75C7EE23
+	for <linux-leds@archiver.kernel.org>; Thu,  8 Jun 2023 12:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233969AbjFHMqe (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 8 Jun 2023 08:46:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59266 "EHLO
+        id S233538AbjFHMro (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 8 Jun 2023 08:47:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233180AbjFHMqd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Jun 2023 08:46:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F6B26B0;
-        Thu,  8 Jun 2023 05:46:32 -0700 (PDT)
+        with ESMTP id S233180AbjFHMrn (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 8 Jun 2023 08:47:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67FFE198C;
+        Thu,  8 Jun 2023 05:47:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E05964D2E;
-        Thu,  8 Jun 2023 12:46:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A510EC433EF;
-        Thu,  8 Jun 2023 12:46:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 060156189A;
+        Thu,  8 Jun 2023 12:47:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E3BDC433EF;
+        Thu,  8 Jun 2023 12:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686228391;
-        bh=BVMYpn9deUNOxNer1oOxAtHoRObvC6n99auv5H7OZIE=;
+        s=k20201202; t=1686228461;
+        bh=gErihSfNJN9neIvqIaF2kUO0JNhwiIF/H2BlcHXmEW8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FDIdw3oeQmfiqgKK+ydiuXt8an/7OYFdC8Fh4sX7+dVJfQ0289PGxtDzuhBKISQOh
-         dv4j/+C6tVOcWUeDdySVTlwZ0O6pOHcasvwPI4stAMOPY7mN13OyyK9LSsEVbrLD69
-         HEJEt0yzCEil/BZGytK01tqHtTF3BhLpu+cA8JbZD36IF23TYsi88P6yUaqWb+VUt9
-         BdFDBwBMw/kbQ8S3aAgWJTGnSh+iZVJXlnD6+PjGQ+gxlz6+Sh51tMth/n5JlMdNoS
-         MqnqAesVmfw3BFt+xKo/0JiBMRrulrm406OS2YlykojmmFzSmoVB78M2F9eWlu1bHV
-         gJrwpYEt/LcPQ==
-Date:   Thu, 8 Jun 2023 13:46:26 +0100
+        b=c4KuxEX1m+b0j8MnDpsbYkU2mRDx71qQNZIlxN+SwRb5imZmdLgwqNCixb4O39FBM
+         eC9pblP/Zx+tdICJyWEwicLrBG9xPCkFMwyEOlfI5GFk0es7CrVSBF210um+ZZSxVk
+         8C5smU7Olfiru0SoY+2BVjJuxvCDTq/K5KCgeYPFn457/lrHlSPir7rAcfIobNJpgP
+         2ivzWd5kCgG5w8uq55Ai/X5c0Bu2BMvREW53yfU+SIRboksar9N/+Q0vOOQ4L8xD7Z
+         RBZbap1rhE53O7+yS7QeHNvnoaI8mVaGP5Paub0sENFcWxqZUP09uiMhRoFM0t5lLL
+         PcCJqoP5FeYmw==
+Date:   Thu, 8 Jun 2023 13:47:36 +0100
 From:   Lee Jones <lee@kernel.org>
-To:     Raymond Hackley <raymondhackley@protonmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        "open list : LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-        "open list : OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [RESEND PATCH 1/2] dt-bindings: leds: sgm3140: Document
- richtek,rt5033 compatible
-Message-ID: <20230608124626.GI1930705@google.com>
-References: <20230602133533.260502-1-raymondhackley@protonmail.com>
- <20230602133714.260556-1-raymondhackley@protonmail.com>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] LEDs fixes for 6.4-rc5
+Message-ID: <20230608124736.GJ1930705@google.com>
+References: <ZHte5sPkB6-D-94G@hovoldconsulting.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230602133714.260556-1-raymondhackley@protonmail.com>
+In-Reply-To: <ZHte5sPkB6-D-94G@hovoldconsulting.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-I've not seen this because Protonmail has encoded your mail.
+On Sat, 03 Jun 2023, Johan Hovold wrote:
 
-On Fri, 02 Jun 2023, Raymond Hackley wrote:
+> Hi Linus,
+> 
+> Here's a fix for a regression in 6.4-rc1 which broke the backlight on
+> machines such as the Lenovo ThinkPad X13s.
+> 
+> The patch has been acked by one of the maintainers who suggested someone else
+> should send it to you:
+> 
+> 	https://lore.kernel.org/lkml/20230602091928.GR449117@google.com/
+> 
+> Please pull.
+> 
+> Johan
 
-> Add devicetree binding for Richtek RT5033 Flash LED charge pump used for
-> camera flash LEDs.
-> 
-> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
-> ---
->  Documentation/devicetree/bindings/leds/leds-sgm3140.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-> index 4d2ffe5fcfc7..37d2a93780ab 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-> +++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
-> @@ -20,6 +20,7 @@ properties:
->    compatible:
->      enum:
->        - ocs,ocp8110
-> +      - richtek,rt5033-led
->        - sgmicro,sgm3140
->  
->    enable-gpios:
-> -- 
-> 2.30.2
-> 
-> 
+Thanks Johan.
 
 -- 
 Lee Jones [李琼斯]
