@@ -2,51 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEF5C7EE29
-	for <linux-leds@archiver.kernel.org>; Fri,  9 Jun 2023 13:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56736C7EE43
+	for <linux-leds@archiver.kernel.org>; Fri,  9 Jun 2023 13:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229985AbjFINvN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 9 Jun 2023 09:51:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57916 "EHLO
+        id S239822AbjFINvR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 9 Jun 2023 09:51:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231326AbjFINvM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jun 2023 09:51:12 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F0718D;
-        Fri,  9 Jun 2023 06:51:11 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f6d7abe9a4so14061725e9.2;
-        Fri, 09 Jun 2023 06:51:11 -0700 (PDT)
+        with ESMTP id S239804AbjFINvQ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 9 Jun 2023 09:51:16 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B6F3580;
+        Fri,  9 Jun 2023 06:51:14 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f7353993cbso14091215e9.0;
+        Fri, 09 Jun 2023 06:51:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686318670; x=1688910670;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RYV5mIt6n6y7m9u02ykJLGYfsCgH+WAjf8v0LH/JCw=;
-        b=RWy6/fdZiXEIh+9mvQzLMJTt+FuaSB4Tyf1lNRC08YVDblBKYa73qF9GVyeXBrvQdN
-         PLH92KRgSq01EpNdefgMa6h/HRjemxIONcxtSxHoZE/rALbPGkSOPI+40EjNQqb2sLYe
-         ylnX3blFH22OyNpAVRFmGEyA9k5HMln2M/ew1lCdBuCexXFeLKB/gpCbf2qw5mdkTY6H
-         L2jpLkFtd0ZV0dKinFYbvLyWV90rSk1hDrgD39ijPqz02qQoLai+yhAIJz3L1AAOKsx1
-         mkTxg43YUCRtJK+tnPc62nExPoqiVmH/mqyfMrxilTKWPLYwo5o/PmU3ZBlzjHJPYjvC
-         h1Sg==
+        d=gmail.com; s=20221208; t=1686318673; x=1688910673;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kprq6jjAZv3c6K51awIK2c2WIWDwE0VUEJPfJtDg3Ao=;
+        b=kBmvvrTBMigUd6EVBWiTB4GST2mTmnUhG5VPYvwTZenw41yi1Voci0g5O2AUWby61c
+         SbYuDBzqmVU9a8F/bqMHUomkV/a6zWeWJw0kQp5Zt7f3EEJa5Tif0ymrsRagnBxK0hqj
+         mZtOlJnwjtQtEhgrBPtW+TjiY6/uGnVEotDkqm61f332N2uunUwcGZb1vxa4dZzwBqEH
+         XsWPs15gkG8l31I4a3DJGECOIZo+k2cu+VaEzaZmy2D10p3W8VwobgKCn7FwIj45kdPj
+         dTY0+Sm0+kNiQnlKnPf4skFmyLj2RPB/IUIf7laAWaUAEUsSQOfEae8CRKRY8iJng7xR
+         dmuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686318670; x=1688910670;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RYV5mIt6n6y7m9u02ykJLGYfsCgH+WAjf8v0LH/JCw=;
-        b=a48Y/eVfYK+jNFqb4EJuQhF/63cUENiW79BeeeD3mRi6ekqWlvI1O3v1/4V0gKZUfw
-         Qjbdp4iAXmMz82YHb0L2Da/YXCxnNzJwmCF9gAOnj9BAk6g4jviXt1/Mg/S+C4ACtKk1
-         sNM210tg0tGSUVZ1LnUoEE2lwb2JLGfh7ONusGBG8Po2RQlqV+fkGQXdia3ZaWTYRWWe
-         Fx+f42r+/XZGAY9e3GzaYaDVR5cug988FtnqQEyJ7z+/8OmNU197Br1prhiFdbUTWKma
-         1tHAqFUHQ5CGbwLfPdLDgxUgU2y684ELjr8EXx+v6bpf/83hfnkP6zNOgRzFd46iJyfb
-         Qm3A==
-X-Gm-Message-State: AC+VfDzi5rlgvkQm0ByJGCr7cd/r3pxQIJi3uu0tjhJQmx2NuT4Wr0Df
-        AbkU2Gh9/T+CZ4CckjeouXhaEiL/goQ=
-X-Google-Smtp-Source: ACHHUZ6fGM+rUrcDUps12Y0j1/r6fLQY/J4zrSODSRDzXCz7XJkWh9AWcU5xjE+k9dTEUOb4EEA+EA==
-X-Received: by 2002:a7b:c397:0:b0:3f6:688:f658 with SMTP id s23-20020a7bc397000000b003f60688f658mr1179830wmj.20.1686318669765;
-        Fri, 09 Jun 2023 06:51:09 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686318673; x=1688910673;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kprq6jjAZv3c6K51awIK2c2WIWDwE0VUEJPfJtDg3Ao=;
+        b=VNjw1p18OoR53RRgHbq/c1m2+jWnMI/ViYCPs5zyP1z2tEyBndrbtz7z22W7g3bZaH
+         GMa2m5mqBedWNqYuQc73ZEELzhEKASKhojTnYQ8sCIdSXEyVolvcbu5ds8locMs+JnGW
+         9UrA16Nt5+r2o5cJ711zyuQV6NkgpZDus9gx3Kaoop6QHoxpDRuEHAkXNiYxoceTc92a
+         N9EsLsHz2k7AXqFH5YEqvKpGS/YG+o+wQ9HFv847nqZ6SpqDymx3S/zT7q94ko2NoHx8
+         FeHRjmDrGzz3vpgx1f3eJRHhxlX/rhrbFHCIdxvVonrUId8poMNAGsZkHXn4Lhol874m
+         FDKw==
+X-Gm-Message-State: AC+VfDw4QD9ImwSVIHN/HDsSLTq46Fi67bMr8kc0Bl9QQ3CMOMG58npE
+        yaUwBytQQZK1hNy7qTCm580=
+X-Google-Smtp-Source: ACHHUZ5RCbq7iBbZMnIoDkOahaI8xduAKEXD6FqhMzCoJyBG7j7LRB0BujP0ClvbIz6nBWQY5hnGsg==
+X-Received: by 2002:a1c:4b14:0:b0:3f7:ec38:7b02 with SMTP id y20-20020a1c4b14000000b003f7ec387b02mr3898298wma.3.1686318673071;
+        Fri, 09 Jun 2023 06:51:13 -0700 (PDT)
 Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.googlemail.com with ESMTPSA id l15-20020adff48f000000b003078cd719ffsm4533962wro.95.2023.06.09.06.51.08
+        by smtp.googlemail.com with ESMTPSA id l15-20020adff48f000000b003078cd719ffsm4533962wro.95.2023.06.09.06.51.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 06:51:09 -0700 (PDT)
+        Fri, 09 Jun 2023 06:51:12 -0700 (PDT)
 From:   Christian Marangi <ansuelsmth@gmail.com>
 To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         Christian Marangi <ansuelsmth@gmail.com>,
@@ -54,63 +56,129 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Yang Li <yang.lee@linux.alibaba.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] leds: trigger: netdev: add additional modes
-Date:   Fri,  9 Jun 2023 15:51:00 +0200
-Message-Id: <20230609135103.14221-1-ansuelsmth@gmail.com>
+Subject: [PATCH 3/3] leds: trigger: netdev: add additional mode for unified tx/rx traffic
+Date:   Fri,  9 Jun 2023 15:51:03 +0200
+Message-Id: <20230609135103.14221-4-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230609135103.14221-1-ansuelsmth@gmail.com>
+References: <20230609135103.14221-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This is a continue of [1]. It was decided to take a more gradual
-approach to implement LEDs support for switch and phy starting with
-basic support and then implementing the hw control part when we have all
-the prereq done.
+Add additional mode for unified tx/rx traffic. LED will blink on both tx
+or rx traffic.
 
-This should be the final part for the netdev trigger.
+This is especially useful for PHY and Switch that supports LEDs hw
+control that doesn't support split tx/rx traffic but supports blinking
+on any kind of traffic in the link.
 
-We collect some info around and we found a good set of modes that are
-common in almost all the PHY and Switch.
+On mode set from sysfs we check if we have enabled split tx/rx mode and
+reject enabling activity mode to prevent wrong and redundant
+configuration.
 
-These modes are:
-- Modes for dedicated link speed(10, 100, 1000 mbps). Additional mode
-  can be added later following this example.
-- Modes for half and full duplex.
-- Mode for unified tx and rx traffic.
+Add additional modes:
+- activity: Blink LED on both tx or rx traffic
 
-The original idea was to add hw control only modes.
-While the concept makes sense in practice it would results in lots of 
-additional code and extra check to make sure we are setting correct modes.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/leds/trigger/ledtrig-netdev.c | 21 +++++++++++++++++----
+ include/linux/leds.h                  |  1 +
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-With the suggestion from Andrew it was pointed out that using the ethtool
-APIs we can actually get the current link speed and duplex and this
-effectively removed the problem of having hw control only modes since we
-can fallback to software.
-
-Since these modes are supported by software, we can skip providing an
-user for this in the LED driver to support hw control for these new modes
-(that will come right after this is merged) and prevent this to be another
-multi subsystem series.
-
-For link speed and duplex we use ethtool APIs. For the unified tx and rx
-mode, we simply add extra logic to the work function we already have in
-the netdev trigger.
-
-To call ethtool APIs, rtnl lock is needed but this can be skipped on
-handling netdev events as the lock is already held.
-
-[1] https://lore.kernel.org/lkml/20230216013230.22978-1-ansuelsmth@gmail.com/
-Christian Marangi (3):
-  leds: trigger: netdev: add additional specific link speed mode
-  leds: trigger: netdev: add additional specific link duplex mode
-  leds: trigger: netdev: add additional mode for unified tx/rx traffic
-
- drivers/leds/trigger/ledtrig-netdev.c | 129 +++++++++++++++++++++++---
- include/linux/leds.h                  |   6 ++
- 2 files changed, 124 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 3c1571b620e4..709371b2115f 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -117,7 +117,8 @@ static void set_baseline_state(struct led_netdev_data *trigger_data)
+ 		 * checking stats
+ 		 */
+ 		if (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ||
+-		    test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode))
++		    test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ||
++		    test_bit(TRIGGER_NETDEV_ACTIVITY, &trigger_data->mode))
+ 			schedule_delayed_work(&trigger_data->work, 0);
+ 	}
+ }
+@@ -285,6 +286,7 @@ static ssize_t netdev_led_attr_show(struct device *dev, char *buf,
+ 	case TRIGGER_NETDEV_FULL_DUPLEX:
+ 	case TRIGGER_NETDEV_TX:
+ 	case TRIGGER_NETDEV_RX:
++	case TRIGGER_NETDEV_ACTIVITY:
+ 		bit = attr;
+ 		break;
+ 	default:
+@@ -315,6 +317,7 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
+ 	case TRIGGER_NETDEV_FULL_DUPLEX:
+ 	case TRIGGER_NETDEV_TX:
+ 	case TRIGGER_NETDEV_RX:
++	case TRIGGER_NETDEV_ACTIVITY:
+ 		bit = attr;
+ 		break;
+ 	default:
+@@ -332,6 +335,11 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
+ 	     test_bit(TRIGGER_NETDEV_LINK_1000, &mode)))
+ 		return -EINVAL;
+ 
++	if (test_bit(TRIGGER_NETDEV_ACTIVITY, &mode) &&
++	    (test_bit(TRIGGER_NETDEV_TX, &mode) ||
++	     test_bit(TRIGGER_NETDEV_RX, &mode)))
++		return -EINVAL;
++
+ 	cancel_delayed_work_sync(&trigger_data->work);
+ 
+ 	trigger_data->mode = mode;
+@@ -363,6 +371,7 @@ DEFINE_NETDEV_TRIGGER(half_duplex, TRIGGER_NETDEV_HALF_DUPLEX);
+ DEFINE_NETDEV_TRIGGER(full_duplex, TRIGGER_NETDEV_FULL_DUPLEX);
+ DEFINE_NETDEV_TRIGGER(tx, TRIGGER_NETDEV_TX);
+ DEFINE_NETDEV_TRIGGER(rx, TRIGGER_NETDEV_RX);
++DEFINE_NETDEV_TRIGGER(activity, TRIGGER_NETDEV_ACTIVITY);
+ 
+ static ssize_t interval_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+@@ -411,6 +420,7 @@ static struct attribute *netdev_trig_attrs[] = {
+ 	&dev_attr_half_duplex.attr,
+ 	&dev_attr_rx.attr,
+ 	&dev_attr_tx.attr,
++	&dev_attr_activity.attr,
+ 	&dev_attr_interval.attr,
+ 	NULL
+ };
+@@ -502,14 +512,17 @@ static void netdev_trig_work(struct work_struct *work)
+ 
+ 	/* If we are not looking for RX/TX then return  */
+ 	if (!test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) &&
+-	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode))
++	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) &&
++	    !test_bit(TRIGGER_NETDEV_ACTIVITY, &trigger_data->mode))
+ 		return;
+ 
+ 	dev_stats = dev_get_stats(trigger_data->net_dev, &temp);
+ 	new_activity =
+-	    (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ?
++	    (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ||
++	     test_bit(TRIGGER_NETDEV_ACTIVITY, &trigger_data->mode) ?
+ 		dev_stats->tx_packets : 0) +
+-	    (test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ?
++	    (test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ||
++	     test_bit(TRIGGER_NETDEV_ACTIVITY, &trigger_data->mode) ?
+ 		dev_stats->rx_packets : 0);
+ 
+ 	if (trigger_data->last_activity != new_activity) {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 7d428100b42b..f11fa5e1e833 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -589,6 +589,7 @@ enum led_trigger_netdev_modes {
+ 	TRIGGER_NETDEV_FULL_DUPLEX,
+ 	TRIGGER_NETDEV_TX,
+ 	TRIGGER_NETDEV_RX,
++	TRIGGER_NETDEV_ACTIVITY,
+ 
+ 	/* Keep last */
+ 	__TRIGGER_NETDEV_MAX,
 -- 
 2.40.1
 
