@@ -2,83 +2,73 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF75EEB64D9
-	for <linux-leds@archiver.kernel.org>; Thu, 15 Jun 2023 10:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA98EB64DA
+	for <linux-leds@archiver.kernel.org>; Thu, 15 Jun 2023 14:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245692AbjFOKu1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 15 Jun 2023 06:50:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        id S1344867AbjFOOHc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 15 Jun 2023 10:07:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245643AbjFOKuY (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jun 2023 06:50:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4969F2119;
-        Thu, 15 Jun 2023 03:50:22 -0700 (PDT)
+        with ESMTP id S1344866AbjFOOH2 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 15 Jun 2023 10:07:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079012110;
+        Thu, 15 Jun 2023 07:07:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 816A5637CE;
-        Thu, 15 Jun 2023 10:50:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DED0DC433A9;
-        Thu, 15 Jun 2023 10:50:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9817963BBE;
+        Thu, 15 Jun 2023 14:07:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D2FDC433C0;
+        Thu, 15 Jun 2023 14:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686826220;
-        bh=LEwkqHixw0z0OGcrNEwNOb/Nt8oETkR9AizJXI9T9WQ=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=JI2TzUnz5SdfTzjKhtSNRAAyLJQsuOzh6e3wCpGAXEAtA2cx6ttqoTWlmhGsLhSYZ
-         QuAV+0FFdkkCe/fSNIg4FproybbjCMbQ98KF+3350iyyUZnspFq9NDa/6McKJgB9Jq
-         9Mrms2cfPhYtTDYaBHZdiLbtG9SRUmeB+K4dbdf1C0mMG0GyYrMy99l8fAbZ434QBh
-         wtI6GnV3O3adz83slsyCd5JMgdSkQBS7pZd0bO5R8+F//xykCEN/58lHDFJW3aAXLH
-         0TbkHLmCDq1NxDngQS/COh0w+ZIVoDHp7baN86KFsLEIkwewv55Tsty0Krm7BRY/JW
-         YmXnq5rq9JhXA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CA7FFC395C7;
-        Thu, 15 Jun 2023 10:50:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1686838047;
+        bh=4IkplSyse+fcqo0BxBbsFz6EOvoaJfDtU9CrjGZJGxE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WFICRMR4b8Y7gnvJJiNTX9TDUN5XroVn5v2inVtCEO5r5zQHiQ0LJZf1Oh+/+Ty9F
+         sQ4dJ7MbVjm5rhAlzM0N4WQVmHfUaiXbzE+VBSyVcuKdCShxf3ih2EeKR9PuFUQ+dn
+         7yMf7FuSsyQewbbhE25pw+Il4kA1F/mgMfYyKQkoyVApxITPN0gR58jXxi1+jL6HlP
+         KyT5BOjzgJWwTiBxWWMzx495e6IBJSlMxd5TNjziQ4ji9hpFGaq/G3DBQlaRAGJSu4
+         rBIOsGYyJg2d5/YGQWUgu75+vu0gyoiLmu2SH09V1dGi6lTiXqXOsmbF4SxvdNrhHp
+         Xp91GzhaVP5gg==
+Date:   Thu, 15 Jun 2023 15:07:22 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Martin Kurbanov <mmkurbanov@sberdevices.ru>,
+        linux-leds@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: fix config reference for AW200xx driver
+Message-ID: <20230615140722.GH3635807@google.com>
+References: <20230609100233.4111-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next resend] leds: trigger: netdev: uninitialized
- variable in netdev_trig_activate()
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168682622082.15431.1307423348951437453.git-patchwork-notify@kernel.org>
-Date:   Thu, 15 Jun 2023 10:50:20 +0000
-References: <ZIlmX/ClDXwxQncL@kadam>
-In-Reply-To: <ZIlmX/ClDXwxQncL@kadam>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     ansuelsmth@gmail.com, f.fainelli@gmail.com, olteanv@gmail.com,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        pavel@ucw.cz, netdev@vger.kernel.org, lee@kernel.org,
-        andrew@lunn.ch, davem@davemloft.net, linux-leds@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+In-Reply-To: <20230609100233.4111-1-lukas.bulwahn@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hello:
+On Fri, 09 Jun 2023, Lukas Bulwahn wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Wed, 14 Jun 2023 10:03:59 +0300 you wrote:
-> The qca8k_cled_hw_control_get() function which implements ->hw_control_get
-> sets the appropriate bits but does not clear them.  This leads to an
-> uninitialized variable bug.  Fix this by setting mode to zero at the
-> start.
+> Commit 36a87f371b7a ("leds: Add AW20xx driver") adds config LEDS_AW200XX
+> in drivers/leds/Kconfig, but then in drivers/leds/Makefile accidently
+> refers to CONFIG_LEDS_W200XX; note the missing A!
 > 
-> Fixes: e0256648c831 ("net: dsa: qca8k: implement hw_control ops")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> This typo makes it impossible to add the driver to a kernel build.
 > 
-> [...]
+> Fix this wrong config reference.
+> 
+> Fixes: 36a87f371b7a ("leds: Add AW20xx driver")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  drivers/leds/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [v2,net-next,resend] leds: trigger: netdev: uninitialized variable in netdev_trig_activate()
-    https://git.kernel.org/netdev/net-next/c/97c5209b3d37
+Applied, thanks
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Lee Jones [李琼斯]
