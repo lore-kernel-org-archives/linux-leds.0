@@ -2,151 +2,124 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27ECEB64D8
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Jun 2023 10:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549CFEB64D7
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Jun 2023 12:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241806AbjFPKQ0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Jun 2023 06:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42862 "EHLO
+        id S1344368AbjFPMg0 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Jun 2023 08:36:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244894AbjFPKQR (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Jun 2023 06:16:17 -0400
-Received: from 9.mo563.mail-out.ovh.net (9.mo563.mail-out.ovh.net [46.105.73.201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7063130CF
-        for <linux-leds@vger.kernel.org>; Fri, 16 Jun 2023 03:16:15 -0700 (PDT)
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net [152.228.215.222])
-        by mo563.mail-out.ovh.net (Postfix) with ESMTPS id BFF98239AA;
+        with ESMTP id S1343765AbjFPMgZ (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Jun 2023 08:36:25 -0400
+X-Greylist: delayed 4199 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 16 Jun 2023 05:36:24 PDT
+Received: from 2.mo563.mail-out.ovh.net (2.mo563.mail-out.ovh.net [46.105.33.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D1F268A
+        for <linux-leds@vger.kernel.org>; Fri, 16 Jun 2023 05:36:24 -0700 (PDT)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+        by mo563.mail-out.ovh.net (Postfix) with ESMTPS id 114C523948;
         Fri, 16 Jun 2023 09:57:55 +0000 (UTC)
-Received: from director3.derp.mail-out.ovh.net (director3.derp.mail-out.ovh.net. [127.0.0.1])
-        by director3.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <conor+dt@kernel.org>; Fri, 16 Jun 2023 09:57:55 +0000 (UTC)
-Received: from pro2.mail.ovh.net (unknown [10.108.16.74])
-        by director3.derp.mail-out.ovh.net (Postfix) with ESMTPS id 93AC7107971;
-        Fri, 16 Jun 2023 09:57:55 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <conor+dt@kernel.org>; Fri, 16 Jun 2023 09:57:54 +0000 (UTC)
+Received: from pro2.mail.ovh.net (unknown [10.108.20.117])
+        by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id AC5FE1FA441;
+        Fri, 16 Jun 2023 09:57:54 +0000 (UTC)
 Received: from traphandler.com (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 16 Jun
- 2023 11:57:55 +0200
+ 2023 11:57:54 +0200
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
 CC:     <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Subject: [PATCH v9 3/5] leds: class: store the color index in struct led_classdev
-Date:   Fri, 16 Jun 2023 11:57:44 +0200
-Message-ID: <20230616095746.872220-4-jjhiblot@traphandler.com>
+Subject: [PATCH v9 0/5] Add a multicolor LED driver for groups of monochromatic LEDs
+Date:   Fri, 16 Jun 2023 11:57:41 +0200
+Message-ID: <20230616095746.872220-1-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230616095746.872220-1-jjhiblot@traphandler.com>
-References: <20230616095746.872220-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
 X-ClientProxiedBy: CAS3.emp2.local (172.16.1.3) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 3612731329022540251
+X-Ovh-Tracer-Id: 3612449853141236187
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvgedgvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeduteevleevvefggfdvueffffejhfehheeuiedtgedtjeeghfehueduudegfeefueenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhrfedruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehieef
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvgedgvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucenucfjughrpefhvfevufffkffoggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeejuefhkeelgffhlefhtefhgeektdevvdfgkeeltdehgeeujeeutdehkeeuhffftdenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhruddruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehieef
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This information might be useful for more than only deriving the led's
-name. And since we have this information, we can expose it in the sysfs.
+Some HW design implement multicolor LEDs with several monochromatic LEDs.
+Grouping the monochromatic LEDs allows to configure them in sync and use
+the triggers.
+The PWM multicolor LED driver implements such grouping but only for
+PWM-based LEDs. As this feature is also desirable for the other types of
+LEDs, this series implements it for any kind of LED device.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
----
- Documentation/ABI/testing/sysfs-class-led |  9 +++++++++
- drivers/leds/led-class.c                  | 20 ++++++++++++++++++++
- include/linux/leds.h                      |  1 +
- 3 files changed, 30 insertions(+)
+changes v8->v9:
+  - rebased on top of lee-leds/for-leds-next
+  - updated kernel version and date for /sys/class/leds/<led>/color in
+    Documentation/ABI/testing/sysfs-class-led
+  - dropped patch "leds: class: simplify the implementation of
+    devm_of_led_get()" because __devm_led_get() is now used by
+    devm_led_get()
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 2e24ac3bd7ef..1509e71fcde1 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -59,6 +59,15 @@ Description:
- 		brightness. Reading this file when no hw brightness change
- 		event has happened will return an ENODATA error.
- 
-+What:		/sys/class/leds/<led>/color
-+Date:		June 2023
-+KernelVersion:	6.5
-+Description:
-+		Color of the led.
-+
-+		This is a read-only file. Reading this file returns the color
-+		of the led as a string (ex: "red", "green", "multicolor").
-+
- What:		/sys/class/leds/<led>/trigger
- Date:		March 2006
- KernelVersion:	2.6.17
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index eb1a8494dc5b..6cca21b227dd 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -76,6 +76,18 @@ static ssize_t max_brightness_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(max_brightness);
- 
-+static ssize_t color_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	const char *color_text = "invalid";
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+
-+	if (led_cdev->color < LED_COLOR_ID_MAX)
-+		color_text = led_colors[led_cdev->color];
-+	return sysfs_emit(buf, "%s\n", color_text);
-+}
-+static DEVICE_ATTR_RO(color);
-+
- #ifdef CONFIG_LEDS_TRIGGERS
- static BIN_ATTR(trigger, 0644, led_trigger_read, led_trigger_write, 0);
- static struct bin_attribute *led_trigger_bin_attrs[] = {
-@@ -90,6 +102,7 @@ static const struct attribute_group led_trigger_group = {
- static struct attribute *led_class_attrs[] = {
- 	&dev_attr_brightness.attr,
- 	&dev_attr_max_brightness.attr,
-+	&dev_attr_color.attr,
- 	NULL,
- };
- 
-@@ -482,6 +495,10 @@ int led_classdev_register_ext(struct device *parent,
- 			if (fwnode_property_present(init_data->fwnode,
- 						    "retain-state-shutdown"))
- 				led_cdev->flags |= LED_RETAIN_AT_SHUTDOWN;
-+
-+			if (fwnode_property_present(init_data->fwnode, "color"))
-+				fwnode_property_read_u32(init_data->fwnode, "color",
-+							 &led_cdev->color);
- 		}
- 	} else {
- 		proposed_name = led_cdev->name;
-@@ -491,6 +508,9 @@ int led_classdev_register_ext(struct device *parent,
- 	if (ret < 0)
- 		return ret;
- 
-+	if (led_cdev->color >= LED_COLOR_ID_MAX)
-+		dev_warn(parent, "LED %s color identifier out of range\n", final_name);
-+
- 	mutex_init(&led_cdev->led_access);
- 	mutex_lock(&led_cdev->led_access);
- 	led_cdev->dev = device_create_with_groups(leds_class, parent, 0,
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 95311c70d95c..487d00dac4de 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -100,6 +100,7 @@ struct led_classdev {
- 	const char		*name;
- 	unsigned int brightness;
- 	unsigned int max_brightness;
-+	unsigned int color;
- 	int			 flags;
- 
- 	/* Lower 16 bits reflect status */
+changes v7->v8:
+ - consistently use "LEDs group multicolor" throughout the code.
+ - rename some variables with more explicit names.
+ - improve comments.
+ - use the 100-characters per line limit.
+
+changes v6->v7:
+ - in led_mcg_probe() increment the counter at the end of the loop for
+   clarity.
+
+changes v5->v6:
+ - restore sysfs access to the leds when the device is removed
+
+changes v4->v5:
+ - Use "depends on COMPILE_TEST || OF" in Kconfig to indicate that OF
+   is a functional requirement, not just a requirement for the
+   compilation.
+ - in led_mcg_probe() check if devm_of_led_get_optional() returns an
+   error before testing for the end of the list.
+ - use sysfs_emit() instead of sprintf() in color_show().
+ - some grammar fixes in the comments and the commit logs.
+
+changes v2->v3, only minor changes:
+ - rephrased the Kconfig descritpion
+ - make the sysfs interface of underlying LEDs read-only only if the probe
+   is successful.
+ - sanitize the header files
+ - removed the useless call to dev_set_drvdata()
+ - use dev_fwnode() to get the fwnode to the device.
+
+changes v1->v2:
+ - Followed Rob Herrings's suggestion to make the dt binding much simpler.
+ - Added a patch to store the color property of a LED in its class
+   structure (struct led_classdev).
+Jean-Jacques Hiblot (5):
+  devres: provide devm_krealloc_array()
+  leds: provide devm_of_led_get_optional()
+  leds: class: store the color index in struct led_classdev
+  dt-bindings: leds: Add binding for a multicolor group of LEDs
+  leds: Add a multicolor LED driver to group monochromatic LEDs
+
+ Documentation/ABI/testing/sysfs-class-led     |   9 +
+ .../bindings/leds/leds-group-multicolor.yaml  |  64 +++++++
+ drivers/leds/led-class.c                      |  45 +++++
+ drivers/leds/rgb/Kconfig                      |  13 ++
+ drivers/leds/rgb/Makefile                     |   1 +
+ drivers/leds/rgb/leds-group-multicolor.c      | 164 ++++++++++++++++++
+ include/linux/device.h                        |  13 ++
+ include/linux/leds.h                          |   3 +
+ 8 files changed, 312 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+ create mode 100644 drivers/leds/rgb/leds-group-multicolor.c
+
 -- 
 2.34.1
 
