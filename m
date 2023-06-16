@@ -2,42 +2,42 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DB6EB64D8
-	for <linux-leds@archiver.kernel.org>; Fri, 16 Jun 2023 10:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E640EB64D7
+	for <linux-leds@archiver.kernel.org>; Fri, 16 Jun 2023 10:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244839AbjFPKGu (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 16 Jun 2023 06:06:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37782 "EHLO
+        id S241228AbjFPKHa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 16 Jun 2023 06:07:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236831AbjFPKGd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Jun 2023 06:06:33 -0400
-X-Greylist: delayed 484 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 16 Jun 2023 03:06:02 PDT
-Received: from 5.mo563.mail-out.ovh.net (5.mo563.mail-out.ovh.net [46.105.53.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C18583AB5
-        for <linux-leds@vger.kernel.org>; Fri, 16 Jun 2023 03:06:02 -0700 (PDT)
+        with ESMTP id S244917AbjFPKGz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 16 Jun 2023 06:06:55 -0400
+X-Greylist: delayed 502 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 16 Jun 2023 03:06:19 PDT
+Received: from 6.mo562.mail-out.ovh.net (6.mo562.mail-out.ovh.net [46.105.48.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E534422C
+        for <linux-leds@vger.kernel.org>; Fri, 16 Jun 2023 03:06:19 -0700 (PDT)
 Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-        by mo563.mail-out.ovh.net (Postfix) with ESMTPS id 5E26623942;
-        Fri, 16 Jun 2023 09:57:56 +0000 (UTC)
+        by mo562.mail-out.ovh.net (Postfix) with ESMTPS id 4F71323F51;
+        Fri, 16 Jun 2023 09:57:55 +0000 (UTC)
 Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
         by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <conor+dt@kernel.org>; Fri, 16 Jun 2023 09:57:56 +0000 (UTC)
-Received: from pro2.mail.ovh.net (unknown [10.109.146.141])
-        by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id 00B5A1F9474;
-        Fri, 16 Jun 2023 09:57:55 +0000 (UTC)
+        for <andy.shevchenko@gmail.com>; Fri, 16 Jun 2023 09:57:55 +0000 (UTC)
+Received: from pro2.mail.ovh.net (unknown [10.108.20.117])
+        by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id E62A81FA43E;
+        Fri, 16 Jun 2023 09:57:54 +0000 (UTC)
 Received: from traphandler.com (88.161.25.233) by DAG1EX1.emp2.local
  (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 16 Jun
- 2023 11:57:55 +0200
+ 2023 11:57:54 +0200
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
 CC:     <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v9 4/5] dt-bindings: leds: Add binding for a multicolor group of LEDs
-Date:   Fri, 16 Jun 2023 11:57:45 +0200
-Message-ID: <20230616095746.872220-5-jjhiblot@traphandler.com>
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v9 1/5] devres: provide devm_krealloc_array()
+Date:   Fri, 16 Jun 2023 11:57:42 +0200
+Message-ID: <20230616095746.872220-2-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230616095746.872220-1-jjhiblot@traphandler.com>
 References: <20230616095746.872220-1-jjhiblot@traphandler.com>
@@ -47,94 +47,51 @@ Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.161.25.233]
 X-ClientProxiedBy: CAS3.emp2.local (172.16.1.3) To DAG1EX1.emp2.local
  (172.16.2.1)
-X-Ovh-Tracer-Id: 3613012804704090577
+X-Ovh-Tracer-Id: 3612731326956714375
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvgedgvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnheptddtffevleejteelieejhfffvedtffeljeehjeeigfejledufedvveejuddtjefhnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhruddruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehieef
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvgedgvddvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepudetveelveevgffgvdeuffffjefhheehueeitdegtdejgefhheeuuddugeeffeeunecukfhppedtrddtrddtrddtpdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopeguihhrvggtthhorhdurdguvghrphdrmhgrihhlqdhouhhtrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhlvggushesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheeivd
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This allows to group multiple monochromatic LEDs into a multicolor
-LED, e.g. RGB LEDs.
+Implement the managed variant of krealloc_array().
+This internally uses devm_krealloc() and as such is usable with all memory
+allocated by devm_kmalloc() (or devres functions using it implicitly like
+devm_kmemdup(), devm_kstrdup() etc.).
+
+Managed realloc'ed chunks can be manually released with devm_kfree().
 
 Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- .../bindings/leds/leds-group-multicolor.yaml  | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+ include/linux/device.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-new file mode 100644
-index 000000000000..8ed059a5a724
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-group-multicolor.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 472dd24d4823..e45dc78068b7 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -223,6 +223,19 @@ static inline void *devm_kcalloc(struct device *dev,
+ {
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
++static inline void *devm_krealloc_array(struct device *dev,
++					void *p,
++					size_t new_n,
++					size_t new_size,
++					gfp_t flags)
++{
++	size_t bytes;
 +
-+title: Multi-color LED built with monochromatic LEDs
++	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
++		return NULL;
 +
-+maintainers:
-+  - Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-+
-+description: |
-+  This driver combines several monochromatic LEDs into one multi-color
-+  LED using the multicolor LED class.
-+
-+properties:
-+  compatible:
-+    const: leds-group-multicolor
-+
-+  leds:
-+    description:
-+      An aray of monochromatic leds
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+
-+required:
-+  - leds
-+
-+allOf:
-+  - $ref: leds-class-multicolor.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    monochromatic-leds {
-+        compatible = "gpio-leds";
-+
-+        led0: led-0 {
-+            gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
-+            color = <LED_COLOR_ID_RED>;
-+        };
-+
-+        led1: led-1 {
-+            gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
-+            color = <LED_COLOR_ID_GREEN>;
-+        };
-+
-+        led2: led-2 {
-+            gpios = <&mcu_pio 2 GPIO_ACTIVE_HIGH>;
-+            color = <LED_COLOR_ID_BLUE>;
-+        };
-+    };
-+
-+    multi-led {
-+        compatible = "leds-group-multicolor";
-+        color = <LED_COLOR_ID_RGB>;
-+        function = LED_FUNCTION_INDICATOR;
-+        leds = <&led0>, <&led1>, <&led2>;
-+    };
-+
-+...
++	return devm_krealloc(dev, p, bytes, flags);
++}
+ void devm_kfree(struct device *dev, const void *p);
+ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+ const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
 -- 
 2.34.1
 
