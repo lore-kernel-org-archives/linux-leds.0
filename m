@@ -2,75 +2,69 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA07EB64DB
-	for <linux-leds@archiver.kernel.org>; Tue, 20 Jun 2023 14:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4A4EB64D7
+	for <linux-leds@archiver.kernel.org>; Tue, 20 Jun 2023 14:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232685AbjFTOAL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 20 Jun 2023 10:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55528 "EHLO
+        id S232827AbjFTOAT (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 20 Jun 2023 10:00:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232661AbjFTOAK (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jun 2023 10:00:10 -0400
+        with ESMTP id S232760AbjFTOAO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jun 2023 10:00:14 -0400
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CF4E65;
-        Tue, 20 Jun 2023 07:00:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ECA4E60;
+        Tue, 20 Jun 2023 07:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=GdFs+TWfdnzasotJ75VrXISngbpJZNZxemLtPJOd8gU=; b=57fPC07sOHvE7GaZutM9buZcIw
-        17JX9CXplffxiFW6K1Otm+XMhoTpqkN2ey0Wmo5SPQC8/hiQ/1rvQQGlourKMOxHzz1ABZOLnjWPu
-        QcYxxQbgl7TQS9U0MPre8qZWrPSyX8bMW6B/xHDSS9J+TeS5GIcNNrE4h/6PqJnRgqr8=;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+        Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+        In-Reply-To:References; bh=8SIpAWwEXWh+2s4C9M/ZFMOhqkGOD4GJqdqOvJ/wEc4=; b=wa
+        o+769JSs2dCeQkSQKZ75nrAIJ5JwjvsRnNbk/7Okb8A9zJwNxCjJ8oaAXa/Ah2Hf/c4thvdTjBk1J
+        FqatkyncShBoaYqnkp1k5+tfPJ17j7T60QMtOKbOBN0eUThvTO5/Xm108WvHMfMLg9PwiQS80rlNJ
+        OD5Ak+wpBR+aQig=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
         (envelope-from <andrew@lunn.ch>)
-        id 1qBbth-00H0FV-Tw; Tue, 20 Jun 2023 15:59:53 +0200
-Date:   Tue, 20 Jun 2023 15:59:53 +0200
+        id 1qBbID-00Gzyr-OC; Tue, 20 Jun 2023 15:21:09 +0200
+Date:   Tue, 20 Jun 2023 15:21:09 +0200
 From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lee Jones <lee@kernel.org>
+To:     Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
 Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
-        Yang Li <yang.lee@linux.alibaba.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v4 0/3] leds: trigger: netdev: add additional
- modes
-Message-ID: <0462a658-8908-4b8c-9859-8d188f794283@lunn.ch>
-References: <20230617115355.22868-1-ansuelsmth@gmail.com>
- <20230619104030.GB1472962@google.com>
- <dd82d1bd-a225-4452-a9a6-fb447bdb070e@lunn.ch>
- <20230620102629.GD1472962@google.com>
+Subject: Re: [net-next PATCH v5 3/3] leds: trigger: netdev: expose hw_control
+ status via sysfs
+Message-ID: <71dfdbf0-09a3-4079-954f-cb87fe9b1817@lunn.ch>
+References: <20230619204700.6665-1-ansuelsmth@gmail.com>
+ <20230619204700.6665-4-ansuelsmth@gmail.com>
+ <CAH-L+nO12Gn4OGepr7KcCjLzMmisNYjYbFp13Aqu2Q14Rc77RA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20230620102629.GD1472962@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH-L+nO12Gn4OGepr7KcCjLzMmisNYjYbFp13Aqu2Q14Rc77RA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-> > If you do decided to wait, you are going to need to create another
-> > stable branch to pull into netdev. I know it is not a huge overhead,
-> > but it is still work, coordination etc.
+>     +static ssize_t hw_control_show(struct device *dev,
+>     +                              struct device_attribute *attr, char *buf)
+>     +{
+>     +       struct led_netdev_data *trigger_data = led_trigger_get_drvdata
+>     (dev);
+>     +
+>     +       return sprintf(buf, "%d\n", trigger_data->hw_control);
 > 
-> Can you clarify you last point for me please?
+> [Kalesh]: How about using sysfs_emit? 
 
-This patchset extends the conditions on which the trigger blinks the
-LED. It adds a couple more values to enum led_trigger_netdev_modes in
-include/linux/leds.h. Once it gets merged, i will have a followup
-patch extending the Marvell PHY driver to make us of them. It will
-need these additional enum values. I also expect other PHY drivers to
-gain support for them. Probably the dp83867.c driver since Alexander
-Stein already has a patch merged adding support for what the current
-API supports.
+Currently, there are zero instances of sysfs_emit() in ledtrig-netdev,
+and in any files in drivers/leds/trigger/, or even drivers/leds.
 
-If we merge this patchset now via netdev, -rc1 should have everything
-we need for this continuing development work. If we wait to merge
-these patches until -rc1, only the LED tree has the needed patches, so
-these network drivers will need a stable branch we can pull into
-netdev.
+So i think it would be better to keep this consistent with the rest of
+the code in this file, and have a follow up patchset which reviews and
+converts the 52 sprintf() in drivers/leds.
 
-Both ways work, we can do either. But it is probably easier for
-everybody to merge now via netdev.
-
-	  Andrew
+	 Andrew
