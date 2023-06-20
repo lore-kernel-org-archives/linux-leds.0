@@ -2,39 +2,32 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B37EB64D7
-	for <linux-leds@archiver.kernel.org>; Tue, 20 Jun 2023 10:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA07EB64DB
+	for <linux-leds@archiver.kernel.org>; Tue, 20 Jun 2023 14:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbjFTK0h (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 20 Jun 2023 06:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50450 "EHLO
+        id S232685AbjFTOAL (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 20 Jun 2023 10:00:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230457AbjFTK0g (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jun 2023 06:26:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFFB4A2;
-        Tue, 20 Jun 2023 03:26:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 581836119E;
-        Tue, 20 Jun 2023 10:26:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CCA1C433C8;
-        Tue, 20 Jun 2023 10:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687256794;
-        bh=Pm9sy2rMlMGkxvexM4D8WBfM6mwhGIuMyl4IfHISPIA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QfYexD7t8NQLaZ3HaQHVSKkdDFh6Vs4LD1P8C1uF8IWZauvQLGjBcmNXK2OcaTRKm
-         AUrwq4IC6w9E2WsOtRD4ktKSMvjWLEXBHf0/lYK/ghJAV3CvsLYYvXPW7a2VL8HlVa
-         qopUjnYxvckoJ99MKSTlp14EB5njYvW1OioJHmhcM8JbLoXvTqGKO/njIr/svhApaN
-         mRydgNWXFU7TDyEuk2dLqcCWNOxTMGN8I6bqjDjY8c2D4siU7SEwrL9u1t5SZm/XYZ
-         iLeCsctRbzeBSQVRfR55PaGi74HErVuAG+9Z/z64L+Ojv//afqhLqkjFF6Dg42fFMV
-         TLfB4LEID3RLw==
-Date:   Tue, 20 Jun 2023 11:26:29 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Andrew Lunn <andrew@lunn.ch>
+        with ESMTP id S232661AbjFTOAK (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 20 Jun 2023 10:00:10 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CF4E65;
+        Tue, 20 Jun 2023 07:00:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=GdFs+TWfdnzasotJ75VrXISngbpJZNZxemLtPJOd8gU=; b=57fPC07sOHvE7GaZutM9buZcIw
+        17JX9CXplffxiFW6K1Otm+XMhoTpqkN2ey0Wmo5SPQC8/hiQ/1rvQQGlourKMOxHzz1ABZOLnjWPu
+        QcYxxQbgl7TQS9U0MPre8qZWrPSyX8bMW6B/xHDSS9J+TeS5GIcNNrE4h/6PqJnRgqr8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1qBbth-00H0FV-Tw; Tue, 20 Jun 2023 15:59:53 +0200
+Date:   Tue, 20 Jun 2023 15:59:53 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lee Jones <lee@kernel.org>
 Cc:     Christian Marangi <ansuelsmth@gmail.com>,
         Pavel Machek <pavel@ucw.cz>,
         "David S. Miller" <davem@davemloft.net>,
@@ -43,42 +36,41 @@ Cc:     Christian Marangi <ansuelsmth@gmail.com>,
         netdev@vger.kernel.org
 Subject: Re: [net-next PATCH v4 0/3] leds: trigger: netdev: add additional
  modes
-Message-ID: <20230620102629.GD1472962@google.com>
+Message-ID: <0462a658-8908-4b8c-9859-8d188f794283@lunn.ch>
 References: <20230617115355.22868-1-ansuelsmth@gmail.com>
  <20230619104030.GB1472962@google.com>
  <dd82d1bd-a225-4452-a9a6-fb447bdb070e@lunn.ch>
+ <20230620102629.GD1472962@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dd82d1bd-a225-4452-a9a6-fb447bdb070e@lunn.ch>
+In-Reply-To: <20230620102629.GD1472962@google.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 19 Jun 2023, Andrew Lunn wrote:
-
-> > Seeing as we're on -rc7 already, any reason why we shouldn't hold off
-> > and simply apply these against LEDs once v6.5 is released?
+> > If you do decided to wait, you are going to need to create another
+> > stable branch to pull into netdev. I know it is not a huge overhead,
+> > but it is still work, coordination etc.
 > 
-> Each subsystem has its own policies. netdev tends to accept patches
-> right up until the merge window opens, sometimes even a couple of days
-> into the merge window for low risk changes. Maybe this is because
-> netdev is fast moving, two weeks of not merging results in a big
-> backlog of patches, making it a bumpy restart once merging is started
-> again. And is some of those late patches breaks something, there is
-> still 7 weeks to fix it.
-> 
-> Since this is cross subsystems i would expect both subsystems
-> Maintainers to agree to a merge or not. If you want to be more
-> conservative than netdev, wait until after the next merge window,
-> please say so.
-> 
-> If you do decided to wait, you are going to need to create another
-> stable branch to pull into netdev. I know it is not a huge overhead,
-> but it is still work, coordination etc.
+> Can you clarify you last point for me please?
 
-Can you clarify you last point for me please?
+This patchset extends the conditions on which the trigger blinks the
+LED. It adds a couple more values to enum led_trigger_netdev_modes in
+include/linux/leds.h. Once it gets merged, i will have a followup
+patch extending the Marvell PHY driver to make us of them. It will
+need these additional enum values. I also expect other PHY drivers to
+gain support for them. Probably the dp83867.c driver since Alexander
+Stein already has a patch merged adding support for what the current
+API supports.
 
--- 
-Lee Jones [李琼斯]
+If we merge this patchset now via netdev, -rc1 should have everything
+we need for this continuing development work. If we wait to merge
+these patches until -rc1, only the LED tree has the needed patches, so
+these network drivers will need a stable branch we can pull into
+netdev.
+
+Both ways work, we can do either. But it is probably easier for
+everybody to merge now via netdev.
+
+	  Andrew
