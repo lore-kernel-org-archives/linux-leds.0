@@ -2,37 +2,37 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFB3EB64D7
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 15:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38313EB64D8
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 15:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232823AbjFUPCk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Jun 2023 11:02:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41646 "EHLO
+        id S233081AbjFUPGz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Jun 2023 11:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232869AbjFUPC1 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 11:02:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824836EB5;
-        Wed, 21 Jun 2023 07:56:39 -0700 (PDT)
+        with ESMTP id S233096AbjFUPGl (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 11:06:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBD55BAA;
+        Wed, 21 Jun 2023 08:01:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CBC036125F;
-        Wed, 21 Jun 2023 14:55:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F4AC433C8;
-        Wed, 21 Jun 2023 14:55:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A8836155A;
+        Wed, 21 Jun 2023 14:54:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC66CC433C8;
+        Wed, 21 Jun 2023 14:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687359350;
-        bh=3nkHxcMV4G3LOSAbCssJSrJUIexihpFEZqQgKvDUeHw=;
+        s=k20201202; t=1687359296;
+        bh=bSDgKgIaIT7I/HAb2R0Ikz2XfAeToNBLTRIqFY41i2w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CqgAyDxoJdQafynZ2SoPGq5a0MmcBsdIfLGtv/7i2Ekk+MpSdnbfffYp82OCQY3ox
-         E7I2LTYfoJtBBWK29NZMHPKhGzvToF86eY4eT4rs4lpP7uxogTGVVV8R+w15QHuRCl
-         EbWcSqR3CYVzwBha9Td+3eVBau+6U0dyzLJALG6nK9Pvi7O7qN8iG14qwE7wgnX5cm
-         lxV5jFkS6uPMQ5TdGktCw8iVDsMiCdF3W6BaeuqrpZxY7ggnVsub257kSe3UkqASsf
-         VWyWOFb4ZCEmOCI08EBErOp0TvmZLOeo6h55bEz7el7S+rvI5rJ7Ekwp7oYeHfp3T2
-         HyiuD3nNVOlRw==
-Date:   Wed, 21 Jun 2023 15:55:45 +0100
+        b=fDZ6bRNauyHwq6dzmJDZBnfL7lqHk5LlP9nPVhO2IUmRMZGfhnj1f+Q9liDfa/86s
+         8P4Y2TyCqe4y1hJmblPWEVbdSjYKtw9z1vkIE/oWCF/hnMxXimkcJTwG6DDAcX2763
+         9vyLMKbKAXgOlnitHHdntphT1vIz798ohvojXaI0astRKHidJzkuCqg4cCoMPACcXm
+         7tj0/D0ERra+CpIlP0FBrXL3xKBZJrVvJT0pqfKyolFredeGkNRqCp2rrJNR9n/4x9
+         izlHFSa30qohHUt/R4c35KTDGvAAon6+FmC87iRQALDOfA/ksWXrcLwIOh9fvHg/Tb
+         Bwu7IYbjlbwqQ==
+Date:   Wed, 21 Jun 2023 15:54:51 +0100
 From:   Lee Jones <lee@kernel.org>
 To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>,
@@ -40,31 +40,50 @@ Cc:     Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>,
         Dan Carpenter <dan.carpenter@linaro.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v5 3/3] leds: trigger: netdev: expose hw_control
- status via sysfs
-Message-ID: <20230621145545.GC10378@google.com>
+Subject: Re: [net-next PATCH v5 1/3] leds: trigger: netdev: add additional
+ specific link speed mode
+Message-ID: <20230621145451.GA10378@google.com>
 References: <20230619204700.6665-1-ansuelsmth@gmail.com>
- <20230619204700.6665-4-ansuelsmth@gmail.com>
+ <20230619204700.6665-2-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230619204700.6665-4-ansuelsmth@gmail.com>
+In-Reply-To: <20230619204700.6665-2-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 On Mon, 19 Jun 2023, Christian Marangi wrote:
 
-> Expose hw_control status via sysfs for the netdev trigger to give
-> userspace better understanding of the current state of the trigger and
-> the LED.
+> Add additional modes for specific link speed. Use ethtool APIs to get the
+> current link speed and enable the LED accordingly. Under netdev event
+> handler the rtnl lock is already held and is not needed to be set to
+> access ethtool APIs.
+> 
+> This is especially useful for PHY and Switch that supports LEDs hw
+> control for specific link speed. (example scenario a PHY that have 2 LED
+> connected one green and one orange where the green is turned on with
+> 1000mbps speed and orange is turned on with 10mpbs speed)
+> 
+> On mode set from sysfs we check if we have enabled split link speed mode
+> and reject enabling generic link mode to prevent wrong and redundant
+> configuration.
+> 
+> Rework logic on the set baseline state to support these new modes to
+> select if we need to turn on or off the LED.
+> 
+> Add additional modes:
+> - link_10: Turn on LED when link speed is 10mbps
+> - link_100: Turn on LED when link speed is 100mbps
+> - link_1000: Turn on LED when link speed is 1000mbps
 > 
 > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 > ---
->  drivers/leds/trigger/ledtrig-netdev.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+>  drivers/leds/trigger/ledtrig-netdev.c | 80 +++++++++++++++++++++++----
+>  include/linux/leds.h                  |  3 +
+>  2 files changed, 73 insertions(+), 10 deletions(-)
 
 Acked-by: Lee Jones <lee@kernel.org>
 
