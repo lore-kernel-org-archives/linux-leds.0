@@ -2,89 +2,124 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E345EB64D7
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 15:14:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2DFEB64D7
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 15:43:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229513AbjFUPOR (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Jun 2023 11:14:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50656 "EHLO
+        id S233802AbjFUPnV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Jun 2023 11:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233176AbjFUPNt (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 11:13:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E00B1FC9;
-        Wed, 21 Jun 2023 08:09:47 -0700 (PDT)
+        with ESMTP id S233772AbjFUPnF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 11:43:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A822D1FE7;
+        Wed, 21 Jun 2023 08:42:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BE41E615BE;
-        Wed, 21 Jun 2023 14:56:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC82C433C0;
-        Wed, 21 Jun 2023 14:56:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 29D24615BB;
+        Wed, 21 Jun 2023 15:42:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A828EC433C8;
+        Wed, 21 Jun 2023 15:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687359380;
-        bh=ln2lWCijb2V4mFtJBQotSwtqT0uvIw8cIIaLNs8TBV0=;
+        s=k20201202; t=1687362168;
+        bh=dbwfknXsqXw4p63vpLDd3iOrBiUELONzHnImHljTpEA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YDjz09CpApkkd08SxYoRrpdpQAfOz2L+/IjSDTWC5mwYrPpO6rjL02A2gakb5TGor
-         odIiypj5ogfEYDfE5Y6yCsiJl+FgV02kiVD4ntFaMSXTZ/pKyjLIP6f9tXGfh8Urey
-         HxoYfAbYc3tX85ec14PaVXemjsI87fsd3c7gXyqhTbh+1d65ZhxSEepqQ1nPzGaWWg
-         +fna6f7Bt80m4FnpSRn6c9gGWKqXWZj6eFFWTaualuKq3viMnq7HPdp0KhmrZuWNfC
-         d9nQ/25S9tzSxNgC6UaA7HIIRwaO5CniGH5yr1WN40MxAFn1rpDX5rGG6t7wJ0ZVnA
-         /Xt1elswPC8VQ==
-Date:   Wed, 21 Jun 2023 15:56:15 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "David S. Miller" <davem@davemloft.net>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v4 0/3] leds: trigger: netdev: add additional
- modes
-Message-ID: <20230621145615.GD10378@google.com>
-References: <20230617115355.22868-1-ansuelsmth@gmail.com>
- <20230619104030.GB1472962@google.com>
- <dd82d1bd-a225-4452-a9a6-fb447bdb070e@lunn.ch>
- <20230620102629.GD1472962@google.com>
- <0462a658-8908-4b8c-9859-8d188f794283@lunn.ch>
+        b=QVylD345zloFSGD1W8zwUcCpjdRN/8JljRejRGPf9ADL8ncjzZ+ZbdHaswXh1ruMk
+         quAXYGU2UUL5fj0A6MiElL1TD2b40WlwmDVVf37WkNbGzqaHL6OBbCZ3WqUJrn1PMq
+         jlvmG9ggh77knIvBT5BG0XpHA8opSrxdCp6DTTkQy1eKulXEb1hZggJoDFxDY/Zuju
+         bIKNyUokqZQDS98EzPGV22p63kxm6tEmuSu+jhihmlROOEt0yEgnGs5MjcoWD7u1sp
+         C+OrMogqa9LXv9AzD28ut+M2XV687zi+1eY7Aysor1olyzenbz+X2NxQETHTdb0Vti
+         1W0YDnXjvG8Lg==
+Date:   Wed, 21 Jun 2023 16:42:44 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Lee Jones <lee@kernel.org>
+Cc:     Raymond Hackley <raymondhackley@protonmail.com>,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: leds: sgm3140: Document richtek,rt5033
+ compatible
+Message-ID: <20230621-stuffed-revolt-435d3d2dd4aa@spud>
+References: <20230602130644.259933-1-raymondhackley@protonmail.com>
+ <20230602131009.260239-1-raymondhackley@protonmail.com>
+ <20230621150141.GE10378@google.com>
+ <20230621150302.GF10378@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qinxGE0I1bfK1wN4"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0462a658-8908-4b8c-9859-8d188f794283@lunn.ch>
+In-Reply-To: <20230621150302.GF10378@google.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Tue, 20 Jun 2023, Andrew Lunn wrote:
 
-> > > If you do decided to wait, you are going to need to create another
-> > > stable branch to pull into netdev. I know it is not a huge overhead,
-> > > but it is still work, coordination etc.
-> > 
-> > Can you clarify you last point for me please?
-> 
-> This patchset extends the conditions on which the trigger blinks the
-> LED. It adds a couple more values to enum led_trigger_netdev_modes in
-> include/linux/leds.h. Once it gets merged, i will have a followup
-> patch extending the Marvell PHY driver to make us of them. It will
-> need these additional enum values. I also expect other PHY drivers to
-> gain support for them. Probably the dp83867.c driver since Alexander
-> Stein already has a patch merged adding support for what the current
-> API supports.
-> 
-> If we merge this patchset now via netdev, -rc1 should have everything
-> we need for this continuing development work. If we wait to merge
-> these patches until -rc1, only the LED tree has the needed patches, so
-> these network drivers will need a stable branch we can pull into
-> netdev.
-> 
-> Both ways work, we can do either. But it is probably easier for
-> everybody to merge now via netdev.
+--qinxGE0I1bfK1wN4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Got it, thanks.
+Raymond,
 
--- 
-Lee Jones [李琼斯]
+On Wed, Jun 21, 2023 at 04:03:02PM +0100, Lee Jones wrote:
+> On Wed, 21 Jun 2023, Lee Jones wrote:
+>=20
+> > On Fri, 02 Jun 2023, Raymond Hackley wrote:
+> >=20
+> > > Add devicetree binding for Richtek RT5033 Flash LED charge pump used =
+for
+> > > camera flash LEDs.
+> > >=20
+> > > Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/leds/leds-sgm3140.yaml | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml=
+ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> > > index 4d2ffe5fcfc7..37d2a93780ab 100644
+> > > --- a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> > > +++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> > > @@ -20,6 +20,7 @@ properties:
+> > >    compatible:
+> > >      enum:
+> > >        - ocs,ocp8110
+> > > +      - richtek,rt5033-led
+> >=20
+> > Why is "-led" appended on to this one and not the others?
+>=20
+> It's unusual for me to have to dump through a bunch of hoops just to
+> read and then subsequently reply to mail.  Can you consider removing
+> whatever encryption you have enabled please?
+
+https://www.kernel.org/doc/html/latest/process/email-clients.html#proton-ma=
+il
+
+I was under the impression that there was no way to disable this
+behaviour, but I saw mention somewhere that they managed to patch the
+open source version of the protonmail bridge to function. I cannot find
+this on lore, because the person's domain was not a proton one and I
+completely forget their name as it was several months ago.
+I'll reply here if I find it.
+
+Cheers,
+Conor.
+
+--qinxGE0I1bfK1wN4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZJMadAAKCRB4tDGHoIJi
+0lMMAQDJuJl2PHQ+dS5xDq6nj6F2iIiHxY8ksq4Wpc2uO8gMTQD+L/To0i81S4q3
+XhaNK2S5KKWDGvsHKH7itW7HPFbf6AY=
+=r1cN
+-----END PGP SIGNATURE-----
+
+--qinxGE0I1bfK1wN4--
