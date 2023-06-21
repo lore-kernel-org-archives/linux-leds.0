@@ -2,90 +2,91 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38313EB64D8
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 15:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280C6EB64DC
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 15:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233081AbjFUPGz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Jun 2023 11:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45436 "EHLO
+        id S232943AbjFUPIX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Jun 2023 11:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233096AbjFUPGl (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 11:06:41 -0400
+        with ESMTP id S233202AbjFUPHx (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 11:07:53 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFBD55BAA;
-        Wed, 21 Jun 2023 08:01:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85D5E6581;
+        Wed, 21 Jun 2023 08:02:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A8836155A;
-        Wed, 21 Jun 2023 14:54:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC66CC433C8;
-        Wed, 21 Jun 2023 14:54:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A4B4261539;
+        Wed, 21 Jun 2023 15:01:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DA1C433C8;
+        Wed, 21 Jun 2023 15:01:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687359296;
-        bh=bSDgKgIaIT7I/HAb2R0Ikz2XfAeToNBLTRIqFY41i2w=;
+        s=k20201202; t=1687359706;
+        bh=TuIlEW+QnlCN5szHBMsvumB71tGciD9z7toszAmdqdg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fDZ6bRNauyHwq6dzmJDZBnfL7lqHk5LlP9nPVhO2IUmRMZGfhnj1f+Q9liDfa/86s
-         8P4Y2TyCqe4y1hJmblPWEVbdSjYKtw9z1vkIE/oWCF/hnMxXimkcJTwG6DDAcX2763
-         9vyLMKbKAXgOlnitHHdntphT1vIz798ohvojXaI0astRKHidJzkuCqg4cCoMPACcXm
-         7tj0/D0ERra+CpIlP0FBrXL3xKBZJrVvJT0pqfKyolFredeGkNRqCp2rrJNR9n/4x9
-         izlHFSa30qohHUt/R4c35KTDGvAAon6+FmC87iRQALDOfA/ksWXrcLwIOh9fvHg/Tb
-         Bwu7IYbjlbwqQ==
-Date:   Wed, 21 Jun 2023 15:54:51 +0100
+        b=NaNQdRh4a0qKMdxSOhy6lt+3Hzz7URKYN2fsdozK655XPsjs+ziR8IqGWZfXITkpV
+         XfJzywHPH+FEvhnIMNv8fmMe8OebO0SGdMTGvqF3ZjSNfZLF1K8NDpuKwLM9gT5Yxg
+         JVRcsKiCe22MMapg01Q3fASchtexE4W86S7zSkPo7uZkZqHQoauzirhM3rfSBBxNFg
+         wD3xE/dl+vd4SDhAvtatch+HKU8CuQuPxLQbI9pl20cedpI2Bh8nK+61wozTjHrSlg
+         LOQ1Qk3VRmE/TglpZPuhbvC5ISNe+DXV55EgwyEjIDprX2kfDyQzMzl83EF2VtuiT3
+         V9V377/c+K/rQ==
+Date:   Wed, 21 Jun 2023 16:01:41 +0100
 From:   Lee Jones <lee@kernel.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v5 1/3] leds: trigger: netdev: add additional
- specific link speed mode
-Message-ID: <20230621145451.GA10378@google.com>
-References: <20230619204700.6665-1-ansuelsmth@gmail.com>
- <20230619204700.6665-2-ansuelsmth@gmail.com>
+To:     Raymond Hackley <raymondhackley@protonmail.com>
+Cc:     linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: leds: sgm3140: Document richtek,rt5033
+ compatible
+Message-ID: <20230621150141.GE10378@google.com>
+References: <20230602130644.259933-1-raymondhackley@protonmail.com>
+ <20230602131009.260239-1-raymondhackley@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230619204700.6665-2-ansuelsmth@gmail.com>
+In-Reply-To: <20230602131009.260239-1-raymondhackley@protonmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 19 Jun 2023, Christian Marangi wrote:
+On Fri, 02 Jun 2023, Raymond Hackley wrote:
 
-> Add additional modes for specific link speed. Use ethtool APIs to get the
-> current link speed and enable the LED accordingly. Under netdev event
-> handler the rtnl lock is already held and is not needed to be set to
-> access ethtool APIs.
+> Add devicetree binding for Richtek RT5033 Flash LED charge pump used for
+> camera flash LEDs.
 > 
-> This is especially useful for PHY and Switch that supports LEDs hw
-> control for specific link speed. (example scenario a PHY that have 2 LED
-> connected one green and one orange where the green is turned on with
-> 1000mbps speed and orange is turned on with 10mpbs speed)
-> 
-> On mode set from sysfs we check if we have enabled split link speed mode
-> and reject enabling generic link mode to prevent wrong and redundant
-> configuration.
-> 
-> Rework logic on the set baseline state to support these new modes to
-> select if we need to turn on or off the LED.
-> 
-> Add additional modes:
-> - link_10: Turn on LED when link speed is 10mbps
-> - link_100: Turn on LED when link speed is 100mbps
-> - link_1000: Turn on LED when link speed is 1000mbps
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
 > ---
->  drivers/leds/trigger/ledtrig-netdev.c | 80 +++++++++++++++++++++++----
->  include/linux/leds.h                  |  3 +
->  2 files changed, 73 insertions(+), 10 deletions(-)
+>  Documentation/devicetree/bindings/leds/leds-sgm3140.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> index 4d2ffe5fcfc7..37d2a93780ab 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> +++ b/Documentation/devicetree/bindings/leds/leds-sgm3140.yaml
+> @@ -20,6 +20,7 @@ properties:
+>    compatible:
+>      enum:
+>        - ocs,ocp8110
+> +      - richtek,rt5033-led
 
-Acked-by: Lee Jones <lee@kernel.org>
+Why is "-led" appended on to this one and not the others?
+
+>        - sgmicro,sgm3140
+>  
+> 
+>    enable-gpios:
+> -- 
+> 
+> 2.30.2
+> 
+
 
 -- 
 Lee Jones [李琼斯]
