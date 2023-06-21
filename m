@@ -2,41 +2,42 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB546EB64D8
-	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 17:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277A1EB64DC
+	for <linux-leds@archiver.kernel.org>; Wed, 21 Jun 2023 17:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231828AbjFUR5t (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 21 Jun 2023 13:57:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57764 "EHLO
+        id S230199AbjFUR6Y (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 21 Jun 2023 13:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230521AbjFUR5e (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 13:57:34 -0400
-Received: from mail-4027.protonmail.ch (mail-4027.protonmail.ch [185.70.40.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3220273F;
-        Wed, 21 Jun 2023 10:56:58 -0700 (PDT)
-Date:   Wed, 21 Jun 2023 17:56:13 +0000
+        with ESMTP id S230412AbjFUR6Q (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 21 Jun 2023 13:58:16 -0400
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1A321FF7;
+        Wed, 21 Jun 2023 10:57:50 -0700 (PDT)
+Date:   Wed, 21 Jun 2023 17:56:40 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail3; t=1687370178; x=1687629378;
+        s=protonmail3; t=1687370215; x=1687629415;
         bh=wHGz+4iR1yJG9gev8O3hnv7/wXS8nRLc1LqeNaYELLY=;
         h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
          Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
          Message-ID:BIMI-Selector;
-        b=C1t7orL4szd8vpbKBwn3Elu1XUCxBcxpLieV4Lz2uU2B5139AlxRAPyHQ1L53omPn
-         5N7m5AmgqctYsTY1+OdnHrdwF5w1+JXSi5t3wK1m7ILC1sPT4J4ngrUSMMKOLP6OUD
-         /hneIEimXPWLdi/F4bEzbqkC3wAzZ/DRkMRRqkxJ+3KDUZwoBSJVPfDEq7xRzX1+qF
-         +cd+j/q67IpSrwUfwyUBer3AyA33ecn5kxqgn8VLoGVyjlq/9QLqEdBuDWwt3XuvAX
-         bZ3X/qZroBN8QSCpPrSDqGxECj9OWSYI6k5SXaPQ4jxLTpdu1lE5uN4hmIJ8d/p1dK
-         Cq4BdDZ+3HVZw==
-To:     lee@kernel.org
+        b=tbrO/bcpzOfBc7Yum/nWOy0bJ3CmwnIO7AXP3tq+xAjz8fFi6Zdacii4PSrKoPDbH
+         g6qp5uw/I2cGFfEeyA8nqL1OuqHV+VRu0cvWICUOTxMjg4kA5kfKs4g2Odbok3mUkD
+         hMLJmRQa7ogY8baGnbtM9MlFkKAr0ut0AyPu4OTryVBnSzNb2RsOPvFIIBxIYT7m/v
+         UsEnV94qxpAGCGI8kuush9cInjpI+VPQHS+NjrELpAfzQ/ukJkNqSMktq/9UKxilh9
+         6M7ASrf9sBb1AcSAD3GnV6c9roS1sQG4k1yjzEVVenf5KYD78f225lQL94RYdL9x7E
+         DvC+lKLv7X7JQ==
+To:     krzysztof.kozlowski@linaro.org
 From:   Raymond Hackley <raymondhackley@protonmail.com>
 Cc:     devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        luca@z3ntu.xyz, pavel@ucw.cz, raymondhackley@protonmail.com,
-        robh+dt@kernel.org
+        lee@kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, luca@z3ntu.xyz, pavel@ucw.cz,
+        raymondhackley@protonmail.com, robh+dt@kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
 Subject: Re: [RESEND PATCH 1/2] dt-bindings: leds: sgm3140: Document richtek,rt5033 compatible
-Message-ID: <20230621175600.1209-1-raymondhackley@protonmail.com>
-In-Reply-To: <20230621150141.GE10378@google.com>
-References: <20230602130644.259933-1-raymondhackley@protonmail.com> <20230602131009.260239-1-raymondhackley@protonmail.com> <20230621150141.GE10378@google.com>
+Message-ID: <20230621175626.1229-1-raymondhackley@protonmail.com>
+In-Reply-To: <5cb59a5e-0ce5-7215-a14a-2ca2c1505b53@linaro.org>
+References: <20230602133533.260502-1-raymondhackley@protonmail.com> <20230602133714.260556-1-raymondhackley@protonmail.com> <5cb59a5e-0ce5-7215-a14a-2ca2c1505b53@linaro.org>
 Feedback-ID: 49437091:user:proton
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
