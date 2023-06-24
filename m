@@ -2,139 +2,165 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1693EB64DA
-	for <linux-leds@archiver.kernel.org>; Sat, 24 Jun 2023 09:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78948EB64DD
+	for <linux-leds@archiver.kernel.org>; Sat, 24 Jun 2023 09:38:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231715AbjFXJVp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 24 Jun 2023 05:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51318 "EHLO
+        id S232882AbjFXJiX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 24 Jun 2023 05:38:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232624AbjFXJVo (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Jun 2023 05:21:44 -0400
-X-Greylist: delayed 1819 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 24 Jun 2023 02:21:42 PDT
-Received: from 7.mo562.mail-out.ovh.net (7.mo562.mail-out.ovh.net [46.105.55.234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91F261BF2
-        for <linux-leds@vger.kernel.org>; Sat, 24 Jun 2023 02:21:42 -0700 (PDT)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
-        by mo562.mail-out.ovh.net (Postfix) with ESMTPS id 11A5522F95;
-        Sat, 24 Jun 2023 08:42:35 +0000 (UTC)
-Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
-        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
-        for <conor+dt@kernel.org>; Sat, 24 Jun 2023 08:42:34 +0000 (UTC)
-Received: from pro2.mail.ovh.net (unknown [10.108.20.150])
-        by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id ADDB82011E4;
-        Sat, 24 Jun 2023 08:42:34 +0000 (UTC)
-Received: from traphandler.com (88.161.25.233) by DAG1EX1.emp2.local
- (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Sat, 24 Jun
- 2023 10:42:34 +0200
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
-CC:     <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v10 4/5] dt-bindings: leds: Add binding for a multicolor group of LEDs
-Date:   Sat, 24 Jun 2023 10:42:16 +0200
-Message-ID: <20230624084217.3079205-5-jjhiblot@traphandler.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230624084217.3079205-1-jjhiblot@traphandler.com>
-References: <20230624084217.3079205-1-jjhiblot@traphandler.com>
+        with ESMTP id S232620AbjFXJiW (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Jun 2023 05:38:22 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF0A1BE4
+        for <linux-leds@vger.kernel.org>; Sat, 24 Jun 2023 02:38:20 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51bde6a8c20so1589640a12.0
+        for <linux-leds@vger.kernel.org>; Sat, 24 Jun 2023 02:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687599499; x=1690191499;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zXBFCivXYU4jqrNenN0qqCdwRcocFvfR8QjuhlC/BNA=;
+        b=R68zl3EL0G2cCxmLykHsoLVBaFLnVsVmuPYJGvZiSFCkHgoVSkrCVf+n9i4Q0yOWDg
+         +s3so7MPt6yCrcnH39+6/mDLpjDbQlfumyCDRYM5HqCSpU9oTSBp+QQf2zvVy7sT5rAD
+         2ykkyJqbMz5FGn0oRZxWJqtn5SDEWmV05NL2H7P+GTJcYpMBAe2nmTcWDWq0phXF2Vy1
+         V35CVaORp5+zHfJsaY6+dDEXzyY8zC53AGNPotbheHGgrCeaEZc/QW00F8XsLkmTsR8o
+         D8y22pr6oO09jUpK6NSkr1fXkD/x7wTyaXTr+xcvIe5OsPJ8dmTwsBZ1tW8HKDYaQt/u
+         cq0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687599499; x=1690191499;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zXBFCivXYU4jqrNenN0qqCdwRcocFvfR8QjuhlC/BNA=;
+        b=Xn26qAnjTThAha7TW94iw//N/ftPYlejSFcj4nKUqY0fICkx8qpbLnB+/CvB4fT3Jh
+         1+0U7AtghHOjrpwRvgpHafDD7cD43acXqanBIV3tLuPaAPagYgM1T3g6+58ACvhY+FNs
+         x4aMugzQvTiLhzfoMORlYnIH4JpiIPG/yr7WkJys58bktJDDSEqnDl96ypqLLzfjbRFR
+         nWDRFwmIXOOQCJ9yR/VgTxY5hHKwrbxl0H+cqah68hSGeeHI2JQkc6F45jlqwBGVm3l6
+         jtFtmqlu2r9+w46/3CIAI0gsY+eCqJxRUjUweD93MbrNFN0UyOvImaMV2wqL+bd3VFKd
+         7zfw==
+X-Gm-Message-State: AC+VfDx8ZbJIgPozF+QWz3o8oAtkPO3MOYBsr1t6ZRpBSh9KRFOJDof4
+        Ci7NdlwENJxREjU9OTNySLYUOQ==
+X-Google-Smtp-Source: ACHHUZ7PVLABuL30C6bX/NntvPW8rghUXjMj6NCmfnVnVEa70oQE8lUdlRmnW05GgXT5nQ/s5wXJbw==
+X-Received: by 2002:aa7:c14a:0:b0:51b:deaf:a489 with SMTP id r10-20020aa7c14a000000b0051bdeafa489mr5936677edp.12.1687599499110;
+        Sat, 24 Jun 2023 02:38:19 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id v9-20020aa7cd49000000b005187a42b44fsm474958edw.58.2023.06.24.02.38.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Jun 2023 02:38:18 -0700 (PDT)
+Message-ID: <e61aa4a6-ca7d-3e33-1971-92b97f8d876e@linaro.org>
+Date:   Sat, 24 Jun 2023 11:38:16 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [88.161.25.233]
-X-ClientProxiedBy: DAG2EX1.emp2.local (172.16.2.11) To DAG1EX1.emp2.local
- (172.16.2.1)
-X-Ovh-Tracer-Id: 12428246121859529169
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgeegjedgtdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnheptddtffevleejteelieejhfffvedtffeljeehjeeigfejledufedvveejuddtjefhnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucfkpheptddrtddrtddrtddpkeekrdduiedurddvhedrvdeffeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepughirhgvtghtohhruddruggvrhhprdhmrghilhdqohhuthdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqlhgvughssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehiedv
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 1/7] dt-bindings: soc: qcom: Add qcom-pbs bindings
+Content-Language: en-US
+To:     Anjelique Melendez <quic_amelende@quicinc.com>, pavel@ucw.cz,
+        lee@kernel.org, thierry.reding@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        agross@kernel.org, andersson@kernel.org
+Cc:     konrad.dybcio@linaro.org, u.kleine-koenig@pengutronix.de,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+References: <20230621185949.2068-1-quic_amelende@quicinc.com>
+ <20230621185949.2068-2-quic_amelende@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230621185949.2068-2-quic_amelende@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-This allows to group multiple monochromatic LEDs into a multicolor
-LED, e.g. RGB LEDs.
+On 21/06/2023 20:59, Anjelique Melendez wrote:
+> Add binding for the Qualcomm Programmable Boot Sequencer device.
+> 
+> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
+> ---
+>  .../bindings/soc/qcom/qcom-pbs.yaml           | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom-pbs.yaml
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/leds/leds-group-multicolor.yaml  | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
+Except missing testing... few more comments:
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-new file mode 100644
-index 000000000000..8ed059a5a724
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-group-multicolor.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Multi-color LED built with monochromatic LEDs
-+
-+maintainers:
-+  - Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-+
-+description: |
-+  This driver combines several monochromatic LEDs into one multi-color
-+  LED using the multicolor LED class.
-+
-+properties:
-+  compatible:
-+    const: leds-group-multicolor
-+
-+  leds:
-+    description:
-+      An aray of monochromatic leds
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+
-+required:
-+  - leds
-+
-+allOf:
-+  - $ref: leds-class-multicolor.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    monochromatic-leds {
-+        compatible = "gpio-leds";
-+
-+        led0: led-0 {
-+            gpios = <&mcu_pio 0 GPIO_ACTIVE_LOW>;
-+            color = <LED_COLOR_ID_RED>;
-+        };
-+
-+        led1: led-1 {
-+            gpios = <&mcu_pio 1 GPIO_ACTIVE_HIGH>;
-+            color = <LED_COLOR_ID_GREEN>;
-+        };
-+
-+        led2: led-2 {
-+            gpios = <&mcu_pio 2 GPIO_ACTIVE_HIGH>;
-+            color = <LED_COLOR_ID_BLUE>;
-+        };
-+    };
-+
-+    multi-led {
-+        compatible = "leds-group-multicolor";
-+        color = <LED_COLOR_ID_RGB>;
-+        function = LED_FUNCTION_INDICATOR;
-+        leds = <&led0>, <&led1>, <&led2>;
-+    };
-+
-+...
--- 
-2.34.1
+
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom-pbs.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom-pbs.yaml
+> new file mode 100644
+> index 000000000000..0a89c334f95c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom-pbs.yaml
+
+Filename matching compatibles, so qcom,pbs
+
+> @@ -0,0 +1,41 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/qcom/qcom-pbs.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. PBS
+
+Qualcomm PBS foo bar a bit more than just one word.
+
+E.g. expand PBS acronym
+
+> +
+> +maintainers:
+> +  - Anjelique Melendez <quic_amelende@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm PBS (programmable boot sequencer) supports triggering sequences
+> +  for clients upon request.
+
+I don't understand what's this. What is "triggering sequences"? What
+sequences?
+
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,pbs
+
+Missing SoC specific comaptibles.
+
+
+> +
+> +  reg:
+> +    description: |
+> +      Base address of the PBS peripheral.
+
+Drop description, it's obvious.
+
+> +    maxItems: 1
+> +
+
+Binding looks very incomplete...
+
+> +required:
+> + - compatible
+> + - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pmic {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      qcom,pbs@7400 {
+
+That's not a proper node name. Do you see anywhere such node? Please, do
+not work on downstream code, but on mainline.
+
+> +        compatible = "qcom,pbs";
+> +        reg = <0x7400>;
+> +      };
+> +    };
+
+Best regards,
+Krzysztof
 
