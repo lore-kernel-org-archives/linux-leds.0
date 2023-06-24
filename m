@@ -2,80 +2,95 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96792EB64DD
-	for <linux-leds@archiver.kernel.org>; Fri, 23 Jun 2023 15:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BE2EB64DD
+	for <linux-leds@archiver.kernel.org>; Sat, 24 Jun 2023 08:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbjFWPWp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 23 Jun 2023 11:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40176 "EHLO
+        id S231706AbjFXImj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 24 Jun 2023 04:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232098AbjFWPWl (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 23 Jun 2023 11:22:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71071AC;
-        Fri, 23 Jun 2023 08:22:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A1CB61A94;
-        Fri, 23 Jun 2023 15:22:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C16AFC433C8;
-        Fri, 23 Jun 2023 15:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687533758;
-        bh=sRj5H73scWO/9TBS+e2MwEJ4mooOFaJ0HbXk3SIJWAM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=g5i0UUMm4sK9b+44ZtTnyAGB15oqq45T8zvGFnZlw7UWNvTOHaMpxcHU3sk2ieLBj
-         N2j1PBm5Ewl+dSuQsuug7lBu1PAu09qzehGzGN9XQZdsYB1XiIWIYvSffIyxB+UGMe
-         vMb1yWtjb2v+vhns3FARfi/Ppr3o98Oub/GBGkcruBfunUYXqrrr94yEC4eMLKygc2
-         5cO6fHOSYd9UFuCNlkhf0XtU7ShyaDDKOmp7nn1L/C1oXmA2LEd9ZvtJCAHmfCCu7A
-         1R+SuuslDJeeWi/XWllcgULrdPzkWnjyN0XUDjjYpRDxAO59Yac3x16Vqh1FMmUp7B
-         yMqjfclwyFQow==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Henning Schild <henning.schild@siemens.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Hans de Goede <hdegoede@redhat.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: simatic-ipc-leds-gpio: restore LEDS_CLASS dependency
-Date:   Fri, 23 Jun 2023 17:22:29 +0200
-Message-Id: <20230623152233.2246285-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S229480AbjFXImi (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 24 Jun 2023 04:42:38 -0400
+Received: from 9.mo563.mail-out.ovh.net (9.mo563.mail-out.ovh.net [46.105.73.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60A901BC
+        for <linux-leds@vger.kernel.org>; Sat, 24 Jun 2023 01:42:36 -0700 (PDT)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net [51.68.80.175])
+        by mo563.mail-out.ovh.net (Postfix) with ESMTPS id 2B96422EDB;
+        Sat, 24 Jun 2023 08:42:34 +0000 (UTC)
+Received: from director1.derp.mail-out.ovh.net (director1.derp.mail-out.ovh.net. [127.0.0.1])
+        by director1.derp.mail-out.ovh.net (inspect_sender_mail_agent) with SMTP
+        for <andy.shevchenko@gmail.com>; Sat, 24 Jun 2023 08:42:33 +0000 (UTC)
+Received: from pro2.mail.ovh.net (unknown [10.109.143.168])
+        by director1.derp.mail-out.ovh.net (Postfix) with ESMTPS id B8D842011E7;
+        Sat, 24 Jun 2023 08:42:33 +0000 (UTC)
+Received: from traphandler.com (88.161.25.233) by DAG1EX1.emp2.local
+ (172.16.2.1) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Sat, 24 Jun
+ 2023 10:42:33 +0200
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
+CC:     <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v10 1/5] devres: provide devm_krealloc_array()
+Date:   Sat, 24 Jun 2023 10:42:13 +0200
+Message-ID: <20230624084217.3079205-2-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230624084217.3079205-1-jjhiblot@traphandler.com>
+References: <20230624084217.3079205-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [88.161.25.233]
+X-ClientProxiedBy: DAG2EX1.emp2.local (172.16.2.11) To DAG1EX1.emp2.local
+ (172.16.2.1)
+X-Ovh-Tracer-Id: 12427964647960492423
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvhedrgeegjedgtdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepudetveelveevgffgvdeuffffjefhheehueeitdegtdejgefhheeuuddugeeffeeunecukfhppedtrddtrddtrddtpdekkedrudeiuddrvdehrddvfeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopeguihhrvggtthhorhdurdguvghrphdrmhgrihhlqdhouhhtrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhlvggushesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheeife
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Implement the managed variant of krealloc_array().
+This internally uses devm_krealloc() and as such is usable with all memory
+allocated by devm_kmalloc() (or devres functions using it implicitly like
+devm_kmemdup(), devm_kstrdup() etc.).
 
-A recent rework accidentally lost the dependency on LEDS_CLASS, which
-leads to a link error when LED support is disbled:
+Managed realloc'ed chunks can be manually released with devm_kfree().
 
-x86_64-linux-ld: drivers/leds/simple/simatic-ipc-leds.o: in function `simatic_ipc_leds_probe':
-simatic-ipc-leds.c:(.text+0x10c): undefined reference to `devm_led_classdev_register_ext'
-
-Add back the dependency that was there originally.
-
-Fixes: a6c80bec3c935 ("leds: simatic-ipc-leds-gpio: Add GPIO version of Siemens driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/simple/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/device.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/leds/simple/Kconfig b/drivers/leds/simple/Kconfig
-index 44fa0f93cb3b3..02443e745ff3b 100644
---- a/drivers/leds/simple/Kconfig
-+++ b/drivers/leds/simple/Kconfig
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config LEDS_SIEMENS_SIMATIC_IPC
- 	tristate "LED driver for Siemens Simatic IPCs"
-+	depends on LEDS_CLASS
- 	depends on SIEMENS_SIMATIC_IPC
- 	help
- 	  This option enables support for the LEDs of several Industrial PCs
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 472dd24d4823..e45dc78068b7 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -223,6 +223,19 @@ static inline void *devm_kcalloc(struct device *dev,
+ {
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
++static inline void *devm_krealloc_array(struct device *dev,
++					void *p,
++					size_t new_n,
++					size_t new_size,
++					gfp_t flags)
++{
++	size_t bytes;
++
++	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
++		return NULL;
++
++	return devm_krealloc(dev, p, bytes, flags);
++}
+ void devm_kfree(struct device *dev, const void *p);
+ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+ const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
 -- 
-2.39.2
+2.34.1
 
