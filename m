@@ -2,60 +2,79 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0A6EB64D9
-	for <linux-leds@archiver.kernel.org>; Tue, 27 Jun 2023 07:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F97EB64D9
+	for <linux-leds@archiver.kernel.org>; Tue, 27 Jun 2023 08:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230336AbjF0Hcq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 27 Jun 2023 03:32:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36802 "EHLO
+        id S231165AbjF0I7M (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 27 Jun 2023 04:59:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbjF0Hcm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jun 2023 03:32:42 -0400
-Received: from mail.ettrick.pl (mail.ettrick.pl [141.94.21.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30900116
-        for <linux-leds@vger.kernel.org>; Tue, 27 Jun 2023 00:32:41 -0700 (PDT)
-Received: by mail.ettrick.pl (Postfix, from userid 1002)
-        id 99350A480F; Tue, 27 Jun 2023 07:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ettrick.pl; s=mail;
-        t=1687851033; bh=ZOVeXw1jXE9TbyZP9aLdRwM96AORcRfum8b+rry5JMw=;
-        h=Date:From:To:Subject:From;
-        b=lXfKGlv9JMfI5OHSCAcKDPGBYQIR5gHgxAw2yCZUToMDfX0s79R043inIaQDFzql7
-         01QmXPe3c4eMX1+g65p2NrPhQchUr3j04E5x7hDnl1h6DiMwbjxlfjvpMYIK+6OSPw
-         i7JkB128VP9dy/9NRlHdOrP70F1cfqtP6d9y/norExpr3U7gE6xna0bhGf/fFuAbDl
-         9WCFvqF6RMRGAnMYL9QzAcBre+g/DuqJJJ8RmME7g3FNSAqwD/MjieeQC2Nl6OCrt4
-         N9Wwe+f8I1mI7Zktk8quA5SWh//pRIO6PlfGJUqYLww74OVJWcuy6bv32jzqtDubkZ
-         /LoHlW5SqO3sQ==
-Received: by mail.ettrick.pl for <linux-leds@vger.kernel.org>; Tue, 27 Jun 2023 07:30:16 GMT
-Message-ID: <20230627064500-0.1.bh.4naqk.0.h3vn5he23d@ettrick.pl>
-Date:   Tue, 27 Jun 2023 07:30:16 GMT
-From:   "Norbert Karecki" <norbert.karecki@ettrick.pl>
-To:     <linux-leds@vger.kernel.org>
-Subject: Fotowoltaika- propozycja instalacji
-X-Mailer: mail.ettrick.pl
+        with ESMTP id S229887AbjF0I7L (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 27 Jun 2023 04:59:11 -0400
+Received: from mail.208.org (unknown [183.242.55.162])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7999710D
+        for <linux-leds@vger.kernel.org>; Tue, 27 Jun 2023 01:59:08 -0700 (PDT)
+Received: from mail.208.org (email.208.org [127.0.0.1])
+        by mail.208.org (Postfix) with ESMTP id 4QqzCs3TWTzBRppk
+        for <linux-leds@vger.kernel.org>; Tue, 27 Jun 2023 16:59:05 +0800 (CST)
+Authentication-Results: mail.208.org (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=208.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=208.org; h=
+        content-transfer-encoding:content-type:message-id:user-agent
+        :subject:to:from:date:mime-version; s=dkim; t=1687856344; x=
+        1690448345; bh=VFd1Mh0aeu2r5IFFYYRc/0gxv1eqPXEe+CP8QHu3Lw8=; b=d
+        TjBDrmsp+QBhy8/JJpianhAEMGMVZXX75WC+lFgWZ6Z63nFWMIOS22D7Xx3dPvS/
+        L3vqh4xkNCVEs4vumP+Yhx25+5CQkXng1ht2ihcLVN7YTkOKCiXeRSzIazWwPG6k
+        /xFkjZedF7td3bFNtpcOyDNwK9hmz4Jq7YZ0ZFtdFJ0Yvs1CEXXVHSb2lfmi1tu9
+        CUfOdrOBVi9Sfd+qYxO2f1jB4rYuPBjdDCj85lVHBz9lLRHKkmH1mD93CkLeKxO9
+        N66YoZywHpCHjMmlqLb/8tggA0DSN5N4plx1MxpwWhE4Ei3Q7ODZO08xF8V/YBS4
+        rwwG6Si4q4GrHryvxzJjQ==
+X-Virus-Scanned: amavisd-new at mail.208.org
+Received: from mail.208.org ([127.0.0.1])
+        by mail.208.org (mail.208.org [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id NF4X8KyLnn7J for <linux-leds@vger.kernel.org>;
+        Tue, 27 Jun 2023 16:59:04 +0800 (CST)
+Received: from localhost (email.208.org [127.0.0.1])
+        by mail.208.org (Postfix) with ESMTPSA id 4QqzCr5gMCzBJBJT;
+        Tue, 27 Jun 2023 16:59:04 +0800 (CST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 27 Jun 2023 16:59:04 +0800
+From:   baomingtong001@208suo.com
+To:     pavel@ucw.cz, lee@kernel.org
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: cht-wcove: Remove unneeded semicolon
+User-Agent: Roundcube Webmail
+Message-ID: <e66d4beb79da0bfa18269c390f1ed5ef@208suo.com>
+X-Sender: baomingtong001@208suo.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dzie=C5=84 dobry,
-=20
-Czy rozwa=C5=BCali Pa=C5=84stwo monta=C5=BC systemu fotowoltaicznego?
-=20
-Instalacja fotowoltaiczna jest najlepszym sposobem na obni=C5=BCenie wyso=
-ko=C5=9Bci rachunk=C3=B3w za pr=C4=85d (pozostaj=C4=85 tylko op=C5=82aty =
-sta=C5=82e) i zabezpieczenie si=C4=99 przed rosn=C4=85cymi cenami energii=
- elektrycznej. Jest to w pe=C5=82ni odnawialne i bezemisyjne =C5=BAr=C3=B3=
-d=C5=82o energii, dzi=C4=99ki czemu przyczyniamy si=C4=99 do ochrony =C5=9B=
-rodowiska naturalnego.
-=20
-Dzia=C5=82amy od wielu lat na rynku energetycznym. Przygotujemy projekt, =
-wycen=C4=99 oraz kompleksowo wykonamy i zg=C5=82osimy realizacj=C4=99 do =
-zak=C5=82adu energetycznego.=20
-=20
-Czy chc=C4=85 Pa=C5=84stwo pozna=C4=87 nasz=C4=85 propozycj=C4=99? =20
+./drivers/leds/leds-cht-wcove.c:193:2-3: Unneeded semicolon
 
+Signed-off-by: Mingtong Bao <baomingtong001@208suo.com>
+---
+  drivers/leds/leds-cht-wcove.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Pozdrawiam,
-Norbert Karecki
+diff --git a/drivers/leds/leds-cht-wcove.c 
+b/drivers/leds/leds-cht-wcove.c
+index 0cfebee98910..e35a25990048 100644
+--- a/drivers/leds/leds-cht-wcove.c
++++ b/drivers/leds/leds-cht-wcove.c
+@@ -190,7 +190,7 @@ static unsigned long cht_wc_leds_get_period(int 
+ctrl)
+  		return 1000;
+  	case CHT_WC_LED_F_2_HZ:
+  		return 1000 / 2;
+-	};
++	}
+
+  	return 0;
+  }
+-- 
+2.40.1
+
