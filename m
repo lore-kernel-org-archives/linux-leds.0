@@ -2,58 +2,58 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF28C0015E
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Jul 2023 11:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B201EB64DD
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Jul 2023 11:57:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234319AbjGML5K (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Jul 2023 07:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55658 "EHLO
+        id S234478AbjGML5U (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Jul 2023 07:57:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233058AbjGML5J (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Jul 2023 07:57:09 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2084.outbound.protection.outlook.com [40.107.6.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07592D48;
-        Thu, 13 Jul 2023 04:56:54 -0700 (PDT)
+        with ESMTP id S234357AbjGML5N (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Jul 2023 07:57:13 -0400
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2072.outbound.protection.outlook.com [40.107.22.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7009D2715;
+        Thu, 13 Jul 2023 04:56:55 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EH1KO8+lagfabXSAkR0uVaxnV8VQ4tZEfexCFDg6vzspcdDN8RHfT2B46Oz9IIv+OlQNoeMWQ7lGHBvxHbZafflFX+b/Ul2iM2HKfWulanH6PEL1lQwhabgR/xLzLrPS7Hk2ZLpjRpxWW2nKl2tFIJrvtE9h/4vTF7fmbr+QmclDQMARJkQm4sMUJpZHdbcGTRw7YOyEgOBHi1pmE7OOl9d2OgPrJeDxYtwpj/oNnFRHdfqEFA086l39g8BO9yeGudy3+GBhVp61s3Lzmq/CW85y5m54neXRyH6h0qWhrPPdCovESi6rGiSxJ+VpF3OMSyMaDLt+TWSxUjew3I/2dg==
+ b=RxlXNQnWD8wXt12M/zQu5ctXB5gg+DShnbVzSzrsd8K0MIhCYEipfs7BliB+JZSj5kdocE/8E26Fyeo0xWq7zIWGp9G8eZNj+2PFtUVzy4DlON00gmNJCvzV5C2O/fms+S4VR/qpTH6Jv/IXTiDU4ZXPzZsJlKl4yg4EF7jUN9HCTVr2T4Z0YMajQ6E+vSQw3o5/oNu5ZSS6p/lTSrqGkVQva0yJQFCJ6iM/w6Bb7kiK3TRLsWWB7iAzb1KW4ft7TFjBWhwJbztqPStVgAl/dQZ/kNo3OZIvrQxKQ6kVTMqdsY4QZTA0VMiy1nMcvelQmlZjXcm7YVUZcWcEH7HN8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u3mFyp/VYjBVmw282+eG2V/tGp60c1ECHjK0ePqsEOo=;
- b=PxBnbmnsr2VrHL/QXCE6RnZ6ZjjlnQKy+wpBjqpDHbEdPn9YeoR5ptj0zwV0RweMURwDidsvM47vv0AN491+jpV5JD/5fP6lJQlLEgK610RK3UI9TzqcgJu1R8ONmUAtTRDbvMCN6jpBzs9eoOvHFn04eU9IgajUx8jfmGmYifWtOQUuWhpnXrTjMpa40ZeJeCHgd359YUFv7drxSPjEOQzWW1wxagKzsBSJRN5WQq09A47s7fzj+ohuz6YdrVI3HEf7ZM5zwrVb01eBkrt7jyH36n0022dPtDeBOvKj6dDCV1DEi07uO79goVIDZGPu8VsXQHImOWA+ubkcJGrsxQ==
+ bh=XzygF6itKHUQzD48/rkMZtcSdaE9lX6nfqG44bmkTOY=;
+ b=geplGJJxfSAwmvI4Qqd14BZ0mO7DFxyxBcTKepqQsT16+H8LscnjQGQ8d2n8sKFUZ6Ek1iwZfjT9V9cwTML38tjAbuIPEhjTOYYXkdGU1S48dFGb+8FvrS9MbIQjLPwv2KvA/vIRd41IG8mMVWDoIuWt+ggCZ5/Rb8F8/QDntZD5+RSHLYAAtUShNIfK9gUAO7zsB43hbfJQIS0VkoccfgTF09bwPWi8U6/kXNNOQHevJw3wFhlfrZQwVSBqgA4SHMAPQb81ltwLHsJiqNP+bY2cSlWX5MOK+8KZxmpMlgO9Ku3Q7A7N81Ndxdm552TuXDict5sQNPzJmwhEF7Pv5Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.76) smtp.rcpttodomain=ucw.cz smtp.mailfrom=siemens.com; dmarc=pass
+ 194.138.21.74) smtp.rcpttodomain=ucw.cz smtp.mailfrom=siemens.com; dmarc=pass
  (p=reject sp=reject pct=100) action=none header.from=siemens.com; dkim=none
  (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u3mFyp/VYjBVmw282+eG2V/tGp60c1ECHjK0ePqsEOo=;
- b=WMGrfBiM/opE0sRYfcYOOCrQ3lcC/1CTABnfR8ozmYnoydIKlwDFjkoVJGvwGLWnc0/CiF+xypxXP26ifogIMiCE+1FuEmaHebJishK+EQqXEtfwFgigqxnWxnZ1d2WT765RFt/Nd6ZvGv1fKJfL6TE+KZkMCSVhqxULEtTGlKTfXt7qzkviLjuC4gjrmlO04bkrUdiEfC+0qqOWhA7lWCXrsW7TLjdq+h1Qc63qxubYLV2PUjVrJE5gCTGhMKg862tvARXxq3EvgFVN4BmWBdQ1A+L2ZHkZoWPkLk2Sy2tlTWSN7I85RNRK+JO3prO/Y16ZRnsrrwqVQ2CYEmBClQ==
-Received: from OS6P279CA0142.NORP279.PROD.OUTLOOK.COM (2603:10a6:e10:3a::16)
- by AS2PR10MB6951.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:579::20) with
+ bh=XzygF6itKHUQzD48/rkMZtcSdaE9lX6nfqG44bmkTOY=;
+ b=zCBlRRLC3Ier0Ily8nmSTxi605e4fF1CKP9W0IAWb5/lf6YDSy7EeGh5hyVrbhJeWS9M9afxLWAK3KZ5l3FlGqdMnsmsAbu9C6cszsWFEtQk0zzGsvfZkM5jYcRvckQSgBkhQde6Z6afGE+kOfnP9daO3t8GkVg96pwzD4U7lnfTOi7EjuVXZUmXBr1UnB+2fAIHlaVdn0NmlX4t9wCPraLVJxMQ/CPCH5WjTtmmBhrl5Bao7N8TI2w6U+yVyVdm84/S6AjjKqOl6aBvuWcTYB5tdKgrGmYVruZQaF38yQRT/lNS15dURNvnjf0sZzAiJp8l+vzOpDthSJN4wMGvtQ==
+Received: from DB7PR03CA0091.eurprd03.prod.outlook.com (2603:10a6:10:72::32)
+ by DB9PR10MB5503.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:306::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.24; Thu, 13 Jul
- 2023 11:56:51 +0000
-Received: from HE1EUR01FT080.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:e10:3a:cafe::11) by OS6P279CA0142.outlook.office365.com
- (2603:10a6:e10:3a::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.20; Thu, 13 Jul
+ 2023 11:56:52 +0000
+Received: from DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:72:cafe::ec) by DB7PR03CA0091.outlook.office365.com
+ (2603:10a6:10:72::32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.24 via Frontend
- Transport; Thu, 13 Jul 2023 11:56:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
+ Transport; Thu, 13 Jul 2023 11:56:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
  smtp.mailfrom=siemens.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=siemens.com;
 Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.76) by
- HE1EUR01FT080.mail.protection.outlook.com (10.152.0.252) with Microsoft SMTP
+ 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.74) by
+ DB5EUR01FT055.mail.protection.outlook.com (10.152.5.250) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.20.6588.24 via Frontend Transport; Thu, 13 Jul 2023 11:56:51 +0000
 Received: from DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
+ DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 13 Jul 2023 13:56:50 +0200
+ 15.2.1118.30; Thu, 13 Jul 2023 13:56:51 +0200
 Received: from md1za8fc.ppmd.siemens.net (139.25.69.128) by
  DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -68,10 +68,12 @@ To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
 CC:     Tobias Schaffner <tobias.schaffner@siemens.com>,
         "xingtong . wu" <xingtong.wu@siemens.com>,
         Henning Schild <henning.schild@siemens.com>
-Subject: [PATCH v2 0/2] leds: simatic-ipc-leds-gpio: add new model BX-21A
-Date:   Thu, 13 Jul 2023 13:56:37 +0200
-Message-ID: <20230713115639.16419-1-henning.schild@siemens.com>
+Subject: [PATCH v2 2/2] leds: simatic-ipc-leds-gpio: add Elkhart Lake version
+Date:   Thu, 13 Jul 2023 13:56:39 +0200
+Message-ID: <20230713115639.16419-3-henning.schild@siemens.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230713115639.16419-1-henning.schild@siemens.com>
+References: <20230713115639.16419-1-henning.schild@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -80,48 +82,154 @@ X-ClientProxiedBy: DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) To
  DEMCHDC8WAA.ad011.siemens.net (139.25.226.104)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HE1EUR01FT080:EE_|AS2PR10MB6951:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22c94e3a-d686-4e87-1c1d-08db83983ea2
+X-MS-TrafficTypeDiagnostic: DB5EUR01FT055:EE_|DB9PR10MB5503:EE_
+X-MS-Office365-Filtering-Correlation-Id: 91e4dc43-fde7-4ae1-b3eb-08db83983ef9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zUVLPAbN1zP+wMugSMhTHZkiHsb+gwRBDrpfkS8mVTukbg4OdIU53RX+Y5VDgwqm9X12jE6F8RjFMA99jG7vki6oTvcKYCfZPUuB4NwsR2uZXHMLrLZ7oLRO6VKlAqcW12DKTgp3zMW4T2DO9NAlkw0UMa98r8NiqBkwBMkDJRvNAyQdpBV3Fehu90mbgBX1NwziqHYFWxpQ1vR7LDDj+x8sUOfAtSi3f8zyvx50jOcS1+v2yrrhrWhowT1xPKcfS+rksvFAD7pBFBdkVkH9bY/iHo0RQ91SXjV2a/ROPWRN/juPp00PnygZOm+rNTyD0Ou+ly6f/lYzMZspngV4WCMO/xrmEEgoA5dqnd0yv7P1acc6/qa7osFbCmB5liImm+hPKR/37KDRwwWhBRlhV6JPiBD8yCk+0CCfe97zXkEe2PufdkczDvsR9JxxpwNim8CE2b2UY9xCTtR9gD9ebvCYNRw55gGe8QJceW3kXNkwN1UCekHF7bSjmh37FKpgfOpJMtJpB20vXZRppeFjOm6PnBeB8HaMMmvGBY078oih8EPhWXSgJx6AgkDEYnFP5srdIeYLDFmX1hBo/fO5EbmpEdSZ2lVTuAmd3XiVwZQHd4+vJgoLxVHyqVF9JCaYSzCSK7m/NQCbulLoJv9PjBrqJzY5C74KzrcOPhHBmbIBrMMbxzROLlAMhgFCFPMRDaUg+T9hd5pIS7psKf9r8iJbMi+08yyNMb7zu44W5KO08bWujOmsJRn4SoomhuMK9t2T2ln4XcNIns2Jrk/HUg==
-X-Forefront-Antispam-Report: CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(346002)(376002)(39860400002)(451199021)(46966006)(36840700001)(40470700004)(2906002)(82310400005)(81166007)(356005)(82740400003)(82960400001)(83380400001)(47076005)(16526019)(956004)(186003)(336012)(2616005)(107886003)(26005)(40480700001)(1076003)(36860700001)(5660300002)(40460700003)(86362001)(8936002)(8676002)(4744005)(36756003)(44832011)(110136005)(478600001)(54906003)(6666004)(41300700001)(70206006)(316002)(4326008)(70586007)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: Z4EfetF0T2MPcKCYA6l/CU7LtJEQWkWUJIOU8F8xH4NhcucJsFnpL3ZqTPsDJf/ClBvYvOCGBlyjgxXNlyNgsRGfPatH3lmg9WDR5K2giEZZx2D5oxKIs0jCYecreQidH5MhXZ3S1jm5nL12sDWqaqSyzfD+ngg5zCfceJeHo7vU1m6Aw+zV8q/HIv3ClydG+aoP7q25RQ+LRYq34xRNuoxZ0bRcjAZA3CW6RnRP3tZSXk+Sqst24CTiDuyK7Eu6WZwMG0Tg2QZYghp9LjK9zRExxqxmDSadjYDLGoKS93f2gCi7UrjLWMR/U0vGzgYPyE9Ki9yYgHUexZTSdDHWb/14H6qaXHeseQmMfzKuZFVIaFuFftAL0INy3lChofPTEB6CmFQxWBPDzfWxTHvwEHguyNTqtiLf9Zc8F4IT4l06D3Yg4YoMnWv+68dpbwItQOW12nGKepJtgMv05HaySmAa/KCp/piwWM+Th/WnYc8GS8jJo7solGZuy+GC3wiGcyNmVwdzBlxsXqCmbd31Q9sVTpHZrXwfgiZW4BwOzOvFjFk7WAO2RNWy48wg3fV0hoa9KStQgRI6IGq+suohSCj/Vi3vNB4Aut4FCg+gBM18FVnuvw1nOJPTIZ97l0MTbE2HpC4RWeSIra1rv+q3nSSmbNOn8le82e8894Rigbt7sELir8Qr9SgTqtw5+DgO4V72cU84dJ1iwAD7FcwBFGBqh1LI1jShZwyiCvGTNwhAcn5FdG/DnCM41Fe7uv8Y
+X-Forefront-Antispam-Report: CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(376002)(396003)(136003)(451199021)(36840700001)(40470700004)(46966006)(44832011)(70206006)(4326008)(70586007)(316002)(41300700001)(2906002)(478600001)(8936002)(8676002)(5660300002)(110136005)(54906003)(36860700001)(6666004)(40460700003)(1076003)(40480700001)(107886003)(26005)(186003)(16526019)(36756003)(336012)(47076005)(82740400003)(82960400001)(7596003)(7636003)(356005)(86362001)(2616005)(82310400005)(956004);DIR:OUT;SFP:1101;
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2023 11:56:51.1354
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2023 11:56:51.7251
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22c94e3a-d686-4e87-1c1d-08db83983ea2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 91e4dc43-fde7-4ae1-b3eb-08db83983ef9
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: HE1EUR01FT080.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR01FT055.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB6951
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5503
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-change since v1:
-- split into two patches to separate leds from platform code and ease
-  merging
+This is used for the Siemens Simatic IPC BX-21A, which has its LEDs
+connected to GPIOs provided by the Intel Elkhart Lake pinctrl driver.
 
-These are rather simple patches adding LED support for yet another Simatic
-IPC model.
-
-Henning Schild (2):
-  platform/x86: simatic-ipc: add another model BX-21A
-  leds: simatic-ipc-leds-gpio: add Elkhart Lake version
-
+Signed-off-by: Henning Schild <henning.schild@siemens.com>
+---
  drivers/leds/simple/Kconfig                   | 13 +++++
  drivers/leds/simple/Makefile                  |  1 +
  .../leds/simple/simatic-ipc-leds-gpio-core.c  |  4 ++
  .../simatic-ipc-leds-gpio-elkhartlake.c       | 57 +++++++++++++++++++
- drivers/platform/x86/simatic-ipc.c            |  3 +
- .../platform_data/x86/simatic-ipc-base.h      |  3 +-
- include/linux/platform_data/x86/simatic-ipc.h |  3 +-
- 7 files changed, 82 insertions(+), 2 deletions(-)
+ 4 files changed, 75 insertions(+)
  create mode 100644 drivers/leds/simple/simatic-ipc-leds-gpio-elkhartlake.c
 
+diff --git a/drivers/leds/simple/Kconfig b/drivers/leds/simple/Kconfig
+index 44fa0f93cb3b..626ab18ac09d 100644
+--- a/drivers/leds/simple/Kconfig
++++ b/drivers/leds/simple/Kconfig
+@@ -34,3 +34,16 @@ config LEDS_SIEMENS_SIMATIC_IPC_F7188X
+ 
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called simatic-ipc-leds-gpio-f7188x.
++
++config LEDS_SIEMENS_SIMATIC_IPC_ELKHARTLAKE
++	tristate "LED driver for Siemens Simatic IPCs based on Intel Elkhart Lake GPIO"
++	depends on LEDS_GPIO
++	depends on PINCTRL_ELKHARTLAKE
++	depends on SIEMENS_SIMATIC_IPC
++	default LEDS_SIEMENS_SIMATIC_IPC
++	help
++	  This option enables support for the LEDs of several Industrial PCs
++	  from Siemens based on Elkhart Lake GPIO i.e. BX-21A.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called simatic-ipc-leds-gpio-elkhartlake.
+diff --git a/drivers/leds/simple/Makefile b/drivers/leds/simple/Makefile
+index e3e840cea275..783578f11bb0 100644
+--- a/drivers/leds/simple/Makefile
++++ b/drivers/leds/simple/Makefile
+@@ -2,3 +2,4 @@
+ obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC)			+= simatic-ipc-leds.o
+ obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC_APOLLOLAKE)	+= simatic-ipc-leds-gpio-core.o simatic-ipc-leds-gpio-apollolake.o
+ obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC_F7188X)		+= simatic-ipc-leds-gpio-core.o simatic-ipc-leds-gpio-f7188x.o
++obj-$(CONFIG_LEDS_SIEMENS_SIMATIC_IPC_ELKHARTLAKE)	+= simatic-ipc-leds-gpio-core.o simatic-ipc-leds-gpio-elkhartlake.o
+diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio-core.c b/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
+index 2a21b663df87..c552ea73ed9d 100644
+--- a/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
++++ b/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
+@@ -57,6 +57,7 @@ int simatic_ipc_leds_gpio_probe(struct platform_device *pdev,
+ 	switch (plat->devmode) {
+ 	case SIMATIC_IPC_DEVICE_127E:
+ 	case SIMATIC_IPC_DEVICE_227G:
++	case SIMATIC_IPC_DEVICE_BX_21A:
+ 		break;
+ 	default:
+ 		return -ENODEV;
+@@ -72,6 +73,9 @@ int simatic_ipc_leds_gpio_probe(struct platform_device *pdev,
+ 		goto out;
+ 	}
+ 
++	if (!table_extra)
++		return 0;
++
+ 	table_extra->dev_id = dev_name(dev);
+ 	gpiod_add_lookup_table(table_extra);
+ 
+diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio-elkhartlake.c b/drivers/leds/simple/simatic-ipc-leds-gpio-elkhartlake.c
+new file mode 100644
+index 000000000000..6ba21dbb3ba0
+--- /dev/null
++++ b/drivers/leds/simple/simatic-ipc-leds-gpio-elkhartlake.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Siemens SIMATIC IPC driver for GPIO based LEDs
++ *
++ * Copyright (c) Siemens AG, 2023
++ *
++ * Author:
++ *  Henning Schild <henning.schild@siemens.com>
++ */
++
++#include <linux/gpio/machine.h>
++#include <linux/gpio/consumer.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/platform_data/x86/simatic-ipc-base.h>
++
++#include "simatic-ipc-leds-gpio.h"
++
++static struct gpiod_lookup_table simatic_ipc_led_gpio_table = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP_IDX("INTC1020:04", 72, NULL, 0, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("INTC1020:04", 77, NULL, 1, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("INTC1020:04", 78, NULL, 2, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("INTC1020:04", 58, NULL, 3, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("INTC1020:04", 60, NULL, 4, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP_IDX("INTC1020:04", 62, NULL, 5, GPIO_ACTIVE_HIGH),
++		{} /* Terminating entry */
++	},
++};
++
++static int simatic_ipc_leds_gpio_elkhartlake_probe(struct platform_device *pdev)
++{
++	return simatic_ipc_leds_gpio_probe(pdev, &simatic_ipc_led_gpio_table,
++					   NULL);
++}
++
++static int simatic_ipc_leds_gpio_elkhartlake_remove(struct platform_device *pdev)
++{
++	return simatic_ipc_leds_gpio_remove(pdev, &simatic_ipc_led_gpio_table,
++					    NULL);
++}
++
++static struct platform_driver simatic_ipc_led_gpio_elkhartlake_driver = {
++	.probe = simatic_ipc_leds_gpio_elkhartlake_probe,
++	.remove = simatic_ipc_leds_gpio_elkhartlake_remove,
++	.driver = {
++		.name = KBUILD_MODNAME,
++	},
++};
++module_platform_driver(simatic_ipc_led_gpio_elkhartlake_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:" KBUILD_MODNAME);
++MODULE_SOFTDEP("pre: simatic-ipc-leds-gpio-core platform:elkhartlake-pinctrl");
++MODULE_AUTHOR("Henning Schild <henning.schild@siemens.com>");
 -- 
 2.41.0
 
