@@ -2,66 +2,182 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F986C001B0
-	for <linux-leds@archiver.kernel.org>; Thu, 13 Jul 2023 15:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D1FC001B0
+	for <linux-leds@archiver.kernel.org>; Thu, 13 Jul 2023 15:59:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjGMPmn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 13 Jul 2023 11:42:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44988 "EHLO
+        id S232870AbjGMP7b (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 13 Jul 2023 11:59:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbjGMPmm (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Jul 2023 11:42:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2251B2680;
-        Thu, 13 Jul 2023 08:42:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        with ESMTP id S231415AbjGMP72 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 13 Jul 2023 11:59:28 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A7B1BEB;
+        Thu, 13 Jul 2023 08:59:26 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A93E2617F1;
-        Thu, 13 Jul 2023 15:42:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC99C433C7;
-        Thu, 13 Jul 2023 15:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689262961;
-        bh=jS3hPdq523+QgNVWU8vvY1rzkmpHFQq5jsrVKZqsnM8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DBTCSh/zL9Yfc6McfWwTCSAChw7SaL7to4nWJp28cPi9bZ6Mtdb9Vo8LxsoNJC/aB
-         pvrG1stmZeYSTuF3aUlh5AAglxecizvAL3zjAxeXS6qcfdZP4+sMp+aKI8MVnd+Zdr
-         44zO4xx8dg6eVtGqmxY/dCXdAawOWzei2K4yPKfAL2hgd4q2A3EP5ICIVcezNVT1Zc
-         kMKzJguo2ArulBrXI3J4ttCFTUvkCTavr0+u0zrpNBeGF2+hLBGAXgHSHSqweSvd6v
-         zW+U9ff+dhsykv2otMK29ndfFU0R//vueLMtHS0QsAWLI3Aq78q66VdE+pgufctUSn
-         0RskzxlHTFCrw==
-Date:   Thu, 13 Jul 2023 16:42:36 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Henning Schild <henning.schild@siemens.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 2/2] leds: simatic-ipc-leds-gpio: fix comment style in
- SPDX header
-Message-ID: <20230713154236.GF968624@google.com>
-References: <20230706161040.21152-1-henning.schild@siemens.com>
- <20230706161040.21152-3-henning.schild@siemens.com>
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 00CC58689F;
+        Thu, 13 Jul 2023 17:59:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1689263964;
+        bh=tOolxknPxQvQ4vpUPx6iwgdAIemp7VcNNITUTqUutJ8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=IVDDsLFLLAvH1kHmy5t7GCnBzvRMaj1l3WXW3UdVWlh324eMbpZV7fLwg5YgUdWfP
+         G4U8qgZiplwdwgHW7kwZC0N7qYt5BOVCc9lRnsXg/He3NPOdcoqSa65TQf1xOyM/N9
+         HRadFV2/CfO4/RhliGSJ6sz4jwTw02q1ITKyggYntiePkC6kS+uKKvkSBWY2bIYSwO
+         jgMR+Y9jhhl/Xo+q30vS1jOpk7VSIkN+ONZaDDJrVrWLiQQZR/qUYSQrib1pzwCWXI
+         FwaqlR39YogIiUy2tTLmBSNdaubLn4sQSr31MNj7iTNveM//M6089ZsHAUtM0lc6A6
+         czAW5RQ/KIPiQ==
+Message-ID: <8f9b207e-7936-1e3b-673c-6a19cd565366@denx.de>
+Date:   Thu, 13 Jul 2023 17:59:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230706161040.21152-3-henning.schild@siemens.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 2/2] leds: pca995x: Add support for PCA995X chips
+Content-Language: en-US
+To:     Lee Jones <lee@kernel.org>
+Cc:     linux-leds@vger.kernel.org,
+        Isai Gaspar <isaiezequiel.gaspar@nxp.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org
+References: <20230705231326.232356-1-marex@denx.de>
+ <20230705231326.232356-2-marex@denx.de> <20230713140759.GD10768@google.com>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20230713140759.GD10768@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, 06 Jul 2023, Henning Schild wrote:
+On 7/13/23 16:07, Lee Jones wrote:
 
-> This was found with giving the file to checkpatch.
+[...]
+
+>> +#define PCA995X_LDRX_MASK	0x3	/* 2 bits per output state control */
+>> +
+>> +#define PCA995X_MODE_1_CFG	0x00	/* Auto-increment disabled. Normal mode */
 > 
-> Signed-off-by: Henning Schild <henning.schild@siemens.com>
-> ---
->  drivers/leds/simple/simatic-ipc-leds-gpio.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Is this not the reset value?
 
-Applied, thanks
+The chip may not be power-cycled on reboot, so this register is not 
+necessarily 0x0.
 
--- 
-Lee Jones [李琼斯]
+>> +#define PCA995X_IREFALL_CFG	0x7F	/* Half of max current gain multiplier */
+> 
+> PCA995X_IREFALL_FULL_CFG	0xFF
+> PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_MAX_CFG / 2)
+> 
+> ?
+> 
+>> +#define PCA995X_MAX_OUTPUTS	16	/* Supported outputs */
+> 
+> The define nomenclature is clear enough.
+> 
+>> +#define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
+>> +
+>> +struct pca995x_led {
+>> +	unsigned int led_no;
+>> +	struct led_classdev ldev;
+>> +	struct pca995x_chip *chip;
+>> +};
+>> +
+>> +struct pca995x_chip {
+>> +	struct regmap *regmap;
+>> +	struct pca995x_led leds[PCA995X_MAX_OUTPUTS];
+>> +	int btype;
+>> +};
+> 
+> It's weird to have 2 structs reference each other.
+> 
+> This should not be allowed:
+> 
+> pca995x_led->pca995x_chip->pca995x_led->pca995x_chip->pca995x_led->pca995x_chip
+> 
+> Some implementation of container_of() should do the trick.
+
+container_of() wouldn't work here because struct pca995x_chip contains 
+array of LEDs .
+
+The structure layout is taken from:
+8325642d2757e ("leds: bd2606mvv: Driver for the Rohm 6 Channel i2c LED 
+driver")
+
+>> +static int pca995x_brightness_set(struct led_classdev *led_cdev,
+>> +				  enum led_brightness brightness)
+>> +{
+>> +	struct pca995x_led *led = ldev_to_led(led_cdev);
+>> +	struct pca995x_chip *chip = led->chip;
+>> +	u8 ledout_addr, pwmout_addr;
+>> +	int shift, ret;
+>> +
+>> +	pwmout_addr = (chip->btype ? PCA9955B_PWM0 : PCA9952_PWM0) + led->led_no;
+> 
+> All this btype stuff is a little crazy and totally not scalable.
+
+That's right, but until NXP changes the register layout again, this 
+should be sufficient to support the entire 995x line up.
+
+>> +	ledout_addr = PCA995X_LEDOUT0 + (led->led_no / 4);
+>> +	shift = 2 * (led->led_no % 4);
+> 
+> Why 2 and 4?  I suggest that they are defined.
+> 
+>> +	switch (brightness) {
+>> +	case LED_FULL:
+> 
+> https://elixir.bootlin.com/linux/latest/source/include/linux/leds.h#L32
+
+LED_HALF is just PWM (default) mode, set to half duty cycle .
+
+>> +		return regmap_update_bits(chip->regmap, ledout_addr,
+>> +					  PCA995X_LDRX_MASK << shift,
+>> +					  PCA995X_LED_ON << shift);
+>> +	case LED_OFF:
+>> +		return regmap_update_bits(chip->regmap, ledout_addr,
+>> +					  PCA995X_LDRX_MASK << shift, 0);
+>> +	default:
+> 
+> Are there no invalid values here?
+
+Not to my knowledge, this should be 0..255 clamped by 
+ldev.max_brightness further down.
+
+>> +	/* Disable LED all-call address and set normal mode */
+>> +	ret = regmap_write(chip->regmap, PCA995X_MODE1, PCA995X_MODE_1_CFG);
+> 
+> The formatting of "MODE1" and "MODE_1" is making me twitch!
+> 
+> Is this how they are referenced in the datasheet?
+
+It's called MODE1 in datasheet, fixed.
+
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* IREF Output current value for all LEDn outputs */
+>> +	return regmap_write(chip->regmap,
+>> +			    btype ? PCA9955B_IREFALL : PCA9952_IREFALL,
+>> +			    PCA995X_IREFALL_CFG);
+>> +}
+>> +
+>> +static const struct i2c_device_id pca995x_id[] = {
+>> +	{ "pca9952", .driver_data = (kernel_ulong_t)0 /* non-B chip */ },
+> 
+> Defines at least please.
+> 
+> Are you sure these are the only 2 types of chip this driver will
+> support?
+
+No, I cannot predict the future or how NXP will or won't change the 
+register layout of it. When it cames, we can deal with that.
+
+[...]
+
+The rest is addressed in V4.
