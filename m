@@ -2,80 +2,186 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2B7EB64DA
-	for <linux-leds@archiver.kernel.org>; Fri, 14 Jul 2023 08:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C8AC001DD
+	for <linux-leds@archiver.kernel.org>; Fri, 14 Jul 2023 09:08:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234549AbjGNIxN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 14 Jul 2023 04:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
+        id S235462AbjGNJIM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 14 Jul 2023 05:08:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235756AbjGNIxC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 14 Jul 2023 04:53:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9868B198A
-        for <linux-leds@vger.kernel.org>; Fri, 14 Jul 2023 01:53:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2DB8A61CA0
-        for <linux-leds@vger.kernel.org>; Fri, 14 Jul 2023 08:53:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F476C433CA;
-        Fri, 14 Jul 2023 08:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689324780;
-        bh=hfhVlSbfqvPK76cxdTnugo9OdIJZfmc1WJ2D+X21X2w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TjyaopTzTB12udXKp+kCYT8I32qafqg7o69HUc5sxhomVBeMvcTx64wfxO9ua2VLf
-         gFb8r7cWWYLyol+iHdi7HnSAX+22DGmRJXntlEaTfIQSTQrGbW4e39MsG4GbotaJ38
-         2wW87qhqefBuYuteYW5L+UgWSRgoAxF3vtf8EqOF3M9aRLQz7boAk0LOA3iubWlnJL
-         a+VBvVGFLkGlniqUEZUa9TqAKjnTgkaa9RxqDgSmRL8YmLxv3t/Z2oRtJT5JHPL4eS
-         Dug32kBmLkvvekncXnRPgqDOBuAKV6KiA8UEbTZAVwadqBfVXL+S5X+F2aVEMmtaRQ
-         u9dqHYS2OvZnw==
-From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-To:     linux-leds@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>
-Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Subject: [PATCH v2 2/3] leds: turris-omnia: initialize multi-intensity to full
-Date:   Fri, 14 Jul 2023 10:52:52 +0200
-Message-ID: <20230714085253.13544-3-kabel@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230714085253.13544-1-kabel@kernel.org>
-References: <20230714085253.13544-1-kabel@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S235844AbjGNJIF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 14 Jul 2023 05:08:05 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D00A32728
+        for <linux-leds@vger.kernel.org>; Fri, 14 Jul 2023 02:07:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689325678; x=1720861678;
+  h=date:from:to:cc:subject:message-id;
+  bh=ZjaK5hR16w4gHcrA8CKzFZYrB3Z3vbr+l+yihwiAoR4=;
+  b=YkLQ06oXIa0xet3RS/LL5rfvSVvSQu7+xUdzHY4I99DDXGXpE8OIYttJ
+   6W4qbzq0ILpSIE8h/nG7D8bYOuESb0Yu5KFZZvcjbKoULJRmSOjvoJ5DC
+   Dafsy3JE5mzRfgx7gMjhJAQltMvBmxEFGW3vVN0ZkEOrI3lX4hyG4IOJ7
+   XthtevYfCDef9biegCc5dyue69bZHiM0EMyVexVDKNlnX0CQx/zxTKr3U
+   45p00zJR7QfAHvWq50eIZFfvbryQbQZ226Rfm9nQqbHyfMf1iIGwJCDLz
+   54u+bk5cM4/LFSa/1jo2QHbRMfMhyBDNR9Jspfk0dDsS/W86+9+zIEL53
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="364303284"
+X-IronPort-AV: E=Sophos;i="6.01,204,1684825200"; 
+   d="scan'208";a="364303284"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2023 02:06:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10770"; a="672626151"
+X-IronPort-AV: E=Sophos;i="6.01,204,1684825200"; 
+   d="scan'208";a="672626151"
+Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 14 Jul 2023 02:06:29 -0700
+Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qKEku-0007Kj-0P;
+        Fri, 14 Jul 2023 09:06:28 +0000
+Date:   Fri, 14 Jul 2023 17:06:13 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Lee Jones <lee@kernel.org>
+Cc:     linux-leds@vger.kernel.org
+Subject: [lee-leds:for-leds-next] BUILD SUCCESS
+ 7a2b85a76b05f16e8e788d035afcacdd4faa1d71
+Message-ID: <202307141711.X8TIEIWs-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The default color of each LED before driver probe is (255, 255, 255).
-Initialize multi_intensity to this value, so that it corresponds to the
-reality.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+branch HEAD: 7a2b85a76b05f16e8e788d035afcacdd4faa1d71  leds: simatic-ipc-leds-gpio: Fix comment style in SPDX header
 
-Signed-off-by: Marek Behún <kabel@kernel.org>
----
- drivers/leds/leds-turris-omnia.c | 3 +++
- 1 file changed, 3 insertions(+)
+elapsed time: 724m
 
-diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
-index c063b6b710f9..7977c0372667 100644
---- a/drivers/leds/leds-turris-omnia.c
-+++ b/drivers/leds/leds-turris-omnia.c
-@@ -98,10 +98,13 @@ static int omnia_led_register(struct i2c_client *client, struct omnia_led *led,
- 	}
- 
- 	led->subled_info[0].color_index = LED_COLOR_ID_RED;
-+	led->subled_info[0].intensity = 255;
- 	led->subled_info[0].channel = 0;
- 	led->subled_info[1].color_index = LED_COLOR_ID_GREEN;
-+	led->subled_info[1].intensity = 255;
- 	led->subled_info[1].channel = 1;
- 	led->subled_info[2].color_index = LED_COLOR_ID_BLUE;
-+	led->subled_info[2].intensity = 255;
- 	led->subled_info[2].channel = 2;
- 
- 	led->mc_cdev.subled_info = led->subled_info;
+configs tested: 116
+configs skipped: 5
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                          axs101_defconfig   gcc  
+arc                                 defconfig   gcc  
+arc                  randconfig-r011-20230713   gcc  
+arc                  randconfig-r043-20230713   gcc  
+arc                        vdk_hs38_defconfig   gcc  
+arm                              allmodconfig   gcc  
+arm                              allyesconfig   gcc  
+arm                       aspeed_g5_defconfig   gcc  
+arm                        clps711x_defconfig   gcc  
+arm                                 defconfig   gcc  
+arm                  randconfig-r012-20230713   clang
+arm                  randconfig-r046-20230713   clang
+arm64                            allyesconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                randconfig-r021-20230713   gcc  
+arm64                randconfig-r036-20230713   clang
+csky                                defconfig   gcc  
+csky                 randconfig-r025-20230713   gcc  
+hexagon              randconfig-r041-20230713   clang
+hexagon              randconfig-r045-20230713   clang
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-r004-20230713   clang
+i386         buildonly-randconfig-r005-20230713   clang
+i386         buildonly-randconfig-r006-20230713   clang
+i386                              debian-10.3   gcc  
+i386                                defconfig   gcc  
+i386                 randconfig-i001-20230713   clang
+i386                 randconfig-i002-20230713   clang
+i386                 randconfig-i003-20230713   clang
+i386                 randconfig-i004-20230713   clang
+i386                 randconfig-i005-20230713   clang
+i386                 randconfig-i006-20230713   clang
+i386                 randconfig-i011-20230713   gcc  
+i386                 randconfig-i012-20230713   gcc  
+i386                 randconfig-i013-20230713   gcc  
+i386                 randconfig-i014-20230713   gcc  
+i386                 randconfig-i015-20230713   gcc  
+i386                 randconfig-i016-20230713   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch            randconfig-r033-20230713   gcc  
+m68k                             allmodconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze           randconfig-r031-20230713   gcc  
+mips                             allmodconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                randconfig-r013-20230713   gcc  
+nios2                randconfig-r015-20230713   gcc  
+openrisc             randconfig-r022-20230713   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc               randconfig-r004-20230713   gcc  
+parisc               randconfig-r023-20230713   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc              randconfig-r026-20230713   gcc  
+powerpc              randconfig-r032-20230713   clang
+riscv                            allmodconfig   gcc  
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   gcc  
+riscv                               defconfig   gcc  
+riscv                randconfig-r042-20230713   gcc  
+riscv                          rv32_defconfig   gcc  
+s390                             allmodconfig   gcc  
+s390                             allyesconfig   gcc  
+s390                                defconfig   gcc  
+s390                 randconfig-r035-20230713   clang
+s390                 randconfig-r044-20230713   gcc  
+sh                               allmodconfig   gcc  
+sh                 kfr2r09-romimage_defconfig   gcc  
+sh                          landisk_defconfig   gcc  
+sh                           se7705_defconfig   gcc  
+sh                        sh7785lcr_defconfig   gcc  
+sh                            shmin_defconfig   gcc  
+sparc                            allyesconfig   gcc  
+sparc                               defconfig   gcc  
+sparc                randconfig-r014-20230713   gcc  
+sparc                randconfig-r016-20230713   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   clang
+um                                  defconfig   gcc  
+um                             i386_defconfig   gcc  
+um                   randconfig-r003-20230713   gcc  
+um                           x86_64_defconfig   gcc  
+x86_64                           allyesconfig   gcc  
+x86_64       buildonly-randconfig-r001-20230713   clang
+x86_64       buildonly-randconfig-r002-20230713   clang
+x86_64       buildonly-randconfig-r003-20230713   clang
+x86_64                              defconfig   gcc  
+x86_64                                  kexec   gcc  
+x86_64               randconfig-r002-20230713   clang
+x86_64               randconfig-x001-20230713   gcc  
+x86_64               randconfig-x002-20230713   gcc  
+x86_64               randconfig-x003-20230713   gcc  
+x86_64               randconfig-x004-20230713   gcc  
+x86_64               randconfig-x005-20230713   gcc  
+x86_64               randconfig-x006-20230713   gcc  
+x86_64               randconfig-x011-20230713   clang
+x86_64               randconfig-x012-20230713   clang
+x86_64               randconfig-x013-20230713   clang
+x86_64               randconfig-x014-20230713   clang
+x86_64               randconfig-x015-20230713   clang
+x86_64               randconfig-x016-20230713   clang
+x86_64                          rhel-8.3-rust   clang
+x86_64                               rhel-8.3   gcc  
+xtensa               randconfig-r001-20230713   gcc  
+xtensa               randconfig-r034-20230713   gcc  
+xtensa                         virt_defconfig   gcc  
+
 -- 
-2.41.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
