@@ -2,118 +2,130 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093B6EB64DA
-	for <linux-leds@archiver.kernel.org>; Tue, 18 Jul 2023 09:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1DAC0015E
+	for <linux-leds@archiver.kernel.org>; Tue, 18 Jul 2023 10:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232137AbjGRJyX (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 18 Jul 2023 05:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49202 "EHLO
+        id S231439AbjGRKwa (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 18 Jul 2023 06:52:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230376AbjGRJyD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2023 05:54:03 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A8AC172E;
-        Tue, 18 Jul 2023 02:53:02 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36I7v7VI010277;
-        Tue, 18 Jul 2023 09:52:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=2d/966OWnkvOyNnR/my+wrb0gN+xG4kEv8BAnNhK44Y=;
- b=ptN0fe4j4F9thQYVMSKotlpxI9eLw7Kevy3uRlrMJbMm9rhXRQxXVunZzlIpdi3Qq0bU
- o+8woEt5YThDiA76a6fDXKXA+4aCPScICnbO0SzQK0k563OwJK4zaPVD6cJCOYJ9bPGL
- 9TTOzk7s+7e8UnmMMkrvNTsQDBBBSBuxTVjkelQ9P07G2ZaYY6FW+GbeGg5ONg0Ic6AJ
- 86SJUUkhb4snOZkmebwQ4IrRq6oGI8zNcE8pYbAaJDxrHnfcvI/6Us0L7fIetbVIle1A
- oiOQ5on+MGQhTpDLMfC3twQsTgULl2sd56womWoHRdTImzDiga3VC0YTDVZlxGPGT46M xg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rwps5882y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jul 2023 09:52:22 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36I9qKSj000884
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jul 2023 09:52:21 GMT
-Received: from [10.239.154.73] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 18 Jul
- 2023 02:52:17 -0700
-Message-ID: <e420f2c9-4c29-e2c4-4312-291b05c97224@quicinc.com>
-Date:   Tue, 18 Jul 2023 17:52:15 +0800
+        with ESMTP id S229938AbjGRKw3 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 18 Jul 2023 06:52:29 -0400
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2040.outbound.protection.outlook.com [40.107.249.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC0C94;
+        Tue, 18 Jul 2023 03:52:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CLbYAqhaFiW+M4nMDuIVaMGnQ/nBnvdhKjYzgOhbmYHFnpKrw/TJTz0chf3fTktD8HMa/up9JGUUHcSZmQTRbx2yEnY86qy0Psb0kEV9486Fu67wTAAQwjDSGX+39yQSreZIDUNpUto04WLAUdRPutAH5sJAAhSnDH3b+bf7TuJfokO76d7ert3ZLXXa9+swXzrc8/kvcJjUUaU8fU+kctljV+g805agDHBTW3EH/fgEkF8APuaFNJx3aM3gqLcjhYnBlbPfboPmvkULJ2NJv4C5X/9rp/zgO1ZY1Y2X8psH6Vgf0JiEkGFiu9gF26fJ4XEYBExC1euq6JF7w/z+8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eKyd+lnbu0O5uR6fuMHww+jkRKGvzNNenyEBsKCUcSo=;
+ b=oTDvRncxjpWBKjyatBV0MXtL3KH9pq+q7iy6IVip65R42DFMWJVmUfiYgM2nC7FoSdPpdjZHlG4idyT2mQL2sqz+fBWGejkaVM1qXrY19XnzreddfWncATw1+xwEPvHzhEY9SbLv5/VKAoM25xG9mgP2DtWF+XUjjp1J/lIfJcVOQCoK+N1UjIqFy91NbFoifJFNjLs1UbfbT1BMwvcYybUSsNZ1wisa05AW6MLLU9F8Dh261Sp4Esf0YGYgn8xcBaFmITWSlCLf8PNk+AKp/9kpafr7PXtV64hz0mGLtZvhJMb3atT1lezBoQdizlubKEfgE13pd8rcjlCitxR2vQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.75) smtp.rcpttodomain=kernel.org smtp.mailfrom=siemens.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=siemens.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eKyd+lnbu0O5uR6fuMHww+jkRKGvzNNenyEBsKCUcSo=;
+ b=FMqQfzIHx2NF8/6LgYz4cp7cSr75jj6cpQujucASeM6CAO94qB0LZKrDCmZ48eSAx5jHKMfEj09pGyaL5BsjstHRckuYPowC1HmB7EWnaBP5Yv0aRBQ0R4iHDzIUULWZgjjoY81/eQTI6E52MoVsEnmGq7RMuTEAQWzTgXlozyzo0lG+WVWZ8QEoGyQKuOxJd7MD8N49RkXBy86P16pOWF4YsowUJOUapeEJ1ROhs43v1Dqsoae/sE65BobvW2Y9d0izPjfonBMR922Etnu/HVQGYh5nbeDHPIobwAYfCJ1XhuiQkcvvAKQxhOSq0d85agbEQRv4c/sTwJ1/euswkA==
+Received: from FR0P281CA0037.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:48::19)
+ by AS4PR10MB5647.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4f2::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Tue, 18 Jul
+ 2023 10:52:25 +0000
+Received: from VE1EUR01FT031.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:d10:48:cafe::a5) by FR0P281CA0037.outlook.office365.com
+ (2603:10a6:d10:48::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.23 via Frontend
+ Transport; Tue, 18 Jul 2023 10:52:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.75)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.75 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.75; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.75) by
+ VE1EUR01FT031.mail.protection.outlook.com (10.152.2.225) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6609.23 via Frontend Transport; Tue, 18 Jul 2023 10:52:25 +0000
+Received: from DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) by
+ DEMCHDC8VRA.ad011.siemens.net (194.138.21.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Tue, 18 Jul 2023 12:52:24 +0200
+Received: from md1za8fc.ppmd.siemens.net (139.25.68.216) by
+ DEMCHDC8WAA.ad011.siemens.net (139.25.226.104) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.25; Tue, 18 Jul 2023 12:52:24 +0200
+From:   Henning Schild <henning.schild@siemens.com>
+To:     Lee Jones <lee@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>
+CC:     Pavel Machek <pavel@ucw.cz>, Mark Gross <markgross@kernel.org>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        Tobias Schaffner <tobias.schaffner@siemens.com>,
+        Henning Schild <henning.schild@siemens.com>
+Subject: [PATCH 2/3] leds: simatic-ipc-leds: default config switch to platform switch
+Date:   Tue, 18 Jul 2023 12:52:12 +0200
+Message-ID: <20230718105213.1275-3-henning.schild@siemens.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230718105213.1275-1-henning.schild@siemens.com>
+References: <20230718105213.1275-1-henning.schild@siemens.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v1] led: flash: various minor fixes for leds-qcom-flash
- driver
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lee@kernel.org>, <pavel@ucw.cz>,
-        ChiaEn Wu <chiaen_wu@richtek.com>,
-        "Alice Chen" <alice_chen@richtek.com>,
-        ChiYuan Huang <cy_huang@richtek.com>,
-        "Dylan Van Assche" <me@dylanvanassche.be>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        Tom Rix <trix@redhat.com>, <linux-leds@vger.kernel.org>
-CC:     <quic_collinsd@quicinc.com>, <quic_subbaram@quicinc.com>
-References: <20230718092439.2482320-1-quic_fenglinw@quicinc.com>
- <d246292b-c0df-fa70-7561-9523e4db6138@linaro.org>
-From:   Fenglin Wu <quic_fenglinw@quicinc.com>
-In-Reply-To: <d246292b-c0df-fa70-7561-9523e4db6138@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: znqBGfnqHkdSNITSJDykir-4j7LPbjUk
-X-Proofpoint-ORIG-GUID: znqBGfnqHkdSNITSJDykir-4j7LPbjUk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-17_15,2023-07-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- mlxlogscore=549 lowpriorityscore=0 suspectscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 phishscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307180089
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [139.25.68.216]
+X-ClientProxiedBy: DEMCHDC8WBA.ad011.siemens.net (139.25.226.105) To
+ DEMCHDC8WAA.ad011.siemens.net (139.25.226.104)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1EUR01FT031:EE_|AS4PR10MB5647:EE_
+X-MS-Office365-Filtering-Correlation-Id: a13f2e75-2ea4-460d-806e-08db877d1288
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: hawnKRpydw40J9A3Kp79L5B32oDT2fGHhkIQ0RSi1nBfzOVgk1eSwTxUNN3BzRnOUVX9EIznZ9C48TuBxq5t82D4CReQ2614lRTK5hBfRgz7EJz/SBDKP6dYPu5vVXvJjwgeXEdhsnW/YAu1T5YEMJoGE3HHj6DZvvMXqS9rwhutIx15rzYyJSIN5EuX3n6IsGYVRaQnKvohrJf369chzfZbV4yWn70Imn7tIHiY5b0wTfz04Ovvatl3IW7WdtZzVdgVRcjWAM0y9nNNO/X2cVNJpk/xLTMKokmVTtUiaA7EbpIsDUOoUZdjO2agWpeYFLYnDIzJWw+FfuUNWNp31XBtjkysxjLlF4t+1WQRiF52h2NO9vVHyzOrFFJi2LvAlgU1Iz5cWGHQWiUHW3ifRIirMY+nbt8JzbmnXPNs1WzGd/2SMm93YexGeTGBO/55yyU/8b37RweJPeV5y3K/4pIMVy78gkDEG5BxUVdztbGAKkm73tbj0UHCap1Twtx0UQUVscQakz9R87RSXZHXqsKg/GIB4yN+dU6T6WPoTKIB7uoTfTySM1v9oU7IEnULH5q/iT7r8dzUJKPtWN59z63Ow0r9xFfBL2CaBLX/86l4PKvT83/n3X2pKpHNGyaaKamGrQQi2CD+NZDkzMZaCsu9kbI6F2IJNaSqoJGDC1pT0ZgAlbDQK+UcENjYWQ2cg7mOTGbwN8SCHTUX+yOL4cK8c/LTaQaAo1xOsO7iCXpGH+4FjbotrYiGsaqCqiw8sVV3J/ucv0ZcBbFxMPU60ETz8joQbK0ig8OSXZgBeaw=
+X-Forefront-Antispam-Report: CIP:194.138.21.75;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(396003)(376002)(136003)(82310400008)(451199021)(40470700004)(46966006)(36840700001)(82960400001)(6666004)(478600001)(82740400003)(356005)(47076005)(16526019)(36860700001)(186003)(336012)(2616005)(956004)(26005)(1076003)(40460700003)(40480700001)(107886003)(8936002)(4744005)(41300700001)(8676002)(4326008)(2906002)(5660300002)(316002)(86362001)(36756003)(70206006)(54906003)(110136005)(7416002)(70586007)(81166007)(44832011)(36900700001)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2023 10:52:25.4105
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a13f2e75-2ea4-460d-806e-08db877d1288
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.75];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: VE1EUR01FT031.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5647
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
+If a user did choose to enable Siemens Simatic platform support they
+likely want the LED drivers to be enabled without having to flip more
+config switches. So we make the LED drivers config switch default to
+the platform driver switches value.
 
+Signed-off-by: Henning Schild <henning.schild@siemens.com>
+---
+ drivers/leds/simple/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 7/18/2023 5:32 PM, Krzysztof Kozlowski wrote:
-> On 18/07/2023 11:24, Fenglin Wu wrote:
->> Update the driver to address following minor issues:
->>   - Add a sentence in Kconfig to explain the driver can be compiled
->>     as a module
->>   - strobe off the LED channel before setting flash current to prevent
->>     the flash LED being lit with an incorrect brightness if it was
->>     already active in torch mode
->>   - put the child node if register any flash LED device failed.
-> 
-> Don't mix different fixes and changes in one commit.
-> 
-> Also, please use scripts/get_maintainers.pl to get a list of necessary
-> people and lists to CC (and consider --no-git-fallback argument). I
-> really do not see a point why I am cc-ed here.
-> 
-> Best regards,
-> Krzysztof
+diff --git a/drivers/leds/simple/Kconfig b/drivers/leds/simple/Kconfig
+index 44fa0f93cb3b..9666bf22d554 100644
+--- a/drivers/leds/simple/Kconfig
++++ b/drivers/leds/simple/Kconfig
+@@ -2,6 +2,7 @@
+ config LEDS_SIEMENS_SIMATIC_IPC
+ 	tristate "LED driver for Siemens Simatic IPCs"
+ 	depends on SIEMENS_SIMATIC_IPC
++	default SIEMENS_SIMATIC_IPC
+ 	help
+ 	  This option enables support for the LEDs of several Industrial PCs
+ 	  from Siemens.
+-- 
+2.41.0
 
-I understood that we should separate the changes for different fixes.
-
-I am trying to address the review comment from Pavel that was coming 
-late after the original changes were applied: 
-https://lore.kernel.org/linux-arm-msm/20230325170957.GA2904@bug/ (sorry 
-for just got time to work on this), since all of them are small ones and 
-all related with the same driver, so I thought it might be good to put 
-them together and update with a single patch?
-
-BTW, you are copied because you also reviewed the original changes.
-Thanks
-
-
-
-> 
