@@ -2,84 +2,116 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB7FC001DE
-	for <linux-leds@archiver.kernel.org>; Mon,  7 Aug 2023 08:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C47C001DF
+	for <linux-leds@archiver.kernel.org>; Mon,  7 Aug 2023 20:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbjHGI4a (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 7 Aug 2023 04:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40992 "EHLO
+        id S231177AbjHGUD3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 7 Aug 2023 16:03:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231241AbjHGI4X (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Aug 2023 04:56:23 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA8F10FD
-        for <linux-leds@vger.kernel.org>; Mon,  7 Aug 2023 01:56:21 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d07c535377fso4677209276.1
-        for <linux-leds@vger.kernel.org>; Mon, 07 Aug 2023 01:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1691398581; x=1692003381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTR/u2PpG3LKb8wVdD7nsllACEqpd45z6GcRCQZJTqE=;
-        b=g2llslmFRX3ySdXig161Vyh5DEUBnJUIvcrEJN67E5rLmdq2oqwU1ffFvhJTzo+MJa
-         V/tzrXoX50fE7NHvM/WDa1n6S1g/bewiFxGcTQBEv2HhPJzMuRhghasqF/rZDU5j5ils
-         0bXa/jK1mikiBk7bu6CVIUqQsJWnXeVIjy9ZLhcmeWzNqLe+fT5QUA/ncIE+jSgan4Yr
-         QeKkQxLUrin9aF9cCdRe3fdd5Q9fQ9g4MSVdSZH+rcyXYoCCXZ8hZdi4Wfd3Y1Zkjk67
-         m5vD4x+8NjALkDkWEnYcnlj9OJVqD0t+0KBmfCjyhC1RZlP/GGkTcT1XWLwYrMybClRv
-         HsHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691398581; x=1692003381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTR/u2PpG3LKb8wVdD7nsllACEqpd45z6GcRCQZJTqE=;
-        b=Rsl6hVp3tHXnYzFs/TkfEM8AiDfb8QqJXWmehhpeXk5Y1clOHQ9tbAD2oB/NyE7kRv
-         6mwh1apbVvE/Kbz1Z6MKT7xBUWSYw7TaVWGIiRfpRt9gwi+4oVDIW80w7dHdEZXYlzQ/
-         BynPYH/IJ4kw4DvWgGxwGl5eykDsGcmJWO9vFhZ85w6EY3yG/R+8F1ebVBb2gqcJXdZB
-         fkSxtO2FGk9emiokDSTSNUQuivhJwpybjqAEEXwynPB01y1DSCXZw0ZYPgFw2qVA9LeJ
-         Rw0Gk/nWC2xpyHg2VDhDZNok7IvbYEKCJ1jsrw2+BhHhtHgLqB5toA7bkDFackSmAZFZ
-         vCQQ==
-X-Gm-Message-State: AOJu0YzS25L7uzoCGsiinxLmMI+x6dbGG4Q3nYoDOSJbg/s13IUtyjjt
-        Z2weZsWgJWou2bttfhze2kwomjjj8qn0i8CrnONljw==
-X-Google-Smtp-Source: AGHT+IEz8bMj8U7s2yoRZBwu0+uMDX8L1rdxKLELEeUY1Cg3hgASws6siBfe5bn9m1H3rny67X2StZqhmW7DsuKoDW0=
-X-Received: by 2002:a25:c345:0:b0:d0f:926b:c734 with SMTP id
- t66-20020a25c345000000b00d0f926bc734mr7593218ybf.61.1691398580784; Mon, 07
- Aug 2023 01:56:20 -0700 (PDT)
+        with ESMTP id S230389AbjHGUD0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 7 Aug 2023 16:03:26 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF54172B;
+        Mon,  7 Aug 2023 13:03:21 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 377HUMfN016146;
+        Mon, 7 Aug 2023 20:03:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=iuZ3TDQo1tozN5VS9Wo/E3D3xrzfQoD/Zc3kj7u+4tc=;
+ b=i7m7+5zDsDl65yll7O8V+0VXjZ2JB0/0xyII8rp/O9xXwYePXbpkplVQxe5PI6Y8q2jA
+ 4fePmJPuDZm8c0PhzKkN5tUTEY/IDyyTk3cUTfJ/kAKBcjpVfmTlhLRToMozcCakGiXI
+ s4HVeQW+Wt5PYkgliGFVXVRKr8Z5r6eCkLIHDcqEgz87I1z9rsCzgtkdS483t740lCLU
+ rArF5CBgKPrfZOmjwI1JlT4UzAf69sMyprbyvjotv/DMmdg3z14Sm/yB2COPKrLPKqUt
+ AnKB/LsBUIc1TW58ny0nxPaF3lNSuSTygvS5stC5YrxCV/axkoMjSC3HaSEdlRPbfriv tg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sawbg9dan-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Aug 2023 20:03:08 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 377K37Js019208
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 7 Aug 2023 20:03:07 GMT
+Received: from [10.110.62.211] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Mon, 7 Aug
+ 2023 13:03:06 -0700
+Message-ID: <900b3b16-cfad-d043-39b4-8ea6802f87bc@quicinc.com>
+Date:   Mon, 7 Aug 2023 13:03:05 -0700
 MIME-Version: 1.0
-References: <20230724063520.182888-1-alexander.stein@ew.tq-group.com> <20230724063520.182888-2-alexander.stein@ew.tq-group.com>
-In-Reply-To: <20230724063520.182888-2-alexander.stein@ew.tq-group.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 7 Aug 2023 10:56:09 +0200
-Message-ID: <CACRpkdZFqkn8epsP2OVDO-+Di9ymxe+n02+9Wcc4MAT5ea7GrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: leds: Add gpio-line-names to PCA9532 GPIO
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 2/7] dt-bindings: leds: leds-qcom-lpg: Add support for
+ LPG PPG
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+CC:     <pavel@ucw.cz>, <lee@kernel.org>, <thierry.reding@gmail.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <luca.weiss@fairphone.com>, <konrad.dybcio@linaro.org>,
+        <u.kleine-koenig@pengutronix.de>, <quic_subbaram@quicinc.com>,
+        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>
+References: <20230725193423.25047-1-quic_amelende@quicinc.com>
+ <20230725193423.25047-3-quic_amelende@quicinc.com>
+ <20230803002502.GA1569972-robh@kernel.org>
+From:   Anjelique Melendez <quic_amelende@quicinc.com>
+In-Reply-To: <20230803002502.GA1569972-robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: tA45PtcBV9TNqiAInbRxmq3CJjyHZ6KV
+X-Proofpoint-GUID: tA45PtcBV9TNqiAInbRxmq3CJjyHZ6KV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-08-07_22,2023-08-03_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=745
+ impostorscore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ mlxscore=0 priorityscore=1501 malwarescore=0 adultscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2308070183
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 8:35=E2=80=AFAM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
 
-> This is a gpio-controller, so gpio-line-names should be allowed as well.
-> pca9532 supports up to 16 GPIOs.
->
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On 8/2/2023 5:25 PM, Rob Herring wrote:
+> On Tue, Jul 25, 2023 at 12:34:18PM -0700, Anjelique Melendez wrote:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - qcom,pm8350c-pw
+>> +              - qcom,pm8550-pwm
+>> +    then:
+>> +      properties:
+>> +        nvmem:
+>> +          minItems: 2
+>> +        nvmem-names:
+>> +          items:
+>> +            - const: lpg_chan_sdam
+>> +            - const: lut_sdam
+> 
+> This can go into the main section and then here you just say 
+> 'minItems: 2'. And similar for the 1st if/then.
+> 
+ACK
+>> +      required:
+>> +        - nvmem
+>> +        - nvmem-names
+> 
+> Looks like these are always required.
+These are only required for the compatibles properties that do not
+have lut peripherals. Right now this is is only for qcom,pmi632-lpg, 
+qcom,pm8350c-pwm and qcom,pm8550-pwm.
 
-Yours,
-Linus Walleij
+
