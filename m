@@ -2,111 +2,57 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70786C04A6A
-	for <linux-leds@archiver.kernel.org>; Tue, 15 Aug 2023 00:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC4CC04A6A
+	for <linux-leds@archiver.kernel.org>; Tue, 15 Aug 2023 08:01:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233572AbjHOACQ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 14 Aug 2023 20:02:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38362 "EHLO
+        id S235519AbjHOIAd (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 15 Aug 2023 04:00:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233554AbjHOABu (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 14 Aug 2023 20:01:50 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6199A124;
-        Mon, 14 Aug 2023 17:01:49 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37ENrp0U010516;
-        Tue, 15 Aug 2023 00:01:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=1slqsGum+wrVX7fcUwAskcTopuaAycoFru9qUnkR0j8=;
- b=WCzsmCelQ+ey6emSvQoTMEisTayUs9x0GIGStHeTj6ncJAezKHDrthCEppyW2JWLzH03
- JYvVuELOEsNx75mp1Y2Bs6mSk5Medp9mQgZ7nv4mge000VuAVGATDqO+DQVsPRBkbvDg
- /U1egxLVNC9mT/+nI6qGGDFB+SFjYQ5Of8ve84TchRmmYF7ZSyy/k65z+dTS96osPVN/
- cGXlSpWiSro/0fYKzhvrhWVt1ojY7jO3G03s7MtOQ3adugj1+pI6qOcrq37SnpPDSmP/
- 4A8z6md5WBijqfjfjojPDXlBZsxnfaeTeFT8pJi7XMchNLZg7oERCFOpWLfQ9NVdE/6c Nw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3se40rmyce-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 15 Aug 2023 00:01:41 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37F01AnL002560
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 15 Aug 2023 00:01:10 GMT
-Received: from hu-amelende-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Mon, 14 Aug 2023 17:01:10 -0700
-From:   Anjelique Melendez <quic_amelende@quicinc.com>
-To:     <pavel@ucw.cz>, <lee@kernel.org>, <thierry.reding@gmail.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>
-CC:     <luca.weiss@fairphone.com>, <konrad.dybcio@linaro.org>,
-        <u.kleine-koenig@pengutronix.de>, <quic_subbaram@quicinc.com>,
-        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>,
-        Anjelique Melendez <quic_amelende@quicinc.com>
-Subject: [PATCH v3 5/7] leds: rgb: leds-qcom-lpg: Update PMI632 lpg_data to support PPG
-Date:   Mon, 14 Aug 2023 16:59:16 -0700
-Message-ID: <20230814235918.10396-6-quic_amelende@quicinc.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230814235918.10396-1-quic_amelende@quicinc.com>
-References: <20230814235918.10396-1-quic_amelende@quicinc.com>
+        with ESMTP id S235511AbjHOIAI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2023 04:00:08 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3557D173F
+        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2023 01:00:06 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RQ3Yb4XC2z1GDYJ;
+        Tue, 15 Aug 2023 15:58:43 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500012.china.huawei.com
+ (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Tue, 15 Aug
+ 2023 16:00:01 +0800
+From:   Li Zetao <lizetao1@huawei.com>
+To:     <pavel@ucw.cz>, <lee@kernel.org>, <andrew@lunn.ch>,
+        <ansuelsmth@gmail.com>, <davem@davemloft.net>, <kuba@kernel.org>,
+        <dan.carpenter@linaro.org>
+CC:     <lizetao1@huawei.com>, <yang.lee@linux.alibaba.com>,
+        <linux-leds@vger.kernel.org>
+Subject: [PATCH -next 0/2] Simplify the code with declaration-driven macros
+Date:   Tue, 15 Aug 2023 15:59:42 +0800
+Message-ID: <20230815075944.1089298-1-lizetao1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OjjvfhALR-LMOwMx646rMhDBulAj-Y4C
-X-Proofpoint-GUID: OjjvfhALR-LMOwMx646rMhDBulAj-Y4C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-14_19,2023-08-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 clxscore=1015 adultscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308140220
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Update the pmi632 lpg_data struct so that pmi632 devices use PPG
-for LUT pattern.
+The patch set uses the declaration-driven macros to simplify the code.
 
-Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
----
- drivers/leds/rgb/leds-qcom-lpg.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Li Zetao (2):
+  leds: trigger: netdev: Use module_led_trigger macro to simplify the
+    code
+  leds: Use module_misc_device macro to simplify the code
 
-diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index 6fdf736d3632..822c7bff00df 100644
---- a/drivers/leds/rgb/leds-qcom-lpg.c
-+++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -1679,11 +1679,15 @@ static const struct lpg_data pm8994_lpg_data = {
- static const struct lpg_data pmi632_lpg_data = {
- 	.triled_base = 0xd000,
- 
-+	.lut_size = 64,
-+	.lut_sdam_base = 0x80,
-+	.nvmem_count = 1,
-+
- 	.num_channels = 5,
- 	.channels = (const struct lpg_channel_data[]) {
--		{ .base = 0xb300, .triled_mask = BIT(7) },
--		{ .base = 0xb400, .triled_mask = BIT(6) },
--		{ .base = 0xb500, .triled_mask = BIT(5) },
-+		{ .base = 0xb300, .triled_mask = BIT(7), .sdam_offset = 0x48 },
-+		{ .base = 0xb400, .triled_mask = BIT(6), .sdam_offset = 0x56 },
-+		{ .base = 0xb500, .triled_mask = BIT(5), .sdam_offset = 0x64 },
- 		{ .base = 0xb600 },
- 		{ .base = 0xb700 },
- 	},
+ drivers/leds/trigger/ledtrig-netdev.c | 13 +------------
+ drivers/leds/uleds.c                  | 12 +-----------
+ 2 files changed, 2 insertions(+), 23 deletions(-)
+
 -- 
-2.41.0
+2.34.1
 
