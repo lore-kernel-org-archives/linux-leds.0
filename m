@@ -2,80 +2,54 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B391C41513
-	for <linux-leds@archiver.kernel.org>; Tue, 15 Aug 2023 08:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54251C41513
+	for <linux-leds@archiver.kernel.org>; Tue, 15 Aug 2023 13:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235520AbjHOIAc (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 15 Aug 2023 04:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45486 "EHLO
+        id S233395AbjHONSj (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 15 Aug 2023 09:18:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235519AbjHOIAI (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2023 04:00:08 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D2E10D8
-        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2023 01:00:05 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4RQ3Yb2xtYzrS2f;
-        Tue, 15 Aug 2023 15:58:43 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500012.china.huawei.com
- (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Tue, 15 Aug
- 2023 16:00:02 +0800
-From:   Li Zetao <lizetao1@huawei.com>
-To:     <pavel@ucw.cz>, <lee@kernel.org>, <andrew@lunn.ch>,
-        <ansuelsmth@gmail.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-        <dan.carpenter@linaro.org>
-CC:     <lizetao1@huawei.com>, <yang.lee@linux.alibaba.com>,
-        <linux-leds@vger.kernel.org>
-Subject: [PATCH -next 1/2] leds: trigger: netdev: Use module_led_trigger macro to simplify the code
-Date:   Tue, 15 Aug 2023 15:59:43 +0800
-Message-ID: <20230815075944.1089298-2-lizetao1@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230815075944.1089298-1-lizetao1@huawei.com>
+        with ESMTP id S237429AbjHONS0 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2023 09:18:26 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 499ABE7A
+        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2023 06:18:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=IVIgVAaEiynVFDb7tHbEp6vZgKISEnHGMrzX2Eh2Eu4=; b=Piowmh+rj5ajjuvvIYnVys68xY
+        Xlwfp/i0WHwsABSXoJ7R4I40N3jFxLuwjfGu6defanSVW8qh0R+QrER/chPoEX79rBAqPLl0JloFc
+        kxBPSXEv1bDRXS6O79DmQtrUaI1hDNZuiZxCT0htPCjC5zYCQU2Ryu/4/G5yYeKH8pd0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1qVtvn-0049sU-Dw; Tue, 15 Aug 2023 15:17:55 +0200
+Date:   Tue, 15 Aug 2023 15:17:55 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Li Zetao <lizetao1@huawei.com>
+Cc:     pavel@ucw.cz, lee@kernel.org, ansuelsmth@gmail.com,
+        davem@davemloft.net, kuba@kernel.org, dan.carpenter@linaro.org,
+        yang.lee@linux.alibaba.com, linux-leds@vger.kernel.org
+Subject: Re: [PATCH -next 0/2] Simplify the code with declaration-driven
+ macros
+Message-ID: <3ac35f8c-aedc-4ea9-afc0-5c39711bbc29@lunn.ch>
 References: <20230815075944.1089298-1-lizetao1@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.90.53.73]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230815075944.1089298-1-lizetao1@huawei.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use the module_led_trigger macro to simplify the code, which is the
-same as declaring with module_init() and module_exit().
+On Tue, Aug 15, 2023 at 03:59:42PM +0800, Li Zetao wrote:
+> The patch set uses the declaration-driven macros to simplify the code.
 
-Signed-off-by: Li Zetao <lizetao1@huawei.com>
----
- drivers/leds/trigger/ledtrig-netdev.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+Hi Li
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index c9bc5a91ec83..a2835f9fed9d 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -605,18 +605,7 @@ static struct led_trigger netdev_led_trigger = {
- 	.groups = netdev_trig_groups,
- };
- 
--static int __init netdev_trig_init(void)
--{
--	return led_trigger_register(&netdev_led_trigger);
--}
--
--static void __exit netdev_trig_exit(void)
--{
--	led_trigger_unregister(&netdev_led_trigger);
--}
--
--module_init(netdev_trig_init);
--module_exit(netdev_trig_exit);
-+module_led_trigger(netdev_led_trigger);
- 
- MODULE_AUTHOR("Ben Whitten <ben.whitten@gmail.com>");
- MODULE_AUTHOR("Oliver Jowett <oliver@opencloud.com>");
--- 
-2.34.1
+After reading this description, i had no idea what the patches were
+going to do. Subjects and descriptions are important, they help get
+the right people to read your patch. So please try to improve them.
 
+    Andrew
