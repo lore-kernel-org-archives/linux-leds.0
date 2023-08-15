@@ -2,129 +2,96 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E8CC41513
-	for <linux-leds@archiver.kernel.org>; Tue, 15 Aug 2023 17:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5A4C04A94
+	for <linux-leds@archiver.kernel.org>; Tue, 15 Aug 2023 20:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238891AbjHORj3 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 15 Aug 2023 13:39:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48102 "EHLO
+        id S237922AbjHOUby (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 15 Aug 2023 16:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238910AbjHORjT (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2023 13:39:19 -0400
-X-Greylist: delayed 696 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Aug 2023 10:39:17 PDT
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E5BD1
-        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2023 10:39:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1692120072; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=FFWPbbPGCxBPNWSfAzf2SbeMSJkx4v1DZ3NFEGPLJiNNFHidJrMRcrRbewctFJOItV
-    8iX37sWvKl6t0tCkw22qFM2/dE2ocDjLIlNhpWQCHK3SYs0L+Nc4HZ74MMtG7++lgDqh
-    30c+wNRTslEPzoCd4yRWcIP/mqBPU95ztgzDe8ko8n+xElyG2FsY1HlbxyRl0Y4kFfdg
-    u9Nlcc+Vngr7/Zw32EVO5fGonF550yob5mJw7gJkwY/CMSx4GMNGK5GgHkMfDgp81Kl3
-    HMJXaLcCgOQ1RmqzlkSFoZdDy3GqYjF7VI0549RoZD5TEQVTeiFrdBRO8bLDuninwOUY
-    JHbQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1692120072;
-    s=strato-dkim-0002; d=strato.com;
-    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
-    From:Subject:Sender;
-    bh=OvXjeQ3KhCC7JaRMJrhSDALEMowi+xqTH2TinBMCtJI=;
-    b=D6+5WEgIDrnhd0VE4Eh6LHCy0vPTkP6IDO66QBU9Ael3Wdq3DV/g2ErMiBBFnnQioo
-    SyYPct1Kza3sNIcsGe7YotTp+VnAOmdjRBpgEsLxJk42Ky8eYL/QwrUe1bV9sjKCU643
-    Gbm7qqbm0dAM062PAzlZ5jBYnR5LdYi19WCNQyH9nwISgH8TkiuAS0vjI71/Qj9wnGPi
-    NAWh+zKPQUC7chQufXoQs6eSUPyD2Y6oeT9p7SDuGLfRW3E0ranC2Tp/dfn54sS8CFDr
-    EQNC80flCxgBKsoI733g0SM2I/uXWbE1u8xcwskiNT1cfuvXEPFpvH6mgl8fJP+23o4J
-    OiJA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1692120072;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
-    From:Subject:Sender;
-    bh=OvXjeQ3KhCC7JaRMJrhSDALEMowi+xqTH2TinBMCtJI=;
-    b=mef6YkzGbqLzk/v9Qs34e3e6mwrDglZdTn7hVEL1WVRX/FAK36MCV29l79oF6e8C5d
-    nbByfm5+J/6HEwyXyDIlahFGDTsEMyv7GxeioyPAhTme47mZ4GA+6f9+vFbTSc0OvEMk
-    BRCahe/xZNNicOjjnPayqseRih6yMYqjzhM9tuvNjAOuwn5H7F4LxipM8hz/nleZij+3
-    P/vYH56lIW4FY+IKnu/GXCc44v+xK6TFfQV7hMK2fJZWaIvrzAqWRX7S5qAEWOtrzVuf
-    htodEceRxbv02f67gSiTgFUelXWU8/0g3RlAvHI9usbecB1dwpnA0vZnaNAdEwYtFTlo
-    fqOw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1692120072;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
-    From:Subject:Sender;
-    bh=OvXjeQ3KhCC7JaRMJrhSDALEMowi+xqTH2TinBMCtJI=;
-    b=iimXrnM/KNIli5yVYzOeJWkUZwqORTN6GA0GjFxMVLEPm8VH+XwhX11fTPB9NDLsNN
-    U9h7kCDXBhQ2OX+BTsDQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn8u4F1mw=="
-Received: from [192.168.244.3]
-    by smtp.strato.de (RZmta 49.8.0 DYNA|AUTH)
-    with ESMTPSA id v41b8bz7FHLC0YV
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Tue, 15 Aug 2023 19:21:12 +0200 (CEST)
-From:   Stephan Gerhold <stephan@gerhold.net>
-Date:   Tue, 15 Aug 2023 19:21:05 +0200
-Subject: [PATCH v3 2/3] dt-bindings: leds: Document pull-up supply for
- interrupt and I2C
+        with ESMTP id S238003AbjHOUbe (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 15 Aug 2023 16:31:34 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6DAA1FCB
+        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2023 13:31:30 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-31771bb4869so5341853f8f.0
+        for <linux-leds@vger.kernel.org>; Tue, 15 Aug 2023 13:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1692131489; x=1692736289;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KyN9mbwaXCeD9ddt8BwKaPHZBpIm4dW+EkteSoYWyH4=;
+        b=xrrg1Lm+rYDLYBzWIRiSdaxZjhV1XYNCjktJ68o3hygAEtXIZQFxlCYG+jRKyxoz05
+         2+vwpNjU4cBXfpgO5uLL4CNwSB2jwyhpVzYhYukSX/KH0HkiLLYteYbCJAYJZ7h5vyao
+         ksUw59ES/NyBAbS1jh3IZsGAeOaeAKylI5LhyttanlDC6SCKOkeRaE73Cw0tAjVIgM+o
+         344GyuIR6zYHzAZ5sRl40FTtAEJSuVlYX+YFoLGcL1Hp9kKd0y/Zuxbo0u1loQNJPsnE
+         7tRIFjWxzsra7bTkYejBdpbz7qs4IStP+YM9NGBKyaQqRym0wdlL4WkIbeBd6l4SuWM0
+         nEsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692131489; x=1692736289;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KyN9mbwaXCeD9ddt8BwKaPHZBpIm4dW+EkteSoYWyH4=;
+        b=SC3dTuCPLq1Oh0V9QhRkXCN22SBT+ge1vu9Mg2kNnY44+B7a8t3/ZeTivbcBZ2EBhO
+         scExZv0Op+9/gdyakOsIQ6gTK2PRy81Pj8koyk9bNZrO69f37unQC2sJebRrMTU73qMs
+         Bt4WbOE727Wgs7utj8UGjIKUYWjIqh7c+Az0pqUkQWB6j9wnyyZyU/xFx6bGavUts9w+
+         RYD3Pm2xREESC9ayEa7pjeEgKCfhnW42/Yzvg4dwIUhnHZUnhDoJxTC/dgebhiatZgAU
+         wobGeY2/5gVV0FsC0nUTi+HxQhI8fdG2IPgMeAAC5opWcqYGQHmD4gHNseFIVD3M1taa
+         5w1g==
+X-Gm-Message-State: AOJu0Yz9+EXhGwpyoE1QRDQve7+ntVGfucuHCPyNATzgqHynZMvjCnpv
+        cEZTrEM81TjbP+AZxj1EfCMxBQ==
+X-Google-Smtp-Source: AGHT+IGKfKT6v7xAX9eRrfeVce0AfRmSoHeqv6qYSAYqLe+fP7lNSELrPG7WvUwsiJxHDSPObqPb+w==
+X-Received: by 2002:a5d:6889:0:b0:319:8161:ecc6 with SMTP id h9-20020a5d6889000000b003198161ecc6mr3432297wru.63.1692131489426;
+        Tue, 15 Aug 2023 13:31:29 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.214.188])
+        by smtp.gmail.com with ESMTPSA id o14-20020a5d474e000000b00317f3fd21b7sm5490315wrs.80.2023.08.15.13.31.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Aug 2023 13:31:29 -0700 (PDT)
+Message-ID: <d9a8e265-8862-0fac-24ae-989293bc4d12@linaro.org>
+Date:   Tue, 15 Aug 2023 22:31:27 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230815-aw2013-vio-v3-2-2505296b0856@gerhold.net>
-References: <20230815-aw2013-vio-v3-0-2505296b0856@gerhold.net>
-In-Reply-To: <20230815-aw2013-vio-v3-0-2505296b0856@gerhold.net>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v3 2/3] dt-bindings: leds: Document pull-up supply for
+ interrupt and I2C
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Nikita Travkin <nikita@trvn.ru>, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Lin, Meng-Bo" <linmengbo0689@protonmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-X-Mailer: b4 0.12.3
+        "Lin, Meng-Bo" <linmengbo0689@protonmail.com>
+References: <20230815-aw2013-vio-v3-0-2505296b0856@gerhold.net>
+ <20230815-aw2013-vio-v3-2-2505296b0856@gerhold.net>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230815-aw2013-vio-v3-2-2505296b0856@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Since the interrupt and I2C lines of AW2013 operate in open drain low
-active mode a pull-up supply is needed for correct operation.
-Unfortunately there is no ideal place to describe it in the DT: The
-pull-up needed for the I2C lines could be described on the I2C bus.
-However, the pull-up needed for the interrupt line belongs neither
-directly to the interrupt controller nor to AW2013. Since the AW2013
-driver will be typically in control of the power management and
-interrupt masking it makes more sense to describe it inside the AW2013
-device tree node.
+On 15/08/2023 19:21, Stephan Gerhold wrote:
+> Since the interrupt and I2C lines of AW2013 operate in open drain low
+> active mode a pull-up supply is needed for correct operation.
+> Unfortunately there is no ideal place to describe it in the DT: The
+> pull-up needed for the I2C lines could be described on the I2C bus.
+> However, the pull-up needed for the interrupt line belongs neither
+> directly to the interrupt controller nor to AW2013. Since the AW2013
+> driver will be typically in control of the power management and
+> interrupt masking it makes more sense to describe it inside the AW2013
+> device tree node.
+> 
+> Add it to the AW2013 DT schema together with a comment that makes it
+> clear what exactly it represents.
+> 
 
-Add it to the AW2013 DT schema together with a comment that makes it
-clear what exactly it represents.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
-Related previous discussion:
-https://lore.kernel.org/linux-leds/20230321220825.GA1685482-robh@kernel.org/
----
- Documentation/devicetree/bindings/leds/leds-aw2013.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-index a0a0dabcfbf3..26238446f2bd 100644
---- a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-@@ -28,6 +28,12 @@ properties:
-   vcc-supply:
-     description: Regulator providing power to the "VCC" pin.
- 
-+  vio-supply:
-+    description: Regulator providing power for pull-up of the I/O lines.
-+      "VIO1" in the typical application circuit example of the datasheet.
-+      Note that this regulator does not directly connect to AW2013, but is
-+      needed for the correct operation of the interrupt and I2C lines.
-+
-   "#address-cells":
-     const: 1
- 
-
--- 
-2.41.0
+Best regards,
+Krzysztof
 
