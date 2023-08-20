@@ -2,138 +2,144 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC11EE4992
-	for <linux-leds@archiver.kernel.org>; Fri, 18 Aug 2023 21:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E421EE49A5
+	for <linux-leds@archiver.kernel.org>; Sun, 20 Aug 2023 08:20:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239873AbjHRVNH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 18 Aug 2023 17:13:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52670 "EHLO
+        id S230161AbjHTIUv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 20 Aug 2023 04:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240724AbjHRVM4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 18 Aug 2023 17:12:56 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D29422C
-        for <linux-leds@vger.kernel.org>; Fri, 18 Aug 2023 14:12:46 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b9b904bb04so21725121fa.1
-        for <linux-leds@vger.kernel.org>; Fri, 18 Aug 2023 14:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692393165; x=1692997965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oAHS8Yx5ppsocSAwAkbrgjIf+g/MiPV0E0bVjlMzLYw=;
-        b=OfTZ+tSNhJ54voY+0cC2z1fsoZf/amXjCTtMtynsl7NPVbg10dBB6achCZnqTfOD89
-         aJgBrkCJGMEFtv2TgxALGaajiU3j1kPpOEaiw6PWnYCmyiGipLg255Ku/nPubfrnaCpX
-         IBQy3T6OSLODkuArZabwP5fNVEdROPFqCXl0xjZYEFtycJ7nQHJRs2uOYHzjZHcneT1n
-         0QeJw1Ss3ZkbgReF/LNhTQIB8illdcBwc/Y7poHJbqGS+57LMP9JPdUKm3ZWX6KkauGf
-         s5Z9mWJ31t5nNtIBe/8dW8dFbQ4U5gzoz01JZCzV88op2v3nQKpF7+uv5zKU6FBMSeFc
-         Ms+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692393165; x=1692997965;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oAHS8Yx5ppsocSAwAkbrgjIf+g/MiPV0E0bVjlMzLYw=;
-        b=VjZevkbqbpu01EOjnnuu9c2kH8+8j0fTI+uqu8wP4KXAlw1QNZBDp5feJCjFZUznsZ
-         NmLET841gCGJyq03cBFEOQIfBj2zwCmu/Zy0C8DwA7G9fTe8QFipMJcZ6EWfPuaqjWW7
-         fFSl1reFG5KToJoFPU1JQopnOBnBhdhGu3pCrMc1xbg0LsIPYLrePRoFGwIML/4Qkzjx
-         lG6fg1c9pULzVcYaOgDLNG9R7iLhRrqbhRTf32+0j43BqUSuJq7nC7erZydYkiZbhjh6
-         cs3z11x2YH+uA8T2NmaQGQoTjgc5jx6Co+B5X/1XtQtTiH/qTIHuhC3Ugrjampse0YmT
-         zPVQ==
-X-Gm-Message-State: AOJu0YxarHm/q/trR9wRJAcAovA/KUBzaX5quqBcLJ4zzHSlzKNMKWkg
-        nMs4yMiVcpIc6Jk2XxkbRBM=
-X-Google-Smtp-Source: AGHT+IHy5rjGw63jPhO7mpRo+1xd3St+FRy6GrBLq19y5Q9ciGsW/sn0ZEU//6tUeJXnLBS8TS3o3A==
-X-Received: by 2002:a2e:8813:0:b0:2b9:e831:f15f with SMTP id x19-20020a2e8813000000b002b9e831f15fmr245467ljh.32.1692393164827;
-        Fri, 18 Aug 2023 14:12:44 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id n5-20020a2e8785000000b002b6df22f0edsm623185lji.64.2023.08.18.14.12.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Aug 2023 14:12:44 -0700 (PDT)
-Message-ID: <e019c436-0edd-4345-8857-ff2a12d28c37@gmail.com>
-Date:   Fri, 18 Aug 2023 23:12:43 +0200
+        with ESMTP id S230140AbjHTIUs (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 20 Aug 2023 04:20:48 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 904EA10F5;
+        Sun, 20 Aug 2023 01:20:12 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,187,1684767600"; 
+   d="scan'208";a="173382663"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2023 17:20:11 +0900
+Received: from localhost.localdomain (unknown [10.226.92.18])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2BCDA400449D;
+        Sun, 20 Aug 2023 17:20:08 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-leds@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] leds: pca955x: Convert enum->pointer for data in the match tables
+Date:   Sun, 20 Aug 2023 09:20:05 +0100
+Message-Id: <20230820082005.55124-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 5/6] leds: turris-omnia: support HW controlled mode via
- private trigger
-To:     =?UTF-8?Q?Marek_Beh=c3=ban?= <kabel@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        linux-leds@vger.kernel.org
-References: <20230802160748.11208-1-kabel@kernel.org>
- <20230802160748.11208-6-kabel@kernel.org> <20230802181345.59d0b0bb@dellmb>
-Content-Language: en-US
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <20230802181345.59d0b0bb@dellmb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Marek,
+Convert enum->pointer for data in the match tables, so that
+device_get_match_data() can do match against OF/ACPI/I2C tables, once i2c
+bus type match support added to it.
 
-On 8/2/23 18:13, Marek Behún wrote:
-> On Wed,  2 Aug 2023 18:07:47 +0200
-> Marek Behún <kabel@kernel.org> wrote:
-> 
->> +static int omnia_hwtrig_activate(struct led_classdev *cdev)
->> +{
->> +	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
->> +	struct omnia_leds *leds = dev_get_drvdata(cdev->dev->parent);
->> +	struct omnia_led *led = to_omnia_led(mc_cdev);
->> +	int err = 0;
->> +
->> +	mutex_lock(&leds->lock);
->> +
->> +	if (!led->on) {
->> +		/*
->> +		 * If the LED is off (brightness was set to 0), the last
->> +		 * configured color was not necessarily sent to the MCU.
->> +		 * Recompute with max_brightness and send if needed.
->> +		 */
->> +		led_mc_calc_color_components(mc_cdev, cdev->max_brightness);
->> +
->> +		if (omnia_led_channels_changed(led))
->> +			err = omnia_led_send_color_cmd(leds->client, led);
->> +	}
->> +
->> +	if (!err) {
->> +		/* put the LED into MCU controlled mode */
->> +		err = omnia_cmd_write(leds->client, CMD_LED_MODE,
->> +				      CMD_LED_MODE_LED(led->reg));
->> +		if (!err)
->> +			led->hwtrig = true;
->> +	}
->> +
->> +	mutex_unlock(&leds->lock);
->> +
->> +	return err;
->> +}
-> 
-> Pavel, Lee, here I wanted to ask: can the .activate() method of a LED
-> trigger sleep? The .brightness_set() method of a LED cannot sleep, and
-> therefore we have .brightness_set_blocking() method, which schedules
-> the potentially sleeping call into a work. But there is no such
-> mechanism for the LED trigger .activate() method.
-> 
-> I looked at the LED core code, and it does not seem to me that
-> .activate() sleeping would cause issues, besides keeping trigger list
-> lock locked...
-> 
-> Note that previously none of the LED triggers in drivers/leds/trigger
-> sleeped in .activate(), but recently the ethernet PHY subsystem was
-> wired into the netdev trigger, which may cause the .activate() method
-> to do a PHY transfer, which AFAIK may sleep...
+Replace enum->struct *pca955x_chipdefs for data in the match table.
+Simplify the probe() by replacing device_get_match_data() and ID lookup
+for retrieving data by i2c_get_match_data().
 
-In general led_set_brightness() can't sleep because it is called from
-triggers in atomic contexts, which shouldn't be the case for activate().
+While at it, add const definition to pca955x_chipdefs[].
 
-.activate() is called from led_trigger_{set|remove}() which is called 
-from led_classdev_{register|unregister}) and from sysfs trigger attr's
-led_trigger_write() handler, so no risk here.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+Note:
+ This patch is only compile tested.
+---
+ drivers/leds/leds-pca955x.c | 45 +++++++++++++------------------------
+ 1 file changed, 16 insertions(+), 29 deletions(-)
 
-Triggers already call e.g. kzalloc() in .activate() which may sleep.
-
+diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
+index b10e1ef38db0..e28fd205678e 100644
+--- a/drivers/leds/leds-pca955x.c
++++ b/drivers/leds/leds-pca955x.c
+@@ -76,7 +76,7 @@ struct pca955x_chipdef {
+ 	int			slv_addr_shift;	/* Number of bits to ignore */
+ };
+ 
+-static struct pca955x_chipdef pca955x_chipdefs[] = {
++static const struct pca955x_chipdef pca955x_chipdefs[] = {
+ 	[pca9550] = {
+ 		.bits		= 2,
+ 		.slv_addr	= /* 110000x */ 0x60,
+@@ -105,11 +105,11 @@ static struct pca955x_chipdef pca955x_chipdefs[] = {
+ };
+ 
+ static const struct i2c_device_id pca955x_id[] = {
+-	{ "pca9550", pca9550 },
+-	{ "pca9551", pca9551 },
+-	{ "pca9552", pca9552 },
+-	{ "ibm-pca9552", ibm_pca9552 },
+-	{ "pca9553", pca9553 },
++	{ "pca9550", (kernel_ulong_t)&pca955x_chipdefs[pca9550] },
++	{ "pca9551", (kernel_ulong_t)&pca955x_chipdefs[pca9551] },
++	{ "pca9552", (kernel_ulong_t)&pca955x_chipdefs[pca9552] },
++	{ "ibm-pca9552", (kernel_ulong_t)&pca955x_chipdefs[ibm_pca9552] },
++	{ "pca9553", (kernel_ulong_t)&pca955x_chipdefs[pca9553] },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, pca955x_id);
+@@ -458,11 +458,11 @@ pca955x_get_pdata(struct i2c_client *client, struct pca955x_chipdef *chip)
+ }
+ 
+ static const struct of_device_id of_pca955x_match[] = {
+-	{ .compatible = "nxp,pca9550", .data = (void *)pca9550 },
+-	{ .compatible = "nxp,pca9551", .data = (void *)pca9551 },
+-	{ .compatible = "nxp,pca9552", .data = (void *)pca9552 },
+-	{ .compatible = "ibm,pca9552", .data = (void *)ibm_pca9552 },
+-	{ .compatible = "nxp,pca9553", .data = (void *)pca9553 },
++	{ .compatible = "nxp,pca9550", .data = &pca955x_chipdefs[pca9550] },
++	{ .compatible = "nxp,pca9551", .data = &pca955x_chipdefs[pca9551] },
++	{ .compatible = "nxp,pca9552", .data = &pca955x_chipdefs[pca9552] },
++	{ .compatible = "ibm,pca9552", .data = &pca955x_chipdefs[ibm_pca9552] },
++	{ .compatible = "nxp,pca9553", .data = &pca955x_chipdefs[pca9553] },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, of_pca955x_match);
+@@ -471,7 +471,7 @@ static int pca955x_probe(struct i2c_client *client)
+ {
+ 	struct pca955x *pca955x;
+ 	struct pca955x_led *pca955x_led;
+-	struct pca955x_chipdef *chip;
++	const struct pca955x_chipdef *chip;
+ 	struct led_classdev *led;
+ 	struct led_init_data init_data;
+ 	struct i2c_adapter *adapter;
+@@ -480,24 +480,11 @@ static int pca955x_probe(struct i2c_client *client)
+ 	bool set_default_label = false;
+ 	bool keep_pwm = false;
+ 	char default_label[8];
+-	enum pca955x_type chip_type;
+-	const void *md = device_get_match_data(&client->dev);
+-
+-	if (md) {
+-		chip_type = (enum pca955x_type)md;
+-	} else {
+-		const struct i2c_device_id *id = i2c_match_id(pca955x_id,
+-							      client);
+-
+-		if (id) {
+-			chip_type = (enum pca955x_type)id->driver_data;
+-		} else {
+-			dev_err(&client->dev, "unknown chip\n");
+-			return -ENODEV;
+-		}
+-	}
+ 
+-	chip = &pca955x_chipdefs[chip_type];
++	chip = i2c_get_match_data(&client->dev);
++	if (!chip)
++		return dev_err_probe(&client->dev, -ENODEV, "unknown chip\n");
++
+ 	adapter = client->adapter;
+ 	pdata = dev_get_platdata(&client->dev);
+ 	if (!pdata) {
 -- 
-Best regards,
-Jacek Anaszewski
+2.25.1
+
