@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8783BC83F29
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD891C83F2F
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:00:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbjH0BAC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 26 Aug 2023 21:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
+        id S229889AbjH0BAE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 26 Aug 2023 21:00:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbjH0A7b (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 20:59:31 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0973BE54
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:27 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-5009969be25so3384193e87.3
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:27 -0700 (PDT)
+        with ESMTP id S229948AbjH0A7d (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 20:59:33 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FB11BF
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:30 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-50079d148aeso3189833e87.3
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693097966; x=1693702766;
+        d=linaro.org; s=google; t=1693097968; x=1693702768;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=A7ewwDA5rK2znaB44N+h4kM3uTy6kez9qLlohwFRQDU=;
-        b=dr+xGfPeYe7Wa2DSNVZV/hj9UAPQ38c1g0yJEofbEloBWIr1C3nlyAvN0XLN5ZIE8R
-         vPE7dc7lBbQTQjDAkbzvDAGGQknMkvPAfLHw+56eiGXgownMfZNCWL7QhB1DnR8fJvsK
-         tyubDUAkii2h2hCpEDAEdZVibyZr3GZ1mjbj/pWq/dAFQvml5ZJ4S/bEVukF3UQXLt4G
-         w2t6VnAgMuPsIXLtSwpcTYsIDjifzLmck2LgWL/Sc+qMPoNOJrNfidamDEhAbij4RX3G
-         eqS+i3kiGqxA18emCJU7b61VMN39U9VQucVvlZIAyNGujQDP/2IrmmjJhJ+aTC6CXiUS
-         izMQ==
+        bh=YcbEnFCtTA9UEjtUWN7yvDCOIDS8kBLNF+kymOo1R3w=;
+        b=UShHV9j76+b2UGFB5EC7mePQoUg/FeJkI8Odj0XEg9yl6Y/6tzP1o1HYOMLoYGrsY/
+         bPr07/vlfUQXGFhlwyLSh99G/BFYRZljHiqFe8YrdYD4W+9RD/tCbnFbIBInYDgaRcNK
+         MRMo9F7XH+AimDgB48tvcZgOHpsKzwMfFC09QMwGITB17xd7VeKKXA3ODUcpeRLCEoVa
+         W8xBM43KxlHJXSQr/53nWHi71y5z6LXfI6Di3jlB2r6HZpMkHpyequGDsgo85cjX+rLV
+         vlw/oefl7qj+O/cflOnK0YVzgYKe3Pbt0DgrnS7cahy3zXfL9qKzDZ7GXnlFXvZdp+YL
+         Y9lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693097966; x=1693702766;
+        d=1e100.net; s=20221208; t=1693097968; x=1693702768;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A7ewwDA5rK2znaB44N+h4kM3uTy6kez9qLlohwFRQDU=;
-        b=Vf3HktDmSFq9xcBFYPRBCS2V/8FuGG5xNimtR4Lbs6/E0nfWUdAF1OMLzTbUbTVv5G
-         x9WgC/zJgoJfE/tHGLySRM0NwiBG49KGCrhd4pu44agoUg4esMLMsX7MtwKkA41SzMJW
-         9kPDPvVwlEFwapck6y1jxK/NnLycon1mQoRynCF8Hqvrafw7pculATwjOSSlBbwvLHCd
-         +CdunSgVbnRAMGd/r1jj/ECLLKsT1sXQL/nEqdrS4SDWGuX3uwVZZ7uaOVwBcK1dwkZZ
-         pd5QjhRJRlhknV8hCPtO05QeSQ6bqod/m/oky45GGlPrFu6Qvogn8mgR6qdpLvynfkdR
-         iT0A==
-X-Gm-Message-State: AOJu0YyZt0XZZ+rQbqNfriEj07LeI5WyZZG6cuNpB4BrqlvmMliQlOhn
-        KYOstTYf/Wk82qHHtzumMa8rig==
-X-Google-Smtp-Source: AGHT+IGkdIIbysyoBRj0pXlTSsbuUyxPi/2jfcF4IkJZNSjqZkhLnZGgbQJK/uyzvu1TAIbijBXsZw==
-X-Received: by 2002:a05:6512:33c5:b0:4f9:cd02:4af1 with SMTP id d5-20020a05651233c500b004f9cd024af1mr17790616lfg.34.1693097966249;
-        Sat, 26 Aug 2023 17:59:26 -0700 (PDT)
+        bh=YcbEnFCtTA9UEjtUWN7yvDCOIDS8kBLNF+kymOo1R3w=;
+        b=IJIy/d2zaMhOO5hG0+qB+TpvsZq0PbEnsN0YgrSz4SHIyrtgbkdje8fDkESfhEI3HS
+         uvsfbabkzxnmgSXS8te4kGaJoBCrouQshfl1qEaj3gBAOYZjVbIp3OQX1meOGKewNpRh
+         q/fMBHzMrj/Nn+MibNPU9nVxT0qTsvPdy4BSXia9fQVpNDuPZGzEVRj78pzKnpW6pnWO
+         qpaJhKBuOlkfwDmFnMne28QT5k8ZVY//1C51gmuVsglh9BfRVRYEWKpfNeJhyAqaD9gH
+         vdwFYh3N2qvjGv0jhH7Gg955IKiF7phuJ2RAhJe/zJ/OeGDcRtRcM/k3CGi/Mb/VJorQ
+         4Gkw==
+X-Gm-Message-State: AOJu0YwwcycZyFNEOPv78OpmAKlsCRzCEyKsL6dOcQVbguDT8iXnMp+5
+        15t53kXfrpM7h6zXSH3MXZtMvw==
+X-Google-Smtp-Source: AGHT+IG71KDyuArP16wER/MBvZejk6g5ArMnhWS8q/w1v/qvxBf3oYq1dqBHZ7VVSpJT4nHsqqMdCg==
+X-Received: by 2002:a05:6512:5d0:b0:500:9bbf:da17 with SMTP id o16-20020a05651205d000b005009bbfda17mr5923510lfo.51.1693097968651;
+        Sat, 26 Aug 2023 17:59:28 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.17.59.25
+        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.17.59.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 17:59:25 -0700 (PDT)
+        Sat, 26 Aug 2023 17:59:28 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -61,11 +61,10 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-iio@vger.kernel.org,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 04/38] ARM: dts: qcom: apq8064: correct XOADC register address
-Date:   Sun, 27 Aug 2023 03:58:46 +0300
-Message-Id: <20230827005920.898719-5-dmitry.baryshkov@linaro.org>
+        linux-leds@vger.kernel.org
+Subject: [PATCH v4 07/38] ARM: dts: qcom: apq8064-nexus7: move sdcc1 node to proper place
+Date:   Sun, 27 Aug 2023 03:58:49 +0300
+Message-Id: <20230827005920.898719-8-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
 References: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
@@ -75,31 +74,46 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The XOADC is present at the address 0x197 rather than just 197. It
-doesn't change a lot (since the driver hardcodes all register
-addresses), but the DT should present correct address anyway.
+Move sdcc1 device node to follow the alphanumberic sorting order.
 
-Fixes: c4b70883ee33 ("ARM: dts: add XOADC and IIO HWMON to APQ8064")
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-index 516f0d2495e2..950adb63af70 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-@@ -738,7 +738,7 @@ pwrkey@1c {
+diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
+index c57c27cd8a20..0e80a5a8e3c6 100644
+--- a/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
++++ b/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
+@@ -181,13 +181,6 @@ &mdp {
+ 	status = "okay";
+ };
  
- 				xoadc: xoadc@197 {
- 					compatible = "qcom,pm8921-adc";
--					reg = <197>;
-+					reg = <0x197>;
- 					interrupts-extended = <&pmicintc 78 IRQ_TYPE_EDGE_RISING>;
- 					#address-cells = <2>;
- 					#size-cells = <0>;
+-/* eMMC */
+-&sdcc1 {
+-	vmmc-supply = <&pm8921_l5>;
+-	vqmmc-supply = <&pm8921_s4>;
+-	status = "okay";
+-};
+-
+ &mdp_dsi1_out {
+ 	remote-endpoint = <&dsi0_in>;
+ };
+@@ -336,6 +329,13 @@ lvs7 {
+ 	};
+ };
+ 
++/* eMMC */
++&sdcc1 {
++	vmmc-supply = <&pm8921_l5>;
++	vqmmc-supply = <&pm8921_s4>;
++	status = "okay";
++};
++
+ &usb_hs1_phy {
+ 	v3p3-supply = <&pm8921_l3>;
+ 	v1p8-supply = <&pm8921_l4>;
 -- 
 2.39.2
 
