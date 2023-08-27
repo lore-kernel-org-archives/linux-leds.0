@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79A1CA1041
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 13:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF15CA1047
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 13:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229594AbjH0N0a (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 27 Aug 2023 09:26:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34560 "EHLO
+        id S230135AbjH0N0b (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 27 Aug 2023 09:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbjH0NZy (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Aug 2023 09:25:54 -0400
+        with ESMTP id S230149AbjH0NZz (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 27 Aug 2023 09:25:55 -0400
 Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C173194
-        for <linux-leds@vger.kernel.org>; Sun, 27 Aug 2023 06:25:48 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-500b66f8b27so533515e87.3
-        for <linux-leds@vger.kernel.org>; Sun, 27 Aug 2023 06:25:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4925E1B7
+        for <linux-leds@vger.kernel.org>; Sun, 27 Aug 2023 06:25:50 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-5007c8308c3so3693107e87.0
+        for <linux-leds@vger.kernel.org>; Sun, 27 Aug 2023 06:25:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693142747; x=1693747547;
+        d=linaro.org; s=google; t=1693142748; x=1693747548;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k892yPv/128pmT+0c+CLRewxWCJSJdHIcCP1VlRPxE4=;
-        b=Dcceytd10U+efXAllIQuTl4dE0/FIHG+O1s2ghx3XNFeXn6TRu+owWywlyUFhzFSVq
-         EGpd8bxNqCQqGWbUL/17/O6urj+TkCzsXvP7uoO3J70eLF/naaeycIMtr7Gxr3r0WHXp
-         lUsEMcXFv2inb5w6YNO1Rl13hcs1uveddl6vJ7mwByMuLdWJDlL/YynItlMl7ZjoYqx1
-         zZXZlYEOAeE1xFNsWZrlM8v4fW17iq5lAEHyNwEp64hTM2Z9KqKt9p8RYq3A1aCodgmr
-         wbvJ5WVCyhjdMZfLduooCDhJ++ilZguaroxZ6jGOpv2wnGelV/jv7PV8gxNksYV3yt9b
-         QmDw==
+        bh=OFX9JomlQAWrg2wVtXgvkj8bMtfCZmpZ79ww1DHQiqs=;
+        b=O6SBeyNyl2Y2KY7TtNVcGggkWGoQFcQiQLCCIb/nYc/zY5e5i5GFzWc2creJJp66J5
+         RGeiTtCkVpqVehN6l24POWnFCDZstQ/I4vW5Bi6Mau0C3DJIpzwdDG1EkFgensWWG4ck
+         yc4Rd/tGmVmYPqeIPdvqeckUTg1fy7Eq7GNSVQ6RsMi6Ozw/vlQNi01gu5M4iKtpzjJ1
+         Bcc1F8TR4bQVBXr6XQi9zsOOx5TvrObUY9oNsj0+o0V4kD16G9U/yPhTsZ+AcQjFSdj7
+         mnooa0aMSTt6vsg86brqXmU3rRjgp/kGhxjcgyQE4OxjeV7qOSml1eVIf9n04VwmSO0/
+         OKew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693142747; x=1693747547;
+        d=1e100.net; s=20221208; t=1693142748; x=1693747548;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k892yPv/128pmT+0c+CLRewxWCJSJdHIcCP1VlRPxE4=;
-        b=Whdzp5RE1N7m1N8LzcQlV2dEFSmOYRndk+9xlcX1NKibVo+oOP6eepmoYeigVi7ZqX
-         BCJvLg1RKxy4ZdS0HEzkvR8AUcqPEwYl64dupBqKxmHuB7kh9h1Fa9DGD+I5PJL1adyu
-         XuSE/UTJyeCWtbdvucdsEZAWTylzAhCUfk9gkc334wIBR2TQ758XjrXRSnqporD3HZ0q
-         jQYTv51JpeuvdmYyaVvIlu58crnDqc8O1nJFnTVXBwOBLhE1TAeH51+9G1IGqYVyYbPI
-         80RQqqxKdGhX6Fq+de2qtDA+2sGfBmDhA5/ePZwPKhSqamiR2j57cEn5lar1iHZjPPAi
-         AFyw==
-X-Gm-Message-State: AOJu0Yy2xj8wSjjoW2wUy8gO68RJ5qUZc+QHv5Z1auDNJRqTWz/LF1X8
-        mkYlDFIBrZiQZcuOZwXFQYnEQQ==
-X-Google-Smtp-Source: AGHT+IGsw3Lfewz3MmsX4swNWn9D6sHSk0RwXB5nQr/I1XdwjxgHosQ112QZtklJs5ODaeWxute4Ag==
-X-Received: by 2002:a05:6512:1186:b0:4f8:752f:3722 with SMTP id g6-20020a056512118600b004f8752f3722mr15266048lfr.5.1693142746838;
-        Sun, 27 Aug 2023 06:25:46 -0700 (PDT)
+        bh=OFX9JomlQAWrg2wVtXgvkj8bMtfCZmpZ79ww1DHQiqs=;
+        b=K4o2WaDUFe5ILVaIR0S6yKCPzXhxCT5FLLZe6RnNK1E9HpR8K79Ucm8UAR5WcJL9C4
+         4TH5pchPWTW+kkIfbevpsdEFII+O4bwaCsoC5LYGsTub7loZi9k6zHBRf6gC2p/cDV+i
+         2xlnBXzSjLIPrCmiOCsBLGONZLhjId9/tXWGkfTeekSRyVMyb2fDhRj9y4bbFqF1k/w+
+         cV00BIvIy/kgdxm3w/bjDRq5p27o5a2KhZAH+wvmyXgT07ux5+SpKgkZDItHnEHLzqUJ
+         lDT1u25j4eYlvxyl25Kc9nPZuKdCAg20Bm9/zHP55syXxB+tkALjWnX5+rPO+KfGaDMa
+         gDkg==
+X-Gm-Message-State: AOJu0YzrzbxcmXxaeNXB6IxXBwJAa+bvPE4KZ1DNPILDT0DC3j339Ipw
+        el7hl2iXP86xelbcc7GVjGk69w==
+X-Google-Smtp-Source: AGHT+IHjfwt1dEUkbeEli+5qs9ZJG+9CIU9y+ic++AuCIyt5zzcd8QRW/Kl9vpzy/kxEkPXtzWVCIw==
+X-Received: by 2002:ac2:562f:0:b0:4f8:4512:c844 with SMTP id b15-20020ac2562f000000b004f84512c844mr15483497lff.48.1693142748561;
+        Sun, 27 Aug 2023 06:25:48 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id t9-20020ac243a9000000b004faa2de9877sm1142040lfl.286.2023.08.27.06.25.46
+        by smtp.gmail.com with ESMTPSA id t9-20020ac243a9000000b004faa2de9877sm1142040lfl.286.2023.08.27.06.25.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Aug 2023 06:25:46 -0700 (PDT)
+        Sun, 27 Aug 2023 06:25:47 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         linux-leds@vger.kernel.org
-Subject: [PATCH v5 24/37] ARM: dts: qcom: pm8921: move reg property
-Date:   Sun, 27 Aug 2023 16:25:12 +0300
-Message-Id: <20230827132525.951475-25-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 26/37] ARM: dts: qcom: pm8921: switch to interrupts-extended
+Date:   Sun, 27 Aug 2023 16:25:14 +0300
+Message-Id: <20230827132525.951475-27-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827132525.951475-1-dmitry.baryshkov@linaro.org>
 References: <20230827132525.951475-1-dmitry.baryshkov@linaro.org>
@@ -74,29 +74,53 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Move reg property to come after compatible.
+Merge interrups and interrupt-parent properties into a single
+interrupts-extended property.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Suggested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Reviewed-by: Konrad DYbcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom/pm8921.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/qcom/pm8921.dtsi | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/qcom/pm8921.dtsi b/arch/arm/boot/dts/qcom/pm8921.dtsi
-index 4697ca33666f..fa00b57e28b9 100644
+index fa00b57e28b9..360a179670c5 100644
 --- a/arch/arm/boot/dts/qcom/pm8921.dtsi
 +++ b/arch/arm/boot/dts/qcom/pm8921.dtsi
-@@ -31,9 +31,9 @@ pm8921_mpps: mpps@50 {
- 
+@@ -11,9 +11,8 @@ pm8921: pmic {
+ 		pwrkey@1c {
+ 			compatible = "qcom,pm8921-pwrkey";
+ 			reg = <0x1c>;
+-			interrupt-parent = <&pm8921>;
+-			interrupts = <50 IRQ_TYPE_EDGE_RISING>,
+-				     <51 IRQ_TYPE_EDGE_RISING>;
++			interrupts-extended = <&pm8921 50 IRQ_TYPE_EDGE_RISING>,
++					      <&pm8921 51 IRQ_TYPE_EDGE_RISING>;
+ 			debounce = <15625>;
+ 			pull-up;
+ 		};
+@@ -32,17 +31,15 @@ pm8921_mpps: mpps@50 {
  		rtc@11d {
  			compatible = "qcom,pm8921-rtc";
-+			reg = <0x11d>;
- 			interrupt-parent = <&pm8921>;
- 			interrupts = <39 IRQ_TYPE_EDGE_RISING>;
--			reg = <0x11d>;
+ 			reg = <0x11d>;
+-			interrupt-parent = <&pm8921>;
+-			interrupts = <39 IRQ_TYPE_EDGE_RISING>;
++			interrupts-extended = <&pm8921 39 IRQ_TYPE_EDGE_RISING>;
  			allow-set-time;
  		};
  
+ 		pm8921_keypad: keypad@148 {
+ 			compatible = "qcom,pm8921-keypad";
+ 			reg = <0x148>;
+-			interrupt-parent = <&pm8921>;
+-			interrupts = <74 IRQ_TYPE_EDGE_RISING>,
+-				     <75 IRQ_TYPE_EDGE_RISING>;
++			interrupts-extended = <&pm8921 74 IRQ_TYPE_EDGE_RISING>,
++					      <&pm8921 75 IRQ_TYPE_EDGE_RISING>;
+ 			debounce = <15>;
+ 			scan-delay = <32>;
+ 			row-hold = <91500>;
 -- 
 2.39.2
 
