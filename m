@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FAECA0FD9
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAF5CA0FDE
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbjH0BAm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 26 Aug 2023 21:00:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48374 "EHLO
+        id S230255AbjH0BAo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 26 Aug 2023 21:00:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbjH0BAL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 21:00:11 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79424CD2
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:06 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-50091b91a83so3186800e87.3
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:06 -0700 (PDT)
+        with ESMTP id S230148AbjH0BAM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 21:00:12 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24CBB1A6
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:08 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2bb8a12e819so32039831fa.1
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693098005; x=1693702805;
+        d=linaro.org; s=google; t=1693098006; x=1693702806;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Hx4XSe/NLtIIcU8XS/aqeNQhQByGw63IXr2PekRrcFA=;
-        b=xvJ17m7V25/YwvKh4yxCkyx7J05xGQJLqOs9Q+Y4TkwThV5z5tggCSzxGK2sgtGPZ5
-         F7bM47HaD4IWowEdGT6Oqpqm6S6G8qVdlbaEdRwm2QSWkt2uuhwRV0FUb9cJThYL94lj
-         OoVuYxLEIfX9XzxIZ8yWIc9+30/W5YaU/2GX1lLxMea4zrnox9CH+0h8VzoWGLHT/XXD
-         hm8jnVSYR40OQxqT3e3y3vni3ZguGTMTMlB8+dRNKtbbKjKfye67GQbroQiYw6iXJMkl
-         tc5SLntLSrkuyTJBkP4w+fpDsWWD/SU6yArr92nu/26kdY9F3eJuEWql1qoN8VMuk88F
-         spkQ==
+        bh=zPGHh0Yc1od2zbTrwc+6JwXrsuE73ZiTR95u6Arvrgw=;
+        b=I8MDGVMh+zj5dAmNy/aSDYaBTgcVRv6bA/klu1RGKSPjBAyS4+G0lqY9ELt+LYNsSd
+         iGazQzjL2HyCSyO/S7rA9LBygcK5Zx4AR4SrPGG/eZoHGM57FKEpOaq4tX2Gum0eUpN8
+         MacLDFi+qcAE2b9gR5SNc0WSxepDy3Je5gGcUSjd6RjZ+V78mlZpubfpTlgDTSiHivxu
+         9ec4RrsMpgHDB4HUwvYwyotpsKBcKjKNOoaUVKhIdR8kpuMSrFitgthUDAyNHzN8tqsW
+         yehh3WAG88bjqs3682OgAIBnsEO1aVtnDY1se6fcGR2MPJX+Fqz06LmGI1mObJbfyVdV
+         JcDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693098005; x=1693702805;
+        d=1e100.net; s=20221208; t=1693098006; x=1693702806;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hx4XSe/NLtIIcU8XS/aqeNQhQByGw63IXr2PekRrcFA=;
-        b=GkIjNEwILupfpsHGW7vEKQeHrbZN1KpHlF4bqtgAD9KyF5ObLcwiB5qt3pyPy8n9Nf
-         BGFXNeLIzCwI6kociHm5heYZ2l6XXjZFbi5cfDdML/W22stDSCwUak+Naqg9QB0BtXcy
-         Qd8toovAAvqhIGpQn+euNtKqV7VJ3qW2bOIL/r2UOrPSdX9zOAtYnlVH+31Aa08Z+u9d
-         +CDdkAX3OT2R1rH/Wa9AhYnzzvITCFCztMhmX1uSrEfFtqKtvWFi3OyC0sEe+617nAdA
-         u0Nmogt1SbLTIw2vvFnEb9yHnovv9/IFsWQBOywurEtcoz5nI3R9kfvpkW7LMHlMzQ+H
-         8QrA==
-X-Gm-Message-State: AOJu0Yz4Yz5Zo8S3xllFc7cAJ7OvfBwilZvENqcIssSQCXzH5UVfnNFp
-        BxWKDQKi4DNlLDpQQ28evxbWsw==
-X-Google-Smtp-Source: AGHT+IGwIJOW2n2P7FY/gY0MrKKkYf6g0hYYDtVz2inuriDR40FzZyZZgSx6KqmqiOAvt0Yaq8zknQ==
-X-Received: by 2002:a05:6512:2347:b0:4f8:8be4:8a82 with SMTP id p7-20020a056512234700b004f88be48a82mr18651829lfu.22.1693098004764;
-        Sat, 26 Aug 2023 18:00:04 -0700 (PDT)
+        bh=zPGHh0Yc1od2zbTrwc+6JwXrsuE73ZiTR95u6Arvrgw=;
+        b=Y3LXxZXlE9Stv7GqjpSjeKIs9T0a+Khkqg9Rna8gCddoUd3lqr4Z60U93BSmVQOVlu
+         ae2b1Kds2ej4n/+cSdapVMH+Uap04/sww5KleCMPEbQREIjlkjs4Nwn07zIxs14XDZE4
+         CId/PUVgek+ZA51jeO5rwG0JxeRjTpFT1BXQUAuBrJBYXocB1k1HzNCxDt6te6CV+b9C
+         p4AaFdFzu1+iUxRymGiqNBQhS2DskCPQ4UvvU7WNGCMFJ+yNsvpfcSd0SHHzZFg7Pt1w
+         JghPDDyRmsqbUiJ9lpH8q5TlbZaD76tvjyNG29GVi3Ny7YE8bhM/V6Homy/HlI7NWmH2
+         XlRQ==
+X-Gm-Message-State: AOJu0YxGpI2ClJpJVCvrgMK2jl2NA3eRVaePz9gtGXvPvi4kNzkUORoo
+        JohV/Oh+vB7qG0EX+ka+Z4cUww==
+X-Google-Smtp-Source: AGHT+IHHy3dYU8bdVmLSeHBW4nkX2UZ3uasIMy53KRd+M3cg93eG8oeAEKfFfZ27unNObXvYBd+i8w==
+X-Received: by 2002:a05:6512:b90:b0:500:7f91:fe2e with SMTP id b16-20020a0565120b9000b005007f91fe2emr18988379lfv.34.1693098006568;
+        Sat, 26 Aug 2023 18:00:06 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.18.00.03
+        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.18.00.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 18:00:04 -0700 (PDT)
+        Sat, 26 Aug 2023 18:00:06 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         linux-leds@vger.kernel.org
-Subject: [PATCH v4 35/38] ARM: dts: qcom: pm8921: Disable keypad by default
-Date:   Sun, 27 Aug 2023 03:59:17 +0300
-Message-Id: <20230827005920.898719-36-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 37/38] ARM: dts: qcom: ipq8064: drop qcom, prefix from SSBI node name
+Date:   Sun, 27 Aug 2023 03:59:19 +0300
+Message-Id: <20230827005920.898719-38-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
 References: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
@@ -74,40 +74,24 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Since keypad is used only by some devices, disable it by default and enable explicitly.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom/pm8921.dtsi          | 1 +
- arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/qcom/pm8921.dtsi b/arch/arm/boot/dts/qcom/pm8921.dtsi
-index 360a179670c5..058962af3005 100644
---- a/arch/arm/boot/dts/qcom/pm8921.dtsi
-+++ b/arch/arm/boot/dts/qcom/pm8921.dtsi
-@@ -43,6 +43,7 @@ pm8921_keypad: keypad@148 {
- 			debounce = <15>;
- 			scan-delay = <32>;
- 			row-hold = <91500>;
-+			status = "disabled";
+diff --git a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
+index 6198f42f6a9c..c3677440b786 100644
+--- a/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi
+@@ -366,7 +366,7 @@ rpmcc: clock-controller {
+ 			};
  		};
  
- 		pm8921_gpio: gpio@150 {
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts b/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts
-index a5ea4843db43..36f4c997b0b3 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts
-@@ -102,6 +102,8 @@ MATRIX_KEY(0, 3, KEY_CAMERA)
- 		>;
- 	keypad,num-rows = <1>;
- 	keypad,num-columns = <5>;
-+
-+	status = "okay";
- };
- 
- &rpm {
+-		qcom,ssbi@500000 {
++		ssbi@500000 {
+ 			compatible = "qcom,ssbi";
+ 			reg = <0x00500000 0x1000>;
+ 			qcom,controller-type = "pmic-arbiter";
 -- 
 2.39.2
 
