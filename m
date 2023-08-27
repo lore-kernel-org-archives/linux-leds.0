@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5409ACA0FE4
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81F9CA0FE2
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbjH0BAn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 26 Aug 2023 21:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48396 "EHLO
+        id S230261AbjH0BAp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 26 Aug 2023 21:00:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230125AbjH0BAL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 21:00:11 -0400
+        with ESMTP id S230167AbjH0BAO (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 21:00:14 -0400
 Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B6AAE6A
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:07 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-500aed06ffcso1673780e87.0
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E06CE50
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:09 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-50079d148aeso3190204e87.3
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 18:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693098006; x=1693702806;
+        d=linaro.org; s=google; t=1693098007; x=1693702807;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tzXt286sPhU+yVmzfDKl882XWnXgjzSmy9rWB6wpkCI=;
-        b=hxbFxl2SA4TE2bOgEYJOmTDYgKgaBo+/T5pdXgIBXr7RnaYeDuWKyoSJFgqmAMWqF4
-         xdUDCjIej49W8wu7KAJXEwmZ31TAXRte16SViK3n6mW4RnJszlleR5jLy+q469qRXOk6
-         SkoFd3VXRL3LAI5ZQhdEVmc8mM382A+Wm3ztwzlx+GSpdbbjrQiiy9F31YKX+wyqY5YI
-         aPBvMVLvz4bdwcrFuvmnK6g+q2mawoDLsxrKFuGdjW9BI8DMZ4io+MO82rD4wt93L6YU
-         Cd4Lxhat+ogRu/4+/77yxbXFpyVhycLyqFErGYy3fzcp69wfbL3lXtGNriRhA4vVv6fo
-         kQDA==
+        bh=hgscUjE5yDYSGHC1956h5azSC53EgKvpe5p9UzSNGuk=;
+        b=Ltz2C1HJNu7vP+v9xWUs3JGPdJ6MtfPz4e6tiLD4W8mO4hKhoqxcLl4A2i0yIzAeZo
+         qCVPLH7F74n4/T5FgaVwi7oBXLPmxZPmj0N6SkCXa0M54OY2dv4U4Y74erESnpDZNIS3
+         I1fpxsjkYaSoLYMPMYTyVqWIsu3KvAYEmcm+iq96I2UbQ71XtwG05H69g7QxdFSTxNAz
+         G2bF0oXmUlvG/062tOEuh1mLafvsO0SVO0CTDcC3QDczy4Hc7/les9aWW1m1sswAU2mv
+         4xhK902bzFuRjCPEK+DfXs7A3ZiiY7x0kNncwK/CnHh3k+quaOq1vDxCHrsjH1WmCEE9
+         QvwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693098006; x=1693702806;
+        d=1e100.net; s=20221208; t=1693098007; x=1693702807;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tzXt286sPhU+yVmzfDKl882XWnXgjzSmy9rWB6wpkCI=;
-        b=EI7NLT26rU1rJjJvCkaMtXFKcFBaLPZz7JK3v4P1wx9e7z4naiaZRHSTcUGl5pcyKn
-         CxiP7c2MpJmcIXOcHVyUdutwH2O0hzi61NdcMPUBIDCXj+4Ohg/PyFfctl9oYG3BMUgF
-         VwnLiqH83sQ9rHh4Nq+i1aJdcMvrWzFia9hC658gDtP+IhU6BZ9MyqjPT7lzB6BtAyUS
-         Bak2qB/kcxv4KJTpE7TOPEVWC7t1F59UIEuI3LlEVa0dyyQwjuMVnMKGDEmgIG6E19Ez
-         0qULJKf+HHxGSY3VnKFpPZB76J8e0K7uZbI5CRJdgAwhd2qyMx2MbuCMsOAbBFeplypw
-         nwPg==
-X-Gm-Message-State: AOJu0YxZu4YYM3n4nIbXGTZa7JFhWBOC2JIQ0Fvf2R6samAwGdTb4rjk
-        Y8tcBfpeJTgkWLv64P0YHQ2+2Q==
-X-Google-Smtp-Source: AGHT+IEByNujKNl5zs1G/zJRvv6FCSd+whhLWn+hP15NRohlEiaQyu5W2ck27zhgeilwS3Sv1pX7uA==
-X-Received: by 2002:ac2:43ad:0:b0:500:a694:46f with SMTP id t13-20020ac243ad000000b00500a694046fmr3756053lfl.19.1693098005850;
-        Sat, 26 Aug 2023 18:00:05 -0700 (PDT)
+        bh=hgscUjE5yDYSGHC1956h5azSC53EgKvpe5p9UzSNGuk=;
+        b=OTynagNLPuqk/6CcKsyKrLVUxggQH5YlPA9rhBzD5ZJWxcCsgF99TOKzPJ28pGnO0k
+         iH29C5X3YUSOsRMiB/DLoRkbyvH9sjbikf9drrU1nfMz2HLkhEzPOS6xeRNm8wf3CI8W
+         Nkqwnt/TrcbQpwjNE1YXgkEMd2IhqoqxUXhwBqTRHeFLixP6g6qktb4LIKGUqL5kYRt0
+         YQQv+8raeKZMqJefSS9rzUkVWDrywzdk5MoieHC6qmtOtBAXRao5s32MvSMKx33ZwXHI
+         xxjEpqYuRQtluKJ21/GpsO9JHM3bvcKTl8+BhwXR/s5Zz7ynNNZnz3OHQMe05NjsM7s3
+         E26w==
+X-Gm-Message-State: AOJu0YzquQ2df1Y5w8sRP1s8sg4heT77uZ/XwKg0n5f4sZVIwVYLuOLf
+        Sg5xOyCrrbRt9n7gQz6Q/mJ7Vw==
+X-Google-Smtp-Source: AGHT+IEfU6g8xk3TlLFDQZKmBEJCe3koZ5101OaR+MtGsHgNyPucXI5am8COezn5/591tL/dLkZAug==
+X-Received: by 2002:a05:6512:3e9:b0:4fb:8de9:ac0e with SMTP id n9-20020a05651203e900b004fb8de9ac0emr13229291lfq.1.1693098007650;
+        Sat, 26 Aug 2023 18:00:07 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.18.00.04
+        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.18.00.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 18:00:05 -0700 (PDT)
+        Sat, 26 Aug 2023 18:00:06 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,9 +62,9 @@ Cc:     Andy Gross <agross@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         linux-leds@vger.kernel.org
-Subject: [PATCH v4 36/38] ARM: dts: qcom: apq8060-dragonboard: rename mpp ADC channels to adc-channel
-Date:   Sun, 27 Aug 2023 03:59:18 +0300
-Message-Id: <20230827005920.898719-37-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v4 38/38] ARM: dts: qcom: mdm9615: drop qcom, prefix from SSBI node name
+Date:   Sun, 27 Aug 2023 03:59:20 +0300
+Message-Id: <20230827005920.898719-39-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
 References: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
@@ -74,52 +74,24 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use generic `adc-channel@N' node names for board-specific ADC channels
-(routed to MPP pins) to follow the schema.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts b/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-index 8b70d4a59c7b..bf2527941917 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-@@ -998,23 +998,27 @@ &pm8058_xoadc {
- 	xoadc-ref-supply = <&pm8058_l18>;
+diff --git a/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi
+index 07e712e890f6..b02336bd8370 100644
+--- a/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi
+@@ -258,7 +258,7 @@ gsbi5_serial: serial@16440000 {
+ 			};
+ 		};
  
- 	/* Board-specific channels */
--	mpp5@5 {
-+	adc-channel@5 {
- 		/* Connected to AOUT of ALS sensor */
- 		reg = <0x00 0x05>;
- 	};
--	mpp6@6 {
-+
-+	adc-channel@6 {
- 		/* Connected to test point TP43 */
- 		reg = <0x00 0x06>;
- 	};
--	mpp7@7 {
-+
-+	adc-channel@7 {
- 		/* Connected to battery thermistor */
- 		reg = <0x00 0x07>;
- 	};
--	mpp8@8 {
-+
-+	adc-channel@8 {
- 		/* Connected to battery ID detector */
- 		reg = <0x00 0x08>;
- 	};
--	mpp9@9 {
-+
-+	adc-channel@9 {
- 		/* Connected to XO thermistor */
- 		reg = <0x00 0x09>;
- 	};
+-		ssbi: qcom,ssbi@500000 {
++		ssbi: ssbi@500000 {
+ 			compatible = "qcom,ssbi";
+ 			reg = <0x500000 0x1000>;
+ 			qcom,controller-type = "pmic-arbiter";
 -- 
 2.39.2
 
