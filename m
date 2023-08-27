@@ -2,53 +2,53 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9071CA0FCD
-	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32651CA0FD5
+	for <linux-leds@archiver.kernel.org>; Sun, 27 Aug 2023 01:00:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbjH0BAH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 26 Aug 2023 21:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43404 "EHLO
+        id S229810AbjH0BAJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 26 Aug 2023 21:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230055AbjH0A7k (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 20:59:40 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AEB11BE
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:38 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-5008d16cc36so3200813e87.2
-        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:38 -0700 (PDT)
+        with ESMTP id S230091AbjH0A7p (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 26 Aug 2023 20:59:45 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69897CD5
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:43 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4ffa6e25ebbso3720204e87.0
+        for <linux-leds@vger.kernel.org>; Sat, 26 Aug 2023 17:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693097976; x=1693702776;
+        d=linaro.org; s=google; t=1693097982; x=1693702782;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yHj6Imq7uBO+05o7KAPbPJTeLf8QZzIWxV/Jhqsh6bk=;
-        b=x3unbMnpIpIWFXGBHZNCqcCHOslZLcTn21up01mGhDhoGKUrxk90dkv0TbKePqFpEZ
-         3zJi5CNRfXxMNuGx2acImGZZC2g6FELgoypRQG9CcdP8ab4mNEUb6DeqQpXrRWhDiY8n
-         ONeLWMH4YT64hE2Br+5N9kUXL71EB751mWZJluB8ordRy6dI46AObvaJcUffYZ2rx2TD
-         EBjrqPKWxeNCmBTldmd3w0wz0gni8xEIMrFPk9VDh3TaAv2cJs/Hz8cgA+cLm5c9oOgp
-         thmwRnDKmprtarfrZA4A8WCSzWpRLFw1RMqbGWojt89GT3gSXDhMCOoyQMtZahQ2Y0gz
-         T9UQ==
+        bh=UDHR/qTLZAAlEyQL6qHwxIGFzk6+uGKbaVZYZcIFL9s=;
+        b=okItZ230mOOzGOPhBpDDPkcsOWiaGaw7rPyXQCSiXJ9aXkco03v3Wovz6V0NIyzN9Y
+         TRUJS54AoqGZEhwbvCOPyF06zxzaGxYQw9DjKK0NP0UpTpy34Ff+Bt2yKMynzzE7D4uT
+         099RFhc7eIUV7bF+CdmJ4sZV2Fcnhlzc/1CLDRFXBBVw0XBLrDMeAYLJpuxiSrzynatt
+         i0E2VZ9/9yE//kkMkqkPfjuyPjJ6NoXBA2AmIfcHr9i11uG3Xsex4XOqzC4uH0RMoDRk
+         fDV/HKybq741qVrCe1/nPf7EjnwnizVVfhZW+3171jD3+2E+riACA7Qsma+nC8wutZmt
+         y8ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693097976; x=1693702776;
+        d=1e100.net; s=20221208; t=1693097982; x=1693702782;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yHj6Imq7uBO+05o7KAPbPJTeLf8QZzIWxV/Jhqsh6bk=;
-        b=DgGKUN8oTu2ahAHcSkOaGBR6VlytOaAOBGhiC1GhlmKnN3RYeqAXss+58+R1tDcWOu
-         Qasqz+qSP0w2pg5h0VdqtJgvRC5DtRduK7UPCM6RfmVn/MD6IBBUa3e+4uSzpO/GrZlm
-         nN5q6ApyisWYZ3TjBFsGl5ULQz+nziStzsAYbJv8243d+wIxZBzbAP/yFeaAo0qV6r98
-         QGapK8t6rwzqFF3ogQvpVgeFWwihnVgD9FEj+rVMB6qja3lPgaIN6Rv+wnKZMdMjzlo7
-         A4QBjoIKB7JplAmwxAqs2sQB9QiRLdP0PfeybxJh1ILE9omkajraYLZCjdM6+Op9BSFg
-         hUzA==
-X-Gm-Message-State: AOJu0YyCKm2ebfha1e51xp99e8TL/XmiMndEp3VcnejEOobrQNrKAmDj
-        vlqdD/ESEeFih6lo0GPMOo0wMQ==
-X-Google-Smtp-Source: AGHT+IFCExfmls6iHApArPk1DNWvWs3BaiyqV+9NL5OM3dv9Un0eKoV/bimwcZ8Vjus4ACksKLaVlw==
-X-Received: by 2002:a05:6512:2354:b0:4fb:9168:1fce with SMTP id p20-20020a056512235400b004fb91681fcemr16432929lfu.59.1693097976767;
-        Sat, 26 Aug 2023 17:59:36 -0700 (PDT)
+        bh=UDHR/qTLZAAlEyQL6qHwxIGFzk6+uGKbaVZYZcIFL9s=;
+        b=Q5eekr6pBu9LyA8NJMxx+rUy8Dpf5B8jFNqvMaUZwXrhvBTuaw5ckVVjOi8e/NEF7z
+         U6K2TJ0izOWIyOP5EeaHY8m4eRqEWw0Wk4wYWrt+OzZqPMcFPARhm5lW09laWM5Reu7C
+         zQ2jf99fi4wZklNR66pZ9m5/BhJgXipBKiEjsgvIUHq/Tr6j2YDyIHpxz6WEfKwr0qbt
+         iXk/5St+RzUCA1lICWibE+IhKtsSipYsBk32nciGOXHKDZW5De2x49kYQsNjMc5H0B74
+         9k0Qsd0uixdCl+E6byEI6o97m5etQu9cw66IIkUNdsEXxrMh5XZyzUJ+CfzXEhei2hvV
+         DMzQ==
+X-Gm-Message-State: AOJu0YyOPOlsJdK4+SLUt+NODOqTEzN6V0NcwzuKcXdH8gitNzQnFoHN
+        eobD2vU/ZOjfredzg5BFSShGOg==
+X-Google-Smtp-Source: AGHT+IGjnds9h1OmUDxQozW/P0ogScd6J724TF03qI8/rDjMC4zVBCpInn/tCU2m9g48AeaqRhMpPg==
+X-Received: by 2002:a05:6512:1053:b0:500:a1e4:fc45 with SMTP id c19-20020a056512105300b00500a1e4fc45mr3087675lfb.21.1693097981797;
+        Sat, 26 Aug 2023 17:59:41 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.17.59.36
+        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b00500a08e42e7sm917729lfo.124.2023.08.26.17.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Aug 2023 17:59:36 -0700 (PDT)
+        Sat, 26 Aug 2023 17:59:40 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -61,10 +61,11 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-iio@vger.kernel.org,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org
-Subject: [PATCH v4 16/38] ARM: dts: qcom: msm8660: move PMIC interrupts to the board files
-Date:   Sun, 27 Aug 2023 03:58:58 +0300
-Message-Id: <20230827005920.898719-17-dmitry.baryshkov@linaro.org>
+        linux-leds@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v4 20/38] ARM: dts: qcom: mdm9615: split PMIC to separate dtsi files
+Date:   Sun, 27 Aug 2023 03:59:02 +0300
+Message-Id: <20230827005920.898719-21-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
 References: <20230827005920.898719-1-dmitry.baryshkov@linaro.org>
@@ -74,61 +75,157 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The interrupt of SSBI PMICs is routed to the SoCs GPIO. As such, it is
-not a property of the SoC, it is a property of the particular board
-(even if it is standard and unified between all devices). Move these
-interrupt specifications to the board files.
+The PMIC is not a part of the SoC, so move PMIC to a separate file and
+include it from the board files.
 
+Suggested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts | 4 ++++
- arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts        | 4 ++++
- arch/arm/boot/dts/qcom/qcom-msm8660.dtsi            | 2 --
- 3 files changed, 8 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/qcom/pm8018.dtsi            | 57 +++++++++++++++++++
+ .../boot/dts/qcom/qcom-mdm9615-wp8548.dtsi    |  1 +
+ arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi      | 48 +---------------
+ 3 files changed, 59 insertions(+), 47 deletions(-)
+ create mode 100644 arch/arm/boot/dts/qcom/pm8018.dtsi
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts b/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-index 48fd1a1feea3..e4261d729d35 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-@@ -273,6 +273,10 @@ kxsd9@18 {
- 	};
- };
- 
-+&pm8058 {
-+	interrupts-extended = <&tlmm 88 IRQ_TYPE_LEVEL_LOW>;
-+};
+diff --git a/arch/arm/boot/dts/qcom/pm8018.dtsi b/arch/arm/boot/dts/qcom/pm8018.dtsi
+new file mode 100644
+index 000000000000..c602544900b2
+--- /dev/null
++++ b/arch/arm/boot/dts/qcom/pm8018.dtsi
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0+ OR MIT
++/*
++ * Device Tree Source for Qualcomm PM8018
++ *
++ * Copyright (C) 2016 BayLibre, SAS.
++ * Author : Neil Armstrong <narmstrong@baylibre.com>
++ */
 +
- &pm8058_gpio {
- 	dragon_ethernet_gpios: ethernet-state {
- 		pinconf {
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts b/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts
-index 86fbb6dfdc2a..a5441aecd637 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts
-@@ -34,6 +34,10 @@ &gsbi12_serial {
- 	status = "okay";
- };
- 
-+&pm8058 {
-+	interrupts-extended = <&tlmm 88 IRQ_TYPE_LEVEL_LOW>;
-+};
++&ssbi {
++	pm8018: pmic {
++		compatible = "qcom,pm8018", "qcom,pm8921";
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- &pm8058_keypad {
- 	linux,keymap = <
- 		MATRIX_KEY(0, 0, KEY_FN_F1)
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi
-index 9217ced108c4..84b0366792d4 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi
-@@ -341,8 +341,6 @@ ssbi@500000 {
++		pwrkey@1c {
++			compatible = "qcom,pm8018-pwrkey",
++				     "qcom,pm8921-pwrkey";
++			reg = <0x1c>;
++			interrupt-parent = <&pm8018>;
++			interrupts = <50 IRQ_TYPE_EDGE_RISING>,
++				     <51 IRQ_TYPE_EDGE_RISING>;
++			debounce = <15625>;
++			pull-up;
++		};
++
++		pm8018_mpps: mpps@50 {
++			compatible = "qcom,pm8018-mpp", "qcom,ssbi-mpp";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			reg = <0x50>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pm8018_mpps 0 0 6>;
++		};
++
++		rtc@11d {
++			compatible = "qcom,pm8018-rtc", "qcom,pm8921-rtc";
++			interrupt-parent = <&pm8018>;
++			interrupts = <39 IRQ_TYPE_EDGE_RISING>;
++			reg = <0x11d>;
++			allow-set-time;
++		};
++
++		pm8018_gpio: gpio@150 {
++			compatible = "qcom,pm8058-gpio",
++				     "qcom,ssbi-gpio";
++			reg = <0x150>;
++			interrupt-controller;
++			#interrupt-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pm8018_gpio 0 0 6>;
++			#gpio-cells = <2>;
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/qcom/qcom-mdm9615-wp8548.dtsi b/arch/arm/boot/dts/qcom/qcom-mdm9615-wp8548.dtsi
+index b782ff0d16cd..27c3d92d9452 100644
+--- a/arch/arm/boot/dts/qcom/qcom-mdm9615-wp8548.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-mdm9615-wp8548.dtsi
+@@ -7,6 +7,7 @@
+  */
  
- 			pm8058: pmic {
- 				compatible = "qcom,pm8058";
--				interrupt-parent = <&tlmm>;
--				interrupts = <88 8>;
- 				#interrupt-cells = <2>;
- 				interrupt-controller;
- 				#address-cells = <1>;
+ #include "qcom-mdm9615.dtsi"
++#include "pm8018.dtsi"
+ 
+ / {
+ 	model = "Sierra Wireless WP8548 Module";
+diff --git a/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi
+index 373d9425b8bd..e23ca6c42683 100644
+--- a/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-mdm9615.dtsi
+@@ -258,56 +258,10 @@ gsbi5_serial: serial@16440000 {
+ 			};
+ 		};
+ 
+-		qcom,ssbi@500000 {
++		ssbi: qcom,ssbi@500000 {
+ 			compatible = "qcom,ssbi";
+ 			reg = <0x500000 0x1000>;
+ 			qcom,controller-type = "pmic-arbiter";
+-
+-			pm8018: pmic {
+-				compatible = "qcom,pm8018", "qcom,pm8921";
+-				#interrupt-cells = <2>;
+-				interrupt-controller;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-
+-				pwrkey@1c {
+-					compatible = "qcom,pm8018-pwrkey", "qcom,pm8921-pwrkey";
+-					reg = <0x1c>;
+-					interrupt-parent = <&pm8018>;
+-					interrupts = <50 IRQ_TYPE_EDGE_RISING>,
+-						     <51 IRQ_TYPE_EDGE_RISING>;
+-					debounce = <15625>;
+-					pull-up;
+-				};
+-
+-				pm8018_mpps: mpps@50 {
+-					compatible = "qcom,pm8018-mpp", "qcom,ssbi-mpp";
+-					interrupt-controller;
+-					#interrupt-cells = <2>;
+-					reg = <0x50>;
+-					gpio-controller;
+-					#gpio-cells = <2>;
+-					gpio-ranges = <&pm8018_mpps 0 0 6>;
+-				};
+-
+-				rtc@11d {
+-					compatible = "qcom,pm8018-rtc", "qcom,pm8921-rtc";
+-					interrupt-parent = <&pm8018>;
+-					interrupts = <39 IRQ_TYPE_EDGE_RISING>;
+-					reg = <0x11d>;
+-					allow-set-time;
+-				};
+-
+-				pm8018_gpio: gpio@150 {
+-					compatible = "qcom,pm8018-gpio", "qcom,ssbi-gpio";
+-					reg = <0x150>;
+-					interrupt-controller;
+-					#interrupt-cells = <2>;
+-					gpio-controller;
+-					gpio-ranges = <&pm8018_gpio 0 0 6>;
+-					#gpio-cells = <2>;
+-				};
+-			};
+ 		};
+ 
+ 		sdcc1bam: dma-controller@12182000 {
 -- 
 2.39.2
 
