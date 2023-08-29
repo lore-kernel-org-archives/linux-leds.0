@@ -2,173 +2,322 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13207C83F14
-	for <linux-leds@archiver.kernel.org>; Mon, 28 Aug 2023 11:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BE6C83F12
+	for <linux-leds@archiver.kernel.org>; Tue, 29 Aug 2023 10:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232476AbjH1LAI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 28 Aug 2023 07:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41156 "EHLO
+        id S234960AbjH2KQf (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 29 Aug 2023 06:16:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232517AbjH1K5m (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 28 Aug 2023 06:57:42 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A894D188
-        for <linux-leds@vger.kernel.org>; Mon, 28 Aug 2023 03:57:34 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2bcb50e194dso46512181fa.3
-        for <linux-leds@vger.kernel.org>; Mon, 28 Aug 2023 03:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693220253; x=1693825053;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ScJJiUxyV9LKUy1UPNfuayMrh4/gBBz+Y4+3/4NfxE8=;
-        b=LyN18tXJscr9QOCDJO9IqWgIn4vHblPj8NYlmAlqv3wJC0I+GKAQ2p3PMr5jaNWbW8
-         Q3J9BmcZtreYsKb2WrbkklUwlaR9p6nzVQW/wjf9DpSij2eDXXS5kKajeMME54dmtkcu
-         fs1cVPjCf3Gcz+Qyv7FPlI0aCN2YvE6BgQ3fA7MH/9bD2FXnLSl7LeKYKVkYi7KGA2/6
-         HqHzlqLv1/f5ra68++VSmSoufeVkZN4Nv2SVemSyOuD0pvxcN99lsfLtj+yn+vR7m9Ea
-         YS2dvFolH9fuMJ6MFryiWQAWhtzJtN06NCxhM7BvfwPjE3uEx374nmAOYxi405/dM9tW
-         sNyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693220253; x=1693825053;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ScJJiUxyV9LKUy1UPNfuayMrh4/gBBz+Y4+3/4NfxE8=;
-        b=N834sNC0m0rmJSjGROAGIsi022iQtuE1SL7Eby7atG0B+WF1bl7ZL8e6QKKH9Sxi84
-         ccWFTRLQ8Lo4eMa6EO8+iM9URpxhm7qum/e+AecqfjmO/I+YtcsEeObr+KN/EChmkPc6
-         GUjLLC0FaIezQSXEB6jyNIpHg0Qf5cR3cdU73bzplT3OGJmFA8KC/tlXNXV+hPuRq4xE
-         wKdRYzdD3UmCGILa7wNVXepIQ7AKLvEVcZ2XcFA7b3Rc8XbrSKOsc3+zLhR5PFXx+VDa
-         9klBvtULXA8VC6h+IY7sKjNqa5BhMnbbLmeR7H5JG70I0x7PqFs1/gEXlhMoEMk6CgAj
-         dTKA==
-X-Gm-Message-State: AOJu0YyVdYWmtlvhGDR9kIW+6OGMUmto95lzRWzSyRqVH3l38Lt6EzZA
-        2Oe2dWtOI+7qc4gQQI8uaWYwtw==
-X-Google-Smtp-Source: AGHT+IFykMJKhRHj5gXoEIcbFTsFjHQv1CdJVv0O+4CFTrlWuhws1TjAclQfP4UIVoy3asWRMgvVmw==
-X-Received: by 2002:a2e:9b01:0:b0:2bc:c064:7252 with SMTP id u1-20020a2e9b01000000b002bcc0647252mr15852281lji.5.1693220252909;
-        Mon, 28 Aug 2023 03:57:32 -0700 (PDT)
-Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
-        by smtp.gmail.com with ESMTPSA id w16-20020a2e9990000000b002b6d7682050sm1698240lji.89.2023.08.28.03.57.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Aug 2023 03:57:32 -0700 (PDT)
-Message-ID: <d9aef01b-80c5-4b35-a246-7ef7bbdf00c6@linaro.org>
-Date:   Mon, 28 Aug 2023 12:57:31 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/37] ARM: dts: qcom: msm8660: move PMIC interrupts to
- the board files
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+        with ESMTP id S233771AbjH2KQH (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Aug 2023 06:16:07 -0400
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2088.outbound.protection.outlook.com [40.107.7.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C333F9;
+        Tue, 29 Aug 2023 03:16:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=U0ZdtnNPL/qWTN5r1NGjWrAhyyW21V+JR4LJRAQBjg/so9x353oqJAf9B/mXnM7RqPqJ8o5xusbGcewf+PQmYYTXeqL6QLzTooPyoqt3rZn9qvPmMzOGNYZlhtD9GkZRDsE0YscoZ59sx38Y7eX2AgCOieDMIYLDVpaSoF/1mStSuuCboSGzh10Sn5mT+eOuckJNGFGvY5eZxjmqaJ0xrJGgkNhOp6BJW1uCaTxrBZY4HGU/w0c2n2/6PNJxsPUE84S0jggnbgnoEapqYNCWL21d8alMEu0r4mSq/Kof1xD/xcI5lFzh9icWRHe5pp8AstNv0mnjcCv9SDMWUo7qhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8i6Z5ofY7+TKGE17qRje3A8VDEN4jiI1FoaTxvBWr9k=;
+ b=XXFKc3gL0+6bDeaBXzTNskD43JR7KI2FXZCgqj5octZfxiqfGUae8akVLKtNE08JhmuQ+jbIgdEsTul15GQqd+/ZCih1fgPTMn2sdZLNfuahSsuwPiY1npGzRhpMXnnLJTzKxfVT2AVebyj2sytCL12k33QgqJtdckI9e4suluXlvw7dEFjw0G5lsrO+PxR7GEx4GY8eNU8JXz15RPn4TWkS8XGjrU22HDixkpPvA9NR0KwoB8rOY89pnPTkku/vTI7bJA7d770rq7qWH14VPBWomr8Cga/LkU3ijh849X88T1Y7eq9Sd2IDkMC1Gy0MRV8hXBc/36Z1icdiFyAL2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 151.1.184.193) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=asem.it;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=asem.it;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asem.it; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8i6Z5ofY7+TKGE17qRje3A8VDEN4jiI1FoaTxvBWr9k=;
+ b=AaNF0P08tbdR1xBzHZhchHbDR2J1M8hru8F/a8DFEVpn0mYxll/eqMOJoAHRKOZFiLAN3FylFp3xn4z2HqgCC+2tlFgiYTUEG7S+cr03AUFKAIUa6zIvCXn3t+cK2+pCDcLYlMOMGb3TFrO6veR/oZGVl3QI7fTsIQ+jak1B0Ik=
+Received: from AS8PR04CA0038.eurprd04.prod.outlook.com (2603:10a6:20b:312::13)
+ by AS8PR01MB7669.eurprd01.prod.exchangelabs.com (2603:10a6:20b:2a9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.18; Tue, 29 Aug
+ 2023 10:15:59 +0000
+Received: from AM1PEPF000252E1.eurprd07.prod.outlook.com
+ (2603:10a6:20b:312:cafe::d4) by AS8PR04CA0038.outlook.office365.com
+ (2603:10a6:20b:312::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6699.35 via Frontend
+ Transport; Tue, 29 Aug 2023 10:15:59 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
+ 151.1.184.193) smtp.mailfrom=asem.it; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=asem.it;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ asem.it discourages use of 151.1.184.193 as permitted sender)
+Received: from asas054.asem.intra (151.1.184.193) by
+ AM1PEPF000252E1.mail.protection.outlook.com (10.167.16.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6745.16 via Frontend Transport; Tue, 29 Aug 2023 10:15:58 +0000
+Received: from flavio-x.asem.intra ([172.16.18.47]) by asas054.asem.intra with Microsoft SMTPSVC(10.0.14393.4169);
+         Tue, 29 Aug 2023 12:15:57 +0200
+From:   Flavio Suligoi <f.suligoi@asem.it>
+To:     Lee Jones <lee@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Helge Deller <deller@gmx.de>, Pavel Machek <pavel@ucw.cz>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org
-References: <20230827132525.951475-1-dmitry.baryshkov@linaro.org>
- <20230827132525.951475-16-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20230827132525.951475-16-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Flavio Suligoi <f.suligoi@asem.it>
+Subject: [PATCH v1 1/2] dt-bindings: backlight: Add MPS MP3309C
+Date:   Tue, 29 Aug 2023 12:15:45 +0200
+Message-Id: <20230829101546.483189-1-f.suligoi@asem.it>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 29 Aug 2023 10:15:57.0724 (UTC) FILETIME=[CD6C25C0:01D9DA61]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM1PEPF000252E1:EE_|AS8PR01MB7669:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 0e27d34a-b970-4a6d-3310-08dba878f06e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: DMQI7ysJxi+Bz1LMkrHzyBMOVUxqyUby9Y3JNrG9jvzMK68UA6RA2MNGvYKCSzAXxlVI78JqdExh3EN0HdTC/cEAij15oXK84yc/bh0M2JDCOyFlvHAWrBehRw+naEGXl/xHbBNbUaMP3IdwBFRgKl/LRiBuqlQiIMRfme2Sh6jaImxK8I+FjYb8sj21BbqTm6xlAKzO8N+tnz4D2B3ruEl1Y/ntzrNz+lENy9JK1B07t1i4MEPaI2K0qZklTOZrUvEFi8uuN93WT8IWsRYWSckR7pxGeJu1FTu5Sz/x+z+78rfb26xsdPMUl2ccX6gNOxHXN+wq6voQuNa+CmWGVv7ygnTrcMqoRHc/TmX35GzD7/4rZhKq7/y2Y6ulLSlI37AK2w5Lzen1F60hRYT2EdQYxyY6bFGeUEzFUpjadQdVBamJ6yjJxo58sWUcLrAOF8QsAvm4l8Sj2DE+zAL3ADp6SHNEMmTGUsudQNRgPqIQ6yJdEKteqPoxvqc0R/pwICtRK+zcdRUifUqpz7o0pko4xub0eTd9cUXlJH9IQ4aB50Fvl1oGbpJTL33xOTFD3/4FmY5LMW+sVN+SwxjImWa51XEb6T9xQKR5hzKBrvqXayHOYdKtHVYPt1Z9TatGnM7RqoOxuqFM5CQFOgPjiRJo/+AFqJ6CtLcU93UDeTMJ1z3diqMtyEwOYaco+EjMsYrQpMuOQhfuI21K8So3E/A/mj0BbO4O2S3QNIFFieo=
+X-Forefront-Antispam-Report: CIP:151.1.184.193;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:asas054.asem.intra;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(39850400004)(346002)(396003)(376002)(136003)(82310400011)(1800799009)(451199024)(186009)(46966006)(36840700001)(316002)(41300700001)(4326008)(336012)(2906002)(83380400001)(86362001)(47076005)(2616005)(107886003)(36756003)(26005)(5660300002)(1076003)(8676002)(40480700001)(36860700001)(8936002)(450100002)(6666004)(81166007)(356005)(82740400003)(966005)(110136005)(70206006)(70586007)(478600001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: asem.it
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2023 10:15:58.3696
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e27d34a-b970-4a6d-3310-08dba878f06e
+X-MS-Exchange-CrossTenant-Id: d0a766c6-7992-4344-a4a2-a467a7bb1ed2
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d0a766c6-7992-4344-a4a2-a467a7bb1ed2;Ip=[151.1.184.193];Helo=[asas054.asem.intra]
+X-MS-Exchange-CrossTenant-AuthSource: AM1PEPF000252E1.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR01MB7669
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 27.08.2023 15:25, Dmitry Baryshkov wrote:
-> The interrupt of SSBI PMICs is routed to the SoCs GPIO. As such, it is
-> not a property of the SoC, it is a property of the particular board
-> (even if it is standard and unified between all devices). Move these
-> interrupt specifications to the board files.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+The Monolithic Power (MPS) MP3309C is a WLED step-up converter, featuring a
+programmable switching frequency to optimize efficiency.
+The brightness can be controlled either by I2C commands (called "analog"
+mode) or by a PWM input signal (PWM mode).
+This driver supports both modes.
 
-Konrad
->  arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts | 4 ++++
->  arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts        | 4 ++++
->  arch/arm/boot/dts/qcom/qcom-msm8660.dtsi            | 2 --
->  3 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts b/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-> index 48fd1a1feea3..e4261d729d35 100644
-> --- a/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-> +++ b/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts
-> @@ -273,6 +273,10 @@ kxsd9@18 {
->  	};
->  };
->  
-> +&pm8058 {
-> +	interrupts-extended = <&tlmm 88 IRQ_TYPE_LEVEL_LOW>;
-> +};
-> +
->  &pm8058_gpio {
->  	dragon_ethernet_gpios: ethernet-state {
->  		pinconf {
-> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts b/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts
-> index 86fbb6dfdc2a..a5441aecd637 100644
-> --- a/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts
-> +++ b/arch/arm/boot/dts/qcom/qcom-msm8660-surf.dts
-> @@ -34,6 +34,10 @@ &gsbi12_serial {
->  	status = "okay";
->  };
->  
-> +&pm8058 {
-> +	interrupts-extended = <&tlmm 88 IRQ_TYPE_LEVEL_LOW>;
-> +};
-> +
->  &pm8058_keypad {
->  	linux,keymap = <
->  		MATRIX_KEY(0, 0, KEY_FN_F1)
-> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi
-> index 9217ced108c4..84b0366792d4 100644
-> --- a/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi
-> +++ b/arch/arm/boot/dts/qcom/qcom-msm8660.dtsi
-> @@ -341,8 +341,6 @@ ssbi@500000 {
->  
->  			pm8058: pmic {
->  				compatible = "qcom,pm8058";
-> -				interrupt-parent = <&tlmm>;
-> -				interrupts = <88 8>;
->  				#interrupt-cells = <2>;
->  				interrupt-controller;
->  				#address-cells = <1>;
+For device driver details, please refer to:
+- drivers/video/backlight/mp3309c_bl.c
+
+The datasheet is available at:
+- https://www.monolithicpower.com/en/mp3309c.html
+
+Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
+---
+ .../bindings/leds/backlight/mps,mp3309c.yaml  | 202 ++++++++++++++++++
+ 1 file changed, 202 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml
+
+diff --git a/Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml b/Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml
+new file mode 100644
+index 000000000000..a58904f2a271
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml
+@@ -0,0 +1,202 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/backlight/mps,mp3309c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MPS MP3309C backlight
++
++maintainers:
++  - Flavio Suligoi <f.suligoi@asem.it>
++
++description: |
++  The Monolithic Power (MPS) MP3309C is a WLED step-up converter, featuring a
++  programmable switching frequency to optimize efficiency.
++  It supports both analog (via I2C commands) and PWM dimming mode.
++
++  The datasheet is available at:
++  https://www.monolithicpower.com/en/mp3309c.html
++
++properties:
++  compatible:
++    const: mps,mp3309c-backlight
++
++  reg:
++    maxItems: 1
++
++  mps,dimming-mode:
++    description: The dimming mode (PWM or analog by I2C commands).
++    $ref: '/schemas/types.yaml#/definitions/string'
++    enum:
++      - pwm
++      - analog-i2c
++
++  pinctrl-names:
++    items:
++      - const: default
++
++  pinctrl-0: true
++
++  pwms:
++    description: PWM channel used for controlling the backlight in "pwm" dimming
++      mode.
++    maxItems: 1
++
++  default-brightness:
++    minimum: 0
++
++  max-brightness:
++    minimum: 1
++
++  enable-gpios:
++    description: GPIO used to enable the backlight in "analog-i2c" dimming mode.
++    maxItems: 1
++
++  mps,switch-on-delay-ms:
++    description: delay (in ms) before switch on the backlight, to wait for image
++      stabilization.
++    default: 10
++
++  mps,switch-off-delay-ms:
++    description: delay (in ms) after the switch off command to the backlight.
++    default: 0
++
++  mps,overvoltage-protection-13v:
++    description: overvoltage protection set to 13.5V.
++    type: boolean
++  mps,overvoltage-protection-24v:
++    description: overvoltage protection set to 24V.
++    type: boolean
++  mps,overvoltage-protection-35v:
++    description: overvoltage protection set to 35.5V.
++    type: boolean
++
++  mps,reset-gpios:
++    description: optional GPIO to reset an external device (LCD panel, FPGA,
++      etc.) when the backlight is switched on.
++    maxItems: 1
++
++  mps,reset-on-delay-ms:
++    description: delay (in s) before generating the reset-gpios.
++    default: 10
++
++  mps,reset-on-length-ms:
++    description: pulse length (in ms) for reset-gpios.
++    default: 10
++
++oneOf:
++  - required:
++      - mps,overvoltage-protection-13v
++  - required:
++      - mps,overvoltage-protection-24v
++  - required:
++      - mps,overvoltage-protection-35.5v
++
++allOf:
++  - $ref: common.yaml#
++  - if:
++      properties:
++        mps,dimming-mode:
++          contains:
++            enum:
++              - pwm
++    then:
++      required:
++        - pwms
++      not:
++        required:
++          - enable-gpios
++
++  - if:
++      properties:
++        mps,dimming-mode:
++          contains:
++            enum:
++              - analog-i2c
++    then:
++      required:
++        - enable-gpios
++      not:
++        required:
++          - pwms
++
++required:
++  - compatible
++  - reg
++  - mps,dimming-mode
++  - max-brightness
++  - default-brightness
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    i2c3 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        clock-frequency = <100000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_i2c3>;
++        status = "okay";
++
++        /* Backlight with PWM control */
++        backlight_pwm: backlight@17 {
++            compatible = "mps,mp3309c-backlight";
++            reg = <0x17>;
++            mps,dimming-mode = "pwm";
++            pinctrl-names = "default";
++            pinctrl-0 = <&pinctrl_fpga_reset>;
++            pwms = <&pwm1 0 3333333 0>; /* 300 Hz --> (1/f) * 1*10^9 */
++            max-brightness = <100>;
++            default-brightness = <80>;
++            mps,switch-on-delay-ms = <800>;
++            mps,switch-off-delay-ms = <10>;
++            mps,overvoltage-protection-24v;
++
++            /*
++             * Enable an FPGA reset pulse when MIPI data are stable,
++             * before switch on the backlight
++             */
++            mps,reset-gpios = <&gpio4 20 GPIO_ACTIVE_HIGH>;
++            mps,reset-on-delay-ms = <100>;
++            mps,reset-on-length-ms = <10>;
++        };
++    };
++
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    /* Backlight with analog control via I2C bus */
++    i2c3 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        clock-frequency = <100000>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_i2c3>;
++        status = "okay";
++
++        backlight_analog_i2c: backlight@18 {
++            compatible = "mps,mp3309c-backlight";
++            reg = <0x17>;
++            mps,dimming-mode = "analog-i2c";
++            pinctrl-names = "default";
++            pinctrl-0 = <&pinctrl_reg_pwm_backlight_fixed>,
++                        <&pinctrl_fpga_reset>;
++            enable-gpios = <&gpio5 5 GPIO_ACTIVE_HIGH>;
++            max-brightness = <100>;
++            default-brightness = <80>;
++            mps,switch-on-delay-ms = <800>;
++            mps,switch-off-delay-ms = <10>;
++            mps,overvoltage-protection-24v;
++
++            /*
++            * Enable an FPGA reset pulse when MIPI data are stable,
++            * before switch on the backlight
++            */
++            mps,reset-gpios = <&gpio4 20 GPIO_ACTIVE_HIGH>;
++            mps,reset-on-delay-ms = <100>;
++            mps,reset-on-length-ms = <10>;
++        };
++    };
+-- 
+2.34.1
+
