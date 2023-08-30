@@ -2,205 +2,209 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0E2C6FA8F
-	for <linux-leds@archiver.kernel.org>; Tue, 29 Aug 2023 16:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A0EC83F01
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Aug 2023 18:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237490AbjH2QjP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 29 Aug 2023 12:39:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50572 "EHLO
+        id S243495AbjH3Ssm (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237551AbjH2QjM (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 29 Aug 2023 12:39:12 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E3C187
-        for <linux-leds@vger.kernel.org>; Tue, 29 Aug 2023 09:39:07 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-52683da3f5cso5983978a12.3
-        for <linux-leds@vger.kernel.org>; Tue, 29 Aug 2023 09:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1693327146; x=1693931946;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mT6oXCgbaIv6xrqOFaIzIhxDtL6iZZ50u0IzIYTJFvk=;
-        b=UbpJ7e7KL9EA1LdgNzK++gknXGMcs5LEHN2Tg0CeDsF+V9PItbRrgw/2Ku4q8TwrAp
-         /RQ1y2sSi1awYmyzllT307gT/U58cJraYSsxN95ED0sro3l7z88tmalAh+KdYXAjWsP8
-         /xjnDZBG9isx7G5Le0dfa7+U6ZfZT02AXuqG/bfoLSM/GgmIlaYPjxQWsWdX+Y/Zyft7
-         tVhVwMBuU1nMKzoUbdrj76MOohFRzOQusMnMlUPlkquLmeGFjDnyxQApNkg67s57PDYm
-         HmbuAeEBTugqvKOdz+7hNePKJMaG9evwGwAJOn7GuGmIjPpUBce61xVuTYAo+TMy+KIp
-         DBOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693327146; x=1693931946;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mT6oXCgbaIv6xrqOFaIzIhxDtL6iZZ50u0IzIYTJFvk=;
-        b=DT3WQt7LmTgpRyNxQyCda4QIJz039BzorPZtQUPFn9cV0qr1CukE2/VYXcZnpcF55U
-         aG/QR01TUHtCZ/DGvYAovXYI6Tcj2g8ATuGgvWbNc0VCOGGDHHwGwv585uKkd3XRTmnD
-         LISBOS3Ox7yuMpFbv+6iLawBaRNk/5eemDTbTw9xXLH0enm/boUv/6hmjoz65MZLrVnk
-         sKzq7y/rEQF/5DoAEsL6rcRuu7wLdgbqbnswLDBCAPX/v9fpPu3z9/QWVCKKt0dPuEL5
-         fizXtQkrqbsi9rXJhDbzaq4kpN4Nga+GfXenbTAmyM1c+fDdV40slbDHUTUmwJmOeBrV
-         B33g==
-X-Gm-Message-State: AOJu0YztkvMT2H/2c82Vi8ZoazE1XRVwve0ru7xfvvdfU5iR3Vnuv7X3
-        162A/0eydXJWPCNZHSxfLcDbgw==
-X-Google-Smtp-Source: AGHT+IESQ+U8zTLIIt37ys6oP/s6v/+8nspiHQlBTB0sN17RPl6ikUPDnr2RZG5aF5IG0fNLxxKcTw==
-X-Received: by 2002:a17:906:8a55:b0:9a2:1853:a0be with SMTP id gx21-20020a1709068a5500b009a21853a0bemr10616171ejc.72.1693327146367;
-        Tue, 29 Aug 2023 09:39:06 -0700 (PDT)
-Received: from [192.168.0.22] ([77.252.47.196])
-        by smtp.gmail.com with ESMTPSA id jj26-20020a170907985a00b00988e953a586sm6147826ejc.61.2023.08.29.09.39.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Aug 2023 09:39:05 -0700 (PDT)
-Message-ID: <4982cfd7-4930-f205-09e8-fc5028183dba@linaro.org>
-Date:   Tue, 29 Aug 2023 18:39:04 +0200
+        with ESMTP id S1344096AbjH3SHN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2023 14:07:13 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70196198;
+        Wed, 30 Aug 2023 11:07:10 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37UGxIaZ005146;
+        Wed, 30 Aug 2023 18:06:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=WzlJ3dt7Edxz8pz9z58eVQOvyCfvbMaoCRg6Ggxb9wE=;
+ b=LaozlE71JEieo39dbgxu6CejfQ7uS79PVPOhaOjvlZXwnt0EpaTQzfGiT1KBE8Ex+EEG
+ VUUhf46EEHIjDHhGxeAmoLF/m/wLQyxGpykQKpc/no14Oh47kmAjrmjqDA2A8lliDgWs
+ GafD0CWBz9LQui/6rinO/AfEHKfiTBXfa1nPGq0ZxOUG5/fxxWg2Al6ezQjV597VizLZ
+ bgETEvHaYbHnwvgeIqO+gsZOcebXVyEvng4CtekZP0sRbf5RMQ52AqJFEczT/8dQM2d1
+ eKp5HBFq+8cZH9Qr1q/KbpY0QeQG7f666udt77A5BpAXAtCf86gHuBm5voLFjxK25rcN 2A== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3st0tasbk9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Aug 2023 18:06:51 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37UI6nJf023892
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 30 Aug 2023 18:06:49 GMT
+Received: from hu-amelende-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.36; Wed, 30 Aug 2023 11:06:47 -0700
+From:   Anjelique Melendez <quic_amelende@quicinc.com>
+To:     <pavel@ucw.cz>, <lee@kernel.org>, <thierry.reding@gmail.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>
+CC:     <luca.weiss@fairphone.com>, <konrad.dybcio@linaro.org>,
+        <u.kleine-koenig@pengutronix.de>, <quic_subbaram@quicinc.com>,
+        <quic_gurus@quicinc.com>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <kernel@quicinc.com>,
+        Anjelique Melendez <quic_amelende@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 2/7] dt-bindings: leds: leds-qcom-lpg: Add support for LPG PPG
+Date:   Wed, 30 Aug 2023 11:05:57 -0700
+Message-ID: <20230830180600.1865-5-quic_amelende@quicinc.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230830180600.1865-2-quic_amelende@quicinc.com>
+References: <20230830180600.1865-2-quic_amelende@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH v1 1/2] dt-bindings: backlight: Add MPS MP3309C
-Content-Language: en-US
-To:     Flavio Suligoi <f.suligoi@asem.it>, Lee Jones <lee@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Helge Deller <deller@gmx.de>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20230829101546.483189-1-f.suligoi@asem.it>
- <6dfae492-5533-df97-5c72-373d5e89444f@linaro.org>
- <DU2PR01MB8034C85013ECF222D12BAAA4F9E7A@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <DU2PR01MB8034C85013ECF222D12BAAA4F9E7A@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ke1J2SmOZh6G-kGAuG3YGOa-VYBcPPUt
+X-Proofpoint-ORIG-GUID: ke1J2SmOZh6G-kGAuG3YGOa-VYBcPPUt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-08-30_15,2023-08-29_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ spamscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 mlxlogscore=859
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2308300165
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On 29/08/2023 16:18, Flavio Suligoi wrote:
-> Hi Krzysztof,
-> 
-> Thanks for your quick replay and corrections!
-> Just some questions about some of your remarks:
-> 
->>> @@ -0,0 +1,202 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
->>> +---
->>
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  mps,dimming-mode:
->>> +    description: The dimming mode (PWM or analog by I2C commands).
->>> +    $ref: '/schemas/types.yaml#/definitions/string'
->>
->> Drop quotes, you should see warnings for this.
->>
->> It does not look like you tested the bindings, at least after quick look. Please
->> run `make dt_binding_check` (see
->> Documentation/devicetree/bindings/writing-schema.rst for instructions).
->> Maybe you need to update your dtschema and yamllint.
->>
->>> +    enum:
->>> +      - pwm
->>> +      - analog-i2c
->>
->> Why do you think this is a property of a board? Is PWM signal optional?
->> If so, its presence would define it. Otherwise it seems you want to control the
->> driver.
->>
-> 
-> The MP3309C device always need a I2C bus to rd/wr its internal registers.
-> But the brightness can be controlled in one of the following ways (mutually exclusive,
-> but mandatory):
-> - a PWM input signal
->     or
-> - a I2C command
-> So, the driver needs a property to select the dimming mode used; this property is mandatory.
+Update leds-qcom-lpg binding to support LPG PPG.
 
-No, it's not a proof. Don't mix properties and hardware signals.
+Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/leds/leds-qcom-lpg.yaml          | 89 ++++++++++++++++++-
+ 1 file changed, 88 insertions(+), 1 deletion(-)
 
-> This is the reason of the existence of the ' mps,dimming-mode' property.
-> PWM signal is not optional, it is required if and only if the 'pwm' dimming mode is used.
-
-So the pwms determine the mode. That's it, no need for this property.
-
-
-> If the 'analog-i2c' dimming mode is used, instead, the PWM signal must not be used.
-> So the property 'mps,dimming-mode' controls how the MP3309C is used.
-> I can add more details about this in the description section.
-
-No, drop the property or explain more, e.g. is I2C mode of control used
-while having PWMs signals connected?
-
-> ...
->  
->>> +
->>> +  mps,overvoltage-protection-13v:
->>> +    description: overvoltage protection set to 13.5V.
->>> +    type: boolean
->>> +  mps,overvoltage-protection-24v:
->>> +    description: overvoltage protection set to 24V.
->>> +    type: boolean
->>> +  mps,overvoltage-protection-35v:
->>> +    description: overvoltage protection set to 35.5V.
->>> +    type: boolean
->>
->> Nope for these three. Use -microvolt suffix for one property.
-> 
-> Ok
-> 
->>
->>> +
->>> +  mps,reset-gpios:
->>> +    description: optional GPIO to reset an external device (LCD panel, FPGA,
->>> +      etc.) when the backlight is switched on.
->>> +    maxItems: 1
->>
->> No, you should not add here GPIOs for other devices.
-> 
-> Do you mean that I have to remove this property or that I have to move it somewhere else?
-> I added this feature because sometimes, in embedded boards, you need a pulse signal to
-
-How you described it, this is not the property of this device.
-
-> use after the backlight probing, for example to reset another device in sync with the backlight
-> probe.
-
-There is no term as "probe" in hardware, so you describe drivers.
-
-> Do you think I have to remove this feature from the driver?
-
-You cannot request GPIO after removing it from the bindings, obviously,
-but whether your backlight should reset something else? Don't care,
-don't know. I talk about bindings.
-
-> 
-> ...
-> 
->>> +allOf:
->>> +  - $ref: common.yaml#
->>> +  - if:
->>> +      properties:
->>> +        mps,dimming-mode:
->>> +          contains:
->>> +            enum:
->>> +              - pwm
->>> +    then:
->>> +      required:
->>> +        - pwms
->>
->> So this proves the point - mps,dimming-mode looks redundant and not
->> hardware related.
-> 
-> See my previous comment.
-
-No, it still proves the point till you explain why pwms cannot be used
-to determine this. Read my messages.
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+index e6f1999cb22f..067ebe35ca5e 100644
+--- a/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-qcom-lpg.yaml
+@@ -11,7 +11,7 @@ maintainers:
+ 
+ description: >
+   The Qualcomm Light Pulse Generator consists of three different hardware blocks;
+-  a ramp generator with lookup table, the light pulse generator and a three
++  a ramp generator with lookup table (LUT), the light pulse generator and a three
+   channel current sink. These blocks are found in a wide range of Qualcomm PMICs.
+ 
+ properties:
+@@ -63,6 +63,29 @@ properties:
+         - description: dtest line to attach
+         - description: flags for the attachment
+ 
++  nvmem:
++    description: >
++      This property is required for PMICs that supports PPG, which is when a
++      PMIC stores LPG per-channel data and pattern LUT in SDAM modules instead
++      of in a LUT peripheral. For PMICs, such as PM8350C, per-channel data
++      and pattern LUT is separated into 2 SDAM modules. In that case, phandles
++      to both SDAM modules need to be specified.
++    minItems: 1
++    maxItems: 2
++
++  nvmem-names:
++    minItems: 1
++    items:
++      - const: lpg_chan_sdam
++      - const: lut_sdam
++
++  qcom,pbs:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: >
++      Phandle of the Qualcomm Programmable Boot Sequencer node (PBS).
++      PBS node is used to trigger LPG pattern sequences for PMICs that support
++      single SDAM PPG.
++
+   multi-led:
+     type: object
+     $ref: leds-class-multicolor.yaml#
+@@ -106,6 +129,39 @@ required:
+ 
+ additionalProperties: false
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: qcom,pmi632-lpg
++    then:
++      properties:
++        nvmem:
++          maxItems: 1
++        nvmem-names:
++          maxItems: 1
++      required:
++        - nvmem
++        - nvmem-names
++        - qcom,pbs
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,pm8350c-pwm
++              - qcom,pm8550-pwm
++    then:
++      properties:
++        nvmem:
++          minItems: 2
++        nvmem-names:
++          minItems: 2
++      required:
++        - nvmem
++        - nvmem-names
++
+ examples:
+   - |
+     #include <dt-bindings/leds/common.h>
+@@ -191,4 +247,35 @@ examples:
+       compatible = "qcom,pm8916-pwm";
+       #pwm-cells = <2>;
+     };
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    led-controller {
++      compatible = "qcom,pmi632-lpg";
++      #address-cells = <1>;
++      #size-cells = <0>;
++      #pwm-cells = <2>;
++      nvmem-names = "lpg_chan_sdam";
++      nvmem = <&pmi632_sdam_7>;
++      qcom,pbs = <&pmi632_pbs_client3>;
++
++      led@1 {
++        reg = <1>;
++        color = <LED_COLOR_ID_RED>;
++        label = "red";
++      };
++
++      led@2 {
++        reg = <2>;
++        color = <LED_COLOR_ID_GREEN>;
++        label = "green";
++      };
++
++      led@3 {
++        reg = <3>;
++        color = <LED_COLOR_ID_BLUE>;
++        label = "blue";
++      };
++    };
++
+ ...
+-- 
+2.41.0
 
