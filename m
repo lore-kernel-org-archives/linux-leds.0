@@ -2,291 +2,382 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179F3C83F18
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Aug 2023 18:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 793F9C83F15
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Aug 2023 20:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243368AbjH3StF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46474 "EHLO
+        id S237928AbjH3U3e (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Aug 2023 16:29:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243851AbjH3L4j (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2023 07:56:39 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2066.outbound.protection.outlook.com [40.107.6.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1381B0;
-        Wed, 30 Aug 2023 04:56:34 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EeWlDPX5Xrf5+Xr/yb4VocAK2biQS997TEOJVuEXaeaLF8GURqzWdDMI9n7HrQCGvRvmw1sjeyNo5vRQQHIpkGXSQTqM4hwsUcqgvnzLWpxw5XSyxlmNGgIk15ajXUUn0TPVdpb4BgiMTFrhGiDIk1/KDspA0Jh62ywQbdYVtTCt4juJmt8Bdnh85c/B4LuLqGxcO91SY6R6v3bTOo6xl6lNCcvFBKLGJDL2FfnL/R9xaB+jUTrad6TZ6Or04Nyc/75tfY6EESN3mar2K8NCsKrsCPgKOoYnlksmYHLvtO8rE4H/XxYfph1CYHUGZsbJHsy9TdA4Ef1/sI4x8/aFsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8ZCZb5WTzCPkiSGRsu0YEasDm7RBAmDEqJnyXuNmkMM=;
- b=LOqTxzzIpiSz3HcqS7piTmlq1D2vdOKCF3cz/4HiNZ5mpaGwoXS3ENmp60qRTTlCpxPQbLxY5Hq6oPTywWi1+PdwX6NPebqZK7x284BJpjvJ/0Ec30PFWkGmpYVtnc4zflpc6DjwzRLEn1NihVocjt/Dqz0xqj5g31VfcpbmXWna0WDXLkYFDwaa978RcHovr70SXqYH+43zEoWQjHB7Ep5El3s8oBQoqAqdsggqlm0TdWEdF4rNoILiuavC7IFyT0O5VPn5yYI58q+1nKcXwwBhDg0wK9TdJq4ogwqufcD8GxJXwWqlEKzrCVitY77FMMxuntwPHMnhMpiHyL4fIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=asem.it; dmarc=pass action=none header.from=asem.it; dkim=pass
- header.d=asem.it; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=asem.it; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8ZCZb5WTzCPkiSGRsu0YEasDm7RBAmDEqJnyXuNmkMM=;
- b=A2xWYQ/vrWUHq1S+0B/vdMYCToTMu36OVAABkDW13wDFTdSD8NDrZj2QO3/FhtgWcuo5XQliBAyuatfoC8lV/71b0Ck5GA5HVKJIHdO5Le6LlVzMR8OxDvOz4dQqQD9t1fljTu+X3iZ2FOT0R5JwXpiUth1k/Bk9oG7FHM0ZSiE=
-Received: from DU2PR01MB8034.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:273::14) by DBAPR01MB6551.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:179::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.20; Wed, 30 Aug
- 2023 11:56:32 +0000
-Received: from DU2PR01MB8034.eurprd01.prod.exchangelabs.com
- ([fe80::11d:15c1:fca6:e077]) by DU2PR01MB8034.eurprd01.prod.exchangelabs.com
- ([fe80::11d:15c1:fca6:e077%7]) with mapi id 15.20.6745.020; Wed, 30 Aug 2023
- 11:56:32 +0000
-From:   Flavio Suligoi <f.suligoi@asem.it>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-CC:     Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        Helge Deller <deller@gmx.de>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1 2/2] backlight: mp3309c: Add support for MPS MP3309C
-Thread-Topic: [PATCH v1 2/2] backlight: mp3309c: Add support for MPS MP3309C
-Thread-Index: AQHZ2mHRsMNOaOYwzkeWXdI/h0YD/bABdtoAgAFFaPA=
-Date:   Wed, 30 Aug 2023 11:56:32 +0000
-Message-ID: <DU2PR01MB80348776A43291B59C5D2A59F9E6A@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
-References: <20230829101546.483189-1-f.suligoi@asem.it>
- <20230829101546.483189-2-f.suligoi@asem.it>
- <20230829162814.GA56339@aspen.lan>
-In-Reply-To: <20230829162814.GA56339@aspen.lan>
-Accept-Language: it-IT, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=asem.it;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU2PR01MB8034:EE_|DBAPR01MB6551:EE_
-x-ms-office365-filtering-correlation-id: ee6a66ad-9058-4842-43ab-08dba9502721
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: qr8C3uqt2DPnwiykr/adLEyWyA+MF2uiBq71Rjx6XMqMA52LW56tqNCrTNaWZm3JsKQQnkEamjYGglzW4e/bL63VFcnXA82638k5o5Hkzi9SfeqO6XRveDo2ctQGHeq0uZ+HiA7GQWRS/QXZTBjqKLRMXZ67JP8XeRBuGZD8oNFnT6gn6XVhYWN1TP8XJf+2xChPhYXIqUoUJPd+VfVJ9kj/zgpm2xm5+8vD2KcLAUNohzvIWo8KDZ6Ipt74c+Sui81iBnh/nSj2YhGEdQSsePhd7zDa3ruX2Au2cXszlhiyEATISqH41NHRFPSmRhpXqxP2Uji/fM+EFob7iKEKCfAzaZdhrhe60Qc+PQkPLjmc61qybHGWDIc5V07WhqWU6nll8EQjSMGTtgYsjFBMW8vmK4tBPMQp+UaLe+qO0BEI5ydx78dTsaU3KGJBnIbNmHD6xmPoDzjp4HIwA/o+QY94Y1g2DvnmFP3IpBn0c6KJBlxMV5KL2Jrr2P/kRvtRyiFonqfC4hX2yvWXur0OgCWFfJ+tA9EgojBZiC7Ht8QEVSVQsHSjF4qdtFqq2vpdONuMwF9O2kqoQKvlpbGZrYB+cLeO2PCOvRoWEf/bHUc=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR01MB8034.eurprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(366004)(396003)(39840400004)(346002)(136003)(186009)(1800799009)(451199024)(33656002)(7416002)(66556008)(6916009)(66476007)(54906003)(66446008)(2906002)(64756008)(66946007)(76116006)(316002)(55016003)(41300700001)(9686003)(53546011)(71200400001)(6506007)(7696005)(5660300002)(52536014)(26005)(83380400001)(86362001)(966005)(8936002)(38070700005)(38100700002)(4326008)(8676002)(122000001)(478600001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Si2W3Rwya+nFNWs/lXpOVYr7gz91Bt3kjdlf/0OAvRLvPUPQNHgudIxlqbDL?=
- =?us-ascii?Q?xBK1MgZaJxVlAe7Q9H/X1txf5pC/5ErHFZY6tCxMi0BUtTa/NU7Y5GBwehqQ?=
- =?us-ascii?Q?e9C922MSt4ofMZvy/yGZk+Dy9UCh+vue8QMoIGQhVsJ1sRoWpMHtyIEW6mPu?=
- =?us-ascii?Q?An7pyYv+NAF4w44jQcHqHLz0m7e9h9J31WD/3wLfwCZsgTwSefFb5eaYuVRD?=
- =?us-ascii?Q?s+6thA8T0ADXLSLO84K0s5cxYG822QmblwwgiFZPyd3LtkKA1l96pVdhT04D?=
- =?us-ascii?Q?YwsaNGv1SrMfj7HYqgEq3N2nS/+Mm9vfDTk7xnC6LFNDoJXBLw8kJG0j/vkp?=
- =?us-ascii?Q?6g5euq983lTY/yUT9cAy7XIBEqvIObh9ZKVrA/W/V4E9uYnR9fDn2qsMQcQU?=
- =?us-ascii?Q?7IP5RInzcQtmLvsi0zCk49sWN/md3D4P7t1pQ+uCG59tcwF/ev76hCaRMtvi?=
- =?us-ascii?Q?vN4RJHkvjAKuJtWIjMj3ObQNix3Jkvy23XTxXoDcJFMwXAI7QNivMTbA9RX4?=
- =?us-ascii?Q?MYERjnW2ARKmjJa5ZZJqeK9yKh6WbXwuKji4TUpJ+iHylS/polQhAQztc3C8?=
- =?us-ascii?Q?1O7+0MfS80pbxYh3WnO4UknLjVwc50Nw4ij4jM3ZWvvDNBBUrgzCm83tTbaD?=
- =?us-ascii?Q?V9650+GClTD7VvoaBdBGTFuQmnQ/JAPlJe/mNNCurckknR29lPXAmogSxkil?=
- =?us-ascii?Q?3/lsuJv6tgvTOWCY+sn6UZa604yZMBGIO3+kHdvjuPLOyUG91zzSmrHsA0fY?=
- =?us-ascii?Q?jGEFT2Jiof2SsbQ/6lIoPMJwrwxCgzRBYNp1D9xiNq7CFI5C15Bh9EaHrY2i?=
- =?us-ascii?Q?NBysvA7sGfmpZWebvRjDMWiZxowx+G8pXURrcJtK3QCeMNlos5GyQI3uAcYc?=
- =?us-ascii?Q?rGTq6+MVA604V8ifU1hD0FXe8d0b7qkm1zxZSnaqGDUQdPz0Nyx6DEGaYlh9?=
- =?us-ascii?Q?K/qgKa2tMKKHn9Bh1xuNjP64mmrao3Na3Tm4d0PLUugSCcBSyRFuQYV+evMF?=
- =?us-ascii?Q?ASUP+YNwvXIzwDcrGo+UAmvieiX0ZMEXXWe+zT0kLC2aMNyiaZwnnsIpnkBH?=
- =?us-ascii?Q?iu86/HJX2HAHfw31TyFOsLsayfAup+UVcik7pfe2DB6CaCfFVj8DUn/OXz74?=
- =?us-ascii?Q?+ENGLXNmrEIvrcudMfA1y7KOQcomR0sy3KHGN5ATZ6NoC+p7khhMcGb94zZ1?=
- =?us-ascii?Q?giuENwkWYpP7TUTqzE3EqzOyG8wNRwISEWmYDvciiv7eN5Pb4UxAdgmMHeC5?=
- =?us-ascii?Q?cKU54IN6kiQUVSUUIVQo7yG16KWw6Y/qMcKWcmO7qVZ/LIn5pjIfLZRs/2+W?=
- =?us-ascii?Q?B7eEELHaMnRNQJbSOLuFmoxd1ENMyg6poHMjSi8aqfy/PEJfJKkKv8rQl3Ws?=
- =?us-ascii?Q?FcmqJtm8f+jFAdfqltQeAM4jsDz7IPlORx1QaFAl+Lvj1TF9NQ/gT4Ga3Y4u?=
- =?us-ascii?Q?FQV+uiq25FYMMgZ84wwOmt6suXLsFlOjAVhGzt3uwI/u8u9pO1VVbiA7Wqt5?=
- =?us-ascii?Q?2sJOhCMujyDT3zwnwNydncYSBDJ2lHlPEStxaMTfjXWFpaRO9zVQRVGQfU0z?=
- =?us-ascii?Q?fvn4zqMnlNYydsDN4Wc=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S239253AbjH3U3D (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2023 16:29:03 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2379FB958
+        for <linux-leds@vger.kernel.org>; Wed, 30 Aug 2023 12:19:54 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-52bcd4db4c0so39808a12.0
+        for <linux-leds@vger.kernel.org>; Wed, 30 Aug 2023 12:19:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1693422981; x=1694027781; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+EWxGsOLnd1S0YI2fSd+NkLhQt9gXvMSC02V+aZzkUY=;
+        b=JYYTzS8o4+n+ux+TT7lxLJp8WMvD7u6CLpQj+IORC5jMI+IfS1SKaqHw6MhkduK3KJ
+         sbnOiwaLvW2FTozv6GOSiEP4bWhgvS3azwLTJbpQM5nbJGjkOgnc6ebS7VyGHzyv2rZ7
+         SiKYCVuV/BCkkyL5fopFe7b75Kjd2MV0G+dJhtUMDSyOUOcLhYSn4TLRFKFd8x5Xre6F
+         iVWjtRKVV0gX/+EDgi0T0UwJl1uNxIVyxoBMIGQXbEFhBXKIi5SQPL999irGYI44latm
+         MuXXf5I4qMtnbp3ODxHH9zxMtUUjk7oPKzJ9Up87SWPPHCpWIH6/Sfd3tyNZi+TMLKja
+         NpAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693422981; x=1694027781;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+EWxGsOLnd1S0YI2fSd+NkLhQt9gXvMSC02V+aZzkUY=;
+        b=I4CtEyAtvK2YarV9ytTjHsaP7XcinysMPUhXtYmEX31sBucPtbE7Vg/96XjePz4CpV
+         iShdsuJwu+vtq3XWUhaz9cbJ+UwyfBQ7chhGYXEGPdeQARqVaYir5aufXztdMpdOCrPU
+         sBH8U6TQ6mexSE3U7Zt36z5P0uopzeGHomATqHKfS9ysunbujBf9iLqKCfFvpynbC4Cr
+         bJlZGKgLRFqXdPWpP9eHdtALx5Yyqpm9UTOhpoGZVSfgnJgXdsshbSDwFzaIme2EdMFS
+         lCCro6/tgYaOvGvS/3LvXVqWAzHnEED3IlBCiBV+9Xd5MHpcKFWmP285dulmMVD4Kli3
+         hLzA==
+X-Gm-Message-State: AOJu0YwLAJuWhRgYf88HtzsIkCAI7XgiZRNLyaO/svIMzWZkugAB9OLy
+        nj1wjb4Ot2Xf1BTr5dzCFkjrWikPxzLpV1JPh+t0Qw==
+X-Google-Smtp-Source: AGHT+IGfR18dSZBXSqYXGSzoHrNRgDwKf6Nb+DOKZeJcaMS5RT7sCIo9zfZ5tbBrSkGgdK4RGB/CLg==
+X-Received: by 2002:a05:6512:159c:b0:4ff:8f76:678c with SMTP id bp28-20020a056512159c00b004ff8f76678cmr165497lfb.1.1693420454740;
+        Wed, 30 Aug 2023 11:34:14 -0700 (PDT)
+Received: from [192.168.1.101] (abyl195.neoplus.adsl.tpnet.pl. [83.9.31.195])
+        by smtp.gmail.com with ESMTPSA id l12-20020ac24a8c000000b004fe633bfcc7sm2473562lfp.17.2023.08.30.11.34.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 11:34:14 -0700 (PDT)
+Message-ID: <3b6f6285-ec3b-4e12-aa65-d5f61937de6f@linaro.org>
+Date:   Wed, 30 Aug 2023 20:34:10 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: asem.it
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR01MB8034.eurprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee6a66ad-9058-4842-43ab-08dba9502721
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2023 11:56:32.1928
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d0a766c6-7992-4344-a4a2-a467a7bb1ed2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VK/gtJbPvr4vvtOk29Wkdiqna8MRwMCUwo6bi7wLio+qjvrhSprs5Gf2DDuoCGYcmeuuaaGomhdCc1l0VCq/dg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR01MB6551
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/7] leds: rgb: leds-qcom-lpg: Add support for PPG
+ through single SDAM
+Content-Language: en-US
+To:     Anjelique Melendez <quic_amelende@quicinc.com>, pavel@ucw.cz,
+        lee@kernel.org, thierry.reding@gmail.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        agross@kernel.org, andersson@kernel.org
+Cc:     luca.weiss@fairphone.com, u.kleine-koenig@pengutronix.de,
+        quic_subbaram@quicinc.com, quic_gurus@quicinc.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, kernel@quicinc.com
+References: <20230830180600.1865-2-quic_amelende@quicinc.com>
+ <20230830180600.1865-7-quic_amelende@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230830180600.1865-7-quic_amelende@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-HI Daniel,
+On 30.08.2023 20:05, Anjelique Melendez wrote:
+> In some PMICs like pmi632, the pattern look up table (LUT) and LPG
+> configuration can be stored in a single SDAM module instead of LUT
+> peripheral. This feature is called PPG. PPG uses Qualcomm Programmable
+> Boot Sequencer (PBS) inorder to trigger pattern sequences for PMICs.
+I still fail to understand what benefit this brings.
 
-> -----Original Message-----
-> From: Daniel Thompson <daniel.thompson@linaro.org>
-> Sent: Tuesday, August 29, 2023 6:28 PM
-> To: Flavio Suligoi <f.suligoi@asem.it>
-> Cc: Lee Jones <lee@kernel.org>; Jingoo Han <jingoohan1@gmail.com>; Helge
-> Deller <deller@gmx.de>; Pavel Machek <pavel@ucw.cz>; Rob Herring
-> <robh+dt@kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley <conor+dt@kernel.org>;
-> dri-devel@lists.freedesktop.org; linux-leds@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-fbdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v1 2/2] backlight: mp3309c: Add support for MPS
-> MP3309C
->=20
-> On Tue, Aug 29, 2023 at 12:15:46PM +0200, Flavio Suligoi wrote:
-> > The Monolithic Power (MPS) MP3309C is a WLED step-up converter,
-> > featuring a programmable switching frequency to optimize efficiency.
-> > The brightness can be controlled either by I2C commands (called "analog=
-"
-> > mode) or by a PWM input signal (PWM mode).
-> > This driver supports both modes.
-> >
-> > For DT configuration details, please refer to:
-> > - Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml
-> >
-> > The datasheet is available at:
-> > - https://www.monolithicpower.com/en/mp3309c.html
-> >
-> > Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
->=20
-> > diff --git a/drivers/video/backlight/Kconfig
-> > b/drivers/video/backlight/Kconfig index 51387b1ef012..65d0ac9f611d
-> > 100644
-> > --- a/drivers/video/backlight/Kconfig
-> > +++ b/drivers/video/backlight/Kconfig
-> > @@ -389,6 +389,19 @@ config BACKLIGHT_LM3639
-> >  	help
-> >  	  This supports TI LM3639 Backlight + 1.5A Flash LED Driver
-> >
-> > +config BACKLIGHT_MP3309C
-> > +	tristate "Backlight Driver for MPS MP3309C"
-> > +	depends on I2C
-> > +	select REGMAP_I2C
-> > +	select NEW_LEDS
-> > +	select LEDS_CLASS
->=20
-> This doesn't seem right.
->=20
-> Shouldn't PWM and GPIOLIB be listed here? Why are NEW_LEDS and
-> LEDS_CLASS needed?
+Is this a "can be used", or "should be used", or maybe "must be used"?
 
-ok, I'll fix it
+Are there any distinct advantages to using one over the other?
+I see some limitations in the code below, but that's not being made
+obvious.
 
->=20
-> > +	help
-> > +	  This supports MPS MP3309C backlight WLED Driver in both PWM
-> and
-> > +	  analog/I2C dimming modes.
-> > +
-> > +	  To compile this driver as a module, choose M here: the module will
-> > +	  be called mp3309c_bl.
-> > +
-> >  config BACKLIGHT_LP855X
-> >  	tristate "Backlight driver for TI LP855X"
-> >  	depends on I2C && PWM
->=20
-> > +static int mp3309c_bl_update_status(struct backlight_device *bl) {
-> > +	struct mp3309c_chip *chip =3D bl_get_data(bl);
-> > +	int brightness =3D backlight_get_brightness(bl);
-> > +	struct pwm_state pwmstate;
-> > +	unsigned int analog_val, bits_val;
-> > +	int i, ret;
-> > +
-> > +	if (chip->pdata->dimming_mode =3D=3D DIMMING_PWM) {
-> > +		/*
-> > +		 * PWM dimming mode
-> > +		 */
-> > +		pwm_init_state(chip->pwmd, &pwmstate);
-> > +		pwm_set_relative_duty_cycle(&pwmstate, brightness,
-> > +					    chip->pdata->max_brightness);
-> > +		pwmstate.enabled =3D true;
-> > +		ret =3D pwm_apply_state(chip->pwmd, &pwmstate);
-> > +		if (ret)
-> > +			return ret;
-> > +	} else {
-> > +		/*
-> > +		 * Analog dimming mode by I2C commands
-> > +		 *
-> > +		 * The 5 bits of the dimming analog value D4..D0 is allocated
-> > +		 * in the I2C register #0, in the following way:
-> > +		 *
-> > +		 *     +--+--+--+--+--+--+--+--+
-> > +		 *     |EN|D0|D1|D2|D3|D4|XX|XX|
-> > +		 *     +--+--+--+--+--+--+--+--+
-> > +		 */
-> > +		analog_val =3D DIV_ROUND_UP(ANALOG_MAX_VAL *
-> brightness,
-> > +					  chip->pdata->max_brightness);
-> > +		bits_val =3D 0;
-> > +		for (i =3D 0; i <=3D 5; i++)
-> > +			bits_val +=3D ((analog_val >> i) & 0x01) << (6 - i);
-> > +		ret =3D regmap_update_bits(chip->regmap, REG_I2C_0,
-> > +					 ANALOG_REG_MASK, bits_val);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	if (brightness > 0) {
-> > +		switch (chip->pdata->status) {
-> > +		case FIRST_POWER_ON:
-> > +			/*
-> > +			 * Only for the first time, wait for the optional
-> > +			 * switch-on delay and then enable the device.
-> > +			 * Otherwise enable the backlight immediately.
-> > +			 */
-> > +			schedule_delayed_work(&chip->enable_work,
-> > +					      msecs_to_jiffies(chip->pdata-
-> >switch_on_delay_ms));
->=20
-> Delaying this work makes no sense to me, especially when it is only going=
- to
-> happen at initial power on.
->=20
-> If you are (ab)using this property to try and sequence the backlight powe=
-r-on
-> with display initialization then this is not the way to do it.
-> Normally backlight drivers that support sequencing versus the panel work =
-by
-> having a backlight property set on the panel linking it to the backlight.=
- When
-> the panel is ready this power status of the backlight will be updated
-> accordingly.
->=20
-> All the backlight driver need do is make sure that is the initial power s=
-tatus is
-> "powerdown" on systems when the link is present (e.g.
-> leave the backlight off and wait to be told the display has settled).
+This all should be in the commit message, the current one includes
+a lot of cryptic names that mean nothing to most people.
 
-OK, I'll remove this delay. It was used for one of our boards, as a workaro=
-und.
+[...]
 
->=20
->=20
-> > +			/*
-> > +			 * Optional external device GPIO reset, with
-> > +			 * delay pulse length
-> > +			 */
-> > +			if (chip->pdata->reset_pulse_enable)
-> > +				schedule_delayed_work(&chip-
-> >reset_gpio_work,
-> > +						      msecs_to_jiffies(chip-
-> >pdata->reset_on_delay_ms));
->=20
-> Similarly I don't understand what this property is for. A backlight is di=
-rectly
-> perceivable by the user. There is nothing downstream of a light that need=
-s to
-> be reset!
->=20
-> What is this used for?
+>  
+> +static int lpg_sdam_write(struct lpg *lpg, u16 addr, u8 val)
+Again, looks like excessive helpers for r/w accessors.
 
-Also this property, this gpio, was used for one of our boards.
-It is not necessary, I'll remove it.
+> +{
+> +	int rc;
+> +
+> +	rc = nvmem_device_write(lpg->lpg_chan_nvmem, addr, 1, &val);
+> +	if (rc < 0) {
+> +		dev_err(lpg->dev, "writing %u to SDAM addr %#x failed, rc=%d\n",
+> +			val, addr, rc);
+> +		return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +#define PBS_SW_TRIG_BIT		BIT(0)
+> +
+> +static int lpg_clear_pbs_trigger(struct lpg_channel *chan)
+> +{
+> +	int rc;
+> +
+> +	clear_bit(chan->lpg_idx, &chan->lpg->pbs_en_bitmap);
+> +	if (!chan->lpg->pbs_en_bitmap) {
+> +		rc = lpg_sdam_write(chan->lpg, SDAM_REG_PBS_SEQ_EN, 0);
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_set_pbs_trigger(struct lpg_channel *chan)
+> +{
+> +	int rc;
+> +
+> +	if (!chan->lpg->pbs_en_bitmap) {
+> +		rc = lpg_sdam_write(chan->lpg, SDAM_REG_PBS_SEQ_EN, PBS_SW_TRIG_BIT);
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		rc = qcom_pbs_trigger_event(chan->lpg->pbs_dev, PBS_SW_TRIG_BIT);
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +	set_bit(chan->lpg_idx, &chan->lpg->pbs_en_bitmap);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lpg_sdam_configure_triggers(struct lpg_channel *chan, bool set_trig)
+> +{
+> +	int rc;
+> +
+> +	if (chan->lpg->lut_base)
+> +		return 0;
+> +
+> +	if (set_trig) {
+> +		rc = lpg_sdam_write(chan->lpg, SDAM_LUT_EN_OFFSET + chan->sdam_offset, 1);
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		rc = lpg_set_pbs_trigger(chan);
+> +		if (rc < 0)
+> +			return rc;
+> +		chan->pattern_set = false;
+> +	} else {
+> +		rc = lpg_sdam_write(chan->lpg, SDAM_LUT_EN_OFFSET + chan->sdam_offset, 0);
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		rc = lpg_clear_pbs_trigger(chan);
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int triled_set(struct lpg *lpg, unsigned int mask, unsigned int enable)
+>  {
+>  	/* Skip if we don't have a triled block */
+> @@ -217,6 +333,41 @@ static int triled_set(struct lpg *lpg, unsigned int mask, unsigned int enable)
+>  				  mask, enable);
+>  }
+>  
+> +static int lpg_lut_store_sdam(struct lpg *lpg, struct led_pattern *pattern,
+> +			 size_t len, unsigned int *lo_idx, unsigned int *hi_idx)
+> +{
+> +	u8 brightness;
+> +	u16 addr;
+> +	unsigned int idx;
+> +	int i, rc;
+Reverse-Christmas-tree?
 
->=20
->=20
-> Daniel.
+> +
+> +	if (len > SDAM_LUT_COUNT_MAX) {
+> +		dev_err(lpg->dev, "Pattern length (%zu) exceeds maximum pattern length (%d)\n",
+> +			len, SDAM_LUT_COUNT_MAX);
+> +		return -EINVAL;
+> +	}
+> +
+> +	idx = bitmap_find_next_zero_area(lpg->lut_bitmap, lpg->lut_size,
+> +					 0, len, 0);
+> +	if (idx >= lpg->lut_size)
+> +		return -ENOSPC;
+> +
+> +	for (i = 0; i < len; i++) {
+> +		brightness = pattern[i].brightness;
+> +		addr = lpg->lut_sdam_base + i + idx;
+> +		rc = lpg_sdam_write(lpg, addr, brightness);
+> +		if (rc < 0)
+> +			return rc;
+> +	}
+> +
+> +	bitmap_set(lpg->lut_bitmap, idx, len);
+> +
+> +	*lo_idx = idx;
+> +	*hi_idx = idx + len - 1;
+> +
+> +	return 0;
+> +}
+> +
+>  static int lpg_lut_store(struct lpg *lpg, struct led_pattern *pattern,
+>  			 size_t len, unsigned int *lo_idx, unsigned int *hi_idx)
+>  {
+> @@ -463,6 +614,26 @@ static void lpg_apply_pwm_value(struct lpg_channel *chan)
+>  #define LPG_PATTERN_CONFIG_PAUSE_HI	BIT(1)
+>  #define LPG_PATTERN_CONFIG_PAUSE_LO	BIT(0)
+>  
+> +static void lpg_sdam_apply_lut_control(struct lpg_channel *chan)
+> +{
+> +	u8 val, conf = 0;
+> +	struct lpg *lpg = chan->lpg;
+Reverse-Christmas-tree?
 
-Thanks, Daniel!
-Flavio
+> +
+> +	if (!chan->ramp_oneshot)
+> +		conf |= LPG_PATTERN_CONFIG_REPEAT;
+> +
+> +	lpg_sdam_write(lpg, SDAM_PBS_SCRATCH_LUT_COUNTER_OFFSET + chan->sdam_offset, 0);
+> +	lpg_sdam_write(lpg, SDAM_PATTERN_CONFIG_OFFSET + chan->sdam_offset, conf);
+> +
+> +	lpg_sdam_write(lpg, SDAM_END_INDEX_OFFSET + chan->sdam_offset, chan->pattern_hi_idx);
+> +	lpg_sdam_write(lpg, SDAM_START_INDEX_OFFSET + chan->sdam_offset, chan->pattern_lo_idx);
+> +
+> +	val = RAMP_STEP_DURATION(chan->ramp_tick_ms);
+> +	if (val > 0)
+> +		val--;
+????
+
+that sounds very cryptic.. almost like some sort of a bad fixup
+maybe the RAMP_STEP_DURATION should contain that "-1"?
+
+not only that, but val is an unsigned value, so it's always > 0
+
+[...]
+
+> @@ -775,7 +952,7 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
+>  	unsigned int lo_idx;
+>  	unsigned int hi_idx;
+>  	unsigned int i;
+> -	bool ping_pong = true;
+> +	bool ping_pong = false;
+Why?
+
+This change combined with assigning true below for LUT mode
+is a NOP
+
+>  	int ret = -EINVAL;
+>  
+>  	/* Hardware only support oneshot or indefinite loops */
+> @@ -824,7 +1001,7 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
+>  	 * used to stretch the first delay of the pattern and a "high pause"
+>  	 * the last one.
+>  	 *
+> -	 * In order to save space the pattern can be played in "ping pong"
+> +	 * In order to save space for the pattern can be played in "ping pong"
+>  	 * mode, in which the pattern is first played forward, then "high
+>  	 * pause" is applied, then the pattern is played backwards and finally
+>  	 * the "low pause" is applied.
+> @@ -837,16 +1014,22 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
+>  	 * If the specified pattern is a palindrome the ping pong mode is
+>  	 * enabled. In this scenario the delta_t of the middle entry (i.e. the
+>  	 * last in the programmed pattern) determines the "high pause".
+> +	 *
+> +	 * NVMEM devices supporting LUT do not support "low pause", "high pause"
+> +	 * or "ping pong"
+>  	 */
+>  
+>  	/* Detect palindromes and use "ping pong" to reduce LUT usage */
+> -	for (i = 0; i < len / 2; i++) {
+> -		brightness_a = pattern[i].brightness;
+> -		brightness_b = pattern[len - i - 1].brightness;
+> -
+> -		if (brightness_a != brightness_b) {
+> -			ping_pong = false;
+> -			break;
+> +	if (lpg->lut_base) {
+> +		ping_pong = true;
+> +		for (i = 0; i < len / 2; i++) {
+> +			brightness_a = pattern[i].brightness;
+> +			brightness_b = pattern[len - i - 1].brightness;
+> +
+> +			if (brightness_a != brightness_b) {
+> +				ping_pong = false;
+> +				break;
+> +			}
+>  		}
+>  	}
+>  
+> @@ -860,14 +1043,21 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
+>  	 * Validate that all delta_t in the pattern are the same, with the
+>  	 * exception of the middle element in case of ping_pong.
+>  	 */
+> -	delta_t = pattern[1].delta_t;
+> -	for (i = 2; i < len; i++) {
+> +	if (lpg->lpg_chan_nvmem) {
+> +		i = 1;
+> +		delta_t = pattern[0].delta_t;
+> +	} else {
+> +		i = 2;
+> +		delta_t = pattern[1].delta_t;
+> +	}
+Why?
+
+What's the rationale behind this change?
+
+> +
+> +	for (; i < len; i++) {
+>  		if (pattern[i].delta_t != delta_t) {
+>  			/*
+>  			 * Allow last entry in the full or shortened pattern to
+>  			 * specify hi pause. Reject other variations.
+>  			 */
+> -			if (i != actual_len - 1)
+> +			if (i != actual_len - 1 || lpg->lpg_chan_nvmem)
+>  				goto out_free_pattern;
+>  		}
+>  	}
+> @@ -876,12 +1066,19 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
+>  	if (delta_t >= BIT(9))
+>  		goto out_free_pattern;
+>  
+> -	/* Find "low pause" and "high pause" in the pattern */
+> -	lo_pause = pattern[0].delta_t;
+> -	hi_pause = pattern[actual_len - 1].delta_t;
+> +	/* Find "low pause" and "high pause" in the pattern if not an NVMEM device*/
+missing a space before '*/'
+"if not an NVMEM device" -> "in the LUT case"?
+
+Konrad
