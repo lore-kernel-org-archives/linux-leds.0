@@ -2,42 +2,42 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9599C6FA8F
-	for <linux-leds@archiver.kernel.org>; Wed, 30 Aug 2023 18:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26D9C83F17
+	for <linux-leds@archiver.kernel.org>; Wed, 30 Aug 2023 18:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243569AbjH3Ssx (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:48:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43736 "EHLO
+        id S243575AbjH3Ssz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 30 Aug 2023 14:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344091AbjH3SGz (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2023 14:06:55 -0400
+        with ESMTP id S1344095AbjH3SHN (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 30 Aug 2023 14:07:13 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8947D193;
-        Wed, 30 Aug 2023 11:06:51 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37UHvP51004676;
-        Wed, 30 Aug 2023 18:06:40 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3681A2;
+        Wed, 30 Aug 2023 11:07:10 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37UHQN1H032622;
+        Wed, 30 Aug 2023 18:07:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=qcppdkim1;
- bh=76aF0ark5/phdGNLQ0a/IfhhkxP/ey3ApZJB9K/fmW0=;
- b=iSiZ58Y2GzyfeJpRxqELtAe9IAdIWuiXyQiKZ0bfD+WZUMKr2xUZu0etBopwDZk+cb2I
- gadEiPYfv8Xzsj02+OkzLcrQpj2YLApR7xpgeNgeudLGxzkKXHHvUMy01DF0ZuL99lMX
- zd0hRTL403wShzXgefVXtl/n32XS5SIGEY6d13ZEuv9PX9lLN/wyOVn71J2j3sBdphOb
- GSggVDFA6wUNZS46WltjPs7AcQfEVjgK05jeIh71iuNbpkbQwzMyg/gnesLsXdP6HyNQ
- ixhVOtf/xDbedKnBWQM7gc3VQ7MU2xmAUNCynn5VeMpFxOZMlX5L9tgD4z/HkZzzYOXP ug== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=d6XkxGnXGdhYD+yZ9yuGftHdbixcTwTNHVcT8grv4eQ=;
+ b=FQLIwJ6h3YcPelLr4s99w/vdkN9PqBEt09sWh4TuwpUqapx/DH2UeNe7n6stYpitumQ9
+ VmC7B+zgtuH5V/UIbL+m0BC2Xmsl6Kp/0u+Y1/rBMs0YxiVbDPsjzgqAS2qT8QVKVwyB
+ +cdd01R3WenPf3NmYIykEq6AuGQRguyFu70ltBlTUt4Rj/GzjKukqKzjHUZ0JNq5cOCc
+ HIv2uai0cQSd23c7E1mTM2o9uarFSsS76LtbVXHbkTliikvTqLDAk8w71vlcWw9zM66u
+ 4plDdVj7psp2peTyCS42vHvk6o39ZYLBZ17ucvpYuxXE76LGAsn7y/z1DnITtAs9sEXt FQ== 
 Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3sswbv1g7a-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ssmcvag5s-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 18:06:40 +0000
+        Wed, 30 Aug 2023 18:07:02 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37UI6cYK007286
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37UI71SB007366
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 18:06:38 GMT
+        Wed, 30 Aug 2023 18:07:01 GMT
 Received: from hu-amelende-lv.qualcomm.com (10.49.16.6) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.36; Wed, 30 Aug 2023 11:06:36 -0700
+ 15.2.1118.36; Wed, 30 Aug 2023 11:06:58 -0700
 From:   Anjelique Melendez <quic_amelende@quicinc.com>
 To:     <pavel@ucw.cz>, <lee@kernel.org>, <thierry.reding@gmail.com>,
         <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
@@ -49,10 +49,12 @@ CC:     <luca.weiss@fairphone.com>, <konrad.dybcio@linaro.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
         <kernel@quicinc.com>,
         Anjelique Melendez <quic_amelende@quicinc.com>
-Subject: [PATCH v4 0/7] Add support for LUT PPG
-Date:   Wed, 30 Aug 2023 11:05:54 -0700
-Message-ID: <20230830180600.1865-2-quic_amelende@quicinc.com>
+Subject: [PATCH v4 7/7] leds: rgb: Update PM8350C lpg_data to support two-nvmem PPG Scheme
+Date:   Wed, 30 Aug 2023 11:06:02 -0700
+Message-ID: <20230830180600.1865-10-quic_amelende@quicinc.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230830180600.1865-2-quic_amelende@quicinc.com>
+References: <20230830180600.1865-2-quic_amelende@quicinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -61,90 +63,50 @@ X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: idL5C5Jjv1mc6-nAt3XkQMyX07IHKoXl
-X-Proofpoint-GUID: idL5C5Jjv1mc6-nAt3XkQMyX07IHKoXl
+X-Proofpoint-ORIG-GUID: xA-um-k7Qhjoxl9CkRd91v8ccKXYCJTh
+X-Proofpoint-GUID: xA-um-k7Qhjoxl9CkRd91v8ccKXYCJTh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-30_14,2023-08-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 impostorscore=0 bulkscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 malwarescore=0 priorityscore=1501
- clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ definitions=2023-08-30_13,2023-08-29_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 spamscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2308100000 definitions=main-2308300165
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-In certain PMICs, LUT pattern and LPG configuration can be stored in SDAM
-modules instead of LUT peripheral. This feature is called PPG.
+Update the pm8350c lpg_data struct so that pm8350c devices are treated as
+PWM devices that support two-nvmem PPG scheme.
 
-This change series adds support for PPG. Thanks!
+Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
+---
+ drivers/leds/rgb/leds-qcom-lpg.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Changes since v3:
-  - Patch 4/7
-    - Fix function returns
-    - Move register definition to top of file
-    - Revert max_brightness and probe accidental changes
-    - Combine init_sdam() and parse_sdam()
-    - Change error prints in probe to use dev_err_probe
-    - Remove ppg_en variable
-    - Update when pbs triggers are set/cleared
-  - Patch 6/7
-    - Remove use of nvmem_count
-    - Move register definition to top of file
-    - Remove lpg_get_sdam_lut_idx()
-Changes since v2:
-  - Patch 1/7
-    - Fix dt_binding_check error
-    - Rename binding file to match compatible
-    - Iclude SoC specific comptaibles
-  - Patch 2/7
-    - Update nvmem-names list
-  - Patch 3/7
-    - Update EXPORT_SYMBOL to EXPORT_SYMBOL_GPL
-    - Fix return/break logic in qcom_pbs_wait_for_ack()
-    - Update iterators to be int
-    - Add constants
-    - Fix function calls in qcom_pbs_trigger_event()
-    - Remove unnessary comments
-    - Return -EPROBE_DEFER from get_pbs_client_device()
-Changes since v1:
-  - Patch 1/7
-    - Fix dt_binding_check errors
-    - Update binding description
-  - Path 2/7
-    - Fix dt_binding_check errors
-    - Update per variant constraints
-    - Update nvmem description
-  - Patch 3/7
-    - Update get_pbs_client_device()
-    - Drop use of printk
-    - Remove unused function
-
-Tested-by: Luca Weiss <luca.weiss@fairphone.com> # sdm632-fairphone-fp3 (pmi632)
-
-Anjelique Melendez (7):
-  dt-bindings: soc: qcom: Add qcom,pbs bindings
-  dt-bindings: leds: leds-qcom-lpg: Add support for LPG PPG
-  soc: qcom: add QCOM PBS driver
-  leds: rgb: leds-qcom-lpg: Add support for PPG through single SDAM
-  leds: rgb: leds-qcom-lpg: Update PMI632 lpg_data to support PPG
-  leds: rgb: leds-qcom-lpg: Include support for dedicated LUT SDAM PPG
-    Scheme
-  leds: rgb: Update PM8350C lpg_data to support two-nvmem PPG Scheme
-
- .../bindings/leds/leds-qcom-lpg.yaml          |  89 ++++-
- .../bindings/soc/qcom/qcom,pbs.yaml           |  46 +++
- drivers/leds/rgb/leds-qcom-lpg.c              | 370 ++++++++++++++++--
- drivers/soc/qcom/Kconfig                      |   9 +
- drivers/soc/qcom/Makefile                     |   1 +
- drivers/soc/qcom/qcom-pbs.c                   | 286 ++++++++++++++
- include/linux/soc/qcom/qcom-pbs.h             |  30 ++
- 7 files changed, 801 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,pbs.yaml
- create mode 100644 drivers/soc/qcom/qcom-pbs.c
- create mode 100644 include/linux/soc/qcom/qcom-pbs.h
-
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index 9f1580e81ab0..b2435693b50e 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -1808,11 +1808,14 @@ static const struct lpg_data pm8150l_lpg_data = {
+ static const struct lpg_data pm8350c_pwm_data = {
+ 	.triled_base = 0xef00,
+ 
++	.lut_size = 122,
++	.lut_sdam_base = 0x45,
++
+ 	.num_channels = 4,
+ 	.channels = (const struct lpg_channel_data[]) {
+-		{ .base = 0xe800, .triled_mask = BIT(7) },
+-		{ .base = 0xe900, .triled_mask = BIT(6) },
+-		{ .base = 0xea00, .triled_mask = BIT(5) },
++		{ .base = 0xe800, .triled_mask = BIT(7), .sdam_offset = 0x48 },
++		{ .base = 0xe900, .triled_mask = BIT(6), .sdam_offset = 0x56 },
++		{ .base = 0xea00, .triled_mask = BIT(5), .sdam_offset = 0x64 },
+ 		{ .base = 0xeb00 },
+ 	},
+ };
 -- 
 2.41.0
 
