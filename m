@@ -2,117 +2,232 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBA6CA0FE1
-	for <linux-leds@archiver.kernel.org>; Fri,  1 Sep 2023 14:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D72CA0FF8
+	for <linux-leds@archiver.kernel.org>; Fri,  1 Sep 2023 21:46:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240795AbjIAO2s (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 1 Sep 2023 10:28:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38014 "EHLO
+        id S1350848AbjIAVqY (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 1 Sep 2023 17:46:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232185AbjIAO2r (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 1 Sep 2023 10:28:47 -0400
-X-Greylist: delayed 560 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 01 Sep 2023 07:28:45 PDT
-Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B88F9C
-        for <linux-leds@vger.kernel.org>; Fri,  1 Sep 2023 07:28:45 -0700 (PDT)
-Received: by gofer.mess.org (Postfix, from userid 501)
-        id 37F211007FB; Fri,  1 Sep 2023 15:19:24 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-        t=1693577964; bh=Lbm8wzOKC2M9GeSPbw06e8KPiOFgpvPECNpJXbRnIo4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OR/WtiAGuMKYxvf8uQg/v/LcwgzCqcfQeQwtjWN1P/XAXpiUqnVCw1bqZ1m46Z2pd
-         ZRfvNTR31CfeB3FWXaYYK8HSYRPj6GEZ7lSzdTvZcsLaoS5Zyx0Y9GQkpzLSWIR7Zr
-         Tjye0gETkda+BrjYmukIM/gFAxuIcMHJcNJKyB9zP7346F2u64M0hLibr4N4I1pyvA
-         ye2fPxbJZ1bLOwPi7yNyS4zcdkJPYkKUjI9RD5Gan/pi4Gxtoj8sAizvyB8xW09TZc
-         fYLBZze8QleCNfx2a/VKxk3agUvxYsGmaO/3BDsIg9EhFwjL/gEyITxK3kNb74xXbp
-         wLd7fBIPNP5Kw==
-Received: from localhost.localdomain (bigcore.mess.org [IPv6:2a02:8011:d000:212:44e0:1480:5a2d:d8ed])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by gofer.mess.org (Postfix) with ESMTPSA id CB23E1007F5;
-        Fri,  1 Sep 2023 15:19:22 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
-        t=1693577962; bh=Lbm8wzOKC2M9GeSPbw06e8KPiOFgpvPECNpJXbRnIo4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mTjVgXPwKuo4921vycPIOm2LJTc7VMoFgoMgAKciGPX9RJuSuxbA5qXdHuiBoie4m
-         +SLlaXXO/jTkWO1u+X4xKCcgMEIxG5SEfHOQ6i6kBIZOZDFQaGx+lDUnQwMl0uP9Mt
-         238pRWyiJAxl3zpG5ZEyV71jK9A0mdFe4gwcfkoEJiU46PjeVnvK2vS0Z0+B/0pdLk
-         EqqOfPxfW23k8KE+zx7xh3YGYJF4ZU3WGie6AXC/hNt1WXrhLfG2JL5s8CrsAukcfc
-         ka0hYlbrcATg3vXSbWQLEuN/QXzwyGFxXApwR0UYJVZsJhiuLi9ZrrBwERuf5kjZ5s
-         58oYuDkVQasoQ==
-From:   Sean Young <sean@mess.org>
-To:     linux-media@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/2] dt-bindings: media: remove nokia,n900-ir as pwm-ir-tx is compatible
-Date:   Fri,  1 Sep 2023 15:18:55 +0100
-Message-ID: <25e8f2626d15199a1bf727fee375b5b149004c8e.1693577725.git.sean@mess.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <cover.1693577725.git.sean@mess.org>
-References: <cover.1693577725.git.sean@mess.org>
+        with ESMTP id S1350834AbjIAVmy (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 1 Sep 2023 17:42:54 -0400
+X-Greylist: delayed 124 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 01 Sep 2023 14:22:34 PDT
+Received: from smtprelay07.ispgateway.de (smtprelay07.ispgateway.de [134.119.228.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6709E1BFD;
+        Fri,  1 Sep 2023 14:22:34 -0700 (PDT)
+Received: from [77.64.243.219] (helo=note-book.lan)
+        by smtprelay07.ispgateway.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <git@apitzsch.eu>)
+        id 1qcBZ5-0004Wd-Rl; Fri, 01 Sep 2023 23:20:27 +0200
+From:   =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Date:   Fri, 01 Sep 2023 23:19:58 +0200
+Subject: [PATCH v2 1/2] dt-bindings: leds: Add Kinetic KTD2026/2027 LED
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20230901-ktd202x-v2-1-3cb8b0ca02ed@apitzsch.eu>
+References: <20230901-ktd202x-v2-0-3cb8b0ca02ed@apitzsch.eu>
+In-Reply-To: <20230901-ktd202x-v2-0-3cb8b0ca02ed@apitzsch.eu>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.12.3
+X-Df-Sender: YW5kcmVAYXBpdHpzY2guZXU=
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The generic pwm-ir-tx driver works for the Nokia n900, so nokia,n900-ir
-can be removed.
+Document Kinetic KTD2026/2027 LED driver devicetree bindings.
 
-Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
 ---
- .../bindings/leds/irled/pwm-ir-tx.yaml        |  5 ++++-
- .../devicetree/bindings/media/nokia,n900-ir   | 20 -------------------
- 2 files changed, 4 insertions(+), 21 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/nokia,n900-ir
+ .../devicetree/bindings/leds/kinetic,ktd202x.yaml  | 171 +++++++++++++++++++++
+ 1 file changed, 171 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-index f2a6fa140f38..7526e3149f72 100644
---- a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-+++ b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-@@ -15,7 +15,10 @@ description:
- 
- properties:
-   compatible:
--    const: pwm-ir-tx
-+    oneOf:
-+      - const: pwm-ir-tx
-+      - const: nokia,n900-ir
-+        deprecated: true
- 
-   pwms:
-     maxItems: 1
-diff --git a/Documentation/devicetree/bindings/media/nokia,n900-ir b/Documentation/devicetree/bindings/media/nokia,n900-ir
-deleted file mode 100644
-index 13a18ce37dd1..000000000000
---- a/Documentation/devicetree/bindings/media/nokia,n900-ir
-+++ /dev/null
-@@ -1,20 +0,0 @@
--Device-Tree bindings for LIRC TX driver for Nokia N900(RX51)
--
--Required properties:
--	- compatible: should be "nokia,n900-ir".
--	- pwms: specifies PWM used for IR signal transmission.
--
--Example node:
--
--	pwm9: dmtimer-pwm@9 {
--		compatible = "ti,omap-dmtimer-pwm";
--		ti,timers = <&timer9>;
--		ti,clock-source = <0x00>; /* timer_sys_ck */
--		#pwm-cells = <3>;
--	};
--
--	ir: n900-ir {
--		compatible = "nokia,n900-ir";
--
--		pwms = <&pwm9 0 26316 0>; /* 38000 Hz */
--	};
+diff --git a/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
+new file mode 100644
+index 000000000000..832c030a5acf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/kinetic,ktd202x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Kinetic KTD2026/7 RGB/White LED Driver
++
++maintainers:
++  - André Apitzsch <git@apitzsch.eu>
++
++description: |
++  The KTD2026/7 is a RGB/White LED driver with I2C interface.
++
++  The data sheet can be found at:
++    https://www.kinet-ic.com/uploads/KTD2026-7-04h.pdf
++
++properties:
++  compatible:
++    enum:
++      - kinetic,ktd2026
++      - kinetic,ktd2027
++
++  reg:
++    maxItems: 1
++
++  vin-supply:
++    description: Regulator providing power to the "VIN" pin.
++
++  vio-supply:
++    description: Regulator providing power for pull-up of the I/O lines.
++      Note that this regulator does not directly connect to KTD2026, but is
++      needed for the correct operation of the status ("ST") and I2C lines.
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  multi-led:
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++    patternProperties:
++      "^led@[0-3]$":
++        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            description: Index of the LED.
++            minimum: 0
++            maximum: 3
++
++        required:
++          - reg
++          - color
++
++    required:
++      - "#address-cells"
++      - "#size-cells"
++
++patternProperties:
++  "^led@[0-3]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        description: Index of the LED.
++        minimum: 0
++        maximum: 3
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@30 {
++            compatible = "kinetic,ktd2026";
++            reg = <0x30>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vin-supply = <&pm8916_l17>;
++            vio-supply = <&pm8916_l6>;
++
++            led@0 {
++                reg = <0>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_RED>;
++            };
++
++            led@1 {
++                reg = <1>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_GREEN>;
++            };
++
++            led@2 {
++                reg = <2>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_BLUE>;
++            };
++        };
++    };
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@30 {
++            compatible = "kinetic,ktd2026";
++            reg = <0x30>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vin-supply = <&pm8916_l17>;
++            vio-supply = <&pm8916_l6>;
++
++            multi-led {
++                color = <LED_COLOR_ID_RGB>;
++                function = LED_FUNCTION_STATUS;
++
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    color = <LED_COLOR_ID_RED>;
++                };
++
++                led@1 {
++                    reg = <1>;
++                    color = <LED_COLOR_ID_GREEN>;
++                };
++
++                led@2 {
++                    reg = <2>;
++                    color = <LED_COLOR_ID_BLUE>;
++                };
++            };
++        };
++    };
+
 -- 
 2.42.0
 
