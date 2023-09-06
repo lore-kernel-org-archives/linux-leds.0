@@ -2,63 +2,234 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B47CA1000
-	for <linux-leds@archiver.kernel.org>; Tue,  5 Sep 2023 16:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 220BCEE14D3
+	for <linux-leds@archiver.kernel.org>; Wed,  6 Sep 2023 20:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351198AbjIEQdK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57490 "EHLO
+        id S244531AbjIFU4B (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 6 Sep 2023 16:56:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353832AbjIEIUk (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 5 Sep 2023 04:20:40 -0400
-X-Greylist: delayed 86464 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 05 Sep 2023 01:20:36 PDT
-Received: from mail.equinoxrise.pl (mail.equinoxrise.pl [217.61.112.157])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8629F1AE
-        for <linux-leds@vger.kernel.org>; Tue,  5 Sep 2023 01:20:36 -0700 (PDT)
-Received: by mail.equinoxrise.pl (Postfix, from userid 1002)
-        id 51B5B83257; Mon,  4 Sep 2023 09:41:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=equinoxrise.pl;
-        s=mail; t=1693813327;
-        bh=v6OgBfK5dN7P5dQ0wCu59rOfZaiqziJeLNblJ8dOcGI=;
-        h=Date:From:To:Subject:From;
-        b=VJp89lAhAs0PTmilzncUnVSHgf/oCwCW08ErXuC0TLVDJj8rSX0bEl2e/NnUxhDPR
-         bfyMEfvyAFzZw1H94Iezx9Rd+xg70tO8uEFKyRIKKrJJ3j3BV3SXaqIGO55f07Du6g
-         fKFo2MgVQ5rC90aXZGLVuDSoBC/rJpHED8JSdY1oW8U1jbEkKhHDMYpRVpVssN1lg3
-         N1VgicrWqUB59vJJeynqYOcgmrUMX6pL5301jGD/JwkBs1uAOOd72mhA3ZSHnvOy8p
-         MyVLIVcwrK7WlH7gmyhy3Obg9h8KZ7eushUxnXf6vDXIE5cNeEbyJvdKA4fTx9D67O
-         rR3hx1mWqNB8A==
-Received: by mail.equinoxrise.pl for <linux-leds@vger.kernel.org>; Mon,  4 Sep 2023 07:40:34 GMT
-Message-ID: <20230904084500-0.1.7.rl0.0.p432v9qtq7@equinoxrise.pl>
-Date:   Mon,  4 Sep 2023 07:40:34 GMT
-From:   "Mateusz Talaga" <mateusz.talaga@equinoxrise.pl>
-To:     <linux-leds@vger.kernel.org>
-Subject: Prezentacja
-X-Mailer: mail.equinoxrise.pl
+        with ESMTP id S238802AbjIFU4A (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Wed, 6 Sep 2023 16:56:00 -0400
+Received: from smtprelay06.ispgateway.de (smtprelay06.ispgateway.de [80.67.18.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB94180;
+        Wed,  6 Sep 2023 13:55:56 -0700 (PDT)
+Received: from [77.64.243.219] (helo=note-book.lan)
+        by smtprelay06.ispgateway.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <git@apitzsch.eu>)
+        id 1qdzZ3-0003MR-5w; Wed, 06 Sep 2023 22:55:53 +0200
+From:   =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Date:   Wed, 06 Sep 2023 22:55:17 +0200
+Subject: [PATCH v3 1/2] dt-bindings: leds: Add Kinetic KTD2026/2027 LED
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230906-ktd202x-v3-1-7fcb91c65d3a@apitzsch.eu>
+References: <20230906-ktd202x-v3-0-7fcb91c65d3a@apitzsch.eu>
+In-Reply-To: <20230906-ktd202x-v3-0-7fcb91c65d3a@apitzsch.eu>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.3
+X-Df-Sender: YW5kcmVAYXBpdHpzY2guZXU=
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Dzie=C5=84 dobry!
+Document Kinetic KTD2026/2027 LED driver devicetree bindings.
 
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 rozwi=C4=85zanie, kt=C3=B3re umo=C5=
-=BCliwia monitoring ka=C5=BCdego auta w czasie rzeczywistym w tym jego po=
-zycj=C4=99, zu=C5=BCycie paliwa i przebieg?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+ .../devicetree/bindings/leds/kinetic,ktd202x.yaml  | 171 +++++++++++++++++++++
+ 1 file changed, 171 insertions(+)
 
-Dodatkowo nasze narz=C4=99dzie minimalizuje koszty utrzymania samochod=C3=
-=B3w, skraca czas przejazd=C3=B3w, a tak=C5=BCe tworzenie planu tras czy =
-dostaw.
+diff --git a/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
+new file mode 100644
+index 000000000000..832c030a5acf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/kinetic,ktd202x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Kinetic KTD2026/7 RGB/White LED Driver
++
++maintainers:
++  - André Apitzsch <git@apitzsch.eu>
++
++description: |
++  The KTD2026/7 is a RGB/White LED driver with I2C interface.
++
++  The data sheet can be found at:
++    https://www.kinet-ic.com/uploads/KTD2026-7-04h.pdf
++
++properties:
++  compatible:
++    enum:
++      - kinetic,ktd2026
++      - kinetic,ktd2027
++
++  reg:
++    maxItems: 1
++
++  vin-supply:
++    description: Regulator providing power to the "VIN" pin.
++
++  vio-supply:
++    description: Regulator providing power for pull-up of the I/O lines.
++      Note that this regulator does not directly connect to KTD2026, but is
++      needed for the correct operation of the status ("ST") and I2C lines.
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  multi-led:
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++    patternProperties:
++      "^led@[0-3]$":
++        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            description: Index of the LED.
++            minimum: 0
++            maximum: 3
++
++        required:
++          - reg
++          - color
++
++    required:
++      - "#address-cells"
++      - "#size-cells"
++
++patternProperties:
++  "^led@[0-3]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        description: Index of the LED.
++        minimum: 0
++        maximum: 3
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@30 {
++            compatible = "kinetic,ktd2026";
++            reg = <0x30>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vin-supply = <&pm8916_l17>;
++            vio-supply = <&pm8916_l6>;
++
++            led@0 {
++                reg = <0>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_RED>;
++            };
++
++            led@1 {
++                reg = <1>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_GREEN>;
++            };
++
++            led@2 {
++                reg = <2>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_BLUE>;
++            };
++        };
++    };
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@30 {
++            compatible = "kinetic,ktd2026";
++            reg = <0x30>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vin-supply = <&pm8916_l17>;
++            vio-supply = <&pm8916_l6>;
++
++            multi-led {
++                color = <LED_COLOR_ID_RGB>;
++                function = LED_FUNCTION_STATUS;
++
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    color = <LED_COLOR_ID_RED>;
++                };
++
++                led@1 {
++                    reg = <1>;
++                    color = <LED_COLOR_ID_GREEN>;
++                };
++
++                led@2 {
++                    reg = <2>;
++                    color = <LED_COLOR_ID_BLUE>;
++                };
++            };
++        };
++    };
 
-Z naszej wiedzy i do=C5=9Bwiadczenia korzysta ju=C5=BC ponad 49 tys. Klie=
-nt=C3=B3w. Monitorujemy 809 000 pojazd=C3=B3w na ca=C5=82ym =C5=9Bwiecie,=
- co jest nasz=C4=85 najlepsz=C4=85 wizyt=C3=B3wk=C4=85.
+-- 
+2.42.0
 
-Bardzo prosz=C4=99 o e-maila zwrotnego, je=C5=9Bli mogliby=C5=9Bmy wsp=C3=
-=B3lnie om=C3=B3wi=C4=87 potencja=C5=82 wykorzystania takiego rozwi=C4=85=
-zania w Pa=C5=84stwa firmie.
-
-
-Pozdrawiam
-Mateusz Talaga
