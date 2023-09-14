@@ -2,132 +2,239 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C43EDE99F
-	for <linux-leds@archiver.kernel.org>; Thu, 14 Sep 2023 10:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD2EEDE9A4
+	for <linux-leds@archiver.kernel.org>; Thu, 14 Sep 2023 11:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235604AbjINKVv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 14 Sep 2023 06:21:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54044 "EHLO
+        id S238343AbjINLpz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 14 Sep 2023 07:45:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236906AbjINJLE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2023 05:11:04 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF8D26A8
-        for <linux-leds@vger.kernel.org>; Thu, 14 Sep 2023 02:10:32 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-403012f27e1so7412295e9.1
-        for <linux-leds@vger.kernel.org>; Thu, 14 Sep 2023 02:10:32 -0700 (PDT)
+        with ESMTP id S238359AbjINLpr (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2023 07:45:47 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A08F2108
+        for <linux-leds@vger.kernel.org>; Thu, 14 Sep 2023 04:45:36 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-401bbfc05fcso8625015e9.3
+        for <linux-leds@vger.kernel.org>; Thu, 14 Sep 2023 04:45:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1694682631; x=1695287431; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/p/h+1hjRJPkTJw7ohFZfNjwicd4vOn5u73LLVp5Pws=;
-        b=pCzhq7HLcxAm3ltl3eMVbQMWzzvuDOW1/9FU7XBZOX8LaKhwH7GFKrhSCfPjRQAsWm
-         tQ8Rvr8KoUzDtPrTLLXjWlwGK6BosWJelWXv4sd2mdIBz+SfORyAuL8nqkR/nCaV4+GH
-         13CfYmjE+0mdmWf7cEMQERm8tNBDni3pLbYJasAL0AD4LzbOVg36Hcd5J4VHT69ghDhZ
-         rJR+JYruxINgrEpRsPjjhLA0HSNUD5pNsg8hQMVCuFLDtXfAHG3qRIIqADzBDeXyeNMN
-         fXP7ScemVXR1lHC/J2klOWm6itysF+MyW831kjL0gZFgmgNvJ2VoMK3EJ9GhEeKQG0ax
-         CbWA==
+        d=9elements.com; s=google; t=1694691935; x=1695296735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DkwdpEsnZjrBHPvFI7R2mEJyzdrosQr2sd/FTGz51gs=;
+        b=Z4YfJ2hckDlIY1kZSDfstfZbVD0Bu3o+dpFk3GM2v+69bzg0hsv+X9YlRdZ8klAqky
+         H02bfN5UTRL3SLAPAKJuYJhsulnvQFhy5fHok7dKm6OEvFWvpOXyuVHpSeYjpEBrXGru
+         icnQRN3GglxG7qAMg4Md2nVmfTfdQMNepm2DiBwseRao5+CKWDe794tyFl53MxNdcco/
+         jKtlucurpWnm8QhRpE2SQDHNB/S0W8EgUS4D+AoHjphk8Xo267wwM8/M7yCkQyDWi1G+
+         wbLWkDwoj38SbKBKooYc5EXvppTSd8F8y5Ze5LS7YRI/ej366J8Dp7mKQ8mePb/4wNEq
+         Pt0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694682631; x=1695287431;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/p/h+1hjRJPkTJw7ohFZfNjwicd4vOn5u73LLVp5Pws=;
-        b=m9No1Dk9AB7v/jPngddMJg6/qtSJTpUPVTpXNj7haU/o/F4goul1ss8cy3Ehw2gXjH
-         Wyqo4AXfWvJO/ufdC4CJCaneBCzPsmWu1KvCia91sSjamQLB5pRsCXV+IRQojeWYa12k
-         2i5gPoNsf8DmS2lclmvdEWphVuNEaq/KuOjEbE2he4EroaeV0MNKoO8Erw/W2yQ0fTB+
-         QfEfQM99ly3L8nHN2Ld0IQ4+sUg90LGtcmHPzlEdcUHWl4NzltyHlX3+N9H7u8KB7Ru3
-         SjfbbxQ+kq00/aVRoHsVBa93Q3RVwOVSXhO6U2ptXFgn2L1zRsRymWDe0G7W4ljtALlp
-         glhQ==
-X-Gm-Message-State: AOJu0YyHWiOrSGOraptPczfSJVHjDwzquaEBE7tz6wI3rO07IR+Tnehs
-        n9ZKW6YSUUQSW3s4u23fEubTyw==
-X-Google-Smtp-Source: AGHT+IHOJr+9i6NWOvvuN/NveO9DgZMU7hC3xHft4L2jEtjxakLoHExd0GgllOpjdXdC9Tnpdx852A==
-X-Received: by 2002:a7b:ce93:0:b0:401:daf2:2735 with SMTP id q19-20020a7bce93000000b00401daf22735mr4087319wmj.31.1694682630841;
-        Thu, 14 Sep 2023 02:10:30 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id m7-20020a05600c280700b003fed630f560sm1379458wmb.36.2023.09.14.02.10.29
+        d=1e100.net; s=20230601; t=1694691935; x=1695296735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DkwdpEsnZjrBHPvFI7R2mEJyzdrosQr2sd/FTGz51gs=;
+        b=VdQETJaTBpzSDxKsfQlCRSWgy1E2ENkH7ehep/+lMhW61LVjAUdsmjZZWOef9Fz7T4
+         67WCPC6TjB76FpnM37odLodO7h7Qhz7gz10FQGW0K2vo1InbVyY5F+Awnm5QUs1Jp4ye
+         EcluDjj0WhO119LK8R6L63SJBZPRxR2681hRMLb3icxaED4u83P97CANxieIuK1IaItI
+         jESHcULdtFMFwEy9NNIMvNmpRbBK3/2i2srCE9/hHkt3mCOHetuc97TZYKBJBsGaLb34
+         4caz25hVHLxWxIBKlowzrrsYGl/iTY3yk22cRWynYZXqXyZnKWznpKfs0tg5aOyMSMPZ
+         cn7A==
+X-Gm-Message-State: AOJu0YxZDs263ZFWTXKCrpCk1U6sjB01mRGohalps2lc1lGnp8wSoVxX
+        liapgLTAfEzQ4//eVoK0QBlc5i8OotjsPcSvtNlgSQ==
+X-Google-Smtp-Source: AGHT+IG2EYDVaDGmiaHofvq/etPb71UE2yevlnqoiAhZwhQ3JgFECvsxW44jwAFgDzz1Pam+sgfurA==
+X-Received: by 2002:a7b:cb85:0:b0:402:ee9e:ed98 with SMTP id m5-20020a7bcb85000000b00402ee9eed98mr4369643wmi.34.1694691934757;
+        Thu, 14 Sep 2023 04:45:34 -0700 (PDT)
+Received: from stroh80.sec.9e.network (ip-078-094-000-051.um19.pools.vodafone-ip.de. [78.94.0.51])
+        by smtp.gmail.com with ESMTPSA id m18-20020a5d4a12000000b0031f65cdd271sm1547021wrq.100.2023.09.14.04.45.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Sep 2023 02:10:30 -0700 (PDT)
-Date:   Thu, 14 Sep 2023 12:10:27 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     oe-kbuild@lists.linux.dev,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jan =?iso-8859-1?Q?Kundr=E1t?= <jan.kundrat@cesnet.cz>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] leds: triggers: gpio: Rewrite to use trigger-sources
-Message-ID: <21f871bb-d409-4337-9d90-27e5c9389aaf@kadam.mountain>
+        Thu, 14 Sep 2023 04:45:34 -0700 (PDT)
+From:   Naresh Solanki <naresh.solanki@9elements.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc:     Patrick Rudolph <patrick.rudolph@9elements.com>,
+        Naresh Solanki <Naresh.Solanki@9elements.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: [RESEND PATCH v3] leds: max5970: Add support for max5970
+Date:   Thu, 14 Sep 2023 13:45:20 +0200
+Message-ID: <20230914114521.1491390-1-naresh.solanki@9elements.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230912-gpio-led-trigger-dt-v1-2-1b50e3756dda@linaro.org>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Linus,
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-kernel test robot noticed the following build warnings:
+The MAX5970 is hot swap controller and has 4 indication LED.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Linus-Walleij/dt-bindings-leds-Mention-GPIO-triggers/20230912-214554
-base:   0bb80ecc33a8fb5a682236443c1e740d5c917d1d
-patch link:    https://lore.kernel.org/r/20230912-gpio-led-trigger-dt-v1-2-1b50e3756dda%40linaro.org
-patch subject: [PATCH 2/2] leds: triggers: gpio: Rewrite to use trigger-sources
-config: x86_64-randconfig-161-20230913 (https://download.01.org/0day-ci/archive/20230914/202309140825.cVUTHU1K-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20230914/202309140825.cVUTHU1K-lkp@intel.com/reproduce)
+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
+---
+Changes in V3:
+- Drop array for ddata variable.
+Changes in V2:
+- Add of_node_put before return.
+- Code cleanup
+- Refactor code & remove max5970_setup_led function.
+---
+ drivers/leds/Kconfig        |  11 ++++
+ drivers/leds/Makefile       |   1 +
+ drivers/leds/leds-max5970.c | 110 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 drivers/leds/leds-max5970.c
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202309140825.cVUTHU1K-lkp@intel.com/
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index b92208eccdea..03ef527cc545 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -637,6 +637,17 @@ config LEDS_ADP5520
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called leds-adp5520.
+ 
++config LEDS_MAX5970
++	tristate "LED Support for Maxim 5970"
++	depends on LEDS_CLASS
++	depends on MFD_MAX5970
++	help
++	  This option enables support for the Maxim MAX5970 & MAX5978 smart
++	  switch indication LEDs via the I2C bus.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called leds-max5970.
++
+ config LEDS_MC13783
+ 	tristate "LED Support for MC13XXX PMIC"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index d7348e8bc019..6eaee0a753c6 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -56,6 +56,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+ obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+ obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
+ obj-$(CONFIG_LEDS_LT3593)		+= leds-lt3593.o
++obj-$(CONFIG_LEDS_MAX5970)		+= leds-max5970.o
+ obj-$(CONFIG_LEDS_MAX77650)		+= leds-max77650.o
+ obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+ obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
+diff --git a/drivers/leds/leds-max5970.c b/drivers/leds/leds-max5970.c
+new file mode 100644
+index 000000000000..c9685990e26e
+--- /dev/null
++++ b/drivers/leds/leds-max5970.c
+@@ -0,0 +1,110 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device driver for leds in MAX5970 and MAX5978 IC
++ *
++ * Copyright (c) 2022 9elements GmbH
++ *
++ * Author: Patrick Rudolph <patrick.rudolph@9elements.com>
++ */
++
++#include <linux/leds.h>
++#include <linux/mfd/max5970.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define ldev_to_maxled(c)       container_of(c, struct max5970_led, cdev)
++
++struct max5970_led {
++	struct device *dev;
++	struct regmap *regmap;
++	struct led_classdev cdev;
++	unsigned int index;
++};
++
++static int max5970_led_set_brightness(struct led_classdev *cdev,
++				      enum led_brightness brightness)
++{
++	struct max5970_led *ddata = ldev_to_maxled(cdev);
++	int ret, val;
++
++	/* Set/clear corresponding bit for given led index */
++	val = !brightness ? BIT(ddata->index) : 0;
++
++	ret = regmap_update_bits(ddata->regmap, MAX5970_REG_LED_FLASH, BIT(ddata->index), val);
++	if (ret < 0)
++		dev_err(cdev->dev, "failed to set brightness %d", ret);
++
++	return ret;
++}
++
++static int max5970_led_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev_of_node(dev->parent);
++	struct regmap *regmap;
++	struct device_node *led_node;
++	struct device_node *child;
++	struct max5970_led *ddata;
++	int ret = -ENODEV, num_leds = 0;
++
++	regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!regmap)
++		return -EPROBE_DEFER;
++
++	led_node = of_get_child_by_name(np, "leds");
++	if (!led_node)
++		return -ENODEV;
++
++	for_each_available_child_of_node(led_node, child) {
++		u32 reg;
++
++		if (of_property_read_u32(child, "reg", &reg))
++			continue;
++
++		if (reg >= MAX5970_NUM_LEDS) {
++			dev_err(dev, "invalid LED (%u >= %d)\n", reg, MAX5970_NUM_LEDS);
++			continue;
++		}
++
++		ddata = devm_kzalloc(dev, sizeof(struct max5970_led), GFP_KERNEL);
++		if (!ddata) {
++			of_node_put(child);
++			return -ENOMEM;
++		}
++
++		ddata->index = reg;
++		ddata->regmap = regmap;
++		ddata->dev = dev;
++
++		if (of_property_read_string(child, "label", &ddata->cdev.name))
++			ddata->cdev.name = child->name;
++
++		ddata->cdev.max_brightness = 1;
++		ddata->cdev.brightness_set_blocking = max5970_led_set_brightness;
++		ddata->cdev.default_trigger = "none";
++
++		ret = devm_led_classdev_register(ddata->dev, &ddata->cdev);
++		if (ret < 0) {
++			of_node_put(child);
++			dev_err(dev, "Failed to initialize LED %u\n", reg);
++			return ret;
++		}
++		num_leds++;
++	}
++
++	return ret;
++}
++
++static struct platform_driver max5970_led_driver = {
++	.driver = {
++		.name = "max5970-led",
++	},
++	.probe = max5970_led_probe,
++};
++
++module_platform_driver(max5970_led_driver);
++MODULE_AUTHOR("Patrick Rudolph <patrick.rudolph@9elements.com>");
++MODULE_AUTHOR("Naresh Solanki <Naresh.Solanki@9elements.com>");
++MODULE_DESCRIPTION("MAX5970_hot-swap controller LED driver");
++MODULE_LICENSE("GPL");
 
-smatch warnings:
-drivers/leds/trigger/ledtrig-gpio.c:98 gpio_trig_activate() error: dereferencing freed memory 'gpio_data'
-
-vim +/gpio_data +98 drivers/leds/trigger/ledtrig-gpio.c
-
-2282e125a406e0 drivers/leds/trigger/ledtrig-gpio.c Uwe Kleine-König 2018-07-02   78  static int gpio_trig_activate(struct led_classdev *led)
-17354bfe85275f drivers/leds/ledtrig-gpio.c         Felipe Balbi     2009-02-17   79  {
-17354bfe85275f drivers/leds/ledtrig-gpio.c         Felipe Balbi     2009-02-17   80  	struct gpio_trig_data *gpio_data;
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   81  	struct device *dev = led->dev;
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   82  	int ret;
-17354bfe85275f drivers/leds/ledtrig-gpio.c         Felipe Balbi     2009-02-17   83  
-17354bfe85275f drivers/leds/ledtrig-gpio.c         Felipe Balbi     2009-02-17   84  	gpio_data = kzalloc(sizeof(*gpio_data), GFP_KERNEL);
-17354bfe85275f drivers/leds/ledtrig-gpio.c         Felipe Balbi     2009-02-17   85  	if (!gpio_data)
-9bfd7d9e5d6353 drivers/leds/trigger/ledtrig-gpio.c Uwe Kleine-König 2018-07-02   86  		return -ENOMEM;
-17354bfe85275f drivers/leds/ledtrig-gpio.c         Felipe Balbi     2009-02-17   87  
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   88  	/*
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   89  	 * The generic property "trigger-sources" is followed,
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   90  	 * and we hope that this is a GPIO.
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   91  	 */
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   92  	gpio_data->gpiod = fwnode_gpiod_get_index(dev->fwnode,
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   93  						  "trigger-sources",
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   94  						  0, GPIOD_IN,
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   95  						  "led-trigger");
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   96  	if (IS_ERR(gpio_data->gpiod)) {
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   97  		kfree(gpio_data);
-                                                                                                ^^^^^^^^^^^^^^^^
-
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12  @98  		return PTR_ERR(gpio_data->gpiod);
-                                                                                                               ^^^^^^^^^^^^^^^^
-Dereferencing freed memory.
-
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12   99  	}
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12  100  	if (!gpio_data->gpiod) {
-2689cea6283a47 drivers/leds/trigger/ledtrig-gpio.c Linus Walleij    2023-09-12  101  		dev_err(dev, "no valid GPIO for the trigger\n");
-
+base-commit: baca986e1f2c31f8e4b2a6d99d47c3bc844033e8
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.41.0
 
