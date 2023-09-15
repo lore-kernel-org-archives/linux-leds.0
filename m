@@ -2,25 +2,25 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F4EEDE989
-	for <linux-leds@archiver.kernel.org>; Fri, 15 Sep 2023 03:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD0DEE3F06
+	for <linux-leds@archiver.kernel.org>; Fri, 15 Sep 2023 03:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231836AbjIODMS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 14 Sep 2023 23:12:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49240 "EHLO
+        id S229767AbjIODMU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 14 Sep 2023 23:12:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230497AbjIODMR (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2023 23:12:17 -0400
+        with ESMTP id S231838AbjIODMT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 14 Sep 2023 23:12:19 -0400
 Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2112.outbound.protection.outlook.com [40.107.215.112])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2F82270B;
-        Thu, 14 Sep 2023 20:12:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45704270B;
+        Thu, 14 Sep 2023 20:12:14 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fvRe1NYUrjuZuHouYIrHPMwws+8jLEiDYCWrpJhw03NKN7lxLuXaJvy8k6b8c9iC9ySgA+sXQc/twoowbJ99x1EGphd9lL0uQGVEdSz8RJmYnhvI8W1Qqm+odJPRrGB3jJxEIU1Tqs/rzV09FJlCi+gVRKUA99Sg/AAKnxryQIQfwCEXR8tRnwdSocH3Xi4bU7o5woL40uIGXJWGMNvyMoSlQaz3sWJWB4FwsZx0AFRMRw7X11aCDmu3aegnXy+6KR7t/KsGjsIrhNnVcDZZxy8oV5fjvkrRg1MfjoQ0fRMY73Swx2kY9tFsfjICPRhL/F2+4wahD1HZgIcOMElRWQ==
+ b=YgyC6nQRoargVnnBdH6gyJG6Q5yxcLw65WOUMHPzxOBn8nioFwe84E3O3Jtosd6msNpfDICSJUKYRiZC7rppSnCPRWRveslP2xV1odwTtNatYLSRH7G25iSQaWxpT0uuq3VTlW4Pc5kGa/gBT0t9nPjQUJEbzMudtl6oq0zueq5tlKvcEw5O/zH0MZLy8mJ8C0ttDnzx1Tw+ft8mkZwU9Pky9bZhMPyOpVfAW2p6RCYTCpsGRG19t88Fb+p59GyFmI+Jt/sU7ZICIN56LnO6o04IlF2G4BrXu6yQY6w3jvEm6aCO9LDo7apvhJI47kwf6L6y6ICNpApk7YIZc8BYBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G6iwr2T8qCeHg7iDYQct+tqMHGlHto6EU2sE7I5fC7Y=;
- b=N+WtadfjZpoD9hcosyIRxj+gSZdn7Gef4GSKS2xXJ4Rn8RILibXuQMeS8OdMvWvIdm3+l6d16K3U+PPIHCz85aH+sHmnPtIOpCt0GucoNHWJHgjAtX9vlCUACZWEd3gt10gyNR0YcMrzGNZQLd1zx9jyBKDV9KiXzs3Gj6oTDRRd03vyCB4drpF4pQB3PB+MwsR/gOV94vpOyQX0QZWnsLfJfzxk4MIv4t6alf32WWAXOFAR31B8qlSXCmhd/hxJyPVsncLKfkFLmqa+dFiw0ia1OvZlf1MH7tj+huhb9xoYrPK22JmCPw4XB+6TrBlhHJtTEG5rJjDLkM5sxHaLYQ==
+ bh=mPEFak8DPIKg17Qx9spL/cql1Cl8xlsX59FcpvNA4j8=;
+ b=NXCY13f2SQGb0TBvRjHCU9Vn4OEgx4B7ui+wFUs/+HCiLuzQZ62tiKaVNGv7U6GfghcInRlcsKP+p/mwvhz9kNc+xYrF4U7zYLuvrIiFnuqF+Adv+iQ0BakdnPzUEnwUCRQNQ6Bpmi3Iztqj4FGciCN23bVxSrsJH7Jhzl8dc1+JLT9kcTABmSlZHtmGmWVsxVOqVUioUS9MuTzabTkSR2akxHMcPtpQTgyqrAMv8tDaUHXcRoQpux4LCcu27aqvVygFBymTj0Zjf0qF0VfbNIvpThuWjR8vWr/YqETe3L9FsglJbLmjFMXaFmlVpdr46/EppS9/ezV19lvFLxp0dA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=yunjingtech.com; dmarc=pass action=none
  header.from=yunjingtech.com; dkim=pass header.d=yunjingtech.com; arc=none
@@ -30,22 +30,25 @@ Received: from SEYPR06MB6507.apcprd06.prod.outlook.com (2603:1096:101:177::9)
  by JH0PR06MB6654.apcprd06.prod.outlook.com (2603:1096:990:36::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.21; Fri, 15 Sep
- 2023 03:12:04 +0000
+ 2023 03:12:11 +0000
 Received: from SEYPR06MB6507.apcprd06.prod.outlook.com
  ([fe80::3fe6:a3fc:55d:fba0]) by SEYPR06MB6507.apcprd06.prod.outlook.com
  ([fe80::3fe6:a3fc:55d:fba0%4]) with mapi id 15.20.6792.021; Fri, 15 Sep 2023
- 03:12:03 +0000
+ 03:12:11 +0000
 From:   "larry.lai" <larry.lai@yunjingtech.com>
 To:     lee@kernel.org, andriy.shevchenko@linux.intel.com,
         linus.walleij@linaro.org, pavel@ucw.cz
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-leds@vger.kernel.org, GaryWang@aaeon.com.tw,
         musa.lin@yunjingtech.com, jack.chang@yunjingtech.com,
-        noah.hung@yunjingtech.com, "larry.lai" <larry.lai@yunjingtech.com>
-Subject: [PATCH V6 0/3] Add support control UP board CPLD/FPGA pin control
-Date:   Fri, 15 Sep 2023 11:11:20 +0800
-Message-Id: <20230915031123.14515-1-larry.lai@yunjingtech.com>
+        noah.hung@yunjingtech.com, "larry.lai" <larry.lai@yunjingtech.com>,
+        Gary Wang <garywang@aaeon.com.tw>
+Subject: [PATCH V6 3/3] leds: Add support for UP board CPLD onboard LEDS
+Date:   Fri, 15 Sep 2023 11:11:23 +0800
+Message-Id: <20230915031123.14515-4-larry.lai@yunjingtech.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230915031123.14515-1-larry.lai@yunjingtech.com>
+References: <20230915031123.14515-1-larry.lai@yunjingtech.com>
 Content-Type: text/plain
 X-ClientProxiedBy: TYCP286CA0099.JPNP286.PROD.OUTLOOK.COM
  (2603:1096:400:2b4::17) To SEYPR06MB6507.apcprd06.prod.outlook.com
@@ -53,90 +56,200 @@ X-ClientProxiedBy: TYCP286CA0099.JPNP286.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SEYPR06MB6507:EE_|JH0PR06MB6654:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e2bdad6-4dcb-43c7-4f65-08dbb5998894
+X-MS-Office365-Filtering-Correlation-Id: 84ea5b44-e3cd-46f7-6429-08dbb5998d92
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1uU1yRpB437NDa/at3mX9pu+d3OaUJUimPyDYMLs0TF/GUAiYBTL5SrGgQJOCMQyIRDs/0r0Pr/7yETHAeV/J6575zPRx7qNo15ENIo3TaH0aQr5JkScALCgWVgi2IpcWmZxbvF37/5+QXAAtBRhct8iPrR9U8K3KDhxirbAM/yjug+5ZoU0M9X9BEUoFwowOifFTf3XqLdlE5jxkbL8QcOPK3AYo0m/i6IsgWnKopsVM3KDjOlSTlm8iA7F0FTwt3QJVYdfHz3hU+DRcnb+gSamZ0ImXJLEcxXXiJmk0YQRp1KDPTtwcIZwADCPsRjAzzQBUc/jJYEqQgYetPTZ8vSyF+dJlk0jByoXfUXWe71V7cL/Cb2ekwH2bEnFfTYpbkvDN65EByiVrtf/CC6L9k67KgisQV+7En8GNAbysPM2qN3Ydr1mt7S7lv+5vtlN80PNWrIiZAud0d/nqmOcd/uEmKeZletVUdeSJYPPebxCoOXKNQKpgYEoj7bk8Jrw426/AD/wscmiy//l105Iskj/bYzTdoC9oMuuqYMbCtEfUZVINPjEI6ZppFyK2UtgWv/8n4dx8VoIFH9GxGkgTYpahd+JsDgHhCuGvxj13Lo=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6507.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(136003)(396003)(39830400003)(346002)(376002)(451199024)(1800799009)(186009)(36756003)(38350700002)(38100700002)(86362001)(52116002)(6666004)(4326008)(6486002)(478600001)(2906002)(8936002)(8676002)(41300700001)(5660300002)(6512007)(6506007)(83380400001)(316002)(66556008)(66946007)(66476007)(1076003)(2616005)(26005)(107886003);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: rcFOmOxThUTHlf57ynylK+VOXqoIqb0gysYGalkKpJpFlFF2eXg/9zy06qWS4cOFtSjxod5aH+F67G/ywQg52H60HDWMTkyw72JDvQWU+adZtTwgxipSNSxWGH0IDsv9Boi0MvFAB+9FDHg048akfJwMheSZbr75IxLGpsYT30h/FIvvilpjdQRHn87FNyOaZ+6bZflzxRi83+Gwxondo9b+4iK7g4ENpIe6x7wnfT154kMQGCf0klVRageaf2MDH/2wv/GmLoB646aL7PQRw6l3gKmvsTaxfmDvuMP2k0y8EkeaSYo5+rIpJ3kH7nlhLvGZ2Id8batOV415z3AvlxUmpsicLoexvJX0TUQTzzs/4oPTROPr0Z5i2ukWfbaIuNNi9/TU1gXxW0H+fviGkzbIMFH4mvkUqsLGlLl4OamscuCE/i+xnVHzzSlDIkdIydu8D5dOUYpS6PKs1x7PAKr9ir8oTqqCyY7O2RII40fxtHGoqGfiS6xH2hVSElcvHBa3ZuiCcM21kohrlk8nsNBEc42RdBpBDB2RMOK6gnX7TpAZve1GOtb6qb2ZZ3uj8ZLqTtzTIcMN+kq9atnrN5gPBpJIvd3QQ/7Wt4rf12yyFpribXEcADLXg/Tw6Gw8
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB6507.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(136003)(396003)(39830400003)(346002)(376002)(451199024)(1800799009)(186009)(36756003)(38350700002)(38100700002)(86362001)(52116002)(6666004)(4326008)(6486002)(478600001)(2906002)(8936002)(8676002)(41300700001)(5660300002)(6512007)(6506007)(83380400001)(54906003)(316002)(66556008)(66946007)(66476007)(1076003)(2616005)(26005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VJxbDAJFAx27Nud3nah4u7OuPu6The1SYc2+DNTbgnxnANWNwgvdse5fwZES?=
- =?us-ascii?Q?YpEIgtP8IP7zCNBleO++9gD50n5Z4iNFQKZWm9tl56LUaUiGze2G32LuN+Ko?=
- =?us-ascii?Q?tz3zcowUuODOcAecBtRMJxqqOikSZTEvhT8L+HL5sDR7vbNk+zpdQ2Lfw28D?=
- =?us-ascii?Q?toE8OexuV6vwsWMk9y/jaxQ2XSYycuoeJ7s7KaEcMcjTUR9mYq7Ghpb+pI9+?=
- =?us-ascii?Q?xXPZC/lNFMUCudvnnM55cKpAHHIokJdeLuyvBU7gHb/JZHizwZiA3rXPU2HU?=
- =?us-ascii?Q?PFtX+PL5XSSz5osDYfWrnWnXlYPZKMCtc5ZALyPx7yIRg3/nhCnNTA5oQSPh?=
- =?us-ascii?Q?nmrgK67yOAZuobw/d301LaX2QVKCvNuhJejoPa91mhj+HhZ77raa88vNdmyf?=
- =?us-ascii?Q?PdJSWO7CyiKAc9KRLAzpHDlEw69oeNzzOSzNqJBF0byf/ruNffyD4qHEyXLW?=
- =?us-ascii?Q?OoBuYowdacyBwl3XI+0XTlWKBnHF9uUJcVn2oNCEsYbqPo6zXsw5PSBsesok?=
- =?us-ascii?Q?G22o8CAdNBwXeQj5nm7VEf/WRRGuTkAIAzbvSCfmUZDxboWyklbYYif/cDgT?=
- =?us-ascii?Q?xhUg9v6BLrmifZo1PG7+k2aw7TcldexWqTJlnl6swfR4fw2AxrpRnFo8ZsMM?=
- =?us-ascii?Q?KLSd9otlX3j8iANBO/c/Pefoj4NcReTjiqbSB7HrjWaZxPOlcIognb4FYMSv?=
- =?us-ascii?Q?IdJiDkj2zb9ZT0i2rd+qhCnB5mlptiTEUAcR81dSvA1XpjIJWU10szo4JNTZ?=
- =?us-ascii?Q?yoEjPusK0qoEtQizFOcWMaHzsvbk3feCAOYPZ7KxrjXxU8clZZdQzn2YoDtB?=
- =?us-ascii?Q?1jRRl75rOuk14tQqPWgHSwLDwkO1dWuJY4BgWXJC9jItc3YcgGXzDTOHcD1w?=
- =?us-ascii?Q?YSQAxOxMYMiFzVXBq9sSA2/J/FdWX1X4JIT1YFEpZfh1Iljj/NDBNl98vR9w?=
- =?us-ascii?Q?LjXwmPXViKEOnc2QPymARYKyGBqqTQ+ZDi3Fn3pLpyX2UNHmtbTki/tJJvZJ?=
- =?us-ascii?Q?u6WcgENSmXNqO4BQ4xOzhmmmh7XbxEiqDknTd4S4uD+wukLJVDGa1dcCOYPj?=
- =?us-ascii?Q?3Lr9T6S1SRMlg7XRMEe35NScaVmTQq6D/tCWMnFeUuOZt4O3SB8Jr4QB1kLQ?=
- =?us-ascii?Q?gVsz1DTWKPOcuWGPCZV4Nu4Ne+NSqgYERwOv0n/X/aMYyQbW0sFeWu6A/2/V?=
- =?us-ascii?Q?SKwdot6kUt/ZIlSLqlIT9V0nsW6DtaSvNzyO9f89Sn8/n9zu0cfDajIiADQ+?=
- =?us-ascii?Q?JoVC6x3HUsZIIZgVvuCLmn1znfF+pygaotRN8OlHf42g+Fgy7BPG2GL83nfw?=
- =?us-ascii?Q?PMeNYGxKEZTPIxH8mL6SDdNYNF2BTXAs8ogrcqmq857+/sviYaTlmySXoTA+?=
- =?us-ascii?Q?F7WWALRh0QKZCP/A22lVffgVJXO2/JONX0cgoKTTr2c+QCQOjBpkeVeSJfz7?=
- =?us-ascii?Q?STV0w11CyHMXieCAM+3kuQXhUAzfdmnGxso7H6IHzFE9E9zveZ2vgbiOmNxV?=
- =?us-ascii?Q?/0Vnu/Uv84OxAvI85tA3zK01huN5CyYZak/HZQaLXc60SG4aaSBsV64JU1lm?=
- =?us-ascii?Q?S3HzeVGze/vPAtc72NCnNz/3Jsy5dZBabwMhg2WoFZOHuAKz+brIf1AMpyD2?=
- =?us-ascii?Q?jw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?gGHqllS/rRe2sfyub0kQ/9bC5ZnyvFRaEcxjPfZY1HEIdzeJ37ldY8A49Zo+?=
+ =?us-ascii?Q?4bjdJdpyNdy7lUjmeWIaX7u2/YzUiQrD9OxR9rtxnR1m4tI6KqqeQsLLaY5O?=
+ =?us-ascii?Q?tRsOv9FLfeDhvCRg37JKrAgdyUHLtr65hI75u0z91p6bFDhYAUTOf+4rcBwB?=
+ =?us-ascii?Q?JZmBGiXBhI9ySiIFbu9F4Sh5+lUkcJuqZan/fWH+6f+8JohSXWhKjWk8lVuV?=
+ =?us-ascii?Q?bhFkgeeDg8uN7z7Pa9tDt8zsPQLB13OTbeX8vG+oKyI8srbPf3r5bSTrf4Bu?=
+ =?us-ascii?Q?5Z4Ndtv7T09LSZNYLVkfc1JOO3fO1Pu9jb8BSN0yPncOzb5zqfp6yURdIUAh?=
+ =?us-ascii?Q?4mqFWBSsGlwKCgjO5Xhyii66680WEQmfCsMgOLQBEnSEOdcQBJ3Ky7RP9vCS?=
+ =?us-ascii?Q?ALYd7iOlJo0pvPKPcDlMnEloW3inyO9kJcmaTA2Rl83Oxx3cv7qnX2VeNRY2?=
+ =?us-ascii?Q?QLxiFI5DAAELt7YxC+7ct868c0jC/9IZOREBhP+V9IQIFcDfN9lHE74KOVIR?=
+ =?us-ascii?Q?1F/sEz94kEaFghChP9s42ec+FxL1oHMMPCA5ZenFRnQd3s0kKp5euMo4GMnH?=
+ =?us-ascii?Q?Ahc0oe5VeWdr79slMQUIHdLi5T3y+rZrBqcDUEPpHIQOZ2kWISDyIsWcxDjP?=
+ =?us-ascii?Q?vhGmxL8w/oEAIyUuR5WwWefHsbHXhE+bGnT9cciygr3LNnSrjazV6FIlHPf8?=
+ =?us-ascii?Q?gtD752Uh/NjMUyiYva01vw9lR8IBRMPgjUsj+KkI1b9xJbhyLHvHhwW2Y2rP?=
+ =?us-ascii?Q?msaSgYltItWnR8gH34dqZHKXiwuXe8KV/XvbixUTtwjhbo0uLVeyqpbL7dVd?=
+ =?us-ascii?Q?uFOqxW6M6k8zOadfMhWkE8hx0yCTUwdi28UhOFQoMcL8lCm0c4WFDFBMqfeg?=
+ =?us-ascii?Q?VewNJF9y40084bvVWviE6y7P36W3gsUOb1lj8ayEVBXY7aR1wsFiYfjpVWsV?=
+ =?us-ascii?Q?4H3sytXCG771NioOs+lVKv1vmvja1u19zUgp9f69yEHuZ7V3PLGierEOQ6PW?=
+ =?us-ascii?Q?Uxu2CVFtDOkjX0RFISFJvOVeVuSbRQ3yjULS5PeD+pra9wWw1fOW0szFwsxM?=
+ =?us-ascii?Q?ul8DiA0gzXsktWTnPH3tjGkk0LU//UPWesI8pt96jLX38TuTzPNgCVMtuHex?=
+ =?us-ascii?Q?f5+HcrR6seSe8kUqBnPxj01Dz+7dVV+ND52fJkbsKoyyD7HQIlLDMhS/Gpyz?=
+ =?us-ascii?Q?cm9GLsH0vngjDXUNeliXQhChvXbhHwtj0Ry5tjroKJ2JHM+p1SrML5UIamL6?=
+ =?us-ascii?Q?rEfxuEQPFWh7uSXR012uXoXJale/TH/NtOyibjsuSRa4kGSD2PDdMGyUhIap?=
+ =?us-ascii?Q?9o5/oL/khCNzwdO3lTqjdfid5yvhjNvGEstgS0APdMFBASBLvxrXfvnlWugb?=
+ =?us-ascii?Q?gUaA4RYQc5Foea4dWK4AznkNczZID2aOn58V+JugftbWE86MpwmmLbYA5yAK?=
+ =?us-ascii?Q?eY2g6P1/mT8keqtn8Y/Rxgz+Sf7aRlnTAsohUsz4lxOqDRnQQ3m6qq6LLa5E?=
+ =?us-ascii?Q?o74HxOvhzgY8vWF/a2eWEelvfa0ecs327FBTsunigiO9Zx0AXPuWSbI7PpBx?=
+ =?us-ascii?Q?LrGMm+gPQkkq87kW+cHdQ93sY04uOERi1mizdV7eXrTPoPWgjjApoMyuNjQc?=
+ =?us-ascii?Q?VQ=3D=3D?=
 X-OriginatorOrg: yunjingtech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e2bdad6-4dcb-43c7-4f65-08dbb5998894
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84ea5b44-e3cd-46f7-6429-08dbb5998d92
 X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB6507.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2023 03:12:03.1254
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2023 03:12:11.4320
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: be2d5505-f7e6-4600-bbe2-b3201c91b344
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XKCkUQbAwbCxVhdfsHIhGsN91CMJgRWDMayX8dbhESNIWwpzdy4EBUotWOKgGOEXBmxZ2/BN4GHhggFS1UXhstR6bDQBmCT1cM92idLGa+Y=
+X-MS-Exchange-CrossTenant-UserPrincipalName: MYDYa3ueR9bora7gvMd6lWYz9CqHxWfIzAqImvb6PIEVIOgL89fjAXm6gpA/Csw+PHwvbesTYaiChU69HlT2ree5hjteO5AerP3s5EwIfj0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6654
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The UP board <https://up-board.org/> is the computer board for 
-Professional Makers and Industrial Applications. We want to upstream 
-the UP board 40-pin GP-bus Kernel driver for giving the users better 
-experience on the software release. (not just download from UP board 
-github)
+The UP boards come with a few FPGA-controlled onboard LEDs:
+* UP Board: yellow, green, red
+* UP Squared: blue, yellow, green, red
 
-These patches are generated from the Linux kernel mainline tag v6.0.
+This patch depends on patch "mfd: Add support for UP board CPLD/FPGA".
 
-This is the PATCH V6 and fixed kernel test robot compiler warning and 
-addressed Linus Walleij review comments.
-
-larry.lai (3):
-  mfd: Add support for UP board CPLD/FPGA
-  pinctrl: Add support pin control for UP board CPLD/FPGA
-  leds: Add support for UP board CPLD onboard LEDS
-
- drivers/leds/Kconfig              |   10 +
- drivers/leds/Makefile             |    1 +
- drivers/leds/leds-upboard.c       |   79 ++
- drivers/mfd/Kconfig               |   12 +
- drivers/mfd/Makefile              |    1 +
- drivers/mfd/upboard-fpga.c        |  492 ++++++++++
- drivers/pinctrl/Kconfig           |   14 +
- drivers/pinctrl/Makefile          |    1 +
- drivers/pinctrl/pinctrl-upboard.c | 1390 +++++++++++++++++++++++++++++
- include/linux/mfd/upboard-fpga.h  |   55 ++
- 10 files changed, 2055 insertions(+)
+Signed-off-by: Gary Wang <garywang@aaeon.com.tw>
+Signed-off-by: larry.lai <larry.lai@yunjingtech.com>
+---
+PATCH V4 -> PATCH V6 : There is no change.
+RFC 2023/04/25 -> PATCH V4
+(1) Fixed kernel test robot compiler warning.
+(2) Remove mistakes with wrong Reviewed-by tags.
+RFC 2022/11/23 --> RFC 2023/04/25: Refer 2022/12/08 Lee Jones review,
+cleaned up coding style.
+PATCH V3 -> RFC 2022/11/23: Update the changes Copyright.
+PATCH V1 -> V3: There is no change.
+PATCH --> PATCH V1: Refer 2022/10/03 Andy Shevchenko review, cleaned up
+coding style.
+---
+ drivers/leds/Kconfig        | 10 +++++
+ drivers/leds/Makefile       |  1 +
+ drivers/leds/leds-upboard.c | 79 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 90 insertions(+)
  create mode 100644 drivers/leds/leds-upboard.c
- create mode 100644 drivers/mfd/upboard-fpga.c
- create mode 100644 drivers/pinctrl/pinctrl-upboard.c
- create mode 100644 include/linux/mfd/upboard-fpga.h
 
-
-base-commit: 4fe89d07dcc2804c8b562f6c7896a45643d34b2f
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 499d0f215a8b..d9d533cb38ca 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -872,6 +872,16 @@ source "drivers/leds/flash/Kconfig"
+ comment "RGB LED drivers"
+ source "drivers/leds/rgb/Kconfig"
+ 
++config LEDS_UPBOARD
++	tristate "LED support for the UP board"
++	depends on LEDS_CLASS
++	depends on MFD_INTEL_UPBOARD_FPGA
++	help
++	  This option enables support for the UP board LEDs.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called leds-upboard.
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 4fd2f92cd198..e72956645646 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -83,6 +83,7 @@ obj-$(CONFIG_LEDS_TI_LMU_COMMON)	+= leds-ti-lmu-common.o
+ obj-$(CONFIG_LEDS_TLC591XX)		+= leds-tlc591xx.o
+ obj-$(CONFIG_LEDS_TPS6105X)		+= leds-tps6105x.o
+ obj-$(CONFIG_LEDS_TURRIS_OMNIA)		+= leds-turris-omnia.o
++obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+ obj-$(CONFIG_LEDS_WM831X_STATUS)	+= leds-wm831x-status.o
+ obj-$(CONFIG_LEDS_WM8350)		+= leds-wm8350.o
+ obj-$(CONFIG_LEDS_WRAP)			+= leds-wrap.o
+diff --git a/drivers/leds/leds-upboard.c b/drivers/leds/leds-upboard.c
+new file mode 100644
+index 000000000000..8a44afe8c526
+--- /dev/null
++++ b/drivers/leds/leds-upboard.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * UP Board CPLD/FPGA based LED driver
++ *
++ * Copyright (c) AAEON. All rights reserved.
++ *
++ * Author: Gary Wang <garywang@aaeon.com.tw>
++ */
++
++#include <linux/kernel.h>
++#include <linux/leds.h>
++#include <linux/mfd/upboard-fpga.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++struct upboard_led {
++	struct regmap_field *field;
++	struct led_classdev cdev;
++	unsigned char bit;
++};
++
++static enum led_brightness upboard_led_brightness_get(struct led_classdev *cdev)
++{
++	struct upboard_led *led = container_of(cdev, struct upboard_led, cdev);
++	int brightness = 0;
++
++	regmap_field_read(led->field, &brightness);
++
++	return brightness;
++};
++
++static void upboard_led_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
++{
++	struct upboard_led *led = container_of(cdev, struct upboard_led, cdev);
++
++	regmap_field_write(led->field, brightness != LED_OFF);
++};
++
++static int __init upboard_led_probe(struct platform_device *pdev)
++{
++	struct upboard_fpga * const up_fpga = dev_get_drvdata(pdev->dev.parent);
++	struct reg_field fldconf = {
++		.reg = UPFPGA_REG_FUNC_EN0,
++	};
++	struct upboard_led_data * const pdata = pdev->dev.platform_data;
++	struct upboard_led *led;
++
++	led = devm_kzalloc(&pdev->dev, sizeof(*led), GFP_KERNEL);
++	if (!led)
++		return -ENOMEM;
++
++	fldconf.lsb = pdata->bit;
++	fldconf.msb = pdata->bit;
++	led->field = devm_regmap_field_alloc(&pdev->dev, up_fpga->regmap, fldconf);
++	if (IS_ERR(led->field))
++		return PTR_ERR(led->field);
++
++	led->cdev.brightness_get = upboard_led_brightness_get;
++	led->cdev.brightness_set = upboard_led_brightness_set;
++	led->cdev.name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "upboard:%s:",
++					pdata->colour);
++	if (!led->cdev.name)
++		return -ENOMEM;
++
++	return devm_led_classdev_register(&pdev->dev, &led->cdev);
++};
++
++static struct platform_driver upboard_led_driver = {
++	.driver = {
++		.name = "upboard-led",
++	},
++};
++module_platform_driver_probe(upboard_led_driver, upboard_led_probe);
++
++MODULE_AUTHOR("Gary Wang <garywang@aaeon.com.tw>");
++MODULE_DESCRIPTION("UP Board LED driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:upboard-led");
 -- 
 2.17.1
 
