@@ -2,65 +2,75 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88500CD37AD
-	for <linux-leds@archiver.kernel.org>; Fri, 15 Sep 2023 20:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48944CD37AA
+	for <linux-leds@archiver.kernel.org>; Fri, 15 Sep 2023 20:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237418AbjIOUqM (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 15 Sep 2023 16:46:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40994 "EHLO
+        id S231583AbjIOUqn (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 15 Sep 2023 16:46:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237409AbjIOUpp (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 15 Sep 2023 16:45:45 -0400
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F812186
-        for <linux-leds@vger.kernel.org>; Fri, 15 Sep 2023 13:45:40 -0700 (PDT)
-Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
+        with ESMTP id S237594AbjIOUqm (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 15 Sep 2023 16:46:42 -0400
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A538FE58
+        for <linux-leds@vger.kernel.org>; Fri, 15 Sep 2023 13:46:37 -0700 (PDT)
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
         by cmsmtp with ESMTP
-        id hAPdqOlerWU1chFh5qTfS0; Fri, 15 Sep 2023 20:45:39 +0000
+        id hFDAqlTgOQFHRhFi1qvWud; Fri, 15 Sep 2023 20:46:37 +0000
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with ESMTPS
-        id hFh4qkO6Sxtb5hFh5qfWgF; Fri, 15 Sep 2023 20:45:39 +0000
-X-Authority-Analysis: v=2.4 cv=IOERtyjG c=1 sm=1 tr=0 ts=6504c273
+        id hFi0qJ8C7HoqXhFi0qe6pb; Fri, 15 Sep 2023 20:46:36 +0000
+X-Authority-Analysis: v=2.4 cv=VP7OIvDX c=1 sm=1 tr=0 ts=6504c2ac
  a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
  a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
  a=IkcTkHD0fZMA:10 a=zNV7Rl7Rt7sA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=cm27Pg_UAAAA:8 a=HvF037n1xESchLcPDVoA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=xmb-EsYY8bH0VWELuYED:22
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=QX4gbG5DAAAA:8 a=l0hiEBf7AAAA:8
+ a=QyXUC8HyAAAA:8 a=JfrnYn6hAAAA:8 a=cm27Pg_UAAAA:8 a=HvF037n1xESchLcPDVoA:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=AbAUZ8qAyYyZVLSsDulk:22
+ a=ynCB8LqupOr-u-Kv-6Up:22 a=1CNFftbPRP8L7MoqJWF3:22 a=xmb-EsYY8bH0VWELuYED:22
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=THcbAJFdx33gBO1MOq6Px2lR54qlr2l+Ip9xfdyyl3E=; b=tYRc1rc6gSEdsGWkdPGjQcdL+u
-        4GBJQuUoziMuoygvT/hYgpkE64TlGr5i5iepg9F2+gHo3kkGZGqeD/bjcEYxD644JcLXUJ/hZBPh2
-        jLv+QB/6nPeMM0pPvbE6iXZ1PLN+3GwMOJUTKCUtm6filW+HXlO19mpwyRH0SqvUyOtR1XzBISg8h
-        f4u4UkpbgFkQcw+toJhP9X0YWb+8DBGn23xVvvVLZd9iOz3lS2oXQoTZXO26ECr8JRvuigv/RFElD
-        1sRKzARtP2uNl/ZJRKgnrgTPkQpST24I/NsU7XdDUQYD9c+dg5pJt+0enAx+zrKrUKxaQNCxe2PIj
-        dcW/1dsg==;
-Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:60304 helo=[192.168.15.8])
+        bh=1ohc40rdkFpNqCvyZeX87gUeuQ9p1uMByBKe82TNbak=; b=awqgyUr3IqvC14RazBVM+ai3UA
+        pDPjDX3wFvhvCsqZwkqOEe1SjMRwqldgbBksO1OFRYeC+ks1k92hmEkJgS7ytkeAbiEArLIOkY/iv
+        RWxgPYxbrKPafMUs+A9qL8o5ETw+rLk+04IB3/Tihjoce3XWYoV6Gxbe0YRdI7H7ikW46mm2Z+UjS
+        QEBgFbUG0E4xDuFS5PJdCRNKDS/dvOEf072qongFWLvEp1yns8FZACdUEQ4jeRKp/YPYAfpWVxyWR
+        OmWidhKMtWJ4votC3kNEyjGrvVpF7FHv+jIwWHac0pOLGbWfRgiqSMLQgP4RfjejYx2822T3RFHUQ
+        6zmmXV2w==;
+Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:51670 helo=[192.168.15.8])
         by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.96)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1qhFh3-002a1b-2a;
-        Fri, 15 Sep 2023 15:45:37 -0500
-Message-ID: <59945a80-0d50-1df0-43cb-eda68b07f93d@embeddedor.com>
-Date:   Fri, 15 Sep 2023 14:46:33 -0600
+        id 1qhFhy-002axi-2b;
+        Fri, 15 Sep 2023 15:46:34 -0500
+Message-ID: <754beb7c-4eca-ebf3-6b0d-3eb5ccda9ed9@embeddedor.com>
+Date:   Fri, 15 Sep 2023 14:47:30 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] leds: cr0014114: Annotate struct cr0014114 with
+Subject: Re: [PATCH] leds: mt6360: Annotate struct mt6360_priv with
  __counted_by
 Content-Language: en-US
 To:     Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
+Cc:     Lee Jones <lee@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Gene Chen <gene_chen@richtek.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
         Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-References: <20230915200948.never.728-kees@kernel.org>
+References: <20230915201020.never.433-kees@kernel.org>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20230915200948.never.728-kees@kernel.org>
+In-Reply-To: <20230915201020.never.433-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
@@ -71,38 +81,45 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 187.162.21.192
 X-Source-L: No
-X-Exim-ID: 1qhFh3-002a1b-2a
+X-Exim-ID: 1qhFhy-002axi-2b
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:60304
+X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:51670
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 199
+X-Email-Count: 241
 X-Org:  HG=hgshared;ORG=hostgator;
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHWG4oMsWJMh/VPyBE/JMQurVwiZcDQxl4V7uCRjaPSyukBdnf6FYTugzpTTg/3aOPZ4zLLqGHhP2MPJZ0lIq3/P9Xv48T9QkJLxrT6HaNHcmQPqsWCa
- /mHd6YMbBZ8z0lvHDEX7YITCheIHp+GUsiIVdx9Fe+Zh9CHEtzf4puA21VeC09i0aX1EgFijvUa+nE/579EOquwLw5BCXiilvkLIY61D2NDUUTZw3pjnDyOo
+X-CMAE-Envelope: MS4xfHUkml+PwZAz61hBiNn/a2gwfdgiXtI/UvVYuuG+WLoKGfr6D25cli3Q8Rk1oL5cKhtd8RXr3QiBssMY8Va4WtL9+2n4maU5kpL3t34wOuHKFRYYOEOT
+ EjMSW8vKU6ZMu7lrBpAqcvU7qtpsgJKPnXsZj5XnkBfONDuLbxtIHQNDTeVfLad5qq6sjqXP7bi56MD18iAs6azE/Q8Hx9hnIgFVCmlDVYO7khfu4vQF5se2
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
 
 
-On 9/15/23 14:09, Kees Cook wrote:
+On 9/15/23 14:10, Kees Cook wrote:
 > Prepare for the coming implementation by GCC and Clang of the __counted_by
 > attribute. Flexible array members annotated with __counted_by can have
 > their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
 > (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
 > functions).
 > 
-> As found with Coccinelle[1], add __counted_by for struct cr0014114.
+> As found with Coccinelle[1], add __counted_by for struct mt6360_priv.
 > 
 > [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
 > 
 > Cc: Pavel Machek <pavel@ucw.cz>
 > Cc: Lee Jones <lee@kernel.org>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Gene Chen <gene_chen@richtek.com>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > Cc: linux-leds@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
 Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
@@ -112,19 +129,19 @@ Thanks
 Gustavo
 
 > ---
->   drivers/leds/leds-cr0014114.c | 2 +-
+>   drivers/leds/flash/leds-mt6360.c | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
-> index b33bca397ea6..c9914fc51f20 100644
-> --- a/drivers/leds/leds-cr0014114.c
-> +++ b/drivers/leds/leds-cr0014114.c
-> @@ -56,7 +56,7 @@ struct cr0014114 {
->   	struct spi_device	*spi;
->   	u8			*buf;
->   	unsigned long		delay;
-> -	struct cr0014114_led	leds[];
-> +	struct cr0014114_led	leds[] __counted_by(count);
+> diff --git a/drivers/leds/flash/leds-mt6360.c b/drivers/leds/flash/leds-mt6360.c
+> index 1af6c5898343..b70dc689b33f 100644
+> --- a/drivers/leds/flash/leds-mt6360.c
+> +++ b/drivers/leds/flash/leds-mt6360.c
+> @@ -91,7 +91,7 @@ struct mt6360_priv {
+>   	unsigned int fled_torch_used;
+>   	unsigned int leds_active;
+>   	unsigned int leds_count;
+> -	struct mt6360_led leds[];
+> +	struct mt6360_led leds[] __counted_by(leds_count);
 >   };
 >   
->   static void cr0014114_calc_crc(u8 *buf, const size_t len)
+>   static int mt6360_mc_brightness_set(struct led_classdev *lcdev,
