@@ -2,91 +2,281 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E76C46CA1
-	for <linux-leds@archiver.kernel.org>; Mon, 18 Sep 2023 15:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58332CD37B0
+	for <linux-leds@archiver.kernel.org>; Mon, 18 Sep 2023 16:18:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbjIRPgp (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 18 Sep 2023 11:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43884 "EHLO
+        id S229436AbjIRQTB (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 18 Sep 2023 12:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjIRPgn (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 Sep 2023 11:36:43 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BF87137
-        for <linux-leds@vger.kernel.org>; Mon, 18 Sep 2023 08:32:09 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-502934c88b7so7674209e87.2
-        for <linux-leds@vger.kernel.org>; Mon, 18 Sep 2023 08:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695050939; x=1695655739; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpkia8kMLrWz8ddvYuwxZ25DCyYDGFA4RB5AWzn1+X4=;
-        b=KX88Crc9BrAmp0Syq8AqZqkAihk2zEcGb/bUfAiJ+13LfbprkT+dWcALgTDo8bXeuv
-         N0q6QsarRlLrm3v/t3SVXHwP6c8XZ1QuCmHv8tkJpGvQPWmRESStsDYQaba+mnOmYd6P
-         +ydxoNjIsCGP8KjfiHLmrb9ZypPQYk7GeAavZv06ERW8fGyLfuW4KD+xD9DdP/96VJbm
-         K/BoHN43qMhhetwy0IE0iTScEOvKTuTyTg9ObNXa3Ue5fZb1BgJ0/wHiewgpinPahffQ
-         DAwvTqqOqqwnJ2RzHccSgw6GICUtQEnqtNzJ4Or8L6y6ZvXR6MwkKO8KlJwkf9IhN7q9
-         Ty4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695050939; x=1695655739;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qpkia8kMLrWz8ddvYuwxZ25DCyYDGFA4RB5AWzn1+X4=;
-        b=ufMENoNzXkB5sCjD7LtCn+z+18l0cvcyDYszlHdMhE291Xm8nnlF1wA/0K84K5fWpN
-         LO+txzRkthVMaqjqlQdGwrt22PC1UPfIig8Wubad4kzOq1cjNsywU5ORLk81L7jTM6AZ
-         Vq6QanOnTgGCFJ8aLAk5TbGRHniBLEPbNn1rwHGZq6OJBdztVmISLGETcpCPaXHMxVP6
-         yX1lqyO5jlTjsgctcJwnTuh8g6v+s5QcxqtpbRtMRsQnP6fn2P1aPB5bR5B3q+7dBmiA
-         JDBJhy1m3BEGhn1Rt1gb7cmBjJlPc/S0NSpagxi1SBDtJ2z0W3JiLp4GWiExJRx5Nue7
-         pOig==
-X-Gm-Message-State: AOJu0YzdQTeZDRzZwQM50JjAG44ggwmWE1Pm1gHF/4w3UfiQs12vOMPj
-        kAP8zLMGNctFdn80mI5ko5h0zl+xk68=
-X-Google-Smtp-Source: AGHT+IFn3Uub80JJFkkHOMPy9v3+XdW+kVvZa5y0aEAe3GfaGI+NlChbBf+/obOsPXWfHuXaP6egkw==
-X-Received: by 2002:a05:6000:11d1:b0:31f:8e7c:6ebe with SMTP id i17-20020a05600011d100b0031f8e7c6ebemr8156993wrx.5.1695047559395;
-        Mon, 18 Sep 2023 07:32:39 -0700 (PDT)
-Received: from eichest-laptop.netmodule.intranet ([2a02:168:af72:0:fee5:6aa7:222c:e5be])
-        by smtp.gmail.com with ESMTPSA id b16-20020a05600010d000b0031aef72a021sm12621708wrx.86.2023.09.18.07.32.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Sep 2023 07:32:39 -0700 (PDT)
-From:   Stefan Eichenberger <eichest@gmail.com>
-To:     linux-leds@vger.kernel.org
-Cc:     pavel@ucw.cz, lee@kernel.org
-Subject: [PATCH] leds: lp55xx: use gpiod_set_value_cansleep
-Date:   Mon, 18 Sep 2023 16:32:38 +0200
-Message-Id: <20230918143238.75600-1-eichest@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S230104AbjIRQSo (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 18 Sep 2023 12:18:44 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392E06A66
+        for <linux-leds@vger.kernel.org>; Mon, 18 Sep 2023 09:11:38 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F699C43142;
+        Mon, 18 Sep 2023 16:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695053473;
+        bh=wuTHXeiu7hGXpCNjWPeVN4T0I6qzcUPEFTnXitUj1gY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FxEXkFzMkr7w06VC7+yeHAhjNTyACV2w9tEeBwK8NVn3vpL7vZJRxToZExDsy/FjW
+         yXc8vbVCzwZPVdyr2oWoEGORPHOHm3FfcSBgUw5Q/cWwOtbkdPHg1RunKmz1zvqoyZ
+         ArxK9WohooR6u0MLu0Q/pNZu6mWLNHVHqI6AJVAJsMpNaxvSJ5vvJpnhCui5+A9rbb
+         81uX1SF70LIdrkf+IiQ0qVYkA1h54KzYsiKMZk5gXrGp+Psn8JT2n67go/Oo5XM7rf
+         zb2qzTU82fmVmyy4BwaPdfDje04e8BbxTCK30NUCQ9T71gCWucR2MxzWdIz2d05ijQ
+         rT0tOnjmh3Fvw==
+From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+To:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org
+Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+Subject: [PATCH v4 4/4] leds: turris-omnia: add support for enabling/disabling HW gamma correction
+Date:   Mon, 18 Sep 2023 18:11:04 +0200
+Message-ID: <20230918161104.20860-5-kabel@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230918161104.20860-1-kabel@kernel.org>
+References: <20230918161104.20860-1-kabel@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Use gpiod_set_value_cansleep in the init_device function. Without this
-change, the driver may print a warning if the LP55xx enable pin is
-connected to a GPIO chip which can sleep (e.g. a GPIO expander):
-WARNING: CPU: 0 PID: 2719 at drivers/gpio/gpiolib.c:3051 gpiod_set_value+0x64/0xbc
+If the MCU on Turris Omnia is running newer firmware versions, the LED
+controller supports RGB gamma correction (and enables it by default for
+newer boards).
 
-Signed-off-by: Stefan Eichenberger <eichest@gmail.com>
+Determine whether the gamma correction setting feature is supported and
+add the ability to set it via sysfs attribute file.
+
+Signed-off-by: Marek Behún <kabel@kernel.org>
 ---
- drivers/leds/leds-lp55xx-common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../sysfs-class-led-driver-turris-omnia       |  14 ++
+ drivers/leds/leds-turris-omnia.c              | 137 +++++++++++++++---
+ 2 files changed, 134 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 77bb26906ea6e..8e7074f0fee00 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -442,9 +442,9 @@ int lp55xx_init_device(struct lp55xx_chip *chip)
- 		gpiod_direction_output(pdata->enable_gpiod, 0);
+diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-turris-omnia b/Documentation/ABI/testing/sysfs-class-led-driver-turris-omnia
+index c4d46970c1cf..369b4ae8be5f 100644
+--- a/Documentation/ABI/testing/sysfs-class-led-driver-turris-omnia
++++ b/Documentation/ABI/testing/sysfs-class-led-driver-turris-omnia
+@@ -12,3 +12,17 @@ Description:	(RW) On the front panel of the Turris Omnia router there is also
+ 		able to change this setting from software.
  
- 		gpiod_set_consumer_name(pdata->enable_gpiod, "LP55xx enable");
--		gpiod_set_value(pdata->enable_gpiod, 0);
-+		gpiod_set_value_cansleep(pdata->enable_gpiod, 0);
- 		usleep_range(1000, 2000); /* Keep enable down at least 1ms */
--		gpiod_set_value(pdata->enable_gpiod, 1);
-+		gpiod_set_value_cansleep(pdata->enable_gpiod, 1);
- 		usleep_range(1000, 2000); /* 500us abs min. */
- 	}
+ 		Format: %i
++
++What:		/sys/class/leds/<led>/device/gamma_correction
++Date:		August 2023
++KernelVersion:	6.6
++Contact:	Marek Behún <kabel@kernel.org>
++Description:	(RW) Newer versions of the microcontroller firmware of the
++		Turris Omnia router support gamma correction for the RGB LEDs.
++		This feature can be enabled/disabled by writing to this file.
++
++		If the feature is not supported because the MCU firmware is too
++		old, the file always reads as 0, and writing to the file results
++		in the EOPNOTSUPP error.
++
++		Format: %i
+diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+index bdccce0ec39c..e1a4629479c5 100644
+--- a/drivers/leds/leds-turris-omnia.c
++++ b/drivers/leds/leds-turris-omnia.c
+@@ -15,17 +15,30 @@
+ #define OMNIA_BOARD_LEDS	12
+ #define OMNIA_LED_NUM_CHANNELS	3
  
+-#define CMD_LED_MODE		3
+-#define CMD_LED_MODE_LED(l)	((l) & 0x0f)
+-#define CMD_LED_MODE_USER	0x10
++/* MCU controller commands at I2C address 0x2a */
++#define OMNIA_MCU_I2C_ADDR		0x2a
+ 
+-#define CMD_LED_STATE		4
+-#define CMD_LED_STATE_LED(l)	((l) & 0x0f)
+-#define CMD_LED_STATE_ON	0x10
++#define CMD_GET_STATUS_WORD		0x01
++#define STS_FEATURES_SUPPORTED		BIT(2)
+ 
+-#define CMD_LED_COLOR		5
+-#define CMD_LED_SET_BRIGHTNESS	7
+-#define CMD_LED_GET_BRIGHTNESS	8
++#define CMD_GET_FEATURES		0x10
++#define FEAT_LED_GAMMA_CORRECTION	BIT(5)
++
++/* LED controller commands at I2C address 0x2b */
++#define CMD_LED_MODE			0x03
++#define CMD_LED_MODE_LED(l)		((l) & 0x0f)
++#define CMD_LED_MODE_USER		0x10
++
++#define CMD_LED_STATE			0x04
++#define CMD_LED_STATE_LED(l)		((l) & 0x0f)
++#define CMD_LED_STATE_ON		0x10
++
++#define CMD_LED_COLOR			0x05
++#define CMD_LED_SET_BRIGHTNESS		0x07
++#define CMD_LED_GET_BRIGHTNESS		0x08
++
++#define CMD_SET_GAMMA_CORRECTION	0x30
++#define CMD_GET_GAMMA_CORRECTION	0x31
+ 
+ struct omnia_led {
+ 	struct led_classdev_mc mc_cdev;
+@@ -40,6 +53,7 @@ struct omnia_led {
+ struct omnia_leds {
+ 	struct i2c_client *client;
+ 	struct mutex lock;
++	bool has_gamma_correction;
+ 	struct omnia_led leds[];
+ };
+ 
+@@ -51,30 +65,42 @@ static int omnia_cmd_write_u8(const struct i2c_client *client, u8 cmd, u8 val)
+ 	return i2c_master_send(client, buf, sizeof(buf));
+ }
+ 
+-static int omnia_cmd_read_u8(const struct i2c_client *client, u8 cmd)
++static int omnia_cmd_read_raw(struct i2c_adapter *adapter, u8 addr, u8 cmd,
++			      void *reply, size_t len)
+ {
+ 	struct i2c_msg msgs[2];
+-	u8 reply;
+ 	int ret;
+ 
+-	msgs[0].addr = client->addr;
++	msgs[0].addr = addr;
+ 	msgs[0].flags = 0;
+ 	msgs[0].len = 1;
+ 	msgs[0].buf = &cmd;
+-	msgs[1].addr = client->addr;
++	msgs[1].addr = addr;
+ 	msgs[1].flags = I2C_M_RD;
+-	msgs[1].len = 1;
+-	msgs[1].buf = &reply;
++	msgs[1].len = len;
++	msgs[1].buf = reply;
+ 
+-	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
++	ret = i2c_transfer(adapter, msgs, ARRAY_SIZE(msgs));
+ 	if (likely(ret == ARRAY_SIZE(msgs)))
+-		return reply;
++		return len;
+ 	else if (ret < 0)
+ 		return ret;
+ 	else
+ 		return -EIO;
+ }
+ 
++static int omnia_cmd_read_u8(const struct i2c_client *client, u8 cmd)
++{
++	u8 reply;
++	int ret;
++
++	ret = omnia_cmd_read_raw(client->adapter, client->addr, cmd, &reply, 1);
++	if (ret < 0)
++		return ret;
++
++	return reply;
++}
++
+ static int omnia_led_send_color_cmd(const struct i2c_client *client,
+ 				    struct omnia_led *led)
+ {
+@@ -353,12 +379,74 @@ static ssize_t brightness_store(struct device *dev, struct device_attribute *a,
+ }
+ static DEVICE_ATTR_RW(brightness);
+ 
++static ssize_t gamma_correction_show(struct device *dev,
++				     struct device_attribute *a, char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct omnia_leds *leds = i2c_get_clientdata(client);
++	int ret;
++
++	if (leds->has_gamma_correction) {
++		ret = omnia_cmd_read_u8(client, CMD_GET_GAMMA_CORRECTION);
++		if (ret < 0)
++			return ret;
++	} else {
++		ret = 0;
++	}
++
++	return sysfs_emit(buf, "%d\n", !!ret);
++}
++
++static ssize_t gamma_correction_store(struct device *dev,
++				      struct device_attribute *a,
++				      const char *buf, size_t count)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct omnia_leds *leds = i2c_get_clientdata(client);
++	bool val;
++	int ret;
++
++	if (!leds->has_gamma_correction)
++		return -EOPNOTSUPP;
++
++	if (kstrtobool(buf, &val) < 0)
++		return -EINVAL;
++
++	ret = omnia_cmd_write_u8(client, CMD_SET_GAMMA_CORRECTION, val);
++
++	return ret < 0 ? ret : count;
++}
++static DEVICE_ATTR_RW(gamma_correction);
++
+ static struct attribute *omnia_led_controller_attrs[] = {
+ 	&dev_attr_brightness.attr,
++	&dev_attr_gamma_correction.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(omnia_led_controller);
+ 
++static int omnia_mcu_get_features(const struct i2c_client *client)
++{
++	u16 reply;
++	int err;
++
++	err = omnia_cmd_read_raw(client->adapter, OMNIA_MCU_I2C_ADDR,
++				 CMD_GET_STATUS_WORD, &reply, sizeof(reply));
++	if (err < 0)
++		return err;
++
++	/* Check whether MCU firmware supports the CMD_GET_FEAUTRES command */
++	if (!(le16_to_cpu(reply) & STS_FEATURES_SUPPORTED))
++		return 0;
++
++	err = omnia_cmd_read_raw(client->adapter, OMNIA_MCU_I2C_ADDR,
++				 CMD_GET_FEATURES, &reply, sizeof(reply));
++	if (err < 0)
++		return err;
++
++	return le16_to_cpu(reply);
++}
++
+ static int omnia_leds_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -383,6 +471,21 @@ static int omnia_leds_probe(struct i2c_client *client)
+ 	leds->client = client;
+ 	i2c_set_clientdata(client, leds);
+ 
++	ret = omnia_mcu_get_features(client);
++	if (ret < 0) {
++		dev_err(dev, "Cannot determine MCU supported features: %d\n",
++			ret);
++		return ret;
++	}
++
++	leds->has_gamma_correction = ret & FEAT_LED_GAMMA_CORRECTION;
++	if (!leds->has_gamma_correction) {
++		dev_info(dev,
++			 "Your board's MCU firmware does not support the LED gamma correction feature.\n");
++		dev_info(dev,
++			 "Consider upgrading MCU firmware with the omnia-mcutool utility.\n");
++	}
++
+ 	mutex_init(&leds->lock);
+ 
+ 	ret = devm_led_trigger_register(dev, &omnia_hw_trigger);
 -- 
-2.39.2
+2.41.0
 
