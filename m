@@ -2,187 +2,65 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02080E7D0AB
-	for <linux-leds@archiver.kernel.org>; Thu, 21 Sep 2023 21:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0517E7D0AA
+	for <linux-leds@archiver.kernel.org>; Thu, 21 Sep 2023 21:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231480AbjIUVN2 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 21 Sep 2023 17:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32948 "EHLO
+        id S231846AbjIUVWs (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 21 Sep 2023 17:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231389AbjIUVNE (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 21 Sep 2023 17:13:04 -0400
+        with ESMTP id S231918AbjIUVWg (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 21 Sep 2023 17:22:36 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D8EA9F6;
-        Thu, 21 Sep 2023 10:07:28 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B298EC32796;
-        Thu, 21 Sep 2023 10:31:59 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E27897E4
+        for <linux-leds@vger.kernel.org>; Thu, 21 Sep 2023 13:50:30 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A816C433C9;
+        Thu, 21 Sep 2023 20:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1695292320;
-        bh=OLrFUB5wiXsqIStG7DXtPfN52moqtzYBsJLLAwsWXrk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r70wz/HAzz20k6nRyeZwyRgQCIcBb4ApB/rTFJoGoE1SiNqWL2DCq6Ep8ZxkUIVtY
-         FhpZ5OvZGtj5oUljHyNZwb9A7wdLFv+xA0wapr4l95PkwfQ+7IdV/gwfyKMw+kMJA9
-         JZnCq0OcSj0fPEP3WDywLG1O4yodu+oDW/S8StUePF+n2dqnj1MchoYk2RamzE5vd1
-         yiuQjkiNmdU8S4Zm0sTuu9D64t5+na9Eeam8Dpn5/2wPFKZ1JGqsMT+2/UjzF+lW96
-         HhUtodx6snAMLBWjlIm2fi0i7rWzWnsMjQ3XdVZoGy55BFs/J9J3atIV3HG9mk4lmH
-         Vz6+nW6f6tFJA==
-Date:   Thu, 21 Sep 2023 11:31:56 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Naresh Solanki <naresh.solanki@9elements.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Patrick Rudolph <patrick.rudolph@9elements.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [RESEND PATCH v3] leds: max5970: Add support for max5970
-Message-ID: <20230921103156.GB3449785@google.com>
-References: <20230914114521.1491390-1-naresh.solanki@9elements.com>
- <20230920130528.GG13143@google.com>
- <CABqG17j_gCr8xw65qjn4Kh7ChdraZbLsyGOsCmFEEWG3txjE4A@mail.gmail.com>
+        s=k20201202; t=1695329429;
+        bh=o/Agu4YpPPbLZVgNf6CK3kCG/+pD6mnDaJlC2mGAkdM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XML8PgsHmjjo+J3USVhE/uxEqviDVz/8QN5eHRB4VcT46hA6tvM/vdhaq+ZBG73g8
+         iN6fDp0RNZyuWL8y3mCjXfA9sdWSmd5qdBNGubkkEXpSKdk5XQKqdxgbsEboFcKTV4
+         9GVTiGA3oVnVpidMyPeQA8vdiJh1aDBYau2PTLs75zbhtzaTbyp0foe4aV6pSm5C11
+         2oSDyaG/xc3UfD8mssZc0BKI0wSFl5d8QkYmqBkmP6xiGHd11S224i5oDZkChXgLh8
+         bZIRI/2EuKGTsAedqEYRBC/N7C8FLiI0URQ5yhf0Msj0IPyg0EvkUKBIgP8HuXLJgk
+         uM/b6pkKYgyYw==
+From:   =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+To:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org
+Cc:     =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
+Subject: [PATCH] leds: turris-omnia: Fix unused variable
+Date:   Thu, 21 Sep 2023 22:50:25 +0200
+Message-ID: <20230921205025.20303-1-kabel@kernel.org>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABqG17j_gCr8xw65qjn4Kh7ChdraZbLsyGOsCmFEEWG3txjE4A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, 21 Sep 2023, Naresh Solanki wrote:
+The variable ret is not used in this function.
 
-> Hi
-> 
-> 
-> On Wed, 20 Sept 2023 at 18:35, Lee Jones <lee@kernel.org> wrote:
-> >
-> > On Thu, 14 Sep 2023, Naresh Solanki wrote:
-> >
-> > > From: Patrick Rudolph <patrick.rudolph@9elements.com>
-> > >
-> > > The MAX5970 is hot swap controller and has 4 indication LED.
-> > >
-> > > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-> > > Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
-> > > ---
-> > > Changes in V3:
-> > > - Drop array for ddata variable.
-> > > Changes in V2:
-> > > - Add of_node_put before return.
-> > > - Code cleanup
-> > > - Refactor code & remove max5970_setup_led function.
-> > > ---
-> > >  drivers/leds/Kconfig        |  11 ++++
-> > >  drivers/leds/Makefile       |   1 +
-> > >  drivers/leds/leds-max5970.c | 110 ++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 122 insertions(+)
-> > >  create mode 100644 drivers/leds/leds-max5970.c
-> >
-> > Couple of nits and you're good to go.
-> >
-> > Once fixed please resubmit with my:
-> >
-> >   Reviewed-by: Lee Jones <lee@kernel.org>
-> >
-> > > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> > > index b92208eccdea..03ef527cc545 100644
-> > > --- a/drivers/leds/Kconfig
-> > > +++ b/drivers/leds/Kconfig
-> > > @@ -637,6 +637,17 @@ config LEDS_ADP5520
-> > >         To compile this driver as a module, choose M here: the module will
-> > >         be called leds-adp5520.
-> > >
-> > > +config LEDS_MAX5970
-> > > +     tristate "LED Support for Maxim 5970"
-> > > +     depends on LEDS_CLASS
-> > > +     depends on MFD_MAX5970
-> > > +     help
-> > > +       This option enables support for the Maxim MAX5970 & MAX5978 smart
-> > > +       switch indication LEDs via the I2C bus.
-> > > +
-> > > +       To compile this driver as a module, choose M here: the module will
-> > > +       be called leds-max5970.
-> > > +
-> > >  config LEDS_MC13783
-> > >       tristate "LED Support for MC13XXX PMIC"
-> > >       depends on LEDS_CLASS
-> > > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > > index d7348e8bc019..6eaee0a753c6 100644
-> > > --- a/drivers/leds/Makefile
-> > > +++ b/drivers/leds/Makefile
-> > > @@ -56,6 +56,7 @@ obj-$(CONFIG_LEDS_LP8501)           += leds-lp8501.o
-> > >  obj-$(CONFIG_LEDS_LP8788)            += leds-lp8788.o
-> > >  obj-$(CONFIG_LEDS_LP8860)            += leds-lp8860.o
-> > >  obj-$(CONFIG_LEDS_LT3593)            += leds-lt3593.o
-> > > +obj-$(CONFIG_LEDS_MAX5970)           += leds-max5970.o
-> > >  obj-$(CONFIG_LEDS_MAX77650)          += leds-max77650.o
-> > >  obj-$(CONFIG_LEDS_MAX8997)           += leds-max8997.o
-> > >  obj-$(CONFIG_LEDS_MC13783)           += leds-mc13783.o
-> > > diff --git a/drivers/leds/leds-max5970.c b/drivers/leds/leds-max5970.c
-> > > new file mode 100644
-> > > index 000000000000..c9685990e26e
-> > > --- /dev/null
-> > > +++ b/drivers/leds/leds-max5970.c
-> > > @@ -0,0 +1,110 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Device driver for leds in MAX5970 and MAX5978 IC
-> > > + *
-> > > + * Copyright (c) 2022 9elements GmbH
-> > > + *
-> > > + * Author: Patrick Rudolph <patrick.rudolph@9elements.com>
-> > > + */
-> > > +
-> > > +#include <linux/leds.h>
-> > > +#include <linux/mfd/max5970.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/regmap.h>
-> > > +
-> > > +#define ldev_to_maxled(c)       container_of(c, struct max5970_led, cdev)
-> > > +
-> > > +struct max5970_led {
-> > > +     struct device *dev;
-> > > +     struct regmap *regmap;
-> > > +     struct led_classdev cdev;
-> > > +     unsigned int index;
-> > > +};
-> > > +
-> > > +static int max5970_led_set_brightness(struct led_classdev *cdev,
-> > > +                                   enum led_brightness brightness)
-> > > +{
-> > > +     struct max5970_led *ddata = ldev_to_maxled(cdev);
-> > > +     int ret, val;
-> > > +
-> > > +     /* Set/clear corresponding bit for given led index */
-> > > +     val = !brightness ? BIT(ddata->index) : 0;
-> > > +
-> > > +     ret = regmap_update_bits(ddata->regmap, MAX5970_REG_LED_FLASH, BIT(ddata->index), val);
-> > > +     if (ret < 0)
-> > > +             dev_err(cdev->dev, "failed to set brightness %d", ret);
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +static int max5970_led_probe(struct platform_device *pdev)
-> > > +{
-> > > +     struct device *dev = &pdev->dev;
-> > > +     struct device_node *np = dev_of_node(dev->parent);
-> > > +     struct regmap *regmap;
-> > > +     struct device_node *led_node;
-> > > +     struct device_node *child;
-> >
-> > Nit: You can place these on the same line.
-> Ack
-> >
-> > > +     struct max5970_led *ddata;
-> > > +     int ret = -ENODEV, num_leds = 0;
-> > > +
-> > > +     regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> > > +     if (!regmap)
-> > > +             return -EPROBE_DEFER;
-> >
-> > Why are you deferring here?
-> This is a Leaf driver. Making sure the parent driver has initialized regmap.
+Fixes: 28350bc0ac77 ("leds: turris-omnia: Do not use SMBUS calls")
+Closes: https://lore.kernel.org/linux-leds/202309212215.Yl5VQaSm-lkp@intel.com/T/#u
+Signed-off-by: Marek Behún <kabel@kernel.org>
+---
+ drivers/leds/leds-turris-omnia.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-How can this driver initialise before the parent driver?
-
+diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-omnia.c
+index e1a4629479c5..f27241896970 100644
+--- a/drivers/leds/leds-turris-omnia.c
++++ b/drivers/leds/leds-turris-omnia.c
+@@ -60,7 +60,6 @@ struct omnia_leds {
+ static int omnia_cmd_write_u8(const struct i2c_client *client, u8 cmd, u8 val)
+ {
+ 	u8 buf[2] = { cmd, val };
+-	int ret;
+ 
+ 	return i2c_master_send(client, buf, sizeof(buf));
+ }
 -- 
-Lee Jones [李琼斯]
+2.41.0
+
