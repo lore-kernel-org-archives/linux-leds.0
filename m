@@ -2,73 +2,119 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB00DCD4938
-	for <linux-leds@archiver.kernel.org>; Thu, 21 Sep 2023 02:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE885E71096
+	for <linux-leds@archiver.kernel.org>; Thu, 21 Sep 2023 17:00:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjIUCoW (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 20 Sep 2023 22:44:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37536 "EHLO
+        id S229808AbjIURAq (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 21 Sep 2023 13:00:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjIUCoV (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 20 Sep 2023 22:44:21 -0400
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B49FE102;
-        Wed, 20 Sep 2023 19:44:13 -0700 (PDT)
-Received: from dlp.unisoc.com ([10.29.3.86])
-        by SHSQR01.spreadtrum.com with ESMTP id 38L2hQsB025108;
-        Thu, 21 Sep 2023 10:43:26 +0800 (+08)
-        (envelope-from Chunyan.Zhang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-        by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Rrfkt1GZQz2SCXQ3;
-        Thu, 21 Sep 2023 10:40:06 +0800 (CST)
-Received: from ubt.spreadtrum.com (10.0.73.70) by BJMBX02.spreadtrum.com
- (10.0.64.8) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 21 Sep
- 2023 10:43:24 +0800
-From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-CC:     <linux-leds@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] leds: sc27xx: Add a missing mutex_destory()
-Date:   Thu, 21 Sep 2023 10:43:14 +0800
-Message-ID: <20230921024314.615370-1-chunyan.zhang@unisoc.com>
-X-Mailer: git-send-email 2.41.0
+        with ESMTP id S229730AbjIURAb (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 21 Sep 2023 13:00:31 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5E611FC6;
+        Thu, 21 Sep 2023 09:59:38 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3301C116A7;
+        Thu, 21 Sep 2023 10:58:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695293924;
+        bh=k+oWmq5/Pe7Ad2WcpmyGau4Su5RU02XWHcpF3f+bt0o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HCd5uoxI0DYs1sKTBnlJPv2cLm4Epi1yRRD8+m26r6LgCADejdZVkWauBM59S7mm9
+         GX5xCgkd/P6zTkI8buwrmtvfsYVcqygtl29+bO+cBeY5lqlYpR7m0utuFrNOdyO6N3
+         7HWVjyQjVcDgx4890o4qiegTVGhs/4gGgDKZs0tq6BfaQGiUhlvfUC8kcSIW6e9WW6
+         v4gK31Dzm/eEIXnzFolY31bnuofJjQOukchp9rxphgPRT9Md2pTWlMr51ZX4hDVueH
+         szWamPr5YQn4GzOPMhMYaHfyywfI7TQIsUPfYCELt2XqhlC05lbkYSFO6OMU/jufim
+         Rp81aVO8E0wtw==
+Date:   Thu, 21 Sep 2023 11:58:38 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Larry Lai <larry.lai@yunjingtech.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "GaryWang@aaeon.com.tw" <GaryWang@aaeon.com.tw>,
+        Musa Lin <musa.lin@yunjingtech.com>,
+        Jack Chang <jack.chang@yunjingtech.com>,
+        Noah Hung <noah.hung@yunjingtech.com>
+Subject: Re: =?utf-8?B?5Zue6KaGOiBbUEFUQ0ggVg==?= =?utf-8?Q?6?= 2/3] pinctrl:
+ Add support pin control for UP board CPLD/FPGA
+Message-ID: <20230921105838.GF3449785@google.com>
+References: <20230915031123.14515-1-larry.lai@yunjingtech.com>
+ <20230915031123.14515-3-larry.lai@yunjingtech.com>
+ <CACRpkdbi0bS0yiJ9ac6Z44os0w6FyKm+UsvbgQEYzYKymjww-w@mail.gmail.com>
+ <SEYPR06MB65077401CD3AA45A9D5E5C97F9FAA@SEYPR06MB6507.apcprd06.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.0.73.70]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL: SHSQR01.spreadtrum.com 38L2hQsB025108
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SEYPR06MB65077401CD3AA45A9D5E5C97F9FAA@SEYPR06MB6507.apcprd06.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-In sc27xx_led_probe() there's one error branch missing mutex_destory()
-after mutex_init(), it seems that we should add it since other branches
-which follow it called mutex_destoy() before return failure.
+On Tue, 19 Sep 2023, Larry Lai wrote:
 
-Fixes: e081c49e30ec ("leds: Add Spreadtrum SC27xx breathing light controller driver")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
- drivers/leds/leds-sc27xx-bltc.c | 1 +
- 1 file changed, 1 insertion(+)
+> Hi Linus, 
+> 
+>        Thank you for spending time to review the V6 patch, for your question, please kindly to check our comments with ">>" beginning.
 
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
-index e199ea15e406..122094bbf444 100644
---- a/drivers/leds/leds-sc27xx-bltc.c
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -300,6 +300,7 @@ static int sc27xx_led_probe(struct platform_device *pdev)
- 	priv->base = base;
- 	priv->regmap = dev_get_regmap(dev->parent, NULL);
- 	if (!priv->regmap) {
-+		mutex_destroy(&priv->lock);
- 		err = -ENODEV;
- 		dev_err(dev, "failed to get regmap: %d\n", err);
- 		return err;
+I don't know about anyone else, but I'm finding this format hard to
+read.  A full conversation using this style would be impossible to
+decipher.
+
+Please can you configure your editor/client to quote and reply properly?
+That way previous responses and your comments can be easily
+differentiated.
+
+> 寄件者: Linus Walleij <linus.walleij@linaro.org>
+> 寄件日期: 2023年9月15日 下午 05:02
+> 收件者: Larry Lai <larry.lai@yunjingtech.com>
+> 副本: lee@kernel.org <lee@kernel.org>; andriy.shevchenko@linux.intel.com <andriy.shevchenko@linux.intel.com>; pavel@ucw.cz <pavel@ucw.cz>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; linux-gpio@vger.kernel.org <linux-gpio@vger.kernel.org>; linux-leds@vger.kernel.org <linux-leds@vger.kernel.org>; GaryWang@aaeon.com.tw <GaryWang@aaeon.com.tw>; Musa Lin <musa.lin@yunjingtech.com>; Jack Chang <jack.chang@yunjingtech.com>; Noah Hung <noah.hung@yunjingtech.com>
+> 主旨: Re: [PATCH V6 2/3] pinctrl: Add support pin control for UP board CPLD/FPGA 
+
+Your client should automatically strip this from the mail body.
+>  
+> On Fri, Sep 15, 2023 at 5:12 AM larry.lai <larry.lai@yunjingtech.com> wrote:
+> 
+> > The UP Squared board <http://www.upboard.com> implements certain
+> > features (pin control) through an on-board FPGA.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Gary Wang <garywang@aaeon.com.tw>
+> > Signed-off-by: larry.lai <larry.lai@yunjingtech.com>
+> 
+> This v6 overall looks good to me!
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Can the patch be merged on its own?
+> 
+> > +#include "core.h"
+> > +#include "intel/pinctrl-intel.h"
+> 
+> Didn't notice this before. But if Andy is OK with it, I'm
+> OK with it, I guess there is a reason? Perhaps it warrants
+> a comment explaining why you do this?
+> >>
+> Need struct intel_pinctrl gpp information to control dedicated Raspberry Pi compatible GPIOs. 
+> These products (Up boards) are intel approves foundation kits.
+> 
+> Valid reasons:
+> - You are using Intel-specific HW features also found in this
+>    FPGA
+> 
+> Invalid reasons:
+> - Using nifty macros or helpers, then either make them generic
+>   or (if they are small) duplicate them.
+> 
+> If it was that thing I asked Andy to keep locally because I didn't
+> agree with its generic usefulness, maybe I should be told to
+> reconsider.
+> 
+> Yours,
+> Linus Walleij
+
 -- 
-2.41.0
-
+Lee Jones [李琼斯]
