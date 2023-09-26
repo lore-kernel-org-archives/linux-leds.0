@@ -2,140 +2,97 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C5CE7D271
-	for <linux-leds@archiver.kernel.org>; Tue, 26 Sep 2023 09:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCF5E7E626
+	for <linux-leds@archiver.kernel.org>; Tue, 26 Sep 2023 12:04:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232180AbjIZJ74 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 26 Sep 2023 05:59:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40134 "EHLO
+        id S233884AbjIZMEU (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 26 Sep 2023 08:04:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231182AbjIZJ7z (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 26 Sep 2023 05:59:55 -0400
-X-Greylist: delayed 1406 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 26 Sep 2023 02:59:48 PDT
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FE0C97;
-        Tue, 26 Sep 2023 02:59:48 -0700 (PDT)
+        with ESMTP id S233899AbjIZMEU (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 26 Sep 2023 08:04:20 -0400
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BE5E6;
+        Tue, 26 Sep 2023 05:04:08 -0700 (PDT)
 Received: from [127.0.0.1] (helo=localhost)
         by relay.expurgate.net with smtp (Exim 4.92)
         (envelope-from <prvs=8647860101=fe@dev.tdt.de>)
-        id 1ql4UJ-008coS-6B; Tue, 26 Sep 2023 11:36:15 +0200
+        id 1ql6nJ-00DGsF-TT; Tue, 26 Sep 2023 14:04:01 +0200
 Received: from [195.243.126.94] (helo=securemail.tdt.de)
         by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <fe@dev.tdt.de>)
-        id 1ql4UI-00EaJX-CA; Tue, 26 Sep 2023 11:36:14 +0200
+        id 1ql6nJ-00FZfF-0r; Tue, 26 Sep 2023 14:04:01 +0200
 Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id E860E24004D;
-        Tue, 26 Sep 2023 11:36:13 +0200 (CEST)
+        by securemail.tdt.de (Postfix) with ESMTP id 90A63240049;
+        Tue, 26 Sep 2023 14:04:00 +0200 (CEST)
 Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id 44600240049;
-        Tue, 26 Sep 2023 11:36:13 +0200 (CEST)
-Received: from localhost.localdomain (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id E599732D8A;
-        Tue, 26 Sep 2023 11:36:12 +0200 (CEST)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org,
-        kabel@kernel.org, u.kleine-koenig@pengutronix.de
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: [PATCH 1/2] tty: add new helper function tty_get_mget
-Date:   Tue, 26 Sep 2023 11:36:06 +0200
-Message-ID: <20230926093607.59536-2-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230926093607.59536-1-fe@dev.tdt.de>
-References: <20230926093607.59536-1-fe@dev.tdt.de>
+        by securemail.tdt.de (Postfix) with ESMTP id E4C63240040;
+        Tue, 26 Sep 2023 14:03:59 +0200 (CEST)
+Received: from mail.dev.tdt.de (localhost [IPv6:::1])
+        by mail.dev.tdt.de (Postfix) with ESMTP id 83F0E2EFEB;
+        Tue, 26 Sep 2023 14:03:59 +0200 (CEST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-purgate-type: clean
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 26 Sep 2023 14:03:59 +0200
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     Jiri Slaby <jirislaby@kernel.org>
+Cc:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
+        pavel@ucw.cz, lee@kernel.org, kabel@kernel.org,
+        u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH 1/2] tty: add new helper function tty_get_mget
+In-Reply-To: <dc5ac2cb-71b3-4946-a58b-2ec353bc40a4@kernel.org>
+References: <20230926093607.59536-1-fe@dev.tdt.de>
+ <20230926093607.59536-2-fe@dev.tdt.de>
+ <dc5ac2cb-71b3-4946-a58b-2ec353bc40a4@kernel.org>
+Message-ID: <2c36a83654942416cfdcb2e40ecb539d@dev.tdt.de>
+X-Sender: fe@dev.tdt.de
+User-Agent: Roundcube Webmail/1.3.17
+X-purgate-ID: 151534::1695729841-26600C1B-B82AB986/0/0
 X-purgate: clean
-X-purgate-ID: 151534::1695720975-B296CB19-1805BCDD/0/0
+X-purgate-type: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The struct 'tty_struct' has a callback to read the status flags of the tt=
-y
-if the tty driver provides them. So fare, the data is transferred directl=
-y
-to userspace with the function 'tty_tiocmget'. This function cannot be
-used to evaluate the status line of the tty interface in the ledtrig-tty
-trigger. To make this possible, a new function must be added that does
-not immediately pass the data on to userspace.
+Thanks for your fast respond!
 
-The new function 'tty_get_mget' only returns the status register.
-This information can then be processed further in the ledtrig-tty
-trigger.
+>> @@ -2494,6 +2494,25 @@ static int send_break(struct tty_struct *tty, 
+>> unsigned int duration)
+>>   	return retval;
+>>   }
+>>   +/**
+>> + * tty_get_mget		-	get modem status
+> 
+> Heh, the naming is funny. It apparently comes from tiocmget. But that
+> comes from:
+> tty ioctl modem get (TIOCMGET)
+> tty ioctl modem set (TIOCMSET)
+> 
+> So you should name it like tty_get_modem() not get_mget().
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/tty/tty_io.c | 29 +++++++++++++++++++++++------
- include/linux/tty.h  |  1 +
- 2 files changed, 24 insertions(+), 6 deletions(-)
+I didn't like the name too, but I couldn't think of another.
+The function is returning the state of serial control and status 
+signals.
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index 8a94e5a43c6d..8070ed0ce41f 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -2494,6 +2494,25 @@ static int send_break(struct tty_struct *tty, unsi=
-gned int duration)
- 	return retval;
- }
-=20
-+/**
-+ * tty_get_mget		-	get modem status
-+ * @tty: tty device
-+ *
-+ * Obtain the modem status bits from the tty driver if the feature
-+ * is supported.
-+ *
-+ */
-+int tty_get_mget(struct tty_struct *tty)
-+{
-+	int retval =3D -ENOTTY;
-+
-+	if (tty->ops->tiocmget)
-+		retval =3D tty->ops->tiocmget(tty);
-+
-+	return retval;
-+}
-+EXPORT_SYMBOL_GPL(tty_get_mget);
-+
- /**
-  * tty_tiocmget		-	get modem status
-  * @tty: tty device
-@@ -2506,14 +2525,12 @@ static int send_break(struct tty_struct *tty, uns=
-igned int duration)
-  */
- static int tty_tiocmget(struct tty_struct *tty, int __user *p)
- {
--	int retval =3D -ENOTTY;
-+	int retval;
-=20
--	if (tty->ops->tiocmget) {
--		retval =3D tty->ops->tiocmget(tty);
-+	retval =3D tty_get_mget(tty);
-+	if (retval >=3D 0)
-+		retval =3D put_user(retval, p);
-=20
--		if (retval >=3D 0)
--			retval =3D put_user(retval, p);
--	}
- 	return retval;
- }
-=20
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index f002d0f25db7..7b9edd4a7007 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -421,6 +421,7 @@ int tty_unthrottle_safe(struct tty_struct *tty);
- int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
- int tty_get_icount(struct tty_struct *tty,
- 		struct serial_icounter_struct *icount);
-+int tty_get_mget(struct tty_struct *tty);
- int is_current_pgrp_orphaned(void);
- void tty_hangup(struct tty_struct *tty);
- void tty_vhangup(struct tty_struct *tty);
---=20
-2.30.2
+ From your suggestion for the name, however, you can not deduce that at 
+all.
+How would it be then with the following name?
 
+tty_tioctl_state() ?
+
+> 
+> Also those extra spaces around "-" caused some issues in the generated
+> output and should be removed (everywhere).
+
+Ok, I will change this in an own commit throughout the file.
+
+
+Thanks
+
+Florian
+
+@jirislaby: Forgot to send this message to the mailing list as well!
