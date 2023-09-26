@@ -2,60 +2,61 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C64E7F144
-	for <linux-leds@archiver.kernel.org>; Tue, 26 Sep 2023 22:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98BBE7F14B
+	for <linux-leds@archiver.kernel.org>; Wed, 27 Sep 2023 00:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbjIZWlv (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Tue, 26 Sep 2023 18:41:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40670 "EHLO
+        id S230057AbjI0AQN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Tue, 26 Sep 2023 20:16:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231633AbjIZWju (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Tue, 26 Sep 2023 18:39:50 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75AB21856D
-        for <linux-leds@vger.kernel.org>; Tue, 26 Sep 2023 14:48:18 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-503065c4b25so15556433e87.1
-        for <linux-leds@vger.kernel.org>; Tue, 26 Sep 2023 14:48:18 -0700 (PDT)
+        with ESMTP id S231452AbjI0AOM (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Tue, 26 Sep 2023 20:14:12 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 781DC17EB8
+        for <linux-leds@vger.kernel.org>; Tue, 26 Sep 2023 14:48:17 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-50433d8385cso15001390e87.0
+        for <linux-leds@vger.kernel.org>; Tue, 26 Sep 2023 14:48:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google; t=1695764896; x=1696369696; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kgLC0yegwN9YtWotfp/L618EWCW38wnqoTZssZI78wo=;
-        b=hpdLunO6fT4qa5/0wHi90PLH70CTyjaZMgu2KDeHYt9goNOHmyTiL7N1eg2XQuwyi+
-         x8kFeOKBSsYLeKaBEEBpwFgwt3p6i6t1xy7ogHv1GL39GThvb5IW+UeJxylD8NcQdiJr
-         ZBwZ4cnqk34uPKDR43BzxC64SNufEGzlu5fO+UX9ZR4q1GtMZwYQutwxQWvxjeAbkmJ6
-         LtDb28izmhHrooNTNnyYyGxfFY1JsPK+rizHKOT5pYXwxZqoCd4rk7BPWfxZn6K6M8Xs
-         Qc19TFFfQDf6neLf/VAAKvozFpRtczgxyGeMhf8Z+kcbYrNs5tqaDQHyyXLdNasK5ZUO
-         MfRw==
+        bh=8qB5IXPhlDrInJ4+uHWJuFNZT6fpdkJgSFfl8pKGqOw=;
+        b=VoBsLbex+dcgZvna6lB2wr/DU7reAqKP2nW0mB0AoSw17gVe92mLnuqVfx2FTXv8+N
+         tNl46h1QvKVge6SMHag9qUIYtctpR/n8uMXVHAObmajFj2rq8WPni3gFPuy3TRIZJe8m
+         B4AuXrDc1Pz0/TB2wuYCfBBFpfDaqJuHFxNuT/vyv8rPCo44OAviw179J6jkqsRrxRh4
+         Ul3x5PHs9Sk3mWjaoAzhaL4a9wSFcpxajQpJh7AU8CcWtPe8ehHTwcjO2Cyy6p0uYD8D
+         51emj0mLCW+z5BKj5Gb3H+e5jC5U3LNLEdrpAeOQoYY3pCQ8yt+240NTdSZlNZ7LwIFG
+         7Lxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1695764896; x=1696369696;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kgLC0yegwN9YtWotfp/L618EWCW38wnqoTZssZI78wo=;
-        b=UFup6pyl/NYUmA9xKAsjQwayfoRlCb28R8F2BV/stjMP0csdTWqfAxXz6yoMaP3yBW
-         dajA/yApLZF1edgQhlwFJo4iwJhsAWW6TSjpCsTjpU6594vYECWEpbTgCkK6dGComRd/
-         u+yVDPldDpaoNyFPk+jt9poqKf53CaEjgyzoDZ6WER97HdqHgMqMMGubxFOTqmc06sJ8
-         Ju8+eXWb7LiiSoaOjSsUZi6QyP2cuzVg+rCEybhSxmSmKtZgQDr74OZ68ZCxvonI/9z6
-         wgcEPLVU2eJhnBg+uYaktvVrrql4BspE79zyHUYwu0BYKvLdEUDXw61bAA7214aDUJo6
-         yEKw==
-X-Gm-Message-State: AOJu0YxwCZI/qF9zD5HBEpHa/Wg2y1KJbP5ZiYoNyajqyuRLH8Sp2i3n
-        cIGACA7pvCycVgW7hK6Ks6npTg==
-X-Google-Smtp-Source: AGHT+IH5jMp1la/wAsctQFsK6FsN53AbjwItO8UhW5YsVBunUbQGovUk+oVdorH/Gl1+UnnAluZfoQ==
-X-Received: by 2002:a05:6512:3e10:b0:503:446:b468 with SMTP id i16-20020a0565123e1000b005030446b468mr16652lfv.67.1695764896685;
-        Tue, 26 Sep 2023 14:48:16 -0700 (PDT)
+        bh=8qB5IXPhlDrInJ4+uHWJuFNZT6fpdkJgSFfl8pKGqOw=;
+        b=WW0d3X7XnhzMWDzrA8RqayPJ4VQCv0w5gNTOHLGU+3MECyQzA3lTGBF6MTu039a1Tc
+         FCq/fIpTbrFs6g1YcgSDAioWT2Nnxy20sWDtMyrcq+8gWJbiPjI1oBxO5y6RTJHYjmWy
+         MmLfkbZhMGxmFjt3fY4ax8ZfAHqvpM7AHFJBKM10RdSY3BKlvfRoYRT/R+wCWg2tUD09
+         zZCMO2aJYaf5IKbf9yZJkNGE0JwtTwc09Za2bGAwpkW7iyFPVJUMJp/1Mou2D8xuBokW
+         86jC4jIofndFeXMuraeR1WFFkz50O8TXxedRG22/tIoNvuHl8K1vkWpxOXh+D6CPJEaG
+         sWDQ==
+X-Gm-Message-State: AOJu0YwElbhrbsL/P/iHENEFtHXrDAjr/a66MKbRj/y1JSnc66/xI9fF
+        NBNQ3tdLqVgZXdx2Hk2e8Onw8A==
+X-Google-Smtp-Source: AGHT+IF07socDjKuzAFiIl/P5XoFGn0P3ljLEYY8uPVMH9VUnHqVycz5Tp/8JEsd/mhpicW4ais7Pw==
+X-Received: by 2002:a05:6512:31c5:b0:500:b63f:4db3 with SMTP id j5-20020a05651231c500b00500b63f4db3mr38886lfe.35.1695764895770;
+        Tue, 26 Sep 2023 14:48:15 -0700 (PDT)
 Received: from [127.0.1.1] ([85.235.12.238])
         by smtp.gmail.com with ESMTPSA id f10-20020a19ae0a000000b0050334e5f5a8sm2299982lfc.271.2023.09.26.14.48.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Sep 2023 14:48:16 -0700 (PDT)
+        Tue, 26 Sep 2023 14:48:15 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 26 Sep 2023 23:48:12 +0200
-Subject: [PATCH v2 2/3] dt-bindings: leds: Mention GPIO triggers
+Date:   Tue, 26 Sep 2023 23:48:11 +0200
+Subject: [PATCH v2 1/3] gpiolib: of: Allow "trigger-sources" to reference a
+ GPIO
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230926-gpio-led-trigger-dt-v2-2-e06e458b788e@linaro.org>
+Message-Id: <20230926-gpio-led-trigger-dt-v2-1-e06e458b788e@linaro.org>
 References: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
 In-Reply-To: <20230926-gpio-led-trigger-dt-v2-0-e06e458b788e@linaro.org>
 To:     =?utf-8?q?Jan_Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
@@ -66,57 +67,68 @@ To:     =?utf-8?q?Jan_Kundr=C3=A1t?= <jan.kundrat@cesnet.cz>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Cc:     linux-leds@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Conor Dooley <conor.dooley@microchip.com>
+        Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-We reuse the trigger-sources phandle to just point to
-GPIOs we may want to use as LED triggers.
+The "trigger-sources" phandle used for LED triggers are special:
+the DT bindings mandate that such triggers have the same phandle
+references no matter what the trigger is. A GPIO is just another
+kind of device that can trigger a LED.
 
-Example:
-
-gpio: gpio@0 {
-    compatible "my-gpio";
-    gpio-controller;
-    #gpio-cells = <2>;
-    interrupt-controller;
-    #interrupt-cells = <2>;
-    #trigger-source-cells = <2>;
-};
-
-leds {
-    compatible = "gpio-leds";
-    led-my-gpio {
-        label = "device:blue:myled";
-        gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
-        default-state = "off";
-        linux,default-trigger = "gpio";
-        trigger-sources = <&gpio 1 GPIO_ACTIVE_HIGH>;
-    };
-};
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- Documentation/devicetree/bindings/leds/common.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpiolib-of.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index 5fb7007f3618..b42950643b9d 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -191,6 +191,8 @@ properties:
-       each of them having its own LED assigned (assuming they are not
-       hardwired). In such cases this property should contain phandle(s) of
-       related source device(s).
-+      Another example is a GPIO line that will be monitored and mirror the
-+      state of the line (with or without inversion flags) to the LED.
-       In many cases LED can be related to more than one device (e.g. one USB LED
-       vs. multiple USB ports). Each source should be represented by a node in
-       the device tree and be referenced by a phandle and a set of phandle
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 531faabead0f..f4a660bf11fd 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -611,6 +611,33 @@ static struct gpio_desc *of_find_mt2701_gpio(struct device_node *np,
+ 	return desc;
+ }
+ 
++/*
++ * Trigger sources are special, they allow us to use any GPIO as a LED trigger
++ * and have the name "trigger-sources" no matter which kind of phandle it is
++ * pointing to, whether to a GPIO, a USB host, a network PHY etc. So in this case
++ * we allow looking something up that is not named "foo-gpios".
++ */
++static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
++					      const char *con_id,
++					      unsigned int idx,
++					      enum of_gpio_flags *of_flags)
++{
++	struct gpio_desc *desc;
++
++	if (!IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO))
++		return ERR_PTR(-ENOENT);
++
++	if (!con_id || strcmp(con_id, "trigger-sources"))
++		return ERR_PTR(-ENOENT);
++
++	desc = of_get_named_gpiod_flags(np, con_id, idx, of_flags);
++	if (!gpiod_not_found(desc))
++		pr_debug("%s is used as a trigger\n", of_node_full_name(np));
++
++	return desc;
++}
++
++
+ typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
+ 						const char *con_id,
+ 						unsigned int idx,
+@@ -618,6 +645,7 @@ typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
+ static const of_find_gpio_quirk of_find_gpio_quirks[] = {
+ 	of_find_gpio_rename,
+ 	of_find_mt2701_gpio,
++	of_find_trigger_gpio,
+ 	NULL
+ };
+ 
 
 -- 
 2.34.1
