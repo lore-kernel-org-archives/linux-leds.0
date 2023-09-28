@@ -2,89 +2,67 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350DBE732D1
-	for <linux-leds@archiver.kernel.org>; Thu, 28 Sep 2023 13:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C573FE732D0
+	for <linux-leds@archiver.kernel.org>; Thu, 28 Sep 2023 13:38:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232174AbjI1N1B (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 28 Sep 2023 09:27:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36338 "EHLO
+        id S231966AbjI1NiE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 28 Sep 2023 09:38:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230420AbjI1N04 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 28 Sep 2023 09:26:56 -0400
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0741A19D;
-        Thu, 28 Sep 2023 06:26:53 -0700 (PDT)
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <prvs=8649084492=fe@dev.tdt.de>)
-        id 1qlr2O-00DmUL-4T; Thu, 28 Sep 2023 15:26:40 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1qlr2N-009JCE-2b; Thu, 28 Sep 2023 15:26:39 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id A1B4D240040;
-        Thu, 28 Sep 2023 15:26:38 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id F24AE24004D;
-        Thu, 28 Sep 2023 15:26:37 +0200 (CEST)
-Received: from localhost.localdomain (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id 84C9B32F15;
-        Thu, 28 Sep 2023 15:26:37 +0200 (CEST)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org,
-        kabel@kernel.org, u.kleine-koenig@pengutronix.de
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-leds@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: [PATCH v2 3/4] trigger: ledtrig-tty: move variable definition to the top
-Date:   Thu, 28 Sep 2023 15:26:31 +0200
-Message-ID: <20230928132632.200263-4-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20230928132632.200263-1-fe@dev.tdt.de>
-References: <20230928132632.200263-1-fe@dev.tdt.de>
+        with ESMTP id S231868AbjI1NiD (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 28 Sep 2023 09:38:03 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D00292;
+        Thu, 28 Sep 2023 06:38:01 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7874BC433C7;
+        Thu, 28 Sep 2023 13:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695908281;
+        bh=tNJPrSt0EbpYHgUGMbTFOG600cX1nU2foR/sWCpczbM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JmPchohDyoQ6K0w5lf2CBErfA/MK9ZiuDsSClS02RQTKpm36prB0Afz4G9prWxgNa
+         zgGeel0htRoZnDUpGT4kmqcI2+KZRs9cFvwT0ehSaIGNBeAW8Dc0bsBO3BQlkbatOT
+         i4k/EEVwrJYA0nUP309m89dkrCztL/rL0tDyQhPfNkvWsANgU7Fh9lbCD8d/JiXsVW
+         slyMxycwEMCZaz1BypRUfJMMjdsZT9zNTNky6UjK6O6cvdEhNEdjRkpkXAa30ZnQCt
+         SRj1FE2QRYTSonX4Xp3UJTt6QdqRh4+cD3+XMupimFUtT8NVq38xwuDUBdeLE9m6KG
+         IClVlEMWWIgFQ==
+Date:   Thu, 28 Sep 2023 14:37:56 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Chunyan Zhang <chunyan.zhang@unisoc.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] leds: sc27xx: Move mutex_init() to the end of probe
+Message-ID: <20230928133756.GI9999@google.com>
+References: <20230925032453.724518-1-chunyan.zhang@unisoc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-purgate-type: clean
-X-purgate: clean
-X-purgate-ID: 151534::1695907599-91376A89-5607C68D/0/0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230925032453.724518-1-chunyan.zhang@unisoc.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The Intel build robot has complained about this. Hence move the commit
-of the variable definition to the beginning of the function.
+On Mon, 25 Sep 2023, Chunyan Zhang wrote:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/leds/trigger/ledtrig-tty.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> Move the mutex_init() to avoid redundant mutex_destroy() calls after
+> that for each time the probe fails.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
+> V2:
+> - Move the mutex_init() to the end of .probe() instead of adding
+> mutex_destroy() according to Lee's comments.
+> ---
+>  drivers/leds/leds-sc27xx-bltc.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/le=
-dtrig-tty.c
-index 8ae0d2d284af..1c6fadf0b856 100644
---- a/drivers/leds/trigger/ledtrig-tty.c
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -82,6 +82,7 @@ static void ledtrig_tty_work(struct work_struct *work)
- {
- 	struct ledtrig_tty_data *trigger_data =3D
- 		container_of(work, struct ledtrig_tty_data, dwork.work);
-+	unsigned long interval =3D LEDTRIG_TTY_INTERVAL;
- 	struct serial_icounter_struct icount;
- 	int ret;
-=20
-@@ -124,8 +125,6 @@ static void ledtrig_tty_work(struct work_struct *work=
-)
-=20
- 	if (icount.rx !=3D trigger_data->rx ||
- 	    icount.tx !=3D trigger_data->tx) {
--		unsigned long interval =3D LEDTRIG_TTY_INTERVAL;
--
- 		led_blink_set_oneshot(trigger_data->led_cdev, &interval,
- 				      &interval, 0);
-=20
---=20
-2.30.2
+Nice patch, but doesn't apply.
 
+Please rebase (onto linux-next or for-leds-next) and resend.
+
+-- 
+Lee Jones [李琼斯]
