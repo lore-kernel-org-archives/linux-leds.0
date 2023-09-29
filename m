@@ -2,86 +2,84 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539BDE71D54
-	for <linux-leds@archiver.kernel.org>; Fri, 29 Sep 2023 15:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299E3E71D4F
+	for <linux-leds@archiver.kernel.org>; Fri, 29 Sep 2023 15:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233676AbjI2PYI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 29 Sep 2023 11:24:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
+        id S233690AbjI2PYJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 29 Sep 2023 11:24:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233633AbjI2PYC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2023 11:24:02 -0400
+        with ESMTP id S233658AbjI2PYI (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2023 11:24:08 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8445DD;
-        Fri, 29 Sep 2023 08:23:59 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951E0C433C9;
-        Fri, 29 Sep 2023 15:23:57 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 825CACC0;
+        Fri, 29 Sep 2023 08:24:03 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 827B9C433C8;
+        Fri, 29 Sep 2023 15:24:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696001039;
-        bh=7MUnS5rrD0zWrSC89C22S+EJFgSBQ12YuL/KwhyLmmg=;
-        h=From:Subject:Date:To:Cc:From;
-        b=efDgvw/6IVLIpaNQ5IedOwDOplM4fB92oegV9FbV+ynNr8SNxHWiQbmEiQFFHKOnb
-         BoW1x59hV8tTt0gVGIwC/tE6+64fgRSAXUpI/Jf0UQpK8MfC20QhF7JxdBht9DO04c
-         a9UwOEU8wXDwKMmpNV8d+WXNXsvuaBZlCj/Ski73eTb5UrHzM4f9PZ40sgadZSxgNr
-         VwsYDwf4JuULJq4lx1ZbSWtieoHdZx/5wSI//RmvuiUxUlbVQ53PNsShzkkD4X01/e
-         2Dos7sVjPJEsWK/4U461y/m2Kxm6oK6uBP+Gt6FBeLPzknW7io9M3rP0VuiZ6D9o3k
-         yKBFdKY2b0uew==
+        s=k20201202; t=1696001043;
+        bh=AQ1REKYT86SJIRHe3K5iba5TZtrH/NWHd9owkuv5xu0=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+        b=a77Cx8lSOcSbDVjROeK8pw5RnUWUbqQ+t6QmjSYSOzQQbPY1Bt7GnLj2cltthIDl9
+         r+erRbvznO88LbZ6Pm3isGWloQZX03PmPlVRXDANbmEvx2J5XR9YO7pYsStNn0q3eI
+         OJkQvk2W1xiboFX2YTg1GKc6Gds2vjlZP/GHUp2oqZG84C365GiJyrZBuBk2adMrYa
+         bPqRhVKeL+d2CBchQbq9SPDWQIyJiB0gS0+pHSW4c14BK+Ankz6GqdS5OJuXHAV5c2
+         I8zyytCNigZRSO8MCdHPzaJIQBENafeOP15QvcBS47PHnTQn98eFZGXJB4AxqQfIDh
+         x5wTSUYDXIgHA==
 From:   Mark Brown <broonie@kernel.org>
-Subject: [PATCH 0/4] leds: Convert to use maple tree register cache
-Date:   Fri, 29 Sep 2023 17:23:34 +0200
-Message-Id: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
+Date:   Fri, 29 Sep 2023 17:23:36 +0200
+Subject: [PATCH 2/4] leds: aw200xx: Convert to use maple tree register
+ cache
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPbrFmUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI2MDSyNL3ZzUlGLd3MSCnFRdcxMzoGBSinFikpkSUENBUWpaZgXYsOjY2lo
- AYTQ1yFwAAAA=
+Message-Id: <20230929-leds-maple-v1-2-ba5f9dcb1e75@kernel.org>
+References: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
+In-Reply-To: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
         Lee Jones <lee@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1065; i=broonie@kernel.org;
- h=from:subject:message-id; bh=7MUnS5rrD0zWrSC89C22S+EJFgSBQ12YuL/KwhyLmmg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFuwJ+F0ZMV1CNFn+jQhAGs375d23RCILs8xRQ
- BcJArN/Y/OJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbsCQAKCRAk1otyXVSH
- 0FMrB/9wqL5tz69qs5QCfv7zfdP/lP0vuIK/ZlP+9ANDMdnvuG5+7WtSC7QUykM9/1h+2uItL/p
- hFYyZ7sa2dK3F4nrIWg7cPjBd4bv6ZlphPXhSAdF/3KM1e4M7dCMviMW42gFcnTTDPO3h3ZIEZA
- n7sE7myKl00+UaaGUoY3D8N/uji1Hay6m6l2KkmfTsFCWjCh3MnPShowDquMoVozodxS79HIjSe
- LZ14Ym1kMnV3eJj4x4r8v6bYY88QI/xUEMVN4gq0ZoEz+uy+T9gOuzTLSYK84ok8cn6jHTrssic
- qMWGiwGbixq0QplLWMYyDgEe21Jd4erwtFFMQz1HyeGdyqaA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=900; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=AQ1REKYT86SJIRHe3K5iba5TZtrH/NWHd9owkuv5xu0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFuwL3d/DlfaPVVeaegTsqycBQsOy9i6K0vwb+
+ jeWKhIefrCJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbsCwAKCRAk1otyXVSH
+ 0HIYB/45TgdBG2Ss70Jh8DRaIN77i2WLODSMblCgcF1Zu5+JnNV+YCrOpr9UH+NqA+VyLoiIDK2
+ /lTSYdadgqwrmCnqWWPl+vSG2u0DrjobEWICJX7Ki4pk4Ua5O6JdAR1mSNh6eEPoe2HEUlZy8qX
+ QVLOmWMToju9HsTgZ5Un57nmYCRQfrxm8sLVGDZ+321jB7LtRNrHCcTef66AKwVmQKv4N1KFymF
+ 6Ps56VsLprCjT5g+atpaPCANdH/bizLEfiEGK/cuA+WP3mc4NBBWbbRbsaY8wcY84C5DK7i2Gyi
+ J1vtdByG1iJQEp8X9Mss7v8uiT1I+WY38i1S241NGxpQX/sh
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The maple tree register cache is a more modern replacement for the
-rbtree cache, the underlying data structure is more modern and the
-surrounding cache implementation makes a number of choices which are
-more suited to modern systems than those made by rbtree.  This series
-updates the LED drivers that use the rbtree cache to use the maple tree
-cache.
+The maple tree register cache is based on a much more modern data structure
+than the rbtree cache and makes optimisation choices which are probably
+more appropriate for modern systems than those made by the rbtree cache.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Mark Brown (4):
-      leds: lm3601x: Convert to use maple tree register cache
-      leds: aw200xx: Convert to use maple tree register cache
-      leds: lm392x: Convert to use maple tree register cache
-      leds: lp3952: Convert to use maple tree register cache
+ drivers/leds/leds-aw200xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/leds/flash/leds-lm3601x.c | 2 +-
- drivers/leds/leds-aw200xx.c       | 2 +-
- drivers/leds/leds-lm3692x.c       | 2 +-
- drivers/leds/leds-lp3952.c        | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
----
-base-commit: 6465e260f48790807eef06b583b38ca9789b6072
-change-id: 20230929-leds-maple-746230bd3ab6
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index 691a743cc9b0..bec846272398 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -479,7 +479,7 @@ static const struct regmap_config aw200xx_regmap_config = {
+ 	.num_ranges = ARRAY_SIZE(aw200xx_ranges),
+ 	.rd_table = &aw200xx_readable_table,
+ 	.wr_table = &aw200xx_writeable_table,
+-	.cache_type = REGCACHE_RBTREE,
++	.cache_type = REGCACHE_MAPLE,
+ };
+ 
+ static int aw200xx_probe(struct i2c_client *client)
 
-Best regards,
 -- 
-Mark Brown <broonie@kernel.org>
+2.39.2
 
