@@ -2,37 +2,38 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F582E71D53
-	for <linux-leds@archiver.kernel.org>; Fri, 29 Sep 2023 15:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50729E71D54
+	for <linux-leds@archiver.kernel.org>; Fri, 29 Sep 2023 15:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233656AbjI2PYV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S233725AbjI2PYV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Fri, 29 Sep 2023 11:24:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41066 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233646AbjI2PYJ (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2023 11:24:09 -0400
+        with ESMTP id S233599AbjI2PYG (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2023 11:24:06 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C534D6;
-        Fri, 29 Sep 2023 08:24:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57948C433C7;
-        Fri, 29 Sep 2023 15:24:05 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945F3F9;
+        Fri, 29 Sep 2023 08:24:01 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8530FC433CA;
+        Fri, 29 Sep 2023 15:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696001046;
-        bh=tLMR3aghMf/AhPWtcH9w+gBW2wf07ak+UQvSzPzVblg=;
+        s=k20201202; t=1696001041;
+        bh=fBI8cLuaLqO/WvsGsTIjx9QYgkX5kcaru537d1XBIGk=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=lPugBENK75E1xPTbcI7TkQk5iJUR5UJwI80B5HCMKmXDz2hUS+yyQPiEaZmFwwUXD
-         755Euk3tP9dI8ejzwlPMqudTcEg2Ho534V/Pi6oN652nUVntc4PM3EYxkAM3J6T5A5
-         XJcCyCox6evJWGFjQ79Y4rOOGbNNtcoLf8/Fo51OUG248FeAWQIcNpsIgLUEZ/ApNy
-         MWRiI1K3TcBiVl3oChKOyR4J8ZmzH2cXWmCr9382BUETZ9OeDdo2HuwuESZlyosSlc
-         h+0HsnHpDUzcCNK6m/p9SnO1QryWOx2uhT1b6QqI0kwsTzx8obOYWGhQOg1ezi3d68
-         OSaI2HU4vFwkg==
+        b=FiPxc1DX0kRzVLJPOSmQQjuSHZrL2XDKoN7J7hRBl7/wHiUj6DAw8vtQhZjezko4P
+         HtD55GIn/TTg0IIuf6K2bcK4DUNgCsMQ3LwQz0uHdkBD7YH0dUuQBTVPpxwiDZ1P/M
+         h5QP34tcBlDwqJ4mfs07a+NbQQu6j8G1W5H9d7nmRlOERGm3FdE2l+9hupiAvQMCch
+         2MuIrYgGT3sezwKag/hrvOpV0SQe+xPfnQmzMN1JiG2Xgwy08MDo6DsiyO5pnPPH7H
+         iUY+RCPizJTg304Bx+3HUwqK7lEYm9Cwf+RdPVWolak76vYJVKXPl+/IcCtOaP+oyY
+         rtszyJWKDg3Ag==
 From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 17:23:38 +0200
-Subject: [PATCH 4/4] leds: lp3952: Convert to use maple tree register cache
+Date:   Fri, 29 Sep 2023 17:23:35 +0200
+Subject: [PATCH 1/4] leds: lm3601x: Convert to use maple tree register
+ cache
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-leds-maple-v1-4-ba5f9dcb1e75@kernel.org>
+Message-Id: <20230929-leds-maple-v1-1-ba5f9dcb1e75@kernel.org>
 References: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
 In-Reply-To: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -41,15 +42,15 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-leds@vger.kernel.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=824; i=broonie@kernel.org;
- h=from:subject:message-id; bh=tLMR3aghMf/AhPWtcH9w+gBW2wf07ak+UQvSzPzVblg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFuwMEbV1tKZ8nY6RRmPRJ+2AC9dtNMCbEkm1R
- RYyIhWY6JGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbsDAAKCRAk1otyXVSH
- 0L4xB/0TxhhxrltOUFZlHxCGEUR6FDZlIKlKg/YnUQILVybkIhRRHFK4VFZNggnJ7Nsf49UJqj3
- 2vpT9CYxEs89GtgiYZJjIXTAStAoPVE2Y06IMrU4FSY+4M5SHDhD1srw8AB3rUh7Hyl7fW2Y7lA
- EPAloHoLY2/N8j4eEJ10b7JOYN7HlXpxvJDArnP9qSuivMFitFqhuYfq66lbNE3atRYXTTK2GOx
- v3BcsXnLb+yEnSqqSeyIAp8QPdlQJ7W6t94XhupXRZopa1MVPr0CqG0jitSxRQNJyVVc5Spu8hC
- ye3eW/gSfS51jZtohbbFNqlwiPd/0/rS9PKr8IsjOUAifq50
+X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=fBI8cLuaLqO/WvsGsTIjx9QYgkX5kcaru537d1XBIGk=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFuwKFGbKnC9uP/YHFPKf8riLwqgsVjOGwaB35
+ 8Lf1/EvqFyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbsCgAKCRAk1otyXVSH
+ 0KTYB/wMYjyI8KbJo9B34uzHVBi1v7vJfYnihs1e2cMUWK6QE9Hs5behqyelt/absOQyVA/oHVz
+ EEAS7mabv94Fg5HGeMQJqg9y/TDUFqCyHH9HZa58AA2TLUQP8u1fR4/UqMK7e5LS92K3B9FQmqM
+ b8s4r72v4r1WX443CgR15cmygPmxcZmBI4VIe25CD2ZEsvYvv/3Biai+vhF5jL/cQujJGlq/P7Q
+ AOafnd3esLHvmMpRh5qwm1pby3xkjPylOHnpWtTMXaB5US6QWYSr+Dz3fVWvuAhLvQb3Ln4S3UB
+ bZEr0UWow58Up6wNGwecsZQJh7PpYpkX4EvAOA1UXXEHEC9g
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 Precedence: bulk
@@ -62,22 +63,22 @@ more appropriate for modern systems than those made by the rbtree cache.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/leds/leds-lp3952.c | 2 +-
+ drivers/leds/flash/leds-lm3601x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
-index 3bd55652a706..9e6a3d300b2f 100644
---- a/drivers/leds/leds-lp3952.c
-+++ b/drivers/leds/leds-lp3952.c
-@@ -204,7 +204,7 @@ static const struct regmap_config lp3952_regmap = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = REG_MAX,
+diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
+index b6c524facf49..8191be0ef0c6 100644
+--- a/drivers/leds/flash/leds-lm3601x.c
++++ b/drivers/leds/flash/leds-lm3601x.c
+@@ -123,7 +123,7 @@ static const struct regmap_config lm3601x_regmap = {
+ 	.max_register = LM3601X_DEV_ID_REG,
+ 	.reg_defaults = lm3601x_regmap_defs,
+ 	.num_reg_defaults = ARRAY_SIZE(lm3601x_regmap_defs),
 -	.cache_type = REGCACHE_RBTREE,
 +	.cache_type = REGCACHE_MAPLE,
+ 	.volatile_reg = lm3601x_volatile_reg,
  };
  
- static int lp3952_probe(struct i2c_client *client)
 
 -- 
 2.39.2
