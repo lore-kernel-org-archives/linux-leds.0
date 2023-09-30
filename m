@@ -2,84 +2,58 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50729E71D54
-	for <linux-leds@archiver.kernel.org>; Fri, 29 Sep 2023 15:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CAAE7737D
+	for <linux-leds@archiver.kernel.org>; Sat, 30 Sep 2023 17:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233725AbjI2PYV (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 29 Sep 2023 11:24:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40974 "EHLO
+        id S234660AbjI3R4Y (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sat, 30 Sep 2023 13:56:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233599AbjI2PYG (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 29 Sep 2023 11:24:06 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945F3F9;
-        Fri, 29 Sep 2023 08:24:01 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8530FC433CA;
-        Fri, 29 Sep 2023 15:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696001041;
-        bh=fBI8cLuaLqO/WvsGsTIjx9QYgkX5kcaru537d1XBIGk=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=FiPxc1DX0kRzVLJPOSmQQjuSHZrL2XDKoN7J7hRBl7/wHiUj6DAw8vtQhZjezko4P
-         HtD55GIn/TTg0IIuf6K2bcK4DUNgCsMQ3LwQz0uHdkBD7YH0dUuQBTVPpxwiDZ1P/M
-         h5QP34tcBlDwqJ4mfs07a+NbQQu6j8G1W5H9d7nmRlOERGm3FdE2l+9hupiAvQMCch
-         2MuIrYgGT3sezwKag/hrvOpV0SQe+xPfnQmzMN1JiG2Xgwy08MDo6DsiyO5pnPPH7H
-         iUY+RCPizJTg304Bx+3HUwqK7lEYm9Cwf+RdPVWolak76vYJVKXPl+/IcCtOaP+oyY
-         rtszyJWKDg3Ag==
-From:   Mark Brown <broonie@kernel.org>
-Date:   Fri, 29 Sep 2023 17:23:35 +0200
-Subject: [PATCH 1/4] leds: lm3601x: Convert to use maple tree register
- cache
+        with ESMTP id S234568AbjI3R4X (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sat, 30 Sep 2023 13:56:23 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 10693D3;
+        Sat, 30 Sep 2023 10:56:20 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.03,190,1694703600"; 
+   d="scan'208";a="177759854"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 01 Oct 2023 02:56:20 +0900
+Received: from localhost.localdomain (unknown [10.226.92.9])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EB6BA4005B37;
+        Sun,  1 Oct 2023 02:56:17 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Biju Das <biju.das.au@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 0/2] Match data improvements for pca955x driver
+Date:   Sat, 30 Sep 2023 18:56:13 +0100
+Message-Id: <20230930175615.13301-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230929-leds-maple-v1-1-ba5f9dcb1e75@kernel.org>
-References: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
-In-Reply-To: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Lee Jones <lee@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.13-dev-0438c
-X-Developer-Signature: v=1; a=openpgp-sha256; l=919; i=broonie@kernel.org;
- h=from:subject:message-id; bh=fBI8cLuaLqO/WvsGsTIjx9QYgkX5kcaru537d1XBIGk=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBlFuwKFGbKnC9uP/YHFPKf8riLwqgsVjOGwaB35
- 8Lf1/EvqFyJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZRbsCgAKCRAk1otyXVSH
- 0KTYB/wMYjyI8KbJo9B34uzHVBi1v7vJfYnihs1e2cMUWK6QE9Hs5behqyelt/absOQyVA/oHVz
- EEAS7mabv94Fg5HGeMQJqg9y/TDUFqCyHH9HZa58AA2TLUQP8u1fR4/UqMK7e5LS92K3B9FQmqM
- b8s4r72v4r1WX443CgR15cmygPmxcZmBI4VIe25CD2ZEsvYvv/3Biai+vhF5jL/cQujJGlq/P7Q
- AOafnd3esLHvmMpRh5qwm1pby3xkjPylOHnpWtTMXaB5US6QWYSr+Dz3fVWvuAhLvQb3Ln4S3UB
- bZEr0UWow58Up6wNGwecsZQJh7PpYpkX4EvAOA1UXXEHEC9g
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The maple tree register cache is based on a much more modern data structure
-than the rbtree cache and makes optimisation choices which are probably
-more appropriate for modern systems than those made by the rbtree cache.
+This patch series aims to add match data improvements for pca955x driver.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/leds/flash/leds-lm3601x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch series is only compile tested.
 
-diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
-index b6c524facf49..8191be0ef0c6 100644
---- a/drivers/leds/flash/leds-lm3601x.c
-+++ b/drivers/leds/flash/leds-lm3601x.c
-@@ -123,7 +123,7 @@ static const struct regmap_config lm3601x_regmap = {
- 	.max_register = LM3601X_DEV_ID_REG,
- 	.reg_defaults = lm3601x_regmap_defs,
- 	.num_reg_defaults = ARRAY_SIZE(lm3601x_regmap_defs),
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- 	.volatile_reg = lm3601x_volatile_reg,
- };
- 
+v2->v3:
+ * Added Rb tag from Andy.
+ * Dropped tabs from struct pca955x.
+v1->v2:
+ * Added Rb tag from Lee Jones for patch#1.
+ * Adeed patch#2 for cleanup of OF/ID table terminators.
+
+Biju Das (2):
+  leds: pca955x: Convert enum->pointer for data in the match tables
+  leds: pca955x: Cleanup OF/ID table terminators
+
+ drivers/leds/leds-pca955x.c | 71 +++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 42 deletions(-)
 
 -- 
-2.39.2
+2.25.1
 
