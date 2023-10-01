@@ -2,127 +2,234 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4178E7737F
-	for <linux-leds@archiver.kernel.org>; Sat, 30 Sep 2023 17:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C930EE748ED
+	for <linux-leds@archiver.kernel.org>; Sun,  1 Oct 2023 13:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234705AbjI3R42 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sat, 30 Sep 2023 13:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41324 "EHLO
+        id S235007AbjJANws (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 1 Oct 2023 09:52:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234703AbjI3R42 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Sat, 30 Sep 2023 13:56:28 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2D940D3;
-        Sat, 30 Sep 2023 10:56:26 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="6.03,190,1694703600"; 
-   d="scan'208";a="177759859"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 01 Oct 2023 02:56:25 +0900
-Received: from localhost.localdomain (unknown [10.226.92.9])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9BEEE4005B37;
-        Sun,  1 Oct 2023 02:56:23 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Biju Das <biju.das.au@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 2/2] leds: pca955x: Cleanup OF/ID table terminators
-Date:   Sat, 30 Sep 2023 18:56:15 +0100
-Message-Id: <20230930175615.13301-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230930175615.13301-1-biju.das.jz@bp.renesas.com>
-References: <20230930175615.13301-1-biju.das.jz@bp.renesas.com>
+        with ESMTP id S234379AbjJANws (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Sun, 1 Oct 2023 09:52:48 -0400
+Received: from smtprelay05.ispgateway.de (smtprelay05.ispgateway.de [80.67.18.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D71EF91;
+        Sun,  1 Oct 2023 06:52:44 -0700 (PDT)
+Received: from [92.206.139.21] (helo=note-book.lan)
+        by smtprelay05.ispgateway.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <git@apitzsch.eu>)
+        id 1qmwsE-0004h3-1S; Sun, 01 Oct 2023 15:52:42 +0200
+From:   =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Date:   Sun, 01 Oct 2023 15:52:12 +0200
+Subject: [PATCH v5 1/2] dt-bindings: leds: Add Kinetic KTD2026/2027 LED
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20231001-ktd202x-v5-1-f544a1d0510d@apitzsch.eu>
+References: <20231001-ktd202x-v5-0-f544a1d0510d@apitzsch.eu>
+In-Reply-To: <20231001-ktd202x-v5-0-f544a1d0510d@apitzsch.eu>
+To:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.3
+X-Df-Sender: YW5kcmVAYXBpdHpzY2guZXU=
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Some cleanups:
- * Remove the trailing comma in the terminator entry for the OF
-   table making code robust against (theoretical) misrebases or other
-   similar things where the new entry goes _after_ the termination without
-   the compiler noticing.
- * Drop a space from terminator entry for ID table.
+Document Kinetic KTD2026/2027 LED driver devicetree bindings.
 
-While at it, move OF/ID table near to the user.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
 ---
-v2->v3:
- * Added Rb tag from Andy.
-v2:
- * New patch.
----
- drivers/leds/leds-pca955x.c | 40 ++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ .../devicetree/bindings/leds/kinetic,ktd202x.yaml  | 171 +++++++++++++++++++++
+ 1 file changed, 171 insertions(+)
 
-diff --git a/drivers/leds/leds-pca955x.c b/drivers/leds/leds-pca955x.c
-index 7a83e84be6db..6720e1c7a8d9 100644
---- a/drivers/leds/leds-pca955x.c
-+++ b/drivers/leds/leds-pca955x.c
-@@ -104,16 +104,6 @@ static const struct pca955x_chipdef pca955x_chipdefs[] = {
- 	},
- };
- 
--static const struct i2c_device_id pca955x_id[] = {
--	{ "pca9550", (kernel_ulong_t)&pca955x_chipdefs[pca9550] },
--	{ "pca9551", (kernel_ulong_t)&pca955x_chipdefs[pca9551] },
--	{ "pca9552", (kernel_ulong_t)&pca955x_chipdefs[pca9552] },
--	{ "ibm-pca9552", (kernel_ulong_t)&pca955x_chipdefs[ibm_pca9552] },
--	{ "pca9553", (kernel_ulong_t)&pca955x_chipdefs[pca9553] },
--	{ }
--};
--MODULE_DEVICE_TABLE(i2c, pca955x_id);
--
- struct pca955x {
- 	struct mutex lock;
- 	struct pca955x_led *leds;
-@@ -457,16 +447,6 @@ pca955x_get_pdata(struct i2c_client *client, const struct pca955x_chipdef *chip)
- 	return pdata;
- }
- 
--static const struct of_device_id of_pca955x_match[] = {
--	{ .compatible = "nxp,pca9550", .data = &pca955x_chipdefs[pca9550] },
--	{ .compatible = "nxp,pca9551", .data = &pca955x_chipdefs[pca9551] },
--	{ .compatible = "nxp,pca9552", .data = &pca955x_chipdefs[pca9552] },
--	{ .compatible = "ibm,pca9552", .data = &pca955x_chipdefs[ibm_pca9552] },
--	{ .compatible = "nxp,pca9553", .data = &pca955x_chipdefs[pca9553] },
--	{},
--};
--MODULE_DEVICE_TABLE(of, of_pca955x_match);
--
- static int pca955x_probe(struct i2c_client *client)
- {
- 	struct pca955x *pca955x;
-@@ -650,6 +630,26 @@ static int pca955x_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static const struct i2c_device_id pca955x_id[] = {
-+	{ "pca9550", (kernel_ulong_t)&pca955x_chipdefs[pca9550] },
-+	{ "pca9551", (kernel_ulong_t)&pca955x_chipdefs[pca9551] },
-+	{ "pca9552", (kernel_ulong_t)&pca955x_chipdefs[pca9552] },
-+	{ "ibm-pca9552", (kernel_ulong_t)&pca955x_chipdefs[ibm_pca9552] },
-+	{ "pca9553", (kernel_ulong_t)&pca955x_chipdefs[pca9553] },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, pca955x_id);
+diff --git a/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
+new file mode 100644
+index 000000000000..832c030a5acf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/kinetic,ktd202x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static const struct of_device_id of_pca955x_match[] = {
-+	{ .compatible = "nxp,pca9550", .data = &pca955x_chipdefs[pca9550] },
-+	{ .compatible = "nxp,pca9551", .data = &pca955x_chipdefs[pca9551] },
-+	{ .compatible = "nxp,pca9552", .data = &pca955x_chipdefs[pca9552] },
-+	{ .compatible = "ibm,pca9552", .data = &pca955x_chipdefs[ibm_pca9552] },
-+	{ .compatible = "nxp,pca9553", .data = &pca955x_chipdefs[pca9553] },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, of_pca955x_match);
++title: Kinetic KTD2026/7 RGB/White LED Driver
 +
- static struct i2c_driver pca955x_driver = {
- 	.driver = {
- 		.name	= "leds-pca955x",
++maintainers:
++  - André Apitzsch <git@apitzsch.eu>
++
++description: |
++  The KTD2026/7 is a RGB/White LED driver with I2C interface.
++
++  The data sheet can be found at:
++    https://www.kinet-ic.com/uploads/KTD2026-7-04h.pdf
++
++properties:
++  compatible:
++    enum:
++      - kinetic,ktd2026
++      - kinetic,ktd2027
++
++  reg:
++    maxItems: 1
++
++  vin-supply:
++    description: Regulator providing power to the "VIN" pin.
++
++  vio-supply:
++    description: Regulator providing power for pull-up of the I/O lines.
++      Note that this regulator does not directly connect to KTD2026, but is
++      needed for the correct operation of the status ("ST") and I2C lines.
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++  multi-led:
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++    patternProperties:
++      "^led@[0-3]$":
++        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            description: Index of the LED.
++            minimum: 0
++            maximum: 3
++
++        required:
++          - reg
++          - color
++
++    required:
++      - "#address-cells"
++      - "#size-cells"
++
++patternProperties:
++  "^led@[0-3]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        description: Index of the LED.
++        minimum: 0
++        maximum: 3
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@30 {
++            compatible = "kinetic,ktd2026";
++            reg = <0x30>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vin-supply = <&pm8916_l17>;
++            vio-supply = <&pm8916_l6>;
++
++            led@0 {
++                reg = <0>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_RED>;
++            };
++
++            led@1 {
++                reg = <1>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_GREEN>;
++            };
++
++            led@2 {
++                reg = <2>;
++                function = LED_FUNCTION_STATUS;
++                color = <LED_COLOR_ID_BLUE>;
++            };
++        };
++    };
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@30 {
++            compatible = "kinetic,ktd2026";
++            reg = <0x30>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vin-supply = <&pm8916_l17>;
++            vio-supply = <&pm8916_l6>;
++
++            multi-led {
++                color = <LED_COLOR_ID_RGB>;
++                function = LED_FUNCTION_STATUS;
++
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    color = <LED_COLOR_ID_RED>;
++                };
++
++                led@1 {
++                    reg = <1>;
++                    color = <LED_COLOR_ID_GREEN>;
++                };
++
++                led@2 {
++                    reg = <2>;
++                    color = <LED_COLOR_ID_BLUE>;
++                };
++            };
++        };
++    };
+
 -- 
-2.25.1
+2.42.0
 
