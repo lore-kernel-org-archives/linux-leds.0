@@ -2,40 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DD5E92706
-	for <linux-leds@archiver.kernel.org>; Thu,  5 Oct 2023 15:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E307E92712
+	for <linux-leds@archiver.kernel.org>; Thu,  5 Oct 2023 15:33:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbjJEPOy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
+        id S232045AbjJEPdl (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 5 Oct 2023 11:33:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232159AbjJEPN4 (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 Oct 2023 11:13:56 -0400
+        with ESMTP id S231586AbjJEPc6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 Oct 2023 11:32:58 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01759368A;
-        Thu,  5 Oct 2023 07:35:54 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94E6C433C9;
-        Thu,  5 Oct 2023 14:35:52 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE83D5C6BA;
+        Thu,  5 Oct 2023 07:50:54 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9C61C3278A;
+        Thu,  5 Oct 2023 11:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1696516553;
-        bh=3i/BBn71Q8/G8a7ePeWfnbBbYuk6/UEmcVUV9C07h0c=;
+        s=k20201202; t=1696504244;
+        bh=81DnpxxdBYZrrUfyjgAJck9Wj4KLJe818fuwhsQR8+Q=;
         h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=kVKlqPtsa6sjcfUw14flLGVAT43yy1cAPQfTPSQoOl8rGP0oRO6xDSYIpb1uS3mFi
-         CcP1dSaN2J2KWCd/0+YL0gNTtqW46ECWHiDOG4DH9iFb99PiYhhJ9qxaQisQrD8HKv
-         85nB1OUI98KeG6HXEOwqjw3ya4Z+HW3066/M2/mm7kBsyQvlrHUYeUMMw1cjtZbK7p
-         jScUxEefnkntSywIhwOelpTMUDM7/aDgU0zAIvRfSZpb7s7UviFKZH0J5EuCujMFLv
-         fhIVQCZs1p+Nh/QETwn2H/xT0udHkGvPz06rj3Bkjj3RHf5dVdZBNqRoyHvkZJ/YwE
-         DMhz2tnrOFypw==
+        b=cWy0RApPbByN09t6pLFrtNEMn3oUnEl+1fgjrYnK0wjnt4TS1k1ixGdjUTaMDd8BZ
+         ts+kdvt4N6Hqac1rifjOJnWqfnekB/dA0edFrP9UTfi9SuqqcDz7Mx2sNESC+FBSLw
+         jmZf1+QT7B1CKM09y6bsEsSYf7N1p8N0qzW40uIeKHWYxj3XcEAODKahrGYBznIAUz
+         Eer+PBcIyx4V4a0hUCuonk17HJDnMdLjSH9LjBLVWILe3IQMttBCAa3qZiekA7Rp2E
+         lHeHvWX5Fbksap9nnNwbrxqVMfT/15s+eE70tc8imu4NHAg85yAgLgouxnoq1NnOcg
+         DwbNARrutJ5Hg==
 From:   Lee Jones <lee@kernel.org>
-To:     Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Pavel Machek <pavel@ucw.cz>
-In-Reply-To: <20231002135629.2605462-1-andriy.shevchenko@linux.intel.com>
-References: <20231002135629.2605462-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] leds: tca6507: Don't use fixed GPIO base
-Message-Id: <169651655262.797431.9123574285135909840.b4-ty@kernel.org>
-Date:   Thu, 05 Oct 2023 15:35:52 +0100
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+In-Reply-To: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
+References: <20230929-leds-maple-v1-0-ba5f9dcb1e75@kernel.org>
+Subject: Re: [PATCH 0/4] leds: Convert to use maple tree register cache
+Message-Id: <169650424265.688682.2460798715972634009.b4-ty@kernel.org>
+Date:   Thu, 05 Oct 2023 12:10:42 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -44,17 +45,26 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Mon, 02 Oct 2023 16:56:29 +0300, Andy Shevchenko wrote:
-> First of all, the fixed GPIO base is source of troubles and
-> it doesn't scale. Second, there is no in-kernel user of this
-> base, so drop it.
+On Fri, 29 Sep 2023 17:23:34 +0200, Mark Brown wrote:
+> The maple tree register cache is a more modern replacement for the
+> rbtree cache, the underlying data structure is more modern and the
+> surrounding cache implementation makes a number of choices which are
+> more suited to modern systems than those made by rbtree.  This series
+> updates the LED drivers that use the rbtree cache to use the maple tree
+> cache.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] leds: tca6507: Don't use fixed GPIO base
-      commit: ed84d55d5115455d17fa93f63dbf89697a309d6e
+[1/4] leds: lm3601x: Convert to use maple tree register cache
+      commit: c2b7575239f5d0925035f3fc3bb155d176abee80
+[2/4] leds: aw200xx: Convert to use maple tree register cache
+      commit: 2aedfe62b4151b0abe35bf022edf18f84817afcd
+[3/4] leds: lm392x: Convert to use maple tree register cache
+      commit: c2ecac98222a23ad8209a71ad5c1e32a8be46392
+[4/4] leds: lp3952: Convert to use maple tree register cache
+      commit: 2997d69d888d6ee7114a89d066889a016448422a
 
 --
 Lee Jones [李琼斯]
