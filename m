@@ -2,83 +2,183 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE084E7C4E2
-	for <linux-leds@archiver.kernel.org>; Wed,  4 Oct 2023 17:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD71E92702
+	for <linux-leds@archiver.kernel.org>; Thu,  5 Oct 2023 14:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233325AbjJDRzb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 4 Oct 2023 13:55:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
+        id S230134AbjJEO1a (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 5 Oct 2023 10:27:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233149AbjJDRzb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Wed, 4 Oct 2023 13:55:31 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB5C9E
-        for <linux-leds@vger.kernel.org>; Wed,  4 Oct 2023 10:55:27 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5a2379a8b69so378147b3.2
-        for <linux-leds@vger.kernel.org>; Wed, 04 Oct 2023 10:55:27 -0700 (PDT)
+        with ESMTP id S233507AbjJEOY6 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 Oct 2023 10:24:58 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A3E26A71
+        for <linux-leds@vger.kernel.org>; Thu,  5 Oct 2023 05:58:28 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-53627feca49so1551284a12.1
+        for <linux-leds@vger.kernel.org>; Thu, 05 Oct 2023 05:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696442127; x=1697046927; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bnEXt+Qpk/tuxhrYR1+7U0sSFNdLmUkU/mz7OnvQGzI=;
-        b=Yek0mUvkp3DK4/ceC+k+sL1BH782I0NAkHEyKCpy8bjCYlXRjpWV29dbUBuRv4FjLR
-         XJwQ7kkKnZUINHW54sk6YgOVEPvv/eJqv/j4HH+3UUixR+YWG/OLLp0HM3mk87FOxYOR
-         iwxKY6a2J8eckHXw00RsFz7jHvN78bbHiP1BF33sVv69MF7kp7+xcONu3uWVNTFEZkOj
-         5VC/LeHnY4Q/dTVQ1mUuhfZkxhPHUVseQxjBqF0gosi99JslwzkBrkfdsPkWsTM4XyzX
-         TyAj3eoFULx2MLBz7XZjsCSAYPhscwwOvOBNsOVFGfjAfVztDSmwH/GH6M7mrm7bmtiM
-         nQ1w==
+        d=linaro.org; s=google; t=1696510707; x=1697115507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=54uUEylq3LVuurRVtb2mIY1GDBu2n1bSehibVDW31Ek=;
+        b=TkVI5vH4Mq8NwWi2aiPtB6u7px28PwXRXDUNBhejq/y1pfLKUjoVJPR5LOz4h9+S/O
+         VSb/iSVm0/MRjkx6STM8vVC1EuVqOJ290GzSRYJXeYVSdFE0vdyNLGVl3GvNhWgRE5sm
+         RsB6CWMr5IcauVrc4HIFXIgc7e8TOvxWpvVmszNLUkfuGTUyi1dUJG2qLP8oC5Ld+lAj
+         IPGwHSILgWzda7Ddm8a9G2Al3ix4IXZiRisjZVZUnX9Kvn7ES4SYTCD/JRhtrMB+moHN
+         8EPAXLQ/YViemrrRxKhosF7QyP+3bz9FWR2cYOmjndupHzynSmJcKDseeAYRm4TkA9XW
+         NxhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696442127; x=1697046927;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bnEXt+Qpk/tuxhrYR1+7U0sSFNdLmUkU/mz7OnvQGzI=;
-        b=Af2KW/IdDpzahvnPbwBridKXWukp7b7siF4hjVYMEH1X0bk0r5lulORfIOVHTxnAtK
-         5Ik/kVQ6n0j89ajTlNp69pSzx/2iecwO8/jDkbGhzkRz+x/C0NYJcHuGaAO+rEn222wb
-         49IHuI5aRUi2zmLt30Y1L4pSu2jyu9eY+WaJ9Or8EDwVLflx/D47SQK4YQJ1dGKZ6QX0
-         O6g70sHOcoomClfuS1X9NpWk/pVJjCoiShqTd+UBoQ4isJVGV40REiqEVdOVjH/3smx5
-         UcFkE33iZu+0EMnm/y6Smc6gHDy8EC1WsLRiSDuFaZXecTrCzcqUX6XyzDlBUn/fF8HZ
-         o9rw==
-X-Gm-Message-State: AOJu0YyXnH8aLCpzHK6QoQ+5BGyIGnyPek7tIJmJi0mF9SLOH9fdKn3L
-        dxHprPH8YLvnNRfVEvwn5l19zBe75RHbDroBElrNG1geoTmCzylG7am7TF/U
-X-Google-Smtp-Source: AGHT+IEmeDf4KlTLH33p95IkrEMknvNVGQa47kajohUwjSfE88QUNxNQhGBK03Q4w9IGMiUCUrSxIDzl79jKONau99g=
-X-Received: by 2002:a0d:cad2:0:b0:59b:f744:f158 with SMTP id
- m201-20020a0dcad2000000b0059bf744f158mr3413679ywd.15.1696442126673; Wed, 04
- Oct 2023 10:55:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1696510707; x=1697115507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=54uUEylq3LVuurRVtb2mIY1GDBu2n1bSehibVDW31Ek=;
+        b=nI4KvoyhGs9eJ7sZLH2CSdZ9pdL6J9Pk1RaAv77SHMUH5HzMVt1NuPbaSOguYkJ14y
+         HL1CZ4+DLYFT+Hi5/S9JZrCcxGjoHGpyfed6KubITJUyUpGHozpR0flhXjmzuwyIGs2d
+         C0+scBBkX8TP6H2h8kO3ewSxrq+nGTCJxDwdBRM1TQUIrhOFTkf12FR5YRSppPWs2HmZ
+         O/JH8m0d40JWGHoAJZo0SDApRpncLiDKpABfrIa61qO3TWMV9yQDseSRSEmi+xTVPbd4
+         HJ78JwyCjSKZWk7YqG1rileOXAWzxhfq6QgmwDh5MI5+UI2FQkYtItqehV3YFfXPayBe
+         bpEQ==
+X-Gm-Message-State: AOJu0YxM+5sv0qF+g4Dn1WWFxTNAJNOXasDejTnyz5ay9/95XTPlh7HH
+        Fm0PL8JUOKk/PlyUjLRDgAx2BA==
+X-Google-Smtp-Source: AGHT+IGYliWIqnSbYurYXmldF5bpXzcFNUK7z8v11/xiPWf8HMiN9f4fcRM4OMhil9K85Li760ospg==
+X-Received: by 2002:aa7:d945:0:b0:523:2e30:aaee with SMTP id l5-20020aa7d945000000b005232e30aaeemr4359227eds.32.1696510707341;
+        Thu, 05 Oct 2023 05:58:27 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id m4-20020a056402050400b00533f111b61dsm1024857edv.68.2023.10.05.05.58.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Oct 2023 05:58:26 -0700 (PDT)
+Date:   Thu, 5 Oct 2023 13:58:24 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Flavio Suligoi <f.suligoi@asem.it>
+Cc:     Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+        Helge Deller <deller@gmx.de>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: backlight: Add MPS MP3309C
+Message-ID: <20231005125824.GC4874@aspen.lan>
+References: <20230925122609.78849-1-f.suligoi@asem.it>
+ <20230926130113.GB4356@aspen.lan>
+ <DU2PR01MB8034F448F6E66BAC3823CDB1F9C4A@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
+ <20231003102138.GB69443@aspen.lan>
+ <DU2PR01MB80349344FB8CB1415BFA917DF9C4A@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
+ <DU2PR01MB8034F17A9C81FE198CCAC5B7F9CBA@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
 MIME-Version: 1.0
-From:   Jack Chen <zenghuchen@google.com>
-Date:   Wed, 4 Oct 2023 13:55:14 -0400
-Message-ID: <CALvyBcVfLZmW4Ks+hzWLMZCvzk1cCt=AV=2Dq9asiZJAv7iAPA@mail.gmail.com>
-Subject: Proposal to add one "configured" property to indicate whether LED has
- been configured
-To:     pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, Milo.Kim@ti.com,
-        Anton Markov <amarkov@google.com>,
-        Jesus Sanchez-Palencia <jesussanp@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU2PR01MB8034F17A9C81FE198CCAC5B7F9CBA@DU2PR01MB8034.eurprd01.prod.exchangelabs.com>
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Hi Pavel,
-When using a LED driver (leds-lp5562.c), we think of one potential
-change to the Linux LED subsystem:
-LED in Linux Kernel did not assume it could be configured before
-Kernel, bootloader specifically. But, from a product perspective,
-users expect to get feedback as soon as possible. So it is quite
-possible that product developers have configured and turned on the LED
-in bootloader to indicate sign of life. However, LED drivers just
-re-initialize LED controllers (hardware) and LED would be off
-afterwards, until it was turned on again by commands from user-space.
-So we are thinking of adding one property "configured" to tell if the
-LED was configured before. If so, drivers would not re-configure the
-LED controller and could read some key information (brightness,
-current etc) from the LED controller.
-1) This property can be optional. If linux led thinks the change is
-acceptable, we can upstream the changes to leds-lp5562.c (we can
-slowly change other led drivers whenever they encounter the same
-issue.)
-2) If this proposal is not considered beneficial to the Linux LED
-subsystem, can we add it only to leds-lp5562.c and upstream the
-change?
-Thanks
-Jack Chen
+On Wed, Oct 04, 2023 at 03:18:24PM +0000, Flavio Suligoi wrote:
+> Hi Daniel,
+> ...
+> > ...
+> > > > > > +required:
+> > > > > > +  - compatible
+> > > > > > +  - reg
+> > > > > > +  - max-brightness
+> > > > >
+> > > > > Why is this mandatory?
+> > > > >
+> > > > > There's no point in setting max-brightness when running in I2C
+> > > > > mode
+> > > > > (max- brightness should default to 31 in that case).
+> > > > >
+> > > > >
+> > > > > > +  - default-brightness
+> > > > >
+> > > > > Again. I'm not clear why this needs to be mandatory.
+> > > > >
+> > > > >
+> > > >
+> > > > Ok, you are right, I'll remove max-brightness and default-brightness
+> > > > from required properties list. I think to change these properties,
+> > > > for the pwm dimming, into a clearer:
+> > > >
+> > > > - brightness-levels (uint32)
+> > > > - default-brightness-levels (uint32).
+> > > >
+> > > > For example:
+> > > >
+> > > >   brightness-levels:
+> > > >     description:
+> > > >       Number of brightness levels. The actual brightness
+> > > >       level (PWM duty cycle) will be interpolated from 0 to this value.
+> > > >       0 means a  0% duty cycle (darkest/off), while the
+> > > > brightness-levels
+> > > represents
+> > > >       a 100% duty cycle (brightest).
+> > > >     $ref: /schemas/types.yaml#/definitions/uint32
+> > > >
+> > > >   default-brightness-level:
+> > > >     description:
+> > > >       The default brightness level (from 0 to brightness-levels)
+> > > >     $ref: /schemas/types.yaml#/definitions/uint32
+> > > >
+> > > > Example:
+> > > > brightness-levels = <10>;
+> > > > default-brightness-level = <6>;
+> > > >
+> > > > What do you think about this solution?
+> > >
+> > > If you want to introduce a brightness-levels property then I would
+> > > expect it to be defined with the same meaning as pwm-backlight (it's
+> > > not relevant to the bindings but ideally it would be implemented by
+> > > refactoring and reusing the code from pwm_bl.c).
+> >
+> > ok, I'll use the brightness-levels property as used in pwm-backlight
+> >
+> > >
+> > > Same with default-brightness-level although I'm not sure why one
+> > > wouldn't just use default-brightness for new bindings (doesn't
+> > > default-brightness-level simply do exactly the same thing as default-
+> > brightness).
+> >
+> > ok for default-brightness instead of default-brightness-level
+>
+> Just a question: default-brightness-level is the index into the brightness-levels array.
+> But, if I use default-brightness instead of default-brightness-level,
+> should I consider default-brightness also as an index into brightness-levels array?
+
+Yes.
+
+
+> Or, in this case, have the default-brightness to be equal to one of the values inside the
+> brightness-levels array?
+
+When there is a brightness array (and there is no interpolation) then
+it is indexed by brightness. The values in the array are not
+brightness (e.g. the controlable value describing the output of the
+hardware). The values in the table are merely the PWM duty cycle...
+
+Main difference is, with a correct table the brightness can use an
+appropriate logarithmic power scale (which matches how humans perceive
+brightness) instead of the linear scale provided by the PWM duty cycle.
+
+
+Daniel.
+
+
+Brightness and "index into the brightness-levels array" should be one
+and the same thing
+>
+> >
+> > >
+> > >
+> > > Daniel.
+> >
+> > Thanks an best regards,
+> > Flavio
+>
+> Thanks,
+>
+> Flavio
