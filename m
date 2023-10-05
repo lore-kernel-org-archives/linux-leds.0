@@ -2,101 +2,126 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0092E7B614
-	for <linux-leds@archiver.kernel.org>; Thu,  5 Oct 2023 16:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEEDE92728
+	for <linux-leds@archiver.kernel.org>; Thu,  5 Oct 2023 18:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242440AbjJEQR7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 5 Oct 2023 12:17:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38630 "EHLO
+        id S229596AbjJESzk (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 5 Oct 2023 14:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240754AbjJEQQB (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 Oct 2023 12:16:01 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE147101BE;
-        Thu,  5 Oct 2023 07:17:31 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0442CC3277E;
-        Thu,  5 Oct 2023 10:40:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1696502444;
-        bh=zG4Uy0wbVjgN17aTIqGgXL6FFxktGI57Cl5UBJTqWsk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cdyW1v9SF2VgC9a4TmbOmocRzolbrpxmNVkrE9kfIn+MQ5QJdbLKT21p1AnOscccW
-         Z9TDm3eRJfphN5+Ivz9zfR4cUetq8CHk/PfFUVEqD9rrzlBep1u/TkG5Oc/6YOg3Hx
-         qbGyY9/pl/m+BpEW6XreGIHUIo7gzyDWuPPMTsuE=
-Date:   Thu, 5 Oct 2023 12:40:41 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Lee Jones <lee@kernel.org>
-Cc:     Florian Eckert <fe@dev.tdt.de>, Jiri Slaby <jirislaby@kernel.org>,
-        Eckert.Florian@googlemail.com, pavel@ucw.cz, kabel@kernel.org,
-        u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-leds@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2 3/4] trigger: ledtrig-tty: move variable definition to
- the top
-Message-ID: <2023100524-liftoff-obnoxious-ec1e@gregkh>
-References: <20230928132632.200263-1-fe@dev.tdt.de>
- <20230928132632.200263-4-fe@dev.tdt.de>
- <20231002140559.GB8453@google.com>
- <acda5dc4-e6d3-4870-929f-fb91636b5649@kernel.org>
- <59cc4073a94edbdec5d77f8457ed4f73@dev.tdt.de>
- <05b03f3e-5863-4d33-8c70-03be7d7e972f@kernel.org>
- <d59855493baa936485a2b00aa29d0449@dev.tdt.de>
- <2023100508-prelaunch-marbled-3a93@gregkh>
- <20231005101307.GE83257@google.com>
+        with ESMTP id S229656AbjJESzj (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 5 Oct 2023 14:55:39 -0400
+X-Greylist: delayed 350 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 05 Oct 2023 11:55:38 PDT
+Received: from mx.skole.hr (mx1.hosting.skole.hr [161.53.165.185])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140AC93;
+        Thu,  5 Oct 2023 11:55:38 -0700 (PDT)
+Received: from mx1.hosting.skole.hr (localhost.localdomain [127.0.0.1])
+        by mx.skole.hr (mx.skole.hr) with ESMTP id 54BB984F75;
+        Thu,  5 Oct 2023 20:49:48 +0200 (CEST)
+From:   =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Date:   Thu, 05 Oct 2023 20:49:08 +0200
+Subject: [PATCH 1/2] dt-bindings: backlight: add Kinetic KTD2801 binding
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231005101307.GE83257@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20231005-ktd2801-v1-1-43cd85b0629a@skole.hr>
+References: <20231005-ktd2801-v1-0-43cd85b0629a@skole.hr>
+In-Reply-To: <20231005-ktd2801-v1-0-43cd85b0629a@skole.hr>
+To:     Lee Jones <lee@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Helge Deller <deller@gmx.de>
+Cc:     Karel Balej <balejk@matfyz.cz>, dri-devel@lists.freedesktop.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1714;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=UdiONCDFn7tSC5O0Vn6kl8sVoN7CSUp9mQWdTvRQG54=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBlHwVCfv22qJGXGxy+4xw0vT+90XZOJv8VbwEA1
+ upnGjCeI6eJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZR8FQgAKCRCaEZ6wQi2W
+ 4RKXD/9XfqrqI9hIeLFo4dL2yYC+GvW8XRQw3ij9ldGmH5vDRakMYYgMM3RjG204uN3bQO9yPjJ
+ AIZnmONSC6fEjx3EgOBYvhNaa4sxxDsh7LwUvIbQeIQ+eZZVRS6YusOguR3xv+vvr1SJ8UrPGas
+ 60idqG69zQjXVnoBK3lVlzZKQlBBlyRXyzoBJOgvB+T0s9/jT/2IqEXnS+i6EM7M2+werN3lGo+
+ lunZHJmuTmWuOrr1yKi4YaxE5h8uPToiALQdwfuU6TSwcdP0hi92LpAVE4p51KYB74pFKXm1IXQ
+ FaIUFk+NmvntQR8P/sGc4CNlN21LmpJ/D6wxIIXxmrmrFYnqOMqJwIvDKhjkAxsJD/sTwEh2A6s
+ P/UBNpCfl3iCqAZP//0qZ9EzVfEBrafl0pqlKWkEkY9K1YP8L3uujyxgDMfoHaWvnggeGAEQs9u
+ ksij04LIVR1XFIlDtfgx+NZ5sspmDjWKLpXiw/JdMzDAEeZexNnwa0NmZyeiahubRIaXAnvZLy2
+ bt0df+oNz7ackb4gSEVOitqw0g5IjN/TZEeJKxobJq3RUg0ErGS7xljASaIqMkaLkVJ3xHrCYJq
+ eXsYYDr/sKW8S7VYFNtzeVYfMX01hfx/NxCrCSCVd+WkT7Dby2gzwQMk7zZVHxwFFKWpgjmX6BH
+ SU0bAmrwbsBOFag==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Thu, Oct 05, 2023 at 11:13:07AM +0100, Lee Jones wrote:
-> On Thu, 05 Oct 2023, Greg KH wrote:
-> 
-> > On Wed, Oct 04, 2023 at 10:36:09AM +0200, Florian Eckert wrote:
-> > > 
-> > > 
-> > > > > I decided to move the variable definition with a separate commit
-> > > > > to the top of the function, to make the build robot happy. After that
-> > > > > I made my changes for v2 to the ledtrig-tty to add the feature.
-> > > > > 
-> > > > > > Ah, lkp, then also the Closes: line as it suggests.
-> > > > > 
-> > > > > Sorry I do not understand your statement
-> > > > 
-> > > > The link you pasted above states:
-> > > > =======
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a new
-> > > > version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > | Closes:
-> > > > https://lore.kernel.org/oe-kbuild-all/202309270440.IJB24Xap-lkp@intel.com/
-> > > > =======
-> > > > 
-> > > > So please follow that suggestion ;).
-> > > 
-> > > Ok, I understand, thanks will to this on a v3 patchset.
-> > > I will now wait for the comments of my changes in ledtrig-tty from the led
-> > > subsystem.
-> > > And then I will send a new patch set with the requested changes.
-> > > 
-> > > Sorry for the silly question. But do I have to send this patch again for a
-> > > v3?
-> > > https://lore.kernel.org/linux-leds/f41dc1e1-6d34-48b2-97dd-ba67df6003c6@kernel.org/T/#u
-> > > It was already marked by you with a `Reviewed-by:` from you?
-> 
-> Yes please.  I will pick this up as a set once it's ready.
-> 
-> > This series is long gone from my review queue, so a v3 will be needed at
-> > the very least.
-> 
-> Nothing for Greg to worry about here (unless you *want* to review).
+Add the dt binding for the Kinetic KTD2801 backlight driver.
 
-Yes, I want to ensure that the tty change is correct, last round I
-didn't think it was...
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+---
+ .../bindings/leds/backlight/kinetic,ktd2801.yaml   | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-thanks,
+diff --git a/Documentation/devicetree/bindings/leds/backlight/kinetic,ktd2801.yaml b/Documentation/devicetree/bindings/leds/backlight/kinetic,ktd2801.yaml
+new file mode 100644
+index 000000000000..970d54bac18e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/kinetic,ktd2801.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/backlight/kinetic,ktd2801.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Kinetic Technologies KTD2801 one-wire backlight
++
++maintainers:
++  - Duje Mihanović <duje.mihanovic@skole.hr>
++
++description: |
++  The Kinetic Technologies KTD2801 is a LED backlight driver controlled
++  by a single GPIO line. The driver can be controlled with a PWM signal
++  or by pulsing the GPIO line to set the backlight level. This is called
++  "ExpressWire".
++
++allOf:
++  - $ref: common.yaml#
++
++properties:
++  compatible:
++    const: kinetic,ktd2801
++
++  enable-gpios:
++    maxItems: 1
++
++  default-brightness: true
++  max-brightness: true
++
++required:
++  - compatible
++  - enable-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    backlight {
++        compatible = "kinetic,ktd2801";
++        enable-gpios = <&gpio 97 GPIO_ACTIVE_LOW>;
++        max-brightness = <210>;
++        default-brightness = <100>;
++    };
 
-greg k-h
+-- 
+2.42.0
+
+
