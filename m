@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA24E81E13
-	for <linux-leds@archiver.kernel.org>; Fri,  6 Oct 2023 16:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C96E81E1D
+	for <linux-leds@archiver.kernel.org>; Fri,  6 Oct 2023 16:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232931AbjJFQFE (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 6 Oct 2023 12:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54572 "EHLO
+        id S232939AbjJFQFH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 6 Oct 2023 12:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232920AbjJFQFC (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 6 Oct 2023 12:05:02 -0400
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE14B9;
-        Fri,  6 Oct 2023 09:05:01 -0700 (PDT)
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 0124812000A;
-        Fri,  6 Oct 2023 19:05:00 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 0124812000A
+        with ESMTP id S232934AbjJFQFF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 6 Oct 2023 12:05:05 -0400
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E2F29E;
+        Fri,  6 Oct 2023 09:05:04 -0700 (PDT)
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 40D97100007;
+        Fri,  6 Oct 2023 19:05:02 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 40D97100007
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-        s=mail; t=1696608300;
-        bh=4J/JIZb8TJ/YBiUfw0G+dDdYJJZD1Z0B5w2YjJsc3UQ=;
+        s=mail; t=1696608302;
+        bh=kvcZ+xJnyeYql7Ke/CZt6+RSekM0tFKgAECXglBZbv0=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=IUlAfyh6YBeRpIT7W3Wc+cTi3YCzz6gkUHMEIpTrsP7OeKxq2brkh5AMOddwjukmY
-         csQ0Z79o+WmQ4URYPRjKCMmEgF/sRiV0Rm0nTzRovNYR5gm9sU6tH4I9lePXACKjE3
-         TOweyYG+tO74EZ7jwr/KAtd8ONsK4XhlwQwDz4Fri/icGfnsabGqogquYKlf4ZCzxD
-         qsR7M0sPcyhHikisSAjzfubfhlr07V0r7rfaFdEqWaczfA3z+xOAcqx7kgfO5bb+yF
-         TVFVgTLgFCsmMBOutGd3TqipGfrQ7hB8gDgNYKjmZ6+WU8JTEWNUQP+Zw5Z6FkggE9
-         tTMuA/sA6acXA==
+        b=oog9KlS66Os+OH0P78FrbWJIbW7kf6V/ifmUHeWRWi+TBIPBQhrtminHQOYftafoA
+         /XIKaEIi90/gaH8x0aETiy3GmLaQRxo8wqUdWtbv6vFVgFsveVCz/bdDEOT94vEbQt
+         7vwJ73/OYZ3v/mXNCw+l74ZATjfrzNd9IIXH50mbb5UzJGvOkwM4rxdtbFY1c5ekK/
+         PrDV1/7dzioeuF5FrP0G5uC2xOcjWRl3ZjsboaHMOhsfhJrWLt9kIUKWFryEmc3ipe
+         ylyXRRoChkxK3/nM0UFm3PTFFqNazN1pn+hMLgV2KEPzKN6IvNBgOm6Wrdt102eFRr
+         Bp28RtARY73Tg==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Fri,  6 Oct 2023 19:04:59 +0300 (MSK)
+        Fri,  6 Oct 2023 19:05:02 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Fri, 6 Oct 2023 19:04:59 +0300
+ 15.2.1118.30; Fri, 6 Oct 2023 19:05:01 +0300
 From:   Dmitry Rokosov <ddrokosov@salutedevices.com>
 To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -44,10 +44,11 @@ To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
 CC:     <kernel@sberdevices.ru>, <rockosov@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-leds@vger.kernel.org>,
+        George Stark <gnstark@salutedevices.com>,
         Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v1 04/11] dt-bindings: leds: aw200xx: introduce optional hwen-gpio property
-Date:   Fri, 6 Oct 2023 19:04:30 +0300
-Message-ID: <20231006160437.15627-5-ddrokosov@salutedevices.com>
+Subject: [PATCH v1 07/11] leds: aw200xx: add delay after software reset
+Date:   Fri, 6 Oct 2023 19:04:33 +0300
+Message-ID: <20231006160437.15627-8-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20231006160437.15627-1-ddrokosov@salutedevices.com>
 References: <20231006160437.15627-1-ddrokosov@salutedevices.com>
@@ -59,14 +60,14 @@ X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
 X-KSMG-Rule-ID: 10
 X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 180439 [Oct 06 2023]
+X-KSMG-AntiSpam-Lua-Profiles: 180438 [Oct 06 2023]
 X-KSMG-AntiSpam-Version: 6.0.0.2
 X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
 X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 535 535 da804c0ea8918f802fc60e7a20ba49783d957ba2, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;p-i-exch-sc-m01.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 535 535 da804c0ea8918f802fc60e7a20ba49783d957ba2, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;100.64.160.123:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -77,45 +78,31 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Property 'awinic,hwen-gpio' is optional, it can be used by the board
-developer to connect AW200XX LED controller with appropriate poweron
-GPIO pad.
+From: George Stark <gnstark@salutedevices.com>
 
+According to datasheets of aw200xx devices software reset takes at
+least 1 ms so add delay after reset before issuing commands to device.
+
+Signed-off-by: George Stark <gnstark@salutedevices.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
- Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/leds/leds-aw200xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-index 73b81f7a7258..e3ad11fc7a84 100644
---- a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-@@ -41,6 +41,9 @@ properties:
-     description:
-       Leds matrix size
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index 5b6907eb6299..a1ef0b0a62fc 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -321,6 +321,9 @@ static int aw200xx_chip_reset(const struct aw200xx *const chip)
+ 	if (ret)
+ 		return ret;
  
-+  awinic,hwen-gpio:
-+    maxItems: 1
++	/* according to datasheet software reset takes at least 1ms */
++	usleep_range(1000, 2000);
 +
- patternProperties:
-   "^led@[0-9a-f]+$":
-     type: object
-@@ -90,12 +93,15 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/gpio/gpio.h>
-     #include <dt-bindings/leds/common.h>
- 
-     i2c {
-         #address-cells = <1>;
-         #size-cells = <0>;
- 
-+        awinic,hwen-gpio = <&gpio 3 GPIO_ACTIVE_HIGH>;
-+
-         led-controller@3a {
-             compatible = "awinic,aw20036";
-             reg = <0x3a>;
+ 	regcache_mark_dirty(chip->regmap);
+ 	return regmap_write(chip->regmap, AW200XX_REG_FCD, AW200XX_FCD_CLEAR);
+ }
 -- 
 2.36.0
 
