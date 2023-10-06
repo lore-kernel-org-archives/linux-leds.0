@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B67E81E19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B472EE81E13
 	for <linux-leds@archiver.kernel.org>; Fri,  6 Oct 2023 16:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232946AbjJFQFH (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 6 Oct 2023 12:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
+        id S232952AbjJFQFI (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 6 Oct 2023 12:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232936AbjJFQFG (ORCPT
+        with ESMTP id S232938AbjJFQFG (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 6 Oct 2023 12:05:06 -0400
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BAB5C5;
-        Fri,  6 Oct 2023 09:05:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380FBCA;
+        Fri,  6 Oct 2023 09:05:05 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 7611312000C;
-        Fri,  6 Oct 2023 19:05:01 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7611312000C
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 5E5E912000E;
+        Fri,  6 Oct 2023 19:05:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 5E5E912000E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-        s=mail; t=1696608301;
-        bh=tN35mD0+nTDTwkVuf3TrI4jko6f8nzNCzdD5oWRnoxE=;
+        s=mail; t=1696608303;
+        bh=WaWXADN19ORvBXYMLJECaMTRXaSMTpZYcOLrM7Lv0aQ=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=RzjLRVazClEjfF/YL9thBc8/7V29oKt+1JaInCqx04ogYcB/j8wrC6E+edYPBP63B
-         UtCKhO3Ow25ZIkClnDk4bArnO1iVbu1Eu/wuxvWDgYz/zv2If2R68yUeHh3jdvKzqe
-         05lwmDlQs/nXKTqWGJGijAWaIM2uWUY1qkCLjUnBs2Ahd2T9OACJ0tjIWYyn/c354v
-         oh8Y2aeFbNMpNoM2sno05pjGrHE5AMDYSLwdZR9a7oCbfd5fB0oDJ3m7KtvRXvwCXf
-         M5rIxHKTfp+4QtBUnJkdE0ovkPmdxusduT8P94WFUYDUukxXTmIeEJXtFdxZAIvRVp
-         YqmeQe7IB9idg==
+        b=PmyneMcwDIwgP/VkvXd1A3ZkKJcEPIb7S6mWuLFlyeZxcO7Z+9Bo1B5P5BrHc6+Yx
+         OX3RVim6scjvNm6hadttpzduzbkVYXXrQcliciWhUVzwHJ1z0q+loTnbr5ZxNjxIA7
+         6OBVirF9LwXDkZHK6rHooH7Cy4ix0EVtUMFXoxSFCP1HxFPTM+vrbXOyTus87hfRn2
+         FDMXVDNXhFRPu5a//yo8Tnil8l2HRnN7YZRtfEX7qy+zbSsfD2OyXCaLfXd4BnPb6H
+         NDF1IZX9J/XU4sK3g92Z0efqA3bQcLC8gMmdF6nHLhCuwcsSFEECsN5B7DFxoghFwI
+         ym/4Akxc3/TLw==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Fri,  6 Oct 2023 19:05:01 +0300 (MSK)
+        Fri,  6 Oct 2023 19:05:02 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Fri, 6 Oct 2023 19:05:01 +0300
+ 15.2.1118.30; Fri, 6 Oct 2023 19:05:02 +0300
 From:   Dmitry Rokosov <ddrokosov@salutedevices.com>
 To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -46,9 +46,9 @@ CC:     <kernel@sberdevices.ru>, <rockosov@gmail.com>,
         <linux-leds@vger.kernel.org>,
         George Stark <gnstark@salutedevices.com>,
         Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v1 06/11] dt-bindings: leds: aw200xx: remove property "awinic,display-rows"
-Date:   Fri, 6 Oct 2023 19:04:32 +0300
-Message-ID: <20231006160437.15627-7-ddrokosov@salutedevices.com>
+Subject: [PATCH v1 08/11] leds: aw200xx: enable disable_locking flag in regmap config
+Date:   Fri, 6 Oct 2023 19:04:34 +0300
+Message-ID: <20231006160437.15627-9-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20231006160437.15627-1-ddrokosov@salutedevices.com>
 References: <20231006160437.15627-1-ddrokosov@salutedevices.com>
@@ -67,7 +67,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 535 535 da804c0ea8918f802fc60e7a20ba49783d957ba2, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;p-i-exch-sc-m01.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 535 535 da804c0ea8918f802fc60e7a20ba49783d957ba2, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -80,75 +80,27 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: George Stark <gnstark@salutedevices.com>
 
-Get rid of the property "awinic,display-rows" and calculate it
-in the driver using led definition nodes.
+In the driver regmap is always used under mutex so regmap's inner lock
+can be disabled.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
- .../bindings/leds/awinic,aw200xx.yaml         | 28 +++----------------
- 1 file changed, 4 insertions(+), 24 deletions(-)
+ drivers/leds/leds-aw200xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-index e3ad11fc7a84..5cd167ab0f04 100644
---- a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-@@ -36,11 +36,6 @@ properties:
-   "#size-cells":
-     const: 0
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index a1ef0b0a62fc..5a1a93ffe36c 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -541,6 +541,7 @@ static const struct regmap_config aw200xx_regmap_config = {
+ 	.rd_table = &aw200xx_readable_table,
+ 	.wr_table = &aw200xx_writeable_table,
+ 	.cache_type = REGCACHE_RBTREE,
++	.disable_locking = true,
+ };
  
--  awinic,display-rows:
--    $ref: /schemas/types.yaml#/definitions/uint32
--    description:
--      Leds matrix size
--
-   awinic,hwen-gpio:
-     maxItems: 1
- 
-@@ -63,31 +58,17 @@ patternProperties:
-           since the chip has a single global setting.
-           The maximum output current of each LED is calculated by the
-           following formula:
--            IMAXled = 160000 * (592 / 600.5) * (1 / display-rows)
-+            IMAXled = 160000 * (592 / 600.5) * (1 / max-current-switch-number)
-           And the minimum output current formula:
--            IMINled = 3300 * (592 / 600.5) * (1 / display-rows)
-+            IMINled = 3300 * (592 / 600.5) * (1 / max-current-switch-number)
-+          where max-current-switch-number is determinated by led configuration
-+          and depends on how leds are physically connected to the led driver.
- 
- required:
-   - compatible
-   - reg
-   - "#address-cells"
-   - "#size-cells"
--  - awinic,display-rows
--
--allOf:
--  - if:
--      properties:
--        compatible:
--          contains:
--            const: awinic,aw20036
--    then:
--      properties:
--        awinic,display-rows:
--          enum: [1, 2, 3]
--    else:
--      properties:
--        awinic,display-rows:
--          enum: [1, 2, 3, 4, 5, 6, 7]
- 
- additionalProperties: false
- 
-@@ -107,7 +88,6 @@ examples:
-             reg = <0x3a>;
-             #address-cells = <1>;
-             #size-cells = <0>;
--            awinic,display-rows = <3>;
- 
-             led@0 {
-                 reg = <0x0>;
+ static int aw200xx_probe(struct i2c_client *client)
 -- 
 2.36.0
 
