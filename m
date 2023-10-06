@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1EAE81E1A
-	for <linux-leds@archiver.kernel.org>; Fri,  6 Oct 2023 16:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD26E81E1C
+	for <linux-leds@archiver.kernel.org>; Fri,  6 Oct 2023 16:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232947AbjJFQFJ (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 6 Oct 2023 12:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33610 "EHLO
+        id S232950AbjJFQFK (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 6 Oct 2023 12:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232940AbjJFQFH (ORCPT
+        with ESMTP id S232941AbjJFQFH (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Fri, 6 Oct 2023 12:05:07 -0400
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D5D6AD;
-        Fri,  6 Oct 2023 09:05:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B4FA6;
+        Fri,  6 Oct 2023 09:05:04 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 9EC2B100008;
-        Fri,  6 Oct 2023 19:05:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9EC2B100008
+        by mx1.sberdevices.ru (Postfix) with ESMTP id BF5EB100006;
+        Fri,  6 Oct 2023 19:05:00 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BF5EB100006
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-        s=mail; t=1696608303;
-        bh=1WCKHX3C2Jio7m/90i7wKEs3GNXifdtSCujv0l+EoC0=;
+        s=mail; t=1696608300;
+        bh=5Ufuy/Jjm8EWqaQZSmq4eDmLrQJXNTNImLau+WXmXuQ=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=W+Er2zc8A3EpDU53xu9dG0ri1JA2w6Y2zZ+2GS4Ux57vOxirZFrGMvTnTx7/oPYJu
-         bwtp/OBRhj+/Vkv0KLxBixccVR8V4kRnNFjyBa8t4vymgGNWhpoltnsw1AX23BpoxS
-         FEVZA/FvAKUQP5S5pDPPn45sVA3rVD8qRRd2ujEgFNWk7m8iBqd3MO+oiD+bdClb4V
-         DOyaAJ26CFzjMOHF+Hqttsri9Y5QfsmwCezdXnpkC74q6yWh4JiSp+IBJOuAtwebo1
-         FU0GxvlS4mYKrEmSV0JBZmYzk7YY+iLpy8FNInf6AMCjNMqQINsxKPJi6YSvjeV9+N
-         vxCdaCHBOblCA==
+        b=EmE3pDxAP5+37QT2BX/JVZBhXigkaBobMIpCmpvDLM8IlTxSh8v6uEaNJ/7DXmwop
+         j6X1rocubh1uNfj9DmeafC8uvaGqnBZAe4mIOn4pW62C7unulmHIHKVkNKzdoEX9Vw
+         3thXMgm5wZS94Ss8FMG1Nl/L8rZrFK2HDN5dteXCOpcRrRfKzoRw+tCI9yUnEheXyb
+         Ky/YObDmzmz4qm6O3PzEkH/QKTo7lq3YSZOKIAZqjtWUdFKq0UzBdJ4U8UwRyZ7A77
+         s8Ht7pTjBCYKdvcMhlCPXWq02EP9BA3GOcipJMm18EMl8IrVW03KqYZBmur7kAPdug
+         cY00b2JZVL5vQ==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Fri,  6 Oct 2023 19:05:03 +0300 (MSK)
+        Fri,  6 Oct 2023 19:05:00 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Fri, 6 Oct 2023 19:05:03 +0300
+ 15.2.1118.30; Fri, 6 Oct 2023 19:05:00 +0300
 From:   Dmitry Rokosov <ddrokosov@salutedevices.com>
 To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -46,9 +46,9 @@ CC:     <kernel@sberdevices.ru>, <rockosov@gmail.com>,
         <linux-leds@vger.kernel.org>,
         George Stark <gnstark@salutedevices.com>,
         Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v1 09/11] leds: aw200xx: improve autodim calculation method
-Date:   Fri, 6 Oct 2023 19:04:35 +0300
-Message-ID: <20231006160437.15627-10-ddrokosov@salutedevices.com>
+Subject: [PATCH v1 05/11] leds: aw200xx: calculate dts property display_rows in driver
+Date:   Fri, 6 Oct 2023 19:04:31 +0300
+Message-ID: <20231006160437.15627-6-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20231006160437.15627-1-ddrokosov@salutedevices.com>
 References: <20231006160437.15627-1-ddrokosov@salutedevices.com>
@@ -80,38 +80,74 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: George Stark <gnstark@salutedevices.com>
 
-use DIV_ROUND_UP instead of coarse div
+Get rid of device tree property "awinic,display-rows" and calculate it
+in driver using led definition nodes. display-row actually means number
+of current switches and depends on how leds are connected to the device.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
- drivers/leds/leds-aw200xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/leds/leds-aw200xx.c | 40 ++++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
-index 5a1a93ffe36c..09b8bc6724c7 100644
+index d92c082d4ab3..5b6907eb6299 100644
 --- a/drivers/leds/leds-aw200xx.c
 +++ b/drivers/leds/leds-aw200xx.c
-@@ -87,6 +87,8 @@
- #define AW200XX_REG_DIM(x, columns) \
- 	AW200XX_REG(AW200XX_PAGE4, AW200XX_LED2REG(x, columns) * 2)
- #define AW200XX_REG_DIM2FADE(x) ((x) + 1)
-+#define AW200XX_REG_FADE2DIM(fade) \
-+	DIV_ROUND_UP((fade) * AW200XX_DIM_MAX, AW200XX_FADE_MAX)
+@@ -383,6 +383,32 @@ static void aw200xx_disable(const struct aw200xx *const chip)
+ 		gpio_set_value(chip->hwen, 0);
+ }
  
- /*
-  * Duty ratio of display scan (see p.15 of datasheet for formula):
-@@ -195,9 +197,7 @@ static int aw200xx_brightness_set(struct led_classdev *cdev,
++static int aw200xx_probe_get_display_rows(struct device *dev, struct aw200xx *chip)
++{
++	struct fwnode_handle *child;
++	u32 max_source = 0;
++
++	device_for_each_child_node(dev, child) {
++		u32 source;
++		int ret;
++
++		ret = fwnode_property_read_u32(child, "reg", &source);
++		if (ret || source >= chip->cdef->channels)
++			continue;
++
++		if (max_source < source)
++			max_source = source;
++	}
++
++	chip->display_rows = max_source / chip->cdef->display_size_columns + 1;
++	if (!chip->display_rows) {
++		dev_err(dev, "No valid led definitions found\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static int aw200xx_probe_fw(struct device *dev, struct aw200xx *chip)
+ {
+ 	struct fwnode_handle *child;
+@@ -390,18 +416,8 @@ static int aw200xx_probe_fw(struct device *dev, struct aw200xx *chip)
+ 	int ret;
+ 	int i;
  
- 	dim = led->dim;
- 	if (dim < 0)
--		dim = max_t(int,
--			    brightness / (AW200XX_FADE_MAX / AW200XX_DIM_MAX),
--			    1);
-+		dim = AW200XX_REG_FADE2DIM(brightness);
+-	ret = device_property_read_u32(dev, "awinic,display-rows",
+-				       &chip->display_rows);
+-	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Failed to read 'display-rows' property\n");
+-
+-	if (!chip->display_rows ||
+-	    chip->display_rows > chip->cdef->display_size_rows_max) {
+-		return dev_err_probe(dev, ret,
+-				     "Invalid leds display size %u\n",
+-				     chip->display_rows);
+-	}
++	if (aw200xx_probe_get_display_rows(dev, chip))
++		return -EINVAL;
  
- 	ret = regmap_write(chip->regmap, reg, dim);
- 	if (ret)
+ 	current_max = aw200xx_imax_from_global(chip, AW200XX_IMAX_MAX_uA);
+ 	current_min = aw200xx_imax_from_global(chip, AW200XX_IMAX_MIN_uA);
 -- 
 2.36.0
 
