@@ -2,78 +2,104 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE3CCDB465
-	for <linux-leds@archiver.kernel.org>; Mon, 16 Oct 2023 09:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48FBCDB465
+	for <linux-leds@archiver.kernel.org>; Mon, 16 Oct 2023 10:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbjJPJRF (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 16 Oct 2023 05:17:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38692 "EHLO
+        id S233007AbjJPK56 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 16 Oct 2023 06:57:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjJPJRD (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Oct 2023 05:17:03 -0400
-X-Greylist: delayed 1814 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 16 Oct 2023 02:17:02 PDT
-Received: from connect.vanmierlo.com (fieber.vanmierlo.com [84.243.197.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7089AAB
-        for <linux-leds@vger.kernel.org>; Mon, 16 Oct 2023 02:17:02 -0700 (PDT)
-X-Footer: dmFubWllcmxvLmNvbQ==
-Received: from roundcube.vanmierlo.com ([192.168.37.37])
-        (authenticated user m.brock@vanmierlo.com)
-        by connect.vanmierlo.com (Kerio Connect 9.4.2) with ESMTPA;
-        Mon, 16 Oct 2023 10:46:44 +0200
+        with ESMTP id S232986AbjJPK5x (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Oct 2023 06:57:53 -0400
+Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA01B4;
+        Mon, 16 Oct 2023 03:57:48 -0700 (PDT)
+Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-5a7ab31fb8bso51807187b3.1;
+        Mon, 16 Oct 2023 03:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697453868; x=1698058668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MLo6lm8DCOrQa7cpbQxRmZ4AW2SzeQU7OJCzMZY1x2g=;
+        b=aDSw4pIKJC98rWNixSFAUkUY4AhA5ORPJMY3vs/jWbxM8ysxoDT/y73tkxLCB8hvGW
+         Q9yMMUFqvL6ADygXXnhWUQiVlQgfFLgWF1CMrMdH6svoin6ME+OqPA5dmr5aTK80ceBa
+         QGk9365gojojInRY4k7V2G87iOz82CDhb6WNKPyvylvJRaVG4Kdr4PP15VE6jj/rhxb2
+         +80/g3jsaK3S4HDB1N/dqdn/RIs7M5nz9873oymhW2QMPIppR9uoiIeT80TJiLtxjol9
+         BvzTj98+YBZJko9PFeLoE4JnMK1hGnshVP0mbuuwoKLDBgTbhbpYiKQfB7HCiRRf7oPM
+         n6Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697453868; x=1698058668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MLo6lm8DCOrQa7cpbQxRmZ4AW2SzeQU7OJCzMZY1x2g=;
+        b=srSYM9E/JDmpBhyUZhWSGbfFHxup/TLdS7ioZW1ymqlhK0GhE7PJLPmuZtYh0UyBWy
+         PKqBOYDhrkp5tWAAkk74vYEAKhqY/T20JT5du2Rx0DqJaMNQNT86Acuuc/VdrQpMBb2F
+         7grR8TijQn4TlSwIoQkElgaJlB+tqyxdhYx8TBIqfaGqDy7/NxiH5H9n9e7MErY6ozH0
+         gVtHia65X5v38WfFPXZ7Hhsf68BVF6RB0hQmPoxGvxSKrIT8bQCi0oVo+V34DsvBkUmk
+         Xhg280IRdggcwbIE9qh/+mE1eD5Z3q0HX9VNV+NWfASJcN4s/P0nYCFHMWXrwTEpNWAq
+         jW3A==
+X-Gm-Message-State: AOJu0YwHAoNpDF5HRZigi/7xL2FLNVDc+y7zpRKtj/Z4pJmKFSGn8Dbk
+        Bk4IZLdQgRngo2PZ5/ifSY4scQGOZ277TAXiCf4=
+X-Google-Smtp-Source: AGHT+IHc7UWoEBo9CKelVYa69UU9KXXFr9P5dhwxdsEhcMwW8dLuDYlvP5XHBxrpFdYeirrlCzCr7lCvaT/m0X/J7YM=
+X-Received: by 2002:a81:8441:0:b0:5a7:c8fa:c620 with SMTP id
+ u62-20020a818441000000b005a7c8fac620mr18397132ywf.0.1697453868093; Mon, 16
+ Oct 2023 03:57:48 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Mon, 16 Oct 2023 10:46:44 +0200
-From:   m.brock@vanmierlo.com
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org,
-        kabel@kernel.org, u.kleine-koenig@pengutronix.de,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-leds@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 3/4] trigger: ledtrig-tty: move variable definition to
- the top
-In-Reply-To: <20231016071332.597654-4-fe@dev.tdt.de>
-References: <20231016071332.597654-1-fe@dev.tdt.de>
- <20231016071332.597654-4-fe@dev.tdt.de>
-Message-ID: <93dcb9f6f218593084f834ba6b450999@vanmierlo.com>
-X-Sender: m.brock@vanmierlo.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20231011190017.1230898-1-wse@tuxedocomputers.com>
+ <ZSe1GYLplZo5fsAe@duo.ucw.cz> <0440ed38-c53b-4aa1-8899-969e5193cfef@tuxedocomputers.com>
+ <ZSf9QneKO/8IzWhd@duo.ucw.cz> <a244a00d-6be4-44bc-9d41-6f9df14de8ee@tuxedocomputers.com>
+ <ZSk16iTBmZ2fLHZ0@duo.ucw.cz> <aac81702-df1e-43a2-bfe9-28e9cb8d2282@tuxedocomputers.com>
+ <ZSmg4tqXiYiX18K/@duo.ucw.cz>
+In-Reply-To: <ZSmg4tqXiYiX18K/@duo.ucw.cz>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Mon, 16 Oct 2023 12:57:36 +0200
+Message-ID: <CANiq72mfP+dOLFR352O0UNVF8m8yTi_VmOY1zzQdTBjPWCRowg@mail.gmail.com>
+Subject: Re: Implement per-key keyboard backlight as auxdisplay?
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Werner Sembach <wse@tuxedocomputers.com>, ojeda@kernel.org,
+        Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-input@vger.kernel.org,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Florian Eckert wrote on 2023-10-16 09:13:
-> Has complained about the following construct:
+On Fri, Oct 13, 2023 at 9:56=E2=80=AFPM Pavel Machek <pavel@ucw.cz> wrote:
+>
+> So... a bit of rationale. The keyboard does not really fit into the
+> LED subsystem; LEDs are expected to be independent ("hdd led") and not
+> a matrix of them.
 
-Who is "Has" or who/what has complained?
+Makes sense.
 
-> drivers/leds/trigger/ledtrig-tty.c:362:3: error: a label can only be
-> part of a statement and a declaration is not a statement
-> 
-> Hence move the variable definition to the beginning of the function.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes:
-> https://lore.kernel.org/oe-kbuild-all/202309270440.IJB24Xap-lkp@intel.com/
-> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> ---
-> @@ -124,8 +125,6 @@ static void ledtrig_tty_work(struct work_struct 
-> *work)
-> 
->  	if (icount.rx != trigger_data->rx ||
->  	    icount.tx != trigger_data->tx) {
-> -		unsigned long interval = LEDTRIG_TTY_INTERVAL;
-> -
+> We do see various strange displays these days -- they commonly have
+> rounded corners and holes in them. I'm not sure how that's currently
+> supported, but I believe it is reasonable to view keyboard as a
+> display with slightly weird placing of pixels.
+>
+> Plus, I'd really like to play tetris on one of those :-).
+>
+> So, would presenting them as auxdisplay be acceptable? Or are there
+> better options?
 
-Is this kernel test robot broken?
-I see no label definition here.
-And this variable declaration is at the start of a new block which does 
-not
-even require C99 support.
+It sounds like a fair use case -- auxdisplay are typically simple
+character-based or small graphical displays, e.g. 128x64, that may not
+be a "main" / usual screen as typically understood, but the concept is
+a bit fuzzy and we are a bit of a catch-all.
 
->  		led_blink_set_oneshot(trigger_data->led_cdev, &interval,
->  				      &interval, 0);
+And "keyboard backlight display with a pixel/color per-key" does not
+sound like a "main" screen, and having some cute effects displayed
+there are the kind of thing that one could do in the usual small
+graphical ones too. :)
 
-Maarten
+But if somebody prefers to create new categories (or subcategories
+within auxdisplay) to hold these, that could be nice too (in the
+latter case, I would perhaps suggest reorganizing all of the existing
+ones while at it).
 
+Cheers,
+Miguel
