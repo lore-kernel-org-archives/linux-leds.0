@@ -2,51 +2,51 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1397CDB465
-	for <linux-leds@archiver.kernel.org>; Mon, 16 Oct 2023 16:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A65CDB465
+	for <linux-leds@archiver.kernel.org>; Mon, 16 Oct 2023 16:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233732AbjJPQKg (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 16 Oct 2023 12:10:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
+        id S232389AbjJPQLS (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 16 Oct 2023 12:11:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233746AbjJPQKd (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Oct 2023 12:10:33 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 360C0F2;
-        Mon, 16 Oct 2023 09:10:31 -0700 (PDT)
+        with ESMTP id S234026AbjJPQLF (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 16 Oct 2023 12:11:05 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C78AD56;
+        Mon, 16 Oct 2023 09:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697472631; x=1729008631;
+  t=1697472658; x=1729008658;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=cvuQMHb9LmDrcSq69UbNf/WifWB3BY+q2NCKjOo91RU=;
-  b=W6o2Y3WaRlIsFT6xoLxifGUMMYeyxfKpJa4G3qLa9mSLWzmIJKhliTLR
-   DXjkkv2kCRGL3GVo27lNzxQ/DUdpzYV6T5kvqWMTcWX5/a+DKz68rbihZ
-   CEMyUn0+AmWTe3kxlARJ17mnsQRyWVhayftDVYkkmKoYG7vobw9iFWRNZ
-   Jli2hy/O/PVdADyPjR4kQf4axnm8Pet4CkwyCzrcLvllqTtqs1UqJRSUm
-   HUgHGYvl1I7aZnhKxgI7qRwOcVd8yrCDX7YwMYoqCpMZ4nDjpb419aZZL
-   DVfazt2N05Gw8OhlFpIBbWtrz/cUexMVsDCHBCKzmWV19s83hOH29WdVy
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10865"; a="7132785"
+  bh=YUkxCSHEq/3rOrfuT0Fg4DI7Hj9/49mwADVgWbNCxXM=;
+  b=cVj697GdHtSBBYSmilaMSM9/h6D4j+erxXqGAXQmtopyenkoDo2pzX9/
+   J+0HhVJ1anSDYgaqvoz2/98mKksvXyzpIcjs9GHt+zeaUgBHcAXRjleI7
+   DsIpUMu1TRka2M7uAUAAFk7cwE65ty1cNRGRrx1xZ1WM0InPlWiFzpaKM
+   1xQI+abtg4UAy54tdOrjPEb5BavkyLojTzArkqwrvVidp2HYSEhtIedTF
+   JcL50o5lhO38Q7BL+SGKHVSyMF3cVBtmwJ2+S31YKVMY/AJeBW8o2oGA9
+   K0vdnlyuQlnkRQYEJZaiysr9GPZlao5/Vaaq4hF13Q0oq1903IUCVGoYQ
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10865"; a="384440997"
 X-IronPort-AV: E=Sophos;i="6.03,229,1694761200"; 
-   d="scan'208";a="7132785"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2023 09:10:12 -0700
+   d="scan'208";a="384440997"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2023 09:10:57 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10865"; a="785123038"
+X-IronPort-AV: E=McAfee;i="6600,9927,10865"; a="790856636"
 X-IronPort-AV: E=Sophos;i="6.03,229,1694761200"; 
-   d="scan'208";a="785123038"
+   d="scan'208";a="790856636"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 16 Oct 2023 09:10:10 -0700
+  by orsmga001.jf.intel.com with ESMTP; 16 Oct 2023 09:10:13 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 0A927385; Mon, 16 Oct 2023 19:10:08 +0300 (EEST)
+        id 48A5EA46; Mon, 16 Oct 2023 19:10:09 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Subject: [PATCH v1 2/6] leds: gpio: Utilise PTR_ERR_OR_ZERO()
-Date:   Mon, 16 Oct 2023 19:10:01 +0300
-Message-Id: <20231016161005.1471768-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 6/6] leds: gpio: Update headers
+Date:   Mon, 16 Oct 2023 19:10:05 +0300
+Message-Id: <20231016161005.1471768-6-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
 In-Reply-To: <20231016161005.1471768-1-andriy.shevchenko@linux.intel.com>
 References: <20231016161005.1471768-1-andriy.shevchenko@linux.intel.com>
@@ -56,41 +56,41 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Avoid a boilerplate code by using PTR_ERR_OR_ZERO() in create_gpio_led().
+Include headers which we are direct users of, no need
+to have proxies.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-gpio.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/leds/leds-gpio.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
-index debadb48ceda..4071cb9eefec 100644
+index d6e8298ffb3e..710c319ad312 100644
 --- a/drivers/leds/leds-gpio.c
 +++ b/drivers/leds/leds-gpio.c
-@@ -125,16 +125,13 @@ static int create_gpio_led(const struct gpio_led *template,
- 		return ret;
+@@ -6,17 +6,21 @@
+  * Raphael Assenat <raph@8d.com>
+  * Copyright (C) 2008 Freescale Semiconductor, Inc.
+  */
++#include <linux/container_of.h>
++#include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/kernel.h>
+ #include <linux/leds.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
++#include <linux/overflow.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/slab.h>
++#include <linux/types.h>
++
+ #include "leds.h"
  
- 	pinctrl = devm_pinctrl_get_select_default(led_dat->cdev.dev);
--	if (IS_ERR(pinctrl)) {
--		ret = PTR_ERR(pinctrl);
--		if (ret != -ENODEV) {
--			dev_warn(led_dat->cdev.dev,
--				 "Failed to select %pfw pinctrl: %d\n",
--				 fwnode, ret);
--		} else {
--			/* pinctrl-%d not present, not an error */
--			ret = 0;
--		}
-+	ret = PTR_ERR_OR_ZERO(pinctrl);
-+	/* pinctrl-%d not present, not an error */
-+	if (ret == -ENODEV)
-+		ret = 0;
-+	if (ret) {
-+		dev_warn(led_dat->cdev.dev, "Failed to select %pfw pinctrl: %d\n",
-+			 fwnode, ret);
- 	}
- 
- 	return ret;
+ struct gpio_led_data {
 -- 
 2.40.0.1.gaa8946217a0b
 
