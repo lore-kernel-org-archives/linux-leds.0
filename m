@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E25F1C25B72
-	for <linux-leds@archiver.kernel.org>; Wed, 25 Oct 2023 13:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196CAC25B47
+	for <linux-leds@archiver.kernel.org>; Wed, 25 Oct 2023 13:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344380AbjJYNH5 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:07:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
+        id S234977AbjJYNIC (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 25 Oct 2023 09:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344347AbjJYNHz (ORCPT
+        with ESMTP id S1344372AbjJYNHz (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Oct 2023 09:07:55 -0400
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24DF5111;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B258312F;
         Wed, 25 Oct 2023 06:07:53 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 41D8F100047;
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 944F5100049;
         Wed, 25 Oct 2023 16:07:45 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 41D8F100047
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 944F5100049
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
         s=mail; t=1698239265;
-        bh=oixfku0w9a55w5ewxmzKyEa0rIk5Ii9elJB6GpE/4So=;
+        bh=jFv3zRFPBURbWkj0WPqDbxM+2lb+aTaY7naFpHwUmqk=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=JTTgkKt0p6xO4qtz6WSKRWy/EAKHEVUbJHuYRMIpW/u5mzRvw+5YeQrApya0AzjYE
-         673HGNkA9lOnam9JcG4sHvTC3NfQnBIrqdWpXnxKqIzr3obiYJ5VEEJcuCrWtamRnW
-         nNq1qiE8ecwC3g24VScn4jGdkTozEIV7ZjE//RvEf18vg17uq4opxfKCUpejcsiZgW
-         Odly5/PkftjP7/H2XUrsp7/+DNvRlPsn0948dHMzrhFlpLDZ7GlQlCpviPcfZB8fGX
-         iS79uDOHdGwL6IDzc/cIgztEYi2LEXwH/GRuA4zmJSGThQcFfybuW2Q4hTLx3KSvhK
-         yXRG75zTfFupg==
+        b=QZ+3oERQ60BbSQDRTDDg7BpzHN8Yp2ggrHeGmuqVl2QEa2Pfof8BoyVWfiw8d2Qom
+         dhnZcGc32wNXr9vLV2cJbFbBB2TTOOzOs73qH/+jKsItMuNNljqwFuBse0AjkwpjzZ
+         2qAwHq5+fqeqUvlCSwdlnq9ftxnwq4mV6Mugvxk7hqOhas3UK4zD7Ve+H6ws/z1Pum
+         kptVRCooRp4TWSqzLsJjBRYjMcvv6tz8ntzUKJ9XMAmxFU6aHCPFVuBzCSHQWJUrGi
+         z+qTSBKQa+ESPXECLiEa4gHlEc89nWkaiLEkY37N9e1WE+hTm2Sj79KcSUuPy+03vm
+         idVrUkgmFPZ9g==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
@@ -36,16 +36,16 @@ Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [1
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.37; Wed, 25 Oct 2023 16:07:44 +0300
+ 15.2.1118.37; Wed, 25 Oct 2023 16:07:45 +0300
 From:   George Stark <gnstark@salutedevices.com>
 To:     <pavel@ucw.cz>, <lee@kernel.org>, <vadimp@nvidia.com>,
         <mpe@ellerman.id.au>, <npiggin@gmail.com>,
         <christophe.leroy@csgroup.eu>, <gnstark@salutedevices.com>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxppc-dev@lists.ozlabs.org>, <kernel@sberdevices.ru>
-Subject: [PATCH 5/8] leds: aw200xx: explicitly unregister LEDs at module's shutdown
-Date:   Wed, 25 Oct 2023 16:07:34 +0300
-Message-ID: <20231025130737.2015468-6-gnstark@salutedevices.com>
+Subject: [PATCH 7/8] leds: lp3952: explicitly unregister LEDs at module's shutdown
+Date:   Wed, 25 Oct 2023 16:07:36 +0300
+Message-ID: <20231025130737.2015468-8-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231025130737.2015468-1-gnstark@salutedevices.com>
 References: <20231025130737.2015468-1-gnstark@salutedevices.com>
@@ -83,24 +83,27 @@ So explicitly unregister LEDs at module shutdown.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
- drivers/leds/leds-aw200xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/leds/leds-lp3952.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
-index 96979b8e09b7..3da0923507ec 100644
---- a/drivers/leds/leds-aw200xx.c
-+++ b/drivers/leds/leds-aw200xx.c
-@@ -539,6 +539,10 @@ static int aw200xx_probe(struct i2c_client *client)
- static void aw200xx_remove(struct i2c_client *client)
+diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+index 3bd55652a706..2de49192011a 100644
+--- a/drivers/leds/leds-lp3952.c
++++ b/drivers/leds/leds-lp3952.c
+@@ -257,8 +257,13 @@ static int lp3952_probe(struct i2c_client *client)
+ static void lp3952_remove(struct i2c_client *client)
  {
- 	struct aw200xx *chip = i2c_get_clientdata(client);
+ 	struct lp3952_led_array *priv;
 +	int i;
-+
-+	for (i = 0; i < chip->num_leds; i++)
-+		devm_led_classdev_unregister(&client->dev, &chip->leds[i].cdev);
  
- 	aw200xx_chip_reset(chip);
- 	mutex_destroy(&chip->mutex);
+ 	priv = i2c_get_clientdata(client);
++	for (i = 0; i < LP3952_LED_ALL; i++)
++		if (priv->leds[i].priv)
++			devm_led_classdev_unregister(&client->dev,
++						     &priv->leds[i].cdev);
+ 	lp3952_on_off(priv, LP3952_LED_ALL, false);
+ 	gpiod_set_value(priv->enable_gpio, 0);
+ }
 -- 
 2.38.4
 
