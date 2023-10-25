@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B65C25B70
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BFFC25B6D
 	for <linux-leds@archiver.kernel.org>; Wed, 25 Oct 2023 13:07:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234960AbjJYNHz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:07:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48978 "EHLO
+        id S1344329AbjJYNHy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 25 Oct 2023 09:07:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234952AbjJYNHx (ORCPT
+        with ESMTP id S234947AbjJYNHx (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Oct 2023 09:07:53 -0400
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70DC5116;
-        Wed, 25 Oct 2023 06:07:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F9E131;
+        Wed, 25 Oct 2023 06:07:48 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 667BE10003F;
-        Wed, 25 Oct 2023 16:07:44 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 667BE10003F
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 1626E100046;
+        Wed, 25 Oct 2023 16:07:45 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 1626E100046
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-        s=mail; t=1698239264;
-        bh=yGub9+Dsp9bk1acBBB0/yAlR8ZzAfw6sZjBF08zOdpU=;
+        s=mail; t=1698239265;
+        bh=0EQMoFRrUMx/pZxHfkfAMtFPBkQrssL7XqzVKbD+szU=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=s4EP/TnfUb8IXrOlVO//TgpOfTSDBG+Z+BupDUdIDF4DstolYt1F8kT5getb3vo/v
-         Bmy7SwjJb7ThjM6IhKaxIjjDZsqZonF/QV18hXnUWatQvWRYf5mA0Is2cA3hNNcK1U
-         phiXb4HwBMu81Q05o/V3t3ENkXUzgZzw5zaHTbo06EMUPjKpXUaKxQvPmwzUsEgvyM
-         qkcKPnKtKzHGjduuCKmuSVgfvCAkJM04Rb8aOOpc7o5AiM6v7fEt2KrwlsJ+EcEVcm
-         8tSPkAhUdpoFrPGRlsflj/Q3iF2v8leMoMNgKzrnZQSRIfs127bnTYk19IAP4QW8Op
-         PkfyBfHAvf2XQ==
+        b=vx7Mcugj3I9S9uBn5rE9V5gZRQf8CUYDa9cbpn7gaCtackskccpRqqVw0zcmZ3QOS
+         0zraMsyawXa63Eg83alOBOoAtLHB1PkWXAjhXzNHVl+1Q0HEIJYffeuEfMuQSo5jtN
+         jyg+rx5GyBPaiwkC7GhYzrbG1CYRymgrWqSufJ72/P5JccGdqk4gbd5JBmOj85byQi
+         8RWoH1dl+oNkX1MVLlDNk9a++QarZSRWb97vGp8eL9Pi8Etletswgf3DWNzMxv3RCi
+         7d9NkNYGklHunkQY0Krex0ADtCfcboiJIwI5CzBDrQGNb0bOPN2OjKMJshjUCvloLw
+         wKoGthGQ0y5vA==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
@@ -36,17 +36,19 @@ Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [1
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.37; Wed, 25 Oct 2023 16:07:43 +0300
+ 15.2.1118.37; Wed, 25 Oct 2023 16:07:44 +0300
 From:   George Stark <gnstark@salutedevices.com>
 To:     <pavel@ucw.cz>, <lee@kernel.org>, <vadimp@nvidia.com>,
         <mpe@ellerman.id.au>, <npiggin@gmail.com>,
         <christophe.leroy@csgroup.eu>, <gnstark@salutedevices.com>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxppc-dev@lists.ozlabs.org>, <kernel@sberdevices.ru>
-Subject: [PATCH 0/8] devm_led_classdev_register() usage problem
-Date:   Wed, 25 Oct 2023 16:07:29 +0300
-Message-ID: <20231025130737.2015468-1-gnstark@salutedevices.com>
+Subject: [PATCH 4/8] leds: mlxreg: explicitly unregister LEDs at module's shutdown
+Date:   Wed, 25 Oct 2023 16:07:33 +0300
+Message-ID: <20231025130737.2015468-5-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20231025130737.2015468-1-gnstark@salutedevices.com>
+References: <20231025130737.2015468-1-gnstark@salutedevices.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -73,84 +75,53 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Lots of drivers use devm_led_classdev_register() to register their led objects
-and let the kernel free those leds at the driver's remove stage.
-It can lead to a problem due to led_classdev_unregister()
-implementation calls led_set_brightness() to turn off the led.
-led_set_brightness() may call one of the module's brightness_set callbacks.
-If that callback uses module's resources allocated without using devm funcs()
-then those resources will be already freed at module's remove() callback and
-we may have use-after-free situation.
+LEDs are registered using devm_led_classdev_register() and automatically
+unregistered after module's remove(). led_classdev_unregister() calls
+led_set_brightness() to turn off the LEDs and module's appropriate callback
+uses resources those were destroyed already in module's remove().
+So explicitly unregister LEDs at module shutdown.
 
-Here is an example:
+Signed-off-by: George Stark <gnstark@salutedevices.com>
+---
+ drivers/leds/leds-mlxreg.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-module_probe()
-{
-    devm_led_classdev_register(module_brightness_set_cb);
-    mutex_init(&mutex);
-}
-
-module_brightness_set_cb()
-{
-    mutex_lock(&mutex);
-    do_set_brightness();
-    mutex_unlock(&mutex);
-}
-
-module_remove()
-{
-    mutex_destroy(&mutex);
-}
-
-at rmmod:
-module_remove()
-    ->mutex_destroy(&mutex);
-devres_release_all()
-    ->led_classdev_unregister();
-        ->led_set_brightness();
-            ->module_brightness_set_cb();
-                 ->mutex_lock(&mutex);  /* use-after-free */
-
-I think it's an architectural issue and should be discussed thoroughly.
-Some thoughts about fixing it as a start:
-1) drivers can use devm_led_classdev_unregister() to explicitly free leds before
-dependend resources are freed. devm_led_classdev_register() remains being useful
-to simplify probe implementation.
-As a proof of concept I examined all drivers from drivers/leds and prepared
-patches where it's needed. Sometimes it was not as clean as just calling
-devm_led_classdev_unregister() because several drivers do not track
-their leds object at all - they can call devm_led_classdev_register() and drop the
-returned pointer. In that case I used devres group API.
-
-Drivers outside drivers/leds should be checked too after discussion.
-
-2) remove led_set_brightness from led_classdev_unregister() and force the drivers
-to turn leds off at shutdown. May be add check that led's brightness is 0
-at led_classdev_unregister() and put a warning to dmesg if it's not.
-Actually in many cases it doesn't really need to turn off the leds manually one-by-one
-if driver shutdowns whole led controller. For the last case to disable the warning
-new flag can be brought in e.g LED_AUTO_OFF_AT_SHUTDOWN (similar to LED_RETAIN_AT_SHUTDOWN).
-
-George Stark (8):
-  leds: powernv: explicitly unregister LEDs at module's shutdown
-  leds: nic78bx: explicitly unregister LEDs at module's shutdown
-  leds: an30259a: explicitly unregister LEDs at module's shutdown
-  leds: mlxreg: explicitly unregister LEDs at module's shutdown
-  leds: aw200xx: explicitly unregister LEDs at module's shutdown
-  leds: aw2013: explicitly unregister LEDs at module's shutdown
-  leds: lp3952: explicitly unregister LEDs at module's shutdown
-  leds: lm3532: explicitly unregister LEDs at module's shutdown
-
- drivers/leds/leds-an30259a.c |  4 ++++
- drivers/leds/leds-aw200xx.c  |  4 ++++
- drivers/leds/leds-aw2013.c   |  4 ++++
- drivers/leds/leds-lm3532.c   |  6 ++++++
- drivers/leds/leds-lp3952.c   |  5 +++++
- drivers/leds/leds-mlxreg.c   | 12 +++++++++++-
- drivers/leds/leds-nic78bx.c  |  4 ++++
- drivers/leds/leds-powernv.c  |  7 +++++++
- 8 files changed, 45 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
+index b7855c93bd72..6d65e39c3372 100644
+--- a/drivers/leds/leds-mlxreg.c
++++ b/drivers/leds/leds-mlxreg.c
+@@ -258,6 +258,7 @@ static int mlxreg_led_probe(struct platform_device *pdev)
+ {
+ 	struct mlxreg_core_platform_data *led_pdata;
+ 	struct mlxreg_led_priv_data *priv;
++	int res;
+ 
+ 	led_pdata = dev_get_platdata(&pdev->dev);
+ 	if (!led_pdata) {
+@@ -273,13 +274,22 @@ static int mlxreg_led_probe(struct platform_device *pdev)
+ 	priv->pdev = pdev;
+ 	priv->pdata = led_pdata;
+ 
+-	return mlxreg_led_config(priv);
++	if (!devres_open_group(&pdev->dev, priv, GFP_KERNEL))
++		return -ENOMEM;
++
++	res = mlxreg_led_config(priv);
++	if (res)
++		devres_remove_group(&pdev->dev, priv);
++
++	return res;
+ }
+ 
+ static int mlxreg_led_remove(struct platform_device *pdev)
+ {
+ 	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
+ 
++	devres_release_group(&pdev->dev, priv);
++
+ 	mutex_destroy(&priv->access_lock);
+ 
+ 	return 0;
 -- 
 2.38.4
 
