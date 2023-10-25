@@ -2,32 +2,32 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BFFC25B6D
-	for <linux-leds@archiver.kernel.org>; Wed, 25 Oct 2023 13:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436B1C07545
+	for <linux-leds@archiver.kernel.org>; Wed, 25 Oct 2023 13:07:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344329AbjJYNHy (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Wed, 25 Oct 2023 09:07:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49000 "EHLO
+        id S1344373AbjJYNHz (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Wed, 25 Oct 2023 09:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234947AbjJYNHx (ORCPT
+        with ESMTP id S234926AbjJYNHx (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 25 Oct 2023 09:07:53 -0400
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10F9E131;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5BC130;
         Wed, 25 Oct 2023 06:07:48 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 1626E100046;
-        Wed, 25 Oct 2023 16:07:45 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 1626E100046
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 8E872100043;
+        Wed, 25 Oct 2023 16:07:44 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8E872100043
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-        s=mail; t=1698239265;
-        bh=0EQMoFRrUMx/pZxHfkfAMtFPBkQrssL7XqzVKbD+szU=;
+        s=mail; t=1698239264;
+        bh=QI0eEMit4cRAk0dzmRcmJgiC5EDe0H7Kqy7+mSGTVrU=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=vx7Mcugj3I9S9uBn5rE9V5gZRQf8CUYDa9cbpn7gaCtackskccpRqqVw0zcmZ3QOS
-         0zraMsyawXa63Eg83alOBOoAtLHB1PkWXAjhXzNHVl+1Q0HEIJYffeuEfMuQSo5jtN
-         jyg+rx5GyBPaiwkC7GhYzrbG1CYRymgrWqSufJ72/P5JccGdqk4gbd5JBmOj85byQi
-         8RWoH1dl+oNkX1MVLlDNk9a++QarZSRWb97vGp8eL9Pi8Etletswgf3DWNzMxv3RCi
-         7d9NkNYGklHunkQY0Krex0ADtCfcboiJIwI5CzBDrQGNb0bOPN2OjKMJshjUCvloLw
-         wKoGthGQ0y5vA==
+        b=EmYuRvSh8MROTQg+CWmVIV3ikaw4wqLxA7YespJ51Vt90wv4OJBBVdF+A5bM2O+Ba
+         xt2+No1w8iIhvvbU5n2TEQAIQYAcJMnAhYhjOx9JLMTz+KvRmWNDTkFhsIVeHS15FX
+         kFcvkjVZyJdhPO7MLDC+1DlRcdY/ab9UH9b07OjAxJzT7FcihnWqKC7njeuiOZiu0s
+         dGG9otRgt3xpTKhii8rk7Hf5c2WpFtWR7RloZynI1NYjVRB0QniDtYs6JssC4m75SN
+         DP+ROqDLgC3vJW3qJrzHnHAvhngpAEgcn8eKIZ5x08gylzWBzvkkVv713uOWrfqwHr
+         Z1G9FXd3eeORw==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
@@ -43,9 +43,9 @@ To:     <pavel@ucw.cz>, <lee@kernel.org>, <vadimp@nvidia.com>,
         <christophe.leroy@csgroup.eu>, <gnstark@salutedevices.com>
 CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxppc-dev@lists.ozlabs.org>, <kernel@sberdevices.ru>
-Subject: [PATCH 4/8] leds: mlxreg: explicitly unregister LEDs at module's shutdown
-Date:   Wed, 25 Oct 2023 16:07:33 +0300
-Message-ID: <20231025130737.2015468-5-gnstark@salutedevices.com>
+Subject: [PATCH 1/8] leds: powernv: explicitly unregister LEDs at module's shutdown
+Date:   Wed, 25 Oct 2023 16:07:30 +0300
+Message-ID: <20231025130737.2015468-2-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231025130737.2015468-1-gnstark@salutedevices.com>
 References: <20231025130737.2015468-1-gnstark@salutedevices.com>
@@ -83,45 +83,35 @@ So explicitly unregister LEDs at module shutdown.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
- drivers/leds/leds-mlxreg.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/leds/leds-powernv.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
-index b7855c93bd72..6d65e39c3372 100644
---- a/drivers/leds/leds-mlxreg.c
-+++ b/drivers/leds/leds-mlxreg.c
-@@ -258,6 +258,7 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- {
- 	struct mlxreg_core_platform_data *led_pdata;
- 	struct mlxreg_led_priv_data *priv;
-+	int res;
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 743e2cdd0891..7c7f696c8265 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -302,7 +302,12 @@ static int powernv_led_probe(struct platform_device *pdev)
  
- 	led_pdata = dev_get_platdata(&pdev->dev);
- 	if (!led_pdata) {
-@@ -273,13 +274,22 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- 	priv->pdev = pdev;
- 	priv->pdata = led_pdata;
+ 	platform_set_drvdata(pdev, powernv_led_common);
  
--	return mlxreg_led_config(priv);
 +	if (!devres_open_group(&pdev->dev, priv, GFP_KERNEL))
 +		return -ENOMEM;
 +
-+	res = mlxreg_led_config(priv);
-+	if (res)
-+		devres_remove_group(&pdev->dev, priv);
-+
-+	return res;
- }
- 
- static int mlxreg_led_remove(struct platform_device *pdev)
+ 	rc = powernv_led_classdev(pdev, led_node, powernv_led_common);
++	if (rc)
++		devres_remove_group(dev, priv);
+ out:
+ 	of_node_put(led_node);
+ 	return rc;
+@@ -313,6 +318,8 @@ static int powernv_led_remove(struct platform_device *pdev)
  {
- 	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
+ 	struct powernv_led_common *powernv_led_common;
  
-+	devres_release_group(&pdev->dev, priv);
++	devres_release_group(&pdev->dev, powernv_led_common);
 +
- 	mutex_destroy(&priv->access_lock);
- 
- 	return 0;
+ 	/* Disable LED operation */
+ 	powernv_led_common = platform_get_drvdata(pdev);
+ 	powernv_led_common->led_disabled = true;
 -- 
 2.38.4
 
