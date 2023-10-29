@@ -2,67 +2,66 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFA3C4167D
-	for <linux-leds@archiver.kernel.org>; Sun, 29 Oct 2023 21:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 946FDC4167B
+	for <linux-leds@archiver.kernel.org>; Sun, 29 Oct 2023 21:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230381AbjJ2V1v (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Sun, 29 Oct 2023 17:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52196 "EHLO
+        id S230388AbjJ2V1w (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Sun, 29 Oct 2023 17:27:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjJ2V1u (ORCPT
+        with ESMTP id S230325AbjJ2V1u (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Sun, 29 Oct 2023 17:27:50 -0400
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19FAFBC;
-        Sun, 29 Oct 2023 14:27:45 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 79A015C0131;
-        Sun, 29 Oct 2023 17:27:44 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75109C1;
+        Sun, 29 Oct 2023 14:27:48 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id E055F5C0132;
+        Sun, 29 Oct 2023 17:27:47 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Sun, 29 Oct 2023 17:27:44 -0400
+  by compute5.internal (MEProxy); Sun, 29 Oct 2023 17:27:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
         cc:cc:content-transfer-encoding:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1698614864; x=
-        1698701264; bh=A2jXfVOkfopr59synhPTE2K5qelNk+BTDcO0NBezLEc=; b=n
-        mjYzBDOSdbYxM2dg1RIjohpz+AATAlO2OhI1iKnT4UC+pmImKoY3C7QLRlF7a/Ac
-        w9Tiq4Wru2TWUrVfNpydhdLyiTKVZcmOHA6zA/UCcdodTDGrimwQog3xPFLdo+bv
-        cjUhbalXMAYuY4Vah2HAnsRVuKlUKRWAYiQw0Otm/x5Ev9CP+nOMUN0lPmYkfHGC
-        4Ws7WcN8SzZd7s1wz7xMmvZMLOFUgLIhCIT+FL9NOGSlMUM+KeNGT91yQiLV9U1O
-        YKKmyOm1rVY1cYam69b5/nOu5cGy2N3wrnmJeCYy+BDqIRneTu576PvEwLTmptpk
-        +zWLUpXqE3EbLqpWBUtVA==
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1698614867; x=
+        1698701267; bh=iEJQRW8XFToPuwgph8rKTRMVOhjzZOWs5XTsNlQdUKI=; b=y
+        ZwG9v2PoNbsKRh7ZW+9x4bEOOutmyNp4MzYot7123IKjKsPWq+yyB+NIIQA3E4mT
+        8tb+G+KrTzwEnmzi375qqbwfKQ2HbFkZL4fg6DNu0Sw0fx6oV+O91LO07QED1U94
+        8qHKBJE4ujEIytwIG/vpU7Oeqz2jtwqfSNh0bcf+TLYhvRwLOIbaqlsTZaaDEVHN
+        eik/+xpPSNmj2/ZvKUjX4eBBzA0zwo/YA1gDF0iQpwPfcXdDNFt3KeFJsBK731BD
+        umaohYZrPo+/INYurd0RbYn+hjWNpNGYS549pl6aObUT27FspDTv3L8R13Kd/M0P
+        bCr2E5ght93/LdLHs3bHw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:date:date:feedback-id:feedback-id:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1698614864; x=
-        1698701264; bh=A2jXfVOkfopr59synhPTE2K5qelNk+BTDcO0NBezLEc=; b=k
-        bQXc6GN/XXLAqBz+O2oD3QrgAKXmQF6uykd4CePuJ8ZSiI8AxRbHMDy1BYf1TDM6
-        Ctjk4ASQyOpR2C2dHvBA8sVuAi7MUQrstiO4nMUkk5mur33TsAx+g0BvnqEaVfHc
-        VfxAGbzLjPP1eL8Jy2VWRwNDA8F7O7t52dVKXXveLePSdKUfOhe8u9ODFUTBpxwi
-        ZXYKUMtDzLJtBA1SRaPce3LfghtBJ5gpHovuCc20DPOqDUAFx+e9d3j/q5UHPxZ9
-        0c5nxwUl2JZUTsIJCSPJcljf460KQTpA0w1SC4WOVYaaoIoYzWsq7opFhZ/tIF8V
-        bbj6EyFxXIS0dCzjhQ8Jg==
-X-ME-Sender: <xms:T84-ZbV2BlxYEZCahjntG9LYL9VYzZXsO8FP0iEV8zl0Y6Ttv28Asg>
-    <xme:T84-ZTlFOaoUk9RXildNFOSCTMQmno198u5h6kKja-fi7vg-xqn0ZJFDEeW0FT6c5
-    yZrW_F1k2cFJbqzjQ>
-X-ME-Received: <xmr:T84-ZXYHgCS7NH1w2J16oBJv8BYTnrjQWWb4DNc6yFCKfFWH9M9wHrUqkXAiZ9Sev0ZE4B3B-QyAiQPjxzW09Lml-BEu3eTNODFJ9DDyhT44_IGizhlwsPHdpVKLsEaIFrWSdQ>
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1698614867; x=
+        1698701267; bh=iEJQRW8XFToPuwgph8rKTRMVOhjzZOWs5XTsNlQdUKI=; b=L
+        dTfUGdQhJDft9NEWrDELH1Vu9ex0KCsF9nYXX9EdjiO1BcPTcRDaMwMfv78cFwGX
+        ZRAKUkf71ZM2B8uZT7rmq+8Q0qXkzzORP7MMhkli5fBf8D/BBc++TIn9ivZO2qt2
+        +bDX3e8dGV3OmnB2FIG5Vu0T4yF9XGDOLKqLRxaDIzBfHqXcl0AjPCnPv0eEMPXK
+        nCkOiA4c/vH+l+a1SPa96XBPTbWkLlf62aTHXsV6z/qx6Ifh5Nxu3+cMNtfCb90E
+        ge42fruG/LA1NBiLdXz+S2WpVLc70Mdum825/MGxB4m8t3jPFraN2tM3dSXt/kP6
+        0mE5aV+NckYOO2UzSS9kg==
+X-ME-Sender: <xms:U84-ZQxoUDBCivZPRjESbv7FLDcVOP6a2OjC3rDIbssneyjJTCYhWw>
+    <xme:U84-ZUQxvWo-pQJJRyNJR7VrTp8pA8XQzqZ8Eoqjdnq25S_c9Cft6u5Cug83uHTIA
+    ZQgysTctgVhyjCwYA>
+X-ME-Received: <xmr:U84-ZSVq4cas52v1Z2dUxOSogGSwP3HXB5S_fEMPMwWWKAS7tYFc-jsV3f2_oOAeVdJH47Eo73M0OcRHE7LpTuadiQwxC8l0lY-seOLE8Q6TNiEqnVPVzZ5152h1ywfhFZVcfw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrleekgddugeekucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhu
     vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecugg
-    ftrfgrthhtvghrnhepgffhvefhgfehjeehgfekheeuffegheffjeegheeuudeufeffhffh
-    ueeihfeufffhnecuffhomhgrihhnpeguvghvihgtvghtrhgvvgdrohhrghenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgvlhesshhh
-    ohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:T84-ZWWd4grisQGmSbMaxDCDIXVcGAGJHJTVsAn82tAbhJ71GjxwLQ>
-    <xmx:T84-ZVmGRSfyV7ASVmWLdtws4TZgrArpFxP4payXb-R9-eDu74HfDQ>
-    <xmx:T84-ZTfGQLhIlhZcj9_9Jax3R-2VfuKlFze7uAl7FjPJ-D9oPZvPIw>
-    <xmx:UM4-ZdO5XcedczGL6xzDiaUIjwqch0-mpei0nYhX7HNpl9N681ok4Q>
+    ftrfgrthhtvghrnhepudekteeuudehtdelteevgfduvddvjefhfedulefgudevgeeghefg
+    udefiedtveetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:U84-ZejbVmgK_6-f0CK1mc6q-y0LVEIiE_sK3FKuyuYht82_s5eQ-A>
+    <xmx:U84-ZSDWsZxWvWKyzpJ4QhaRgbvXn8U7HN93QKUHnYTPP0SEO4n2fw>
+    <xmx:U84-ZfKHfySLQl3Be9Fk65ORamu2ALKBRJeNsZTSySNxs-0UerfI-A>
+    <xmx:U84-ZUx4tvf-bNJ3tfsG1xm7dPv_Ksg3lAkb7LE50auBY8WShxiMjQ>
 Feedback-ID: i0ad843c9:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Oct 2023 17:27:42 -0400 (EDT)
+ 29 Oct 2023 17:27:46 -0400 (EDT)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
         linux-leds@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
@@ -83,12 +82,10 @@ Cc:     Samuel Holland <samuel@sholland.org>,
         Trevor Woerner <twoerner@gmail.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, Maxime Ripard <mripard@kernel.org>,
-        Palmer Dabbelt <palmer@rivosinc.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v8 1/5] dt-bindings: leds: Add Allwinner A100 LED controller
-Date:   Sun, 29 Oct 2023 16:26:55 -0500
-Message-ID: <20231029212738.7871-2-samuel@sholland.org>
+        linux-sunxi@lists.linux.dev
+Subject: [PATCH v8 3/5] arm64: dts: allwinner: a100: Add LED controller node
+Date:   Sun, 29 Oct 2023 16:26:57 -0500
+Message-ID: <20231029212738.7871-4-samuel@sholland.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20231029212738.7871-1-samuel@sholland.org>
 References: <20231029212738.7871-1-samuel@sholland.org>
@@ -98,189 +95,46 @@ Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-The Allwinner A100, R329, and D1 SoCs contain an LED controller designed
-to drive a series of RGB LED pixels. It supports PIO and DMA transfers,
-and has configurable timing and pixel format. All three implementations
-appear to be identical, so use the oldest as the fallback compatible.
+Allwinner A100 contains an LED controller. Add it to the devicetree.
 
 Acked-by: Guo Ren <guoren@kernel.org>
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Tested-by: Trevor Woerner <twoerner@gmail.com>
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 ---
 
-Changes in v8:
- - Remove redundant "Bindings" from the binding document title
- - Make the DMA channel optional; the driver now works without DMA
+(no changes since v5)
 
 Changes in v5:
- - A100 contains the original implementation, so use that as the base
-   compatible string, and rename the binding to match
- - Add "unevaluatedProperties: false" to the child multi-led binding
+ - New patch for v5
 
-Changes in v4:
- - Use "default" instead of "maxItems" for timing properties
+ arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Changes in v3:
- - Removed quotes from enumeration values
- - Added vendor prefix to timing/format properties
- - Renamed "format" property to "pixel-format" for clarity
- - Dropped "vled-supply" as it is unrelated to the controller hardware
-
-Changes in v2:
- - Fixed typo leading to duplicate t1h-ns property
- - Removed "items" layer in definition of dmas/dma-names
- - Replaced uint32 type reference with maxItems in timing properties
-
- .../leds/allwinner,sun50i-a100-ledc.yaml      | 137 ++++++++++++++++++
- 1 file changed, 137 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/allwinner,sun50i-a100-ledc.yaml
-
-diff --git a/Documentation/devicetree/bindings/leds/allwinner,sun50i-a100-ledc.yaml b/Documentation/devicetree/bindings/leds/allwinner,sun50i-a100-ledc.yaml
-new file mode 100644
-index 000000000000..760cb336dccb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/allwinner,sun50i-a100-ledc.yaml
-@@ -0,0 +1,137 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/allwinner,sun50i-a100-ledc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+index a3dccf193765..037750d383f8 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+@@ -273,6 +273,20 @@ i2c3: i2c@5002c00 {
+ 			#size-cells = <0>;
+ 		};
+ 
++		ledc: led-controller@5018000 {
++			compatible = "allwinner,sun50i-a100-ledc";
++			reg = <0x5018000 0x400>;
++			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_LEDC>, <&ccu CLK_LEDC>;
++			clock-names = "bus", "mod";
++			resets = <&ccu RST_BUS_LEDC>;
++			dmas = <&dma 42>;
++			dma-names = "tx";
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
 +
-+title: Allwinner A100 LED Controller
-+
-+maintainers:
-+  - Samuel Holland <samuel@sholland.org>
-+
-+description:
-+  The LED controller found in Allwinner sunxi SoCs uses a one-wire serial
-+  interface to drive up to 1024 RGB LEDs.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: allwinner,sun50i-a100-ledc
-+      - items:
-+          - enum:
-+              - allwinner,sun20i-d1-ledc
-+              - allwinner,sun50i-r329-ledc
-+          - const: allwinner,sun50i-a100-ledc
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Bus clock
-+      - description: Module clock
-+
-+  clock-names:
-+    items:
-+      - const: bus
-+      - const: mod
-+
-+  resets:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 1
-+    description: TX DMA channel
-+
-+  dma-names:
-+    const: tx
-+
-+  allwinner,pixel-format:
-+    description: Pixel format (subpixel transmission order), default is "grb"
-+    enum:
-+      - bgr
-+      - brg
-+      - gbr
-+      - grb
-+      - rbg
-+      - rgb
-+
-+  allwinner,t0h-ns:
-+    default: 336
-+    description: Length of high pulse when transmitting a "0" bit
-+
-+  allwinner,t0l-ns:
-+    default: 840
-+    description: Length of low pulse when transmitting a "0" bit
-+
-+  allwinner,t1h-ns:
-+    default: 882
-+    description: Length of high pulse when transmitting a "1" bit
-+
-+  allwinner,t1l-ns:
-+    default: 294
-+    description: Length of low pulse when transmitting a "1" bit
-+
-+  allwinner,treset-ns:
-+    default: 300000
-+    description: Minimum delay between transmission frames
-+
-+patternProperties:
-+  "^multi-led@[0-9a-f]+$":
-+    type: object
-+    $ref: leds-class-multicolor.yaml#
-+    unevaluatedProperties: false
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 1023
-+        description: Index of the LED in the series (must be contiguous)
-+
-+    required:
-+      - reg
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - resets
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    ledc: led-controller@2008000 {
-+      compatible = "allwinner,sun20i-d1-ledc",
-+                   "allwinner,sun50i-a100-ledc";
-+      reg = <0x2008000 0x400>;
-+      interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&ccu 12>, <&ccu 34>;
-+      clock-names = "bus", "mod";
-+      resets = <&ccu 12>;
-+      dmas = <&dma 42>;
-+      dma-names = "tx";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      multi-led@0 {
-+        reg = <0x0>;
-+        color = <LED_COLOR_ID_RGB>;
-+        function = LED_FUNCTION_INDICATOR;
-+      };
-+    };
-+
-+...
+ 		ths: thermal-sensor@5070400 {
+ 			compatible = "allwinner,sun50i-a100-ths";
+ 			reg = <0x05070400 0x100>;
 -- 
 2.41.0
 
