@@ -2,35 +2,35 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9210C4167D
-	for <linux-leds@archiver.kernel.org>; Mon, 30 Oct 2023 10:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74504C4167D
+	for <linux-leds@archiver.kernel.org>; Mon, 30 Oct 2023 10:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232777AbjJ3KPw (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 30 Oct 2023 06:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
+        id S232599AbjJ3KS1 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 30 Oct 2023 06:18:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232829AbjJ3KPX (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 30 Oct 2023 06:15:23 -0400
+        with ESMTP id S232596AbjJ3KR5 (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 30 Oct 2023 06:17:57 -0400
 Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414C47AB3;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17117ABC;
         Mon, 30 Oct 2023 03:05:01 -0700 (PDT)
 Received: from [127.0.0.1] (helo=localhost)
         by relay.expurgate.net with smtp (Exim 4.92)
         (envelope-from <prvs=9681cd3a30=fe@dev.tdt.de>)
-        id 1qxP8i-0076ja-1V; Mon, 30 Oct 2023 11:04:56 +0100
+        id 1qxP8h-0076gk-FT; Mon, 30 Oct 2023 11:04:55 +0100
 Received: from [195.243.126.94] (helo=securemail.tdt.de)
         by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <fe@dev.tdt.de>)
-        id 1qxP8h-00HZAM-7o; Mon, 30 Oct 2023 11:04:55 +0100
+        id 1qxP8g-004YcQ-F8; Mon, 30 Oct 2023 11:04:54 +0100
 Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id D8991240040;
+        by securemail.tdt.de (Postfix) with ESMTP id 1DEB424004B;
         Mon, 30 Oct 2023 11:04:54 +0100 (CET)
 Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id 39F2324004D;
-        Mon, 30 Oct 2023 11:04:54 +0100 (CET)
+        by securemail.tdt.de (Postfix) with ESMTP id 70E5A24004D;
+        Mon, 30 Oct 2023 11:04:53 +0100 (CET)
 Received: from localhost.localdomain (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id DC086223E0;
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 27666215D4;
         Mon, 30 Oct 2023 11:04:53 +0100 (CET)
 From:   Florian Eckert <fe@dev.tdt.de>
 To:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
@@ -39,183 +39,96 @@ To:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
         m.brock@vanmierlo.com
 Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-leds@vger.kernel.org
-Subject: [Patch v6 5/7] leds: ledtrig-tty: replace mutex with completion
-Date:   Mon, 30 Oct 2023 11:04:45 +0100
-Message-ID: <20231030100447.63477-6-fe@dev.tdt.de>
+Subject: [Patch v6 2/7] tty: add new helper function tty_get_tiocm
+Date:   Mon, 30 Oct 2023 11:04:42 +0100
+Message-ID: <20231030100447.63477-3-fe@dev.tdt.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20231030100447.63477-1-fe@dev.tdt.de>
 References: <20231030100447.63477-1-fe@dev.tdt.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-purgate-type: clean
-X-purgate-ID: 151534::1698660296-DD37C1F7-F4E99D39/0/0
 X-purgate: clean
+X-purgate-type: clean
+X-purgate-ID: 151534::1698660295-DD37C1F7-E2C4BAF0/0/0
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-With this commit, the mutex handling is replaced by the completion
-handling. When handling mutex, it must always be ensured that the held
-mutex is also released again. This is more error-prone should the number
-of code paths increase.
+There is no in-kernel function to get the status register of a tty device
+like the TIOCMGET ioctl returns to userspace. Create a new function,
+tty_get_tiocm(), to obtain the status register that other portions of the
+kernel can call if they need this information, and move the existing
+internal tty_tiocmget() function to use this interface.
 
-This is a preparatory commit to make the trigger more configurable via
-additional sysfs parameters. With this change, the worker always runs and
-is no longer stopped if no ttyname is set.
-
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Florian Eckert <fe@dev.tdt.de>
 ---
- drivers/leds/trigger/ledtrig-tty.c | 60 +++++++++++++++---------------
- 1 file changed, 31 insertions(+), 29 deletions(-)
+ drivers/tty/tty_io.c | 28 ++++++++++++++++++++++------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/le=
-dtrig-tty.c
-index 86595add72cd..3badf74fa420 100644
---- a/drivers/leds/trigger/ledtrig-tty.c
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 3299a5d50727..a12f63854ac4 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -2494,6 +2494,24 @@ static int send_break(struct tty_struct *tty, unsi=
+gned int duration)
+ 	return retval;
+ }
 =20
-+#include <linux/completion.h>
- #include <linux/delay.h>
- #include <linux/leds.h>
- #include <linux/module.h>
-@@ -12,15 +13,24 @@
- struct ledtrig_tty_data {
- 	struct led_classdev *led_cdev;
- 	struct delayed_work dwork;
--	struct mutex mutex;
-+	struct completion sysfs;
- 	const char *ttyname;
- 	struct tty_struct *tty;
- 	int rx, tx;
- };
-=20
--static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
-+static int ledtrig_tty_waitforcompletion(struct device *dev)
++/**
++ * tty_get_tiocm - get tiocm status register
++ * @tty: tty device
++ *
++ * Obtain the modem status bits from the tty driver if the feature
++ * is supported.
++ */
++int tty_get_tiocm(struct tty_struct *tty)
++{
++	int retval =3D -ENOTTY;
++
++	if (tty->ops->tiocmget)
++		retval =3D tty->ops->tiocmget(tty);
++
++	return retval;
++}
++EXPORT_SYMBOL_GPL(tty_get_tiocm);
++
+ /**
+  * tty_tiocmget - get modem status
+  * @tty: tty device
+@@ -2506,14 +2524,12 @@ static int send_break(struct tty_struct *tty, uns=
+igned int duration)
+  */
+ static int tty_tiocmget(struct tty_struct *tty, int __user *p)
  {
--	schedule_delayed_work(&trigger_data->dwork, 0);
-+	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
-+	int ret;
-+
-+	ret =3D wait_for_completion_timeout(&trigger_data->sysfs,
-+					  msecs_to_jiffies(LEDTRIG_TTY_INTERVAL * 20));
-+
-+	if (ret =3D=3D 0)
-+		return -ETIMEDOUT;
-+
-+	return ret;
- }
+-	int retval =3D -ENOTTY;
++	int retval;
 =20
- static ssize_t ttyname_show(struct device *dev,
-@@ -28,14 +38,16 @@ static ssize_t ttyname_show(struct device *dev,
- {
- 	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
- 	ssize_t len =3D 0;
-+	int completion;
+-	if (tty->ops->tiocmget) {
+-		retval =3D tty->ops->tiocmget(tty);
++	retval =3D tty_get_tiocm(tty);
++	if (retval >=3D 0)
++		retval =3D put_user(retval, p);
 =20
--	mutex_lock(&trigger_data->mutex);
-+	reinit_completion(&trigger_data->sysfs);
-+	completion =3D ledtrig_tty_waitforcompletion(dev);
-+	if (completion < 0)
-+		return completion;
-=20
- 	if (trigger_data->ttyname)
- 		len =3D sprintf(buf, "%s\n", trigger_data->ttyname);
-=20
--	mutex_unlock(&trigger_data->mutex);
--
- 	return len;
- }
-=20
-@@ -46,7 +58,7 @@ static ssize_t ttyname_store(struct device *dev,
- 	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
- 	char *ttyname;
- 	ssize_t ret =3D size;
--	bool running;
-+	int completion;
-=20
- 	if (size > 0 && buf[size - 1] =3D=3D '\n')
- 		size -=3D 1;
-@@ -59,9 +71,10 @@ static ssize_t ttyname_store(struct device *dev,
- 		ttyname =3D NULL;
- 	}
-=20
--	mutex_lock(&trigger_data->mutex);
--
--	running =3D trigger_data->ttyname !=3D NULL;
-+	reinit_completion(&trigger_data->sysfs);
-+	completion =3D ledtrig_tty_waitforcompletion(dev);
-+	if (completion < 0)
-+		return completion;
-=20
- 	kfree(trigger_data->ttyname);
- 	tty_kref_put(trigger_data->tty);
-@@ -69,11 +82,6 @@ static ssize_t ttyname_store(struct device *dev,
-=20
- 	trigger_data->ttyname =3D ttyname;
-=20
--	mutex_unlock(&trigger_data->mutex);
--
--	if (ttyname && !running)
--		ledtrig_tty_restart(trigger_data);
--
- 	return ret;
- }
- static DEVICE_ATTR_RW(ttyname);
-@@ -86,13 +94,8 @@ static void ledtrig_tty_work(struct work_struct *work)
- 	struct led_classdev *led_cdev =3D trigger_data->led_cdev;
- 	int ret;
-=20
--	mutex_lock(&trigger_data->mutex);
--
--	if (!trigger_data->ttyname) {
--		/* exit without rescheduling */
--		mutex_unlock(&trigger_data->mutex);
--		return;
+-		if (retval >=3D 0)
+-			retval =3D put_user(retval, p);
 -	}
-+	if (!trigger_data->ttyname)
-+		goto out;
-=20
- 	/* try to get the tty corresponding to $ttyname */
- 	if (!trigger_data->tty) {
-@@ -117,11 +120,8 @@ static void ledtrig_tty_work(struct work_struct *wor=
-k)
- 	}
-=20
- 	ret =3D tty_get_icount(trigger_data->tty, &icount);
--	if (ret) {
--		dev_warn(led_cdev->dev, "Failed to get icount, stop polling\n");
--		mutex_unlock(&trigger_data->mutex);
--		return;
--	}
-+	if (ret)
-+		goto out;
-=20
- 	if (icount.rx !=3D trigger_data->rx ||
- 	    icount.tx !=3D trigger_data->tx) {
-@@ -134,7 +134,7 @@ static void ledtrig_tty_work(struct work_struct *work=
-)
- 	}
-=20
- out:
--	mutex_unlock(&trigger_data->mutex);
-+	complete_all(&trigger_data->sysfs);
- 	schedule_delayed_work(&trigger_data->dwork,
- 			      msecs_to_jiffies(LEDTRIG_TTY_INTERVAL * 2));
+ 	return retval;
  }
-@@ -157,7 +157,9 @@ static int ledtrig_tty_activate(struct led_classdev *=
-led_cdev)
 =20
- 	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
- 	trigger_data->led_cdev =3D led_cdev;
--	mutex_init(&trigger_data->mutex);
-+	init_completion(&trigger_data->sysfs);
-+
-+	schedule_delayed_work(&trigger_data->dwork, 0);
-=20
- 	return 0;
- }
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index f002d0f25db7..8e4d0b3b12b7 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -421,6 +421,7 @@ int tty_unthrottle_safe(struct tty_struct *tty);
+ int tty_do_resize(struct tty_struct *tty, struct winsize *ws);
+ int tty_get_icount(struct tty_struct *tty,
+ 		struct serial_icounter_struct *icount);
++int tty_get_tiocm(struct tty_struct *tty);
+ int is_current_pgrp_orphaned(void);
+ void tty_hangup(struct tty_struct *tty);
+ void tty_vhangup(struct tty_struct *tty);
 --=20
 2.30.2
 
