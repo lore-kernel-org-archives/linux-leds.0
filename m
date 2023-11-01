@@ -2,41 +2,41 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D9AC07352
-	for <linux-leds@archiver.kernel.org>; Wed,  1 Nov 2023 14:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95077C07EA3
+	for <linux-leds@archiver.kernel.org>; Wed,  1 Nov 2023 14:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344451AbjKAOZN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        id S1344404AbjKAOZN (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
         Wed, 1 Nov 2023 10:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40078 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344406AbjKAOZI (ORCPT
+        with ESMTP id S1344409AbjKAOZI (ORCPT
         <rfc822;linux-leds@vger.kernel.org>); Wed, 1 Nov 2023 10:25:08 -0400
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4656D118;
-        Wed,  1 Nov 2023 07:25:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4655119;
+        Wed,  1 Nov 2023 07:25:02 -0700 (PDT)
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id E8D9810002C;
-        Wed,  1 Nov 2023 17:24:59 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E8D9810002C
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 8806110002D;
+        Wed,  1 Nov 2023 17:25:01 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8806110002D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-        s=mail; t=1698848699;
-        bh=zGbcaAeoOpRXhpYsG9hnKfwX226reF7uQ3cUGwZXb+E=;
+        s=mail; t=1698848701;
+        bh=5UzFTw0GkjbA5GCoSIxy5Ugy4PogpR26uw1TUsMBOFQ=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-        b=lPijxW4YODL7chgvLNjpvWE4X1nlhoslHsYq+Xl1gsY0EUJFM0JHPMNEU3Y8tYmDH
-         TqrjOFw1pnkizEtV5Y/EJJdSLtAG0l2rj0X1v294l/LfjjRVP1oxtFxzTi5WS0urgh
-         +tn0dsPBkkXSOC0mMVqqOaSPraVOciaIMn4PfY+MOLk8WXB2b2Bmadcu3+70mNSzHM
-         OnWsO38VLNRmNXBTlbIEpY+XW8Vbc53oyEmw4eeaWjZsX9Wmo6HWNzDqEMCw/mmO1z
-         tmIhyqelBUwjyX+ijicQf5uS4Nc2Uez3HypHMzTCZU8n85c4LxVr5/Ed8tvZlJV1uv
-         nx6ysT3/skXFQ==
+        b=gj1dHCVKVIHfvy1ulDvKfG+k0Yln4Z5/P3j/3vWsaSsisNFBnCLbtw1uN9gZaWJhn
+         VpqKW1ZCiuZeuGILDuqAAk6nKFUxRTXlXEdTIxSML7LTwg4q0I3uZ28hFUiIatym0r
+         LyP/rF1UrBYKpAqs7UhpE0r2+CbgeGiqz3aiRepZIB44P3lAPr1H1nYayTFox2RhXk
+         Q45UY3XnfzlV91+ITu3sI1/OGtJ7Uf4WOSp3MtB9pT6gxen4dTkmY7rtr6wKUua8AC
+         N/ukq8BUdMwu5dkyRMPyaTusfMKCRrbNdK4v9XU41IuVbs+0M+V+XNrYhbkGj+gBeU
+         dTmgavh7ZW8Og==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Wed,  1 Nov 2023 17:24:59 +0300 (MSK)
+        Wed,  1 Nov 2023 17:25:01 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.37; Wed, 1 Nov 2023 17:24:59 +0300
+ 15.2.1118.37; Wed, 1 Nov 2023 17:25:01 +0300
 From:   Dmitry Rokosov <ddrokosov@salutedevices.com>
 To:     <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -46,9 +46,9 @@ CC:     <kernel@sberdevices.ru>, <rockosov@gmail.com>,
         <linux-leds@vger.kernel.org>,
         George Stark <gnstark@salutedevices.com>,
         Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v3 06/11] leds: aw200xx: add delay after software reset
-Date:   Wed, 1 Nov 2023 17:24:40 +0300
-Message-ID: <20231101142445.8753-7-ddrokosov@salutedevices.com>
+Subject: [PATCH v3 08/11] leds: aw200xx: improve autodim calculation method
+Date:   Wed, 1 Nov 2023 17:24:42 +0300
+Message-ID: <20231101142445.8753-9-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20231101142445.8753-1-ddrokosov@salutedevices.com>
 References: <20231101142445.8753-1-ddrokosov@salutedevices.com>
@@ -80,29 +80,48 @@ X-Mailing-List: linux-leds@vger.kernel.org
 
 From: George Stark <gnstark@salutedevices.com>
 
-According to datasheets of aw200xx devices software reset takes at
-least 1ms so add delay after reset before issuing commands to device.
+It is highly recommended to leverage the DIV_ROUND_UP() function as a
+more refined and mathematically precise alternative to employing a
+coarse division method.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
- drivers/leds/leds-aw200xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/leds/leds-aw200xx.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
-index aab8898b0330..ae3b4a96c52c 100644
+index b7625f028153..899cb1f7ed9b 100644
 --- a/drivers/leds/leds-aw200xx.c
 +++ b/drivers/leds/leds-aw200xx.c
-@@ -321,6 +321,9 @@ static int aw200xx_chip_reset(const struct aw200xx *const chip)
- 	if (ret)
- 		return ret;
+@@ -87,6 +87,8 @@
+ #define AW200XX_REG_DIM(x, columns) \
+ 	AW200XX_REG(AW200XX_PAGE4, AW200XX_LED2REG(x, columns) * 2)
+ #define AW200XX_REG_DIM2FADE(x) ((x) + 1)
++#define AW200XX_REG_FADE2DIM(fade) \
++	DIV_ROUND_UP((fade) * AW200XX_DIM_MAX, AW200XX_FADE_MAX)
  
-+	/* according to datasheet software reset takes at least 1ms */
-+	fsleep(1000);
-+
- 	regcache_mark_dirty(chip->regmap);
- 	return regmap_write(chip->regmap, AW200XX_REG_FCD, AW200XX_FCD_CLEAR);
- }
+ /*
+  * Duty ratio of display scan (see p.15 of datasheet for formula):
+@@ -195,9 +197,7 @@ static int aw200xx_brightness_set(struct led_classdev *cdev,
+ 
+ 	dim = led->dim;
+ 	if (dim < 0)
+-		dim = max_t(int,
+-			    brightness / (AW200XX_FADE_MAX / AW200XX_DIM_MAX),
+-			    1);
++		dim = AW200XX_REG_FADE2DIM(brightness);
+ 
+ 	ret = regmap_write(chip->regmap, reg, dim);
+ 	if (ret)
+@@ -456,6 +456,7 @@ static int aw200xx_probe_fw(struct device *dev, struct aw200xx *chip)
+ 		led->num = source;
+ 		led->chip = chip;
+ 		led->cdev.brightness_set_blocking = aw200xx_brightness_set;
++		led->cdev.max_brightness = AW200XX_FADE_MAX;
+ 		led->cdev.groups = dim_groups;
+ 		init_data.fwnode = child;
+ 
 -- 
 2.36.0
 
