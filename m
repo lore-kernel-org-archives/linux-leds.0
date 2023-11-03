@@ -2,95 +2,83 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1D0C4332F
-	for <linux-leds@archiver.kernel.org>; Fri,  3 Nov 2023 20:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018EDC4167D
+	for <linux-leds@archiver.kernel.org>; Fri,  3 Nov 2023 20:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbjKCUz6 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Fri, 3 Nov 2023 16:55:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54378 "EHLO
+        id S230250AbjKCUz7 (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Fri, 3 Nov 2023 16:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234477AbjKCTxU (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Nov 2023 15:53:20 -0400
+        with ESMTP id S1378183AbjKCTxT (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Fri, 3 Nov 2023 15:53:19 -0400
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7EDD4E;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0551BC;
         Fri,  3 Nov 2023 12:53:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699041198; x=1730577198;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=eUuuyUtQ+5betVlsnj9MIgKiK2+aM4+nMSQ8mwzd6Uk=;
-  b=lZFvyC883EjBfQLF5PjSpJENPYHWPQCcvP1e5dyGvpzGxDj+WSFsdOJY
-   Gu4nhdI+CqlYri2Vo2kZ5mX84YgPOPPbjRIdDsWCpUxBY/qSBtdROg65+
-   iHz/a3qALjcVOQEjEyia2yyKp+MApfUOc+zZf8IJIkK00iNW2KAS+aJKH
-   H7M5Uu9OAK4oDJ0ky1AKxC3cihsNvmSB83Ym3TXqlimP8d7NkzsNbozcf
-   dh3JPzpGXpY3XHviZoRs756vBYrJj4budD5wnhzVPOXrX2sNOraIBFIMJ
-   ybIERmqSKZtbt7SEQRFck4yV34s4OqyhN9SIEByHA7GPuHFE7W740W7jK
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="1962960"
+  t=1699041197; x=1730577197;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=M2LYr3uiwRiw2hfh8eZTwB7i1h0z6rfdmlPTebmD3d0=;
+  b=j7XwkUNJ9/9TsLf520/+Oq7tI0HVVk7sYI7K0eruNZwAHHTp5APL7stF
+   ZVXqMFPr5J9hxpl56MZqOTuz7X8rVz02qvb7q+JwGhbazGD8vjv9j0Tgm
+   BZkbTz6vSK1Q5goHNQWEjetBUCNSR147I8aNDCVlDiOsFgUYGSOZhDPTD
+   M3CO2M/HdpYagw0KrFQxAF+UPwueJuYHdDSWEzmEqTPyTYYbQ8GrO38Iq
+   bBPMNXOwGsfLszNJ195wjaFfGZqCewALS3ov//dt99aBXUDXqW2AJdZqT
+   cXizvIKbCfllAC9U5mKGTWNUVwu1Bc1FhAAwkGk8g0rCK6aW+JzUdtaEp
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="1962964"
 X-IronPort-AV: E=Sophos;i="6.03,275,1694761200"; 
-   d="scan'208";a="1962960"
+   d="scan'208";a="1962964"
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2023 12:53:17 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="761719315"
+X-IronPort-AV: E=McAfee;i="6600,9927,10883"; a="761719316"
 X-IronPort-AV: E=Sophos;i="6.03,275,1694761200"; 
-   d="scan'208";a="761719315"
+   d="scan'208";a="761719316"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orsmga002.jf.intel.com with ESMTP; 03 Nov 2023 12:53:14 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id B1E775E2; Fri,  3 Nov 2023 21:53:13 +0200 (EET)
+        id D66EC5E8; Fri,  3 Nov 2023 21:53:13 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Subject: [PATCH v1 1/4] leds: trigger: gpio: Replace custom code for gpiod_get_optional()
-Date:   Fri,  3 Nov 2023 21:53:07 +0200
-Message-Id: <20231103195310.948327-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 3/4] leds: trigger: gpio: Use sysfs_emit() to instead of s*printf()
+Date:   Fri,  3 Nov 2023 21:53:09 +0200
+Message-Id: <20231103195310.948327-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.40.0.1.gaa8946217a0b
+In-Reply-To: <20231103195310.948327-1-andriy.shevchenko@linux.intel.com>
+References: <20231103195310.948327-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-gpiod_get_optional() and currently used fwnode_gpiod_get_index()
-are both wrappers against the same engine internally. Since we
-have a pointer to struct device there is no reason to use fwnode
-type of GPIO call. So, replace the current fwnode call by respective
-gpiod ones.
+Follow the advice of the Documentation/filesystems/sysfs.rst and show()
+should only use sysfs_emit() or sysfs_emit_at() when formatting the
+value to be returned to user space.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/trigger/ledtrig-gpio.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/leds/trigger/ledtrig-gpio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
-index 9b7fe5dd5208..d91ae7fde3cf 100644
+index 8a30f9228186..8824be19881f 100644
 --- a/drivers/leds/trigger/ledtrig-gpio.c
 +++ b/drivers/leds/trigger/ledtrig-gpio.c
-@@ -89,10 +89,7 @@ static int gpio_trig_activate(struct led_classdev *led)
- 	 * The generic property "trigger-sources" is followed,
- 	 * and we hope that this is a GPIO.
- 	 */
--	gpio_data->gpiod = fwnode_gpiod_get_index(dev->fwnode,
--						  "trigger-sources",
--						  0, GPIOD_IN,
--						  "led-trigger");
-+	gpio_data->gpiod = gpiod_get_optional(dev, "trigger-sources", GPIOD_IN);
- 	if (IS_ERR(gpio_data->gpiod)) {
- 		ret = PTR_ERR(gpio_data->gpiod);
- 		kfree(gpio_data);
-@@ -104,6 +101,8 @@ static int gpio_trig_activate(struct led_classdev *led)
- 		return -EINVAL;
- 	}
+@@ -46,7 +46,7 @@ static ssize_t gpio_trig_brightness_show(struct device *dev,
+ {
+ 	struct gpio_trig_data *gpio_data = led_trigger_get_drvdata(dev);
  
-+	gpiod_set_consumer_name(gpio_data->gpiod, "led-trigger");
-+
- 	gpio_data->led = led;
- 	led_set_trigger_data(led, gpio_data);
+-	return sprintf(buf, "%u\n", gpio_data->desired_brightness);
++	return sysfs_emit(buf, "%u\n", gpio_data->desired_brightness);
+ }
  
+ static ssize_t gpio_trig_brightness_store(struct device *dev,
 -- 
 2.40.0.1.gaa8946217a0b
 
