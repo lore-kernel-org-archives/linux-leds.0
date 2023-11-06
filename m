@@ -2,94 +2,104 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBEDC4332F
-	for <linux-leds@archiver.kernel.org>; Mon,  6 Nov 2023 11:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF876C4167D
+	for <linux-leds@archiver.kernel.org>; Mon,  6 Nov 2023 12:34:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbjKFLTb (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Mon, 6 Nov 2023 06:19:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49966 "EHLO
+        id S231566AbjKFMek (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Mon, 6 Nov 2023 07:34:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjKFLTb (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Nov 2023 06:19:31 -0500
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C764FB6;
-        Mon,  6 Nov 2023 03:19:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699269568; x=1730805568;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UZ2mllwSITLMwigLdMMHTXlcJTSw0v3IiGJDOlJ2u+Y=;
-  b=cubp9twLVqAxNpl/F+C5/a0vGXxUQc/jCZ87Bau8HV/DZ1YDUumTDWjq
-   IEnYptHgPTAaSW3PcIem+V0ZmlHvjWUnuCoHgcGZlFqP8s6VM+Y3LBTXu
-   edZOCxQEJZ+IxnuegaWJgiuFFDtcAIFMwquELuZp2K3IHq+CNS7oXzxYA
-   vF0rBKFdeQMsUS0+VH/LdSrYY3XVY3d7d09bBOCOoJ8vbZ1/nF3yu3gxe
-   whuy21sI0S0aIHD9U1+jDWwqEr/LoksYZvMRjJnpLfce2Wl4O1WOiwTJH
-   e7cGTioKKtg18pvDPp4ujXoNmyhVDWK++IK9M4c3uWJv98XXbYEe0Z2tU
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10885"; a="369461450"
-X-IronPort-AV: E=Sophos;i="6.03,281,1694761200"; 
-   d="scan'208";a="369461450"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2023 03:19:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10885"; a="1009491417"
-X-IronPort-AV: E=Sophos;i="6.03,281,1694761200"; 
-   d="scan'208";a="1009491417"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2023 03:19:25 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC3)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qzxda-0000000Blvc-10qR;
-        Mon, 06 Nov 2023 13:19:22 +0200
-Date:   Mon, 6 Nov 2023 13:19:21 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stefan Wahren <wahrenst@gmx.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 1/2] leds: gpio: Add kernel log if devm_fwnode_gpiod_get
- fails
-Message-ID: <ZUjLuTPppvI9xlOD@smile.fi.intel.com>
-References: <20231105154940.97688-1-wahrenst@gmx.net>
- <20231105154940.97688-2-wahrenst@gmx.net>
+        with ESMTP id S231558AbjKFMeh (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Mon, 6 Nov 2023 07:34:37 -0500
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCC9EB6;
+        Mon,  6 Nov 2023 04:34:34 -0800 (PST)
+Received: from [127.0.0.1] (helo=localhost)
+        by relay.expurgate.net with smtp (Exim 4.92)
+        (envelope-from <prvs=068806c1c2=fe@dev.tdt.de>)
+        id 1qzyoH-00BFYS-3c; Mon, 06 Nov 2023 13:34:29 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <fe@dev.tdt.de>)
+        id 1qzyoG-00Ddr6-7d; Mon, 06 Nov 2023 13:34:28 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+        by securemail.tdt.de (Postfix) with ESMTP id DCE61240050;
+        Mon,  6 Nov 2023 13:34:27 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+        by securemail.tdt.de (Postfix) with ESMTP id 3BB64240052;
+        Mon,  6 Nov 2023 13:34:27 +0100 (CET)
+Received: from localhost.localdomain (unknown [10.2.3.40])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 05AE1227EE;
+        Mon,  6 Nov 2023 13:34:27 +0100 (CET)
+From:   Florian Eckert <fe@dev.tdt.de>
+To:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org,
+        kabel@kernel.org, u.kleine-koenig@pengutronix.de,
+        m.brock@vanmierlo.com
+Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: [Patch v7 3/6] leds: ledtrig-tty: change logging if get icount failed
+Date:   Mon,  6 Nov 2023 13:34:12 +0100
+Message-ID: <20231106123415.3365732-4-fe@dev.tdt.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20231106123415.3365732-1-fe@dev.tdt.de>
+References: <20231106123415.3365732-1-fe@dev.tdt.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231105154940.97688-2-wahrenst@gmx.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-purgate: clean
+X-purgate-ID: 151534::1699274068-65079C7C-E3564830/0/0
+X-purgate-type: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-On Sun, Nov 05, 2023 at 04:49:39PM +0100, Stefan Wahren wrote:
-> In case leds-gpio fails to get the GPIO from the DT (e.g. the GPIO is
-> already requested) the driver doesn't provide any helpful error log:
-> 
->     leds-gpio: probe of leds failed with error -16
-> 
-> So add a new error log in case devm_fwnode_gpiod_get() fails.
+Change the log level from info to warn, because there is something
+wrong. That is more a warn message than an info message.
 
-...
+While we are at it, the device prefix is also changed, as this is the
+led device and not the tty device that generates this message.
 
->  		led.gpiod = devm_fwnode_gpiod_get(dev, child, NULL, GPIOD_ASIS,
->  						  NULL);
->  		if (IS_ERR(led.gpiod)) {
-> +			dev_err(dev, "Failed to get gpio '%pfw': %ld\n",
-> +				child, PTR_ERR(led.gpiod));
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+---
+ drivers/leds/trigger/ledtrig-tty.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Perhaps %pe ?
-
->  			fwnode_handle_put(child);
->  			return ERR_CAST(led.gpiod);
->  		}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/le=
+dtrig-tty.c
+index 3e69a7bde928..86595add72cd 100644
+--- a/drivers/leds/trigger/ledtrig-tty.c
++++ b/drivers/leds/trigger/ledtrig-tty.c
+@@ -83,6 +83,7 @@ static void ledtrig_tty_work(struct work_struct *work)
+ 	struct ledtrig_tty_data *trigger_data =3D
+ 		container_of(work, struct ledtrig_tty_data, dwork.work);
+ 	struct serial_icounter_struct icount;
++	struct led_classdev *led_cdev =3D trigger_data->led_cdev;
+ 	int ret;
+=20
+ 	mutex_lock(&trigger_data->mutex);
+@@ -117,7 +118,7 @@ static void ledtrig_tty_work(struct work_struct *work=
+)
+=20
+ 	ret =3D tty_get_icount(trigger_data->tty, &icount);
+ 	if (ret) {
+-		dev_info(trigger_data->tty->dev, "Failed to get icount, stopped pollin=
+g\n");
++		dev_warn(led_cdev->dev, "Failed to get icount, stop polling\n");
+ 		mutex_unlock(&trigger_data->mutex);
+ 		return;
+ 	}
+@@ -126,8 +127,7 @@ static void ledtrig_tty_work(struct work_struct *work=
+)
+ 	    icount.tx !=3D trigger_data->tx) {
+ 		unsigned long interval =3D LEDTRIG_TTY_INTERVAL;
+=20
+-		led_blink_set_oneshot(trigger_data->led_cdev, &interval,
+-				      &interval, 0);
++		led_blink_set_oneshot(led_cdev, &interval, &interval, 0);
+=20
+ 		trigger_data->rx =3D icount.rx;
+ 		trigger_data->tx =3D icount.tx;
+--=20
+2.30.2
 
