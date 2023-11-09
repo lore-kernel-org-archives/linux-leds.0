@@ -2,288 +2,242 @@ Return-Path: <linux-leds-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB00C4332F
-	for <linux-leds@archiver.kernel.org>; Thu,  9 Nov 2023 08:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E4AC4332F
+	for <linux-leds@archiver.kernel.org>; Thu,  9 Nov 2023 09:50:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233679AbjKIIvP (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
-        Thu, 9 Nov 2023 03:51:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49468 "EHLO
+        id S229565AbjKIJuo (ORCPT <rfc822;linux-leds@archiver.kernel.org>);
+        Thu, 9 Nov 2023 04:50:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233691AbjKIIvL (ORCPT
-        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Nov 2023 03:51:11 -0500
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9232D62;
-        Thu,  9 Nov 2023 00:51:00 -0800 (PST)
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <prvs=06912c668f=fe@dev.tdt.de>)
-        id 1r10kU-00FPbS-Ej; Thu, 09 Nov 2023 09:50:50 +0100
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1r10kT-00FPas-Kj; Thu, 09 Nov 2023 09:50:49 +0100
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id 31E7B240040;
-        Thu,  9 Nov 2023 09:50:49 +0100 (CET)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id 87C19240049;
-        Thu,  9 Nov 2023 09:50:48 +0100 (CET)
-Received: from localhost.localdomain (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id A55C7222EE;
-        Thu,  9 Nov 2023 09:50:47 +0100 (CET)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Eckert.Florian@googlemail.com, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, pavel@ucw.cz, lee@kernel.org,
-        kabel@kernel.org, u.kleine-koenig@pengutronix.de,
-        m.brock@vanmierlo.com
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: [Patch v8 5/6] leds: ledtrig-tty: make rx tx activitate configurable
-Date:   Thu,  9 Nov 2023 09:50:37 +0100
-Message-ID: <20231109085038.371977-6-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20231109085038.371977-1-fe@dev.tdt.de>
-References: <20231109085038.371977-1-fe@dev.tdt.de>
+        with ESMTP id S229581AbjKIJun (ORCPT
+        <rfc822;linux-leds@vger.kernel.org>); Thu, 9 Nov 2023 04:50:43 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B91C271C
+        for <linux-leds@vger.kernel.org>; Thu,  9 Nov 2023 01:50:41 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-6b89ab5ddb7so699111b3a.0
+        for <linux-leds@vger.kernel.org>; Thu, 09 Nov 2023 01:50:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1699523441; x=1700128241; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XOVetaQKamOc5YiV+kDh/Gfy/FprSlSW2sob1kkaLyE=;
+        b=A4FfurahnRW3fw3/zC7NH9hL6PbIGWcb49XwM7QstmiCFJgVL2NJoPuTzHmXnI2dmx
+         hUHB3xXdU2yImniWyfrQc6RHcHJ54IStcb+9ssRCZaBK4XoCDIBgC281ZP6/EHtn6GgI
+         6FI4DBpEbY+8jfoFz4i/P7Ai+ODBD+4c+hqh0KXy7CokUydXwiVZkdgFo8GBxC6arnzh
+         cfvgj8H8S2sN1aECBeK2fL0ewh/OfuAst6D7lPm7UQ0PS3wIvHJb5Z/wSkfEpcx0PAxT
+         JlgLpBrK6JFgk2rS9+z6KcX4xu/8lyNKhF7xV6iDerLic9/fHqj9T9Z1z/sZ8Hb+xD9r
+         +hIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699523441; x=1700128241;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XOVetaQKamOc5YiV+kDh/Gfy/FprSlSW2sob1kkaLyE=;
+        b=f8yYWMJFoW5/N36JxjzKw5PE2wnQrUq0fPq/GukN6jAw2AFhHnuKRwvsVaa5pk6032
+         5ZD4xs/J+s+f8Wj/zzlHefQQKfz4BoiwPl0fhngFM5PjmCPVXK3q0reF27y0BpGtcmia
+         /4Ak6N+vKIfaVm4nS7PQM9n6QHnJYQxh8QGzV4iYRySOPyR6o32bxtWpzazjmExn6SI1
+         Q787NpR2SPhlCDLjmF9YTMlt4RyCd1WN5JM8aLO3r0X/Tz+OZw5Sq1NQwZdnGbvmLiKy
+         4UADK8nuMupw9CPMhQ5QeeSOVyp3KLKflkQOKecf85Asxt9yiX4LehwWCBrld6Rho0uc
+         QE5A==
+X-Gm-Message-State: AOJu0Yy5O1LCW3/f94wUuM1n+Jr2UMc7YI/y7cG+NsOyWirMfGh9tU9/
+        P2KH1MLiGuzUHxC9/+rcvWXhfj7A4jc5gQ6JsPpeAA==
+X-Google-Smtp-Source: AGHT+IFyIqsTZ6z28Zr+jIjT+jv08XPl2Lyls6kYJxYL7+NJuDzi3vH6dv5Mu4O85+wE0yd4+9twA+gX0u1r2+nOMuA=
+X-Received: by 2002:a05:6a21:4847:b0:180:def9:20e1 with SMTP id
+ au7-20020a056a21484700b00180def920e1mr5054946pzc.22.1699523440819; Thu, 09
+ Nov 2023 01:50:40 -0800 (PST)
 MIME-Version: 1.0
+References: <20230914114521.1491390-1-naresh.solanki@9elements.com>
+ <20230920130528.GG13143@google.com> <CABqG17j_gCr8xw65qjn4Kh7ChdraZbLsyGOsCmFEEWG3txjE4A@mail.gmail.com>
+ <20230921103156.GB3449785@google.com> <CABqG17ibzHiYmzCZ6ZpAa8BZhj5N+0dQ0aa1yebtCk0YYVdsFQ@mail.gmail.com>
+In-Reply-To: <CABqG17ibzHiYmzCZ6ZpAa8BZhj5N+0dQ0aa1yebtCk0YYVdsFQ@mail.gmail.com>
+From:   Naresh Solanki <naresh.solanki@9elements.com>
+Date:   Thu, 9 Nov 2023 15:20:29 +0530
+Message-ID: <CABqG17h8hxgmMA=G5hitzgjNSX_BZ2utFsMZni9evn0Nogu0GA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3] leds: max5970: Add support for max5970
+To:     Lee Jones <lee@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Patrick Rudolph <patrick.rudolph@9elements.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-purgate-type: clean
-X-purgate-ID: 151534::1699519850-6D8F2018-22B5DCA8/0/0
-X-purgate: clean
 Precedence: bulk
 List-ID: <linux-leds.vger.kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 
-Until now, the LED blinks when data is sent via the tty (rx/tx).
-This is not configurable.
+Hey Lee,
 
-This change adds the possibility to make the indication for the direction
-of the transmitted data independently controllable via the new rx and
-tx sysfs entries.
+Is there anything specific you'd suggest changing in the current
+patchset, or are we good to proceed?
 
-- rx:
-  Signal reception (rx) of data on the named tty device.
-  If set to 0, the LED will not blink on reception.
-  If set to 1 (default), the LED will blink on reception.
+Thanks,
+Naresh Solanki
 
-- tx:
-  Signal transmission (tx) of data on the named tty device.
-  If set to 0, the LED will not blink on transmission.
-  If set to 1 (default), the LED will blink on transmission.
-
-This new sysfs entry are on by default. Thus the trigger behaves as
-before this change.
-
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- .../ABI/testing/sysfs-class-led-trigger-tty   |  16 +++
- drivers/leds/trigger/ledtrig-tty.c            | 124 ++++++++++++++++--
- 2 files changed, 130 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-tty b/Docu=
-mentation/ABI/testing/sysfs-class-led-trigger-tty
-index 2bf6b24e781b..504dece151b8 100644
---- a/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-@@ -4,3 +4,19 @@ KernelVersion:	5.10
- Contact:	linux-leds@vger.kernel.org
- Description:
- 		Specifies the tty device name of the triggering tty
-+
-+What:		/sys/class/leds/<led>/rx
-+Date:		February 2024
-+KernelVersion:	6.8
-+Description:
-+		Signal reception (rx) of data on the named tty device.
-+		If set to 0, the LED will not blink on reception.
-+		If set to 1 (default), the LED will blink on reception.
-+
-+What:		/sys/class/leds/<led>/tx
-+Date:		February 2024
-+KernelVersion:	6.8
-+Description:
-+		Signal transmission (tx) of data on the named tty device.
-+		If set to 0, the LED will not blink on transmission.
-+		If set to 1 (default), the LED will blink on transmission.
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/le=
-dtrig-tty.c
-index 3badf74fa420..1a40a78bf1ee 100644
---- a/drivers/leds/trigger/ledtrig-tty.c
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -17,6 +17,19 @@ struct ledtrig_tty_data {
- 	const char *ttyname;
- 	struct tty_struct *tty;
- 	int rx, tx;
-+	bool mode_rx;
-+	bool mode_tx;
-+};
-+
-+/* Indicates which state the LED should now display */
-+enum led_trigger_tty_state {
-+	TTY_LED_BLINK,
-+	TTY_LED_DISABLE,
-+};
-+
-+enum led_trigger_tty_modes {
-+	TRIGGER_TTY_RX =3D 0,
-+	TRIGGER_TTY_TX,
- };
-=20
- static int ledtrig_tty_waitforcompletion(struct device *dev)
-@@ -86,12 +99,82 @@ static ssize_t ttyname_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(ttyname);
-=20
-+static ssize_t ledtrig_tty_attr_show(struct device *dev, char *buf,
-+				     enum led_trigger_tty_modes attr)
-+{
-+	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
-+	int completion;
-+	bool state;
-+
-+	reinit_completion(&trigger_data->sysfs);
-+	completion =3D ledtrig_tty_waitforcompletion(dev);
-+	if (completion < 0)
-+		return completion;
-+
-+	switch (attr) {
-+	case TRIGGER_TTY_RX:
-+		state =3D trigger_data->mode_rx;
-+		break;
-+	case TRIGGER_TTY_TX:
-+		state =3D trigger_data->mode_tx;
-+		break;
-+	}
-+
-+	return sysfs_emit(buf, "%u\n", state);
-+}
-+
-+static ssize_t ledtrig_tty_attr_store(struct device *dev, const char *bu=
-f,
-+				      size_t size, enum led_trigger_tty_modes attr)
-+{
-+	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
-+	int completion;
-+	bool state;
-+	int ret;
-+
-+	ret =3D kstrtobool(buf, &state);
-+	if (ret)
-+		return ret;
-+
-+	reinit_completion(&trigger_data->sysfs);
-+	completion =3D ledtrig_tty_waitforcompletion(dev);
-+	if (completion < 0)
-+		return completion;
-+
-+	switch (attr) {
-+	case TRIGGER_TTY_RX:
-+		trigger_data->mode_rx =3D state;
-+		break;
-+	case TRIGGER_TTY_TX:
-+		trigger_data->mode_tx =3D state;
-+		break;
-+	}
-+
-+	return size;
-+}
-+
-+#define DEFINE_TTY_TRIGGER(trigger_name, trigger) \
-+	static ssize_t trigger_name##_show(struct device *dev, \
-+		struct device_attribute *attr, char *buf) \
-+	{ \
-+		return ledtrig_tty_attr_show(dev, buf, trigger); \
-+	} \
-+	static ssize_t trigger_name##_store(struct device *dev, \
-+		struct device_attribute *attr, const char *buf, size_t size) \
-+	{ \
-+		return ledtrig_tty_attr_store(dev, buf, size, trigger); \
-+	} \
-+	static DEVICE_ATTR_RW(trigger_name)
-+
-+DEFINE_TTY_TRIGGER(rx, TRIGGER_TTY_RX);
-+DEFINE_TTY_TRIGGER(tx, TRIGGER_TTY_TX);
-+
- static void ledtrig_tty_work(struct work_struct *work)
- {
- 	struct ledtrig_tty_data *trigger_data =3D
- 		container_of(work, struct ledtrig_tty_data, dwork.work);
--	struct serial_icounter_struct icount;
- 	struct led_classdev *led_cdev =3D trigger_data->led_cdev;
-+	enum led_trigger_tty_state state =3D TTY_LED_DISABLE;
-+	unsigned long interval =3D LEDTRIG_TTY_INTERVAL;
- 	int ret;
-=20
- 	if (!trigger_data->ttyname)
-@@ -119,21 +202,36 @@ static void ledtrig_tty_work(struct work_struct *wo=
-rk)
- 		trigger_data->tty =3D tty;
- 	}
-=20
--	ret =3D tty_get_icount(trigger_data->tty, &icount);
--	if (ret)
--		goto out;
-+	if (trigger_data->mode_rx || trigger_data->mode_tx) {
-+		struct serial_icounter_struct icount;
-=20
--	if (icount.rx !=3D trigger_data->rx ||
--	    icount.tx !=3D trigger_data->tx) {
--		unsigned long interval =3D LEDTRIG_TTY_INTERVAL;
-+		ret =3D tty_get_icount(trigger_data->tty, &icount);
-+		if (ret)
-+			goto out;
-=20
--		led_blink_set_oneshot(led_cdev, &interval, &interval, 0);
-+		if (trigger_data->mode_tx && (icount.tx !=3D trigger_data->tx)) {
-+			trigger_data->tx =3D icount.tx;
-+			state =3D TTY_LED_BLINK;
-+		}
-=20
--		trigger_data->rx =3D icount.rx;
--		trigger_data->tx =3D icount.tx;
-+		if (trigger_data->mode_rx && (icount.rx !=3D trigger_data->rx)) {
-+			trigger_data->rx =3D icount.rx;
-+			state =3D TTY_LED_BLINK;
-+		}
- 	}
-=20
- out:
-+	switch (state) {
-+	case TTY_LED_BLINK:
-+		led_blink_set_oneshot(led_cdev, &interval, &interval, 0);
-+		break;
-+	case TTY_LED_DISABLE:
-+		fallthrough;
-+	default:
-+		led_set_brightness(led_cdev, LED_OFF);
-+		break;
-+	}
-+
- 	complete_all(&trigger_data->sysfs);
- 	schedule_delayed_work(&trigger_data->dwork,
- 			      msecs_to_jiffies(LEDTRIG_TTY_INTERVAL * 2));
-@@ -141,6 +239,8 @@ static void ledtrig_tty_work(struct work_struct *work=
-)
-=20
- static struct attribute *ledtrig_tty_attrs[] =3D {
- 	&dev_attr_ttyname.attr,
-+	&dev_attr_rx.attr,
-+	&dev_attr_tx.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(ledtrig_tty);
-@@ -153,6 +253,10 @@ static int ledtrig_tty_activate(struct led_classdev =
-*led_cdev)
- 	if (!trigger_data)
- 		return -ENOMEM;
-=20
-+	/* Enable default rx/tx mode */
-+	trigger_data->mode_rx =3D true;
-+	trigger_data->mode_tx =3D true;
-+
- 	led_set_trigger_data(led_cdev, trigger_data);
-=20
- 	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
---=20
-2.30.2
-
+On Mon, 30 Oct 2023 at 14:22, Naresh Solanki
+<naresh.solanki@9elements.com> wrote:
+>
+> Hi,
+>
+> On Thu, 21 Sept 2023 at 16:02, Lee Jones <lee@kernel.org> wrote:
+> >
+> > On Thu, 21 Sep 2023, Naresh Solanki wrote:
+> >
+> > > Hi
+> > >
+> > >
+> > > On Wed, 20 Sept 2023 at 18:35, Lee Jones <lee@kernel.org> wrote:
+> > > >
+> > > > On Thu, 14 Sep 2023, Naresh Solanki wrote:
+> > > >
+> > > > > From: Patrick Rudolph <patrick.rudolph@9elements.com>
+> > > > >
+> > > > > The MAX5970 is hot swap controller and has 4 indication LED.
+> > > > >
+> > > > > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> > > > > Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
+> > > > > ---
+> > > > > Changes in V3:
+> > > > > - Drop array for ddata variable.
+> > > > > Changes in V2:
+> > > > > - Add of_node_put before return.
+> > > > > - Code cleanup
+> > > > > - Refactor code & remove max5970_setup_led function.
+> > > > > ---
+> > > > >  drivers/leds/Kconfig        |  11 ++++
+> > > > >  drivers/leds/Makefile       |   1 +
+> > > > >  drivers/leds/leds-max5970.c | 110 ++++++++++++++++++++++++++++++=
+++++++
+> > > > >  3 files changed, 122 insertions(+)
+> > > > >  create mode 100644 drivers/leds/leds-max5970.c
+> > > >
+> > > > Couple of nits and you're good to go.
+> > > >
+> > > > Once fixed please resubmit with my:
+> > > >
+> > > >   Reviewed-by: Lee Jones <lee@kernel.org>
+> > > >
+> > > > > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> > > > > index b92208eccdea..03ef527cc545 100644
+> > > > > --- a/drivers/leds/Kconfig
+> > > > > +++ b/drivers/leds/Kconfig
+> > > > > @@ -637,6 +637,17 @@ config LEDS_ADP5520
+> > > > >         To compile this driver as a module, choose M here: the mo=
+dule will
+> > > > >         be called leds-adp5520.
+> > > > >
+> > > > > +config LEDS_MAX5970
+> > > > > +     tristate "LED Support for Maxim 5970"
+> > > > > +     depends on LEDS_CLASS
+> > > > > +     depends on MFD_MAX5970
+> > > > > +     help
+> > > > > +       This option enables support for the Maxim MAX5970 & MAX59=
+78 smart
+> > > > > +       switch indication LEDs via the I2C bus.
+> > > > > +
+> > > > > +       To compile this driver as a module, choose M here: the mo=
+dule will
+> > > > > +       be called leds-max5970.
+> > > > > +
+> > > > >  config LEDS_MC13783
+> > > > >       tristate "LED Support for MC13XXX PMIC"
+> > > > >       depends on LEDS_CLASS
+> > > > > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> > > > > index d7348e8bc019..6eaee0a753c6 100644
+> > > > > --- a/drivers/leds/Makefile
+> > > > > +++ b/drivers/leds/Makefile
+> > > > > @@ -56,6 +56,7 @@ obj-$(CONFIG_LEDS_LP8501)           +=3D leds-l=
+p8501.o
+> > > > >  obj-$(CONFIG_LEDS_LP8788)            +=3D leds-lp8788.o
+> > > > >  obj-$(CONFIG_LEDS_LP8860)            +=3D leds-lp8860.o
+> > > > >  obj-$(CONFIG_LEDS_LT3593)            +=3D leds-lt3593.o
+> > > > > +obj-$(CONFIG_LEDS_MAX5970)           +=3D leds-max5970.o
+> > > > >  obj-$(CONFIG_LEDS_MAX77650)          +=3D leds-max77650.o
+> > > > >  obj-$(CONFIG_LEDS_MAX8997)           +=3D leds-max8997.o
+> > > > >  obj-$(CONFIG_LEDS_MC13783)           +=3D leds-mc13783.o
+> > > > > diff --git a/drivers/leds/leds-max5970.c b/drivers/leds/leds-max5=
+970.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..c9685990e26e
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/leds/leds-max5970.c
+> > > > > @@ -0,0 +1,110 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +/*
+> > > > > + * Device driver for leds in MAX5970 and MAX5978 IC
+> > > > > + *
+> > > > > + * Copyright (c) 2022 9elements GmbH
+> > > > > + *
+> > > > > + * Author: Patrick Rudolph <patrick.rudolph@9elements.com>
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/leds.h>
+> > > > > +#include <linux/mfd/max5970.h>
+> > > > > +#include <linux/of.h>
+> > > > > +#include <linux/platform_device.h>
+> > > > > +#include <linux/regmap.h>
+> > > > > +
+> > > > > +#define ldev_to_maxled(c)       container_of(c, struct max5970_l=
+ed, cdev)
+> > > > > +
+> > > > > +struct max5970_led {
+> > > > > +     struct device *dev;
+> > > > > +     struct regmap *regmap;
+> > > > > +     struct led_classdev cdev;
+> > > > > +     unsigned int index;
+> > > > > +};
+> > > > > +
+> > > > > +static int max5970_led_set_brightness(struct led_classdev *cdev,
+> > > > > +                                   enum led_brightness brightnes=
+s)
+> > > > > +{
+> > > > > +     struct max5970_led *ddata =3D ldev_to_maxled(cdev);
+> > > > > +     int ret, val;
+> > > > > +
+> > > > > +     /* Set/clear corresponding bit for given led index */
+> > > > > +     val =3D !brightness ? BIT(ddata->index) : 0;
+> > > > > +
+> > > > > +     ret =3D regmap_update_bits(ddata->regmap, MAX5970_REG_LED_F=
+LASH, BIT(ddata->index), val);
+> > > > > +     if (ret < 0)
+> > > > > +             dev_err(cdev->dev, "failed to set brightness %d", r=
+et);
+> > > > > +
+> > > > > +     return ret;
+> > > > > +}
+> > > > > +
+> > > > > +static int max5970_led_probe(struct platform_device *pdev)
+> > > > > +{
+> > > > > +     struct device *dev =3D &pdev->dev;
+> > > > > +     struct device_node *np =3D dev_of_node(dev->parent);
+> > > > > +     struct regmap *regmap;
+> > > > > +     struct device_node *led_node;
+> > > > > +     struct device_node *child;
+> > > >
+> > > > Nit: You can place these on the same line.
+> > > Ack
+> > > >
+> > > > > +     struct max5970_led *ddata;
+> > > > > +     int ret =3D -ENODEV, num_leds =3D 0;
+> > > > > +
+> > > > > +     regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
+> > > > > +     if (!regmap)
+> > > > > +             return -EPROBE_DEFER;
+> > > >
+> > > > Why are you deferring here?
+> > > This is a Leaf driver. Making sure the parent driver has initialized =
+regmap.
+> >
+> > How can this driver initialise before the parent driver?
+> The parent driver in this case is simple_i2c_mfd.
+> Based on reference from other similar implementations, the regmap
+> check was adapted.
+> As you mentioned, your right that leaf driver will not start before paren=
+t
+> driver is loaded successfully so probably the DEFER might not be needed
+> here.
+>
+> Thanks,
+> Naresh
+> >
+> > --
+> > Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
