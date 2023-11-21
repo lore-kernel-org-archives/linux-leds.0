@@ -1,42 +1,42 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="C9QV9gle"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="e6ICdCyg"
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5001AA;
-	Tue, 21 Nov 2023 12:28:52 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD9F9110;
+	Tue, 21 Nov 2023 12:28:54 -0800 (PST)
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id B6AB7100066;
-	Tue, 21 Nov 2023 23:28:50 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru B6AB7100066
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 6CC85100068;
+	Tue, 21 Nov 2023 23:28:53 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 6CC85100068
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1700598530;
-	bh=j/fX6YDIQyQ1VIymrunLH5mwmh/dqGOmhqXkwzfUmIU=;
+	s=mail; t=1700598533;
+	bh=BgYX2+stSRz4UC4B1i7+MADMeWskKbtgM6xh9R/y7cI=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=C9QV9gle0BLaMWuyLuCouKtNzA5yyHFlSXuFFqZThCOBSucH0BqhbwLWZEt0mGCJX
-	 s/Lg0vATGho8rAdK311A7aEqLbehvzB5lcsLxbWivkx9hQaAwGL3O1ZnJ578RNYf/5
-	 UiBYbBf2/tx7CapUvLoq5q0OJpIKPotgyuFjjWdQCjY+rljLkcdb3dQY1yCt9YPBLK
-	 NxwMhCw3f+lJQBLDAXVHCW3OwlKt4dBNy9Vp7ct9Sgb8h3Wizya6pz6Ulyn+EeXUva
-	 Aw+1WKhrXcc/PjQXX8/S9fo0I6JeDitvQi18oZT7BdyZVZuR7u+CSC7Kk859kiDYOr
-	 nsNLpML8Q0IWw==
+	b=e6ICdCyg1h+8RTqRoFBoprOItc6MANLQ6Y4XHsbsTXq+DkOCuiiPfqEt9iPqEoIE2
+	 slbjY74CviyvXLZrve49E5OJIJ9WO1GSMdqGhej/V0ydDTOIMBUrNNpR/2fQIHg0xz
+	 UFzcNQuS89fMAtKvMppPJQJX0Fp5W3nTZpcON2gShD/wmtpQwQx00V8Qh3WDPuQJe+
+	 UDu3T21rYlOueT/mpPzTiRqzmNc7f1eDxIHdXxYCDrsFxA7y9MdZNmtyeN2M8AO0YJ
+	 BOlaB5boa85ZkLcsdreqOPK3w137oIuvC65GpMPsgFBSq2HpxUQDYcVgR0gEbsL+CY
+	 FQ/fsQ8yD5maw==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 21 Nov 2023 23:28:50 +0300 (MSK)
+	Tue, 21 Nov 2023 23:28:53 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 21 Nov 2023 23:28:50 +0300
+ 15.2.1118.40; Tue, 21 Nov 2023 23:28:52 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
 To: <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
 	<andy.shevchenko@gmail.com>
 CC: <kernel@sberdevices.ru>, <rockosov@gmail.com>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, Dmitry Rokosov <ddrokosov@salutedevices.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 03/11] dt-bindings: leds: aw200xx: introduce optional enable-gpios property
-Date: Tue, 21 Nov 2023 23:28:27 +0300
-Message-ID: <20231121202835.28152-4-ddrokosov@salutedevices.com>
+	<linux-leds@vger.kernel.org>, George Stark <gnstark@salutedevices.com>,
+	Dmitry Rokosov <ddrokosov@salutedevices.com>
+Subject: [PATCH v4 07/11] leds: aw200xx: enable disable_locking flag in regmap config
+Date: Tue, 21 Nov 2023 23:28:31 +0300
+Message-ID: <20231121202835.28152-8-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20231121202835.28152-1-ddrokosov@salutedevices.com>
 References: <20231121202835.28152-1-ddrokosov@salutedevices.com>
@@ -67,46 +67,30 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/11/21 17:47:00 #22495004
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Property 'enable-gpios' is optional, it can be used by the board
-developer to connect AW200XX LED controller with appropriate 'enable'
-GPIO pad.
+From: George Stark <gnstark@salutedevices.com>
 
+In the driver regmap is always used under mutex so regmap's inner lock
+can be disabled.
+
+Signed-off-by: George Stark <gnstark@salutedevices.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/leds/leds-aw200xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-index feb5febaf361..3da3633a242c 100644
---- a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-@@ -41,6 +41,9 @@ properties:
-     description:
-       Leds matrix size
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index bb17e48b3e2a..4c83d4979cf5 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -524,6 +524,7 @@ static const struct regmap_config aw200xx_regmap_config = {
+ 	.rd_table = &aw200xx_readable_table,
+ 	.wr_table = &aw200xx_writeable_table,
+ 	.cache_type = REGCACHE_MAPLE,
++	.disable_locking = true,
+ };
  
-+  enable-gpios:
-+    maxItems: 1
-+
- patternProperties:
-   "^led@[0-9a-f]$":
-     type: object
-@@ -90,6 +93,7 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/gpio/gpio.h>
-     #include <dt-bindings/leds/common.h>
- 
-     i2c {
-@@ -102,6 +106,7 @@ examples:
-             #address-cells = <1>;
-             #size-cells = <0>;
-             awinic,display-rows = <3>;
-+            enable-gpios = <&gpio 3 GPIO_ACTIVE_HIGH>;
- 
-             led@0 {
-                 reg = <0x0>;
+ static int aw200xx_probe(struct i2c_client *client)
 -- 
 2.36.0
 
