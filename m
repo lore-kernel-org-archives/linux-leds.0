@@ -1,34 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1533846B2
-	for <linux-leds@vger.kernel.org>; Thu, 23 Nov 2023 14:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4467250EB;
+	Thu, 23 Nov 2023 14:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KioWlU0z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B336C433C8;
-	Thu, 23 Nov 2023 14:48:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UI1vN4bX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D66C433C8;
+	Thu, 23 Nov 2023 14:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1700750920;
-	bh=u1dfPAl8WU4nH1bqr+U/uJcJjIRSFeshXRZIIy7HgTw=;
+	s=k20201202; t=1700751289;
+	bh=WVecSFWfBVZt7eHFDKvJJUv63uzdwj5MUayfwitPJng=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KioWlU0zmU30FWER87A8d5h5uul9ohvHD+i0X704NCKIYMg8CIhu8OYWNR5uH6hT9
-	 8j/QU+ung6WIr/9ZNBmh+jvAYMUYATV2jaXsIL14e+VFrX7hIPPd4Y3C6KsnEgHZPt
-	 iz5pd3LzK2QpHtRFFpkZQEntsc47alcz746BqT+ZXscNP56Pn6c7j/Y/aVIm/ixask
-	 TXFjGn1/C03I72hRt9T6/hnVDW8sm1zKooGwdNYJwPjPE2rMNqazOnaVofLg03H1oc
-	 OmQpJ2vj+rLmvRGadRlf4fTLA8fvgSFXUeKpjc79nJozWWrBg83Fb8HlLStfYepPlu
-	 YENPJUi1+9zHQ==
+	b=UI1vN4bXnDluSjqdzluU7xIHm1q2q0PduZMPaBxZJNaJFOJ8QeiJY2xs9hZwjej8A
+	 +PbvFS5rsJlmivgH6c6kLlwfzU6HhVXxgudulfWfC2pJDrSa30qmQ831rZziWqvWTX
+	 0ZTeDoyQb73HrG4lHjq1NZh6KXTWZMBa2cm9AhRBC4zXO5gZahAWOjQPKE5H3gS61W
+	 4M+KsuvhlrywqvebBe9DXy3Z1A021BSGy9Gacewbag8698aktWkWy1RXzeOHVrcVDM
+	 dadaNEHK6UkxJZAFziVEce8EvU2ezt2howCEwqd9Y5gCbiOKkE+yo7VgBYK2nGyQ22
+	 sQUNpIgoP94DA==
 From: Lee Jones <lee@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
-In-Reply-To: <20231103195310.948327-1-andriy.shevchenko@linux.intel.com>
-References: <20231103195310.948327-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/4] leds: trigger: gpio: Replace custom code for
- gpiod_get_optional()
-Message-Id: <170075091897.1365956.17632014819922518514.b4-ty@kernel.org>
-Date: Thu, 23 Nov 2023 14:48:38 +0000
+To: Lee Jones <lee@kernel.org>, 
+ Daniel Thompson <daniel.thompson@linaro.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+ Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Flavio Suligoi <f.suligoi@asem.it>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20231116105319.957600-1-f.suligoi@asem.it>
+References: <20231116105319.957600-1-f.suligoi@asem.it>
+Subject: Re: [PATCH v7 0/2] backlight: mp3309c: Add support for MPS MP3309C
+Message-Id: <170075128649.1369133.8551722036774346120.b4-ty@kernel.org>
+Date: Thu, 23 Nov 2023 14:54:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -39,26 +42,27 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.12.3
 
-On Fri, 03 Nov 2023 21:53:07 +0200, Andy Shevchenko wrote:
-> gpiod_get_optional() and currently used fwnode_gpiod_get_index()
-> are both wrappers against the same engine internally. Since we
-> have a pointer to struct device there is no reason to use fwnode
-> type of GPIO call. So, replace the current fwnode call by respective
-> gpiod ones.
+On Thu, 16 Nov 2023 11:53:17 +0100, Flavio Suligoi wrote:
+> This patchset (rebased on v6.7.0-rc1 kernel version):
 > 
+> - includes and updates the mps,mp3309c.yaml dt bindings file:
+>     - Documentation/devicetree/bindings/leds/backlight/mps,mp3309c.yaml
+>     Note: the patch related to this file was previously a separate patch
+>           and sent in two versions (v1 and v2).
+>           It has now been included in this patchset, starting with the
+>           version v6.
+> - adds the related device driver to support the MPS MP3309C backlight chip
+> - adds missed history of previous versions
+> - adds missed "Acked-by" and "Reviewed-by" added in previous versions
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] leds: trigger: gpio: Replace custom code for gpiod_get_optional()
-      commit: cafe2f8ed515e586b020a60df44e9f251f4d6248
-[2/4] leds: trigger: gpio: Convert to use kstrtox()
-      commit: 001813a6f0c7b05c139cde5d5177a4a9bfe39b09
-[3/4] leds: trigger: gpio: Use sysfs_emit() to instead of s*printf()
-      commit: bd4f0709c66394bb746c985872c4153ac93877b7
-[4/4] leds: trigger: gpio: Convert to DEVICE_ATTR_RW()
-      commit: 0603a253b18421a336c3be14bdcd1c5d75b6503b
+[1/2] dt-bindings: backlight: mp3309c: remove two required properties
+      commit: 87f33a1b8f7e3d223fc331fe54fd8ec337dc9cb9
+[2/2] backlight: mp3309c: Add support for MPS MP3309C
+      commit: 2e914516a58cf86bd0e42c7d3e25c81d44ec2ab8
 
 --
 Lee Jones [李琼斯]
