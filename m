@@ -1,103 +1,111 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXwn1L7K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B28127;
-	Sat, 25 Nov 2023 12:00:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1700942450; x=1732478450;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ndvF+Ar9gfYxB4rkH+FeGi/cHGDpQpbFY+l59NJJuCQ=;
-  b=aXwn1L7K+FiTepoVjDLc1n0TySWKAnIPYjVU7bt7osIxzRlgq3fjCgWr
-   QjZgctzEL62Sc4rKeY4KNXpw3XdA9CELBj0v9GVE+3D0FjuPaPbG8XSrR
-   FV2ugoE5YIGjDPHRagNORdIZSfARJ3sZ+KSs7L22SPf4plpjkkyz+1+eC
-   ZgTyuXHGnkm7/ySW/7jCiI8tPzB+4m0rnt+mQ/khRuYbZmPZw89RsgF8E
-   nXVjkVd/tf4Bk1ib7rChiL3DbiN8wNj8DfnWOoDOCFA/dfCRffQQqzql5
-   SK8YGP6sLp/TBRGJ2JQPO2H7iaufCo8IxZbGRfR9RBEiGLfxBWL2R9ja7
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10905"; a="391398657"
-X-IronPort-AV: E=Sophos;i="6.04,227,1695711600"; 
-   d="scan'208";a="391398657"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2023 12:00:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10905"; a="891332354"
-X-IronPort-AV: E=Sophos;i="6.04,227,1695711600"; 
-   d="scan'208";a="891332354"
-Received: from lkp-server01.sh.intel.com (HELO d584ee6ebdcc) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 25 Nov 2023 12:00:46 -0800
-Received: from kbuild by d584ee6ebdcc with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1r6ypY-0004Mh-1Z;
-	Sat, 25 Nov 2023 20:00:44 +0000
-Date: Sun, 26 Nov 2023 04:00:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuxi Wang <Yuxi.Wang@monolithicpower.com>, pavel@ucw.cz, lee@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, wyx137120466@gmail.com
-Subject: Re: [PATCH 2/2] leds: add mp3326 driver
-Message-ID: <202311260229.JhaLyLj7-lkp@intel.com>
-References: <20231124093034.951-3-Yuxi.Wang@monolithicpower.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Vf3sumlO"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AC62133;
+	Sat, 25 Nov 2023 12:05:30 -0800 (PST)
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id D24D510001F;
+	Sat, 25 Nov 2023 23:05:27 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D24D510001F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1700942727;
+	bh=zn+S/RI+VLG0sC38068gPmLqXKUSbREudqkWjxnsPFY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=Vf3sumlOgZWhlZy1PHPNxhCcH7oNJzqTz0K9ICC5PboBhNpBJExGtrL7T5KzCyMdT
+	 QUoDPm6hSaEoNRciaq0dNp+OVPwjvZViGk8anpjq4RwfZCNAJC4WnOzc2DJ0njyvxF
+	 sdMrtEydHigjPwpDiNU2F/vZf4QauenuGxdOJKg+Y0GL7E+0vCjF00R+wMNrDi+mSz
+	 Mdxlyc6j4VEC4JNNCtX2QusgiEu1vwgz1e7+kw779jysPC/WqHW1QW4ckR7gK8P1Rv
+	 CSogETZkTxr9Y08f31BrauTrSA7a4vIYj2R1g0vZbSaAmKE5sE9j4aPWXP5/5evizj
+	 ZUz7eWpd0bFbA==
+Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sat, 25 Nov 2023 23:05:27 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sat, 25 Nov 2023 23:05:27 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<andy.shevchenko@gmail.com>
+CC: <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-leds@vger.kernel.org>, Martin Kurbanov <mmkurbanov@salutedevices.com>,
+	Dmitry Rokosov <ddrokosov@salutedevices.com>
+Subject: [PATCH v5 01/11] leds: aw200xx: fix write to DIM parameter
+Date: Sat, 25 Nov 2023 23:05:09 +0300
+Message-ID: <20231125200519.1750-2-ddrokosov@salutedevices.com>
+X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20231125200519.1750-1-ddrokosov@salutedevices.com>
+References: <20231125200519.1750-1-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231124093034.951-3-Yuxi.Wang@monolithicpower.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 181593 [Nov 25 2023]
+X-KSMG-AntiSpam-Version: 6.0.0.2
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 4 0.3.4 720d3c21819df9b72e78f051e300e232316d302a, {Tracking_from_domain_doesnt_match_to}, p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/11/25 18:32:00 #22537065
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Yuxi,
+From: Martin Kurbanov <mmkurbanov@salutedevices.com>
 
-kernel test robot noticed the following build errors:
+If write only DIM value to the page 4, LED brightness will not be
+updated, as both DIM and FADE need to be written to the page 4.
+Therefore, write DIM to the page 1.
 
-[auto build test ERROR on lee-leds/for-leds-next]
-[also build test ERROR on robh/for-next linus/master v6.7-rc2 next-20231124]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: 36a87f371b7a ("leds: Add AW20xx driver")
+Signed-off-by: Martin Kurbanov <mmkurbanov@salutedevices.com>
+Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/leds/leds-aw200xx.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuxi-Wang/dt-bindings-leds-add-mps-mp3326-LED/20231124-173610
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20231124093034.951-3-Yuxi.Wang%40monolithicpower.com
-patch subject: [PATCH 2/2] leds: add mp3326 driver
-config: i386-buildonly-randconfig-005-20231126 (https://download.01.org/0day-ci/archive/20231126/202311260229.JhaLyLj7-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231126/202311260229.JhaLyLj7-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311260229.JhaLyLj7-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/leds/leds-mp3326.c:543:6: warning: unused variable 'val' [-Wunused-variable]
-           int val;
-               ^
-   drivers/leds/leds-mp3326.c:611:3: error: field designator 'probe_new' does not refer to any field in type 'struct i2c_driver'
-           .probe_new = mp3326_leds_probe,
-            ^
->> drivers/leds/leds-mp3326.c:619:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-   module_i2c_driver(mp3326_driver);
-   ^
-   int
->> drivers/leds/leds-mp3326.c:619:19: error: a parameter list without types is only allowed in a function definition
-   module_i2c_driver(mp3326_driver);
-                     ^
-   1 warning and 3 errors generated.
-
-
-vim +/int +619 drivers/leds/leds-mp3326.c
-
-   618	
- > 619	module_i2c_driver(mp3326_driver);
-
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index ef4eda6a09ee..842a22087b16 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -74,6 +74,10 @@
+ #define AW200XX_LED2REG(x, columns) \
+ 	((x) + (((x) / (columns)) * (AW200XX_DSIZE_COLUMNS_MAX - (columns))))
+ 
++/* DIM current configuration register on page 1 */
++#define AW200XX_REG_DIM_PAGE1(x, columns) \
++	AW200XX_REG(AW200XX_PAGE1, AW200XX_LED2REG(x, columns))
++
+ /*
+  * DIM current configuration register (page 4).
+  * The even address for current DIM configuration.
+@@ -153,7 +157,8 @@ static ssize_t dim_store(struct device *dev, struct device_attribute *devattr,
+ 
+ 	if (dim >= 0) {
+ 		ret = regmap_write(chip->regmap,
+-				   AW200XX_REG_DIM(led->num, columns), dim);
++				   AW200XX_REG_DIM_PAGE1(led->num, columns),
++				   dim);
+ 		if (ret)
+ 			goto out_unlock;
+ 	}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.36.0
+
