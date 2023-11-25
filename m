@@ -1,42 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="cF5nkyk+"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A746127;
-	Sat, 25 Nov 2023 12:05:30 -0800 (PST)
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 7ED3212000E;
-	Sat, 25 Nov 2023 23:05:27 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7ED3212000E
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="aIIu02lY"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A726318E;
+	Sat, 25 Nov 2023 12:05:33 -0800 (PST)
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 47348100025;
+	Sat, 25 Nov 2023 23:05:32 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 47348100025
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1700942727;
-	bh=1tkFCVxrpuSx/KtKj+sM5p4E0PBX09OKY9Yjr94V+/I=;
+	s=mail; t=1700942732;
+	bh=XZaUtJIinZsFjG7oW4EmSM0d0XTPrP4/k2a7efLvsns=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=cF5nkyk+9kmo1JDYUKprRbDsuuoVDCvjqQhotffFLwYp9KADidMBjmdZKqF3+XPrR
-	 Vk8VkE7EcuRuquDQ6k3tV9E3a8m2sFg5Pr2Q2aSXCp7ZGU6J0FIFrjOK4Ut640ssPd
-	 U0Q+Xdn8gTjYlLxyR7lKgTB8VjDFIO6MXoMfqvaNEsriQ3rz3XV+LwBybl5wkJzTaz
-	 QuRkXjgzD4vDACglR2Sz2cV7KIotmfuXJ4zRlsrsxDg9qSMftVL07saIlmOCdHxn/b
-	 DR4MJlUg4cM/mj89k9CG3TAnW1Fx505TupQA6aU/R5IfFcz9nCJmP68tQjij2j/5Uh
-	 MBnoBVpCp6VsA==
+	b=aIIu02lYdQoypBa3oIs4n5XP/m9sSl6fDFToka7rWIvDq+UpqMjeM06et9IoRIXtG
+	 de+EnBcgtYJ7YnA9y0bFjaI5U3hiojfrbeUQpmA/O/sKOT07qFxmD2aBUH9WE8s4OJ
+	 S3AxACLsu4/uMzhErtAE8mnJvTzgzy1gBfNykH8FAmTARL2bc1LMie1TlxEqdvmKsg
+	 Q2ZBSKZi9xz4W9miGSbFHEgHr5piDXKBnIbjANLFXOtgV4CKsJlzU0LFJxNVVCNceD
+	 H7G8t1r2XGNSWH+E1Ppo4DkrYdGj8hVrrF1/nZ2yAqTArSk34Eb+5fcBzMH1rosF9B
+	 4nl14chOKN9dg==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sat, 25 Nov 2023 23:05:26 +0300 (MSK)
+	Sat, 25 Nov 2023 23:05:32 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 25 Nov 2023 23:05:26 +0300
+ 15.2.1118.40; Sat, 25 Nov 2023 23:05:31 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
 To: <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
 	<andy.shevchenko@gmail.com>
 CC: <kernel@sberdevices.ru>, <rockosov@gmail.com>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v5 00/11] leds: aw200xx: several driver updates
-Date: Sat, 25 Nov 2023 23:05:08 +0300
-Message-ID: <20231125200519.1750-1-ddrokosov@salutedevices.com>
+	<linux-leds@vger.kernel.org>, George Stark <gnstark@salutedevices.com>,
+	Dmitry Rokosov <ddrokosov@salutedevices.com>
+Subject: [PATCH v5 09/11] leds: aw200xx: add support for aw20108 device
+Date: Sat, 25 Nov 2023 23:05:17 +0300
+Message-ID: <20231125200519.1750-10-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20231125200519.1750-1-ddrokosov@salutedevices.com>
+References: <20231125200519.1750-1-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -56,88 +59,93 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 4 0.3.4 720d3c21819df9b72e78f051e300e232316d302a, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;100.64.160.123:7.1.2;doc.awinic.com:7.1.1;lore.kernel.org:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 4 0.3.4 720d3c21819df9b72e78f051e300e232316d302a, {Tracking_from_domain_doesnt_match_to}, p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2023/11/25 18:50:00
-X-KSMG-LinksScanning: Clean, bases: 2023/11/25 18:50:00
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/11/25 18:32:00 #22537065
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-The following patch series includes several updates for the AW200XX LED
-driver:
-    - some small fixes and optimizations to the driver implementation:
-      delays, autodimming calculation, disable_locking regmap flag,
-      display_rows calculation in runtime;
-    - fix LED device tree node pattern to accept LED names counting not
-      only from 0 to f;
-    - add missing reg constraints;
-    - support HWEN hardware control, which allows enabling or disabling
-      AW200XX RTL logic from the main SoC using a GPIO pin;
-    - introduce the new AW20108 LED controller, the datasheet for this
-      controller can be found at [1].
+From: George Stark <gnstark@salutedevices.com>
 
-Changes v5 since v4 at [5]:
-    - make several lowercase->uppercase renaming suggested by Lee Jones
-    - change aw200xx_probe_get_display_rows() return value type from
-      boolean to integer and propagate error return values to the
-      dev_err_probe()
-    - fix some grammar problems
+Add support for the Awinic aw20108 device, which belongs to the same LED
+drivers family. The new device supports 108 LEDs using a matrix of 12x9
+outputs."
 
-Changes v4 since v3 at [4]:
-    - properly handle max_source = 0 situations
-    - fix Rob's dt_binding_check alerts
+Signed-off-by: George Stark <gnstark@salutedevices.com>
+Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+---
+ drivers/leds/Kconfig        | 14 +++++++++-----
+ drivers/leds/leds-aw200xx.c | 10 +++++++++-
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-Changes v3 since v2 at [3]:
-    - handle all cases during hwen gpio get routine execution
-    - rename 'hwen-gpios' to standard 'enable-gpios'
-    - properly handle aw200xx_probe_get_display_rows() ret values
-    - fix timestamp format in the comments and commit messages
-    - expand LEDS_AW200XX config and dt-bindings description
-    - describe reg constraints for all compatible variants
-    - add Conor's Acked-by tag
-
-Changes v2 since v1 at [2]:
-    - rebase on the latest aw200xx changes from lee/leds git repo
-    - some commit messages rewording
-    - replace legacy gpio_* API with gpiod_* and devm_gpiod_* API
-    - rename dt property awinic,hwen-gpio to hwen-gpios according to
-      gpiod API
-    - use fsleep() instead of usleep_range() per Andy's suggestion
-    - add max_brightness parameter to led cdev to restrict
-      set_brightness() overflow
-    - provide reg constraints as Rob suggested
-    - move hwen-gpios to proper dt node in the bindings example
-
-Links:
-    [1] https://doc.awinic.com/doc/20230609wm/8a9a9ac8-1d8f-4e75-bf7a-67a04465c153.pdf
-    [2] https://lore.kernel.org/all/20231006160437.15627-1-ddrokosov@salutedevices.com/
-    [3] https://lore.kernel.org/all/20231018182943.18700-1-ddrokosov@salutedevices.com/
-    [4] https://lore.kernel.org/all/20231101142445.8753-1-ddrokosov@salutedevices.com/
-    [5] https://lore.kernel.org/all/20231121202835.28152-1-ddrokosov@salutedevices.com/
-
-Dmitry Rokosov (3):
-  leds: aw200xx: support HWEN hardware control
-  dt-bindings: leds: aw200xx: introduce optional enable-gpios property
-  dt-bindings: leds: aw200xx: fix led pattern and add reg constraints
-
-George Stark (7):
-  leds: aw200xx: calculate dts property display_rows in the driver
-  dt-bindings: leds: aw200xx: remove property "awinic,display-rows"
-  leds: aw200xx: add delay after software reset
-  leds: aw200xx: enable disable_locking flag in regmap config
-  leds: aw200xx: improve autodim calculation method
-  leds: aw200xx: add support for aw20108 device
-  dt-bindings: leds: awinic,aw200xx: add AW20108 device
-
-Martin Kurbanov (1):
-  leds: aw200xx: fix write to DIM parameter
-
- .../bindings/leds/awinic,aw200xx.yaml         | 95 +++++++++++++-----
- drivers/leds/Kconfig                          | 14 ++-
- drivers/leds/leds-aw200xx.c                   | 98 ++++++++++++++++---
- 3 files changed, 163 insertions(+), 44 deletions(-)
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6046dfeca16f..a898a8679334 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -95,14 +95,18 @@ config LEDS_ARIEL
+ 	  Say Y to if your machine is a Dell Wyse 3020 thin client.
+ 
+ config LEDS_AW200XX
+-	tristate "LED support for Awinic AW20036/AW20054/AW20072"
++	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
+ 	depends on LEDS_CLASS
+ 	depends on I2C
+ 	help
+-	  This option enables support for the AW20036/AW20054/AW20072 LED driver.
+-	  It is a 3x12/6x9/6x12 matrix LED driver programmed via
+-	  an I2C interface, up to 36/54/72 LEDs or 12/18/24 RGBs,
+-	  3 pattern controllers for auto breathing or group dimming control.
++	  This option enables support for the Awinic AW200XX LED controllers.
++	  It is a matrix LED driver programmed via an I2C interface. Devices have
++	  a set of individually controlled LEDs and support 3 pattern controllers
++	  for auto breathing or group dimming control. Supported devices:
++	    - AW20036 (3x12) 36 LEDs
++	    - AW20054 (6x9)  54 LEDs
++	    - AW20072 (6x12) 72 LEDs
++	    - AW20108 (9x12) 108 LEDs
+ 
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called leds-aw200xx.
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index e125b6c68c23..1d3943f86f7f 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Awinic AW20036/AW20054/AW20072 LED driver
++ * Awinic AW20036/AW20054/AW20072/AW20108 LED driver
+  *
+  * Copyright (c) 2023, SberDevices. All Rights Reserved.
+  *
+@@ -622,10 +622,17 @@ static const struct aw200xx_chipdef aw20072_cdef = {
+ 	.display_size_columns = 12,
+ };
+ 
++static const struct aw200xx_chipdef aw20108_cdef = {
++	.channels = 108,
++	.display_size_rows_max = 9,
++	.display_size_columns = 12,
++};
++
+ static const struct i2c_device_id aw200xx_id[] = {
+ 	{ "aw20036" },
+ 	{ "aw20054" },
+ 	{ "aw20072" },
++	{ "aw20108" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, aw200xx_id);
+@@ -634,6 +641,7 @@ static const struct of_device_id aw200xx_match_table[] = {
+ 	{ .compatible = "awinic,aw20036", .data = &aw20036_cdef, },
+ 	{ .compatible = "awinic,aw20054", .data = &aw20054_cdef, },
+ 	{ .compatible = "awinic,aw20072", .data = &aw20072_cdef, },
++	{ .compatible = "awinic,aw20108", .data = &aw20108_cdef, },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, aw200xx_match_table);
 -- 
 2.36.0
 
