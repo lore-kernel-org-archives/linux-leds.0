@@ -1,42 +1,42 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="qY6E0jc8"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED9913E;
-	Sat, 25 Nov 2023 12:05:30 -0800 (PST)
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 015E9100022;
-	Sat, 25 Nov 2023 23:05:29 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 015E9100022
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="lQTIvF8Q"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2996718C;
+	Sat, 25 Nov 2023 12:05:33 -0800 (PST)
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id C16DE12001D;
+	Sat, 25 Nov 2023 23:05:31 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru C16DE12001D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1700942729;
-	bh=j/fX6YDIQyQ1VIymrunLH5mwmh/dqGOmhqXkwzfUmIU=;
+	s=mail; t=1700942731;
+	bh=Nz6KMI06TAaOZ9MntU69qR3R1MQfjHcEyVZW5vm7XRg=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=qY6E0jc8xIGFm1MjjrXwby0mkNJtjR5PTe4DAeI8VK/Tb8FI+60ocr9dq4aSmWXFv
-	 ZSQQILcUKk6JTHh9MwzSjSinO3WRIA51SD8nReiqslSaaXh7+pyJ55TV1pgv2oHOhS
-	 H+Bl3e+XI7vgwtJCbWSbPA3+foJUP7NJK+MrBF/YUaHRiJsCeBjJsWTpdDCLoqM9ty
-	 Ec5+IgK9YlYwV8aTc8NGSZDUBDU2wnRvrhvN+OdEJE5iYWSlZVzbNPGhtmguyvfLm0
-	 u3REjKySbzSvwND7UXzX8lVBJj1JjyjANGURp1JQp0+vsy4/yhLKy2FVkk/uffA2ah
-	 URFnNmvCbnBww==
+	b=lQTIvF8QnLV5wyaSvYRsggp9VWwurc4dhac7y3yQt28HL6ZXQCDPShRFmqCBTFSd+
+	 7ovtRVrSe0NiEzcYC4GG1PS96N+ekfA+drualE/farafqN37EvTDQ8DxbxEDzjmLXG
+	 CyHESYRwN4d64YNOOpdWPoxr+6ndfVfEEnHWCs0BVVM7z9XWFP4LzoB0aWbimbq1Ez
+	 h2i2wwUJDMtpGVeWfOo9inU2k4M1vNOZfrly6FAB59ol/0FjuAiOKksRgYMBvrq+XF
+	 i8NLMpD+J7ofDUBZwD7U5oqwAfreeh2BpquCQSCB3EE3Lwyar6g5AK8fK9KwtnYdSZ
+	 ER3QALOd28nIA==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sat, 25 Nov 2023 23:05:28 +0300 (MSK)
+	Sat, 25 Nov 2023 23:05:31 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 25 Nov 2023 23:05:28 +0300
+ 15.2.1118.40; Sat, 25 Nov 2023 23:05:31 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
 To: <lee@kernel.org>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
 	<andy.shevchenko@gmail.com>
 CC: <kernel@sberdevices.ru>, <rockosov@gmail.com>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-leds@vger.kernel.org>, Dmitry Rokosov <ddrokosov@salutedevices.com>,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 03/11] dt-bindings: leds: aw200xx: introduce optional enable-gpios property
-Date: Sat, 25 Nov 2023 23:05:11 +0300
-Message-ID: <20231125200519.1750-4-ddrokosov@salutedevices.com>
+	<linux-leds@vger.kernel.org>, George Stark <gnstark@salutedevices.com>,
+	Dmitry Rokosov <ddrokosov@salutedevices.com>
+Subject: [PATCH v5 08/11] leds: aw200xx: improve autodim calculation method
+Date: Sat, 25 Nov 2023 23:05:16 +0300
+Message-ID: <20231125200519.1750-9-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20231125200519.1750-1-ddrokosov@salutedevices.com>
 References: <20231125200519.1750-1-ddrokosov@salutedevices.com>
@@ -59,7 +59,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 4 0.3.4 720d3c21819df9b72e78f051e300e232316d302a, {Tracking_from_domain_doesnt_match_to}, p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 4 0.3.4 720d3c21819df9b72e78f051e300e232316d302a, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;100.64.160.123:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -67,46 +67,51 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/11/25 18:32:00 #22537065
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Property 'enable-gpios' is optional, it can be used by the board
-developer to connect AW200XX LED controller with appropriate 'enable'
-GPIO pad.
+From: George Stark <gnstark@salutedevices.com>
 
+It is highly recommended to leverage the DIV_ROUND_UP() function as a
+more refined and mathematically precise alternative to employing a
+coarse division method.
+
+Signed-off-by: George Stark <gnstark@salutedevices.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/leds/leds-aw200xx.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-index feb5febaf361..3da3633a242c 100644
---- a/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-+++ b/Documentation/devicetree/bindings/leds/awinic,aw200xx.yaml
-@@ -41,6 +41,9 @@ properties:
-     description:
-       Leds matrix size
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index c6a51152a494..e125b6c68c23 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -87,6 +87,8 @@
+ #define AW200XX_REG_DIM(x, columns) \
+ 	AW200XX_REG(AW200XX_PAGE4, AW200XX_LED2REG(x, columns) * 2)
+ #define AW200XX_REG_DIM2FADE(x) ((x) + 1)
++#define AW200XX_REG_FADE2DIM(fade) \
++	DIV_ROUND_UP((fade) * AW200XX_DIM_MAX, AW200XX_FADE_MAX)
  
-+  enable-gpios:
-+    maxItems: 1
-+
- patternProperties:
-   "^led@[0-9a-f]$":
-     type: object
-@@ -90,6 +93,7 @@ additionalProperties: false
+ /*
+  * Duty ratio of display scan (see p.15 of datasheet for formula):
+@@ -195,9 +197,7 @@ static int aw200xx_brightness_set(struct led_classdev *cdev,
  
- examples:
-   - |
-+    #include <dt-bindings/gpio/gpio.h>
-     #include <dt-bindings/leds/common.h>
+ 	dim = led->dim;
+ 	if (dim < 0)
+-		dim = max_t(int,
+-			    brightness / (AW200XX_FADE_MAX / AW200XX_DIM_MAX),
+-			    1);
++		dim = AW200XX_REG_FADE2DIM(brightness);
  
-     i2c {
-@@ -102,6 +106,7 @@ examples:
-             #address-cells = <1>;
-             #size-cells = <0>;
-             awinic,display-rows = <3>;
-+            enable-gpios = <&gpio 3 GPIO_ACTIVE_HIGH>;
+ 	ret = regmap_write(chip->regmap, reg, dim);
+ 	if (ret)
+@@ -462,6 +462,7 @@ static int aw200xx_probe_fw(struct device *dev, struct aw200xx *chip)
+ 		led->num = source;
+ 		led->chip = chip;
+ 		led->cdev.brightness_set_blocking = aw200xx_brightness_set;
++		led->cdev.max_brightness = AW200XX_FADE_MAX;
+ 		led->cdev.groups = dim_groups;
+ 		init_data.fwnode = child;
  
-             led@0 {
-                 reg = <0x0>;
 -- 
 2.36.0
 
