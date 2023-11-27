@@ -1,239 +1,213 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="OAUKknIa"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80AF111;
-	Mon, 27 Nov 2023 02:59:53 -0800 (PST)
-Received: from [192.168.42.20] (p5b164862.dip0.t-ipconnect.de [91.22.72.98])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 87C812FC0048;
-	Mon, 27 Nov 2023 11:59:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1701082792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nbU2k/kMmm5ocGXjEMeXuk5Iu3qkqA+oEUDAkRMSimM=;
-	b=OAUKknIa2UDNliD87gXDT6W74PHafjt8zUK/lu6NMT30uriZOF8aVJAWTLI3lyQgt+ec9e
-	rTkrJoVuy0dKiLck4tJAe8COvY9PcSh1pDBI8KPZnuRKrmnmrtsNRbCQiNY8gDqKaqeYbL
-	y0b+TPtX0SDSMpmj7mGgZkE3RuaTunY=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <ac02143c-d417-49e5-9c6e-150cbda71ba7@tuxedocomputers.com>
-Date: Mon, 27 Nov 2023 11:59:51 +0100
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF2B113;
+	Mon, 27 Nov 2023 03:03:24 -0800 (PST)
+Received: from [127.0.0.1] (helo=localhost)
+	by relay.expurgate.net with smtp (Exim 4.92)
+	(envelope-from <prvs=1709d64187=fe@dev.tdt.de>)
+	id 1r7ZOZ-00HQdp-2E; Mon, 27 Nov 2023 12:03:19 +0100
+Received: from [195.243.126.94] (helo=securemail.tdt.de)
+	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <fe@dev.tdt.de>)
+	id 1r7ZOY-000Ydh-C2; Mon, 27 Nov 2023 12:03:18 +0100
+Received: from securemail.tdt.de (localhost [127.0.0.1])
+	by securemail.tdt.de (Postfix) with ESMTP id 00E4724004D;
+	Mon, 27 Nov 2023 12:03:18 +0100 (CET)
+Received: from mail.dev.tdt.de (unknown [10.2.4.42])
+	by securemail.tdt.de (Postfix) with ESMTP id 6BFFE240040;
+	Mon, 27 Nov 2023 12:03:17 +0100 (CET)
+Received: from localhost.localdomain (unknown [10.2.3.40])
+	by mail.dev.tdt.de (Postfix) with ESMTPSA id 2512E33D8E;
+	Mon, 27 Nov 2023 12:03:17 +0100 (CET)
+From: Florian Eckert <fe@dev.tdt.de>
+To: Eckert.Florian@googlemail.com,
+	pavel@ucw.cz,
+	lee@kernel.org,
+	kabel@kernel.org,
+	gregkh@linuxfoundation.org,
+	u.kleine-koenig@pengutronix.de
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [Patch v9 2/4] leds: ledtrig-tty: replace mutex with completion
+Date: Mon, 27 Nov 2023 12:03:09 +0100
+Message-ID: <20231127110311.3583957-3-fe@dev.tdt.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20231127110311.3583957-1-fe@dev.tdt.de>
+References: <20231127110311.3583957-1-fe@dev.tdt.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Implement per-key keyboard backlight as auxdisplay?
-Content-Language: en-US
-To: Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>,
- Jani Nikula <jani.nikula@linux.intel.com>, jikos@kernel.org,
- Jelle van der Waa <jelle@vdwaa.nl>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Lee Jones
- <lee@kernel.org>, linux-kernel@vger.kernel.org,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- linux-input@vger.kernel.org, ojeda@kernel.org, linux-leds@vger.kernel.org
-References: <20231011190017.1230898-1-wse@tuxedocomputers.com>
- <ZSe1GYLplZo5fsAe@duo.ucw.cz>
- <0440ed38-c53b-4aa1-8899-969e5193cfef@tuxedocomputers.com>
- <ZSf9QneKO/8IzWhd@duo.ucw.cz>
- <a244a00d-6be4-44bc-9d41-6f9df14de8ee@tuxedocomputers.com>
- <ZSk16iTBmZ2fLHZ0@duo.ucw.cz>
- <aac81702-df1e-43a2-bfe9-28e9cb8d2282@tuxedocomputers.com>
- <ZSmg4tqXiYiX18K/@duo.ucw.cz>
- <CANiq72mfP+dOLFR352O0UNVF8m8yTi_VmOY1zzQdTBjPWCRowg@mail.gmail.com>
- <87sf61bm8t.fsf@intel.com> <ZVvHG/Q+V6kCnfKZ@duo.ucw.cz>
- <f4137e34-c7fb-4f21-bc93-1496cbf61fdf@tuxedocomputers.com>
- <8096a042-83bd-4b9f-b633-79e86995c9b8@redhat.com>
- <f416fbca-589b-4f6a-aad6-323b66398273@tuxedocomputers.com>
- <4222268b-ff44-4b7d-bf11-e350594bbe24@redhat.com>
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <4222268b-ff44-4b7d-bf11-e350594bbe24@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-purgate: clean
+X-purgate-type: clean
+X-purgate-ID: 151534::1701082999-65079C7C-1C077096/0/0
 
-Hi Hans,
+With this commit, the mutex handling is replaced by the completion
+handling. When handling mutex, it must always be ensured that the held
+mutex is also released again. This is more error-prone should the number
+of code paths increase.
 
-Am 22.11.23 um 19:34 schrieb Hans de Goede:
-> Hi Werner,
-[snip]
->>>> Another idea I want to throw in the mix:
->>>>
->>>> Maybe the kernel is not the right place to implement this at all. RGB stuff is not at all standardized and every vendor is doing completely different interfaces, which does not fit the kernel userpsace apis desire to be uniformal and fixed. e.g. Auxdisplay might fit static setting of RGB values, but it does not fit the snake-effect mode, or the raindrops mode, or the 4-different-colors-in-the-edges-breathing-and-color-cycling mode.
->>>>
->>>> So my current idea: Implement these keyboards as a single zone RGB kbd_backlight in the leds interface to have something functional out of the box, but make it runtime disable-able if something like https://gitlab.com/CalcProgrammer1/OpenRGB wants to take over more fine granular control from userspace via hidraw.
->>> That sounds like a good approach to me. We are seeing the same with game controllers where steam and wine/proton also sometimes use hidraw mode to get access to all the crazy^W interesting features.
->>>
->>> That would mean that all we need to standardize and the kernel <-> userspace API level is adding a standard way to disable the single zone RGB kbd_backlight support in the kernel.
->> I would suggest a simple "enable" entry. Default is 1. When set to 0 the kernel driver no longer does anything.
-> I'm not in favor of using "enable" as sysfs attribute for this,
-> I would like to see a more descriptive name, how about:
->
-> "disable_kernel_kbd_backlight_support"
->
-> And then maybe also have the driver actually unregister
-> the LED class device ?
->
-> Or just make the support inactive when writing 1 to
-> this and allow re-enabling it by writing 0?
+This is a preparatory commit to make the trigger more configurable via
+additional sysfs parameters. With this change, the worker always runs and
+is no longer stopped if no ttyname is set.
 
-Unregistering would mean that it can't be reenabled without module reload/reboot?
+Signed-off-by: Florian Eckert <fe@dev.tdt.de>
+---
+ drivers/leds/trigger/ledtrig-tty.c | 59 +++++++++++++++---------------
+ 1 file changed, 30 insertions(+), 29 deletions(-)
 
-I would prefer that the userspace driver could easily give back control to the 
-leds interface.
-
->
->> Questions:
->>
->> - Should the driver try to reset the settings to boot default? Or just leave the device in the current state? With the former I could see issues that they keyboard is flashing when changing from kernelspace control to userspace control. With the later the burden on bringing the device to a know state lies with the userspace driver.
-> My vote would go to leave the state as is. Even if the hw
-> does not support state readback, then the userspace code
-> can readback the state before writing 1 to
-> "disable_kernel_kbd_backlight_support"
-ack
->
->> - Should this be a optional entry that only shows up on drivers supporting it, or could this implemented in a generic way affecting all current led entries?
-> IMHO this should be optional. If we go with the variant
-> where writing 1 to "disable_kernel_kbd_backlight_support"
-> just disables support and 0 re-enables it then I guess
-> we could have support for this in the LED-core, enabled
-> by a flag set by the driver.
->
-> If we go with unregistering the led class device,
-> then this needs to be mostly handled in the driver.
->
-> Either way the kernel driver should know about this even
-> if it is mostly handled in the LED core so that e.g.
-> it does not try to restore settings on resume from suspend.
-
-So a generic implementation would still require all current led drivers to be 
-touched?
-
-For the sake of simplicity I would then prefer the optional variant.
-
->
->> - I guess UPower integration for the userspace driver could be archived with https://www.kernel.org/doc/html/latest/leds/uleds.html however this limited to brightness atm, so when accent colors actually come to UPower this would also need some expansion to be able to pass a preferred color to the userspace driver (regardless of what that driver is then doing with that information).
-> Using uleds is an interesting suggestion, but upower atm
-> does not support LED class kbd_backlight devices getting
-> hot-plugged. It only scans for them once at boot.
->
-> Jelle van der Waa (a colleague of mine, added to the Cc)
-> has indicated he is interested in maybe working on fixing
-> this upower short-coming as a side project, once his
-> current side-projects are finished.
-Nice to hear.
->
->> On a different note: This approach does currently not cover the older EC controlled 3 zone keyboards from clevo. Here only the kernel has access access to the device so the kernel driver has to expose all functionality somehow. Should this be done by an arbitrarily designed platform device?
-> Interesting question, this reminds there was a discussion
-> about how to handle zoned keyboards using plain LED class
-> APIs here:
->
-> https://lore.kernel.org/linux-leds/544484b9-c0ac-2fd0-1f41-8fa94cb94d4b@redhat.com/
->
-> Basically the idea discussed there is to create
-> separate multi-color LED sysfs devices for each zone,
-> using :rgb:kbd_zoned_backlight-xxx as postfix, e.g. :
->
->   :rgb:kbd_zoned_backlight-left
->   :rgb:kbd_zoned_backlight-middle
->   :rgb:kbd_zoned_backlight-right
->   :rgb:kbd_zoned_backlight-wasd
->
-> As postfixes for the 4 per zone LED class devices
-> and then teach upower to just treat this as
-> a single kbd-backlight for the existing upower
-> DBUS API and maybe later extend the DBUS API.
->
-> Would something like this work for the Clevo
-> case you are describing?
-
-Not entirely as some concept for the special modes would still be required.
-
-Also it would be nice to be able to set the whole keyboard with a singular file 
-access so that the keyboard changes at once and not zone by zone.
-
->
-> Unfortunately this was never implemented but
-> I think that for simple zoned backlighting
-> this still makes sense. Where as for per key
-> controllable backlighting as mention in
-> $subject I do believe that just using hidraw
-> access directly from userspace is best.
->
-> Regards,
->
-> Hans
-I also stumbled across a new Problem:
-
-We have an upcoming device that has a per-key keyboard backlight, but does the 
-control completely via a wmi/acpi interface. So no usable hidraw here for a 
-potential userspace driver implementation ...
-
-So a quick summary for the ideas floating in this thread so far:
-
-1. Expand leds interface allowing arbitrary modes with semi arbitrary optional 
-attributes:
-
-     - Pro:
-
-         - Still offers all default attributes for use with UPower
-
-         - Fairly simple to implement from the preexisting codebase
-
-         - Could be implemented for all (to me) known internal keyboard backlights
-
-     - Con:
-
-         - Violates the simplicity paradigm of the leds interface (e.g. with 
-this one leds entry controls possible multiple leds)
-
-2. Implement per-key keyboards as auxdisplay
-
-     - Pro:
-
-         - Already has a concept for led positions
-
-         - Is conceptually closer to "multiple leds forming a singular entity"
-
-     - Con:
-
-         - No preexisting UPower support
-
-         - No concept for special hardware lightning modes
-
-         - No support for arbitrary led outlines yet (e.g. ISO style enter-key)
-
-3. Implement in input subsystem
-
-     - Pro:
-
-         - Preexisting concept for keys and key purpose
-
-     - Con:
-
-         - Not in scope for subsystem
-
-         - No other preexisting light infrastructure
-
-4. Implement a simple leds driver only supporting a small subset of the 
-capabilities and make it disable-able for a userspace driver to take over
-
-     - Pro:
-
-         - Most simple to implement basic support
-
-         - In scope for led subsystem simplicity paradigm
-
-     - Con:
-
-         - Not all built in keyboard backlights can be implemented in a 
-userspace only driver
-
-Kind Regards,
-
-Werner
+diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/le=
+dtrig-tty.c
+index 8ae0d2d284af..0d73bec1529f 100644
+--- a/drivers/leds/trigger/ledtrig-tty.c
++++ b/drivers/leds/trigger/ledtrig-tty.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+=20
++#include <linux/completion.h>
+ #include <linux/delay.h>
+ #include <linux/leds.h>
+ #include <linux/module.h>
+@@ -12,15 +13,23 @@
+ struct ledtrig_tty_data {
+ 	struct led_classdev *led_cdev;
+ 	struct delayed_work dwork;
+-	struct mutex mutex;
++	struct completion sysfs;
+ 	const char *ttyname;
+ 	struct tty_struct *tty;
+ 	int rx, tx;
+ };
+=20
+-static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
++static int ledtrig_tty_wait_for_completion(struct device *dev)
+ {
+-	schedule_delayed_work(&trigger_data->dwork, 0);
++	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
++	int ret;
++
++	ret =3D wait_for_completion_timeout(&trigger_data->sysfs,
++					  msecs_to_jiffies(LEDTRIG_TTY_INTERVAL * 20));
++	if (ret =3D=3D 0)
++		return -ETIMEDOUT;
++
++	return ret;
+ }
+=20
+ static ssize_t ttyname_show(struct device *dev,
+@@ -28,14 +37,16 @@ static ssize_t ttyname_show(struct device *dev,
+ {
+ 	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
+ 	ssize_t len =3D 0;
++	int completion;
+=20
+-	mutex_lock(&trigger_data->mutex);
++	reinit_completion(&trigger_data->sysfs);
++	completion =3D ledtrig_tty_wait_for_completion(dev);
++	if (completion < 0)
++		return completion;
+=20
+ 	if (trigger_data->ttyname)
+ 		len =3D sprintf(buf, "%s\n", trigger_data->ttyname);
+=20
+-	mutex_unlock(&trigger_data->mutex);
+-
+ 	return len;
+ }
+=20
+@@ -46,7 +57,7 @@ static ssize_t ttyname_store(struct device *dev,
+ 	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
+ 	char *ttyname;
+ 	ssize_t ret =3D size;
+-	bool running;
++	int completion;
+=20
+ 	if (size > 0 && buf[size - 1] =3D=3D '\n')
+ 		size -=3D 1;
+@@ -59,9 +70,10 @@ static ssize_t ttyname_store(struct device *dev,
+ 		ttyname =3D NULL;
+ 	}
+=20
+-	mutex_lock(&trigger_data->mutex);
+-
+-	running =3D trigger_data->ttyname !=3D NULL;
++	reinit_completion(&trigger_data->sysfs);
++	completion =3D ledtrig_tty_wait_for_completion(dev);
++	if (completion < 0)
++		return completion;
+=20
+ 	kfree(trigger_data->ttyname);
+ 	tty_kref_put(trigger_data->tty);
+@@ -69,11 +81,6 @@ static ssize_t ttyname_store(struct device *dev,
+=20
+ 	trigger_data->ttyname =3D ttyname;
+=20
+-	mutex_unlock(&trigger_data->mutex);
+-
+-	if (ttyname && !running)
+-		ledtrig_tty_restart(trigger_data);
+-
+ 	return ret;
+ }
+ static DEVICE_ATTR_RW(ttyname);
+@@ -85,13 +92,8 @@ static void ledtrig_tty_work(struct work_struct *work)
+ 	struct serial_icounter_struct icount;
+ 	int ret;
+=20
+-	mutex_lock(&trigger_data->mutex);
+-
+-	if (!trigger_data->ttyname) {
+-		/* exit without rescheduling */
+-		mutex_unlock(&trigger_data->mutex);
+-		return;
+-	}
++	if (!trigger_data->ttyname)
++		goto out;
+=20
+ 	/* try to get the tty corresponding to $ttyname */
+ 	if (!trigger_data->tty) {
+@@ -116,11 +118,8 @@ static void ledtrig_tty_work(struct work_struct *wor=
+k)
+ 	}
+=20
+ 	ret =3D tty_get_icount(trigger_data->tty, &icount);
+-	if (ret) {
+-		dev_info(trigger_data->tty->dev, "Failed to get icount, stopped pollin=
+g\n");
+-		mutex_unlock(&trigger_data->mutex);
+-		return;
+-	}
++	if (ret)
++		goto out;
+=20
+ 	if (icount.rx !=3D trigger_data->rx ||
+ 	    icount.tx !=3D trigger_data->tx) {
+@@ -134,7 +133,7 @@ static void ledtrig_tty_work(struct work_struct *work=
+)
+ 	}
+=20
+ out:
+-	mutex_unlock(&trigger_data->mutex);
++	complete_all(&trigger_data->sysfs);
+ 	schedule_delayed_work(&trigger_data->dwork,
+ 			      msecs_to_jiffies(LEDTRIG_TTY_INTERVAL * 2));
+ }
+@@ -157,7 +156,9 @@ static int ledtrig_tty_activate(struct led_classdev *=
+led_cdev)
+=20
+ 	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
+ 	trigger_data->led_cdev =3D led_cdev;
+-	mutex_init(&trigger_data->mutex);
++	init_completion(&trigger_data->sysfs);
++
++	schedule_delayed_work(&trigger_data->dwork, 0);
+=20
+ 	return 0;
+ }
+--=20
+2.30.2
 
