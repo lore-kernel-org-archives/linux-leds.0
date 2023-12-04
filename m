@@ -1,74 +1,92 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KH4huRNS"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 591E0F2
-	for <linux-leds@vger.kernel.org>; Mon,  4 Dec 2023 06:03:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1701698606; x=1733234606;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Hc3GDWAuiWFVq4OPHL/bpZJQWt8nhUFwuxno2A4bz/Q=;
-  b=KH4huRNSQayz+aeQrA7Dueva6be1vkDqKlXugfLWsuoBAEo9Y5+AMGrP
-   tUpqwLeMv7XQyhAhQkcF2YRYr6vwKup4Sbko9dBJyMBNCClsnNMxkd4AC
-   88R+CeS4OdQNN8RWD6KWov8JvzfPtqklOtdvroa8OjVWwo9SOsffhyn89
-   wXmXlhmfZiyZZdjkH8KN0TEpbNq+4bXx7cyySdK8kXD8gwzTtXHkyWJTq
-   6DIgkW3aSPYELwCnl3nTclK/UNqhqR0xRplRkJSwJtaDJJNkJvwUsH7uQ
-   XLfmIJ2MMm932o2NMNMycmGxRPHtwtngQrk9F2lBwUbesE1TuC4HxESX0
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10914"; a="396540385"
-X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="396540385"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 06:03:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10914"; a="746843628"
-X-IronPort-AV: E=Sophos;i="6.04,249,1695711600"; 
-   d="scan'208";a="746843628"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2023 06:03:24 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1rA9Xd-00000001lqn-05Lo;
-	Mon, 04 Dec 2023 16:03:21 +0200
-Date: Mon, 4 Dec 2023 16:03:20 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH V3] leds: gpio: Add kernel log if devm_fwnode_gpiod_get
- fails
-Message-ID: <ZW3cKOcFt4g4H7Mm@smile.fi.intel.com>
-References: <20231202183636.7055-1-wahrenst@gmx.net>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="b4Oum7vj"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DC9109;
+	Mon,  4 Dec 2023 10:07:16 -0800 (PST)
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id E09ED10000C;
+	Mon,  4 Dec 2023 21:07:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E09ED10000C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1701713234;
+	bh=d8YylvO0HU+4GQf+TTFQ6STuqvCB6UYaTCNR2JumiPA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=b4Oum7vjao8QFZ4tE78SOvrwMO/aOqJsA2M1wdA9lpv/7TjEOD7kdaiYWFSmKhDGX
+	 W68K4Ng3qvkEdcCy3/RD6ubyV05jBnAS/qxoOcnIbJiKDol0byE7VpOQtAbEQ0IRzx
+	 ElWkA7MZkVeTPmJV9kp/rYqd/az+8zU70vHrUucxTGbYzr8L42jYPzpPcgtNlod77E
+	 Mnan6JsNC8ZXiu9VzL9+fWBbnA69TWVJyO2MYyq20YKlmw2qdxn9gUGG4ZSR2GaWDk
+	 Et68R647fEWjtzWT8GJ4UGd4cgb6ZPvuTKQ5UbHGhJUdB/5VLFuh8OimkqlANlu7hU
+	 NhgHVafzVX2WQ==
+Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon,  4 Dec 2023 21:07:14 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Mon, 4 Dec 2023 21:07:14 +0300
+From: George Stark <gnstark@salutedevices.com>
+To: <pavel@ucw.cz>, <lee@kernel.org>, <vadimp@nvidia.com>,
+	<mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
+	<hdegoede@redhat.com>, <mazziesaccount@gmail.com>,
+	<andy.shevchenko@gmail.com>, <jic23@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
+	<gnstark@salutedevices.com>
+Subject: [PATCH v2 02/10] leds: aw2013: unlock mutex before destroying it
+Date: Mon, 4 Dec 2023 21:05:55 +0300
+Message-ID: <20231204180603.470421-3-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231204180603.470421-1-gnstark@salutedevices.com>
+References: <20231204180603.470421-1-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231202183636.7055-1-wahrenst@gmx.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 181831 [Dec 04 2023]
+X-KSMG-AntiSpam-Version: 6.0.0.2
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 5 0.3.5 98d108ddd984cca1d7e65e595eac546a62b0144b, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/12/04 11:06:00 #22624476
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Sat, Dec 02, 2023 at 07:36:36PM +0100, Stefan Wahren wrote:
-> In case leds-gpio fails to get at least one of possibly many GPIOs
-> from the DT (e.g. the GPIO is already requested) neither gpiolib nor
-> the driver does provide any helpful error log:
-> 
->     leds-gpio: probe of leds failed with error -16
-> 
-> As the driver knows better how to handle errors with such mandatory
-> GPIOs, let's implement an error log which points to the affected
-> GPIO.
+In the probe() callback in case of error mutex is destroyed being locked
+which is not allowed so unlock the mute before destroying.
 
-As we have had a consensus,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: George Stark <gnstark@salutedevices.com>
+---
+ drivers/leds/leds-aw2013.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
+index 59765640b70f..c2bc0782c0cd 100644
+--- a/drivers/leds/leds-aw2013.c
++++ b/drivers/leds/leds-aw2013.c
+@@ -397,6 +397,7 @@ static int aw2013_probe(struct i2c_client *client)
+ 	regulator_disable(chip->vcc_regulator);
+ 
+ error:
++	mutex_unlock(&chip->mutex);
+ 	mutex_destroy(&chip->mutex);
+ 	return ret;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.38.4
 
