@@ -1,32 +1,35 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5946D6D
-	for <linux-leds@vger.kernel.org>; Wed,  6 Dec 2023 03:48:31 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBAFD45
+	for <linux-leds@vger.kernel.org>; Wed,  6 Dec 2023 03:48:51 -0800 (PST)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rAqO6-0005yh-Di; Wed, 06 Dec 2023 12:48:22 +0100
+	id 1rAqOP-0007j6-NI; Wed, 06 Dec 2023 12:48:41 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rAqO5-00DwrZ-Bg; Wed, 06 Dec 2023 12:48:21 +0100
+	id 1rAqON-00DwyB-QH; Wed, 06 Dec 2023 12:48:39 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rAqO5-00FQwi-2b; Wed, 06 Dec 2023 12:48:21 +0100
+	id 1rAqON-00FR3e-Gt; Wed, 06 Dec 2023 12:48:39 +0100
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: kernel@pengutronix.de,
 	Pavel Machek <pavel@ucw.cz>,
 	Lee Jones <lee@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Anjelique Melendez <quic_amelende@quicinc.com>,
-	Lu Hongfei <luhongfei@vivo.com>,
 	Rob Herring <robh@kernel.org>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Kees Cook <keescook@chromium.org>,
 	Luca Weiss <luca@z3ntu.xyz>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH v4 004/115] leds: qcom-lpg: Consistenly use dev_err_probe() in .probe()'s error path
-Date: Wed,  6 Dec 2023 12:43:18 +0100
-Message-ID:  <1884e7d6928764ef230587d68ec79f04aa0e79a0.1701860672.git.u.kleine-koenig@pengutronix.de>
+	linux-leds@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: [PATCH v4 108/115] leds: qcom-lpg: Make use of devm_pwmchip_alloc() function
+Date: Wed,  6 Dec 2023 12:45:02 +0100
+Message-ID:  <60605623e9e41d6f4b25e9c0eaf09d99bbc825f2.1701860672.git.u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <cover.1701860672.git.u.kleine-koenig@pengutronix.de>
 References: <cover.1701860672.git.u.kleine-koenig@pengutronix.de>
@@ -37,7 +40,7 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3943; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=6oU15lfp1LCvdQHKK6/LXwZgDnhknB7CYyZJ6e5dt1w=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlcF5WdoJRypBRMEkJAYrKiL/dr/2eH/LCDZbVF J1kFCoGIKGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZXBeVgAKCRCPgPtYfRL+ TqEPB/98ugKHBTzXlbbIjLKmjI2r+S4B7my8wmT5/6IzR7aT8u2LuafoIShipvNoWNec+ffUr88 jvp8YC28GDt6+ZToZbY2kU1GmSwyY8zd9eZW1qcaCOsaQw1ecX43cWDCm9hShegOau6fBJwS2S8 1Q80nMAChCni7Iy1AYmjOAJ5M9JZqPplSBZPwpNUObnNzOb4RRzF3bAoIeFCH9rK5bUGy9ppMOZ IYZcQmiqe4pI3NwKSqBr8wuaxdW7sMtibJpCvv1k7aY9RKdFBX0IpqJf8MByqAbGR13QHyE8FUY +yCt3I9/TPDT1B1ziub9YgrFvmATJZ/FYcueUzEqETsGbaiD
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1692; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=pvhY4Y0JLdiqVhBwOjMIbLiR5NL0oEVp+2u1SCdBGyk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlcF9X2vmR/YE9bA6uWt931rHgfeSo8ftDHS2tD 7l9+gb7i9OJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZXBfVwAKCRCPgPtYfRL+ TrqiB/45axpfyNtYf+7C1G/VIJWVX/ii239LT4Fp4h0AhOHiWH0JfGRchNca4IVSz6ykrreNp7q x3ZBzmIguPHrXbLIB2nEVhmTsHk2020lq8gfm7ztUtDoFVzsRK5E9kyf+TEemf5shzdLiU3n8YN 0pkRP3FmQq9XYn7RU8nyuC2gv+vhZu438vqJ0X7h7CiUXmOrU9guhYVPSB/rRLyuRXLRfsePW7Y 66gCrvTa34U9LNE/E8axYBqv6XWSZVe4JfahnuZ0rU7Ota1Z2aVy6sPgvvrINubhVnXMH9LMMHd dM9UbNF+GYD79neO6yszxU9Rv0TnvLBObXXliwxgRSFtGAMW
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -45,116 +48,59 @@ X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-One error path already used dev_err_probe(). Adapt the other error paths
-that emit an error message to also use this function for consistency and
-slightly simplified code.
+This prepares the pwm sub-driver to further changes of the pwm core
+outlined in the commit introducing devm_pwmchip_alloc(). There is no
+intended semantical change and the driver should behave as before.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
-Note this patch was already sent out individually, find it at
-https://lore.kernel.org/linux-pwm/20231130074133.969806-3-u.kleine-koenig@pengutronix.de
-
- drivers/leds/rgb/leds-qcom-lpg.c | 40 ++++++++++++++------------------
- 1 file changed, 17 insertions(+), 23 deletions(-)
+ drivers/leds/rgb/leds-qcom-lpg.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index f5805fd0eb21..54c90ee43ef8 100644
+index 156b73d1f4a2..0a7acf59a420 100644
 --- a/drivers/leds/rgb/leds-qcom-lpg.c
 +++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -552,9 +552,9 @@ static int lpg_parse_dtest(struct lpg *lpg)
- 		ret = count;
- 		goto err_malformed;
- 	} else if (count != lpg->data->num_channels * 2) {
--		dev_err(lpg->dev, "qcom,dtest needs to be %d items\n",
--			lpg->data->num_channels * 2);
--		return -EINVAL;
-+		return dev_err_probe(lpg->dev, -EINVAL,
-+				     "qcom,dtest needs to be %d items\n",
-+				     lpg->data->num_channels * 2);
- 	}
+@@ -77,7 +77,7 @@ struct lpg {
  
- 	for (i = 0; i < lpg->data->num_channels; i++) {
-@@ -574,8 +574,7 @@ static int lpg_parse_dtest(struct lpg *lpg)
- 	return 0;
+ 	struct mutex lock;
  
- err_malformed:
--	dev_err(lpg->dev, "malformed qcom,dtest\n");
--	return ret;
-+	return dev_err_probe(lpg->dev, ret, "malformed qcom,dtest\n");
+-	struct pwm_chip pwm;
++	struct pwm_chip *pwm;
+ 
+ 	const struct lpg_data *data;
+ 
+@@ -978,7 +978,7 @@ static int lpg_pattern_mc_clear(struct led_classdev *cdev)
+ 
+ static inline struct lpg *lpg_pwm_from_chip(struct pwm_chip *chip)
+ {
+-	return container_of(chip, struct lpg, pwm);
++	return pwmchip_get_drvdata(chip);
  }
  
- static void lpg_apply_dtest(struct lpg_channel *chan)
-@@ -1097,7 +1096,7 @@ static int lpg_add_pwm(struct lpg *lpg)
+ static int lpg_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+@@ -1093,13 +1093,17 @@ static const struct pwm_ops lpg_pwm_ops = {
  
- 	ret = devm_pwmchip_add(lpg->dev, &lpg->pwm);
- 	if (ret)
--		dev_err(lpg->dev, "failed to add PWM chip: ret %d\n", ret);
-+		dev_err_probe(lpg->dev, ret, "failed to add PWM chip\n");
- 
- 	return ret;
- }
-@@ -1111,19 +1110,16 @@ static int lpg_parse_channel(struct lpg *lpg, struct device_node *np,
+ static int lpg_add_pwm(struct lpg *lpg)
+ {
++	struct pwm_chip *chip;
  	int ret;
  
- 	ret = of_property_read_u32(np, "reg", &reg);
--	if (ret || !reg || reg > lpg->num_channels) {
--		dev_err(lpg->dev, "invalid \"reg\" of %pOFn\n", np);
--		return -EINVAL;
--	}
-+	if (ret || !reg || reg > lpg->num_channels)
-+		return dev_err_probe(lpg->dev, -EINVAL, "invalid \"reg\" of %pOFn\n", np);
+-	lpg->pwm.dev = lpg->dev;
+-	lpg->pwm.npwm = lpg->num_channels;
+-	lpg->pwm.ops = &lpg_pwm_ops;
++	lpg->pwm = chip = devm_pwmchip_alloc(lpg->dev, lpg->num_channels, 0);
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
  
- 	chan = &lpg->channels[reg - 1];
- 	chan->in_use = true;
- 
- 	ret = of_property_read_u32(np, "color", &color);
--	if (ret < 0 && ret != -EINVAL) {
--		dev_err(lpg->dev, "failed to parse \"color\" of %pOF\n", np);
--		return ret;
--	}
-+	if (ret < 0 && ret != -EINVAL)
-+		return dev_err_probe(lpg->dev, ret,
-+				     "failed to parse \"color\" of %pOF\n", np);
- 
- 	chan->color = color;
- 
-@@ -1146,10 +1142,9 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
- 	int i;
- 
- 	ret = of_property_read_u32(np, "color", &color);
--	if (ret < 0 && ret != -EINVAL) {
--		dev_err(lpg->dev, "failed to parse \"color\" of %pOF\n", np);
--		return ret;
--	}
-+	if (ret < 0 && ret != -EINVAL)
-+		return dev_err_probe(lpg->dev, ret,
-+			      "failed to parse \"color\" of %pOF\n", np);
- 
- 	if (color == LED_COLOR_ID_RGB)
- 		num_channels = of_get_available_child_count(np);
-@@ -1226,7 +1221,7 @@ static int lpg_add_led(struct lpg *lpg, struct device_node *np)
- 	else
- 		ret = devm_led_classdev_register_ext(lpg->dev, &led->cdev, &init_data);
+-	ret = devm_pwmchip_add(lpg->dev, &lpg->pwm);
++	chip->ops = &lpg_pwm_ops;
++	pwmchip_set_drvdata(chip, lpg);
++
++	ret = devm_pwmchip_add(lpg->dev, chip);
  	if (ret)
--		dev_err(lpg->dev, "unable to register %s\n", cdev->name);
-+		dev_err_probe(lpg->dev, ret, "unable to register %s\n", cdev->name);
+ 		dev_err_probe(lpg->dev, ret, "failed to add PWM chip\n");
  
- 	return ret;
- }
-@@ -1272,10 +1267,9 @@ static int lpg_init_triled(struct lpg *lpg)
- 
- 	if (lpg->triled_has_src_sel) {
- 		ret = of_property_read_u32(np, "qcom,power-source", &lpg->triled_src);
--		if (ret || lpg->triled_src == 2 || lpg->triled_src > 3) {
--			dev_err(lpg->dev, "invalid power source\n");
--			return -EINVAL;
--		}
-+		if (ret || lpg->triled_src == 2 || lpg->triled_src > 3)
-+			return dev_err_probe(lpg->dev, -EINVAL,
-+					     "invalid power source\n");
- 	}
- 
- 	/* Disable automatic trickle charge LED */
 -- 
 2.42.0
 
