@@ -1,122 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="AA4Sss6q"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86AC210A;
-	Wed,  6 Dec 2023 03:30:02 -0800 (PST)
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 4D0CE10005E;
-	Wed,  6 Dec 2023 14:29:59 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4D0CE10005E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1701862199;
-	bh=vNxXeAowednmOMP3lRMoLv0eg+bQqxfTIG2s7U0+4xE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=AA4Sss6q0+ayb8AfT1f4+oWUiPZ9XFYrrTAp1FevXfGDhXveDFok2v8s8+aex+ya2
-	 WoVYT2Rgjw+cCdLas26KuYjyEPMvFt8NpfyNPJjGi26ANC6NF3UDS5HT48SsPyJFi6
-	 X/ZCe7duuWVAf2XyooCYTtZRD6Vm3FlKiz00ZzamczGC9gQuyPZqHjaWom8N/RghmO
-	 2x97CpnFSfpyFS5GpgFO17HwwYC1uHHLK26j+FlwFd6UnW7jZ0DoU3HHi4urYLq7Vh
-	 AVEi5sWLbkfh9cKh8bkvo2cZyRYHBSGen5M6laiMZ3dz7I+/5c9b76Nnr3BHcJm11V
-	 U7nPuDXHI99nw==
-Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed,  6 Dec 2023 14:29:59 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m01.sberdevices.ru
- (172.16.192.107) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 6 Dec
- 2023 14:29:58 +0300
-Date: Wed, 6 Dec 2023 14:29:58 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Lee Jones <lee@kernel.org>
-CC: <pavel@ucw.cz>, <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <andy.shevchenko@gmail.com>, <kernel@sberdevices.ru>,
-	<rockosov@gmail.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-Subject: Re: [PATCH v5 00/11] leds: aw200xx: several driver updates
-Message-ID: <20231206112958.xlzrzorkzzexwpwe@CAB-WSD-L081021>
-References: <20231125200519.1750-1-ddrokosov@salutedevices.com>
- <170142898612.3365188.2222761548333694548.b4-ty@kernel.org>
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73274181
+	for <linux-leds@vger.kernel.org>; Wed,  6 Dec 2023 03:48:31 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rAqO6-0005yU-Di; Wed, 06 Dec 2023 12:48:22 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rAqO5-00DwrW-6x; Wed, 06 Dec 2023 12:48:21 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rAqO4-00FQwe-To; Wed, 06 Dec 2023 12:48:20 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: kernel@pengutronix.de,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Anjelique Melendez <quic_amelende@quicinc.com>,
+	Lu Hongfei <luhongfei@vivo.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Luca Weiss <luca@z3ntu.xyz>,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v4 003/115] leds: qcom-lpg: Use devm_pwmchip_add() simplifying driver removal
+Date: Wed,  6 Dec 2023 12:43:17 +0100
+Message-ID:  <631d24f0edaa7ac8ebeb22bb66260db8d8823aff.1701860672.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <cover.1701860672.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1701860672.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <170142898612.3365188.2222761548333694548.b4-ty@kernel.org>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 181895 [Dec 06 2023]
-X-KSMG-AntiSpam-Version: 6.0.0.2
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 5 0.3.5 98d108ddd984cca1d7e65e595eac546a62b0144b, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/12/06 07:39:00 #22618292
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1968; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=eAo2sms+IdnUcS+VQAmli0qw30jKPeeRn2Hzf92eCok=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlcF5Vz88q1wxr7wuaHOcrsrN9rvSsQbiTnMheB N85Nph3ClKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZXBeVQAKCRCPgPtYfRL+ TvJUB/4wk8liDnQVXBoS/JXanLhibw+/Nq3kIdUMq98clTCjCv3DRVygmDLM/evfSfCzd1ByRax srXgM8Gg6GyluODf947nhAjG12H3B8I0OJDCAFFpf4rpDprguzkEkpduDNWtiiZvthFn3NEWyr1 k9W0K0CsozF4Y7rbI2Z779sGYuw7plbeifrDvxz6oIkLKL+zGaLvljlbbJbMGSuGg+nOfPJiVZ8 v0sbIIO96pyDKSXziKnn1RTUlDpf+xCP+9F0grg+pnPa8jshKvitKKw6DLW4S1ceF+J6FIoNRar 9tMsIDFJy5swoBY5Bs99OrP17RzyifunNlTkBx7o6paOou+o
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-Hello Lee,
+With pwmchip_remove() being automatically called after switching to
+devm_pwmchip_add() the remove function can be dropped completely. Yay!
+With lpg_remove() gone there is no user of the platform device's drvdata
+left, so platform_set_drvdata() can be dropped from .probe(), too.
 
-On Fri, Dec 01, 2023 at 11:09:46AM +0000, Lee Jones wrote:
-> On Sat, 25 Nov 2023 23:05:08 +0300, Dmitry Rokosov wrote:
-> > The following patch series includes several updates for the AW200XX LED
-> > driver:
-> >     - some small fixes and optimizations to the driver implementation:
-> >       delays, autodimming calculation, disable_locking regmap flag,
-> >       display_rows calculation in runtime;
-> >     - fix LED device tree node pattern to accept LED names counting not
-> >       only from 0 to f;
-> >     - add missing reg constraints;
-> >     - support HWEN hardware control, which allows enabling or disabling
-> >       AW200XX RTL logic from the main SoC using a GPIO pin;
-> >     - introduce the new AW20108 LED controller, the datasheet for this
-> >       controller can be found at [1].
-> > 
-> > [...]
-> 
-> Applied, thanks!
-> 
-> [01/11] leds: aw200xx: fix write to DIM parameter
->         commit: 785fec3a8daff2957fd55e49cbdfe0a50866fdb7
-> [02/11] leds: aw200xx: support HWEN hardware control
->         commit: eabe8239022cf3c75b90d9ee07dcfbbe4e50bcac
-> [03/11] dt-bindings: leds: aw200xx: introduce optional enable-gpios property
->         commit: e91899ea3759d04e185721153a036e1a25e315b7
-> [04/11] leds: aw200xx: calculate dts property display_rows in the driver
->         commit: 4ccd392c3ea7ceefbee58622e634d4997ef46acc
-> [05/11] dt-bindings: leds: aw200xx: remove property "awinic,display-rows"
->         commit: 66d078f105837670c52bb31da29e26ad13bc2923
-> [06/11] leds: aw200xx: add delay after software reset
->         commit: aac13e5630d6e081a9f6c5a57e5e6fc1152acca8
-> [07/11] leds: aw200xx: enable disable_locking flag in regmap config
->         commit: 851fa70b9b162bbf5b5f5f92fc450633e6b21a3a
-> [08/11] leds: aw200xx: improve autodim calculation method
->         commit: 5fcc24b92b43f012cbf430244f0698ff588ec9fc
-> [09/11] leds: aw200xx: add support for aw20108 device
->         commit: abc74724d5e714bb3359124f3576d5318828a83e
-> [10/11] dt-bindings: leds: awinic,aw200xx: add AW20108 device
->         commit: d6bbe677add2c560ae4aa2f9dab7a19c287e2193
-> [11/11] dt-bindings: leds: aw200xx: fix led pattern and add reg constraints
->         commit: 5707a06e5391a4eeaf0c2705f973336537a41c79
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Note this patch was already sent out individually, find it at
+https://lore.kernel.org/linux-leds/20231126095230.683204-2-u.kleine-koenig@pengutronix.de/
 
-Thank you for applying the patch series!
+ drivers/leds/rgb/leds-qcom-lpg.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Could you please advise where I can find the above commits? I've tried
-looking in the 'lee/leds' branch, but I couldn't find anything. I want
-to cherry-pick the commits that you applied to my internal branch, which
-I sync with the upstream periodically.
-
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index 68d82a682bf6..f5805fd0eb21 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -1095,7 +1095,7 @@ static int lpg_add_pwm(struct lpg *lpg)
+ 	lpg->pwm.npwm = lpg->num_channels;
+ 	lpg->pwm.ops = &lpg_pwm_ops;
+ 
+-	ret = pwmchip_add(&lpg->pwm);
++	ret = devm_pwmchip_add(lpg->dev, &lpg->pwm);
+ 	if (ret)
+ 		dev_err(lpg->dev, "failed to add PWM chip: ret %d\n", ret);
+ 
+@@ -1324,8 +1324,6 @@ static int lpg_probe(struct platform_device *pdev)
+ 	if (!lpg->data)
+ 		return -EINVAL;
+ 
+-	platform_set_drvdata(pdev, lpg);
+-
+ 	lpg->dev = &pdev->dev;
+ 	mutex_init(&lpg->lock);
+ 
+@@ -1363,13 +1361,6 @@ static int lpg_probe(struct platform_device *pdev)
+ 	return lpg_add_pwm(lpg);
+ }
+ 
+-static void lpg_remove(struct platform_device *pdev)
+-{
+-	struct lpg *lpg = platform_get_drvdata(pdev);
+-
+-	pwmchip_remove(&lpg->pwm);
+-}
+-
+ static const struct lpg_data pm8916_pwm_data = {
+ 	.num_channels = 1,
+ 	.channels = (const struct lpg_channel_data[]) {
+@@ -1529,7 +1520,6 @@ MODULE_DEVICE_TABLE(of, lpg_of_table);
+ 
+ static struct platform_driver lpg_driver = {
+ 	.probe = lpg_probe,
+-	.remove_new = lpg_remove,
+ 	.driver = {
+ 		.name = "qcom-spmi-lpg",
+ 		.of_match_table = lpg_of_table,
 -- 
-Thank you,
-Dmitry
+2.42.0
+
