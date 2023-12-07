@@ -1,34 +1,36 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1B846B95
-	for <linux-leds@vger.kernel.org>; Thu,  7 Dec 2023 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEC046BB6
+	for <linux-leds@vger.kernel.org>; Thu,  7 Dec 2023 16:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kvy7Py4V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D34CCC433C8;
-	Thu,  7 Dec 2023 16:29:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQ3seVR2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B75C433C7;
+	Thu,  7 Dec 2023 16:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1701966569;
-	bh=bIk2zEVd/ALsJPnzNnUpGKKfoLp6VvygCrV4NUYPhF4=;
+	s=k20201202; t=1701966649;
+	bh=lQQtU4tYIZ245AplOqW4Zvwsb+ueZMLoO44f/yIejSk=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Kvy7Py4VdNM01E7IR4ovzeKQYpJ0CpAazXTFaU0+LlVFKhJa+fOJ+SFDiL/ULejgO
-	 2a5yJX24skY1woXVm/qciCgYVfOhQ7XZVDfofDm1keqA24gzRdTFcIq5bCD1zpo+zL
-	 3J3+jl4KtUNGxwcCyvlIi2uDQO30qCIAzmZ3yPIAk79b4C0pQFXDIGobLi91soZFdk
-	 VI8UrLKkxWPg6xAiXnDHMJr5vKHz/UhUdK3vTdGzf60uaIF71i6opKBnOID0xPtRso
-	 3fV62ZIpqTJJJ8XReBK281wn/fb5SECPg8LwO5AwCqIWNjLGGHF2n6LX2SSqakGs5t
-	 hkm6fT1RVh3Aw==
-Date: Thu, 7 Dec 2023 17:29:23 +0100
+	b=MQ3seVR2dDL05UbmXkM8yxg6e/AANgmppkO7hfPNFLUIdFsiYjzsCeI65h+EvTxLj
+	 Om4vuRDd/nQ/f6aLxNLSTfjwWYSS2d49NsLLenTvKxmNk5jxCHM/NUlwTHeTtyMnSI
+	 KD5sYHsw+MhiJy0A3SoYvqTc3ozluoevgqeE5fJ4JjLaex8eDlQDrKiI7QcmJ6FsB6
+	 hRpvkwM09R8KczL+U6lOwyVG3sKl+zJqNURvGVlaU05ZR2yBZWyJtvWyJNYJQUElcD
+	 Z8o4PWSZ+Ll2b9hUWYZaO1Nfx8FKbU1vY46+FLH+jFE4VlRNAj9rv5xVOZfeSwn/40
+	 XL2eSZRLbwpJQ==
+Date: Thu, 7 Dec 2023 17:30:44 +0100
 From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Daniel Golle <daniel@makrotopia.org>, Lee Jones <lee@kernel.org>, Andrew
- Lunn <andrew@lunn.ch>
-Cc: Pavel Machek <pavel@ucw.cz>, Jakub Kicinski <kuba@kernel.org>, Christian
- Marangi <ansuelsmth@gmail.com>, "David S. Miller" <davem@davemloft.net>, Li
- Zetao <lizetao1@huawei.com>, linux-kernel@vger.kernel.org,
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Christian Marangi
+ <ansuelsmth@gmail.com>, "David S. Miller" <davem@davemloft.net>, Li Zetao
+ <lizetao1@huawei.com>, linux-kernel@vger.kernel.org,
  linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] leds: trigger: netdev: extend speeds up to 10G
-Message-ID: <20231207172923.62ce530e@dellmb>
-In-Reply-To: <99e7d3304c6bba7f4863a4a80764a869855f2085.1701143925.git.daniel@makrotopia.org>
+Subject: Re: [PATCH v3 2/2] docs: ABI: sysfs-class-led-trigger-netdev: add
+ new modes and entry
+Message-ID: <20231207173044.67ec3c9d@dellmb>
+In-Reply-To: <e72a6794639cf3881d698e1d34b456e747da1b95.1701143925.git.daniel@makrotopia.org>
 References: <99e7d3304c6bba7f4863a4a80764a869855f2085.1701143925.git.daniel@makrotopia.org>
+	<e72a6794639cf3881d698e1d34b456e747da1b95.1701143925.git.daniel@makrotopia.org>
 X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -39,27 +41,39 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 28 Nov 2023 04:00:10 +0000
+On Tue, 28 Nov 2023 04:00:39 +0000
 Daniel Golle <daniel@makrotopia.org> wrote:
 
-> Add 2.5G, 5G and 10G as available speeds to the netdev LED trigger.
+> Document newly introduced modes for the LED netdev trigger.
+> 
+> Add documentation for new modes:
+> - link_2500
+> - link_5000
+> - link_10000
 > 
 > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> ---
+> v3: include this documentation patch as well
+> 
+>  .../testing/sysfs-class-led-trigger-netdev    | 39 +++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> index f6d9d72ce77b7..a6c307c4befa0 100644
+> --- a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> @@ -114,6 +114,45 @@ Description:
+>  		speed of 1000Mbps of the named network device.
+>  		Setting this value also immediately changes the LED state.
+>  
+> +What:		/sys/class/leds/<led>/link_2500
+> +Date:		Nov 2023
+> +KernelVersion:	6.8
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Signal the link speed state of 2500Mbps of the named network device.
 
-So what will happen when there are more speeds? Will we create a
-separate file for each speed?
-
-Will we have a separate sysfs file for 10, 100, 1000, 2500, 5000,
-10000, 20000, 25000, 40000, 50000, 56000, 100000, 200000, 400000,
-800000 ?
-
-These are all speeds from include/uapi/linux/ethtool.h.
-
-Maybe we should have reused ethtool link mode bits, or something...
-
-Also, the files should only be present if the requested speed is
-supported by the net device. So if 2500 mbps is not supported, there
-should no be link_2500.
+Should this file be present even if the network device does not support
+that speed?
 
 Marek
