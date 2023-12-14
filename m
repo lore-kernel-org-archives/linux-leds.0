@@ -1,140 +1,150 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Bhs/9SCd"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E89C106;
-	Thu, 14 Dec 2023 00:29:51 -0800 (PST)
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id BB789100057;
-	Thu, 14 Dec 2023 11:29:48 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BB789100057
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1702542588;
-	bh=E+93qW99+MbE6qv9QYbuPHDD4qbYVZKtaw4xnbuw8OI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Bhs/9SCdZOPnb6ZrePaoj9pFpw9ksXOTSMXxCqjx+eAhIoHoyRIFQcc/TWfXggTV6
-	 HGUzGj5cPOghTjwfo42EkRqu+Nj/toNqIkXEmuEOmorEdVpa7Sc+UNiEdSOiLuzT5l
-	 2KWnPubXjT5V8pcBNrSdV6YlXcIKDNcJutq/4csr7SyQmGF+i12kj1prXnZ3dGhLKh
-	 /8ZP29DerkVi0mb7N6mNrp3J2wGWRaqwxhZ8WFfqISIQH4c/sEGSgpzEvCExf53GUW
-	 Q87kpMNCk42a3gwoo22fOibcgLEFHm0XMOSl2jrFohxVpWVOHNbahKhtHmegcQiw1w
-	 nWw+vUJa2GJiA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 14 Dec 2023 11:29:48 +0300 (MSK)
-Received: from localhost.localdomain (100.64.160.123) by
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 14 Dec 2023 11:29:48 +0300
-From: George Stark <gnstark@salutedevices.com>
-To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
-	<vadimp@nvidia.com>, <mpe@ellerman.id.au>, <npiggin@gmail.com>,
-	<christophe.leroy@csgroup.eu>, <hdegoede@redhat.com>,
-	<mazziesaccount@gmail.com>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<will@kernel.org>, <longman@redhat.com>, <boqun.feng@gmail.com>,
-	<nikitos.tr@gmail.com>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
-	<gnstark@salutedevices.com>
-Subject: [PATCH v3 06/11] leds: lp3952: use devm API to cleanup module's resources
-Date: Thu, 14 Dec 2023 11:29:35 +0300
-Message-ID: <20231214082940.2718303-2-gnstark@salutedevices.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231214082940.2718303-1-gnstark@salutedevices.com>
-References: <20231214082940.2718303-1-gnstark@salutedevices.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e7RY885y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA82BB7
+	for <linux-leds@vger.kernel.org>; Thu, 14 Dec 2023 01:16:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1702545414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aSXTliSLRPJwWKgirD+ynnpgvILXx2haTFF7t0rHIEw=;
+	b=e7RY885yJP6B4JNrRfhD4NtUKfB2bJDSjKpe4WQ8kCzYmjrYGZ4yh+sU6tfYSJd4a0S2QQ
+	Oq9hf8TRLyIogRUKrSd9R0oG+knoNIIaOwtPeyn2kLP3ALFcntTsc7PRagtCJQsD2Wimwc
+	935FHK+lQyDEWc8XTKZImnv1SeG7OYw=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-570-d3Bjnj-TMhaQskVKv_nqBQ-1; Thu, 14 Dec 2023 04:16:50 -0500
+X-MC-Unique: d3Bjnj-TMhaQskVKv_nqBQ-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-55223b294e0so724053a12.2
+        for <linux-leds@vger.kernel.org>; Thu, 14 Dec 2023 01:16:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702545410; x=1703150210;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aSXTliSLRPJwWKgirD+ynnpgvILXx2haTFF7t0rHIEw=;
+        b=n77laO7pTsP7ADNO1MBXB/vTyIo1CDfauyyzTunA2JOHY9I333i8UG9EHvMzSaR0DS
+         mv6hR+LfuBUROXb92ufBVQjagcbUtUvL12BABrxCdn8pyaBx/8zmhBDMyYJcd9hTeqL+
+         maaKz89R7GCa+UqPQZ1L0s4rlnTMvV+YmsdHz8Aw3OggWSVR5hG+yLV5FlabQnXirofq
+         r4oYNX29PFhRHwEU4c0GPmWN0vKRLyGJE5xrbSIoiC3a6RYI0Hh2HnolyQeBYtbtGCp9
+         fZyxmN4mgvcSAuZEQgP0X2TtNRhMAQKh1l87IJpR1KdKveoNAnGPW1525puKuJZz2Svo
+         gPIA==
+X-Gm-Message-State: AOJu0YwA6TLTQ4x1EL7QStO/ZG0zuv9jsaR2Tm/K2O5ShJ2lF2V5L4Y3
+	VHB9co0T8MQmt4j7Cms7Nfvh66nX1QulaWFGnMBS6h/20UoVArUc+/1vb20ipgOyCPlg6qkB+Pe
+	TPys0nlkZld5t5oQUxBXGgA==
+X-Received: by 2002:a17:907:268e:b0:a1d:b7b9:3263 with SMTP id bn14-20020a170907268e00b00a1db7b93263mr2986287ejc.164.1702545409800;
+        Thu, 14 Dec 2023 01:16:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFVQE/9DmmfQQ7JcgUanGLiAM3AoyRWgj4qusaFgzl7bO8ELi8lg6GnTyvH3KcEx592UQ4ElQ==
+X-Received: by 2002:a17:907:268e:b0:a1d:b7b9:3263 with SMTP id bn14-20020a170907268e00b00a1db7b93263mr2986277ejc.164.1702545409439;
+        Thu, 14 Dec 2023 01:16:49 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id tq14-20020a170907c50e00b00a1f83646eb6sm7701080ejc.149.2023.12.14.01.16.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Dec 2023 01:16:48 -0800 (PST)
+Message-ID: <56e74264-6f98-4216-9f9a-e8f718375602@redhat.com>
+Date: Thu, 14 Dec 2023 10:16:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/11] devm-helpers: introduce devm_mutex_init
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ George Stark <gnstark@salutedevices.com>
+Cc: pavel@ucw.cz, lee@kernel.org, vadimp@nvidia.com, mpe@ellerman.id.au,
+ npiggin@gmail.com, christophe.leroy@csgroup.eu, mazziesaccount@gmail.com,
+ peterz@infradead.org, mingo@redhat.com, will@kernel.org, longman@redhat.com,
+ boqun.feng@gmail.com, nikitos.tr@gmail.com, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kernel@salutedevices.com
+References: <20231213223020.2713164-1-gnstark@salutedevices.com>
+ <20231213223020.2713164-4-gnstark@salutedevices.com>
+ <CAHp75Vc1zZFWB8PPrg8oeAKz9aHnQrrSjdGyGd8mWcmeZdJ9qA@mail.gmail.com>
+ <CAHp75Vdxa5k-CLhL+PmK0iTPTNSpP77DA6ooWnxfViwSKiEOSw@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CAHp75Vdxa5k-CLhL+PmK0iTPTNSpP77DA6ooWnxfViwSKiEOSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 182104 [Dec 14 2023]
-X-KSMG-AntiSpam-Version: 6.1.0.3
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/12/14 06:13:00 #22683038
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-In this driver LEDs are registered using devm_led_classdev_register()
-so they are automatically unregistered after module's remove() is done.
-led_classdev_unregister() calls module's led_set_brightness() to turn off
-the LEDs and that callback uses resources which were destroyed already
-in module's remove() so use devm API instead of remove().
-Also drop explicit turning LEDs off from remove() due to they will be off
-anyway by led_classdev_unregister().
+Hi,
 
-Signed-off-by: George Stark <gnstark@salutedevices.com>
----
- drivers/leds/leds-lp3952.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+On 12/13/23 23:38, Andy Shevchenko wrote:
+> On Thu, Dec 14, 2023 at 12:36 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>> On Thu, Dec 14, 2023 at 12:30 AM George Stark <gnstark@salutedevices.com> wrote:
+>>>
+>>> Using of devm API leads to a certain order of releasing resources.
+>>> So all dependent resources which are not devm-wrapped should be deleted
+>>> with respect to devm-release order. Mutex is one of such objects that
+>>> often is bound to other resources and has no own devm wrapper.
+>>> Since mutex_destroy() actually does nothing in non-debug builds
+>>> frequently calling mutex_destroy() is just ignored which is safe for now
+>>> but wrong formally and can lead to a problem if mutex_destroy() is
+>>> extended so introduce devm_mutex_init().
+> 
+> ...
+> 
+>>> +#ifdef mutex_destroy
+>>> +static inline void devm_mutex_release(void *res)
+>>> +{
+>>> +       mutex_destroy(res);
+>>> +}
+>>> +#endif
+>>> +
+>>> +/**
+>>> + * devm_mutex_init - Resource-managed mutex initialization
+>>> + * @dev:       Device which lifetime mutex is bound to
+>>> + * @lock:      Pointer to a mutex
+>>> + *
+>>> + * Initialize mutex which is automatically destroyed when the driver is detached.
+>>> + *
+>>> + * Returns: 0 on success or a negative error code on failure.
+>>> + */
+>>> +static inline int devm_mutex_init(struct device *dev, struct mutex *lock)
+>>> +{
+>>> +       mutex_init(lock);
+>>> +#ifdef mutex_destroy
+>>> +       return devm_add_action_or_reset(dev, devm_mutex_release, lock);
+>>> +#else
+>>> +       return 0;
+>>> +#endif
+>>> +}
+>>
+>> If this is going to be accepted, you may decrease the amount of ifdeffery.
+>>
+>> #ifdef ...
+>> #else
+>> #define devm_mutex_init(dev, lock)  mutex_init(lock)
+> 
+> More precisely ({ mutex_init(lock); 0; }) or as a static inline...
 
-diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
-index 3bd55652a706..fc0e02a9768f 100644
---- a/drivers/leds/leds-lp3952.c
-+++ b/drivers/leds/leds-lp3952.c
-@@ -207,6 +207,13 @@ static const struct regmap_config lp3952_regmap = {
- 	.cache_type = REGCACHE_RBTREE,
- };
- 
-+static void gpio_set_low_action(void *data)
-+{
-+	struct lp3952_led_array *priv = (struct lp3952_led_array *)data;
-+
-+	gpiod_set_value(priv->enable_gpio, 0);
-+}
-+
- static int lp3952_probe(struct i2c_client *client)
- {
- 	int status;
-@@ -226,6 +233,10 @@ static int lp3952_probe(struct i2c_client *client)
- 		return status;
- 	}
- 
-+	status = devm_add_action(&client->dev, gpio_set_low_action, priv);
-+	if (status)
-+		return status;
-+
- 	priv->regmap = devm_regmap_init_i2c(client, &lp3952_regmap);
- 	if (IS_ERR(priv->regmap)) {
- 		int err = PTR_ERR(priv->regmap);
-@@ -254,15 +265,6 @@ static int lp3952_probe(struct i2c_client *client)
- 	return 0;
- }
- 
--static void lp3952_remove(struct i2c_client *client)
--{
--	struct lp3952_led_array *priv;
--
--	priv = i2c_get_clientdata(client);
--	lp3952_on_off(priv, LP3952_LED_ALL, false);
--	gpiod_set_value(priv->enable_gpio, 0);
--}
--
- static const struct i2c_device_id lp3952_id[] = {
- 	{LP3952_NAME, 0},
- 	{}
-@@ -274,7 +276,6 @@ static struct i2c_driver lp3952_i2c_driver = {
- 			.name = LP3952_NAME,
- 	},
- 	.probe = lp3952_probe,
--	.remove = lp3952_remove,
- 	.id_table = lp3952_id,
- };
- 
--- 
-2.25.1
+With a static inline we are pretty much back to the original
+v3 patch.
+
+I believe the best way to reduce the ifdef-ery is to remove
+the #ifdef around devm_mutex_release() having unused
+static inline ... functions in .h files is quite common,
+so this one does not need a #ifdef around it and with
+that removed we are down to just one #ifdef so just
+removing the #ifdef around devm_mutex_release() seems
+the best fix.
+
+With that fixed you may add my:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+to the patch and I'm fine with this being routed
+upstream through whatever tree is convenient.
+
+Regards,
+
+Hans
+
+
 
