@@ -1,31 +1,31 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="G2Btu04+"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ogWeDn6x"
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BE2131;
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FF0D133;
 	Thu, 14 Dec 2023 09:36:29 -0800 (PST)
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 2D8CE12001F;
+	by mx1.sberdevices.ru (Postfix) with ESMTP id B1302120020;
 	Thu, 14 Dec 2023 20:36:26 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 2D8CE12001F
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru B1302120020
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
 	s=mail; t=1702575386;
-	bh=nTXR4WBFZR+kxSlC13nocgtwFZu8ItCajWxM9cqi5i0=;
+	bh=IipliOBxVO1mB0P9vxh3aTZrhIFdLT6fPsP0SLsHsZA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=G2Btu04+yak/8X6fT3WuNA96d147W5JSc/bjvRnU3To5MiV3hU85t8rXnzP1CDGJc
-	 Nqi8RAragqLnWBD4xThH4DPHRJeqjq58CKKSzgix9X4rgOi6cVOuHKI5XgBWdGQAZD
-	 OG+zH2ofCmV/bRXj7tb2mVyDD+mwAj/ljsNBXZIAQ3/dzl+vQDOSuMBk7FkfrY9HbY
-	 5joVO1jvu2Kcjc8zbRWhmeyTqGx/Mdrp9Doa6r0FjTpQ0ke64J+vKkcl4lIXeOEBPn
-	 J2StXK9G5d/jG+k3NjZgO3V4NLF2RXBdffOgoFSKMlTT6+khG/VfmDFw0U3LqNxEFW
-	 leNh/hF5COznw==
+	b=ogWeDn6x5Jc6Am38+/f3ozPM/OnYdYI1EQ4Z/NZQ1rrQld2H+yUlwlfE0t1Ls1IHn
+	 jSXRRda4eritSb7OIENH3IwFBCWe9MxMVnDSqdMBDBeh63I22arzTmcOPal4zMzqBn
+	 N18Pzd+nrGZ5G5fXso7721xybvU0M4xEhGeMXUvqibwY0NB9S7lygfMyaMcqEevK5/
+	 JfAzsR+Z7LSXw+MDQ0yIEJ9pHiWnGqSgqGBAt0fRmsYyxEUQpSDzPD6rgDZStnqu33
+	 ejI6wuLvzAPvJPjMVgy5xLtjfTmyRXHolzZ4kqyJUEjjLindDKlcxqAMjdC1bEx6B6
+	 B+Bofz6+b10Hw==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 14 Dec 2023 20:36:25 +0300 (MSK)
+	Thu, 14 Dec 2023 20:36:26 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 14 Dec 2023 20:36:25 +0300
+ 15.2.1118.40; Thu, 14 Dec 2023 20:36:26 +0300
 From: George Stark <gnstark@salutedevices.com>
 To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 	<vadimp@nvidia.com>, <mpe@ellerman.id.au>, <npiggin@gmail.com>,
@@ -36,9 +36,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
 	<gnstark@salutedevices.com>
-Subject: [PATCH v4 08/10] leds: mlxreg: use devm_mutex_init for mutex initializtion
-Date: Thu, 14 Dec 2023 20:36:12 +0300
-Message-ID: <20231214173614.2820929-9-gnstark@salutedevices.com>
+Subject: [PATCH v4 10/10] leds: powernv: use LED_RETAIN_AT_SHUTDOWN flag for leds
+Date: Thu, 14 Dec 2023 20:36:14 +0300
+Message-ID: <20231214173614.2820929-11-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231214173614.2820929-1-gnstark@salutedevices.com>
 References: <20231214173614.2820929-1-gnstark@salutedevices.com>
@@ -69,70 +69,72 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/12/14 10:50:00 #22693095
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-In this driver LEDs are registered using devm_led_classdev_register()
-so they are automatically unregistered after module's remove() is done.
-led_classdev_unregister() calls module's led_set_brightness() to turn off
-the LEDs and that callback uses mutex which was destroyed already
-in module's remove() so use devm API instead.
+This driver wants to keep its LEDs state after module is removed
+and implemented it in its own way. LED subsystem supports dedicated
+flag LED_RETAIN_AT_SHUTDOWN for the same purpose so use the flag
+instead of custom implementation.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
- drivers/leds/leds-mlxreg.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/leds/leds-powernv.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
-index b7855c93bd72..64a78eff05c7 100644
---- a/drivers/leds/leds-mlxreg.c
-+++ b/drivers/leds/leds-mlxreg.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/device.h>
-+#include <linux/devm-helpers.h>
- #include <linux/io.h>
- #include <linux/leds.h>
- #include <linux/module.h>
-@@ -258,6 +259,7 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- {
- 	struct mlxreg_core_platform_data *led_pdata;
- 	struct mlxreg_led_priv_data *priv;
-+	int err;
- 
- 	led_pdata = dev_get_platdata(&pdev->dev);
- 	if (!led_pdata) {
-@@ -269,28 +271,21 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	mutex_init(&priv->access_lock);
-+	err = devm_mutex_init(&pdev->dev, &priv->access_lock);
-+	if (err)
-+		return err;
-+
- 	priv->pdev = pdev;
- 	priv->pdata = led_pdata;
- 
- 	return mlxreg_led_config(priv);
- }
- 
--static int mlxreg_led_remove(struct platform_device *pdev)
--{
--	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
--
--	mutex_destroy(&priv->access_lock);
--
--	return 0;
--}
--
- static struct platform_driver mlxreg_led_driver = {
- 	.driver = {
- 	    .name = "leds-mlxreg",
- 	},
- 	.probe = mlxreg_led_probe,
--	.remove = mlxreg_led_remove,
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 743e2cdd0891..018ec933ac10 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -30,15 +30,6 @@ static const struct led_type_map led_type_map[] = {
  };
  
- module_platform_driver(mlxreg_led_driver);
+ struct powernv_led_common {
+-	/*
+-	 * By default unload path resets all the LEDs. But on PowerNV
+-	 * platform we want to retain LED state across reboot as these
+-	 * are controlled by firmware. Also service processor can modify
+-	 * the LEDs independent of OS. Hence avoid resetting LEDs in
+-	 * unload path.
+-	 */
+-	bool		led_disabled;
+-
+ 	/* Max supported LED type */
+ 	__be64		max_led_type;
+ 
+@@ -178,10 +169,6 @@ static int powernv_brightness_set(struct led_classdev *led_cdev,
+ 	struct powernv_led_common *powernv_led_common = powernv_led->common;
+ 	int rc;
+ 
+-	/* Do not modify LED in unload path */
+-	if (powernv_led_common->led_disabled)
+-		return 0;
+-
+ 	mutex_lock(&powernv_led_common->lock);
+ 	rc = powernv_led_set(powernv_led, value);
+ 	mutex_unlock(&powernv_led_common->lock);
+@@ -225,6 +212,14 @@ static int powernv_led_create(struct device *dev,
+ 
+ 	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
+ 	powernv_led->cdev.brightness_get = powernv_brightness_get;
++	/*
++	 * By default unload path resets all the LEDs. But on PowerNV
++	 * platform we want to retain LED state across reboot as these
++	 * are controlled by firmware. Also service processor can modify
++	 * the LEDs independent of OS. Hence avoid resetting LEDs in
++	 * unload path.
++	 */
++	powernv_led->cdev.flags = LED_RETAIN_AT_SHUTDOWN;
+ 	powernv_led->cdev.brightness = LED_OFF;
+ 	powernv_led->cdev.max_brightness = LED_FULL;
+ 
+@@ -313,9 +308,7 @@ static int powernv_led_remove(struct platform_device *pdev)
+ {
+ 	struct powernv_led_common *powernv_led_common;
+ 
+-	/* Disable LED operation */
+ 	powernv_led_common = platform_get_drvdata(pdev);
+-	powernv_led_common->led_disabled = true;
+ 
+ 	/* Destroy lock */
+ 	mutex_destroy(&powernv_led_common->lock);
 -- 
 2.25.1
 
