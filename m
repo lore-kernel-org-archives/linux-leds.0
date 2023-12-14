@@ -1,244 +1,237 @@
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61029692A5;
+	Thu, 14 Dec 2023 19:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ICKagdH4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5C89FB
-	for <linux-leds@vger.kernel.org>; Thu, 14 Dec 2023 10:49:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g5lxo8lA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702579746; x=1734115746;
-  h=date:from:to:cc:subject:message-id;
-  bh=+mguCdgCg6kzi1ofInmhuyAj9qIJG7tLxrpR5xR9c98=;
-  b=ICKagdH469GApMYzAUOWu+U5FaD+khioCctoc8bBUoyOXcVGT69RVPFC
-   FX4QkfHaIkE86gVZndDGSgeo7Q8rvRr8F817kAJ2CibM0cWOhGU5AtVcW
-   92PqgA/8ODzHkAtVF1rCyro+MeUBsFsgff8p/ujbM8lUa4nFwcKD00CtO
-   Ql6QcCH3CN6AwT5xZtFzXtgrbReG2JBCXh+98H78PxuO9MjINK+CGV4zv
-   HcI1VCX8w/eXwDoi9q9S18PUtuTEM+IqCznhmlQ2JfeJqqgTRHAZKzHi4
-   1Sf4e1kjjFt2V5VGOmJ/wbbVdNa7AmW++G9k/QYTT0QFeJPObovL/t35T
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="2020507"
+  t=1702581700; x=1734117700;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LokdJSVPxQB366f7GnnDV7J2ROlBIOMUcu0P2Ocn6xw=;
+  b=g5lxo8lA+IYFmG7BqvhiPMAn3mKVyJCfp2eK2huD9WGx59fCWkfQhoF9
+   7NzEzq4PRlxEQPHOpqfl0xkdMLXSqFwJcr5zZaLL28t+DGLz0tz2meuXB
+   2p4mEl/1oC/NROdqkyp95AVldFRyN55pfedBK/BbomlBi1yUWl3Hy1jUe
+   /gRRMOBi2YfiKZZ5oel2cY4XAgaKOcDyADi3umskhA3z6wTWfpnjJvEo1
+   FDnuJJpJSrnCpbBgqtVxix39RXBu96osrG0Ow686LmN1gTNeE4AoqCiGX
+   Ebcao7ZA+48DHC30GyX0PbT0DgawoEJOL2UzaIw/Jl9h7lbKX2XXy3Oc7
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="2328261"
 X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
-   d="scan'208";a="2020507"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 10:49:06 -0800
+   d="scan'208";a="2328261"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 11:21:39 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="750636099"
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="774490674"
 X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
-   d="scan'208";a="750636099"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 14 Dec 2023 10:49:04 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rDqla-000MUd-11;
-	Thu, 14 Dec 2023 18:49:02 +0000
-Date: Fri, 15 Dec 2023 02:48:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org
-Subject: [lee-leds:for-leds-next] BUILD SUCCESS
- 40cfa414e7f99ea0aa3b578e382eed93540c3641
-Message-ID: <202312150216.uvPpwgKM-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+   d="scan'208";a="774490674"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 14 Dec 2023 11:21:36 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 1ECD618E; Thu, 14 Dec 2023 21:21:35 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Lee Jones <lee@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: [PATCH v1 1/1] leds: sun50i-a100: Convert to be agnostic to property provider
+Date: Thu, 14 Dec 2023 21:21:31 +0200
+Message-ID: <20231214192131.1309912-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-branch HEAD: 40cfa414e7f99ea0aa3b578e382eed93540c3641  leds: sun50i-a100: Avoid division-by-zero warning
+Convert the driver to be agnostic to the property provider.
+LEDS subsytem is not dependent on OF, so no need to make drivers
+be a such.
 
-Warning ids grouped by kconfigs:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/leds/Kconfig            |  2 +-
+ drivers/leds/leds-sun50i-a100.c | 46 ++++++++++++++++-----------------
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-clang_recent_errors
-|-- i386-allmodconfig
-|   `-- drivers-leds-leds-max5970.c:warning:variable-num_leds-set-but-not-used
-|-- i386-allyesconfig
-|   `-- drivers-leds-leds-max5970.c:warning:variable-num_leds-set-but-not-used
-|-- powerpc-allyesconfig
-|   `-- drivers-leds-leds-max5970.c:warning:variable-num_leds-set-but-not-used
-|-- x86_64-allmodconfig
-|   `-- drivers-leds-leds-max5970.c:warning:variable-num_leds-set-but-not-used
-`-- x86_64-allyesconfig
-    `-- drivers-leds-leds-max5970.c:warning:variable-num_leds-set-but-not-used
-
-elapsed time: 1475m
-
-configs tested: 168
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                               defconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                          axs103_defconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20231214   gcc  
-arc                   randconfig-002-20231214   gcc  
-arm                               allnoconfig   gcc  
-arm                         bcm2835_defconfig   clang
-arm                                 defconfig   clang
-arm                          gemini_defconfig   gcc  
-arm                           imxrt_defconfig   gcc  
-arm                      integrator_defconfig   gcc  
-arm                   randconfig-001-20231214   gcc  
-arm                   randconfig-002-20231214   gcc  
-arm                   randconfig-003-20231214   gcc  
-arm                   randconfig-004-20231214   gcc  
-arm                        vexpress_defconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20231214   gcc  
-arm64                 randconfig-002-20231214   gcc  
-arm64                 randconfig-003-20231214   gcc  
-arm64                 randconfig-004-20231214   gcc  
-csky                              allnoconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20231214   gcc  
-csky                  randconfig-002-20231214   gcc  
-hexagon                           allnoconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20231214   clang
-hexagon               randconfig-002-20231214   clang
-i386                             allmodconfig   clang
-i386                              allnoconfig   clang
-i386                             allyesconfig   clang
-i386         buildonly-randconfig-001-20231214   gcc  
-i386         buildonly-randconfig-002-20231214   gcc  
-i386         buildonly-randconfig-003-20231214   gcc  
-i386         buildonly-randconfig-004-20231214   gcc  
-i386         buildonly-randconfig-005-20231214   gcc  
-i386         buildonly-randconfig-006-20231214   gcc  
-i386                                defconfig   gcc  
-i386                  randconfig-001-20231214   gcc  
-i386                  randconfig-002-20231214   gcc  
-i386                  randconfig-003-20231214   gcc  
-i386                  randconfig-004-20231214   gcc  
-i386                  randconfig-005-20231214   gcc  
-i386                  randconfig-006-20231214   gcc  
-i386                  randconfig-011-20231214   clang
-i386                  randconfig-012-20231214   clang
-i386                  randconfig-013-20231214   clang
-i386                  randconfig-014-20231214   clang
-i386                  randconfig-015-20231214   clang
-i386                  randconfig-016-20231214   clang
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20231214   gcc  
-loongarch             randconfig-002-20231214   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   clang
-mips                             allyesconfig   gcc  
-mips                  cavium_octeon_defconfig   clang
-mips                         cobalt_defconfig   gcc  
-mips                           rs90_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20231214   gcc  
-nios2                 randconfig-002-20231214   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20231214   gcc  
-parisc                randconfig-002-20231214   gcc  
-parisc64                            defconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc                     ep8248e_defconfig   gcc  
-powerpc                   lite5200b_defconfig   clang
-powerpc                      makalu_defconfig   gcc  
-powerpc                       ppc64_defconfig   gcc  
-powerpc               randconfig-001-20231214   gcc  
-powerpc               randconfig-002-20231214   gcc  
-powerpc               randconfig-003-20231214   gcc  
-powerpc64             randconfig-001-20231214   gcc  
-powerpc64             randconfig-002-20231214   gcc  
-powerpc64             randconfig-003-20231214   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   clang
-riscv                            allyesconfig   gcc  
-riscv                               defconfig   gcc  
-riscv             nommu_k210_sdcard_defconfig   gcc  
-riscv                 randconfig-001-20231214   gcc  
-riscv                 randconfig-002-20231214   gcc  
-riscv                          rv32_defconfig   clang
-s390                             allmodconfig   gcc  
-s390                              allnoconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                  randconfig-001-20231214   clang
-s390                  randconfig-002-20231214   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20231214   gcc  
-sh                    randconfig-002-20231214   gcc  
-sh                          rsk7203_defconfig   gcc  
-sh                          urquell_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20231214   gcc  
-sparc64               randconfig-002-20231214   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   clang
-um                                  defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                    randconfig-001-20231214   gcc  
-um                    randconfig-002-20231214   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20231214   gcc  
-x86_64       buildonly-randconfig-002-20231214   gcc  
-x86_64       buildonly-randconfig-003-20231214   gcc  
-x86_64       buildonly-randconfig-004-20231214   gcc  
-x86_64       buildonly-randconfig-005-20231214   gcc  
-x86_64       buildonly-randconfig-006-20231214   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20231214   clang
-x86_64                randconfig-002-20231214   clang
-x86_64                randconfig-003-20231214   clang
-x86_64                randconfig-004-20231214   clang
-x86_64                randconfig-005-20231214   clang
-x86_64                randconfig-006-20231214   clang
-x86_64                randconfig-011-20231214   gcc  
-x86_64                randconfig-012-20231214   gcc  
-x86_64                randconfig-013-20231214   gcc  
-x86_64                randconfig-014-20231214   gcc  
-x86_64                randconfig-015-20231214   gcc  
-x86_64                randconfig-016-20231214   gcc  
-x86_64                randconfig-071-20231214   gcc  
-x86_64                randconfig-072-20231214   gcc  
-x86_64                randconfig-073-20231214   gcc  
-x86_64                randconfig-074-20231214   gcc  
-x86_64                randconfig-075-20231214   gcc  
-x86_64                randconfig-076-20231214   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-001-20231214   gcc  
-xtensa                randconfig-002-20231214   gcc  
-xtensa                         virt_defconfig   gcc  
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index ef2bdf51ae91..8a1471a0b528 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -304,7 +304,7 @@ config LEDS_COBALT_RAQ
+ 
+ config LEDS_SUN50I_A100
+ 	tristate "LED support for Allwinner A100 RGB LED controller"
+-	depends on LEDS_CLASS_MULTICOLOR && OF
++	depends on LEDS_CLASS_MULTICOLOR
+ 	depends on ARCH_SUNXI || COMPILE_TEST
+ 	help
+ 	  This option enables support for the RGB LED controller found
+diff --git a/drivers/leds/leds-sun50i-a100.c b/drivers/leds/leds-sun50i-a100.c
+index 171cefd1ea0d..62d21c3a3575 100644
+--- a/drivers/leds/leds-sun50i-a100.c
++++ b/drivers/leds/leds-sun50i-a100.c
+@@ -15,10 +15,11 @@
+ #include <linux/io.h>
+ #include <linux/led-class-multicolor.h>
+ #include <linux/leds.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
++#include <linux/property.h>
+ #include <linux/reset.h>
+ #include <linux/spinlock.h>
+ 
+@@ -247,13 +248,13 @@ static const char *const sun50i_a100_ledc_formats[] = {
+ 	"rgb", "rbg", "grb", "gbr", "brg", "bgr",
+ };
+ 
+-static int sun50i_a100_ledc_parse_format(const struct device_node *np,
++static int sun50i_a100_ledc_parse_format(struct device *dev,
+ 					 struct sun50i_a100_ledc *priv)
+ {
+ 	const char *format = "grb";
+ 	u32 i;
+ 
+-	of_property_read_string(np, "allwinner,pixel-format", &format);
++	device_property_read_string(dev, "allwinner,pixel-format", &format);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(sun50i_a100_ledc_formats); i++) {
+ 		if (!strcmp(format, sun50i_a100_ledc_formats[i])) {
+@@ -262,7 +263,7 @@ static int sun50i_a100_ledc_parse_format(const struct device_node *np,
+ 		}
+ 	}
+ 
+-	return dev_err_probe(priv->dev, -EINVAL, "Bad pixel format '%s'\n", format);
++	return dev_err_probe(dev, -EINVAL, "Bad pixel format '%s'\n", format);
+ }
+ 
+ static void sun50i_a100_ledc_set_format(struct sun50i_a100_ledc *priv)
+@@ -283,18 +284,18 @@ static const struct sun50i_a100_ledc_timing sun50i_a100_ledc_default_timing = {
+ 	.treset_ns = 300000,
+ };
+ 
+-static int sun50i_a100_ledc_parse_timing(const struct device_node *np,
++static int sun50i_a100_ledc_parse_timing(struct device *dev,
+ 					 struct sun50i_a100_ledc *priv)
+ {
+ 	struct sun50i_a100_ledc_timing *timing = &priv->timing;
+ 
+ 	*timing = sun50i_a100_ledc_default_timing;
+ 
+-	of_property_read_u32(np, "allwinner,t0h-ns", &timing->t0h_ns);
+-	of_property_read_u32(np, "allwinner,t0l-ns", &timing->t0l_ns);
+-	of_property_read_u32(np, "allwinner,t1h-ns", &timing->t1h_ns);
+-	of_property_read_u32(np, "allwinner,t1l-ns", &timing->t1l_ns);
+-	of_property_read_u32(np, "allwinner,treset-ns", &timing->treset_ns);
++	device_property_read_u32(dev, "allwinner,t0h-ns", &timing->t0h_ns);
++	device_property_read_u32(dev, "allwinner,t0l-ns", &timing->t0l_ns);
++	device_property_read_u32(dev, "allwinner,t1h-ns", &timing->t1h_ns);
++	device_property_read_u32(dev, "allwinner,t1l-ns", &timing->t1l_ns);
++	device_property_read_u32(dev, "allwinner,treset-ns", &timing->treset_ns);
+ 
+ 	return 0;
+ }
+@@ -388,13 +389,12 @@ static void sun50i_a100_ledc_dma_cleanup(void *data)
+ 
+ static int sun50i_a100_ledc_probe(struct platform_device *pdev)
+ {
+-	const struct device_node *np = pdev->dev.of_node;
+ 	struct dma_slave_config dma_cfg = {};
+ 	struct led_init_data init_data = {};
+ 	struct sun50i_a100_ledc_led *led;
+ 	struct device *dev = &pdev->dev;
+ 	struct sun50i_a100_ledc *priv;
+-	struct device_node *child;
++	struct fwnode_handle *child;
+ 	struct resource *mem;
+ 	u32 max_addr = 0;
+ 	u32 num_leds = 0;
+@@ -404,19 +404,19 @@ static int sun50i_a100_ledc_probe(struct platform_device *pdev)
+ 	 * The maximum LED address must be known in sun50i_a100_ledc_resume() before
+ 	 * class device registration, so parse and validate the subnodes up front.
+ 	 */
+-	for_each_available_child_of_node(np, child) {
++	device_for_each_child_node(dev, child) {
+ 		u32 addr, color;
+ 
+-		ret = of_property_read_u32(child, "reg", &addr);
++		ret = fwnode_property_read_u32(child, "reg", &addr);
+ 		if (ret || addr >= LEDC_MAX_LEDS) {
+-			of_node_put(child);
++			fwnode_handle_put(child);
+ 			return dev_err_probe(dev, -EINVAL, "'reg' must be between 0 and %d\n",
+ 					     LEDC_MAX_LEDS - 1);
+ 		}
+ 
+-		ret = of_property_read_u32(child, "color", &color);
++		ret = fwnode_property_read_u32(child, "color", &color);
+ 		if (ret || color != LED_COLOR_ID_RGB) {
+-			of_node_put(child);
++			fwnode_handle_put(child);
+ 			return dev_err_probe(dev, -EINVAL, "'color' must be LED_COLOR_ID_RGB\n");
+ 		}
+ 
+@@ -437,11 +437,11 @@ static int sun50i_a100_ledc_probe(struct platform_device *pdev)
+ 	spin_lock_init(&priv->lock);
+ 	dev_set_drvdata(dev, priv);
+ 
+-	ret = sun50i_a100_ledc_parse_format(np, priv);
++	ret = sun50i_a100_ledc_parse_format(dev, priv);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = sun50i_a100_ledc_parse_timing(np, priv);
++	ret = sun50i_a100_ledc_parse_timing(dev, priv);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -504,11 +504,11 @@ static int sun50i_a100_ledc_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	led = priv->leds;
+-	for_each_available_child_of_node(np, child) {
++	device_for_each_child_node(dev, child) {
+ 		struct led_classdev *cdev;
+ 
+ 		/* The node was already validated above. */
+-		of_property_read_u32(child, "reg", &led->addr);
++		fwnode_property_read_u32(child, "reg", &led->addr);
+ 
+ 		led->subled_info[0].color_index = LED_COLOR_ID_RED;
+ 		led->subled_info[0].channel = 0;
+@@ -524,7 +524,7 @@ static int sun50i_a100_ledc_probe(struct platform_device *pdev)
+ 		cdev->max_brightness = U8_MAX;
+ 		cdev->brightness_set = sun50i_a100_ledc_brightness_set;
+ 
+-		init_data.fwnode = of_fwnode_handle(child);
++		init_data.fwnode = child;
+ 
+ 		ret = led_classdev_multicolor_register_ext(dev, &led->mc_cdev, &init_data);
+ 		if (ret) {
+@@ -540,7 +540,7 @@ static int sun50i_a100_ledc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_put_child:
+-	of_node_put(child);
++	fwnode_handle_put(child);
+ 	while (led-- > priv->leds)
+ 		led_classdev_multicolor_unregister(&led->mc_cdev);
+ 	sun50i_a100_ledc_suspend(&pdev->dev);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0.rc1.1.gbec44491f096
+
