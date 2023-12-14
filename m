@@ -1,27 +1,27 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="gz0oo78M"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6001310C;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ljq/CCEV"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F220109;
 	Thu, 14 Dec 2023 00:29:51 -0800 (PST)
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 6F005100058;
-	Thu, 14 Dec 2023 11:29:49 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 6F005100058
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 87FC112004A;
+	Thu, 14 Dec 2023 11:29:48 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 87FC112004A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1702542589;
-	bh=nTXR4WBFZR+kxSlC13nocgtwFZu8ItCajWxM9cqi5i0=;
+	s=mail; t=1702542588;
+	bh=2AuAiO3OInmf7JfFcpOZ0isTbjfNOkeR9WOJsIXMUT4=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=gz0oo78MnPVya0XjJUuUYRfcxmotx57qbGoHTE+FqCwNj5xNRNyxjmZFZH/zqAe/7
-	 How0VxbyJPWxBPE0IBX+MfWueNLfarF2DO3mBrHx1BlItuKJfGk3XR4h85Hm+jeVFe
-	 83vTskqz3P2WhITedrqzNBF7kx5P91ys/vn54GyVlCSz8oocBP8ELy6MggMvJjsF3l
-	 yykQwWh2IAQNs0YWqfAi0ehNTEC2eQnO620a5/+cr19/PfjOVXRSzMQRLwh577PhfK
-	 VQT5p4jnl9LoMfkC27yy3MQ5H45hqL+Hu0fB5eLh+mAtWhuZ4AM1DWDZnXmqePyegc
-	 er+A0UiJtmitA==
+	b=ljq/CCEVuNjhV7bgoZQGMQ4PMbvPTMeiSJYgJC/dm9Wk9QLHXlyBd7qvuhHbiFrQd
+	 DLs44yN9pBRG4VXDmfHNZ+SABRlchRc4Wto1XhbjvM1wbH+1f+A1xecDErATgNsH8Q
+	 eqS1061mPOhwf2RkfW7bPWv5i1ldIJwErrihHvTwSkyG1/uWnq+uzJ6TSmytAKmusv
+	 nVYlGC2ZXBglFXIRg/u/6Yzx3SRO3ezkbF3oHuUWGlMmmsKmufdg/YYAh6mNGzG6vD
+	 hGjw1DIRWHV7XnO33DR3wFZk0O9ei8sQxJWLXXkYEGHAHSNXPav2nhEqtRsQtL8DXq
+	 cu2I7XT5KhQ+g==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 14 Dec 2023 11:29:49 +0300 (MSK)
+	Thu, 14 Dec 2023 11:29:48 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -36,12 +36,10 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
 	<gnstark@salutedevices.com>
-Subject: [PATCH v3 09/11] leds: mlxreg: use devm_mutex_init for mutex initializtion
-Date: Thu, 14 Dec 2023 11:29:38 +0300
-Message-ID: <20231214082940.2718303-5-gnstark@salutedevices.com>
+Subject: [PATCH v3 05/11] leds: aw200xx: use devm API to cleanup module's resources
+Date: Thu, 14 Dec 2023 11:29:34 +0300
+Message-ID: <20231214082940.2718303-1-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231214082940.2718303-1-gnstark@salutedevices.com>
-References: <20231214082940.2718303-1-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -61,7 +59,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -72,67 +70,97 @@ X-KSMG-AntiVirus-Status: Clean, skipped
 In this driver LEDs are registered using devm_led_classdev_register()
 so they are automatically unregistered after module's remove() is done.
 led_classdev_unregister() calls module's led_set_brightness() to turn off
-the LEDs and that callback uses mutex which was destroyed already
-in module's remove() so use devm API instead.
+the LEDs and that callback uses resources which were destroyed already
+in module's remove() so use devm API instead of remove().
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
- drivers/leds/leds-mlxreg.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/leds/leds-aw200xx.c | 33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
-index b7855c93bd72..64a78eff05c7 100644
---- a/drivers/leds/leds-mlxreg.c
-+++ b/drivers/leds/leds-mlxreg.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/bitops.h>
- #include <linux/device.h>
+diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
+index 1d3943f86f7f..eed1e65c1c0e 100644
+--- a/drivers/leds/leds-aw200xx.c
++++ b/drivers/leds/leds-aw200xx.c
+@@ -10,6 +10,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/bits.h>
+ #include <linux/container_of.h>
 +#include <linux/devm-helpers.h>
- #include <linux/io.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
  #include <linux/leds.h>
- #include <linux/module.h>
-@@ -258,6 +259,7 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- {
- 	struct mlxreg_core_platform_data *led_pdata;
- 	struct mlxreg_led_priv_data *priv;
-+	int err;
- 
- 	led_pdata = dev_get_platdata(&pdev->dev);
- 	if (!led_pdata) {
-@@ -269,28 +271,21 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	mutex_init(&priv->access_lock);
-+	err = devm_mutex_init(&pdev->dev, &priv->access_lock);
-+	if (err)
-+		return err;
-+
- 	priv->pdev = pdev;
- 	priv->pdata = led_pdata;
- 
- 	return mlxreg_led_config(priv);
- }
- 
--static int mlxreg_led_remove(struct platform_device *pdev)
--{
--	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
--
--	mutex_destroy(&priv->access_lock);
--
--	return 0;
--}
--
- static struct platform_driver mlxreg_led_driver = {
- 	.driver = {
- 	    .name = "leds-mlxreg",
- 	},
- 	.probe = mlxreg_led_probe,
--	.remove = mlxreg_led_remove,
+@@ -530,6 +531,16 @@ static const struct regmap_config aw200xx_regmap_config = {
+ 	.disable_locking = true,
  };
  
- module_platform_driver(mlxreg_led_driver);
++static void aw200xx_chip_reset_action(void *data)
++{
++	aw200xx_chip_reset(data);
++}
++
++static void aw200xx_disable_action(void *data)
++{
++	aw200xx_disable(data);
++}
++
+ static int aw200xx_probe(struct i2c_client *client)
+ {
+ 	const struct aw200xx_chipdef *cdef;
+@@ -568,11 +579,17 @@ static int aw200xx_probe(struct i2c_client *client)
+ 
+ 	aw200xx_enable(chip);
+ 
++	ret = devm_add_action(&client->dev, aw200xx_disable_action, chip);
++	if (ret)
++		return ret;
++
+ 	ret = aw200xx_chip_check(chip);
+ 	if (ret)
+ 		return ret;
+ 
+-	mutex_init(&chip->mutex);
++	ret = devm_mutex_init(&client->dev, &chip->mutex);
++	if (ret)
++		return ret;
+ 
+ 	/* Need a lock now since after call aw200xx_probe_fw, sysfs nodes created */
+ 	mutex_lock(&chip->mutex);
+@@ -581,6 +598,10 @@ static int aw200xx_probe(struct i2c_client *client)
+ 	if (ret)
+ 		goto out_unlock;
+ 
++	ret = devm_add_action(&client->dev, aw200xx_chip_reset_action, chip);
++	if (ret)
++		goto out_unlock;
++
+ 	ret = aw200xx_probe_fw(&client->dev, chip);
+ 	if (ret)
+ 		goto out_unlock;
+@@ -595,15 +616,6 @@ static int aw200xx_probe(struct i2c_client *client)
+ 	return ret;
+ }
+ 
+-static void aw200xx_remove(struct i2c_client *client)
+-{
+-	struct aw200xx *chip = i2c_get_clientdata(client);
+-
+-	aw200xx_chip_reset(chip);
+-	aw200xx_disable(chip);
+-	mutex_destroy(&chip->mutex);
+-}
+-
+ static const struct aw200xx_chipdef aw20036_cdef = {
+ 	.channels = 36,
+ 	.display_size_rows_max = 3,
+@@ -652,7 +664,6 @@ static struct i2c_driver aw200xx_driver = {
+ 		.of_match_table = aw200xx_match_table,
+ 	},
+ 	.probe_new = aw200xx_probe,
+-	.remove = aw200xx_remove,
+ 	.id_table = aw200xx_id,
+ };
+ module_i2c_driver(aw200xx_driver);
 -- 
 2.25.1
 
