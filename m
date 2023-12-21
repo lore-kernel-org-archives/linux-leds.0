@@ -1,159 +1,140 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7142A62803
-	for <linux-leds@vger.kernel.org>; Thu, 21 Dec 2023 17:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050EC65194;
+	Thu, 21 Dec 2023 18:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZk/6WCi"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-54c7744a93fso1250616a12.2
-        for <linux-leds@vger.kernel.org>; Thu, 21 Dec 2023 09:31:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1703179909; x=1703784709; darn=vger.kernel.org;
-        h=content-transfer-encoding:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sl4xWaa/YanOYUDyLRwIulVIaM5N2PZrG0JXFZvNw0w=;
-        b=QZk/6WCi7oZZRW/kavwtnX6ns6o5i0RjGYr+FrSoWb/UKwJNwHEN+f6SFiRVR4mf54
-         2UBX3jYvnkihFN+fvK4VG676xnvliomALl6FbaP7NhpTxJACG5fXZzNFkuxdRBdwxQAK
-         yOWjrjkAdvm7dBClbFEfmmA2ko7VZ55m26YyINOEbr7cd9FcvQpM1H3vsu9AeTP8gBlp
-         U90HB8ro111mLguyzoPRbMyS5jOI4qiD2055LTPC1yqjqUxfAT/6GCauRrpHD+8cfFOA
-         IMONGaAMrHyPhQobIp+1VHFZYoOe1FZ0IV7zngpN2TCxvZ1ITNbv1G05f/tL353NzEyi
-         QVRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703179909; x=1703784709;
-        h=content-transfer-encoding:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sl4xWaa/YanOYUDyLRwIulVIaM5N2PZrG0JXFZvNw0w=;
-        b=Wjh9iei1x3lscEdnc4WmGXu4er3E09PN6oZaXyEzleCdRGS9LSBiQfFoTerj2EAQyY
-         uUxKgGqUCgrUK+5XK+HMEEH3EQfRduBY6eI08xMTegHp4ubURMes1fv8r2PehXrTX9eZ
-         2gGHEq881K4VPkx3LvKtbVXD7hQTAeIQgqu7NllzGcmVuWzIticvLmw9Eb7AAd+uuuU9
-         oAQEVIAVPpfpYTCoG4nLNgugo+UxJlKkAvmOYpbfgUzdnNlzHG5wiNbSWQHi112gTwEQ
-         l6zu2dYLHuzTITUQtmoWapTEB/xs/5il+Lw9MsI3aQb9SuFEFFn3Pj+WibhwAiw0OXCH
-         AWWQ==
-X-Gm-Message-State: AOJu0YwN8f9E8TGzCm7I1JMtJFy22MlXLKARuA5NkhG5yHzEjQsHW4yV
-	B6aRqEmPwBuLFZX9YeoOmt4=
-X-Google-Smtp-Source: AGHT+IHT+EKXmB8NSq2LESn1Z0rHQuklZWKA6IyL2qnJOnxdzZ7xctOuzZXKpSRWy5ZVR/j+PSEAFQ==
-X-Received: by 2002:a50:d70a:0:b0:552:e9d1:5dc6 with SMTP id t10-20020a50d70a000000b00552e9d15dc6mr5201597edi.14.1703179909345;
-        Thu, 21 Dec 2023 09:31:49 -0800 (PST)
-Received: from ?IPV6:2a01:c23:b8a5:3600:c010:4b2f:ccc7:a870? (dynamic-2a01-0c23-b8a5-3600-c010-4b2f-ccc7-a870.c23.pool.telefonica.de. [2a01:c23:b8a5:3600:c010:4b2f:ccc7:a870])
-        by smtp.googlemail.com with ESMTPSA id f19-20020a056402069300b0054c9b0bd576sm1415575edy.26.2023.12.21.09.31.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Dec 2023 09:31:48 -0800 (PST)
-Message-ID: <d3f2859c-2673-401c-a4f7-fcaef2167991@gmail.com>
-Date: Thu, 21 Dec 2023 18:31:48 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ltUYREeg"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 3BLEqabE008807;
+	Thu, 21 Dec 2023 18:59:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding:content-type; s=
+	qcppdkim1; bh=kpE5sCFq3dmk4U1+LA8mrhI3/a/VConRpuJvlSn/PyE=; b=lt
+	UYREegUJL+kfWGBvYbEzdEh2tcvCc8BzZAayDJolYDU8L6hgVT5uQV/wcIfoNaJz
+	rK04H81G52DhLJJcIgM9P9dSBU2hJN4+fTKTepzaGEDFCNyRR+wHNL1YQOBzOyXD
+	wwDuXOoXxaxdu2n7dbTsjK9U5nRa77oks2biDxnIci1MmqhVeVBboyUq6xxtq1QI
+	m5niSa9OVjcWUdp7xxPecFugvWQOnSB5lm4aPQFNC2ZWAUizBI2MgVuSz1lKAaR3
+	awCMbMhngoPu7FlRArQc8gT0p0RHcmUEfXikBFjSoKZqXvmvCSGKcftdSUrTU4w4
+	WhoThVeNwl+RGaffxUsg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3v4qe2rq6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Dec 2023 18:58:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3BLIwxp0008617
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Dec 2023 18:58:59 GMT
+Received: from hu-amelende-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 21 Dec 2023 10:58:58 -0800
+From: Anjelique Melendez <quic_amelende@quicinc.com>
+To: <pavel@ucw.cz>, <lee@kernel.org>, <thierry.reding@gmail.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <agross@kernel.org>, <andersson@kernel.org>
+CC: <luca.weiss@fairphone.com>, <konrad.dybcio@linaro.org>,
+        <u.kleine-koenig@pengutronix.de>, <quic_subbaram@quicinc.com>,
+        <quic_gurus@quicinc.com>, <linux-leds@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        "Anjelique
+ Melendez" <quic_amelende@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v8 1/7] dt-bindings: soc: qcom: Add qcom,pbs bindings
+Date: Thu, 21 Dec 2023 10:58:31 -0800
+Message-ID: <20231221185838.28440-2-quic_amelende@quicinc.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20231221185838.28440-1-quic_amelende@quicinc.com>
+References: <20231221185838.28440-1-quic_amelende@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-Cc: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Christian Marangi <ansuelsmth@gmail.com>
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v4] leds: trigger: netdev: skip setting baseline state in
- activate if hw-controlled
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FOZr0BEv5iF3laM7ulFWeNNZAA-g8EDm
+X-Proofpoint-ORIG-GUID: FOZr0BEv5iF3laM7ulFWeNNZAA-g8EDm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-12-09_01,2023-12-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 mlxlogscore=999 clxscore=1011 malwarescore=0 phishscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2311290000
+ definitions=main-2312210144
 
-The current codes uses the sw_control path in set_baseline_state() when
-called from netdev_trig_activate() even if we're hw-controlled. This
-may result in errors when led_set_brightness() is called because we may
-not have set_brightness led ops (if hw doesn't support setting a "LED"
-to ON). In addition this path may schedule trigger_data->work which
-doesn't make sense when being hw-controlled.
+Add binding for the Qualcomm Programmable Boot Sequencer device.
 
-Therefore set trigger_data->hw_control = true before calling
-set_device_name() from netdev_trig_activate(). In this call chain we
-have to prevent set_baseline_state() from being called, because this
-would call hw_control_set(). Use led_cdev->trigger_data == NULL as
-indicator for being called from netdev_trig_activate().
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-v2:
-- improve commit message
-v3:
-- spelling and style fixes
-v4:
-- rebased on top of for-leds-next
----
- drivers/leds/trigger/ledtrig-netdev.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ .../bindings/soc/qcom/qcom,pbs.yaml           | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,pbs.yaml
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 836610292..192662e05 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -275,7 +275,10 @@ static int set_device_name(struct led_netdev_data *trigger_data,
- 
- 	trigger_data->last_activity = 0;
- 
--	set_baseline_state(trigger_data);
-+	/* Skip if we're called from netdev_trig_activate() and hw_control is true */
-+	if (!trigger_data->hw_control || led_get_trigger_data(trigger_data->led_cdev))
-+		set_baseline_state(trigger_data);
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pbs.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pbs.yaml
+new file mode 100644
+index 000000000000..b502ca72266a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pbs.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/qcom/qcom,pbs.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	mutex_unlock(&trigger_data->lock);
- 
- 	return 0;
-@@ -614,8 +617,8 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
- 		if (dev) {
- 			const char *name = dev_name(dev);
- 
--			set_device_name(trigger_data, name, strlen(name));
- 			trigger_data->hw_control = true;
-+			set_device_name(trigger_data, name, strlen(name));
- 
- 			rc = led_cdev->hw_control_get(led_cdev, &mode);
- 			if (!rc)
++title: Qualcomm Technologies, Inc. Programmable Boot Sequencer
++
++maintainers:
++  - Anjelique Melendez <quic_amelende@quicinc.com>
++
++description: |
++  The Qualcomm Technologies, Inc. Programmable Boot Sequencer (PBS)
++  supports triggering power up and power down sequences for clients
++  upon request.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - qcom,pmi632-pbs
++      - const: qcom,pbs
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/spmi/spmi.h>
++
++    pmic@0 {
++      reg = <0x0 SPMI_USID>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      pbs@7400 {
++        compatible = "qcom,pmi632-pbs", "qcom,pbs";
++        reg = <0x7400>;
++      };
++    };
 -- 
-2.43.0
+2.41.0
+
