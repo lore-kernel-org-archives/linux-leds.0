@@ -1,37 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6E248791;
-	Wed, 10 Jan 2024 12:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470EC10A2F;
+	Thu, 11 Jan 2024 08:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUn8qYiD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 952CCC433C7;
-	Wed, 10 Jan 2024 12:54:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3lCI9b+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85DF9C43390;
+	Thu, 11 Jan 2024 08:44:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704891299;
-	bh=5n8+CXGpbcg2EukFcN9GH3kiPhkvu8XAbFD9ugJEqO8=;
+	s=k20201202; t=1704962669;
+	bh=0nfN0jXa8If+AOKA0QftSzZaWPjBWS5C/cukTLMv5v4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fUn8qYiDRQ8oiPkJuPpQGjABUZmMKQm5uuNqcRgXABYS9zK6SKk2So3nWtvKabFUw
-	 PFJL5c1GtM6OUk5DE/Rqd7Sv9540B4JfPQZ7jSDewrSvMBZFwesnBjdY5Ay90Nj+9C
-	 pqX21jHByezFcQ3De9rleGzR5Iz5ealyfNCJViQ8M/c3ClvH1IZBjvX9UWy1g4095V
-	 rYjdpHJu4lMZClINUPhxpvvpHxRd3CvzpfFHtEtcn/9thYEB75QyuESqml3YArYeZQ
-	 FTJBDXR7iqwp6Sjl5xP+n+QZ0FdGQFk9z5R2t1rweUBYff5L16HeZY2Df+/Jn7Yl4l
-	 gT3KzSR2QX7tw==
-Date: Wed, 10 Jan 2024 12:54:54 +0000
+	b=g3lCI9b+YBDhgiP8uFMcEWtgry1Wc0/9v3ZhYQ+7u0z8akQr8a0EIL3VXtPmORsMp
+	 l2VIM2vAEQ6Yaby/OiqX5yyu8YYkEe/pQqdaZ5WJ8sDrUoy7iR+tK1MAq2vCoPMwyr
+	 SXvpt/IwsJoZOnepShzSy4sR9yNzffmND+e4uH805N1mVL8hTmxPokiOUEHxHHyf/K
+	 jVftm0E+5GHTBbr0RJpY8jY+QgTQYUqaMrlmZW+HxyIrTa0vl+7jJ4GlqPWtQSmIHD
+	 ZpHsU0k3yhQqPAnpBjA2BNlpQclBjXkt61V/4BR2ubfGJt8djNi9Dg5gUZMjh5MWq3
+	 zOX0Mtmp5c/Xw==
+Date: Thu, 11 Jan 2024 08:44:25 +0000
 From: Lee Jones <lee@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>
 Cc: Pavel Machek <pavel@ucw.cz>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Daniel Golle <daniel@makrotopia.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Li Zetao <lizetao1@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] leds: trigger: netdev: display only supported
- link speed attribute
-Message-ID: <20240110125454.GI7948@google.com>
-References: <20231221171125.1732-1-ansuelsmth@gmail.com>
- <659e8adc.5d0a0220.a73cd.069f@mx.google.com>
+	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH RESUBMIT] leds: trigger: netdev: add core support for hw
+ not supporting fallback to LED sw control
+Message-ID: <20240111084425.GJ7948@google.com>
+References: <3fd5184c-3641-4b0b-b59a-f489ec69a6cd@gmail.com>
+ <7b6cf0fb-4c77-4088-b87b-5649cfaa697e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,36 +38,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <659e8adc.5d0a0220.a73cd.069f@mx.google.com>
+In-Reply-To: <7b6cf0fb-4c77-4088-b87b-5649cfaa697e@gmail.com>
 
-On Wed, 10 Jan 2024, Christian Marangi wrote:
+On Sun, 17 Dec 2023, Heiner Kallweit wrote:
 
-> On Thu, Dec 21, 2023 at 06:11:24PM +0100, Christian Marangi wrote:
-> > With the addition of more link speed mode to the netdev trigger, it was
-> > pointed out that there may be a problem with bloating the attribute list
-> > with modes that won't ever be supported by the trigger as the attached
-> > device name doesn't support them.
+> On 17.12.2023 19:46, Heiner Kallweit wrote:
+> > If hw doesn't support sw control of the LED and we switch to a mode
+> > not supported by hw, currently we get lots of errors because neither
+> > brigthness_set() nor brithness_set_blocking() is set.
+> > Deal with this by not falling back to sw control, and return
+> > -EOPNOTSUPP to the user. Note that we still store the new mode.
+> > This is needed in case an intermediate unsupported mode is necessary
+> > to switch from one supported mode to another.
 > > 
-> > To clear and address this problem, change the logic where these
-> > additional trigger modes are listed.
+> > Add a comment explaining how a driver for such hw is supposed to behave.
 > > 
-> > Since the netdev trigger REQUIRE a device name to be set, attach to the
-> > device name change function additional logic to parse the supported link
-> > speed modes using ethtool APIs and show only the supported link speed
-> > modes attribute.
-> > 
-> > Link speed attribute are refreshed on device_name set and on
-> > NETDEV_CHANGE events.
-> > 
-> > This only apply to the link speed modes and every other mode is still
-> > provided by default.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > Reviewed-by: Marek Behún <kabel@kernel.org>
+> > Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> > ---
 > 
-> Any news for this?
+> For whatever reason this patch (original version and resubmit) doesn't
+> show up on linux-leds patchwork. In netdev patchwork it's visible.
 
-Not yet.  It's on the list.  Holidays, merge window, etc.
+Never used it.  Do you have a link?
 
 -- 
 Lee Jones [李琼斯]
