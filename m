@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369D604B2;
-	Wed, 24 Jan 2024 14:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6B312DD94;
+	Wed, 24 Jan 2024 14:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706106593; cv=none; b=hznwPpqE9pVeGC71ktkIiAPMyr8wVUv91W1JPlqeQgYMkLu+pIaRRk1EHLUFB/vsgVVW8Ybx3qNEcooMCllOEOPOTVdsf3jzuSXcbazZ3Pwz+9WHMJldU29OpivgKQsD4v3wAEa8MB7zzkfnICE4bAhxGhps6jRr5RUf7U/y3bI=
+	t=1706106628; cv=none; b=unyq9j/d5PrcBhcsqDLuhWIavm+CvpPlDWiMJ4mzNSWCXDAvQZC3M1dWmBL3rXLMv7NTEQPOmUs+tq1Sxpxprc3NPz0eyU16xHJMhxnQB3dbi9au3sHDUUT0CFtqlYX3THWAuRGEoFKqGEoYgsT332XrsBei22nQK1LNYwFGOCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706106593; c=relaxed/simple;
+	s=arc-20240116; t=1706106628; c=relaxed/simple;
 	bh=OYia0AtsnKf67CdsbSIm04KyjzCViV9xEqkqRkan7fg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fVzNq3N6gmagYjnaMi7WWrVkwFPoNJah082LrUiLDsxvUk0HM43OgGpN7wiP6tq9maF7Wd0Aem/rz/uhAldiS9I9aaYfzDAgBINpKICsvNIk1uQzDumwgMCbYl+sIZ0To4w5k/mV4xHVTv/LYyOkwyhcwjhW7Tn/4w9JFs8KQTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEszC+d7; arc=none smtp.client-ip=10.30.226.201
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SeTXm8CvgnERA6Up30xGhVgPLThROsOZ/MiJx28VD6T1Rxn0IFPuEDRRSKxEBCH72kTs8ggOGgJBKVo9zcZvuf/B9oZwS2fYlWtNXFQqyKA19ig/DXvZMsYUECGqJ+TklSxyQX1ys+jIrg0orZ1pWNiEbWS+6KurSXyxqWKhsSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u7YwJDnr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEszC+d7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B265C433F1;
-	Wed, 24 Jan 2024 14:29:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7YwJDnr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3375C433F1;
+	Wed, 24 Jan 2024 14:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706106592;
+	s=k20201202; t=1706106627;
 	bh=OYia0AtsnKf67CdsbSIm04KyjzCViV9xEqkqRkan7fg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=KEszC+d7wJwEZ429lAyXqII8qCj3CaebuBUJjlJ40/Ez3XYIivWx1u6ewhTVWI2OI
-	 wuErfHUXvxuk6LbwjnsyToAo1AQ6eDgyTRB7tsUaQw6baP+UywYeruWRwHXOsAJ1ah
-	 NV9/5KH0Mbwp3ImCcVP8MI+l+8WVDyi3dRNeQ3szrE2CNSfVQeZd7KEp/WKtpXEY1b
-	 i9PSN3CTtotQK5EZwwnC/zizC8FB6kyfY0KHvW86bM5JQyFQWiXb9FKt2Zyt/OdxFs
-	 a88WH3j6F1NI75a6GRuh9tTfXi/QG5vTP2x9v13hyu3M0npYK11vlD8/iM/PndqRsa
-	 ludhp8jpZN/HA==
+	b=u7YwJDnrk34NJX/gyVDuknBVHZi0189iIVli0ZlxCgHRnhYitscIpTj7cpu4PRAAn
+	 yjHGph7R0tBi+7HdOZwqI52rn8FNPXyGSzSGgyjTgWJaAiBcrcCOsxNu+F/zaCRWJU
+	 dxdiDfVnBgzD43S9Ea+n8zqOTIQJX6xXbhtXCvzoWicSMKNTPAeotraC810ipr9DFF
+	 OZTi7WAjCl4Mot+skPUhaKIU0lqlL4TWwtBlHuCijmR6Kj5QYhM2CEIPxkaHb+h/it
+	 AJAMT5WUzyPReIDwTbALO2sNwbolkcdimGVUvGjdQCnUh5YCdCaY5FrkVgLaQNEuIj
+	 793s0AfxdiMOw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -33,9 +33,9 @@ Cc: Heiner Kallweit <hkallweit1@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
 	pavel@ucw.cz,
 	linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 1/9] leds: trigger: panic: Don't register panic notifier if creating the trigger failed
-Date: Wed, 24 Jan 2024 09:29:31 -0500
-Message-ID: <20240124142949.1283818-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 1/9] leds: trigger: panic: Don't register panic notifier if creating the trigger failed
+Date: Wed, 24 Jan 2024 09:30:04 -0500
+Message-ID: <20240124143024.1284046-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.74
+X-stable-base: Linux 5.15.147
 Content-Transfer-Encoding: 8bit
 
 From: Heiner Kallweit <hkallweit1@gmail.com>
