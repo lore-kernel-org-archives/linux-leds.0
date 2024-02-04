@@ -1,90 +1,143 @@
-Received: from alpha.404-net.de (alpha.404-net.de [193.26.159.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C616224E3
-	for <linux-leds@vger.kernel.org>; Sun,  4 Feb 2024 15:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.26.159.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C8F24205;
+	Sun,  4 Feb 2024 17:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707059767; cv=none; b=CMReJLHkNawdC4OnS1I7c1CtqznAbbj4Jr6koAIT7zLpgM7nfAyYr9FT+X8SMG39oO8OXdn7jX03qZuIjbc/Cq1ajFhVBSd6ebp/YEt+zPF0ErwbTSdEClGZmGLL778kTtVSewSlUP807/DdphgGgDaDejSMEV73FCqQfnKS3vA=
+	t=1707067790; cv=none; b=gDoTohjXrSCTrkD0KX0a7MWD4mgPMbjCe1BUyS5fmdzSQoZ28L6UvuWbNGg93Ki0DYGRlALNxL1jnN+8NbzFKzCXiJi9wAQpysSQmuxROnliD29d0bEg/GiXRuD48focEJly6jqEHuKm/tv+g3VboA0TccdtNFHebBC/jgM1oT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707059767; c=relaxed/simple;
-	bh=s2QuvAjQ1a7LpB4lqJqaMhnT2yqN11n+k+pub6Q/bPg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QRxvI7x5BfRi6yZEUZ4kzsJFUl9SL+GBvrbFBsc7KcHZP4bhOLsmZlLCoK7mVN+osggUrc2PlLXHwigVPTqH6+aBnGyECigeupxoi79Fxz8X6GTHrlZ8PY//UlTqJ67QGo/TrRKCkFYeUuvoXVBpUY9yNJ/mWhiofLQccPLkVp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=stklcode.de; spf=pass smtp.mailfrom=stklcode.de; arc=none smtp.client-ip=193.26.159.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=stklcode.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stklcode.de
-Received: from stklpc.intra.404-net.de (2001-4dd0-4f5d-1101-0-0-0-4eb.ipv6dyn.netcologne.de [IPv6:2001:4dd0:4f5d:1101::4eb])
-	by alpha.404-net.de (Postfix) with ESMTPSA id 9BAFD11FE8;
-	Sun,  4 Feb 2024 16:07:38 +0100 (CET)
-Authentication-Results: alpha.404-net.de;
-	spf=pass (sender IP is 2001:4dd0:4f5d:1101::4eb) smtp.mailfrom=stefan@stklcode.de smtp.helo=stklpc.intra.404-net.de
-Received-SPF: pass (alpha.404-net.de: connection is authenticated)
-From: Stefan Kalscheuer <stefan@stklcode.de>
-To: linux-leds@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Christian Mauderer <oss@c-mauderer.de>,
-	Stefan Kalscheuer <stefan@stklcode.de>
-Subject: [PATCH] leds: spi-byte: use devm_led_classdev_register_ext()
-Date: Sun,  4 Feb 2024 16:07:26 +0100
-Message-ID: <20240204150726.29783-1-stefan@stklcode.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1707067790; c=relaxed/simple;
+	bh=lzSrv4+0HNUHwkpIOl2xT9ERzLM/rHgR5h5G3ipP+LI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhSlZWpW3IxAEFybWnKW//Ek8c/YrpaNjyYkVJ+0wX9gGkYLQF6SVVFIkKkleF7uFyZCdM9SnRJzreR/7pvFIh/YByxca20nfO9XAP1B0UUJHh7kfcl65+R7eN+6KBk6x5lXxzG57sdbW0VG6BU8DteyAQs9WBPYmsnFMYM/rKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (2a02-a420-67-c93f-164f-8aff-fee4-5930.mobile6.kpn.net [IPv6:2a02:a420:67:c93f:164f:8aff:fee4:5930])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 348BA3EF26;
+	Sun,  4 Feb 2024 18:29:45 +0100 (CET)
+Date: Sun, 4 Feb 2024 18:29:43 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, phone-devel@vger.kernel.org, 
+	Pavel Machek <pavel@ucw.cz>, Bjorn Andersson <bjorn.andersson@linaro.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
+	Martin Botka <martin.botka@somainline.org>, Jami Kettunen <jami.kettunen@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Stephen Boyd <swboyd@chromium.org>, Satya Priya <quic_c_skakit@quicinc.com>
+Subject: Re: [PATCH v4 2/2] leds: qcom-lpg: Add PM660L configuration and
+ compatible
+Message-ID: <vj7mlrrvn7y45fpavdy37eqfxrz3anq43qh4n2flktckuaoeo7@ynlw5rexyi27>
+References: <20220719211848.1653920-1-marijn.suijten@somainline.org>
+ <20220719211848.1653920-2-marijn.suijten@somainline.org>
+ <ZYFS04cznE5bhOeV@hovoldconsulting.com>
+ <3lsapoxlqijes5m4nqcbhdfhhs4chq3mcq3jaty7v2zihsqnwu@nn67a4h6425k>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3lsapoxlqijes5m4nqcbhdfhhs4chq3mcq3jaty7v2zihsqnwu@nn67a4h6425k>
 
-Use extended classdev registration to generate generic device names from
-color and function enums instead of reading only the label from the
-device tree.
+On 2023-12-19 10:17:21, Marijn Suijten wrote:
+> Hi Johan and Lee,
+> 
+> On 2023-12-19 09:22:43, Johan Hovold wrote:
+> > Hi Marijn and Lee,
+> > 
+> > On Tue, Jul 19, 2022 at 11:18:48PM +0200, Marijn Suijten wrote:
+> > > Inherit PM660L PMIC LPG/triled block configuration from downstream
+> > > drivers and DT sources, consisting of a triled block with automatic
+> > > trickle charge control and source selection, three colored led channels
+> > > belonging to the synchronized triled block and one loose PWM channel.
+> > > 
+> > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > ---
+> > > 
+> > > Changes since v3:
+> > > - Rebased on -next;
+> > > - (series) dropped DTS patches that have been applied through the
+> > >   Qualcomm DTS tree, leaving only leds changes (driver and
+> > >   accompanying dt-bindings).
+> > 
+> > > diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+> > > index 02f51cc61837..102ab0c33887 100644
+> > > --- a/drivers/leds/rgb/leds-qcom-lpg.c
+> > > +++ b/drivers/leds/rgb/leds-qcom-lpg.c
+> > > @@ -1304,6 +1304,23 @@ static int lpg_remove(struct platform_device *pdev)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static const struct lpg_data pm660l_lpg_data = {
+> > > +	.lut_base = 0xb000,
+> > > +	.lut_size = 49,
+> > > +
+> > > +	.triled_base = 0xd000,
+> > > +	.triled_has_atc_ctl = true,
+> > > +	.triled_has_src_sel = true,
+> > > +
+> > > +	.num_channels = 4,
+> > > +	.channels = (const struct lpg_channel_data[]) {
+> > > +		{ .base = 0xb100, .triled_mask = BIT(5) },
+> > > +		{ .base = 0xb200, .triled_mask = BIT(6) },
+> > > +		{ .base = 0xb300, .triled_mask = BIT(7) },
+> > > +		{ .base = 0xb400 },
+> > > +	},
+> > > +};
+> > > +
+> > >  static const struct lpg_data pm8916_pwm_data = {
+> > >  	.num_channels = 1,
+> > >  	.channels = (const struct lpg_channel_data[]) {
+> > > @@ -1424,6 +1441,7 @@ static const struct lpg_data pm8350c_pwm_data = {
+> > >  };
+> > >  
+> > >  static const struct of_device_id lpg_of_table[] = {
+> > > +	{ .compatible = "qcom,pm660l-lpg", .data = &pm660l_lpg_data },
+> > >  	{ .compatible = "qcom,pm8150b-lpg", .data = &pm8150b_lpg_data },
+> > >  	{ .compatible = "qcom,pm8150l-lpg", .data = &pm8150l_lpg_data },
+> > >  	{ .compatible = "qcom,pm8350c-pwm", .data = &pm8350c_pwm_data },
+> > 
+> > When reviewing the Qualcomm SPMI PMIC bindings I noticed that this patch
+> > was never picked up by the LEDs maintainer, while the binding and dtsi
+> > changes made it in:
+> > 
+> > 	https://lore.kernel.org/r/20220719211848.1653920-2-marijn.suijten@somainline.org
+> > 
+> > Looks like it may still apply cleanly, but otherwise, would you mind
+> > rebasing and resending so that Lee can pick this one up?
+> > 
+> > Johan
+> 
+> Coincidentally I haven't touched this device/platform for months... until last
+> weekend where I noticed the same.  It does not apply cleanly and I had to solve
+> some conflicts:
+> 
+> https://github.com/SoMainline/linux/commit/8ec5d02eaffcec24fcab6a989ab117a5b72b96b6
+> 
+> I'll gladly resend this!
 
-Signed-off-by: Stefan Kalscheuer <stefan@stklcode.de>
----
- drivers/leds/leds-spi-byte.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Apologies for taking more time than necessary.  According to b4 the patch should
+become available at:
 
-diff --git a/drivers/leds/leds-spi-byte.c b/drivers/leds/leds-spi-byte.c
-index 9d91f21842f2..96296db5f410 100644
---- a/drivers/leds/leds-spi-byte.c
-+++ b/drivers/leds/leds-spi-byte.c
-@@ -83,7 +83,7 @@ static int spi_byte_probe(struct spi_device *spi)
- 	struct device_node *child;
- 	struct device *dev = &spi->dev;
- 	struct spi_byte_led *led;
--	const char *name = "leds-spi-byte::";
-+	struct led_init_data init_data = {};
- 	const char *state;
- 	int ret;
- 
-@@ -97,12 +97,9 @@ static int spi_byte_probe(struct spi_device *spi)
- 	if (!led)
- 		return -ENOMEM;
- 
--	of_property_read_string(child, "label", &name);
--	strscpy(led->name, name, sizeof(led->name));
- 	led->spi = spi;
- 	mutex_init(&led->mutex);
- 	led->cdef = device_get_match_data(dev);
--	led->ldev.name = led->name;
- 	led->ldev.brightness = LED_OFF;
- 	led->ldev.max_brightness = led->cdef->max_value - led->cdef->off_value;
- 	led->ldev.brightness_set_blocking = spi_byte_brightness_set_blocking;
-@@ -120,7 +117,11 @@ static int spi_byte_probe(struct spi_device *spi)
- 	spi_byte_brightness_set_blocking(&led->ldev,
- 					 led->ldev.brightness);
- 
--	ret = devm_led_classdev_register(&spi->dev, &led->ldev);
-+	init_data.fwnode = of_fwnode_handle(child);
-+	init_data.devicename = "leds-spi-byte";
-+	init_data.default_label = ":";
-+
-+	ret = devm_led_classdev_register_ext(&spi->dev, &led->ldev, &init_data);
- 	if (ret) {
- 		mutex_destroy(&led->mutex);
- 		return ret;
--- 
-2.43.0
+https://lore.kernel.org/r/20240204-pm660l-lpg-v5-1-2f54d1a0894b@somainline.org
 
+> Note that I have one more unmerged leds patch around, that hasn't been looked
+> at either.  Would it help to send this once again, perhaps with more reviewers/
+> testing (Johan, would you mind taking a look too)?
+> 
+> https://lore.kernel.org/linux-leds/20220719213034.1664056-1-marijn.suijten@somainline.org/
+
+I'll continue looking into clarifying this patch before resending it.
+
+- Marijn
