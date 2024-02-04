@@ -1,154 +1,88 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA71715AE0;
-	Sun,  4 Feb 2024 08:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A822301;
+	Sun,  4 Feb 2024 15:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707035505; cv=none; b=KSUI0KAR8spBUseVr7jNHIkJGOMBCsIREc41iOnxnv8GhF81xyVPrulNjpKlTRcThNAIHv8OkBtoAJmJv3jKzxkUGbFqGdni41mBpkbqD98E+kO2qlCO+TY4R2F5GhwZmtaROWDb/qdpo37jhTUlfcdaRurSb7mCbcoN03N6IAY=
+	t=1707059723; cv=none; b=tXlSsvy4n1+SWN42Pmez0bowKg9YWScbBk1ZCxLmkpKXaNgX7+Pd08raGNw95tWNkDVAekzdXnH98tieLVnXftSRLqA0a4jeT4l3Oxe4fFDd3XbKOuEs/A/K4OEIKdVLYAPBeODGAKojgPNc7CUFt3Pp7t4l0OBbJTAeRV5Q7Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707035505; c=relaxed/simple;
-	bh=zuZ16cXlvgwszlj4UY3oSjQsOuqVS9Gy8T9k3jLpus4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TCl551nN79dE9HGJhR2tik3t2NFYsoxZd84fcMa7T7YJ4FMw2JbCQ7HKNIFRFebLYtaOmjEbKdMVA39skGEun2c3MPUCBkK6NAxJXvu/qjus3Ij9aqnF39yyEkH1HFAwc40+QfGlAuTxuyPOLl+cUjyQmoIsrbSa3onC0mohOVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JaQRKEh9; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1707059723; c=relaxed/simple;
+	bh=IeZfAJeIueCJI7tdAJKSyC4Jwez+pyH758ixVanQ578=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IfMhqeuHnn9G2ooXiO88JOITLGwkCe+dF++peMQT8Jt4+5vVLfu5Z8775LTUkw0sRA2XNEMH19OtOfS1mfS5hqU24PeMzP+I/IXd2B8WwGLKtD9oT9Ubkdiqw7V2rclw0lADJOHyi+ZuJK3yKlFMVW3bNzXEEnp50qA8Jdd93Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zTL4Va8w; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JaQRKEh9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=14TOX
-	UYYbIa7nuVrv7wPD6Hm67H8jXpzC51fRcD2YDI=; b=JaQRKEh9BwNt7ESr+7YWP
-	16ewiOYq3OUnVLx+mE5ZgxGytIvGcvSaGohW+d0v75n7TKDyiKA5G5LQpC+XJFw/
-	MsuZJOyr9WMrAfJ/10S+WuSq++Lj0xnyG1AWoCIq5/S8FqZ/5Frc7cm5Gaq8W3aN
-	CYUGg3yjryAqEXnzGKHplc=
-Received: from localhost.localdomain (unknown [39.144.137.116])
-	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wDnM2Y+S79lBerCAg--.45702S3;
-	Sun, 04 Feb 2024 16:30:58 +0800 (CST)
-From: Xing Tong Wu <xingtong_wu@163.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Xing Tong Wu <xingtong.wu@siemens.com>,
-	Tobias Schaffner <tobias.schaffner@siemens.com>,
-	Gerd Haeussler <gerd.haeussler.ext@siemens.com>,
-	Henning Schild <henning@hennsch.de>
-Subject: [PATCH RESEND 1/1] leds: simatic-ipc-leds-gpio: add support for module BX-59A
-Date: Sun,  4 Feb 2024 16:30:48 +0800
-Message-Id: <20240204083048.2458-2-xingtong_wu@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240204083048.2458-1-xingtong_wu@163.com>
-References: <20240204083048.2458-1-xingtong_wu@163.com>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zTL4Va8w"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=edYHnRAqz8+dv8WEmyxXjWpoGAiVxFe3ltzCGSM68NQ=; b=zTL4Va8wcoV/6G2DFrtpoPED7k
+	1Gd4ADSJt7S5piBmZKIaGfIT7mgq8co+nbQvDjwI68Uzn8hY/Z6tVt+IivT570WzbI5kQUQ/25aM3
+	6aBv0Gp3WzyByyqEl0ANbN+vbUh7Q+6r9Zgw1YKfr9r/bOVfuXVC51z5VZ5y9/2zC4kI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1rWeD0-006xuU-Qj; Sun, 04 Feb 2024 16:15:02 +0100
+Date: Sun, 4 Feb 2024 16:15:02 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Li Zetao <lizetao1@huawei.com>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] leds: trigger: netdev: Fix kernel panic on interface
+ rename trig notify
+Message-ID: <8d51f09b-e6d2-4ee1-9e7d-b545d561798a@lunn.ch>
+References: <20240203235413.1146-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnM2Y+S79lBerCAg--.45702S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXr1kurWUJw15Xry7JFy7Jrb_yoWrXF1fpF
-	nrJ39YkFW5J3Zrtw13CFW7ZF93u3WxKr97tFZrGa90g3Wjvr10qF9rAFW3XFZ5J3ykuF17
-	GF1rtFyUur4DAwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jqxRfUUUUU=
-X-CM-SenderInfo: p0lqw35rqjs4rx6rljoofrz/xtbBEAd60GVOCGzapQAAsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240203235413.1146-1-ansuelsmth@gmail.com>
 
-From: Xing Tong Wu <xingtong.wu@siemens.com>
+On Sun, Feb 04, 2024 at 12:54:01AM +0100, Christian Marangi wrote:
+> Commit d5e01266e7f5 ("leds: trigger: netdev: add additional specific link
+> speed mode") in the various changes, reworked the way to set the LINKUP
+> mode in commit cee4bd16c319 ("leds: trigger: netdev: Recheck
+> NETDEV_LED_MODE_LINKUP on dev rename") and moved it to a generic function.
+> 
+> This changed the logic where, in the previous implementation the dev
+> from the trigger event was used to check if the carrier was ok, but in
+> the new implementation with the generic function, the dev in
+> trigger_data is used instead.
+> 
+> This is problematic and cause a possible kernel panic due to the fact
+> that the dev in the trigger_data still reference the old one as the
+> new one (passed from the trigger event) still has to be hold and saved
+> in the trigger_data struct (done in the NETDEV_REGISTER case).
+> 
+> On calling of get_device_state(), an invalid net_dev is used and this
+> cause a kernel panic.
+> 
+> To handle this correctly, move the call to get_device_state() after the
+> new net_dev is correctly set in trigger_data (in the NETDEV_REGISTER
+> case) and correctly parse the new dev.
+> 
+> Fixes: d5e01266e7f5 ("leds: trigger: netdev: add additional specific link speed mode")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-This is used for the Siemens Simatic IPC BX-59A, which has its LEDs
-connected to GPIOs provided by the Nuvoton NCT6126D
+This should have 'net' in the subject line, to indicate which tree its
+for.
 
-Signed-off-by: Xing Tong Wu <xingtong.wu@siemens.com>
----
- .../leds/simple/simatic-ipc-leds-gpio-core.c  |  1 +
- .../simple/simatic-ipc-leds-gpio-f7188x.c     | 42 ++++++++++++++++---
- 2 files changed, 37 insertions(+), 6 deletions(-)
+Otherwise:
 
-diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio-core.c b/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
-index 667ba1bc3a30..85003fd7f1aa 100644
---- a/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
-+++ b/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
-@@ -56,6 +56,7 @@ int simatic_ipc_leds_gpio_probe(struct platform_device *pdev,
- 	case SIMATIC_IPC_DEVICE_127E:
- 	case SIMATIC_IPC_DEVICE_227G:
- 	case SIMATIC_IPC_DEVICE_BX_21A:
-+	case SIMATIC_IPC_DEVICE_BX_59A:
- 		break;
- 	default:
- 		return -ENODEV;
-diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c b/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
-index c7c3a1f986e6..783e74e9a805 100644
---- a/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
-+++ b/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
-@@ -17,7 +17,10 @@
- 
- #include "simatic-ipc-leds-gpio.h"
- 
--static struct gpiod_lookup_table simatic_ipc_led_gpio_table = {
-+static struct gpiod_lookup_table *led_lookup_table;
-+static struct gpiod_lookup_table *led_lookup_table_extra;
-+
-+static struct gpiod_lookup_table simatic_ipc_led_gpio_table_227g = {
- 	.dev_id = "leds-gpio",
- 	.table = {
- 		GPIO_LOOKUP_IDX("gpio-f7188x-2", 0, NULL, 0, GPIO_ACTIVE_LOW),
-@@ -30,7 +33,7 @@ static struct gpiod_lookup_table simatic_ipc_led_gpio_table = {
- 	},
- };
- 
--static struct gpiod_lookup_table simatic_ipc_led_gpio_table_extra = {
-+static struct gpiod_lookup_table simatic_ipc_led_gpio_table_extra_227g = {
- 	.dev_id = NULL, /* Filled during initialization */
- 	.table = {
- 		GPIO_LOOKUP_IDX("gpio-f7188x-3", 6, NULL, 6, GPIO_ACTIVE_HIGH),
-@@ -39,16 +42,43 @@ static struct gpiod_lookup_table simatic_ipc_led_gpio_table_extra = {
- 	},
- };
- 
-+static struct gpiod_lookup_table simatic_ipc_led_gpio_table_bx_59a = {
-+	.dev_id = "leds-gpio",
-+	.table = {
-+		GPIO_LOOKUP_IDX("gpio-f7188x-2", 0, NULL, 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("gpio-f7188x-2", 3, NULL, 1, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("gpio-f7188x-5", 3, NULL, 2, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("gpio-f7188x-5", 2, NULL, 3, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("gpio-f7188x-7", 7, NULL, 4, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX("gpio-f7188x-7", 4, NULL, 5, GPIO_ACTIVE_LOW),
-+		{} /* Terminating entry */
-+	}
-+};
-+
- static int simatic_ipc_leds_gpio_f7188x_probe(struct platform_device *pdev)
- {
--	return simatic_ipc_leds_gpio_probe(pdev, &simatic_ipc_led_gpio_table,
--					   &simatic_ipc_led_gpio_table_extra);
-+	const struct simatic_ipc_platform *plat = pdev->dev.platform_data;
-+
-+	switch (plat->devmode) {
-+	case SIMATIC_IPC_DEVICE_227G:
-+		led_lookup_table = &simatic_ipc_led_gpio_table_227g;
-+		led_lookup_table_extra = &simatic_ipc_led_gpio_table_extra_227g;
-+		break;
-+	case SIMATIC_IPC_DEVICE_BX_59A:
-+		led_lookup_table = &simatic_ipc_led_gpio_table_bx_59a;
-+		break;
-+	default:
-+		return -ENODEV;
-+	}
-+
-+	return simatic_ipc_leds_gpio_probe(pdev, led_lookup_table,
-+					   led_lookup_table_extra);
- }
- 
- static void simatic_ipc_leds_gpio_f7188x_remove(struct platform_device *pdev)
- {
--	simatic_ipc_leds_gpio_remove(pdev, &simatic_ipc_led_gpio_table,
--				     &simatic_ipc_led_gpio_table_extra);
-+	simatic_ipc_leds_gpio_remove(pdev, led_lookup_table,
-+				     led_lookup_table_extra);
- }
- 
- static struct platform_driver simatic_ipc_led_gpio_driver = {
--- 
-2.25.1
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
+    Andrew
