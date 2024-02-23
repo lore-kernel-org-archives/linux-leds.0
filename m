@@ -1,46 +1,46 @@
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1916143C63;
-	Fri, 23 Feb 2024 20:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F828146E96;
+	Fri, 23 Feb 2024 20:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708720107; cv=none; b=DQHOvE6f/z6/dUNA78PC+Ys1YpzladWmIYeQTxHyBAkLtkG1hiIv1efwidY7dFPNRDPd5B4vtx+9cGeIEYjrbAKpO5hWCbqPBmk+RjZ7DMgtxWCiE2BJdoUfoE2Wfoaoan6UbPUr1TZK+JglxBpZhNcQbYVHfSQlW5Bl2/4sncg=
+	t=1708720217; cv=none; b=b78Y50li7VgaxWmaAoMwddaRG8UgSzW4mMfc6Y0qdqbLJSAqxt8KT67C26CQ2Gy21b5RqaCoKOfrpNUq2z2PyKo5BgvQVpXEtcKKp+0biUT5Jjy/zlB+FxaNMCVG3qDoq1zxm/QHJ+VjV29dEnPzQQ7I8/S96HEjJfZIGohbrsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708720107; c=relaxed/simple;
-	bh=X+QPIuS/gA9uBqcR8AeIe4WwFzeO2SwHTyFgIoUO3Ng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MO72+QdlzBznq5YaE/Z8ssgLVJdCMRPDkBTsLSmv/nbtw3GozYUx1woXIcboSOyV06vCJxgRo83LO0b4Z9J+PaYYf/mn9PC1OV+65wyawHnLPkZtGixQXB99u8euwdN3n8LLdOTv9jgXn+jR5fZlrmkn0qW7k1JQMcUcLkSIrvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PrBGB+Pt; arc=none smtp.client-ip=192.198.163.9
+	s=arc-20240116; t=1708720217; c=relaxed/simple;
+	bh=Ha3KeLTITa/qwislXa09L9QKN+hTvp4TmZbpeNy2fNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hByUr/+jGQxtI+Q66oGPcPiAv7yrThOvxN+syDBtEzymnQvJ4cs9ypx9RVvXEXJMLPjt/xGXdViu6Ji7FopT7/bQyhb+amutrN81vz23Or06UBbH/xlByJfRnpqwFsKtA/cke8cKHxGnwYBvc8a56cWqTya4Qbt3mUVC1pPlY74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nzSAA1Oo; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PrBGB+Pt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nzSAA1Oo"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708720106; x=1740256106;
+  t=1708720215; x=1740256215;
   h=from:to:cc:subject:date:message-id:mime-version:
    content-transfer-encoding;
-  bh=X+QPIuS/gA9uBqcR8AeIe4WwFzeO2SwHTyFgIoUO3Ng=;
-  b=PrBGB+PtvMTCeIy1a0pR6logVL2JAgOg1+tBLbrx1ySsoJUkCFUEhxw/
-   wJBfgElxcZhNnGaAz3MaeavyFFK8D+ztWPa/bJLEFYa5fjNQSTG1HmByF
-   aTa+YUMRh5SBD5JrI7u0elWt4wIp0OakORSbKHfd52n13i29OFN3t9lnO
-   3sCJ90/Njb7GZCiOqF68kriJYq/7J2jbP6RX7TUYyyLKjN8d4zaM0yZnW
-   8Al7pyIOZcnD+zhTAdvhejX4kC6MS5ioWzHy88klNTVQoopGgSmDixkkx
-   eAZqiloNi+RBgQxacOFWtLghZoMNhD5bsgk1N3bdz0BgyE5cLd9CxgICH
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="13757930"
+  bh=Ha3KeLTITa/qwislXa09L9QKN+hTvp4TmZbpeNy2fNU=;
+  b=nzSAA1OoHcwdxwUo4BnepSrlE+Q+0VCjt/algpYHCXjQ98rEbgAaR9kM
+   lMM1VFOemAu9Nisa1QvmYhKftBHTbPlt3/pUzDBP8k8BhhIq6s4+GRbed
+   4MEowGd0c/7z/W9GatIi14PM7XMpXEfHoUeyhdpQ8zWFg+b+5bu4TO6IC
+   xR/RRYpN/UrDXFlfU9TKwK2vjbz/1wi0MuHi2PQpZvsZPjvI3qYB6Qfh+
+   tiwU7WptaqE+ONzYrfosrO8gBcRqO0TSNdisn7LUIyjGGE2BAnb2k91lh
+   HMB++MdmI+E/2ixfujdQnon+Ktkef+fBxeXi4PZ8tdSU7/qDl866TYBmy
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="13758102"
 X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
-   d="scan'208";a="13757930"
+   d="scan'208";a="13758102"
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 12:28:24 -0800
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 12:30:14 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="937025698"
+X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="937025702"
 X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
-   d="scan'208";a="937025698"
+   d="scan'208";a="937025702"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Feb 2024 12:28:22 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 23 Feb 2024 12:30:12 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id F24F934C; Fri, 23 Feb 2024 22:28:20 +0200 (EET)
+	id 6B9F534C; Fri, 23 Feb 2024 22:30:11 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -48,9 +48,9 @@ To: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
 	linux-kernel@vger.kernel.org
 Cc: Pavel Machek <pavel@ucw.cz>,
 	Lee Jones <lee@kernel.org>
-Subject: [PATCH v1 1/1] leds: expresswire: Don't use "proxy" headers
-Date: Fri, 23 Feb 2024 22:28:16 +0200
-Message-ID: <20240223202816.880938-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] leds: expresswire: Don't use "proxy" headers
+Date: Fri, 23 Feb 2024 22:30:00 +0200
+Message-ID: <20240223203010.881065-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -65,17 +65,20 @@ principle.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/leds-expresswire.c  | 3 +++
+v2: added one more missing header
+ drivers/leds/leds-expresswire.c  | 4 ++++
  include/linux/leds-expresswire.h | 4 +++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-expresswire.c b/drivers/leds/leds-expresswire.c
-index 89e147b0e019..8176356aafac 100644
+index 89e147b0e019..e4937a8e0f44 100644
 --- a/drivers/leds/leds-expresswire.c
 +++ b/drivers/leds/leds-expresswire.c
-@@ -6,7 +6,10 @@
+@@ -5,8 +5,12 @@
+  * ktd2692 and ktd2801 are known to use this protocol.
   */
  
++#include <linux/bits.h>
  #include <linux/delay.h>
 +#include <linux/export.h>
  #include <linux/gpio/consumer.h>
