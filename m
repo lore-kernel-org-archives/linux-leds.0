@@ -1,107 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F828146E96;
-	Fri, 23 Feb 2024 20:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7091412A16D;
+	Fri, 23 Feb 2024 20:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708720217; cv=none; b=b78Y50li7VgaxWmaAoMwddaRG8UgSzW4mMfc6Y0qdqbLJSAqxt8KT67C26CQ2Gy21b5RqaCoKOfrpNUq2z2PyKo5BgvQVpXEtcKKp+0biUT5Jjy/zlB+FxaNMCVG3qDoq1zxm/QHJ+VjV29dEnPzQQ7I8/S96HEjJfZIGohbrsE=
+	t=1708721822; cv=none; b=O8XxSLjYtjxdXv+D5mD/H9TUwmMK0HF9v+ydkyjqFoRwONL7qsgdZGwsy9YSZsGzr9fKQDiwc7L2afcH2Of1BNCnsG9863mCrYKKRxODlcOioZGXw+20Ajo5KLaDCRWk/KHlA54OpiNdZilnN2p7h7gtkSrXUypOQilz+RPneD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708720217; c=relaxed/simple;
-	bh=Ha3KeLTITa/qwislXa09L9QKN+hTvp4TmZbpeNy2fNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hByUr/+jGQxtI+Q66oGPcPiAv7yrThOvxN+syDBtEzymnQvJ4cs9ypx9RVvXEXJMLPjt/xGXdViu6Ji7FopT7/bQyhb+amutrN81vz23Or06UBbH/xlByJfRnpqwFsKtA/cke8cKHxGnwYBvc8a56cWqTya4Qbt3mUVC1pPlY74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nzSAA1Oo; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1708721822; c=relaxed/simple;
+	bh=CKZrZ6sYomS5NW1gYcqEpokW/ERpUA257FQDucHaWjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeoJg5sgI+LuMcUSeUMeeeege6DRTXAQqZgfIKQDbCH26xpUAnlP2mfde08HmNX39QdmmGY0YWt9RmyprJ7AL+LrzMtgdbvryRQKm3Et2tfrcWoXWFANo2mkT/zlaxS2jOOx2jsm4HcZg3go0TAZjjKuPPXqClw/583TDyct4vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=QDYA8WAx; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nzSAA1Oo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708720215; x=1740256215;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Ha3KeLTITa/qwislXa09L9QKN+hTvp4TmZbpeNy2fNU=;
-  b=nzSAA1OoHcwdxwUo4BnepSrlE+Q+0VCjt/algpYHCXjQ98rEbgAaR9kM
-   lMM1VFOemAu9Nisa1QvmYhKftBHTbPlt3/pUzDBP8k8BhhIq6s4+GRbed
-   4MEowGd0c/7z/W9GatIi14PM7XMpXEfHoUeyhdpQ8zWFg+b+5bu4TO6IC
-   xR/RRYpN/UrDXFlfU9TKwK2vjbz/1wi0MuHi2PQpZvsZPjvI3qYB6Qfh+
-   tiwU7WptaqE+ONzYrfosrO8gBcRqO0TSNdisn7LUIyjGGE2BAnb2k91lh
-   HMB++MdmI+E/2ixfujdQnon+Ktkef+fBxeXi4PZ8tdSU7/qDl866TYBmy
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="13758102"
-X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
-   d="scan'208";a="13758102"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 12:30:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="937025702"
-X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
-   d="scan'208";a="937025702"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Feb 2024 12:30:12 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 6B9F534C; Fri, 23 Feb 2024 22:30:11 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pavel Machek <pavel@ucw.cz>,
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="QDYA8WAx"
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 377961C006B; Fri, 23 Feb 2024 21:56:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1708721817;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=19PmzHinJBrlqK95eJjEcRGwQvI5W5s5uv/yUxNPc48=;
+	b=QDYA8WAxyJChGBr3RHP0k1/MDQiSnDHWQnghXsOWwRcRxIKvWBd2PzCJKaW4sW4YjLns43
+	voiF48OWAHvesB7KGc6XbfJCRYyCQks0w50tRTDYWVO+G/s9fSzzEaWNFnbgCNe8LUYAoT
+	eIcijqHdFA9axqOQSwFbKPuZzEFvhgI=
+Date: Fri, 23 Feb 2024 21:56:56 +0100
+From: Pavel Machek <pavel@ucw.cz>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Lee Jones <lee@kernel.org>
-Subject: [PATCH v2 1/1] leds: expresswire: Don't use "proxy" headers
-Date: Fri, 23 Feb 2024 22:30:00 +0200
-Message-ID: <20240223203010.881065-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
+Subject: Re: [PATCH v2 1/1] leds: expresswire: Don't use "proxy" headers
+Message-ID: <ZdkGmE2HFxXpIonR@duo.ucw.cz>
+References: <20240223203010.881065-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2lTx/hEuWHPoqeWW"
+Content-Disposition: inline
+In-Reply-To: <20240223203010.881065-1-andriy.shevchenko@linux.intel.com>
 
-Update header inclusions to follow IWYU (Include What You Use)
-principle.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: added one more missing header
- drivers/leds/leds-expresswire.c  | 4 ++++
- include/linux/leds-expresswire.h | 4 +++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+--2lTx/hEuWHPoqeWW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/leds/leds-expresswire.c b/drivers/leds/leds-expresswire.c
-index 89e147b0e019..e4937a8e0f44 100644
---- a/drivers/leds/leds-expresswire.c
-+++ b/drivers/leds/leds-expresswire.c
-@@ -5,8 +5,12 @@
-  * ktd2692 and ktd2801 are known to use this protocol.
-  */
- 
-+#include <linux/bits.h>
- #include <linux/delay.h>
-+#include <linux/export.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/types.h>
-+
- #include <linux/leds-expresswire.h>
- 
- void expresswire_power_off(struct expresswire_common_props *props)
-diff --git a/include/linux/leds-expresswire.h b/include/linux/leds-expresswire.h
-index 3c61902ccac8..a422921f4159 100644
---- a/include/linux/leds-expresswire.h
-+++ b/include/linux/leds-expresswire.h
-@@ -8,7 +8,9 @@
- #ifndef _LEDS_EXPRESSWIRE_H
- #define _LEDS_EXPRESSWIRE_H
- 
--#include <linux/gpio/consumer.h>
-+#include <linux/types.h>
-+
-+struct gpio_desc;
- 
- struct expresswire_timing {
- 	unsigned long poweroff_us;
--- 
-2.43.0.rc1.1.gbec44491f096
+Hi!
 
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> v2: added one more missing header
+>  drivers/leds/leds-expresswire.c  | 4 ++++
+>  include/linux/leds-expresswire.h | 4 +++-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+>=20
+
+> diff --git a/include/linux/leds-expresswire.h b/include/linux/leds-expres=
+swire.h
+> index 3c61902ccac8..a422921f4159 100644
+> --- a/include/linux/leds-expresswire.h
+> +++ b/include/linux/leds-expresswire.h
+> @@ -8,7 +8,9 @@
+>  #ifndef _LEDS_EXPRESSWIRE_H
+>  #define _LEDS_EXPRESSWIRE_H
+> =20
+> -#include <linux/gpio/consumer.h>
+> +#include <linux/types.h>
+> +
+> +struct gpio_desc;
+
+If include tweak means you need to declare struct, is it ian
+improvement?
+
+BR,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--2lTx/hEuWHPoqeWW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZdkGmAAKCRAw5/Bqldv6
+8kAvAJ0UQUgcqts8MRgtY+0Rml1psMSvWQCgnUAbxDekDN5xR7B5siUnzJgeMIU=
+=ENYA
+-----END PGP SIGNATURE-----
+
+--2lTx/hEuWHPoqeWW--
