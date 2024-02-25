@@ -1,111 +1,119 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4C34D11B;
-	Sat, 24 Feb 2024 22:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D823E1B94F
+	for <linux-leds@vger.kernel.org>; Sun, 25 Feb 2024 21:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708815011; cv=none; b=mAo86svu2Plre85IRVR9Xz3l5pKMDDEdkYLRVTLanG3uq5WBQaGw1r3wXLoajskFurI7OfzhL8oj/P9ZuizL5kOhiGdid2aSIsU67ZnEmxewLs951/n0DovJH9nL6oHnIBo5TxrwTDLSzvAHkNwdR1VqkmIgrjtZNN8I2AVZBIA=
+	t=1708896886; cv=none; b=oFr+dy0xKpw0U7DPQXZrC28N8asFzq8bE5hZn7WRWMe0L2ccQPeNBaadNrMv9v8iVAskfKTFoMjoII5Y3hu18ncXWLie4URYVUKtNqqGoY+wYKzENrwLjBwe07bmXDDULYaL2JNcfZu8f+PUStcgyJiNqtYkmPnkliFf6M6+K/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708815011; c=relaxed/simple;
-	bh=31a5GEP8D1PpwdN5PyjwuEtq748f/aUOFXdtpk75vgo=;
+	s=arc-20240116; t=1708896886; c=relaxed/simple;
+	bh=QQsvhwDj8VEU6K1KjI/knaY7wpikZJpWMS+4htoOu/A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hVQeDHBjm3Ix8P4SmgOMwXR7jPNta7f5RYESRQb+hCG2uJGoz4dIoAPQo/LnV+ZBr3RUEEX0Do95wksrIOH+RnuAOGT0M3W38bRsaD3RhVMeywGfHZe1y9YOgPyTiHQ1ItFm+xg41o2pq0FOEvwGS7FrIx44s+2hGhbhYQERm7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a87XncPO; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 MIME-Version; b=qJ2eja2mKo+dDNDPT5zjIXm8T4szc9xOdHQmSzgkit4E13V9p4I3Z/sOWzkA1ldTVHTlrfFADc0MJjgdIlXWfsCDjtDAfDfBSGa811pIdSzlnFxTA9FN0bCZhXE+c+50AD1VTqK49Ydxfl62tc+Xa0Qh8oalIT1AI+pK7j7rbUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=mm+T4MLb; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a87XncPO"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-512ab55fde6so2124567e87.2;
-        Sat, 24 Feb 2024 14:50:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708815008; x=1709419808; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CyUeNBz/6EL4JMqPMkzQBEjM7Nv00R+NzMPMSoNI1/U=;
-        b=a87XncPOeIjS02wB1SfpkarJoHcWvJWzmLVBNaCFTwrjNLXbEAKsrJ3Udqrd4SBDov
-         aMLC3cAkOjQkE62NxQjonMO1hRyIvV0o+yRqpANZ5Dg6kQVrFefQXG1OWVLHkjGXOr9D
-         jg1H8IFOfy6n+wx/Z4mSgOV2h8qmxQu/EYbkgsPXlZ/ubDXlqC4SqHdILSFq/kPD4ncw
-         W5dSWZzckEmP4rO/cJ/q2ZtwzLWZnT24NijVNva6+wmTkO6FrxgHVSX8sZDVPifxnbSI
-         C2+gajytSLgn36mcJnC+lnYoIBeALHu98V8KkzQhZ4eT1cpv9BN7onDXCfHOi9TT3BGT
-         PnjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708815008; x=1709419808;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CyUeNBz/6EL4JMqPMkzQBEjM7Nv00R+NzMPMSoNI1/U=;
-        b=v3P1n5Yv2AnkmG2QBY5UVCq7eUklR8o1TMris58x7NjOdsXMyCqYmiPp7kLArCo+Nd
-         XrVMDIGlo2NCXY/ZvQ49BugiksBc55y41srVwrsO7/SBNwI1SmMOivhXAflkjPo+dnAf
-         GcGtPxQV0m/A50vfe0zl3HorttfzNGrCnPXGo7wBVdkzq/lwLzgFa9acErBvc19WQdUc
-         nu1vDfoXhABFOKbaYp1p6fLHJ3kkbaCljOUU7ABeYOwrctlxsOsXtBTGeZbASyapCq/N
-         dxXuDR7Vn3pWG9K7fkSiGZKddwijG81Oe1VEUVKjrlNjrult9keyEJTCtCprS2kOKXYh
-         aKVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz/sWyle/YdrifmFHuqgsChcYcqJb9N7nQKOWiYSYtwYSlDAnhr1SELVM+oKeYOsIZNBweJlqbYYiPvSJYxERvvXyDP5irCgU+MRr8f9TwbS0o9UE0uMAOrxZMeIUd6cq2kXS05js/AiWsPzfIQVUuZ3LyKaJ7rb2xO2nGcbSz7PW3tHIyDZrYsy019aw6ue9iGrIBNsY3hd6SVn07+QptCThQ
-X-Gm-Message-State: AOJu0YyuWs395pK9M/9C64l2vNFN7IimUX0dqCrcoPbnU02XgUWkFhUc
-	aYdpCSZvEpBv1s+McXuBpZqCTJ629QhRCHs8r1+7Vah5EeLhU093
-X-Google-Smtp-Source: AGHT+IHBzJLfQOY8i0MtTP644KdtkaI5a50DFXrhplfFOgTK/AsvwDWJYYu79HZD5D/Y98ywV4OcGA==
-X-Received: by 2002:a05:6512:2210:b0:512:d81f:c22e with SMTP id h16-20020a056512221000b00512d81fc22emr2323567lfu.59.1708815007566;
-        Sat, 24 Feb 2024 14:50:07 -0800 (PST)
-Received: from unknown.netbird.cloud ([37.161.229.181])
-        by smtp.googlemail.com with ESMTPSA id ti6-20020a170907c20600b00a431cc4bd3dsm145672ejc.182.2024.02.24.14.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 14:50:07 -0800 (PST)
-From: Gianluca Boiano <morf3089@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="mm+T4MLb"
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id EE0AD2C07CB;
+	Mon, 26 Feb 2024 10:34:35 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1708896875;
+	bh=mOUZ+TwkiAjRh9ZNzvyYfCdGmY+q2Lr2Qp5dtz9LG/w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mm+T4MLbSCX7nTfRotXb1RXaplysCTOGH3rL1HjPxD2PGcZ6/hE0horowEWSgXa7a
+	 wu5JPrKxRnSUhXY93xTmAyCdqu7yFtTKNzIGBkAm1YLENk7GPuTAtcOsjpTzqJpLyK
+	 ljr84ELkDdTYImvtfKb4jkkTETWlc4WVZWit2/SMr3GSinY69zbnsnMfn6d5oxu78M
+	 gC7qMI+ex5pZ4hO3803hTUeARaXyMRYXFwcXjaXuwbw2UhYlwaqO0IbP08PvJYD/V8
+	 FiHOaIPHQHg9nTTAI2//EE+6bOEumuy/TsCM8xh5vGByCgqQxkR0aLKSTsZq54eVQK
+	 Q2EgyJj0jL9YA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B65dbb26b0003>; Mon, 26 Feb 2024 10:34:35 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id A29B413EE8E;
+	Mon, 26 Feb 2024 10:34:35 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 9FFD3280808; Mon, 26 Feb 2024 10:34:35 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: ojeda@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	andy.shevchenko@gmail.com,
+	geert@linux-m68k.org,
+	pavel@ucw.cz,
+	lee@kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Cc: Gianluca Boiano <morf3089@gmail.com>
-Subject: [PATCH 3/3] arm64: dts: qcom: pmi8950: add pwm node
-Date: Sat, 24 Feb 2024 23:49:51 +0100
-Message-ID: <20240224224951.1357644-3-morf3089@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240224224951.1357644-1-morf3089@gmail.com>
-References: <20240224224951.1357644-1-morf3089@gmail.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-leds@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 3/3] ARM: dts: marvell: Add 7 segment LED display on x530
+Date: Mon, 26 Feb 2024 10:34:23 +1300
+Message-ID: <20240225213423.690561-4-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240225213423.690561-1-chris.packham@alliedtelesis.co.nz>
+References: <20240225213423.690561-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BKkQr0QG c=1 sm=1 tr=0 ts=65dbb26b a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=k7vzHIieQBIA:10 a=75wrGpN2Od3tzqupbDsA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-This node is actually found on some msm8953 devices (xiaomi-mido) and
-allows irled enablement
+The Allied Telesis x530 products have a 7 segment LED display which is
+used for node identification when the devices are stacked. Represent
+this as a gpio-7seg device.
 
-Signed-off-by: Gianluca Boiano <morf3089@gmail.com>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- arch/arm64/boot/dts/qcom/pmi8950.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/marvell/armada-385-atl-x530.dts | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/pmi8950.dtsi b/arch/arm64/boot/dts/qcom/pmi8950.dtsi
-index 1029f3b1bb9a..b4822cb17a37 100644
---- a/arch/arm64/boot/dts/qcom/pmi8950.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8950.dtsi
-@@ -84,6 +84,14 @@ pmic@3 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
-+		pmi8950_pwm: pwm@b000 {
-+			compatible = "qcom,pmi8950-pwm";
-+			reg = <0xb000 0x100>;
-+			#pwm-cells = <2>;
+diff --git a/arch/arm/boot/dts/marvell/armada-385-atl-x530.dts b/arch/arm=
+/boot/dts/marvell/armada-385-atl-x530.dts
+index 5a9ab8410b7b..088b77987081 100644
+--- a/arch/arm/boot/dts/marvell/armada-385-atl-x530.dts
++++ b/arch/arm/boot/dts/marvell/armada-385-atl-x530.dts
+@@ -43,6 +43,17 @@ uart0: serial@12000 {
+ 			};
+ 		};
+ 	};
 +
-+			status = "disabled";
-+		};
-+
- 		pmi8950_wled: leds@d800 {
- 			compatible = "qcom,pmi8950-wled";
- 			reg = <0xd800>, <0xd900>;
--- 
-2.44.0
++	led-7seg {
++		compatible =3D "generic,gpio-7seg";
++		segment-gpios =3D <&led_7seg_gpio 0 GPIO_ACTIVE_LOW
++				 &led_7seg_gpio 1 GPIO_ACTIVE_LOW
++				 &led_7seg_gpio 2 GPIO_ACTIVE_LOW
++				 &led_7seg_gpio 3 GPIO_ACTIVE_LOW
++				 &led_7seg_gpio 4 GPIO_ACTIVE_LOW
++				 &led_7seg_gpio 5 GPIO_ACTIVE_LOW
++				 &led_7seg_gpio 6 GPIO_ACTIVE_LOW>;
++	};
+ };
+=20
+ &pciec {
+@@ -149,7 +160,7 @@ i2c@3 {
+ 			#size-cells =3D <0>;
+ 			reg =3D <3>;
+=20
+-			gpio@20 {
++			led_7seg_gpio: gpio@20 {
+ 				compatible =3D "nxp,pca9554";
+ 				gpio-controller;
+ 				#gpio-cells =3D <2>;
+--=20
+2.43.2
 
