@@ -1,35 +1,35 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632031369A2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A691369A0;
 	Tue, 27 Feb 2024 09:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709026814; cv=none; b=QaLixcvkyZ6bX3oQ9Du+85Tsf4A3qJMyXGHZgdvWMNzxN9O+nRti09X011uWXz/mhdC4Uc7z4VJVD301NdIC0Fktqpt1A+HmknMeHlj/3AvfEoKEbcGpJwAzIUMs85r8UVzNDx49FHiNKpIeeLz+fuYnZJGwN0wBjunIuj0/tJA=
+	t=1709026814; cv=none; b=gllcxbkZktgQ/wxF8vDbhcZ/TnoIvzlNk+pIVx7IiQDLlv2ho6fq6R+0MnmGATyAfkza4VAdj/xQNGvzr2Jcl+FUMmEVyAd7Pu+N4C9YPzkz0sJ+StBz4DSoTPCIb1ayFT1mQAU8zjlhPF/z92klqIcUtEtpuQQuAuyaDcacxuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709026814; c=relaxed/simple;
-	bh=wEhydF0uAkZdVJjRAdGWXmqjpXqyXP1qcx0hncX2AaQ=;
+	bh=9JjvHERcZ8YVK7b/Q4VF9ZW0OhQYLZLE7HJA4c4oEVs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KQoUpVjYGC/FaE6NM/uwp7ha4rcwGkdcvbXJ2s/AwFj7y+1BC3f+agojDPH0r3e429JTIqPjLLB2skbSP7PvLUoiEJjTCVYZb1nJmPfBxAc58wbdjUy+LsjMJDURHw7roGrYvhde+NX+aCbhAA4r7Z7L3WkaCHL1cLSZTkoFRjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BVrfdssO; arc=none smtp.client-ip=217.70.183.201
+	 MIME-Version; b=gwO2nhf6+57jlIi6SJpSEGxGLxVqWLHgd/5CUrm0slzSb3lJNjjOy5X2AF6AiTG/FZ3O2JQwL5JdM4tbXioTSEu1YwD0k2F8WCIZz/tl0YL+l6cThvfRmc/8lr9YTCfUgQc6B43Z2xPXYp4pCyjcMAodM1LyyZjiNYubVxCFfKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l/BJeXbo; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BVrfdssO"
-Received: by mail.gandi.net (Postfix) with ESMTPA id B67441BF203;
-	Tue, 27 Feb 2024 09:40:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l/BJeXbo"
+Received: by mail.gandi.net (Postfix) with ESMTPA id 5FCE91BF20C;
+	Tue, 27 Feb 2024 09:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709026809;
+	t=1709026804;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DImN79hQFdqQ+Xbnqbaw0AlsT0SBJRI+BKdyo30mw/4=;
-	b=BVrfdssOBrbkIODUzKD1+KhDBq7FT8u1tLb8wnnTm4a2+Nn+kyU8jFUS1Az33QCdkRfjKw
-	jIIIZsY+8QqRXgx+7Iisi8pP0/g9j5o5EO5Vks3NOvJq7/Y2wn4Q2ppWA+x+K/lDgKJA98
-	ZQ18RU4+OywqWsKqc7yFWLp6YcHABJqRsgS1Huc+A/njJkAl7v5J9DAxfY4yt7get/nyzj
-	F/fN1PU4ClotmT8tgoSR5PhUYdml8orinEc3xwsZuhUMTcCbISukv239TDojCnJt+OWdcf
-	944oZLQrLDYbzTZ9u9i/5Y37714BZk6nManBs93Hw7TC34W/CoAmZh5s/nO2tg==
+	bh=lvm6/L2WXUvtdtliXYOUV1u9RT8vkw9obusEbpY4LHk=;
+	b=l/BJeXboAzq1t4BjFnD2es++LHkbZFXWmgrkX0aR4REVIzt4KMJ5FAFxCYspEGps/FbXDy
+	Z3bMV2puAky55syDyN/tQZVqDlJpRTClyqH5iFYlBOJaCZBIX2PJPZmXtg61O8ySCmGKUw
+	aBbY3IjojuuJORbqxR494qk/k86uhWSvZVcMHnTjmsU90YfnEomj6el5YsvqSQchk9Zj5b
+	+jbQkP78Uc3nBa/LDHnV6mqGpCQ8EkU3negzntm/hxKfo1pCZF7KNimfktC50nDvopfo+9
+	7ndMdXlLbiekglz8oPiJ5u98zOkFZptaU+VIJsYuTXCrhmH+FRzjWWy8RFdmYQ==
 From: Bastien Curutchet <bastien.curutchet@bootlin.com>
 To: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
@@ -53,9 +53,9 @@ Cc: linux-kernel@vger.kernel.org,
 	herve.codina@bootlin.com,
 	maxime.chevallier@bootlin.com,
 	christophercordahi@nanometrics.ca
-Subject: [PATCH v2 4/6] net: phy: DP83640: Add EDPD management
-Date: Tue, 27 Feb 2024 10:39:43 +0100
-Message-ID: <20240227093945.21525-5-bastien.curutchet@bootlin.com>
+Subject: [PATCH v2 1/6] dt-bindings: net: Add bindings for PHY DP83640
+Date: Tue, 27 Feb 2024 10:39:40 +0100
+Message-ID: <20240227093945.21525-2-bastien.curutchet@bootlin.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240227093945.21525-1-bastien.curutchet@bootlin.com>
 References: <20240227093945.21525-1-bastien.curutchet@bootlin.com>
@@ -68,121 +68,101 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: bastien.curutchet@bootlin.com
 
-The driver does not support enabling/disabling Energy Detect Power Down
-(EDPD).
-The PHY itself support EDPD.
+The DP83640 is a PTP PHY. Some of his features can be enabled by
+hardware straps. There is not binding yet.
 
-Add missing part in the driver in order to have this support based on
-ethtool {set,get}_phy_tunable functions.
+Add a device tree binding to be able to override the hardware strap
+configuration when needed.
 
 Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- drivers/net/phy/dp83640.c     | 62 +++++++++++++++++++++++++++++++++++
- drivers/net/phy/dp83640_reg.h |  4 +++
- 2 files changed, 66 insertions(+)
+ .../devicetree/bindings/net/ti,dp83640.yaml   | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/ti,dp83640.yaml
 
-diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
-index c46c81ef0ad0..16c9fda50b19 100644
---- a/drivers/net/phy/dp83640.c
-+++ b/drivers/net/phy/dp83640.c
-@@ -1531,6 +1531,66 @@ static void dp83640_remove(struct phy_device *phydev)
- 	kfree(dp83640);
- }
- 
-+static int dp83640_get_edpd(struct phy_device *phydev, u16 *edpd)
-+{
-+	int val;
+diff --git a/Documentation/devicetree/bindings/net/ti,dp83640.yaml b/Documentation/devicetree/bindings/net/ti,dp83640.yaml
+new file mode 100644
+index 000000000000..db1dc909d5cb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/ti,dp83640.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2024 Nanometrics Inc
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/ti,dp83640.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	phy_write(phydev, PAGESEL, 0);
-+	val = phy_read(phydev, EDCR);
-+	if (val & ED_EN)
-+		*edpd = 2000; /* 2 seconds */
-+	else
-+		*edpd = ETHTOOL_PHY_EDPD_DISABLE;
++title: TI DP83640 ethernet PHY
 +
-+	return 0;
-+}
++allOf:
++  - $ref: ethernet-controller.yaml#
 +
-+static int dp83640_set_edpd(struct phy_device *phydev, u16 edpd)
-+{
-+	int val;
++maintainers:
++  - Bastien Curutchet <bastien.curutchet@bootlin.com>
 +
-+	phy_write(phydev, PAGESEL, 0);
-+	val = phy_read(phydev, EDCR);
++description: |
++  The DP83640 Precision PHYTER device is an Ethernet PHY providing PTP
++  capabilities based on IEEE 1588 standard.
 +
-+	switch (edpd) {
-+	case ETHTOOL_PHY_EDPD_DFLT_TX_MSECS:
-+	case 2000: /* 2 seconds */
-+		val |= ED_EN;
-+		break;
-+	case ETHTOOL_PHY_EDPD_DISABLE:
-+		val &= ~ED_EN;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
++  This device interfaces directly to the MAC layer through the
++  IEEE 802.3 Standard Media Independent Interface (MII), or Reduced MII (RMII).
 +
-+	phy_write(phydev, EDCR, val);
++  Specifications about the Ethernet PHY can be found at:
++    https://www.ti.com/lit/gpn/dp83640
 +
-+	return 0;
-+}
++properties:
++  reg:
++    maxItems: 1
 +
-+static int dp83640_get_tunable(struct phy_device *phydev,
-+			       struct ethtool_tunable *tuna, void *data)
-+{
-+	switch (tuna->id) {
-+	case ETHTOOL_PHY_EDPD:
-+		return dp83640_get_edpd(phydev, data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
++  ti,fiber-mode:
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [ disable, enable ]
++    description: |
++      If present, enables or disables the FX Fiber Mode.
++       - disable  = FX Fiber Mode disabled
++       - enable   = FX Fiber Mode enabled
++      Fiber mode enabling can also be strapped. If the strap pin is not set
++      correctly or not set at all then this can be used to configure it.
 +
-+static int dp83640_set_tunable(struct phy_device *phydev,
-+			       struct ethtool_tunable *tuna, const void *data)
-+{
-+	switch (tuna->id) {
-+	case ETHTOOL_PHY_EDPD:
-+		return dp83640_set_edpd(phydev, *(u16 *)data);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
++  leds:
++    type: object
++    $ref: /schemas/leds/common.yaml#
++    description: |
++      Describes the three LEDs of the PHY.
 +
- static int dp83640_led_brightness_set(struct phy_device *phydev, u8 index,
- 				      enum led_brightness brightness)
- {
-@@ -1692,6 +1752,8 @@ static struct phy_driver dp83640_driver = {
- 	.name		= "NatSemi DP83640",
- 	/* PHY_BASIC_FEATURES */
- 	.probe		= dp83640_probe,
-+	.get_tunable    = dp83640_get_tunable,
-+	.set_tunable    = dp83640_set_tunable,
- 	.remove		= dp83640_remove,
- 	.soft_reset	= dp83640_soft_reset,
- 	.config_init	= dp83640_config_init,
-diff --git a/drivers/net/phy/dp83640_reg.h b/drivers/net/phy/dp83640_reg.h
-index 09dd2d2527c7..bf34d422d91e 100644
---- a/drivers/net/phy/dp83640_reg.h
-+++ b/drivers/net/phy/dp83640_reg.h
-@@ -9,6 +9,7 @@
- #define LEDCR                     0x0018 /* PHY Control Register */
- #define PHYCR                     0x0019 /* PHY Control Register */
- #define PHYCR2                    0x001c /* PHY Control Register 2 */
-+#define EDCR                      0x001D /* Energy Detect Control Register */
- 
- #define PAGE4                     0x0004
- #define PTP_CTL                   0x0014 /* PTP Control Register */
-@@ -64,6 +65,9 @@
- /* Bit definitions for the PHYCR2 register */
- #define BC_WRITE                  (1<<11) /* Broadcast Write Enable */
- 
-+/* Bit definitions for the EDCR register */
-+#define ED_EN		          BIT(15) /* Enable Energy Detect Mode */
++required:
++  - reg
 +
- /* Bit definitions for the PTP_CTL register */
- #define TRIG_SEL_SHIFT            (10)    /* PTP Trigger Select */
- #define TRIG_SEL_MASK             (0x7)
++unevaluatedProperties: false
++
++examples:
++  - |
++    mdio0 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      ethphy0: ethernet-phy@0 {
++        reg = <0>;
++        ti,fiber-mode = "disable";
++        leds {
++          #address-cells = <1>;
++          #size-cells = <0>;
++
++          led@0 {
++            reg = <0>;
++            label = "activity";
++          };
++          led@1 {
++            reg = <1>;
++            label = "link";
++          };
++          led@2 {
++            reg = <2>;
++            label = "speed";
++          };
++        };
++      };
++    };
 -- 
 2.43.0
 
