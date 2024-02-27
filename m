@@ -1,35 +1,35 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAA0137C3E;
-	Tue, 27 Feb 2024 09:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED461384A9;
+	Tue, 27 Feb 2024 09:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709026816; cv=none; b=g8BZ4aetZKarkLRkJBKmP+/5a3LCnNlo8DlVugRRSQcx8kYw4cArcbWZOgryX+DgI3oZuhfVteZ7KU8q9Y5C+WCShHxUprSti/ECAMz83z+HA4A61db3i5ikUQ9r1ZNaQsj6u1uRCL2GezYk96CGqyVZ6SfIORiLb3/m8ZWO+3U=
+	t=1709026817; cv=none; b=JqQ03QaEtymczjWvWTHfGawlgwFNUYhqCBaXwpe/PxL46yC6WYbGq0VEcNnZ2FlJuHmKLsqQhJctJfiB1VSMnze4mh8QYGa3v/ARBDx2CQhUGEkO/oNZxB0yBlkQWmXy8R3ktNh5D6H/UCqmhW8syNjatMcZKasEz+69YA1NBa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709026816; c=relaxed/simple;
-	bh=MrAC+0ugacDW+NQuPpEBMoPhZSOJdpkLAl75R2nIfps=;
+	s=arc-20240116; t=1709026817; c=relaxed/simple;
+	bh=WKyTm9tvEpOHc9SUmAoFjXDcY9NXpqkPz111tBhUrs0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U+vXpyqdsXB03XMtqEdkFFkVvij9BdFy69AoXlWBPKccLs60eFvnVD3t1f37VT/G7VAF4JrudAxzhSlva/GYunDXPEz5KmYDv/gdzJaSZy0PnwBZMkB0OALbf7K85tfNtNO9HDCypiIU1ayk93p5uamrlfhSN7LBlp8VlSXFvOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Toaf3mwm; arc=none smtp.client-ip=217.70.183.201
+	 MIME-Version; b=LiYrgGId+YFjBL8BV1Ik1rOhzaaosfEtetQNUj1Lbogm5T193omDE3+YfhmkT6ILK++cQNkl12lxwCni6IyG0aDzk5/lfbZTwkp+xMFufDodL0i+MRM99lelKKtf+eCndSqrD3vGnCcg6QDrXWXE7tb2zuiD0kEPwpt6Vm63WA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ele8Kxd/; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Toaf3mwm"
-Received: by mail.gandi.net (Postfix) with ESMTPA id 2EC051BF219;
-	Tue, 27 Feb 2024 09:40:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ele8Kxd/"
+Received: by mail.gandi.net (Postfix) with ESMTPA id 500A91BF21B;
+	Tue, 27 Feb 2024 09:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709026806;
+	t=1709026813;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DlGBjihIRSEjSd8ST43CRqXi/gW9NM8DXJGmyMeDqgs=;
-	b=Toaf3mwmcXc+zhwAdXDEsfX60JOGqIVKuao1hV1NpjdNWwC3ZVN01Me//rXPGJ+eLYHcfL
-	kSMWLEnDollecV7xJfbPv2hjY6z+lZCSBr1pjiA4HrSa85czOC+xubyPYGRvx3MvRQBV89
-	eA4qj5Nz6XLAck1HzaOauJm2z5O+0HrUyH1x6H5UVsxRjycEbvcRzFBL5abB6HTMHTkqlU
-	lnRHLFqfTAaQ/cna+QuUQ5NeO/r/EQoSpUcAMQ6O+w91HwmJki6LT7vWy15hf6pyRt0QXq
-	rsqDf+6Po1Bwb5gyuzMfzbb9EUVSIqb/v8/OnU9GA1zMwwXiJk6JrCfj0LuXuA==
+	bh=rgaNBK3volcj4FhXmaNO+Po++qQCUID/slrT9VBh2II=;
+	b=ele8Kxd/pDw2DVnj7w1ZSTVzt5dJp44Z34mJh3wAoCCb1F8Uowblgmmil72EwgmkzjIbbq
+	BnV0zkfG0sko4SN3vb3/BWQ/gGE3L68HdzcY2vqoe79/DT+2DyGyv2Yr6dAGkh5Q8VVSuB
+	PvND6VZRvmeiIZUB8ODZVYVHr1W5pqL9g0E5v3GoDa2QO1eIq+yfgPuPqjaMkqKqZpAssh
+	ZwlzFMmrhJzAeju2hJO5tc4OKbrrq1B1wFgI31ZAwpE54t+edRu4BFKmyTSr1n1G22TrXu
+	mg5xISlvcK4u7ko++V1NXOoQ4jc5fEgEYKuEsupodVlBQ1ZvcE57gIFjl7rCYg==
 From: Bastien Curutchet <bastien.curutchet@bootlin.com>
 To: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
@@ -53,9 +53,9 @@ Cc: linux-kernel@vger.kernel.org,
 	herve.codina@bootlin.com,
 	maxime.chevallier@bootlin.com,
 	christophercordahi@nanometrics.ca
-Subject: [PATCH v2 2/6] leds: trigger: Create a new LED netdev trigger for collision
-Date: Tue, 27 Feb 2024 10:39:41 +0100
-Message-ID: <20240227093945.21525-3-bastien.curutchet@bootlin.com>
+Subject: [PATCH v2 6/6] net: phy: DP83640: Add fiber mode enabling/disabling from device tree
+Date: Tue, 27 Feb 2024 10:39:45 +0100
+Message-ID: <20240227093945.21525-7-bastien.curutchet@bootlin.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240227093945.21525-1-bastien.curutchet@bootlin.com>
 References: <20240227093945.21525-1-bastien.curutchet@bootlin.com>
@@ -68,87 +68,151 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Collisions on link does not fit into one of the existing netdev triggers.
+The PHY is able to use copper or fiber. The fiber mode can be enabled or
+disabled by hardware strap. If hardware strap is incorrect, PHY can't
+establish link.
 
-Add TRIGGER_NETDEV_COLLISION in the enum led_trigger_netdev_modes.
-Add its definition in Documentation.
-Add its handling in ledtrig-netdev, it can only be supported by hardware
-so no software fallback is implemented.
+Add a DT attribute 'ti,fiber-mode' that can be use to override the
+hardware strap configuration. If the property is not present, hardware
+strap configuration is left as is.
 
 Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- .../ABI/testing/sysfs-class-led-trigger-netdev        | 11 +++++++++++
- drivers/leds/trigger/ledtrig-netdev.c                 |  4 ++++
- include/linux/leds.h                                  |  1 +
- 3 files changed, 16 insertions(+)
+ drivers/net/phy/dp83640.c     | 55 +++++++++++++++++++++++++++++++++++
+ drivers/net/phy/dp83640_reg.h |  5 ++++
+ 2 files changed, 60 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-index a6c307c4befa..fbb2bc1d6108 100644
---- a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-@@ -178,3 +178,14 @@ Description:
- 		If set to 1, the LED's normal state reflects the link full
- 		duplex state of the named network device.
- 		Setting this value also immediately changes the LED state.
+diff --git a/drivers/net/phy/dp83640.c b/drivers/net/phy/dp83640.c
+index b371dea23937..886f2bc3710d 100644
+--- a/drivers/net/phy/dp83640.c
++++ b/drivers/net/phy/dp83640.c
+@@ -16,6 +16,7 @@
+ #include <linux/net_tstamp.h>
+ #include <linux/netdevice.h>
+ #include <linux/if_vlan.h>
++#include <linux/of.h>
+ #include <linux/phy.h>
+ #include <linux/ptp_classify.h>
+ #include <linux/ptp_clock_kernel.h>
+@@ -141,6 +142,11 @@ struct dp83640_private {
+ 	/* queues of incoming and outgoing packets */
+ 	struct sk_buff_head rx_queue;
+ 	struct sk_buff_head tx_queue;
 +
-+What:		/sys/class/leds/<led>/collision
-+Date:		Feb 2024
-+KernelVersion:	6.8
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Signal collision of the named network device.
-+
-+		If set to 0 (default), the LED's normal state is off.
-+
-+		If set to 1, the LED's normal state reflects collisions.
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 8e5475819590..5c17b8e27d5c 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -318,6 +318,7 @@ static ssize_t netdev_led_attr_show(struct device *dev, char *buf,
- 	case TRIGGER_NETDEV_FULL_DUPLEX:
- 	case TRIGGER_NETDEV_TX:
- 	case TRIGGER_NETDEV_RX:
-+	case TRIGGER_NETDEV_COLLISION:
- 		bit = attr;
- 		break;
- 	default:
-@@ -352,6 +353,7 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
- 	case TRIGGER_NETDEV_FULL_DUPLEX:
- 	case TRIGGER_NETDEV_TX:
- 	case TRIGGER_NETDEV_RX:
-+	case TRIGGER_NETDEV_COLLISION:
- 		bit = attr;
- 		break;
- 	default:
-@@ -410,6 +412,7 @@ DEFINE_NETDEV_TRIGGER(half_duplex, TRIGGER_NETDEV_HALF_DUPLEX);
- DEFINE_NETDEV_TRIGGER(full_duplex, TRIGGER_NETDEV_FULL_DUPLEX);
- DEFINE_NETDEV_TRIGGER(tx, TRIGGER_NETDEV_TX);
- DEFINE_NETDEV_TRIGGER(rx, TRIGGER_NETDEV_RX);
-+DEFINE_NETDEV_TRIGGER(collision, TRIGGER_NETDEV_COLLISION);
- 
- static ssize_t interval_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
-@@ -473,6 +476,7 @@ static struct attribute *netdev_trig_attrs[] = {
- 	&dev_attr_tx.attr,
- 	&dev_attr_interval.attr,
- 	&dev_attr_offloaded.attr,
-+	&dev_attr_collision.attr,
- 	NULL
++#define FIBER_MODE_DEFAULT	0
++#define FIBER_MODE_ENABLE	1
++#define FIBER_MODE_DISABLE	2
++	int fiber;
  };
- ATTRIBUTE_GROUPS(netdev_trig);
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 4754b02d3a2c..8864d6ce8185 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -578,6 +578,7 @@ enum led_trigger_netdev_modes {
- 	TRIGGER_NETDEV_FULL_DUPLEX,
- 	TRIGGER_NETDEV_TX,
- 	TRIGGER_NETDEV_RX,
-+	TRIGGER_NETDEV_COLLISION,
  
- 	/* Keep last */
- 	__TRIGGER_NETDEV_MAX,
+ struct dp83640_clock {
+@@ -1141,6 +1147,17 @@ static int dp83640_config_init(struct phy_device *phydev)
+ 	val = phy_read(phydev, PCFCR) & ~PCF_EN;
+ 	phy_write(phydev, PCFCR, val);
+ 
++	if (dp83640->fiber != FIBER_MODE_DEFAULT) {
++		val = phy_read(phydev, PCSR) & ~FX_EN;
++		if (dp83640->fiber == FIBER_MODE_ENABLE)
++			val |= FX_EN;
++		phy_write(phydev, PCSR, val);
++
++		/* Write SOFT_RESET bit to ensure configuration */
++		val = phy_read(phydev, PHYCR2) | SOFT_RESET;
++		phy_write(phydev, PHYCR2, val);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1440,6 +1457,39 @@ static int dp83640_ts_info(struct mii_timestamper *mii_ts,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_OF_MDIO
++static int dp83640_of_init(struct phy_device *phydev)
++{
++	struct dp83640_private *dp83640 = phydev->priv;
++	struct device *dev = &phydev->mdio.dev;
++	struct device_node *of_node = dev->of_node;
++	const char *fiber;
++	int ret;
++
++	if (of_property_present(of_node, "ti,fiber-mode")) {
++		ret = of_property_read_string(of_node, "ti,fiber-mode", &fiber);
++		if (ret)
++			return ret;
++
++		dp83640->fiber = FIBER_MODE_DEFAULT;
++		if (!strncmp(fiber, "enable", 6))
++			dp83640->fiber = FIBER_MODE_ENABLE;
++		else if (!strncmp(fiber, "disable", 7))
++			dp83640->fiber = FIBER_MODE_DISABLE;
++		else
++			return -EINVAL;
++	}
++
++	return 0;
++}
++#else
++static int dp83640_of_init(struct phy_device *phydev)
++{
++	dp83640->fiber = FIBER_MODE_DEFAULT;
++	return 0;
++}
++#endif /* CONFIG_OF_MDIO */
++
+ static int dp83640_probe(struct phy_device *phydev)
+ {
+ 	struct dp83640_clock *clock;
+@@ -1472,6 +1522,10 @@ static int dp83640_probe(struct phy_device *phydev)
+ 	phydev->mii_ts = &dp83640->mii_ts;
+ 	phydev->priv = dp83640;
+ 
++	err = dp83640_of_init(phydev);
++	if (err < 0)
++		goto of_failed;
++
+ 	spin_lock_init(&dp83640->rx_lock);
+ 	skb_queue_head_init(&dp83640->rx_queue);
+ 	skb_queue_head_init(&dp83640->tx_queue);
+@@ -1494,6 +1548,7 @@ static int dp83640_probe(struct phy_device *phydev)
+ 
+ no_register:
+ 	clock->chosen = NULL;
++of_failed:
+ 	kfree(dp83640);
+ no_memory:
+ 	dp83640_clock_put(clock);
+diff --git a/drivers/net/phy/dp83640_reg.h b/drivers/net/phy/dp83640_reg.h
+index b5adb8958c08..cbecf04da5a5 100644
+--- a/drivers/net/phy/dp83640_reg.h
++++ b/drivers/net/phy/dp83640_reg.h
+@@ -6,6 +6,7 @@
+ #define HAVE_DP83640_REGISTERS
+ 
+ /* #define PAGE0                  0x0000 */
++#define PCSR                      0x0016 /* PCS Configuration and Status Register */
+ #define LEDCR                     0x0018 /* PHY Control Register */
+ #define PHYCR                     0x0019 /* PHY Control Register */
+ #define PHYCR2                    0x001c /* PHY Control Register 2 */
+@@ -54,6 +55,9 @@
+ #define PTP_GPIOMON               0x001e /* PTP GPIO Monitor Register */
+ #define PTP_RXHASH                0x001f /* PTP Receive Hash Register */
+ 
++/* Bit definitions for the PCSR register */
++#define FX_EN		          BIT(6)  /* Enable FX Fiber Mode */
++
+ /* Bit definitions for the LEDCR register */
+ #define DP83640_LED_DIS(x)        BIT((x) + 9) /* Disable LED */
+ #define DP83640_LED_DRV(x)        BIT((x) + 3) /* Force LED val to output */
+@@ -64,6 +68,7 @@
+ #define LED_CNFG_1	          BIT(6)  /* LED configuration, bit 1 */
+ 
+ /* Bit definitions for the PHYCR2 register */
++#define SOFT_RESET		  BIT(9)  /* Soft Reset */
+ #define BC_WRITE                  (1<<11) /* Broadcast Write Enable */
+ 
+ /* Bit definitions for the EDCR register */
 -- 
 2.43.0
 
