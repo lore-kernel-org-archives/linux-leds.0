@@ -1,45 +1,48 @@
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ABA44C60;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD55644C62;
 	Thu, 29 Feb 2024 07:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709191178; cv=none; b=Xp48SZ9oNNDY3oniG25qBdeOiBX2xvRNLtHSGFdKZoRidusUoovraKE8d0gdf2BKVoq09L01jztvm+cy0WcEeUi2tSehMgBwObdLT3P+lKpceZkKB0+37eCvtgCvsUbje+1ZiB/n3e8N4Xxyc7pLqsOtuMKZlpnTO58S4HRi0RE=
+	t=1709191178; cv=none; b=QF/hmIoGCSys1vdZSn3SRs/6nH1CFbi6hzBskw/cY290ICP3q/epfWcVjgRDHQ6eYCBvsD62n7fGJBrgOWda1jjbhpTip5kynTcBiMkINzeLhae0ELjIZol7Wpo0sBY45g4rA5JJLYiqPLmZXuFjzBOhvSZ1ioxx65qy3FeOx1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709191178; c=relaxed/simple;
-	bh=tPCMm9iGolFXvWv5fvj5V1ItxLfXV2fIW6FWJFQwSzE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KU81AO6sRHhqAmdf+rdVn+BUV2uP9H4mCULT2sa8cQlamWRUlFqXX9PLUkGDYRJ06MhJzGHtB9Mvu3hqmPaQI8MoLxRcxULzcWyVdLtkTOBGB75opttEgbH43OuziFVIcBiqyuB8ymMtybUGa3eNt+IEAxjcqAzISBZAaz6do0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4fwe7aNv; arc=none smtp.client-ip=198.137.202.133
+	bh=Znyef0w00wFhrFfOangTwrEShTAAZ9j4c+Qy3tm5Pho=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kzjO9iRvN9hOsqSTnU4y31L9d9JeHmBNPvg5pdJkXka2MntclDMPBRSdZnm+bGjzdkE+arkXfc3VLNMQZzbM/ftXWM6PGZySz2IJe8cti1iAIv+U8UKZgvsFGvGMSBuvwFl5/ZaTKcDq8chVuhOx0IhbZ/zKwcCGVuRCq98w+QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=heN6FNVU; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4fwe7aNv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="heN6FNVU"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=fdZMYkp4/hjcAN0ZLKNckyXABggtZ+R0eKZlDjrAclo=; b=4fwe7aNvamUnAok4A9TAPzHJS7
-	WpMGXRFz28xXgi2J/nqSt07LadmdHrzwnKGbgEhajWvl5ZB3sEyvfiEk2uyzq5VeZlgNZ5gFMU+Vr
-	mjgg56byh3NAtknArx6Sc4QaBEtLhp0MeTuVTk0Ndfh5UWjoJC5EP/QUF7BLIkNrTIsI9YF8iHCNK
-	Hgso4+EDeCXliVZZBvhum5qWznvKLqdI78/EfSiRmQuierOU4ZoFxfoX1KpVgTqISOpzZSrPauB+y
-	E4eUXD0N2CKJB7K98QlOI1KPLHZu8w3Cd0KT2c+hKyRuEnMOqHPgwzsm7IwDHP6IdFO1jO8MDzwrW
-	OJv9hX5w==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=ygama+h1D6ZMT3In11w2DYFC+Ygt+wGjnAaK2I0y9rM=; b=heN6FNVUX0cTwhasrYNlknUpTh
+	c4Z4JgU8kzTNNYRzsROAkQ3YIHO2WLJMTv6B9pf+i3Ipz8DF60ARNS0/jhutErbZAmVsRcgaJwsuy
+	IiXbEjjgE0kCOlhPxLnS0fwjM53z/9bMe73kOSXfAq+Ql5JYwK1EkwAaaVvhpO9urP0U3qDm4T/Rv
+	RqPVuVIw1rZZ8obsGLTwWnhs4VG08JF46yww2sccjuAkBZR5eG2dDA+zagryWHB1Bnm4NdFIJBn3M
+	+0zF3IvTz4uLMHGX61vnNQrloSDHBSHrirI37w4ijV/pMED/HyBOlILD07FMLcP02Mn92pct1pgBJ
+	qtXJPqdg==;
 Received: from [50.53.50.0] (helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rfahY-0000000CRbT-0NOY;
-	Thu, 29 Feb 2024 07:19:34 +0000
+	id 1rfahb-0000000CRbT-1bIn;
+	Thu, 29 Feb 2024 07:19:35 +0000
 From: Randy Dunlap <rdunlap@infradead.org>
 To: linux-kernel@vger.kernel.org
 Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Vadim Pasternak <vadimp@nvidia.com>,
 	Pavel Machek <pavel@ucw.cz>,
 	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	Vadim Pasternak <vadimp@nvidia.com>
-Subject: [PATCH] leds: fix 3 drivers' kernel-doc warnings
-Date: Wed, 28 Feb 2024 23:19:28 -0800
-Message-ID: <20240229071931.7870-1-rdunlap@infradead.org>
+	linux-leds@vger.kernel.org
+Subject: [PATCH v2 2/3] leds: leds-mlxcpld: fix struct mlxcpld_led_priv member name
+Date: Wed, 28 Feb 2024 23:19:30 -0800
+Message-ID: <20240229071931.7870-3-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240229071931.7870-1-rdunlap@infradead.org>
+References: <20240229071931.7870-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -48,18 +51,32 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix kernel-doc warnings in 3 leds drivers:
+Change "cled" to "cdev" to quieten kernel-doc warnings:
 
- [PATCH v2 1/3] leds: lm3601x: fix struct lm3601_led kernel-doc warnings
- [PATCH v2 2/3] leds: leds-mlxcpld: fix struct mlxcpld_led_priv member name
- [PATCH v2 3/3] leds: mlxreg: drop an excess struct mlxreg_led_data member
+leds-mlxcpld.c:86: warning: Function parameter or struct member 'cdev' not described in 'mlxcpld_led_priv'
+leds-mlxcpld.c:86: warning: Excess struct member 'cled' description in 'mlxcpld_led_priv'
 
- drivers/leds/flash/leds-lm3601x.c |    3 +--
- drivers/leds/leds-mlxcpld.c       |    2 +-
- drivers/leds/leds-mlxreg.c        |    1 -
- 3 files changed, 2 insertions(+), 4 deletions(-)
-
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Vadim Pasternak <vadimp@nvidia.com>
 Cc: Pavel Machek <pavel@ucw.cz>
 Cc: Lee Jones <lee@kernel.org>
 Cc: linux-leds@vger.kernel.org
-Cc: Vadim Pasternak <vadimp@nvidia.com>
+---
+v2: make the 3 leds patches a series as requested by Lee;
+    make the Subject better/unique
+
+ drivers/leds/leds-mlxcpld.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -- a/drivers/leds/leds-mlxcpld.c b/drivers/leds/leds-mlxcpld.c
+--- a/drivers/leds/leds-mlxcpld.c
++++ b/drivers/leds/leds-mlxcpld.c
+@@ -77,7 +77,7 @@ struct mlxcpld_param {
+ 
+ /**
+  * struct mlxcpld_led_priv - LED private data:
+- * @cled: LED class device instance
++ * @cdev: LED class device instance
+  * @param: LED CPLD access parameters
+ **/
+ struct mlxcpld_led_priv {
