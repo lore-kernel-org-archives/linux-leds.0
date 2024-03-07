@@ -1,44 +1,44 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6806D1847;
-	Thu,  7 Mar 2024 02:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7BD4C83;
+	Thu,  7 Mar 2024 02:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709779256; cv=none; b=hpVIqg92GrjyfTZjhzs1EA13+SQNQZChAkxgA77aFjn0PyXbtlzi7Pd6VeMFjyczFrd2PR1PWUcH6bsoQIjr5GMJbQNOcib/O2WNK9PKBzMzC/LPFq33IPBVTgja/FJoIxG6DIa7iYFYPND7P9g2ZjyDMtsjLELx+s4Qep+mG8g=
+	t=1709779256; cv=none; b=Ul2kltHQ0/vxWEmauo3y4AEUUy/js8bHa9af2cDbOCIIydHQqCOdUfi08H1w8BJz6dhalaiHTDHsqZ3Wx04lnddQtI1+7mpctvo4nDkqIxUSYKh2Wn4FpimyeKRHY25C+5YDMMQAiIxL0KveVeSiy5g8bUI9bSbNbd+VWyWC+yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1709779256; c=relaxed/simple;
-	bh=Yjjz5ewPjXZp4KyL2oiueZbhuwnsqUODQj8pNHnwbkc=;
+	bh=ZhwIqYSkHeid7IzpzPz46BYX4vhv51LDlh8l+Z+depo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iJbtFnOEg6mXXJZPx4wiFzm1NEN4ci8mL569hfjFMV6Rbe6J4+MuYRQW82Yso+SABZPQGqKTWzBl1Kvnc74r4aArMURKosEIMNZ1O0qfQXL5dKGUVx3LlLFGWtm0qkvUyWnCnmAcaPks01TbMZ6bx7Og9TB2avbAUnKEp1h/TIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ngT8lCR3; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=daybfLydBn0w3La2z5VWgytReZ3UbpPkE4Bxf6Fbo/4sAyAfjDH4nw17mxEB/rFMJDaQCEzZE4Pf8wWB06XpVcaENR2xjvW3/DxF39PIGo0GBTVePLwp75HHAAH15rl0jV/5i/E4ZzcvCKp7Qu24i52nd3s04MCbq+kMvOJx7bU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=lU5slDiY; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ngT8lCR3"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 05C5312001F;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="lU5slDiY"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id EBF73100037;
 	Thu,  7 Mar 2024 05:40:45 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 05C5312001F
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru EBF73100037
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
 	s=mail; t=1709779245;
-	bh=jEVsja8SSmoMIIjVaOxrbFMoSgIk5r+GyxaxqJuvUC4=;
+	bh=UKhnHyf3Q15t1sWab7Ng1cV9QPOXCfl6k9inzlZSB1c=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ngT8lCR3EkUmke2AOk56uWYG4CAuNBWDlIKszqS1zln2UZaEF+1yEzt2vI7f8Nn0W
-	 KojlbOIIVzM95uqCKn1NJAG9vU7b7gTDCvhIX+GMFiquDk7sLDkBvk95nuPECE26q+
-	 /Eu1HxrZr7thZXj90/iIJeve4tbdPOdjyWU3MBLNdcnHzamHA9gDqdOxG0dw/J7M1Z
-	 k4bhE4Og8ZeCC8Een2FVn7E1O5Bi610KIzTocJq+EGHSvRT2FRDAQg/Qkcz5A8Yvpc
-	 wrhRfI+pCpolfY/a0nOpQJL8Kmbusli08c3YBudNBCLrJHzmh3LJFTmnH/15ZiZWEe
-	 qlS4PomkNG+nw==
+	b=lU5slDiYOWyLrEh994hiweA22+yzTSHp9jdwJbNqGuNy2A3IWVFi1gIt8iZbi0zUs
+	 GqLcDXrqzqXcynHSYKsScDlfwHETyxrDNlQc1LemGiWaPSqVtN18hP7hDl14ieqmIz
+	 C/mfeNkyDXiXe0uQxiWka57LBrs/3x8lANQiQ26zzZVNouROM4Qg1WpuraSM5tAolN
+	 82EQUUlJA2ymA/895iBnu/4o1YQhJUCnOrT5JHYPA49tMpjIlcVKktec9ls+Vd21gb
+	 2Cc8X0jMIksss7BQRk+jWAOfS0Y6lRyoOTi7vRjUH3p6VnWwHyIK8SnSzMciQXX/vt
+	 4chEdrHuSM4Pg==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu,  7 Mar 2024 05:40:44 +0300 (MSK)
+	Thu,  7 Mar 2024 05:40:45 +0300 (MSK)
 Received: from localhost.localdomain (100.125.24.169) by
  p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 7 Mar 2024 05:40:44 +0300
+ 15.2.1118.40; Thu, 7 Mar 2024 05:40:45 +0300
 From: George Stark <gnstark@salutedevices.com>
 To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 	<vadimp@nvidia.com>, <mpe@ellerman.id.au>, <npiggin@gmail.com>,
@@ -49,9 +49,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
 	<gnstark@salutedevices.com>
-Subject: [PATCH v5 01/10] locking/mutex: move mutex_destroy() definition lower
-Date: Thu, 7 Mar 2024 05:40:25 +0300
-Message-ID: <20240307024034.1548605-2-gnstark@salutedevices.com>
+Subject: [PATCH v5 05/10] leds: lp3952: use devm API to cleanup module's resources
+Date: Thu, 7 Mar 2024 05:40:29 +0300
+Message-ID: <20240307024034.1548605-6-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240307024034.1548605-1-gnstark@salutedevices.com>
 References: <20240307024034.1548605-1-gnstark@salutedevices.com>
@@ -82,53 +82,72 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-mutex_destroy() definition is located in the middle of the code related
-purely to mutex initialization so place it separately after mutex_init()
+In this driver LEDs are registered using devm_led_classdev_register()
+so they are automatically unregistered after module's remove() is done.
+led_classdev_unregister() calls module's led_set_brightness() to turn off
+the LEDs and that callback uses resources which were destroyed already
+in module's remove() so use devm API instead of remove().
+Also drop explicit turning LEDs off from remove() due to they will be off
+anyway by led_classdev_unregister().
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
-Hello Waiman. This is helper patch to make resulting mutex.h look like we discussed
-it in December. It was in you cleanup patch at first but slept away somehow
+ drivers/leds/leds-lp3952.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
- include/linux/mutex.h | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 67edc4ca2bee..f7611c092db7 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -37,14 +37,10 @@
- # define __DEBUG_MUTEX_INITIALIZER(lockname)				\
- 	, .magic = &lockname
-
--extern void mutex_destroy(struct mutex *lock);
+diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
+index 5d18bbfd1f23..e24bfe686312 100644
+--- a/drivers/leds/leds-lp3952.c
++++ b/drivers/leds/leds-lp3952.c
+@@ -207,6 +207,13 @@ static const struct regmap_config lp3952_regmap = {
+ 	.cache_type = REGCACHE_MAPLE,
+ };
+ 
++static void gpio_set_low_action(void *data)
++{
++	struct lp3952_led_array *priv = (struct lp3952_led_array *)data;
++
++	gpiod_set_value(priv->enable_gpio, 0);
++}
++
+ static int lp3952_probe(struct i2c_client *client)
+ {
+ 	int status;
+@@ -226,6 +233,10 @@ static int lp3952_probe(struct i2c_client *client)
+ 		return status;
+ 	}
+ 
++	status = devm_add_action(&client->dev, gpio_set_low_action, priv);
++	if (status)
++		return status;
++
+ 	priv->regmap = devm_regmap_init_i2c(client, &lp3952_regmap);
+ 	if (IS_ERR(priv->regmap)) {
+ 		int err = PTR_ERR(priv->regmap);
+@@ -254,15 +265,6 @@ static int lp3952_probe(struct i2c_client *client)
+ 	return 0;
+ }
+ 
+-static void lp3952_remove(struct i2c_client *client)
+-{
+-	struct lp3952_led_array *priv;
 -
- #else
-
- # define __DEBUG_MUTEX_INITIALIZER(lockname)
-
--static inline void mutex_destroy(struct mutex *lock) {}
+-	priv = i2c_get_clientdata(client);
+-	lp3952_on_off(priv, LP3952_LED_ALL, false);
+-	gpiod_set_value(priv->enable_gpio, 0);
+-}
 -
- #endif
-
- #ifndef CONFIG_PREEMPT_RT
-@@ -117,6 +113,16 @@ do {							\
- } while (0)
- #endif /* CONFIG_PREEMPT_RT */
-
-+#ifdef CONFIG_DEBUG_MUTEXES
-+
-+void mutex_destroy(struct mutex *lock);
-+
-+#else
-+
-+static inline void mutex_destroy(struct mutex *lock) {}
-+
-+#endif
-+
- /*
-  * See kernel/locking/mutex.c for detailed documentation of these APIs.
-  * Also see Documentation/locking/mutex-design.rst.
---
+ static const struct i2c_device_id lp3952_id[] = {
+ 	{LP3952_NAME, 0},
+ 	{}
+@@ -274,7 +276,6 @@ static struct i2c_driver lp3952_i2c_driver = {
+ 			.name = LP3952_NAME,
+ 	},
+ 	.probe = lp3952_probe,
+-	.remove = lp3952_remove,
+ 	.id_table = lp3952_id,
+ };
+ 
+-- 
 2.25.1
 
