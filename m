@@ -1,268 +1,134 @@
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6E51C692
-	for <linux-leds@vger.kernel.org>; Wed,  6 Mar 2024 23:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6806D1847;
+	Thu,  7 Mar 2024 02:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709769037; cv=none; b=kqCWHu0gJREGG4chgZfoWjtbOuWPFD9eM8IKg4MdTw2u5G3r6AhANJfZD2XjtkHBC4fln7iMg6VxeIrvxJ/OPdYMeh+S+KbrvBfRkCXxvgoDM0ruzalYz7KdzuSH+PrP+Gh8914cI84s1q0d3xVxl47XgSX01jI983GFlCEsfl8=
+	t=1709779256; cv=none; b=hpVIqg92GrjyfTZjhzs1EA13+SQNQZChAkxgA77aFjn0PyXbtlzi7Pd6VeMFjyczFrd2PR1PWUcH6bsoQIjr5GMJbQNOcib/O2WNK9PKBzMzC/LPFq33IPBVTgja/FJoIxG6DIa7iYFYPND7P9g2ZjyDMtsjLELx+s4Qep+mG8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709769037; c=relaxed/simple;
-	bh=gEPQvX5SJAVDlMS08CkA/v0KkEgSVXfJJFjGqDl6zIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Aex0Y0RQ0lgKHxnAR9pi+Rz5CX2OOUTFsEKFoiElIpxN3Gi3773QaQXrEYrzsh7QUlgskP+XXXasPUrTNWz0PhdybVWwxbWJs7Uvy/k55YkgIVNeiUcg1ilewKC9tjcHFnsLb05kaR3ZdOBKlChlDafT/MhkFdjOTZiyq7pfHtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=K6pQmFGp; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+	s=arc-20240116; t=1709779256; c=relaxed/simple;
+	bh=Yjjz5ewPjXZp4KyL2oiueZbhuwnsqUODQj8pNHnwbkc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iJbtFnOEg6mXXJZPx4wiFzm1NEN4ci8mL569hfjFMV6Rbe6J4+MuYRQW82Yso+SABZPQGqKTWzBl1Kvnc74r4aArMURKosEIMNZ1O0qfQXL5dKGUVx3LlLFGWtm0qkvUyWnCnmAcaPks01TbMZ6bx7Og9TB2avbAUnKEp1h/TIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ngT8lCR3; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="K6pQmFGp"
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E107F2C02AF;
-	Thu,  7 Mar 2024 12:50:25 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1709769025;
-	bh=ZxIG0qfk8IU+iE3wzGZNbD924JHWsjbov0UkBN70Et8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K6pQmFGpmgF8GlnjNMQF0Ac/BcKY3sGRQV0cEYrK1OJOFfl0Ljqg4kmocQqpRjJwd
-	 FYBSpEoqkgRMulqMsH0g0HBWwl6CXj+NkJ3oK+U34w0qzlwg9pBpX8N1i+QPeTOrtt
-	 m4s0TyWIZAOHrXZIBQnkbdszUrAL1ixv752FPvZP3xdf4xCbEYvIepmCoECbe0U1hG
-	 c0wevpWSIU2zppWkhR8Za1Ja0GOG2YO73/D7vgnk0HAnX2A1sQWQmqo2sEpIHJmCLo
-	 lHY7fxwchPsntwn70k6Pj/z6I/c4ypMYQWCmw8Eecbx2M1iECwad7dQ/6lClKL/eR2
-	 G+8DMXIRdLs5Q==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B65e901410002>; Thu, 07 Mar 2024 12:50:25 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 8390F13EE6D;
-	Thu,  7 Mar 2024 12:50:25 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 7F729280913; Thu,  7 Mar 2024 12:50:25 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: andy@kernel.org,
-	geert@linux-m68k.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	lee@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v5 1/3] auxdisplay: Add 7-segment LED display driver
-Date: Thu,  7 Mar 2024 12:50:19 +1300
-Message-ID: <20240306235021.976083-2-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240306235021.976083-1-chris.packham@alliedtelesis.co.nz>
-References: <20240306235021.976083-1-chris.packham@alliedtelesis.co.nz>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ngT8lCR3"
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 05C5312001F;
+	Thu,  7 Mar 2024 05:40:45 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 05C5312001F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1709779245;
+	bh=jEVsja8SSmoMIIjVaOxrbFMoSgIk5r+GyxaxqJuvUC4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ngT8lCR3EkUmke2AOk56uWYG4CAuNBWDlIKszqS1zln2UZaEF+1yEzt2vI7f8Nn0W
+	 KojlbOIIVzM95uqCKn1NJAG9vU7b7gTDCvhIX+GMFiquDk7sLDkBvk95nuPECE26q+
+	 /Eu1HxrZr7thZXj90/iIJeve4tbdPOdjyWU3MBLNdcnHzamHA9gDqdOxG0dw/J7M1Z
+	 k4bhE4Og8ZeCC8Een2FVn7E1O5Bi610KIzTocJq+EGHSvRT2FRDAQg/Qkcz5A8Yvpc
+	 wrhRfI+pCpolfY/a0nOpQJL8Kmbusli08c3YBudNBCLrJHzmh3LJFTmnH/15ZiZWEe
+	 qlS4PomkNG+nw==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu,  7 Mar 2024 05:40:44 +0300 (MSK)
+Received: from localhost.localdomain (100.125.24.169) by
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 7 Mar 2024 05:40:44 +0300
+From: George Stark <gnstark@salutedevices.com>
+To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
+	<vadimp@nvidia.com>, <mpe@ellerman.id.au>, <npiggin@gmail.com>,
+	<christophe.leroy@csgroup.eu>, <hdegoede@redhat.com>,
+	<mazziesaccount@gmail.com>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<will@kernel.org>, <longman@redhat.com>, <boqun.feng@gmail.com>,
+	<nikitos.tr@gmail.com>, <kabel@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
+	<gnstark@salutedevices.com>
+Subject: [PATCH v5 01/10] locking/mutex: move mutex_destroy() definition lower
+Date: Thu, 7 Mar 2024 05:40:25 +0300
+Message-ID: <20240307024034.1548605-2-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240307024034.1548605-1-gnstark@salutedevices.com>
+References: <20240307024034.1548605-1-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BKkQr0QG c=1 sm=1 tr=0 ts=65e90141 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=K6JAEmCyrfEA:10 a=U_IlPVK5r1qgVbMESHIA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 183875 [Feb 29 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.3
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a, {Tracking_from_domain_doesnt_match_to}, FromAlignment: s, ApMailHostAddress: 100.125.24.169
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Add a driver for a 7-segment LED display. At the moment only one
-character is supported but it should be possible to expand this to
-support more characters and/or 14-segment displays in the future.
+mutex_destroy() definition is located in the middle of the code related
+purely to mutex initialization so place it separately after mutex_init()
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
+Hello Waiman. This is helper patch to make resulting mutex.h look like we discussed
+it in December. It was in you cleanup patch at first but slept away somehow
 
-Notes:
-    Changes in v5:
-    - Add depends on GPIOLIB || COMPILE_TEST
-    - Validate that we get enough GPIOs
-    Changes in v4:
-    - Fix one more usage of 7 segment
-    - Move ASCII art diagram to DT binding
-    - Include map_to_7segment.h for map_to_seg7()
-    - Use initialiser for values in seg_led_update
-    Changes in v3:
-    - "7 segment" -> "7-Segment" in Kconfig help text
-    - Update after feedback from Andy
-    - Use compatible =3D "gpio-7-segment" as suggested by Rob
-    Changes in v2:
-    - Rebased on top of auxdisplay/for-next dropping unnecessary code for=
- 7
-      segment maps.
-    - Update for new linedisp_register() API
-    - Include headers based on actual usage
-    - Allow building as module
-    - Use compatible =3D "generic-gpio-7seg" to keep checkpatch.pl happy
+ include/linux/mutex.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
- drivers/auxdisplay/Kconfig        |  11 +++
- drivers/auxdisplay/Makefile       |   1 +
- drivers/auxdisplay/seg-led-gpio.c | 112 ++++++++++++++++++++++++++++++
- 3 files changed, 124 insertions(+)
- create mode 100644 drivers/auxdisplay/seg-led-gpio.c
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 67edc4ca2bee..f7611c092db7 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -37,14 +37,10 @@
+ # define __DEBUG_MUTEX_INITIALIZER(lockname)				\
+ 	, .magic = &lockname
 
-diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-index d4be0a3695ce..151d95f96b11 100644
---- a/drivers/auxdisplay/Kconfig
-+++ b/drivers/auxdisplay/Kconfig
-@@ -211,6 +211,17 @@ config ARM_CHARLCD
- 	  line and the Linux version on the second line, but that's
- 	  still useful.
-=20
-+config SEG_LED_GPIO
-+	tristate "Generic 7-segment LED display"
-+	depends on GPIOLIB || COMPILE_TEST
-+	select LINEDISP
-+	help
-+	  This driver supports a generic 7-segment LED display made up
-+	  of GPIO pins connected to the individual segments.
+-extern void mutex_destroy(struct mutex *lock);
+-
+ #else
+
+ # define __DEBUG_MUTEX_INITIALIZER(lockname)
+
+-static inline void mutex_destroy(struct mutex *lock) {}
+-
+ #endif
+
+ #ifndef CONFIG_PREEMPT_RT
+@@ -117,6 +113,16 @@ do {							\
+ } while (0)
+ #endif /* CONFIG_PREEMPT_RT */
+
++#ifdef CONFIG_DEBUG_MUTEXES
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called seg-led-gpio.
++void mutex_destroy(struct mutex *lock);
 +
- menuconfig PARPORT_PANEL
- 	tristate "Parallel port LCD/Keypad Panel support"
- 	depends on PARPORT
-diff --git a/drivers/auxdisplay/Makefile b/drivers/auxdisplay/Makefile
-index a725010ca651..4a8ea41b0550 100644
---- a/drivers/auxdisplay/Makefile
-+++ b/drivers/auxdisplay/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_PARPORT_PANEL)	+=3D panel.o
- obj-$(CONFIG_LCD2S)		+=3D lcd2s.o
- obj-$(CONFIG_LINEDISP)		+=3D line-display.o
- obj-$(CONFIG_MAX6959)		+=3D max6959.o
-+obj-$(CONFIG_SEG_LED_GPIO)	+=3D seg-led-gpio.o
-diff --git a/drivers/auxdisplay/seg-led-gpio.c b/drivers/auxdisplay/seg-l=
-ed-gpio.c
-new file mode 100644
-index 000000000000..ebf6028a1dfa
---- /dev/null
-+++ b/drivers/auxdisplay/seg-led-gpio.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Driver for a 7-segment LED display
-+ *
-+ * The decimal point LED present on some devices is currently not
-+ * supported.
-+ *
-+ * Copyright (C) Allied Telesis Labs
-+ */
++#else
 +
-+#include <linux/bitmap.h>
-+#include <linux/container_of.h>
-+#include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/map_to_7segment.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/types.h>
-+#include <linux/workqueue.h>
++static inline void mutex_destroy(struct mutex *lock) {}
 +
-+#include "line-display.h"
++#endif
 +
-+struct seg_led_priv {
-+	struct linedisp linedisp;
-+	struct delayed_work work;
-+	struct gpio_descs *segment_gpios;
-+};
-+
-+static void seg_led_update(struct work_struct *work)
-+{
-+	struct seg_led_priv *priv =3D container_of(work, struct seg_led_priv, w=
-ork.work);
-+	struct linedisp *linedisp =3D &priv->linedisp;
-+	struct linedisp_map *map =3D linedisp->map;
-+	DECLARE_BITMAP(values, 8) =3D { 0 };
-+
-+	bitmap_set_value8(values, map_to_seg7(&map->map.seg7, linedisp->buf[0])=
-, 0);
-+
-+	gpiod_set_array_value_cansleep(priv->segment_gpios->ndescs, priv->segme=
-nt_gpios->desc,
-+				       priv->segment_gpios->info, values);
-+}
-+
-+static int seg_led_linedisp_get_map_type(struct linedisp *linedisp)
-+{
-+	struct seg_led_priv *priv =3D container_of(linedisp, struct seg_led_pri=
-v, linedisp);
-+
-+	INIT_DELAYED_WORK(&priv->work, seg_led_update);
-+	return LINEDISP_MAP_SEG7;
-+}
-+
-+static void seg_led_linedisp_update(struct linedisp *linedisp)
-+{
-+	struct seg_led_priv *priv =3D container_of(linedisp, struct seg_led_pri=
-v, linedisp);
-+
-+	schedule_delayed_work(&priv->work, 0);
-+}
-+
-+static const struct linedisp_ops seg_led_linedisp_ops =3D {
-+	.get_map_type =3D seg_led_linedisp_get_map_type,
-+	.update =3D seg_led_linedisp_update,
-+};
-+
-+static int seg_led_probe(struct platform_device *pdev)
-+{
-+	struct seg_led_priv *priv;
-+	struct device *dev =3D &pdev->dev;
-+
-+	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+
-+	priv->segment_gpios =3D devm_gpiod_get_array(dev, "segment", GPIOD_OUT_=
-LOW);
-+	if (IS_ERR(priv->segment_gpios))
-+		return PTR_ERR(priv->segment_gpios);
-+
-+	if (priv->segment_gpios->ndescs < 7)
-+		return -EINVAL;
-+
-+	return linedisp_register(&priv->linedisp, dev, 1, &seg_led_linedisp_ops=
-);
-+}
-+
-+static int seg_led_remove(struct platform_device *pdev)
-+{
-+	struct seg_led_priv *priv =3D platform_get_drvdata(pdev);
-+
-+	cancel_delayed_work_sync(&priv->work);
-+	linedisp_unregister(&priv->linedisp);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id seg_led_of_match[] =3D {
-+	{ .compatible =3D "gpio-7-segment"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, seg_led_of_match);
-+
-+static struct platform_driver seg_led_driver =3D {
-+	.probe =3D seg_led_probe,
-+	.remove =3D seg_led_remove,
-+	.driver =3D {
-+		.name =3D "seg-led-gpio",
-+		.of_match_table =3D seg_led_of_match,
-+	},
-+};
-+module_platform_driver(seg_led_driver);
-+
-+MODULE_AUTHOR("Chris Packham <chris.packham@alliedtelesis.co.nz>");
-+MODULE_DESCRIPTION("7 segment LED driver");
-+MODULE_LICENSE("GPL");
---=20
-2.43.2
+ /*
+  * See kernel/locking/mutex.c for detailed documentation of these APIs.
+  * Also see Documentation/locking/mutex-design.rst.
+--
+2.25.1
 
