@@ -1,168 +1,174 @@
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09C4136995
-	for <linux-leds@vger.kernel.org>; Thu,  7 Mar 2024 19:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD80139597
+	for <linux-leds@vger.kernel.org>; Thu,  7 Mar 2024 22:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709841062; cv=none; b=KSYTO4Ax3GIEn7s9uLwRwQnpqChHGYoXcKjCOwndIrBITSUdm+ua0bR0FBfFoUtBVgXNvR1yE5ARngG64+vjpYO6Eg3sQTun16fd18iUHYOquwBr9lMagPFgK0RGn65ntL1pf7O2bDoNqK4s5SpW9XZbOFUxEjXHssol59UlY8g=
+	t=1709849366; cv=none; b=i/+2OQ5lwj55hwXwRjvZUJ3wnsHsD55C/495Us13oeFEYqG4u6F7/d+R34vdzdmrv+5TJQ4UmPJGTLyLeXMYDKF5xViKLhih0m1Ocr8H0w8jQkXh4PWQTQWStt/SFGCrSBe6oq/+znryDzhvJ7a+Jma+z0WK2TMVWgrmDLkzSXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709841062; c=relaxed/simple;
-	bh=mXN5wgd3o4fIew4BW8dq44SYd4HTn/EPSiwKP+WUK8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UFGyT09CSo3Mn1uPMyUbCzwfF4jZlC7wvJXxD5ffli2vPDXjH4boeZuRSJi3jlU1po02U+F5jwNWWdLzPQovEjl7G+CK0uOA030D2njyN3ltigE0J7MeP8VKtskgltp9B2jDZ3l71UYujbqjKqG03F89nmexvYsLvtmjamXdap0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=CNEDOW3V; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+	s=arc-20240116; t=1709849366; c=relaxed/simple;
+	bh=n7P3GNxY8K4iHSE1JoPXsHQ7c7TUSVh8xib+dCPNzB8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=eYXb1cLjRe2iOb2QAgITGfuLkw4/iK1myRyyy9pwSOugN2jlHw9GcyDEBo4kyM2+iYY8ujK/FaIOIX4NwCl1k4Vz6j9i2iwBK8GsWtZBVlLE8OFiysnyaQ0CJhfSfjQzDe/QE+Ef/izrVvErwBRv8u5k66qebm1gXBUq7kTnKgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JgqooJ6O; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="CNEDOW3V"
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 3A9EB2C04A9;
-	Fri,  8 Mar 2024 08:50:56 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1709841056;
-	bh=xxBD7nIRpCKC/svvZNqUfTVZv80HTqUWAxM9FrAVvSQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CNEDOW3V8SXBIDlNITxoSq/hyzsBzTYpbmGAd/yPN66zdrAav5c5ranALa004zsC0
-	 Zuk3ywkA5vI5xj6mo/X77UvMcxF3HC0SsIzxmZRYuW7Hs8e9SzBjJ9Zz4ozJ3T9nlI
-	 seARkJlvJMwcWWA+pUwA75D1I7Fn3lVNlTIEetKM0xVMU9ovwk39bgEDdYbeAL7IaT
-	 7NY8dlG4srXSZ+HWI0epAttTOG1URHfnuoeP77BExQVjFNJDwAadYMV/uw5faeCsmS
-	 3lbBupkPKRSUmXpVZ3m9qzCCu+bcNZ3KRQPvYD8he5lCdAKyAefXDl+rIRCmUXlBJJ
-	 wUjYE+DYQQfZA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B65ea1a9f0003>; Fri, 08 Mar 2024 08:50:55 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id C709613EE85;
-	Fri,  8 Mar 2024 08:50:55 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id BF7542808BA; Fri,  8 Mar 2024 08:50:55 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: andy@kernel.org,
-	geert@linux-m68k.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	andrew@lunn.ch,
-	gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com,
-	lee@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v6 2/3] dt-bindings: auxdisplay: Add bindings for generic 7-segment LED
-Date: Fri,  8 Mar 2024 08:50:52 +1300
-Message-ID: <20240307195053.1320538-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240307195053.1320538-1-chris.packham@alliedtelesis.co.nz>
-References: <20240307195053.1320538-1-chris.packham@alliedtelesis.co.nz>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JgqooJ6O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1709849365; x=1741385365;
+  h=date:from:to:cc:subject:message-id;
+  bh=n7P3GNxY8K4iHSE1JoPXsHQ7c7TUSVh8xib+dCPNzB8=;
+  b=JgqooJ6O0sos+/QTc0IBYYjofdIKcquE9D/svQne19Ve+S6RDFwTTtOk
+   xKR33DtumXWz+ZZOFD11R0MfEHcZTaU8jas5EwDVfOgOLqU0XL9hn4ItX
+   GN2Qz0QdhwDZkLNz061RcnzOP2cpAuKUarGfjuSVqM/PdOkuNoVR1Y7eK
+   sPakqf/ZGFc9A7Vm+4i/OthvdQD0tfIOGp6guAYIfflWEgxFF0EWcJ/1D
+   sBwaooxJeNlKxxQOEnOPaVGbPc7zADQYs9T/vr8l1zWLo6ap65nPJVtih
+   gJnx1YjgqBE8VKLqrmPdEzoAieXYgtmmJS9NksnzUnkpZl8Wpp0HdpGJs
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11006"; a="15119794"
+X-IronPort-AV: E=Sophos;i="6.07,107,1708416000"; 
+   d="scan'208";a="15119794"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2024 14:09:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,107,1708416000"; 
+   d="scan'208";a="10355340"
+Received: from lkp-server01.sh.intel.com (HELO b21307750695) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 07 Mar 2024 14:09:22 -0800
+Received: from kbuild by b21307750695 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1riLvU-0005kU-1e;
+	Thu, 07 Mar 2024 22:09:20 +0000
+Date: Fri, 08 Mar 2024 06:09:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org
+Subject: [lee-leds:for-leds-next] BUILD SUCCESS
+ 45066c4bbe8ca25f9f282245b84568116c783f1d
+Message-ID: <202403080607.cJGPZK4p-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=BKkQr0QG c=1 sm=1 tr=0 ts=65ea1aa0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=K6JAEmCyrfEA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8 a=gEfo2CItAAAA:8 a=UL8_YvhhsuCliVb0JXoA:9 a=3ZKOabzyN94A:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
 
-Add bindings for a generic 7-segment LED display using GPIOs.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+branch HEAD: 45066c4bbe8ca25f9f282245b84568116c783f1d  leds: ncp5623: Add MS suffix to time defines
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+elapsed time: 746m
 
-Notes:
-    Changes in v6:
-    - Collect R-by from Geert and Rob
-    Changes in v5:
-    - Preserve formatting, maxItems set to 8, group GPIO specifiers
-      as suggested by Geert
-    Changes in v4:
-    - Add ASCII art diagram showing arrangement of segments
-    Changes in v3:
-    - Set maxItems: 7
-    - Expand description of segment-gpios property.
-    - Use compatible =3D "gpio-7-segment" as suggested by Rob
-    Changes in v2:
-    - Use compatible =3D "generic-gpio-7seg" to keep checkpatch.pl happy
+configs tested: 101
+configs skipped: 3
 
- .../bindings/auxdisplay/gpio-7-segment.yaml   | 55 +++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/auxdisplay/gpio-7-s=
-egment.yaml
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/Documentation/devicetree/bindings/auxdisplay/gpio-7-segment.=
-yaml b/Documentation/devicetree/bindings/auxdisplay/gpio-7-segment.yaml
-new file mode 100644
-index 000000000000..328954893c64
---- /dev/null
-+++ b/Documentation/devicetree/bindings/auxdisplay/gpio-7-segment.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/auxdisplay/gpio-7-segment.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: GPIO based LED segment display
-+
-+maintainers:
-+  - Chris Packham <chris.packham@alliedtelesis.co.nz>
-+
-+properties:
-+  compatible:
-+    const: gpio-7-segment
-+
-+  segment-gpios:
-+    description: |
-+      An array of GPIOs one per segment. The first GPIO corresponds to t=
-he A
-+      segment, the seventh GPIO corresponds to the G segment. Some LED b=
-locks
-+      also have a decimal point which can be specified as an optional ei=
-ghth
-+      segment.
-+
-+               -a-
-+              |   |
-+              f   b
-+              |   |
-+               -g-
-+              |   |
-+              e   c
-+              |   |
-+               -d-  dp
-+
-+    minItems: 7
-+    maxItems: 8
-+
-+required:
-+  - segment-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    led-7seg {
-+        compatible =3D "gpio-7-segment";
-+        segment-gpios =3D <&gpio 0 GPIO_ACTIVE_LOW>,
-+                        <&gpio 1 GPIO_ACTIVE_LOW>,
-+                        <&gpio 2 GPIO_ACTIVE_LOW>,
-+                        <&gpio 3 GPIO_ACTIVE_LOW>,
-+                        <&gpio 4 GPIO_ACTIVE_LOW>,
-+                        <&gpio 5 GPIO_ACTIVE_LOW>,
-+                        <&gpio 6 GPIO_ACTIVE_LOW>;
-+    };
---=20
-2.43.2
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240307   clang
+i386         buildonly-randconfig-002-20240307   gcc  
+i386         buildonly-randconfig-003-20240307   clang
+i386         buildonly-randconfig-004-20240307   gcc  
+i386         buildonly-randconfig-005-20240307   gcc  
+i386         buildonly-randconfig-006-20240307   clang
+i386                                defconfig   clang
+i386                  randconfig-001-20240307   gcc  
+i386                  randconfig-002-20240307   gcc  
+i386                  randconfig-003-20240307   clang
+i386                  randconfig-004-20240307   gcc  
+i386                  randconfig-005-20240307   gcc  
+i386                  randconfig-006-20240307   clang
+i386                  randconfig-011-20240307   clang
+i386                  randconfig-012-20240307   gcc  
+i386                  randconfig-013-20240307   clang
+i386                  randconfig-014-20240307   clang
+i386                  randconfig-015-20240307   clang
+i386                  randconfig-016-20240307   clang
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64                              defconfig   gcc  
+x86_64                          rhel-8.3-rust   clang
+xtensa                            allnoconfig   gcc  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
