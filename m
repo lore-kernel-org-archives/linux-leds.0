@@ -1,229 +1,271 @@
-Received: from mail.nic.cz (mail.nic.cz [217.31.204.67])
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1FFB161;
-	Thu,  7 Mar 2024 16:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.31.204.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F0F137763
+	for <linux-leds@vger.kernel.org>; Thu,  7 Mar 2024 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709829866; cv=none; b=WxbFCWHjntcIFgCzvf5ZHsQWrotCU7jjMBCprn1NmQyWKIvKnjNjpeDFZeudZPPB0BZaeexnvxz8hObxFMqVrHtF6kVPcsHNu/0g1GyAsjv45nogBB/eNFzI7iSU7abDIFPEV65CrxqmoIRk/2XNlOARYD5N6LjF0NNWLFVbLgs=
+	t=1709841061; cv=none; b=kvXodRqW9W6UWVgyEvPbukJ5yvF9Mt1/Vu6jTJ4FZhH1nIv9Acx7LmnwOFi3sDarqT0aOAxqKDnGXfxZeO+jPMjKfQoPs7K21sgVuSWzFUcSrR4mCzroG0Sm/uB6uw+bWy9aYI1p32Wu/fv5dwZUtSRmOJ9Y90O70gKV8UVG+Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709829866; c=relaxed/simple;
-	bh=Eas23TLQr46xZHt7gYs24YdP69SZOXFeMT3pAmuT6DA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g1Tx6iP7aUWYysvGSP4EwvzS30hXG4zvAcCP6BdSQF4MFw8390qJwteuUVjLXIj+HWOmPe47ptTpayyNAFmDQi96WL/QnsI7x4pW3T6Y7MQITjeYdSSArsQzpdGVUd2YUZUro/upbrkT347aC2a0kgniuIIoUWEFzliECHE7NEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nic.cz; spf=pass smtp.mailfrom=nic.cz; dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b=HB2lzJd8; arc=none smtp.client-ip=217.31.204.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nic.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nic.cz
+	s=arc-20240116; t=1709841061; c=relaxed/simple;
+	bh=dcuwCIcPkwlpCeqeGzB2ahg6kGQcvfajIjuTZHCKCRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VJOkWcmRmhixybd8RiRYnhfNrX8Y4hF+N5Uez1L6FfNc49UiO80xSkBMj32XMwECw3MI+c6heLKQvJESu/MliRHx+2xmxyG7i2SANNMu85VTJ9FsgumC2OcziU/WjehuigzALtaextH6H32vIP6nSTQ83dWwtsTMt/wrHk3olL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=iM67tkxS; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="HB2lzJd8"
-Received: from dellmb (unknown [IPv6:2001:1488:fffe:6:8747:7254:5571:3010])
-	by mail.nic.cz (Postfix) with ESMTPSA id A47281C0343;
-	Thu,  7 Mar 2024 17:44:15 +0100 (CET)
-Authentication-Results: mail.nic.cz;
-	auth=pass smtp.auth=marek.behun@nic.cz smtp.mailfrom=marek.behun@nic.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-	t=1709829857; bh=Eas23TLQr46xZHt7gYs24YdP69SZOXFeMT3pAmuT6DA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From:Reply-To:
-	 Subject:To:Cc;
-	b=HB2lzJd8YaauT0cp2xxF7qnSe160360ygc3/6mKcJ6jsvmOsiTLbnAxeyrs9YjbEP
-	 OwAWP919IXltZucSQtWWo0tE8W7jlC/dnh4Lzj+z7/LdLyKZe45dImbmU5XdR9De3e
-	 yqDV2Ltcib7negRha3QKDE+cvoHBAWz+YSLpUeiM=
-Date: Thu, 7 Mar 2024 17:44:14 +0100
-From: Marek =?UTF-8?B?QmVow7pu?= <marek.behun@nic.cz>
-To: Waiman Long <longman@redhat.com>
-Cc: George Stark <gnstark@salutedevices.com>, andy.shevchenko@gmail.com,
- pavel@ucw.cz, lee@kernel.org, vadimp@nvidia.com, mpe@ellerman.id.au,
- npiggin@gmail.com, christophe.leroy@csgroup.eu, hdegoede@redhat.com,
- mazziesaccount@gmail.com, peterz@infradead.org, mingo@redhat.com,
- will@kernel.org, boqun.feng@gmail.com, nikitos.tr@gmail.com,
- kabel@kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kernel@salutedevices.com
-Subject: Re: [PATCH v5 02/10] locking/mutex: introduce devm_mutex_init
-Message-ID: <20240307174414.4059d7ee@dellmb>
-In-Reply-To: <3d95ab40-2df5-4988-87be-568a628a0561@redhat.com>
-References: <20240307024034.1548605-1-gnstark@salutedevices.com>
-	<20240307024034.1548605-3-gnstark@salutedevices.com>
-	<20240307095639.b6utkbzr36liuu3p@kandell>
-	<3d95ab40-2df5-4988-87be-568a628a0561@redhat.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.39; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="iM67tkxS"
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 23AA92C0191;
+	Fri,  8 Mar 2024 08:50:56 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1709841056;
+	bh=eIbYqqtkIi1075lhYmfRmxlxQ5ZAYFkVhvIGsJudGBA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iM67tkxSt9glgR1LT4D0eVaavY5b8uiqSPva18UDbDMzd4zFGG57A+S//Eo+vdO9T
+	 SkQg96sH4VLW22WPgY4alI9eBuG96q1znaj3AiKRc/rk+y+Au/73HQBOgBa/8zu5pD
+	 ERv3NyBDQn0ZT0rCdl/A1G8B2pTtVGjGemlS4tMxnT7LW0P5hgVHO3ulfIMTV3eiho
+	 xKljU53oz/U/E06DQuwwlU3b6KEOVKGS7WMgseAtzEWDQVJgbr4SykgjGeN0ilaG6V
+	 a/q+0oZ+ZH/GGYlm5NLUQrur3udU/dU5Y7bAwSI/JhwhRwCXIdwThMVIK9VDgexsdQ
+	 SNhwY5hHLtXEw==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B65ea1a9f0002>; Fri, 08 Mar 2024 08:50:55 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id C19E013EE6D;
+	Fri,  8 Mar 2024 08:50:55 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id B98E22806D9; Fri,  8 Mar 2024 08:50:55 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andy@kernel.org,
+	geert@linux-m68k.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	andrew@lunn.ch,
+	gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com,
+	lee@kernel.org
+Cc: linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v6 1/3] auxdisplay: Add 7-segment LED display driver
+Date: Fri,  8 Mar 2024 08:50:51 +1300
+Message-ID: <20240307195053.1320538-2-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240307195053.1320538-1-chris.packham@alliedtelesis.co.nz>
+References: <20240307195053.1320538-1-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.103.10 at mail
-X-Virus-Status: Clean
-X-Rspamd-Queue-Id: A47281C0343
-X-Spamd-Bar: /
-X-Spamd-Result: default: False [-0.10 / 20.00];
-	MIME_GOOD(-0.10)[text/plain];
-	ASN(0.00)[asn:25192, ipnet:2001:1488::/32, country:CZ];
-	WHITELISTED_IP(0.00)[2001:1488:fffe:6:8747:7254:5571:3010];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com]
-X-Rspamd-Pre-Result: action=no action;
-	module=multimap;
-	Matched map: WHITELISTED_IP
-X-Rspamd-Action: no action
-X-Rspamd-Server: mail
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=BKkQr0QG c=1 sm=1 tr=0 ts=65ea1a9f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=K6JAEmCyrfEA:10 a=U_IlPVK5r1qgVbMESHIA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Thu, 7 Mar 2024 08:39:46 -0500
-Waiman Long <longman@redhat.com> wrote:
+Add a driver for a 7-segment LED display. At the moment only one
+character is supported but it should be possible to expand this to
+support more characters and/or 14-segment displays in the future.
 
-> On 3/7/24 04:56, Marek Beh=C3=BAn wrote:
-> > On Thu, Mar 07, 2024 at 05:40:26AM +0300, George Stark wrote: =20
-> >> Using of devm API leads to a certain order of releasing resources.
-> >> So all dependent resources which are not devm-wrapped should be deleted
-> >> with respect to devm-release order. Mutex is one of such objects that
-> >> often is bound to other resources and has no own devm wrapping.
-> >> Since mutex_destroy() actually does nothing in non-debug builds
-> >> frequently calling mutex_destroy() is just ignored which is safe for n=
-ow
-> >> but wrong formally and can lead to a problem if mutex_destroy() will be
-> >> extended so introduce devm_mutex_init()
-> >>
-> >> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> >> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> >> ---
-> >>   Hello Christophe. Hope you don't mind I put you SoB tag because you =
-helped alot
-> >>   to make this patch happen.
-> >>
-> >>   include/linux/mutex.h        | 13 +++++++++++++
-> >>   kernel/locking/mutex-debug.c | 22 ++++++++++++++++++++++
-> >>   2 files changed, 35 insertions(+)
-> >>
-> >> diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-> >> index f7611c092db7..9bcf72cb941a 100644
-> >> --- a/include/linux/mutex.h
-> >> +++ b/include/linux/mutex.h
-> >> @@ -22,6 +22,8 @@
-> >>   #include <linux/cleanup.h>
-> >>   #include <linux/mutex_types.h>
-> >>
-> >> +struct device;
-> >> +
-> >>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> >>   # define __DEP_MAP_MUTEX_INITIALIZER(lockname)			\
-> >>   		, .dep_map =3D {					\
-> >> @@ -115,10 +117,21 @@ do {							\
-> >>
-> >>   #ifdef CONFIG_DEBUG_MUTEXES
-> >>
-> >> +int devm_mutex_init(struct device *dev, struct mutex *lock);
-> >>   void mutex_destroy(struct mutex *lock);
-> >>
-> >>   #else
-> >>
-> >> +static inline int devm_mutex_init(struct device *dev, struct mutex *l=
-ock)
-> >> +{
-> >> +	/*
-> >> +	 * since mutex_destroy is nop actually there's no need to register it
-> >> +	 * in devm subsystem.
-> >> +	 */
-> >> +	mutex_init(lock);
-> >> +	return 0;
-> >> +}
-> >> +
-> >>   static inline void mutex_destroy(struct mutex *lock) {}
-> >>
-> >>   #endif
-> >> diff --git a/kernel/locking/mutex-debug.c b/kernel/locking/mutex-debug=
-.c
-> >> index bc8abb8549d2..c9efab1a8026 100644
-> >> --- a/kernel/locking/mutex-debug.c
-> >> +++ b/kernel/locking/mutex-debug.c
-> >> @@ -19,6 +19,7 @@
-> >>   #include <linux/kallsyms.h>
-> >>   #include <linux/interrupt.h>
-> >>   #include <linux/debug_locks.h>
-> >> +#include <linux/device.h>
-> >>
-> >>   #include "mutex.h"
-> >>
-> >> @@ -104,3 +105,24 @@ void mutex_destroy(struct mutex *lock)
-> >>   }
-> >>
-> >>   EXPORT_SYMBOL_GPL(mutex_destroy);
-> >> +
-> >> +static void devm_mutex_release(void *res)
-> >> +{
-> >> +	mutex_destroy(res);
-> >> +}
-> >> +
-> >> +/**
-> >> + * devm_mutex_init - Resource-managed mutex initialization
-> >> + * @dev:	Device which lifetime mutex is bound to
-> >> + * @lock:	Pointer to a mutex
-> >> + *
-> >> + * Initialize mutex which is automatically destroyed when the driver =
-is detached.
-> >> + *
-> >> + * Returns: 0 on success or a negative error code on failure.
-> >> + */
-> >> +int devm_mutex_init(struct device *dev, struct mutex *lock)
-> >> +{
-> >> +	mutex_init(lock);
-> >> +	return devm_add_action_or_reset(dev, devm_mutex_release, lock);
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(devm_mutex_init); =20
-> > Hi George,
-> >
-> > look at
-> > https://lore.kernel.org/lkml/7013bf9e-2663-4613-ae61-61872e81355b@redha=
-t.com/
-> > where Matthew and Hans explain that devm_mutex_init needs to be a macro
-> > because of the static lockdep key.
-> >
-> > so this should be something like:
-> >
-> > static inline int __devm_mutex_init(struct device *dev, struct mutex *m=
-utex,
-> > 				    const char *name,
-> > 				    struct lock_class_key *key)
-> > {
-> > 	__mutex_init(mutex, name, key);
-> > 	return devm_add_action_or_reset(dev, devm_mutex_release, mutex);
-> > }
-> >
-> > #define devm_mutex_init(dev, mutex)				\
-> > do {								\
-> > 	static struct lock_class_key __key;			\
-> > 								\
-> > 	__devm_mutex_init(dev, (mutex), #mutex, &__key);	\
-> > } while (0);
-> >
-> >
-> > Marek =20
->=20
-> Making devm_mutex_init() a function will make all the devm_mutex share=20
-> the same lockdep key. Making it a macro will make each caller of=20
-> devm_mutex_init() have a distinct lockdep key. It all depends on whether=
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+
+Notes:
+    Changes in v6:
+    - Enforce maximum number of GPIOs
+    - Drop unnecessary 0 in initialiser
+    Changes in v5:
+    - Add depends on GPIOLIB || COMPILE_TEST
+    - Validate that we get enough GPIOs
+    Changes in v4:
+    - Fix one more usage of 7 segment
+    - Move ASCII art diagram to DT binding
+    - Include map_to_7segment.h for map_to_seg7()
+    - Use initialiser for values in seg_led_update
+    Changes in v3:
+    - "7 segment" -> "7-Segment" in Kconfig help text
+    - Update after feedback from Andy
+    - Use compatible =3D "gpio-7-segment" as suggested by Rob
+    Changes in v2:
+    - Rebased on top of auxdisplay/for-next dropping unnecessary code for=
+ 7
+      segment maps.
+    - Update for new linedisp_register() API
+    - Include headers based on actual usage
+    - Allow building as module
+    - Use compatible =3D "generic-gpio-7seg" to keep checkpatch.pl happy
+
+ drivers/auxdisplay/Kconfig        |  11 +++
+ drivers/auxdisplay/Makefile       |   1 +
+ drivers/auxdisplay/seg-led-gpio.c | 112 ++++++++++++++++++++++++++++++
+ 3 files changed, 124 insertions(+)
+ create mode 100644 drivers/auxdisplay/seg-led-gpio.c
+
+diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+index d4be0a3695ce..151d95f96b11 100644
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -211,6 +211,17 @@ config ARM_CHARLCD
+ 	  line and the Linux version on the second line, but that's
+ 	  still useful.
 =20
-> all the devm_mutexes have the same lock usage pattern or not and whether=
-=20
-> it is possible for one devm_mutex to be nested inside another. So either=
-=20
-> way can be fine depending on the mutex usage pattern. My suggestion is=20
-> to use a function, if possible, unless it will cause a false positive=20
-> lockdep splat as there is a limit on the maximum # of lockdep keys that=20
-> can be used.
++config SEG_LED_GPIO
++	tristate "Generic 7-segment LED display"
++	depends on GPIOLIB || COMPILE_TEST
++	select LINEDISP
++	help
++	  This driver supports a generic 7-segment LED display made up
++	  of GPIO pins connected to the individual segments.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called seg-led-gpio.
++
+ menuconfig PARPORT_PANEL
+ 	tristate "Parallel port LCD/Keypad Panel support"
+ 	depends on PARPORT
+diff --git a/drivers/auxdisplay/Makefile b/drivers/auxdisplay/Makefile
+index a725010ca651..4a8ea41b0550 100644
+--- a/drivers/auxdisplay/Makefile
++++ b/drivers/auxdisplay/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_PARPORT_PANEL)	+=3D panel.o
+ obj-$(CONFIG_LCD2S)		+=3D lcd2s.o
+ obj-$(CONFIG_LINEDISP)		+=3D line-display.o
+ obj-$(CONFIG_MAX6959)		+=3D max6959.o
++obj-$(CONFIG_SEG_LED_GPIO)	+=3D seg-led-gpio.o
+diff --git a/drivers/auxdisplay/seg-led-gpio.c b/drivers/auxdisplay/seg-l=
+ed-gpio.c
+new file mode 100644
+index 000000000000..5dc2a006cac5
+--- /dev/null
++++ b/drivers/auxdisplay/seg-led-gpio.c
+@@ -0,0 +1,112 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for a 7-segment LED display
++ *
++ * The decimal point LED present on some devices is currently not
++ * supported.
++ *
++ * Copyright (C) Allied Telesis Labs
++ */
++
++#include <linux/bitmap.h>
++#include <linux/container_of.h>
++#include <linux/errno.h>
++#include <linux/gpio/consumer.h>
++#include <linux/map_to_7segment.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/types.h>
++#include <linux/workqueue.h>
++
++#include "line-display.h"
++
++struct seg_led_priv {
++	struct linedisp linedisp;
++	struct delayed_work work;
++	struct gpio_descs *segment_gpios;
++};
++
++static void seg_led_update(struct work_struct *work)
++{
++	struct seg_led_priv *priv =3D container_of(work, struct seg_led_priv, w=
+ork.work);
++	struct linedisp *linedisp =3D &priv->linedisp;
++	struct linedisp_map *map =3D linedisp->map;
++	DECLARE_BITMAP(values, 8) =3D { };
++
++	bitmap_set_value8(values, map_to_seg7(&map->map.seg7, linedisp->buf[0])=
+, 0);
++
++	gpiod_set_array_value_cansleep(priv->segment_gpios->ndescs, priv->segme=
+nt_gpios->desc,
++				       priv->segment_gpios->info, values);
++}
++
++static int seg_led_linedisp_get_map_type(struct linedisp *linedisp)
++{
++	struct seg_led_priv *priv =3D container_of(linedisp, struct seg_led_pri=
+v, linedisp);
++
++	INIT_DELAYED_WORK(&priv->work, seg_led_update);
++	return LINEDISP_MAP_SEG7;
++}
++
++static void seg_led_linedisp_update(struct linedisp *linedisp)
++{
++	struct seg_led_priv *priv =3D container_of(linedisp, struct seg_led_pri=
+v, linedisp);
++
++	schedule_delayed_work(&priv->work, 0);
++}
++
++static const struct linedisp_ops seg_led_linedisp_ops =3D {
++	.get_map_type =3D seg_led_linedisp_get_map_type,
++	.update =3D seg_led_linedisp_update,
++};
++
++static int seg_led_probe(struct platform_device *pdev)
++{
++	struct seg_led_priv *priv;
++	struct device *dev =3D &pdev->dev;
++
++	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, priv);
++
++	priv->segment_gpios =3D devm_gpiod_get_array(dev, "segment", GPIOD_OUT_=
+LOW);
++	if (IS_ERR(priv->segment_gpios))
++		return PTR_ERR(priv->segment_gpios);
++
++	if (priv->segment_gpios->ndescs < 7 || priv->segment_gpios->ndescs > 8)
++		return -EINVAL;
++
++	return linedisp_register(&priv->linedisp, dev, 1, &seg_led_linedisp_ops=
+);
++}
++
++static int seg_led_remove(struct platform_device *pdev)
++{
++	struct seg_led_priv *priv =3D platform_get_drvdata(pdev);
++
++	cancel_delayed_work_sync(&priv->work);
++	linedisp_unregister(&priv->linedisp);
++
++	return 0;
++}
++
++static const struct of_device_id seg_led_of_match[] =3D {
++	{ .compatible =3D "gpio-7-segment"},
++	{}
++};
++MODULE_DEVICE_TABLE(of, seg_led_of_match);
++
++static struct platform_driver seg_led_driver =3D {
++	.probe =3D seg_led_probe,
++	.remove =3D seg_led_remove,
++	.driver =3D {
++		.name =3D "seg-led-gpio",
++		.of_match_table =3D seg_led_of_match,
++	},
++};
++module_platform_driver(seg_led_driver);
++
++MODULE_AUTHOR("Chris Packham <chris.packham@alliedtelesis.co.nz>");
++MODULE_DESCRIPTION("7 segment LED driver");
++MODULE_LICENSE("GPL");
+--=20
+2.43.2
 
-devm_mutex_init() should behave like other similar function
-initializing stuff with resource management. I.e. it should behave like
-mutex_init(), but with resource management.
-
-mutex_init() is a macro generating static lockdep key for each instance,
-so devm_mutex_init() should also generate static lockdep key for each
-instance.
-
-Marek
