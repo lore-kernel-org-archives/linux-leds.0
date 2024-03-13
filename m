@@ -1,185 +1,166 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339E6168A4
-	for <linux-leds@vger.kernel.org>; Wed, 13 Mar 2024 07:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8B7171A6;
+	Wed, 13 Mar 2024 08:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710315901; cv=none; b=BnYvRfhOmxoekkIIbblZu6b00LcjuRpCcfZtSQIO9H8f9zAyjmBmbgcHtnh8O9NdgVZd3IFPviIAGvmMJ/EFaOCYoylT9OjjAxSm9lsmxybLbSdKaZjOdZGDsv/N0J5qhpObOEGX1wH/FG3l7qA64axJnmFu33kve5SzkveXtdY=
+	t=1710317705; cv=none; b=YpdCRZ34Mc4B3eBhZG/09Ui9tneSsR4DkuPqgtoansEAIdkUfaw6ZAcEXKytdtYhpkPAJkBJHHmJhj6p73uvZt6TPkI8/dG4KcjHslqgBr7GBcpA3PWObv9PCw0lKou3Nyscs7Yya/0XeMM3qvC6KGrJQxig2rrP/3K6SXHNRL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710315901; c=relaxed/simple;
-	bh=8anSx8q99+x/R1N4KLqO1nqPHUMqJRw5y6ZKWDoREsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Aw7skH29wtjEmaO1BMZ5jv4Xvd87wjzD3nSfgN0Xt0y7HWywjs8QHBk9jeO9gQm5pIytHKETeHDfG9VIEt/DoceD6JVYiRpLVo1c7E/jn4okxc635LsPKfBhrtXCo1NaigxxEIjjmzSpNSyahHiA/fI+8gmp9S5Q0Va8D+LH8d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UoQByNh/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1710317705; c=relaxed/simple;
+	bh=6ACgQRkjwLr3es9amra2hSZW1tM5eUceoFTu3/80IAA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lhpNJEoIoj2QSdeV3HvJ4DwG4mbYCrea7P2kr+WCWjV9DdFI6NIb2UZs/pUt+yBFBZDFgvtiXI7vNDF9xy3BPs5JpxgKxLz8mKZ7VkvKuN69zTHQ3A//yaX21aPlPxIkkZ7f38+m5yXVNaxdleHq+oybZAcvjanjv/Prvlquh6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bhjD6ueD; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UoQByNh/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710315899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WGrURXceHY9m9JciYiADkX3iVVWUeKWeoiT1soRGRlo=;
-	b=UoQByNh/OZV5fVzeJAzX2IQ5ujh4ddmnjsBNuxxLvpRdyDqZxKqCapPFUbTbj30dqTOMsE
-	X/IJgtOMXd1Wa5bCJJbT0GdOM6qW0GHY4QFWeV3pvC/hdOlt2lmhYI/vhXIn8pyqODop3I
-	MV7A6U1eS8zQwHIUeV0Qp68SUhin9tk=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-329-YOhfP437NBeEGos--Kk-Iw-1; Wed, 13 Mar 2024 03:44:57 -0400
-X-MC-Unique: YOhfP437NBeEGos--Kk-Iw-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-29bad31f920so4676768a91.0
-        for <linux-leds@vger.kernel.org>; Wed, 13 Mar 2024 00:44:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710315896; x=1710920696;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WGrURXceHY9m9JciYiADkX3iVVWUeKWeoiT1soRGRlo=;
-        b=frX+GOnNXoa/WgMLEj7N0XsFanUrMpqI+PuzJgJeYv/Ndc52LyVyHcGIfyv13rDrVF
-         ufa0s/jTyxRwBZJnOFqUdgqY6AR8SF2B0LbuHArx4WYEhr8R6SPXxaRVd+tUfdg2blU7
-         0+vMgg2HFJCQbuSKe9U86bvL7ly+QrrvrXe9c81rUjnOhPT7BK0+6CSP9/Dn6hnId1o3
-         j8cQ/55oKLOe7gm6vRX7BuLhl6MK6yElqAFbdNyvK3754QMnsOI2OriiZ3JAhFOTXYmZ
-         4CkC7ngEk0Co1jnSa1hF0i8q/8SI7s8K0/iMlipcukBpUIuWATphrHbhOMz6Vvh3OQMB
-         6XgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZoEs9bl6aRf2ky0MYWSpe37LKrO5Es+ev0KxD9o9JDMhl6RXUkfUYLjIpURHZ6yg8kFkmm+p96BN99JBEGBYZ05SNYYu7gWAvPQ==
-X-Gm-Message-State: AOJu0YxbQM+aHhZ75s2WcFFyWcMBmm9CHhVyhEnC2ZerutSjRDbj3mc7
-	mcXzZYWAqyK+zTYdYGxPkROEi4wl07b7MtyYyHwuiludSt0i+IfIOuLVr+chLeqYCyex0zd8Pot
-	/TfnvunV+IM9Sd/irYPeRwFfde+uWyg0AqUjsNmpA26bvprYZSXsui2kWCkE/TGTegXYPNSopok
-	Ux7aX+ki595iIxvAdX5KQLbPd1DwZPNRPPkQ==
-X-Received: by 2002:a17:90a:6b0e:b0:29b:c17c:5fa6 with SMTP id v14-20020a17090a6b0e00b0029bc17c5fa6mr8532086pjj.33.1710315896307;
-        Wed, 13 Mar 2024 00:44:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEnecfTlt1S5a/TCBvW3wjmZmuTlvFN/9s7nOHl7xM0rjUN5wKmXbKaRmsc/jVnIyYox8COM7YCe9OeUiPGHk=
-X-Received: by 2002:a17:90a:6b0e:b0:29b:c17c:5fa6 with SMTP id
- v14-20020a17090a6b0e00b0029bc17c5fa6mr8532076pjj.33.1710315895932; Wed, 13
- Mar 2024 00:44:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bhjD6ueD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ySvk1
+	10FebIcrpo64c8Fhrck02hJgRALePz85GlRAKs=; b=bhjD6ueDC+1w3kTfzm2qj
+	yGT9EBgG2LVMhCXoWW/ANG2seQnhbBVTq33S/zxldjBtMp0w0I2q+cWcpBbXgscj
+	MFkysT7C7eLCamaP0oghGDfFp4/Q9DNvrsz49Q1Km+45LW1Inn8NGikdgJw8i1OG
+	htVXqlwRJ1mqZJvHJpf3H8=
+Received: from localhost.localdomain (unknown [39.144.138.148])
+	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wDHpTBkYPFl51aWBg--.60890S3;
+	Wed, 13 Mar 2024 16:14:30 +0800 (CST)
+From: Xing Tong Wu <xingtong_wu@163.com>
+To: andy.shevchenko@gmail.com,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Xing Tong Wu <xingtong.wu@siemens.com>,
+	Gerd Haeussler <gerd.haeussler.ext@siemens.com>,
+	Tobias Schaffner <tobias.schaffner@siemens.com>,
+	Henning Schild <henning@hennsch.de>
+Subject: [PATCH v3 1/1] leds: simatic-ipc-leds-gpio: add support for module BX-59A
+Date: Wed, 13 Mar 2024 16:14:25 +0800
+Message-Id: <20240313081425.2634-2-xingtong_wu@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240313081425.2634-1-xingtong_wu@163.com>
+References: <20240313081425.2634-1-xingtong_wu@163.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240306025801.8814-1-hpa@redhat.com> <20240306025801.8814-2-hpa@redhat.com>
- <Ze-I63bNzaMkHfgg@surfacebook.localdomain> <18ef7e97-db6e-2dc4-5728-5a539ae4c9bb@linux.intel.com>
-In-Reply-To: <18ef7e97-db6e-2dc4-5728-5a539ae4c9bb@linux.intel.com>
-From: Kate Hsuan <hpa@redhat.com>
-Date: Wed, 13 Mar 2024 15:44:44 +0800
-Message-ID: <CAEth8oHvgTzUhSrJUduS621J_1ow1dWySXTLX+mSwk3HHv25Vw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] platform: x86-android-tablets: other: Add swnode
- for Xiaomi pad2 indicator LED
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	linux-leds@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHpTBkYPFl51aWBg--.60890S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXr1kurWUJw15Xryrur4DArb_yoWrZr4kpF
+	nxJa9YkFW3XF1Dtr13GFW7Zas3uw4xKr97trZrGa90g3Wjvr10gFnrAFW3XFZ5J3yDuFnx
+	GF1rtFyj9r4kAwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jwWrXUUUUU=
+X-CM-SenderInfo: p0lqw35rqjs4rx6rljoofrz/xtbBEAqg0GVOCv++yAAAsC
 
-On Tue, Mar 12, 2024 at 6:35=E2=80=AFPM Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> On Tue, 12 Mar 2024, Andy Shevchenko wrote:
->
-> > Wed, Mar 06, 2024 at 10:58:00AM +0800, Kate Hsuan kirjoitti:
-> > > There is a KTD2026 LED controller to manage the indicator LED for Xia=
-omi
-> > > pad2. The ACPI for it is not properly made so the kernel can't get
-> > > a correct description of it.
-> > >
-> > > This work add a description for this RGB LED controller and also set =
-a
-> > > trigger to indicate the chaging event (bq27520-0-charging). When it i=
-s
-> > > charging, the indicator LED will be turn on.
-> >
-> > Ilpo, Kate, please consider the following remarks.
-> >
-> > ...
-> >
-> > >  #include <linux/gpio/machine.h>
-> > >  #include <linux/input.h>
-> > >  #include <linux/platform_device.h>
-> >
-> > + Blank line?
-> >
-> > > +#include <dt-bindings/leds/common.h>
-> >
-> > Not sure where to place this, some drivers put it the first, some after=
- linux/*.
-> >
-> > ...
-> >
-> > > +/* main fwnode for ktd2026 */
-> > > +static const struct software_node ktd2026_node =3D {
-> >
-> > No name?
-> >
-> > > +};
-> > > +
-> > > +static const struct property_entry ktd2026_rgb_led_props[] =3D {
-> > > +   PROPERTY_ENTRY_U32("reg", 0),
-> > > +   PROPERTY_ENTRY_U32("color", LED_COLOR_ID_RGB),
-> > > +   PROPERTY_ENTRY_STRING("function", "indicator"),
-> >
-> > > +   PROPERTY_ENTRY_STRING("linux,default-trigger",
-> > > +                         "bq27520-0-charging"),
-> >
-> > It's less than 80, why not on a single line?
-> >
-> > > +
-> >
-> > Redundant blank line.
-> >
-> > > +   { }
-> > > +};
-> >
-> > ...
-> >
-> > > +/* B */
-> >
-> > B for red?!
-> >
-> > > +static const struct property_entry ktd2026_red_led_props[] =3D {
-> > > +   PROPERTY_ENTRY_U32("reg", 0),
-> > > +   PROPERTY_ENTRY_U32("color", LED_COLOR_ID_BLUE),
-> > > +   { }
-> > > +};
->
-> The name with "red" and LED_COLOR_ID_BLUE are also inconsistent.
->
-> > ...
-> >
-> > > +/* R */
-> >
-> > R for blue?!
-> >
-> > > +static const struct property_entry ktd2026_blue_led_props[] =3D {
-> > > +   PROPERTY_ENTRY_U32("reg", 2),
-> > > +   PROPERTY_ENTRY_U32("color", LED_COLOR_ID_RED),
-> > > +   { }
-> > > +};
->
-> Here as well.
->
-> I think it's better I drop this patch (it's only in review-ilpo) and wait
-> for v5 version as there's some much still to correct.
->
+From: Xing Tong Wu <xingtong.wu@siemens.com>
 
-Hi,
+This is used for the Siemens Simatic IPC BX-59A, which has its LEDs
+connected to GPIOs provided by the Nuvoton NCT6126D.
 
-Thank you for reviewing it.
-I'll propose the v5 patch to improve them :)
+Signed-off-by: Xing Tong Wu <xingtong.wu@siemens.com>
+---
+ .../leds/simple/simatic-ipc-leds-gpio-core.c  |  1 +
+ .../simple/simatic-ipc-leds-gpio-f7188x.c     | 53 ++++++++++++++++---
+ 2 files changed, 48 insertions(+), 6 deletions(-)
 
->
-> --
->  i.
->
-
-
---=20
-BR,
-Kate
+diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio-core.c b/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
+index 667ba1bc3a30..85003fd7f1aa 100644
+--- a/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
++++ b/drivers/leds/simple/simatic-ipc-leds-gpio-core.c
+@@ -56,6 +56,7 @@ int simatic_ipc_leds_gpio_probe(struct platform_device *pdev,
+ 	case SIMATIC_IPC_DEVICE_127E:
+ 	case SIMATIC_IPC_DEVICE_227G:
+ 	case SIMATIC_IPC_DEVICE_BX_21A:
++	case SIMATIC_IPC_DEVICE_BX_59A:
+ 		break;
+ 	default:
+ 		return -ENODEV;
+diff --git a/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c b/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
+index c7c3a1f986e6..08d8e580b4f1 100644
+--- a/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
++++ b/drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c
+@@ -17,7 +17,12 @@
+ 
+ #include "simatic-ipc-leds-gpio.h"
+ 
+-static struct gpiod_lookup_table simatic_ipc_led_gpio_table = {
++struct simatic_ipc_led_tables {
++	struct gpiod_lookup_table *led_lookup_table;
++	struct gpiod_lookup_table *led_lookup_table_extra;
++};
++
++static struct gpiod_lookup_table simatic_ipc_led_gpio_table_227g = {
+ 	.dev_id = "leds-gpio",
+ 	.table = {
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-2", 0, NULL, 0, GPIO_ACTIVE_LOW),
+@@ -30,7 +35,7 @@ static struct gpiod_lookup_table simatic_ipc_led_gpio_table = {
+ 	},
+ };
+ 
+-static struct gpiod_lookup_table simatic_ipc_led_gpio_table_extra = {
++static struct gpiod_lookup_table simatic_ipc_led_gpio_table_extra_227g = {
+ 	.dev_id = NULL, /* Filled during initialization */
+ 	.table = {
+ 		GPIO_LOOKUP_IDX("gpio-f7188x-3", 6, NULL, 6, GPIO_ACTIVE_HIGH),
+@@ -39,16 +44,52 @@ static struct gpiod_lookup_table simatic_ipc_led_gpio_table_extra = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table simatic_ipc_led_gpio_table_bx_59a = {
++	.dev_id = "leds-gpio",
++	.table = {
++		GPIO_LOOKUP_IDX("gpio-f7188x-2", 0, NULL, 0, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-f7188x-2", 3, NULL, 1, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-f7188x-5", 3, NULL, 2, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-f7188x-5", 2, NULL, 3, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-f7188x-7", 7, NULL, 4, GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP_IDX("gpio-f7188x-7", 4, NULL, 5, GPIO_ACTIVE_LOW),
++		{} /* Terminating entry */
++	}
++};
++
+ static int simatic_ipc_leds_gpio_f7188x_probe(struct platform_device *pdev)
+ {
+-	return simatic_ipc_leds_gpio_probe(pdev, &simatic_ipc_led_gpio_table,
+-					   &simatic_ipc_led_gpio_table_extra);
++	const struct simatic_ipc_platform *plat = dev_get_platdata(&pdev->dev);
++	struct simatic_ipc_led_tables *led_tables;
++
++	led_tables = devm_kzalloc(&pdev->dev, sizeof(*led_tables), GFP_KERNEL);
++	if (!led_tables)
++		return -ENOMEM;
++
++	switch (plat->devmode) {
++	case SIMATIC_IPC_DEVICE_227G:
++		led_tables->led_lookup_table = &simatic_ipc_led_gpio_table_227g;
++		led_tables->led_lookup_table_extra = &simatic_ipc_led_gpio_table_extra_227g;
++		break;
++	case SIMATIC_IPC_DEVICE_BX_59A:
++		led_tables->led_lookup_table = &simatic_ipc_led_gpio_table_bx_59a;
++		break;
++	default:
++		return -ENODEV;
++	}
++
++	platform_set_drvdata(pdev, led_tables);
++	return simatic_ipc_leds_gpio_probe(pdev, led_tables->led_lookup_table,
++					   led_tables->led_lookup_table_extra);
+ }
+ 
+ static void simatic_ipc_leds_gpio_f7188x_remove(struct platform_device *pdev)
+ {
+-	simatic_ipc_leds_gpio_remove(pdev, &simatic_ipc_led_gpio_table,
+-				     &simatic_ipc_led_gpio_table_extra);
++	struct simatic_ipc_led_tables *led_tables;
++
++	led_tables = platform_get_drvdata(pdev);
++	simatic_ipc_leds_gpio_remove(pdev, led_tables->led_lookup_table,
++				     led_tables->led_lookup_table_extra);
+ }
+ 
+ static struct platform_driver simatic_ipc_led_gpio_driver = {
+-- 
+2.25.1
 
