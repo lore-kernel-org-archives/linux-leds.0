@@ -1,40 +1,40 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FCD6D1A8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7246D1AD;
 	Thu, 14 Mar 2024 08:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710405983; cv=none; b=XBwRAemY2uSApq7Ap7fgsxLloK31kGgWU/SRdWyT1LlCw92UBbLfIfytoEAa9tgf8OVRDS1SN9j7feUPQI++xjk2NR/biI9O2Bbfg7Ynt2ac00+GoJtVLujeZTl6O4tJrxkp3ZfooKp7w/U4AHZE5dHv5atGbdSzVoCSWjbOCac=
+	t=1710405983; cv=none; b=toSqondCxUvTGV/gzOjKcjs+/MGyABWgfFfHpY5xTYchbuo7IWIJhVBZvSY3fU9Ofa5lWaVDBfKbEJbzx+reEmYnVzmzylAz2AgiylhUnFwSZkyMZInbWOpibiRVzNOOxmvuL06Rq5SLB+GGc3WNzX+uw43JSz2BX36+LaosQGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710405983; c=relaxed/simple;
-	bh=Rlhm1dbHK3QZmBGqM0Yvi7Buk6BTwyDX+ubGHWclzeg=;
+	bh=1wp47qp/alsOZHbeqiRWsh/Pk9ud/IcelhS3NNl88Xs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FPw5QPUdn+BV3dWmPLKbcnJdB4cgRxfqIaBkYBwrqBjNNF8joqfHhdrG9nmE8uIXbIA+KqYFyr2SL/NuYK2frEBa09UhBAyiJcELLGYTRcmWTL5xmHOdQxB8bTldNaN2alDQ1JoSN5+/R6LBcJMkvnXpjesbaDp1RlHJ8/0G7FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=lc0Vhom+; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=M9USZwieycXOEfMKDVqE9knsyFvRXz64g7R9VLhoowRaCJDkXrXRxpTlIqocLYRMkFwCNLRj3JNN1uvV1n5cD282GkAovGEKCVzV4L/Ecp8ic7xkds6r97r/3FDP7vajBAgUof1dfoLeWGozhErzqiCbU8kpn2xW1ehovYHOgao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Km0rU/5E; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="lc0Vhom+"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Km0rU/5E"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 69121120012;
-	Thu, 14 Mar 2024 11:46:14 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 69121120012
+	by mx1.sberdevices.ru (Postfix) with ESMTP id F3DA2120008;
+	Thu, 14 Mar 2024 11:46:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru F3DA2120008
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
 	s=mail; t=1710405974;
-	bh=gvlhRnJ5xJg26euVayo9SmeLTTcIC3Y5vdfnz8cqeiE=;
+	bh=7LCfx2PuYn9jYgJQVVqsryHiVahatRhw2btAYqtVZKA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=lc0Vhom+kVS5MsqC3TWjKvYENT3F534cqellvmHlUWQgIj6PypY0keqPsDPgjt5fq
-	 d0ktIBzPxpqQL2UPI/H0FZSd9fmfv0Y9PI6V7xTt21+P8GOvHSkZDv1PbvnrBQ0254
-	 AaHni4ZinyFHADmVfKya21p82j5Skbik3c9CQX/DvzbCcDtzQwwt99TJU/LE1gjXH2
-	 DWKdGR9pc56XZhfmUYoRf+EhNmDYqY0rqau0cfdvyn3XSufWufhUmWyHfmoGt37KQg
-	 F44bRQsZ05hseiAgDlF3UtBD9MHezCjuC8uEPA6qBSA+tfxBxkGtTw2sPp1nvEqmWr
-	 x+BvBy6RM/mtg==
+	b=Km0rU/5EocJAGAGZUTwMqQW8XgG6JPo2LG/cdDXbhCOBG50+BbEaCA4CUdi3q8YO5
+	 Tj/UlU/1LzkSQb/lXzFcXEj+u82RamL1hG+CJRep9/llwry1Y8RXQSK8mIA2/9iHQ5
+	 7VITNa4d06ebreVhGtVi3kAXq6FHvP71gUt0ezJI1BtmrGnGRB8OascoAGnbovXxIy
+	 Fem0sKyRXdYQ1wGGgZ3Ujfrnis7mubDgTFYP7Q/YfWpYEkPQbNk/cY/eyORXa/xDOK
+	 +s4x1AHMuYKwW2Kyjs2Ju6LsJKuKiey+op77hhmjCfN8Uw0b6q4eNZpkdOrvDoWROa
+	 L8hJ1tqXgjPzQ==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 14 Mar 2024 11:46:14 +0300 (MSK)
+	Thu, 14 Mar 2024 11:46:13 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -49,9 +49,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
 	<gnstark@salutedevices.com>
-Subject: [PATCH v6 3/9] leds: aw200xx: use devm API to cleanup module's resources
-Date: Thu, 14 Mar 2024 11:45:25 +0300
-Message-ID: <20240314084531.1935545-4-gnstark@salutedevices.com>
+Subject: [PATCH v6 1/9] locking/mutex: introduce devm_mutex_init
+Date: Thu, 14 Mar 2024 11:45:23 +0300
+Message-ID: <20240314084531.1935545-2-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240314084531.1935545-1-gnstark@salutedevices.com>
 References: <20240314084531.1935545-1-gnstark@salutedevices.com>
@@ -82,92 +82,96 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-In this driver LEDs are registered using devm_led_classdev_register()
-so they are automatically unregistered after module's remove() is done.
-led_classdev_unregister() calls module's led_set_brightness() to turn off
-the LEDs and that callback uses resources which were destroyed already
-in module's remove() so use devm API instead of remove().
+Using of devm API leads to a certain order of releasing resources.
+So all dependent resources which are not devm-wrapped should be deleted
+with respect to devm-release order. Mutex is one of such objects that
+often is bound to other resources and has no own devm wrapping.
+Since mutex_destroy() actually does nothing in non-debug builds
+frequently calling mutex_destroy() is just ignored which is safe for now
+but wrong formally and can lead to a problem if mutex_destroy() will be
+extended so introduce devm_mutex_init()
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
+Suggested by-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/leds/leds-aw200xx.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ include/linux/mutex.h        | 27 +++++++++++++++++++++++++++
+ kernel/locking/mutex-debug.c | 11 +++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/leds/leds-aw200xx.c b/drivers/leds/leds-aw200xx.c
-index f584a7f98fc5..5cba52d07b38 100644
---- a/drivers/leds/leds-aw200xx.c
-+++ b/drivers/leds/leds-aw200xx.c
-@@ -530,6 +530,16 @@ static const struct regmap_config aw200xx_regmap_config = {
- 	.disable_locking = true,
- };
+diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+index 67edc4ca2bee..f57e005ded24 100644
+--- a/include/linux/mutex.h
++++ b/include/linux/mutex.h
+@@ -22,6 +22,8 @@
+ #include <linux/cleanup.h>
+ #include <linux/mutex_types.h>
  
-+static void aw200xx_chip_reset_action(void *data)
++struct device;
++
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ # define __DEP_MAP_MUTEX_INITIALIZER(lockname)			\
+ 		, .dep_map = {					\
+@@ -117,6 +119,31 @@ do {							\
+ } while (0)
+ #endif /* CONFIG_PREEMPT_RT */
+ 
++#ifdef CONFIG_DEBUG_MUTEXES
++
++int __devm_mutex_init(struct device *dev, struct mutex *lock);
++
++#else
++
++static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
 +{
-+	aw200xx_chip_reset(data);
++	/*
++	 * When CONFIG_DEBUG_MUTEXES is off mutex_destroy is just a nop so
++	 * no really need to register it in devm subsystem.
++	 */
++	return 0;
 +}
 +
-+static void aw200xx_disable_action(void *data)
-+{
-+	aw200xx_disable(data);
-+}
++#endif
 +
- static int aw200xx_probe(struct i2c_client *client)
- {
- 	const struct aw200xx_chipdef *cdef;
-@@ -568,11 +578,17 @@ static int aw200xx_probe(struct i2c_client *client)
- 
- 	aw200xx_enable(chip);
- 
-+	ret = devm_add_action(&client->dev, aw200xx_disable_action, chip);
-+	if (ret)
-+		return ret;
++#define devm_mutex_init(dev, mutex)			\
++({							\
++	typeof(mutex) mutex_ = (mutex);			\
++							\
++	mutex_init(mutex_);				\
++	__devm_mutex_init(dev, mutex_);			\
++})
 +
- 	ret = aw200xx_chip_check(chip);
- 	if (ret)
- 		return ret;
+ /*
+  * See kernel/locking/mutex.c for detailed documentation of these APIs.
+  * Also see Documentation/locking/mutex-design.rst.
+diff --git a/kernel/locking/mutex-debug.c b/kernel/locking/mutex-debug.c
+index bc8abb8549d2..6aa77e3dc82e 100644
+--- a/kernel/locking/mutex-debug.c
++++ b/kernel/locking/mutex-debug.c
+@@ -19,6 +19,7 @@
+ #include <linux/kallsyms.h>
+ #include <linux/interrupt.h>
+ #include <linux/debug_locks.h>
++#include <linux/device.h>
  
--	mutex_init(&chip->mutex);
-+	ret = devm_mutex_init(&client->dev, &chip->mutex);
-+	if (ret)
-+		return ret;
+ #include "mutex.h"
  
- 	/* Need a lock now since after call aw200xx_probe_fw, sysfs nodes created */
- 	mutex_lock(&chip->mutex);
-@@ -581,6 +597,10 @@ static int aw200xx_probe(struct i2c_client *client)
- 	if (ret)
- 		goto out_unlock;
- 
-+	ret = devm_add_action(&client->dev, aw200xx_chip_reset_action, chip);
-+	if (ret)
-+		goto out_unlock;
-+
- 	ret = aw200xx_probe_fw(&client->dev, chip);
- 	if (ret)
- 		goto out_unlock;
-@@ -595,15 +615,6 @@ static int aw200xx_probe(struct i2c_client *client)
- 	return ret;
+@@ -89,6 +90,16 @@ void debug_mutex_init(struct mutex *lock, const char *name,
+ 	lock->magic = lock;
  }
  
--static void aw200xx_remove(struct i2c_client *client)
--{
--	struct aw200xx *chip = i2c_get_clientdata(client);
--
--	aw200xx_chip_reset(chip);
--	aw200xx_disable(chip);
--	mutex_destroy(&chip->mutex);
--}
--
- static const struct aw200xx_chipdef aw20036_cdef = {
- 	.channels = 36,
- 	.display_size_rows_max = 3,
-@@ -652,7 +663,6 @@ static struct i2c_driver aw200xx_driver = {
- 		.of_match_table = aw200xx_match_table,
- 	},
- 	.probe = aw200xx_probe,
--	.remove = aw200xx_remove,
- 	.id_table = aw200xx_id,
- };
- module_i2c_driver(aw200xx_driver);
++static void devm_mutex_release(void *res)
++{
++	mutex_destroy(res);
++}
++
++int __devm_mutex_init(struct device *dev, struct mutex *lock)
++{
++	return devm_add_action_or_reset(dev, devm_mutex_release, lock);
++}
++
+ /***
+  * mutex_destroy - mark a mutex unusable
+  * @lock: the mutex to be destroyed
 -- 
 2.25.1
 
