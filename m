@@ -1,35 +1,35 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F313376048;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30EC76034;
 	Thu, 14 Mar 2024 20:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710447563; cv=none; b=POJodEoKidhSvGx065I+WQ5YT8qOyTxZLvsXhm4MqMqH6D3ef8jh0J2sGT8fHxO/FkdaVJl3txf0qCi+fZAVWNzwbhQV3rzlE17v/i6rhlMkHAdbUSYN4PfES6MK+jZnmDq9bC+QSnPRnu6dy/hx8gAt4CVDJ29aw37Vd7GLtE0=
+	t=1710447563; cv=none; b=paaL9qo9qY99C5CjqIMBmLZevKzXoT9Bkyoa3TVt66U2RPrL0s81P7QQ3a6SaWI4TRD+pcdPYkkHGyMtucHDx0I1HKexnDfCeyM2YsziGM12uzOK9cOcOzOgBsKI+B0X6/3poZcXv3Kxb4tW3qD+by65n+ExejP6dlT6Wt3uEVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1710447563; c=relaxed/simple;
-	bh=VicWOoUKqbTrduhvOAK5/tdWM0flXsTzAaM5gZgdRV8=;
+	bh=NQ0t6+WUh/1PErpgCXsjTjUPRQo8SoyoPUTdinF2stQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=khKA//hWSxVyyr2jzLADFpFCVg42xAYOEA3/8JF+VqheWK9n6yGGc1gfFOBQRDf3mSiZk54/9JP89EYMb5/3gWqLjXSJJeKgdzaFA3BUResbfFk+xfJXsgPk1xSsNd5dKZhS8sBo36w3jPXgHNGdKE0mIKkK5eGeQIVypM8fJN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=kP7kFZ61; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=Hp+G97vj260Z1thmN3XYt+W+lAmZr2rcgJVv9eqGI7XvIh1MYdxtsL4JZXmPHCpq0wR++YYRmEg8qkHDiuMAriB6wyzuwidc7yQLacN5rVWk+z2iCkSI8MQj7hCIKNBz/fVAVSofwkviQJcdlN05o1bukzQ+T6kRZTsPDsdivdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Hbtdgi20; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="kP7kFZ61"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Hbtdgi20"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 1671512000C;
-	Thu, 14 Mar 2024 23:19:18 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 1671512000C
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 9970612000B;
+	Thu, 14 Mar 2024 23:19:17 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9970612000B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710447558;
-	bh=vjFu0WetQUdQD1FDdJDXCPhSAI5jeoGRKFYXAru4DoY=;
+	s=mail; t=1710447557;
+	bh=2bwV6P2QNBuBXkovEaePsPnQMetWmXvmhijTjHCaCW0=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=kP7kFZ61sbqRpmbh3SCZf6h6WoMXkDVGQGKALLT1qMTW4kiwqSmelyuHHcGLStzDr
-	 CQBCsmayhZvLuv/aakpO4yeuf0N/rqPcFvxckCxgG94Nf/7fk1wc4BMXPjnpSYxV0G
-	 imEDHHJbG0/kCQcHcrJiPcPzHxnQDnwTEij3iVDozSdWgysZLLP27ctdNbphOLIiuu
-	 izxc/EgTAxUAH1XraKma/h18mxZnhzw66WJLJPJnQGDuJMAa4BIAqgF+KjMeA7WFdv
-	 4ayMYAOzUAoEdRb5y/90/XKIrmd392wMhnHQKZaRtwcJaO0R5Pdq+cNTcf2CHsZzVL
-	 5T4IOSoV9IfKQ==
+	b=Hbtdgi20Q12YEx66H6L0kj5QNvsGiZ/7rv7iQgzEjPwPj9kCseDNA452huRH5AVx0
+	 WyvVk4HWbo0isDLmHJkQfZV8mwqahOgrw7tzvp5EDOMPnukUaPTzU+DSTZJtPCMIJq
+	 qsOv1TeqcUeWJdmUh/ymjcbXKtfnLYThxRVYwNi7GExZKszW/p+r8UFg5yR9w26LRG
+	 GtZIJX5nm/6V8msBVJjPrJojiRt818AhzzUSARsJsG/Cl/7MEtJiME31pWTicpxT7/
+	 57GgA9eVzEfYUEOPJq1bsYdYhx62NsDDENlFHujOyEO9MgA3h96zozE8ocH0+hitaK
+	 kb2z9paLkK7fw==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
@@ -47,9 +47,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 	<nikitos.tr@gmail.com>, <marek.behun@nic.cz>, <kabel@kernel.org>
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
-Subject: [PATCH v7 7/8] leds: mlxreg: use devm_mutex_init() for mutex initialization
-Date: Thu, 14 Mar 2024 23:18:55 +0300
-Message-ID: <20240314201856.1991899-8-gnstark@salutedevices.com>
+Subject: [PATCH v7 5/8] leds: lm3532: use devm API to cleanup module's resources
+Date: Thu, 14 Mar 2024 23:18:53 +0300
+Message-ID: <20240314201856.1991899-6-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240314201856.1991899-1-gnstark@salutedevices.com>
 References: <20240314201856.1991899-1-gnstark@salutedevices.com>
@@ -83,58 +83,83 @@ X-KSMG-AntiVirus-Status: Clean, skipped
 In this driver LEDs are registered using devm_led_classdev_register()
 so they are automatically unregistered after module's remove() is done.
 led_classdev_unregister() calls module's led_set_brightness() to turn off
-the LEDs and that callback uses mutex which was destroyed already
-in module's remove() so use devm API instead.
+the LEDs and that callback uses resources which were destroyed already
+in module's remove() so use devm API instead of remove().
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/leds-mlxreg.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/leds/leds-lm3532.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
-index d8e3d5d8d2d0..b1510cd32e47 100644
---- a/drivers/leds/leds-mlxreg.c
-+++ b/drivers/leds/leds-mlxreg.c
-@@ -257,6 +257,7 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- {
- 	struct mlxreg_core_platform_data *led_pdata;
- 	struct mlxreg_led_priv_data *priv;
-+	int err;
- 
- 	led_pdata = dev_get_platdata(&pdev->dev);
- 	if (!led_pdata) {
-@@ -268,26 +269,21 @@ static int mlxreg_led_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	mutex_init(&priv->access_lock);
-+	err = devm_mutex_init(&pdev->dev, &priv->access_lock);
-+	if (err)
-+		return err;
-+
- 	priv->pdev = pdev;
- 	priv->pdata = led_pdata;
- 
- 	return mlxreg_led_config(priv);
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index 13662a4aa1f2..aa7966eb506f 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -542,6 +542,13 @@ static int lm3532_parse_als(struct lm3532_data *priv)
+ 	return ret;
  }
  
--static void mlxreg_led_remove(struct platform_device *pdev)
++static void gpio_set_low_action(void *data)
++{
++	struct lm3532_data *priv = (struct lm3532_data *)data;
++
++	gpiod_direction_output(priv->enable_gpio, 0);
++}
++
+ static int lm3532_parse_node(struct lm3532_data *priv)
+ {
+ 	struct fwnode_handle *child = NULL;
+@@ -556,6 +563,12 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+ 	if (IS_ERR(priv->enable_gpio))
+ 		priv->enable_gpio = NULL;
+ 
++	if (priv->enable_gpio) {
++		ret = devm_add_action(&priv->client->dev, gpio_set_low_action, priv);
++		if (ret)
++			return ret;
++	}
++
+ 	priv->regulator = devm_regulator_get(&priv->client->dev, "vin");
+ 	if (IS_ERR(priv->regulator))
+ 		priv->regulator = NULL;
+@@ -691,7 +704,10 @@ static int lm3532_probe(struct i2c_client *client)
+ 		return ret;
+ 	}
+ 
+-	mutex_init(&drvdata->lock);
++	ret = devm_mutex_init(&client->dev, &drvdata->lock);
++	if (ret)
++		return ret;
++
+ 	i2c_set_clientdata(client, drvdata);
+ 
+ 	ret = lm3532_parse_node(drvdata);
+@@ -703,16 +719,6 @@ static int lm3532_probe(struct i2c_client *client)
+ 	return ret;
+ }
+ 
+-static void lm3532_remove(struct i2c_client *client)
 -{
--	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
+-	struct lm3532_data *drvdata = i2c_get_clientdata(client);
 -
--	mutex_destroy(&priv->access_lock);
+-	mutex_destroy(&drvdata->lock);
+-
+-	if (drvdata->enable_gpio)
+-		gpiod_direction_output(drvdata->enable_gpio, 0);
 -}
 -
- static struct platform_driver mlxreg_led_driver = {
- 	.driver = {
- 	    .name = "leds-mlxreg",
- 	},
- 	.probe = mlxreg_led_probe,
--	.remove_new = mlxreg_led_remove,
- };
+ static const struct of_device_id of_lm3532_leds_match[] = {
+ 	{ .compatible = "ti,lm3532", },
+ 	{},
+@@ -727,7 +733,6 @@ MODULE_DEVICE_TABLE(i2c, lm3532_id);
  
- module_platform_driver(mlxreg_led_driver);
+ static struct i2c_driver lm3532_i2c_driver = {
+ 	.probe = lm3532_probe,
+-	.remove = lm3532_remove,
+ 	.id_table = lm3532_id,
+ 	.driver = {
+ 		.name = LM3532_NAME,
 -- 
 2.25.1
 
