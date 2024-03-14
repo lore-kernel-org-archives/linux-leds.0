@@ -1,44 +1,44 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753206D1D7;
-	Thu, 14 Mar 2024 08:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2FD6BB46;
+	Thu, 14 Mar 2024 08:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710405984; cv=none; b=KKzdFWFfaGFwUZwSWAzA/qn5yu1stiPriLon1wUSZqtyQcJ1PYh1Al9Wq1fsbz2S8YzC/XlFcH7FdjmS74EIzi8PpRJkDxPtyT8gnx/2FSQehGEfBRM2Pvz74CF2INd8PvbN8kWFQYI/gv5ZhkCf/zxwAqaxOKKfiDLPBqGH7HQ=
+	t=1710405985; cv=none; b=T1jR1GMlFjDBewblNg0DvE0LBM/JhlptkxFU1eognE0XjQbEq/oP0LK3ju3K3Qf7F/aiCTLgo5yIO+YgCc/0WD0O9CEgIugV2RLeVVMsBemQn5z0Efau08GlB6fwaF5ee8J6QdfnSCs61J9dbzR1VI0gzHYr/nVI/9kNd9EUhjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710405984; c=relaxed/simple;
-	bh=pMOgNp1DtB4n4llksf8GEmN9pM3NbcpZqdPQK42zEpE=;
+	s=arc-20240116; t=1710405985; c=relaxed/simple;
+	bh=vUFUEsCwm/+WnjI8Fz9CnNUsoSwU+TtLeBEcKA5W7mk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n5CsKJlUk2UpTrwtbopJ+O/KMc1Cffsp8+UsJb7puFjXNpSGWyQPmCbh/FXI21isgRFdGg/9RpaghejNrKAkRtlT7wuxRJslcBUGNonC18YknqqRBadRIL5NZLe0FD+JhkPhmR31Rr+wIyObCvLZJhtTrxKIs+4I84MGV8/laAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ahxOl+FY; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=bf8Od1wncmEPY20zAtbggmhaTfawIIxevDirUR97AZ9SrQvpY3EK5IoT7n00mY5ZGQ9E9fpJ/m/+cRnqPqinN/HsasCT7n7swVsMMi4/UKdJJL6/m0ml504iZz8RyA8qroZq1iyMZoSWpvhChikJdvfr306gg6yYZejQokMS6SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=FVYF3nyJ; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ahxOl+FY"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="FVYF3nyJ"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id D28FF120014;
-	Thu, 14 Mar 2024 11:46:14 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D28FF120014
+	by mx1.sberdevices.ru (Postfix) with ESMTP id B4321120017;
+	Thu, 14 Mar 2024 11:46:15 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru B4321120017
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710405974;
-	bh=HLNCTgwzZsqdyYp20b9aN7SyO2BGd0FTbWWmDldD028=;
+	s=mail; t=1710405975;
+	bh=kK6WfysHnoHnPx6m7g6/YcvxmY15e9MkbOzMlx2Ecms=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ahxOl+FY3h1Uv5tYKMdCdjMv85duFzMGZgsuilG0nDULwvWDt/viK2nQGPXg37jBd
-	 YhyFsOOP9hCdJX9Ew7ykKZ1rkLt0URgZ7hSVrgrxVDeJO+FjPUSH9j83i8zB/IPJrP
-	 bGlnDRJkldD9tgdPifOry0WZMjGvG3FBzuRDOuDQX68cKgHJjPwg7MJrhPJa94Cu2L
-	 vdu1KOXEmUFNunDHJZG1r1DXht+q5effeFpZXlde8KjPLywjF5j+JMHcpwbyEHNN93
-	 fCDKZoB4SXLz8ZfusdurGpIP7yp1DWfX9XbaT+q1fXxO1aVgTodM4MqXLyyZrHoTFA
-	 NFYr5zC7tS+hA==
+	b=FVYF3nyJFVV8nqcHI1kM0ThJpq2TvXKVhERwcShPVUnyXw85/EPQPFF6AusH6DKjN
+	 Y6lu3+hVjI+RjS7nMswAQKVWxvkYBJfI+CyQuB+Dm4OhkKHA7/AdfoszjABQEEEt8R
+	 8kDHRNB/XWd/IUgzh2eX0bUj+bqWftT0RNRJONNnhvUBvtlaudDEIA8XOKD3gDjlwL
+	 WGghUGf22kf4Np1AVi3Dbh277kn2fVQqKgzkx/v27iTeV0IIwmtexOXcMe4XhuGXif
+	 FjmDWeNiBbv0Y/f6g3A/plsdI5o+NoHlq/TBWABhL67QN/5foA3w5imRuCQhPrcEYs
+	 SQ12W1jYMvucg==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 14 Mar 2024 11:46:14 +0300 (MSK)
+	Thu, 14 Mar 2024 11:46:15 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 14 Mar 2024 11:46:14 +0300
+ 15.2.1118.40; Thu, 14 Mar 2024 11:46:15 +0300
 From: George Stark <gnstark@salutedevices.com>
 To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 	<vadimp@nvidia.com>, <mpe@ellerman.id.au>, <npiggin@gmail.com>,
@@ -49,9 +49,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
 	<gnstark@salutedevices.com>
-Subject: [PATCH v6 5/9] leds: lm3532: use devm API to cleanup module's resources
-Date: Thu, 14 Mar 2024 11:45:27 +0300
-Message-ID: <20240314084531.1935545-6-gnstark@salutedevices.com>
+Subject: [PATCH v6 9/9] leds: powernv: use LED_RETAIN_AT_SHUTDOWN flag for leds
+Date: Thu, 14 Mar 2024 11:45:31 +0300
+Message-ID: <20240314084531.1935545-10-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240314084531.1935545-1-gnstark@salutedevices.com>
 References: <20240314084531.1935545-1-gnstark@salutedevices.com>
@@ -82,85 +82,72 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-In this driver LEDs are registered using devm_led_classdev_register()
-so they are automatically unregistered after module's remove() is done.
-led_classdev_unregister() calls module's led_set_brightness() to turn off
-the LEDs and that callback uses resources which were destroyed already
-in module's remove() so use devm API instead of remove().
+This driver wants to keep its LEDs state after module is removed
+and implemented it in its own way. LED subsystem supports dedicated
+flag LED_RETAIN_AT_SHUTDOWN for the same purpose so use the flag
+instead of custom implementation.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 ---
- drivers/leds/leds-lm3532.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/leds/leds-powernv.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index 13662a4aa1f2..aa7966eb506f 100644
---- a/drivers/leds/leds-lm3532.c
-+++ b/drivers/leds/leds-lm3532.c
-@@ -542,6 +542,13 @@ static int lm3532_parse_als(struct lm3532_data *priv)
- 	return ret;
- }
+diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+index 4f01acb75727..9c6fb7d6e0e7 100644
+--- a/drivers/leds/leds-powernv.c
++++ b/drivers/leds/leds-powernv.c
+@@ -30,15 +30,6 @@ static const struct led_type_map led_type_map[] = {
+ };
  
-+static void gpio_set_low_action(void *data)
-+{
-+	struct lm3532_data *priv = (struct lm3532_data *)data;
-+
-+	gpiod_direction_output(priv->enable_gpio, 0);
-+}
-+
- static int lm3532_parse_node(struct lm3532_data *priv)
+ struct powernv_led_common {
+-	/*
+-	 * By default unload path resets all the LEDs. But on PowerNV
+-	 * platform we want to retain LED state across reboot as these
+-	 * are controlled by firmware. Also service processor can modify
+-	 * the LEDs independent of OS. Hence avoid resetting LEDs in
+-	 * unload path.
+-	 */
+-	bool		led_disabled;
+-
+ 	/* Max supported LED type */
+ 	__be64		max_led_type;
+ 
+@@ -178,10 +169,6 @@ static int powernv_brightness_set(struct led_classdev *led_cdev,
+ 	struct powernv_led_common *powernv_led_common = powernv_led->common;
+ 	int rc;
+ 
+-	/* Do not modify LED in unload path */
+-	if (powernv_led_common->led_disabled)
+-		return 0;
+-
+ 	mutex_lock(&powernv_led_common->lock);
+ 	rc = powernv_led_set(powernv_led, value);
+ 	mutex_unlock(&powernv_led_common->lock);
+@@ -225,6 +212,14 @@ static int powernv_led_create(struct device *dev,
+ 
+ 	powernv_led->cdev.brightness_set_blocking = powernv_brightness_set;
+ 	powernv_led->cdev.brightness_get = powernv_brightness_get;
++	/*
++	 * By default unload path resets all the LEDs. But on PowerNV
++	 * platform we want to retain LED state across reboot as these
++	 * are controlled by firmware. Also service processor can modify
++	 * the LEDs independent of OS. Hence avoid resetting LEDs in
++	 * unload path.
++	 */
++	powernv_led->cdev.flags = LED_RETAIN_AT_SHUTDOWN;
+ 	powernv_led->cdev.brightness = LED_OFF;
+ 	powernv_led->cdev.max_brightness = LED_FULL;
+ 
+@@ -313,9 +308,7 @@ static void powernv_led_remove(struct platform_device *pdev)
  {
- 	struct fwnode_handle *child = NULL;
-@@ -556,6 +563,12 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 	if (IS_ERR(priv->enable_gpio))
- 		priv->enable_gpio = NULL;
+ 	struct powernv_led_common *powernv_led_common;
  
-+	if (priv->enable_gpio) {
-+		ret = devm_add_action(&priv->client->dev, gpio_set_low_action, priv);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	priv->regulator = devm_regulator_get(&priv->client->dev, "vin");
- 	if (IS_ERR(priv->regulator))
- 		priv->regulator = NULL;
-@@ -691,7 +704,10 @@ static int lm3532_probe(struct i2c_client *client)
- 		return ret;
- 	}
+-	/* Disable LED operation */
+ 	powernv_led_common = platform_get_drvdata(pdev);
+-	powernv_led_common->led_disabled = true;
  
--	mutex_init(&drvdata->lock);
-+	ret = devm_mutex_init(&client->dev, &drvdata->lock);
-+	if (ret)
-+		return ret;
-+
- 	i2c_set_clientdata(client, drvdata);
- 
- 	ret = lm3532_parse_node(drvdata);
-@@ -703,16 +719,6 @@ static int lm3532_probe(struct i2c_client *client)
- 	return ret;
- }
- 
--static void lm3532_remove(struct i2c_client *client)
--{
--	struct lm3532_data *drvdata = i2c_get_clientdata(client);
--
--	mutex_destroy(&drvdata->lock);
--
--	if (drvdata->enable_gpio)
--		gpiod_direction_output(drvdata->enable_gpio, 0);
--}
--
- static const struct of_device_id of_lm3532_leds_match[] = {
- 	{ .compatible = "ti,lm3532", },
- 	{},
-@@ -727,7 +733,6 @@ MODULE_DEVICE_TABLE(i2c, lm3532_id);
- 
- static struct i2c_driver lm3532_i2c_driver = {
- 	.probe = lm3532_probe,
--	.remove = lm3532_remove,
- 	.id_table = lm3532_id,
- 	.driver = {
- 		.name = LM3532_NAME,
+ 	/* Destroy lock */
+ 	mutex_destroy(&powernv_led_common->lock);
 -- 
 2.25.1
 
