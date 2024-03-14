@@ -1,44 +1,44 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7246D1AD;
-	Thu, 14 Mar 2024 08:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DD26D1C6;
+	Thu, 14 Mar 2024 08:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710405983; cv=none; b=toSqondCxUvTGV/gzOjKcjs+/MGyABWgfFfHpY5xTYchbuo7IWIJhVBZvSY3fU9Ofa5lWaVDBfKbEJbzx+reEmYnVzmzylAz2AgiylhUnFwSZkyMZInbWOpibiRVzNOOxmvuL06Rq5SLB+GGc3WNzX+uw43JSz2BX36+LaosQGg=
+	t=1710405984; cv=none; b=eBavXfidRS6fjCXVZPXeytUyKXUnSRAS4hDv7ARgdiz21JpsArEwCthZ4y+Qf3JQxFOp0fYoaLs19fFLMDZAOC7NKWZdqiWXlrTUhgoTl70qab27/HsrhFLfRMBeYcmQ3QPZ0D+HUjgGX3R3NAXnEErDUlKoltOIm6rU25a81Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710405983; c=relaxed/simple;
-	bh=1wp47qp/alsOZHbeqiRWsh/Pk9ud/IcelhS3NNl88Xs=;
+	s=arc-20240116; t=1710405984; c=relaxed/simple;
+	bh=PIDOEaAKLWz5GNkyRQxsE0YdmWP8uMNFDBG7DQx5cxk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M9USZwieycXOEfMKDVqE9knsyFvRXz64g7R9VLhoowRaCJDkXrXRxpTlIqocLYRMkFwCNLRj3JNN1uvV1n5cD282GkAovGEKCVzV4L/Ecp8ic7xkds6r97r/3FDP7vajBAgUof1dfoLeWGozhErzqiCbU8kpn2xW1ehovYHOgao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Km0rU/5E; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=FyVXdESdnXN+FUXszipEuPxnHGXya9WVH+tDn+YkwOKXUkOV8lQiA6KKYvYZLMJhvpBV6AmdWP80v1QXLVcwHQpDYj4VEvs4jBnAZ50yX1Nbg7My0bh2ngM+1r4rrT+9C3JHcLriSACGReXbbGMzOTmk6F/LbJJ8li1syb0zXUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=vQQ3Y3Cw; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Km0rU/5E"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="vQQ3Y3Cw"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id F3DA2120008;
-	Thu, 14 Mar 2024 11:46:13 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru F3DA2120008
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 57682120015;
+	Thu, 14 Mar 2024 11:46:15 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 57682120015
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1710405974;
-	bh=7LCfx2PuYn9jYgJQVVqsryHiVahatRhw2btAYqtVZKA=;
+	s=mail; t=1710405975;
+	bh=LmfiAF+FpdVlIohenEIhk6shsOuTjKAZ1y/DMUyjSdQ=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Km0rU/5EocJAGAGZUTwMqQW8XgG6JPo2LG/cdDXbhCOBG50+BbEaCA4CUdi3q8YO5
-	 Tj/UlU/1LzkSQb/lXzFcXEj+u82RamL1hG+CJRep9/llwry1Y8RXQSK8mIA2/9iHQ5
-	 7VITNa4d06ebreVhGtVi3kAXq6FHvP71gUt0ezJI1BtmrGnGRB8OascoAGnbovXxIy
-	 Fem0sKyRXdYQ1wGGgZ3Ujfrnis7mubDgTFYP7Q/YfWpYEkPQbNk/cY/eyORXa/xDOK
-	 +s4x1AHMuYKwW2Kyjs2Ju6LsJKuKiey+op77hhmjCfN8Uw0b6q4eNZpkdOrvDoWROa
-	 L8hJ1tqXgjPzQ==
+	b=vQQ3Y3CwqnylN4ByQc+t+A1gysJ+XZa/5D4ndNa6wEnChH84sbaO6l5wyyuPg3DQo
+	 KP7RsorYZN4hJkmr4wWEJ4yozLONU4M+7JGanAoDmXcRVbpu155M6AcO3lNpxVT7Jc
+	 /rtFydf1v9Nlf6Cr+kf4urBQtvjnhhvaGp3Q7I3r9c5rA7ZeKCeJTioxyukbGbBxzR
+	 00SjSkdUaFjl5fUMQuiWBmS3p/dKHl3dpykFWYM8qNK/6hwc6WwjJoNo2kw+Fl5+rI
+	 hXphqyZ/+K4gDyKImWORG7x23b5TsvzxZjfPjHrr8xCCdbvjW2Yus7lzbtlB5cgaL6
+	 jPTA6bZjM4uVA==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 14 Mar 2024 11:46:13 +0300 (MSK)
+	Thu, 14 Mar 2024 11:46:15 +0300 (MSK)
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 14 Mar 2024 11:46:13 +0300
+ 15.2.1118.40; Thu, 14 Mar 2024 11:46:14 +0300
 From: George Stark <gnstark@salutedevices.com>
 To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 	<vadimp@nvidia.com>, <mpe@ellerman.id.au>, <npiggin@gmail.com>,
@@ -49,9 +49,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linuxppc-dev@lists.ozlabs.org>, <kernel@salutedevices.com>, George Stark
 	<gnstark@salutedevices.com>
-Subject: [PATCH v6 1/9] locking/mutex: introduce devm_mutex_init
-Date: Thu, 14 Mar 2024 11:45:23 +0300
-Message-ID: <20240314084531.1935545-2-gnstark@salutedevices.com>
+Subject: [PATCH v6 7/9] leds: mlxreg: use devm_mutex_init for mutex initializtion
+Date: Thu, 14 Mar 2024 11:45:29 +0300
+Message-ID: <20240314084531.1935545-8-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240314084531.1935545-1-gnstark@salutedevices.com>
 References: <20240314084531.1935545-1-gnstark@salutedevices.com>
@@ -82,96 +82,60 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/02/29 19:21:00 #23899999
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Using of devm API leads to a certain order of releasing resources.
-So all dependent resources which are not devm-wrapped should be deleted
-with respect to devm-release order. Mutex is one of such objects that
-often is bound to other resources and has no own devm wrapping.
-Since mutex_destroy() actually does nothing in non-debug builds
-frequently calling mutex_destroy() is just ignored which is safe for now
-but wrong formally and can lead to a problem if mutex_destroy() will be
-extended so introduce devm_mutex_init()
+In this driver LEDs are registered using devm_led_classdev_register()
+so they are automatically unregistered after module's remove() is done.
+led_classdev_unregister() calls module's led_set_brightness() to turn off
+the LEDs and that callback uses mutex which was destroyed already
+in module's remove() so use devm API instead.
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
-Suggested by-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- include/linux/mutex.h        | 27 +++++++++++++++++++++++++++
- kernel/locking/mutex-debug.c | 11 +++++++++++
- 2 files changed, 38 insertions(+)
+ drivers/leds/leds-mlxreg.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 67edc4ca2bee..f57e005ded24 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -22,6 +22,8 @@
- #include <linux/cleanup.h>
- #include <linux/mutex_types.h>
+diff --git a/drivers/leds/leds-mlxreg.c b/drivers/leds/leds-mlxreg.c
+index d8e3d5d8d2d0..b1510cd32e47 100644
+--- a/drivers/leds/leds-mlxreg.c
++++ b/drivers/leds/leds-mlxreg.c
+@@ -257,6 +257,7 @@ static int mlxreg_led_probe(struct platform_device *pdev)
+ {
+ 	struct mlxreg_core_platform_data *led_pdata;
+ 	struct mlxreg_led_priv_data *priv;
++	int err;
  
-+struct device;
-+
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- # define __DEP_MAP_MUTEX_INITIALIZER(lockname)			\
- 		, .dep_map = {					\
-@@ -117,6 +119,31 @@ do {							\
- } while (0)
- #endif /* CONFIG_PREEMPT_RT */
+ 	led_pdata = dev_get_platdata(&pdev->dev);
+ 	if (!led_pdata) {
+@@ -268,26 +269,21 @@ static int mlxreg_led_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
  
-+#ifdef CONFIG_DEBUG_MUTEXES
+-	mutex_init(&priv->access_lock);
++	err = devm_mutex_init(&pdev->dev, &priv->access_lock);
++	if (err)
++		return err;
 +
-+int __devm_mutex_init(struct device *dev, struct mutex *lock);
-+
-+#else
-+
-+static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
-+{
-+	/*
-+	 * When CONFIG_DEBUG_MUTEXES is off mutex_destroy is just a nop so
-+	 * no really need to register it in devm subsystem.
-+	 */
-+	return 0;
-+}
-+
-+#endif
-+
-+#define devm_mutex_init(dev, mutex)			\
-+({							\
-+	typeof(mutex) mutex_ = (mutex);			\
-+							\
-+	mutex_init(mutex_);				\
-+	__devm_mutex_init(dev, mutex_);			\
-+})
-+
- /*
-  * See kernel/locking/mutex.c for detailed documentation of these APIs.
-  * Also see Documentation/locking/mutex-design.rst.
-diff --git a/kernel/locking/mutex-debug.c b/kernel/locking/mutex-debug.c
-index bc8abb8549d2..6aa77e3dc82e 100644
---- a/kernel/locking/mutex-debug.c
-+++ b/kernel/locking/mutex-debug.c
-@@ -19,6 +19,7 @@
- #include <linux/kallsyms.h>
- #include <linux/interrupt.h>
- #include <linux/debug_locks.h>
-+#include <linux/device.h>
+ 	priv->pdev = pdev;
+ 	priv->pdata = led_pdata;
  
- #include "mutex.h"
- 
-@@ -89,6 +90,16 @@ void debug_mutex_init(struct mutex *lock, const char *name,
- 	lock->magic = lock;
+ 	return mlxreg_led_config(priv);
  }
  
-+static void devm_mutex_release(void *res)
-+{
-+	mutex_destroy(res);
-+}
-+
-+int __devm_mutex_init(struct device *dev, struct mutex *lock)
-+{
-+	return devm_add_action_or_reset(dev, devm_mutex_release, lock);
-+}
-+
- /***
-  * mutex_destroy - mark a mutex unusable
-  * @lock: the mutex to be destroyed
+-static void mlxreg_led_remove(struct platform_device *pdev)
+-{
+-	struct mlxreg_led_priv_data *priv = dev_get_drvdata(&pdev->dev);
+-
+-	mutex_destroy(&priv->access_lock);
+-}
+-
+ static struct platform_driver mlxreg_led_driver = {
+ 	.driver = {
+ 	    .name = "leds-mlxreg",
+ 	},
+ 	.probe = mlxreg_led_probe,
+-	.remove_new = mlxreg_led_remove,
+ };
+ 
+ module_platform_driver(mlxreg_led_driver);
 -- 
 2.25.1
 
