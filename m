@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1654FAC;
-	Mon,  1 Apr 2024 21:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA6F54FAD;
+	Mon,  1 Apr 2024 21:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712006655; cv=none; b=gnL0fpOR5tslnqjhxQbAdBJU+jGm+4I6n4lzW0vOkeczvIAsdPs/jjIz1sCWKXi0cxRMO5lVntBFpS06FV9E6KN96crg6bnjw7qRmOG51o8Tg9DsGFFZ0PrIlcguCfnZje3nSe42tNEQ/PYwPISHgcPrv1yb7YIT/3YmaLT1Io8=
+	t=1712006655; cv=none; b=GSSI8nQCnx4QlHrApN8vFSfPYByVDDxsbA3lOLIUPhoXwb/WBskgszNbxCXHlP6wps+3cF4dQb4RT2WolKzqAVy5lbrpEBEmwVj8VIhjcHccEIiV2RlhtH+eRVhZWJ9mtbke+YbHrzOLBvvr5NRmXFEevQmX2V20HGIi191DFHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712006655; c=relaxed/simple;
-	bh=JvZ9DjATerhrdZXHJcR5iNqmcuYJoWGExgpd7+c6UhM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ovJE1wQgLQ8roWTbiq4ANJuKooTxfU9QqYymUHodRdCctST6BDYn2E4jvK0ZQjy71gmoEvYcxe7wPKwVmItkyh4jGirWqi/WG1giRmTzIhe5fxBvGr26WsArYobxOuSmJfvEPTd9hQRmIMLVgJwdiGujYeIHIjg4U2bGw4np9EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpC6pCTP; arc=none smtp.client-ip=10.30.226.201
+	bh=npQsuKJCSjPU1CmK2mJzpdJDvL/vcRiQ7VqJraBwVjk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZHmU2lg3QZgkjYmETQCdgLM1/Xd1MLhqIl6+RTKg8L4mfU2VH3Ij9gkS6sUmopOV5VALhJsUSyiCCx7xqkMNJDYf3AU5IL5/0y4vHUXyzavU4n7CQcZu4u0Wl5n3iwERY5o2mAjjXkXvXwyaU5dJptqCpn/6nqF8Wovo9/sjwho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdMA86/Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpC6pCTP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A7D01C433F1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdMA86/Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D58A2C433A6;
 	Mon,  1 Apr 2024 21:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1712006654;
-	bh=JvZ9DjATerhrdZXHJcR5iNqmcuYJoWGExgpd7+c6UhM=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=EpC6pCTP/4yn8SsPctg6qvbKEvmTz3dFwiMhjTjvZ0FiEqFF4zeoyxn4tmhJ6O6Ro
-	 YXHkYqTs+PuzgL4ZZfv7ipdnVnBnJeMxTXbiJ4UF6a44M7KUAe8Hmb4prTKU8nmHUo
-	 U9oBRSDeILQgnCZJNFkJAqYXPRzzYjUL4cL+3rqp7mKyrZqcEcLHNpJzkzRztWYO5C
-	 MEwoKc/IEx4VsGjL+8m24mJDmmZ5EgFeTW8Jpnr3yvpqt3/8LPgdECVEaDYdbtVlLN
-	 LjfNAZRyQKur93gwm8YWCBIgb+dwCZWjtYoRjXG6IwAZryBBba5nIBDAvjXo9G4KRB
-	 gQx3jY7P9i62A==
+	bh=npQsuKJCSjPU1CmK2mJzpdJDvL/vcRiQ7VqJraBwVjk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=SdMA86/YEPcmQGsy+iEO9KDVIHZrZ1MKkpZ0+DVJFcLp7IVVfJxoajkUA17yUxiTM
+	 fC+MHpRwUxXhvmKENybn6YFALrfsnHPCg8wTTlinI6BVc6WuyfrmQ4RzQWQaFx5eqI
+	 EUqgHnCIfgSSDVVcS5izJH00f09+SMgkf5dDV9zaJ6ty4VX/dvgTeY6gVzBQn8yfB0
+	 5W8bUGRqOtU31vfuBqIYuuqa5N378JBX6b7rxFOt+AXB1oimAi9furnHa4wcdEQk4W
+	 GM8wxhco7NvxPBVwemI5B2nFiuLN5MNZIHFgV708XYLAZwH0MZ6DpfnacRw0mAhUls
+	 IPO2mgnTjSgSw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91971CD1294;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8321CD1297;
 	Mon,  1 Apr 2024 21:24:14 +0000 (UTC)
 From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Subject: [PATCH v2 0/3] Add sy7802 flash led driver
-Date: Mon, 01 Apr 2024 23:23:54 +0200
-Message-Id: <20240401-sy7802-v2-0-1138190a7448@apitzsch.eu>
+Date: Mon, 01 Apr 2024 23:23:57 +0200
+Subject: [PATCH v2 3/3] arm64: dts: qcom: msm8939-longcheer-l9100: Add rear
+ flash
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -40,9 +41,9 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAOolC2YC/zXMQQ6DIBCF4auYWZcGR9Cmq96jcYEIZTZqGEtqD
- XcvNXH5v7x8O7CL5Bju1Q7RJWKapxJ4qcAGM72coLE0oEQlG9SCt+4mUXglvW29bjVqKOclOk+
- fA3r2pQPxOsftcFP9X0+iO4lUCynGoVNmaNAb4x9mofXLNlzdG/qc8w897YTOngAAAA==
+Message-Id: <20240401-sy7802-v2-3-1138190a7448@apitzsch.eu>
+References: <20240401-sy7802-v2-0-1138190a7448@apitzsch.eu>
+In-Reply-To: <20240401-sy7802-v2-0-1138190a7448@apitzsch.eu>
 To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
  Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
@@ -56,11 +57,11 @@ Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  phone-devel@vger.kernel.org, 
  =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1712006653; l=1363;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1712006653; l=1408;
  i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=JvZ9DjATerhrdZXHJcR5iNqmcuYJoWGExgpd7+c6UhM=;
- b=CsSah5WnQVUtjNjrlw5gu4Gao8S8QY2nMFQ6MIhCxS6uoASsfJ8db1HQdi0pBimstKMB/Wsz7
- BYz4yP8sITnBiqcqs5eQgZrY8IR7yz9VdSWr2xW2mJX2gL5YTJP3gay
+ bh=nJ8Y+0v6j8LoIOHmDYBEGHd/SEM9XgaMCtxGw6/naMk=;
+ b=gqfbtPehMV8+wP3w7HI3sn6C+xAFx3683GBQL2w0H7Hf+9K/ARgklPCxZQJXzmeCi1/76iRa0
+ McESBGTHjzqCsfs46R/pCp0ajvP5etuZo8YkNnmKLPYU3ITM/2bjw1Z
 X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
  pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
 X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
@@ -68,40 +69,61 @@ X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
 X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
 Reply-To: git@apitzsch.eu
 
-This series introduces a driver for the Silergy SY7802 charge pump used
-in the BQ Aquaris M5 and X5 smartphones.
+From: André Apitzsch <git@apitzsch.eu>
 
-The implementation is based on information extracted from downstream as
-the datasheet provided by a distributor of the hardware didn't include
-any information about the i2c register description.
+The phone has a Silergy SY7802 flash LED controller.
 
 Signed-off-by: André Apitzsch <git@apitzsch.eu>
 ---
-Changes in v2:
-- bindings: remove unneeded allOf
-- bindings: example: move flash-led-controller under i2c node to fix
-  check error
-- Cc to phone-devel
-- Link to v1: https://lore.kernel.org/r/20240327-sy7802-v1-0-db74ab32faaf@apitzsch.eu
+ .../boot/dts/qcom/msm8939-longcheer-l9100.dts      | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
----
-André Apitzsch (3):
-      dt-bindings: leds: Add Silergy SY7802 flash LED
-      leds: sy7802: Add support for Silergy SY7802 flash LED controller
-      arm64: dts: qcom: msm8939-longcheer-l9100: Add rear flash
+diff --git a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
+index e3404c4455cf..528737929274 100644
+--- a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
++++ b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
+@@ -159,6 +159,25 @@ led@2 {
+ 			};
+ 		};
+ 	};
++
++	flash-led-controller@53 {
++		compatible = "silergy,sy7802";
++		reg = <0x53>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		enable-gpios = <&tlmm 16 GPIO_ACTIVE_HIGH>;
++
++		pinctrl-0 = <&camera_rear_flash_default>;
++		pinctrl-names = "default";
++
++		led@0 {
++			reg = <0>;
++			function = LED_FUNCTION_FLASH;
++			color = <LED_COLOR_ID_WHITE>;
++			led-sources = <0>, <1>;
++		};
++	};
+ };
+ 
+ &blsp_i2c3 {
+@@ -318,6 +337,13 @@ camera_front_flash_default: camera-front-flash-default-state {
+ 		bias-disable;
+ 	};
+ 
++	camera_rear_flash_default: camera-rear-flash-default-state {
++		pins = "gpio9", "gpio16", "gpio51";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
+ 	gpio_hall_sensor_default: gpio-hall-sensor-default-state {
+ 		pins = "gpio20";
+ 		function = "gpio";
 
- .../devicetree/bindings/leds/silergy,sy7802.yaml   | 100 ++++
- .../boot/dts/qcom/msm8939-longcheer-l9100.dts      |  26 +
- drivers/leds/flash/Kconfig                         |  11 +
- drivers/leds/flash/Makefile                        |   1 +
- drivers/leds/flash/leds-sy7802.c                   | 532 +++++++++++++++++++++
- 5 files changed, 670 insertions(+)
----
-base-commit: a6bd6c9333397f5a0e2667d4d82fef8c970108f2
-change-id: 20240325-sy7802-f40fc6f56525
-
-Best regards,
 -- 
-André Apitzsch <git@apitzsch.eu>
+2.44.0
 
 
