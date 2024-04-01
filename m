@@ -1,146 +1,190 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B8C1E888;
-	Mon,  1 Apr 2024 13:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97092A1BF;
+	Mon,  1 Apr 2024 21:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711976630; cv=none; b=efrPEvKDrnglGvmhYf0rmq1tKwf/SbKb7zMjDo5C68QfVKD3R0yBaWPfpA0EAzgeZZwzF62Hysmzmursy/a8YlN9VAGMCOVAUp7IOetpjEXXh4LgmmqegPFq5XSKetphAP70b8y0e6G2uvaC+lFEE+1s7/GHTWa3ZIVM/tTN+eg=
+	t=1712006655; cv=none; b=CbJG/u1/SHbeQEINKTGq2DNPHe0Ssn/XQVurYiIsOf9wOXpym4tIoY7ANZo2UbZ9zTIoEHEne0bSyNHoiLkhpxOBgIpfP0O05P1/n3FHxRcdgfFiUBWPAzc4QKpeGBr1xma6yUvP8E7FZssbC2OS2229A/1mm76L2RN2uHVYS04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711976630; c=relaxed/simple;
-	bh=6IX8cDFUlSsk6IxtbhcF68yxgznuBZCAUSinqNSI60Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TL2whoBUq9rL4IQyYOEjNJ9s8cLnvFwJMvl0v+OSvQ2V3IpgOpGRGmxZFB6KjxMz0mVrex/cMx+hvt9OJ4jR6ygcfZLPJXzdFGk1r3htJ7L24qneeWTAv7KKH5t31glw6+t8c43KZFF2spw5x6qa/s/Nnt+tDI9Q2Q0cJzwHw4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9tDxF+B; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712006655; c=relaxed/simple;
+	bh=7PNroOoNcSozKXZaTo+xY8DjgQ9Ph0at2E5Zu60uSDc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mCqR++wd/TSInBNHlTmdY0eA8HAbPrSdcLFa/IV8xJAmxmY1ZFxpaAQqyXNzhm89xwB0qG149iaT9kilDSbdGf6tjxKpfgZPSxyecY1pKnlmYBQRkgyHCvMTrhLt7VXBtQilItlkZYuzKgZ5pG03hU9RPYVuRGepLl/1X3FUo58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXh0Qu64; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9tDxF+B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F3AC43390;
-	Mon,  1 Apr 2024 13:03:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXh0Qu64"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BDAC4C43394;
+	Mon,  1 Apr 2024 21:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711976629;
-	bh=6IX8cDFUlSsk6IxtbhcF68yxgznuBZCAUSinqNSI60Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t9tDxF+B/kICX01tgWTInIvIoSP9ORRRD9KOxwP84iHOUi0SKK/Ie42RUnp7t63FN
-	 HVqjkZ5KlC6r9xKWCl/PeAJMG/KIh5KXuih4+kiHghdkd8/st153SMr/ZNhz+ZL23p
-	 D6EuKGrsL+Ai1zBEWIcpOvcddijki3UnjLotM8odP4gXTf7VBLo8n3OihiTeVz6O/V
-	 93Vr1FFFPxCnRAvBkZ9v758Qjjkohp6VSPznDAbcnaGecnpbMEcO5WLl7vGxIXqsxs
-	 CUw4xRe+JpxokeW//OF/xQU0Z3nndTfOdl9EVWPpGm58X/UdaltgtXdup/n47CR6ru
-	 8Mu87fvXgThzg==
-Date: Mon, 1 Apr 2024 08:03:47 -0500
-From: Rob Herring <robh@kernel.org>
-To: Patrick Gansterer <paroga@paroga.com>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, Lee Jones <lee@kernel.org>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: backlight: Add Texas Instruments
- LM3509
-Message-ID: <20240401130347.GA274540-robh@kernel.org>
-References: <20240330145931.729116-1-paroga@paroga.com>
- <20240330145931.729116-2-paroga@paroga.com>
+	s=k20201202; t=1712006654;
+	bh=7PNroOoNcSozKXZaTo+xY8DjgQ9Ph0at2E5Zu60uSDc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=sXh0Qu64VJBB9AhBiy/8p0Bj58UOqnQd57igpzSvXCNezwZcR+q9IccEyxOXOto1y
+	 DkR4KCMMvI20HXLmTw7RzkDhlQiSmQfgP9rU2ts017uEXEhlilsgOahKsfB/negII2
+	 n5eYPr1iuJizz/MmPx9OhVY0F7TwCCR9K/3dRVIpDnYp7aoI4HZePhyREreCBPaU0o
+	 sT0ziUYFmbrUXttGNszG13z0SM6gxYIJBDor4wTp0pbzQI0LCSX3R/BaMczeUhU4ln
+	 CejBjSMYN0XxGjtZyHPL6Vdxg/vR8IiCEyKqxE1gikxjlxHjIxpzysGkFETtVx0VDf
+	 RHT6h159KsJVQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5000CD1293;
+	Mon,  1 Apr 2024 21:24:14 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Date: Mon, 01 Apr 2024 23:23:55 +0200
+Subject: [PATCH v2 1/3] dt-bindings: leds: Add Silergy SY7802 flash LED
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240330145931.729116-2-paroga@paroga.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240401-sy7802-v2-1-1138190a7448@apitzsch.eu>
+References: <20240401-sy7802-v2-0-1138190a7448@apitzsch.eu>
+In-Reply-To: <20240401-sy7802-v2-0-1138190a7448@apitzsch.eu>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1712006653; l=2814;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=oNM0ya5oNykHINhTxOzzwyy/jcGSPZfyaMMYcdcGZWM=;
+ b=/zydaTt+SHiXn+Dz5Npbr9hbi+pY9nvC43lHAbEZ0Se1tEy3tq9tO3IEqw7t0L0NlSLMPaDBH
+ VR8GP458pcGA0DNm8DZSKO7NAs+3Ga5Z2m+bn0SUCYbI/+j1EZPYtEz
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-On Sat, Mar 30, 2024 at 03:59:24PM +0100, Patrick Gansterer wrote:
-> Add Device Tree bindings for Texas Instruments LM3509 - a
-> High Efficiency Boost for White LED's and/or OLED Displays
-> 
-> Signed-off-by: Patrick Gansterer <paroga@paroga.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> ---
->  .../bindings/leds/backlight/ti,lm3509.yaml    | 139 ++++++++++++++++++
->  1 file changed, 139 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/ti,lm3509.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/ti,lm3509.yaml b/Documentation/devicetree/bindings/leds/backlight/ti,lm3509.yaml
-> new file mode 100644
-> index 000000000000..b67f67648852
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/ti,lm3509.yaml
-> @@ -0,0 +1,139 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/ti,lm3509.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI LM3509 High Efficiency Boost for White LED's and/or OLED Displays
-> +
-> +maintainers:
-> +  - Patrick Gansterer <paroga@paroga.com>
-> +
-> +description:
-> +  The LM3509 current mode boost converter offers two separate outputs.
-> +  https://www.ti.com/product/LM3509
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,lm3509
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  ti,brightness-rate-of-change-us:
-> +    description: Brightness Rate of Change in microseconds.
-> +    enum: [51, 13000, 26000, 52000]
-> +
-> +  ti,oled-mode:
-> +    description: Enable OLED mode.
-> +    type: boolean
-> +
-> +patternProperties:
-> +  "^led@[01]$":
-> +    type: object
-> +    description: Properties for a string of connected LEDs.
-> +
-> +    allOf:
+From: André Apitzsch <git@apitzsch.eu>
 
-You don't need allOf here.
+Document Silergy SY7802 flash LED driver devicetree bindings.
 
-> +      - $ref: common.yaml#
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          The control register that is used to program the two current sinks.
-> +          The LM3509 has two registers (BMAIN and BSUB) and are represented
-> +          as 0 or 1 in this property. The two current sinks can be controlled
-> +          independently with both registers, or register BMAIN can be
-> +          configured to control both sinks with the led-sources property.
-> +        minimum: 0
-> +        maximum: 1
-> +
-> +      label: true
-> +
-> +      led-sources:
-> +        allOf:
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+ .../devicetree/bindings/leds/silergy,sy7802.yaml   | 100 +++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-Or here.
+diff --git a/Documentation/devicetree/bindings/leds/silergy,sy7802.yaml b/Documentation/devicetree/bindings/leds/silergy,sy7802.yaml
+new file mode 100644
+index 000000000000..46b8e5452b62
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/silergy,sy7802.yaml
+@@ -0,0 +1,100 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/silergy,sy7802.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Silergy SY7802 1800mA Boost Charge Pump LED Driver
++
++maintainers:
++  - André Apitzsch <git@apitzsch.eu>
++
++description: |
++  The SY7802 is a current-regulated charge pump which can regulate two current
++  levels for Flash and Torch modes.
++
++  The SY7802 is a high-current synchronous boost converter with 2-channel
++  high side current sources. Each channel is able to deliver 900mA current.
++
++properties:
++  compatible:
++    enum:
++      - silergy,sy7802
++
++  reg:
++    maxItems: 1
++
++  enable-gpios:
++    maxItems: 1
++    description: A connection to the 'EN' pin.
++
++  flash-gpios:
++    maxItems: 1
++    description: A connection to the 'FLEN' pin.
++
++  vin-supply:
++    description: Regulator providing power to the 'VIN' pin.
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^led@[0-1]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        description: Index of the LED.
++        minimum: 0
++        maximum: 1
++
++      led-sources:
++        minItems: 1
++        maxItems: 2
++        items:
++          minimum: 0
++          maximum: 1
++
++    required:
++      - reg
++      - led-sources
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++  - enable-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        flash-led-controller@53 {
++            compatible = "silergy,sy7802";
++            reg = <0x53>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            enable-gpios = <&tlmm 16 GPIO_ACTIVE_HIGH>;
++
++            led@0 {
++                reg = <0>;
++                function = LED_FUNCTION_FLASH;
++                color = <LED_COLOR_ID_WHITE>;
++                led-sources = <0>, <1>;
++            };
++        };
++    };
 
-> +          - minItems: 1
-> +            maxItems: 2
-> +            items:
-> +              minimum: 0
-> +              maximum: 1
+-- 
+2.44.0
+
+
