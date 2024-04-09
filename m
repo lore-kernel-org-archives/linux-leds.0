@@ -1,109 +1,107 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21527E580;
-	Tue,  9 Apr 2024 08:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681A486AF4;
+	Tue,  9 Apr 2024 11:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712653189; cv=none; b=i+7zl/xnMZRrNzs6/gzQagqHBcqHrOXw4lo/vXyHObWOIw0L/YFHF+UiaZsC5ZD4Jf0T3GC2YeEk3y4hAa7r3b4+5U9h0HhfCCRsbdumjPwWRLGSDOeZZOIurOSwRNmiXMSKGkqlKef2z6TIaU491qVwGX6uFYyz3C1iwPmJosU=
+	t=1712663146; cv=none; b=Dxzcw0zeBQc6+sOuGZwSiyGxangfBNuPmeY9ctrh3PAZlkzw+r4JFzLCTS97bEcLICCPg3UvrgQxBWbmqeMzLKSSsXE7kVxtxRaZXJtszO7mMy7Wun5ZYZYMTz6ZxAIj8Hika9EGmuDCbOSuOd/KLL7frT8R61yKxu3Z5/wKde4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712653189; c=relaxed/simple;
-	bh=Ji9qU29b0LOvBoHZAKGFxAoA21Xv44MATWXua9pnMVk=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kxRVYJz1crO2Od3Tp/oeh2zQBSYG1kcIy5KiwYO/xxj4g44dgkV7vOgWon+Hcyups6dgeLxQgg5ONrIeZ7GU7BrQTBH4iMF0fOX+rssAoA+SO/jd122JT6cYeWg4LSlCmeGnVkCbItpm2ZoAUs51YCj9u9fzC7lCcAxdAk3xwvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=vH8VJKBV; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1712663146; c=relaxed/simple;
+	bh=lC4EWcyFhRfCmq02OzOhjC6dK5sQhjYXtXyu0Z/pVO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y849mvezmQqkhDebljdhPA6nqjUhGyDeU4I16abCo8HRJ806v7Z+r0cciYZXGWYkak5OsFEKKqhJJ927kpl9iyGpvvHpAXUlrHfqIWyou9qUDJfZFv+xxTaic+N4vHy28kvVrPK0XB5GDsbsooT2bx4GrilK+y4X1ThYdKc7So4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=w3c2kQFO; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="vH8VJKBV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=q64bAyl+Qg6fQaVjCQKqO/8qybmHcNNCXqZE2H37A1A=;
-	t=1712653187; x=1713862787; b=vH8VJKBVhh9f70N0wksw9vwHlD+oMRxRxsA5JMV6duo/PY9
-	mBQ9RnONVPltUJrzI8c/sj7fN3PlaUkwgTRAh+B6zTwEXeJoUSFSevPDYemtrVJ27WfgKJ/RFQxKp
-	hqRmjUjlIVryoyF7fdRA5/hUuj79zSYvxZa6yvJNV0QK8tsyCHr8vQjZxC4u4D00L9XVf4FamO22S
-	8vPqbnqCGGVsd23wKWx1MlGx8qULg1SJuXdKuw8EtmisqKTROZugy0fD1UpoFcvp2I90Vr4wJNCzu
-	nRjBKmWWqd9Z96PWdrePBPJm7tGDGxZtQP9/0kXSMT0Uybl1sgzDKSIt7vcL4Luw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ru7KS-0000000HUKi-05fi;
-	Tue, 09 Apr 2024 10:59:44 +0200
-Message-ID: <157c703381624d331c7de4aeb2b2802789239456.camel@sipsolutions.net>
-Subject: Re: 6.9.0-rc2+ kernel hangs on boot (bisected, maybe LED related)
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Linux regressions mailing list <regressions@lists.linux.dev>, Ben Greear
-	 <greearb@candelatech.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-leds@vger.kernel.org
-Date: Tue, 09 Apr 2024 10:59:42 +0200
-In-Reply-To: <93494f0b-ad05-4566-b454-fa36a7dac248@leemhuis.info>
-References: <30f757e3-73c5-5473-c1f8-328bab98fd7d@candelatech.com>
-	 <30819e01-43ce-638f-0cc6-067d6a8d03c7@candelatech.com>
-	 <89a9eec3-337f-3c9f-6bbe-00a26a15287c@candelatech.com>
-	 <05545ecdd2b05223b9204131b0ce9ba33460f44c.camel@sipsolutions.net>
-	 <93494f0b-ad05-4566-b454-fa36a7dac248@leemhuis.info>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="w3c2kQFO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1712663142;
+	bh=lC4EWcyFhRfCmq02OzOhjC6dK5sQhjYXtXyu0Z/pVO8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=w3c2kQFOB9CvuYyVBDEo7ncdVlz3Zt9JgxPdIIBosC8qcLaa0fP2yD2eKN4eGtn0J
+	 Uiu5m97KAjMcXiRPcc1XSZU9gtEdOpf2lACGTOibkpHatkd7aH0LOn914CkjBpm30M
+	 /VPO9c6ORB8uqvHl27IOmsB55KdiiH12cgbfZ2GYL2Ag6WDsck244+j+pmCQAjAn1H
+	 rWX02LNgggpNu9ExU7PMayxgB2nZh+1yujFm/W/VX2s3yYVyetuRVnd2l8au+MMCc3
+	 ioJTAjRb/nGm5yulnao+dR9u1V+URfC+eCL11sGhJt4f64X9pUlr8jJbWnkIqX3hz8
+	 RV4QuRAowgY7w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DDAEB37820F5;
+	Tue,  9 Apr 2024 11:45:41 +0000 (UTC)
+Message-ID: <c98ea7c9-6c9b-466d-bc49-ec76874ac6da@collabora.com>
+Date: Tue, 9 Apr 2024 13:45:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] leds: mt6360: Fix the second LED can not enable torch
+ mode by V4L2
+To: ChiaEn Wu <chiaen_wu@richtek.com>, pavel@ucw.cz, lee@kernel.org,
+ matthias.bgg@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ peterwu.pub@gmail.com, cy_huang@richtek.com
+References: <d1d1419bb322e2b0f40d34edd3a66979015b668c.1712657386.git.chiaen_wu@richtek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <d1d1419bb322e2b0f40d34edd3a66979015b668c.1712657386.git.chiaen_wu@richtek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-04-09 at 10:47 +0200, Linux regression tracking (Thorsten
-Leemhuis) wrote:
-> On 08.04.24 18:35, Johannes Berg wrote:
-> > On Wed, 2024-04-03 at 12:35 -0700, Ben Greear wrote:
-> > > >=20
-> > > > So, deadlock I guess....
-> > > >=20
-> > > >  =C2=A0INFO: task kworker/5:13:648 blocked for more than 180 second=
-s.
-> > > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Not tainted 6.9.0-rc2+ #23
-> > > > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this me=
-ssage.
-> > > > task:kworker/5:13=C2=A0=C2=A0=C2=A0 state:D stack:0=C2=A0=C2=A0=C2=
-=A0=C2=A0 pid:648=C2=A0=C2=A0 tgid:648=C2=A0=C2=A0 ppid:2=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 flags:0x00004000
-> > > > Workqueue: events deferred_probe_timeout_work_func
-> > > > Call Trace:
-> > > >  =C2=A0<TASK>
-> > > >  =C2=A0__schedule+0x43d/0xe20
-> > > >  =C2=A0schedule+0x31/0x130
-> > > >  =C2=A0schedule_timeout+0x1b9/0x1d0
-> > > >  =C2=A0? mark_held_locks+0x49/0x70
-> > > >  =C2=A0? lockdep_hardirqs_on_prepare+0xd6/0x170
-> > > >  =C2=A0__wait_for_common+0xb9/0x1d0
-> > > >  =C2=A0? usleep_range_state+0xb0/0xb0
-> > > >  =C2=A0? __flush_work+0x1ff/0x460
-> > > >  =C2=A0__flush_work+0x287/0x460
-> > > >  =C2=A0? flush_workqueue_prep_pwqs+0x120/0x120
-> > > >  =C2=A0deferred_probe_timeout_work_func+0x2b/0xa0
-> >=20
-> > This seems ... complex.
-> >=20
-> > Does changing iwlwifi's request_module() to request_module_nowait() in
-> > iwl_req_fw_callback() (only) fix it? I think we can do that, we don't
-> > really care at that point, and the issue here seems to be waiting for i=
-t
-> > while also other modules are loading and due to the hashing in
-> > idempotent() (kernel/module/main.c) it can't make progress.
->=20
-> Not my area of expertise, so listening to me my send you off-track.
->=20
-> Might this be related to the issue discussed here:
-> https://lore.kernel.org/all/ZhRD3cOtz5i-61PB@mail-itl/
->=20
-> See also:
-> https://lore.kernel.org/all/2695e9db-a5a0-4564-9812-a50b91fb1b46@gmail.co=
-m/
+Il 09/04/24 12:21, ChiaEn Wu ha scritto:
+> V4L2 will disable strobe mode of the LED device when enable torch mode,
+> but this logic will conflict with the "priv->fled_torch_used"
+> in "mt6360_strobe_set()". So after enabling torch mode of the first
+> LED, the second LED will not be able to enable torch mode correctly.
+> 
+> Therefore, at the beginning of "mt6360_strobe_set()", check whether the
+> state of the upcoming change and the current LED device state are the
+> same, so as to avoid the above problem.
+> 
+> Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
+> ---
+>   drivers/leds/flash/leds-mt6360.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/flash/leds-mt6360.c b/drivers/leds/flash/leds-mt6360.c
+> index a90de82f4568..1b75b4d36834 100644
+> --- a/drivers/leds/flash/leds-mt6360.c
+> +++ b/drivers/leds/flash/leds-mt6360.c
+> @@ -241,10 +241,20 @@ static int mt6360_strobe_set(struct led_classdev_flash *fl_cdev, bool state)
+>   	u32 enable_mask = MT6360_STROBEN_MASK | MT6360_FLCSEN_MASK(led->led_no);
+>   	u32 val = state ? MT6360_FLCSEN_MASK(led->led_no) : 0;
+>   	u32 prev = priv->fled_strobe_used, curr;
+> -	int ret;
+> +	int ret = 0;
 
-Don't think so, that was related to devm and module unload, neither
-seems to be the case here.
+I prefer that you leave ret uninitialized here, and...
 
-johannes
+>   
+>   	mutex_lock(&priv->lock);
+>   
+> +	/*
+> +	 * If the state of the upcoming change is the same as the current LED
+> +	 * device state, then skip the subsequent code to avoid conflict
+> +	 * with the flow of turning on LED torch mode in V4L2.
+> +	 */
+> +	if (state == !!(BIT(led->led_no) & prev)) {
+> +		dev_info(lcdev->dev, "No change in strobe state [0x%x]\n", prev);
+
+...that you do here, instead
+
+		ret = 0;
+		goto unlock;
+
+With that addressed,
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collaobra.com>
+
+
