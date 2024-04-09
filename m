@@ -1,89 +1,90 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CFF17F36E
-	for <linux-leds@vger.kernel.org>; Wed, 10 Apr 2024 18:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C262144
+	for <linux-leds@vger.kernel.org>; Thu, 11 Apr 2024 01:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712772904; cv=none; b=pVgD4z+R2ZD8nHoPgRcM13WhItH/DtHd5HdJyqv68x0p2T69ezjctefiCl+8xTPvy5tnuX4HesSHOPCRa0+RHreft3ohRQepK5vUvQxAIEw/WhZiCeBLWZfNlBcCOfrpSPuEuGXonc8spwwl3GSQGCE/wc0IHuTB41d6VG+tSl4=
+	t=1712799141; cv=none; b=lh7ph3KwWmcGCTFFXBwZnI/uJmIxYRIEZcHs8tdHhPgf6Vov7tOVO2oty+SyPaxlOaQDIsdtjtRxCYrI30jctivfOC3yGJzeWMnRLBrbbMPooc0fmGgpdJ6UTofzo77g09TKXoSner9xD38j6qV/y9+8XIPt54VwSoY/SxbPLXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712772904; c=relaxed/simple;
-	bh=bgxBc5QL1EgrGNz1Nh0tisNL2vyofmodpiuIjwYsJhE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P9pgQ+hmvnenA0SvKI+0UgaEzXnrRGQ0vC3QshxKD0JONh55y9vMDvn/k7djGF1YjK5rOWausIRBsMk8eCADKiClEgOpuSPS0AqshBr4NLh3aFkb6ODHqjHiCF+n4bUrGSHeUxG7cBTLi6MW7B7W1SWIIev70BXn84ydgGlJOzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EADTuXU9; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EADTuXU9"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-516ab4b3251so8001196e87.0
-        for <linux-leds@vger.kernel.org>; Wed, 10 Apr 2024 11:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712772901; x=1713377701; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5mElfgPubZ0c/8Pokd0nDZ//CRbTWxbvbOos9Zm32WI=;
-        b=EADTuXU9LCDxn80s/DTc32NwUDCtZPjHalHbwK4eOl5wJ2EFUXfft/8N3VgxHT61af
-         aI0xio9ys+iFOQUOueg6NiwHaYpw4JUm220DdLshcKOHY3kNTuOqJPLX5LhLJEMWN/Mu
-         BfAcez8NFHX/sySDEj3ZcIoS1BKFBfYBsvNmcZF7qOfsTWlNQtgGRCWx+rdi/NwYe1dw
-         nWy50PxeijJLym5pMECb1WQYo4TfV0+mJEbv0pfiZzNf0C4iW0n6VUUjuHDgLYN6fc/i
-         tAUlV7HJTBx3RcwAUNBKUYdedghRGDr4u+5FVDpWkEZNWdmF0lvH8SlyLRgOBIC0XI8+
-         AP1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712772901; x=1713377701;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5mElfgPubZ0c/8Pokd0nDZ//CRbTWxbvbOos9Zm32WI=;
-        b=ALjlkL5fpdK3Aj3Vw1kBOeIWJ2qPjysP0pXtpHMEHhvw6Slvb7KYicl5avyjtq4vAU
-         k3SZz31in8G04nfm8rAKwzwx+XSHc40UdNKGyxk2acBivj/eu+2JBCMXCo2QGH6+Vr0+
-         VE4En+o/Bu1++UnVRb6lCnz97+6JIjtkAswwNlsjPH5S7j0i7Qmj/TD2LzvtLMHM71l+
-         dO2QMadOE68wPtLrUuiHUYexYvdKGAoB6z4rrwEQeX/7Tffd5mhT2vx6VW8CYwuOfdph
-         5BG0tjmwJ9sQNIMXXipb2F5/k9atWcff6+RyIR09q/KM5/JclxmBhmFFceaKgxolSbXM
-         vjeQ==
-X-Gm-Message-State: AOJu0YyZ9khAbMxUcNJqXbFobn5md8YKuUJkjRgYv1rO15m1BN927ldg
-	drJ83VOSiOzKf03NU1RW0rptTZd8pkE/6rE9YDnJlQ39n7ExNa6k6dYU2EXZ6Ro=
-X-Google-Smtp-Source: AGHT+IEx+N42sULyWh0hFoGahD+v4vOuxraHP+O8zMLn+GdI27fRh0rSrMwRe1q9w/Amti/YHcM56w==
-X-Received: by 2002:ac2:4289:0:b0:513:cf5e:f2ad with SMTP id m9-20020ac24289000000b00513cf5ef2admr2477386lfh.60.1712772900853;
-        Wed, 10 Apr 2024 11:15:00 -0700 (PDT)
-Received: from [172.30.205.26] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id c27-20020ac25f7b000000b00515ce9f4a2bsm1912642lfc.35.2024.04.10.11.14.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Apr 2024 11:15:00 -0700 (PDT)
-Message-ID: <3b457615-533d-40b6-a637-770eb9af8956@linaro.org>
-Date: Wed, 10 Apr 2024 20:14:59 +0200
+	s=arc-20240116; t=1712799141; c=relaxed/simple;
+	bh=jXkinlrC/O0981KfQ2xDFNxGIg5ef9XA4gIIMPm+uOg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mrgqiwgA93Q0jQrXHWufJa5te1ASH8GA2c15mBtfTK0iYXnhAynKAE98ocsI/xUcpIEqczGjeo7QUs/LKUY2a8o4/nLZlQ7+bb/GVUpTkY4OW1mmMTaUX8fJh4M7rYslK1gnslCGg2zqAfb2f/sDjZBw/AqsScpckNU7YTJSHRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+Received: By OpenMail Mailer;Thu, 11 Apr 2024 09:32:08 +0800 (CST)
+X-MGFlag: HAM
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(744429:0:AUTH_RELAY)
+	(envelope-from <chiaen_wu@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 09 Apr 2024 18:21:58 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 9 Apr 2024
+ 18:21:58 +0800
+Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 9 Apr 2024 18:21:58 +0800
+From: ChiaEn Wu <chiaen_wu@richtek.com>
+To: <pavel@ucw.cz>, <lee@kernel.org>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<peterwu.pub@gmail.com>, <cy_huang@richtek.com>, ChiaEn Wu
+	<chiaen_wu@richtek.com>
+Subject: [PATCH] leds: mt6360: Fix the second LED can not enable torch mode by V4L2
+Date: Tue, 9 Apr 2024 18:21:54 +0800
+Message-ID: <28FE6F1712799128000.chiaen_wu@richtek.com>
+X-MG-ORIG-MSGID: <d1d1419bb322e2b0f40d34edd3a66979015b668c.1712657386.git.chiaen_wu@richtek.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: pmi8950: add pwm node
-To: Gianluca Boiano <morf3089@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240402-pmi8950-pwm-support-v1-0-1a66899eeeb3@gmail.com>
- <20240402-pmi8950-pwm-support-v1-2-1a66899eeeb3@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240402-pmi8950-pwm-support-v1-2-1a66899eeeb3@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+V4L2 will disable strobe mode of the LED device when enable torch mode,
+but this logic will conflict with the "priv->fled_torch_used"
+in "mt6360_strobe_set()". So after enabling torch mode of the first
+LED, the second LED will not be able to enable torch mode correctly.
 
+Therefore, at the beginning of "mt6360_strobe_set()", check whether the
+state of the upcoming change and the current LED device state are the
+same, so as to avoid the above problem.
 
-On 4/2/24 14:35, Gianluca Boiano wrote:
-> This node is actually found on some msm8953 devices (xiaomi-mido) and
-> allows irled enablement
-> 
-> Signed-off-by: Gianluca Boiano <morf3089@gmail.com>
-> ---
+Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
+---
+ drivers/leds/flash/leds-mt6360.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+diff --git a/drivers/leds/flash/leds-mt6360.c b/drivers/leds/flash/leds-mt6360.c
+index a90de82f4568..1b75b4d36834 100644
+--- a/drivers/leds/flash/leds-mt6360.c
++++ b/drivers/leds/flash/leds-mt6360.c
+@@ -241,10 +241,20 @@ static int mt6360_strobe_set(struct led_classdev_flash *fl_cdev, bool state)
+ 	u32 enable_mask = MT6360_STROBEN_MASK | MT6360_FLCSEN_MASK(led->led_no);
+ 	u32 val = state ? MT6360_FLCSEN_MASK(led->led_no) : 0;
+ 	u32 prev = priv->fled_strobe_used, curr;
+-	int ret;
++	int ret = 0;
+ 
+ 	mutex_lock(&priv->lock);
+ 
++	/*
++	 * If the state of the upcoming change is the same as the current LED
++	 * device state, then skip the subsequent code to avoid conflict
++	 * with the flow of turning on LED torch mode in V4L2.
++	 */
++	if (state == !!(BIT(led->led_no) & prev)) {
++		dev_info(lcdev->dev, "No change in strobe state [0x%x]\n", prev);
++		goto unlock;
++	}
++
+ 	/*
+ 	 * Only one set of flash control logic, use the flag to avoid torch is
+ 	 * currently used
+-- 
+2.42.0
 
-Konrad
