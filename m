@@ -1,35 +1,35 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF799153560;
-	Thu, 11 Apr 2024 16:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B8B17C66;
+	Thu, 11 Apr 2024 16:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712851845; cv=none; b=hVKUh4QW31I/WRWU7cae63HH9QCZTLuqBCdQA0xytnRRHPn+skVBduR/9gKHdo8RSEXM11no20/O5meRJSZ+01o0+yK83Upf3+F7wCu0h/M+U+7kqlo6I3xIudnL1/jtGTjz6p1gCEhGhRZbU+FHted7AOdjEbD5hf35kJeXm80=
+	t=1712851845; cv=none; b=SV2OOYSSQTzHH9o7k3k0wcfZlFJL1+jvemAEXO1FUF95h8W817dPwdUxVqeYikQfB6chVtguquQkKOKZ4fUnZg3K7r5TN/a7cLl0jg3TdLS1+LY3DExSS2aVMP8zyttbvOsRgsAvFnKnb/3jQke3/uwqAXob9wIN2EMTQ2zFw8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1712851845; c=relaxed/simple;
-	bh=L00rq1L+gtOj3efnD1WruodOwvRV/8aBEMMWY3J5iPo=;
+	bh=e69E9XiKbn3qnCR9v9riXoYG/Elb7S93jjrX4imdQRc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K+VqKnX+tVMF9+jeTbeM39rKTWA9mJyaYAgDcqEKIGKIB7LUE1cJrlpRFPcpVy9Vfg8mLNZNATMbtzYjG0OHmJLjJjylFB1jSQReIeAZYPxUBL+43EpUcDFfmGmXWIn2A0cqYaLwTXNRyyI3OPbuRSW1YxA6L5XdgaeyUq6Qq6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=g6EYZaMa; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=qHpWN5kD4xQUi7AE8dqBJPHhaIn6UfQfcLErHwsSU+OG+EN++oaj1qaYO05haoPDfwjNC0Y3H071lONMN+mS+XlJda58Qp6XFS8tZEn+rLbHoM0lFncRRjcXXSyoiGaIenplIC3wnd1wtzkJ4+V5bficL5sqraTR6fxonjt92Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=jDuGxCxX; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="g6EYZaMa"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="jDuGxCxX"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id BE6FC12006A;
-	Thu, 11 Apr 2024 19:10:40 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BE6FC12006A
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 20438120072;
+	Thu, 11 Apr 2024 19:10:41 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 20438120072
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1712851840;
-	bh=nkAc8tcTwNyXqA6894hIXQtbRa2ozzEzdgetR3rCMxE=;
+	s=mail; t=1712851841;
+	bh=V36gHZChttM+wJGAKw+EV7JCxHF68jFXBdZerKqAVC0=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=g6EYZaMaOzPO5+y0jyEwP3ZU3indav8z8DVhCgYsLVFJ6IxX+Qa7UeIvEovOikxjI
-	 D+vBBI+JxfMXOfN9yAg5aEIPFR+swFVCeC+uLmIy94cGxAIAtjkGRBq5KC1qC1TDoP
-	 g5pRPLTBb1Wd2IgjZ8pubMu+fTDZ1n0jPbM4fzLyhkhepto9G1q/jlAkBNtZVyT5r2
-	 RzbCWO2/U1mylFkv9vuHIn4XCQWmQWdvYmZvmSVLTtcEDcth0Lhp3gHDA678SU4gRw
-	 yEOX+ifCHqTJvJgzhTkjaUnTFf4V/lzI9v9t7iIKAmi64bJFuShoBp0l3ZPL1yy/j/
-	 TjLveox4nenFg==
+	b=jDuGxCxXy/DDPRsiNB+cKYPFouILqgKRI8boeF40K9p8tghDnnO8dc+Zrclw7PXeH
+	 HYHQaIoEa3nFyV1V9imCFmPHCoDuL52Dc4IYyushHaVmJuqj2cWT2XtoSYKNhJJYL9
+	 cX/ZeH8nNs2e9v+7SN8/dgHdc3TsAdfMO6VANCUBa6bcKV5MgPBCtXtXg5O59ptyzn
+	 nT44iSsJ7Apl7p4NI9YF2VpGW/wqKZO0lJ6DAt7P2pVAkRa5TPGEKwc/Gh6IOSWwG/
+	 r6hdEahXrSfFqxxkIR+MHbn/b2kPRU+mdqmT3GWv05FAQhY1O9D2/ywjMErQ2Mj+4E
+	 Bl+l2zz3aGQKg==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
@@ -47,9 +47,9 @@ To: <andy.shevchenko@gmail.com>, <pavel@ucw.cz>, <lee@kernel.org>,
 	<nikitos.tr@gmail.com>, <marek.behun@nic.cz>, <kabel@kernel.org>
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
-Subject: [PATCH v8 4/8] leds: lp3952: use devm API to cleanup module's resources
-Date: Thu, 11 Apr 2024 19:10:28 +0300
-Message-ID: <20240411161032.609544-5-gnstark@salutedevices.com>
+Subject: [PATCH v8 6/8] leds: nic78bx: use devm API to cleanup module's resources
+Date: Thu, 11 Apr 2024 19:10:30 +0300
+Message-ID: <20240411161032.609544-7-gnstark@salutedevices.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240411161032.609544-1-gnstark@salutedevices.com>
 References: <20240411161032.609544-1-gnstark@salutedevices.com>
@@ -85,68 +85,68 @@ so they are automatically unregistered after module's remove() is done.
 led_classdev_unregister() calls module's led_set_brightness() to turn off
 the LEDs and that callback uses resources which were destroyed already
 in module's remove() so use devm API instead of remove().
-Also drop explicit turning LEDs off from remove() due to they will be off
-anyway by led_classdev_unregister().
 
 Signed-off-by: George Stark <gnstark@salutedevices.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/leds/leds-lp3952.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/leds/leds-nic78bx.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/leds/leds-lp3952.c b/drivers/leds/leds-lp3952.c
-index 5d18bbfd1f23..ff7bae2447dd 100644
---- a/drivers/leds/leds-lp3952.c
-+++ b/drivers/leds/leds-lp3952.c
-@@ -207,6 +207,13 @@ static const struct regmap_config lp3952_regmap = {
- 	.cache_type = REGCACHE_MAPLE,
+diff --git a/drivers/leds/leds-nic78bx.c b/drivers/leds/leds-nic78bx.c
+index a86b43dd995e..282d9e4cf116 100644
+--- a/drivers/leds/leds-nic78bx.c
++++ b/drivers/leds/leds-nic78bx.c
+@@ -118,6 +118,15 @@ static struct nic78bx_led nic78bx_leds[] = {
+ 	}
  };
  
-+static void gpio_set_low_action(void *data)
++static void lock_led_reg_action(void *data)
 +{
-+	struct lp3952_led_array *priv = data;
++	struct nic78bx_led_data *led_data = data;
 +
-+	gpiod_set_value(priv->enable_gpio, 0);
++	/* Lock LED register */
++	outb(NIC78BX_LOCK_VALUE,
++	     led_data->io_base + NIC78BX_LOCK_REG_OFFSET);
 +}
 +
- static int lp3952_probe(struct i2c_client *client)
+ static int nic78bx_probe(struct platform_device *pdev)
  {
- 	int status;
-@@ -226,6 +233,10 @@ static int lp3952_probe(struct i2c_client *client)
- 		return status;
- 	}
+ 	struct device *dev = &pdev->dev;
+@@ -152,6 +161,10 @@ static int nic78bx_probe(struct platform_device *pdev)
+ 	led_data->io_base = io_rc->start;
+ 	spin_lock_init(&led_data->lock);
  
-+	status = devm_add_action(&client->dev, gpio_set_low_action, priv);
-+	if (status)
-+		return status;
++	ret = devm_add_action(dev, lock_led_reg_action, led_data);
++	if (ret)
++		return ret;
 +
- 	priv->regmap = devm_regmap_init_i2c(client, &lp3952_regmap);
- 	if (IS_ERR(priv->regmap)) {
- 		int err = PTR_ERR(priv->regmap);
-@@ -254,15 +265,6 @@ static int lp3952_probe(struct i2c_client *client)
- 	return 0;
+ 	for (i = 0; i < ARRAY_SIZE(nic78bx_leds); i++) {
+ 		nic78bx_leds[i].data = led_data;
+ 
+@@ -167,15 +180,6 @@ static int nic78bx_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
--static void lp3952_remove(struct i2c_client *client)
+-static void nic78bx_remove(struct platform_device *pdev)
 -{
--	struct lp3952_led_array *priv;
+-	struct nic78bx_led_data *led_data = platform_get_drvdata(pdev);
 -
--	priv = i2c_get_clientdata(client);
--	lp3952_on_off(priv, LP3952_LED_ALL, false);
--	gpiod_set_value(priv->enable_gpio, 0);
+-	/* Lock LED register */
+-	outb(NIC78BX_LOCK_VALUE,
+-	     led_data->io_base + NIC78BX_LOCK_REG_OFFSET);
 -}
 -
- static const struct i2c_device_id lp3952_id[] = {
- 	{LP3952_NAME, 0},
- 	{}
-@@ -274,7 +276,6 @@ static struct i2c_driver lp3952_i2c_driver = {
- 			.name = LP3952_NAME,
- 	},
- 	.probe = lp3952_probe,
--	.remove = lp3952_remove,
- 	.id_table = lp3952_id,
- };
+ static const struct acpi_device_id led_device_ids[] = {
+ 	{"NIC78B3", 0},
+ 	{"", 0},
+@@ -184,7 +188,6 @@ MODULE_DEVICE_TABLE(acpi, led_device_ids);
  
+ static struct platform_driver led_driver = {
+ 	.probe = nic78bx_probe,
+-	.remove_new = nic78bx_remove,
+ 	.driver = {
+ 		.name = KBUILD_MODNAME,
+ 		.acpi_match_table = ACPI_PTR(led_device_ids),
 -- 
 2.25.1
 
