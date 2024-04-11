@@ -1,90 +1,108 @@
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C262144
-	for <linux-leds@vger.kernel.org>; Thu, 11 Apr 2024 01:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62A063D;
+	Thu, 11 Apr 2024 06:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712799141; cv=none; b=lh7ph3KwWmcGCTFFXBwZnI/uJmIxYRIEZcHs8tdHhPgf6Vov7tOVO2oty+SyPaxlOaQDIsdtjtRxCYrI30jctivfOC3yGJzeWMnRLBrbbMPooc0fmGgpdJ6UTofzo77g09TKXoSner9xD38j6qV/y9+8XIPt54VwSoY/SxbPLXg=
+	t=1712818516; cv=none; b=aapPD4F7sH2+26H+pmEjPGOwMeWc511JkC5wsk2ZTMz0G/jmcz1eIwYEEzIrLJ9NDonJ3lgIh0OMvjhwr8oQ1Mj5zOOmoD4wr+mTOu2IogYZZOax+gkiNZCMZ1LyxuqwszVxfkv/aE0MSkY5xyd7maCSxm4tDiLT7PZEMP44Ifk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712799141; c=relaxed/simple;
-	bh=jXkinlrC/O0981KfQ2xDFNxGIg5ef9XA4gIIMPm+uOg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mrgqiwgA93Q0jQrXHWufJa5te1ASH8GA2c15mBtfTK0iYXnhAynKAE98ocsI/xUcpIEqczGjeo7QUs/LKUY2a8o4/nLZlQ7+bb/GVUpTkY4OW1mmMTaUX8fJh4M7rYslK1gnslCGg2zqAfb2f/sDjZBw/AqsScpckNU7YTJSHRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-Received: By OpenMail Mailer;Thu, 11 Apr 2024 09:32:08 +0800 (CST)
-X-MGFlag: HAM
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(744429:0:AUTH_RELAY)
-	(envelope-from <chiaen_wu@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 09 Apr 2024 18:21:58 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 9 Apr 2024
- 18:21:58 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 9 Apr 2024 18:21:58 +0800
-From: ChiaEn Wu <chiaen_wu@richtek.com>
-To: <pavel@ucw.cz>, <lee@kernel.org>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<peterwu.pub@gmail.com>, <cy_huang@richtek.com>, ChiaEn Wu
-	<chiaen_wu@richtek.com>
-Subject: [PATCH] leds: mt6360: Fix the second LED can not enable torch mode by V4L2
-Date: Tue, 9 Apr 2024 18:21:54 +0800
-Message-ID: <28FE6F1712799128000.chiaen_wu@richtek.com>
-X-MG-ORIG-MSGID: <d1d1419bb322e2b0f40d34edd3a66979015b668c.1712657386.git.chiaen_wu@richtek.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1712818516; c=relaxed/simple;
+	bh=g5uFzpLBD5mMvoeBx8hAdujf+J4m8llZ6LvgrHfw/qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aq0Qop138Q7x/7X0ILv2SYOypie2nFIJy5hC2j0qHfZwdtM4go/3BB0BZ6U0rh1bTdO/bCPWyt+Hjcch07tOLdUsplQmcgjMaOQBgvm/f9ZHEaioeIoBlGaFYUFGrHbLYCdSuTkuh68IZyNMbiH9/ipXZQH0tpwjw/Ygp2krH1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BvNxYyjs; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BvNxYyjs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27F3AC433C7;
+	Thu, 11 Apr 2024 06:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712818516;
+	bh=g5uFzpLBD5mMvoeBx8hAdujf+J4m8llZ6LvgrHfw/qs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BvNxYyjsAvCfq31BNCEVkvEyXMKqXg17zoo7EoJSAq2MhkmyRtqBo2DG+2Ssxh0TN
+	 0mtKRf7SNGnt4dwLynbgqlfJ2dgqXrwu52VMW6bXvShCdH7WF89v9WoNW3hj0nIzba
+	 jffDoK1d5Fp3YmDVOciJfQQlJ7HDJTgcCy4GQEHNv6vh9TR9kBTl3ngPRT5G69VI85
+	 MXgiWEZTCbnWSyzbZzKDdGh/+g/HuUsPq6nz2DqeYu2PtRF7nf5GCpJGY6aUJJGuUN
+	 QU9Fww/Ln77Q3okVcn7v0WKeIXxi5fKU2aDYHErN5KaEOfszOylPhdAl1U8b3PPGjD
+	 72xWSWZmp3Wig==
+Date: Thu, 11 Apr 2024 07:55:11 +0100
+From: Lee Jones <lee@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: ChiaEn Wu <chiaen_wu@richtek.com>, pavel@ucw.cz, matthias.bgg@gmail.com,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, peterwu.pub@gmail.com,
+	cy_huang@richtek.com
+Subject: Re: [PATCH] leds: mt6360: Fix the second LED can not enable torch
+ mode by V4L2
+Message-ID: <20240411065511.GB6194@google.com>
+References: <d1d1419bb322e2b0f40d34edd3a66979015b668c.1712657386.git.chiaen_wu@richtek.com>
+ <c98ea7c9-6c9b-466d-bc49-ec76874ac6da@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c98ea7c9-6c9b-466d-bc49-ec76874ac6da@collabora.com>
 
-V4L2 will disable strobe mode of the LED device when enable torch mode,
-but this logic will conflict with the "priv->fled_torch_used"
-in "mt6360_strobe_set()". So after enabling torch mode of the first
-LED, the second LED will not be able to enable torch mode correctly.
+On Tue, 09 Apr 2024, AngeloGioacchino Del Regno wrote:
 
-Therefore, at the beginning of "mt6360_strobe_set()", check whether the
-state of the upcoming change and the current LED device state are the
-same, so as to avoid the above problem.
+Not sure why, but this mail was sent unthreaded from the original.
 
-Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
----
- drivers/leds/flash/leds-mt6360.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+> Il 09/04/24 12:21, ChiaEn Wu ha scritto:
+> > V4L2 will disable strobe mode of the LED device when enable torch mode,
+> > but this logic will conflict with the "priv->fled_torch_used"
+> > in "mt6360_strobe_set()". So after enabling torch mode of the first
+> > LED, the second LED will not be able to enable torch mode correctly.
+> > 
+> > Therefore, at the beginning of "mt6360_strobe_set()", check whether the
+> > state of the upcoming change and the current LED device state are the
+> > same, so as to avoid the above problem.
+> > 
+> > Signed-off-by: ChiaEn Wu <chiaen_wu@richtek.com>
+> > ---
+> >   drivers/leds/flash/leds-mt6360.c | 12 +++++++++++-
+> >   1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/leds/flash/leds-mt6360.c b/drivers/leds/flash/leds-mt6360.c
+> > index a90de82f4568..1b75b4d36834 100644
+> > --- a/drivers/leds/flash/leds-mt6360.c
+> > +++ b/drivers/leds/flash/leds-mt6360.c
+> > @@ -241,10 +241,20 @@ static int mt6360_strobe_set(struct led_classdev_flash *fl_cdev, bool state)
+> >   	u32 enable_mask = MT6360_STROBEN_MASK | MT6360_FLCSEN_MASK(led->led_no);
+> >   	u32 val = state ? MT6360_FLCSEN_MASK(led->led_no) : 0;
+> >   	u32 prev = priv->fled_strobe_used, curr;
+> > -	int ret;
+> > +	int ret = 0;
+> 
+> I prefer that you leave ret uninitialized here, and...
 
-diff --git a/drivers/leds/flash/leds-mt6360.c b/drivers/leds/flash/leds-mt6360.c
-index a90de82f4568..1b75b4d36834 100644
---- a/drivers/leds/flash/leds-mt6360.c
-+++ b/drivers/leds/flash/leds-mt6360.c
-@@ -241,10 +241,20 @@ static int mt6360_strobe_set(struct led_classdev_flash *fl_cdev, bool state)
- 	u32 enable_mask = MT6360_STROBEN_MASK | MT6360_FLCSEN_MASK(led->led_no);
- 	u32 val = state ? MT6360_FLCSEN_MASK(led->led_no) : 0;
- 	u32 prev = priv->fled_strobe_used, curr;
--	int ret;
-+	int ret = 0;
- 
- 	mutex_lock(&priv->lock);
- 
-+	/*
-+	 * If the state of the upcoming change is the same as the current LED
-+	 * device state, then skip the subsequent code to avoid conflict
-+	 * with the flow of turning on LED torch mode in V4L2.
-+	 */
-+	if (state == !!(BIT(led->led_no) & prev)) {
-+		dev_info(lcdev->dev, "No change in strobe state [0x%x]\n", prev);
-+		goto unlock;
-+	}
-+
- 	/*
- 	 * Only one set of flash control logic, use the flag to avoid torch is
- 	 * currently used
+What's the reason for this?
+
+> >   	mutex_lock(&priv->lock);
+> > +	/*
+> > +	 * If the state of the upcoming change is the same as the current LED
+> > +	 * device state, then skip the subsequent code to avoid conflict
+> > +	 * with the flow of turning on LED torch mode in V4L2.
+> > +	 */
+> > +	if (state == !!(BIT(led->led_no) & prev)) {
+> > +		dev_info(lcdev->dev, "No change in strobe state [0x%x]\n", prev);
+> 
+> ...that you do here, instead
+> 
+> 		ret = 0;
+> 		goto unlock;
+> 
+> With that addressed,
+> 
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collaobra.com>
+> 
+> 
+
 -- 
-2.42.0
-
+Lee Jones [李琼斯]
