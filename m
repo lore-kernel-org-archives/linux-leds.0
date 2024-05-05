@@ -1,35 +1,37 @@
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CAD40848;
-	Sun,  5 May 2024 16:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20A1374DB;
+	Sun,  5 May 2024 16:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714927944; cv=none; b=qjk+9dXx1WXtjQOd4muCardofM5ohpMDN/Kis1SAZROyfE9uvW+pq1/oSxxPqDikmdnmhg+m6WsMkxVtGi9swMXlB7+bGj5TGGkxmGTQkaZ/Mp8Skn2GINIg9AqUrdT1JcK0PW5pByXjQdUbPHNA1QX/GCkIPUHN3+urBy3xQbg=
+	t=1714927957; cv=none; b=MnGchLLxcGDc2AQ/piojd8TutGmta47CpnNpEG1q4oxvV9nwM9HWXczdmMGtG2yirODKX1V5B/SiH7IemZ0529L+dDlGeAWisJnPVGLdWgFxY3kJqWn5pza4Ram0gs9gh/L+Csy7y5I/peNuDffJpb6WrOVkYWZMxCUu1UUSErQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714927944; c=relaxed/simple;
-	bh=uBdD4j/qcVqfiTQc3aMSaCW0q+TOLKg73rRJRcTG9kA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fc9cZ2Je0qsF6LFQSqbjLWgQUiwxNGQism2p+M+WeQwqP6wi0SVkD+EhxiX3GtqHVr8aSW2g8eX0hAJAZ3B6O4BtYC2g8GQrPBTjazHol8U7HHmEIwff3PzePbkasq4lcYtmokRjyLQnm3HxeYEPfWr3VFjH6TpA5W38vkg+wCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=UW/d8YIV; arc=none smtp.client-ip=134.0.28.12
+	s=arc-20240116; t=1714927957; c=relaxed/simple;
+	bh=/Qzj5nd6IlnXyI8xQ6KpRh7qJX97MpZcROYGIASsScA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fOJf52s+wvsT4CYFXHufQYkCPwYLQClSY6cHkMDKBXCTnXOkpMUpqsQtZCmBCR8cTR17UDAUguNOocNj9nhJ8ZRMeuj4Wi4ZJzOtedvV1ZQyji76FAyjupymkCCn1Cn6k5YIBlQrmEFew1dBIn4l3EFbZ+YqX63Xg2/+f7ZWg0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=r8Xd++4m; arc=none smtp.client-ip=134.0.28.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="UW/d8YIV"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="r8Xd++4m"
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout2.routing.net (Postfix) with ESMTP id 0AA035FC1F;
-	Sun,  5 May 2024 16:45:59 +0000 (UTC)
+	by mxout3.routing.net (Postfix) with ESMTP id B7BA160028;
+	Sun,  5 May 2024 16:46:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1714927559;
+	s=20200217; t=1714927560;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RLH3io7UNKePw3EyOdFULg9Ms10FSzoi3dnG86S1EXo=;
-	b=UW/d8YIV0QSPsg1hKTYKgbmMNM6nLY1veCdqtdo63qaDl3Q45beJJ0NPCWmk1DPpjOWU4B
-	VYx69bxiAHIN61XNZNmP0839JzRASQof9+HWa29txjKLwatn44c4aydyTB/LbTOKapJIix
-	uPYbf/vKvZlf6Yc8quEJocQ2tKzNpOo=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b8CC5FsbogjZoptEYJG363eKljb3vexCvHMr6xKGdvw=;
+	b=r8Xd++4muWmwyDD5Xd+UwQY9nTveijg1zPeMjggUy8ABSeGpRrnJg0Edse6gx9psCUjak4
+	Tu1rFXrgeZAKX/p7kuDzOYrW2gMQVu4PvVgoFn4ByFsQ+Bgvp/r9S+c6qY2Fdo04f2RYxU
+	60KRT+YKBG/xcSdWM7ZqeOmT7JSu+Xo=
 Received: from frank-G5.. (fttx-pool-217.61.153.24.bambit.de [217.61.153.24])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id CAC4E360233;
-	Sun,  5 May 2024 16:45:57 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id B6869360233;
+	Sun,  5 May 2024 16:45:59 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -54,10 +56,12 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	netdev@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [RFC v1 0/5] Add Bananapi R3 Mini
-Date: Sun,  5 May 2024 18:45:44 +0200
-Message-Id: <20240505164549.65644-1-linux@fw-web.de>
+Subject: [RFC v1 2/5] dt-bindings: clock: mediatek: add address-cells and size-cells to ethsys
+Date: Sun,  5 May 2024 18:45:46 +0200
+Message-Id: <20240505164549.65644-3-linux@fw-web.de>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240505164549.65644-1-linux@fw-web.de>
+References: <20240505164549.65644-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -65,29 +69,40 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 4acaa28b-d825-4c5f-b59f-9ec20eb5ead6
+X-Mail-ID: 12140d7a-4053-44a5-aee2-e46c434d17da
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Add mt7986 based BananaPi R3 Mini SBC and fix some related binding errors.
+Add missing properties already used in mt7986a.dtsi.
 
-Frank Wunderlich (5):
-  dt-bindings: leds: add led trigger netdev
-  dt-bindings: clock: mediatek: add address-cells and size-cells to
-    ethsys
-  dt-bindings: net: mediatek,net: add reset-cells
-  dt-bindings: arm64: dts: mediatek: add BananaPi R3 Mini
-  arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ .../devicetree/bindings/clock/mediatek,ethsys.yaml          | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- .../devicetree/bindings/arm/mediatek.yaml     |   1 +
- .../bindings/clock/mediatek,ethsys.yaml       |   6 +
- .../devicetree/bindings/leds/common.yaml      |   2 +
- .../devicetree/bindings/net/mediatek,net.yaml |   3 +
- arch/arm64/boot/dts/mediatek/Makefile         |   1 +
- .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 486 ++++++++++++++++++
- 6 files changed, 499 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
+index f9cddacc2eae..ce953a35f307 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,ethsys.yaml
+@@ -32,12 +32,18 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  "#address-cells":
++    const: 1
++
+   "#clock-cells":
+     const: 1
+ 
+   "#reset-cells":
+     const: 1
+ 
++  "#size-cells":
++    const: 1
++
+ required:
+   - reg
+   - "#clock-cells"
 -- 
 2.34.1
 
