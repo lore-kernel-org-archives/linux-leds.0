@@ -1,37 +1,35 @@
 Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CDD4084C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CAD40848;
 	Sun,  5 May 2024 16:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714927943; cv=none; b=bmA31/jLZyY9I/qnwaQg4iI2chCtJWuXxcPgbXYPp25ueT22+UHey01xRkyaZGGKacjirroSrSamYO/gwaUZPt2W5p6WMUFXy6CRvK275QyvM0nNybBRw7eay96iWQyN1e/VY8FaZQax4kbiwyCSZEfzhG2JlNzcZDNHPbTdsgI=
+	t=1714927944; cv=none; b=qjk+9dXx1WXtjQOd4muCardofM5ohpMDN/Kis1SAZROyfE9uvW+pq1/oSxxPqDikmdnmhg+m6WsMkxVtGi9swMXlB7+bGj5TGGkxmGTQkaZ/Mp8Skn2GINIg9AqUrdT1JcK0PW5pByXjQdUbPHNA1QX/GCkIPUHN3+urBy3xQbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714927943; c=relaxed/simple;
-	bh=jjQ9nJQeGTIui5bgLlRc/vV6Y1T5Rd4gjMvkJ2mfyx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r3pd9BtG1pw6KKAKd97bGkfBT8Ul2HDxNB2Fwtnjfh1iZnzJeCbATYvv0MPHgOq9RoI6hA2Zqa58qR0ya8OjDS21XZ/DfxIaYnp8UGqz6Nnf0tBfGZK7GhyGK4x9sa4pQ/4nVRC0g8pg5qZV5bLihfDCSoHm1VR0SoPajIJ9wVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=YPrHqBk1; arc=none smtp.client-ip=134.0.28.12
+	s=arc-20240116; t=1714927944; c=relaxed/simple;
+	bh=uBdD4j/qcVqfiTQc3aMSaCW0q+TOLKg73rRJRcTG9kA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fc9cZ2Je0qsF6LFQSqbjLWgQUiwxNGQism2p+M+WeQwqP6wi0SVkD+EhxiX3GtqHVr8aSW2g8eX0hAJAZ3B6O4BtYC2g8GQrPBTjazHol8U7HHmEIwff3PzePbkasq4lcYtmokRjyLQnm3HxeYEPfWr3VFjH6TpA5W38vkg+wCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=UW/d8YIV; arc=none smtp.client-ip=134.0.28.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="YPrHqBk1"
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="UW/d8YIV"
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout2.routing.net (Postfix) with ESMTP id 97F705FC36;
-	Sun,  5 May 2024 16:46:01 +0000 (UTC)
+	by mxout2.routing.net (Postfix) with ESMTP id 0AA035FC1F;
+	Sun,  5 May 2024 16:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1714927561;
+	s=20200217; t=1714927559;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4WZG70r8O5lFcJ/c3m5E3BoGyd+N0jBB6rsNs5I7w5I=;
-	b=YPrHqBk1k0CDPlMkhHZ81R7pN7OflmVokk9KkwmPSHiqAA8A0skbw3pEfPIG9xbyJTb3W+
-	RchVYou0Suokrza/FnffpnyIiKGlSdAW/4P06esjT0N/UmX24gZKBWySElJ8RVNvsNE7OO
-	YliBkdw1IHbMRFfMSKHovAjRMdmIIWg=
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=RLH3io7UNKePw3EyOdFULg9Ms10FSzoi3dnG86S1EXo=;
+	b=UW/d8YIV0QSPsg1hKTYKgbmMNM6nLY1veCdqtdo63qaDl3Q45beJJ0NPCWmk1DPpjOWU4B
+	VYx69bxiAHIN61XNZNmP0839JzRASQof9+HWa29txjKLwatn44c4aydyTB/LbTOKapJIix
+	uPYbf/vKvZlf6Yc8quEJocQ2tKzNpOo=
 Received: from frank-G5.. (fttx-pool-217.61.153.24.bambit.de [217.61.153.24])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id A5F9B3604D6;
-	Sun,  5 May 2024 16:46:00 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id CAC4E360233;
+	Sun,  5 May 2024 16:45:57 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -56,12 +54,10 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	netdev@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [RFC v1 3/5] dt-bindings: net: mediatek,net: add reset-cells
-Date: Sun,  5 May 2024 18:45:47 +0200
-Message-Id: <20240505164549.65644-4-linux@fw-web.de>
+Subject: [RFC v1 0/5] Add Bananapi R3 Mini
+Date: Sun,  5 May 2024 18:45:44 +0200
+Message-Id: <20240505164549.65644-1-linux@fw-web.de>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240505164549.65644-1-linux@fw-web.de>
-References: <20240505164549.65644-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -69,31 +65,29 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 5b13f365-7f17-4ad6-9c2a-9ca17ef7465e
+X-Mail-ID: 4acaa28b-d825-4c5f-b59f-9ec20eb5ead6
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Add missing binding for property used in mt7986a.dtsi.
+Add mt7986 based BananaPi R3 Mini SBC and fix some related binding errors.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- Documentation/devicetree/bindings/net/mediatek,net.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+Frank Wunderlich (5):
+  dt-bindings: leds: add led trigger netdev
+  dt-bindings: clock: mediatek: add address-cells and size-cells to
+    ethsys
+  dt-bindings: net: mediatek,net: add reset-cells
+  dt-bindings: arm64: dts: mediatek: add BananaPi R3 Mini
+  arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
 
-diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-index e74502a0afe8..5214927c0fe8 100644
---- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
-+++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-@@ -101,6 +101,9 @@ properties:
-   "#address-cells":
-     const: 1
- 
-+  "#reset-cells":
-+    const: 1
-+
-   "#size-cells":
-     const: 0
- 
+ .../devicetree/bindings/arm/mediatek.yaml     |   1 +
+ .../bindings/clock/mediatek,ethsys.yaml       |   6 +
+ .../devicetree/bindings/leds/common.yaml      |   2 +
+ .../devicetree/bindings/net/mediatek,net.yaml |   3 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+ .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 486 ++++++++++++++++++
+ 6 files changed, 499 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+
 -- 
 2.34.1
 
