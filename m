@@ -1,31 +1,31 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AF017D89E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F28917D8AE;
 	Fri, 31 May 2024 16:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717173224; cv=none; b=pbzDhjzYLs73M9pDd1j+OAAINlc56wMPyendpSBK/oQz9i9xlSUo8H45ZWV892RBVzZmOT1bd/lk5JRMKVggR7oOqGvSOPDMTDvbSCoOJooTlAYCbwhBGJHf4YsU9Gij7z4n3kXc21gkI8tkwx3tCahRLtbBpLkPEAYVNIuZDBQ=
+	t=1717173225; cv=none; b=S3OATbg7oREKh87CPDA+4GfxaLt7Kr/bP3Axh+m5vxTGVit3Dwty+OTAiIk8iSNFjIu+BVF5cMD6eT9I3oVi/iCj4etVY/qki2tPaSMAAbeLMpbsMVUqcG3WAjyA02ZBT0nzqu36m1S1eikj9Kkfr9Zs/XudDbiY3kabhONnwJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717173224; c=relaxed/simple;
-	bh=jaXh6FVnKJ8THkebhacKfDXHombFjeJ5bXLceH94XZ8=;
+	s=arc-20240116; t=1717173225; c=relaxed/simple;
+	bh=6P/REFXkRfn4bWBytnGVypd3XVcWLfHX/2SwBqbZM9Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p4dzp6E3P/4sxqbv7h1DJkveUagchSzfqoRAabaZO9psaoZlSXaPrvpy0eNyZyPskbzrclGPw5ClZPGcWu6U2TggjCcKvNaqL5JpmP3/rImNHm3U6aNupDXfU1asCI2BYUtBVxfvUZcqWuqshoNPngAbIO6qVVUIbzRFh/Lu+i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=peunh7G5; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=ftK+mJEgA/TG/8WR2iooN2OPkfpnTK0rMc1FH8pxt1sLkaMzPRZ7zU88fJumN3jjNg0qsgYE5tyNsEMmPlhksYIc0wzCQfINSWPTpVo9U6uekmsitVto9fOPmiPtZXEcM4bl31dxCIm5WjvL68tIma4vKvY1tkhsA41eg37RWuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=YEQ6ODVG; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="peunh7G5"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="YEQ6ODVG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1717173219;
-	bh=jaXh6FVnKJ8THkebhacKfDXHombFjeJ5bXLceH94XZ8=;
+	bh=6P/REFXkRfn4bWBytnGVypd3XVcWLfHX/2SwBqbZM9Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=peunh7G5Uyw+cvUOZ13e6S8vfU7F4Ual54QHxsVlLSNMj4cm8FLckCyGVX2zbft4c
-	 D2vSsfEV789RYCVT1IIcPMBPM5ghDsBpvMeqexjMKz1u69ZLWL2o1V47dLnCr08X++
-	 ffVbr12EV4EnsnXyBFGqnFhr/QRghVPzSsRCmxfE=
+	b=YEQ6ODVG2g70bMj47WPgcisRwtBaGQFnP3v2Uml2Cy82LqBpt8HdqykhnjvqLltDb
+	 p0fcQZFZmV5uh/j6+btGH8ARK7Yn31hogxbSyYAAfFJ29RulPHhLavjbgHLeG5nNcJ
+	 vQPteVPR2iLp98JUWjdg3A8YSuGl316+xqDaytf8=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 31 May 2024 18:33:31 +0200
-Subject: [PATCH v2 1/5] leds: core: Introduce led_get_color_name() function
+Date: Fri, 31 May 2024 18:33:33 +0200
+Subject: [PATCH v2 3/5] leds: core: Unexport led_colors[] array
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -34,7 +34,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240531-cros_ec-led-v2-1-6cc34408b40d@weissschuh.net>
+Message-Id: <20240531-cros_ec-led-v2-3-6cc34408b40d@weissschuh.net>
 References: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
 In-Reply-To: <20240531-cros_ec-led-v2-0-6cc34408b40d@weissschuh.net>
 To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
@@ -46,67 +46,54 @@ Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
  Mario Limonciello <mario.limonciello@amd.com>, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1717173219; l=1805;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717173219; l=1434;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=jaXh6FVnKJ8THkebhacKfDXHombFjeJ5bXLceH94XZ8=;
- b=sw6asO9DbB2NI/kSNYDhSG6SZ2ydPJIKgcDPNFgUM+Enzsq4KXtYtgzA8WNQ+Gyd2y64YfJcD
- 0Gh5LNwCTwDAUvSFtXBelRktdOkWqvVcUUkMyoM5rlCtTJHv0dgiCV2
+ bh=6P/REFXkRfn4bWBytnGVypd3XVcWLfHX/2SwBqbZM9Y=;
+ b=KgPBSTNMPiQRBdNPmlr2NPQyoeK81ZrR1G/EpJlPPAoyHUvUMqmQLYQFh+BGjRmm0lZl2TT03
+ TWsmqHGjsPdAVVyFdKqus3ybt2CR/OzuuTjN6yTMTzcvRBTNeM8+QI3
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-This is similar to the existing led_colors[] array but is safer to use and
-usable by everyone.
-
-Getting string representations of color ids is useful for drivers
-which are handling color IDs anyways, for example for the multicolor API.
+There are no external users left, make the array static.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- drivers/leds/led-core.c |  9 +++++++++
- include/linux/leds.h    | 10 ++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/leds/led-core.c | 3 +--
+ drivers/leds/leds.h     | 1 -
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 89c9806cc97f..e0dd2284e84a 100644
+index e0dd2284e84a..f2cea4e094f6 100644
 --- a/drivers/leds/led-core.c
 +++ b/drivers/leds/led-core.c
-@@ -534,6 +534,15 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
- }
- EXPORT_SYMBOL_GPL(led_compose_name);
+@@ -25,7 +25,7 @@ EXPORT_SYMBOL_GPL(leds_list_lock);
+ LIST_HEAD(leds_list);
+ EXPORT_SYMBOL_GPL(leds_list);
  
-+const char *led_get_color_name(u8 color_id)
-+{
-+	if (color_id >= ARRAY_SIZE(led_colors))
-+		return NULL;
-+
-+	return led_colors[color_id];
-+}
-+EXPORT_SYMBOL_GPL(led_get_color_name);
-+
- enum led_default_state led_init_default_state_get(struct fwnode_handle *fwnode)
+-const char * const led_colors[LED_COLOR_ID_MAX] = {
++static const char * const led_colors[LED_COLOR_ID_MAX] = {
+ 	[LED_COLOR_ID_WHITE] = "white",
+ 	[LED_COLOR_ID_RED] = "red",
+ 	[LED_COLOR_ID_GREEN] = "green",
+@@ -42,7 +42,6 @@ const char * const led_colors[LED_COLOR_ID_MAX] = {
+ 	[LED_COLOR_ID_CYAN] = "cyan",
+ 	[LED_COLOR_ID_LIME] = "lime",
+ };
+-EXPORT_SYMBOL_GPL(led_colors);
+ 
+ static int __led_set_brightness(struct led_classdev *led_cdev, unsigned int value)
  {
- 	const char *state = NULL;
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 6300313c46b7..dedea965afbf 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -427,6 +427,16 @@ void led_sysfs_enable(struct led_classdev *led_cdev);
- int led_compose_name(struct device *dev, struct led_init_data *init_data,
- 		     char *led_classdev_name);
+diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+index 1138e2ab82e5..d7999e7372a4 100644
+--- a/drivers/leds/leds.h
++++ b/drivers/leds/leds.h
+@@ -30,6 +30,5 @@ ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
  
-+/**
-+ * led_get_color_name - get string representation of color ID
-+ * @color_id: The LED_COLOR_ID_* constant
-+ *
-+ * Get the string name of a LED_COLOR_ID_* constant.
-+ *
-+ * Returns: A string constant or NULL on an invalid ID.
-+ */
-+const char *led_get_color_name(u8 color_id);
-+
- /**
-  * led_sysfs_is_disabled - check if LED sysfs interface is disabled
-  * @led_cdev: the LED to query
+ extern struct rw_semaphore leds_list_lock;
+ extern struct list_head leds_list;
+-extern const char * const led_colors[LED_COLOR_ID_MAX];
+ 
+ #endif	/* __LEDS_H_INCLUDED */
 
 -- 
 2.45.1
