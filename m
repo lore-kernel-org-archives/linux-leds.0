@@ -1,79 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC4229A0;
-	Fri, 31 May 2024 12:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171FC29A0
+	for <linux-leds@vger.kernel.org>; Fri, 31 May 2024 12:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717156892; cv=none; b=h2z/lKkUvR59Ms7iE2raZFTtO+W+1A6p5/L6tbDsqTh0ApRYF73WfWZ3PhtP8bUZcOluCCUbR7FYsT+ayOvnX4UVC4ha7bcLPQOcjBGHI3qYi7FQNVXQCd5PFXXFuuKmCysvp0aQ/DJnVcK9oVir1z35Nj9ntLK2/q8rPozZRZo=
+	t=1717156900; cv=none; b=Xhfx4vPAFdK/2t4qWufl67gVVZvrteEqOo5wnD4hMcYlwVuCmNk9A7MVJyA2riThoWxcmpvI0bi9IKfJ5YNxYdRjXHuuARDfY/RjYcseU6RaLNlLnQt1w0eJlAhvsZ4VgmkDFw271DgPXapvPdaPww0OylddMNCoWpsi47PHcH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717156892; c=relaxed/simple;
-	bh=oSBVMnc8DbzbnZGG0e2B5WpXzjiiLuTOa/w8WzqCncE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lI3kL/KZ9iMnY12VcnOViv/JyuWvXGqa76YjBQUR6Dsm5an28I2VgytbM2i8cj0Q1Fu1ZDIdjb2Hg2M3yNzo3ZLYHCSH4H75f1TAdNebFKHWZggVAA5ggZpt4Nj1KO/BQ14q3PmLPQUkBh0KwmbBAbwtj3uMAr8azPVjDWJuOnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rR3oQM7M; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717156900; c=relaxed/simple;
+	bh=SGUxaqj3roxhsZHXZ97Jzmz5x+OTYp82vFmPpB5FHg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iGSDKkWTyuFhSLjHtW//rh2QfoTgYBQiWtXY08V+K4I8xaxLi8fDhUT5HmbNdIW+A8JWOpPu3rbeNd4/FvUWRnEdxrPHzLmxNH3UgY8a/PhOghI+LTyO3WSMvsINBgG7cUJ2a6kKKzHafRBPAE1fhJ8+dp6yCBB0E5TB7n2Bzm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwYC3euF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rR3oQM7M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02557C32786;
-	Fri, 31 May 2024 12:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717156891;
-	bh=oSBVMnc8DbzbnZGG0e2B5WpXzjiiLuTOa/w8WzqCncE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rR3oQM7M8Ff2U8XxWBMWgkpu+11jNcRen6mmj/Kx83Z2kr9og3HIKNUchawuh7UIr
-	 jrjUDgZ5ZKCyE3JMd+F0/E8TG5yGy0eCg9fEVqgAmIuFyAQl8+SFOVHvIsFjqHtStP
-	 ollrYW1wkW1b/AVpYEIgSMMN1jyi49LwIvtk94U+hKm/NUjduGib/pkQZYgHqLB98o
-	 /HlE6R0dJWqROUKv10JXcdU+K741VFz9Y1Axr4BOh7tefXrGbw2IHj8DgzzaxjKrz8
-	 DvxdseoTu23MTevhFLhJQpUWxXb65zedi/rI35fibhANi4prZBLkCT7tgOsMUZbIdm
-	 U19P5HS1fNIGQ==
-From: Lee Jones <lee@kernel.org>
-To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Andy Shevchenko <andy@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Lee Jones <lee@kernel.org>, Kate Hsuan <hpa@redhat.com>, 
- Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: platform-driver-x86@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
- linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
-In-Reply-To: <20240531114124.45346-1-hdegoede@redhat.com>
-References: <20240531114124.45346-1-hdegoede@redhat.com>
-Subject: Re: [PATCH v10 0/6] KTD2026 indicator LED for X86 Xiaomi Pad2
-Message-Id: <171715688820.1048514.12317802240706577541.b4-ty@kernel.org>
-Date: Fri, 31 May 2024 13:01:28 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwYC3euF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717156898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=z5cFbf2GUbcrYaHE/CFhP7+b5Ae1iDyBnu+KvJWUvY0=;
+	b=fwYC3euFuY6/sGmCwRilOHDMJclIq81bt90Wj5musp0HqsRFK4SpA36IEXahQx6Rc57ylT
+	q9SS4eheP4BwvkHVp/illUIRincP1CUmrHjxuSrBBHAaVgjY5DZhQQwLAi+Ze5h1ry1sct
+	3eiDmPTEx371csMokkVKct2piAkX8yQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-J1kzq2mMM3Sv2AkkK5-C0g-1; Fri, 31 May 2024 08:01:33 -0400
+X-MC-Unique: J1kzq2mMM3Sv2AkkK5-C0g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 36262101A525;
+	Fri, 31 May 2024 12:01:33 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.39.192.76])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 74A381054820;
+	Fri, 31 May 2024 12:01:32 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Kate Hsuan <hpa@redhat.com>,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v2] leds: trigger: Call synchronize_rcu() before calling trig->activate()
+Date: Fri, 31 May 2024 14:01:24 +0200
+Message-ID: <20240531120124.75662-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.4
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Fri, 31 May 2024 13:41:18 +0200, Hans de Goede wrote:
-> Here is v10 of Kate's series to add support for Xiaomi Pad2 indicator LED,
-> this is unchanged from v9 except for being rebased on top of 6.10-rc1 and
-> dropping patch 7/7 since that one has been merged through the pdx86 tree.
-> 
-> Patch 6/6 has an Acked-by from Sebastien for merging this patch through
-> the leds tree since it depends on the earlier patches.
-> 
-> [...]
+Some triggers call led_trigger_event() from their activate() callback
+to initialize the brightness of the LED for which the trigger is being
+activated.
 
-Applied, thanks!
+In order for the LED's initial state to be set correctly this requires that
+the led_trigger_event() call uses the new version of trigger->led_cdevs,
+which has the new LED.
 
-[1/6] leds: rgb: leds-ktd202x: Get device properties through fwnode to support ACPI
-      commit: f14aa5ea415b8add245e976bfab96a12986c6843
-[2/6] leds: rgb: leds-ktd202x: I2C ID tables for KTD2026 and 2027
-      commit: 75bd07aef47e1a984229e6ec702e8b9aee0226e4
-[3/6] leds: rgb: leds-ktd202x: Initialize mutex earlier
-      commit: e1b08c6f5b92d408a9fcc1030a340caeb9852250
-[4/6] leds: core: Add led_mc_set_brightness() function
-      commit: 5607ca92e6274dfb85d0ff7c4e91e6c4ddb6d25c
-[5/6] leds: trigger: Add led_mc_trigger_event() function
-      commit: 0921a57c91648b08857b47a2f26fa7942f06120f
-[6/6] power: supply: power-supply-leds: Add charging_orange_full_green trigger for RGB LED
-      commit: 9af12f57f1f9785f231d31a7365ad244c656b7ff
+AFAICT led_trigger_event() will always use the new version when it is
+running on the same CPU as where the list_add_tail_rcu() call was made,
+which is why the missing synchronize_rcu() has not lead to bug reports.
+But if activate() is pre-empted, sleeps or uses a worker then
+the led_trigger_event() call may run on another CPU which may still use
+the old trigger->led_cdevs list.
 
---
-Lee Jones [李琼斯]
+Add a synchronize_rcu() call to ensure that any led_trigger_event() calls
+done from activate() always use the new list.
+
+Triggers using led_trigger_event() from their activate() callback are:
+net/bluetooth/leds.c, net/rfkill/core.c and drivers/tty/vt/keyboard.c.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+Changes in v2:
+- Rebase on top of v6.10-rc1
+---
+ drivers/leds/led-triggers.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index b1b323b19301..07ce5cf76cf4 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -194,6 +194,13 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 		spin_unlock(&trig->leddev_list_lock);
+ 		led_cdev->trigger = trig;
+ 
++		/*
++		 * Some activate() calls use led_trigger_event() to initialize
++		 * the brightness of the LED for which the trigger is being set.
++		 * Ensure the led_cdev is visible on trig->led_cdevs for this.
++		 */
++		synchronize_rcu();
++
+ 		ret = 0;
+ 		if (trig->activate)
+ 			ret = trig->activate(led_cdev);
+-- 
+2.45.1
 
