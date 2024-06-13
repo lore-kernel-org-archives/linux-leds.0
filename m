@@ -1,94 +1,76 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CB51474A0;
-	Thu, 13 Jun 2024 14:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADC114900F;
+	Thu, 13 Jun 2024 15:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718290135; cv=none; b=OJ36w8o7YtsQwNmPh9BYXcWvbDg+Yk5wZ6EqoCClaZ6optdm74IAD2QDtrVgcQe0ucbaGw9hvzbCIuNv1bnFg+IDW2sk0ZDvifdQhyMovqLJ3MUD7QVt97u5eNveDIa74yvtGuqNjsRPC1VIHEy0AzzrKhWlV04mKCAOKQ66hfc=
+	t=1718290970; cv=none; b=ZnbhlLEKlRQ61h8LOdi5d8XQo7gpPBHC7cOWaJevg1u4B2xIK7mn864C71KQh0n21CWacfFiPhJF9ShRqkejqR8W9z9gv5uGww0RnF83vkwqV1nbEUrlMR7JvNrVBHx/7wK6X5R31+VDY14lxKYRwP3oKaFen8PcvQ4jKmVKPg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718290135; c=relaxed/simple;
-	bh=yVxyVIwMRddgUEXhVZPY0twYDEXyBd/qRw3RPwi32Eg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jtB1knGqXC2ZE7qWtoV92oin9S6NAYfyhpY2rK9w2rlhaV9xHA02FQUDvEinHEdF+fOlGsPwjUz+UCvwGu2r1xEwQAdkWupDHE3LAmJB4zGX+udHULG+vvlcCTXY9zJibirVRKN75CpSmMFTZc2NgEkecLT3/Dv3I/Ea4BFwJWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=pLd4/VbA; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	s=arc-20240116; t=1718290970; c=relaxed/simple;
+	bh=V+fe5XWMSFww4qgqdxA2gm8RTgqpG9cYDlZuGZBpm6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEJEgUm8TEV8YsYvDua+3u8eL9CeQ0Qk8Rjcp39jc2S0p8eTxiD4nNcU5p1+NFG+U+zOVvD/9f8orcZnPZvNF5uYNwjl9MA9jGJd+dKru+dTfeO30vro20QH+xdDqYs+r+z83aO158gONIqhc0kohXi9FxpIfmpsmC0U76YCxrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZ0i2pg+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="pLd4/VbA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1718290120;
-	bh=yVxyVIwMRddgUEXhVZPY0twYDEXyBd/qRw3RPwi32Eg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=pLd4/VbAsVstarpEzFdot13IT4mpN+rMLEk92Hldp/KOBHZrEUNlt7h3LVQZDwrDf
-	 STz3oQldRrJGpAL8HXEcJZGklrh3uTqfM1j2QC+f79i1fLLRMoX342pG1Jarg/pcOP
-	 UV4n+hl0mWNy5HTJ59M2qCBDqTG3ipn8Tgh13JeI=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 13 Jun 2024 16:48:40 +0200
-Subject: [PATCH v3 5/5] mfd: cros_ec: Register LED subdevice
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZ0i2pg+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060D6C4AF1C;
+	Thu, 13 Jun 2024 15:02:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718290970;
+	bh=V+fe5XWMSFww4qgqdxA2gm8RTgqpG9cYDlZuGZBpm6Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JZ0i2pg+nV3+QOCvt7vH2GCl59/M9Fjl4GZ3z/n4vB81JNpgmmTbqhdK26Q1k5Tfg
+	 GFTz3X0TAIz3jwQL3mEZ7xRh9uycEknDSpPyKk7LiJtd8/YLAa3Aqp32L37JtUNs8r
+	 JQKOC6nqkWNgsLB1C+nZIPoNFXGjg0qigBrHK9uNBOoTIkSFbiFWy1JxX4o6VxwA44
+	 EoBpurwB3aTenl5tttvexEoY4SoEIYM92GXgvo4UIM4UlK2e8QxabZmRyUgYNjHGqb
+	 EOJF+cBbzMrbdxNS6ZsFwKeAzcRcQDv6KmlxqMU1V4jqX69FrhQmM5AmS3Hu2ayOFJ
+	 XLbI0oASwiSMg==
+Date: Thu, 13 Jun 2024 16:02:46 +0100
+From: Lee Jones <lee@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Pavel Machek <pavel@ucw.cz>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dustin Howett <dustin@howett.net>
+Subject: Re: [PATCH] leds: triggers: flush pending brightness before
+ activating trigger
+Message-ID: <20240613150246.GI2561462@google.com>
+References: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240613-cros_ec-led-v3-5-500b50f41e0f@weissschuh.net>
-References: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
-In-Reply-To: <20240613-cros_ec-led-v3-0-500b50f41e0f@weissschuh.net>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- chrome-platform@lists.linux.dev, Dustin Howett <dustin@howett.net>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1718290119; l=1053;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=yVxyVIwMRddgUEXhVZPY0twYDEXyBd/qRw3RPwi32Eg=;
- b=N/ZDeeBVukUv4uGrxzH8013chzUsFpC2ISJK3xoUpLuH+svvdsuJuaVl8u+lAI3vDRmc+p8As
- a/mu6Gz3/4UB/mDhRXTvpg8sW1RvC7GWucN3XzW/7ltiWxe4AGV47YC
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+In-Reply-To: <20240603-led-trigger-flush-v1-1-c904c6e2fb34@weissschuh.net>
 
-Add ChromeOS EC-based LED control as EC subdevice.
+On Mon, 03 Jun 2024, Thomas Weißschuh wrote:
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/mfd/cros_ec_dev.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> The race fixed in timer_trig_activate() between a blocking
+> set_brightness() call and trigger->activate() can affect any trigger.
+> So move the call to flush_work() into led_trigger_set() where it can
+> avoid the race for all triggers.
+> 
+> Fixes: 0db37915d912 ("leds: avoid races with workqueue")
+> Fixes: 8c0f693c6eff ("leds: avoid flush_work in atomic context")
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+> Dustin, could you validate that this fixes the issue you encountered in
+> the cros_ec led driver?
+> ---
+>  drivers/leds/led-triggers.c          | 10 ++++++++--
+>  drivers/leds/trigger/ledtrig-timer.c |  5 -----
+>  2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index a52d59cc2b1e..d8408054ba15 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -99,6 +99,10 @@ static const struct mfd_cell cros_ec_wdt_cells[] = {
- 	{ .name = "cros-ec-wdt", }
- };
- 
-+static const struct mfd_cell cros_ec_led_cells[] = {
-+	{ .name = "cros-ec-led", },
-+};
-+
- static const struct cros_feature_to_cells cros_subdevices[] = {
- 	{
- 		.id		= EC_FEATURE_CEC,
-@@ -125,6 +129,11 @@ static const struct cros_feature_to_cells cros_subdevices[] = {
- 		.mfd_cells	= cros_ec_wdt_cells,
- 		.num_cells	= ARRAY_SIZE(cros_ec_wdt_cells),
- 	},
-+	{
-+		.id		= EC_FEATURE_LED,
-+		.mfd_cells	= cros_ec_led_cells,
-+		.num_cells	= ARRAY_SIZE(cros_ec_led_cells),
-+	},
- };
- 
- static const struct mfd_cell cros_ec_platform_cells[] = {
+This patch clashes with:
+
+  https://lore.kernel.org/all/20240531120124.75662-1-hdegoede@redhat.com/
+
+Please rebase and ensure that your solution doesn't conflict.
 
 -- 
-2.45.2
-
+Lee Jones [李琼斯]
