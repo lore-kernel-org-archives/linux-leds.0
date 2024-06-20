@@ -1,162 +1,205 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47E43BB50;
-	Thu, 20 Jun 2024 16:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6611CD3D;
+	Thu, 20 Jun 2024 16:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718900095; cv=none; b=M/Dza0dWbpqjPrr5PskQwXRAYx7OT8xw9DEVjX3d+VdNVW8YJ6SPy5XFLA8UwLjFHduYPLUKEERl+uaeWvwo4dZeRtLWfiKGLGWqmCYhrEg4SYwv8vV9Hqxk9NyBlh/jZNMWli3lTWM40L8VX2SsE39dg5FwjZ8kZQIyNtYhdVw=
+	t=1718900130; cv=none; b=lwPuU1YdtweQs/hEgpuypQol/udHnF/Mf1gKmcxg9ULJcmyZSXP3Bj4rAjKdG28hu8E1KOXphKGySWGBmrqCAHJV8BZrOh4mqOoE66N3xeXhdY+mcZ4XJ/20kWcLX+gGjin2xIXAMIfzTjZVl0eZoLUR0/xEQYjfNW6SZhLka/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718900095; c=relaxed/simple;
-	bh=SsR5ywCmJcyAKgpGrGi2rRMSTDslVwxFinDE2yFQ3mA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TpBchcuqgS/f18Ek9jzuZAHv2IiG6tCnHBKtZpkiKtW/Pu6+LRmIBXlsjAtd7u0lHmS933mrEmJ/rcJiwjgigopNdOQulcX908GYrTIUolAC2cDxGCBOOhWvHvmFfQGd8wgDBCrBDoZIqgFFLltmooQk3S/qUGxfa9lR9Ew7e2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZsWJn8o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718900130; c=relaxed/simple;
+	bh=iblHSi10AuILwtDWFYWrNs420fLs8WQLdO1dzegU+mo=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAW7w1ENINCCtMpXoCcGopCF/C3iouL5m/CutkaHip2kveT//D1mZFbfiJCuQovWfznbC/eIw8D5zSM9CvkyRhUnqFKQF1TPKO6BPUFKDHBwyCXHmU+Gu7ukcCRjBDNGrsE8+6t0NbvhLfeufCkvyrvrbxYSBf9egNwipb9pqK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rkscq9RF; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZsWJn8o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4408C2BD10;
-	Thu, 20 Jun 2024 16:14:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718900094;
-	bh=SsR5ywCmJcyAKgpGrGi2rRMSTDslVwxFinDE2yFQ3mA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XZsWJn8oElL8FMl3rNOgzPMJqXIjdT1qF01Xjai5CDdm/nATHk10wXOkdRGVwCgKG
-	 m10SjL3TpyMCNkVOdpibrpfTeXjh9pP+sWU4CYyr5GfRPt+s2jD5yw14SF0i5gAufG
-	 2p9mhrJmSeTy9f+S3XuBSgOe09Q3fTjsx0C3u6Vm7KRf3JJesoXuNwUJhXeaG+swhM
-	 12acsWYszPRxjFxgFoeYzNT/GzoH9RVeRclI9dyjuCdVKalybfyWZg1PF0WTVwnv6Q
-	 7+T4xZxQ/rZZ6vvpAlOWakldkr2qmv61qKoiDAxMoX093hrCQihvj4i+9VeOHK545H
-	 PbdYVx4CY01sA==
-Message-ID: <2ebf44b2-4d79-4a5a-bdc2-e9b33ff8d37b@kernel.org>
-Date: Thu, 20 Jun 2024 18:14:41 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rkscq9RF"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42121d27861so10849425e9.0;
+        Thu, 20 Jun 2024 09:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718900127; x=1719504927; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BstTnchL1g9WNRv1yB6FmVexKMDI5/7ZXs3DFkUlV0E=;
+        b=Rkscq9RFNY4H1IZ7DPejsdIf3HO0DWQ8pHm8oI6EJFGONyLQQPeEN6o4lzZwjx/aHJ
+         7Las/rIgwOGnwufDO/s4JZcxncVm6Y1ExzU0kcqExmP2uxkAxTM71f0b61S8Xi3CMZ3F
+         UKldZxEhvKELx/dfAwxTXcnU0IkLP9/Jy86OhkxlqUgwytZZwCgE5LKv0cbCP2XKMInl
+         tua/2Q0IkkkcUEDDsL1E3D5V/+gt3LESmLqv2D3EWg/8meXi/JfcIDqgQ1bxnbkCUyQ/
+         LsGeYzbiWpBtNi+l8yIBJH38x80B/b9d20P2l3LxB+SNUL7o4KuFEUBfgP8+s1T3kbDv
+         PvwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718900127; x=1719504927;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BstTnchL1g9WNRv1yB6FmVexKMDI5/7ZXs3DFkUlV0E=;
+        b=kbqR1URhvret1N7a1g+Khz7k5kwefrNb1lhKEoZDeXZXTtXUTWyHC9Dl8JmH3UOg4y
+         0UO7cRJ8wLnz/Xb2Jf27SWFKyz4GQtvYpdK1UiOHtl5hg97YFjpFuJWq4SAqUGHb4iDa
+         bbPzseXQ5gkPCNEX7SsmP/lhYrEo6D9OJSPjyaB8bDRc/XRM3I94MUt/PdtAfjH1ty/r
+         zICkxEeNj8re/uoujxsUdUJV0WTjvB9Sqq0GSPs6ykTaxG0rbqyRsGh6+UDD19hFpQX1
+         y+x6fEtKiwnT5Mx81TbOrcX1sxGdMsjzCu1VtQnhUBekoas0Lyqo2PTaCNJhd7PIW2g5
+         2BCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNpC3Is+oshgKiSu7MW2dqkan0FV8uWIqkJsaoG6cQOJyZpnEY0vxHctOgzIzCkhlCFynEGPAWsS1nOAr3fiIDP9Ynd97gUa6+MZ4Wy7K+FQkTQF84teK/FNMQMxHCT526DpXhXQZm/XlNlbnNKEM3hx8823L5wCG+Fl5RqAsD1zcINkY=
+X-Gm-Message-State: AOJu0YwU2sbvOFJ9AfvlAUOCF7jujs+lTfhQUUe0d7p0TtbwnADxCzwt
+	ZZHSVd4xOMuCKQloYs9CLYYU7eY8zSv8ygx0p0BbEzIjINpbDzlC
+X-Google-Smtp-Source: AGHT+IHotOeTmi3cx/hKnhyyOXPzVz9w8/VmYgvuqZQkugAEyPeKDfhQGXLD4K9BaiGXtaQxTTH11A==
+X-Received: by 2002:a05:600c:314b:b0:421:7fe5:12a with SMTP id 5b1f17b1804b1-4247529a9c1mr49600905e9.35.1718900126775;
+        Thu, 20 Jun 2024 09:15:26 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d1f6dbasm29676695e9.43.2024.06.20.09.15.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 09:15:26 -0700 (PDT)
+Message-ID: <6674559e.050a0220.14848.cb8f@mx.google.com>
+X-Google-Original-Message-ID: <ZnRHm5eF6P2VCoiz@Ansuel-XPS.>
+Date: Thu, 20 Jun 2024 17:15:39 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/20] leds: leds-lp55xx: overhaul driver
+References: <20240616215226.2112-1-ansuelsmth@gmail.com>
+ <20240620160907.GP3029315@google.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/23] dt-bindings: power: supply: add maxim,max77705
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-7-e3f6662017ac@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240618-starqltechn_integration_upstream-v3-7-e3f6662017ac@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240620160907.GP3029315@google.com>
 
-On 18/06/2024 15:59, Dzmitry Sankouski wrote:
-> add maxim,max77705 fuel gauge binding part
+On Thu, Jun 20, 2024 at 05:09:07PM +0100, Lee Jones wrote:
+> On Sun, 16 Jun 2024, Christian Marangi wrote:
 > 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  .../bindings/power/supply/maxim,max77705-fg.yaml   | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
+> > This long series is (as requested) a big overhaul of the lp55xx based
+> > LED driver.
+> > 
+> > As notice for these kind of LED chip there was the bad habit of copy
+> > the old driver and just modify it enough to make it work with the new
+> > model. Till v4 I was also doing the same by following the pattern and
+> > the code format of previous driver.
+> > 
+> > Since Lee didn't like this, here is the BIG series that generalize
+> > pretty much anything in the 4 model currently supported.
+> > 
+> > Indeed, although the LED chip have fundamental difference (page
+> > support), things can be generalized and produce slimmer drivers by
+> > putting everything in the lp55xx-common shared module.
+> > 
+> > This result in the new model lp5569 being very small with only the
+> > selftest portion to be custom.
+> > 
+> > Lee also wasn't clear by the meaning of ENGINE in these LED driver,
+> > so here some simple explaination. This is very common on these TI LED
+> > chip. The ENGINE (there are always 3) is just some kind of processor
+> > that execute a program (precompiled code ASM like) loaded in the SRAM.
+> > Sysfs is used to load the pattern, and to start and stop the engine.
+> > 
+> > These pattern can do all kind of complex thing with LEDs. Old LED chip
+> > had 32bytes of space for the pattern but newer one (like lp5569) have
+> > pages and if correctly configured can have massive pattern.
+> > These pattern can do all kind of magic like loops that make the LED
+> > pulse, change color and all kind of stuff.
+> > 
+> > (For Lee, sorry if you will have to repeat some review that I might
+> >  have missed in the lp5569 driver)
+> > 
+> > Changes v6:
+> > - Fix compilation warning for ret unused in read_poll_timeout
+> >   (no idea why this is flagged only on some particular arch...)
+> > - Fix missing bitfield.h in lp55x-common.c (again it seems this
+> >   header gets included in the flow if the arch use them or not...)
+> > Changes v5:
+> > - Big generalization patch
+> > - Rework lp5569 driver with new generalized functions
+> > - Drop all copyright header in lp5569 as the driver got reworked
+> >   entirely and it's not based on previous one anymore.
+> > Changes v4:
+> > - Fix reported buffer overflow due to a copypaste error
+> > - Add comments to describe fw size logic
+> > Changes v3:
+> > - Add ACK tag to DT patch
+> > - Enlarge and support program size up to 128bytes
+> > Changes v2:
+> > - Add ACK tag to DT patch
+> > - Fix compilation error with target that doesn't
+> >   include bitfield.h
+> > 
+> > Christian Marangi (20):
+> >   dt-bindings: leds-lp55xx: limit pwr-sel property to ti,lp8501
+> >   dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
+> >   leds: leds-lp55xx: generalize stop_all_engine OP
+> >   leds: leds-lp55xx: generalize probe/remove functions
+> >   leds: leds-lp55xx: generalize load_engine function
+> >   leds: leds-lp55xx: generalize load_engine_and_select_page function
+> >   leds: leds-lp55xx: generalize run_engine function
+> >   leds: leds-lp55xx: generalize update_program_memory function
+> >   leds: leds-lp55xx: generalize firmware_loaded function
+> >   leds: leds-lp55xx: generalize led_brightness function
+> >   leds: leds-lp55xx: generalize multicolor_brightness function
+> >   leds: leds-lp55xx: generalize set_led_current function
+> >   leds: leds-lp55xx: generalize turn_off_channels function
+> >   leds: leds-lp55xx: generalize stop_engine function
+> >   leds: leds-lp55xx: generalize sysfs engine_load and engine_mode
+> >   leds: leds-lp55xx: generalize sysfs engine_leds
+> >   leds: leds-lp55xx: generalize sysfs master_fader
+> >   leds: leds-lp55xx: support ENGINE program up to 128 bytes
+> >   leds: leds-lp55xx: drop deprecated defines
+> >   leds: leds-lp5569: Add support for Texas Instruments LP5569
+> > 
+> >  .../devicetree/bindings/leds/leds-lp55xx.yaml |  11 +
+> >  drivers/leds/Kconfig                          |  16 +-
+> >  drivers/leds/Makefile                         |   1 +
+> >  drivers/leds/leds-lp5521.c                    | 405 +---------
+> >  drivers/leds/leds-lp5523.c                    | 728 ++---------------
+> >  drivers/leds/leds-lp5562.c                    | 261 +------
+> >  drivers/leds/leds-lp5569.c                    | 542 +++++++++++++
+> >  drivers/leds/leds-lp55xx-common.c             | 730 +++++++++++++++++-
+> >  drivers/leds/leds-lp55xx-common.h             | 133 +++-
+> >  drivers/leds/leds-lp8501.c                    | 313 +-------
+> >  10 files changed, 1523 insertions(+), 1617 deletions(-)
+> >  create mode 100644 drivers/leds/leds-lp5569.c
 > 
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max77705-fg.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max77705-fg.yaml
-> new file mode 100644
-> index 000000000000..b24db0aba0d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max77705-fg.yaml
-> @@ -0,0 +1,35 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/supply/maxim,max77705-fg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX77705 Companion Power Management IC fuelgauge
-> +
-> +maintainers:
-> +  - Dzmitry Sankouski <dsankouski@gmail.com>
-> +
-> +description: |
-> +  This is a part of device tree bindings for Maxim MAX77705 multi functional device.
-> +
-> +  MAX77705 fuelgauge with ModelGauge m5 EZ algorithm support.
-> +
-> +  See also Documentation/devicetree/bindings/mfd/maxim,max77705.yaml for
-> +  additional information and example.
-> +
-> +allOf:
-> +  - $ref: power-supply.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77705-fg
-> +
-> +  rsense:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
+> Generally, I love it - what a difference!
+> 
+> Couple of small things within the patches and few general points.
+> 
+> * Ensure scripts/checkpatch.pl is happy before resubmitting.
 
-Look at other bindings how this is defined. shunt-resistor-micro-ohms
+Eh I always run patch with checkpatch.pl --strict but this time is quite
+problematic to fix the single error for the complex macro.
 
-> +    description: |
-> +      Sense resistor value in mOhm
+I will check what I can do but I think I'm really stretching the C
+precompiler there... That is really one of the very few case where error
+might be acceptable.
 
-Merge the node into parent node. No resources here.
+If I manage to mute that error, it might result in very bad code...
 
-Best regards,
-Krzysztof
+If you are referring to other warning and check just tell me.
 
+> * Please place my Suggested-by in all of the consolidation patches.
+
+Ok will add the suggested in all the generalization patch
+
+> * Subject titles should always match that of the subsystem
+>   - In our case the first letter of the description should be uppercase
+
+Ok missed that.
+
+> 
+> Thanks for doing this, it's great work.
+> 
+> -- 
+> Lee Jones [李琼斯]
+
+-- 
+	Ansuel
