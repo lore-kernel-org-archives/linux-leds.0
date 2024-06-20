@@ -1,348 +1,284 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD2D22616;
-	Thu, 20 Jun 2024 16:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D201AED4A;
+	Thu, 20 Jun 2024 16:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718899433; cv=none; b=tQlXFIJ+EOHz0tbSVpxH0UgYjByN7zW9/2zkhonNDt6NAw2d+0x/oKC4BTg2aIq3GVnXYn8zA+VXCDWlyCdwF5eplaGgce7S9aXAmiZWRCb08ZcYmL191pZJ5n9ivj1u0Ejwxth0JzVujMP/gr1q3ASqDmWpApAsqkdQCGSfsmk=
+	t=1718899511; cv=none; b=Mra56sfM6+DB9h1QrTn01BonYW49HUQgk+RiUAxYfo6a6xscw4tGWgzMomWg2ky42q1wdMoS9zFBT9CHUIYG6Weo6pdyQq3uzUdLMr+CSsMv5mfa7afCyp8uqfYe8b68qf2lcoNETpITtOpoHDJnGZkWGTbal4K2dMWIxe3udo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718899433; c=relaxed/simple;
-	bh=7449aXzYn9bX0ZnucChb+HyWRYsC5+qU2hWIlqqwN5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NxHjXsp+CDBTy7anzUa8dkPANqv8VJS/9KNZn/iiJS2B17g5joY/O6vx10R4/6vPU2dR55rQGLM+tZt5C1o4WgbKBz/cF8Md+X7RURQKlan9xWaWyeUnHKbgSO2aZuV+r+hVsruNqu1vR1P6XAhA0S0+Ur8ojVnLnZeZb5VlaGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BrfoLKiR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718899511; c=relaxed/simple;
+	bh=VxwxD9NlRx02IyNbc/jHsn3Pas/lBfmDoifITi881bg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YQoPN7N/y+E/2it5M29JzC8R7iNkFhlvmU1nn2PbD8SuMVT+/Qg+ZuZ88AJJ3LzHxysgsc3c9iLdc1imS+c3HEc8K8VU0MgMMuIMY47g5HHgwNxJhi4vrBIRMY+jAi4sGhKO8/FJfp8JRquBRaMRYkglvYjB7pTTdlljkSSnkb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyuA3tv9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BrfoLKiR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121F4C2BD10;
-	Thu, 20 Jun 2024 16:03:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyuA3tv9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815E2C2BD10;
+	Thu, 20 Jun 2024 16:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718899432;
-	bh=7449aXzYn9bX0ZnucChb+HyWRYsC5+qU2hWIlqqwN5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BrfoLKiRMMIOXw0LZ59ayrDOnm//nmM8xdghnUjxRxZdKWuCmlMxqMuUdjfE9JQw+
-	 YqTInOHFpAVh72PFRuA1bXv9DCGW7gFdZXW4Wqbb+w3G4UO+xHj2ElVnpav/CVv7xs
-	 mZgifmdilcURRP3PjMhrvTcdkpxzzY6Z/KhEEyoOwRHHftxdUI59h5gdVSZ8+3kohC
-	 hq8+SD7SCswHnSwKXWYYM2NK31XAwc4zehdGc90gptGj/W8LEwr2HEIvOU2aUa0gnX
-	 TN8D0id4CPHo+Xw5VZYG4d+YZ2QCrU0lRW95h1yeneKXhmRq0TyVsH9enjb4NQEgsZ
-	 etFQi9jdsqLdg==
-Date: Thu, 20 Jun 2024 17:03:48 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 20/20] leds: leds-lp5569: Add support for Texas
- Instruments LP5569
-Message-ID: <20240620160348.GO3029315@google.com>
-References: <20240616215226.2112-1-ansuelsmth@gmail.com>
- <20240616215226.2112-21-ansuelsmth@gmail.com>
+	s=k20201202; t=1718899511;
+	bh=VxwxD9NlRx02IyNbc/jHsn3Pas/lBfmDoifITi881bg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uyuA3tv9HEGJ0cbi+XB62kPlv8bBvRWLA1xMi447pWjJl+MwiU9oRbgaGaqbAjiJm
+	 0uaW8CxfqAw5ujZj+iLTxPMLxjqoVI14D4KLfAGDCjfnGPDjKnKULYfREWZu6L13qh
+	 uoxKbtqfUE6NxpenmMBzvHw5P82UTD72luGvTOa1LBXGJo2VjX+8lxdnaFSgbxQUTo
+	 MIcU7Vxgo+h79ekBibAC/3Z2kPXJDwOkoYOM9vIz+6a/PoLRpoZa2RYLD3QsfTxhAi
+	 XECwf0XuI67epGZOHyA/sRtACxfM3MU1AWzpMB1p8raEkr3fh937YuY6+mcCCcx0C0
+	 +JI+q1MIvIkfQ==
+Message-ID: <da34df13-bc57-4142-b558-88a6628d8b81@kernel.org>
+Date: Thu, 20 Jun 2024 18:04:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240616215226.2112-21-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/23] input: add max77705 haptic driver
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-13-e3f6662017ac@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-13-e3f6662017ac@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 16 Jun 2024, Christian Marangi wrote:
-
-> Add support for Texas Instruments LP5569 LED driver.
+On 18/06/2024 15:59, Dzmitry Sankouski wrote:
+> Add support for haptic controller on MAX77705 Multifunction
+> device.
 > 
-> Texas Instruments LP5569 is 9 channels chip with programmable engines.
+> This driver supports external pwm and LRA (Linear Resonant Actuator) motor.
+> User can control the haptic device via force feedback framework.
 > 
-> It almost a copy of LP5523 with fundamental changes to regs order and
-> regs content.
-> 
-> Has difference in how the clock is handled and doesn't support detecting
-> clock time automatically, different handling for selftest and different
-> scheme for the status regs.
-> 
-> LED chip supports ENGINE and MUX to group LED and run precompiled code
-> with magic values to run patterns. This is loaded via the sysfs entry
-> and it's passed as a string of ASCII HEX char.
-> 
-> One some devices using this LED Controller (a NBG7815 Router) it was
-> found loading big precompiled pattern with up to 96 bytes of code. To
-> have support for this "extended" scenario, hardcode each engine to
-> support 4 pages of precompiled pattern (128 bytes of code) and 1 page
-> for each MUX. This gives plenty of space for any kind precompiled
-> pattern keeping simple logic for page handling of each engine and mux.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
->  drivers/leds/Kconfig       |  16 +-
->  drivers/leds/Makefile      |   1 +
->  drivers/leds/leds-lp5569.c | 542 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 556 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/leds/leds-lp5569.c
-Pretty good, just a couple of tiny nits.
 
-[...]
-
-> +static ssize_t lp5569_led_short_test(struct lp55xx_led *led, char *buf)
+> +static int max77705_haptic_bias(struct max77705_haptic *haptic, bool on)
 > +{
-> +	struct lp55xx_chip *chip = led->chip;
-> +	struct lp55xx_platform_data *pdata = chip->pdata;
-> +	bool leds_fault[LP5569_MAX_LEDS];
-> +	struct lp55xx_led *led_tmp = led;
-> +	int i, ret, pos = 0;
-> +	u8 status;
+> +	int error;
 > +
-> +	/* Set in STANDBY state */
-> +	ret = lp55xx_write(chip, LP5569_REG_ENABLE, 0);
-> +	if (ret)
-> +		goto exit;
+> +	error = regmap_update_bits(haptic->regmap_haptic,
+> +							   MAX77705_PMIC_REG_MAINCTRL1,
+> +							   MAX77705_MAINCTRL1_BIASEN_MASK,
+> +							   on << MAX77705_MAINCTRL1_BIASEN_SHIFT);
 > +
-> +	/* Wait 1ms for device to enter STANDBY state */
-> +	usleep_range(1000, 2000);
-> +
-> +	/* Set Charge Pump to 1x */
-> +	ret = lp55xx_update_bits(chip, LP5569_REG_MISC,
-> +				 FIELD_PREP(LP5569_CP_MODE_MASK, LP55XX_CP_BYPASS),
-> +				 LP5569_CP_MODE_MASK);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	/* Enable LED and set to 100% brightness and current to 100% (25.5mA) */
-> +	for (i = 0; i < pdata->num_channels; i++) {
-> +		ret = lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led_tmp->chan_nr,
-> +				   LED_FULL);
-> +		if (ret)
-> +			goto exit;
-> +
-> +		ret = lp55xx_write(chip, LP5569_REG_LED_CURRENT_BASE + led_tmp->chan_nr,
-> +				   LED_FULL);
-> +		if (ret)
-> +			goto exit;
-> +
-> +		led_tmp++;
+> +	if (error) {
+> +		dev_err(haptic->dev, "failed to %s bias: %d\n",
+> +			on ? "enable" : "disable", error);
+> +		return error;
 > +	}
 > +
-> +	/* Put Device in NORMAL state */
-> +	ret = lp55xx_write(chip, LP5569_REG_ENABLE, LP5569_ENABLE);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	/* Wait 500 us for device to enter NORMAL state */
-> +	usleep_range(500, 750);
-> +
-> +	/* Enable LED Shorted Test */
-> +	ret = lp55xx_update_bits(chip, LP5569_REG_MISC2, LP5569_LED_OPEN_TEST,
-> +				 LP5569_LED_SHORT_TEST);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	/* Wait 500 us for device to fill status regs */
-> +	usleep_range(500, 750);
-> +
-> +	/* Parse status led fault 1 regs */
-> +	ret = lp55xx_read(chip, LP5569_REG_LED_FAULT1, &status);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	for (i = 0; i < 8; i++)
-> +		leds_fault[i] = !!LEDn_STATUS_FAULT(i, status);
-> +
-> +	/* Parse status led fault 2 regs */
-> +	ret = lp55xx_read(chip, LP5569_REG_LED_FAULT2, &status);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	for (i = 0; i < 1; i++)
-> +		leds_fault[i + 8] = !!LEDn_STATUS_FAULT(i, status);
-> +
-> +	/* Report LED fault */
-> +	led_tmp = led;
-> +	for (i = 0; i < pdata->num_channels; i++) {
-> +		if (leds_fault[led_tmp->chan_nr])
-> +			pos += sprintf(buf + pos, "LED %d SHORTED FAIL\n",
-> +				       led_tmp->chan_nr);
-> +
-> +		led_tmp++;
-> +	}
-> +
-> +	ret = pos;
-> +
-> +exit:
-> +	/* Disable LED Shorted Test */
-> +	lp55xx_update_bits(chip, LP5569_REG_MISC2, LP5569_LED_SHORT_TEST,
-> +			   0);
-
-Nit: This line break seems unnecessary.
-
-> +
-> +	led_tmp = led;
-> +	for (i = 0; i < pdata->num_channels; i++) {
-> +		lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led_tmp->chan_nr,
-> +			     0);
-
-Nit: This too.
-
-> +
-> +		led_tmp++;
-> +	}
-> +
-> +	return ret;
+> +	return 0;
 > +}
 > +
-> +static ssize_t lp5569_selftest(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       char *buf)
+> +static int max77705_haptic_configure(struct max77705_haptic *haptic,
+> +				     bool enable)
 > +{
-> +	struct lp55xx_led *led = i2c_get_clientdata(to_i2c_client(dev));
-> +	struct lp55xx_chip *chip = led->chip;
-> +	int i, pos = 0;
+> +	unsigned int value, config_reg;
+> +	int error;
 > +
-> +	mutex_lock(&chip->lock);
+> +	value = ((haptic->type << MAX77705_CONFIG2_MODE_SHIFT) |
+> +		(enable << MAX77705_CONFIG2_MEN_SHIFT) |
+> +		(haptic->mode << MAX77705_CONFIG2_HTYP_SHIFT) |
+> +		MAX77705_HAPTIC_PWM_DIVISOR_128);
+> +	config_reg = MAX77705_PMIC_REG_MCONFIG;
 > +
-> +	/* Test LED Open */
-> +	pos = lp5569_led_open_test(led, buf);
-> +	if (pos < 0)
-> +		goto fail;
-> +
-> +	/* Test LED Shorted */
-> +	pos = lp5569_led_short_test(led, buf);
-> +	if (pos < 0)
-> +		goto fail;
-> +
-> +	for (i = 0; i < chip->pdata->num_channels; i++) {
-> +		/* Restore current */
-> +		lp55xx_write(chip, LP5569_REG_LED_CURRENT_BASE + led->chan_nr,
-> +			     led->led_current);
-> +
-> +		/* Restore brightness */
-> +		lp55xx_write(chip, LP5569_REG_LED_PWM_BASE + led->chan_nr,
-> +			     led->brightness);
-> +		led++;
+> +	error = regmap_write(haptic->regmap_haptic,
+> +			     config_reg, value);
+> +	if (error) {
+> +		dev_err(haptic->dev,
+> +			"failed to update haptic config: %d\n", error);
+> +		return error;
 > +	}
 > +
-> +	if (pos == 0)
-> +		pos = sprintf(buf, "OK\n");
-> +	goto release_lock;
-> +fail:
-> +	pos = sprintf(buf, "FAIL\n");
-> +
-> +release_lock:
-> +	mutex_unlock(&chip->lock);
-> +
-> +	return pos;
+> +	return 0;
 > +}
 > +
-> +LP55XX_DEV_ATTR_ENGINE_MODE(1);
-> +LP55XX_DEV_ATTR_ENGINE_MODE(2);
-> +LP55XX_DEV_ATTR_ENGINE_MODE(3);
-> +LP55XX_DEV_ATTR_ENGINE_LEDS(1);
-> +LP55XX_DEV_ATTR_ENGINE_LEDS(2);
-> +LP55XX_DEV_ATTR_ENGINE_LEDS(3);
-> +LP55XX_DEV_ATTR_ENGINE_LOAD(1);
-> +LP55XX_DEV_ATTR_ENGINE_LOAD(2);
-> +LP55XX_DEV_ATTR_ENGINE_LOAD(3);
-> +static LP55XX_DEV_ATTR_RO(selftest, lp5569_selftest);
-> +LP55XX_DEV_ATTR_MASTER_FADER(1);
-> +LP55XX_DEV_ATTR_MASTER_FADER(2);
-> +LP55XX_DEV_ATTR_MASTER_FADER(3);
-> +static LP55XX_DEV_ATTR_RW(master_fader_leds, lp55xx_show_master_fader_leds,
-> +			  lp55xx_store_master_fader_leds);
+> +static void max77705_haptic_enable(struct max77705_haptic *haptic)
+> +{
+> +	int error;
 > +
-> +static struct attribute *lp5569_attributes[] = {
-> +	&dev_attr_engine1_mode.attr,
-> +	&dev_attr_engine2_mode.attr,
-> +	&dev_attr_engine3_mode.attr,
-> +	&dev_attr_engine1_load.attr,
-> +	&dev_attr_engine2_load.attr,
-> +	&dev_attr_engine3_load.attr,
-> +	&dev_attr_engine1_leds.attr,
-> +	&dev_attr_engine2_leds.attr,
-> +	&dev_attr_engine3_leds.attr,
-> +	&dev_attr_selftest.attr,
-> +	&dev_attr_master_fader1.attr,
-> +	&dev_attr_master_fader2.attr,
-> +	&dev_attr_master_fader3.attr,
-> +	&dev_attr_master_fader_leds.attr,
-> +	NULL,
-> +};
+> +	if (haptic->enabled)
+> +		return;
 > +
-> +static const struct attribute_group lp5569_group = {
-> +	.attrs = lp5569_attributes,
-> +};
+> +	error = pwm_enable(haptic->pwm_dev);
+> +	if (error) {
+> +		dev_err(haptic->dev,
+> +			"failed to enable haptic pwm device: %d\n", error);
+> +		return;
+> +	}
 > +
-> +/* Chip specific configurations */
-> +static struct lp55xx_device_config lp5569_cfg = {
-> +	.reg_op_mode = {
-> +		.addr = LP5569_REG_OP_MODE,
-> +		.shift = LP5569_MODE_ENG_SHIFT,
-> +	},
-> +	.reg_exec = {
-> +		.addr = LP5569_REG_EXEC_CTRL,
-> +		.shift = LP5569_EXEC_ENG_SHIFT,
-> +	},
-> +	.reset = {
-> +		.addr = LP5569_REG_RESET,
-> +		.val  = LP5569_RESET,
-> +	},
-> +	.enable = {
-> +		.addr = LP5569_REG_ENABLE,
-> +		.val  = LP5569_ENABLE,
-> +	},
-> +	.prog_mem_base = {
-> +		.addr = LP5569_REG_PROG_MEM,
-> +	},
-> +	.reg_led_pwm_base = {
-> +		.addr = LP5569_REG_LED_PWM_BASE,
-> +	},
-> +	.reg_led_current_base = {
-> +		.addr = LP5569_REG_LED_CURRENT_BASE,
-> +	},
-> +	.pages_per_engine   = LP5569_PAGES_PER_ENGINE,
-> +	.max_channel  = LP5569_MAX_LEDS,
-> +	.post_init_device   = lp5569_post_init_device,
-> +	.brightness_fn      = lp55xx_led_brightness,
-> +	.multicolor_brightness_fn = lp55xx_multicolor_brightness,
-> +	.set_led_current    = lp55xx_set_led_current,
-> +	.firmware_cb        = lp55xx_firmware_loaded_cb,
-> +	.run_engine         = lp5569_run_engine,
-> +	.dev_attr_group     = &lp5569_group,
-> +};
+> +	error = max77705_haptic_configure(haptic, true);
+> +	if (error)
+> +		goto err_enable_config;
 > +
-> +static const struct i2c_device_id lp5569_id[] = {
-> +	{ "lp5569",  .driver_data = (kernel_ulong_t)&lp5569_cfg, },
-> +	{ }
-> +};
+> +	haptic->enabled = true;
 > +
-> +MODULE_DEVICE_TABLE(i2c, lp5569_id);
+> +	return;
 > +
-> +static const struct of_device_id of_lp5569_leds_match[] = {
-> +	{ .compatible = "ti,lp5569", .data = &lp5569_cfg, },
-> +	{},
-> +};
+> +err_enable_config:
+> +	pwm_disable(haptic->pwm_dev);
+> +}
 > +
-> +MODULE_DEVICE_TABLE(of, of_lp5569_leds_match);
+> +static void max77705_haptic_disable(struct max77705_haptic *haptic)
+> +{
+> +	int error;
 > +
-> +static struct i2c_driver lp5569_driver = {
-> +	.driver = {
-> +		.name	= "lp5569x",
-> +		.of_match_table = of_lp5569_leds_match,
-> +	},
-> +	.probe		= lp55xx_probe,
-> +	.remove		= lp55xx_remove,
-> +	.id_table	= lp5569_id,
-> +};
+> +	if (!haptic->enabled)
+> +		return;
 > +
-> +module_i2c_driver(lp5569_driver);
+> +	error = max77705_haptic_configure(haptic, false);
+> +	if (error)
+> +		return;
 > +
-> +MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-> +MODULE_DESCRIPTION("LP5569 LED engine");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.43.0
-> 
+> +	pwm_disable(haptic->pwm_dev);
+> +	haptic->enabled = false;
+> +}
+> +
+> +static void max77705_haptic_play_work(struct work_struct *work)
+> +{
+> +	struct max77705_haptic *haptic =
+> +			container_of(work, struct max77705_haptic, work);
+> +	int error;
+> +
+> +	error = max77705_haptic_set_duty_cycle(haptic);
+> +	if (error) {
+> +		dev_err(haptic->dev, "failed to set duty cycle: %d\n", error);
+> +		return;
+> +	}
+> +
+> +	if (haptic->magnitude)
+> +		max77705_haptic_enable(haptic);
+> +	else
+> +		max77705_haptic_disable(haptic);
+> +}
+> +
+> +static int max77705_haptic_play_effect(struct input_dev *dev, void *data,
+> +				       struct ff_effect *effect)
+> +{
+> +	struct max77705_haptic *haptic = input_get_drvdata(dev);
+> +	struct pwm_args pargs;
+> +	u64 period_mag_multi;
+> +
+> +	haptic->magnitude = effect->u.rumble.strong_magnitude;
+> +	if (!haptic->magnitude)
+> +		haptic->magnitude = effect->u.rumble.weak_magnitude;
+> +
+> +	/*
+> +	 * The magnitude comes from force-feedback interface.
+> +	 * The formula to convert magnitude to pwm_duty as follows:
+> +	 * - pwm_duty = (magnitude * pwm_period) / MAX_MAGNITUDE(0xFFFF)
+> +	 */
+> +	pr_info("magnitude: %d(%x)", haptic->magnitude, haptic->magnitude);
 
--- 
-Lee Jones [李琼斯]
+Do not use pr_xxx in your drivers. That's a generic comment so please
+apply it everywhere. Anyway driver should be silent.
+
+
+> +	pwm_get_args(haptic->pwm_dev, &pargs);
+> +	period_mag_multi = (u64)pargs.period * haptic->magnitude;
+> +	haptic->pwm_duty = (unsigned int)(period_mag_multi >>
+> +						MAX_MAGNITUDE_SHIFT);
+> +
+> +	schedule_work(&haptic->work);
+> +
+> +	return 0;
+> +}
+
+
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(max77705_haptic_pm_ops,
+> +				max77705_haptic_suspend,
+> +				max77705_haptic_resume);
+> +
+> +static const struct of_device_id of_max77705_haptic_dt_match[] = {
+> +	{ .compatible = "maxim,max77705-haptic", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, of_max77705_haptic_dt_match);
+> +
+> +static struct platform_driver max77705_haptic_driver = {
+> +	.driver		= {
+> +		.name	= "max77705-haptic",
+> +		.pm	= pm_sleep_ptr(&max77705_haptic_pm_ops),
+> +		.of_match_table = of_max77705_haptic_dt_match,
+> +	},
+> +	.probe		= max77705_haptic_probe,
+> +	.remove_new	= max77705_haptic_remove,
+> +};
+> +module_platform_driver(max77705_haptic_driver);
+> +
+> +MODULE_AUTHOR("Dzmitry Sankouski <dsankouski@gmail.com>");
+> +MODULE_AUTHOR("Jaewon Kim <jaewon02.kim@samsung.com>");
+> +MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
+
+I doubt that this driver is needed. Everything is copy of max777693.
+
+
+Best regards,
+Krzysztof
+
