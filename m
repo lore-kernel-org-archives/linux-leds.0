@@ -1,195 +1,194 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB1C1DFEB;
-	Sun,  7 Jul 2024 17:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13211DA5E;
+	Sun,  7 Jul 2024 20:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720373039; cv=none; b=pOyfwFS3SrQerrfPaMRDk66H9M6Gh4f8NCFX1YVrcp8YrMd2AUKOAZTgKSoZ82aK4iHiyi5qzihLtqEBZanCGs8vlbrgEJYoB/5y3+H0YDDdQsymndTKWZ1fZ5Ob0rrpAv8iloicFWjp8/dU/bS+Sh+SXdLH9YrLjgvYH/9o/Wo=
+	t=1720384326; cv=none; b=WqrNhLVdu7eM+JZK0knwy9/uFUfjlCcNQlgU3bWkbeNh3bI56zsw4uA1/vlE+6IojtbeTf9mRPfRxHnbi3mMiO+6jId8j84970874hm2ebN5zJt8tF4A/1ALl/MPUqd/lRSOl6+lKCuTv3Sn5Nfe2BLlonXv7/ZmKQfCZd2fLFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720373039; c=relaxed/simple;
-	bh=ZQmbDHsQvjQBDmkJ+Fa6JDDQBZQvzQIiuk1mPEYhXrc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uA0KmmZ2xJ8xZ2HaqdbJo9gawU4eZZMxLvbKQmgAso0mzU9lceewV6zigwTUNWFr2/drxbw/AVMN4gE3PqsT0zkz5r1v9J9k5edS2TYACKQMyNmjGogH8QDC21Yk+7ZusM3v85auCfATd+H7hixeihdWiHKz7179mEWVXvopNwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hhFi0bS8; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720384326; c=relaxed/simple;
+	bh=F8ef2LDwx73H3bb2EMmW031XbE67mopRtD6WTxjZLwQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KhecPS9/dSR93yY85xeZWV1srk+nQbOCZ3g8ffEsR4JbpR9+NrsookR8ws683O6GwgxZK6+MxiLhBmh4KLJ63wRvBjgn//dl3XvpEQ+Q4lPiGSo5msFRVVli6vR/kFjVWCD1bk2Up8B2YhcwmjzUd2XdkutE0Vx1XdEZfbkFEa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aN0KiTs6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hhFi0bS8"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3678aa359b7so2594263f8f.1;
-        Sun, 07 Jul 2024 10:23:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720373036; x=1720977836; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJCjdfrQ8aPWVCj5Ds9uLJdxgkaWdZl/hGofw0fBJ2E=;
-        b=hhFi0bS8gLao2zyY5MzqyfOUPJ1Ht4+m2SO21RKjLwEP4iMD3y4fN2wKhUuQAvV5Bc
-         /lQa2WdKsATHH95taO5mSqL0bml0qwMwXPkNIWAA3LWrhVFW58Ze+zA5hIGLYhhbuwz4
-         PsrQ21r3b4uV8N1UnXiBPjLecIfMfiW3sTrMXVVXfc4HyLn91UI78P4wvO8YQ7vNfN9L
-         EYS5ZFovh232a1QoDmK7TxuKXr6oZA4lKhnwn3XwHDJhUmVspaF3O4ys6joZoWkwD21j
-         CMfNdMEqil6QFfj7Eb5NCeyIofsla1Q/XhMx8TfNPrVQnd74W6MRBBOgWyOey3aai5x0
-         l4sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720373036; x=1720977836;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJCjdfrQ8aPWVCj5Ds9uLJdxgkaWdZl/hGofw0fBJ2E=;
-        b=t2kHfzZnvuMgtc3mhj07vo8VQf5xw1MRieEDU7LKxcp1aW2HIyVEUubwssm+rYDiZb
-         PgLo22AaZ+D74l6fNilMvRnv1ixexkNMIOVeScYi2ObEr/iX8VXW9w6QEJcITy0EuEvM
-         w/Gxges8A+tz5GRaWpQ6gRbRKrh56oy/x7t3K77RU5KgwGp+M7oP5JLS411MAx/tzv/t
-         fSy2S4AtIgLgeaH3NtO3icxVW9u/adyOzUKCFqoEDnnuRNTR/0yu7IrhSfg9pJ2IBW7t
-         dD+m3Xgt+2X5GlOderD5aCLvWpcSnGl74lAyp/2lqOy5cnhtdA5OlUo6R0PG4EoyhW9R
-         0f0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXopiZJ8HVAVPEge7TebTSlyLJv5ZmcZIQ3QfiCZ9PPVnhXgsBy0xgpic0Tb/1pbjoCUkNuPeM4gVXPZ7ym/2EuqAIEB145ZTnVrnIOrZ4Q1/cIgPfAalzcij7MBYN2BYuDZ87uPotU45XP/bazTHkT51zKP1GM+oye9EBg3e/18IYTNqqPlg/5GFijyDs=
-X-Gm-Message-State: AOJu0YysGfDitaN2HlbFlINWTs6B1VapBfI5eFmFFd1X6BRfaVTSTPtB
-	Q7QmKgHUoHcx2igaJMv2Vn9dQwOXR3ATiXJfyzyMtiQAUPXLA/mL
-X-Google-Smtp-Source: AGHT+IFZOzod0Y2BwmwPeiFLAmKCFJLGdNREpGGJpTiyGT9P3/8Klvh5SH6BxWnb9Y4xfPl3At/AcA==
-X-Received: by 2002:adf:ce0d:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-3679f75c4eemr9234958f8f.27.1720373035359;
-        Sun, 07 Jul 2024 10:23:55 -0700 (PDT)
-Received: from localhost.localdomain ([2001:8a0:ed72:2800:17de:b512:9f9e:464b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367961a507csm11039720f8f.77.2024.07.07.10.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jul 2024 10:23:55 -0700 (PDT)
-From: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
-To: hdegoede@redhat.com
-Cc: carlosmiguelferreira.2003@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	mustafa.eskieksi@gmail.com,
-	pavel@ucw.cz,
-	platform-driver-x86@vger.kernel.org,
-	rishitbansal0@gmail.com,
-	wse@tuxedocomputers.com
-Subject: Re: Re: [PATCH] HP: wmi: added support for 4 zone keyboard rgb
-Date: Sun,  7 Jul 2024 18:20:00 +0100
-Message-ID: <20240707172000.19723-1-carlosmiguelferreira.2003@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <473d8897-7b97-4175-b171-42fd2c8de0d6@redhat.com>
-References: <473d8897-7b97-4175-b171-42fd2c8de0d6@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aN0KiTs6"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5FFE3C3277B;
+	Sun,  7 Jul 2024 20:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720384325;
+	bh=F8ef2LDwx73H3bb2EMmW031XbE67mopRtD6WTxjZLwQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=aN0KiTs6hXFdiNwQnhyJmYVyyW7MnHzEASL4dCWsZ0pRmZmG9Wxs55XMgcN+s0qXr
+	 h+eyG/zGS48A5pOwj7VnFyaCs6sc9nZBybK44gZ7/psVENrwk7AJobj65sE1DzHU9N
+	 N+A+32/vHmm/StvhWyj9QNAqyAPMR7Yx88sGQ+ezmk50vPqtNQDvB1EXKe2XdPyuS6
+	 W5Sck9Dza2fOdugTBs42KNVp0rBAPPkhZTQy2xheFVkRCmdhAFfBC4a40X0NYAbzxy
+	 y1q1V2gQMWw0iEZZU9z8zDOJxtIMjrRsuJDa0j344kBZp1oTLwmAFnGABoD9swbjuA
+	 MsT22CHXrXg1A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F69C3DA41;
+	Sun,  7 Jul 2024 20:32:05 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Date: Sun, 07 Jul 2024 22:31:59 +0200
+Subject: [PATCH v6] arm64: dts: qcom: msm8939-longcheer-l9100: Add rear
+ flash
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240707-sy7802-v6-1-ab03f17706d8@apitzsch.eu>
+X-B4-Tracking: v=1; b=H4sIAD77imYC/2XMy27CMBCF4VdBXteVZzy+seI9UBe2YzfeAIoh4
+ qK8ex0kAlWWZzTf/2A1DSVVtt082JDGUsvx0Ib+2rDY+8Nv4qVrm6FAEhIVrzdjBfJMIkedlVa
+ oWHs+DSmX6zO0/2m7L/V8HG7P7gjz9ZUwr8QIXPAuGPJBYvY+7/ypnO819t/pwubIiG9IAhaID
+ QJIC054Q2TXUL6hBlygnGFyMUI0Lhi3hvQJ9QKpQWOdcwRWJKHWUH1ApAWqGfoQXed0yF7/h9M
+ 0/QGc3YZEggEAAA==
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Trilok Soni <quic_tsoni@quicinc.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720384339; l=3739;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=PCHxsETnqMCOtnrhqJf1EyDZwF469Myb53EG0JzMbr8=;
+ b=OaGp88AZFpSA85IPzlVCL7cbjAQlkMynDDxeobpKmJ0lx+cfRR36y3siZkt1KFN/ZFdZ+Jcas
+ tT+f9DBoLAlBy24twlkMj0jWQf3GWqOKtcyoC1K1M2DhMML30NTa2Xg
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-Hi, sorry for the (big) delay
+From: André Apitzsch <git@apitzsch.eu>
 
-> Hi Carlos,
-> 
-> On 3/24/24 7:05 PM, Carlos Ferreira wrote:
-> > Added support for 4 zone keyboard rgb on omen laptops.
-> > 
-> > Signed-off-by: Carlos Ferreira <carlosmiguelferreira.2003@gmail.com>
-> 
-> Thank you for your patch and sorry for being slow with replying to this.
-> 
-> There actually already was a previous attemp to add support for
-> the 4 zone keyboard to hp-wmi by Rishit Bansal:
-> 
-> https://lore.kernel.org/platform-driver-x86/20230131235027.36304-1-rishitbansal0@gmail.com/
-> 
-> As discussed there we really want to define a new standardized
-> userspace API for the backlight functionality of these zoned
-> RGB keyboards. Using driver specific sysfs attributes for this
-> is undesirable, since that will never get wide support in userspace.
-> 
-> OTOH if we define and document a new standard userspace API for this
-> then hopefully standard userspace stacks like KDE and GNOME will
-> eventually get support for this and then for the next zoned rgb
-> keyboard things will just work using the new standard API once
-> kernel support is merged.
-> 
-> I realize that using a single LED class device with kbd_backlight
-> in the name to tap into the existing userspace support to at least
-> control the overall backlight brightness is useful and tempting but
-> 
-> IMHO this really is a case where we need a new userspace API and then
-> emulating just a single brightness control for compatilbility with
-> existing userspace UI code can be done in powerdevil (KDE) or
-> upower (GNOME and others) in combination with offereing a more
-> complete DBUS API to also allow controlling the zones separately.
-> 
+The phone has a Silergy SY7802 flash LED controller.
 
-That makes sense. I should post my first implementation using the
-multicolor led api soon.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+This series introduces a driver for the Silergy SY7802 charge pump used
+in the BQ Aquaris M5 and X5 smartphones.
 
-> Recently another (laptop) driver for Casper Excalibur laptops has
-> been posted and this also include support for a 4 zone rgb keyboard:
-> https://lore.kernel.org/platform-driver-x86/20240324181201.87882-2-mustafa.eskieksi@gmail.com/
-> 
-> This driver actually already implements the userspace API proposed in
-> the discussion surrounding the earlier "[PATCH V3] platform/x86: hp-wmi:
-> Support omen backlight control wmi-acpi methods" patch.
-> 
-> This driver creates 4 LED class devices using the multi-color LED API
-> for RGB. One LED class device per zone. These are named:
-> 
-> casper:rgb:kbd_zoned_backlight-right
-> casper:rgb:kbd_zoned_backlight-middle
-> casper:rgb:kbd_zoned_backlight-left
-> casper:rgb:kbd_zoned_backlight-corners
-> 
-> Where as for the HP laptop case I believe the 4 multi-color LED
-> class devices should have the following names since the zones
-> are different:
-> 
-> hp:rgb:kbd_zoned_backlight-main
-> hp:rgb:kbd_zoned_backlight-wasd
-> hp:rgb:kbd_zoned_backlight-cursor
-> hp:rgb:kbd_zoned_backlight-numpad
-> 
+The implementation is based on information extracted from downstream as
+the datasheet provided by a distributor of the hardware didn't include
+any information about the i2c register description.
+---
+Changes in v6:
+- Drop applied patches 1/3 and 2/3
+- Move #address-/size-cells to the end
+- Add R-b tag
+- Link to v5: https://lore.kernel.org/r/20240624-sy7802-v5-0-7abc9d96bfa6@apitzsch.eu
 
-For this driver i think it should be something more like this:
+Changes in v5:
+- Fix language in driver description comment
+- Unwrap function arguments
+- Remove unnecessary empty lines
+- Add Acked-by tag to second patch
+- Link to v4: https://lore.kernel.org/r/20240616-sy7802-v4-0-789994180e05@apitzsch.eu
 
-hp:rgb:kbd_zoned_backlight-right
-hp:rgb:kbd_zoned_backlight-middle
-hp:rgb:kbd_zoned_backlight-left
-hp:rgb:kbd_zoned_backlight-wasd
+Changes in v4:
+- Use for_each_available_child_of_node_scoped() to simplify code
+- Use dev_err_probe() to be consistent with the other code in
+  sy7802_probe()
+- Split devm_add_action() into 2 devm_add_action_or_reset() to simplify
+  code and balance regulator_enable()
+- Link to v3: https://lore.kernel.org/r/20240612-sy7802-v3-0-1e9cc1c79b79@apitzsch.eu
 
-> As I mentioned in my review of the Casper Excalibur laptop driver
-> as part of adding support for these zoned rgb keyboards to various
-> laptop vendor specific drivers we should also document how these
-> devices are presented to userspace:
-> 
-> A separate patch needs to be written to add documentation about
-> the use of these names for zoned RGB backlit kbds in a new paragraph /
-> subsection of the "LED Device Naming" section of:
-> 
-> Documentation/leds/leds-class.rst 
-> 
-> And this should document at least the 2 currently known
-> zone sets:
-> 
-> :rgb:kbd_zoned_backlight-right
-> :rgb:kbd_zoned_backlight-middle
-> :rgb:kbd_zoned_backlight-left
-> :rgb:kbd_zoned_backlight-corners
-> 
-> :rgb:kbd_zoned_backlight-main
-> :rgb:kbd_zoned_backlight-wasd
-> :rgb:kbd_zoned_backlight-cursor
-> :rgb:kbd_zoned_backlight-numpad
-> 
-> with a comment that in the future different zone names are possible
-> if keyboards with a different zoning scheme show up.
-> 
-> Perhaps you can work together with Mustafa on writing a patch for:
-> Documentation/leds/leds-class.rst ?
-> 
+Changes in v3:
+- Add R-b tag to first patch
+- Extend driver commit message
+- Improve readability of defines by using BIT()
+- Rename some variables/parameters
+  * led_no -> led_id
+  * level -> brightness
+  * curr -> fled_{strobe,torch}_used_tmp
+  * mask -> {flash,torch}_mask
+  * i -> child_num
+- Restructure structs ("Place th big stuff at the top")
+- Declare 'child' on a separate line
+- Move multi-line assignments out of declaration block
+- Update warning/error messages and comments
+- Use gotos to handle error path
+- Use devm API to cleanup module's resources
+- Init mutex before LED class device is registered to avoid race
+  condition
+- Link to v2: https://lore.kernel.org/r/20240401-sy7802-v2-0-1138190a7448@apitzsch.eu
 
-I am open to it if it was not done yet. But could you please
-be a bit more specific about what exactly
-needs to be documented about my patch?
-Zone names, brightness control, userspace interaction?
+Changes in v2:
+- bindings: remove unneeded allOf
+- bindings: example: move flash-led-controller under i2c node to fix
+  check error
+- Cc to phone-devel
+- Link to v1: https://lore.kernel.org/r/20240327-sy7802-v1-0-db74ab32faaf@apitzsch.eu
+---
+ .../boot/dts/qcom/msm8939-longcheer-l9100.dts      | 27 ++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-> for this and then hopefully Pavel can review + ack this patch
-> and then we can move forward with both the hp and the casper
-> laptop zoned rgb keyboard support.
-> 
-> Regards,
-> 
-> Hans
+diff --git a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
+index e3404c4455cf..b845da4fa23e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
++++ b/arch/arm64/boot/dts/qcom/msm8939-longcheer-l9100.dts
+@@ -159,6 +159,26 @@ led@2 {
+ 			};
+ 		};
+ 	};
++
++	flash-led-controller@53 {
++		compatible = "silergy,sy7802";
++		reg = <0x53>;
++
++		enable-gpios = <&tlmm 16 GPIO_ACTIVE_HIGH>;
++
++		pinctrl-0 = <&camera_rear_flash_default>;
++		pinctrl-names = "default";
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		led@0 {
++			reg = <0>;
++			function = LED_FUNCTION_FLASH;
++			color = <LED_COLOR_ID_WHITE>;
++			led-sources = <0>, <1>;
++		};
++	};
+ };
+ 
+ &blsp_i2c3 {
+@@ -318,6 +338,13 @@ camera_front_flash_default: camera-front-flash-default-state {
+ 		bias-disable;
+ 	};
+ 
++	camera_rear_flash_default: camera-rear-flash-default-state {
++		pins = "gpio9", "gpio16", "gpio51";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
+ 	gpio_hall_sensor_default: gpio-hall-sensor-default-state {
+ 		pins = "gpio20";
+ 		function = "gpio";
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240325-sy7802-f40fc6f56525
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
