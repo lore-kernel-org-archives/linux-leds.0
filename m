@@ -1,39 +1,48 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DE98814;
-	Sun,  7 Jul 2024 21:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD86469D;
+	Mon,  8 Jul 2024 02:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720388728; cv=none; b=R57xAlRE3i5ecwfeLitxhl8p56NBalENvGxUOSnV5ZrvbCM3aMsSF6OnUur9jkMQj3QZ1ptaXSve+AbMLqjxJA9ITLGf1yZKqlT1K6wlO3QZK94+roecNmg6pN0IEIsldO2k4Snkr2FG1O8qwvQox6RLcq7bNKIqwyj2qHUgnks=
+	t=1720407589; cv=none; b=KlYG6V8PDzoSBGdA/pxAYmlxL0jW1+bATTFz8iaZSWgbwu+xQS0ECick4OlkqV0fwarLsU8HEFM+iyQBqf1aUyTd4ei2oLxDAKFH1tjLUQx2VdtMtqWdEoqyJQIzFEaJGqmV9oCD/yb+WRu7b1JTZ1dW7nSNft/aMIqOcya/b9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720388728; c=relaxed/simple;
-	bh=kxoFWYO3bwZsOtyKWt2DNQ3B10E/thQVySN+XmbBCRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=foQH237pyZdQnJeUby4KFJN+yyE3YD+gAwx5wOMKotG28PFH0KmNfSwVq2QOMKqxI8+x85twpHqA8O2Yo2aUfA3V87ay80XqFab+ege9QDWQODyhY6UgrUaRseLP+BdOd8vrV+vQ7cf6xhJykFvmJsOJ8H1Y4sD4a/qJbP7UZK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=yUf5MXcx; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1720407589; c=relaxed/simple;
+	bh=A1FQ2BG5XM8p1fshxHOyJ7FQDlUasavHLtnXZJmCBN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uo0v6hYupDUoqrou1EexqxpTyoRh3Pp4bDi7nlTDhU2Rvarg27RlCehaSld7glycui+Phx8h9r4oGQzbrgYqdVyrczp0WT5SsVDjPVv4b8fi+c8GY3ZUNuWxq4xC2ugq9kj3dvWitq7hJ5uIZtEXs9ES23aIoISp/tlPo0Yk/Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WN4v4FeZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="yUf5MXcx"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 8AA128848D;
-	Sun,  7 Jul 2024 23:37:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720388274;
-	bh=DaZTjlF90VZfbPLVFBAGhoPz840GJQhHGxpz8MMGTwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=yUf5MXcxu6xkB8toruebib0gSsBnLM7VJyB1fSXq9VHPLq6DyRpN0hTygVSd0FHOl
-	 buZHbdUiDFOK9Jf+pp2D8EyIF3ZJsJGGAM9eqQid8H7sAhnpgdXcJSJ0ERUqhci2+x
-	 oB7i4NV4jgRWtxqEPmrL84TxQpowYRQWg4qPBbUNCkJ1/mkW9fGkTSz8BG9skM+zLf
-	 17SP3qEVMM01UUTnN5u6WeCPW9RP/bYDLXndPag0VDgH38KlU1f0dV7J9zzeEZrqeG
-	 F+P2g1AuEC/5YjhMEQntSN5Y89ixVZ+YUNtUco+GGpZL4k3fVl0ZKoCsA6eBG1HHPu
-	 EycgpdEb6bURA==
-Message-ID: <ba158821-2f9f-46f6-9929-5bc810f2e10b@denx.de>
-Date: Sun, 7 Jul 2024 21:49:14 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WN4v4FeZ"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4682EFSP012919;
+	Mon, 8 Jul 2024 02:59:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nTchpMjfhBevEBM42fp3Ef+mrykdVch3hUrrS7l5hto=; b=WN4v4FeZ6gYCnk17
+	TK6o9QM1XX7+H4GcrObDY0ZUDbn8vIGUqrcy1JT3c/K3SNKuiufbZty2G0IE90r2
+	qwNxSOyxPYl14WUtM0IN5XGXn1MP54IMLQ8JyXvpO0zNniJHzo7jcLyarXciaLkQ
+	wjgOQSvd04C7hsByoQurHmLGASTYgSIAHHZJ4GYvA/2yZIH/OXw2ty4CPKxyN44K
+	GqAvHzhGGi7HmqWey9rKDCnDF1VdKQay6FcGF22zImNEn6it20W0EGEzKedCaikm
+	A0VBtzO0l1QOerSOMYdTu6e3WRxDCrw64ASwYYVX5VGBXEWHXsltXyOaF/R33SxW
+	KKwAJA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x512edr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 02:59:39 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4682xcwo012098
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 02:59:38 GMT
+Received: from [10.239.154.73] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 7 Jul 2024
+ 19:59:33 -0700
+Message-ID: <40dfeb9c-e420-4695-939f-ef9b1985d61c@quicinc.com>
+Date: Mon, 8 Jul 2024 10:59:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,40 +50,90 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: leds: Document "netdev" trigger
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-leds@vger.kernel.org
-Cc: kernel@dh-electronics.com, Conor Dooley <conor+dt@kernel.org>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org
-References: <20240705215313.256963-1-marex@denx.de>
- <22b43c93-6055-4503-94ad-cd449f21f801@kernel.org>
+Subject: Re: [PATCH RESEND v3] leds: flash: leds-qcom-flash: limit LED current
+ based on thermal condition
+To: Luca Weiss <luca.weiss@fairphone.com>, <kernel@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Lee Jones
+	<lee@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "David
+ Collins" <quic_collinsd@quicinc.com>,
+        Subbaraman Narayanamurthy
+	<quic_subbaram@quicinc.com>
+References: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
+ <D2HO9CAE81NA.3UIL5UZ1N5I4W@fairphone.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <22b43c93-6055-4503-94ad-cd449f21f801@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Fenglin Wu <quic_fenglinw@quicinc.com>
+In-Reply-To: <D2HO9CAE81NA.3UIL5UZ1N5I4W@fairphone.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cbG9am1QUBLpZ3l3KeuYeJbmyqb9REpU
+X-Proofpoint-ORIG-GUID: cbG9am1QUBLpZ3l3KeuYeJbmyqb9REpU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-07_10,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=711 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080023
 
-On 7/7/24 3:49 PM, Krzysztof Kozlowski wrote:
-> On 05/07/2024 23:52, Marek Vasut wrote:
->> Document the "netdev" trigger which is used to control LEDs by
->> network device activity.
+
+
+On 7/5/2024 10:23 PM, Luca Weiss wrote:
+> On Fri Jul 5, 2024 at 9:55 AM CEST, Fenglin Wu via B4 Relay wrote:
+>> From: Fenglin Wu <quic_fenglinw@quicinc.com>
+>>
+>> The flash module has status bits to indicate different thermal
+>> conditions which are called as OTSTx. For each OTSTx status,
+>> there is a recommended total flash current for all channels to
+>> prevent the flash module entering into higher thermal level.
+>> For example, the total flash current should be limited to 1000mA/500mA
+>> respectively when the HW reaches the OTST1/OTST2 thermal level.
 > 
-> Instead, please propose a patch adding a comment there (in that place):
-> "# netdev - not accepted, please do not add it"
+> Hi Fenglin,
 > 
-> This is like fourth or fifth attempt.
+> Only semi-related to this patch, but I wanted to ask.
 > 
-> https://lore.kernel.org/all/20230217230346.GA2217008-robh@kernel.org/
+> Since most phones with a flash also have a thermistor for the flash led,
+> is there any plan to add support to be able to declare the flash led to
+> be a "cooling-device" for the relevant thermal zone? That way from a
+> Linux thermal API standpoint when the zone gets too hot that it can ask
+> the driver to throttle the brightness or turn the LED off completely.
+> 
+> Right now the only action the kernel can take is with type 'critical' to
+> just kill the entire system to mitigate the thermal situation.
+> 
+> Regards
+> Luca
+> 
 
-There is a follow up to that discussion:
+Hi Luca,
 
-https://lore.kernel.org/all/20230221014413.GA780723-robh@kernel.org/
+This change provides the ability to throttle flash current based on the 
+thermal status sensed by the temperature sensor inside the flash module 
+HW , it doesn't need to register anything in Linux thermal framework.
 
-That netdev trigger is nothing new, there are existing DTs using that 
-trigger in-tree going back to 2019, this is only documenting it.
+For the case that you mentioned, when an external thermistor is 
+installed nearby the flash LED component and normally the ADC_TM driver 
+registers a thermal_zone device with it, I agree that having the flash 
+LED driver providing a thermal_cooling device so that any cooling 
+mapping policy could be defined between the thermal sensor and the 
+cooling device would be a good option for better system level thermal 
+control. I would assume that this could be added in flash LED framework 
+driver instead of the client drivers considering this should be a common 
+request because of the big thermal dissipation of flash LED?
 
-So, shall I really add a comment or update the commit message ?
+Fenglin
+>>
+>> ---
+>> base-commit: ca66b10a11da3c445c9c0ca1184f549bbe9061f2
+>> change-id: 20240507-qcom_flash_thermal_derating-260b1f3c757c
+>>
+>> Best regards,
+> 
