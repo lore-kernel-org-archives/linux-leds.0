@@ -1,69 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C89B19DF86;
-	Thu, 25 Jul 2024 16:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FDB6F2EA;
+	Thu, 25 Jul 2024 19:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721924888; cv=none; b=ZTxj+uF5AzZ7wIUoWoo/pmZQup/fRfBlsrQtgoAXzCzeGRK2U8hw5wsIVGsDQ7t+wh62SY1R7xJdH19mlEo8VjyY/oqJFEKi244n/2vIliqt4nFhHUf0mHvWvwxLcpPdVY9wZBwnMN3lMCusYNxXSzr7ezfCXOLd9e4uqKUwZVQ=
+	t=1721936774; cv=none; b=p+tb7wcCxO2oXnwmuBiSsOyTzLtgbkJSuuOHDSEkyoAqHG8L9Dn4yLwbkFh5s+XUXshkvsO09p6h7b7JES2WsDczmwfog9Lx1Sjd/pyruqfhQDz2Rypi8xOlXjQjBHRVnFo0cBBlZjBKMw49AN6YO1gRMuLnRCVz54UCYH4H2eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721924888; c=relaxed/simple;
-	bh=D+1K37f9Eu/3aYFDb/ufjHrcefMCPhYev9u6FW28edw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WaUi4aAb6Vk5I73Q69GhCzVmiBxt3qPmpVccB7YHiQEjS79t6PdtOoktgpcvWNlhTmOqIrdu1HtBMTOQePUoaoIV6RvbYuog618uMltQrT7/W5sEgGSwMC9V4yNJVB0qBkMYQEXWHRQucQbsWNJxhgezB97MuL9FsFCHY0vZAYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yn+C02f/; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yn+C02f/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E410C4AF0E;
-	Thu, 25 Jul 2024 16:28:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721924888;
-	bh=D+1K37f9Eu/3aYFDb/ufjHrcefMCPhYev9u6FW28edw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Yn+C02f/XzXbbUWbenckJ+lzK0Hy8IFarQsnPThtEQNOAj+xiXOVUpBB9RfmEgI51
-	 6fOgNuATtZiuEoJVBn+6B6RYb651y/OA/wYdfY1yzjkDfuxxku8vPhCujBV2BhvMI/
-	 dfsVS/PP/5bUopCAqhU2J8ObYDaG0Cl7DeSvSLxVM42roukxhksKEB49O9tus64Oku
-	 Np9dnLzom/CjP/I6SI/DdGio9tfA5LIA/xgargaIUQsbjHejqNBjji1eJp6aRAZ6Fj
-	 iLSv40hdQeRpkGMMBKdAkLLdqqnBAR8LLaXoReCCn3f4B62JwfB6DKxrzrj4PfbsaQ
-	 dbCBWjoan/OxQ==
-From: Lee Jones <lee@kernel.org>
-To: kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Fenglin Wu <quic_fenglinw@quicinc.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Collins <quic_collinsd@quicinc.com>, 
- Subbaraman Narayanamurthy <quic_subbaram@quicinc.com>
-In-Reply-To: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
-References: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
-Subject: Re: (subset) [PATCH RESEND v3] leds: flash: leds-qcom-flash: limit
- LED current based on thermal condition
-Message-Id: <172192488634.1053789.976131312615476659.b4-ty@kernel.org>
-Date: Thu, 25 Jul 2024 17:28:06 +0100
+	s=arc-20240116; t=1721936774; c=relaxed/simple;
+	bh=fkrMzGswzCO7CPU3pzXIY4sgrQ/Z3eYGrtwNukVb2dM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Zv3Hnbk37+dENHaiuVSUo7xlnkCe71Jr4VxusRJ1tzS5ysBwO1QGDGUQExlooudQovXK9jZ50X4jVUjKvrc5BCRgwJd1FePXnEBiipxhja0CawQtgqAI4pHlCOemd9JJck4oG7FMUIg3r9mYFYe8g1zVnZJKCKDE3lYkOGb+kb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860cdd.versanet.de ([94.134.12.221] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sX4PS-0001rD-Bx; Thu, 25 Jul 2024 21:45:54 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH 7/7] arm64: dts: rockchip: set hdd led labels on qnap-ts433
+Date: Thu, 25 Jul 2024 21:45:39 +0200
+Message-Id: <20240725194539.1780790-8-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240725194539.1780790-1-heiko@sntech.de>
+References: <20240725194539.1780790-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
 
-On Fri, 05 Jul 2024 15:55:01 +0800, Fenglin Wu wrote:
-> The flash module has status bits to indicate different thermal
-> conditions which are called as OTSTx. For each OTSTx status,
-> there is a recommended total flash current for all channels to
-> prevent the flash module entering into higher thermal level.
-> For example, the total flash current should be limited to 1000mA/500mA
-> respectively when the HW reaches the OTST1/OTST2 thermal level.
-> 
-> [...]
+The automatically generated names for the LEDs from color and function
+do not match nicely for the 4 hdds, so set them manually per the label
+property to also match the LEDs generated from the MCU.
 
-Applied, thanks!
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-[1/1] leds: flash: leds-qcom-flash: limit LED current based on thermal condition
-      commit: 3db5127c28f8faa1c245588ab982f72d033e1de4
-
---
-Lee Jones [李琼斯]
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+index bff21684a3970..c35c11203e903 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+@@ -50,6 +50,7 @@ led-0 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD5 GPIO_ACTIVE_LOW>;
++			label = "hdd1:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd1_led_pin>;
+@@ -59,6 +60,7 @@ led-1 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD6 GPIO_ACTIVE_LOW>;
++			label = "hdd2:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd2_led_pin>;
+@@ -68,6 +70,7 @@ led-2 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD7 GPIO_ACTIVE_LOW>;
++			label = "hdd3:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd3_led_pin>;
+@@ -77,6 +80,7 @@ led-3 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio2 RK_PA0 GPIO_ACTIVE_LOW>;
++			label = "hdd4:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd4_led_pin>;
+-- 
+2.39.2
 
