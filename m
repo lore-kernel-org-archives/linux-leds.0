@@ -1,267 +1,188 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3643A13AD23;
-	Thu, 25 Jul 2024 19:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB1AED8;
+	Fri, 26 Jul 2024 03:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721936777; cv=none; b=l4WHsCvHRuoOVOWnS+UEpgBKlXyzIWFQCWjUNRiSu9X4XjH+uNluSqkX+SWD9PVIFEcz/nPLza0Mdz3ttkq0B8prlHz4BsmFt1mse5bMK1mOEb9qwtOm9kippd9kipDWRTK3xrGAE7FiDVSb3W5CO9+69Ufl7/qzqnFeoaLPhoA=
+	t=1721964712; cv=none; b=rRKTLJdDR4mk9R6pYG1Daq7mBzYn5oSdj/nfzqEr2JsF8Oh12ZEsUsvvAtn87Xq72rVlW9kYEhHOquWeIgcb5h7kxa8N8Mb1yE3UP74GA+DBugbzHpFwYYGghG8EaMThpm0IfcWns/DDROdx217gc1O0iza/6DiY5YJVgcJMQPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721936777; c=relaxed/simple;
-	bh=+tAV/jdwNu/c42NsW1/DDe58gft+TQdAXYr918JtTps=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lfUgjtUtiTV3LqMSHTIdPSl+/sHZVlS+18k2Sbyy9FZ0xO8baD5sgi2WoSUEl/mfoCmfKIpM32As60ffCJlOgBtAyzNYd071v+aX8dbYbD0naUwGEHa3mD7b1448JlRper25KVk+ZEUUQcDDOQELjXtdCsotLNlvIWoGCqyQ/LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860cdd.versanet.de ([94.134.12.221] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sX4PQ-0001rD-7y; Thu, 25 Jul 2024 21:45:52 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lee@kernel.org,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	dmitry.torokhov@gmail.com,
-	pavel@ucw.cz
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	ukleinek@debian.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-hwmon@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH 4/7] Input: add driver for the input part of qnap-mcu devices
-Date: Thu, 25 Jul 2024 21:45:36 +0200
-Message-Id: <20240725194539.1780790-5-heiko@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240725194539.1780790-1-heiko@sntech.de>
-References: <20240725194539.1780790-1-heiko@sntech.de>
+	s=arc-20240116; t=1721964712; c=relaxed/simple;
+	bh=wB4ZRIrL2XC91qM492YblhoR+l2yJuhp6KXnkhC4eEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpVWCK2sKMuTNZ+g8c2fsBiVI36ZNP9WHFuxwOnAnN8p6tGd2PYhUc05YTdHV/kluSSXudD8Q3htdOgd2Drc2BfCyceoArfzJysa8mzF/0Y2rDrlmthlLl9zqHyVcq+rBuGoNiw8MBfF/EnrVKoXqg9JLQCRsPgJHYgxCaZrc1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXcRl5jm; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXcRl5jm"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fd78c165eeso2095165ad.2;
+        Thu, 25 Jul 2024 20:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721964710; x=1722569510; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1fW7ZV4Va2JuSoO+Cf3WvU21hzFTENmt0nNVN5ukOAQ=;
+        b=hXcRl5jmtxMbpfWDz8i9YY/a1OlqmJTSE1kGkfLr+6zSKYp11Gh2hxiFqxG8fdZutY
+         u5/4F0WzRSCuVDFFtys78SARm3izxIfW0oDDn3U0+zzIWk9KIU07o5YHIaKqp6zDzpoI
+         3fxIfcr7rq1Og5WV7Q9H2KAtm2NVyKnJFl2Y+Me/7/nMl8YZEiQScbJ1zeZSjPI8Gc9L
+         TWBBabaEYuDeVFnX3NSNi23lb15QZZnuWJTTFSDJMoebPAE7EdMT+CuG0OgIMbBiioSJ
+         XdLdRyu1n7laZuM46gsENgQjVhEnpyp7Zamg+pIkFJ14Rg1NauE91C/SwTpxxX2i2gG9
+         bANA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721964710; x=1722569510;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1fW7ZV4Va2JuSoO+Cf3WvU21hzFTENmt0nNVN5ukOAQ=;
+        b=w6PxQwXHLX8nVUGWcBvDlQixP5ZndfEGKRFyv6c8uhLwhCwt6SrH6mtGQgWzGqL/PR
+         8S0D5TOgNKRiBL8Vgws53YlshH+JFGXhwnTYjPc3uR7zkc4WlkDsH2bWCtgf77HD/GSR
+         9+4Mnk3PT+nPjdPzEBdhGq9RLO2d9CEXvo668i3CF1shbWaFLfwcMQ5Xdvk/0KT2cPk5
+         vHkLWanIgewOLHBnB6+EgS9JHd+DCmXDInjXCNXGrFFYdQEYyXWXDE47PLnjokN6HI9d
+         yZi98zMTvBtZHo3JKOGjuRWNwXknBEPhppdiP44lBVzfiFEng4p9MSHw7iNt7L9Mhw22
+         nAmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTHOgu+FPX4ZgXH0t0P/GrLo+vdwB+UBE8Kd9kFUO848dgxD3rkOf59sGaAivztvtrZ1INOBhRgbvIEnoIqvz2Y2Kr2Bg4PG0QRl2kONbctOqG1GBdgt1xYgNXFv2wnC9u1D/De3NyRA==
+X-Gm-Message-State: AOJu0YzLQauwE6cAy68zMI8k299RcT9/F7wz/3HouRi5cHFJ0Ij7ZQ5W
+	uLUBHb8sTPVwqbwSMMGN05FY21lCkgNGFfxgoxajGrfbBS86UJH5
+X-Google-Smtp-Source: AGHT+IGArxlRKUqIi7rI4POpLExB0YmXp+ngOKRn7FSCpip32UpijpO64pFVvxb4M04Tyo9rXnzcUQ==
+X-Received: by 2002:a17:902:da8c:b0:1fd:6ca9:4c0 with SMTP id d9443c01a7336-1fed91d97c8mr43821945ad.18.1721964710202;
+        Thu, 25 Jul 2024 20:31:50 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee5715sm21612835ad.128.2024.07.25.20.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jul 2024 20:31:49 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id A690B4937EEA; Fri, 26 Jul 2024 10:31:45 +0700 (WIB)
+Date: Fri, 26 Jul 2024 10:31:44 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Guilherme =?utf-8?Q?Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux LED Devices <linux-leds@vger.kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
+	Lee Jones <lee@kernel.org>
+Subject: Re: leds: remove led_brightness
+Message-ID: <ZqMYoHUECmrl2Rty@archie.me>
+References: <CAM_RzfZWcD8F+6YutbDBo7hGhFm0nbG-Wc0H7bnu4XM03W6_Tg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Df/vGhVmn7C13MvM"
+Content-Disposition: inline
+In-Reply-To: <CAM_RzfZWcD8F+6YutbDBo7hGhFm0nbG-Wc0H7bnu4XM03W6_Tg@mail.gmail.com>
 
-The MCU controls the power-button and beeper, so expose them as input
-device. There is of course no interrupt line, so the status of the
-power-button needs to be polled. To generate an event the power-button
-also needs to be held for 1-2 seconds, so the polling interval does
-not need to be overly fast.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/input/misc/Kconfig          |  12 +++
- drivers/input/misc/Makefile         |   1 +
- drivers/input/misc/qnap-mcu-input.c | 156 ++++++++++++++++++++++++++++
- 3 files changed, 169 insertions(+)
- create mode 100644 drivers/input/misc/qnap-mcu-input.c
+--Df/vGhVmn7C13MvM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 6ba984d7f0b18..4ab8fe8301635 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -900,6 +900,18 @@ config INPUT_HISI_POWERKEY
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called hisi_powerkey.
- 
-+config INPUT_QNAP_MCU
-+	tristate "Input Support for QNAP MCU controllers"
-+	depends on MFD_QNAP_MCU
-+	help
-+	  This option enables support for input elements available on
-+	  embedded controllers used in QNAP NAS devices.
-+
-+	  This includes a polled power-button as well as a beeper.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called qnap-mcu-input.
-+
- config INPUT_RAVE_SP_PWRBUTTON
- 	tristate "RAVE SP Power button Driver"
- 	depends on RAVE_SP_CORE
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 04296a4abe8e8..05f5d0072b08f 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)	+= pmic8xxx-pwrkey.o
- obj-$(CONFIG_INPUT_POWERMATE)		+= powermate.o
- obj-$(CONFIG_INPUT_PWM_BEEPER)		+= pwm-beeper.o
- obj-$(CONFIG_INPUT_PWM_VIBRA)		+= pwm-vibra.o
-+obj-$(CONFIG_INPUT_QNAP_MCU)		+= qnap-mcu-input.o
- obj-$(CONFIG_INPUT_RAVE_SP_PWRBUTTON)	+= rave-sp-pwrbutton.o
- obj-$(CONFIG_INPUT_RB532_BUTTON)	+= rb532_button.o
- obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)	+= regulator-haptic.o
-diff --git a/drivers/input/misc/qnap-mcu-input.c b/drivers/input/misc/qnap-mcu-input.c
-new file mode 100644
-index 0000000000000..9bac7ea2c6b80
---- /dev/null
-+++ b/drivers/input/misc/qnap-mcu-input.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/*
-+ * Driver for input events on QNAP-MCUs
-+ *
-+ * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
-+ */
-+
-+#include <linux/input.h>
-+#include <linux/mfd/qnap-mcu.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <uapi/linux/input-event-codes.h>
-+
-+/*
-+ * The power-key needs to be pressed for a while to create an event,
-+ * so there is no use for overly frequent polling.
-+ */
-+#define POLL_INTERVAL		500
-+
-+struct qnap_mcu_input_dev {
-+	struct input_dev *input;
-+	struct qnap_mcu *mcu;
-+	struct device *dev;
-+
-+	struct work_struct beep_work;
-+	int beep_type;
-+};
-+
-+static void qnap_mcu_input_poll(struct input_dev *input)
-+{
-+	struct qnap_mcu_input_dev *idev = input_get_drvdata(input);
-+	u8 cmd[] = {
-+		[0] = 0x40, /* @ */
-+		[1] = 0x43, /* C */
-+		[2] = 0x56  /* V */
-+	};
-+	u8 reply[4];
-+	int state, ret;
-+
-+	/* poll the power button */
-+	ret = qnap_mcu_exec(idev->mcu, cmd, sizeof(cmd), reply, sizeof(reply));
-+	if (ret)
-+		return;
-+
-+	/* First bytes must mirror the sent command */
-+	if (memcmp(cmd, reply, sizeof(cmd))) {
-+		dev_err(idev->dev, "malformed data received\n");
-+		return;
-+	}
-+
-+	state = reply[3] - 0x30;
-+	input_event(input, EV_KEY, KEY_POWER, state);
-+	input_sync(input);
-+}
-+
-+static void qnap_mcu_input_beeper_work(struct work_struct *work)
-+{
-+	struct qnap_mcu_input_dev *idev =
-+		container_of(work, struct qnap_mcu_input_dev, beep_work);
-+	u8 cmd[] = {
-+		[0] = 0x40, /* @ */
-+		[1] = 0x43, /* C */
-+		[2] = (idev->beep_type == SND_TONE) ? 0x33 : 0x32
-+	};
-+
-+	qnap_mcu_exec_with_ack(idev->mcu, cmd, sizeof(cmd));
-+}
-+
-+static int qnap_mcu_input_event(struct input_dev *input, unsigned int type,
-+				unsigned int code, int value)
-+{
-+	struct qnap_mcu_input_dev *idev = input_get_drvdata(input);
-+
-+	if (type != EV_SND || (code != SND_BELL && code != SND_TONE))
-+		return -EOPNOTSUPP;
-+
-+	if (value < 0)
-+		return -EINVAL;
-+
-+	/* beep runtime is determined by the MCU */
-+	if (value == 0)
-+		return 0;
-+
-+	/* Schedule work to actually turn the beeper on */
-+	idev->beep_type = code;
-+	schedule_work(&idev->beep_work);
-+
-+	return 0;
-+}
-+
-+static int qnap_mcu_input_probe(struct platform_device *pdev)
-+{
-+	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
-+	struct qnap_mcu_input_dev *idev;
-+	struct device *dev = &pdev->dev;
-+	struct input_dev *input;
-+	int ret;
-+
-+	idev = devm_kzalloc(dev, sizeof(*idev), GFP_KERNEL);
-+	if (!idev)
-+		return -ENOMEM;
-+
-+	input = devm_input_allocate_device(dev);
-+	if (!input)
-+		return dev_err_probe(dev, -ENOMEM, "no memory for input device\n");
-+
-+	idev->input = input;
-+	idev->dev = dev;
-+	idev->mcu = mcu;
-+
-+	input_set_drvdata(input, idev);
-+
-+	input->name		= "qnap-mcu";
-+	input->phys		= "qnap-mcu-input/input0";
-+	input->id.bustype	= BUS_HOST;
-+	input->id.vendor	= 0x0001;
-+	input->id.product	= 0x0001;
-+	input->id.version	= 0x0100;
-+	input->event		= qnap_mcu_input_event;
-+
-+	input_set_capability(input, EV_KEY, KEY_POWER);
-+	input_set_capability(input, EV_SND, SND_BELL);
-+	input_set_capability(input, EV_SND, SND_TONE);
-+
-+	INIT_WORK(&idev->beep_work, qnap_mcu_input_beeper_work);
-+
-+	ret = input_setup_polling(input, qnap_mcu_input_poll);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "unable to set up polling\n");
-+
-+	input_set_poll_interval(input, POLL_INTERVAL);
-+
-+	ret = input_register_device(input);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "unable to register input device\n");
-+
-+	qnap_mcu_input_poll(input);
-+	input_sync(input);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qnap_mcu_input_driver = {
-+	.probe = qnap_mcu_input_probe,
-+	.driver = {
-+		.name = "qnap-mcu-input",
-+	},
-+};
-+module_platform_driver(qnap_mcu_input_driver);
-+
-+MODULE_ALIAS("platform:qnap-mcu-input");
-+MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
-+MODULE_DESCRIPTION("QNAP MCU input driver");
-+MODULE_LICENSE("GPL");
--- 
-2.39.2
+On Tue, Jul 23, 2024 at 10:03:52AM -0300, Guilherme Gi=C3=A1como Sim=C3=B5e=
+s wrote:
+> Hi community, I hope this email finds you well
+> I maked a change in kernel linux, for fulfill a TODO in
+> drivers/leds/TODO that say:
+> >* On/off LEDs should have max_brightness of 1
+> >* Get rid of enum led_brightness
+> >
+> >It is really an integer, as maximum is configurable. Get rid of it, or
+> >make it into typedef or something.
+>=20
+> Then I removed the led_brightness. And in the files that enum
+> led_brightness was used I replace to "int" ... And in the file
+> "include/linux/leds.h" I created constants like:
+> +#define LED_OFF  0
+> +#define LED_ON   1
+> +#define LED_HALF 127
+> +#define LED_FULL 255
+>=20
+> because in some files when has a compare like "brightness =3D=3D LED_OFF"
+> it will work yet.
+>=20
+> The includes/linux/leds.h diff:
+> -/* This is obsolete/useless. We now support variable maximum brightness.=
+ */
+> -enum led_brightness {
+> -       LED_OFF         =3D 0,
+> -       LED_ON          =3D 1,
+> -       LED_HALF        =3D 127,
+> -       LED_FULL        =3D 255,
+> -};
+> +// default values for leds brightness
+> +#define LED_OFF  0
+> +#define LED_ON   1
+> +#define LED_HALF 127
+> +#define LED_FULL 255
+>=20
+>  enum led_default_state {
+>         LEDS_DEFSTATE_OFF       =3D 0,
+> @@ -127,15 +125,15 @@ struct led_classdev {
+>          * that can sleep while setting brightness.
+>          */
+>         void            (*brightness_set)(struct led_classdev *led_cdev,
+> -                                         enum led_brightness brightness);
+> +                                         int brightness);
+>         /*
+>          * Set LED brightness level immediately - it can block the caller=
+ for
+>          * the time required for accessing a LED device register.
+>          */
+>         int (*brightness_set_blocking)(struct led_classdev *led_cdev,
+> -                                      enum led_brightness brightness);
+> +                                      int brightness);
+>         /* Get LED brightness level */
+> -       enum led_brightness (*brightness_get)(struct led_classdev *led_cd=
+ev);
+> +       int (*brightness_get)(struct led_classdev *led_cdev);
+>=20
+>         /*
+>          * Activate hardware accelerated blink, delays are in milliseconds
+> @@ -486,7 +484,7 @@ int devm_led_trigger_register(struct device *dev,
+>  void led_trigger_register_simple(const char *name,
+>                                 struct led_trigger **trigger);
+>  void led_trigger_unregister_simple(struct led_trigger *trigger);
+> -void led_trigger_event(struct led_trigger *trigger,  enum
+> led_brightness event);
+> +void led_trigger_event(struct led_trigger *trigger,  int event);
+>  void led_trigger_blink(struct led_trigger *trigger, unsigned long delay_=
+on,
+>                        unsigned long delay_off);
+>=20
+>=20
+>=20
+> How the kernel has a lot of files that use this led_brightness, the
+> change is very very big.
+> I have some questions:
+>=20
+> Does my change make sense?
+>=20
+> How can I split the change into several patches for sending to
+> different email lists and still have the split change make sense in
+> the email lists I'm going to send it to? can I reference the commit in
+> which I delete the enum?
 
+tl;dr: send the formal patch (see Documentation/process/submitting-patches.=
+rst
+for how to do that). Make sure to Cc: relevant maintainers (see MAINTAINERS
+in the kernel source tree).
+
+Bye!
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--Df/vGhVmn7C13MvM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZqMYkgAKCRD2uYlJVVFO
+oxXwAQCLvO87nzZ+KrPySP5kKy4IRGW7qzfq8Cn4Hw/Z+WwHbAEA/85BYlpyvKL4
+BWa/ppbHgcN36DElpv4NVuIlAlIJ7gI=
+=WLrH
+-----END PGP SIGNATURE-----
+
+--Df/vGhVmn7C13MvM--
