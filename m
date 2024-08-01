@@ -1,34 +1,35 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3A6194125;
-	Thu,  1 Aug 2024 12:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831271A99C0;
+	Thu,  1 Aug 2024 13:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722516794; cv=none; b=HE/N7A4CEL+tdOwzd9WESg3tCI7QEBXxHG6NNUtL8hI1rKWnlU1fz4Lfa3Vob4XYTbLLS5PcB5ooPpt1QHj0C0TNBe5WKQQRUuRc7NpSi3b8gtgW2jCgnFpRUm+oXbNulh/r0EqY6kdkDptfo4n3iFP8+EqzX6qy2EktX8fmcho=
+	t=1722517442; cv=none; b=hlhhtfOOn/BFaMQ416zW2ZH9osyD73frv+X0LXfOETFY1MmZ2zLsKe/z7XRf7Jglrh1fjOqn/Ki+g4el2Akr40Hep9YfrCb4KFB923yHGFkATrrwKWgXgwp42YS2AWS4U4aX/mvbmWBq66xRcjUWVEs7YssOCVyI3geuMUXOIdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722516794; c=relaxed/simple;
-	bh=4TSGYMtxMTPV4JTDRQx/tcJV5tOMAGSkL6U8Y04AVi4=;
+	s=arc-20240116; t=1722517442; c=relaxed/simple;
+	bh=kSCoKSw5DnZETEk8lly0c/wVEP/LzQmG+z9f0B9Xet8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ogf0M19FCjmpJoi1ZYIIBFB11F96qonhhwkGGSo9Z5Nx3Jkv+ibx5i0kGHycjqxLacSxJ7aWqMeQfb0GHYE6Z/RaB+7+1IBO7wJlyfC+jhpiYdoFr6SPVrciwJF2f6cI1lQPhIm7WMg6HntupFZR0wyW6FUQYIaWMqqQDZ1L8eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LP97E20l; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7HL53B4mXyu9SpyKS18SNSE5TXNwJKLaYvNjmPOOhKmAOUA+OgNv94Q9LU8zcuZFnmMGmF3bOpMsUOkKQdWOT5Qp2jdOzWxiCoNxUg9WvfnP6v0Vj58iAn9Qn3aNmTIPYHdS+7wsTl7+NDgk0tQJaC4qb+kY13FfBT1tg3PPXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ruqq/X+W; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LP97E20l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0692C4AF0A;
-	Thu,  1 Aug 2024 12:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722516794;
-	bh=4TSGYMtxMTPV4JTDRQx/tcJV5tOMAGSkL6U8Y04AVi4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LP97E20lR6NcNAe6P/Dv9uh+QWgkTfAk5Y6509n6NgEQH8IrvVx3tHg+qHNLk4UZ4
-	 AbGXV2uJlsQD1Xqu47yBFXPrZsKNZSCcruaDBONavWDFNE8rxO3I9PvznpepBrSUH/
-	 EfKr0+Dye1EfCu7B17NOa1Bq1nk9PTYbJiDVoMU0OcjuQGQpp6fGLsY6S18IGNa/O8
-	 TE1fyMRAFpx6BpamWJBZHjOu3zGADP7LJ9YX1OkPnwRJko0eTWx1AIKeDBO06hqGyS
-	 vTM4FRDmUSJapX9nmwjCI4ysw5bq7GTg9rpsAhxwp5KlugmT3fY27DQTJsLT20OpQ7
-	 2nGpXI3BYe9xw==
-Date: Thu, 1 Aug 2024 13:53:09 +0100
-From: Lee Jones <lee@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ruqq/X+W"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UmKFNRw0LjtNfCc16BZfWf6WWKpUZoBiL2KbRjpT4Q4=; b=ruqq/X+WVqVxsCOGRsQzOraUVk
+	/XDER8dHu9VOD6sOKYdGVLNwNfrs6MOlvtq6pRoFW/91H4g5AkDa17x5cZKzYRajpltx3ANqnQFXF
+	miZ0xXQmy5jny2DthO4ZLMiz5wklJEPg0o+rmPuSK1OQPhQpKnMez5og9/JIGMHlrvcA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZVTH-003mE2-J0; Thu, 01 Aug 2024 15:03:55 +0200
+Date: Thu, 1 Aug 2024 15:03:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lee Jones <lee@kernel.org>
 Cc: Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
 	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -36,53 +37,52 @@ Cc: Marek Vasut <marex@denx.de>, devicetree@vger.kernel.org,
 	Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
 	linux-leds@vger.kernel.org, netdev@vger.kernel.org
 Subject: Re: [PATCH v2] dt-bindings: leds: Document "netdev" trigger
-Message-ID: <20240801125309.GE6756@google.com>
+Message-ID: <62cc3d64-c5e4-4af3-90ce-273ece6e8e57@lunn.ch>
 References: <20240708114653.18566-1-marex@denx.de>
  <20240725085042.GC501857@google.com>
  <3c8bf807-8a8e-4704-a90a-d77ad3293b57@lunn.ch>
+ <20240801125309.GE6756@google.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3c8bf807-8a8e-4704-a90a-d77ad3293b57@lunn.ch>
+In-Reply-To: <20240801125309.GE6756@google.com>
 
-On Thu, 25 Jul 2024, Andrew Lunn wrote:
-
-> > > diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-> > > index 8a3c2398b10ce..bf9a101e4d420 100644
-> > > --- a/Documentation/devicetree/bindings/leds/common.yaml
-> > > +++ b/Documentation/devicetree/bindings/leds/common.yaml
-> > > @@ -113,6 +113,8 @@ properties:
-> > >              # LED indicates NAND memory activity (deprecated),
-> > >              # in new implementations use "mtd"
-> > >            - nand-disk
-> > > +            # LED indicates network activity
-> > > +          - netdev
-> > 
-> > netdev is the description of the network development ML/repo, right?
-> > 
-> > Seems like an odd name for an OS agnostic property?
+On Thu, Aug 01, 2024 at 01:53:09PM +0100, Lee Jones wrote:
+> On Thu, 25 Jul 2024, Andrew Lunn wrote:
 > 
-> I agree that one meaning is the network development community within
-> Linux.
+> > > > diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+> > > > index 8a3c2398b10ce..bf9a101e4d420 100644
+> > > > --- a/Documentation/devicetree/bindings/leds/common.yaml
+> > > > +++ b/Documentation/devicetree/bindings/leds/common.yaml
+> > > > @@ -113,6 +113,8 @@ properties:
+> > > >              # LED indicates NAND memory activity (deprecated),
+> > > >              # in new implementations use "mtd"
+> > > >            - nand-disk
+> > > > +            # LED indicates network activity
+> > > > +          - netdev
+> > > 
+> > > netdev is the description of the network development ML/repo, right?
+> > > 
+> > > Seems like an odd name for an OS agnostic property?
+> > 
+> > I agree that one meaning is the network development community within
+> > Linux.
+> > 
+> > But it also means a network device, which is OS agnostic. I don't
+> > really see it be any different to a memory technology device, mtd.
 > 
-> But it also means a network device, which is OS agnostic. I don't
-> really see it be any different to a memory technology device, mtd.
+> MTD is an acronym.
+> 
+> The only dodgy one I see in there is 'kbd-capslock'.
+> 
+> How about, now go with me here: 'network'?
 
-MTD is an acronym.
+We could do, but we have to keep netdev around for backwards
+compatibility. There are DT blobs using it which we cannot break.
 
-The only dodgy one I see in there is 'kbd-capslock'.
-
-How about, now go with me here: 'network'?
-
-I'd even suffer 'network-device' or 'net-device' if we really have to shorten.
-
-Although, I'm not really sure the 'device' part needs to come into play'?
-
--- 
-Lee Jones [李琼斯]
+	Andrew
