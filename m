@@ -1,122 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965332F2A;
-	Sat, 10 Aug 2024 10:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F03482DB;
+	Sat, 10 Aug 2024 18:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723286342; cv=none; b=Oyen8DdsHpGV0SHyzcef4tXE3M/H4XkQuafUYToIccPbtQGknldoYlzIy+EDHjc5IMhRKei2vJY/h9j0K7h6iQEA/puMWY5XZt/bY5/kYxHHUM/zYfq+MdU0oEQP0YgY2+l/A9cdxfz9Sy+gXTHGIBLL8d5gWmFUjO055lvASWQ=
+	t=1723315694; cv=none; b=oY5C9fTBlQptej1PbtECgTX57+Eg4JzCpb7ApYrpmllczoSEzRHTlGkFm8SW9plttQo+MVzSOtRwzirUgw4m0V9QOSAZKm8qt2j7bmbaU8TzUj8uGlRj1SzQE38P/4J+XmwY/MlABrUxR/h7Kwx2gIpvBr9+cEImsYDBwuMFg90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723286342; c=relaxed/simple;
-	bh=0vNqomN9bAeuns1PhwCNV03ItP9jYxldk/oGAUya2VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f5I9peVq03qlL3pNdEVSKsvvdO8d9E4N+sPwpsw7tr0MSPJAUXZt7St6yh6UW16NzqfKHzqZnDorxEBY/jf6LF8wlvLgb9iXoTI/UVpEd5GE8sSTNeajyagcWEH/zyLiZxnzfHq3qgzN5cVJ/Z05gD0IAhdA7dQC2kcBQXgZFMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNGzBp/N; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNGzBp/N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 113BBC32781;
-	Sat, 10 Aug 2024 10:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723286342;
-	bh=0vNqomN9bAeuns1PhwCNV03ItP9jYxldk/oGAUya2VE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YNGzBp/N7wVNNWQDT4wB6QREkJiXMPcaxhq+iaCXcPWGns2Q/heV84nWyQSJYMDoM
-	 nPc8EXCFXC0La/XVWTjXw/IUGyfLev/ndDq/UHCVL0glLGcU3Di0tbYZxMQMrRRNLi
-	 cctTTLqA9P7xZLXidBx7SGTpo4R6F/z6m3kHxQcMF1+Pg8KJ0nomtKrxT/T6wpPLIf
-	 oYF81fNCqx2qEBM7f0hDHdPUTaJe+amWiSQX7JTHrmj/niA4dRw4RYLKU4/yDkSjEn
-	 FzccGrcjALyocLX11Iht5cfjYa91qRCeehfjeu9w/hXPpUPPy0ZnDFl4mF7u18XhNU
-	 8aDx+2bAJHprQ==
-Date: Sat, 10 Aug 2024 11:38:55 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Anand
- Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, Michal Simek
- <michal.simek@amd.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel
- Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] iio: adc: xilinx-ams: use device_* to iterate
- over device child nodes
-Message-ID: <20240810113855.691dfb6d@jic23-huawei>
-In-Reply-To: <20240808-device_child_node_access-v2-2-fc757cc76650@gmail.com>
-References: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
-	<20240808-device_child_node_access-v2-2-fc757cc76650@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723315694; c=relaxed/simple;
+	bh=3oRagH2yyp/5JVazFAZWcnGYexHP4Uw1cLEt7HEAvTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=r4EH9RXYL9ngilVMX8jyjl9mC20VZqZ4fVS6ae1WD1D4xhm36m8Bsb/ntxEWEVo9W2jG0uOKTaJRX+lFp12+kQDfVVpWz5uUHfxb0TQWZiLTU3OY0a/VB/8WGvC/jeJLIa/pwPe9Mzw+J6JP1C7ChDesJuwZBumssEycXk/UjdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b02.versanet.de ([83.135.91.2] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1scr84-0006GR-HN; Sat, 10 Aug 2024 20:47:52 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v4 7/7] arm64: dts: rockchip: set hdd led labels on qnap-ts433
+Date: Sat, 10 Aug 2024 20:47:43 +0200
+Message-Id: <20240810184743.277248-8-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240810184743.277248-1-heiko@sntech.de>
+References: <20240810184743.277248-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 08 Aug 2024 17:12:38 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+The automatically generated names for the LEDs from color and function
+do not match nicely for the 4 hdds, so set them manually per the label
+property to also match the LEDs generated from the MCU.
 
-> Use `device_for_each_child_node_scoped()` in `ams_parse_firmware()`
-> to explicitly state device child node access, and simplify the child
-> node handling as it is not required outside the loop.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-One follow up question for those familiar with the driver.
-Why do we check if the main device is available?
-	if (fwnode_device_is_available(fwnode)) {
-		ret = ams_init_module(indio_dev, fwnode, ams_channels);
-		if (ret < 0)
-			return ret;
-
-		num_channels += ret;
-	}
-
-
-How is the platform device driver probed if it's not available?
-
-Jonathan
-
-
-> ---
->  drivers/iio/adc/xilinx-ams.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
-> index f051358d6b50..ebc583b07e0c 100644
-> --- a/drivers/iio/adc/xilinx-ams.c
-> +++ b/drivers/iio/adc/xilinx-ams.c
-> @@ -1275,7 +1275,6 @@ static int ams_parse_firmware(struct iio_dev *indio_dev)
->  	struct ams *ams = iio_priv(indio_dev);
->  	struct iio_chan_spec *ams_channels, *dev_channels;
->  	struct device *dev = indio_dev->dev.parent;
-> -	struct fwnode_handle *child = NULL;
->  	struct fwnode_handle *fwnode = dev_fwnode(dev);
->  	size_t ams_size;
->  	int ret, ch_cnt = 0, i, rising_off, falling_off;
-> @@ -1297,16 +1296,12 @@ static int ams_parse_firmware(struct iio_dev *indio_dev)
->  		num_channels += ret;
->  	}
->  
-> -	fwnode_for_each_child_node(fwnode, child) {
-> -		if (fwnode_device_is_available(child)) {
-> -			ret = ams_init_module(indio_dev, child, ams_channels + num_channels);
-> -			if (ret < 0) {
-> -				fwnode_handle_put(child);
-> -				return ret;
-> -			}
-> +	device_for_each_child_node_scoped(dev, child) {
-> +		ret = ams_init_module(indio_dev, child, ams_channels + num_channels);
-> +		if (ret < 0)
-> +			return ret;
->  
-> -			num_channels += ret;
-> -		}
-> +		num_channels += ret;
->  	}
->  
->  	for (i = 0; i < num_channels; i++) {
-> 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+index 6405ec7d47361..110c323786848 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+@@ -50,6 +50,7 @@ led-0 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD5 GPIO_ACTIVE_LOW>;
++			label = "hdd1:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd1_led_pin>;
+@@ -59,6 +60,7 @@ led-1 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD6 GPIO_ACTIVE_LOW>;
++			label = "hdd2:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd2_led_pin>;
+@@ -68,6 +70,7 @@ led-2 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD7 GPIO_ACTIVE_LOW>;
++			label = "hdd3:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd3_led_pin>;
+@@ -77,6 +80,7 @@ led-3 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio2 RK_PA0 GPIO_ACTIVE_LOW>;
++			label = "hdd4:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd4_led_pin>;
+-- 
+2.39.2
 
