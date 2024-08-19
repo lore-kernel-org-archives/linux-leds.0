@@ -1,76 +1,163 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C28925760;
-	Mon, 19 Aug 2024 14:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A49171E5F;
+	Mon, 19 Aug 2024 14:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724078033; cv=none; b=PPmY6duE+dROgxh9cItf0lr2gMI+S6fx8dk5VHAelNZkSLt1BY/tlMOIaZA3pKmr/W8rKCVytdlCtmgLRTIl6eFthj9hTIBjtIhGnkud3HfsJZNkKHflqQITrhhp20fn4ldxIdpmnGu0SJr+wYlPaXTIeUd44Wzm9nUh5dD1kc0=
+	t=1724078419; cv=none; b=YZaQ0myovdhjGbc9+1/p57g9F9zZcHqiMFEkm3fs7mHbYQgbh+ViRhT3o7qS+c1/rtDeDe9aSO8tJL/36dmw+p6nUPJvgRGSGruRvp7HrGc021ZvnEYP+girRlAc1WGwM/dObvTYrQ4m931DSt2BO/svIZQJsPGTnzuwBq7+FAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724078033; c=relaxed/simple;
-	bh=2EcRFcFZ24hxH7FI/vmbdXoJjqRfMTBJZTWq0UYw8O8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=byyhz9nIF1g7PbTOEQlfcjGhe/BCD83MgG4GKgk6aVF0xDxKcaA3r0J683URVD44mHS+HcFneyEBUeJ/4wWE5O5KSMU1uN2ve7Yr+4OYNQnuWFWjGcbTOu5wyQGZKX6ovnwkowrigQ9sgbe6jubbvnNmdBb7oginGxNPZa7f0qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0CBF339;
-	Mon, 19 Aug 2024 07:34:16 -0700 (PDT)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 528833F73B;
-	Mon, 19 Aug 2024 07:33:48 -0700 (PDT)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: Michal Simek <michal.simek@amd.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	James Clark <james.clark@linaro.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Pavel Machek <pavel@ucw.cz>,
-	Mike Leach <mike.leach@linaro.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Lee Jones <lee@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	s=arc-20240116; t=1724078419; c=relaxed/simple;
+	bh=I1ayERe8+MKL+sKOTVHqL9vNWgJrFIP3xM5InJN9/c8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u3gc9tQx+KnM02uHJhPG4pO9SFpvOE6J67uj64zrIgdgsJe/tMdHtyjzS0Hot9hMpuHxa1msc8C08Q6OkVphNxke3tmikFiSLJx3ZCbrIp6wXuEXGUdYjhGAWd08+ck2vMIgOyjj3+3P2SYNYhxE5WdnS1Esl0LTemS51hF873E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ADz41dxq; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ADz41dxq"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OX2mDGoNhn5NuPQsdotMoW4uOBKIyWHrefRAShTe53U=; b=ADz41dxqtFzBBOB1Oz5YCrvvnE
+	wWjfmJPuu9EHrYRAcUJ/CPScNwPnl8JWrdmABs/uQA3aw+ycT+Zqgklqohqk+Um9WgUVFspvfHpS3
+	FwxCnNqtokLxrgBhwUxaUM58178HgX28sHPwNuQiwYxzXzVOFMmODPAsWagMh5k5xgOb9zfl5wVnQ
+	NWO+1b/gOxLEuFfqTVuUKUGM/pXyEoxrcmgayI6ao8EcsEwQq1SPGPg8slKM0r92rlxdFCggRb5hn
+	Iy7rqh/7w8+Z/3dICn9IHy1a0DbTYtNwSyCWx05tqrl7PgpG9qAjnieS4k3YbJHkAkDmri5h7W1OW
+	I+wc/i2A==;
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sg3YG-00014n-0p; Mon, 19 Aug 2024 16:40:08 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	heiko@sntech.de,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	coresight@lists.linaro.org,
-	linux-iio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-input@vger.kernel.org,
 	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] use device_for_each_child_node_scoped to access device child nodes
-Date: Mon, 19 Aug 2024 15:33:34 +0100
-Message-Id: <172407794569.198441.3395176443590632204.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
-References: <20240808-device_child_node_access-v2-0-fc757cc76650@gmail.com>
+Subject: [PATCH v5 6/7] arm64: dts: rockchip: hook up the MCU on the QNAP TS433
+Date: Mon, 19 Aug 2024 16:39:59 +0200
+Message-ID: <20240819144000.411846-7-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240819144000.411846-1-heiko@sntech.de>
+References: <20240819144000.411846-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Thu, 08 Aug 2024 17:12:36 +0200, Javier Carrasco wrote:
-> This series removes accesses to the device `fwnode` to iterate over its
-> own child nodes. Using the `device_for_each_child_node` macro provides
-> direct access to the device child nodes, and given that in all cases
-> they are only required within the loop, the scoped variant of the macro
-> can be used.
-> 
-> It has been stated in previous discussions [1] that `device_for_each_*`
-> should be used to access device child nodes, removing the need to access
-> its internal fwnode, and restricting `fwnode_for_each_*` to traversing
-> subnodes when required.
-> 
-> [...]
+The MCU is an important part of the device functionality. It provides
+functionality like fan-control, more leds, etc and even more important
+without it, the NAS-device cannot even fully turned off.
 
-Applied, to coresight next tree. Thanks!
+Hook up the serial device to its uart and hook into the thermal
+management to control the fan according to the cpu temperature.
 
-[1/3] coresight: cti: use device_* to iterate over device child nodes
-      https://git.kernel.org/coresight/c/daca644d0c9e0
+While the MCU also provides a temperature sensor for the case, this one
+is just polled and does not provide functionality for handling trip
+points in hardware, so a lot of polling would be involved.
+As the cpu is only cooled passively in these devices, it's temperature
+rising will indicate the temperature level of the system just earlier.
 
-Best regards,
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+index e601d9271ba8..4bc5f5691d45 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+@@ -483,6 +483,54 @@ rgmii_phy0: ethernet-phy@0 {
+ 	};
+ };
+ 
++/*
++ * The MCU can provide system temperature too, but only by polling and of
++ * course also cannot set trip points. So attach to the cpu thermal-zone
++ * instead to control the fan.
++ */
++&cpu_thermal {
++	trips {
++		case_fan0: case-fan0 {
++			hysteresis = <2000>;
++			temperature = <35000>;
++			type = "active";
++		};
++
++		case_fan1: case-fan1 {
++			hysteresis = <2000>;
++			temperature = <45000>;
++			type = "active";
++		};
++
++		case_fan2: case-fan2 {
++			hysteresis = <2000>;
++			temperature = <65000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		/*
++		 * Always provide some air movement, due to small case
++		 * full of harddrives.
++		 */
++		map1 {
++			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
++			trip = <&case_fan0>;
++		};
++
++		map2 {
++			cooling-device = <&fan 2 3>;
++			trip = <&case_fan1>;
++		};
++
++		map3 {
++			cooling-device = <&fan 4 THERMAL_NO_LIMIT>;
++			trip = <&case_fan2>;
++		};
++	};
++};
++
+ &pcie30phy {
+ 	data-lanes = <1 2>;
+ 	status = "okay";
+@@ -582,6 +630,15 @@ &tsadc {
+  */
+ &uart0 {
+ 	status = "okay";
++
++	mcu {
++		compatible = "qnap,ts433-mcu";
++
++		fan: fan-0 {
++			#cooling-cells = <2>;
++			cooling-levels = <0 64 89 128 166 204 221 238>;
++		};
++	};
+ };
+ 
+ /*
 -- 
-Suzuki K Poulose <suzuki.poulose@arm.com>
+2.43.0
+
