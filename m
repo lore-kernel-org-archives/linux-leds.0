@@ -1,87 +1,163 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08C6B667;
-	Sun, 25 Aug 2024 03:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737093B78D;
+	Sun, 25 Aug 2024 20:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724558050; cv=none; b=i1Pwx+SAiRzGqXV27EsxUKwKjDhNcbLoQ0p0SIKQs6fHcd4dF9+HEAe12RGYQDxW5e8/ApSAyeT9HODJm46b8JgYVEuIwNFa50cvwm8E9mgcGlmOMo32VJC7JvQxnSY3AwljigG8fKF7apwNL++aYs05syf0kCzU6ZYsVX8t3W8=
+	t=1724617977; cv=none; b=QV5xfPDWW4W5YQ+PrMtvb8Q/4Qwhdi4sqzNpsznWGnQoUNOz0RLQykdAH0ACj8+ndFid+KwtHy7rKvOrGLrV3Gg5/io/EEV/ZUa/lgQ7DMNc+X3KhFHeFjovMvfRBsnb3OT7T5frI2hVOOf9G5D4bd+ePJmWRDGn6eai5IV2JSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724558050; c=relaxed/simple;
-	bh=okJ2hCt5aTJgDcUNU44pAdnsRODyqx1Z0qzyZr0eCUs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Eai562mdq1zIpMyIKc5k8julZFuiBEvhPxdUFpyjcPFaYfindjgS6NENZb3id17icrHtfQwNyLXoYZEvI+yHD1cojI2uQe+yu2dZ+8HUIOMaexI6sLydbhH4e2UDhyUzRs1Fo4HH7FaWW2piVn7zByXcQQ+pPuPp12psx6EonA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ebUubxVJ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724617977; c=relaxed/simple;
+	bh=I1ayERe8+MKL+sKOTVHqL9vNWgJrFIP3xM5InJN9/c8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=svU4aw/1SFnBo/NbCbpiKAQhEO75GLJgfV9Fe+wWBbbKD/zpegS/HPpmDPCvydf+S2AjbZ5iqPNp0souZjy5Sln9rKEsmDpcv5fbf9XXHGWV6RV2T8vjQZsWmVDMq25e84Z7H2IWqxMqa7hxl182CRu5td9A+02W/lumgZO/Ijs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=D1gBs5Fm; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebUubxVJ"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20203988f37so31728405ad.1;
-        Sat, 24 Aug 2024 20:54:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724558048; x=1725162848; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bEKwLaZ8eX+2F+2ojEc0idJO4EKoYFoaC5mzt/EJ/Hk=;
-        b=ebUubxVJ8C0xfx+5hIcCnuhoYQu+hIVgS1/eLHUsVwCRaRfpqVhPzL9GMyJX+yBaJp
-         X/Vxl/12DMswfl7tiTNoEj95eyot3ONRHo2UgKrgD0oA+fIg+kkNZsol8xGfZDItzhIe
-         F//cyxklW6kFo26NJPuF6jzAOBH5DICxntDD9omM8D/iS369vAxyXpwTrwrDO70yQRFM
-         4AYF1Wldfk2v1d7nqPUTqu/k8eOQZU6gBrm0PPgErwaLKBRm5yGmRnLog3N2zUsMrsib
-         HtHtw5Ich1CsQgW9Cswx0ps+9HOwpTosy453YvmZemMp0YSwmLffRJP0+CnaZ4tryCpR
-         YI/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724558048; x=1725162848;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bEKwLaZ8eX+2F+2ojEc0idJO4EKoYFoaC5mzt/EJ/Hk=;
-        b=YLNVwmZzOY248LSs5H3J3lALQGSnkck2//q7twqclHmPXduf/kJeeSSj+64/N2Jecs
-         EJ5gjk9HalGVwNIRmZAG0lib31rs64/nbeCnOrh3yOWiOPs6Svbq4FJ47VUedLXlZsjT
-         SKfwsN6Uek3HZzluid4411BwKGprjelWcLpGNloGKYi5c+GtV66py6pjXCxLfz2h/Ato
-         tbr7SfQatT4P42cvM960Fa34k41mKAsi316FlsSYSIf6bz7FkNlCv8aD6Wl+b6twXKsi
-         6jQO+TppUEkOVNn2zwSyn1pMcy0XY0ibdxkEARlHQontEAs9IcYAFT2sbQZtp9kUjPSY
-         ZTOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgZ+utlSFqLWpd05NsTs8WNQBApqr/33F/m0YHyESxHoToSGFduOAKtLJCdWWEsu5/Kz08U/YWCwLoeA==@vger.kernel.org, AJvYcCW5BhqNLV+CCIfWxFZxuf5Chv2kdldftZqgdcnMD+aTqQaqhGIL68a/acgP66QteBXFRZIBebNHP/Q=@vger.kernel.org, AJvYcCXTy3c4j+EBUJly6Bd3w/UXQx1mc8MMMpIxpZV+HWozqkU1hQctK1OPKOc1eMkNBcI/TSSo+d+7Q1OePCse@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV4m9z2wWz0wmeEzYhIAQAR0pTR6GTwE5g4ItZe3+p+Y036+2n
-	cNrtHgf/VBx/H9vVkL8ThjhgPs2voUh90Fwc/CgyRmQyKOW9JRZM
-X-Google-Smtp-Source: AGHT+IH87DrnE50Q4Lcvaxpezm44zwafI4NmnxTd+2z0GBPruvMFo+HdishWtazpN/w1WMpGkBP2jQ==
-X-Received: by 2002:a17:902:da8d:b0:1ff:393d:5e56 with SMTP id d9443c01a7336-2039e4cab1emr80348865ad.36.1724558048058;
-        Sat, 24 Aug 2024 20:54:08 -0700 (PDT)
-Received: from localhost ([115.96.30.187])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203859f0115sm48430965ad.242.2024.08.24.20.54.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 20:54:07 -0700 (PDT)
-Date: Sun, 25 Aug 2024 09:20:39 +0530
-From: Aryabhatta Dey <aryabhattadey35@gmail.com>
-To: vadimp@nvidia.com, pavel@ucw.cz, lee@kernel.org, corbet@lwn.net, 
-	linux-leds@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: leds: fix typo in Documentation/leds/leds-mlxcpld.rst
-Message-ID: <5nib2kj6uh7lkafrmmwcjpeyvs7megdfmseftkjws2wcuztoyc@yhidnl4ilbok>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="D1gBs5Fm"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OX2mDGoNhn5NuPQsdotMoW4uOBKIyWHrefRAShTe53U=; b=D1gBs5FmrSMGtVNzlimfww/Xy8
+	T2YkapJ/ZtqFbvVpKcdSmZ8niwabpAS1z2l5H0lSVjRydt1dE7yiAr8sh26RtK7HYm965BHXJ0JOZ
+	s7MEJnSYzght/OlC1dQUe3XM0TFMTf/5DI2TMn1COcnEVHFYi7BqWqo09ALxUCCWtAlew2VPVeGdQ
+	PAbtsVO5SzPH8Pdza+0Ob5rjC+NaVX1kDintIBnvMnmV7DUgxrvz5qOJ4AWPIC0zxnqQhARGxI3Qq
+	lDZyy7knvtsv65hl4IDgnMdCNLMhzvogTFgMszjJ/V3IVCqRGwsGX0KlkhYpjuq5wU0Nl0kH5I+je
+	JpWC1cOQ==;
+Received: from i53875a40.versanet.de ([83.135.90.64] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1siJum-0001cM-OR; Sun, 25 Aug 2024 22:32:44 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	heiko@sntech.de,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v6 6/7] arm64: dts: rockchip: hook up the MCU on the QNAP TS433
+Date: Sun, 25 Aug 2024 22:32:34 +0200
+Message-ID: <20240825203235.1122198-7-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240825203235.1122198-1-heiko@sntech.de>
+References: <20240825203235.1122198-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Change 'cylce' to 'cycle'.
+The MCU is an important part of the device functionality. It provides
+functionality like fan-control, more leds, etc and even more important
+without it, the NAS-device cannot even fully turned off.
 
-Signed-off-by: Aryabhatta Dey <aryabhattadey35@gmail.com>
+Hook up the serial device to its uart and hook into the thermal
+management to control the fan according to the cpu temperature.
+
+While the MCU also provides a temperature sensor for the case, this one
+is just polled and does not provide functionality for handling trip
+points in hardware, so a lot of polling would be involved.
+As the cpu is only cooled passively in these devices, it's temperature
+rising will indicate the temperature level of the system just earlier.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- Documentation/leds/leds-mlxcpld.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-diff --git a/Documentation/leds/leds-mlxcpld.rst b/Documentation/leds/leds-mlxcpld.rst
-index 528582429e0b..c520a134d91e 100644
---- a/Documentation/leds/leds-mlxcpld.rst
-+++ b/Documentation/leds/leds-mlxcpld.rst
-@@ -115,4 +115,4 @@ Driver provides the following LEDs for the system "msn2100":
- 	- [1,1,1,1] = Blue blink 6Hz
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+index e601d9271ba8..4bc5f5691d45 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+@@ -483,6 +483,54 @@ rgmii_phy0: ethernet-phy@0 {
+ 	};
+ };
  
- Driver supports HW blinking at 3Hz and 6Hz frequency (50% duty cycle).
--For 3Hz duty cylce is about 167 msec, for 6Hz is about 83 msec.
-+For 3Hz duty cycle is about 167 msec, for 6Hz is about 83 msec.
++/*
++ * The MCU can provide system temperature too, but only by polling and of
++ * course also cannot set trip points. So attach to the cpu thermal-zone
++ * instead to control the fan.
++ */
++&cpu_thermal {
++	trips {
++		case_fan0: case-fan0 {
++			hysteresis = <2000>;
++			temperature = <35000>;
++			type = "active";
++		};
++
++		case_fan1: case-fan1 {
++			hysteresis = <2000>;
++			temperature = <45000>;
++			type = "active";
++		};
++
++		case_fan2: case-fan2 {
++			hysteresis = <2000>;
++			temperature = <65000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		/*
++		 * Always provide some air movement, due to small case
++		 * full of harddrives.
++		 */
++		map1 {
++			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
++			trip = <&case_fan0>;
++		};
++
++		map2 {
++			cooling-device = <&fan 2 3>;
++			trip = <&case_fan1>;
++		};
++
++		map3 {
++			cooling-device = <&fan 4 THERMAL_NO_LIMIT>;
++			trip = <&case_fan2>;
++		};
++	};
++};
++
+ &pcie30phy {
+ 	data-lanes = <1 2>;
+ 	status = "okay";
+@@ -582,6 +630,15 @@ &tsadc {
+  */
+ &uart0 {
+ 	status = "okay";
++
++	mcu {
++		compatible = "qnap,ts433-mcu";
++
++		fan: fan-0 {
++			#cooling-cells = <2>;
++			cooling-levels = <0 64 89 128 166 204 221 238>;
++		};
++	};
+ };
+ 
+ /*
 -- 
-2.46.0
+2.43.0
 
