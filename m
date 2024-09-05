@@ -1,151 +1,115 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13808179BF;
-	Thu,  5 Sep 2024 14:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A51B158DC0;
+	Thu,  5 Sep 2024 18:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725547725; cv=none; b=dO8ul8/V6RZJOasWSvWJBgwC2d4VEDvSY/IBwFhoVoCWcjmLfVoGii5/SyLfmOURN3iMgCnHXMOP32XySpUTlVjb4jrofVlzIW0PsQ/OyzpPdtZYjPRTIzXEA0carIfO+LsagFcvEZB3db+E1EtcmEm9PlhPIxnnotShVgDV+EY=
+	t=1725562370; cv=none; b=CbMnTu/88Ry1o4Ng//LtvszqBbiodI6qx3X9T94+NGLpHEcWWP56Z/VBzBCSK0VYHqCvY4Ll8HLkOXi8wmBd1WbSI7yRxoy3An4Ozb7bIkKmy1SAcuqvXTY2bGtTMkOeVjZ/X5NX4j6hHiRMbY/tj8+s/RuBkUS6ghRVpfi9dow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725547725; c=relaxed/simple;
-	bh=0ommqQRWmdehvN0o6pbfhCcsZNj04TF1UHTEwGE5yDM=;
+	s=arc-20240116; t=1725562370; c=relaxed/simple;
+	bh=equbU9VBMIwdvGkqWk+AjPVcTc+O1BMZPBWXnDB1Dyo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j3ez7wsb/1ApqH+94ZSJ7MpY+Wc6GIDtaLnrHA8LZz9w+6e4pt28cDZRanlykN7wNXiJAEVkBkjK7KE3f/S91Rpm7MmJ25tyAudcwEFZGnh2IiEExlwT/z4SY4NNMlDZMVjCZIULEuKh784ioAnCevBXw5eyZwzNBYdEltIykDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=w/b4diqw; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version; b=Qf+m+Yp8I/xMi1Ds1xz2Po2gun+3sd5dgUTl1D0fm0kDUQ1WTuIc4drcx+5NvGSo5MJcABHJxoJWWtfz0jqIlShZ4Hayh5wseciAKv4aD1sN/ppcgb6gRuYSdTVGnVeiW8iI2Y+/ARqmXLx7LPeXHVYr+E0vZT9l93wThhofO/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Zw2ev8a4; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="w/b4diqw"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Zw2ev8a4"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Z9IgYD/2bP3HwiWDe9m6U4cOpfzwTsOumgc5N6zAYJA=; b=w/b4diqw5J8ZIWZLi5djL0KZax
-	oYskcatg6UJKVdLpBuSCCoPxb857ufeJN9eshcmsi68J/7ptbzWk043BsCHcRZ+oXflAwquP5rcoA
-	MV40is1liBi9d8axQSJHuIhypek6r9Lvz4WU8t+VItpygoIB3Qrdq4VKamWkE7HBi7vMET96xV0oC
-	yyF4mAvu0ThWEjYfLULsTtkVHc3A6s7wx5yRnUz9WjN0FdjUpRdKbQ0bD/gnSFwMp9guoDc2fL3HW
-	4iE5WgDR4IijnID5sLC2t6JfrtyLyvB2hFOMLYI26aTLd/qZk5RdFq5LFYVTydBQ05sXM6fHcZQsu
-	0P35Q/gw==;
-Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=diego.localnet)
+	bh=q1jpFbe8UJlfuFdvluwPG8fKnNdFZmBXVzuyZQAcBU0=; b=Zw2ev8a4ieSzwL/N0YlGZzW/ll
+	TKKyyBaABhDZ1kOpCLCfFkpqQ/qY8eaVT9pwdT0xUL91tY2qb6ru1I2JSnL4SWInTy8w2+QaVP1Qr
+	Un/8mXkQ+CRnjD/tJ85HXqHWJqyBarz06F0vMw36oaQ7Khm3qkSrVxfFyhQrG0A2P4y5XU7vy65W1
+	YXtGsP8a03bamLMJuKSPVqDjbnxo/rLax1/V2T7boLTfN+eKbdsidip7y+Oc7GtV5xc2lnuR5pEMB
+	zTMcXT944RBvfFsdbawLbD5GSjamt/3S45bZJyHGQaUHdZP1rlEtwG3HHbC0XihEr/G051j7aDSui
+	qdAog12w==;
+Received: from i5e860d0f.versanet.de ([94.134.13.15] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1smDmd-0002HD-Hx; Thu, 05 Sep 2024 16:48:27 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Lee Jones <lee@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jdelvare@suse.com, linux@roeck-us.net, dmitry.torokhov@gmail.com,
- pavel@ucw.cz, ukleinek@debian.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 3/7] leds: add driver for LEDs from qnap-mcu devices
-Date: Thu, 05 Sep 2024 16:50:22 +0200
-Message-ID: <3627679.ZzFAyJQhcr@diego>
-In-Reply-To: <20240829162705.GR6858@google.com>
-References:
- <20240825203235.1122198-1-heiko@sntech.de>
- <20240825203235.1122198-4-heiko@sntech.de> <20240829162705.GR6858@google.com>
+	id 1smHb1-0003sR-Ft; Thu, 05 Sep 2024 20:52:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	heiko@sntech.de,
+	dmitry.torokhov@gmail.com,
+	pavel@ucw.cz,
+	ukleinek@debian.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v7 8/8] arm64: dts: rockchip: set hdd led labels on qnap-ts433
+Date: Thu,  5 Sep 2024 20:52:32 +0200
+Message-ID: <20240905185232.2899464-9-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240905185232.2899464-1-heiko@sntech.de>
+References: <20240905185232.2899464-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 29. August 2024, 18:27:05 CEST schrieben Sie:
-> On Sun, 25 Aug 2024, Heiko Stuebner wrote:
-> 
-> > This adds a driver that connects to the qnap-mcu mfd driver and provides
-> > access to the LEDs on it.
-> > 
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+The automatically generated names for the LEDs from color and function
+do not match nicely for the 4 hdds, so set them manually per the label
+property to also match the LEDs generated from the MCU.
 
-[...]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> > +{
-> > +	struct qnap_mcu_err_led *err_led = cdev_to_qnap_mcu_err_led(led_cdev);
-> > +	u8 cmd[] = { 0x40, 0x52, 0x30 + err_led->num, 0x30 };
-> 
-> Really not fan of these magic values being used raw like this.
-
-Me neither, I tried my luck with QNAP support to get some sort of
-documentation on what these magic characters mean, and it did
-even get up to some "product team" but ultimately they decided
-against providing any help.
-
-But ok, if it makes you feel more at ease, I'll switch to at least
-replaying ascii-values where possible :-) .
-
-
-> > +static int qnap_mcu_err_led_blink_set(struct led_classdev *led_cdev,
-> > +				      unsigned long *delay_on,
-> > +				      unsigned long *delay_off)
-> > +{
-> > +	struct qnap_mcu_err_led *err_led = cdev_to_qnap_mcu_err_led(led_cdev);
-> > +	u8 cmd[] = { 0x40, 0x52, 0x30 + err_led->num, 0x30 };
-> > +
-> > +	/* LED is off, nothing to do */
-> > +	if (err_led->mode == QNAP_MCU_ERR_LED_OFF)
-> > +		return 0;
-> > +
-> > +	if (*delay_on < 500) {
-> 
-> Setting delay_on based on the current value of delay_on sounds sketchy.
-
-As far as I understood the API, the parameter should indicated the wanted
-blink time, while the function then should set in those variables the delay
-the driver actually set.
-
-So if the delay_on is < 500, select the fast blink mode, which is this
-100/100 variant and for everything >= 500 the slow blink mode.
-
-I.e. you set the trigger to "timer" and this creates the delay_on and
-delay_off sysfs files, where you put you wish into and can read the
-actually set delays out of.
-
-
-> > +		*delay_on = 100;
-> > +		*delay_off = 100;
-> > +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_FAST;
-> > +	} else {
-> > +		*delay_on = 500;
-> > +		*delay_off = 500;
-> > +		err_led->mode = QNAP_MCU_ERR_LED_BLINK_SLOW;
-> > +	}
-> 
-> How do you change from a fast to a slow blinking LED and back again?
-
-echo timer > /sys/class/leds/hdd4:red:status/trigger
-## creates delay_on + delay_off sysfs files
-
-echo 150 > /sys/class/leds/hdd4:red:status/delay_on
-cat /sys/class/leds/hdd4:red:status/delay_on --> 100
-
-echo 250 > /sys/class/leds/hdd4:red:status/delay_on
-cat /sys/class/leds/hdd4:red:status/delay_on --> 100
-
-## switch to slow blink
-
-echo 500 > /sys/class/leds/hdd4:red:status/delay_on
-cat /sys/class/leds/hdd4:red:status/delay_on --> 500
-
-echo 600 > /sys/class/leds/hdd4:red:status/delay_on
-cat /sys/class/leds/hdd4:red:status/delay_on --> 500
-
-## switch to fast blink again
-
-echo 150 > /sys/class/leds/hdd4:red:status/delay_on
-cat /sys/class/leds/hdd4:red:status/delay_on --> 100
-
-echo heartbeat > /sys/class/leds/hdd4:red:status/trigger
-## removes the delay_on + delay_off files again
-
-
-Heiko
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+index 4bc5f5691d45..7bd32d230ad2 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+@@ -50,6 +50,7 @@ led-0 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD5 GPIO_ACTIVE_LOW>;
++			label = "hdd1:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd1_led_pin>;
+@@ -59,6 +60,7 @@ led-1 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD6 GPIO_ACTIVE_LOW>;
++			label = "hdd2:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd2_led_pin>;
+@@ -68,6 +70,7 @@ led-2 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio1 RK_PD7 GPIO_ACTIVE_LOW>;
++			label = "hdd3:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd3_led_pin>;
+@@ -77,6 +80,7 @@ led-3 {
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_DISK;
+ 			gpios = <&gpio2 RK_PA0 GPIO_ACTIVE_LOW>;
++			label = "hdd4:green:disk";
+ 			linux,default-trigger = "disk-activity";
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&hdd4_led_pin>;
+-- 
+2.43.0
 
