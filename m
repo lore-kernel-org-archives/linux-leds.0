@@ -1,73 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01E91C4A2C;
-	Tue, 15 Oct 2024 14:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7EC1CBA07;
+	Tue, 15 Oct 2024 15:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729003257; cv=none; b=NY5i+ls9l+KkhLxiNXaWEuF5LBlrhdLi0ibBcyRFm12PYO+E5VQ3YEoNluHAs+hb3i7+1myWYFi5WBOXj0roM0B/v3v5iE3OVwWK3ATG1Lka+gl2ubZxlQi/YakkNWbBTQXJcVhIyjMqo3ZI6No//rJIHEH4pJzNjvexgoJsY6g=
+	t=1729005271; cv=none; b=gEVrwShOZHYdc51HELsLvw3bBITW4X0OJnwS+gDA+kD4/uTKMe5WUzP7ECVMOtqkXYFSsLjUoXz0QorTT7W2qvU6Jjt0zxRw5j/D2uGALPGuNczZmOgRi6+cXOfnM+UXrzV23WXmJrUG3H3ktPhEt+lOHSZS5zytKNKObNvfrg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729003257; c=relaxed/simple;
-	bh=h45voZ3l33ty37RQF0W2WNSzAywOCLZGEWusIeq6Kuc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qtU/LOODE6i7hvho8zQKZ1M94n+sWAfeCQclQI93KU7qAB1A4MqAUqapyp1id0Rnkas1sAJuMS8eQjAJ48R6bRTiguY72ZE1krkrSWblBEg+3JgIi/H7wKfw8bAqsLhYv1wmOM1wsadq0jr8Lk542HUnxpCrTZVmW7m8pv2h7Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEOwdjsw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729005271; c=relaxed/simple;
+	bh=lazf32CoxSyj614cm2Mrmcr74+H3vT0Umdqs2/LXc+I=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XL0PwrY4UJ2BST7iDvqjbHydXQ+TWvj+zYNqzhJ7hChjvYFvnG0T5GnHiyAfsOJs9214cat4Hlmjt06U1YE+y91jbKFMDmSOVVjxDFNnqiWKiVcQkDns2fdkvFwt/RtLhD5mijLS81Mt82eNTGhKG4ZYsB2pUHQYmGiuIBZgnQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=LTXOS2p8; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEOwdjsw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B2FAC4CEC6;
-	Tue, 15 Oct 2024 14:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729003256;
-	bh=h45voZ3l33ty37RQF0W2WNSzAywOCLZGEWusIeq6Kuc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=lEOwdjswxHb/fngcBMbmH7c/lymo/+exHYs4FoQWCtL8YM2yFNgoHs9PMaEikcpVP
-	 wnw/Kc2BRu9HA2JAfAuLUEu0jQHC42neuZ4a0RnNYHbj9dGwY3kMzhjjDRI0+5TgnE
-	 bw/uO3oPYyMCSIc1tyu5Uxw+1nVpFVRS7X8nZs0iZkDH9kgyDW31L1BD8XntFm3aSB
-	 b6DMdndcSmtkStcUkcl0UTtieiBa6G/GyVCBJFYKuABmWs5DFO2/O/6fump97C8NMf
-	 7GsbArSpUUdjpkYCuHQ3X3rh8RDCPpTd+V/G74IYBHrPdO+gCMBpjDZ3t0YjbLVYNo
-	 aH/916hbn5ZDg==
-From: Lee Jones <lee@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Daniel Thompson <daniel.thompson@linaro.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-leds@vger.kernel.org, linux-watchdog@vger.kernel.org
-In-Reply-To: <20241010-zii_yaml-v2-2-0ab730607422@nxp.com>
-References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
- <20241010-zii_yaml-v2-2-0ab730607422@nxp.com>
-Subject: Re: (subset) [PATCH v2 2/5] dt-bindings: backlight: convert
- zii,rave-sp-backlight.txt to yaml
-Message-Id: <172900325306.630549.2100737513482910527.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 15:40:53 +0100
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="LTXOS2p8"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 9BA69120019;
+	Tue, 15 Oct 2024 18:14:18 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9BA69120019
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1729005258;
+	bh=DgHLH+41zl5GK77OYraBFgcXwbuWqP38YKFjixubQRc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=LTXOS2p8sWLts9zxfJnFdotMtxTQGpI9D+PGP0nEuc44NXMl5JYlqz5HSZgvN98Bd
+	 qgiczDSGtxgA7VccwP5KhnZ9XhCu83k/lNZ4kwkQQmE9eOKvgQLTb3cNgzYBhNky7W
+	 V8Ft9kSp5Mf61hIew69UyqmHbRNn1V9UzKferKsn+TStFWehCOR9lOlPMJH6QayCck
+	 Yt52ZJmN82bdSnaC8nb6N7UxhiCcTX2AD06oWgCm/1XXMR+LxPimk9wC/w9DUXyW2i
+	 TYIuBnb7insLAo9qgOiNLCtqZWkAhzgQjtUFUTcNCa4SbI1rMx5fK4vH6RhxjorxhT
+	 6VA7Hv3kyTptw==
+Received: from smtp.sberdevices.ru (unknown [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 15 Oct 2024 18:14:18 +0300 (MSK)
+From: George Stark <gnstark@salutedevices.com>
+To: <pavel@ucw.cz>, <lee@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, George Stark
+	<gnstark@salutedevices.com>
+Subject: [PATCH 1/2] dt-bindings: leds: pwm: Add default-brightness property
+Date: Tue, 15 Oct 2024 18:14:09 +0300
+Message-ID: <20241015151410.2158102-2-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241015151410.2158102-1-gnstark@salutedevices.com>
+References: <20241015151410.2158102-1-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188453 [Oct 15 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/15 13:03:00 #26756955
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Thu, 10 Oct 2024 11:42:39 -0400, Frank Li wrote:
-> Convert device tree binding doc zii,rave-sp-backlight.txt to yaml format.
-> Additional Changes:
-> - Remove mfd parent node at example.
-> - Ref to backlight's common.yaml
-> 
-> 
+Optional default-brightness property specifies brightness value to be
+used if default LED state is on.
 
-Applied, thanks!
+Signed-off-by: George Stark <gnstark@salutedevices.com>
+---
+ Documentation/devicetree/bindings/leds/leds-pwm.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-[2/5] dt-bindings: backlight: convert zii,rave-sp-backlight.txt to yaml
-      commit: 0eda30af58809224d80dc3bf3f368fc677fe8c08
-
---
-Lee Jones [李琼斯]
+diff --git a/Documentation/devicetree/bindings/leds/leds-pwm.yaml b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+index 113b7c218303..61b97e8bc36d 100644
+--- a/Documentation/devicetree/bindings/leds/leds-pwm.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-pwm.yaml
+@@ -34,6 +34,12 @@ patternProperties:
+           Maximum brightness possible for the LED
+         $ref: /schemas/types.yaml#/definitions/uint32
+ 
++      default-brightness:
++        description:
++          Brightness to be set if LED's default state is on. Used only during
++          initialization. If the option is not set then max brightness is used.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
+     required:
+       - pwms
+       - max-brightness
+-- 
+2.25.1
 
