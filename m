@@ -1,32 +1,33 @@
 Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB021D31B2
-	for <linux-leds@vger.kernel.org>; Mon, 28 Oct 2024 11:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ED91D95B1
+	for <linux-leds@vger.kernel.org>; Mon, 28 Oct 2024 11:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730114414; cv=none; b=GThkpCQl+kTJMnXnwmnyqMA7jA76+b5GOXIBfjGBY09dFZeo3sL+oRHjMRTcRTdW1Vqpb//IIkPiNMBLpYhCfZGpGZeoqa8kA7qTP5LWSIEEQSPbfXSPU3eAEtvQlU7f4WmgDDWs59N4wOoUlD5uQRlWVa+8LQAv4CzYbHGQgxQ=
+	t=1730114657; cv=none; b=NuzJZC1B2O9HJVagFC0CuOsjMM1MxP3qObJ4OMJZi4t5sjIM3BYISPkcwXy+c8bK8x9wvxl6CJh7oL6xKTchl1+0pCnNGjQ7LX758hItgpGhyX5j/h97GbJA7Fyqlvi8ktcxU6fWKOMmbXsaSgIa2VypAV7PY++O6uBRXPmHloQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730114414; c=relaxed/simple;
+	s=arc-20240116; t=1730114657; c=relaxed/simple;
 	bh=ItHaAeA3t5zCok+910i2whs/c6mfv3/gAIB7CAL5qPA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K7QcgnxeEmH4ORfjHikiAwGbshLu86DgXan139wql0sPX27AZkusT7hPOw1gOihwZ3DRXZropnxXX1jIr5R7/9GehrLIVDTgKeKjZQVIaPrGgCIRn+Lw9/FrkUfI3GI2OCdHGOad7HtDcsZiLUlKbqKdJTSuIl1YBiDtFFmaJ48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b=YK1ouhSF; arc=none smtp.client-ip=185.136.64.225
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=T4tUUYZVh2OX5zS12PqDUGbKJ2AvQ/ZDQc6QUH3FNHb40/YkcpK476pTFm1Xp2qD/al0rnSk97Nyc6g7KvQrcjSwe9QlOhzxxFwVaB6/y4304PxTI9nTPhva9e8CL27n+PgLQf1wGR/qrsLBRTzonsnwh18wIBT70/Hh5wbBXBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b=KpsqjSJg; arc=none smtp.client-ip=185.136.64.225
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b="YK1ouhSF"
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20241028112000bcaeac919f9258f645
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b="KpsqjSJg"
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202410281124128cf2676cd45a81f0bc
         for <linux-leds@vger.kernel.org>;
-        Mon, 28 Oct 2024 12:20:01 +0100
+        Mon, 28 Oct 2024 12:24:12 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=benedikt.niedermayr@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
  bh=60P486yFCSDAYHWuQ7gt3t6auAm6BcPA3MNAns79R/0=;
- b=YK1ouhSFLNLqqTW2fxklzWXfUPXW6WWP7sCIfzUlA3d+qiFLSm3fJ0JDgA+R4MmYg/rJr7
- PHBINPLLzfLHSbYmQQUlRECx3g/M8f7mg7i+zN1MiGRnebNujoviOwQyyQCprRTcRcC5Xley
- lC9lF0Ri+LApX4lzHx61LSf8pJFEyilMMW36/fWqClavSWbxUZy+OcyP/xTL1Sz2O0Yx2jKB
- kUo311ngSIz9PGkYyD2iUhhtZWcyAaYqhjvQim8tBAvpNoCUOhiP65Q7NPYFYoGexcl1xhQ1
- fpgZEnXOwImq51tqbrASeZ0MFLcMWEoLUFJ6sMEGO0G1G7zcN/w1mTqA==;
+ b=KpsqjSJgHmPb2VaxzsR3ZAijglfiQa6Pq743EGQIMQRyviHaosz8VG9MKhYelgT0hdVukr
+ 3oIatBbevZS9QGGxsw+AKHPv6NFP+Tf7MFO9lcHeKMktuBiYWT0vxAiWX/sFk/t6Zz8od1HL
+ HFIAotWUIxCctQtb9pnQdEVDDAycBRER41S3d1NZFP6w8Kle65rA+UcoXYYqcpOD1XzsdFyi
+ +IIiA1MxFM7b2ZC8eIZJZFs8WW7oY6V36WqWfnfghWLg5KvvNHZ/9vaVZNgVb4tfU0sSwQAA
+ +QofxWo69tSZcO96pED+htNF6mXyhprgt1RGDhP4ZdqkW+M49qaQucjQ==;
 From: Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
 To: konstantin@linuxfoundation.org,
 	baocheng.su@siemens.com,
@@ -46,8 +47,10 @@ Cc: linux-leds@vger.kernel.org,
 	quirin.gylstorff@siemens.com,
 	chao.zeng@siemens.com
 Subject: [PATCH 1/1] MAINTAINERS: replace bouncing maintainers
-Date: Mon, 28 Oct 2024 12:19:53 +0100
-Message-Id: <20241028111953.3329169-2-benedikt.niedermayr@siemens.com>
+Date: Mon, 28 Oct 2024 12:23:59 +0100
+Message-Id: <20241028112359.3333152-2-benedikt.niedermayr@siemens.com>
+In-Reply-To: <20241028112359.3333152-1-benedikt.niedermayr@siemens.com>
+References: <20241028112359.3333152-1-benedikt.niedermayr@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
