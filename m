@@ -1,79 +1,91 @@
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B011D435F
-	for <linux-leds@vger.kernel.org>; Mon, 28 Oct 2024 11:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EAF188CD8;
+	Mon, 28 Oct 2024 17:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730114662; cv=none; b=f4/P9aEARqg7yncTZ+4HD9xza8GxwU6SI9Rnzlr7mYCzHeKqN5e3X2yX33Mo1EhlO2WvphTyxmzi7+JYmhbx8F8aaYJMv61S6naKPcHFCACRtlcP5Sw+vaCw1HKtKjHsjjcX8j/iUd//mrTO85VZ8l2r+pJb1S34Dc1+1ODcrH0=
+	t=1730135726; cv=none; b=IuN4BG6nNfxWeBr195LM5lak0irytMXp7acxJTxCJBYJFzuIMEykPUrEa1EDyccUQ4FERXcSKls5fAqzi1h81DGD/pIzjSSr/F4cPP8tHrPyADlDQZuOqMcLPe+M1lVyfP/WmKz1Dq2esmCeRzKnM8RfX02HuMAM3oQ7wvXxPT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730114662; c=relaxed/simple;
-	bh=Ky5YBRYQATDBlfe9Lmh+zMWTk5LDfZ3E5jBpxDguYms=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dDWFIlbSTuX6GbP1y8R57N2vS589txEpef8GR/hE/tKLSCedLgWm5dYBgbYo3QGl9BnI3H53TJMJ9xvRFWYcjhK45ZWBgwD+6E3B4u+PYka7/tUgSDVknardB4HQdqDIXBw2OljTnz9oPXynkzwYE7+Ho9eI/zZ3isWydT8H75o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b=E5YYH84a; arc=none smtp.client-ip=185.136.64.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+	s=arc-20240116; t=1730135726; c=relaxed/simple;
+	bh=SHA60aUVkHc5dOlticmp590SgsHwyopdCX3RsUQYjWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8qSIKKt4ZLwEEAaZbIDgA3+VRSYewjkkvNq28sRrgGUKMzRFkMB1NugQOQJMOnRyS0VWpjdcOyZ6pa6QNwRp+mWQSkACDHiI3wWMv4sB2/1IG7wcSFXgeEah1bVf+Wbo5wOB+ZNywObj+m9KFJHoPuATKB0cSD1BKEZ2y5t8rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWAOt+iN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b="E5YYH84a"
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 2024102811241187e93832e66e15cd39
-        for <linux-leds@vger.kernel.org>;
-        Mon, 28 Oct 2024 12:24:12 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=benedikt.niedermayr@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=YpfhoksL9PDDwInw2DZ2EdIAS8Ef5VZRAiLXmKgQ/IU=;
- b=E5YYH84aR8Od7Y/LAhHmacmnYuCIUBAepoH9NDnbAp83Fj1k5B2khb3eQiQvvH8WSjLpFq
- hVLq6cEFLGoNuk410ccEW1aloI2/tz1AYfbPZ+coEU9QRhxTp7gp/KaCcvcut2/QpDgIuLJ9
- aPGL47X2r/LfNic10XGVcFFJW8ni6qhMoWOm8/WS7HcqV8rxdb2BVSeqY7S8qUXIM9EseKTg
- 9ZdPDJq6pYdLcvLe599tsEsWLSCNhId4Gm2/Xd3ncYnF3sCIGGIpxxntoVZsq6tyBGUIDq1z
- WMFmVlXgWml7NBF++hZyaPtn7E9HbnFkl17ONnnLXn6vvIWU6IGJOnpA==;
-From: Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
-To: konstantin@linuxfoundation.org,
-	baocheng.su@siemens.com,
-	tobias.schaffner@siemens.com,
-	pavel@ucw.cz,
-	lee@kernel.org,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	felix.moessbauer@siemens.com,
-	christian.storm@siemens.com,
-	quirin.gylstorff@siemens.com,
-	chao.zeng@siemens.com
-Subject: [PATCH 0/1] MAINTAINERS: replace bouncing maintainers
-Date: Mon, 28 Oct 2024 12:23:58 +0100
-Message-Id: <20241028112359.3333152-1-benedikt.niedermayr@siemens.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWAOt+iN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18F54C4CEC3;
+	Mon, 28 Oct 2024 17:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730135726;
+	bh=SHA60aUVkHc5dOlticmp590SgsHwyopdCX3RsUQYjWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CWAOt+iNqV10UbkGMm36iAkjcva/IcPN2CiH5/NaihQtNCvt2RzbFu8Z3qJejfR/Q
+	 98AB7CAtGwicrznM29UzZtx5rnNHNFMdA+3xsHywrzFCo1yMoZfBcypBFW3cGCGzX3
+	 jp9BqiggK9yw/A9paQ0uxWnhV5vZwe+v/SIAYcfIrWWQ1Omrtgx7Fy/KjGRXcYky9S
+	 BaRi3qsuI14JxJiHm6H57dmVXxLmHwbfMfYlKBxnIbs+7CToaZIPAbEOJGmMRXegVS
+	 AVuGchll3ZzAwXShS1RXO8r0Ur5pK71nmjuv57v+czwzRxMO6s+DsZVO46wUB0mf/0
+	 atZrkOYxqzCsw==
+Date: Mon, 28 Oct 2024 12:15:24 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] dt-bindings: mfd: convert zii,rave-sp.txt and
+ child txt to yaml format
+Message-ID: <20241028171524.GA888974-robh@kernel.org>
+References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1323861:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
 
-Since there where complaints [1] about bouncing maintainers we have now a
-replacement for maintainers that stepped away from their duties.
+On Thu, Oct 10, 2024 at 11:42:37AM -0400, Frank Li wrote:
+> Fixed below warnings:
+> 
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu: failed to match any schema with compatible: ['zii,rave-sp-rdu2']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/watchdog: failed to match any schema with compatible: ['zii,rave-sp-watchdog']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/backlight: failed to match any schema with compatible: ['zii,rave-sp-backlight']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/pwrbutton: failed to match any schema with compatible: ['zii,rave-sp-pwrbutton']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a3: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a4: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu: failed to match any schema with compatible: ['zii,rave-sp-rdu2']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/watchdog: failed to match any schema with compatible: ['zii,rave-sp-watchdog']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/backlight: failed to match any schema with compatible: ['zii,rave-sp-backlight']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/pwrbutton: failed to match any schema with compatible: ['zii,rave-sp-pwrbutton']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a3: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-zest.dtb: /soc@0/bus@30800000/serial@30890000/mcu/eeprom@a4: failed to match any schema with compatible: ['zii,rave-sp-eeprom']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Changes in v2:
+> - change all maintainer to frank li.
+> - Link to v1: https://lore.kernel.org/r/20241008-zii_yaml-v1-0-d06ba7e26225@nxp.com
+> 
+> ---
+> Frank Li (5):
+>       dt-bindings: input: convert zii,rave-sp-pwrbutton.txt to yaml
+>       dt-bindings: backlight: convert zii,rave-sp-backlight.txt to yaml
+>       dt-bindings: nvmem: convert zii,rave-sp-eeprom.txt to yaml format
+>       dt-bindings: watchdog: convert zii,rave-sp-wdt.txt to yaml format
+>       dt-bindings: mfd: convert zii,rave-sp.txt to yaml format
 
-I'm going to address all participants from the above discussion, so that everybody
-is informed about the change. I also added the related subsystem maintainers.
-Please tell me if I should avoid this in the future, and whom I should exactly address
-for changes in the MAINTAINERS file.
+Applied 1 and 4 since they still haven't been picked up and linux-next 
+is warning due to the whole series not being applied. Once again, these 
+MFD bindings need to go in via 1 tree.
 
-
-[1] https://www.spinics.net/lists/platform-driver-x86/msg47105.html
-
-Benedikt Niedermayr (1):
-  MAINTAINERS: replace bouncing maintainers
-
- MAINTAINERS | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
---
-2.34.1
+Rob
