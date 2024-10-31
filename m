@@ -1,40 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1529E13342F;
-	Thu, 31 Oct 2024 16:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6364519DF49;
+	Thu, 31 Oct 2024 16:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730391042; cv=none; b=iqCxy+y1OmJHkp6uCZEKugXNF3cdQrfxYMCz7+8dRIgFeIDzKjd+JlLYaoDLwosuR3VCUPiJyedXA6sguL+Oitc4WuZvf9z9F+IxQAVAwtfYZHHK48jgum+izKgFXpUhT9Zi7l55I4zNxw9vARa+tdvSL2O2/YLkMn7M/Z+vLHQ=
+	t=1730391139; cv=none; b=FaQiEaF/lx49tZunLwUYjb2AuVmMEAMlfI6qbX8Tl1p3Nv4764b6LOZ2UyP/KvR8kkbUXLe5uedVDhmmhJl77q2VA1TAUVTBrSVI5pt0M5PocFYGI9cqReIXKvt2PsA3s6JDIdVkU6AVmWeclxKuXiY3Q7uodmSoaq1QergmpY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730391042; c=relaxed/simple;
-	bh=4d6mgxmGridH9gvLS7zUL+14pujQhNdiYCfvRt2QC18=;
+	s=arc-20240116; t=1730391139; c=relaxed/simple;
+	bh=MY/hoDwp6W/pd8Z5Djsa3d6zFgEXmmIbebao0o71+Gw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=a3FWqq7GmFVrcGI0yqAXT8HTOyQNuQMQDYjMkLlu6GwnTv58fIr9Y50w7+30fkWlJE7QPz7QRf1Hu0QlwzCEGKSdUq23Y4zft4aItLh1ENZOZq2BXLKV8a2CXQSupJk8ucMkGso6HLwidz5Y9/BaNzKIjJbOP9LOjDkO/LrbbEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epWd+AoE; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=MGRaxhhjonjAj3gfnuSumOeOKlOEFxQX03gRKDWT6RjCSlUKqeuUhtVGm+jmklgm+CAjrKRr1miD/BlgiGLXM4Uz24lmnIhgZRaSKMBt6M7FvO4QfomN9HEYLMFvgFavq9BwzHHC8PM3WtRa9KgQg5eGpfpohRboK93cpXObaR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM7cDB1k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epWd+AoE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F05BC4DDF9;
-	Thu, 31 Oct 2024 16:10:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM7cDB1k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7242DC4FF7A;
+	Thu, 31 Oct 2024 16:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730391040;
-	bh=4d6mgxmGridH9gvLS7zUL+14pujQhNdiYCfvRt2QC18=;
+	s=k20201202; t=1730391139;
+	bh=MY/hoDwp6W/pd8Z5Djsa3d6zFgEXmmIbebao0o71+Gw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=epWd+AoEaThNnPV86I89LKI3zw1z3K21lCh2mfHx5yqkb0T6dswRrZpjjlmoiip13
-	 3SItJf7s8l4tD4pj4Ok8YA6py95yf6mEF8p85NWarFtTt2CB9RSQ/+VzTaoj9gp3I7
-	 aaNHMLNaHzo8S3xfRPQtSyPScpoMZ+AL59iarG31BM/B3hCIn+rIuQL7HuW166BmwM
-	 BLDTuGmjzSUa/Fk3Dejms0YYCfR2WLjkcRv3AJ3OV/Mxhc0bFwunW+49f2ogvFkmbI
-	 XSCa54Dunm6cJrm+H2RT7J99dD3qJ5vHAv+gkc2q5042FvnC/bsRxuruem27y/Wxj/
-	 BZgtKsZQDMVtg==
+	b=ZM7cDB1kUrrMUJLsfVWJIe8JPP43Y8Stxp1QuXV1C/M579XnLz1nF86lGLIXVPKbu
+	 s79IDSdZRrmOJabM50Yz28IM47t9CfQPA0hfSQ8JTMJgBp6s4JWaWHmrlIcGqfO1Qs
+	 rosEB7HFhsctGSXkPi2z69bvDmIoFZfuGitHAy0+IvUmsSwAgh+11hl1hNpQz8NxbM
+	 POF9TA4xibX1Mzdyk/NY6HKjpUfNc8z2uMVI3PLB+O2g4zBaajw9CKgpBhRynPgQoT
+	 Yq1Sv0/duDIma2F5mhjCJnVHoF09K2XVnndjFrbkHJa56aWAP/RSH6EJzsGCuqZacH
+	 yy/oyzs1TrbeA==
 From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, pavel@ucw.cz, Dipendra Khadka <kdipendra88@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241019073302.35499-1-kdipendra88@gmail.com>
-References: <20241019073302.35499-1-kdipendra88@gmail.com>
-Subject: Re: (subset) [PATCH v2] leds: bcm6328: Replace divide condition
- with comparison for shift value
-Message-Id: <173039103924.1797070.1959784060223429346.b4-ty@kernel.org>
-Date: Thu, 31 Oct 2024 16:10:39 +0000
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Patrick Rudolph <patrick.rudolph@9elements.com>, 
+ Naresh Solanki <Naresh.Solanki@9elements.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org
+In-Reply-To: <20241019-max5970-of_node_put-v1-1-e6ce4af4119b@gmail.com>
+References: <20241019-max5970-of_node_put-v1-0-e6ce4af4119b@gmail.com>
+ <20241019-max5970-of_node_put-v1-1-e6ce4af4119b@gmail.com>
+Subject: Re: (subset) [PATCH 1/2] leds: max5970: fix unreleased
+ fwnode_handle in probe function
+Message-Id: <173039113720.1798167.5364741747242416515.b4-ty@kernel.org>
+Date: Thu, 31 Oct 2024 16:12:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -45,17 +50,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
-On Sat, 19 Oct 2024 07:33:01 +0000, Dipendra Khadka wrote:
-> Fixes the following Smatch warnings:
-> drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide condition 'shift / 16' with 'shift >= 16'
-> drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+On Sat, 19 Oct 2024 21:36:43 +0200, Javier Carrasco wrote:
+> An object initialized via device_get_named_child_node() requires calls
+> to fwnode_handle_put() when it is no longer required to avoid leaking
+> memory.
 > 
+> Add the missing calls to fwnode_handle_put() in the different paths
+> (error paths and normal exit).
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] leds: bcm6328: Replace divide condition with comparison for shift value
-      commit: 5f57672cf4629542b525cfef027e293656915368
+[1/2] leds: max5970: fix unreleased fwnode_handle in probe function
+      commit: 42c04062ba3cd1f2aef96dc160e0ab4b45b5e10a
 
 --
 Lee Jones [李琼斯]
