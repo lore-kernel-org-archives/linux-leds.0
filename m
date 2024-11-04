@@ -1,118 +1,118 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA701AE01F;
-	Mon,  4 Nov 2024 09:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C011A724C
+	for <linux-leds@vger.kernel.org>; Mon,  4 Nov 2024 10:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712990; cv=none; b=Cljt9+64fMosPCc+cZqC6q+4YjJhTy3Blza5ignzo6YeMlKT5DrkbcWvnBJ6jsM1SNaJgCX52U3TM0lHChDZFlOHN7ClA9U5fg4+KxWH3B/imzQ7JNmy2So4sexh5KfCT0ZdZ2gdeFRdWhhqjalp1VJJ4CRCWfGyXM1U7Jq0/MI=
+	t=1730714698; cv=none; b=AkbM7FUaH1k2t3UQnQ+ZyrQf3ZTG9QMPLO8ZQ6MnnokdbClP0yoRC47zgOBOeIlnFePyq60yFuKJhGCwDNqzAyvX1juGe5QRfvScUpAGEiIKUzQFiLx1baG9jew2M6px/m7imfnmJVdrFS0ljKJNIpG+i+HQJW9/F5aXHJgTlCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712990; c=relaxed/simple;
-	bh=Sc+eqveINCgjfeZ/XCA8LOsWGvrDOO3Z75MHxHV6gP0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mt+RPlEdvCZsyLcedYLWecW1tqWl4Unb0QTaHpo6LVY2MBYXq+g/UWw9gFthakmBjcDBSW6LQBQai2XenkMd/jYj2HJQkC9W1B/ZDtZA7wwZExRtelWTeqaI5LOeX6OoSw5bdhZXfxJUnUQbfn6a+gku6MkdfMGr4+WmQeyv9Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cmsGN5d0; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730714698; c=relaxed/simple;
+	bh=j6FK+QcFXV1PXLH5fQz7HwdZu+CP4alnNimVP6X1tMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiVYUQwmFlIXX3XHTt7UnQNWoZGtbITaxt2cvm3aybCMm0XtmwUUaKHRwTAUXGkoiAxROH2a/VaCiiIJziefINc0M79ltG0MwsdmwZ/eMOssz/9PNoaznQPpvK8JKRA13Mzkl58oLKf6v2JOyIdkWE29wsXWOE4vysAf90Ajekk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fQj7YHOJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cmsGN5d0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730712989; x=1762248989;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Sc+eqveINCgjfeZ/XCA8LOsWGvrDOO3Z75MHxHV6gP0=;
-  b=cmsGN5d0H45SlHE2iorkOF4oDGsx0dkzWCvZqWymjaX6giruS7iDSnAt
-   CLQeiOMSud5hKCG4ejQ1CoV7brTpn+ImUgZ1LFZzc1B3oDIhFN2yK1XCL
-   Tfq0Uk1CkFTzQCYjg3gKgzUaTKLhXoFMpy/uiOKvXph4YsEsW6uVlN08L
-   P7rYVvL2ERf+KTF7dhEtFYCJ9amvHXn4qQoZIT1tlAMmJ+KFCpjGGbfmh
-   zV9TEK++pm0l+8YuU82ygtvMYhptdflipxeQl7PP38Ug2ZjIXbUI2UgtB
-   zAP02g5A7uR3Fwxvb8Na1wDPxf/+J/wnf2B4TJpqPJDGAtOR1tKk9ii4M
-   g==;
-X-CSE-ConnectionGUID: fCGnczMRShubdAUWnlhnBA==
-X-CSE-MsgGUID: tuH0gCZQQwWibhfRlgAwSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30620092"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="30620092"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:36:21 -0800
-X-CSE-ConnectionGUID: Ah+BKPYZTaqhFdk5MbXoWg==
-X-CSE-MsgGUID: 7yc422SjSi6VFqbnsmzs9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83127064"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 04 Nov 2024 01:36:16 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D17216CE; Mon, 04 Nov 2024 11:36:10 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-usb@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pavel Machek <pavel@ucw.cz>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v1 5/6] USB: gadget: pxa27x_udc: Avoid using GPIOF_ACTIVE_LOW
-Date: Mon,  4 Nov 2024 11:34:23 +0200
-Message-ID: <20241104093609.156059-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
-References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fQj7YHOJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730714694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rr0x/642zGcE80hVGdWJ4xDKS0hjceKOyLETD5XhvJ4=;
+	b=fQj7YHOJ4yuuwfCDykDYHI73ugIqMhxv6+xD4noj+PyLUsvZFgwIN0lcqtyLJGw/SlCTAU
+	3SeSdD2RFe7GmejJ5zUWAfr/A8U6HuPGGl22nnnzPHSwiUcE+rHdGafbdi0lxgR/ApmuiF
+	EITjcnCnFv/kaKZlDMk/3b/eZg6eAs0=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-636-vuezxDRSM6abELAOBCUL5g-1; Mon, 04 Nov 2024 05:04:52 -0500
+X-MC-Unique: vuezxDRSM6abELAOBCUL5g-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a99fff1ad9cso351941466b.2
+        for <linux-leds@vger.kernel.org>; Mon, 04 Nov 2024 02:04:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730714691; x=1731319491;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rr0x/642zGcE80hVGdWJ4xDKS0hjceKOyLETD5XhvJ4=;
+        b=hB04c5VqfZvt6SU8YLq2wmNtsX5WeHcg7FF712oJqkdHsJLNgZnPqBr+rEchI7R8LL
+         kBIfmATrQu25QFXFbfuUCcrsSad/JkoCuPTW6sAYSyhrg/3PMh9bGNeI+Sewle74vxLz
+         dUepEvtai9WfSZBqwmjd9RA+Kfe5/IeFU6H5LhuBxkbuwyz2qzYRw+FvoYLO+ekVwRGS
+         BDKoDgJSGkVZX7HAmzM0vlCudgcrwUgrq+XxJq1ByU1PN1g+9a16xcEhkyADKVDU60zc
+         bU3Cumji9QRMJVr6U3IcMiShZ3+dFhM8RxJ5i8DHcO5rTRtNtJsD0tbVExm8015xowB7
+         t0WQ==
+X-Gm-Message-State: AOJu0YwYjEk7lLog7AADGkFkkkwZMF7YzRifgn0Vsw9huuG7M98ifYzh
+	mYuxhylocXZ7to3tdhdWvugogLYnOIPp3V1JUVYgqu6jElAt7s3YiojKZ8zbTYHrtP0Ob5uuZJ4
+	dtP6HKUXnLc1pz5gEi0/v/4b2iU0S4EAzF7UNeHbBJp/eTP0+NSdm/Pp8glg=
+X-Received: by 2002:a17:907:1c1d:b0:a9a:24a2:180b with SMTP id a640c23a62f3a-a9e3a7f2174mr1755625066b.57.1730714691069;
+        Mon, 04 Nov 2024 02:04:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEk/6X5iphD0pbEQ2fucbUHyw3wo9CHjAKQ/X/7Vcp/jJ3z+kYYgLixvBF2Ri7qLRxsJUMjTg==
+X-Received: by 2002:a17:907:1c1d:b0:a9a:24a2:180b with SMTP id a640c23a62f3a-a9e3a7f2174mr1755621466b.57.1730714690591;
+        Mon, 04 Nov 2024 02:04:50 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7700dbsm4086192a12.34.2024.11.04.02.04.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 02:04:50 -0800 (PST)
+Message-ID: <0f27f32e-bf00-4f9d-a0b6-0625a6dae203@redhat.com>
+Date: Mon, 4 Nov 2024 11:04:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH 1/1] MAINTAINERS: replace bouncing maintainers
+To: Lee Jones <lee@kernel.org>, konstantin@linuxfoundation.org,
+ baocheng.su@siemens.com, tobias.schaffner@siemens.com, pavel@ucw.cz,
+ ilpo.jarvinen@linux.intel.com, wim@linux-watchdog.org, linux@roeck-us.net,
+ Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ felix.moessbauer@siemens.com, christian.storm@siemens.com,
+ quirin.gylstorff@siemens.com, chao.zeng@siemens.com
+References: <20241028112359.3333152-1-benedikt.niedermayr@siemens.com>
+ <20241028112359.3333152-2-benedikt.niedermayr@siemens.com>
+ <173048213838.1966999.11456105703949125929.b4-ty@kernel.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <173048213838.1966999.11456105703949125929.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Avoid using GPIOF_ACTIVE_LOW as it's deprecated and subject to remove.
+Hi Lee,
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/usb/gadget/udc/pxa27x_udc.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On 1-Nov-24 6:28 PM, Lee Jones wrote:
+> On Mon, 28 Oct 2024 12:23:59 +0100, Benedikt Niedermayr wrote:
+>> Since complaints about bouncing maintainers raised [1] we have now a
+>> replacement for maintainers that stepped away from their duties.
+>>
+>> [1] https://www.spinics.net/lists/platform-driver-x86/msg47105.html
+>>
+>>
+> 
+> Applied, thanks!
+> 
+> [1/1] MAINTAINERS: replace bouncing maintainers
+>       commit: 64dd44a658065ab5595bbfe2cb4d8fd30c9e34a2
 
-diff --git a/drivers/usb/gadget/udc/pxa27x_udc.c b/drivers/usb/gadget/udc/pxa27x_udc.c
-index 7d3a8a5f3796..f9a55d4f189f 100644
---- a/drivers/usb/gadget/udc/pxa27x_udc.c
-+++ b/drivers/usb/gadget/udc/pxa27x_udc.c
-@@ -2355,18 +2355,19 @@ static int pxa_udc_probe(struct platform_device *pdev)
- 	struct pxa_udc *udc = &memory;
- 	int retval = 0, gpio;
- 	struct pxa2xx_udc_mach_info *mach = dev_get_platdata(&pdev->dev);
--	unsigned long gpio_flags;
- 
- 	if (mach) {
--		gpio_flags = mach->gpio_pullup_inverted ? GPIOF_ACTIVE_LOW : 0;
- 		gpio = mach->gpio_pullup;
- 		if (gpio_is_valid(gpio)) {
- 			retval = devm_gpio_request_one(&pdev->dev, gpio,
--						       gpio_flags,
-+						       GPIOF_OUT_INIT_LOW,
- 						       "USB D+ pullup");
- 			if (retval)
- 				return retval;
- 			udc->gpiod = gpio_to_desc(mach->gpio_pullup);
-+
-+			if (mach->gpio_pullup_inverted ^ gpiod_is_active_low(udc->gpiod))
-+				gpiod_toggle_active_low(udc->gpiod);
- 		}
- 		udc->udc_command = mach->udc_command;
- 	} else {
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+I'm not seeing this on either of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git/log/?h=for-leds-next
+https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/log/?h=for-mfd-next
+
+?
+
+Note I'm fine with you picking this up, I just want to make sure that
+it does not fall through the cracks and drop it from my own patch queue
+since it also touches pdx86 MAINTAINERS entries.
+
+Regards,
+
+Hans
+
 
