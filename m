@@ -1,43 +1,32 @@
 Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8F019DF66
-	for <linux-leds@vger.kernel.org>; Sat, 23 Nov 2024 19:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA6C17C2
+	for <linux-leds@vger.kernel.org>; Sat, 23 Nov 2024 19:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732391270; cv=none; b=HfFmXcgX+sGlBG0M19BhpC+0UFEBcSAdxcOlXZYc86b9BwgGRcFjQkPw0WgH3e7GrP4SYJrG7SGvtfl4KoFnIPlnnqiveGyCgumwOGhyLvTsu8vTWw4YNACyMVOgpgSyEKihmhPgHE7Uzj8Y+oAToNsb7EVqqsVXFFYKCYZwh+o=
+	t=1732391754; cv=none; b=gw1jlFCpdzBsuP98kiv7XazncJXD8DUK1V0FREnMJThlo4oavJzh0kP08EGu3n/8ZjTS6Nd8/w08wkAWXGajuSP4+yfWe1Mt+CBSeD3gaWEfPqMBGp6QCeluxPvw9GwTkGv6OTLzvo0bQiB7/eB4Y0AnAU7bOWUCC/XQq1x5S+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732391270; c=relaxed/simple;
-	bh=m2qLnqDWjiQs3VDlXncJpshue+oltGe7BCDFQj8lFzc=;
+	s=arc-20240116; t=1732391754; c=relaxed/simple;
+	bh=JXfIhgh8HkAwewLXXElARlOCEMiN1yj3hdYbrmk1qsM=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8UjVcSwyVySRjXPNKD6VOa22lPuW58YhDVS+9c9YK8mEN9IRJpntSn1e7D0ULlLFsLkMZ6WFYuF80qtn91qPaceOGGW8UOBOFzgmj4r4Ck64yv2X9/WQuTIhUhwfe/Ajzr911NNizwMDayq3uSp0gMzZdnf24BUpfXDjDXe3CI=
+	 Content-Type:Content-Disposition:In-Reply-To; b=si+g1o6RQgAtSQUZiiESlV2bFn51s3l/Tl+GCgQzB4NwqM1petZeYvKZuiHv55AF8aE9zQIuZ6PRrv61ZYppTQ0b5V9qQ4o+KF/con3SGHWcQK7WbRfRYA5/pmpQXFHu4Gf7MnIpu4eFvT/kUcl+zZt9EjsdJctpOHUeWJNafGQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-25-143.elisa-laajakaista.fi [88.113.25.143])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id cada6636-a9d3-11ef-a0f6-005056bdfda7;
-	Sat, 23 Nov 2024 21:47:38 +0200 (EET)
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id edf28269-a9d4-11ef-827a-005056bdf889;
+	Sat, 23 Nov 2024 21:55:46 +0200 (EET)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 23 Nov 2024 21:47:37 +0200
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Gene Chen <gene_chen@richtek.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 11/18] leds: max77650: switch to
- device_for_each_child_node_scoped()
-Message-ID: <Z0IxWdV8ZWhJ5Pp4@surfacebook.localdomain>
-References: <20240927-leds_device_for_each_child_node_scoped-v1-0-95c0614b38c8@gmail.com>
- <20240927-leds_device_for_each_child_node_scoped-v1-11-95c0614b38c8@gmail.com>
+Date: Sat, 23 Nov 2024 21:55:46 +0200
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: lee@kernel.org, pavel@ucw.cz, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] leds: bcm6328: Replace divide condition with
+ comparison for shift value
+Message-ID: <Z0IzQlsP6OMCcXRB@surfacebook.localdomain>
+References: <20241019073302.35499-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,35 +35,24 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927-leds_device_for_each_child_node_scoped-v1-11-95c0614b38c8@gmail.com>
+In-Reply-To: <20241019073302.35499-1-kdipendra88@gmail.com>
 
-Fri, Sep 27, 2024 at 01:21:02AM +0200, Javier Carrasco kirjoitti:
-> Switch to device_for_each_child_node_scoped() to simplify the code by
-> removing the need for calls to fwnode_handle_put() in the error paths.
-> 
-> This also prevents possible memory leaks if new error paths are added
-> without the required call to fwnode_handle_put().
-> 
-> After switching to the scoped variant, there is no longer need for a
-> jump to 'err_node_out', as an immediate return is possible.
+Sat, Oct 19, 2024 at 07:33:01AM +0000, Dipendra Khadka kirjoitti:
+> Fixes the following Smatch warnings:
+> drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+> drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condition 'shift / 16' with 'shift >= 16'
 
-...
+As discussed with Dan (author of smatch), these warnings make no much sense as
+"division" by power-of-two numbers in modern world (ISAs, compilers, etc) most
+unlikely become a real division instruction with all bad consequences. Even
+though, some ISAs can optimize cases where foo / 16; foo % 16 goes together and
+this change may break that.
 
->  		rv = fwnode_property_read_u32(child, "reg", &reg);
-> -		if (rv || reg >= MAX77650_LED_NUM_LEDS) {
-> -			rv = -EINVAL;
-> -			goto err_node_put;
-> -		}
-> +		if (rv || reg >= MAX77650_LED_NUM_LEDS)
-> +			return -EINVAL;
+So, please, consider not to send such changes in the future because at least
+they are just noise, at most might add a (micro-)rgressions.
 
-Again (yes, I know that is original issue, but with your series applied
-it may be nicely resolved), shadowing error code. Should be
-
-		if (rv)
-			return rv;
-		if (reg >= MAX77650_LED_NUM_LEDS)
-			return -EINVAL;
+https://lore.kernel.org/linux-gpio/20241112201659.16785-1-surajsonawane0215@gmail.com/
+https://lore.kernel.org/all/20241121105838.4073659-4-andriy.shevchenko@linux.intel.com/
 
 -- 
 With Best Regards,
