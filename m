@@ -1,25 +1,25 @@
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB36189B86
-	for <linux-leds@vger.kernel.org>; Sat, 23 Nov 2024 19:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CC9195
+	for <linux-leds@vger.kernel.org>; Sat, 23 Nov 2024 19:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732390641; cv=none; b=BvUr+5ff4zL4q0jJud5gGcZN5VxURaN/JYV3DZzeGdk5nas08ucizryckVGTlJMSAcXAvUR89CGacn3RkT8LEdz/vqIaJAN1zkD+3tMa16I0im191DwJDiowKsuHOgLXvMXAH8vEx1geyw1SZYVE67qxAPuiW+wRCNAIxRWaQCw=
+	t=1732390684; cv=none; b=grEhaFJB8u6L1j7sDjRiMul133mcOkyoknqui/jvbrL2TvSfNnch6OlZuh8G9Ayl4QgyO5wIaECT+Isczx/EE5w4x4y6Cfa0v6yyNDJ/zASsQra9QsRa7tztNY52m5m/SqaxQU4jGiRkO7oYyqSuUbiGiODOpgeg/AY0pV1uS4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732390641; c=relaxed/simple;
-	bh=4InhN3EJV5HAmDBFzgegujCf8BENyWDwohjfcGHHi1M=;
+	s=arc-20240116; t=1732390684; c=relaxed/simple;
+	bh=v/P84colaqWvSrZoU41qTnj+BoK6c9VtvnimLqokQxY=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYVWej+WCJVMpL40x6PykeR7+Rc40zyWLje+a/VMYMDISPVpWpkhVkRHKcspJjWz2QixK+CIVJXoudIsoN9OA380HqJKLyAgiltg/74XwfrS+8khuidWagnkpsMFuKDY+Ve/B7KNIdAS6VmNQdw4QsNCZpV6Aq84M3LARDD2qRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOmofbVGPbdQcsuFhIEtfLU+nRN7/OpZ2Oub0QvsjPdDiPg5K180u8BwYsox2TngiYlvUKgt78+MoFhDel3Y7l1KxlCUyOjr74VJO50LJeW2KfmmvMJarPze6x82KirosqvxoKV4eeN8dn4DEnZjHqmiUowzzikqEeqpFkPIckM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-25-143.elisa-laajakaista.fi [88.113.25.143])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id 541681c2-a9d2-11ef-9b92-005056bd6ce9;
-	Sat, 23 Nov 2024 21:37:09 +0200 (EET)
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id 724e09f1-a9d2-11ef-827a-005056bdf889;
+	Sat, 23 Nov 2024 21:38:00 +0200 (EET)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 23 Nov 2024 21:37:08 +0200
+Date: Sat, 23 Nov 2024 21:37:59 +0200
 To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>,
@@ -33,11 +33,11 @@ Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
 	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 08/18] leds: lm3532: switch to
+Subject: Re: [PATCH 09/18] leds: lm3697: switch to
  device_for_each_child_node_scoped()
-Message-ID: <Z0Iu5Noc_-hTmNLE@surfacebook.localdomain>
+Message-ID: <Z0IvF_xkWOcGuUnJ@surfacebook.localdomain>
 References: <20240927-leds_device_for_each_child_node_scoped-v1-0-95c0614b38c8@gmail.com>
- <20240927-leds_device_for_each_child_node_scoped-v1-8-95c0614b38c8@gmail.com>
+ <20240927-leds_device_for_each_child_node_scoped-v1-9-95c0614b38c8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,9 +46,9 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927-leds_device_for_each_child_node_scoped-v1-8-95c0614b38c8@gmail.com>
+In-Reply-To: <20240927-leds_device_for_each_child_node_scoped-v1-9-95c0614b38c8@gmail.com>
 
-Fri, Sep 27, 2024 at 01:20:59AM +0200, Javier Carrasco kirjoitti:
+Fri, Sep 27, 2024 at 01:21:00AM +0200, Javier Carrasco kirjoitti:
 > Switch to device_for_each_child_node_scoped() to simplify the code by
 > removing the need for calls to fwnode_handle_put() in the error paths.
 > 
@@ -58,51 +58,8 @@ Fri, Sep 27, 2024 at 01:20:59AM +0200, Javier Carrasco kirjoitti:
 > After switching to the scoped variant, there is no longer need for a
 > jump to 'child_out', as an immediate return is possible.
 
-...
-
->  		if (ret) {
->  			dev_err(&priv->client->dev, "reg property missing\n");
-> -			goto child_out;
-> +			return ret;
-
-return dev_err_probe(...);
-
->  		}
-
-...
-
->  		if (ret) {
->  			dev_err(&priv->client->dev, "ti,led-mode property missing\n");
-> -			goto child_out;
-> +			return ret;
->  		}
-
-...
-
->  		if (ret) {
->  			dev_err(&priv->client->dev, "led-sources property missing\n");
-> -			goto child_out;
-> +			return ret;
->  		}
-
-...
-
->  		if (ret) {
->  			dev_err(&priv->client->dev, "led register err: %d\n",
->  				ret);
-> -			goto child_out;
-> +			return ret;
->  		}
->  
->  		ret = lm3532_init_registers(led);
->  		if (ret) {
->  			dev_err(&priv->client->dev, "register init err: %d\n",
->  				ret);
-> -			goto child_out;
-> +			return ret;
->  		}
-
-Ditto for all above.
+Same here and so on...
+So, please revisit these drivers for the possible improvements.
 
 -- 
 With Best Regards,
