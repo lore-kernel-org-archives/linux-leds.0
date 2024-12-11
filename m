@@ -1,37 +1,38 @@
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CEE1DBB0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493091DD0DC;
 	Wed, 11 Dec 2024 16:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733934480; cv=none; b=QVvAoLCMXoNiyO2iviyxOl4pw7lL0yBy3Iy/sOO3C2PrD70S80dJMNznhna9P4otmndc10BU9F2FLjD3dZH7M8lBjvD7exJ2MmhCPwfN6Acvbf9tBPzilrJuzgLs8boTHIxya+CZsiizl8l6s+bhXDSyIcEJfXmifiEf8GpixWk=
+	t=1733934481; cv=none; b=CvtObbKbYN959zvHbYUwotRajc1iz+7J4bEwIKomSZMm62jWbFRVJuAejIOdpYozTDPsiRdZ9KIkn9LUDHKmGpGnIZWo+UY6b0zAYqSTbypKHD3ZwCOUBuRlnWPbfKnEtbHaMRL1NtNCTSG2s81pYI9G5lB9QWvGkjzyPsg1ptg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733934480; c=relaxed/simple;
-	bh=yyNvLDoRqw3n7kygorYC0ZKcQZ8W0My3Qn5ah/JVOfA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k5rVAib9+jaJQu5RaYxFCUluF0yn7cI26iGjCxu+aj5ibMXENz2TuQcPYtK8CnhlhVUrNJtcZclQ8h3JYXVrLfETFQ3OvVuoinRCVQqu02SpSNSyFF+eoUh1q3A6unxtOHO9TJ1UBhUnaWopsqQxJm0gWkysbvmqGDNP2gQhpHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QaGJhj1N; arc=none smtp.client-ip=217.70.183.193
+	s=arc-20240116; t=1733934481; c=relaxed/simple;
+	bh=R9Ph2LuNSizL9cZ5KwZKjg48Yy4GVSq4AuUp2eZ53Mc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hzhLuTxnSGfdT0o61VR2qkrSGxfBQiWppM5qKT3/Yjil+WGNc44q7AKA+ssFbWF7khv5fVxe/Mw9Qlfze6Vqq9iQnMamgVC4XlCL5yq17UhvvGMGFga0gQYK+xjWi3iRxG3MXv1idyq7asNFQRr1aWrfk2VEBEvd0W2cRmDtmUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jFYOe4Yq; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QaGJhj1N"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8CABC240006;
-	Wed, 11 Dec 2024 16:27:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jFYOe4Yq"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 19D3624000C;
+	Wed, 11 Dec 2024 16:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733934470;
+	t=1733934472;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vlmO94F6PCr3MRVBDoCJwKj3tmn8SRl8fag8OJSDsvI=;
-	b=QaGJhj1N3BXKsF4O/l0gE0WlKZyiCvorqS52KoWtT2bdoVKaxA+oGgtUiH5uwDzuyeAdM6
-	Cf+K+BzvksSUYfGTl9kQTrBiY+E3LG06f0XxihpBetSiKqEZqrn9Xd+1jS5m+qgFG05qpZ
-	CbkJyddITIADD5ebZp3/AvCRI3sSOJUQ11LpEO3xS0DR7dxP5lKehCeGEcw1LQMNXO4rhu
-	6IyKDb19TJOZUOCiXn7E/dbk1zQ9ZvsvuRgwXzrGe8Tv4Kt/lZSiC+QScQUj5HyLhDeWbw
-	2s6Df9qB+5pr0PLZI2Qr6P39Mlbs/PPeKzW7wcvYU3TRatcw64dTvCY0SZQDuQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GJLX7UutB8ehS0hHXBDQ4WgR2Cmh6ovxEz75/hzjYaI=;
+	b=jFYOe4YqQizwu6An/9RPBSvh2vpj9zksMTEK3eBWi66gZ2Dxo2ZpAAmqDCanz62rpsNjh6
+	lhS8HWxuaCkcf/rkWCgGfQFcI/hA9CvH/uU+QQ9eICZiuclHKA0EYxyviocdOSxSZxF4aY
+	FavOqmrxdWAfIE3OiwOdcNzdzfDL0pHhK6DZFTMCUnW+Q1BJgr0vt+PzS4oxzaR9CdKRnu
+	I4FyJfGanB8km/tHOY0Ne4PR+/QBOWDff9PNdUnd/bepvoDpPvXMj8CpiM38GQW/EAkzwi
+	hIV3oBswyaNUOVqEleGvQanKaZEgCA1yO+JmDOxbpTwQZRCpBeMssvIv12wu8A==
 From: Thomas Richard <thomas.richard@bootlin.com>
-Subject: [PATCH 0/5] Add support for the AAEON UP board FPGA
-Date: Wed, 11 Dec 2024 17:27:15 +0100
-Message-Id: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
+Date: Wed, 11 Dec 2024 17:27:18 +0100
+Subject: [PATCH 3/5] gpiolib: add gpiochip_add_pinlist_range() function
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -40,9 +41,9 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGO9WWcC/yXNyw6CMBCF4Vchs3ZMucQIr2JYDGXQSaSt05aYE
- N7dRpbfWZx/h8gqHGGodlDeJIp3BfWlAvsi92SUuRga03Smbw0SsXeYA06edMYgziZ9Y8wheE3
- Y3xfqyLSm6w2Uk6C8yPcfeIynlT+5dNI5wkSR0fp1lTRU2+1at6i2hvE4fvbG9fWdAAAA
+Message-Id: <20241211-aaeon-up-board-pinctrl-support-v1-3-24719be27631@bootlin.com>
+References: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
+In-Reply-To: <20241211-aaeon-up-board-pinctrl-support-v1-0-24719be27631@bootlin.com>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
  Pavel Machek <pavel@ucw.cz>
@@ -53,59 +54,154 @@ Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.14.1
 X-GND-Sasl: thomas.richard@bootlin.com
 
-This is the revival of the AAEON UP boards FPGA.
-The latest version was sent one year ago [1].
+Add gpiochip_add_pinlist_range() function to add a range for GPIO <-> pin
+mapping, using a list of non consecutive pins.
+Previously, it was only possible to add range of consecutive pins using
+gpiochip_add_pin_range().
 
-I started a new series, as I re-wrote all the drivers using the AAEON
-DKMS driver [2] as reference. I also read all series sent to the ML to
-collect the comments sent by the maintainers and reviewers (to not
-reproduce the same errors).
-
-The FPGA acts as a level shifter between the Intel SoC and the HAT interfaces.
-The pinctrl driver shall manage FPGA pins in tandem with the corresponding
-Intel SoC pins. In the previous series [2], this was done using Intel pinctrl
-code (included in the FPGA pinctrl driver).
-Now this code was removed and gpiolib is used to drive the SoC pins.
-
-The FPGA also drives some LEDs.
-
-This series adds support for UP and UP Squared boards.
-
-More informations (like the HAT mapping) are available on the UP community
-wiki [3].
-
-[1] https://lore.kernel.org/all/20231031015119.29756-1-larry.lai@yunjingtech.com/
-[2] https://github.com/up-division/pinctrl-upboard
-[3] https://github.com/up-board/up-community/wiki
+The struct pinctrl_gpio_range has a 'pins' member which allows to set a
+list of pins (which can be non consecutive). gpiochip_add_pinlist_range()
+is identical to gpiochip_add_pin_range(), except it set 'pins' member
+instead of 'pin_base' member.
 
 Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
 ---
-Thomas Richard (5):
-      mfd: Add support for AAEON UP board FPGA
-      leds: Add AAEON UP board LED driver
-      gpiolib: add gpiochip_add_pinlist_range() function
-      pinctrl: Add pin controller driver for AAEON UP boards
-      MAINTAINERS: Add entry for AAEON UP board FPGA drivers
+ drivers/gpio/gpiolib.c      | 74 +++++++++++++++++++++++++++++++++------------
+ include/linux/gpio/driver.h | 12 ++++++++
+ 2 files changed, 66 insertions(+), 20 deletions(-)
 
- MAINTAINERS                       |    8 +
- drivers/gpio/gpiolib.c            |   74 ++-
- drivers/leds/Kconfig              |    9 +
- drivers/leds/Makefile             |    1 +
- drivers/leds/leds-upboard.c       |  126 +++++
- drivers/mfd/Kconfig               |   12 +
- drivers/mfd/Makefile              |    2 +
- drivers/mfd/upboard-fpga.c        |  325 +++++++++++
- drivers/pinctrl/Kconfig           |   14 +
- drivers/pinctrl/Makefile          |    1 +
- drivers/pinctrl/pinctrl-upboard.c | 1090 +++++++++++++++++++++++++++++++++++++
- include/linux/gpio/driver.h       |   12 +
- include/linux/mfd/upboard-fpga.h  |   55 ++
- 13 files changed, 1709 insertions(+), 20 deletions(-)
----
-base-commit: cbc4912199deab59fdbd830b115d81941d0add46
-change-id: 20240930-aaeon-up-board-pinctrl-support-98fa4a030490
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 3c8ec7f3a83b..e0fe07167e62 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2227,26 +2227,9 @@ int gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_add_pingroup_range);
+ 
+-/**
+- * gpiochip_add_pin_range() - add a range for GPIO <-> pin mapping
+- * @gc: the gpiochip to add the range for
+- * @pinctl_name: the dev_name() of the pin controller to map to
+- * @gpio_offset: the start offset in the current gpio_chip number space
+- * @pin_offset: the start offset in the pin controller number space
+- * @npins: the number of pins from the offset of each pin space (GPIO and
+- *	pin controller) to accumulate in this range
+- *
+- * Calling this function directly from a DeviceTree-supported
+- * pinctrl driver is DEPRECATED. Please see Section 2.1 of
+- * Documentation/devicetree/bindings/gpio/gpio.txt on how to
+- * bind pinctrl and gpio drivers via the "gpio-ranges" property.
+- *
+- * Returns:
+- * 0 on success, or a negative errno on failure.
+- */
+-int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+-			   unsigned int gpio_offset, unsigned int pin_offset,
+-			   unsigned int npins)
++static int __gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
++				    unsigned int gpio_offset, unsigned int pin_offset,
++				    unsigned int const *pins, unsigned int npins)
+ {
+ 	struct gpio_pin_range *pin_range;
+ 	struct gpio_device *gdev = gc->gpiodev;
+@@ -2264,6 +2247,7 @@ int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ 	pin_range->range.name = gc->label;
+ 	pin_range->range.base = gdev->base + gpio_offset;
+ 	pin_range->range.pin_base = pin_offset;
++	pin_range->range.pins = pins;
+ 	pin_range->range.npins = npins;
+ 	pin_range->pctldev = pinctrl_find_and_add_gpio_range(pinctl_name,
+ 			&pin_range->range);
+@@ -2282,8 +2266,58 @@ int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ 
+ 	return 0;
+ }
++
++/**
++ * gpiochip_add_pin_range() - add a range for GPIO <-> pin mapping
++ * @gc: the gpiochip to add the range for
++ * @pinctl_name: the dev_name() of the pin controller to map to
++ * @gpio_offset: the start offset in the current gpio_chip number space
++ * @pin_offset: the start offset in the pin controller number space
++ * @npins: the number of pins from the offset of each pin space (GPIO and
++ *	pin controller) to accumulate in this range
++ *
++ * Calling this function directly from a DeviceTree-supported
++ * pinctrl driver is DEPRECATED. Please see Section 2.1 of
++ * Documentation/devicetree/bindings/gpio/gpio.txt on how to
++ * bind pinctrl and gpio drivers via the "gpio-ranges" property.
++ *
++ * Returns:
++ * 0 on success, or a negative errno on failure.
++ */
++int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
++			   unsigned int gpio_offset, unsigned int pin_offset,
++			   unsigned int npins)
++{
++	return __gpiochip_add_pin_range(gc, pinctl_name, gpio_offset,
++					pin_offset, NULL, npins);
++}
+ EXPORT_SYMBOL_GPL(gpiochip_add_pin_range);
+ 
++/**
++ * gpiochip_add_pinlist_range() - add a range for GPIO <-> pin mapping
++ * @gc: the gpiochip to add the range for
++ * @pinctl_name: the dev_name() of the pin controller to map to
++ * @gpio_offset: the start offset in the current gpio_chip number space
++ * @pin_list: the list of pins to accumulate in this range
++ * @npins: the number of pins to accumulate in this range
++ *
++ * Calling this function directly from a DeviceTree-supported
++ * pinctrl driver is DEPRECATED. Please see Section 2.1 of
++ * Documentation/devicetree/bindings/gpio/gpio.txt on how to
++ * bind pinctrl and gpio drivers via the "gpio-ranges" property.
++ *
++ * Returns:
++ * 0 on success, or a negative errno on failure.
++ */
++int gpiochip_add_pinlist_range(struct gpio_chip *gc, const char *pinctl_name,
++			       unsigned int gpio_offset, unsigned int const *pins,
++			       unsigned int npins)
++{
++	return __gpiochip_add_pin_range(gc, pinctl_name, gpio_offset, 0, pins,
++					npins);
++}
++EXPORT_SYMBOL_GPL(gpiochip_add_pinlist_range);
++
+ /**
+  * gpiochip_remove_pin_ranges() - remove all the GPIO <-> pin mappings
+  * @gc: the chip to remove all the mappings for
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 2dd7cb9cc270..8037f9a1e2a9 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -751,6 +751,9 @@ struct gpio_pin_range {
+ int gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ 			   unsigned int gpio_offset, unsigned int pin_offset,
+ 			   unsigned int npins);
++int gpiochip_add_pinlist_range(struct gpio_chip *gc, const char *pinctl_name,
++			       unsigned int gpio_offset, unsigned int const *pins,
++			       unsigned int npins);
+ int gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ 			struct pinctrl_dev *pctldev,
+ 			unsigned int gpio_offset, const char *pin_group);
+@@ -765,6 +768,15 @@ gpiochip_add_pin_range(struct gpio_chip *gc, const char *pinctl_name,
+ {
+ 	return 0;
+ }
++
++static inline int
++gpiochip_add_pinlist_range(struct gpio_chip *gc, const char *pinctl_name,
++			   unsigned int gpio_offset, unsigned int const *pins,
++			   unsigned int npins)
++{
++	return 0;
++}
++
+ static inline int
+ gpiochip_add_pingroup_range(struct gpio_chip *gc,
+ 			struct pinctrl_dev *pctldev,
 
-Best regards,
 -- 
-Thomas Richard <thomas.richard@bootlin.com>
+2.39.5
 
