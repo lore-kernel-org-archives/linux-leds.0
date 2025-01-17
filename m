@@ -1,44 +1,44 @@
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01olkn2023.outbound.protection.outlook.com [40.92.112.23])
+Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01olkn2048.outbound.protection.outlook.com [40.92.112.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311B1DE8A0;
-	Fri, 17 Jan 2025 23:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.112.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B5C1DE8B7;
+	Fri, 17 Jan 2025 23:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.112.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737157243; cv=fail; b=E6rIwJyuLNZXUxg2M6Cn4VwDjXw3YiQJWuPSnp7x0/vbZGQoGgte1/F/B9O/WJuoglrfuJFcSKHKTJuXXkTmESHaOYM97qRfb9HBeHXKv0MIAHt5SRlCwZSeV5RnUvIhFOpFxVFNdkuLGGv/BB2eNaKckZl8tgmmwc5hVWXU8ls=
+	t=1737157244; cv=fail; b=DKhxIeH1s+HUGrgjlm25Nj+mB9Gkd955NvSyIfijHye0dL8BFMdfEkx+XoBRfl6irSIpLJ15Juhy//ZrGQQF5GbgM9r4oZVvOCHWMhr9gkS4QwgMEx35TXXpQZAZG0DDdydSeg3RnwKvWxDn+9RrYe8JOaC6DNBI4nxaQzCFdjI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737157243; c=relaxed/simple;
-	bh=D4K9r6e8+Sk1BS+2VGhIrg5v2AEBsDv5XXQuSlnTfiY=;
+	s=arc-20240116; t=1737157244; c=relaxed/simple;
+	bh=hRVn4644dpgs01/+pFm+Kug1oolgFC1dj4b8PExnEKs=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=emuWfFYv3/rZaZ2iKrEYdX8w6Ier/LFbR5j/lUOwefLG+F8krJbmPd4VoxhszIrLdEM9YZIYK88s+WErTn0JxMQ8AeD3uD2aCnP9pYitjb4nDKofzMgF7s0aTmGB7wwumvUeOenkxppBTjZC6ood1veCtABuZc3KmwGgOclYWrE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=syYHg4IS; arc=fail smtp.client-ip=40.92.112.23
+	 Content-Type:MIME-Version; b=hI4bb8+rz/WbCfKIKA0cR6Uw1470T2rwbPK/gun3WDkcYZ76uAECEzCaMdoQcw0ML4D+tXkqxeXMFwiQUv4ehSmUzVUHgv4ShYRIx3K5vHbDEIsZVuI2ob/+tRE8TjplGbjx90aAxPVdkFxjMzT5HwvUp8is9nRe7X3feGAyG6U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=m6l9xBm5; arc=fail smtp.client-ip=40.92.112.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="syYHg4IS"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="m6l9xBm5"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cu8AqyX543K7dXIVlfYF13iOswLXullxrkYOhmTc7ZRCmhity/nrB5syjkBrm6SRUpfwVmHaRB9i6TJze53V1/1QnOxZWlEDQGiw58Vl6Baq1PYD9USaTiGgfgmk04+9DkrgTWg/CZAXEteLLBvFUUrpOusWCdnfdlaZtAwYzOQuS5yYdM5FIfGRSHQVZd5KcTh/7gPs/tQP3fmqQ3BbhvP4gHABWUVRW55curLVX0PL9FVRfx1d3gjCFc/4VrEGeBNs7FlyNWhKedJJnCa+MByroy0jVgJNJgXEp7+61by1dsPwEVUOvktVBu2HtB50Yi3ARQRj08H8j9+Lj1K6pg==
+ b=YcbiUI0CatpKI6bsF3Iiq2Sz6+XEKhCEPy8o1iKth2ciEbhFo2/8CJRZEN4Jvnezc4lkGp+RI92OcaLcRyWLYywTVwi1G6N3sNt08LfdYsnqQ/MC65tfFPgDNX2MrocZ1Go6wVDIeSk4JoOPGkZ1x44egjfSKKbTY7btL5Sm6bAIChl/DRb02Wjo2mCb7V/XhlaVclV2BDje7eQEVoPZEhCE+0V2E4PmHMLnmuhT5388D/YwIe0ig5jqYSas85GFSw6lEj2Jh9VqzaFy0UevOoY8e3khlRVl+mVJAh5E+6jmK4jklWcy/ZbMPtRKO+YGpWJEyx4CkRxc3LAP56pyrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ogS6YfdqA8BdxG9LAhhchBsCc1A0frBaELQUTCigOQE=;
- b=cIJZcgXHm7n6bzs9O/LR8InCojqjTctkSWWzEHr80Jw9kIfO45nNC6J4+QUvTgpIb89vu9yo8Oosw9pFVsNC//SPP4a7L85s677TeY1ajy5JNbwtm/V1M9RJEu2RHugzr2SCUqHOtJs5Pv/f4B4BgUsansfG4zFHkafDMKRiEqMUY6GLVbdmqLu6LTgf868tKkKr+D8GQ4I3It6b3szruHBGamIYom4f3bLN0pXTQ0CJhF/axAPeCx3FscmWQU/jR7CKz5eI/M85x5g+8oH4+M+wFRr66/EGcf/QNYFSQMQ/C0Kg+DXdxWOOpxbMlq3NfqBAGPjv1TdwNVBZEqvvwA==
+ bh=+ZJBY+tRiyU5lRK4Q9axrQ85I7SfOhWcopMeYJcKGDo=;
+ b=YmS061Ow3OEOShlbKW4tv05NgsDAm75xYccPwBPyhZeLgGdKP5fpNW2r/pyUQb3wZubo5AkGWzICdBJvcL/Ug42rkjL15Dd54kwOwwJUsb810xiZExpi3qoqLTpomfMP7jUkExRrgwPkgY5kuNyZB64uqwyqoh0JcXE3L6160Q6UNwQPr8s/IQPivlAhjzdjggdpOcisbOXM59oKpA+0KciClt9Fsbn8Qyat9IeYKuIq4gZyYAoGuXNeJvHjHtpOf7gVQlk6MG8PIa5r/KMieVvmnL/9DankeLihW5N4HSo2Vdcj58D+Edg2JZJLD0y7j+GjV2XeBAU2yvj4nz+qqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ogS6YfdqA8BdxG9LAhhchBsCc1A0frBaELQUTCigOQE=;
- b=syYHg4ISn/HJzDxnogfMmUf2N8PUAt5t2dRKGPvYU3cOm/THCxpMAtn7Xg8MmkL9K0K0LDpvTqdINpZXQvX2m/TnIoOofyzGjwoCICJXcztKhgxewbBMk/WgrziOP9RbK5vA8APuHZwc6qitEPVKUS6KY3W3/pKMn3rDDQeZaTSaKwYYDvZYWlL5IbUJBTquLGr6X5jt4W/djJxnM7K0oI9t1y8Ax6s9ZDsQlNHmbvomOEy8OW9CdszZewnt5mgjM/tWBtCvpfREcFUIv7w+ZFf5P7UEE+23R1h9CKe1CAklxu27SLvlAKJDDPH470UU8wkG+QKvocQ8l5Y/zpxETw==
+ bh=+ZJBY+tRiyU5lRK4Q9axrQ85I7SfOhWcopMeYJcKGDo=;
+ b=m6l9xBm5YD5tzCqahdp2VfykyHAe+HnZBzWdS86Pv+Nj38c8v5PXyCxnQ38R4Hvqy5DakEyfv8pt8vDSP6VAlAeNGe0LS+FkJtv9jjmBL7JE2pE0kYTAkNzogYJOWS1FC8pvEUz1MamSp4N4hFA9aC7LmF0ABNE7pR52B/nPCv/xh0NcG0SWaUbueS7Rip1pe42H15USemQasrOBKdHT2/QhaVXcZCkFHKL6jS+eiNRGZMDTNxT3L/fHED/Hj4muwhzOW9l+mMdd83rVFBnSddL1l+7Sie1Q7VJ2cK6ukIo7bmcOlPonRcL/MCkuEpmUhWlWMuf240GGhavYjvCPlA==
 Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:160::13)
  by CWXP123MB4166.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:b4::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.17; Fri, 17 Jan
- 2025 23:40:36 +0000
+ 2025 23:40:35 +0000
 Received: from CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
  ([fe80::c0fe:9ff5:51fd:3fdb]) by CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
  ([fe80::c0fe:9ff5:51fd:3fdb%6]) with mapi id 15.20.8356.014; Fri, 17 Jan 2025
- 23:40:36 +0000
+ 23:40:35 +0000
 From: Manuel Fombuena <fombuena@outlook.com>
 To: pavel@ucw.cz,
 	lee@kernel.org,
@@ -46,20 +46,20 @@ To: pavel@ucw.cz,
 	linux-leds@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] leds: leds-st1202: spacing and proofreading editing
-Date: Fri, 17 Jan 2025 23:40:29 +0000
+Subject: [PATCH 1/5] leds: leds-st1202: fix NULL pointer access on race condition
+Date: Fri, 17 Jan 2025 23:40:27 +0000
 Message-ID:
- <CWLP123MB5473FF69CC006C0417053E58C51B2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+ <CWLP123MB5473583199E0B466E907E2ABC51B2@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250117234034.670794-1-fombuena@outlook.com>
 References: <20250117234034.670794-1-fombuena@outlook.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: CWLP123CA0273.GBRP123.PROD.OUTLOOK.COM
  (2603:10a6:400:1d5::20) To CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
  (2603:10a6:400:160::13)
 X-Microsoft-Original-Message-ID:
- <20250117234034.670794-4-fombuena@outlook.com>
+ <20250117234034.670794-2-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -69,74 +69,59 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CWLP123MB5473:EE_|CWXP123MB4166:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5e7cdbd-ffcd-4378-c258-08dd375057ac
+X-MS-Office365-Filtering-Correlation-Id: 9aeb4c58-3ac2-48fe-190e-08dd3750570f
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|15080799006|5072599009|461199028|7092599003|6090799003|19110799003|440099028|3412199025|41001999003;
+	BCL:0;ARA:14566002|8060799006|15080799006|5072599009|461199028|7092599003|19110799003|440099028|3412199025|41001999003;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UlY3eVBkb3RzcG5kWTFFSGhWVUJwRDlMTEc4YTFEc0FPVzUxTThqSXpYMjcv?=
- =?utf-8?B?ckRzQzJ4aFNrcm9YSjJ0S1BEQTZQN1FmQUNvUERDdGc2YVgvUjVQVXNEYVZS?=
- =?utf-8?B?TFR3Zm5tS1J2V2ViK1drcXVNMWF0NDEvcWZ0MEF4VmcwT2t4YnUzM0lldXVn?=
- =?utf-8?B?SUZlL20rMTM2SjgwUWJVYitQeFZGMnAyNVEyT2pJdzd2ODVWSjFLWG5pek8v?=
- =?utf-8?B?ZUpwM1FLTFM5R285RnZHQTczTUx5bWM3Y0drUUpjMGk5VDljd2hXVGF6K3NO?=
- =?utf-8?B?eFk0bkhOdnBGUmhOZ2lzRDBtemp0azBXMjRnR0lKcVU2VEtVUmFXeHkxYmNk?=
- =?utf-8?B?UXJRVXI1MXdvaHpjZFo3ak1aMS9Wd2V1ckNHQnN6YVQ1NmdqdWVJdzExbE1R?=
- =?utf-8?B?YlBWclFKbjZ3bDg0dnoybGwxdmZMQlhRbVNtLzRxbmhGbVFZa2JxT0IrTzdP?=
- =?utf-8?B?S2hqUjhKV0N6RGM4aU1pUFJ1ckhYS2hDN0JIUGpZcUxqcjFoWml3cHVOd0F6?=
- =?utf-8?B?UTRybllmeVBZU2RPdmR0ZE45ZzhuTE1GSDVCd29zVmlmNFRvdFkvK0ZVcFVs?=
- =?utf-8?B?c2djWkVjYkxpRi9yMjJPUVJVS3FIQnZDWFhWY04waVZHM0FTa2JFWDdyZmky?=
- =?utf-8?B?Q09kc0lJV05uT201MUViM1NFYm9yeE9oWlEwVThoZVgyOWJLNSsxTzB1cmtE?=
- =?utf-8?B?eE5LMEVjTkF1RVR5RVdUeXpiK0lYUnFqcEZYcFRGaERSMG1Pbzl1YnhrTVVl?=
- =?utf-8?B?bEFzTzEwN3pmeVpUMk1tcG43ejJmWjh5ZVVIeGdJUlU1ZmxtUHdBYVFvbkl0?=
- =?utf-8?B?SEN4djhZNVJHTmlrWlgwbTZUekhSelpiVmZrS2JvRFpLNVhKaldwenFHK3da?=
- =?utf-8?B?bjgzcyt3SGZ0RnJOT3BWKzVVN0RWME8rb2tsQlN5aE5GTzNqakRXMWhodTB5?=
- =?utf-8?B?WVpxeTVKVUNWOUNrOFNRb21yWHAvaGp4WmpLZGFkdm5PM3J6WjlBTjU3Y2pE?=
- =?utf-8?B?ejNJWG1VckQyYjVMejZKSHJlQjZSa2NXcXU5cE80a2kzbGpxUWVSOHY1M2R4?=
- =?utf-8?B?aFFvTTVGM2pmQWc1NmtuRmVBTTU2MzJ1ZTlrR2ZtOVFueHgzbldBZG5pczBS?=
- =?utf-8?B?aXJUT2NKU0g5Q2ZPZy81ektUL1VIMHVheEc4QWZ1OC9oVlZFUENNUlNpTVRr?=
- =?utf-8?B?WDNBS043TFpxQXFEdndGL2RYbmNHU0R0blZiMGs1dVpHZndUaDVDK201b1dt?=
- =?utf-8?B?d2lPUU1Pc3Q4TVlCWGlqMkRwUVNiUFZmaGtkTWpPRmFpd28wMnNCbDhrRDVo?=
- =?utf-8?B?QVRYWVo1eldWN3hieHV4ZExMLzdvVnlJbTI0OWhyYmh5OVFVT0YzUGxrbTBL?=
- =?utf-8?B?RmdmMHp4LzZRZG5SQ1BlQjJpWElLR2ZRNXRpOTJHK3FibnZQbnRPb09IeU5Q?=
- =?utf-8?B?RWROc0RiSzVVOFhYak5NZkxkMjlBZTRTeEIxMTBpM2pmUEpFQWx5NWlzM25E?=
- =?utf-8?B?RXdTSzl5TDU2cDVPUzl2ZUM2WHhqVzAwK2tUT2NEY3NOeFlvQlhjekhuR3lP?=
- =?utf-8?B?VTl3UT09?=
+	=?us-ascii?Q?3w3+uQYrle/2JveI0Jj+3ylESe6jclehD8IXTKeFLO9B4Sn1qcDKKS2koLZM?=
+ =?us-ascii?Q?49vhGACk9rE5yYYg0OJ4dC9anHlhYJUux3FvKUrR0GkDY7U6MEYv1dQcvphQ?=
+ =?us-ascii?Q?kCD3zmD8fLsZbDjFl/RDYIbTQPTNPUd/A/pKFlEL0Hmytge5fpDAt8GlQ2H2?=
+ =?us-ascii?Q?Qbt5mO/vUrGYgQQ3KIzRHPLtLefqWPpuSB1DRaTXEnXbhM6S3JgLDdWDo9Wm?=
+ =?us-ascii?Q?Aqx2Pu/n+FpctWlg2j37TwTpZvA23QEKUUAqtzw7cHExk8dP4bhWlUObaBMC?=
+ =?us-ascii?Q?x7o8TKCWAvu9xhsvXCmLe4gGG/FJneRxVM84RzMFG5rTz4smhfoawg9maaoA?=
+ =?us-ascii?Q?Ez5Xm0J9mFz3SKLGkcSUDKNXODQMTMqKWVnQaWMP0cFBjKyBAVOjIJPIRcYL?=
+ =?us-ascii?Q?XYs/Jio7Ut1zisgX2KLph9O8FENb8HHBDDPuJNm0UruFVM7O2AUYND9CWjki?=
+ =?us-ascii?Q?u0d07Ogot0i0yqyz7EvFq6//cpx1pzjEF3d2aoCBcSeBXXBJeVVIDZoO3Q9f?=
+ =?us-ascii?Q?l5+0nzKezloe5qnqTjvJF0wUl7weiS/VH/cHrNpHgno39wS5chcTOAyIqXoF?=
+ =?us-ascii?Q?kmza+1SaleyQYf3rqb36gwFqfgzSyIzfAL+5xL/M0qrjoI0lpR6lcTbcMCtq?=
+ =?us-ascii?Q?LLwZg54E7ccR6rCWaoFKA56WFtC/1Neh/9VdfhzNE1luaM6mxmbEsSJbQ+sO?=
+ =?us-ascii?Q?ngweb8N+jz93g5Cz9ndV8UKtzRYaA7ByYEbf35aJz018wPUqB7LkZ6yknNzQ?=
+ =?us-ascii?Q?GwT5JdStgQppEv/TwhGpMCzuaQKEZzm4tEfauxLOOA661IvThEaTG99pNL2d?=
+ =?us-ascii?Q?TY02DEF9xg7xazbYxwVzDiOREwX+760nS21l7FM2YPYTz+goI0QoDpod1fCi?=
+ =?us-ascii?Q?jVQsyaT6m4tcyCNNvN1CzFl5LobifOcxiZBKESMuqVxz92LJkoK39jSIWzDI?=
+ =?us-ascii?Q?4Z6L+twUAbwlDd8lAlKOCBL3szUtjnpixWU9jA2MQ4kSvNZZz69B5qmD5L2D?=
+ =?us-ascii?Q?FwDi/91QK2NdYnmJJ4wz5zh7KZ4tnunZKE+QPUMz1Hw7cMvkGNxN9XME941k?=
+ =?us-ascii?Q?mw3jB/3BSSnXMncodiWlrPvvgpa9A542SU5fYmj0nNWbRKlpsz8=3D?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UEN5N0NQcFRNeWVUTEhjNldhdkZpb3JSUUxhYyszT1VHa2VRNHJXZ0FLWVp2?=
- =?utf-8?B?L0VLYnRaQ1BjYkpsU1lSUzluM0xUanJCUVF6Mk5UWUZxMDZtenk4eTlXNjVL?=
- =?utf-8?B?ekVVdmNlSU00RkExSWJVRFJ0cEVsLy8zMVhuZVZSL2JzVXc5cXNHekk3dlZZ?=
- =?utf-8?B?VkRoSi9yNWpwS25UVDE1d0ZBNVBrbWR3Z1dRWTdYNFROSW5hekd3dWFuKy9m?=
- =?utf-8?B?VXoyMkFlR1k5SzZTZERXWkEvNzdSaVdxU1QrRUhyazFNWlpBSXZWRmJRdFQy?=
- =?utf-8?B?SDIyZ2QvejZyOUNZcHpPbFh5bVk1R1VaR29hRUw2MERVWDIyTmMweE4yWk52?=
- =?utf-8?B?TTZUWHhncldPT1Y1VlU4KzN0Zis3QTBnWGxlK2xOdW5ySHRZUUxHRHdNUjJq?=
- =?utf-8?B?SHk5c2p6NnMxbkUzZXovR0dqMTJQOFk2M2VpUWZjK0JmK0Q0TTF4WUUzZnFN?=
- =?utf-8?B?ZUhpcUFNdC9kZzZZMURNdUNTQzBLbnZuY2J5c0JWYjhPYWhNcGQ1NUtVeFRs?=
- =?utf-8?B?MXp3OFJ3VVRkWFFUbWxxVjM5T3BqcWNDVlo1NmMwZHVhNHMvaVozREM3bVlS?=
- =?utf-8?B?WTJlSHpBdkhZaXRJdUlsbTlMazcreXpvaVNoTGw5LzgvRndZTGc4bUViUC8r?=
- =?utf-8?B?MXlLWUl1YmFBUFQxN3NPMkc0ejhiL21sNjdXNlhKQzhTVHJ3QkFxcmpITkZr?=
- =?utf-8?B?M0ViM3RsVmhOR3VKM3hCNVhhM0ZKTWZ2bEhNbFJNdUE5Vk1Ud0dHWlExcFhp?=
- =?utf-8?B?a2cvQTlLamZ5eGxhRW1nell4eWlRSmg2dEYyQTVyWm5NNFB1WHRUTVBKTkYv?=
- =?utf-8?B?SkJvTXVpdzRPRzFqZUUwWm1VcmVzN3NaUnRpRVFIVXI0NThvd0Z4YXkra1dZ?=
- =?utf-8?B?bEZ5bStOM0kxdG1zMk9CTTVsR2FqSFpEOGE3N25SZTZ4U2pSS21yOFQ5a1d1?=
- =?utf-8?B?N2YwOENrVXZaNklEOVZSTmFlVFVhNDY4ZEd5dzdBbVBlTTNENEwzNlJKM2hx?=
- =?utf-8?B?Q1hiOVBRMERjNk5Sa0tYdVNHVmhtVGhRL2FyYVByVHlSenAzU2Q5UHFscHl0?=
- =?utf-8?B?eStzTm9SZ2Z4bWo3QVZlakRndXhjY0drT09teWJKOTJUSEZMMjRxOWtCRmRZ?=
- =?utf-8?B?Tmt3aGIrT1dNQUUrVVU0WHZQa2dkS0ZvdmR1UVJ3WGVsMUlvU3NYTktzRFdX?=
- =?utf-8?B?MzQvajlZa2VOdG9jTEtCN24vb1VMdjFyeWlXY0RnYmhoVkJTWEMwNGNXcXNu?=
- =?utf-8?B?V0ZFUlhES2JXZ1cyWHpKWkc0OSs5Zm55c0xlUGtxSEJMOGU4dW9reTVvYWVi?=
- =?utf-8?B?WGdhNlprNVlXczY3Y3lNVitEOGJpWnVyVndEczVDOGZpUWVzc0RnQ29PV042?=
- =?utf-8?B?VGdvdHQrMi83TXVlYldtYWZKQ1E0U0YzRWZIaytjU1p6NHo0QkZxMTZPRUFr?=
- =?utf-8?B?NkNFdXQvdnhGT3AxaC95bWhZc1orQWdnSnpPcG1LaHRablo5TVJSWFR1eHJl?=
- =?utf-8?B?L08xcG9qdlduSlVDYWM3OFlCd1hrVUJZYXFsRW9EVXdrWmhqc2JQSW5zaVQv?=
- =?utf-8?B?UU5HM3p1dEtqbUR1NEpVUEIydU9MQ2dpc3NNQmNCajk5Z1UralNjZ2lXZkxJ?=
- =?utf-8?B?a0p4TDd1SXhBMGVOYXBDK1I4dTBzeFlhMHFsYmR1cHNlb0pEcUUyQTNaZ3k1?=
- =?utf-8?B?UWlIMmwzWTJFbzFQNHhJd0kwMGRqYm0reU1MdG55TE11Wmw0OHFlUVVMM2E0?=
- =?utf-8?Q?FJ1XiP2QuJvi7NowJM=3D?=
+	=?us-ascii?Q?FfAGB24K3WJf6Nf5h6R8i0LzWDXirnTmBnTWVNCNdhj+ph0iE4M6TxGIGFsq?=
+ =?us-ascii?Q?d/gHJuSStMdtuk6j0ERZxVFRWFqQ18irrm/ij2aFsRGAsiJc6yjbZJroICk6?=
+ =?us-ascii?Q?xfsD1YnjceoN3TAztDx04G1UmdCdrewns8VEnaE3j12XPz1UDUzc5IA+gV+M?=
+ =?us-ascii?Q?6YcolQNCvGrXnnUqrge4SQ3ScHyzmdbNVAP7WAX0Qq10cP2DS6v7N9mSUWRR?=
+ =?us-ascii?Q?xvSCnrUtGZ8mK6TlhClpWWenOqY08UDAf9164ifQ4yLZGIQOKKyZG4oUHedc?=
+ =?us-ascii?Q?YR8VV4iVeVhpdvK8Ra6qa1MW82n8+yQZfD0Ta4Ec2nLT05cFO9HUdzT9TV9h?=
+ =?us-ascii?Q?BIzQ+HXYGjW7y+IwrL03iJznjWATWYBV6X24DPoExeTw8uCTiqcHOzzA82n0?=
+ =?us-ascii?Q?dPWXQqsIbWjP2UIOg92vk962gwk/kNRmdPG6iB4IYHJEL3IZzhhzM9dTTQNv?=
+ =?us-ascii?Q?EOtrxvkFgfNlr8houVleGD3gBVF6tkg7/WWZN1iyzoBt+ZTa7mS1xyYks5l/?=
+ =?us-ascii?Q?CzbEVG5olFGdz97Bh0mBYa8GlrKwfEhgOynp6aEDfgi+qnw2eeuE1Yl+kzxE?=
+ =?us-ascii?Q?oIy6ihJzBpRY17+Rjn8tWJ5KWykhPiKg8tOxN4qcXWNBtqRH2iTtd1QTrel1?=
+ =?us-ascii?Q?9jYsFexIN6InuEXMQ3jRG+wlGFdkkQsauJXfjEAwawnSXyKRVknMgQFJAlPp?=
+ =?us-ascii?Q?bLxojMf1rRdZ5Rg8JqEgyiBwuYdExw9imqAZyO9gBkkp9jF7Eyh8ZD1I+9+R?=
+ =?us-ascii?Q?lxm59qVWoYt2g3k89Y+utNW3FZ9+rzDp1+tZipjWheLWzn4BHy6BTjdHKP2J?=
+ =?us-ascii?Q?MokjfPcV8ls88Drm+trxU6OblZOO5N8fGM7UT07wl/w13SkM4PBGbwrY/Svi?=
+ =?us-ascii?Q?/B46um/NLX7YFE0oO4j7F22u7HAW2GJk4bxyzIjdw0tsyuneA+5avJFtx4hX?=
+ =?us-ascii?Q?/Jm85+Vj+PnNtcgJByjUGX1McJNM+9oylLC3/qSFajy4i8b07OX1BBKgudUa?=
+ =?us-ascii?Q?8vS8a8v1ZWh4VGV6Q9232+utGl98O1297/p/hCSUDhn2oke8p59uPQp2jQdt?=
+ =?us-ascii?Q?9EX9Kg3SOvL6WT8IeHSkK29SypEcDOUBdDSV8xpl07TSdWOrFZF/cW0cAFQw?=
+ =?us-ascii?Q?FJQieGx/gQTZJmI0rscmDoLTKYWgRZ0WNhHmlcjztUCs7aiFmTpuBwqBppbs?=
+ =?us-ascii?Q?+6M6mwHFgTRLclRYMW2YnuKrjFZLiSQ2AWBr2t/SI9G23CMnj8+57Ccxbpib?=
+ =?us-ascii?Q?gCUUC1s5RPGvW8ZRsQ2fwpohigfI4pIhlgFaotzWEEwymlNZ7lOJApJtM6Nr?=
+ =?us-ascii?Q?f9g=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5e7cdbd-ffcd-4378-c258-08dd375057ac
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9aeb4c58-3ac2-48fe-190e-08dd3750570f
 X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2025 23:40:36.7556
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2025 23:40:35.7113
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -144,88 +129,72 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP123MB4166
 
-Minor edits regarding use of spacing and proofreading.
+st1202_dt_init() calls devm_led_classdev_register_ext() before the
+internal data structures are properly setup, so the leds become visible
+to user space while being partially initialized, leading to a window
+where trying to access them causes a NULL pointer access.
+
+This change moves devm_led_classdev_register_ext() to the last thing to
+happen during initialization to eliminate it.
 
 Signed-off-by: Manuel Fombuena <fombuena@outlook.com>
 ---
- drivers/leds/leds-st1202.c | 48 +++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/leds/leds-st1202.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-index 927874f20839..cb4797ea8f3a 100644
+index b691c4886993..e894b3f9a0f4 100644
 --- a/drivers/leds/leds-st1202.c
 +++ b/drivers/leds/leds-st1202.c
-@@ -16,27 +16,27 @@
- #include <linux/slab.h>
- #include <linux/string.h>
+@@ -261,8 +261,6 @@ static int st1202_dt_init(struct st1202_chip *chip)
+ 	int err, reg;
  
--#define ST1202_CHAN_DISABLE_ALL            0x00
--#define ST1202_CHAN_ENABLE_HIGH            0x03
--#define ST1202_CHAN_ENABLE_LOW             0x02
--#define ST1202_CONFIG_REG                  0x04
-+#define ST1202_CHAN_DISABLE_ALL				0x00
-+#define ST1202_CHAN_ENABLE_HIGH				0x03
-+#define ST1202_CHAN_ENABLE_LOW				0x02
-+#define ST1202_CONFIG_REG					0x04
- /* PATS: Pattern sequence feature enable */
--#define ST1202_CONFIG_REG_PATS             BIT(7)
-+#define ST1202_CONFIG_REG_PATS				BIT(7)
- /* PATSR: Pattern sequence runs (self-clear when sequence is finished) */
--#define ST1202_CONFIG_REG_PATSR            BIT(6)
--#define ST1202_CONFIG_REG_SHFT             BIT(3)
--#define ST1202_DEV_ENABLE                  0x01
--#define ST1202_DEV_ENABLE_ON               BIT(0)
--#define ST1202_DEV_ENABLE_RESET            BIT(7)
--#define ST1202_DEVICE_ID                   0x00
--#define ST1202_ILED_REG0                   0x09
--#define ST1202_MAX_LEDS                    12
--#define ST1202_MAX_PATTERNS                8
--#define ST1202_MILLIS_PATTERN_DUR_MAX      5660
--#define ST1202_MILLIS_PATTERN_DUR_MIN      22
--#define ST1202_PATTERN_DUR                 0x16
--#define ST1202_PATTERN_PWM                 0x1E
--#define ST1202_PATTERN_REP                 0x15
-+#define ST1202_CONFIG_REG_PATSR				BIT(6)
-+#define ST1202_CONFIG_REG_SHFT				BIT(3)
-+#define ST1202_DEV_ENABLE					0x01
-+#define ST1202_DEV_ENABLE_ON				BIT(0)
-+#define ST1202_DEV_ENABLE_RESET				BIT(7)
-+#define ST1202_DEVICE_ID					0x00
-+#define ST1202_ILED_REG0					0x09
-+#define ST1202_MAX_LEDS						12
-+#define ST1202_MAX_PATTERNS					8
-+#define ST1202_MILLIS_PATTERN_DUR_MAX		5660
-+#define ST1202_MILLIS_PATTERN_DUR_MIN		22
-+#define ST1202_PATTERN_DUR					0x16
-+#define ST1202_PATTERN_PWM					0x1E
-+#define ST1202_PATTERN_REP					0x15
+ 	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
+-		struct led_init_data init_data = {};
+-
+ 		err = of_property_read_u32(child, "reg", &reg);
+ 		if (err)
+ 			return dev_err_probe(dev, err, "Invalid register\n");
+@@ -276,15 +274,6 @@ static int st1202_dt_init(struct st1202_chip *chip)
+ 		led->led_cdev.pattern_set = st1202_led_pattern_set;
+ 		led->led_cdev.pattern_clear = st1202_led_pattern_clear;
+ 		led->led_cdev.default_trigger = "pattern";
+-
+-		init_data.fwnode = led->fwnode;
+-		init_data.devicename = "st1202";
+-		init_data.default_label = ":";
+-
+-		err = devm_led_classdev_register_ext(dev, &led->led_cdev, &init_data);
+-		if (err < 0)
+-			return dev_err_probe(dev, err, "Failed to register LED class device\n");
+-
+ 		led->led_cdev.brightness_set = st1202_brightness_set;
+ 		led->led_cdev.brightness_get = st1202_brightness_get;
+ 	}
+@@ -368,6 +357,7 @@ static int st1202_probe(struct i2c_client *client)
+ 		return ret;
  
- struct st1202_led {
- 	struct fwnode_handle *fwnode;
-@@ -99,9 +99,9 @@ static int st1202_pwm_pattern_write(struct st1202_chip *chip, int led_num,
- 	value_h = (u8)(value >> 8);
+ 	for (int i = 0; i < ST1202_MAX_LEDS; i++) {
++		struct led_init_data init_data = {};
+ 		led = &chip->leds[i];
+ 		led->chip = chip;
+ 		led->led_num = i;
+@@ -384,6 +374,15 @@ static int st1202_probe(struct i2c_client *client)
+ 		if (ret < 0)
+ 			return dev_err_probe(&client->dev, ret,
+ 					"Failed to clear LED pattern\n");
++
++		init_data.fwnode = led->fwnode;
++		init_data.devicename = "st1202";
++		init_data.default_label = ":";
++
++		ret = devm_led_classdev_register_ext(&client->dev, &led->led_cdev, &init_data);
++		if (ret < 0)
++			return dev_err_probe(&client->dev, ret,
++					"Failed to register LED class device\n");
+ 	}
  
- 	/*
--	 *  Datasheet: Register address low = 1Eh + 2*(xh) + 18h*(yh),
--	 *  where x is the channel number (led number) in hexadecimal (x = 00h .. 0Bh)
--	 *  and y is the pattern number in hexadecimal (y = 00h .. 07h)
-+	 * Datasheet: Register address low = 1Eh + 2*(xh) + 18h*(yh),
-+	 * where x is the channel number (led number) in hexadecimal (x = 00h .. 0Bh)
-+	 * and y is the pattern number in hexadecimal (y = 00h .. 07h)
- 	 */
- 	ret = st1202_write_reg(chip, (ST1202_PATTERN_PWM + (led_num * 2) + 0x18 * pattern),
- 				value_l);
-@@ -288,8 +288,8 @@ static int st1202_setup(struct st1202_chip *chip)
- 	guard(mutex)(&chip->lock);
- 
- 	/*
--	 * Once the supply voltage is applied, the LED1202 executes some internal checks,
--	 * afterwords it stops the oscillator and puts the internal LDO in quiescent mode.
-+	 * Once the supply voltage is applied, the LED1202 executes some internal checks.
-+	 * Afterwards, it stops the oscillator and puts the internal LDO in quiescent mode.
- 	 * To start the device, EN bit must be set inside the “Device Enable” register at
- 	 * address 01h. As soon as EN is set, the LED1202 loads the adjustment parameters
- 	 * from the internal non-volatile memory and performs an auto-calibration procedure
+ 	return 0;
 -- 
 2.48.1
 
