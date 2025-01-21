@@ -1,121 +1,110 @@
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E561F1516;
-	Tue, 21 Jan 2025 11:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0361F03D5;
+	Tue, 21 Jan 2025 12:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737460608; cv=none; b=OFeO5FAF7RDrJa16PS1r4FWw37jm9eVMNyJsFUNWtNwJP4iCMBlSXoehF5P9K/SQaz7K76VnFTqNWUGiTOTZWbGzq2hFhUfQTIWkH9mdWtrb7FBY43NB85qILbVakHUvD15qdAfk/Ipck764F4RcQcl3fCv3wQN045ITkDp8uog=
+	t=1737460981; cv=none; b=HUSIAiXZGxeGssUMV/gB0yRfNmhLJqb+suVeqLQq7V9FQlDpmbvHAXnsHqVniVfoHPncDIrztkqFeQEQ8YkqZZ0Ym/I7/QYhiidrQ5u3xOCalXJlXEjyTnXxtQiROx8Uey6STS2nZfjTRCm+b0K0V4g8FRh/f/HHlI9j631cPyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737460608; c=relaxed/simple;
-	bh=K0/AjDFGBBdMW11wkHaFw7h814RS+ZCwNh/M/FIL7xU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hqi3BDeNf49k0E+mWpQ28IH+aJn/J1lGQmJ7J/uAOxttmaQsaZLN9p9miHLVz3hnjuyl3K+agnBUO/NmXPSKAJtpX1xBDLdRaq1Mvj/Eo6Jii+gcMYlaIrckzVY0q3z8Dq64GNzYJ9yP4J1H4AZf2Mkau485e4+Zym1rJ7qQVp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-860f0e91121so3511121241.0;
-        Tue, 21 Jan 2025 03:56:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737460605; x=1738065405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TqtHU/R3kSgV3SxrlRx5UmzaTSmbxvnJE3LFzs/ekRI=;
-        b=Hkd30H7utjGSe540vu3BDm5TJbwjvuJ+jPX3gXVNyvienaGi4HjiRjH8OTcNEUUMYm
-         Jts9nTxgI4QxUvO06z1VCN23fS9Zy7wrS4Jrb6s4vE0h3/+TT5yelsbafdL4QsTAxmB+
-         tWP7IXg+fPE19oQwggSQI4oOMwnsO1UWdQM0pax/MGXlePNypAsc1vRV74JUSEbA2Vlt
-         G4PaACOugUAUHQLRkKH9HO17sYK+0VIoJXi8MXe6gacbJ/4RwTV7uMPtKWQffC9J394p
-         ICv6iyhXVtPAX7f/Ri9oyFAevCC6LGELN4ZmDIk19w9jioGaGlQd1k5jWJ5AgNd2MIjU
-         Wd4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1XQh/kVnqdB2d38D71vUtdS3MgZ78BnrloyWf8XAECHPUgN1h7tHBQN/uTy2QpZut0UabEYnnhHjq@vger.kernel.org, AJvYcCUmfiivoxtGlDpJ92jGdZgReNzO5JqALs+fRR37nwiZ0x7PQQPWQ1hYrTHV62Q3tdzds0Rh2t1xNQWVTq31@vger.kernel.org, AJvYcCWFxkPEllPOrYbdzMVexKiRs18EJSeL3QudasYcpAyDJ6lZqHAjGr8LuplXWfSI6S0VX8dnAYdSAxOa@vger.kernel.org, AJvYcCXsW0m1kQEZho7A8e0HNmvGgwTeEG+xQZzCjGMGIcUwVjWTz0LplMBifWP4cKMqjenv4oD9hBI4z050hA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaUvjS37oSTgWmRVovz5cGQcjxTukyiZJsvCX/jSRZIJKF2ErF
-	m3bq5FTxwCniuKuwH6kQsquaIVq3pwIAPFVm4PHT3tXKAqcahL+fgUKkFp7H
-X-Gm-Gg: ASbGnctAmKD3EOL9GNW6aulMYsOG72XUYwmRRNCvZgMV2TzlluP+dnVEwDDfX7CpOHq
-	BQHTyawEyUzDI1rbXRUZ1sp89K5zKOSLZpk0wBQwrEmRr/jLHJuDlu3k+g/wPmwr48HLM2imwtD
-	acoLf76+I5ahFVztvb1psnkQvvMfi+8zRbJ9JZR3l/Ka5a4eKjQNV6cfTnc6/GX0UrU1b3H72Cw
-	CmRSnZWWxGbHpgs/wA3fCP/98+FqbBtCIxzAhKeWs5CavU89bWVE6O2zOZHwyu7MYm87vFK/833
-	fJrhE9JQFOMMQ3V973NkI7O55U/LXX4iOk4M
-X-Google-Smtp-Source: AGHT+IGCXf/J3iOtXAmeT6F4XIyPxbsqx+SfQR/pYvUe9iuyc2N0P559UVUGE8BoCLeJqyPm772lxw==
-X-Received: by 2002:a05:6122:4f96:b0:518:7bc4:fcc0 with SMTP id 71dfb90a1353d-51d763559admr12398492e0c.2.1737460604927;
-        Tue, 21 Jan 2025 03:56:44 -0800 (PST)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51cf55775aasm1719455e0c.1.2025.01.21.03.56.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2025 03:56:44 -0800 (PST)
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5174db4e34eso3810904e0c.0;
-        Tue, 21 Jan 2025 03:56:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUpbn20QGozAvwnCFTdl8hmY3s7S/CC+CwPsNwuw1BYufNsYkAYuielkx+apiTUr9dNr+kmjge65gjw@vger.kernel.org, AJvYcCVC4sWeoYCxQsuqB4phPiMmWSLBONxF6DrUaAtWV/84rSCwP3PTlc5eCpF/XW5jF3BdkHYn//4eiQ1UFQ==@vger.kernel.org, AJvYcCVKDkcjd01U0jvAmaoqpmsyw4AgccLZJpXCOqkAhicK+MKYQ1X6Ruldy6J++UwR3VAmQlDaUNxD+VqafiUz@vger.kernel.org, AJvYcCWjc9FM089huu/QzohvUNwsgaS9T9f2EplqcTZHOMGnJre0eIoqwfFE1qBF148w99zPaQFbFYzvnJZt@vger.kernel.org
-X-Received: by 2002:a05:6122:918:b0:516:dc0f:c925 with SMTP id
- 71dfb90a1353d-51cd983a309mr19736115e0c.6.1737460604451; Tue, 21 Jan 2025
- 03:56:44 -0800 (PST)
+	s=arc-20240116; t=1737460981; c=relaxed/simple;
+	bh=RWqNh0FamzGZLZTrMHa0koysLbnh/1JyBwU2rc2rJ4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAJq+zQT5os7QpEs12zZ9Wb/OgAc7ytFk/zNYkF91GW2h/1Z/sFh4YtEhdRJf1ow6X49f1gjnF7fhPypR8WfCSCtx8FGAPOKc0eYx8PgvvVrF8b4ovB0k0OrOp4n6apvC3TK2fw3Zjjsmdope61BBMxJO7t26EqcvurxbVpeI0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=IUsfFBn3; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="IUsfFBn3"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 56F8C104811E2;
+	Tue, 21 Jan 2025 13:02:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1737460972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4EjOg4GooGB9zfQoDLzHhDxxaxOQHP4+q8cuOcut4HE=;
+	b=IUsfFBn3hZDx3M6UTDgqVE06MDOQUu9IuRkxsiIVGGJV2eiPe+KWGvz/YpXZe4AcQMOS6J
+	49Q5+gQ8L+oOJNhVE276yktsvO3sAkob2LDYH6FMMNnZOiWL/QfT5hl7GwvwEoScYgq1qR
+	nHLl7Bup9hRemUisXKv9rbaKtguzp7Oeu3a9nOq/iBgcWLCSU4sgrQfhlDgaKHsPsirY+u
+	wXyXAB9FEQOyGvs9a65OAf0oYtBCIZmeAR8e54qssINDx5NmkBxG3y3XMewiMi92wIE+Bu
+	jc5VA4fLZm8HBYFHkaskmiNyikXmGRiwCp9iFLUHNdtrX5R/ZffFHOnZVvuoNg==
+Message-ID: <c794c87e-30df-4993-86d9-35be35878e44@denx.de>
+Date: Tue, 21 Jan 2025 12:27:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218183401.41687-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241218183401.41687-4-vicentiu.galanopulo@remote-tech.co.uk> <173641864745.2570436.6359371577917683428.b4-ty@kernel.org>
-In-Reply-To: <173641864745.2570436.6359371577917683428.b4-ty@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Jan 2025 12:56:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXNOEXuEADeSGGHw88Tse+QjSkknKYGH-kk02jSpiuNiQ@mail.gmail.com>
-X-Gm-Features: AbW1kvbP8VBj9TGhqL-IeQM6ZcZK-ooOHR3y80pnUD5QE8N4oMpIvwl3ey59IxQ
-Message-ID: <CAMuHMdXNOEXuEADeSGGHw88Tse+QjSkknKYGH-kk02jSpiuNiQ@mail.gmail.com>
-Subject: Re: (subset) [PATCH v11 3/3] leds: Add LED1202 I2C driver
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] leds: trigger: netdev: Introduce OF mode
+ configuration using netdev-trigger-mode property
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-leds@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
+ Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Lukasz Majewski <lukma@denx.de>, Pavel Machek <pavel@ucw.cz>,
+ Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+References: <20250113002346.297481-1-marex@denx.de>
+ <20250113002346.297481-2-marex@denx.de>
+ <78e19c21-589f-4a15-8878-d2f5bb3017ef@lunn.ch>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <78e19c21-589f-4a15-8878-d2f5bb3017ef@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Lee,
+On 1/16/25 2:47 PM, Andrew Lunn wrote:
+>> It is not possible to immediately configure the LED mode, because the
+>> interface to which the PHY and the LED is connected to might not be
+>> attached to the PHY yet. The netdev_trig_notify() is called when the
+>> PHY got attached to interface, extend netdev_trig_notify() to detect
+>> the condition where the LED does have netdev trigger configured in DT
+>> but the mode was not yet configured and configure the baseline mode
+>> from the notifier. This can reuse most of set_device_name() except for
+>> the rtnl_lock() which cannot be claimed in the notifier, so split the
+>> relevant core code into set_device_name_locked() and call only the core
+>> code.
+> 
+> Why cannot it be claimed? Because it has already been claimed?
 
-On Thu, Jan 9, 2025 at 11:31=E2=80=AFAM Lee Jones <lee@kernel.org> wrote:
-> On Wed, 18 Dec 2024 18:33:59 +0000, Vicentiu Galanopulo wrote:
-> > The output current can be adjusted separately for each channel by 8-bit
-> > analog (current sink input) and 12-bit digital (PWM) dimming control. T=
-he
-> > LED1202 implements 12 low-side current generators with independent dimm=
-ing
-> > control.
-> > Internal volatile memory allows the user to store up to 8 different pat=
-terns,
-> > each pattern is a particular output configuration in terms of PWM
-> > duty-cycle (on 4096 steps). Analog dimming (on 256 steps) is per channe=
-l but
-> > common to all patterns. Each device tree LED node will have a correspon=
-ding
-> > entry in /sys/class/leds with the label name. The brightness property
-> > corresponds to the per channel analog dimming, while the patterns[1-8] =
-to the
-> > PWM dimming control.
-> >
-> > [...]
->
-> Applied, thanks!
->
-> [3/3] leds: Add LED1202 I2C driver
->       commit: 939757aafeb9c266dda37657ee5f7a73ffd35ae2
+Yes
 
-You also have commit 259230378c65ebb6 ("leds: Add LED1202 I2C driver")
-in mfd/for-mfd-next, which dropped the change to drivers/leds/Makefile,
-and changed the Link:-tag to point to the older version v10?
+> If so,
+> please add an ASSERT_RTNL() in the locked function to document
+> this.
 
-Gr{oetje,eeting}s,
+Added
 
-                        Geert
+> Or is there a lock inversion here?
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Not to my knowledge, the rtnl lock should always be locked first and the 
+trigger_data->lock mutex second.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>> -static int set_device_name(struct led_netdev_data *trigger_data,
+>> -			   const char *name, size_t size)
+>> +static void set_device_name_locked(struct led_netdev_data *trigger_data,
+>> +				  const char *name, size_t size)
+>>   {
+>> -	if (size >= IFNAMSIZ)
+>> -		return -EINVAL;
+>> -
+> 
+> The code you cannot see in the context does:
+> 
+>          memcpy(trigger_data->device_name, name, size);
+> 
+> If we don't have this size check, is it possible to overrun the
+> buffer?
+
+Yes, good point, added.
+
+> It might be better to split this patch into two, one doing the
+> refactoring of this function, and include an explanation of the
+> locking and why it is safe not to include this size check.
+Does this still apply with the ASSERT_RTNL() in place and the check in 
+the _locked() function reinstated ?
