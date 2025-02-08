@@ -1,32 +1,32 @@
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75121F30BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74B7154445;
 	Sat,  8 Feb 2025 16:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739032224; cv=none; b=KrKMJ2wpgEH6znmAmlAvT7lZAcwuuNOUcwhCfJvUofXLMsCvtpAPyB32xES5YGCb/61VTFZ6D+yR7wNafpSOlhKT7TyvO+OngV6IFn1fvatHoo8S8PYXAv95vZ2SSJrpcv4QPil3reZ3q9rvaOjwDWx5YnGDfNz+9IYcrZsD7Vw=
+	t=1739032224; cv=none; b=lSC+e2SQvpLVbAd66B0MeaAL/MbpWR5Z1bLaYynSC2Wv1CZ8eGxT2D8m51cEPEYl/5K/T9rcWqDNvV79Vc+4P+zur1mQMt4Ymfh4EtjlXicpZDLe9cP73iLPr3nc/PMJn3GTGFRmD1/khA6laZ7mD1ANrELJEO39FQ185XL/lbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739032224; c=relaxed/simple;
-	bh=CaCYZdoznE8WXB+t4HNPsgCbCMDDiyEbSGnXkSMn6g8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=G3XqCAxCgR50uWQrFqHZjrpvSaUGfqgJnIol/k7IQ7PwZMp8ZQRstFY3GRb4x2oRXTim/yZwvA0RKbC4XkbKtBd3md+hmMwF/wG3NFolOD4tcvphsQMZbXhXsqGjjarVkSr5uV5F5eI74F0V5XTlSisYvpdoTMDMHBk7yIY+auI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=btzsGsCk; arc=none smtp.client-ip=159.69.126.157
+	bh=S+FgsT4YmTc9xZS3TcIUnObVuDCWJlNFwJHQyUr8Bl0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZTCOCNceYMCd7lryig5iZ2q+am+HbJzgYTdASYRgKvdMIbhQRZX0NRSW9sQFBqc4h214lIoFknOlmXoGkAOlk2UTFR6C2AHavKKEH5bm9qqtQpYXwkO/7qjARU5Ykw0uWtFcW183X21GtYnCUs1h6iHKMibTQMWq8JMR7KdR5lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ny1XhArJ; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="btzsGsCk"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ny1XhArJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1739032220;
-	bh=CaCYZdoznE8WXB+t4HNPsgCbCMDDiyEbSGnXkSMn6g8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=btzsGsCkKjEIbxIsSJ24YcyNkyx8a1wyGV4gJyzf+IvG2MzjPEFuJmFxSXEH2U0Ip
-	 DlhKzBfeFOsWUnsY9a0rZPrHhA7sk5E+UTtgCTRdaTfoR3YB9M45yY7WXGHYxR772n
-	 kSkeUfQvaZ43A12mVABwc00sWINulKz6JeSvxcuU=
+	bh=S+FgsT4YmTc9xZS3TcIUnObVuDCWJlNFwJHQyUr8Bl0=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ny1XhArJYA3nmrmSvzPTHTuptpJb7xPxFUxZUlTodnrDSNZKdoiTigio5gJHzBSpP
+	 C0xaIVuWw76aGfKBiUQ3dsqge8pyNCjitqQ6Ki33NRPT73RsNnEbrYvhL/+5MqNjHX
+	 lq3ykjo7/btcp8JCX2Xan/4O8sp4bZZv+wkpXc54=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 08 Feb 2025 17:30:04 +0100
-Subject: [PATCH v3 2/2] locking/mutex: Mark devm_mutex_init() as
+Subject: [PATCH v3 0/2] locking/mutex: Mark devm_mutex_init() as
  __must_check
+Date: Sat, 08 Feb 2025 17:30:02 +0100
+Message-Id: <20250208-must_check-devm_mutex_init-v3-0-245e417dcc9e@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -35,9 +35,11 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250208-must_check-devm_mutex_init-v3-2-245e417dcc9e@weissschuh.net>
-References: <20250208-must_check-devm_mutex_init-v3-0-245e417dcc9e@weissschuh.net>
-In-Reply-To: <20250208-must_check-devm_mutex_init-v3-0-245e417dcc9e@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAIqGp2cC/33NTQ6CMBCG4auQrq1py0/RlfcwhtAy2ImhGFoqh
+ nB3C8aVCZtJ3lk830wcDAiOnJOZDBDQYW9jpIeEaFPbO1BsYhPBRMZZymk3Ol9pA/pBGwhd1Y0
+ epgoteqprnZepauqyBRKB5wAtTht+vcU26Hw/vLetwNfvl41njw2ccgoFA3WSqtRSXF6AzjltR
+ nO04MlqB/HzciZYtusJyqhUhZBcZ0pC8ecty/IBrlAqTxkBAAA=
+X-Change-ID: 20241031-must_check-devm_mutex_init-cac583bda8fe
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
  Boqun Feng <boqun.feng@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
@@ -47,11 +49,11 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
  linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739032220; l=2032;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739032220; l=1217;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=CaCYZdoznE8WXB+t4HNPsgCbCMDDiyEbSGnXkSMn6g8=;
- b=0ZxN+2uSZvaFdCeSXX5kVzhUxZVR9ll2dqmtVANSNQIw2rGkOw9DGeuBvPeweEjcp65yEp/1u
- RLtjJtBcFV7Cq5ngLpBp2isXBaOuAoQat+2hIOOtSA56SBuIsM7A8+m
+ bh=S+FgsT4YmTc9xZS3TcIUnObVuDCWJlNFwJHQyUr8Bl0=;
+ b=ST/Gfa1vXaFKGJvEL3yIbebIuSviD0jUwCW3sc3iHkIybaLa8vc74liDOiu2+6zE7dYxu4tAT
+ cFaib2WJQnbDbXHQHoQQ+yO1UBkBkLYjICfvDNIiDmx/SBSUwSQzz3Q
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
@@ -60,56 +62,32 @@ from devm_mutex_init() call today diminishes the point of using devm
 variant of it. Tomorrow it may even leak something. Enforce all callers
 checking the return value through the compiler.
 
-As devm_mutex_init() itself is a macro, it can not be annotated
-directly. Annotate __devm_mutex_init() instead.
-Unfortunately __must_check/warn_unused_result don't propagate through
-statement expression. So move the statement expression into the argument
-list of the call to __devm_mutex_init() through a helper macro.
+The series should go through the locking tree.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- include/linux/mutex.h | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Changes in v3:
+- Introduce and use helper macro __mutex_init_ret()
+- Link to v2: https://lore.kernel.org/r/20250204-must_check-devm_mutex_init-v2-0-7b6271c4b7e6@weissschuh.net
 
-diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-index 2bf91b57591b49e4668752e773419ae945f124da..970b0526c549b699e7e4e1ba522696537957e069 100644
---- a/include/linux/mutex.h
-+++ b/include/linux/mutex.h
-@@ -126,11 +126,11 @@ do {							\
- 
- #ifdef CONFIG_DEBUG_MUTEXES
- 
--int __devm_mutex_init(struct device *dev, struct mutex *lock);
-+int __must_check __devm_mutex_init(struct device *dev, struct mutex *lock);
- 
- #else
- 
--static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
-+static inline int __must_check __devm_mutex_init(struct device *dev, struct mutex *lock)
- {
- 	/*
- 	 * When CONFIG_DEBUG_MUTEXES is off mutex_destroy() is just a nop so
-@@ -141,14 +141,17 @@ static inline int __devm_mutex_init(struct device *dev, struct mutex *lock)
- 
- #endif
- 
--#define devm_mutex_init(dev, mutex)			\
-+#define __mutex_init_ret(mutex)				\
- ({							\
- 	typeof(mutex) mutex_ = (mutex);			\
- 							\
- 	mutex_init(mutex_);				\
--	__devm_mutex_init(dev, mutex_);			\
-+	mutex_;						\
- })
- 
-+#define devm_mutex_init(dev, mutex) \
-+	__devm_mutex_init(dev, __mutex_init_ret(mutex))
-+
- /*
-  * See kernel/locking/mutex.c for detailed documentation of these APIs.
-  * Also see Documentation/locking/mutex-design.rst.
+Changes in v2:
+- Rebase on 6.14-rc1
+- Fix up leds-1202 driver
+- Link to v1: https://lore.kernel.org/r/20241202-must_check-devm_mutex_init-v1-1-e60eb97b8c72@weissschuh.net
 
+---
+Thomas Weißschuh (2):
+      leds: st1202: Check for error code from devm_mutex_init() call
+      locking/mutex: Mark devm_mutex_init() as __must_check
+
+ drivers/leds/leds-st1202.c |  4 +++-
+ include/linux/mutex.h      | 11 +++++++----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20241031-must_check-devm_mutex_init-cac583bda8fe
+
+Best regards,
 -- 
-2.48.1
+Thomas Weißschuh <linux@weissschuh.net>
 
