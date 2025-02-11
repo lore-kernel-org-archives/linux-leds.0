@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45E9261594;
-	Tue, 11 Feb 2025 19:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AE8250C11;
+	Tue, 11 Feb 2025 19:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739301035; cv=none; b=l6mYJeijR/H1O25AkLPtcVEfCXum1pQ04Kgf0w1IUAvghsDAuyrtxcYPI6jWazNzkz+FBqZcv3oQUeMcEvvx3XEB/tyTcWchDOQ8+9bBvaxBtquNiWa3HbvB1yn7X4ssUoouteZ34cD2QYZ60deGFDBfNH89oi14CCMvSg8LhKU=
+	t=1739301124; cv=none; b=n7ERjSXNvMMPzxfkEGbobW5nzaR8Fhv4xpjbVhHgNiIbNTVcLW69ZLEkdwSDGDIPCe2Vpdy7MN/I+bgEn6q2gJoh/iulSmYiP9Zs7zt83z7SU56ZM7k9KppZyUPibADheB986TIt4wxgT0rVApp7njZjq1TccTwX6CzomRbti7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739301035; c=relaxed/simple;
-	bh=iqjbkB0UJnMpdI19H+Eiv1Wx7DSAC8Vkj2FgGAvH/04=;
+	s=arc-20240116; t=1739301124; c=relaxed/simple;
+	bh=p80x++a6EVVT6tvJDMFWYIeh0mwBg0pkUXEKpJCo07M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LrVrteprAg3kXTzUlM2e9EmE4wim9rq9rTAf/tpmO9jE1Xzo1Z65G/+l6R/C6BFwJf8U5PMz4sdj4ipUL0ePVDqL+oY+C8wZBs/P01cIdP2I/VVSY9RK0enIW9YyJ9QNJYrTnEWtdTkD5JU6uZ8fywnKXzkhSMmGf2A5ap64Ypg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DekO0SRW; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ZRIY1SEf0z9EYp54tvtuJFqgd0AJ0XBOEDUgFw9gm4vBLgsUlcaB0SBcgnif/NLX2ESBHCO+CQ3K7A/h0Byro/Yf07JcPxKEMmB2szshe7Uz7RBH4VP6GNULGhF9zss3hrPT/Jh8twKp3K192sO1NX0U5NCZwblvmsWgLdWgT3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQJZR3Fi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DekO0SRW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CF1C4CEDD;
-	Tue, 11 Feb 2025 19:10:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQJZR3Fi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5DAC4CEDD;
+	Tue, 11 Feb 2025 19:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739301035;
-	bh=iqjbkB0UJnMpdI19H+Eiv1Wx7DSAC8Vkj2FgGAvH/04=;
+	s=k20201202; t=1739301123;
+	bh=p80x++a6EVVT6tvJDMFWYIeh0mwBg0pkUXEKpJCo07M=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DekO0SRWn7UDJlf/VuCR7Z5GjYSFtcInyCdXCo3qB0jdxbL5NgIDjJ1My5i8P/ECP
-	 TpKO6LrdpgXeVOOyXajkGWpNE5QukU5YVmHCKxlU5vdDoTYBucn5tpHly0Lbtjl6nW
-	 z4RS4l2uG320y7mshku7LCyFEZIwvbyhHup42+JGi7eeMql9x12VcAJ+uGDBmFATiV
-	 yJdzMDKLOUVvvppljJo47xWwWhdJiETODfyPyo68Lwh8nqlSbR5gYWo886dUeLtAlc
-	 uzOtvjIxThcuCHGBBlMz5d3KutNJsa5SOopg5PfTrK+mF7jgQOSnIc/huNnX5mNejC
-	 ZqO6uO2YSVmcQ==
-Message-ID: <de7fb605-527e-4c62-9b5d-947a1636c54b@kernel.org>
-Date: Tue, 11 Feb 2025 20:10:28 +0100
+	b=AQJZR3FihvkScnajHbQ2W1uu9c2nm4MJVwbxjp/foYqgxlszhw7bZ+NH79XIR7nO0
+	 LuWfatCN6Kvvk+8UxPfnadZkFS4hb/I0NNDd2tACQzG1tN2BoDaoVRT6JVpUYgu0DB
+	 jRMOSxQVkKqFBdFhAdXZ27DooRHSVqUEw5UhoUVv2xnzqIkXLC2a327OSdc2d+FjFc
+	 pbRWFU3K+tkadDYvNF/05HOT9Au0ZBRcTtFwWRbkJyIn3Z8KhuFsmNFQWEpYi6kVS3
+	 8RscySPiwGGqB530lKruBYw085wDteOhQSUieMhWvjVu3s38OFm+GCm0PlRyBntJgO
+	 euR94IKLi80UQ==
+Message-ID: <9b9bb222-7545-4dd7-9233-fe5122b44d40@kernel.org>
+Date: Tue, 11 Feb 2025 20:11:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -37,15 +37,12 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] dt-bindings: leds: Allow differently named multicolor
  leds
-To: =?UTF-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
- Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+To: j.ne@posteo.net, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250209-multi-led-v1-1-5aebccbd2db7@posteo.net>
- <20250211144300.GW1868108@google.com> <Z6ucAFNauWkhfYZr@probook>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,45 +88,40 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <Z6ucAFNauWkhfYZr@probook>
+In-Reply-To: <20250209-multi-led-v1-1-5aebccbd2db7@posteo.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 11/02/2025 19:50, J. Neuschäfer wrote:
-> On Tue, Feb 11, 2025 at 02:43:00PM +0000, Lee Jones wrote:
->> On Sun, 09 Feb 2025, J. Neuschäfer via B4 Relay wrote:
->>
->>> From: "J. Neuschäfer" <j.ne@posteo.net>
->>>
->>> In some cases, a board may have multiple multi-leds, which can't be
->>> distinguished by unit address. In such cases it should be possible to
->>> name them differently, for example multi-led-a and multi-led-b.
->>> This patch adds another node name pattern to leds-class-multicolor.yaml
->>> to allow such names.
->>
->> Which H/W needs this?  Is it upstream?  Where is the doc / usage?
+On 09/02/2025 23:06, J. Neuschäfer via B4 Relay wrote:
+> From: "J. Neuschäfer" <j.ne@posteo.net>
 > 
-> I encountered this situation while upstreaming the LANCOM NWAPP2 board,
-> which has multiple LED-group-based multicolor LEDs:
+> In some cases, a board may have multiple multi-leds, which can't be
+> distinguished by unit address. In such cases it should be possible to
+> name them differently, for example multi-led-a and multi-led-b.
+> This patch adds another node name pattern to leds-class-multicolor.yaml
+> to allow such names.
 > 
->   https://lore.kernel.org/lkml/20250102-mpc83xx-v1-16-86f78ba2a7af@posteo.net/
-
-Which LEDs are these? I don't see multi-led there node name at all.
-
-This patch must come with user. It's fine to send the user separately,
-but please provide lore link to exact user.
-
-Otherwise what certainty we have that this change is needed in the first
-place?
-
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> ---
+>  Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> Since they are based on leds-group-multicolor, they don't have a unit
-> address, but there is more than one on the same level (as direct
-> sub-nodes of the DT root node).
+> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+> index bb40bb9e036ee00e06d21e2321ecd5a7d471c408..c22af25b6430be71300c0e37f696cd61112ea190 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+> @@ -21,7 +21,9 @@ description: |
+>  
+>  properties:
+>    $nodename:
+> -    pattern: "^multi-led(@[0-9a-f])?$"
+> +    oneOf:
+> +      - pattern: "^multi-led(@[0-9a-f])?$"
+> +      - pattern: "^multi-led-.*$"
 
-Which binding is this?
-
-
+I don't see any bindings using this or allowing this. If this is because
+of some new binding, it is supposed to be part of that patchset.
+Otherwise please provide reference which binding needs this.
 
 Best regards,
 Krzysztof
