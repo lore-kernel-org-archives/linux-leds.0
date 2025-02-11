@@ -1,39 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F231F1908;
-	Tue, 11 Feb 2025 14:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966C9243396;
+	Tue, 11 Feb 2025 14:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739283073; cv=none; b=XfbeXNy3Fa83d3X0iHvmepBKmmif4Z4Nsg8omcbKSWSPXLkanDF1Ic7kSfrdWxnijQaGwGPJIIi6nPnr914wrKr1At8/Z/PiJt4MRaXFQ9b0Mj0AACXYLNsHYZpoUiSACG1DegIqxmJPYn2lffg+Qwc9/9OTnrldjeROGnqn2ig=
+	t=1739284985; cv=none; b=NP0vAMz6nppe5+lnqDwR4BrsZEYRVnrHCl18dSAXPzJxWCXPxOE91z/fpecHv4eG4Z0QoEfk0qGBB5H5VgNpiSfgPiV9rpT0RzEErEjHEWLYXrq7ZzY9c8ri466QEIBCFCBBiezZ1YYYcFsva+U1YOYaERm3xhpGL84gmHHON/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739283073; c=relaxed/simple;
-	bh=v0XjR7wKS7vmy7/txNxgU72aZrpmETgvpsKegYPQTT4=;
+	s=arc-20240116; t=1739284985; c=relaxed/simple;
+	bh=voK0gPzw+wXISlMnQBaqyxmaIdyN+OgNztg0FBND6l4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlstorC2LLhM/B9LM6v+/CRFyGJpoUe8QYWDtjIW5KZ4QubBLaIJcumiSuRGu6QUH0guHmMdGcFPNKlT5+H7CpN9prExRPNnh7U6KFhV4QRdafeBwqGURc25fj5ulKror6UlyUXlPnEDUMRNts2qq5Yh2DNZOtZ3hfqPWcruDYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OleQUF3y; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+HKQF5TFPYSaWKJppMRMKR5055P+jeov33TeZHCeXFgMrmSOJFTDdkn52OdHtxbnI460jTV+aRWFmGZhXc2x04J5buzvUvuslo+UBBsetNYKDADKn/kAQay51nN4nlGVUQF4PYfaFQwxRnfY0p3O3eXN6YJWQ7Z8OgSAc5g7vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLmmjNJG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OleQUF3y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6558C4CEDD;
-	Tue, 11 Feb 2025 14:11:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLmmjNJG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF4AC4CEDD;
+	Tue, 11 Feb 2025 14:43:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739283073;
-	bh=v0XjR7wKS7vmy7/txNxgU72aZrpmETgvpsKegYPQTT4=;
+	s=k20201202; t=1739284985;
+	bh=voK0gPzw+wXISlMnQBaqyxmaIdyN+OgNztg0FBND6l4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OleQUF3yPK+Qe9gXYfq/X6pwvLWYOiA4dFckPykBYmx7w/UTwvYISPvvcwazKDAp+
-	 cOG77Mdeg3h8SC41D2N3okELmySEE4JrAQoga1GGhIAaIZ9hErQs/9g82OTXzhtNVm
-	 2diFBrUfzFimC3J70V0mLjPxSNy6eC3r0tRtwcKNpn5m/GyOwLKZtM0a2rk/3zRER0
-	 VJ1Lg5DwJ8Ba2s7SxxDYEPSkpVQe+4q3qbI1UOUPKYJW/pYiSFnC/2uga6U9fJ9CVX
-	 vSLGXea/UMn9jr0QrKabC4r5VOwXJXKsAxQoXaOeSTYIkCjYMgpI7eXR8+6sSU6y+j
-	 R/2jJDD1UiwXg==
-Date: Tue, 11 Feb 2025 14:11:09 +0000
+	b=YLmmjNJGAcSLPAyZ0KQ6kprjDncYe39q8wtFEVHf5HpI4k5G4yrWG6ykaTZTsKcUK
+	 5T3S3Yax/EU4cdOuRrEG+py0EmMZErVfexXKIj8iXZmHWFiaA8A3lQAt24x/to+G7N
+	 JsZCFwCeOiqHDxFnBfFNugi0OBE6naFN7SfywFJhrcegbFjp959EpNxkvNHj27NOVU
+	 4APfnAFqN3QEswb9Yl/NM62+ofWsTAk2bRuIi6VabseNwvSrtPd1LKoSbSQJ6BsAJ0
+	 Iymr8Gkxu1bCzXpOugO9pgl/yck58qlkFdlkG+utg5wWFMg5WSk3l7Wh8Yg4cRLayv
+	 yYHo3mQN4tAIg==
+Date: Tue, 11 Feb 2025 14:43:00 +0000
 From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: kernel list <linux-kernel@vger.kernel.org>, rafael@kernel.org,
-	linux-leds@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: MAINTAINERS: Move Pavel to kernel.org address
-Message-ID: <20250211141109.GV1868108@google.com>
-References: <Z6Ow+T/uSv128wdR@duo.ucw.cz>
+To: j.ne@posteo.net
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: leds: Allow differently named multicolor
+ leds
+Message-ID: <20250211144300.GW1868108@google.com>
+References: <20250209-multi-led-v1-1-5aebccbd2db7@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -43,20 +47,50 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z6Ow+T/uSv128wdR@duo.ucw.cz>
+In-Reply-To: <20250209-multi-led-v1-1-5aebccbd2db7@posteo.net>
 
-On Wed, 05 Feb 2025, Pavel Machek wrote:
+On Sun, 09 Feb 2025, J. Neuschäfer via B4 Relay wrote:
 
-> I need to filter my emails better, switch to pavel@kernel.org address
-> to help with that.
->     
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> From: "J. Neuschäfer" <j.ne@posteo.net>
+> 
+> In some cases, a board may have multiple multi-leds, which can't be
+> distinguished by unit address. In such cases it should be possible to
+> name them differently, for example multi-led-a and multi-led-b.
+> This patch adds another node name pattern to leds-class-multicolor.yaml
+> to allow such names.
+
+Which H/W needs this?  Is it upstream?  Where is the doc / usage?
+
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 > ---
-> I guess this should go through the LED tree?
-
-I'm struggling to apply this.
-
-Something is up with your Message-ID.  How is it crafted?
+>  Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+> index bb40bb9e036ee00e06d21e2321ecd5a7d471c408..c22af25b6430be71300c0e37f696cd61112ea190 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+> +++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
+> @@ -21,7 +21,9 @@ description: |
+>  
+>  properties:
+>    $nodename:
+> -    pattern: "^multi-led(@[0-9a-f])?$"
+> +    oneOf:
+> +      - pattern: "^multi-led(@[0-9a-f])?$"
+> +      - pattern: "^multi-led-.*$"
+>  
+>    color:
+>      description: |
+> 
+> ---
+> base-commit: 645b5c24cf8590eea322a4fd79c811817046a2e6
+> change-id: 20250209-multi-led-9991e205befd
+> 
+> Best regards,
+> -- 
+> J. Neuschäfer <j.ne@posteo.net>
+> 
+> 
 
 -- 
 Lee Jones [李琼斯]
