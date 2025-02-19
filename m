@@ -1,129 +1,82 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1069B1FCCE7;
-	Wed, 19 Feb 2025 15:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB8286284;
+	Wed, 19 Feb 2025 17:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739980580; cv=none; b=XUylcvMQTHPtLp+1+rc8+LciWJ0sGXKX3XJv6XV3F8vwu7dPK9P+lfkWFDmfo70TAn2g1cwzrHhVyJna+hH4CTKdty6V653DCrqifTu2v9O9c+qp4rCuAGh0OAYe5bC3FXtwX/HSx+1pypWz5aVd1CUCkVyCClsrDI9D5Y9LPdk=
+	t=1739985701; cv=none; b=HMC2di0GF4pYYw792aHM2oe/WprrjXffyHDNB2jdtPa18JtgXhomNJts/G+WDuZD4kKXWpp76NxIXdC0WrxN8okC+708ltKuvCHjNSBQuqs01H4X/YB9mCDhrD81k83AUpSgek6l3dJViqtrJ8xTiYIcv9Hf2Wuch11ryLOKyQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739980580; c=relaxed/simple;
-	bh=uV3soKwL+HCNAvSymtrWOzDP+EtcGO1BQkAUCm5Wg+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8ihoQis5BMrsJSyR+VJ3NK9gH6MxP5xEBTlb5uanFZeKgw6YNb2iELwKlkWVP3iqJQ6aI4GdjdIVn6v4ontKtPuFNhv7X4xQMsswwgcxB9c3c9efBMLpL6Z6JUYYPItloEct+/cC3UHafqbbiEEgaN3vEN2uP3an3ulq2oVOYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lwlqJK1L; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1739985701; c=relaxed/simple;
+	bh=1Me3lu0fX9NUSPq+Ggrr4DEAwkU4l3ce4Mld2GXKtg0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYce3WBAjfXjpI+8r0FQv3NDprBDJIBahSS0rVG0rhUh1ZcE5qvw0X4IACDsTW/fueh4hT1DG5xW8fiVqjUn9bSLwnTTJlVQrvji0/MCnREvKN7UFzntUJVkWGY3qCxzZfITm6+UkZReUgkUHEVIV5rFVUzHebpZ4LqMw9imMtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Oec9H/gA; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lwlqJK1L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739980579; x=1771516579;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=uV3soKwL+HCNAvSymtrWOzDP+EtcGO1BQkAUCm5Wg+g=;
-  b=lwlqJK1LXTvxJ+EWudFro8aZPJMqcJPUT58kxjNEZ30GML6GSKnX9EAB
-   liAhzqJS5SDhtwvZcQMnOjFibzq++KcRAtqG30zoRL9mbRMYhlJVvLHWE
-   bu52UwMhnVY4w8glg6dMCLs/Ax2z3KE1P99rj0e51sfsjJvOcRvsRVnC5
-   0lfWofu3WTokGPBr9X39mAVp1xImbe3esC5xatTO7alkn7svGQ/jSqCQ5
-   pxUA0mChaMFS3bJs+yC9z2N5B0T1ehQeC0MuLGKtuS7gybUcwMbHaj3CP
-   nsD2xaEGaf+xVJPa2Q/lB0yICi0LRhMeUC1XMs4a4P2ex5jUPk5IiRJc5
-   w==;
-X-CSE-ConnectionGUID: p18e5709S3i1yRm3An+ukg==
-X-CSE-MsgGUID: c4WqoUpRTjW1gzzBzpm1ng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44641211"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="44641211"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 07:56:15 -0800
-X-CSE-ConnectionGUID: 9tQ7e4C6QyWDwrfSehe6Ew==
-X-CSE-MsgGUID: pjGdWZJjSauXppPQLfgMhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="145612236"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 07:23:30 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tkluw-0000000D3ix-2SQZ;
-	Wed, 19 Feb 2025 17:23:18 +0200
-Date: Wed, 19 Feb 2025 17:23:18 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mfd: lm3533: convert to use OF
-Message-ID: <Z7X3ZvQbSe75U-AR@smile.fi.intel.com>
-References: <20250218132702.114669-1-clamor95@gmail.com>
- <20250218132702.114669-3-clamor95@gmail.com>
- <Z7XqKcOUt5niXzpv@smile.fi.intel.com>
- <CAPVz0n1_WQyOHhtEVAh53uhEUhZvqqZSEJh6XALtSrVfkMSLYw@mail.gmail.com>
- <Z7XzgfHcjyK_UZKv@smile.fi.intel.com>
- <CAPVz0n2WwAOb1UU7J7aDTdhXXCaAZkCpYjW_nc_CBRgkGWdEOw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Oec9H/gA"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id knkEt082zsC0pknkHtl0HU; Wed, 19 Feb 2025 18:20:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739985626;
+	bh=QW6x6Fz8XX5peZDa2MJO8SZhs7Tp8RyNuh/Nt9PBXRE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Oec9H/gAZMMuSXgE68f9B/TYvkhyYCZxwWie6NgYFH0TjbLCByUDa3Vx7BDcXSPgF
+	 HSoZn/z6jWtYw9sMKm1BuxGRC70Bw93hdBbF5yrprmV4/nZrGU6bVCmedccal8JVOk
+	 W7CK8OP7Qxpd750ShNiWHS5aQNGyaNrKB4LboofPf8Rk8rIpVfVhaxITnBgpD++Iy1
+	 CDClym/uMUSGPmXEEoWxJAYGzU/jbSyLJUsIYfN93078Way/gUF0RfQj6WMDB0vJcT
+	 EkNcj8b3Nif4ctnAPHE2N0b1GLTcRonx498ixCGMm9fyuUP+SQwA2fmrciBnELr9s9
+	 bM59H7wDOfXnQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 Feb 2025 18:20:26 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-leds@vger.kernel.org
+Subject: [PATCH] leds: st1202: Fix an error handling path in st1202_probe()
+Date: Wed, 19 Feb 2025 18:20:20 +0100
+Message-ID: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n2WwAOb1UU7J7aDTdhXXCaAZkCpYjW_nc_CBRgkGWdEOw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Feb 19, 2025 at 05:13:15PM +0200, Svyatoslav Ryhel wrote:
-> ср, 19 лют. 2025 р. о 17:07 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> пише:
-> > On Wed, Feb 19, 2025 at 04:36:38PM +0200, Svyatoslav Ryhel wrote:
-> > > ср, 19 лют. 2025 р. о 16:27 Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> пише:
+devm_mutex_init() may return -ENOMEM.
+So this error should be handled in st1202_probe().
 
-...
+Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/leds/leds-st1202.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> > > MFD part is removed since MFD cells binding is unconditional, while
-> > > the device supports any amount of children grater then one. For
-> > > example, my  device uses only backlight at bank A, while all other
-> > > subdevices are not present and used. This patch switches to dynamic
-> > > bind of children.
-> >
-> > MFD does the same. Please, take your time and get familiar with how MFD works.
-> 
-> It does not. I have tried. If mfd cell binding is missing, driver will
-> complain and fail.
-
-I really don't know what exactly is going on here, you can check it later, but
-I'm 100% sure that MFD works for only driver that are present. What you are
-describing is how component framework is designed.
-
-To proove my words you can check drivers/mfd/intel_soc_pmic_*.c and find listed
-cells that never had a driver in the Linux kernel. They are just placeholders.
-
-...
-
-> > --
-> > With Best Regards,
-> > Andy Shevchenko
-
-Please, when answering, remove unrelated context from the replies.
-
-...
-
-> Let this driver rot for now, I might return to it. At some point
-
-Up to you. But thanks for trying!
-
+diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
+index b691c4886993..4fc17d518292 100644
+--- a/drivers/leds/leds-st1202.c
++++ b/drivers/leds/leds-st1202.c
+@@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
+ 	if (!chip)
+ 		return -ENOMEM;
+ 
+-	devm_mutex_init(&client->dev, &chip->lock);
++	ret = devm_mutex_init(&client->dev, &chip->lock);
++	if (ret < 0)
++		return ret;
++
+ 	chip->client = client;
+ 
+ 	ret = st1202_dt_init(chip);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
