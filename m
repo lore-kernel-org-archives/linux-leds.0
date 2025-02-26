@@ -1,36 +1,77 @@
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FF31E1E18
-	for <linux-leds@vger.kernel.org>; Wed, 26 Feb 2025 09:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4831E1E18
+	for <linux-leds@vger.kernel.org>; Wed, 26 Feb 2025 09:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740562705; cv=none; b=mnoqy6xmOyTXFxWv9o6jCxDzMTeqQpEoAYjZYFAymQzzSl86lG8KMrD4WBUdKKF7tErw0qpFTNnxatGrgy7hHUj6VLqKtkU/aIopAN3rejnRsoMLZmF+SjYbeJcwiKmLCuSvF+zH2OYY5tAApU+HAxxZ49kCQuNvy7SGjZ4hXNA=
+	t=1740562711; cv=none; b=kWChYYECA0zm8Og16VBzmCYxV/njYDQ61W0ythcPU9f0HRJlCMilJDkqZeh5fJw68vM8gl+JaqYthrrBM/21CC5kJs9RUXnboEZ/z39AETeBUEhq6oMJOIinjhRaF3R6RgjYhtzYIJXbuAIAD0BHLKm7aJEQoVESGLEGoKRv/rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740562705; c=relaxed/simple;
-	bh=rhW/P84AgHPcK09qLqNurXUTmdBqqZeK9KdFDD5WNU0=;
+	s=arc-20240116; t=1740562711; c=relaxed/simple;
+	bh=/LN07wfOZX2o44gXHqPKwPDBTu7wJNW41TdyzfGRDgk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kZ1lCndfNpR80+doY5Y0FjFIjQfOag28hQa8OnaEQv0dFgp1O87cSO8aZ03EafFk53vV7tUwui4FY7PQO0fZJFd3GGalHwAyRy+B/YRQIyQSgKWc7Bx974gFpwoFMupZERfaFodQsuqiolRefJogCgCSMHtFf6B+UYETKJveyaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=qpp1o8ubIQmdwQfgP9dRnGuMeK0mxUsbWwTIX2gCZbLk817fdiAgB1r42WMiKhbCfZN/k2Mb5LUTCSW1MMT5Up9uFWeh2kYnmfxwdRUtMzJQdI90XeeHBAQAzFKy5SLMdBgKN5ztJhC4e285DCTw1gaGkgBjH/wg/Wf9AaWaANE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=B+BUDvuX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HWz6BnZK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hYR2VjD3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=f2ogy1WY; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="B+BUDvuX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HWz6BnZK";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hYR2VjD3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="f2ogy1WY"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5167B1F74C;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EA8211F769;
 	Wed, 26 Feb 2025 09:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740562668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9XoDLtPCKWt6ClEJ9Qt53YfMlYcjc8fJHXBVL4z+6UQ=;
+	b=B+BUDvuXdKXqUbdGvd90ZLB1d0LHyl/hWwOCOM7G6s3Q7/QN55FlWAa/c760y52c1QeLUk
+	cE2CHkEJfkBnGE4VNAwwQprz8RVNPbO5t9KexvKtINNZJfV+aa4fFEYMDFRQJbYatqgasu
+	AEubSl7uF47wTXjkMzEjQ7yF9IR6uPM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740562668;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9XoDLtPCKWt6ClEJ9Qt53YfMlYcjc8fJHXBVL4z+6UQ=;
+	b=HWz6BnZKGaJhHuUpHX0HvS8PiL2Vytbd6VtlKmYBgYfMx4wK97JJziVgexTn3LUxB2pw05
+	6LkAnwaYuN280KDA==
 Authentication-Results: smtp-out2.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740562667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9XoDLtPCKWt6ClEJ9Qt53YfMlYcjc8fJHXBVL4z+6UQ=;
+	b=hYR2VjD3/3uzQcF0hzXQ9s2wh2+WWvoBUA16oNugkFBpNEkMduDb0yklCHnHKhUTCTVOgE
+	SqFGbo0e2o8o5c1I6MOxocssStzY1bBMKRzZLG8PoO7h4+73WREjUMEXzuiYl0TWVFx6H9
+	TvKbRotaEQNI14jULorVzyUyFtW7izU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740562667;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9XoDLtPCKWt6ClEJ9Qt53YfMlYcjc8fJHXBVL4z+6UQ=;
+	b=f2ogy1WYRR4bUfxE4l71+e5Es4DIPLr+dSCekrmI/eO/FsvDTIWEljdWi6lloKwDUp9ARl
+	480AAXVIwHzBSYAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A0E713A82;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A349213A82;
 	Wed, 26 Feb 2025 09:37:47 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YE0pAevgvmezXQAAD6G6ig
+	id QCuRJuvgvmezXQAAD6G6ig
 	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 09:37:47 +0000
 From: Thomas Zimmermann <tzimmermann@suse.de>
 To: lee@kernel.org,
@@ -43,9 +84,9 @@ Cc: linux-leds@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	linux-fbdev@vger.kernel.org,
 	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v2 07/11] backlight: lcd: Move event handling into helpers
-Date: Wed, 26 Feb 2025 10:31:56 +0100
-Message-ID: <20250226093456.147402-8-tzimmermann@suse.de>
+Subject: [PATCH v2 09/11] leds: backlight trigger: Move blank-state handling into helper
+Date: Wed, 26 Feb 2025 10:31:58 +0100
+Message-ID: <20250226093456.147402-10-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250226093456.147402-1-tzimmermann@suse.de>
 References: <20250226093456.147402-1-tzimmermann@suse.de>
@@ -56,96 +97,99 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
 X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-6.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_TO(0.00)[kernel.org,ucw.cz,gmail.com,gmx.de,ffwll.ch];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	R_RATELIMIT(0.00)[to_ip_from(RLqirfcw6gnbcr9a9yhi49fhi6)];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de]
+X-Spam-Score: -6.80
 X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 5167B1F74C
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-Move the handling of display updates to separate helper functions.
-There is code for handling fbdev blank events and fbdev mode changes.
-The code currently runs from fbdev event notifiers, which will be
-replaced.
+Move the handling of blank-state updates into a separate helper,
+so that is can be called without the fbdev event. No functional
+changes.
+
+v2:
+- rename helper to avoid renaming in a later patch (Lee)
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/video/backlight/lcd.c | 38 ++++++++++++++++++++++++++---------
- 1 file changed, 28 insertions(+), 10 deletions(-)
+ drivers/leds/trigger/ledtrig-backlight.c | 30 ++++++++++++++----------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/video/backlight/lcd.c b/drivers/video/backlight/lcd.c
-index 3267acf8dc5b..f57ff8bcc2fa 100644
---- a/drivers/video/backlight/lcd.c
-+++ b/drivers/video/backlight/lcd.c
-@@ -18,6 +18,32 @@
- #include <linux/fb.h>
- #include <linux/slab.h>
+diff --git a/drivers/leds/trigger/ledtrig-backlight.c b/drivers/leds/trigger/ledtrig-backlight.c
+index 487577d22cfc..8e66d55a6c82 100644
+--- a/drivers/leds/trigger/ledtrig-backlight.c
++++ b/drivers/leds/trigger/ledtrig-backlight.c
+@@ -25,12 +25,28 @@ struct bl_trig_notifier {
+ 	unsigned invert;
+ };
  
-+static void lcd_notify_blank(struct lcd_device *ld, struct device *display_dev,
-+			     int power)
++static void ledtrig_backlight_notify_blank(struct bl_trig_notifier *n, int new_status)
 +{
-+	guard(mutex)(&ld->ops_lock);
++	struct led_classdev *led = n->led;
 +
-+	if (!ld->ops || !ld->ops->set_power)
-+		return;
-+	if (ld->ops->controls_device && !ld->ops->controls_device(ld, display_dev))
++	if (new_status == n->old_status)
 +		return;
 +
-+	ld->ops->set_power(ld, power);
++	if ((n->old_status == UNBLANK) ^ n->invert) {
++		n->brightness = led->brightness;
++		led_set_brightness_nosleep(led, LED_OFF);
++	} else {
++		led_set_brightness_nosleep(led, n->brightness);
++	}
++
++	n->old_status = new_status;
 +}
 +
-+static void lcd_notify_mode_change(struct lcd_device *ld, struct device *display_dev,
-+				   unsigned int width, unsigned int height)
-+{
-+	guard(mutex)(&ld->ops_lock);
-+
-+	if (!ld->ops || !ld->ops->set_mode)
-+		return;
-+	if (ld->ops->controls_device && !ld->ops->controls_device(ld, display_dev))
-+		return;
-+
-+	ld->ops->set_mode(ld, width, height);
-+}
-+
- #if defined(CONFIG_FB) || (defined(CONFIG_FB_MODULE) && \
- 			   defined(CONFIG_LCD_CLASS_DEVICE_MODULE))
- static int to_lcd_power(int fb_blank)
-@@ -50,25 +76,17 @@ static int fb_notifier_callback(struct notifier_block *self,
- 	struct fb_info *info = evdata->info;
- 	struct lcd_device *fb_lcd = fb_lcd_device(info);
+ static int fb_notifier_callback(struct notifier_block *p,
+ 				unsigned long event, void *data)
+ {
+ 	struct bl_trig_notifier *n = container_of(p,
+ 					struct bl_trig_notifier, notifier);
+-	struct led_classdev *led = n->led;
+ 	struct fb_event *fb_event = data;
+ 	int *blank;
+ 	int new_status;
+@@ -42,17 +58,7 @@ static int fb_notifier_callback(struct notifier_block *p,
+ 	blank = fb_event->data;
+ 	new_status = *blank ? BLANK : UNBLANK;
  
--	guard(mutex)(&ld->ops_lock);
+-	if (new_status == n->old_status)
+-		return 0;
 -
--	if (!ld->ops)
--		return 0;
--	if (ld->ops->controls_device && !ld->ops->controls_device(ld, info->device))
--		return 0;
- 	if (fb_lcd && fb_lcd != ld)
- 		return 0;
- 
- 	if (event == FB_EVENT_BLANK) {
- 		int power = to_lcd_power(*(int *)evdata->data);
- 
--		if (ld->ops->set_power)
--			ld->ops->set_power(ld, power);
-+		lcd_notify_blank(ld, info->device, power);
- 	} else {
- 		const struct fb_videomode *videomode = evdata->data;
- 
--		if (ld->ops->set_mode)
--			ld->ops->set_mode(ld, videomode->xres, videomode->yres);
-+		lcd_notify_mode_change(ld, info->device, videomode->xres, videomode->yres);
- 	}
+-	if ((n->old_status == UNBLANK) ^ n->invert) {
+-		n->brightness = led->brightness;
+-		led_set_brightness_nosleep(led, LED_OFF);
+-	} else {
+-		led_set_brightness_nosleep(led, n->brightness);
+-	}
+-
+-	n->old_status = new_status;
++	ledtrig_backlight_notify_blank(n, new_status);
  
  	return 0;
+ }
 -- 
 2.48.1
 
