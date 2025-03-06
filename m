@@ -1,58 +1,37 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EE1151990
-	for <linux-leds@vger.kernel.org>; Thu,  6 Mar 2025 14:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A88151990
+	for <linux-leds@vger.kernel.org>; Thu,  6 Mar 2025 14:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741270408; cv=none; b=XCo3uTJAYXCVXjgLMsc0pLfE0+1K1vvydms+8ch8EQx+AkroJHAF3pi4LldSsSij3aheUfkH+OHC0rk/3nU8ywg+R+iDkM64PRztRR7BXLYlFapFUkdcmscMMdVB/dSZ8rfwpaIEKPNXed43jpptTxaT2iEYU5oJZBwLrrAiAMk=
+	t=1741270413; cv=none; b=mlm0yHXJAOYfUfhdvFfqh68FwQxcwpgKbTKgImGcXGB5inlqYbjp4N4Eo+VGkPTQJhH/e6bkjLsmSkvC+pSVrg60CxeT5JTwrgJV8RERJM9NmFiV3HObJUH0mpZfm50RmJxfJyiT21l6QeBCFtdnya4RzSMExKtpAtYbDioXNkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741270408; c=relaxed/simple;
-	bh=bCyCvFUNgazUsYzoBDQvZpXsp+PgXdjcwIYP/Sh5gFk=;
+	s=arc-20240116; t=1741270413; c=relaxed/simple;
+	bh=rhW/P84AgHPcK09qLqNurXUTmdBqqZeK9KdFDD5WNU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OHO4t0jonmysfmv7d+dEbkwVRI2iwsikn5yobOuAAUkdtLZ572ktRT29niv8kHp2ug+RgXToF+KhfwrMznN0CjMVuXZlB52lvkPoVYlXYc3F5Q4fsf9Sy9kLVl7Q+BYmI7BV8N4bcH5smHXc6Jsc1kyCBesR106TwXQH4RfFeaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=doAnn8cW; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4vsKVJgd; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=cvbQo16cYFzsVLrN+KUj+fiSVptBmga4jcCVT7ZACzrPZvx5LD2Yuy9cho3DdBWTBHNqYYsQrKSyQE8HuXimxibq3XIT5rG2JXl2lZzFAGhKtnTG6+jzFL0RmHM5qeTLC0zbjAP9eQ1P8UnsrmAbGwdpsg1rZoklVXihdQBohJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="doAnn8cW";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4vsKVJgd"
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CCF7A211C6;
-	Thu,  6 Mar 2025 14:13:10 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B926C1F74D;
+	Thu,  6 Mar 2025 14:13:11 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741270390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zgDvqUdwLhdUvH7pT0MEgdzzLVp6J0w2nBCTIPIypCA=;
-	b=doAnn8cWSrpE3bOYPtqZTB9TCveFrMaJ8Lmkx50sszqbyx0GJ8wIngZ2D9+0XyC+C8XT6J
-	+kCbPIxLJ327aWiQQigAqy41P+t/1q/xAknT4x2AGNncScW/w8Cg/Inx0E0zG4ifLwNvzf
-	S2qIEvophAw/C2edJlbdBPCJCQI6kOU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741270390;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zgDvqUdwLhdUvH7pT0MEgdzzLVp6J0w2nBCTIPIypCA=;
-	b=4vsKVJgdw0ZCvw63HJjlYQ8g0AJhPDcJvKMF9ilPdwF9MltVKKnbuBXXzA6eUJqmK3iR8T
-	cFQwRO+ZbreKQYDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 828D213AC9;
-	Thu,  6 Mar 2025 14:13:10 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7303B13A91;
+	Thu,  6 Mar 2025 14:13:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8PKUHnatyWeveQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 06 Mar 2025 14:13:10 +0000
+	id 2FrGGnetyWeveQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 06 Mar 2025 14:13:11 +0000
 From: Thomas Zimmermann <tzimmermann@suse.de>
 To: lee@kernel.org,
 	pavel@ucw.cz,
@@ -64,9 +43,9 @@ Cc: linux-leds@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	linux-fbdev@vger.kernel.org,
 	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH v3 04/11] backlight: Implement fbdev tracking with blank state from event
-Date: Thu,  6 Mar 2025 15:05:46 +0100
-Message-ID: <20250306140947.580324-5-tzimmermann@suse.de>
+Subject: [PATCH v3 07/11] backlight: lcd: Move event handling into helpers
+Date: Thu,  6 Mar 2025 15:05:49 +0100
+Message-ID: <20250306140947.580324-8-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250306140947.580324-1-tzimmermann@suse.de>
 References: <20250306140947.580324-1-tzimmermann@suse.de>
@@ -77,11 +56,14 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	REPLY(-4.00)[]
 X-Spam-Flag: NO
 X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: CCF7A211C6
+X-Rspamd-Queue-Id: B926C1F74D
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
@@ -89,87 +71,81 @@ X-Rspamd-Action: no action
 X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Level: 
 
-Look at the blank state provided by FB_EVENT_BLANK to determine
-whether to enable or disable a backlight. Remove the tracking fields
-from struct backlight_device.
-
-Tracking requires three variables, fb_on, prev_fb_on and the
-backlight's use_count. If fb_on is true, the display has been
-unblanked. The backlight needs to be enabled if the display was
-blanked before (i.e., prev_fb_on is false) or if use_count is still
-at 0. If fb_on is false, the display has been blanked. In this case,
-the backlight has to be disabled was unblanked before and the
-backlight's use_count is greater than 0.
-
-This change removes fbdev state tracking from blacklight. All the
-backlight requires it its own use counter and information about
-changes to the display. Removing fbdev internals makes  backlight
-drivers easier to integrate into other display drivers, such as DRM.
+Move the handling of display updates to separate helper functions.
+There is code for handling fbdev blank events and fbdev mode changes.
+The code currently runs from fbdev event notifiers, which will be
+replaced.
 
 Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 ---
- drivers/video/backlight/backlight.c | 14 +++++++-------
- include/linux/backlight.h           | 10 +---------
- 2 files changed, 8 insertions(+), 16 deletions(-)
+ drivers/video/backlight/lcd.c | 38 ++++++++++++++++++++++++++---------
+ 1 file changed, 28 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/video/backlight/backlight.c b/drivers/video/backlight/backlight.c
-index f699e5827ccb..bb01f57c4683 100644
---- a/drivers/video/backlight/backlight.c
-+++ b/drivers/video/backlight/backlight.c
-@@ -98,9 +98,9 @@ static int fb_notifier_callback(struct notifier_block *self,
- 	struct backlight_device *bd;
- 	struct fb_event *evdata = data;
- 	struct fb_info *info = evdata->info;
-+	const int *fb_blank = evdata->data;
- 	struct backlight_device *fb_bd = fb_bl_device(info);
--	int node = info->node;
--	int fb_blank = 0;
-+	bool fb_on, prev_fb_on;
+diff --git a/drivers/video/backlight/lcd.c b/drivers/video/backlight/lcd.c
+index 3267acf8dc5b..f57ff8bcc2fa 100644
+--- a/drivers/video/backlight/lcd.c
++++ b/drivers/video/backlight/lcd.c
+@@ -18,6 +18,32 @@
+ #include <linux/fb.h>
+ #include <linux/slab.h>
  
- 	/* If we aren't interested in this event, skip it immediately ... */
- 	if (event != FB_EVENT_BLANK)
-@@ -116,15 +116,15 @@ static int fb_notifier_callback(struct notifier_block *self,
- 	if (fb_bd && fb_bd != bd)
- 		goto out;
- 
--	fb_blank = *(int *)evdata->data;
--	if (fb_blank == FB_BLANK_UNBLANK && !bd->fb_bl_on[node]) {
--		bd->fb_bl_on[node] = true;
-+	fb_on = fb_blank[0] == FB_BLANK_UNBLANK;
-+	prev_fb_on = fb_blank[1] == FB_BLANK_UNBLANK;
++static void lcd_notify_blank(struct lcd_device *ld, struct device *display_dev,
++			     int power)
++{
++	guard(mutex)(&ld->ops_lock);
 +
-+	if (fb_on && (!prev_fb_on || !bd->use_count)) {
- 		if (!bd->use_count++) {
- 			bd->props.state &= ~BL_CORE_FBBLANK;
- 			backlight_update_status(bd);
- 		}
--	} else if (fb_blank != FB_BLANK_UNBLANK && bd->fb_bl_on[node]) {
--		bd->fb_bl_on[node] = false;
-+	} else if (!fb_on && prev_fb_on && bd->use_count) {
- 		if (!(--bd->use_count)) {
- 			bd->props.state |= BL_CORE_FBBLANK;
- 			backlight_update_status(bd);
-diff --git a/include/linux/backlight.h b/include/linux/backlight.h
-index f5652e5a9060..03723a5478f8 100644
---- a/include/linux/backlight.h
-+++ b/include/linux/backlight.h
-@@ -294,15 +294,7 @@ struct backlight_device {
- 	struct device dev;
++	if (!ld->ops || !ld->ops->set_power)
++		return;
++	if (ld->ops->controls_device && !ld->ops->controls_device(ld, display_dev))
++		return;
++
++	ld->ops->set_power(ld, power);
++}
++
++static void lcd_notify_mode_change(struct lcd_device *ld, struct device *display_dev,
++				   unsigned int width, unsigned int height)
++{
++	guard(mutex)(&ld->ops_lock);
++
++	if (!ld->ops || !ld->ops->set_mode)
++		return;
++	if (ld->ops->controls_device && !ld->ops->controls_device(ld, display_dev))
++		return;
++
++	ld->ops->set_mode(ld, width, height);
++}
++
+ #if defined(CONFIG_FB) || (defined(CONFIG_FB_MODULE) && \
+ 			   defined(CONFIG_LCD_CLASS_DEVICE_MODULE))
+ static int to_lcd_power(int fb_blank)
+@@ -50,25 +76,17 @@ static int fb_notifier_callback(struct notifier_block *self,
+ 	struct fb_info *info = evdata->info;
+ 	struct lcd_device *fb_lcd = fb_lcd_device(info);
  
- 	/**
--	 * @fb_bl_on: The state of individual fbdev's.
--	 *
--	 * Multiple fbdev's may share one backlight device. The fb_bl_on
--	 * records the state of the individual fbdev.
--	 */
--	bool fb_bl_on[FB_MAX];
+-	guard(mutex)(&ld->ops_lock);
 -
--	/**
--	 * @use_count: The number of uses of fb_bl_on.
-+	 * @use_count: The number of unblanked displays.
- 	 */
- 	int use_count;
- };
+-	if (!ld->ops)
+-		return 0;
+-	if (ld->ops->controls_device && !ld->ops->controls_device(ld, info->device))
+-		return 0;
+ 	if (fb_lcd && fb_lcd != ld)
+ 		return 0;
+ 
+ 	if (event == FB_EVENT_BLANK) {
+ 		int power = to_lcd_power(*(int *)evdata->data);
+ 
+-		if (ld->ops->set_power)
+-			ld->ops->set_power(ld, power);
++		lcd_notify_blank(ld, info->device, power);
+ 	} else {
+ 		const struct fb_videomode *videomode = evdata->data;
+ 
+-		if (ld->ops->set_mode)
+-			ld->ops->set_mode(ld, videomode->xres, videomode->yres);
++		lcd_notify_mode_change(ld, info->device, videomode->xres, videomode->yres);
+ 	}
+ 
+ 	return 0;
 -- 
 2.48.1
 
