@@ -1,49 +1,50 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBF922D4FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E20622D78F;
 	Mon, 10 Mar 2025 15:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619326; cv=none; b=r06iQgYbYZ93f5wK1924sWckOTMpiKi9l7NsfeLAmE4gJFOEOQLqM57w8UFfXNSH7YjtNIQlHmewXTCfj8k16Gj6IlF2tCbgvhO+QxvBYo1xb2F2Issbyor6bDiQ5MiqEPfXGCTNE3Tt9Ns9akMih+t4eKy4jhEjuUkpMUzO214=
+	t=1741619327; cv=none; b=pl5ExvdrouqyKsVDVVqJZ5YEHGYkWMcUXWYtj0ThDrAscRokolZ4SRvrHgsGejwsV7l3/DS/hlEToyrAxW5IJk0DsjQvrUJaTcjlhde5M+TFysXThw02eNfTgndh+zSUF+GB/8dDwpZTnScTnGC7R5GMB+L8tFuMNuhpPw8HWqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619326; c=relaxed/simple;
-	bh=EpMFSHa1gvbKfDyXibbN9/h7VuT+tFTW2UFp/+p7z6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hD+vFArzAdD5Y+Wgw+lqtEUH+yMl8v8bgExAUQiJ/jJUKLDhYADuXnZoBDEoQBrwrTTNzsuuvp2VixZDGAYU7c53x3XZEqPP3wzGdESKZDqrW+FExzmd/GopuqPW1HPWppver+yenQQXEr/LqVHe0H16A+OSFR5Fe6GYmhN000U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3W2Ur+J; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1741619327; c=relaxed/simple;
+	bh=MNV2x4YXuI3EbpVLRxfKOQWNxGNCe/SqUoLSpVNi0M0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dPW914YcqhIL1u2A7aSYp39pe/SqMNTUS/o0k2wu7g00q16YT3vY1lBFDKSH5HyMKIedmuxRVfXeZLM8N0b2BrzwjSpFFLKq4fd66OV5JcQUqyUAh/iA1WogeEUVwK4zyxVU5VLC0e5anoa6stDhoOW8j0EUaE8IdJaWHQiO91w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nqzj2mcP; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3W2Ur+J"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nqzj2mcP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741619325; x=1773155325;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=EpMFSHa1gvbKfDyXibbN9/h7VuT+tFTW2UFp/+p7z6s=;
-  b=h3W2Ur+J64iIHh9G4I6TUIcxwuNjtEV9I60Z2T5gwvja9ysTuri9aavw
-   gM9M1UkvA2K1dgRyplK/VP32l4ECCa7Kug6vPrsLJemShiOZcbcyf0oYz
-   tp4SmZZ7vE9T8xVoWow69STPeGCfVw1b2wxjHm3sK3ZSn59dk3mmlNaLm
-   edtbsbiKy1NH/oPS6S0aw1LP3x+UdehyLaHucBCjx1uOs63lt/eM4P02R
-   guoC46FjHM3fZBrpaZeawXkn4jOLbTm0Gw1AQa0rDTe1jJUViP4wCVZRF
-   y/Dbe2zdB9BSsMw5unhLiDhb08cFRtv4cBWa4F71ZFJZDDeOXV58jqYKt
-   w==;
-X-CSE-ConnectionGUID: idpDIE95SOyU8Y4daln6OA==
-X-CSE-MsgGUID: tgDlIRl1SDOSf3w8tn96dA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42470922"
+  t=1741619326; x=1773155326;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=MNV2x4YXuI3EbpVLRxfKOQWNxGNCe/SqUoLSpVNi0M0=;
+  b=nqzj2mcPfbK8/SVmB7jauhB/NSU/c1wp406YTxeWw6jDQM09/PYu+j2i
+   fIMou4nHCS5GDTP3ACzlp5DEmRz8RlGDtXuvupW1CSmn1deeU8V1/ktxh
+   MS8sfpdue7wWEfdVnWxtGTx+HsBEN4S9KerXdCzkNT8V2JDPq1GhlpPi7
+   Ix/9/yR2o3tvNDM3mxHFcC8P5KuHMeKfGhg2hh2OH5owIkYb16wBr+RtU
+   x4s4zUcHPgsWIexPPKuWnc/0EqHdP3APwo58EhKHv9ZrAjvGA8OwOPXkK
+   f/b1J7WbqUywhwjuTE0siqoGDt+E4UeC1UpsWatkyaAAQll20GzVdVXSc
+   g==;
+X-CSE-ConnectionGUID: dm7l8EEzTkKJgRhbudTNMA==
+X-CSE-MsgGUID: tf+6VIcoTB6Odz/h+XBdoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42470928"
 X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42470922"
+   d="scan'208";a="42470928"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
   by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
-X-CSE-ConnectionGUID: 1oHC2dQkSyq+7W0yUn0Wpg==
-X-CSE-MsgGUID: VcPVJum6TIyfxFftSp7Wig==
+X-CSE-ConnectionGUID: mUmVCTCiScyhQY6GM3rDeA==
+X-CSE-MsgGUID: A3xcm5rtTmSOkhv6SQuHyA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="124619902"
+   d="scan'208";a="124619904"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2025 08:08:37 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2025 08:08:38 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BC5FF156; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
+	id DBB89340; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rob Herring (Arm)" <robh@kernel.org>,
@@ -64,10 +65,12 @@ Cc: Daniel Scally <djrscally@gmail.com>,
 	Pavel Machek <pavel@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH v1 0/4] leds: Introduce and use fwnode_get_child_node_count()
-Date: Mon, 10 Mar 2025 16:54:50 +0200
-Message-ID: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/4] leds: pwm-multicolor: Use fwnode_get_child_node_count()
+Date: Mon, 10 Mar 2025 16:54:52 +0200
+Message-ID: <20250310150835.3139322-3-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
+References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -76,29 +79,43 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series was inspired during review of "Support ROHM BD79124 ADC" [1].
-The three conversion patches are the examples of the new API in use.
+Since fwnode_get_child_node_count() was split from its device property
+counterpart, we may utilise it in the driver and drop custom implementation.
 
-Since the first two examples of LEDS, in case of posotove response it may
-be routed via that tree and immutable branch/tag shared with others, e.g.,
-IIO which Matti's series is targeting and might be dependent on. The USB
-patch can be applied later separately, up to the respective maintainers.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/leds/rgb/leds-pwm-multicolor.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Link: https://lore.kernel.org/r/cover.1741610847.git.mazziesaccount@gmail.com> [1]
-
-Andy Shevchenko (4):
-  device property: Split fwnode_get_child_node_count()
-  leds: pwm-multicolor: Use fwnode_get_child_node_count()
-  leds: ncp5623: Use fwnode_get_child_node_count()
-  usb: typec: tcpm: Use fwnode_get_child_node_count()
-
- drivers/base/property.c                | 12 ++++++------
- drivers/leds/rgb/leds-ncp5623.c        |  5 ++---
- drivers/leds/rgb/leds-pwm-multicolor.c |  7 +++----
- drivers/usb/typec/tcpm/tcpm.c          |  6 ++----
- include/linux/property.h               |  7 ++++++-
- 5 files changed, 19 insertions(+), 18 deletions(-)
-
+diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
+index f80a06cc31f8..61f4e17100f8 100644
+--- a/drivers/leds/rgb/leds-pwm-multicolor.c
++++ b/drivers/leds/rgb/leds-pwm-multicolor.c
+@@ -107,12 +107,12 @@ static int iterate_subleds(struct device *dev, struct pwm_mc_led *priv,
+ 
+ static int led_pwm_mc_probe(struct platform_device *pdev)
+ {
+-	struct fwnode_handle *mcnode, *fwnode;
++	struct fwnode_handle *mcnode;
+ 	struct led_init_data init_data = {};
+ 	struct led_classdev *cdev;
+ 	struct mc_subled *subled;
+ 	struct pwm_mc_led *priv;
+-	int count = 0;
++	unsigned int count;
+ 	int ret = 0;
+ 
+ 	mcnode = device_get_named_child_node(&pdev->dev, "multi-led");
+@@ -121,8 +121,7 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
+ 				     "expected multi-led node\n");
+ 
+ 	/* count the nodes inside the multi-led node */
+-	fwnode_for_each_child_node(mcnode, fwnode)
+-		count++;
++	count = fwnode_get_child_node_count(mcnode);
+ 
+ 	priv = devm_kzalloc(&pdev->dev, struct_size(priv, leds, count),
+ 			    GFP_KERNEL);
 -- 
 2.47.2
 
