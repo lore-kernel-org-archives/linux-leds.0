@@ -1,50 +1,49 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B80A22D4DE;
-	Mon, 10 Mar 2025 15:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBF922D4FB;
+	Mon, 10 Mar 2025 15:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619325; cv=none; b=X8eeGJfFb6IhUFuEkKcL5tY5/hvqtw69kQWdQiBOKIS1oHXEVcHiK3V48a2UBxYX94cyQ7MQKQ6R8Jut3LbI2zO0bvNd/VJh/f9YYpmy2mSC01GmEBn/3ULeIGB+3rPJupcIM2+ER9PD9t3TZ13kIzSAPkl2lJXRIQHAQDoIEbE=
+	t=1741619326; cv=none; b=r06iQgYbYZ93f5wK1924sWckOTMpiKi9l7NsfeLAmE4gJFOEOQLqM57w8UFfXNSH7YjtNIQlHmewXTCfj8k16Gj6IlF2tCbgvhO+QxvBYo1xb2F2Issbyor6bDiQ5MiqEPfXGCTNE3Tt9Ns9akMih+t4eKy4jhEjuUkpMUzO214=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741619325; c=relaxed/simple;
-	bh=j9ACf3C/6xmuNSerOIzYrxEPtrP4pqy0z2n/p3IOeUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K/quVm6vaeZEFCILvhLFA+ge0GTXFO+BiPg4hqDd5SmnqV/14VXkrI3+b0riwPLSjb/ueQm9tGcmBauPD6lrotFF8jMM29xPVB2Kc7yHcZTff0AjYHVCOjgTNZyKuL0+9Z3WGCt5HB7bwEifDtVndImNxQ5v7UwUa7rxzYHswfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIYap6lr; arc=none smtp.client-ip=198.175.65.20
+	s=arc-20240116; t=1741619326; c=relaxed/simple;
+	bh=EpMFSHa1gvbKfDyXibbN9/h7VuT+tFTW2UFp/+p7z6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hD+vFArzAdD5Y+Wgw+lqtEUH+yMl8v8bgExAUQiJ/jJUKLDhYADuXnZoBDEoQBrwrTTNzsuuvp2VixZDGAYU7c53x3XZEqPP3wzGdESKZDqrW+FExzmd/GopuqPW1HPWppver+yenQQXEr/LqVHe0H16A+OSFR5Fe6GYmhN000U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h3W2Ur+J; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIYap6lr"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h3W2Ur+J"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741619324; x=1773155324;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=j9ACf3C/6xmuNSerOIzYrxEPtrP4pqy0z2n/p3IOeUA=;
-  b=hIYap6lrUNCb93nMVpLt85I9Mg+Re2mS8lw0+eJ2fUW7orIcbq08kiKn
-   kaMA/EGUi9+/QPp24hynVLsj8QS2gl14G/B6MgsKjvcZT0XcMgfhNv+fi
-   7t4+ayewzv+La13hseGAJsfxoETtkadhcyWXETKzyVZMPsacECXZHtSUU
-   jYuDzUeRJDm3p4uInwHx8Kls4bfdVTN6RKJobm+rdz9VfJlKC2HFVYbU0
-   SYzfYF5kD/i5val2rtb+UxJ4H8DYGvVVyfVL/fzyWmIbSrznVTHQ9oMrX
-   xykkCm1n+LlaL8VpNh5yeBemfRHkVVLrO/aTSVh0xliqjPYP5gRqCiBLO
-   A==;
-X-CSE-ConnectionGUID: JycGKDslTSWSD92YnI6ExA==
-X-CSE-MsgGUID: dHiE1rBDSNiFkuta4VOXIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42334989"
+  t=1741619325; x=1773155325;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EpMFSHa1gvbKfDyXibbN9/h7VuT+tFTW2UFp/+p7z6s=;
+  b=h3W2Ur+J64iIHh9G4I6TUIcxwuNjtEV9I60Z2T5gwvja9ysTuri9aavw
+   gM9M1UkvA2K1dgRyplK/VP32l4ECCa7Kug6vPrsLJemShiOZcbcyf0oYz
+   tp4SmZZ7vE9T8xVoWow69STPeGCfVw1b2wxjHm3sK3ZSn59dk3mmlNaLm
+   edtbsbiKy1NH/oPS6S0aw1LP3x+UdehyLaHucBCjx1uOs63lt/eM4P02R
+   guoC46FjHM3fZBrpaZeawXkn4jOLbTm0Gw1AQa0rDTe1jJUViP4wCVZRF
+   y/Dbe2zdB9BSsMw5unhLiDhb08cFRtv4cBWa4F71ZFJZDDeOXV58jqYKt
+   w==;
+X-CSE-ConnectionGUID: idpDIE95SOyU8Y4daln6OA==
+X-CSE-MsgGUID: tgDlIRl1SDOSf3w8tn96dA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42470922"
 X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42334989"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
-X-CSE-ConnectionGUID: FaU1Z4XnSIOFlimyoSy2eQ==
-X-CSE-MsgGUID: KL9q+jCwQNmdXjfuRWAQqg==
+   d="scan'208";a="42470922"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
+X-CSE-ConnectionGUID: 1oHC2dQkSyq+7W0yUn0Wpg==
+X-CSE-MsgGUID: VcPVJum6TIyfxFftSp7Wig==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="119731644"
+   d="scan'208";a="124619902"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 10 Mar 2025 08:08:38 -0700
+  by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2025 08:08:37 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E9601476; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
+	id BC5FF156; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rob Herring (Arm)" <robh@kernel.org>,
@@ -65,12 +64,10 @@ Cc: Daniel Scally <djrscally@gmail.com>,
 	Pavel Machek <pavel@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH v1 3/4] leds: ncp5623: Use fwnode_get_child_node_count()
-Date: Mon, 10 Mar 2025 16:54:53 +0200
-Message-ID: <20250310150835.3139322-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 0/4] leds: Introduce and use fwnode_get_child_node_count()
+Date: Mon, 10 Mar 2025 16:54:50 +0200
+Message-ID: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
-References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -79,39 +76,29 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since fwnode_get_child_node_count() was split from its device property
-counterpart, we may utilise it in the driver and drop custom implementation.
+This series was inspired during review of "Support ROHM BD79124 ADC" [1].
+The three conversion patches are the examples of the new API in use.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/rgb/leds-ncp5623.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Since the first two examples of LEDS, in case of posotove response it may
+be routed via that tree and immutable branch/tag shared with others, e.g.,
+IIO which Matti's series is targeting and might be dependent on. The USB
+patch can be applied later separately, up to the respective maintainers.
 
-diff --git a/drivers/leds/rgb/leds-ncp5623.c b/drivers/leds/rgb/leds-ncp5623.c
-index f18156683375..7c7d44623a9e 100644
---- a/drivers/leds/rgb/leds-ncp5623.c
-+++ b/drivers/leds/rgb/leds-ncp5623.c
-@@ -155,9 +155,9 @@ static int ncp5623_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	struct fwnode_handle *mc_node, *led_node;
- 	struct led_init_data init_data = { };
--	int num_subleds = 0;
- 	struct ncp5623 *ncp;
- 	struct mc_subled *subled_info;
-+	unsigned int num_subleds;
- 	u32 color_index;
- 	u32 reg;
- 	int ret;
-@@ -172,8 +172,7 @@ static int ncp5623_probe(struct i2c_client *client)
- 	if (!mc_node)
- 		return -EINVAL;
- 
--	fwnode_for_each_child_node(mc_node, led_node)
--		num_subleds++;
-+	num_subleds = fwnode_get_child_node_count(mc_node);
- 
- 	subled_info = devm_kcalloc(dev, num_subleds, sizeof(*subled_info), GFP_KERNEL);
- 	if (!subled_info) {
+Link: https://lore.kernel.org/r/cover.1741610847.git.mazziesaccount@gmail.com> [1]
+
+Andy Shevchenko (4):
+  device property: Split fwnode_get_child_node_count()
+  leds: pwm-multicolor: Use fwnode_get_child_node_count()
+  leds: ncp5623: Use fwnode_get_child_node_count()
+  usb: typec: tcpm: Use fwnode_get_child_node_count()
+
+ drivers/base/property.c                | 12 ++++++------
+ drivers/leds/rgb/leds-ncp5623.c        |  5 ++---
+ drivers/leds/rgb/leds-pwm-multicolor.c |  7 +++----
+ drivers/usb/typec/tcpm/tcpm.c          |  6 ++----
+ include/linux/property.h               |  7 ++++++-
+ 5 files changed, 19 insertions(+), 18 deletions(-)
+
 -- 
 2.47.2
 
