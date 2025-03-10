@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E20622D78F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76DF22D79D;
 	Mon, 10 Mar 2025 15:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741619327; cv=none; b=pl5ExvdrouqyKsVDVVqJZ5YEHGYkWMcUXWYtj0ThDrAscRokolZ4SRvrHgsGejwsV7l3/DS/hlEToyrAxW5IJk0DsjQvrUJaTcjlhde5M+TFysXThw02eNfTgndh+zSUF+GB/8dDwpZTnScTnGC7R5GMB+L8tFuMNuhpPw8HWqo=
+	t=1741619327; cv=none; b=XtW41eraxXffdQvsniZ4b3/dKy0yqQYtiQh9mOJC/X9Du9Olupyh6b6mR2ypqwiRfYl4+iTTXYumId8mnayWj6ZtfyglgVLdzl8yotkSFXI9+t9Ddve0j65Uk10JTyGMRH96cJIj/szI1oa9JCXQRqNvvTcuyl3XjS393v7+XRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741619327; c=relaxed/simple;
-	bh=MNV2x4YXuI3EbpVLRxfKOQWNxGNCe/SqUoLSpVNi0M0=;
+	bh=kZtafXHrGb7mXS4bvxISt7O8W/fzSi4801NL/wtYIkE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dPW914YcqhIL1u2A7aSYp39pe/SqMNTUS/o0k2wu7g00q16YT3vY1lBFDKSH5HyMKIedmuxRVfXeZLM8N0b2BrzwjSpFFLKq4fd66OV5JcQUqyUAh/iA1WogeEUVwK4zyxVU5VLC0e5anoa6stDhoOW8j0EUaE8IdJaWHQiO91w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nqzj2mcP; arc=none smtp.client-ip=198.175.65.19
+	 MIME-Version; b=FICje0UnLZ4//Sf9PHBPxJDlm7Xmw82Uhlwg0GvTOsSBVFXeSlZX/4EMjqXX2pF9ZHYvAixuH04O/iJvu9VZm0R8lryMw2p5C1e3IqEK17NO67ilfiwxxqQX6GDUCB6ezLuaUgoAIR3bhMdiVCz4867zLxF7TSszwzJBcpQtQdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGs9iCzJ; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nqzj2mcP"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGs9iCzJ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1741619326; x=1773155326;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=MNV2x4YXuI3EbpVLRxfKOQWNxGNCe/SqUoLSpVNi0M0=;
-  b=nqzj2mcPfbK8/SVmB7jauhB/NSU/c1wp406YTxeWw6jDQM09/PYu+j2i
-   fIMou4nHCS5GDTP3ACzlp5DEmRz8RlGDtXuvupW1CSmn1deeU8V1/ktxh
-   MS8sfpdue7wWEfdVnWxtGTx+HsBEN4S9KerXdCzkNT8V2JDPq1GhlpPi7
-   Ix/9/yR2o3tvNDM3mxHFcC8P5KuHMeKfGhg2hh2OH5owIkYb16wBr+RtU
-   x4s4zUcHPgsWIexPPKuWnc/0EqHdP3APwo58EhKHv9ZrAjvGA8OwOPXkK
-   f/b1J7WbqUywhwjuTE0siqoGDt+E4UeC1UpsWatkyaAAQll20GzVdVXSc
-   g==;
-X-CSE-ConnectionGUID: dm7l8EEzTkKJgRhbudTNMA==
-X-CSE-MsgGUID: tf+6VIcoTB6Odz/h+XBdoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42470928"
+  bh=kZtafXHrGb7mXS4bvxISt7O8W/fzSi4801NL/wtYIkE=;
+  b=iGs9iCzJdcTix69aICGUraExy3DK9OAFgEAqEFSqsHKY3Hcniu+0Rmm6
+   3x28uW2H84S7O0uYybf1YsdGxP/3UZOvHTj+8ritiKQ/QhhWtxgjHtlZs
+   d1KF6KyT3ZT9Sc0jWggtU0g+p52azvM3j1ef7EtY4vbODKV/xeONBZ3Wx
+   UhkIb00Bx2w9w6F+3RNJ42LstKwMUnbufHBIpHKcXlgBpWwcXBSwEi1sn
+   q/zhU8GEhNUz+bs2qqw1q+XArYoymgLlWlxGayCrqx+oXn76paDOEKx4Q
+   nH8lUoi/9TR6cVVa1MYJKkEeeGZNzRYm15Uf4em5llKaMs7x998vPYPjy
+   w==;
+X-CSE-ConnectionGUID: fNKlSjufSSegG6GtCF7SCg==
+X-CSE-MsgGUID: kDV/KoxNQW6P6NjxhpG2nA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="42334998"
 X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="42470928"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
-X-CSE-ConnectionGUID: mUmVCTCiScyhQY6GM3rDeA==
-X-CSE-MsgGUID: A3xcm5rtTmSOkhv6SQuHyA==
+   d="scan'208";a="42334998"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 08:08:43 -0700
+X-CSE-ConnectionGUID: 21gImyG7TTufNq2sz9kIzw==
+X-CSE-MsgGUID: +bgqcGd4R9uID+UOQbR6ww==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="124619904"
+   d="scan'208";a="119731645"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2025 08:08:38 -0700
+  by orviesa009.jf.intel.com with ESMTP; 10 Mar 2025 08:08:38 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id DBB89340; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
+	id 05290560; Mon, 10 Mar 2025 17:08:36 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rob Herring (Arm)" <robh@kernel.org>,
@@ -65,9 +65,9 @@ Cc: Daniel Scally <djrscally@gmail.com>,
 	Pavel Machek <pavel@kernel.org>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
 	Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH v1 2/4] leds: pwm-multicolor: Use fwnode_get_child_node_count()
-Date: Mon, 10 Mar 2025 16:54:52 +0200
-Message-ID: <20250310150835.3139322-3-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/4] usb: typec: tcpm: Use fwnode_get_child_node_count()
+Date: Mon, 10 Mar 2025 16:54:54 +0200
+Message-ID: <20250310150835.3139322-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
 References: <20250310150835.3139322-1-andriy.shevchenko@linux.intel.com>
@@ -84,38 +84,33 @@ counterpart, we may utilise it in the driver and drop custom implementation.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/leds/rgb/leds-pwm-multicolor.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/usb/typec/tcpm/tcpm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
-index f80a06cc31f8..61f4e17100f8 100644
---- a/drivers/leds/rgb/leds-pwm-multicolor.c
-+++ b/drivers/leds/rgb/leds-pwm-multicolor.c
-@@ -107,12 +107,12 @@ static int iterate_subleds(struct device *dev, struct pwm_mc_led *priv,
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index 9c455f073233..8ca2e26752fb 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -7166,7 +7166,7 @@ static void tcpm_fw_get_timings(struct tcpm_port *port, struct fwnode_handle *fw
  
- static int led_pwm_mc_probe(struct platform_device *pdev)
+ static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode)
  {
--	struct fwnode_handle *mcnode, *fwnode;
-+	struct fwnode_handle *mcnode;
- 	struct led_init_data init_data = {};
- 	struct led_classdev *cdev;
- 	struct mc_subled *subled;
- 	struct pwm_mc_led *priv;
--	int count = 0;
-+	unsigned int count;
- 	int ret = 0;
- 
- 	mcnode = device_get_named_child_node(&pdev->dev, "multi-led");
-@@ -121,8 +121,7 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
- 				     "expected multi-led node\n");
- 
- 	/* count the nodes inside the multi-led node */
--	fwnode_for_each_child_node(mcnode, fwnode)
--		count++;
-+	count = fwnode_get_child_node_count(mcnode);
- 
- 	priv = devm_kzalloc(&pdev->dev, struct_size(priv, leds, count),
- 			    GFP_KERNEL);
+-	struct fwnode_handle *capabilities, *child, *caps = NULL;
++	struct fwnode_handle *capabilities, *caps = NULL;
+ 	unsigned int nr_src_pdo, nr_snk_pdo;
+ 	const char *opmode_str;
+ 	u32 *src_pdo, *snk_pdo;
+@@ -7232,9 +7232,7 @@ static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode
+ 	if (!capabilities) {
+ 		port->pd_count = 1;
+ 	} else {
+-		fwnode_for_each_child_node(capabilities, child)
+-			port->pd_count++;
+-
++		port->pd_count = fwnode_get_child_node_count(capabilities);
+ 		if (!port->pd_count) {
+ 			ret = -ENODATA;
+ 			goto put_capabilities;
 -- 
 2.47.2
 
