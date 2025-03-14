@@ -1,39 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF641F3B87
-	for <linux-leds@vger.kernel.org>; Fri, 14 Mar 2025 11:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E521FAC59
+	for <linux-leds@vger.kernel.org>; Fri, 14 Mar 2025 11:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741950573; cv=none; b=juov5z8tOJ7xOXZHR4hfYOZrP2HavhZsJ/6c45Rz+hBZSxKTKmJ9fTmuGLR2KdJyqztIIG0p7TAskI9tjnAIbKT4WFTt7jhYJOLKA7q8OLBw32p25VdTijXO48I7EuHvd8YbBILYzFeaivSD8DaKFnq4+rgoajO1Wyocwnj+U9g=
+	t=1741950604; cv=none; b=I80QAV1DSOtcoIUGSI7Mdc1HbyEwFDHbYvyqZcI3LoXphXswo+wLnE0NQu9pKqV9KRDx0LXZGUSy0ye3xKkDUOAyKYxPkxMNSbyi42Ft90V0X4Ltq3P/SgysT0tvhM6xi6r3eOD2uHDIqGhQxmYTqp7djZ9a5HZI+IDmTUT1Yp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741950573; c=relaxed/simple;
-	bh=7DVJ9hlL2N6ry1BU3q7mn37eu068nYK1cmNSbyFQFMo=;
+	s=arc-20240116; t=1741950604; c=relaxed/simple;
+	bh=qdxkvKrzGZRqnibt1mT1IZqM9Wg3j87qhs84ywFiGtA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8iJxudPXjAFCGHMoy0KT5/CVW229LwA4xB7cy9SW/jVyhWQtAlq7tM5pJu5TfOHAs/6riupmC69s6/RsXcXQiTloOxU+rUSLq86gnwyvI2l74PPyjmoAU1nItKRpX3RBqus1P3X89Y644eYu0RRfBWmt0qj0YBbE3GlWSYMQQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSe58QMc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZC06TRNVzY4F48mho2nBuVtKJJtq5bpTzlGlTM21aVdh7en6Ol88Yx8GuDw9T5GuWYzpnY/yFYk0q0NL5FSudFA5PznW76u9d9zYhSErPXdBvI+Wga3nvAqnpjD+XqWESY3RvglZkVRTyNwGQIshAoz+Yhy6haxcZcI8bTuL4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsOsPsgs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSe58QMc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3DB5C4CEE3;
-	Fri, 14 Mar 2025 11:09:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsOsPsgs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40403C4CEE3;
+	Fri, 14 Mar 2025 11:10:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741950571;
-	bh=7DVJ9hlL2N6ry1BU3q7mn37eu068nYK1cmNSbyFQFMo=;
+	s=k20201202; t=1741950603;
+	bh=qdxkvKrzGZRqnibt1mT1IZqM9Wg3j87qhs84ywFiGtA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SSe58QMcGEExrx2Z7U1PAmLWFWFz1UOd1Jd8bXtk4vBwBcMpSgKDtiIWZrJS77+k0
-	 HSn3P5TbuxBkR2Oas6Fgl51Nez8t8yhSdvBlyQ1sGyUmjuvwoYLfh746CHL31sZiWY
-	 cQNK41PJ3lJHMIZhIJeA5WTD3XfuLOU8CUXhQcWlkV1lo0+2dlDqbTeFkBZRuY9bN9
-	 RLYVXJBgeMdUQCl5Byq5kJRGtWQPvIFjjTSAVztOtxv78NXeWVaMhf40thgq1R0lQW
-	 LqJhKpDpJoT4rTtxD/BUdd/DqhS45+8R779HHa/Q24VrrLypMMfwmQ9VqUOL4KWnsp
-	 COeudbbzLb4Uw==
-Date: Fri, 14 Mar 2025 11:09:28 +0000
+	b=OsOsPsgsGMswP81O4H/wVGlJYqxNJIYH0EVNMASMv1YPICs0If57/fy9DMNBbwIFN
+	 t8nB0BcsYPiBPLavXYwA4fd5xXaSX0KyqCQCGE3z8LwthpDRRvHTcapXfGh4E51N3s
+	 Iv+0lnttW3ejT4S7IdLa1Fi6qPQVG15Dy9Rs0zhA8XNhCxF0QeY4s20Jozv8cpUx+9
+	 KZNCCGETVMVFWepAd7BQhI9/RSV5XFtPo/3PXX9ytBCMgOybsUjIpt1trFgPKBbK/Z
+	 Lltz8ZH9F4pUJqcfL5uKEqoXvGj7cPcZVgSEdoBiN/UomvuyhARhR7LShnDFHOWn12
+	 FMw5gqKlRt3fQ==
+Date: Fri, 14 Mar 2025 11:10:00 +0000
 From: Lee Jones <lee@kernel.org>
 To: Craig McQueen <craig@mcqueen.au>
 Cc: linux-leds@vger.kernel.org
 Subject: Re: [PATCH] leds: uleds documentation fixes
-Message-ID: <20250314110928.GG3890718@google.com>
+Message-ID: <20250314111000.GH3890718@google.com>
 References: <20250311042642.373782-1-craig@mcqueen.au>
  <20250314110853.GF3890718@google.com>
+ <20250314110928.GG3890718@google.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -43,20 +44,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250314110853.GF3890718@google.com>
+In-Reply-To: <20250314110928.GG3890718@google.com>
 
 On Fri, 14 Mar 2025, Lee Jones wrote:
 
-> On Tue, 11 Mar 2025, Craig McQueen wrote:
+> On Fri, 14 Mar 2025, Lee Jones wrote:
 > 
-> > * Add max_brightness field to struct for setup.
-> > * Reads are a signed int value, not a single unsigned byte value.
+> > On Tue, 11 Mar 2025, Craig McQueen wrote:
+> > 
+> > > * Add max_brightness field to struct for setup.
+> > > * Reads are a signed int value, not a single unsigned byte value.
+> > 
+> > SoB
+> > 
+> > You must remember to use `-s` when committing patches.
 > 
-> SoB
-> 
-> You must remember to use `-s` when committing patches.
+> And run checkpatch.pl and Cc: LKML.
 
-And run checkpatch.pl and Cc: LKML.
+And get_maintainer.pl
+
+Etc!  =:-)
 
 -- 
 Lee Jones [李琼斯]
