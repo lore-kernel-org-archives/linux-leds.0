@@ -1,55 +1,55 @@
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619FC25487D;
-	Mon,  7 Apr 2025 18:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585E3254AE5;
+	Mon,  7 Apr 2025 18:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744050964; cv=none; b=hjLf+lcCMIscpWQNMWOt/B5Ywd/5sFO3+6ruc7ygjxtWqTsPMQGyYdtI1CQO0fBprYn3Q9+ckxxT/J8sRT32kC433rzgEAjCMQKJAAeHPi3ZpV+F/MeK0xFKBMSMu7o3CNUOH8vjePgAE6Rl+6nomLb55gwhWJPbROayDk8ddQQ=
+	t=1744050965; cv=none; b=obPZ+LBo3nC1wYykGPuElWXjbPAK4FS3dwMyYy0u210jQKG+BADD9uCDRRG+cwOvffPCuEdsjReFwT2UfqY9Q7te3kdyS9p5U7gl/SrvqUmy8c4dNWl4+sUAxicGSgh1gMnZDgmKwL2vvQq1FywkCjhq3MfjA5GbxEukvEZb4mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744050964; c=relaxed/simple;
-	bh=yNaJEimCo4WkfEa7h25jnR5wd51/T+H07fAqq0lXrgI=;
+	s=arc-20240116; t=1744050965; c=relaxed/simple;
+	bh=1tZPCxHoovdH7Blw+5CPCxrs5ag1pmEdYrR875D0/Mo=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=REvUwhQXWYp3IAqEIqlGERkIUcdFnJPckMYO9kpI7Q6/GSn495ZqWV+EP+5K8QFygj3UBiQ/Sx+bOGVwSdBZkX8PglhOXCRiWmIRflgDNLNYaeD8ZXL1C2xq7JtDZh166mKKW/3CFdKKsPNyNK3O/h9jMJrWDO7uUDUO4I8acfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YR2gP/Yd; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=dJLt2cZ54/qe7SIoUbB1BfUFVwC5xltuK5zZwaASet7VNXv7rIlkrXpxqdrF161ovTWRxuc+NTN+1hhQHltt1OR0l7nQKnXc0dpDjAlWkHXJCQwDelgWWXOWR0k+OqzEln+/VM+bjnrPWi9dP6yhfUJpJHEXKKiSXAvhnzf09nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=x7vGOY6V; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YR2gP/Yd"
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537IZvP6446975
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x7vGOY6V"
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 537IZw2u953486
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 7 Apr 2025 13:35:57 -0500
+	Mon, 7 Apr 2025 13:35:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1744050957;
-	bh=I0bQFuwF+tvwcknZPRO59RODH2vQWhzkEhJenpNV/Bo=;
+	s=ti-com-17Q1; t=1744050959;
+	bh=WG+gFLkwHlKjAf5O2m6YwuuMmVSxH0J2znwfzw9Uhv8=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YR2gP/YdYcnTjWboSkSBZHqUEc58IcWYzKHMHjy1mbhO7m+aHeE2sOthSchCEaa2j
-	 0IwvxD8NoDIPhEaSTKOFw1RYeWsThzj3oYU0cKh/zkUcW3Y6+AFDpTF1Xy5xKX9tQY
-	 8fSsgKABc8VkHaL+Iuf0bFmHHYiQrs6o5mhhPAgU=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537IZv53001097
+	b=x7vGOY6VK8OLzDwRwvRBnnqozukPOLf7stpInhSJXKQ1X0ugvZ9XhSquET4cSC/3U
+	 kZOKSKzjYc5pkhrNp5dUDBOpLHi2vBmmkeA9EemTiRd5JoPqF/ezk/QzlDoXsGzTpL
+	 M+qvITKLMjwwJmioU+qbWHjj2e4TLJpUVCF6Gn/E=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 537IZw7T082417
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 7 Apr 2025 13:35:57 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 7 Apr 2025 13:35:58 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Apr 2025 13:35:57 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2025 13:35:58 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Apr 2025 13:35:57 -0500
+ Frontend Transport; Mon, 7 Apr 2025 13:35:58 -0500
 Received: from lelvsmtp6.itg.ti.com ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537IZuQo072942;
-	Mon, 7 Apr 2025 13:35:57 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 537IZuQs072942;
+	Mon, 7 Apr 2025 13:35:58 -0500
 From: Andrew Davis <afd@ti.com>
 To: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew Davis
 	<afd@ti.com>
-Subject: [PATCH 2/6] leds: lp8860: Use new mutex guards to cleanup function exits
-Date: Mon, 7 Apr 2025 13:35:51 -0500
-Message-ID: <20250407183555.409687-2-afd@ti.com>
+Subject: [PATCH 6/6] leds: lp8860: Disable GPIO with devm action
+Date: Mon, 7 Apr 2025 13:35:55 -0500
+Message-ID: <20250407183555.409687-6-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20250407183555.409687-1-afd@ti.com>
 References: <20250407183555.409687-1-afd@ti.com>
@@ -63,118 +63,120 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Use scoped mutex guards to simplify return paths. While here use
-devm_mutex_init() to register the muxex so it also is cleaned
-up automatically.
+This helps prevent mistakes like disable out of order in cleanup functions
+and forgetting to free on error paths (as was done here).
+
+This was the last thing the .remove() function did, so remove that too.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/leds/leds-lp8860.c | 27 +++++++++++----------------
- 1 file changed, 11 insertions(+), 16 deletions(-)
+ drivers/leds/leds-lp8860.c | 37 +++++++++++++------------------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 2b1c68e609495..2d91f476f0b79 100644
+index 088610988138f..7a9eb9a247ae7 100644
 --- a/drivers/leds/leds-lp8860.c
 +++ b/drivers/leds/leds-lp8860.c
-@@ -135,7 +135,7 @@ static int lp8860_unlock_eeprom(struct lp8860_led *led, int lock)
- {
- 	int ret;
+@@ -99,7 +99,6 @@ struct lp8860_led {
+ 	struct led_classdev led_dev;
+ 	struct regmap *regmap;
+ 	struct regmap *eeprom_regmap;
+-	struct gpio_desc *enable_gpio;
+ };
  
--	mutex_lock(&led->lock);
-+	guard(mutex)(&led->lock);
+ static const struct reg_sequence lp8860_eeprom_disp_regs[] = {
+@@ -219,8 +218,6 @@ static int lp8860_init(struct lp8860_led *led)
+ 	unsigned int read_buf;
+ 	int ret, reg_count;
  
- 	if (lock == LP8860_UNLOCK_EEPROM) {
- 		ret = regmap_write(led->regmap,
-@@ -143,7 +143,7 @@ static int lp8860_unlock_eeprom(struct lp8860_led *led, int lock)
- 			LP8860_EEPROM_CODE_1);
- 		if (ret) {
- 			dev_err(&led->client->dev, "EEPROM Unlock failed\n");
--			goto out;
-+			return ret;
- 		}
+-	gpiod_direction_output(led->enable_gpio, 1);
+-
+ 	ret = lp8860_fault_check(led);
+ 	if (ret)
+ 		goto out;
+@@ -257,9 +254,6 @@ static int lp8860_init(struct lp8860_led *led)
+ 	return ret;
  
- 		ret = regmap_write(led->regmap,
-@@ -151,14 +151,14 @@ static int lp8860_unlock_eeprom(struct lp8860_led *led, int lock)
- 			LP8860_EEPROM_CODE_2);
- 		if (ret) {
- 			dev_err(&led->client->dev, "EEPROM Unlock failed\n");
--			goto out;
-+			return ret;
- 		}
- 		ret = regmap_write(led->regmap,
- 			LP8860_EEPROM_UNLOCK,
- 			LP8860_EEPROM_CODE_3);
- 		if (ret) {
- 			dev_err(&led->client->dev, "EEPROM Unlock failed\n");
--			goto out;
-+			return ret;
- 		}
- 	} else {
- 		ret = regmap_write(led->regmap,
-@@ -166,8 +166,6 @@ static int lp8860_unlock_eeprom(struct lp8860_led *led, int lock)
- 			LP8860_LOCK_EEPROM);
- 	}
- 
--out:
--	mutex_unlock(&led->lock);
+ out:
+-	if (ret)
+-		gpiod_direction_output(led->enable_gpio, 0);
+-
  	return ret;
  }
  
-@@ -204,30 +202,29 @@ static int lp8860_brightness_set(struct led_classdev *led_cdev,
- 	int disp_brightness = brt_val * 255;
- 	int ret;
+@@ -277,6 +271,13 @@ static const struct regmap_config lp8860_eeprom_regmap_config = {
+ 	.max_register = LP8860_EEPROM_REG_24,
+ };
  
--	mutex_lock(&led->lock);
-+	guard(mutex)(&led->lock);
- 
- 	ret = lp8860_fault_check(led);
- 	if (ret) {
- 		dev_err(&led->client->dev, "Cannot read/clear faults\n");
--		goto out;
-+		return ret;
- 	}
- 
- 	ret = regmap_write(led->regmap, LP8860_DISP_CL1_BRT_MSB,
- 			(disp_brightness & 0xff00) >> 8);
- 	if (ret) {
- 		dev_err(&led->client->dev, "Cannot write CL1 MSB\n");
--		goto out;
-+		return ret;
- 	}
- 
- 	ret = regmap_write(led->regmap, LP8860_DISP_CL1_BRT_LSB,
- 			disp_brightness & 0xff);
- 	if (ret) {
- 		dev_err(&led->client->dev, "Cannot write CL1 LSB\n");
--		goto out;
-+		return ret;
- 	}
--out:
--	mutex_unlock(&led->lock);
--	return ret;
++static void lp8860_disable_gpio(void *data)
++{
++	struct gpio_desc *gpio = data;
 +
-+	return 0;
- }
++	gpiod_set_value(gpio, 0);
++}
++
+ static int lp8860_probe(struct i2c_client *client)
+ {
+ 	int ret;
+@@ -284,6 +285,7 @@ static int lp8860_probe(struct i2c_client *client)
+ 	struct device_node *np = dev_of_node(&client->dev);
+ 	struct device_node *child_node;
+ 	struct led_init_data init_data = {};
++	struct gpio_desc *enable_gpio;
  
- static int lp8860_init(struct lp8860_led *led)
-@@ -392,7 +389,7 @@ static int lp8860_probe(struct i2c_client *client)
- 	led->client = client;
- 	led->led_dev.brightness_set_blocking = lp8860_brightness_set;
+ 	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+ 	if (!led)
+@@ -293,13 +295,11 @@ static int lp8860_probe(struct i2c_client *client)
+ 	if (!child_node)
+ 		return -EINVAL;
  
--	mutex_init(&led->lock);
-+	devm_mutex_init(&client->dev, &led->lock);
+-	led->enable_gpio = devm_gpiod_get_optional(&client->dev,
+-						   "enable", GPIOD_OUT_LOW);
+-	if (IS_ERR(led->enable_gpio)) {
+-		ret = PTR_ERR(led->enable_gpio);
+-		dev_err(&client->dev, "Failed to get enable gpio: %d\n", ret);
+-		return ret;
+-	}
++	enable_gpio = devm_gpiod_get_optional(&client->dev, "enable", GPIOD_OUT_LOW);
++	if (IS_ERR(enable_gpio))
++		return dev_err_probe(&client->dev, PTR_ERR(enable_gpio),
++				     "Failed to get enable GPIO\n");
++	devm_add_action_or_reset(&client->dev, lp8860_disable_gpio, enable_gpio);
  
- 	i2c_set_clientdata(client, led);
+ 	ret = devm_regulator_get_enable_optional(&client->dev, "vled");
+ 	if (ret && ret != -ENODEV)
+@@ -311,8 +311,6 @@ static int lp8860_probe(struct i2c_client *client)
  
-@@ -443,8 +440,6 @@ static void lp8860_remove(struct i2c_client *client)
- 			dev_err(&led->client->dev,
- 				"Failed to disable regulator\n");
- 	}
+ 	devm_mutex_init(&client->dev, &led->lock);
+ 
+-	i2c_set_clientdata(client, led);
 -
--	mutex_destroy(&led->lock);
+ 	led->regmap = devm_regmap_init_i2c(client, &lp8860_regmap_config);
+ 	if (IS_ERR(led->regmap)) {
+ 		ret = PTR_ERR(led->regmap);
+@@ -347,14 +345,6 @@ static int lp8860_probe(struct i2c_client *client)
+ 	return 0;
  }
  
+-static void lp8860_remove(struct i2c_client *client)
+-{
+-	struct lp8860_led *led = i2c_get_clientdata(client);
+-	int ret;
+-
+-	gpiod_direction_output(led->enable_gpio, 0);
+-}
+-
  static const struct i2c_device_id lp8860_id[] = {
+ 	{ "lp8860" },
+ 	{ }
+@@ -373,7 +363,6 @@ static struct i2c_driver lp8860_driver = {
+ 		.of_match_table = of_lp8860_leds_match,
+ 	},
+ 	.probe		= lp8860_probe,
+-	.remove		= lp8860_remove,
+ 	.id_table	= lp8860_id,
+ };
+ module_i2c_driver(lp8860_driver);
 -- 
 2.39.2
 
