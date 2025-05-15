@@ -1,254 +1,303 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2073.outbound.protection.outlook.com [40.107.22.73])
+Received: from clean103.mxserver.ro (clean103.mxserver.ro [176.223.125.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCFC202C2A;
-	Thu, 15 May 2025 07:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747294578; cv=fail; b=qnAqG2/vA9UaLAzXYqPzUq4GGOMz00lafPp6BdK22OuC7tNH0itYyfoWLZfhAbM4s26up7jo/ZlWCaUSRnKzZSq33jfOcXjxJT1SGy3VlBu+c3/PFZv/sKSX5AlP/WQfg3uTqf9XGYQTTXNjkXFAAUoXBr44INSauhD56F/lVRY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747294578; c=relaxed/simple;
-	bh=TDn7Fik/6LGb5lNoCQQ2ChlCU5US4jh09XBxUB8hmws=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jC4ImrM5hZ3dwdmkIxgVJ5xI5SlznaMgVrJKb6lnXgfj+XSLbbgZ/Y5xXeCYEHcaILfA36sQ3mf6nY2hk3TKnY6s9rsxceApPEuUlZJkamClflMaZhnuUwfgUcdnnT8m3TDDdDWEjsc68qAKun1jBd46HSJmDcYuE0KgqmXuqJY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=f9qeHLJW; arc=fail smtp.client-ip=40.107.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251F22874F6;
+	Thu, 15 May 2025 08:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.223.125.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747297048; cv=none; b=XTqIKe4qnuIAai7EXUWnWAX/aiMmTf5nTSvqGIzRCBHOsFC5pMKKsdJVrj0HB9UGSFv/N6Xx4BOlV9iU/qYeICkayRz/HRWywq0OoFgE6KjMAukA5DgtNxyJKSgukSB9LIbEorUyvKhhO2fWvrgMQnOszehL8vSoDhNxKsxYCpM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747297048; c=relaxed/simple;
+	bh=59EvuJKTItg/MQf3XkZzL1WEDvsOtpA/YLaURewi72g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SYPIwsCLWj0W6J99xTF6Qoo77EN0ru72AvIxq4SnyCHfNa3kKDROyygwLlpnKAKJOwkiqpPwCmnO35DcY+xYq/3CB35abvpCLezcO3uGwN7WkfgMJZgfG93r+LgxNa3daTF6og+OxUqYuSZroVo+4cDJ79hGs4aORIhE8n3TRg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=taladin.ro; spf=pass smtp.mailfrom=taladin.ro; dkim=pass (2048-bit key) header.d=taladin.ro header.i=@taladin.ro header.b=KRYbtfwK; arc=none smtp.client-ip=176.223.125.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=taladin.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=taladin.ro
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="f9qeHLJW"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TmiZbTjY5QRUqTSP6sW+R07El3rulExrlQFZC50IH75x1f7B76XLVBYcc4X7KBlSnimrFpLJO44xwkwf1kvl/+e/eH7g6e5DVEbB9qaW891i3WlVIzORwKSVSIX6No8/c4l1WXY3ydDsx3VdISE69lXiI4ZOF0PxNyO/trGYDeKYMfoTPGCKXATQnW94I3qYFShSGmlfCoPJIpjDEtlDwCI2h0WIZm9RLV09RmIEvv91uUJ5/L0tzXP/OrRSMMqmGMaE4jEvpTyjqIDr3PVm+NSbNvLBOqlGHNSHqDJNcKhuHLc/Q8Im3h2zCh94zrQO/hAcC70K3XW0BUlEYxFJHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nxw5jtT126AcP0WjWfaBOJkpSA3cOIhamuEig8HTBzg=;
- b=vCvGECHfChw7pFEBlFo32oDy3b0+QxMJht7XF/vg2ovOL5WgDhhQGz6hXaQiBao6pA2IeNrYsB/MJnEJ9gAFTVpe8YDn8aoQkl84maC7DoIgrsISuFGIsCGXV/jZ6CXDpV9icznI/x6pc3CCmiW9urbxbw353ggyqT3Vz4KAm9OdNsMlI7fvMwa4Qw8itJ7qE7Tuovny57a1E+UbrabFCJ4+0t4ChZ/ctgSQpBWKWhwFqRlcvGdzbbk1jSiN3pi0/8pDWs09mgiaX42LsIJfKRlCti0nQcsv5c1/d7gxd3Diz0ZtQWZRWW3/Uh0b7zPjgxej5RmqUXC1W72Zey40Qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nxw5jtT126AcP0WjWfaBOJkpSA3cOIhamuEig8HTBzg=;
- b=f9qeHLJWiDeH+h+XRAB8WcA/3ZZaHZP5PX8X0ch2aTJ47qga/jynk4cuOxn7nQqbEJcwLcawXr/VP5RqcDvhITjxFqqOk3QAmxFKN+yBq5lXpiHoFGNSFAAZw+oSIlDooP9RVgN6JPjILAv/X9iO4tlFmaWNycxc2LAkKuvC8OY=
-Received: from PAWPR02MB9281.eurprd02.prod.outlook.com (2603:10a6:102:330::10)
- by DU2PR02MB10109.eurprd02.prod.outlook.com (2603:10a6:10:497::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.28; Thu, 15 May
- 2025 07:36:08 +0000
-Received: from PAWPR02MB9281.eurprd02.prod.outlook.com
- ([fe80::87f6:1bcb:22bd:b050]) by PAWPR02MB9281.eurprd02.prod.outlook.com
- ([fe80::87f6:1bcb:22bd:b050%5]) with mapi id 15.20.8722.027; Thu, 15 May 2025
- 07:36:08 +0000
-From: Johan Adolfsson <Johan.Adolfsson@axis.com>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-CC: "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kernel
-	<Kernel@axis.com>, Johan Adolfsson <Johan.Adolfsson@axis.com>
-Subject: Re: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct
- multi_index
-Thread-Topic: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct
- multi_index
-Thread-Index: AQHbvnMzuEeJRwGRtkiTeZxACDeeErPRBBWAgAE4NHmAAFsqgIAAu44f
-Date: Thu, 15 May 2025 07:36:08 +0000
-Message-ID:
- <PAWPR02MB928130924556174EA494C97D9B90A@PAWPR02MB9281.eurprd02.prod.outlook.com>
-References: <20250506-led-fix-v1-1-56a39b55a7fc@axis.com>
- <5d34aec7-5027-4575-b860-afdf7b2c0757@gmail.com>
- <PAWPR02MB92815DC59F65E90956269EEC9B91A@PAWPR02MB9281.eurprd02.prod.outlook.com>
- <449cf572-f637-42c9-b804-aaf74178e96b@gmail.com>
-In-Reply-To: <449cf572-f637-42c9-b804-aaf74178e96b@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAWPR02MB9281:EE_|DU2PR02MB10109:EE_
-x-ms-office365-filtering-correlation-id: 7e90342d-68ce-49d4-a888-08dd93832893
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?+Dfh4B1ANO0ljrtyCgB8QRNemDHxdK72gQ4eFHbFJrvGLXWKpx8kdHDuDF?=
- =?iso-8859-1?Q?THCZ0a1mjFT6XQoV3ci3ugSevBOiTMv1TjVNutEK5OymikO6gjm+SIcDnX?=
- =?iso-8859-1?Q?YcmUgKJ0T3i5Tubmpua5KC02XqZR4oJ8ydoGGeKZ6sE7j6mUHdekJMl0h+?=
- =?iso-8859-1?Q?gRlM1dex6x+p1l4ENIgztp0NnmrnHoyZcD8OlD2jkORZhkmrfve6qadWmu?=
- =?iso-8859-1?Q?PcP9AtWQBG6AJTisSdPcXIsFr2o865+UIVAZYOv6DIbH5Yzj5wbg9r+hfQ?=
- =?iso-8859-1?Q?dbvEAJ1Cbu59OrAQjOwwtqZMBAXRD5zQnQKfWOJrZeUqHyHvy8rltOjSA8?=
- =?iso-8859-1?Q?EXTgtJMaTEW7PXjRmRyvG7JY0jdFOQrPC0+V3RQbwwHGj6Pr1aFzHjy1LR?=
- =?iso-8859-1?Q?0tbB7Zb8GzZ9ePe59DSmq/Vw0qg40o8ceRWyL86CBn7MRU3Zy9oYFSpkIk?=
- =?iso-8859-1?Q?bdiv+3VtrD80gB9Wdy/obTCXzfqOyMz5ePtQaFfqXyQbfgMQnRi2yoJ/FA?=
- =?iso-8859-1?Q?/m3Aef7dxFuuGw4FC3159MrS2znuQA0GRPz4Imir4N6Vu36zpfrikQI5UY?=
- =?iso-8859-1?Q?ZhpNUUYEYpBUMhTLqyPTRMUehyt7gISzEQl9Iv5RLWFeazWLtNwIeK88Gd?=
- =?iso-8859-1?Q?c5fWWxjZ83RHbJBypocwEk2dHnC5FnAVo/+N9ZUAV6XQHmwH0j/0dPx1ny?=
- =?iso-8859-1?Q?5BL1d5Iy+Y8elWyL7XTnWOXcmwcUItpr0jtQSM+cc6NAixcBsQg8JHweKW?=
- =?iso-8859-1?Q?phYslyEiF23Knn0Y+BH0QPsnRW/7CItQJbJU0ZkNHQldt1wSmVTcqs2TTh?=
- =?iso-8859-1?Q?xRfSkMISnCITlshp5WWQQNFD1WfxhV4Lo0hJ7R9gTwck5AkR+vMPFr6Q0q?=
- =?iso-8859-1?Q?pBOixDvG3D1Vk1pNrREbydqTwk8yda2uehoeDIF4T6r8sR1IuI8YIULn+K?=
- =?iso-8859-1?Q?GWpuYeVkTgw4id/hJH4L7pxRCEpo9opzRhc2qzs2HqpiOcnQgArP3PmKtI?=
- =?iso-8859-1?Q?aG1ySOYTWfjv0BDtGgsbRUyfBvodBKNH4hNUN6fhmAwcSYwk1h/lLpP6oc?=
- =?iso-8859-1?Q?bpAk341NGkO2aUHrloMtRQk3WCzrm9IPcb4skEAVkeytQhHqsSHdeHZAUK?=
- =?iso-8859-1?Q?toKHs0O4Qyza94fyBcGKON7bp6bAA7up8VBkja7gqcWJJH7bk963XQsWyr?=
- =?iso-8859-1?Q?ropmQEYTthU0NrV5FAJDNqyj13EqGYFZgasS3Q6R3rbu4nb38nSDGgybrB?=
- =?iso-8859-1?Q?KHU0iROofd4Uesr9zEEL1/MQT++7um4bLRkBqB2CvKQcr9Eoyxz9Too5dZ?=
- =?iso-8859-1?Q?jvSxoQ8Yt/kuh0ESHixogfkL83ptejO7lUuNSgMolmAB+xnAlevywhzSP6?=
- =?iso-8859-1?Q?kuh1duTwjQd9/mdx8bSmof2OhomLdI8r419IXzLQctqrJkSaHNHGLEXw3p?=
- =?iso-8859-1?Q?LWShnLpN4hjE5g7mRNX+SAOXb9S64UjkZJt7D2P93xkW8DQpIEAhlUw9Ix?=
- =?iso-8859-1?Q?8wpnYR1ys9ycAUJegUMsfQE5CtSH+hYWV5fDrw9CjpXA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR02MB9281.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?oMs4X6EIfMI/TAaryUtQFHpXkRSH2e5xtn2r7ffENTkCIob294SXztRHrh?=
- =?iso-8859-1?Q?/9tF2pJknQi7XMC7/kVxVn0dRD+G8ZYNBPPbPLz0z7LFyS9qVqfEonpbIJ?=
- =?iso-8859-1?Q?d3LbJKtBO9udyCGID5wyqU5XorwERTuEvxcywx74VfvzZRPOeZxt5QRYeQ?=
- =?iso-8859-1?Q?cGzz3v+aGsDNG8tEySnceI3Zphc7zTD6EdtHMq2J2cIla/3EV+UKVK5FHr?=
- =?iso-8859-1?Q?nZrOm8bp1g3FVm+tQGDlwBHdNK6wuBvWNUC9ZDNOAF9EY1xRAqeA7HQ29o?=
- =?iso-8859-1?Q?uIykayJmoOhPxcZ5ZnFl3nNCI6ppO+B8WHHx6Sh5edQFdSfGlbQyNRdJXs?=
- =?iso-8859-1?Q?JVTusTqRm0GPELna5otYmuODcxBtNBbX3VO8We3luayaCtdLLpUesTPWMf?=
- =?iso-8859-1?Q?u0jPbaARR72lpsRcVtOXxu360da4EkI1X7DrWldcolYTGnLqZmDCXXp8gI?=
- =?iso-8859-1?Q?aXTRpBkYkLtAm7+MAynI5IOWS+4sXLqw9Shi6VrBYSm1JP6jqJ6VQXOOYZ?=
- =?iso-8859-1?Q?sYG+zpTXdgpIpd6ohM/93+OrE1p6hxtq5QyshKdpGHTJtFwvEnNfaYNR7B?=
- =?iso-8859-1?Q?BVSRrPewxen3Uf3qeHT8/P5K1I0lCL+NOzZPmND2sAzpi6/jqE3I7aqvpr?=
- =?iso-8859-1?Q?Cksxpc8YG1PhwdLURL3DRQ9VZXfEIcEPsKQee8WKDyaVvUauDByWzhQ4oy?=
- =?iso-8859-1?Q?8p+Bo29oq91UMZDMoI5gn34Ab29hb1l9E7uwuYqHfN9USryeNIgfZYFMtR?=
- =?iso-8859-1?Q?Tis/18GgAggo/p3NYUdybvU3l/99dVj9zg+4m7TFlrJrpWwJjE4pXLjOd3?=
- =?iso-8859-1?Q?vIgSKF6iSfznkvzpnE5IO9jNO5JBaxTZPFSXa0oWCqsYNMIiSPXZUZF6hy?=
- =?iso-8859-1?Q?xLJzH6hY1kxlF3KAXe4cJvVzJ07fep8RMsYweHXi+6RXckpSSvBx7yUhtR?=
- =?iso-8859-1?Q?sXLiziF3ezX3IpSHWJ7FwvivLe3prmG3DvWrCzn+yuYENFsX6zjbp6aNGp?=
- =?iso-8859-1?Q?CPdOo07qiQQDN34xwp+TonIhsR6Gn+aAFnvoxOChPsiWOs6T+4wgz96Uoi?=
- =?iso-8859-1?Q?SC2f9lL30IPU4P+Gyv7ZAQMWOquce1wKrFaGVg2WwobQnqlYrMSBlft+eN?=
- =?iso-8859-1?Q?KhVf2GbWh3UhoIkA03iAHpX9d3IAY/HfiFI0vYCenoikoL4kEjlC+PeROY?=
- =?iso-8859-1?Q?7JLHmuCQ0Em0fdc5q+xlq+4GEuJ02RLtpkent+ZiVfpulVZEI03M8pxT5l?=
- =?iso-8859-1?Q?t/OY4c/1EXO0aD6VyYeivk4W2fFC45hUY60RK+iyUIPOMJyKS7j4i6/4Cs?=
- =?iso-8859-1?Q?ymnA4DrIvpEaA+dhiwseEBgAeha30EIE5n5KnWTyo/Lz/g4C3NT/j6zcJC?=
- =?iso-8859-1?Q?V3c1vTjZvLjLX2erRvW6IiW1uczJYvgvi0mrfb65I/VTxhTVjCxGqsXjhv?=
- =?iso-8859-1?Q?9QL5FeyBAKXwTEWMBjW0020+1DzCeAKtJeBP7ilns6Ty+oOqI2XdCAPCnU?=
- =?iso-8859-1?Q?qze8I9hV1Rmq0tsQtrkhxbhg0AnT/ol+3OlxS5fEQZ2R8Ogvw5kM72TrR9?=
- =?iso-8859-1?Q?xamoA3ilwp+r85iZzIDNiMG/rTQmpsVKDNKSj5GB4JVWt25m8KgDbU2BQS?=
- =?iso-8859-1?Q?zLh/fPgv3kzh0=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=taladin.ro header.i=@taladin.ro header.b="KRYbtfwK"
+Received: from cloud347.c-f.ro ([185.236.86.218])
+	by cleanserver1.mxserver.ro with esmtps (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <asoponar@taladin.ro>)
+	id 1uFTmD-00H1kv-CP; Thu, 15 May 2025 04:17:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=taladin.ro;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=5qQNra+2Cp8u7mp46CFqnKOn4bpY4tOymWLSppXXVgQ=; b=KRYbtfwKrP5JWyHDZyJ+LsM4TM
+	ko5g12ztP9SwDdjndz/buqYuuXqDtqQKnyiflgq1UFxBOSmPhitIHUzGy7mnvtCpjhWfUFb4HS/tJ
+	42duJd6hAlw30bu+iN8P2nlho9hCXMaOZRAr2n5UDKEXPuNynFscveZyrfzzFXNsIFO/7gD3iA8ah
+	6q5P4UCrT4W51CgWGbrMQt8l9K9UUD2b/O4TrMOVwzdr+cCYBeOKx827YWv6uPZdNtR9lu9Yeznpo
+	xU4hKjixEQ3bnAo/kHGe6LBvh3j5b4IDagHVH4teVi4MqB7Pq1UaomwKl/5hiUEDLeyiDWHRT5TNA
+	UTH0G8mA==;
+Received: from [109.166.137.172] (port=55940 helo=localhost)
+	by cloud347.c-f.ro with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <asoponar@taladin.ro>)
+	id 1uFTm3-00000006qMV-1X5D;
+	Thu, 15 May 2025 11:17:12 +0300
+From: Alexandru Soponar <asoponar@taladin.ro>
+To: linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Cc: jdelvare@suse.com,
+	linux@roeck-us.net,
+	jic23@kernel.org,
+	pavel@ucw.cz,
+	lee@kernel.org,
+	baocheng.su@siemens.com,
+	wim@linux-watchdog.org,
+	tobias.schaffner@siemens.com,
+	angelogioacchino.delregno@collabora.com,
+	benedikt.niedermayr@siemens.com,
+	matthias.bgg@gmail.com,
+	aardelean@baylibre.com,
+	contact@sopy.one,
+	Alexandru Soponar <asoponar@taladin.ro>
+Subject: [PATCH 16/16] lib: move find_closest() and find_closest_descending() to lib functions
+Date: Thu, 15 May 2025 11:13:32 +0300
+Message-ID: <20250515081332.151250-17-asoponar@taladin.ro>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250515081332.151250-1-asoponar@taladin.ro>
+References: <20250515081332.151250-1-asoponar@taladin.ro>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAWPR02MB9281.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e90342d-68ce-49d4-a888-08dd93832893
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2025 07:36:08.7202
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0Tb+E6Z0HaPk46/rvkClaMm4cXIrO4ya1YRO0Hm6uSyepqCwqy7cJK2fr9qCBo4N
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR02MB10109
+Content-Transfer-Encoding: 8bit
+X-SpamExperts-Domain: cloud347.c-f.ro
+X-SpamExperts-Username: 185.236.86.218
+Authentication-Results: mxserver.ro; auth=pass smtp.auth=185.236.86.218@cloud347.c-f.ro
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.000242666053139)
+X-Recommended-Action: accept
+X-Filter-ID: Pt3MvcO5N4iKaDQ5O6lkdGlMVN6RH8bjRMzItlySaT98ZpYtbjLMlHLIMLfKiMBSPUtbdvnXkggZ
+ 3YnVId/Y5jcf0yeVQAvfjHznO7+bT5w1OL79HMxE022P+rQy8YAdcSeERs4TOTnIH1kc1IWc5TSx
+ S75yz9IFZiY7BarU/NrpK8SEOwGmfn6ucAKqn/OHRh3BqzFaEnAEj4UixLJBjVNiLZt/QXQnOBRD
+ +jq1HsIBmHTFdhqXZEtguZY7iGKpkcJnJKaJfT+dw1udmv00tbIRNtoyOobb3xnDyRRylAVTYi2b
+ f0F0JzgUQ/o6tR7C8pLPCtTiVLo0r89ClJHDKhDGKgJ+T00JeCnHBmMdB1eMZAyYlfUtEN4pUyes
+ jVRntA/J5DcfwvG53FyVviDO9UET3GKmqv1jT0lY+AQz8YX4CVph7ctC7tRH2SPTQJ/0klTuXKq/
+ B9rqRWsYzNfBLt79i78aPHyWnIqxGMxPZotYvH/es1vXuByXo2bkrYMqq0x5CzaUoJIoBUQayHle
+ UvbvCQmh9x4kn6NeQcRkc6G+OgAcq5x+BzhRyg9rYO6I0H7Q2OEpckvWJAOmdJd77Z9vwc+QHB+X
+ +u7aTqYHtT2CBuxNPBc9JM2jck1NnIBf0tvflhq7Xjhll72AYgnW/6M0ftSpvLIx+X1vKami8KF6
+ jWQ71uVNIY/EFPWeDmcZuFRQy1vmjjPiYw8fUCp0/qY6cmSW9oUDdvKuTRfTGZ6f8nTXoYFaQ71l
+ mMti8uxA0gKVmIzBXtbLDVvAQ/KVNbF0n38s4PnjIiWSgo0iehuSAN5VcIfsMVILjVAz6RZsCHxD
+ lgOJwEwCFaF+62b2lf1UUDu9jECN1V/lwmsioRLmNJoHOZOE/9e5UD715p61XAQw85DCXa0iAPEd
+ fYyrF5wMRSLGyY+i0m2IxQLxQUxLMkCVXN63lz38Up+2UgeFSDBPqdRoFsq0hfzdx0oxkgNI/jhY
+ WFhu7VV+HdWjdZLlmQ5z83qEVVG/6RJ+BW7FmGcwL889DSW2cZWGkIYVQAbHnYkWUz1gRIjAiMvi
+ vM7um7t0SVa5NVZ2g1u6DnOpqk1nwAzTSgytNKIH5lfAuQc8I07FTFcjpdfX/Jcr87en7cKbI0NU
+ afdkQMG+6qjtXoANVR89VM6f75a5kmRIbungV7ywXD8VtmM8wef5C6IkqMFhROX1HYRo9Sm1kZOW
+ saz62DSUUd/fn3Ix/aSqJVglEtnFggTvi4y/qO0sxBxzHDeqqFz43py4SDhdaHkWxEWqfohU+1d2
+ sh7IKZpXLgBCJ476nn5Gmr/PK603nEEgvmn7Dzq8wsrwxhZMoHvqxJYqN+GmyxwR+V15PgePOPPI
+ vtB/lrJsWW29FRnUbXCk3//yGA2OaEkyEoP0Kl1YERWeKKG4PAQYNyavp7c49JwbmBalBK3QvTzZ
+ aymz/kAx9sNOIdFDvUNZLdaRhCZaMx8xtwV1+Gg8ihl6LJV8o3nXKu/l5TM8iMLe4AKyoGlZj2VA
+ 3aW/vPi2AMAbWLs/EIKEbeDIxNYIJ7Ews1OEan6m+UeFXprlCOm3BAEbJtATHIdhc/Osc/lXM+l8
+ 06U7GxUAPGlXms+D1TI22+vIvtmOpB8mDzWv8vBwVi5XkC8ewLVRqANj6mzlzL3VH5WM/aCyI5/o
+ yhoezeIJy3L+cB4hBppwR1r+Bof9KZqCMQkUV4VT4TerS/vbL3R5w07g
+X-Report-Abuse-To: spam@cleanserver1.mxserver.ro
+X-Complaints-To: abuse@cleanserver1.mxserver.ro
 
-Hi Jacek,=0A=
-=0A=
->From: Jacek Anaszewski <jacek.anaszewski@gmail.com>=0A=
->Sent: Wednesday, May 14, 2025 21:55=0A=
->To: Johan Adolfsson; Lee Jones; Pavel Machek=0A=
->Cc: linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; Kernel=0A=
->Subject: Re: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct mult=
-i_index=0A=
->=0A=
->Hi Johan,=0A=
->=0A=
->On 5/14/25 16:34, Johan Adolfsson wrote:=0A=
-> From: Jacek Anaszewski <jacek.anaszewski@gmail.com>=0A=
-> Sent: Tuesday, May 13, 2025 21:52=0A=
-> To: Johan Adolfsson; Lee Jones; Pavel Machek=0A=
-> Cc: linux-leds@vger.kernel.org; linux-kernel@vger.kernel.org; Kernel=0A=
-> Subject: Re: [PATCH RFC] leds: leds-lp50xx: Handle reg to get correct mul=
-ti_index=0A=
-> ..=0A=
->>>                        }=0A=
->>> +                     ret =3D fwnode_property_read_u32(led_node, "reg",=
- &multi_index);=0A=
->>> +                     if (ret) {=0A=
->>> +                             multi_index =3D num_colors;=0A=
->>=0A=
->> Why not to fail if 'reg' parsing fails?=0A=
->> It is marked required in DT bindings [0].=0A=
->=0A=
->> I didn't want to start failing if reg is missing since it has never been=
- handled until now, despite what the doc says since 2022...=0A=
->=0A=
->There is one in-tree user [0], and we will need to patch it as well,=0A=
->because it uses reg 0,1,2 for each RGB LED module, instead of iout=0A=
->numbers as it will be after your change.=0A=
-=0A=
-Not sure i follow you here. What works for me is starting with reg =3D <0> =
-for the childs of each bank (multi-led).=0A=
-The register (maps to iout I guess) is calculated based on led_number * 3 +=
- i where i is the offset as well as the color_index in subled_info (reg).=
-=0A=
-So I don't think additional changes to that dts is needed.=0A=
-=0A=
->=0A=
->We will need to also state clearly in the bindings that 'reg' property=0A=
->maps to iouts for the non-banked RGB LED modules.=0A=
-=0A=
-Not sure it actually does, haven't really tested that, or at least not gott=
-en it to work as I expected. =0A=
-For the non-rgb led in the product I requested those to be on the first pin=
- on each bank (wasting 2 pins per bank),=0A=
-since I couldn't figure out how to configure it in another way when prototy=
-ping.=0A=
-=0A=
-Since the 3 outputs per bank share a single brightness setting, it could co=
-mplicate things as well.=0A=
-(And we didn't need all the pins anyway)=0A=
-=0A=
->For banked RGB LED modules it is more tricky, because there is one=0A=
->LED multicolor class device created for them. Probably to be correct=0A=
->we would need make the 'reg' properties in the subnodes also arrays=0A=
->reflecting iouts that will be governed by BANK_A_Color, BANK_B_Color,=0A=
->and BANK_C_Color registers respectively. And DT parser in the driver=0A=
->would need to enforce proper iout definition for the banked modules=0A=
-=0A=
->E.g. the multi-led@3 node from the example should look like below:=0A=
->=0A=
->             multi-led@3 {=0A=
->                 #address-cells =3D <1>;=0A=
->                 #size-cells =3D <0>;=0A=
->                 reg =3D <0x3>, <0x4>, <0x5>;=0A=
->                 color =3D <LED_COLOR_ID_RGB>;=0A=
->                 function =3D LED_FUNCTION_STANDBY;=0A=
->=0A=
->                 led@9 {=0A=
->                     reg =3D <0x9>, <0xc>, <0xf>;=0A=
->                     color =3D <LED_COLOR_ID_RED>;=0A=
->                 };=0A=
->=0A=
->                 led@a {=0A=
->                     reg =3D <0xa>, <0xd>, <0x10>;=0A=
->                     color =3D <LED_COLOR_ID_GREEN>;=0A=
->                 };=0A=
->=0A=
->                 led@b {=0A=
->                     reg =3D <0xb>, <0xe>, <0x11>;=0A=
->                     color =3D <LED_COLOR_ID_BLUE>;=0A=
->                 };=0A=
->=0A=
->=0A=
->[0] arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji.dts=0A=
-=0A=
-Not sure about that, I dont' think we handle an array of reg values within =
-the led node.=0A=
-=0A=
->--=0A=
->Best regards,=0A=
->Jacek Anaszewski=0A=
-=0A=
-Best regards=0A=
-/Johan=0A=
-=0A=
-=0A=
+Move the utility macros find_closest() and find_closest_descending()
+from inline macros to proper library functions in lib/.
+
+Signed-off-by: Alexandru Soponar <asoponar@taladin.ro>
+---
+ include/linux/find_closest.h | 13 +++++++
+ include/linux/util_macros.h  | 61 +------------------------------
+ lib/Makefile                 |  2 +-
+ lib/find_closest.c           | 71 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 86 insertions(+), 61 deletions(-)
+ create mode 100644 include/linux/find_closest.h
+ create mode 100644 lib/find_closest.c
+
+diff --git a/include/linux/find_closest.h b/include/linux/find_closest.h
+new file mode 100644
+index 000000000000..28a5c4d0c768
+--- /dev/null
++++ b/include/linux/find_closest.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Find closest element functions
++ */
++#ifndef _LINUX_FIND_CLOSEST_H_
++#define _LINUX_FIND_CLOSEST_H_
++
++#include <linux/types.h>
++
++unsigned int find_closest(int x, const int *a, unsigned int as);
++unsigned int find_closest_descending(int x, const int *a, unsigned int as);
++
++#endif /* _LINUX_FIND_CLOSEST_H_ */
+diff --git a/include/linux/util_macros.h b/include/linux/util_macros.h
+index 825487fb66fa..478d4821f2d1 100644
+--- a/include/linux/util_macros.h
++++ b/include/linux/util_macros.h
+@@ -3,66 +3,7 @@
+ #define _LINUX_HELPER_MACROS_H_
+ 
+ #include <linux/math.h>
+-
+-/**
+- * find_closest - locate the closest element in a sorted array
+- * @x: The reference value.
+- * @a: The array in which to look for the closest element. Must be sorted
+- *  in ascending order.
+- * @as: Size of 'a'.
+- *
+- * Returns the index of the element closest to 'x'.
+- * Note: If using an array of negative numbers (or mixed positive numbers),
+- *       then be sure that 'x' is of a signed-type to get good results.
+- */
+-#define find_closest(x, a, as)						\
+-({									\
+-	typeof(as) __fc_i, __fc_as = (as) - 1;				\
+-	long __fc_mid_x, __fc_x = (x);					\
+-	long __fc_left, __fc_right;					\
+-	typeof(*a) const *__fc_a = (a);					\
+-	for (__fc_i = 0; __fc_i < __fc_as; __fc_i++) {			\
+-		__fc_mid_x = (__fc_a[__fc_i] + __fc_a[__fc_i + 1]) / 2;	\
+-		if (__fc_x <= __fc_mid_x) {				\
+-			__fc_left = __fc_x - __fc_a[__fc_i];		\
+-			__fc_right = __fc_a[__fc_i + 1] - __fc_x;	\
+-			if (__fc_right < __fc_left)			\
+-				__fc_i++;				\
+-			break;						\
+-		}							\
+-	}								\
+-	(__fc_i);							\
+-})
+-
+-/**
+- * find_closest_descending - locate the closest element in a sorted array
+- * @x: The reference value.
+- * @a: The array in which to look for the closest element. Must be sorted
+- *  in descending order.
+- * @as: Size of 'a'.
+- *
+- * Similar to find_closest() but 'a' is expected to be sorted in descending
+- * order. The iteration is done in reverse order, so that the comparison
+- * of '__fc_right' & '__fc_left' also works for unsigned numbers.
+- */
+-#define find_closest_descending(x, a, as)				\
+-({									\
+-	typeof(as) __fc_i, __fc_as = (as) - 1;				\
+-	long __fc_mid_x, __fc_x = (x);					\
+-	long __fc_left, __fc_right;					\
+-	typeof(*a) const *__fc_a = (a);					\
+-	for (__fc_i = __fc_as; __fc_i >= 1; __fc_i--) {			\
+-		__fc_mid_x = (__fc_a[__fc_i] + __fc_a[__fc_i - 1]) / 2;	\
+-		if (__fc_x <= __fc_mid_x) {				\
+-			__fc_left = __fc_x - __fc_a[__fc_i];		\
+-			__fc_right = __fc_a[__fc_i - 1] - __fc_x;	\
+-			if (__fc_right < __fc_left)			\
+-				__fc_i--;				\
+-			break;						\
+-		}							\
+-	}								\
+-	(__fc_i);							\
+-})
++#include <linux/find_closest.h>
+ 
+ /**
+  * is_insidevar - check if the @ptr points inside the @var memory range.
+diff --git a/lib/Makefile b/lib/Makefile
+index f1c6e9d76a7c..e8e738c9ced8 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -35,7 +35,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+ 	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
+ 	 nmi_backtrace.o win_minmax.o memcat_p.o \
+-	 buildid.o objpool.o iomem_copy.o
++	 buildid.o objpool.o iomem_copy.o find_closest.o
+ 
+ lib-$(CONFIG_UNION_FIND) += union_find.o
+ lib-$(CONFIG_PRINTK) += dump_stack.o
+diff --git a/lib/find_closest.c b/lib/find_closest.c
+new file mode 100644
+index 000000000000..d481625cae9d
+--- /dev/null
++++ b/lib/find_closest.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Find closest element functions
++ *
++ * Based on previous util_macros.h implementation
++ */
++
++#include <linux/find_closest.h>
++#include <linux/module.h>
++
++/**
++ * find_closest - locate the closest element in a sorted array
++ * @x: The reference value.
++ * @a: The array in which to look for the closest element. Must be sorted
++ *  in ascending order.
++ * @as: Size of 'a'.
++ *
++ * Returns the index of the element closest to 'x'.
++ */
++unsigned int find_closest(int x, const int *a, unsigned int as)
++{
++	unsigned int array_size = as - 1;
++	int mid_x, left, right;
++	unsigned int i;
++
++	for (i = 0; i < array_size; i++) {
++		mid_x = (a[i] + a[i + 1]) / 2;
++		if (x <= mid_x) {
++			left = x - a[i];
++			right = a[i + 1] - x;
++			if (right < left)
++				i++;
++			break;
++		}
++	}
++
++	return i;
++}
++EXPORT_SYMBOL_GPL(find_closest);
++
++/**
++ * find_closest_descending - locate the closest element in a sorted array
++ * @x: The reference value.
++ * @a: The array in which to look for the closest element. Must be sorted
++ *  in descending order.
++ * @as: Size of 'a'.
++ *
++ * Similar to find_closest() but 'a' is expected to be sorted in descending
++ * order. The iteration is done in reverse order, so that the comparison
++ * of 'right' & 'left' also works for unsigned numbers.
++ */
++unsigned int find_closest_descending(int x, const int *a, unsigned int as)
++{
++	unsigned int array_size = as - 1;
++	int mid_x, left, right;
++	unsigned int i;
++
++	for (i = array_size; i >= 1; i--) {
++		mid_x = (a[i] + a[i - 1]) / 2;
++		if (x <= mid_x) {
++			left = x - a[i];
++			right = a[i - 1] - x;
++			if (right < left)
++				i--;
++			break;
++		}
++	}
++
++	return i;
++}
++EXPORT_SYMBOL_GPL(find_closest_descending);
+-- 
+2.49.0
+
