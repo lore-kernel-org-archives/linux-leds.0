@@ -1,133 +1,108 @@
-Received: from clean110.mxserver.ro (clean110.mxserver.ro [89.46.7.161])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB371C4A20;
-	Thu, 15 May 2025 09:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.46.7.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1DF4B1E4F;
+	Thu, 15 May 2025 09:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747300421; cv=none; b=S/FyFf0+DTKSO5h/xdrKy2gFXdq/cD9RqPZLm8MYyQHEnx9kJVf3jwKuHY+tBl8t4/ljpqbgH71i3WJXdKiAZzg+WQD7iCEPjwqrF+KTk2S8XLgqpJPKhfPCH4MQaWmZQCEMqwiqj7LK0TDD6vS3sSj0+2IxwSpL+ADrxShFYqY=
+	t=1747300561; cv=none; b=rO1h/I3vn6sfN2+Is1edANwBhvufZSvALX25GazqHrM/Lgpq4/xAcgPdx/FSO4mnNhFeIQjxlRP7npyfXf6tWbhyD7ar5Wk/Uu1gATRAY/aoF6SyKpHWdYBcEA9Ln3Smz/Syu5sGTMS+E2/H0ZFvwsLt1X6U5l8ltKIiw9Js7KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747300421; c=relaxed/simple;
-	bh=SFsEIdrP6hHN6X/ZQ+xkzbfpWgoSLqIaX+iq6UcXdr0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SWewFuXZLi61Ory/Kyz6D+pwYJOjVap25g1m/NU9EG/xRy5f6rimoV9ye1f4eji5zcfgbXlzIjdyK6Gv90KNThpghzbMZiuPpOICuan51Kw0bfrR3k+TKDpYf2I7WETyLMZaVeOXF4/VEL/LQs/aFk/gspjgA1DF5YmSid1QAX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=taladin.ro; spf=pass smtp.mailfrom=taladin.ro; dkim=pass (2048-bit key) header.d=taladin.ro header.i=@taladin.ro header.b=MWI1dMT3; arc=none smtp.client-ip=89.46.7.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=taladin.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=taladin.ro
+	s=arc-20240116; t=1747300561; c=relaxed/simple;
+	bh=OrRGwHR3T+yZqMwu+ZI2ZRtcEyZ6s3tyQEG8nevlPZM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZCmyzndM194YfGOoOiIf17jgRUZC9eGig7nkgLjjvoAleMNiegSVcXMZSTMRwmYALX9AJZX4+zm5L36sJ198l3qUVnRfZASZblAV53xVKRExXbg32DmxWxe0pgPgqkEZDEHkxonXg0tAPRhH3KAEbj3KPgYjRQa6276PIZwvD1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+xmHdrS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=taladin.ro header.i=@taladin.ro header.b="MWI1dMT3"
-Received: from cloud347.c-f.ro ([185.236.86.218])
-	by cleanserver1.mxserver.ro with esmtps (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <asoponar@taladin.ro>)
-	id 1uFTly-00H1IU-5p; Thu, 15 May 2025 04:17:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=taladin.ro;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=sEpO7OpjVT0XSxus/yyrP/Dip45qs8iHo0xmypk/VOA=; b=MWI1dMT3PBKFALb4aPj0hQnWaA
-	PZBTh3wNFli8mSt049q7OxBdbs7loxwvP3flPpdNU9gOVM9BtwbhPNdGx73i7VFtTtIBgkHirHoIA
-	wFQHuOLy1hbVTXrxqwvIBM+zRlfSf0dyIqoMn3NDl4DIAqf13bMUXFeqYZE1/oHQOVqVOqSda2Y8D
-	2GS1pjNaDHkSoRdhzvfotTMzLOiun1mYJIy56yM9BlVQwRtPFeryON03ZfriMbIqCf/8OVKiPl25q
-	x1UcSV9QkoabAWeP99RaVXBZmjtxttsWHzQfZsa5dNRhP9/accGab9XAwueGTVWYl0jZbIZiQLDVT
-	glChjVsQ==;
-Received: from [109.166.137.172] (port=37876 helo=localhost)
-	by cloud347.c-f.ro with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <asoponar@taladin.ro>)
-	id 1uFTll-00000006q85-3vHx;
-	Thu, 15 May 2025 11:16:54 +0300
-From: Alexandru Soponar <asoponar@taladin.ro>
-To: linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	jic23@kernel.org,
-	pavel@ucw.cz,
-	lee@kernel.org,
-	baocheng.su@siemens.com,
-	wim@linux-watchdog.org,
-	tobias.schaffner@siemens.com,
-	angelogioacchino.delregno@collabora.com,
-	benedikt.niedermayr@siemens.com,
-	matthias.bgg@gmail.com,
-	aardelean@baylibre.com,
-	contact@sopy.one,
-	Alexandru Soponar <asoponar@taladin.ro>
-Subject: [PATCH 02/16] hwmon: emc1403: Fix type incompatibility with non-macro find_closest
-Date: Thu, 15 May 2025 11:13:18 +0300
-Message-ID: <20250515081332.151250-3-asoponar@taladin.ro>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250515081332.151250-1-asoponar@taladin.ro>
-References: <20250515081332.151250-1-asoponar@taladin.ro>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+xmHdrS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910BAC4CEE7;
+	Thu, 15 May 2025 09:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747300560;
+	bh=OrRGwHR3T+yZqMwu+ZI2ZRtcEyZ6s3tyQEG8nevlPZM=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=a+xmHdrSv1DsG7cHKp5gfpRKPGPlWx9Re+rlqjzahK1ktoxpHQ88pc9vWAO+QirnJ
+	 DXcxODiswqIaMKxgqM2kNchIKTTUPknbdUaswq3q8xtEG3DHgUgNfT+TDiLoSrHv90
+	 C1x2roa88lHPh0jlMkKh54ssNLDQYnF5a228UWMab2YdgoFLKTaoykLR0jmmw1usWG
+	 ukkrM3r0ZQY7YhZKc5+i5RoFbRyJ+P3j36uqvNn6/JL5HKJY4H0qRH5gCK031NJZE8
+	 L8g95FNrWke9PIVfyckSo3Pyt3uZ488EcUc9UIMOHLGSX5sPuy7IFGFm7SQ3PPPTE7
+	 qlrUILqtw2MRA==
+Date: Thu, 15 May 2025 10:15:55 +0100
+From: Lee Jones <lee@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Pavel Machek <pavel@kernel.org>,
+	linux-leds <linux-leds@vger.kernel.org>
+Subject: Re: [PATCH v3] ARM: dts: renesas: r9a06g032-rzn1d400-db: describe
+ Debug LEDs
+Message-ID: <20250515091555.GE2936510@google.com>
+References: <20250417093256.40390-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWN-QDrmogJ+7x8sdc6UmDAoF+0z0hZ3SQ7ajN2V2+mSw@mail.gmail.com>
+ <aBxjvofZCEi_1Fna@shikoro>
+ <20250508134930.GM3865826@google.com>
+ <18b78845-3f01-444d-835a-aa39f84a2689@gmail.com>
+ <CAMuHMdW1Hn51R-6MstS1Ojuu-CR0eNs504YEruPbe2L-H_zBHA@mail.gmail.com>
+ <ebb257c6-33f9-4841-b9af-c2744b59e513@gmail.com>
+ <20250514152852.GA2936510@google.com>
+ <a26c7cce-df72-47a7-b501-1b66faa3e38f@gmail.com>
+ <aCWlenAtx2uaQhcE@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SpamExperts-Domain: cloud347.c-f.ro
-X-SpamExperts-Username: 185.236.86.218
-Authentication-Results: mxserver.ro; auth=pass smtp.auth=185.236.86.218@cloud347.c-f.ro
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00463308261943)
-X-Recommended-Action: accept
-X-Filter-ID: Pt3MvcO5N4iKaDQ5O6lkdGlMVN6RH8bjRMzItlySaT/AbQevlWAh+RflL9yAhNbrPUtbdvnXkggZ
- 3YnVId/Y5jcf0yeVQAvfjHznO7+bT5w1OL79HMxE022P+rQy8YAdcSeERs4TOTnIH1kc1IWc5TSx
- S75yz9IFZiY7BarU/NrpK8SEOwGmfn6ucAKqn/OHRh3BqzFaEnAEj4UixLJBjVNiLZt/QXQnOBRD
- +jq1HsIBmHTFdhqXZEtguZY7iGKpkcJnJKaJfT+dw1udmv00tbIRNtoyOobb3xnDyRRylAVTYi2b
- f0F0JzgUQ/o6tR7C8pLPCtTiVLo0r89ClJHDKhDGKgJ+T00JeCnHBmMdB1eMZAyYlfUtEN4pUyes
- jVRntA/J5DcfwvG53FyVviDO9UET3GKmqv1jT0lY+AQz8YX4CVph7ctC7tRH2SPTQJ/0klTuXKq/
- B9rqRWsYzNfBLt79i78aPHyWnIqxGMxPZotYvH/es1vXuByXo2bkrYMqq0x5CzaUoJIoBUQayHle
- UvbvCQmh9x4kn6NeQcRkc6G+OgAcq5x+BzhRyg9rYO6I0H7Q2OEpckvWJAOmdJd77Z9vwc+QHB+X
- +u7aTqYHtT2CBuxNPBc9JM2jck1NnIBf0tvflhq7Xjhll72AYgnW/6M0ftSpvLIx+X1vKami8KF6
- jWQ71uVNIY/EFPWeDmcZuFRQy1vmjjPiYw8fUCp0/qY6cmSW9oUDdvKuTRfTGZ6f8nTXoYFaQ71l
- mMti8uxA0gKVmIzBXtbLDVvAQ/KVNTWALGJzCrBoi/4ByzWCdrOSAN5VcIfsMVILjVAz6RZsCHxD
- lgOJwEwCFaF+62b2lf1UUDu9jECN1V/lwmsioRLmNJoHOZOE/9e5UD715p61XAQw85DCXa0iAPEd
- fYyrF5wMRSLGyY+i0m2IxQLxQUxLMkCVXN63lz38Up+2UgeFSDBPqdRoFsq0hfzdx0oxkgNI/jhY
- WFhu7VV+HdWjdZLlmQ5z83qEVVG/6RJ+BW7FmGcwL889DSW2cZWGkIYVQAbHnYkWUz1gRIjAiMvi
- vM7um7t0SVa5NVZ2g1u6DnOpqk1nwAzTSgytNKIH5lfAuQc8I07FTFcjpdfX/Jcr87en7cKbI0NU
- afdkQMG+6qjtXoANVR89VM6f75a5kmRIbungV7ywXD8VtmM8wef5C6IkqMFhROX1HYRo9Sm1kZOW
- saz62DSUUd/fn3Ix/aSqJVglEtnFggTvi4y/qO0sxBxzHDeqqFz43py4SDhdaHkWxEWqfohU+1d2
- sh7IKZpXLgBCJ476nn5Gmr/PK603nEEcf1B7S/Q5Y1x9OERLjlo/xJYqN+GmyxwR+V15PgePOPPI
- vtB/lrJsWW29FRnUbXCk3//yGA2OaEkyEoP0Kl1YERWeKKG4PAQYNyavp7c49JwbmBalBK3QvTzZ
- aymz/kAx9sNOIdFDvUNZLdaRhCZaLQiUCt7lLFd4QEmyiHT3nyoAiv3KW15o855pU/4uCclZj2VA
- 3aW/vPi2AMAbWLs/EIKEbeDIxNYIJ7Ews1OEan6m+UeFXprlCOm3BAEbJtATHIdhc/Osc/lXM+l8
- 06U7GxUAPGlXms+D1TI22+vIvtmOpB8mDzWv8vBwVi5XkC8ewLVRqANj6mzlzL3VH5WM/aCyI5/o
- yhoezeIJy3L+cB4hBppwR1r+Bof9KZqCMQkUV4VT4TerS/vbL3R5w07g
-X-Report-Abuse-To: spam@cleanserver1.mxserver.ro
-X-Complaints-To: abuse@cleanserver1.mxserver.ro
+In-Reply-To: <aCWlenAtx2uaQhcE@shikoro>
 
-The ina3221_conv_time array was previously declared as u16 but used with
-find_closest_descending(). With find_closest_descending() now implemented
-as a function taking 'int' parameters instead of a macro, passing unsigned
-arrays causes type incompatibility errors. Change the array type from u16
-to int to ensure compatibility with the new function signature.
+On Thu, 15 May 2025, Wolfram Sang wrote:
 
-Signed-off-by: Alexandru Soponar <asoponar@taladin.ro>
----
- drivers/hwmon/emc1403.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi all,
+> 
+> thank you for providing all this input. I appreciate this a lot. And
+> please excuse the slow response. I am currently at the EmbeddedRecipes
+> conference which needed a bit of preparation on my side.
+> 
+> > So the node would look like this, for the pca1 LED:
+> > 
+> > led-1 {
+> > 	function = "pca1";
+> > 	color = <LED_COLOR_GREEN>;
+> > 	default-state = "keep";
+> > };
+> 
+> This looks optimal to me, if this is acceptable. I totally understand
+> the advantages and desire to unify LED naming. The main problem for me
+> here is that the GPIO-driven LEDs have no 'device' part in the generic
+> name. And only 'function:color' seems suboptimal for the board here in
+> question. I kinda arranged with the option of using "LED_FUNCTION_DEBUG"
+> for the above LEDs and some other function for the LED on the carrier
+> board. This seems OK enough for a development board, but ideal would be
+> the above solution. So, if you can live with the above, I'll happily
+> make use of it. If you want me to live with the different
+> LED_FUNCTION_* solution, I will survive this as well...
 
-diff --git a/drivers/hwmon/emc1403.c b/drivers/hwmon/emc1403.c
-index eca33220d34a..41590b44b162 100644
---- a/drivers/hwmon/emc1403.c
-+++ b/drivers/hwmon/emc1403.c
-@@ -517,7 +517,7 @@ static int emc1403_temp_write(struct thermal_data *data, u32 attr, int channel,
- }
- 
- /* Lookup table for temperature conversion times in msec */
--static const u16 ina3221_conv_time[] = {
-+static const int ina3221_conv_time[] = {
- 	16000, 8000, 4000, 2000, 1000, 500, 250, 125, 62, 31, 16
- };
- 
+My only fear would be one of setting a precedent for bespoke function
+strings.  However, seeing as we already have some that slipped through
+the gaps [0], I guess one more wouldn't hurt.
+
+FTR however, my preference would be to use LED_FUNCTION_DEBUG as
+previously discussed.  If you can fight your slightly leaning partiality
+for a bespoke string, please choose one of the predefined options.  If
+you cannot live with it, go ahead with the bespoke option.
+
+[0]
+ arch/arm/boot/dts/broadcom/bcm6846-genexis-xg6846b.dts                
+ arch/arm/boot/dts/intel/ixp/intel-ixp42x-netgear-wg302v1.dts          
+ arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-netgear-r8000p.dts        
+ arch/arm64/boot/dts/broadcom/bcmbca/bcm4906-tplink-archer-c2300-v1.dts
+
+
 -- 
-2.49.0
-
+Lee Jones [李琼斯]
