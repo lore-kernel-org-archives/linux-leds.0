@@ -1,174 +1,114 @@
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2058.outbound.protection.outlook.com [40.107.105.58])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A246A28C5A6;
-	Thu, 22 May 2025 14:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747923303; cv=fail; b=Yw4bqF8tsh0nukpCI+4mnIFE12hhtiodlEStxHgsD2gf5JdPM/H4j05B+UOLEeo+ymrC5qiG1zoIqrj2b8IZ2ycyETsUbCZrQu9Rlg5/n7AC3r631f4/kTMP1z/EJbSe7vMffVPTzesXd/I1/oCFNKh9X7sA3BNtPviF0Y+mEeU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747923303; c=relaxed/simple;
-	bh=CcK7ocC778Eqgpc5Jtb46D//yva3DsVhDcio1XHbXy0=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=aO7PNgSihm99tXFi+aoyKiF+j4ZmYjxfhCX/qgdELDAc+yzRNfDrevC1AhDkkq5c8fOH2163vnP+zxKi5t3O6/UF8A2n6cuWulxRAut5UKenrA5/0n0+k4yj/zvVAM5opvWKOaGBWBDX4bxTE8x2NWVGU8GzsXza9rjvw5taT/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=UFLMoJpr; arc=fail smtp.client-ip=40.107.105.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AEF28A1E3;
+	Thu, 22 May 2025 14:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747924395; cv=none; b=X2CVZijH1hjzT0IEPFJ2qnU3gsxgTpgoXVtNQUvoKx/pYMMfLNWUcwNrWtgFzzHop8889+uRuf4JhwqEPZSyvAc/ij3tklGsWoK2yXTSx4vT4z2BiqApn16xrX6eJ8HtPG5HUfPk1yKASiP/dzi/d7X+GfUNMuty3nTsJS5XT50=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747924395; c=relaxed/simple;
+	bh=DJKs6Q7Dqz8+aybYX0U4dC30YuBlJrtErU/MK3V46QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5416MQkpltk5thumjhqyfei0vMoq+Q8rzGBcr8frjlXLTBi3HVxQbL9GeLGjsQeKxO091/oIPde0nyb42md+SGhkI2f15mA6oeq48WGtsg9avda+zw6iGOeXhgdMiwblDf3fwCdMs38m/qiLkYXvQx6v3zDo44hMyxkiK8omEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMqrnovc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="UFLMoJpr"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cxJn6QnWxTRXN2QeyvtQjDZ7mNaqMPJcuodpPcimqGyIYPzKMwD3QpQkyxp0sx4re0rDNlYUkfm8QaOV1x9ivSsN24OKn3+SEvhIZKVZtXHjtXtyNH5kchdENx63HPfNTpflm7s6qzgurU6mky2562vYfVrjpVhRGCvxrRdp55jLnJPXSPAllrpmoBnaJxKoq6v+KR9j8qBdV0i2yUpmeAMawgl4CGxxe9WCWJ5dJ+TujUj94/PzmolC3l2S18rA2/xz+AKWN1Gq8Zn+ywBaVXw9VaoWaNSp39PsOR+R/3xJ5hoLNvZ1V5d/Ebgt3r/NmK8lXTaH/QM0QojHH4l/gA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DlJ7DEzKXpMjHbvLOQsIgXkwcm4cQiH8R7CKHN1W/eY=;
- b=lIriajYiubaVUHIoC/4fxjMiKDDCdhq9P5xStFhN9J1d4KWhtIwM5sUFxStqJZ86vZPCV0jlw5WKBp/SqSUg7LsQj5A/JZBqRVVA71U3x663ur/ik7A381G7GzghveaYSUlLPmjVQUq2kzcz0W7ZAkKUqE6F1W4W4zxfznMQQzpuRdkXngsgfeEA0rwuQYYqPGd2B1S+yAxr3r6zzYbNxXbxp5FEPxaVOBAOpidhe5F/6nLFubr7u9Ox2GlLFBSMKIqyi+7cEhSzGcyUiHTKFxKIzKFxrt67pnp41hhqnL5oLYsbjC/CyAUxJatEElHtS+dVZrjF5/+uGVTRvltOjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=gmail.com smtp.mailfrom=axis.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DlJ7DEzKXpMjHbvLOQsIgXkwcm4cQiH8R7CKHN1W/eY=;
- b=UFLMoJprSx/jwo1P05hYoDHWoP1ujyurob6N2ozXfgaWPsJms4oHNKdRgpYtfozhpQmHTAPxw1s1WQoHqqMsSv0Yfm7gUFUMShWffN7FiSIxvfFDQX6Xjp0a6DPHDle9i+oG5PCNShqjNQ8b63H5ONpBmUHkH73y/VZuqsBcCNU=
-Received: from DU2PR04CA0248.eurprd04.prod.outlook.com (2603:10a6:10:28e::13)
- by AM7PR02MB6305.eurprd02.prod.outlook.com (2603:10a6:20b:1b3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.21; Thu, 22 May
- 2025 14:14:55 +0000
-Received: from DB1PEPF00050A01.eurprd03.prod.outlook.com
- (2603:10a6:10:28e:cafe::35) by DU2PR04CA0248.outlook.office365.com
- (2603:10a6:10:28e::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.28 via Frontend Transport; Thu,
- 22 May 2025 14:14:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DB1PEPF00050A01.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8769.18 via Frontend Transport; Thu, 22 May 2025 14:14:55 +0000
-Received: from se-mail01w.axis.com (10.20.40.7) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Thu, 22 May
- 2025 16:14:54 +0200
-Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Thu, 22 May 2025 16:14:54 +0200
-Received: from pc51235-2237.se.axis.com (pc51235-2237.se.axis.com [10.96.29.3])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 58F3A2F47;
-	Thu, 22 May 2025 16:14:54 +0200 (CEST)
-Received: by pc51235-2237.se.axis.com (Postfix, from userid 3319)
-	id 5DE0840364C8; Thu, 22 May 2025 16:14:54 +0200 (CEST)
-From: Johan Adolfsson <johan.adolfsson@axis.com>
-Subject: [PATCH RFC v2 0/2] leds-lp50xx: Support reg to set multi_index.
-Date: Thu, 22 May 2025 16:14:47 +0200
-Message-ID: <20250522-led-fix-v2-0-652046323ec3@axis.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMqrnovc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9834C4CEE4;
+	Thu, 22 May 2025 14:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747924395;
+	bh=DJKs6Q7Dqz8+aybYX0U4dC30YuBlJrtErU/MK3V46QE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CMqrnovcHVWVuc3u/CUiT/cqgMzY16zqBcFlJI8s/Uavv6xzqnejwTL8rrF8O2I2N
+	 gNE44hAp4VSoMH3h2B1ZNvI6nYfepyKAsHH8E1BVz8OxIM4UZOl1fEWXLh7Sh6EMsm
+	 0CjKLxVRKsxR+bqIvgk06sY5ZKXcTzcz48n5Vhy9dB/uNscKVde3Iy9L2fW77rlblD
+	 YKt5V71dLuLFYQpHwBuqs6hADi7P5z09QLXhV3LYuBgTPSgiVJzLOcQeNbhOPY61j6
+	 Ka9esymGb0jdUuhDMNRvG48/ItghTZCDgL5T5EGHETWhukGRofLsAn6rTzyqK454tZ
+	 Y2DVt0kKBnYiQ==
+Date: Thu, 22 May 2025 15:33:09 +0100
+From: Lee Jones <lee@kernel.org>
+To: Alexandru Soponar <asoponar@taladin.ro>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, jdelvare@suse.com,
+	linux@roeck-us.net, jic23@kernel.org, pavel@ucw.cz,
+	baocheng.su@siemens.com, wim@linux-watchdog.org,
+	tobias.schaffner@siemens.com,
+	angelogioacchino.delregno@collabora.com,
+	benedikt.niedermayr@siemens.com, matthias.bgg@gmail.com,
+	aardelean@baylibre.com, contact@sopy.one
+Subject: Re: [PATCH 13/16] leds: eds-mt6370-rgb: Fix type incompatibility
+ with find_closest()
+Message-ID: <20250522143309.GA1378991@google.com>
+References: <20250515081332.151250-1-asoponar@taladin.ro>
+ <20250515081332.151250-14-asoponar@taladin.ro>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFcxL2gC/z3Myw7CIBCF4VdpZu0YQKZeVr6H6YJSsJNoacCQm
- oZ3F2vi8j85+VZILrJLcGlWiC5z4jDVULsG7Gimu0MeaoMSioRShA83oOcFtda+J63ppA3U9xx
- dnTfp1tUeOb1CfG9wlt/1Z5Bo/0aWKJFaczj3RObo7dUsnPY2PKErpXwAaDth9J0AAAA=
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, "Jacek
- Anaszewski" <jacek.anaszewski@gmail.com>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Johan
- Adolfsson" <johan.adolfsson@axis.com>, <kernel@axis.com>
-X-Mailer: b4 0.13.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF00050A01:EE_|AM7PR02MB6305:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4018055b-3dcb-4160-ecef-08dd993b06b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aURibHdaRDZJMjFQTUdJZitMNUkzenU3a1ZyVVdIclIvV0J1cndSSXdqcGxj?=
- =?utf-8?B?T2RFc3poWnE3bE51VTI5T3JoZkYyUTNtUmVnMnVVSzlIMVBDZE5MYk5kZGhj?=
- =?utf-8?B?TG1laU9Eek0yNkZNOC9WYW9BT3U4dXcvU0JMb25Zc2NaNExMbjMrMVZTa21s?=
- =?utf-8?B?eURxY0VpaVpJNmJGZlRhOGlWeHAxS0FFNU8rS25nTHgyWWZuOW8rcUFyd3hh?=
- =?utf-8?B?WFB2ZjJEbS9OYkpJdzZBc1YrUlVZaUxPMGIxcnVnQmhxQUpIYzZjbnNDOUFG?=
- =?utf-8?B?K0sxVmlTcG9xYVdIbUxVeXpIYUhTRFUwZER0U0JBb2Z3UWxVYU42MGx4aDNt?=
- =?utf-8?B?emdWdE9RZFl6bUg3M0VUUkFCUmVqSkRXa3Z4c3B3V0NLYzFFVmdkTGJ0MlI4?=
- =?utf-8?B?aHhMcy9HK2FBclpqeURUQjlWQkZ4ZXBVWDNudHVpSzdKOS9ESVhIVzVrWjBM?=
- =?utf-8?B?cTkybGZ3VGpQVmNNeTJNbkdTYTZiSVFTY1FFeFV1MFNvYzlIVG1RSjAzcHhW?=
- =?utf-8?B?dndTdjM0cnhjZVhFUkFuNTNoQXB6ODFmMXVsZi9idlp2MWhRVFA0RHJKOWlO?=
- =?utf-8?B?eVF2TjI0WjE5VDVUVXhNMFBndkxDdjJBd0N6dU10c2dUUHNSd2xOaDVqWnQ5?=
- =?utf-8?B?b2g2TzZzeEtLd0s5NlZReVVHeDRJczM5VHNNL29HeG1LUGhqM0dSQ3JQOHdU?=
- =?utf-8?B?QjRoQjNqdGF5Z2wzRFhkK2FPb1ZaNEtVT2p1aXpMMXZlM3JCRWk1enAzNDBL?=
- =?utf-8?B?bnVJM0p2UWJPaTBEOHp3MlNVdDBXdmRGVW4yNHF6MVNHemV6MVlYV2F5RkFO?=
- =?utf-8?B?WDhqUk0vaURESWpBME1MWTR5MlJTeUw4MXBjNy9Xbkc3TGFxckxNYzMwbFFz?=
- =?utf-8?B?UE5nMGxicEJWdktYbHhWZjIyWFRjaVRQbzdVU3ZDUWxTVmxNU2U5SDZLOFFp?=
- =?utf-8?B?YVVJV2hWQnFWdUNYMko0cTJZWGdWUndRbVJhbFRSNFdzWFNSRnBMdXA2bzZm?=
- =?utf-8?B?VUVpMUppRSt1NXova203angyamZEUDZpbnBhRkMzVElsQ0ZGRUt3anQ0VVhG?=
- =?utf-8?B?bzF0K1VJOEROUTZldUlNSUpCbFowcDlndEpTN2J1R1IxVDd4YkJFeUluTHlJ?=
- =?utf-8?B?VW80WHFmeWpOc0EzZFJHaVFjNVhMd2tWZDBBSDVIOFpNZCtBOU1tVFphQmJT?=
- =?utf-8?B?ZFBSRG1Sa0dWMStQY3JKYXpqc1RkM1ZocExSYUdiQmRDTlNyaGRLbzJEb0hZ?=
- =?utf-8?B?cDZuS21nNTQvajdDcHNkMnJIUmZjdHRWT3J2eHB0U3IycW9JMnBTQS9iV05q?=
- =?utf-8?B?Y0JaSEJEYnhCcnkydDJGS1FlRUpHT3RlQWh0eDh5eUdQU2ZoU3Y5cTFxRm10?=
- =?utf-8?B?WVR6Qi81MWVrRmgxL3JVTkRJRW0yMklCTWozaVR0aHlzTFBSdGJEanlCVnQ4?=
- =?utf-8?B?OVd1V1R5OG1CeEZlTERSSGJ0R3IzUm1tUzVJLytUN0h0N25kRVZsMEtpWFcy?=
- =?utf-8?B?UHdrUGNXUmdrWEVtMmhBalNIMU1XbkxyOHRCcGRpRHRydjZFbzVzMTVNVitJ?=
- =?utf-8?B?WHQ0cVZXcmhoaytiRGtndis0RGFYR1NodjVqZHhWVTZqZWtxcXd2RXZWdk9R?=
- =?utf-8?B?QzFGV0YrSkZsTVpYOWhxSE1xYlhyVDV2Q002Yk9PODd2REtFWngxcjgxdCtu?=
- =?utf-8?B?ZE1FVGtLZWVUTUtnL3RCZ0hBS0E4ZUt1WWQrUUIwQ29YMDk2cFpTUkVXQUll?=
- =?utf-8?B?bnFxVlYwS3ZZcUhxREttR3Z4VTRaRFk4dlk5NmxVVWx0TGlPVkp1YTBWY0RJ?=
- =?utf-8?B?WFdnMFpxSTRVVjdMZlBheXQxQXpET2NWelBENCtqUXJ0MVlRZXI0L1EvYVNj?=
- =?utf-8?B?d1Q4ME1RZkpwZDJBWkhsSFp4L3RlcWkyMFhldmlnUlRmczRLMTM5WExKNzBD?=
- =?utf-8?B?RW5ubWduWlV5T2ZnYmhTTUliU1lWZFk1a0hvQlpwVG5scElnS3FWLzloRnlP?=
- =?utf-8?B?RWJTMmxZRXpBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2025 14:14:55.0889
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4018055b-3dcb-4160-ecef-08dd993b06b8
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF00050A01.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6305
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250515081332.151250-14-asoponar@taladin.ro>
 
-Since devicetree nodes are (sometimes?) processed in reverse order,
-support reg as the actual multi_index index so yo get well defined
-color order presented in the multi_index file.
-Not sure if reusing reg for this is the correct way or if another
-property such as "multi_index" or similar should be used instead.
-Looks like reg is used for similar things at least.
-Or should the whole "reverse the devicetree" problem be fixed instead?
-Update bindings to match implementation, and add description for the
-reg property.
+On Thu, 15 May 2025, Alexandru Soponar wrote:
 
-Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
----
-Changes in v2:
-- Avoid duplicate assignment. dev_err and return -EINVAL on error.
-- Update bindings doc.
-- Link to v1: https://lore.kernel.org/r/20250506-led-fix-v1-1-56a39b55a7fc@axis.com
+> The common_tfreqs and mt6372_tfreqs arrays were previously declared as
+> unsigned int but used with find_closest(), which now takes signed int
+> parameters. Change these arrays from unsigned int to int to maintain type
+> compatibility with the find_closest() function signature and prevent
+> compilation errors.
+> 
+> Signed-off-by: Alexandru Soponar <asoponar@taladin.ro>
+> ---
+>  drivers/leds/rgb/leds-mt6370-rgb.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 
----
-Johan Adolfsson (2):
-      leds: leds-lp50xx: Handle reg to get correct multi_index
-      dt-bindings: leds: lp50xx: Document child reg, fix example
+Acked-by: Lee Jones <lee@kernel.org>
 
- Documentation/devicetree/bindings/leds/leds-lp50xx.yaml | 11 ++++++++---
- drivers/leds/leds-lp50xx.c                              |  8 +++++++-
- 2 files changed, 15 insertions(+), 4 deletions(-)
----
-base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
-change-id: 20250225-led-fix-444fb544584a
+> diff --git a/drivers/leds/rgb/leds-mt6370-rgb.c b/drivers/leds/rgb/leds-mt6370-rgb.c
+> index ebd3ba878dd5..6ce11432dd96 100644
+> --- a/drivers/leds/rgb/leds-mt6370-rgb.c
+> +++ b/drivers/leds/rgb/leds-mt6370-rgb.c
+> @@ -135,7 +135,7 @@ struct mt6370_led {
+>  };
+>  
+>  struct mt6370_pdata {
+> -	const unsigned int *tfreq;
+> +	const int *tfreq;
+>  	unsigned int tfreq_len;
+>  	u16 reg_rgb1_tr;
+>  	s16 reg_rgb_chrind_tr;
+> @@ -212,11 +212,11 @@ static const struct linear_range mt6372_led_ranges[R_MAX_RANGES] = {
+>  	[R_LED_TOFF]	= { 250, 0, 15, 500 },
+>  };
+>  
+> -static const unsigned int common_tfreqs[] = {
+> +static const int common_tfreqs[] = {
+>  	10000, 5000, 2000, 1000, 500, 200, 5, 1,
+>  };
+>  
+> -static const unsigned int mt6372_tfreqs[] = {
+> +static const int mt6372_tfreqs[] = {
+>  	8000, 4000, 2000, 1000, 500, 250, 8, 4,
+>  };
+>  
+> @@ -304,7 +304,8 @@ static int mt6370_set_led_freq(struct mt6370_priv *priv, unsigned int led_no, un
+>  	const struct mt6370_pdata *pdata = priv->pdata;
+>  	enum mt6370_led_field sel_field;
+>  	unsigned int tfreq_len = pdata->tfreq_len;
+> -	unsigned int tsum, sel;
+> +	unsigned int sel;
+> +	int tsum;
+>  
+>  	tsum = ton + toff;
+>  
+> -- 
+> 2.49.0
+> 
 
-Best regards,
 -- 
-Johan Adolfsson <johan.adolfsson@axis.com>
-
+Lee Jones [李琼斯]
