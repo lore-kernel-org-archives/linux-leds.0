@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E36289E3D;
-	Fri,  6 Jun 2025 15:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A9C28D8C6;
+	Fri,  6 Jun 2025 15:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749224642; cv=none; b=BOzlurw4j9bcZ9XGRv8OHSW//hjJ8ugOOdRy/QhCaI9bjtkO5/ZesT/rHqfrQCitNhANYoVl8wpZHAXVlCTEMoJfBF1waqi9m88rXJzj2w1Yte5kKudlcCosHZhp6aeDZx5Vn0BEzuGJh1dyLxOEfKi7W8+gKqXWn56IAiIO3LM=
+	t=1749224657; cv=none; b=EmMf0EUM0JBYOxRwso4pb+s/++P4u4Vzqa6oI8AU6+wcxlAV/+ILKYZiDAiQaBmAdn0viaO6xwuLa8cXthtcTSPPIJv3m0BJgRlziXGu5b9T+FDXB0pWsvv7nRmdXIi00bt9jYv0lkgga66s2RHlviQckrWyaBoElDZG/2aXblI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749224642; c=relaxed/simple;
+	s=arc-20240116; t=1749224657; c=relaxed/simple;
 	bh=VBYYKDLJM0I51mdHNd3IaGT7PgmJzLlVNj2YChC6Ds8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uV3Qs0DAXOi0Y2uqENCYLDCwlmddRnqUjKJd4jnfO6ma+WOJG3i5StT6KwH3m6WDyMVXQUCLkGppZo0eZglgS0qD6Xkser3j/Un8NW96H1YEb3Hc6dI6cBfiXI1903p60kZUU6GSgdR/U32gtQF17NXFGxjo3uuu7/YfDn3ygEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axKo7SpK; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=FCWi7MdlZkh/BExSnayYMWUtYGccXoDrOhrm6PmKgFuM64+AvGI/THEPwuLC15CISHyi8qjUB3d709lqElel9iZ2QLqo2j6tdNa6WR2USptOF3QnK8bQ6iLS3aS5sTxJjW/yUn7r7/J95NhJbu8Jnfa0tHmsd3mE5LRdjOkzm3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXkEaMYe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axKo7SpK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE7DC4CEF4;
-	Fri,  6 Jun 2025 15:44:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXkEaMYe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E24CC4CEEB;
+	Fri,  6 Jun 2025 15:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749224642;
+	s=k20201202; t=1749224657;
 	bh=VBYYKDLJM0I51mdHNd3IaGT7PgmJzLlVNj2YChC6Ds8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=axKo7SpK2AbU55+kBTMOQRKvy01Abpde67fJ1sbiBO9nFjluDinNyEVHH4tpVUm0d
-	 2tiHCw2ah2EvXz5Vrm7Dk8XtsM5AQtDnCktUnblqKPTOa+SSbP2DyiQdE9W5LL6aM+
-	 SX1MyQByGqGgokhnJDz3tpTIabcMMt7SOW1A/pZEch7u+j0uesk8XD+ceM6lPtav1Q
-	 ZwDZ3TGZ1o7UzpD8c5fTyxbPIt1LifePr0HBD19UN7LvR2Oods+amwnSQFvHdBtWAb
-	 LJTkkCRWq7ppvKixsYPairNsN3g1aOfC2Jgx/hxgmww10topI+5ckX7ieDpW0gQy5E
-	 /3oWGrTLserUQ==
+	b=LXkEaMYemSPYk8qE3T3MVoGUWW81GmECr9/kWYFe0L2TOD/FKvbNe2HdIxaiCJe6A
+	 Ow3JdZXsKhFUljiwcpZffWGK18nCXJQjvva6Tp2xvrJNFU1HcnFPzw9QUFcBih6i1j
+	 C3fv5SmFbV5uGC1SNiQncDd9SjqpyFgSDIDjNBjs8titavtOPCiixhaiXDJhwA4Lmz
+	 72JXPs46VJnJyX7SpSbsQu/Fzrv1bo5zWgdp+YjExFQhLni2UKuLhE+fmabyZ+bpEK
+	 oVi/4LyM7s5R8oJ+7Xmbk2d/8jVySM/jOV40LYQ0yNmd0cMTVa8JsW8j56nSvShXm0
+	 vGJjb5R7DhF5g==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Sven Schwermer <sven.schwermer@disruptive-technologies.com>,
 	Sasha Levin <sashal@kernel.org>,
 	pavel@kernel.org,
 	linux-leds@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 7/9] leds: multicolor: Fix intensity setting while SW blinking
-Date: Fri,  6 Jun 2025 11:43:48 -0400
-Message-Id: <20250606154350.548104-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 6/7] leds: multicolor: Fix intensity setting while SW blinking
+Date: Fri,  6 Jun 2025 11:44:06 -0400
+Message-Id: <20250606154408.548320-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250606154350.548104-1-sashal@kernel.org>
-References: <20250606154350.548104-1-sashal@kernel.org>
+In-Reply-To: <20250606154408.548320-1-sashal@kernel.org>
+References: <20250606154408.548320-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.141
+X-stable-base: Linux 5.15.185
 Content-Transfer-Encoding: 8bit
 
 From: Sven Schwermer <sven.schwermer@disruptive-technologies.com>
