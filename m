@@ -1,84 +1,96 @@
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.216])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACAB226D07;
-	Tue, 10 Jun 2025 11:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.216
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749555838; cv=pass; b=AZoeTnYbCL6wWX2SchVdC4z15Ftb41ziYItAvWoYL9PlCdvv33K/zg1RNaK1Qib8BDZrIL0drMUZiUmrDkgEikmorVplCEjZL9cgH+PioBXeEtaHZoj5vmU+L4B/1eh4KVZ6Ib+j1z//bSEzN4EaIwHxzpDqP2wkZLImlUCp3Yk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749555838; c=relaxed/simple;
-	bh=uiITjteoxkaeAuq1hjBPppcndqOMCUH+QZXMDGdZR/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lU5NEzHWKV1EdTbhSqp+0yYBrwFofiVzCw+lKKh2Za+Nm5Si4in+9qNENk67Ww5D35V2Ut57f9QIdHIcS8oy+KCIqobvO/Qt21Nuq+j61KneWjSSAFVEsNDK3yv9ntwZ9xjSeCZ1SPkW/rVsCEaZJFT39pIdVUd5qKJChDHm+eI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inhub.de; spf=pass smtp.mailfrom=inhub.de; arc=pass smtp.client-ip=81.169.146.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inhub.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inhub.de
-ARC-Seal: i=1; a=rsa-sha256; t=1749555645; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=GSJbHVVXfiFocmAbCNc1BiCOuG4pSUxEwOCWR/uVL71ziE0ixT8c/+9su8PLV7XTW0
-    7ZkXy5ZSxj+rfd66IvWPo0JkdEg3fP6xdlVmPrxQH//XDnQazN0wnkiE2aD4wzf/8dFu
-    PWXefsScr/A5m1CCJY7vRBuMBCWZ0fFesR1eLqq9zhGNL7029TpXLodkRNsbILPX0KYE
-    NdMfYvAKTfL3+pGF7wC/ICWNNVDLk2j29tblnfbncolM+XttLYhFQKe5eZVSNPOUaBsU
-    lmZtPVA4vfLSd4otyt8wafRFjMmqt8ta5EKGqjmdV7/HR5t+Rop7mTFkEnIlF/GCJjYV
-    ECCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1749555645;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=z0j/rSmihpzXd5aYpATr1YjCDRitMRewVaq3O4GQK0s=;
-    b=BiiLCWt0GlVQcoXb3URwJBXtNaq6dvf3vjjOHg9vore3uKqwZrC7bTXFlsp+0+UzYr
-    vV7mDRis437K46lOFJZ2U49WJ1SU4+7odAUqNqCz9AwpHZLBuymtGZrvN0iVHP1v13l7
-    zrRHxSBAFG01l9amzjPvbbeeJUoDj059BpwDV5BExgZl6loPXXKFyqdo65r66skAucRI
-    Nou2/K6p64TGY0jYTQa8YpVYBpuAilFeZXucoia76km/zMYFr/M/3geIlB3+EIxLhljE
-    uCp19/0flSLexIs85UDOIFvoTUoSAwBKRyhioPXlVtpmDhtvm+PiyE3LoKONImK8A5SZ
-    iRSg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-X-RZG-AUTH: ":OGMGfEG7NfU1WQAxQKSndOy9b62IXRUXP1G+n0e9SfNgaKe3jg5kqErvsv7wxhn7R+CZYOGugK8="
-Received: from crypto.lan.inhub.de
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id J569d715ABej5yY
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 10 Jun 2025 13:40:45 +0200 (CEST)
-From: Tobias Junghans <tobias.junghans@inhub.de>
-To: Lee Jones <lee@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	linux-leds@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Tobias Junghans <tobias.junghans@inhub.de>
-Subject: [PATCH 0/2]  leds: trigger: netdev: refactor event handling
-Date: Tue, 10 Jun 2025 13:40:18 +0200
-Message-ID: <20250610114029.268938-1-tobias.junghans@inhub.de>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E33184F;
+	Tue, 10 Jun 2025 11:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749555979; cv=none; b=bIKoZ+klkCKGBfGHdOG9SmDapdEhM9x1OZ3IMaF7OerqUuxf2turYY7eR31YJx6NQ9rupQFBZ5jesPnxLQjIrgTVz2orQJUq8Cr4z3UmDg/Xw35Sf6fxYcVwtL/W2Q41Cs1vqzZPTzaAFChinPJUq48tiiBYbqvvVzRAercGjv0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749555979; c=relaxed/simple;
+	bh=YibikXW00JUDmSUtGKV75M+LUkgeqXyZelMhzVfCmDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZMrOX/7p91AH5vZef6aWa2VzOe/j4/tzF4CKzqGwWrCc25xw33zlMlfEojJEeHXeC22u1UQYrVkOT0spw0V/BsgmGk2WubMVl31ntA783ShZl/bZiH1JRaMKfOFe0tanhPnZt1cypRNYVWKdHmC+gRQGPRjs49ozUtMg6Qdtlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dq4G5RF7; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dq4G5RF7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28407C4CEED;
+	Tue, 10 Jun 2025 11:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749555978;
+	bh=YibikXW00JUDmSUtGKV75M+LUkgeqXyZelMhzVfCmDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dq4G5RF7Eu+/4EdP/i+nSGo4QP47NeIsw0NQT77QTHds0si3J2dpCd9ZiDwMrVjMr
+	 JgIYC/IycMwYHphJSCMv8/9lgst1D9qKNByLJoeIwzE+gX4BcgvS9wpSqVpdJ0M5Sz
+	 tpYYyyJ2QxaVkQa/69wRCDTps5J2SGRiHCg00N7lw8zbsbMdQgBiCUEcVmC1Pf7ZDo
+	 BQXUspMcWpT7UZMdWJykQTIy1cCKxNSTyJU00aRnbT9wjTYzy10NYaXTyCOM4yLQA/
+	 qC0zXvB84Ir6m9+t3zWXysAlvZLhtaNL00AtkiHuX0zzh4gxwdCESOGSFUYTjDQ4ZY
+	 FMBo7ixuE//7g==
+Date: Tue, 10 Jun 2025 12:46:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
+	Will Deacon <will@kernel.org>, Han Xu <han.xu@nxp.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Yogesh Gaur <yogeshgaur.83@gmail.com>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, Andrew Davis <afd@ti.com>,
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-spi@vger.kernel.org, imx@lists.linux.dev,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] spi: spi-nxp-fspi: check return value of
+ devm_mutex_init()
+Message-ID: <d8d1ee94-ee95-461f-a5d8-040bb2a1cfee@sirena.org.uk>
+References: <20250609-must_check-devm_mutex_init-v6-0-9540d5df9704@weissschuh.net>
+ <20250609-must_check-devm_mutex_init-v6-1-9540d5df9704@weissschuh.net>
+ <7afc214a-affd-4a99-8528-c58c31fbcc59@sirena.org.uk>
+ <aEgBkROmEV2df4rA@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qlddIJtm5jpvAAgD"
+Content-Disposition: inline
+In-Reply-To: <aEgBkROmEV2df4rA@smile.fi.intel.com>
+X-Cookie: When in doubt, follow your heart.
 
-This series fixes issues in the netdev event handling code which lead to
-erroneous netdev associations if e.g. net devices in different net
-namespaces have the same name before or after being renamed.
 
-The series based on different previous approaches:
-- https://lore.kernel.org/linux-leds/20250401085002.492904-1-tobias.junghans@inhub.de/
-- https://lore.kernel.org/linux-leds/20250425132059.393144-1-tobias.junghans@inhub.de/
+--qlddIJtm5jpvAAgD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Tobias Junghans <tobias.junghans@inhub.de>
+On Tue, Jun 10, 2025 at 12:57:37PM +0300, Andy Shevchenko wrote:
+> On Mon, Jun 09, 2025 at 09:59:46PM +0100, Mark Brown wrote:
 
----
-Tobias Junghans (2):
-  leds: trigger: netdev: separate event checks
-  leds: trigger: netdev: refactor netdev_event_requires_handling()
+> > I don't understand the comment about leaking here?  We might end up with
+> > an unitialised mutex but how would we leak anything?
 
- drivers/leds/trigger/ledtrig-netdev.c | 38 +++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 8 deletions(-)
+> In case if the mutex_init() allocates something that needs to be freed
+> (in the future).
 
--- 
-2.43.0
+I don't see how checking the return value impacts that?  The management
+via devm is still there either way.
 
+--qlddIJtm5jpvAAgD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmhIGwMACgkQJNaLcl1U
+h9DndAf+IDszF0KDE41cdqFp7QzU28ehipRQZ/2ImAVdikU6XvsSlqXgulFgPanN
+lfk3V9B/9okKYjokFS+cc2d40vlbrE0UMsceGwnQfySoVqrdD62K43POtx1Jgo8/
+qMKE5FwtNzZnq6dkuy3bLDH/8I+v2jhWs1mozB+euPHs6F1AgpREbYeIBhv6h0d2
+Bd6o+qXpvuoxVEOmOS0cABcxvSHl+Tg6gZk7rM6VJKSEaxPlznwnJ+tJdK2Fv8WU
+QOtRl595cqKywMdRyWTuQcdI3iS8mTIu7twIl0Wm/+S1TleZqZZb3trTsTyzfSRr
+R3GugZLFMOZU8mXSwRxZltFqDKKMfg==
+=POCg
+-----END PGP SIGNATURE-----
+
+--qlddIJtm5jpvAAgD--
