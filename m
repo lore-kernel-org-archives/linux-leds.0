@@ -1,100 +1,121 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A92B28C013;
-	Tue, 10 Jun 2025 09:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749549468; cv=none; b=GBakR3LZnRgstDVDk2my5sTc3HmduVBjMPrSwtJ/UsOokRn8t3BpJbXDVUf9Vr2HvOtfPSGKYlksx71Kn5c/PnDJlw3Qi+lTlHHRtWzfQL6aa5XjklfoRuHhj3l2yHR5jFicqZJBtCGt+lmTprW+DJcZ8QT4IDmuwahaIsQh3U4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749549468; c=relaxed/simple;
-	bh=ImjjDdcR0PDR/B0hW6U6b9uAanK0m2+0ZrpHzZLv2xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPupk8Dp6ROHD+tbRZwDb5GQvLaxek2VUhhDaGw7q8Zycn8bfMxJXNrTgWY2HbHkj21YfEVDXhtfSnx3gZaPakmJwDA7+pxUCK65nnMBfrUXyMXIKa29TXBc7UC8Mv96EGV5/JsB8hCEseQZVNQaHKDPWyUH0Y2/sfA1nk/JIa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PKHygNYQ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PKHygNYQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749549467; x=1781085467;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ImjjDdcR0PDR/B0hW6U6b9uAanK0m2+0ZrpHzZLv2xM=;
-  b=PKHygNYQdI9D4flMuzw7JPdbRKP0Zkw75AdmARP6p0LIroSZjc4uyyJI
-   VNmfIQVOwqy1o2Q05S55tv36fQZUnd36QOSVMCf4ArXfoukWJxlqpppSa
-   8cHrJ9ee7rAKTFP9J62Cdxoj7Xgv2PKNbYe7MfaW7DVqMtm/lO8+TWzsu
-   tDsB2hMb2kUZBHoHZKP+mcoImdBQkzZdDruFj7EaasQE2ExJm+qxzr94+
-   PpZLTHDLCq3QNmDlcITE+2bVotMyEUDck4HUKonw+8z7+8eAppo1xzTcT
-   WfGrIClVmei8Qe+7UA9gThZsV/C8cwni8IYWuBiqcA4ZUiMCgsBImhjFp
-   g==;
-X-CSE-ConnectionGUID: PFfajYLTTS+59hOIqLhJ/A==
-X-CSE-MsgGUID: NfZttT+aRY6DY4YPHL+3Qg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11459"; a="74184743"
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="74184743"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 02:57:46 -0700
-X-CSE-ConnectionGUID: 5j80a83bTXmxzQIG+3ulhA==
-X-CSE-MsgGUID: 2r67tEUWSUKZ8gLPPEVWxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,224,1744095600"; 
-   d="scan'208";a="177719736"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2025 02:57:41 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uOvjd-00000005JZB-3lD4;
-	Tue, 10 Jun 2025 12:57:37 +0300
-Date: Tue, 10 Jun 2025 12:57:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
-	Will Deacon <will@kernel.org>, Han Xu <han.xu@nxp.com>,
-	Haibo Chen <haibo.chen@nxp.com>,
-	Yogesh Gaur <yogeshgaur.83@gmail.com>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Andrew Davis <afd@ti.com>,
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] spi: spi-nxp-fspi: check return value of
- devm_mutex_init()
-Message-ID: <aEgBkROmEV2df4rA@smile.fi.intel.com>
-References: <20250609-must_check-devm_mutex_init-v6-0-9540d5df9704@weissschuh.net>
- <20250609-must_check-devm_mutex_init-v6-1-9540d5df9704@weissschuh.net>
- <7afc214a-affd-4a99-8528-c58c31fbcc59@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35351FC11F;
+	Tue, 10 Jun 2025 11:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.216
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749555837; cv=pass; b=DvO4zxcPfxEPjf3onA12CeklPF9YBgcNkz+OUYMrfsBgwqCvR2+d7zWSz2AX72E4XRACkEAIYwhPICc0SxBbfwVHFgyAp3F+e51TabjhERhoIWt//IURkz6tsxDqCZL1nblaxKT2KYdbvOoaUMiZmydZRg/ny0nmDYpmqlyyoew=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749555837; c=relaxed/simple;
+	bh=3pfg9+NOL9Z6C2kDRxwBlHKPTOUuNHjM2OTYR6PYrc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AyxKR/8VJFlKjZD7XvwY3slpkNLXlVrMUWd108SEtZntkVVG7wTJY8kx/JY8e3Za73vApG41nE32SgTJhocpp8fCsok6jgGrJiGANkURhugFWQFWenEUVj2pSg0f1LU96HXaAxTchzfQiPrRdiMud5ziCqLxv2UImms7ru/ic7U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inhub.de; spf=pass smtp.mailfrom=inhub.de; arc=pass smtp.client-ip=81.169.146.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inhub.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inhub.de
+ARC-Seal: i=1; a=rsa-sha256; t=1749555649; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=YZ1EHzYIf1PKdQpDhOk2uvvSFpXrEsS5zufu0eS6zLG9yNP5ql7+kspHG2IsrYQZcP
+    aF9L3VYqOLZt+lHBciBend1iBpi2fQJZ7yA8x1tCP/L07+XSSHvE+XGplFLj7wtsnKb7
+    lw+lEpf4AjUJ79MrtyQzNUWtLVz55Yir9fGDWTxmWsUsancZ+xB4Rp6OafOHhIcNwTBn
+    A5n47cy+g3gMIfVTrZiuYxmDDhutMY1boMFxwrUm3xZZZidEPcLWWjvhX7iA0okdvodz
+    GSI+p+oXsqlWvU9XuSEsht/0SAuGABBMD4KkeicpcagprbcGRJ4iBlq5Id7/Yj9lzkUq
+    HteA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1749555649;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=+USfT8fUhTO+Fl9hwpSWxcPLWELa5gF0F9SDLGkBSXY=;
+    b=fgErK5PCwl+DMS5EJxYMqvaLjMWy57x0Gfpjh4Yt/Pk5UpmcTE3e65Wizal1LILL4p
+    MMFE33lOQOlc9RiLW67jR49EjMWhHXDC3yGwKbspE4HRwVYeliiu0khAo2Q2jL+Lrjkq
+    OolT8xc72aGBqDT4eKHuOZkd8bKUI591VZYPkX0RzHumAOKjh4/j9bqVO3XzYMvGa9iV
+    n3z1+1C2xxTDcyOienba1z1FVJQGqz1BbM3ZfVRgAlkoC/5UvjIBveZdqaXCjIwzoQ1s
+    cj1XI+EVR26QnROkPUoF8O4lygu39hSGEAX36hZ0bEUMjqmfCfAxvItP072BG+D3CVgz
+    25uQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+X-RZG-AUTH: ":OGMGfEG7NfU1WQAxQKSndOy9b62IXRUXP1G+n0e9SfNgaKe3jg5kqErvsv7wxhn7R+CZYOGugK8="
+Received: from crypto.lan.inhub.de
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id J569d715ABen5ya
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 10 Jun 2025 13:40:49 +0200 (CEST)
+From: Tobias Junghans <tobias.junghans@inhub.de>
+To: Lee Jones <lee@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Tobias Junghans <tobias.junghans@inhub.de>
+Subject: [PATCH 1/2] leds: trigger: netdev: separate event checks
+Date: Tue, 10 Jun 2025 13:40:19 +0200
+Message-ID: <20250610114029.268938-2-tobias.junghans@inhub.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250610114029.268938-1-tobias.junghans@inhub.de>
+References: <20250610114029.268938-1-tobias.junghans@inhub.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7afc214a-affd-4a99-8528-c58c31fbcc59@sirena.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Jun 09, 2025 at 09:59:46PM +0100, Mark Brown wrote:
-> On Mon, Jun 09, 2025 at 10:38:37PM +0200, Thomas Weißschuh wrote:
-> > Even if it's not critical, the avoidance of checking the error code
-> > from devm_mutex_init() call today diminishes the point of using devm
-> > variant of it. Tomorrow it may even leak something.
-> 
-> I don't understand the comment about leaking here?  We might end up with
-> an unitialised mutex but how would we leak anything?
+Move event handling checks into a separate function to ease subsequent
+refactorings of the actual logic.
 
-In case if the mutex_init() allocates something that needs to be freed
-(in the future).
+Signed-off-by: Tobias Junghans <tobias.junghans@inhub.de>
+---
+ drivers/leds/trigger/ledtrig-netdev.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 4e048e08c4fd..6e16619719fe 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -575,6 +575,22 @@ static const struct attribute_group *netdev_trig_groups[] = {
+ 	NULL,
+ };
+ 
++static bool netdev_event_requires_handling(unsigned long evt, struct net_device *dev,
++					   struct led_netdev_data *trigger_data)
++{
++	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
++	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
++	    && evt != NETDEV_CHANGENAME)
++		return false;
++
++	if (!(dev == trigger_data->net_dev ||
++	     (evt == NETDEV_CHANGENAME && !strcmp(dev->name, trigger_data->device_name)) ||
++	     (evt == NETDEV_REGISTER && !strcmp(dev->name, trigger_data->device_name))))
++		return false;
++
++	return true;
++}
++
+ static int netdev_trig_notify(struct notifier_block *nb,
+ 			      unsigned long evt, void *dv)
+ {
+@@ -584,14 +600,7 @@ static int netdev_trig_notify(struct notifier_block *nb,
+ 		container_of(nb, struct led_netdev_data, notifier);
+ 	struct led_classdev *led_cdev = trigger_data->led_cdev;
+ 
+-	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
+-	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
+-	    && evt != NETDEV_CHANGENAME)
+-		return NOTIFY_DONE;
+-
+-	if (!(dev == trigger_data->net_dev ||
+-	      (evt == NETDEV_CHANGENAME && !strcmp(dev->name, trigger_data->device_name)) ||
+-	      (evt == NETDEV_REGISTER && !strcmp(dev->name, trigger_data->device_name))))
++	if (!netdev_event_requires_handling(evt, dev, trigger_data))
+ 		return NOTIFY_DONE;
+ 
+ 	cancel_delayed_work_sync(&trigger_data->work);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
