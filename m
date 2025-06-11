@@ -1,15 +1,16 @@
 Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F31D23E336;
-	Wed, 11 Jun 2025 08:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD143238C0C;
+	Wed, 11 Jun 2025 08:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749630735; cv=none; b=S0TvTkYkpyY9QaLV0QPiqZeyTLIANXMAklApmsLgvyhMeBwC4E4kjTMwjyzTUDUgsjP4hIUOyRFHKPQqmtCVUyhCzM3f50XPZT5gMBFQ3QH4b8IxaRGpnYGgODtgqilGyphB2Qq9EYsAau+84qKObPhQlJhjT2VRNAuJV+DKDeg=
+	t=1749630740; cv=none; b=OzoOcHw9aFy9jbBB9W7/Fyv4qV4Yl6hFx1+CZ0yQLQlSIV5gWdYQe260m3Ei1Nfe80gTG78wyz2lsCauBgClo01EqRHC5Dez4CAFu0H4lt0UcRd3vzSTZ/yCWbvme6Xg/oPL9s46aP+yUHyVCcZxxCKBacjqqJ2rKv+3f2Vz7PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749630735; c=relaxed/simple;
-	bh=PPynbfnkIjXxGpaTo686aW4m3QhtkxNND5E/kPM/9N4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D9YmqeEha9tV14u1LHI3pF2vIx7SoWWQlbMFxndXDKS5+zsyp9olgOnlekvICt5O9hMkOM3LZJo6drq/HV946lTcQawKZbygZtm7J6KNb/29SAdlDL8vHLYibM5ByFI08EoWJQR/Q2BZDwwrdoowGLL6ZV13Az55ghAX5w84yaI=
+	s=arc-20240116; t=1749630740; c=relaxed/simple;
+	bh=trUX0gVPJ0n0sTl+vIBz2GzynZMnGSykW9Y1wQxpzI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ioU8sSjiZnN9xwC9VBz1QWxoXpVQQr/bhghWN26DZE2O0f6orxdojvB7hp+BBUxAakthXsFY99bDvObgzn9ikzv2ZOpJyPk8X5I1wPN+Tl8eXBJ1hHArmrmk133cQ/HmFc4mLC6lq7Pup4WDYI1TXVItCXJRMOOsZxcHIx0+QJY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
@@ -17,8 +18,8 @@ Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bHJmg5fsLz9tPJ;
-	Wed, 11 Jun 2025 10:32:03 +0200 (CEST)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bHJmk6GXzz9snl;
+	Wed, 11 Jun 2025 10:32:06 +0200 (CEST)
 From: Lukas Timmermann <linux@timmermann.space>
 To: lee@kernel.org,
 	pavel@kernel.org,
@@ -29,9 +30,11 @@ Cc: linux-leds@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux@timmermann.space
-Subject: [PATCH v6 0/2] Support for Osram as3668 LED driver
-Date: Wed, 11 Jun 2025 10:31:49 +0200
-Message-ID: <20250611083151.22150-1-linux@timmermann.space>
+Subject: [PATCH v6 2/2] leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
+Date: Wed, 11 Jun 2025 10:31:51 +0200
+Message-ID: <20250611083151.22150-3-linux@timmermann.space>
+In-Reply-To: <20250611083151.22150-1-linux@timmermann.space>
+References: <20250611083151.22150-1-linux@timmermann.space>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -39,68 +42,280 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4bHJmg5fsLz9tPJ
+X-Rspamd-Queue-Id: 4bHJmk6GXzz9snl
 
-This patch adds basic support for the as3668 driver IC via I2C interface. 
-The IC is capable of driving four individual LEDs up to 25.5mA per 
-channel. Hardware blinking would be theoretically possible, but this chip
-only supports a few set on/off-delays which makes using that feature 
-unfeasable, therefore my driver doesn't offer that capability. 
-It's intended applications is in mobile devices such as phones, 
-tablets and cameras. This driver was tested and is working on 
-a samsung-manta which is running postmarketOS with a near mainline kernel.
-
-Please note: This is my first suggested patch to the kernel. 
-checkpatch.pl runs without warnings or errors. 
-I've read the docs in regards to the led subsystem, 
-coding style and submission of patches, 
-but I'm still a bit unsure about the general workflow. 
-
-I will try my best.
-
-Changes in v6:
-- Fixed missing error handling during init
-- Fixed missing newline in error messages
-- Fixed size calculation for memory allocation
-- Fixed error handling for memory allocation
-- Link to v5: https://lore.kernel.org/lkml/20250608231854.75668-1-linux@timmermann.space/
-Changes in v5:
-- Fixed debug and error messages using wrong format specifiers.
-- Fixed missing include bitwise.h.
-- Changed commit message for dt file to fit expected style.
-- Link to v4: https://lore.kernel.org/lkml/20250607215049.29259-1-linux@timmermann.space/
-Changes in v4:
-- Fixed some mistakes made in the dt file pointed out in v3.
-- Swapped dt and driver in patch series. DT now comes first.
-- Fixed errors in Kconfig due to last minute changes.
-- Added dt file into MAINTAINERS file.
-- Link to v3: https://lore.kernel.org/lkml/20250604225838.102910-2-linux@timmermann.space/
-Changes in v3:
-- Fixed an extra whitespace in the dt bindings documentation.
-- Sent patch to all related lists and maintainers.
-- Link to v2: https://lore.kernel.org/lkml/20250531120715.302870-4-linux@timmermann.space/
-Changes in v2:
-- Fixed reading led subnodes in dt incorrectly, 
-  which caused wrong numbering and a segfault when removing the driver module
-- Fixed calling of_property_read_u8 with an int, causing a compiler error
-- Added more error checking during writes to the i2c bus
-- Link to v1: https://lore.kernel.org/linux-leds/20250530184219.78085-3-linux@timmermann.space/
+Since there were no existing drivers for the AS3668 or related devices,
+a new driver was introduced in a separate file. Similar devices were
+reviewed, but none shared enough characteristics to justify code reuse.
+As a result, this driver is written specifically for the AS3668.
 
 Signed-off-by: Lukas Timmermann <linux@timmermann.space>
-
-Lukas Timmermann (2):
-  dt-bindings: leds: Add new as3668 support
-  leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
-
- .../devicetree/bindings/leds/ams,as3668.yaml  |  74 +++++++
- MAINTAINERS                                   |   7 +
- drivers/leds/Kconfig                          |  13 ++
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-as3668.c                    | 204 ++++++++++++++++++
- 5 files changed, 299 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/ams,as3668.yaml
+---
+ MAINTAINERS                |   1 +
+ drivers/leds/Kconfig       |  13 +++
+ drivers/leds/Makefile      |   1 +
+ drivers/leds/leds-as3668.c | 204 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 219 insertions(+)
  create mode 100644 drivers/leds/leds-as3668.c
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 091206c54c63..945d78fef380 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3511,6 +3511,7 @@ M:	Lukas Timmermann <linux@timmermann.space>
+ L:	linux-leds@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/leds/ams,as3668.yaml
++F:	drivers/leds/leds-as3668.c
+ 
+ ASAHI KASEI AK7375 LENS VOICE COIL DRIVER
+ M:	Tianshu Qiu <tian.shu.qiu@intel.com>
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index a104cbb0a001..8cfb423ddf82 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -100,6 +100,19 @@ config LEDS_ARIEL
+ 
+ 	  Say Y to if your machine is a Dell Wyse 3020 thin client.
+ 
++config LEDS_AS3668
++	tristate "LED support for AMS AS3668"
++	depends on LEDS_CLASS
++	depends on I2C
++	help
++	  This option enables support for the AMS AS3668 LED controller.
++	  The AS3668 provides up to four LED channels and is controlled via
++	  the I2C bus. This driver offers basic brightness control for each
++	  channel, without support for blinking or other advanced features.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called leds-as3668.
++
+ config LEDS_AW200XX
+ 	tristate "LED support for Awinic AW20036/AW20054/AW20072/AW20108"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 2f170d69dcbf..983811384fec 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -14,6 +14,7 @@ obj-$(CONFIG_LEDS_ADP5520)		+= leds-adp5520.o
+ obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
+ obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
+ obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
++obj-$(CONFIG_LEDS_AS3668)		+= leds-as3668.o
+ obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
+ obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
+ obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
+diff --git a/drivers/leds/leds-as3668.c b/drivers/leds/leds-as3668.c
+new file mode 100644
+index 000000000000..cb1b90217ca6
+--- /dev/null
++++ b/drivers/leds/leds-as3668.c
+@@ -0,0 +1,204 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ *  Osram AMS AS3668 LED Driver IC
++ *
++ *  Copyright (C) 2025 Lukas Timmermann <linux@timmermann.space>
++ */
++
++#include <linux/bitfield.h>
++#include <linux/i2c.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/uleds.h>
++
++#define AS3668_MAX_LEDS 4
++
++/* Chip Registers */
++#define AS3668_CHIP_ID1 0x3e
++#define AS3668_CHIP_ID2 0x3f
++
++#define AS3668_CHIP_ID2_SERIAL_MASK GENMASK(7, 4)
++#define AS3668_CHIP_ID2_REV_MASK GENMASK(3, 0)
++
++#define AS3668_CURRX_CONTROL 0x01
++#define AS3668_CURR1 0x02
++#define AS3668_CURR2 0x03
++#define AS3668_CURR3 0x04
++#define AS3668_CURR4 0x05
++
++/* Constants */
++#define AS3668_CHIP_IDENT 0xa5
++#define AS3668_CHIP_REV1 0x01
++
++struct as3668_led {
++	struct led_classdev cdev;
++	struct as3668 *chip;
++	struct fwnode_handle *fwnode;
++
++	int num;
++};
++
++struct as3668 {
++	struct i2c_client *client;
++	struct as3668_led leds[AS3668_MAX_LEDS];
++};
++
++static int as3668_read_value(struct i2c_client *client, u8 reg)
++{
++	return i2c_smbus_read_byte_data(client, reg);
++}
++
++static int as3668_write_value(struct i2c_client *client, u8 reg, u8 value)
++{
++	int err = i2c_smbus_write_byte_data(client, reg, value);
++
++	if (err)
++		dev_err(&client->dev, "error writing to reg 0x%02x, returned %d\n", reg, err);
++
++	return err;
++}
++
++static enum led_brightness as3668_brightness_get(struct led_classdev *cdev)
++{
++	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
++
++	return as3668_read_value(led->chip->client, AS3668_CURR1 + led->num);
++}
++
++static void as3668_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
++{
++	struct as3668_led *led = container_of(cdev, struct as3668_led, cdev);
++
++	as3668_write_value(led->chip->client, AS3668_CURR1 + led->num, brightness);
++}
++
++static int as3668_dt_init(struct as3668 *as3668)
++{
++	struct device *dev = &as3668->client->dev;
++	struct as3668_led *led;
++	struct led_init_data init_data = {};
++	int err;
++	u32 reg;
++
++	for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
++		err = of_property_read_u32(child, "reg", &reg);
++		if (err) {
++			dev_err(dev, "unable to read device tree led reg, err %d\n", err);
++			return err;
++		}
++
++		if (reg < 0 || reg > AS3668_MAX_LEDS) {
++			dev_err(dev, "unsupported led reg %d\n", reg);
++			return -EOPNOTSUPP;
++		}
++
++		led = &as3668->leds[reg];
++		led->fwnode = of_fwnode_handle(child);
++
++		led->num = reg;
++		led->chip = as3668;
++
++		led->cdev.max_brightness = U8_MAX;
++		led->cdev.brightness_get = as3668_brightness_get;
++		led->cdev.brightness_set = as3668_brightness_set;
++
++		init_data.fwnode = led->fwnode;
++		init_data.default_label = ":";
++
++		err = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
++		if (err) {
++			dev_err(dev, "failed to register %d LED\n", reg);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static int as3668_probe(struct i2c_client *client)
++{
++	u8 chip_id1, chip_id2, chip_serial, chip_rev;
++	struct as3668 *as3668;
++
++	/* Check for sensible i2c address */
++	if (client->addr != 0x42)
++		return dev_err_probe(&client->dev, -EFAULT,
++				     "unexpected address for as3668 device\n");
++
++	/* Read identifier from chip */
++	chip_id1 = as3668_read_value(client, AS3668_CHIP_ID1);
++
++	if (chip_id1 != AS3668_CHIP_IDENT)
++		return dev_err_probe(&client->dev, -ENODEV,
++				"chip reported wrong id: 0x%02x\n", chip_id1);
++
++	/* Check the revision */
++	chip_id2 = as3668_read_value(client, AS3668_CHIP_ID2);
++	chip_serial = FIELD_GET(AS3668_CHIP_ID2_SERIAL_MASK, chip_id2);
++	chip_rev = FIELD_GET(AS3668_CHIP_ID2_REV_MASK, chip_id2);
++
++	if (chip_rev != AS3668_CHIP_REV1)
++		dev_warn(&client->dev, "unexpected chip revision\n");
++
++	/* Print out information about the chip */
++	dev_dbg(&client->dev,
++		"chip_id: 0x%02x | chip_id2: 0x%02x | chip_serial: 0x%02x | chip_rev: 0x%02x\n",
++		chip_id1, chip_id2, chip_serial, chip_rev);
++
++	as3668 = devm_kzalloc(&client->dev, sizeof(*as3668), GFP_KERNEL);
++
++	if (!as3668)
++		return -ENOMEM;
++
++	as3668->client = client;
++	int err = as3668_dt_init(as3668);
++
++	if (err) {
++		dev_err(&client->dev, "failed to initialize device, err %d\n", err);
++		return err;
++	}
++
++	/* Initialize the chip */
++	as3668_write_value(client, AS3668_CURRX_CONTROL, 0x55);
++	as3668_write_value(client, AS3668_CURR1, 0x00);
++	as3668_write_value(client, AS3668_CURR2, 0x00);
++	as3668_write_value(client, AS3668_CURR3, 0x00);
++	as3668_write_value(client, AS3668_CURR4, 0x00);
++
++	return 0;
++}
++
++static void as3668_remove(struct i2c_client *client)
++{
++	as3668_write_value(client, AS3668_CURRX_CONTROL, 0x0);
++}
++
++static const struct i2c_device_id as3668_idtable[] = {
++	{"as3668"},
++	{}
++};
++
++MODULE_DEVICE_TABLE(i2c, as3668_idtable);
++
++static const struct of_device_id as3668_match_table[] = {
++	{.compatible = "ams,as3668"},
++	{}
++};
++
++MODULE_DEVICE_TABLE(of, as3668_match_table);
++
++static struct i2c_driver as3668_driver = {
++	.driver = {
++		.name           = "leds_as3668",
++		.of_match_table = as3668_match_table,
++	},
++	.probe          = as3668_probe,
++	.remove         = as3668_remove,
++	.id_table       = as3668_idtable,
++};
++
++module_i2c_driver(as3668_driver);
++
++MODULE_AUTHOR("Lukas Timmermann <linux@timmermann.space>");
++MODULE_DESCRIPTION("AS3668 LED driver");
++MODULE_LICENSE("GPL");
 -- 
 2.49.0
 
