@@ -1,33 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012060.outbound.protection.outlook.com [52.101.71.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9AD28DB57;
-	Tue, 17 Jun 2025 07:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750145503; cv=none; b=mzrvLNZGVKE91KvvCUhV6Ca0T9eeeZQ4sWx99nEqOR19J5w3wrULyd0/7qbjcNrFYn1gmWnioMxDbVFEy7ASuSZ1lKvP8ZKaD0iVbhnrwOAFekrL2FcaiV0WQM3Jek3wG+imKHUaVov09kPTEGSm3iPyK9L13SyU0JEtljok5+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750145503; c=relaxed/simple;
-	bh=vj4AZ2VwKF/zDloCshyajTedmued0DDmjMCD6CM2Ep8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QxrR/gcdhkTlHVipM9l85OpNZxn/0G8kGkyMpHc+qYWksKaFM+Wo1nnwFhXUFCtm5arw7g/WY4EPzjI6IuIw2gdtvjJlNkYAw/n8gMY874RYlZ6SOe0D8fgrHlKoJLMGrFLXuh/W8QUlfyfKgDQoWGbFqeombRXmf7ga+w8mVnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xFsADBPi; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11424216E2A;
+	Tue, 17 Jun 2025 10:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750155846; cv=fail; b=usN+zspGdw2Ht3l3T0i7esE2NK1v8CvYkgUi0jXWZoRSpz7P04RkCvscQPwUFnS/0C4t10uwtJmAtlQPApYkX1za8e/NT1jWAUZuTvz+q6kuquAz8as3yfN6hbck9PfLcbu2ij2xio3PGc13pzR7qlP7d+iM5FRTzxcno8hL9gU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750155846; c=relaxed/simple;
+	bh=zSBCmZH2vxcHGgdqFfBALqcoYNOaTn0v9/CUCN+n/Ek=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=oIQtDfPrd0iv2XkJIsmvSx84kMGS7pyrDkNLL+cpAAOCkOqNEbt4ouSNZgLlqdXz6EdexmwZLnvvd71aIjL5P+qD08KmoT6In9gNaGYzr56neZLrH+SwPqF4irixRDkXb7tIlASNmWh2JQko1VkUmgWQr40miLdjjKX2f3Qx/9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=cdkKjN97; arc=fail smtp.client-ip=52.101.71.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xFsADBPi"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 12C62C4CEFE;
-	Tue, 17 Jun 2025 07:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1750145503; bh=vj4AZ2VwKF/zDloCshyajTedmued0DDmjMCD6CM2Ep8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=xFsADBPiHh0jBYzZXOoksSQlOTztWxmmO7oeYF+E/RDVQsGPSF+2JfEnY4YePmSOb
-	 E4KIJz4hrE6YOdXfqtNP/ifCLzCw10zDyO39Ye3t4nFYjsnVlfcAOXrAhK+aSTrTnD
-	 aT7e0uDeg3P0r6KxBemLJ9Vns/cUQOvu2yjb7IMo=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093D2C7114A;
-	Tue, 17 Jun 2025 07:31:43 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Tue, 17 Jun 2025 09:31:40 +0200
-Subject: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="cdkKjN97"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RUtlZvUqGjK0kEUfud1HaNNNq60bOqzVHM6yRQS/husNOPOpA2IygQKc/NEZO1PJxT/uYN5FGczGHV27MEx30iLvRwvNzK7DySlv0ISLDSRzl+vWH1OtFlu7dEM3b+OAWzPchF1s+SmSur5CC/V70ptbob3HvsBc+Ip8mQjCqwA1sceCVkzukEA8DGCUCp2XCAERaNC1vKiLtP2ieKkrPSuSCDffb7XWtNkrSEUTYseka9GMf5XEEK8Xuv+X0N1rh1DkS7gxMy6YOsG6QIHBhrkMnD8qCzxzavgkEt2Fu/EE7/us3IU13v/cVZHw628fgQj3NeX3TgU7JUDbmXuIEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ekA463wGXDLjl33aKQP7+7BuiKijAtkzQnkBYiudE8w=;
+ b=S3vayBJFBP3X7ibVmd3EHEnTnbk6uGZe5yzvstv7FzDu/DmgDwh+fAheXYDeUIu5iBBgoZZMcC+VcL92DjkMfd72GsJV7gM+ASmq5edWEtQCK+9R8lfnMaw0t/Sqwf8qb6zCIPS5q7QCS2jEU0qk4jEAgv4CCZfCg2p/xibGPZfcADyVUZoyupgSwX383EAoWsQAcg/JOmCPhpOjCfS9QlPvzbS5U4zY8Jj054yTbRRuzl2wwx6Qn4QGGaNcfApSUZO+fU2LnWhweU4qN8M9ON4hmXB2600GqScmu7LrA15CoqwGygZ0VWlbDAqPqkRI3GORZ7T4ws9W8pMx4hsEhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=gmail.com smtp.mailfrom=axis.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ekA463wGXDLjl33aKQP7+7BuiKijAtkzQnkBYiudE8w=;
+ b=cdkKjN97TpyUDOQeVrHI8lyRXhUFggBICodEb1J1iy/fNTFN1DTGwFVOplheQxY78viSXiZgGDONP8QUngzeCs47mZLOql79TTyQVXDHblpwsGMgyKtUzptm31dYXtWNvw7VKrLmrB2PJBGvQJmwj2iM4EilsXIH0aQa1sTqkc8=
+Received: from AM9P193CA0021.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:21e::26)
+ by PAXPR02MB7296.eurprd02.prod.outlook.com (2603:10a6:102:1bd::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Tue, 17 Jun
+ 2025 10:24:01 +0000
+Received: from AM3PEPF0000A793.eurprd04.prod.outlook.com
+ (2603:10a6:20b:21e:cafe::30) by AM9P193CA0021.outlook.office365.com
+ (2603:10a6:20b:21e::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8835.27 via Frontend Transport; Tue,
+ 17 Jun 2025 10:24:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM3PEPF0000A793.mail.protection.outlook.com (10.167.16.122) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8835.15 via Frontend Transport; Tue, 17 Jun 2025 10:24:01 +0000
+Received: from SE-MAILARCH01W.axis.com (10.20.40.15) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 17 Jun
+ 2025 12:23:55 +0200
+Received: from se-mail01w.axis.com (10.20.40.7) by SE-MAILARCH01W.axis.com
+ (10.20.40.15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 17 Jun
+ 2025 12:23:55 +0200
+Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Tue, 17 Jun 2025 12:23:55 +0200
+Received: from pc51235-2237.se.axis.com (pc51235-2237.se.axis.com [10.96.29.3])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 7E5D8278A;
+	Tue, 17 Jun 2025 12:23:55 +0200 (CEST)
+Received: by pc51235-2237.se.axis.com (Postfix, from userid 3319)
+	id 6E9034033836; Tue, 17 Jun 2025 12:23:55 +0200 (CEST)
+From: Johan Adolfsson <johan.adolfsson@axis.com>
+Date: Tue, 17 Jun 2025 12:23:55 +0200
+Subject: [PATCH v7 2/2] dt-bindings: leds: lp50xx: Document child reg, fix
+ example
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -36,105 +79,129 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
-References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
-In-Reply-To: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- Richard Leitner <richard.leitner@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1750145501; l=2663;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=vj4AZ2VwKF/zDloCshyajTedmued0DDmjMCD6CM2Ep8=;
- b=gkGMtTqdRP2ZqpP/QeyIOA+7vgfR8r6qWp3xe3u8MCx7IPMK1bjL0jhOcL4ZnE49sggj2kVSv
- 9Trv1X7E37uBELtjEKqhBqjfi9z30J8HF9khw4BMwgIUJAiPAuJ9lFZ
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
+Message-ID: <20250617-led-fix-v7-2-cdbe8efc88fa@axis.com>
+References: <20250617-led-fix-v7-0-cdbe8efc88fa@axis.com>
+In-Reply-To: <20250617-led-fix-v7-0-cdbe8efc88fa@axis.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Andrew Davis <afd@ti.com>, Jacek Anaszewski
+	<jacek.anaszewski@gmail.com>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, Johan Adolfsson <johan.adolfsson@axis.com>,
+	<kernel@axis.com>
+X-Mailer: b4 0.13.0
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A793:EE_|PAXPR02MB7296:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9650365-27b5-45b8-3b5a-08ddad8913fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TE9yTWE5Ui80dWhPTHE1SVI5QnA5SWJkYzJTc3VQVGNkYnZxQWIrU1hNWVhO?=
+ =?utf-8?B?bmM4ejduRStBWThVQUtjcnJhb3N0OExJVWhWKzBNVTBVdjI0YVJOY3FrN1Zz?=
+ =?utf-8?B?YU1GNXpOa0tqZjNkeWxubGM0UWhYRHRqdE14aGprQTBVMForZThpSWxpd0xL?=
+ =?utf-8?B?OVJmZGxxelFmbk1HY3loQkFQYlNnMkNPcTZsbnFKUDd2aEpSRDdCaWwvSERP?=
+ =?utf-8?B?bXR4WFZScktZbG54WDdlRGNMRDZVQk82akg4Ry9LeXpmem1HaWhUbEZZdE8z?=
+ =?utf-8?B?d2ZIZFArTTFsUm9TWkNKcjI3SmVKSDR2WGxrZ1ZzdFhyelpyVG9DZGR2Y1Vk?=
+ =?utf-8?B?K0d5MHVzWHZrd0IyVXRQdnZTbmlGYWtYNURpL0F5Q29QcE9yMzdnS3RDSVJU?=
+ =?utf-8?B?YWVZTnd4cWVmVGJqK1MyTUR2Q01LWmEvRmZMeUNuQXF0eWFrMHJoS2xNMnY2?=
+ =?utf-8?B?WVE1VUtmV1VPLzNoMGVJUFc0aVZsdi9sKzRqWHRteDNnMVdQNTR4UVFIMDFK?=
+ =?utf-8?B?bHNOWC9iYkk1emptR0lWa25lQ1E2UHhFQ1RMU0JNK0tXTEZIaUhza3lzUEdp?=
+ =?utf-8?B?M3B5MHBnK0NNb2hCZVpRdGtQbENUQnlyY0hyM1hDdmJOV0RQMnphbVFGTmhn?=
+ =?utf-8?B?TWxHRG1YRXdHbTdxRXZwNlBYZ1c1dUVvYW0xYWlTNGN2TVk2S0JFbjVmUlZL?=
+ =?utf-8?B?d2RTQndEb0VkL1lZN3FmUXB1UXdCU3RHOUl6dDJZdDFuU0FJcm5HamxYUHlz?=
+ =?utf-8?B?V210UHF1eDVwYmRPN1EyNmw2Z2UxK3B3SnBCN1N3NEVsa3RPUlZGODBWZlRi?=
+ =?utf-8?B?bGhBem9Gdms1c0k4bVBBZ2ljOS9SRGFCb2IvSXZHeCtEd2srSWxCYkdsY3JW?=
+ =?utf-8?B?bWRKQlVnV0l5bEEzRi8xaUlMeEtnbjVZQk8rWU9RS2YwMUN6cVgwdzVTaTZD?=
+ =?utf-8?B?b1I0UXRkTFdrQ3FreU5SNzIydVJDaWRKMmRndXliTEJNb0xJMVV4OXhDVytl?=
+ =?utf-8?B?QnBVd3Y2NEZWWHhPYW1Ea1o0L3g3aU1JWjloY3VDNUxxRG5Tc3hsZUtweVll?=
+ =?utf-8?B?cDNlM0JCaVN6VFFucnBsZWpuZXhvanh3bmVxUjF1dzdrNXlzYlRCc3pOMUNu?=
+ =?utf-8?B?QVNaalJCWSthanpFb3h0OFhIaUpVR0tUSmhSWC91VXJvRE9yc01mSDNRcm1O?=
+ =?utf-8?B?aDBrbitVN2hka3NBTUl6TTJEdWZBSHhkQ0VuTVV6MXhVc0s1MDEwcGczaTFa?=
+ =?utf-8?B?T1A5c3NnL241WXpyT2crVTErMHBmVU5xZzV6Y2ROVWFLRHl5Zmk4VWRWTjJj?=
+ =?utf-8?B?eFNRcmlnNW1FRTVndzFOcTYyZ3dYYWhLNzJ3VEdyOWhYUVRLWlNvYXF2UDdz?=
+ =?utf-8?B?V2RXN3N5aXhadDRVSm1FYkRHQTNsSjVvUXNYc0FIdy8rcTROTXNOMC92dTJ5?=
+ =?utf-8?B?bjVXL1pLbm9wNmlIdG0xKzN6VVRMR0JLQmkzM0xRb1k5WTlJTlVYUnBmWHFz?=
+ =?utf-8?B?cFI2V3kxYTEyZGRKRFFKT3NIaDA5TXhYMVNxTU0za1kzdWZOVVZQOWVPL1Bk?=
+ =?utf-8?B?bW5rV3hQSTQ0am5yWlVpVXpNdlB1dzZjeFhBeENqaVNJYzBsTUkxTEphdG81?=
+ =?utf-8?B?ZXlKcWRVK3ZkSWNsVzFhS3dTK0t4OWdKVmRrSmJXOFFwb1VwTTVTWlE4S0p1?=
+ =?utf-8?B?OW5kQ2NzbmhacG1abWxoK0d3UDFSNHVUdFlNMWt3emkvREp3bjNaUXphK1Bv?=
+ =?utf-8?B?TWNqN3ZHNm5xall0RWxHVmYwdEQyMVVxendJd2lPdzlnVVZXcmkvZWNvbEN6?=
+ =?utf-8?B?UHNGS0gxQ09aeHozTzRBc1lMMGE4RkZRNlYvOXo0dTMvT3lCMks4TUFmRFZh?=
+ =?utf-8?B?c24yUG00SkQyUkRrTXNuTld3S0RlRzlHVXI0ejNmN3NlNDlxQlV6TDJKOEZi?=
+ =?utf-8?B?UjNhWmNXbFhNMDQwQUswNlZWTGpMQ1E0VUFrd2d3bWlIdkJES0FIc0F2eUt0?=
+ =?utf-8?B?cjFkRm9QeTk2MU1idmo3eUZUK28xajZWR1F1eFNqcnExbm55Vy93Z29adGsx?=
+ =?utf-8?Q?CN754V?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2025 10:24:01.3532
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9650365-27b5-45b8-3b5a-08ddad8913fd
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A793.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR02MB7296
 
-Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
-feature of the sensor. This implements following modes:
+The led child reg node is the index within the bank, document that
+and update the example accordingly.
+The reg property in child node is limited to 0-2 since there are 3 leds
+per bank, previous value in example was speculative.
 
- - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
- - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
-
-All values are based on the OV9281 datasheet v1.53 (january 2019) and
-tested using an ov9281 VisionComponents module.
-
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+Signed-off-by: Johan Adolfsson <johan.adolfsson@axis.com>
 ---
- drivers/media/i2c/ov9282.c | 29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/leds/leds-lp50xx.yaml         | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index f42e0d439753e74d14e3a3592029e48f49234927..b6de96997426f7225a061bfdc841aa062e8d0891 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
- 				current_val);
- }
+diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
+index 402c25424525..23f809906ba7 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.yaml
+@@ -81,7 +81,12 @@ patternProperties:
  
-+static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
-+{
-+	u32 current_val;
-+	int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-+				  &current_val);
-+	if (ret)
-+		return ret;
+         properties:
+           reg:
+-            maxItems: 1
++            items:
++              - minimum: 0
++                maximum: 2
 +
-+	if (mode == V4L2_FLASH_LED_MODE_FLASH)
-+		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
-+	else
-+		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
-+
-+	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
-+				current_val);
-+}
-+
- /**
-  * ov9282_set_ctrl() - Set subdevice control
-  * @ctrl: pointer to v4l2_ctrl structure
-@@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
- 		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
- 				       (ctrl->val + ov9282->cur_mode->width) >> 1);
- 		break;
-+	case V4L2_CID_FLASH_LED_MODE:
-+		ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
-+		break;
- 	default:
- 		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
- 		ret = -EINVAL;
-@@ -1326,7 +1346,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 	u32 lpfr;
- 	int ret;
++            description:
++              This property denotes the index within the LED bank.
  
--	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-+	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
- 	if (ret)
- 		return ret;
+         required:
+           - reg
+@@ -138,18 +143,18 @@ examples:
+                 color = <LED_COLOR_ID_RGB>;
+                 function = LED_FUNCTION_STANDBY;
  
-@@ -1391,6 +1411,13 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 						OV9282_TIMING_HTS_MAX - mode->width,
- 						1, hblank_min);
+-                led@3 {
+-                    reg = <0x3>;
++                led@0 {
++                    reg = <0x0>;
+                     color = <LED_COLOR_ID_RED>;
+                 };
  
-+	/* Flash/Strobe controls */
-+	v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
-+			       V4L2_CID_FLASH_LED_MODE,
-+			       V4L2_FLASH_LED_MODE_TORCH,
-+			       (1 << V4L2_FLASH_LED_MODE_TORCH),
-+			       V4L2_FLASH_LED_MODE_NONE);
-+
- 	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
- 	if (!ret) {
- 		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+-                led@4 {
+-                    reg = <0x4>;
++                led@1 {
++                    reg = <0x1>;
+                     color = <LED_COLOR_ID_GREEN>;
+                 };
+ 
+-                led@5 {
+-                    reg = <0x5>;
++                led@2 {
++                    reg = <0x2>;
+                     color = <LED_COLOR_ID_BLUE>;
+                 };
+             };
 
 -- 
-2.47.2
-
+2.30.2
 
