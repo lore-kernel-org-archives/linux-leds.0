@@ -1,63 +1,63 @@
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ECD224AFE;
-	Sun, 29 Jun 2025 13:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8A921FF4D;
+	Sun, 29 Jun 2025 13:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751202014; cv=none; b=ApQ5XXnBVD2IJ1GH2AyHyvUD9hxq2uwuhI1k0suGwWnZDwS7NPb8246nnGHmx8Yn4BOEPFq0SEPW8nMFQGHG3dubRZYsQxTGluw8Dnw14XyaCibvb7xk1fRWkBbTx5AiE5aeqewTNjOcCDuaf6Qvp3dWoHIr6v9glVxSWHs1iy4=
+	t=1751202016; cv=none; b=q99Z4jkrrFBI1nwBp3vmMlc/234uCT5XgtHU7rxZr8ZxQ+HLgdNiqILCGmZGy2e02q67a4oKCTcRP/s9yrGdKoMqRuiulpqWntUW95miiJkn0aP0nNodhJBFYpxbG5Yzdh6Z9iqCESyY20F+EsokQ9a4Rm0NQCkDkwTZd98lfa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751202014; c=relaxed/simple;
-	bh=VPXwInonU9FGvXJ0LXgLGZ+V0gSc7vckQtgi8zBOXZQ=;
+	s=arc-20240116; t=1751202016; c=relaxed/simple;
+	bh=HTqeSsSKky9tN3QC/e3EIkj1leVwea/z1aXXKmDKd2A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SoE2KWb7ByU5Inv4pIMbPJmE7Yk1ELEeNVWJU1W+yqwzjdpGiTkCxKynvmv2J7Ku3oB3SZx3tClsJDS7+VQytw0m+S/giurKSYcEGoVU8nI2/fvEJ3n7bRHzPwKqsn2Tk066QPDjVOPsEu9qKA2KMBzhTVjgV04hNHinAt+MnTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bqRKJ0mE; arc=none smtp.client-ip=209.85.219.44
+	 MIME-Version:Content-Type; b=KZRZ9xv9dBoWb3dQqTH+vAENRM96hOuHtBYTTbGsYnofGudiiRXxUZJyNfo6vaK61uOmo8j8968AlWNzOSwKttUSdEUDytBmgJZbdCQwFe1bJKXygu9dPRC2K5veMkAiFF5g6N+ao6BEv0oSs2FFC34GKB0x5KUtYshGjEJsVMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OES7FHWT; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqRKJ0mE"
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6faf66905baso16111636d6.2;
-        Sun, 29 Jun 2025 06:00:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OES7FHWT"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7d402c901cbso333897385a.3;
+        Sun, 29 Jun 2025 06:00:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751202009; x=1751806809; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751202014; x=1751806814; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IouU7a5uPzIAqGhqgxh18KDCBsLsQhNOKT3uXf6rrdY=;
-        b=bqRKJ0mEZNOT/UAP0XhlYtmpxWGtcDYOhrvGuWzEzYhs3NowSlU8tHgVFJYkPW37ov
-         Nq1qd5JuW7hG2K7fJJrqCiVk6d8jzVUq2/PccWVvHSbpWfBGOllJTKStPaFnaDnPo9pW
-         SGG4ifE8vru7+OWMHaXImbkc5tEYfO+G9Tx5w/pKHxldpYSOxg+okCvkTtyoQ5UZWJDN
-         sPeVa7RpCOLpn29EOcIddRa2leMQpwx9t9mvks+OaduDPFXhLmHperdj7GjD2LtkLW22
-         J/Rss4p/VLNPGa5oDwsls1CbJXrjPnWMWMqCNNWfB2uveBzdxLzKBYPtKH/Dq4uvXIou
-         S29A==
+        bh=mVrl6HRSnPKb1ylhxhE5h77W8zUj8C870Hx3TOMMukA=;
+        b=OES7FHWTDnYkflaWwvjIhZokjHJAax+TajHdSsIiajXcJesqS3Nm8BZSnwtS4ATkLp
+         5pddQLtoJmCtfmrX4qq6+qaR7uiPyTygfhILTeRB949QxRTJZ832Nn2QvMuEEtT3HZA5
+         1CJ02Dg4hVLiJ3xu2irYxtcaRKkju3jL19airkWf/DBspDVwtM8AAPnCKgKlNOHKy7DO
+         nVdID+i/V0S/oSs8skPYbCaTYw+uW2d9jRG4B42Pdkbk+Ocyh/CsR9V6r78CSpTOFZod
+         9t90YHxgNWmdJ/GKDgcOBaMpoOC+vMxF0deV8poqpY/09Of+v/zNHFgJ+Ni+or+MjL8o
+         0Y9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751202009; x=1751806809;
+        d=1e100.net; s=20230601; t=1751202014; x=1751806814;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IouU7a5uPzIAqGhqgxh18KDCBsLsQhNOKT3uXf6rrdY=;
-        b=sVm8Ah26FWNsWDIocWcSB5R5oB/vTeQsfogU4YBlTTwBBGXOlXLppiNSFwLaFSuvLW
-         8sMdqluSR+z/V9+YUN6m+uswn3xlqDzTK+OGOlFsfvfBsoNevoaj1X6N4T68oo93K0mx
-         dnDIa/8E/ea4pdvEtbeIjYD5GKA09Ir57Yl0PEwpid08PJly0tbtaTdaEXy7b80bMVAE
-         kP0Fd68MXs5Ef/D/ylLDoGY36FhSEvoovHsWVSGrXnDFEaJg55dItgKrVsKyUwqmAirt
-         LZDEQfP9ONCxFQtLWj21qxiiBI3EeS6UMRk/3ytcWEdxiegrEWP2xR2TbC9hViBXDawB
-         W2IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVeplP3VQm7bdylCrfaBC5w+SRR8jRk7l7ntrCuBxQ8gKm13NFugw3CZqE5RVxmyRG+mpKwinQBSzKHxQ==@vger.kernel.org, AJvYcCX/iu2cy/L6RRNbw8cm3KLjkhmeRigLnetX5OVb6ToQ//a32Ic2R3huRIruPHbte/X0V6lnGtgPX/Qt@vger.kernel.org, AJvYcCXGOB/vRGwHWA+6K3qWIBypk/R40o9OOH61D9/JrH4aYRCB4Vg2K3QvRMYua9NymX34uTuiwo9odFN4wflS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4c6OtLHSg8qxv2IvJrF4qKDoLZ0qLgne/ncP2b5GciLk1LccE
-	2UmH3C4OFH1bHLF9eqAfqrYo9kEYUbtClQ4E29LI8OUDV6iqax1BNNnB
-X-Gm-Gg: ASbGncvHC2wm0XI5lYr5cRCL2fTojHvN7+xR5Ju0mZ87L8FDCUFs5K/BOWI6qRoN/8l
-	ZRGqsL0Ewa1tJz44Cp33pbwFZ3fYWCHXLCJL4+ynh8gW3KTsRf0L/s4H/qKmwh/CyfouMv9lUyX
-	1k+lB3rqT7eCdiy0DsFPEmpDNvfjIJshVpokZyqXK3ZvLHFH+2ne4JkSAYlBWm2M9IULviJlrlT
-	KgtH9i6uqwTcx0fbzvGx0SaBysRUIJc0V0aRySQuRsfkaYxNIIEzNEO4dX7D4igaMJoIAiuhpYQ
-	D+LkDhMNRcCPWRMbk2pHd7FXHY1AgRSO8sRZDA+l1ftS8HLdZR8FFlKUq7+mQybr7YIFi/G3blS
-	Rnu30S1Z3t9TZQ5axNhmnSGmHecvx9Jw1
-X-Google-Smtp-Source: AGHT+IEUBwDEUQzHFjFXBnrjMkyje4gXDohI4wRYXdcnYEyAAYqGM8UanERI78bbJxoogKIEErt8yA==
-X-Received: by 2002:ad4:5c88:0:b0:6fd:ace:4cf0 with SMTP id 6a1803df08f44-7001378c7c6mr120998726d6.24.1751202008458;
-        Sun, 29 Jun 2025 06:00:08 -0700 (PDT)
+        bh=mVrl6HRSnPKb1ylhxhE5h77W8zUj8C870Hx3TOMMukA=;
+        b=HBMpfIdpvn5dZGJoODOdWkOd9dMVq49YB9dvRciNrql1CQtlPF/+i+WOyJvvXW8/VD
+         il3VGgbfMCYswCMoiBm4bvmFxcw2tM/a0Nb0xwyD5gLbqegoJhEwklVrEXV3Z7OcLpg/
+         q7dr7E8bwDT5ApO7MMrRXHRNtVGxBFTcDZ0kLYBxeQbBo9IF+FRm1pkIJLDgPXEoVsGq
+         +F31IjFdRXUh0kGFZuh1nYU2ki6OxCSZ9iChWkwIg1ubXow5bYZ4PtbkEQMIo6+iI3n0
+         7ANNoZikSZXDK9f3W8bN15ROi6DK5hAVtjO80EOHvNkQ6OGMd+8jpa8Epl/u1RepO12J
+         p4lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbwJEfOr++rmfVwRlglY+p01zjzH7juzxzw9AS2yJo3mTBrpBXrb9VE3lttn6Mml5pVaa1Jsb27eSx@vger.kernel.org, AJvYcCXRcib0klB4PZkYTelZFXXhxMNTEmV3VEM4esuwF06m4ATNCuKB0vwDjLuLWwtEmysn2TPoHWJFhUs8v2WE@vger.kernel.org, AJvYcCXcUZoDqdMUr1RBsLLHt0LFubxjjr4l/91jG77NUknYcmYBh287izXfOP0qTGW449k+gVjub8M1lA1iKg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrVAq7rRirNyizv0ptPlTdl3YN1Af/24MdHuGm74nOTU9C44+o
+	x2e0jUM1tm0hzCE9xcujMrzHtAWJ6+CJxngxuRsqVyF5hrB81j+7PsIe
+X-Gm-Gg: ASbGncsbYUMCQNmyMu+PAFT9/oHFYhT1agXt9RNYzfixaaHFQg8Mx+xd6/e1GIGlpga
+	PeKqurSnxoyhsoYnsh2mNpfGlSH1Jh53nApYXBwpZVvep3yzmb51Xa0ja8jUFxYaUDaP8zUscXK
+	4KsjQoIpH3uiTOOqlBz1aLiN5xqjIE8cUz2zk+EI8LoA8XaaMhIpO7Ee06hR3rRERMDZY9EKvne
+	aaWn8GpmebgJQiGbm2rtQow8utSvpMkviKFAjQv5Ab8ZOG6/7hu0hmpnt/czsEewHpBQNFxDPlx
+	wcaeUdUUBUwVzUyb1t7VpP7kP3OEwh4r2AcANfT80XH1PKKhQlH97c2pL3/ti38lDzsqaL2aKOY
+	lptt93wsXWdZLqq+vxHYuvyxguPOWYZ3t3Ku4zchnkKM=
+X-Google-Smtp-Source: AGHT+IFqLhtEo9BTQVj9QHz5TaaN9GgsZ03wdBMZX3J4QcBvI16MWyyJDlp9W0unUCkfBfa1pvuIeA==
+X-Received: by 2002:a05:620a:3f48:b0:7d4:5abd:6859 with SMTP id af79cd13be357-7d45abd6eabmr86451585a.46.1751202013936;
+        Sun, 29 Jun 2025 06:00:13 -0700 (PDT)
 Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd771b883csm50895216d6.39.2025.06.29.06.00.07
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d44320430dsm433678185a.63.2025.06.29.06.00.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 06:00:07 -0700 (PDT)
+        Sun, 29 Jun 2025 06:00:13 -0700 (PDT)
 From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
 To: Andy Shevchenko <andy@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -71,11 +71,10 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Boris Gjenero <boris.gjenero@gmail.com>,
 	Christian Hewitt <christianshewitt@gmail.com>,
 	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Sabatino <paolo.sabatino@gmail.com>,
-	sales@fdhisi.com
-Subject: [PATCH v2 1/8] dt-bindings: vendor-prefixes: Add Fuda Hisi Microelectronics
-Date: Sun, 29 Jun 2025 08:59:51 -0400
-Message-ID: <20250629130002.49842-3-jefflessard3@gmail.com>
+	Paolo Sabatino <paolo.sabatino@gmail.com>
+Subject: [PATCH v2 4/8] dt-bindings: vendor-prefixes: Add Winrise Technology
+Date: Sun, 29 Jun 2025 08:59:54 -0400
+Message-ID: <20250629130002.49842-6-jefflessard3@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250629130002.49842-1-jefflessard3@gmail.com>
 References: <20250629130002.49842-1-jefflessard3@gmail.com>
@@ -88,30 +87,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Andreas Färber <afaerber@suse.de>
+Assign vendor prefix "winrise", matching their domain name.
 
-Assign vendor prefix "fdhisi", based on their domain name.
-
-Cc: sales@fdhisi.com
-Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
 ---
  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 5d2a7a8d3a..9e4d251e71 100644
+index f03ab02afe..a3bf93e5dc 100644
 --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
 +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -531,6 +531,8 @@ patternProperties:
-     description: Fastrax Oy
-   "^fcs,.*":
-     description: Fairchild Semiconductor
-+  "^fdhisi,.*":
-+    description: Fuzhou Fuda Hisi Microelectronics Co., Ltd.
-   "^feixin,.*":
-     description: Shenzhen Feixin Photoelectic Co., Ltd
-   "^feiyang,.*":
+@@ -1711,6 +1711,8 @@ patternProperties:
+     description: Wingtech Technology Co., Ltd.
+   "^winlink,.*":
+     description: WinLink Co., Ltd
++  "^winrise,.*":
++    description: Shenzhen Winrise Technology Co., Ltd.
+   "^winsen,.*":
+     description: Winsen Corp.
+   "^winstar,.*":
 -- 
 2.43.0
 
