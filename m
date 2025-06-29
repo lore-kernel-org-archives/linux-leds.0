@@ -1,63 +1,63 @@
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1738022370F;
-	Sun, 29 Jun 2025 13:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D2223DFB;
+	Sun, 29 Jun 2025 13:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751202008; cv=none; b=R9fYg6FYaAJSBGLhE5mX2erI80mWDzVlMh9fyoP9umSXIBymvQv34cdiTpMoaNUukd2U1QzLDyDptmuFBsH6i0vE9C8/hR2f8zK0uhU0WdPFlu4cVucQLXyJEk1H3xdm3yDjcJZx36uJnnXn8w1IBuaj9bNLg4P+s+JriC2MefI=
+	t=1751202014; cv=none; b=FS+mDhrpKgXb5V5SOiR1AL54X+Wo3HuSj/H/+wLn3OQgFW+bEq7PmZ456QC7ZbfThQhgLtEdfSANCeZRTSQr4ixZ33ORP+oNLZIcvtdSR8K9kSv0f9joSAaS4+IswhHKUelZ0Ncrh+neh7gEX9o7ZKJT7GNBjFLkSEVWRMYWNZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751202008; c=relaxed/simple;
-	bh=K+WEFJjjIWvHspQTmC84LVv6AkmYWMvLRVPGaxC35mA=;
+	s=arc-20240116; t=1751202014; c=relaxed/simple;
+	bh=v2XAzjfgoGzkdFNzMifDiw3LW48guo2c5O2/eNjtFo0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ugFVcp5YhiAO+eVi1CB9HsHCio4oifPXAsIBui8EJCk4pg3hVKXyAYpEc5jh0FXrkklDRq7YkycsWPfzhJpyjP15MGxLBpsHkMvc6dpScxxBGgHyQkBwYoR6HydbO/V6Dz0eMQ4xOQRUiISFuKg9/MankxbhzBK2OPoYtNxPnAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3YrMbkM; arc=none smtp.client-ip=209.85.160.170
+	 MIME-Version:Content-Type; b=W0kMdfWwJxJW+Quz93H8WoyX1u9C8HZTBzhGYLwfp94BZvjhGYNcsxkctJT+65h4bH8TTrTexPbqFnyPWv4IW8MpAmW8GGsY1CEYY4rlgARV0B5XnSXWKl+m5Rfx+DHly0TeHO02j72L95VNEKxckRnB8aZU/Wr4iDDnQXsuKp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUUmySfv; arc=none smtp.client-ip=209.85.219.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3YrMbkM"
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a58f79d6e9so51249111cf.2;
-        Sun, 29 Jun 2025 06:00:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUUmySfv"
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fabb948e5aso16380066d6.1;
+        Sun, 29 Jun 2025 06:00:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751202006; x=1751806806; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751202010; x=1751806810; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TVmynuRCoUKul3boZbYZPMM1R7E70lXz34Kw3eLlkLw=;
-        b=E3YrMbkMiRaDdYBXGIDlFLJ7ABu4ss3GwFk9chVMwWfviMF4vHe7chPDOBcS08d7Xt
-         GfWg0QHE7o8Yn8RkDKsslLAB+dMu2Gt1h/NTIk5p1jHKHn/W2vrb8jCvPH49utMjNNXO
-         F2UZHFZOQjkVlppjjTCoOfVYeRV1Pks3kPdhbgfG+G9khsnvFyJgpIr9q6VdEaPICcHx
-         oJER1wWkyuztqpV5U3Jcrxi3p3GD86ypr7BAtjulwYnRDI2HJV9YVF8P5KjvINA3CYfx
-         O7l9mh9nj/VMv614iF9xWkEfzSHumTGa6eMv9mZKU7boQ7PJX7LDY06O/hnAtqGigMRj
-         Twag==
+        bh=QwEXumjeSgSKL538gxbS9ghqm2KZDoPQ2P9+gjK1hDc=;
+        b=iUUmySfvg9iODYhoswlYNGotxYoC7JxQO43bONQlSL67qk6l1TRyLs40s+ykBHOYTf
+         /1IWehgeGUdJJe8hriXj0S+jcX4ilK3i0r25guGm2+hL4KQ9ioG7qHHCxq1bWaYfUB5s
+         NTX09UcsnQUjlMY+9X85FYI+PBloTcX9qh10fqsHmnCIrYrBzAR5/7mCsskiODDV/qkN
+         M/Lr6BbxZhM6Yj27yZqK16Ww2zLzL3Kj4ydDWC211RL1oEhAH97C6ocMjSSitei9bnJ7
+         O6HPYS08uEiv1KgXBTnmWTo7HSwqsq+UgzSCqxz8D/3FCcflct8ZL5Nk9pCHRTS6YT4r
+         tA+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751202006; x=1751806806;
+        d=1e100.net; s=20230601; t=1751202010; x=1751806810;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TVmynuRCoUKul3boZbYZPMM1R7E70lXz34Kw3eLlkLw=;
-        b=TFLdBoQeeDEmCk9lsFEukt41aacbV22O89QYSegS2M2UcospgDKBK1ngjF4DVbLVuy
-         JUGdvi6ysf6MSiS7BgIoddLO2cedhkE7Il+Xk+qzuKXA7erJoBl7WFlCmGN9IfoZSWBS
-         W8PS+X+qqOxWmQiTbSaDDAlL1CICm1XvB9hb/15a446+SajR7o7+FFzUXgcYo+3ePTDF
-         n0Wzj5Scdnnvlp9rfd9DPiS1Sn2mAO0/mu3U/gu7JmUpH9HmudwqDoLN4LefJ721f/Vr
-         lovTti9aHCU+jvtZ8xHWiQBaFpnvx+omdTjT6upasyR3tk6+kF6oAE/gE/Fg1EH/KNV2
-         2Mcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNun44zuLUJfFoZyWgkxHb3Ev4y1KM6axI7SDzTMnbw8gpM+Jqi4XFZTFd8cTR2lKgK2Sb5CsBxnpI@vger.kernel.org, AJvYcCUsYTta0dx+hsHuDvFK1KQPjjZDN3iSdAoLJm7MJXpju6UF0Jujf9gJUUNupiGNVXkDKsgkwGtESFUtZm7e@vger.kernel.org, AJvYcCVZlR1tY9sJrhdrrSQj7aOLkMsUZUzbNjJVGgwIWFL/7sXAbpPifT8CNCPlfSj/Z3jnlmSXz+gx6/vMCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8nqqBIqWlocCzGEm6VvVUMA7O7Z2yWzTE5KPUL+iD1jLPZfbu
-	bgE3ahBVLapoRwHpx4wNFNwKld0zRMqa1kDCEnMhsAvjg/dnWxvJlJ9x
-X-Gm-Gg: ASbGnctsqMM/Cy6UJdgKESnxnJ7wGUPHBrTdGRsNoiCi2RS+R6IsusoYCwWxLcdE9oN
-	Yyp94OFQL677LxEqrGMBAI4lkJMV3RUaxzEViL7q4qmrOcMyzWSj+NOspRLuDDvXFq04Tf77HH/
-	c2OMFawwjYflVCT4g/Oc3rwZz4UAyctn3S9Vcsi8TizSM3hJHCyabYTzZPCYaubvocyiB8/9aJt
-	Pd4UP1sS8a4lzbUd4zEPwjWJahoeNrjaKh8G59Os5EJJ7nqql8pe9K6BeCJz8PLJysp/46etEY7
-	bx4f9S8jsiIlvkFLug42lpxPzNhJlr2zKusntjvFmtMwa7z/VNOt/UvmXGBa2smEn1Fh9g3ouhV
-	zuqYDPCgup3lJc4ybVbEQ9mlISDIH2jrw
-X-Google-Smtp-Source: AGHT+IE/3brjX7yxclIrmWbxkpUjIQt8qdYLuN+1INlqRRBTxWp2u29+VyO1TAa6r4JrEXMQwsawkQ==
-X-Received: by 2002:a05:6214:4348:b0:6fd:7577:cee9 with SMTP id 6a1803df08f44-70001c5337fmr160635236d6.2.1751202005823;
-        Sun, 29 Jun 2025 06:00:05 -0700 (PDT)
+        bh=QwEXumjeSgSKL538gxbS9ghqm2KZDoPQ2P9+gjK1hDc=;
+        b=toFI8anx84LhMqWm4kWv7a1Qy1vOxemWuF0FovRc88nexbB+3PZoP0Bq/N0f5WcgYX
+         w5DvGmGwpMauZr9ffTxy+ZCmX8QNN1lpP3KtIjNSq7Rao6TMqgwZ9Ai7VMIymxW9EwoB
+         dmI7kRfFQWF2xC0wfnoNQHpOaTroX8Qd2Zb7pFZCXtswRdo0qQEVUK0qFtu4x5Nu8hiq
+         z13hXJP7jC5oNumCj3w0xi/L0YGZBTZV70ZXi2WCpzXrdeQ1a9fsbfNVXc66FuhRUJGO
+         yGf+74eUyRT2W37znmwBWh9TcL9F+eQ4LF/tDJ51pmNWwXCBn3upvpq53Q+7775YC8ki
+         9ASw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE8IrgPNd/LJ/7CxUt+Cs//pNc1GB4mHDQvZjlvz9am/u/bmLBcMqSIZL3OVl5EX3mOBpp3MLIryMdz0tT@vger.kernel.org, AJvYcCXGLskp94aN1XmtsKL3qUD7PpMo1q7iMYLFDcEh0swBQY2biXD2N7DLaEpzyDvhzq8SWqC0C0/2T8netw==@vger.kernel.org, AJvYcCXZlEauV64vAn55vRHUoCxsbwPDKRuboUQKt7cCjt6KR5U1r1Ka4+0ZotVy0kc5gXG7OC51vX4zY5b0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl7CPxw/BiYrREMo6MCsSkjDyVze3iYQwdtxfs5q6cyIuxW0KM
+	Tv59oENUM7IopOdQKApM0lGzoEz83PqIrSY2ZwpRJdG4h5/JVKIykiWr
+X-Gm-Gg: ASbGncuKtu9hz9CctPtULgXa1qYBLWZ06zRvqocLwUAc+NCSoq8NVM8gOLd4wD+z2Mc
+	i5wzwZuOIcxiYzkiS8ET5rrYXK4Joki4Bcd7kDJPQTyqYGRb/uyKHKMlwJY/hphhRgwmNtQw62A
+	D2mQImbbZaTB+OqLz2i0nKC2C6XNZchRKDM+a1lXMrEitZjltKhZyX3mz4Mz3wNCMRwtuf2P7DS
+	mI/HvSnpTL6gYKouiJBeUDgjyap8zioj9udvzM5KdOBjq7jRihm4uVs8lVItKTNQRtdBI4zbnuE
+	/7Zx26M+Uh7uUZJHhMIUs7mz9LkgiNUFmO1togxypAMLKr83ysnYDPfACLjcTILxKwwK8nZL4BF
+	aZxGL54H7G8XIlIimau7sMgYRguBaYPKm
+X-Google-Smtp-Source: AGHT+IFjqSGcyWn6dUYeWy/vMHme32wBpUtVRfJxNvO1b0o4yAx282ALGzUc7eggW8k2CgOt4WxUvg==
+X-Received: by 2002:a05:6214:262b:b0:6fa:c46c:6fa1 with SMTP id 6a1803df08f44-7000262377amr169329956d6.3.1751202010228;
+        Sun, 29 Jun 2025 06:00:10 -0700 (PDT)
 Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d443201b67sm431628685a.61.2025.06.29.06.00.05
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ff81088cbcsm43946886d6.7.2025.06.29.06.00.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Jun 2025 06:00:05 -0700 (PDT)
+        Sun, 29 Jun 2025 06:00:09 -0700 (PDT)
 From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
 To: Andy Shevchenko <andy@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -71,10 +71,11 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Boris Gjenero <boris.gjenero@gmail.com>,
 	Christian Hewitt <christianshewitt@gmail.com>,
 	Heiner Kallweit <hkallweit1@gmail.com>,
-	Paolo Sabatino <paolo.sabatino@gmail.com>
-Subject: [PATCH v2 0/8] auxdisplay: Add TM16xx and compatible LED display controllers driver
-Date: Sun, 29 Jun 2025 08:59:50 -0400
-Message-ID: <20250629130002.49842-2-jefflessard3@gmail.com>
+	Paolo Sabatino <paolo.sabatino@gmail.com>,
+	zypeng@titanmec.com
+Subject: [PATCH v2 2/8] dt-bindings: vendor-prefixes: Add Titan Micro Electronics
+Date: Sun, 29 Jun 2025 08:59:52 -0400
+Message-ID: <20250629130002.49842-4-jefflessard3@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250629130002.49842-1-jefflessard3@gmail.com>
 References: <20250629130002.49842-1-jefflessard3@gmail.com>
@@ -87,76 +88,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This patch series introduces a new auxiliary display driver for the TM16xx family of LED controllers and compatible chips, widely used in TV boxes and embedded devices.
+From: Andreas Färber <afaerber@suse.de>
 
-Many consumer devices, particularly TV boxes, use auxiliary displays based on TM16xx LED controllers to show status information such as time, network connectivity, and system state. Currently, there is no mainline kernel support for these displays, forcing users to rely on out-of-tree drivers or userspace solutions that directly manipulate GPIO pins.
+Assign vendor prefix "titanmec", matching their domain name.
 
-This driver provides a unified interface for TM16xx-based auxiliary displays through the Linux LED subsystem. It supports both I2C and SPI communication protocols and integrates with the existing LED class framework, allowing displays to be controlled via standard sysfs interfaces and LED triggers.
+Cc: zypeng@titanmec.com
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Upstreaming this driver will eliminate reliance on out-of-tree drivers and enable standardized auxiliary display support across devices using these controllers.
-
-It is compatible with multiple LED controller families:
-- Titan Micro Electronics: TM1618, TM1620, TM1628, TM1650
-- FUDA HISI Microelectronics: FD620, FD628, FD650, FD655, FD6551
-- i-Core Electronics: AiP650, AiP1618, AiP1628
-- Princeton Technology: PT6964
-- Winrise Technology: HBS658
-
-Key features:
-- Write-only display support: This initial submission implements display output functionality. Most devices do not wire key scanning lines for input, so key input is left for potential future extensions if needed.
-- 7-segment display support: Full integration with kernel segment mapping helpers for driving standard 7-segment digit displays.
-- Flexible display configuration: Device tree bindings allow board-specific configuration of digit grids, segment mappings, and matrix orientation to accommodate different PCB layouts and wiring designs.
-- LED subsystem integration: Individual display elements (icons) are exposed as LED devices, enabling use of LED triggers for automatic control based on system events (network activity, USB connections, etc.).
-- Dual protocol support: Supports both I2C and SPI communication, with the protocol selected based on device tree configuration.
-
-The device tree bindings provide properties to describe board-specific wiring and display layout, as the controller itself is agnostic to the display configuration:
-- titanmec,digits: Array defining which controller grids drive digit displays.
-- titanmec,segment-mapping: Mapping of 7-segment display elements to controller outputs.
-- titanmec,transposed: Flag for displays with swapped grid/segment orientation.
-- Individual LED definitions for icons and status indicators.
-
-Tested platforms:
-- Multiple TV boxes with Amlogic, Rockchip and Allwinner SoCs.
-- Various display configurations and controller variants.
-- Both I2C and SPI communication modes.
-- LED trigger integration for automatic status indication.
-
-Dependencies:
-- Requires CONFIG_NEW_LEDS=y and CONFIG_LEDS_CLASS=y
-
-Optional LED trigger modules for advanced functionality:
-- CONFIG_LEDS_TRIGGER_TIMER for blinking elements.
-- CONFIG_LEDS_TRIGGER_NETDEV for network activity indication.
-- CONFIG_USB_LEDS_TRIGGER_USBPORT for USB activity indication.
-
-User space clients, including display-service and display-utils for testing and integration, are available at: https://github.com/jefflessard/tm16xx-display
-
-v2:
-- Fixed duplicate label in dt-bindings examples
-- Renamed dt properties prefix to match titanmec vendor prefix
-
-Andreas Färber (2):
-  dt-bindings: vendor-prefixes: Add Fuda Hisi Microelectronics
-  dt-bindings: vendor-prefixes: Add Titan Micro Electronics
-
-Jean-François Lessard (6):
-  dt-bindings: vendor-prefixes: Add Princeton Technology Corp
-  dt-bindings: vendor-prefixes: Add Winrise Technology
-  dt-bindings: vendor-prefixes: Add Wuxi i-Core Electronics
-  dt-bindings: auxdisplay: add Titan Micro Electronics TM16XX
-  auxdisplay: Add Titanmec TM16xx 7-segment display controllers driver
-  MAINTAINERS: Add entry for TM16xx driver
-
- .../bindings/auxdisplay/titanmec,tm16xx.yaml  |  210 +++
- .../devicetree/bindings/vendor-prefixes.yaml  |   10 +
- MAINTAINERS                                   |    6 +
- drivers/auxdisplay/Kconfig                    |   18 +
- drivers/auxdisplay/Makefile                   |    1 +
- drivers/auxdisplay/tm16xx.c                   | 1305 +++++++++++++++++
- 6 files changed, 1550 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/auxdisplay/titanmec,tm16xx.yaml
- create mode 100644 drivers/auxdisplay/tm16xx.c
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 9e4d251e71..d02615496b 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1550,6 +1550,8 @@ patternProperties:
+     description: Texas Instruments
+   "^tianma,.*":
+     description: Tianma Micro-electronics Co., Ltd.
++  "^titanmec,.*":
++    description: Shenzhen Titan Micro Electronics Co., Ltd.
+   "^tlm,.*":
+     description: Trusted Logic Mobility
+   "^tmt,.*":
 -- 
 2.43.0
 
