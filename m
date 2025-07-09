@@ -1,117 +1,92 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978F42DA75A
-	for <linux-leds@vger.kernel.org>; Wed,  9 Jul 2025 11:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2D313B797;
+	Wed,  9 Jul 2025 21:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752061614; cv=none; b=qYBHhSXMTAkt6eqOf97bck7wt2uo58YVDpWivHwvkt+gjqrzZU9BAVbWfEMqjiGWLPqZOFfuRm/+TpC9Z1ujLgYps3jVa3MLwExdHdTA5qr4uHMDzOwP7DG/8UCt7Y4m7HnmBXphWWIxQT8UkR95mqID1hKKJanCNUnbCZhb5B4=
+	t=1752095585; cv=none; b=ga8mCkMqIznjPyvO7Jym2IlIugn/cISzdi2Elw9Uh25FtJu0y2nnzPA8EsM5IoJ/A03AXUrvJsoIOAvn9yRQcsvz+nI2zF1WLC5gDuzBvbifM+Ct6KZ0bSa8dtFfY7+LnujWKu5sZ+GH0wbJ8J+vocxJiNx0HCmSJIYlPKUhzc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752061614; c=relaxed/simple;
-	bh=q0f4Kt7CB4b+gGrecsM4LRgCLVf+5IH0ECZJniU0Rsc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=juqN7Y7oXX1f4KGK+Is5XryukKf7JZmsrvPORFQji/LL/sULm/jkQz/GCZoLNIzpxMYaS5klcMXx8NMGLnaWV/QKK3gZkDB/j8L2x7zvnz0+0+YyQN2qkSslVDUU5HDMK6PTHu5pdHlXbnZeQND8mT+inLdCWfm+in0YxbP/JT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=p8rJVdMv; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1752095585; c=relaxed/simple;
+	bh=euOd07cHnX9O5CkW5J+sbo8I4BBSaxORTjOxCBxyPUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmLwBgF2tOA5z9CdwzjjHgMX782m9VS46Di/GtbvjlYLHe50yZD3w+LPauCHHd9oqh5P+f2wAi9/1NuDPPVPfdEkfiOukU92mxwEPZBAe1FxxHo7yfD85ko3zzTgeWtFgB3KvRyWfAIE3dcY1j0YtNMXcbo5r4ynSqK/FCQRkMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ry7uaS/k; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="p8rJVdMv"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so1146205666b.1
-        for <linux-leds@vger.kernel.org>; Wed, 09 Jul 2025 04:46:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1752061609; x=1752666409; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mqaqbmx0aerFIcDameI20v5fF8h6z9wFPaN8VWktnrY=;
-        b=p8rJVdMvQqD67raf2TgUtXlA7ZLdTBcyLrQ4CCF4cOj8UIq6S/Y0SYJPVaZnf2kdkB
-         /8Ov6vbmgDl6dn1F85LaR0mA9V2QeaqYdtOffSN8Y5H03HaoOKblgHpsw5VzveRzi1Uc
-         tRzeM+X1Fzi7My+hGQzGOCg1LwuaHXJI0JACfIwj77TIeyc55T33+UiXzEkwC/0S+uYF
-         32G+/XlO9iXwBliesJUur6YRBI/PRw9OcV6SeOvdXqPJr7MCbjd8EeLBjnHLMh2oTEei
-         EEom6mLKUji5guo11YFku3GFZ2hM/Bcwjm3PU9seRzIwDbUFX4C567Oir0a7pqf7uRr+
-         89Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752061609; x=1752666409;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mqaqbmx0aerFIcDameI20v5fF8h6z9wFPaN8VWktnrY=;
-        b=Pb64bkwvE7iKcdxpCfRKfMJbVoNMiZ+KrKzYCZVc+mJ0qqvPx92bi9D7bIrWudyPQt
-         zfC/Worq5lK6Q12OvZlkQcSmCZwjvRPThCV/uQ6bnL6Gpydutz3I95izFhQxR2YTUWJp
-         w2L39foZbPS/FolOQI6Tih4LOG3GURF0PJDYZLDUbnBsSLMPGZDCX+EZ76Wdb9vpK9ek
-         /38NDcp9eL1hqRoX+u96l2YGO0ndAxapk/T1zdCI3BNdy72Fe89MrCJBI1S/N8HoJLlL
-         BWL4lJggviF56GhuHIgEJuroEshrx6CEq3O+pIw3GRqk5SxDxfPI7biGcc0Vk9nQMO3A
-         F/HA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQyhmwDKEkYB7dpAwoo+XiKlblcBQb7hcQ1LrXX365DBqg2EJDrfE8MfZkLDUHREWYytyIquTQijN0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZvYTa65UGdOLsXz6U4jnKCXfWkb4TIaxAjIAZ7XO2dpyWDUq9
-	FWsTOUqyUDR2QTgLiIMg7vyzg9Z74mr3ubh0b1Pa143tbankZhJk8l2PAGTxgTGx3PG1nCxxbo2
-	lmeYH
-X-Gm-Gg: ASbGnctep3RQDTutZomN3C9mdDtGvm/X0wXsVLYiSqbN6bZWSTrUIuNMbSm9BjyJ1Nn
-	v15QDgirBNyCvE8JWbTT48WPW3q6T+AmjlmERn2gWtPSHs98abdLqkdXsEUbPfIejMDMxi2W7XZ
-	LAxrWTZgAmvq/4LiccGYmxwyCzhpMTEtpVUJrys3QAQd0RyJ7ILFQZSv2loQcQQdYRyOr3Wi0Fl
-	9YhEQSiCwZ5NsPcrazg0EonGHNIJQ89bqZZt+7V0VSWwb/X8hmcB26potMNEzAVS1VvRojfinp5
-	PeXf8Ja1OpMBUaXDzMfR16w7sSwJGkkOL1L5uJ2RFE1TIM3PrQsbYiRMaY0+AZj3tqdC4QbNLuE
-	DEJn+gth4cxzVAN9EHURqfAWvAae13M0u
-X-Google-Smtp-Source: AGHT+IGe8ifQK3zKlm/INbNEzwNqGtIX1dU/rXl+zkSfPoXCoNmj/1eNhP01t/aTJ30bcZIwFGeScw==
-X-Received: by 2002:a17:907:a42:b0:ae0:d78a:2366 with SMTP id a640c23a62f3a-ae6cf64081dmr276746366b.4.1752061608819;
-        Wed, 09 Jul 2025 04:46:48 -0700 (PDT)
-Received: from otso.local (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ae3f692e4ecsm1102995266b.55.2025.07.09.04.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 04:46:48 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Wed, 09 Jul 2025 13:46:35 +0200
-Subject: [PATCH v2 4/5] pinctrl: qcom: spmi: Add PM7550
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ry7uaS/k"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752095584; x=1783631584;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=euOd07cHnX9O5CkW5J+sbo8I4BBSaxORTjOxCBxyPUg=;
+  b=Ry7uaS/kGrv8Cl7xGx7Z3/zvVUKJWYlBDo4l2AqLo3k4mVxffaY7Sdk+
+   B9mWJBqZ7wKlrVL6rSe7k/fT6MS9Oh3gYCoKJMTYPeBfh9wY6Cmx4XU7z
+   azuzf+WuLIGB7L2J7/bwfDTve2UqA4bik4RQ66jSPllcGCDbxRpCVH5L7
+   AOUhasJBEWRYPXV9oSBpuuNWn2t1doM0dQD6cMOX00kFcOTIbapPmSRno
+   cthxJzqh9hrySqd4tOqpGk7hkpD324Vzu4O5z6rkUoJ00jEhjsOeG/XOc
+   y9XH+xPAvE4h2vCCiF74FczyL1z+crm9gb2Ho5TeKJ+6qJspOXZha979D
+   g==;
+X-CSE-ConnectionGUID: cbwKT87RRPSvVFwpJqVd6Q==
+X-CSE-MsgGUID: HZLQBJi7QGalrSmLdlzx0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11489"; a="53582958"
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="53582958"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:13:03 -0700
+X-CSE-ConnectionGUID: tk7aBOlVSIm4iog4lyeLCA==
+X-CSE-MsgGUID: qwK92l/rQo6T0zx2/mhiCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,299,1744095600"; 
+   d="scan'208";a="155297528"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.15])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2025 14:13:00 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id B41F711F89A;
+	Thu, 10 Jul 2025 00:12:57 +0300 (EEST)
+Date: Wed, 9 Jul 2025 21:12:57 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
+Message-ID: <aG7bWXpz5sxYcLKI@kekkonen.localdomain>
+References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
+ <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250709-sm7635-pmxr2230-v2-4-09777dab0a95@fairphone.com>
-References: <20250709-sm7635-pmxr2230-v2-0-09777dab0a95@fairphone.com>
-In-Reply-To: <20250709-sm7635-pmxr2230-v2-0-09777dab0a95@fairphone.com>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Fenglin Wu <quic_fenglinw@quicinc.com>, 
- Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752061604; l=1016;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=q0f4Kt7CB4b+gGrecsM4LRgCLVf+5IH0ECZJniU0Rsc=;
- b=WK2/spcTGkOFsA+I8ICoknzdQfJloKrmYS1KluZTLN+wJZEx6G2GjwtphGdFhyMYagAJEI+dy
- z9OsIl9SHyIA8x8M1W+KJQK0AAL0iP5G0eSLD+npYZDzmIPE5SPQ1MJ
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
 
-PM7550 is a PMIC, featuring 12 GPIOs. Describe it.
+Hi Richard,
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the update.
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index bc082bfb52ef480941e1804f1142496e1db6413a..da62eadbe1e97bde0bb56db8c07182ad5c6a4162 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1206,6 +1206,7 @@ static const struct of_device_id pmic_gpio_of_match[] = {
- 	{ .compatible = "qcom,pm6450-gpio", .data = (void *) 9 },
- 	{ .compatible = "qcom,pm7250b-gpio", .data = (void *) 12 },
- 	{ .compatible = "qcom,pm7325-gpio", .data = (void *) 10 },
-+	{ .compatible = "qcom,pm7550-gpio", .data = (void *) 12 },
- 	{ .compatible = "qcom,pm7550ba-gpio", .data = (void *) 8},
- 	{ .compatible = "qcom,pm8005-gpio", .data = (void *) 4 },
- 	{ .compatible = "qcom,pm8019-gpio", .data = (void *) 6 },
+On Tue, Jun 17, 2025 at 09:31:40AM +0200, Richard Leitner wrote:
+> Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
+> feature of the sensor. This implements following modes:
+> 
+>  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
+>  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
+
+I really think you should use a different control for this. The sensor can
+strobe the flash but it won't control its mode.
+
+How about calling it V4L2_FLASH_STROBE_ENABLE?
 
 -- 
-2.50.0
+Kind regards,
 
+Sakari Ailus
