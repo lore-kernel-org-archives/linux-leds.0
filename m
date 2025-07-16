@@ -1,166 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB702F0E55;
-	Wed, 16 Jul 2025 09:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A9B433AC;
+	Wed, 16 Jul 2025 16:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752656849; cv=none; b=oPy8LJ+IcMkZdYW26JR09cAwusblSw9DZQ8jMKfIpg3ZUNFmCjTdKT4nlXH75xa4nP/NaAqjteJwx09xfTX16QwkPSbr1aqsGLN5WKsEa+H6W4XKl1N52KfXgCVMKnuygIGBxR4CRrxEOl2AAfOY//0rziDmlTD9J+NXUuNRxG0=
+	t=1752683883; cv=none; b=WJGnKA3MSAyLwOIpRC3z0gLkccKIQi7CRlPt4U76tmhA3grtC/kdu7q1pFadrt81jSOVgRaWmTuVl1Y3MewvhNdnF3FJgr0bpGtQTlAqDXi2RLWg2zMmI+X6CNv5UEstaHStnt6JBgU/0bk+qpE7KxTJh11HRoOZWn4lyLeseNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752656849; c=relaxed/simple;
-	bh=zpPHdpszebqthTo574ANivruP/PT3WTF/uH/e9F0K+Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uui2jML8myorhvW7lHberTRNTRDQ7N+DAgRurDQE81orN6HoKpQ7ADXefyAW2S/LsM/3vpVW+/zRfV60R9XxWWdlSwiJjiPS1/LJuJQfKSfyNUfZ80B3Wmjn5uEj1Ekki5phdrHgtNeo1u4U6GC3JGvpIkSbyCGbdLIBufVta/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vT/J8cOT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752683883; c=relaxed/simple;
+	bh=zFmtA21AaEV1+kxfnsDnysiKefMlwlfiKdpeTCGGCyk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fdnk60WBZUMdil5e/39iJPueiD2HbmZskAw+kX05T+jMSrkhKEFa4XSDLXiwCZ7Yghj9wQLOBC+j4LTciZSOGrTUsScqcqqnbjI0QO3xXv1PpdMcAhCcup9Rct6QWQ/2ktJ8kxUtHw8Fe9aer8fATmJp7K0M5zaDGoSW2I1I8ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=GX4Y4wKN; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vT/J8cOT"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B0E8C4CEF6;
-	Wed, 16 Jul 2025 09:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1752656849; bh=zpPHdpszebqthTo574ANivruP/PT3WTF/uH/e9F0K+Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=vT/J8cOT+JNtUVIbNyxar/K9EZifT4sFZN9UD71d20F7zLtFFPQSkrfO1goUoB7hB
-	 4etOeaOl1E9wCWy/FU1GDV833fgDrswhZfk70+fVJ8vYaWYpoGiKcFxUtJvsu21wpF
-	 1KiEwe3fhWfVBeEny8/eawedrT1GM8tLp8WmIF1w=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05146C83F34;
-	Wed, 16 Jul 2025 09:07:29 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Wed, 16 Jul 2025 11:07:00 +0200
-Subject: [PATCH v6 10/11] media: i2c: ov9282: implement try_ctrl for
- strobe_duration
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="GX4Y4wKN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1752683854; x=1753288654; i=w_armin@gmx.de;
+	bh=zFmtA21AaEV1+kxfnsDnysiKefMlwlfiKdpeTCGGCyk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=GX4Y4wKNu128WgMJ8lxHjftmSrSg5DGfmwzUBmUmJ9dckeBq0oGJ3Uly8aPs0qzc
+	 /sDnCYpqqHNQb8rmPuc4Ktz2tMhtlUActsLWJ684skYiFQpGOQ1paNmqypf9qa1a8
+	 xt4dys9ALbx1HS7l7CIQF/orjbg0btSEnqu60LX8Fjgmx2b/h/rVeJHVEigG0PPbn
+	 AeKnPefuxew6M9T2vTCejXCtU5J6uCNmjyuE0Yh2Enb4eaXHrz6nnud9RBI9JTIpX
+	 lBO7x1QUGjydxt742rv2riSuxLK8ds16N4QmXu7s/ZSESNkkh2d0TEce8/vTTG+o+
+	 8wgkrCyWyQlpLK6VXQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3KPg-1ukA6Z2Pli-00vbSy; Wed, 16
+ Jul 2025 18:37:33 +0200
+Message-ID: <b0ac5ea8-e18c-4460-8366-efef4f6e9cc6@gmx.de>
+Date: Wed, 16 Jul 2025 18:37:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250716-ov9282-flash-strobe-v6-10-934f12aeff33@linux.dev>
-References: <20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev>
-In-Reply-To: <20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- Richard Leitner <richard.leitner@linux.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1752656846; l=3557;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=zpPHdpszebqthTo574ANivruP/PT3WTF/uH/e9F0K+Q=;
- b=Fsa9/j05Zmy7liPoe6CfjaQSR1rWDhQWXqxWq5SFQgRYIppoyU1Mrpga6ULa2A3X1C5ehpdfj
- qF+2mjSpqgfCSCJc+mIhMarCFZDYb4XQAhTr+On2mJLAXQumDrRSalG
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : [PATCH 1/3] platform/x86: Add Uniwill WMI driver
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, chumuzero@gmail.com, corbet@lwn.net, cs@tuxedo.de,
+ wse@tuxedocomputers.com, ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, rdunlap@infradead.org,
+ linux-leds@vger.kernel.org, lee@kernel.org, pobrn@protonmail.com
+References: <20250712112310.19964-1-W_Armin@gmx.de>
+ <20250712112310.19964-2-W_Armin@gmx.de>
+ <2cc8f650-e917-4bed-80f0-e74b37a426f5@oracle.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <2cc8f650-e917-4bed-80f0-e74b37a426f5@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:IIPBYNdS1rgS4+iSJyOtw8Yjfx7X1mylxTIVnWb2bfJdthNEabN
+ NQXd8t37MWppKy8Zsz4jxRULKQk9dyan9vCr3XkSTE7rMImJG9uApiqSldEHRQgA2XTijMv
+ XjAHLvFsa9rUhV7cJTxel/GnXC3DTd6Tf6IGmI/SD0I/BWAhp0+cGM6O+mulZjeMhrMAELd
+ BYqNkjKLkIHijprWagR2Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nrN5zB//Kyg=;TJgbUBqtiypFW+cUjVwghzoskK0
+ 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
 
-As the granularity of the hardware supported values is lower than the
-control value, implement a try_ctrl() function for
-V4L2_CID_FLASH_DURATION. This function calculates the nearest possible
-µs strobe duration for the given value and returns it back to the
-caller.
-
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
----
- drivers/media/i2c/ov9282.c | 54 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 52 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index 9efc82a1929a76c6fb245e7dbfb5276a133d1c5d..b104ae77f00e9e7777342e48b7bf3caa6d297f69 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -128,6 +128,8 @@
- #define OV9282_REG_MIN		0x00
- #define OV9282_REG_MAX		0xfffff
- 
-+#define OV9282_STROBE_SPAN_FACTOR	192
-+
- static const char * const ov9282_supply_names[] = {
- 	"avdd",		/* Analog power */
- 	"dovdd",	/* Digital I/O power */
-@@ -691,7 +693,7 @@ static int ov9282_set_ctrl_flash_hw_strobe_signal(struct ov9282 *ov9282, bool en
- 				current_val);
- }
- 
--static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-+static u32 ov9282_us_to_flash_duration(struct ov9282 *ov9282, u32 value)
- {
- 	/*
- 	 * Calculate "strobe_frame_span" increments from a given value (µs).
-@@ -702,7 +704,27 @@ static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
- 	 * The formula below is interpolated from different modes/framerates
- 	 * and should work quite well for most settings.
- 	 */
--	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+
-+	return value * OV9282_STROBE_SPAN_FACTOR / frame_width;
-+}
-+
-+static u32 ov9282_flash_duration_to_us(struct ov9282 *ov9282, u32 value)
-+{
-+	/*
-+	 * As the calculation in ov9282_us_to_flash_duration uses an integer
-+	 * divison calculate in ns here to get more precision. Then check if
-+	 * we need to compensate that divison by incrementing the µs result.
-+	 */
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+	u64 ns = value * 1000 * frame_width / OV9282_STROBE_SPAN_FACTOR;
-+
-+	return DIV_ROUND_UP(ns, 1000);
-+}
-+
-+static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-+{
-+	u32 val = ov9282_us_to_flash_duration(ov9282, value);
- 
- 	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
- 	ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-@@ -792,9 +814,37 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
- 	return ret;
- }
- 
-+static int ov9282_try_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct ov9282 *ov9282 =
-+		container_of(ctrl->handler, struct ov9282, ctrl_handler);
-+
-+	if (ctrl->id == V4L2_CID_FLASH_DURATION) {
-+		u32 fd = ov9282_us_to_flash_duration(ov9282, ctrl->val);
-+		u32 us = ctrl->val;
-+
-+		/* get nearest strobe_duration value */
-+		u32 us0 = ov9282_flash_duration_to_us(ov9282, fd);
-+		u32 us1 = ov9282_flash_duration_to_us(ov9282, (fd + 1));
-+
-+		if (abs(us1 - us) < abs(us - us0))
-+			ctrl->val = us1;
-+		else
-+			ctrl->val = us0;
-+
-+		if (us != ctrl->val) {
-+			dev_dbg(ov9282->dev, "using next valid strobe_duration %u instead of %u\n",
-+				ctrl->val, us);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- /* V4l2 subdevice control ops*/
- static const struct v4l2_ctrl_ops ov9282_ctrl_ops = {
- 	.s_ctrl = ov9282_set_ctrl,
-+	.try_ctrl = ov9282_try_ctrl,
- };
- 
- /**
-
--- 
-2.47.2
-
-
+QW0gMTIuMDcuMjUgdW0gMTM6NDYgc2NocmllYiBBTE9LIFRJV0FSSToNCg0KPg0KPj4gK8KgwqDC
+oCAvKiBSZXBvcnRlZCB3aGVuIHRoZSB1c2VyIGxvY2tzL3VubG9ja3MgdGhlIHN1cGVyIGtleSAq
+Lw0KPj4gK8KgwqDCoCB7IEtFX0lHTk9SRSzCoMKgwqAgVU5JV0lMTF9PU0RfU1VQRVJfS0VZX0xP
+Q0tfRU5BQkxFLMKgwqDCoCB7IA0KPj4gS0VZX1VOS05PV04gfX0sDQo+PiArwqDCoMKgIHsgS0Vf
+SUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9TVVBFUl9LRVlfTE9DS19ESVNBQkxFLMKgwqDCoCB7
+IA0KPj4gS0VZX1VOS05PV04gfX0sDQo+PiArDQo+PiArwqDCoMKgIC8qIFJlcG9ydGVkIGluIG1h
+bnVhbCBtb2RlIHdoZW4gdG9nZ2xpbmcgdGhlIGFpcnBsYW5lIG1vZGUgDQo+PiBzdGF0dXMgKi8N
+Cj4+ICvCoMKgwqAgeyBLRV9LRVkswqDCoMKgIFVOSVdJTExfT1NEX1JGS0lMTCzCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHsgS0VZX1JGS0lMTCB9fSwNCj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0
+ZWQgd2hlbiB1c2VyIHdhbnRzIHRvIGN5Y2xlIHRoZSBwbGF0Zm9ybSBwcm9maWxlICovDQo+PiAr
+wqDCoMKgIHsgS0VfSUdOT1JFLMKgwqDCoCBVTklXSUxMX09TRF9QRVJGT1JNQU5DRV9NT0RFX1RP
+R0dMRSzCoMKgwqAgeyANCj4+IEtFWV9VTktOT1dOIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBS
+ZXBvcnRlZCB3aGVuIHRoZSB1c2VyIHdhbnRzIHRvIGFkanVzdCB0aGUgYnJpZ2h0bmVzcyBvZiB0
+aGUgDQo+PiBrZXlib2FyZMKgICovDQo+DQo+IHJlbW92ZSBleHRyYSAiICIgYWZ0ZXIga2V5Ym9h
+cmQNCg0KV2lsbCBkby4NCg0KVGhhbmtzLA0KQXJtaW4gV29sZg0KDQo+DQo+PiArwqDCoMKgIHsg
+S0VfS0VZLCBVTklXSUxMX09TRF9LQkRJTExVTURPV04swqDCoMKgwqDCoMKgwqAgeyBLRVlfS0JE
+SUxMVU1ET1dOIH19LA0KPj4gK8KgwqDCoCB7IEtFX0tFWSzCoMKgwqAgVU5JV0lMTF9PU0RfS0JE
+SUxMVU1VUCzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHsgS0VZX0tCRElMTFVNVVAgDQo+PiB9fSwN
+Cj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0ZWQgd2hlbiB0aGUgdXNlciB3YW50cyB0byB0b2dn
+bGUgdGhlIG1pY3JvcGhvbmUgbXV0ZSANCj4+IHN0YXR1cyAqLw0KPj4gK8KgwqDCoCB7IEtFX0tF
+WSzCoMKgwqAgVU5JV0lMTF9PU0RfTUlDX01VVEUswqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB7IEtF
+WV9NSUNNVVRFIH19LA0KPj4gKw0KPj4gK8KgwqDCoCAvKiBSZXBvcnRlZCB3aGVuIHRoZSB1c2Vy
+IGxvY2tzL3VubG9ja3MgdGhlIEZuIGtleSAqLw0KPj4gK8KgwqDCoCB7IEtFX0lHTk9SRSzCoMKg
+wqAgVU5JV0lMTF9PU0RfRk5fTE9DSyzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHsgS0VZX0ZOX0VT
+QyB9fSwNCj4+ICsNCj4+ICvCoMKgwqAgLyogUmVwb3J0ZWQgd2hlbiB0aGUgdXNlciB3YW50cyB0
+byB0b2dnbGUgdGhlIGJyaWdodG5lc3Mgb2YgdGhlIA0KPj4ga2V5Ym9hcmQgKi8NCj4NCj4NCj4g
+VGhhbmtzLA0KPiBBbG9rDQo+DQo=
