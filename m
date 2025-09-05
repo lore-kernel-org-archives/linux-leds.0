@@ -1,36 +1,37 @@
-Received: from mail-43170.protonmail.ch (mail-43170.protonmail.ch [185.70.43.170])
+Received: from mail-106113.protonmail.ch (mail-106113.protonmail.ch [79.135.106.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823622FC026;
-	Fri,  5 Sep 2025 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C5A2F9C2A
+	for <linux-leds@vger.kernel.org>; Fri,  5 Sep 2025 08:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757059217; cv=none; b=pOVXMyLE0jSnIimMXl5bUH1br7WB+ZS6JWOqXBNUYbOfQEjz1ViPpwqK4JyEELCE2JIV7kjckIGe/LWkOZIXDbo3XHojLZCsFegD5WBKJlUf26j5Iu0vTSZGi2nWfKgNBLMocTN5aKKadaMMaG6kpjosWGH2/s6sBeJ+iMsF1xY=
+	t=1757059217; cv=none; b=EqYR935gsz+30V2cd7VkQMxysgGT/rvCb45E1xohFnbx/LFn8CzuTF75JFzvpGUgnbWJ927zVMpBQtrgsq7tqu9j5ahPNvSXkYEPwQDUDS1LbXayqYuD8Fnerkm+mg3guotdxpi3YiAnQ0cfW2MgIuyEMJW0rSETd0Z4WgNI9hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757059217; c=relaxed/simple;
-	bh=kLPrQ659PXpBtUHxSKyrlCPL8odBGqiSsZ+49Xj2WT4=;
+	bh=edWT6KdBWyksJJHrbWQQWgcHw91Jmbb/HxPT7wxRo/w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HrxcjsV1YpOR67dgcntRZ3JGDZl9fchqWvuaQmiFrqhDeVA+mrWKxGzzVWRDLfjx44SnPdboLaRxJ3G2OM6VJsyJXWeo3s1Ve6E75BfRxmxaFJ4eSSg321D88diGTgiQDMBoQQnpcNRVa9uN6PiacH3CrAE84foerD0IpsaNyTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=VBfMhe2F; arc=none smtp.client-ip=185.70.43.170
+	 In-Reply-To:To:Cc; b=ni6vsdKJ/1BynGhoTh9a6UPs/LLl5NMKwZoNiFpyukuZ4eWFVnz/NhPvoKUy13eYeE3rp7RBYFWBSBl1MxVYYd3PbfQ+0gSpgpjyqyT62GG10TU7tccE3t9991yR7h0VF+MsexRfipgFIxwUHgqROIsC/Tv0uqeWMvnDYGvbZE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=byR/Ou5J; arc=none smtp.client-ip=79.135.106.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="VBfMhe2F"
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="byR/Ou5J"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1757059208; x=1757318408;
-	bh=BJo0FJum8sQrRT4jsiM538uClhfHDmbKIzs7j5jXPQc=;
+	s=protonmail; t=1757059213; x=1757318413;
+	bh=91qDt4aSXmfJHmp9z9JEKedQZehuTGRF2Qw0y+ToL4c=;
 	h=From:Date:Subject:Message-Id:References:In-Reply-To:To:Cc:From:To:
 	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=VBfMhe2FjrHeHJG53FiZ5vPPZ+AZ6DgtfeNSLJIKJTNA6nqgJT2MFiZu5zHAHPiAo
-	 WkAfizok97IA3GPc1sML1fz8rrOf/2nMLq/j8X8eqFZVdmpPlMDhkE/dbDZZglA444
-	 I+Ryi2EaRW9j8sS+m1YM5KVR+lQz0SRv0OvgoKS7S73N6aFhpa1jepFYU7xMlZGKmr
-	 krKC9TvxD62F94MJcA7hatjSzNflML6MruPoKGe8x86TXQXykyDxkvLgjFLoCLDyyK
-	 UeRd5CQdSEWhBUOTo95fvc8Sr8B0o9+fiNQu1eMLQz+eFFsvSnF2Zo7LWvw36H06iT
-	 Yg/akqmCu+++g==
-X-Pm-Submission-Id: 4cJ8050D40z2ScWX
+	b=byR/Ou5JsdLbXUMHPk15tlUl0O7VgudGiQrUKw+EObIXH5Kg24RKVpnurvOBc6qsp
+	 Wlz0VIc2Xq8xkSuurQiMBWj7en4ol4ksaUvRzzI0eBWNLRmczZ5tIqfz4TgsGkVbw8
+	 6oCW7lvNQBEOe0hE0PlZ1+gRvjYdPUnHuuc9O5kNFeHoLJTcg1ybR2Jm43jLILUWYm
+	 UwaAAK/Ie6/6nmbZf8z3tmur8MLWKPe4htq1ntv54uP+HkOW1FBrnFUcrkFDFz0fpt
+	 oIFzuUmci8/YFdEO7Nu8BGAVtsRtIu/DrxoHoxPJoc2sWQZetLGkK1Vj3lVtonHkei
+	 BQGdVBg0R8fMw==
+X-Pm-Submission-Id: 4cJ80B4J0gz2ScWP
 From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Date: Fri, 05 Sep 2025 09:59:30 +0200
-Subject: [PATCH v2 2/4] dt-bindings: leds: commonize leds property
+Date: Fri, 05 Sep 2025 09:59:32 +0200
+Subject: [PATCH v2 4/4] arm64: dts: qcom: sc8280xp-x13s: enable camera
+ privacy indicator
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -39,7 +40,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250905-leds-v2-2-ed8f66f56da8@vinarskis.com>
+Message-Id: <20250905-leds-v2-4-ed8f66f56da8@vinarskis.com>
 References: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
 In-Reply-To: <20250905-leds-v2-0-ed8f66f56da8@vinarskis.com>
 To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -59,90 +60,58 @@ Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, 
  linux-arm-msm@vger.kernel.org, Aleksandrs Vinarskis <alex@vinarskis.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3023; i=alex@vinarskis.com;
- h=from:subject:message-id; bh=kLPrQ659PXpBtUHxSKyrlCPL8odBGqiSsZ+49Xj2WT4=;
- b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBm7ZtTX877LP3guYc/u7lkf1hckTE5rDF0VHdJ2N+D00
- wvHT03Y1lHKwiDGxSArpsjS/edrWteiuWsZrmt8g5nDygQyhIGLUwAmIpHF8M9YNdZYddEO+VP1
- 7naREvM7zu6x3ujhfNNNvk/44uaKi3KMDN3Ghnd/MjwpYPmxaXmcypyq1+3977pn2C1edHRdsHX
- KVD4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1667; i=alex@vinarskis.com;
+ h=from:subject:message-id; bh=edWT6KdBWyksJJHrbWQQWgcHw91Jmbb/HxPT7wxRo/w=;
+ b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBm7ZtQn+QrvYmBferxhro26SRLDQ/c7UwVnzq4QytJWM
+ OleJRreUcrCIMbFICumyNL952ta16K5axmua3yDmcPKBDKEgYtTACYS957hn+UtoyaP4xP8Ikv5
+ vZlWvHkX0snO9OXInZqTnK8jD8p4PWFk2BPx1l09o+pyA2/fxKd/6kMUi9tzTM7zuU2y+ZU1a+k
+ VZgA=
 X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
  fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
 
-A number of existing schemas use 'leds' property to provide
-phandle-array of LED(s) to the consumer. Additionally, with the
-upcoming privacy-led support in device-tree, v4l2 subnode could be a
-LED consumer, meaning that all camera sensors should support 'leds'
-and 'led-names' property via common 'video-interface-devices.yaml'.
-
-To avoid dublication, commonize 'leds' property from existing schemas
-to newly introduced 'led-consumer.yaml'.
+Leverage newly introduced 'leds' and 'led-names' properties to pass
+indicator's phandle and function to v4l2 subnode. The latter supports
+privacy led since couple of years ago under 'privacy-led' designation.
+Unlike initially proposed trigger-source based approach, this solution
+cannot be easily bypassed from userspace, thus reducing privacy
+concerns.
 
 Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
 ---
- .../devicetree/bindings/leds/backlight/led-backlight.yaml          | 7 +------
- Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml  | 6 +-----
- .../devicetree/bindings/media/video-interface-devices.yaml         | 3 +++
- 3 files changed, 5 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml b/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml
-index f5554da6bc6c73e94c4a2c32b150b28351b25f16..5e19b4376715eeb05cb789255db209ed27f8822f 100644
---- a/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml
-+++ b/Documentation/devicetree/bindings/leds/backlight/led-backlight.yaml
-@@ -18,17 +18,12 @@ description:
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+index 637430719e6d7d3c0eeb4abf2b80eea1f8289530..03801b174713cb9962c10072a73e9516abc45930 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
++++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+@@ -83,15 +83,11 @@ leds {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_indicator_en>;
  
- allOf:
-   - $ref: common.yaml#
-+  - $ref: /schemas/leds/leds-consumer.yaml#
+-		led-camera-indicator {
+-			label = "white:camera-indicator";
++		privacy_led: privacy-led {
+ 			function = LED_FUNCTION_INDICATOR;
+ 			color = <LED_COLOR_ID_WHITE>;
+ 			gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "none";
+ 			default-state = "off";
+-			/* Reuse as a panic indicator until we get a "camera on" trigger */
+-			panic-indicator;
+ 		};
+ 	};
  
- properties:
-   compatible:
-     const: led-backlight
+@@ -685,6 +681,9 @@ camera@10 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_rgb_default>;
  
--  leds:
--    description: A list of LED nodes
--    $ref: /schemas/types.yaml#/definitions/phandle-array
--    items:
--      maxItems: 1
--
- required:
-   - compatible
-   - leds
-diff --git a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-index 8ed059a5a724f68389a1d0c4396c85b9ccb2d9af..b4f326e8822a3bf452b22f5b9fa7189696f760a4 100644
---- a/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-@@ -17,16 +17,12 @@ properties:
-   compatible:
-     const: leds-group-multicolor
- 
--  leds:
--    description:
--      An aray of monochromatic leds
--    $ref: /schemas/types.yaml#/definitions/phandle-array
--
- required:
-   - leds
- 
- allOf:
-   - $ref: leds-class-multicolor.yaml#
-+  - $ref: /schemas/leds/leds-consumer.yaml#
- 
- unevaluatedProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/media/video-interface-devices.yaml b/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-index cf7712ad297c01c946fa4dfdaf9a21646e125099..1e25cea0ff71da2cfd1c7c4642713199f3542c0a 100644
---- a/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-+++ b/Documentation/devicetree/bindings/media/video-interface-devices.yaml
-@@ -10,6 +10,9 @@ maintainers:
-   - Jacopo Mondi <jacopo@jmondi.org>
-   - Sakari Ailus <sakari.ailus@linux.intel.com>
- 
-+allOf:
-+  - $ref: /schemas/leds/leds-consumer.yaml#
++		led-names = "privacy-led";
++		leds = <&privacy_led>;
 +
- properties:
-   flash-leds:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
+ 		clocks = <&camcc CAMCC_MCLK3_CLK>;
+ 
+ 		orientation = <0>;	/* Front facing */
 
 -- 
 2.48.1
