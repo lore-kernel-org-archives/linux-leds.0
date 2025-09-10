@@ -1,37 +1,37 @@
 Received: from mail-43172.protonmail.ch (mail-43172.protonmail.ch [185.70.43.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAB831985B
-	for <linux-leds@vger.kernel.org>; Wed, 10 Sep 2025 11:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DDB31C57B;
+	Wed, 10 Sep 2025 11:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757502485; cv=none; b=Q5NoZfqC8Ov2Qc7FpotSoJR+M9pQ4PkU8tMfTLfMduKkXVoOJBlRdWgZ6zXJmrZZwLGW7caGVBXshspDQvJQMghH5VFIK50QZpjeMGqZSj5OHDSFq677sZn1jcxA9s/jUsejSH3kzh0VwNuszYd8vG9P7y2x4k+6AO/ZOzrND3o=
+	t=1757502488; cv=none; b=pQ9BiKnOl4h/cEvS5kCHqegXMffD6ebEVT7utlJngM0ETpvZlTqBmDyLJdSfipztK/zafKsYeG5IVAiJ6kZTf7+bQreJGQg2XX91yX/F/8FEf1POux5BhfUA4F8VkaZEpu/8s4NJQHg3tEOZ+MlaSzfg+6iHC75esh1R7PWG4AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757502485; c=relaxed/simple;
-	bh=SPKWv/JQEXR16HtlqFeEjmqa98wFumTsk9d2ortAgHA=;
+	s=arc-20240116; t=1757502488; c=relaxed/simple;
+	bh=MrJ75K5TTGWsUdBgpB6wcSaOrHL0GEx8YvZLO6OHvZk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R1/NVMucQuWXmZ828VXPiSjg6U3RMnmKUn6X30tIITAs7bG3X4010wfzChkTsK8VF4kdaPylaLugW9OGUmra3ZWzGFpHK82aAVgtDqPPX+AdUtpqNmYO2Rz6VtCmwCRTyTHeVvwpbF/WybusfN6F7n7sDdVQlmKflPkN/75xcNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=UQ/maKJE; arc=none smtp.client-ip=185.70.43.172
+	 In-Reply-To:To:Cc; b=QZW8V7vU1nKj3BSFOfZv5PI6BJtKBrUWEGtKvEbQSc2eUjTEn6FYWY7pD8sf1ZEPp4WZFGJEAxQE+PkZAM4k+U9zNKXA3bU35HqDEAigHpoYTtgaTgcIrI11kT6PEzEDJXa7cGSC5kgbgeO8W2W+Ivmk3dfdYYMTev5bZcJVjeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com; spf=pass smtp.mailfrom=vinarskis.com; dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b=eWzpltn8; arc=none smtp.client-ip=185.70.43.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vinarskis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vinarskis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="UQ/maKJE"
+	dkim=pass (2048-bit key) header.d=vinarskis.com header.i=@vinarskis.com header.b="eWzpltn8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vinarskis.com;
-	s=protonmail; t=1757502475; x=1757761675;
-	bh=RmR4FNIXxGeq68sxf1XR7z8lLSrYJxEP+cVucv58fCI=;
+	s=protonmail; t=1757502484; x=1757761684;
+	bh=WVAZkSDamM6pxbj/GVHH3PYvdQm8SxrqzkK9f4jXnr4=;
 	h=From:Date:Subject:Message-Id:References:In-Reply-To:To:Cc:From:To:
 	 Cc:Date:Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=UQ/maKJEQ0HT6tKljQoS8drkmlfLruLP0vaC+Lpb6B6D5xpq2dQ+5VtCERFESuO5r
-	 h1T1aGwhXW9LDVKsDL+bHfW+gRWbE3CpB6RU0kHsTOfn3GSg7cxyifE4IoeIApd7fZ
-	 EtHjxVKUWPtK2JQxILtVxBUtdC7NSdNPl1XozaD7tbW4lvJQeMg9jTU+k57IzkLGsQ
-	 QhBdSg1FgSKqb2gVY4jlu60z7U2z3qiOMN1xZuizBd9SE7cmqpGGLiN6hGbH2LkQrw
-	 Osb2CPp/o+TkkeIjA9RLpQJnOVYtQZpCc5EYZgqq/qagVY9zF41+kZnClS+rAJexLu
-	 3aqfdcytoFdyA==
-X-Pm-Submission-Id: 4cMHwS4cvdz2ScCs
+	b=eWzpltn87rCiyyQBJUp7vRnPZXNyU3H0OzGMPb6LPJkb61q32Zrteoq/uwCgjzwfa
+	 uVFd3PYwEuFIIq7atpigf46P8ZL2pTBrlfQvwdcKGL4xYZ8QKm2AV05op6kbqSU7WY
+	 N+OAWNaPM4rI/6QFVtjhczhUW9L3stNPuBFxhe3gjoJ1Ik5APcaXhQubQ7A4CTbM8W
+	 BQgdjDmdE+MAbdWIIg3eNOd40fba6CDtAMHZJ1SSH/iALN5t8lLpd/fWy8RUN3kQyH
+	 vW1qk9FOsHwcVVJzKkzGkMyBI5+CPtdYdu0o08c88q1HQD6BSb6knnqifYiXhFX4HL
+	 g3/TtFNTlANew==
+X-Pm-Submission-Id: 4cMHwc5yG7z2ScCt
 From: Aleksandrs Vinarskis <alex@vinarskis.com>
-Date: Wed, 10 Sep 2025 13:07:37 +0200
-Subject: [PATCH v4 1/4] dt-bindings: leds: add generic LED consumer
- documentation
+Date: Wed, 10 Sep 2025 13:07:40 +0200
+Subject: [PATCH v4 4/4] arm64: dts: qcom: sc8280xp-x13s: enable camera
+ privacy indicator
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250910-leds-v4-1-1fc320488233@vinarskis.com>
+Message-Id: <20250910-leds-v4-4-1fc320488233@vinarskis.com>
 References: <20250910-leds-v4-0-1fc320488233@vinarskis.com>
 In-Reply-To: <20250910-leds-v4-0-1fc320488233@vinarskis.com>
 To: Hans de Goede <hansg@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -61,101 +61,57 @@ Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  threeway@gmail.com, Andy Shevchenko <andy.shevchenko@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2715; i=alex@vinarskis.com;
- h=from:subject:message-id; bh=SPKWv/JQEXR16HtlqFeEjmqa98wFumTsk9d2ortAgHA=;
- b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBkHY1jm7mVcFXhrc6I0ww1N9YXChXNv1WXttdnQYfqlJ
- PbAkd+XOkpZGMS4GGTFFFm6/3xN61o0dy3DdY1vMHNYmUCGMHBxCsBE+F4y/C9f/mhXz9HreSsO
- vjH5fDyzOG5x75OS4oDVXhOOH7zz5LckI0PrweNz8v5UOwVGsHRoH/5vf9ricNXONN/be+0rHvz
- J+MIDAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1659; i=alex@vinarskis.com;
+ h=from:subject:message-id; bh=MrJ75K5TTGWsUdBgpB6wcSaOrHL0GEx8YvZLO6OHvZk=;
+ b=owGbwMvMwCX2dl3hIv4AZgHG02pJDBkHY1i7Dd/wNV2TMgp7/s+PfduOR475Z84UuM//ueLxT
+ d1eAx/9jlIWBjEuBlkxRZbuP1/TuhbNXctwXeMbzBxWJpAhDFycAjAR5wxGhvPensm6/BOZRP7q
+ VEmGWNl0lk05mCiwiCHnGiNjTn+eBCPD7uPXChdOn3RV9nVGJEe93F+JWe/vX1q67/aZa6Zv77V
+ GsAEA
 X-Developer-Key: i=alex@vinarskis.com; a=openpgp;
  fpr=8E21FAE2D2967BB123303E8C684FD4BA28133815
 
-Introduce common generic led consumer binding, where consumer defines
-led(s) by phandle, as opposed to trigger-source binding where the
-trigger source is defined in led itself.
-
-Add already used in some schemas 'leds' parameter which expects
-phandle-array. Additionally, introduce 'led-names' which could be used
-by consumers to map LED devices to their respective functions.
+Leverage newly introduced 'leds' and 'led-names' properties to pass
+indicator's phandle and function to v4l2 subnode. The latter supports
+privacy led since couple of years ago under 'privacy-led' designation.
+Unlike initially proposed trigger-source based approach, this solution
+cannot be easily bypassed from userspace, thus reducing privacy
+concerns.
 
 Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
 ---
- .../devicetree/bindings/leds/leds-consumer.yaml    | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-consumer.yaml b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..045b7a4fcd3bdcfb19a02fe4435b40445c168115
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-consumer.yaml
-@@ -0,0 +1,67 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-consumer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+index 637430719e6d7d3c0eeb4abf2b80eea1f8289530..3b3f7137689a6fa292ffe4fec8c1d1f20ee525bc 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
++++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+@@ -83,14 +83,11 @@ leds {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_indicator_en>;
+ 
+-		led-camera-indicator {
+-			label = "white:camera-indicator";
++		privacy_led: privacy-led {
+ 			function = LED_FUNCTION_INDICATOR;
+ 			color = <LED_COLOR_ID_WHITE>;
+ 			gpios = <&tlmm 28 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "none";
+ 			default-state = "off";
+-			/* Reuse as a panic indicator until we get a "camera on" trigger */
+ 			panic-indicator;
+ 		};
+ 	};
+@@ -685,6 +682,9 @@ camera@10 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_rgb_default>;
+ 
++		leds = <&privacy_led>;
++		led-names = "privacy";
 +
-+title: Common leds consumer
-+
-+maintainers:
-+  - Aleksandrs Vinarskis <alex@vinarskis.com>
-+
-+description:
-+  Some LED defined in DT are required by other DT consumers, for example
-+  v4l2 subnode may require privacy or flash LED. Unlike trigger-source
-+  approach which is typically used as 'soft' binding, referencing LED
-+  devices by phandle makes things simpler when 'hard' binding is desired.
-+
-+  Document LED properties that its consumers may define.
-+
-+select: true
-+
-+properties:
-+  leds:
-+    oneOf:
-+      - type: object
-+      - $ref: /schemas/types.yaml#/definitions/phandle-array
-+        description:
-+          A list of LED device(s) required by a particular consumer.
-+        items:
-+          maxItems: 1
-+
-+  led-names:
-+    description:
-+      A list of device name(s). Used to map LED devices to their respective
-+      functions, when consumer requires more than one LED.
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
-+
-+    leds {
-+        compatible = "gpio-leds";
-+
-+        privacy_led: privacy-led {
-+            color = <LED_COLOR_ID_RED>;
-+            default-state = "off";
-+            function = LED_FUNCTION_INDICATOR;
-+            gpios = <&tlmm 110 GPIO_ACTIVE_HIGH>;
-+        };
-+    };
-+
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      v4l2_node: camera@36 {
-+        reg = <0x36>;
-+
-+        leds = <&privacy_led>;
-+        led-names = "privacy-led";
-+      };
-+    };
-+
-+...
+ 		clocks = <&camcc CAMCC_MCLK3_CLK>;
+ 
+ 		orientation = <0>;	/* Front facing */
 
 -- 
 2.48.1
