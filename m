@@ -1,26 +1,27 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404AB26E71C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02BB26F2B2
 	for <linux-leds@vger.kernel.org>; Thu, 11 Sep 2025 06:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573999; cv=none; b=Q9LtJH6+4EyWxisZP1eKcYSoNVtS/xkESGhut5XYmw5TmOLfCmGMN/VqJBiUXs2f8P//VANmrn4KCfAX8KCbT7hS5PYmIW7Iq1ISSTqxUIwdLU4nfOWbztRhqIaj8ltBgIttLE0SP1wVGFCllvRFDDNa9KeGWHgumUZJIuIafYI=
+	t=1757574000; cv=none; b=gjpuHmcigW5KMH0ywfWWJPd5zm9C1uJ7GmdiI1ZQwIh60GZkl3gownlpj5/k8VJmcVMkSWp3CA0wXFNegl3Yscz5EDmtNK3cTIMgqaanpZztCPNrv26zJlQDN7LPjjsFv7JipMOKK2bXObDw3YlSzz97bvRUEk4lyOg5wtt/muA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573999; c=relaxed/simple;
-	bh=ikmvF5McPKvbvKcbMDQxO1YadbWImTCIb9/ZX2RJXiI=;
+	s=arc-20240116; t=1757574000; c=relaxed/simple;
+	bh=s3kbGH2m7tYAq0Ru+MGjztJlEXICfIdT9WzMkCBCWFM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p8gVpuhMxO+kjY48Pzr3IEc1CvZBQMKD+7qh6anPKVwrZWzORayiNQf2m6v6AHDYdpfXfryIN0fd2s0r47CwxAE4b9V4A5FaKDjgdqrcoRu9KdrQicnq/JaFDSZ4WGW6JcpimbBNHAUZ2a3S2rvFw5kDwozpta0Sa5FV2e9ZYnY=
+	 In-Reply-To:To:Cc; b=ozz4VDA/HlrzV9UN+pX38e/EM4FOrQ93zXdYcayLNWTPQ6C6wpy8wg56tjhijAYAhffnslJVzNtTYZsx5ABEeY6mXPEqo7nLYAoranvoC8i+up5vl8WeXuD+x79Us55iccqAV5UFeITiqfB0nQzGeBbRYVG/xIQai/PW2OemJqs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
 	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1uwbHb-0002uj-LN; Thu, 11 Sep 2025 08:59:51 +0200
+	id 1uwbHd-0002uj-JG; Thu, 11 Sep 2025 08:59:53 +0200
 From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Thu, 11 Sep 2025 08:59:31 +0200
-Subject: [PATCH v3 1/3] dt-bindings: leds: add lp5860 LED controller
+Date: Thu, 11 Sep 2025 08:59:33 +0200
+Subject: [PATCH v3 3/3] Documentation: ABI: add lp5860 led matrix
+ controller
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -29,7 +30,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-v6-14-topic-ti-lp5860-v3-1-390738ef9d71@pengutronix.de>
+Message-Id: <20250911-v6-14-topic-ti-lp5860-v3-3-390738ef9d71@pengutronix.de>
 References: <20250911-v6-14-topic-ti-lp5860-v3-0-390738ef9d71@pengutronix.de>
 In-Reply-To: <20250911-v6-14-topic-ti-lp5860-v3-0-390738ef9d71@pengutronix.de>
 To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
@@ -46,139 +47,46 @@ X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-The lp5860 is a LED matrix driver with 18 constant current sinks and 11
-scan switches for 198 LED dots:
-  * Supply range from 2.7 V to 5.5 V
-  * 0.1mA - 50mA per current sink
-  * 1MHz I2C and 12MHz SPI control interface
-  * 8-bit analog dimming
-  * 8/16-bit PWM dimming
-  * individual ON and OFF control for each LED dot
-  * globat 3-bit Maximum Current setting for all LED dots
-  * individual LED dot open/short detection
+The lp5860 is an LED matrix controller that can be connected to SPI or I2C.
+It supports setting the maximum brightness of the three basic
+colors (R,G,B) with a global value.
 
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org
 Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
 ---
- .../devicetree/bindings/leds/leds-lp5860.yaml      | 111 +++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+ Documentation/ABI/testing/sysfs-class-spi-lp5860 | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lp5860.yaml b/Documentation/devicetree/bindings/leds/leds-lp5860.yaml
+diff --git a/Documentation/ABI/testing/sysfs-class-spi-lp5860 b/Documentation/ABI/testing/sysfs-class-spi-lp5860
 new file mode 100644
-index 0000000000000000000000000000000000000000..1ccba48541595eb85c8accc7e6514b33482c5f4d
+index 0000000000000000000000000000000000000000..80b22a9d6642100a25efbf658cfed8604150baa5
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lp5860.yaml
-@@ -0,0 +1,111 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/leds-lp5860.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/Documentation/ABI/testing/sysfs-class-spi-lp5860
+@@ -0,0 +1,23 @@
++What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/b_global_brightness_set
++Date:           July 2025
++KernelVersion:  6.16
++Contact:        Steffen Trumtrar <kernel@pengutronix.de>
++Description:
++	Contains and sets the global brightness for the B color group.
++	Can be adjusted in 128 steps from 0% to 100% of the maximum brightness.
 +
-+title: LED driver for LP5860 RGB LED from Texas Instruments.
++What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/g_global_brightness_set
++Date:           July 2025
++KernelVersion:  6.16
++Contact:        Steffen Trumtrar <kernel@pengutronix.de>
++Description:
++	Contains and sets the global brightness for the G color group.
++	Can be adjusted in 128 steps from 0% to 100% of the maximum brightness.
 +
-+maintainers:
-+  - Steffen Trumtrar <kernel@pengutronix.de>
-+
-+description: |
-+  The LP5860 is multi-channel, I2C and SPI RGB LED Driver that can group RGB LEDs
-+  into a LED group or control them individually.
-+
-+  For more product information please see the link below:
-+  https://www.ti.com/lit/ds/symlink/lp5860.pdf
-+
-+allOf:
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,lp5860
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+patternProperties:
-+  '^multi-led@[0-9a-f]+$':
-+    type: object
-+    $ref: leds-class-multicolor.yaml#
-+    unevaluatedProperties: false
-+
-+    properties:
-+      reg:
-+        minimum: 0
-+        maximum: 198
-+        description:
-+          This property denotes the LED module number that is used
-+          for the child node.
-+
-+      '#address-cells':
-+        const: 1
-+
-+      '#size-cells':
-+        const: 0
-+
-+    patternProperties:
-+      "^led@[0-9a-f]+$":
-+        type: object
-+        $ref: common.yaml#
-+        unevaluatedProperties: false
-+
-+        properties:
-+          reg:
-+            maxItems: 1
-+
-+        required:
-+          - reg
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led-controller@0 {
-+            compatible = "ti,lp5860";
-+            reg = <0x0>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            multi-led@0 {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+                reg = <0x0>;
-+                color = <LED_COLOR_ID_RGB>;
-+
-+                led@0 {
-+                     reg = <0x0>;
-+                     color = <LED_COLOR_ID_RED>;
-+                };
-+
-+                led@1 {
-+                     reg = <0x1>;
-+                     color = <LED_COLOR_ID_GREEN>;
-+                };
-+
-+                led@2 {
-+                     reg = <0x2>;
-+                     color = <LED_COLOR_ID_BLUE>;
-+                };
-+            };
-+        };
-+    };
++What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/r_global_brightness_set
++Date:           July 2025
++KernelVersion:  6.16
++Contact:        Steffen Trumtrar <kernel@pengutronix.de>
++Description:
++	Contains and sets the global brightness for the R color group.
++	Can be adjusted in 128 steps from 0% to 100% of the maximum brightness.
 
 -- 
 2.49.0
