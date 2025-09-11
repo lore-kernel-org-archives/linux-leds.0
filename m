@@ -1,212 +1,189 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337D426A1B6;
-	Thu, 11 Sep 2025 07:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CC122F74A;
+	Thu, 11 Sep 2025 07:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757574022; cv=none; b=mEXg8vMs3O4ckzhb4NCHwde//9fff+cBtBT1KCQQ3oe9qvqpQc8sgBdFODadWF0wmftDBLE64yl/C/OsF7zXs1+ALtXLk2X+//VEEdRvew5G9W99AkUS92pEZpqn6alBwwRU9CZUs/3f2u+jtrifjSGp8bL5+i3+k6U0EI8m35o=
+	t=1757577208; cv=none; b=hfiwzq4PZEeeMqbp50cfGtY9639D6GvJEloxR4tbRE8Zy6Y9Hz6lk3dkW/Nasf7fGqkcis8nAWwujo9z1Jxrq9BfiU/W+DLCvsVuMrmJT9CcL/0W7yPUE7rTD3//uMfh81yyLz9BaBqODa1whHK+ZtESzNxjCoQ+SaLXV/7ci1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757574022; c=relaxed/simple;
-	bh=e02AXsrIhddBZnge/kfTWxo3s0wzqn5n5hJK4I40gEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uh+soEzq7IcqCEfdRhhHO+Naw8xJoWIzhUFRvmlZQtfFoUXI2r2/2HpOi07yJuRE4KvHOl3dkk0KTfILa+5hcK5XAwHM9HWfk2Eift93pdoN6QK/p//oak1vG8acLkJtSdHjJXaNkxwu1N5pXhHpHmtR77KMBcBLPOT4BxURB0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SkDTEaxA; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+	s=arc-20240116; t=1757577208; c=relaxed/simple;
+	bh=dMNYBL2O6f4/igyNj4rxu6fdmJ5X6xhc9PGg4Vp5DT0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UzyjhACSLly4F49XMe8CwPt6zFnXfDiaJbNzGMDD3Pm1pGoPAHDB/ilfng/1+OjLr0Ns0eQXAylv0V3prdWIyjF7pE6QgyE0bCWEaK6QiNTGslwAsBhwWrQcCLAv8mFi9MEXYVqnwIUB6Wg6kS6akgVRz4j84HWsufQbtyu4qFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvxbs4FZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SkDTEaxA"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1172A14864B3;
-	Thu, 11 Sep 2025 09:00:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1757574009; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=QsXFqDE+gmRD/x0bUEZx45QWv+5GScBR7g2luqrlIYA=;
-	b=SkDTEaxAF/y7/E/ddlcleMBHPgPMOy3DyxO+bPFOYjadfbjxLx8Vn35uRe8fGrp3g5Wl7O
-	9mcjOrYctUVC+BV7dGmXGw677vFln8Gph0+gKxp/s6N1I+5d5uV6wFDZ8w+kbEcqj8PwDx
-	zGpGQWmWCqCKMlAd3L989jVNWSb4cLGBfXRAjDgkAlsEHNdHDEvKZzTIeKYxELrozdhtwB
-	SCNwLW/uTWnu/R9/fzksJSDvvbVDId/2NHzR9kQ8Vo+ZyqxH3AxhT2LJYATQuTQKXdmp8b
-	OP9//XgDNL4EGE5U75+FjIOxQc05qgd27U81taWCbHoku9d74a6Y52tN9IfnDg==
-Date: Thu, 11 Sep 2025 09:00:03 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Ryan Wanner <ryan.wanner@microchip.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
-Message-ID: <20250911-breeder-hardness-d3ffa4bfbb6d@thorsis.com>
-Mail-Followup-To: Ryan Wanner <ryan.wanner@microchip.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-References: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
- <20250910-retake-attic-ac1fe3429a1e@thorsis.com>
- <20250910-alkalize-overtime-930a59a7d169@thorsis.com>
- <fa5d44ca-d1ea-4c72-a998-b10f098b25f8@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvxbs4FZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 370C9C4CEF7;
+	Thu, 11 Sep 2025 07:53:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757577208;
+	bh=dMNYBL2O6f4/igyNj4rxu6fdmJ5X6xhc9PGg4Vp5DT0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=tvxbs4FZsWYVO8hw/0sDZCBSQMU4p6YLR0SgXrYWFQe/1P+cZRu6q41Jj9OZtd5nv
+	 ndgDO8ZiT3kXpaIKMj4ElajFXH+k+Nbf62hqdYo2gLVR1WrafmMR5XnrOKd7tB0Qka
+	 UJD1L4VedcSiEym1tEuHgdHt6akwNkof3x7osr223lgcTer2MRbPV4L3Dg2VvMX+oz
+	 nD40DDf6f5x0jFKrvLTf0UqoyDAbNITQHiJa9nlrNhVB7cP2cXRYf8tFGu6kB56lqR
+	 AABrLo+T42dINbmHsLQVeGnWypPLe3HUjnXYEZS7Mt84TQYGQgt7nhJKH4o6G+h4um
+	 /hvR+/J05iUFg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2563ACA1016;
+	Thu, 11 Sep 2025 07:53:28 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Date: Thu, 11 Sep 2025 09:53:18 +0200
+Subject: [PATCH v3 1/4] dt-bindings: backlight: Add max25014 bindings
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa5d44ca-d1ea-4c72-a998-b10f098b25f8@microchip.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250911-max25014-v3-1-d03f4eba375e@gocontroll.com>
+References: <20250911-max25014-v3-0-d03f4eba375e@gocontroll.com>
+In-Reply-To: <20250911-max25014-v3-0-d03f4eba375e@gocontroll.com>
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757577207; l=3271;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=5g4P1Wahkw5JoS3mX7/6i/sx/W0CFQwRY6rNR38SJig=;
+ b=l0RYJ1FzMcXSI4IFv4c60sFbpautxCOLa2QrSLHkl3pIPbI7i+ExXyxrkfg7D58y9Us3zN3Oi
+ s/XtYiRRe3vCbM3UmML90iyhGPMBMXsydB98oYmt1xcPAiWOUiRWjBj
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-Hello Ryan,
+From: Maud Spierings <maudspierings@gocontroll.com>
 
-Am Wed, Sep 10, 2025 at 10:16:03AM -0700 schrieb Ryan Wanner:
-> On 9/9/25 23:25, Alexander Dahl wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> > 
-> > Hello Ryan,
-> > 
-> > Am Wed, Sep 10, 2025 at 08:20:28AM +0200 schrieb Alexander Dahl:
-> >> Hello Ryan,
-> >>
-> >> Am Tue, Sep 09, 2025 at 09:08:38AM -0700 schrieb Ryan.Wanner@microchip.com:
-> >>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> >>>
-> >>> Add the USER button as a GPIO input as well as add the LEDs and enable
-> >>> the blue LED as a heartbeat.
-> >>>
-> >>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> >>> ---
-> >>>  .../dts/microchip/at91-sama7d65_curiosity.dts | 49 +++++++++++++++++++
-> >>>  1 file changed, 49 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-> >>> index f091cc40a9f0..2fe34c59d942 100644
-> >>> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-> >>> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-> >>> @@ -11,6 +11,7 @@
-> >>>  #include "sama7d65-pinfunc.h"
-> >>>  #include "sama7d65.dtsi"
-> >>>  #include <dt-bindings/mfd/atmel-flexcom.h>
-> >>> +#include <dt-bindings/input/input.h>
-> >>>  #include <dt-bindings/pinctrl/at91.h>
-> >>>
-> >>>  / {
-> >>> @@ -26,6 +27,42 @@ chosen {
-> >>>             stdout-path = "serial0:115200n8";
-> >>>     };
-> >>>
-> >>> +   gpio-keys {
-> >>> +           compatible = "gpio-keys";
-> >>> +
-> >>> +           pinctrl-names = "default";
-> >>> +           pinctrl-0 = <&pinctrl_key_gpio_default>;
-> >>> +
-> >>> +           button {
-> >>> +                   label = "PB_USER";
-> >>> +                   gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
-> >>> +                   linux,code = <KEY_PROG1>;
-> >>> +                   wakeup-source;
-> >>> +           };
-> >>> +   };
-> >>> +
-> >>> +   leds {
-> >>> +           compatible = "gpio-leds";
-> >>> +           pinctrl-names = "default";
-> >>> +           pinctrl-0 = <&pinctrl_led_gpio_default>;
-> >>> +
-> >>> +           led-red {
-> >>> +                   label = "red";
-> >>> +                   gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
-> >>> +           };
-> >>> +
-> >>> +           led-green {
-> >>> +                   label = "green";
-> >>> +                   gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
-> >>> +           };
-> >>> +
-> >>> +           led-blue {
-> >>> +                   label = "blue";
-> >>> +                   gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
-> >>> +                   linux,default-trigger = "heartbeat";
-> >>> +           };
-> >>> +   };
-> >>
-> >> The label property is deprecated.  Please use the properties "color"
-> >> and "function" for new boards.  See devicetree binding documentation
-> >> for LEDs.
-> > 
-> > From a quick glance, this seems to be an RGB-LED, so I would suggest
-> > to not model it as three distinct LEDs, but make use of the
-> > "leds-group-multicolor" feature, example:
-> > 
-> >  59         multi-led {
-> >  60                 compatible = "leds-group-multicolor";
-> >  61                 color = <LED_COLOR_ID_RGB>;
-> >  62                 function = LED_FUNCTION_INDICATOR;
-> >  63                 leds = <&led_red>, <&led_green>, <&led_blue>;
-> >  64         };
-> 
-> I see, I was not aware of this feature. This would combine all of the
-> LED pins into one RGB light correct, it seems from sysfs that this is
-> the case.
+The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+with integrated boost controller.
 
-The group-multicolor feature was merged for kernel v6.6 so it's still
-quite new.  I tried this some time ago, so this is from memory only.
-The three single color gpio leds are still visible in sysfs, but you
-can not control them independently anymore, only through the sysfs
-interface of that one multicolor led.
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+ .../bindings/leds/backlight/maxim,max25014.yaml    | 81 ++++++++++++++++++++++
+ MAINTAINERS                                        |  5 ++
+ 2 files changed, 86 insertions(+)
 
-> Would having the default-trigger="heartbeat" still be allowed for the
-> led-blue node or should that be moved into the multi-led node? From the
-> bindings it seems that the default trigger is still in the gpio-led nodes.
+diff --git a/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..e113a2ad16aa74f982b9c2ea80578aed2d9424fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Maxim max25014 backlight controller
++
++maintainers:
++  - Maud Spierings <maudspierings@gocontroll.com>
++
++allOf:
++  - $ref: common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - maxim,max25014
++
++  reg:
++    maxItems: 1
++
++  enable-gpios:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  power-supply:
++    description: Regulator which controls the boost converter input rail.
++
++  pwms:
++    maxItems: 1
++
++  maxim,iset:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    maximum: 15
++    default: 11
++    description:
++      Value of the ISET register field. This controls the current scale of the
++      outputs, a higher number means more current.
++
++  maxim,strings:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    description:
++      A 4-bit bitfield that describes which led strings to turn on.
++    minItems: 4
++    maxItems: 4
++    items:
++      maximum: 1
++
++required:
++  - compatible
++  - reg
++  - maxim,strings
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        backlight@6f {
++            compatible = "maxim,max25014";
++            reg = <0x6f>;
++            default-brightness = <50>;
++            enable-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
++            interrupt-parent = <&gpio1>;
++            interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
++            power-supply = <&reg_backlight>;
++            pwms = <&pwm1>;
++            maxim,iset = <7>;
++            maxim,strings = <1 1 1 1>;
++        };
++    };
++
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7b7396ed28a700a2aab318553ce8ba1788312bff..5a592eefbe7562734aada05ab9e3aea8cee010e7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15069,6 +15069,11 @@ F:	Documentation/userspace-api/media/drivers/max2175.rst
+ F:	drivers/media/i2c/max2175*
+ F:	include/uapi/linux/max2175.h
+ 
++MAX25014 BACKLIGHT DRIVER
++M:	Maud Spierings <maudspierings@gocontroll.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
++
+ MAX31335 RTC DRIVER
+ M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+ L:	linux-rtc@vger.kernel.org
 
-Sorry, not sure here.  I put linux-leds in Cc, maybe someone over
-there can answer.  If this does not fit how Microchip wants to handle
-that LED on their boards I think that's fine, too.  Just wanted to
-make people aware of the possibility.
+-- 
+2.51.0
 
-Greets
-Alex
 
-> 
-> Best,
-> Ryan
-> > 
-> > Greets
-> > Alex
-> > 
-> >>
-> >> Thanks and greetings
-> >> Alex
-> >>
-> >>> +
-> >>>     memory@60000000 {
-> >>>             device_type = "memory";
-> >>>             reg = <0x60000000 0x40000000>;
-> >>> @@ -352,6 +389,18 @@ pinctrl_i2c10_default: i2c10-default {
-> >>>             bias-pull-up;
-> >>>     };
-> >>>
-> >>> +   pinctrl_key_gpio_default: key-gpio-default {
-> >>> +           pinmux = <PIN_PC10__GPIO>;
-> >>> +           bias-pull-up;
-> >>> +   };
-> >>> +
-> >>> +   pinctrl_led_gpio_default: led-gpio-default {
-> >>> +           pinmux = <PIN_PB15__GPIO>,
-> >>> +                    <PIN_PB17__GPIO>,
-> >>> +                    <PIN_PA21__GPIO>;
-> >>> +           bias-pull-up;
-> >>> +   };
-> >>> +
-> >>>     pinctrl_sdmmc1_default: sdmmc1-default {
-> >>>             cmd-data {
-> >>>                     pinmux = <PIN_PB22__SDMMC1_CMD>,
-> >>> --
-> >>> 2.43.0
-> >>>
-> >>>
-> >>
-> 
-> 
