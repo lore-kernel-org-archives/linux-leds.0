@@ -1,37 +1,37 @@
 Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6393029DB61
-	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 18:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671AF2C08B6
+	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 18:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759947054; cv=none; b=dmc0TPC1PB8/K4UXy4D5npvQ+onAa1Am7FgQrqvK7TZ8FFkXXEwTQpA3xBaMhAXqiIlhCd+j74nIcd3xR6f42av91gek3pe78Cq94Qeqb/5P0e5gNsJh4f0gnC0HlP3U9CQPGSLPUKqVfP1kfWPso947b/v1TLQ0WugCZZxBo54=
+	t=1759947056; cv=none; b=F/NoWR236/+dzMo15cbRcH+rBNLSWEnFpd3mW2KXM1lbkkgjz9NfEtnKKl2FbS6Xkj0QYTDvJkAVeT7f3tpGpAyHZpA7S1Gggv80cKE6+/4DiGQs4WUkKJKyd6vj4+uO+FtAzawC81/I0nLiHl2fYs0zVpdJ4u0xXbHkjl0he8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759947054; c=relaxed/simple;
-	bh=SaGxqTldM1xsGEyQJzMNlPIGiii+/O+77EXJ3kOV6yA=;
+	s=arc-20240116; t=1759947056; c=relaxed/simple;
+	bh=TensFLUA81g/x9L5G6Z4Yuw/GBe3HW5Htj5vNxykNyI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VY5knalhGIOlgHoFMGugzJ0C1NhuX04HkIAosI9hehDe+ClBw2wKQFA6DEuA+NNLewnASuyqdAem7I1yJ/zwPOueQw5cHwX7qHjo/Fl4ibJzyv72IhKTxj03oBELy2SIAPwYq3Zjbjdxs0oHPZRf5BaDSl/0jSF5dKSu4UnuV/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=m5AngRcT; arc=none smtp.client-ip=185.67.36.65
+	 MIME-Version; b=XHigG6d0nQ9wciCqad8NrAgmGDBfhwjeLSGE8GR7tHDpVAZRklUGLnFNhIOTx1ems9dSJZ6P/ZdwW7u9Oqqm4EHSoYGNGtPp2PHcc1WXH5swI2OlwogQaLocn1LTce9yDtPT+Jm8pMKlBz+hPYvyyNUwFrZ5ReA+TGaWHlG3KMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=Ld0DaSOq; arc=none smtp.client-ip=185.67.36.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="m5AngRcT"
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="Ld0DaSOq"
 Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id C7D2A240028
-	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 20:10:44 +0200 (CEST)
+	by mout01.posteo.de (Postfix) with ESMTPS id 3769724002F
+	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 20:10:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1759947044; bh=g9UUqZTuO/pVU1g1HZjC8FVIAQ6keeZB0dh+9qZDMYs=;
+	t=1759947049; bh=6o5KG45PmF3kRE1S0MtEmvCsqg21dTOW7EJNjlfw1yY=;
 	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
 	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=m5AngRcTsImkVuHPJ+AjNSmEDhETeQ6YrkI5NRxY9rI3Lcpk+QtIX2+P9Tuwtwiz1
-	 GKcs5+xEXOYQ7N9vq9yBYJC+sjSAG7l+52gNGjoJSxLsQKwoqwVXYOUO71SEptaX+v
-	 lNHwgBZ1yy2zPDIkH++Xuz2cgfJFrYMvmKU8MCJr9JKnkXqTlrdQ9UCgd+Op+gVCOK
-	 ZkedOAoKWokMFE9QnWfKvh2tZYLRvDGr9MESG6rw1UBRufe5HeROV3y4LbKUf3NLQl
-	 4Z3R0iAAIwPWDGc4xn6vURtfSJ5CzO4rBKpg+O54xVtTlBRqnZviGkeuB7HXcEeuSG
-	 MYIFpg/YqOvBQ==
+	b=Ld0DaSOqpJtr+0h9qcB2L/VXhbl+reTlMopC2ij3Jr8Mc0NuQkiIbiFIS1lVdpaVW
+	 yFfCCbNdnf792JlHSx2k5hsaaTQN3gGsSKLjrgew+HJOayFp3MpmUJ7Ik+RqHnJaV7
+	 eanB3nsKTDR4ACfZN5XBI/syqtZLqZbwO64F3erXOTrDwCFQrKMwnQXbglapqQwXH9
+	 NO0sBinsWqyeXd7yaIHNIGDzT0DkQ7qD2pgrjiDNb0Lwat9hGYL87YCY9GJl0mHtej
+	 ipuzAaR8F/5mtiVzIpd7zGVQhZqnS5dqthKxdzCaN9fc2by5fxR4jfPVT7Hv2acKAt
+	 2mS73TLVgbPdQ==
 Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4chgzQ0ZwKz9rxY;
-	Wed,  8 Oct 2025 20:10:42 +0200 (CEST)
+	by submission (posteo.de) with ESMTPSA id 4chgzT6Jcvz9rxX;
+	Wed,  8 Oct 2025 20:10:45 +0200 (CEST)
 From: Markus Probst <markus.probst@posteo.de>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -55,11 +55,13 @@ Cc: Markus Probst <markus.probst@posteo.de>,
 	linux-leds@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] rust: i2c: add read and write byte data abstractions
-Date: Wed, 08 Oct 2025 18:10:43 +0000
-Message-ID: <20251008181027.662616-2-markus.probst@posteo.de>
-In-Reply-To: <20251008181027.662616-1-markus.probst@posteo.de>
+Subject: [PATCH 3/4] rust: leds: add basic led classdev abstractions
+Date: Wed, 08 Oct 2025 18:10:47 +0000
+Message-ID: <20251008181027.662616-4-markus.probst@posteo.de>
+In-Reply-To: <20251008181027.662616-3-markus.probst@posteo.de>
 References: <20251008181027.662616-1-markus.probst@posteo.de>
+ <20251008181027.662616-2-markus.probst@posteo.de>
+ <20251008181027.662616-3-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -110,78 +112,339 @@ Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
   aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
 OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-In addition to the core abstractions, implement
+Implement the core abstractions needed for led class devices, including:
 
-* `i2c::I2cClient::read_byte` - read a byte from the i2c client
-* `i2c::I2cClient::write_byte` - write a byte to the i2c client
+* `led::LedHandler` - the trait for handling leds, including
+  `brightness_set`
 
-* `i2c::I2cClient::read_byte_data` - read byte data from the i2c client
-* `i2c::I2cClient::write_byte_data` - write byte data to the i2c client
+* `led::LedInitData` - data set for the led class device
 
-* `i2c::I2cClient::read_word_data` - read word data from the i2c client
-* `i2c::I2cClient::write_word_data` - write word data to the i2c client
+* `led::LedClassDev` - a safe wrapper arround `led_classdev`
 
 Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
- rust/kernel/i2c.rs | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ rust/kernel/led.rs | 299 +++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs |   1 +
+ 2 files changed, 300 insertions(+)
+ create mode 100644 rust/kernel/led.rs
 
-diff --git a/rust/kernel/i2c.rs b/rust/kernel/i2c.rs
-index 73858aecc131..57b02b65f90f 100644
---- a/rust/kernel/i2c.rs
-+++ b/rust/kernel/i2c.rs
-@@ -463,6 +463,51 @@ impl<Ctx: device::DeviceContext> I2cClient<Ctx> {
-     fn as_raw(&self) -> *mut bindings::i2c_client {
-         self.0.get()
-     }
+diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
+new file mode 100644
+index 000000000000..14f09a2c8c3b
+--- /dev/null
++++ b/rust/kernel/led.rs
+@@ -0,0 +1,299 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+    /// Reads a byte from the i2c client
-+    pub fn read_byte(&self) -> Result<u8> {
-+        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-+        // `struct i2c_client`.
-+        let value = unsafe { bindings::i2c_smbus_read_byte(self.as_raw()) };
-+        to_result(value).map(|()| value as u8)
++//! Abstractions for the leds driver model.
++//!
++//! C header: [`include/linux/leds.h`](srctree/include/linux/leds.h)
++
++use core::pin::Pin;
++
++use pin_init::{pin_data, pinned_drop, PinInit};
++
++use crate::{
++    alloc::KBox,
++    container_of,
++    device::{property::FwNode, Device},
++    error::{code::EINVAL, from_result, to_result, Error, Result},
++    prelude::GFP_KERNEL,
++    str::{CStr, CString},
++    try_pin_init,
++    types::{ARef, Opaque},
++};
++
++/// The led class device representation.
++///
++/// This structure represents the Rust abstraction for a C `struct led_classdev`.
++#[pin_data(PinnedDrop)]
++pub struct LedClassDev {
++    default_trigger: Option<CString>,
++    parent: Option<ARef<Device>>,
++    handler: KBox<dyn LedHandlerImpl>,
++    #[pin]
++    classdev: Opaque<bindings::led_classdev>,
++}
++
++/// The led init data representation.
++///
++/// This structure represents the Rust abstraction for a C `struct led_init_data`.
++#[derive(Default)]
++pub struct LedInitData<'a> {
++    fwnode: Option<&'a FwNode>,
++    default_label: Option<&'a CStr>,
++    devicename: Option<&'a CStr>,
++    devname_mandatory: bool,
++}
++
++impl LedInitData<'static> {
++    /// Creates a new [`LedInitData`]
++    pub fn new() -> Self {
++        Self::default()
++    }
++}
++
++impl<'a> LedInitData<'a> {
++    /// Sets the firmware node
++    pub fn fwnode<'b, 'c>(self, fwnode: &'b FwNode) -> LedInitData<'c>
++    where
++        'a: 'c,
++        'b: 'c,
++    {
++        LedInitData {
++            fwnode: Some(fwnode),
++            ..self
++        }
 +    }
 +
-+    /// Writes a byte to the i2c client
-+    pub fn write_byte(&self, value: u8) -> Result<()> {
-+        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-+        // `struct i2c_client`.
-+        to_result(unsafe { bindings::i2c_smbus_write_byte(self.as_raw(), value) })
++    /// Sets a default label
++    pub fn default_label<'b, 'c>(self, label: &'b CStr) -> LedInitData<'c>
++    where
++        'a: 'c,
++        'b: 'c,
++    {
++        LedInitData {
++            default_label: Some(label),
++            ..self
++        }
 +    }
 +
-+    /// Reads byte data from the i2c client
-+    pub fn read_byte_data(&self, reg: u8) -> Result<u8> {
-+        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-+        // `struct i2c_client`.
-+        let value = unsafe { bindings::i2c_smbus_read_byte_data(self.as_raw(), reg) };
-+        to_result(value).map(|()| value as u8)
++    /// Sets the device name
++    pub fn devicename<'b, 'c>(self, devicename: &'b CStr) -> LedInitData<'c>
++    where
++        'a: 'c,
++        'b: 'c,
++    {
++        LedInitData {
++            devicename: Some(devicename),
++            ..self
++        }
 +    }
 +
-+    /// Writes byte data to the i2c client
-+    pub fn write_byte_data(&self, reg: u8, value: u8) -> Result<()> {
-+        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-+        // `struct i2c_client`.
-+        to_result(unsafe { bindings::i2c_smbus_write_byte_data(self.as_raw(), reg, value) })
++    /// Sets if a device name is mandatory
++    pub fn devicename_mandatory(self, mandatory: bool) -> Self {
++        Self {
++            devname_mandatory: mandatory,
++
++            ..self
++        }
++    }
++}
++
++/// The led handler trait.
++///
++/// # Examples
++///
++///```
++/// # use kernel::{c_str, led, alloc::KBox, error::{Result, code::ENOSYS}};
++/// # use core::pin::Pin;
++///
++/// struct MyHandler;
++///
++///
++/// impl led::LedHandler for MyHandler {
++///     const BLOCKING = false;
++///     const MAX_BRIGHTNESS = 255;
++///
++///     fn brightness_set(&self, _brightness: u32) -> Result<()> {
++///         // Set the brightness for the led here
++///         Ok(())
++///     }
++/// }
++///
++/// fn register_my_led() -> Result<Pin<KBox<led::LedClassDev>>> {
++///     let handler = MyHandler;
++///     KBox::pin_init(led::LedClassDev::new(
++///         None,
++///         None,
++///         led::LedInitData::new()
++///             .default_label(c_str!("my_led")),
++///         handler,
++///     ))
++/// }
++///```
++/// Led drivers must implement this trait in order to register and handle a [`LedClassDev`].
++pub trait LedHandler {
++    /// If set true, [`LedHandler::brightness_set`] and [`LedHandler::blink_set`] must not sleep
++    /// and perform the operation immediately.
++    const BLOCKING: bool;
++    /// Set this to true, if [`LedHandler::blink_set`] is implemented.
++    const BLINK: bool = false;
++    /// The max brightness level
++    const MAX_BRIGHTNESS: u32;
++
++    /// Sets the brightness level
++    ///
++    /// See also [`LedHandler::BLOCKING`]
++    fn brightness_set(&self, brightness: u32) -> Result<()>;
++
++    /// Activates hardware accelerated blinking.
++    ///
++    /// delays are in milliseconds. If both are zero, a sensible default should be chosen.
++    /// The caller should adjust the timings in that case and if it can't match the values
++    /// specified exactly. Setting the brightness to 0 will disable the hardware accelerated
++    /// blinking.
++    ///
++    /// See also [`LedHandler::BLOCKING`]
++    fn blink_set(&self, _delay_on: &mut usize, _delay_off: &mut usize) -> Result<()> {
++        Err(EINVAL)
++    }
++}
++
++trait LedHandlerImpl {
++    fn brightness_set(&self, brightness: u32) -> Result<()>;
++    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize) -> Result<()>;
++}
++
++impl<T: LedHandler> LedHandlerImpl for T {
++    fn brightness_set(&self, brightness: u32) -> Result<()> {
++        T::brightness_set(self, brightness)
 +    }
 +
-+    /// Reads word data from the i2c client
-+    pub fn read_word_data(&self, reg: u8) -> Result<u16> {
-+        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-+        // `struct i2c_client`.
-+        let value = unsafe { bindings::i2c_smbus_read_word_data(self.as_raw(), reg) };
-+        to_result(value).map(|()| value as u16)
++    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize) -> Result<()> {
++        T::blink_set(self, delay_on, delay_off)
 +    }
++}
 +
-+    /// Writes word data to the i2c client
-+    pub fn write_word_data(&self, reg: u8, value: u16) -> Result<()> {
-+        // SAFETY: By the type invariant of `Self`, `self.as_raw()` is a pointer to a valid
-+        // `struct i2c_client`.
-+        to_result(unsafe { bindings::i2c_smbus_write_word_data(self.as_raw(), reg, value) })
++// SAFETY: A `LedClassDev` can be unregistered from any thread.
++unsafe impl Send for LedClassDev {}
++
++// SAFETY: `LedClassDev` can be shared among threads because all methods of `LedClassDev`
++// are thread safe.
++unsafe impl Sync for LedClassDev {}
++
++impl LedClassDev {
++    /// Registers a new led classdev.
++    ///
++    /// The [`LedClassDev`] will be unregistered and drop.
++    pub fn new<'a, T: LedHandler + 'static>(
++        parent: Option<&Device>,
++        default_trigger: Option<CString>,
++        init_data: LedInitData<'a>,
++        handler: T,
++    ) -> impl PinInit<Self, Error> + use<'a, T> {
++        let parent_ptr = parent.map_or(core::ptr::null_mut(), Device::as_raw);
++        let parent = parent.map(ARef::from);
++        try_pin_init!(Self {
++            default_trigger,
++            parent,
++            handler <- {
++                let handler: KBox<dyn LedHandlerImpl> = KBox::<T>::new(handler, GFP_KERNEL)?;
++                Ok::<_, Error>(handler)
++            },
++            classdev <- Opaque::try_ffi_init(|ptr: *mut bindings::led_classdev| {
++                // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write.
++                unsafe { ptr.write(bindings::led_classdev {
++                    max_brightness: T::MAX_BRIGHTNESS,
++                    brightness_set: T::BLOCKING.then_some(
++                        brightness_set as unsafe extern "C" fn(*mut bindings::led_classdev, u32)
++                    ),
++                    brightness_set_blocking: (!T::BLOCKING).then_some(
++                        brightness_set_blocking
++                            as unsafe extern "C" fn(*mut bindings::led_classdev,u32) -> i32
++                    ),
++                    blink_set: T::BLINK.then_some(
++                        blink_set
++                            as unsafe extern "C" fn(*mut bindings::led_classdev, *mut usize,
++                                                    *mut usize) -> i32
++                    ),
++                    .. bindings::led_classdev::default()
++                }) };
++
++                let mut init_data = bindings::led_init_data {
++                    fwnode: init_data.fwnode.map_or(core::ptr::null_mut(), FwNode::as_raw),
++                    default_label: init_data.default_label
++                                            .map_or(core::ptr::null(), CStr::as_char_ptr),
++                    devicename: init_data.devicename.map_or(core::ptr::null(), CStr::as_char_ptr),
++                    devname_mandatory: init_data.devname_mandatory,
++                };
++                // SAFETY:
++                // - `parent_ptr` is guaranteed to be a pointer to a valid `device`
++                //    or a null pointer.
++                // - `ptr` is guaranteed to be a pointer to an initialized `led_classdev`.
++                to_result(unsafe {
++                    bindings::led_classdev_register_ext(parent_ptr, ptr, &mut init_data)
++                })
++            }),
++        })
 +    }
- }
- 
- // SAFETY: `I2cClient` is a transparent wrapper of a type that doesn't depend on `I2cClient`'s generic
++}
++
++extern "C" fn brightness_set(led_cdev: *mut bindings::led_classdev, brightness: u32) {
++    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev` stored inside a `LedClassDev`.
++    let classdev = unsafe {
++        &*container_of!(
++            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
++            LedClassDev,
++            classdev
++        )
++    };
++    let _ = classdev.handler.brightness_set(brightness);
++}
++
++extern "C" fn brightness_set_blocking(
++    led_cdev: *mut bindings::led_classdev,
++    brightness: u32,
++) -> i32 {
++    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev` stored inside a `LedClassDev`.
++    let classdev = unsafe {
++        &*container_of!(
++            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
++            LedClassDev,
++            classdev
++        )
++    };
++    from_result(|| {
++        classdev.handler.brightness_set(brightness)?;
++        Ok(0)
++    })
++}
++
++extern "C" fn blink_set(
++    led_cdev: *mut bindings::led_classdev,
++    delay_on: *mut usize,
++    delay_off: *mut usize,
++) -> i32 {
++    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev` stored inside a `LedClassDev`.
++    let classdev = unsafe {
++        &*container_of!(
++            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
++            LedClassDev,
++            classdev
++        )
++    };
++    from_result(|| {
++        classdev.handler.blink_set(
++            // SAFETY: `delay_on` is guaranteed to be a valid pointer to usize
++            unsafe { &mut *delay_on },
++            // SAFETY: `delay_on` is guaranteed to be a valid pointer to usize
++            unsafe { &mut *delay_off },
++        )?;
++        Ok(0)
++    })
++}
++
++#[pinned_drop]
++impl PinnedDrop for LedClassDev {
++    fn drop(self: Pin<&mut Self>) {
++        // SAFETY: The existence of `self` guarantees that `self.classdev` has previously been
++        // successfully registered with `led_classdev_register_ext`
++        unsafe { bindings::led_classdev_unregister(self.classdev.get()) };
++    }
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index e5247f584ad2..f42c60da21ae 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -97,6 +97,7 @@
+ pub mod jump_label;
+ #[cfg(CONFIG_KUNIT)]
+ pub mod kunit;
++pub mod led;
+ pub mod list;
+ pub mod miscdevice;
+ pub mod mm;
 -- 
 2.49.1
 
