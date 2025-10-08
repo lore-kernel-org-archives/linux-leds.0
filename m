@@ -1,37 +1,37 @@
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C292C0F79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A112C0F9A
 	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 18:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759947057; cv=none; b=uj7/Jta3U03CJrWnt5donZGoINudhJPSxD6fxZDtP44GOFAU9ssoVQ/renIZC89Jhyq6tZCZqwv/v+NJyn8Jt1+xjuxFEy8m0MgiLyZX+6sKW2o/NWu79+oHdjWreetHU/imE2jZoRTTHAmP0RnAXsGbJbsN8mwB8RFup8NDO3s=
+	t=1759947058; cv=none; b=s/oIsGW6+GeLVF5FZ0DLT1IxcyuqqQnxVSZU1pjQcAitXkIRaYE/OOOxERH+JdjZyYinivsX5zskE24wpm/fnMphWNBt3pDMImqXj49EGjeYcWUkTjkbiw+1ydQzRVaOdPUNOZvZUg5qOBn8yQdoddx84/8VWsSlbONr4AE4Kqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759947057; c=relaxed/simple;
-	bh=9wHa2NsXWAKtyAdOkdyrbMj3P5LT1P+0xBazNJQx9Q8=;
+	s=arc-20240116; t=1759947058; c=relaxed/simple;
+	bh=6l/3GTLT2UydYiP55+oG+smz/WuH5npHBY+AV/7yf14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hoiXyMyIOYQs/wN7O86LgLp1PoNErULcA8yEKgQHP8FSo35nnQq7XwOvv2aBU+8kLBBHEjhlca9k+NA6yI69bAbvKnQzQRO857MwzluK3Ikk6Y/QdQmCP5DrXpcSCdO5CcSxY88XmZK68ktsdJnjmJ1b/qmg/jU5jGX0jVWoSsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=gM1ENKSE; arc=none smtp.client-ip=185.67.36.66
+	 MIME-Version; b=sOfni1bO820ULs24amAY/YY5cVr4bJHdbVaJk/UCYzM2LedmujVBJJe6jaGsCrubeT25HFu0/QyphgbIb/sM1kzWutcWydHSNFlVvMCkUt0nMfaJaiWOz33Biiy4XD13Il0XFuYhSfalkxvjlNWN7JHimULrYtLTY1tMJOE28hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=lh8KWDC+; arc=none smtp.client-ip=185.67.36.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="gM1ENKSE"
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="lh8KWDC+"
 Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 7376F240105
-	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 20:10:48 +0200 (CEST)
+	by mout01.posteo.de (Postfix) with ESMTPS id D12A3240028
+	for <linux-leds@vger.kernel.org>; Wed,  8 Oct 2025 20:10:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1759947048; bh=XNe1KPk/bBREo5nDOhlFMfiW54nPpt8QW+L/MjqxhEw=;
+	t=1759947050; bh=PPe7UKsklAFbVGgif5GZJ8GIADSBA74PnnS80wLjF0Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
 	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=gM1ENKSEHQ/vfUp0cRLc1IO+g2TwjGuAMyu7fEZ6rsz+3VPaKHVPuC7sA9/g3DQ5Y
-	 Neeql1f/bBOSaGm12OiMx0viiQ2vhYPy1g0leIe/si4D72lrkzMNuV9ZfCGTI4ntmG
-	 Czc6Aj/S7cGGhYnvDWvkhWhGdB1tRCXXrCGObFg8uiCCWzRlwE/CMelJQdfn+1nfyV
-	 lNrGwJQvoRJ3FCxX/UFwYsg2S02JTlIxolrUDyUcvzGD0wms7wIjOlCB+DV7qhrrOI
-	 6URMBzpJ3kNURVuTzlRdJSe8VVqgADNkmFlaiIufEygoy1hYo7eq2GWIxblmYZDxej
-	 3JaZCr0vuimuQ==
+	b=lh8KWDC+bLjGQx5Wi9iOBsIkSXLYxT7S+pPXJDRZ2KA/ksCQWccjj9DovtuI5MZ24
+	 A3pBYCF54zHGnfyog0dFMb7vV1ydb4HLNIYXxkhQ9GU1bSoHUjpEX5IYGjSEaPwPPk
+	 i9+3pFiwTO2/EmAGqn6/o6aWv1Je0jdUZXeU6f2LvDR5RNcmxGhf2ZNOe8b9RYWYz1
+	 s2zjyl1cYbC1hDg2Uxg41jAG3vKxABNbopLSCAdsccWI7aB8E+MwJickB1bAIXL8fB
+	 Cz+lmiR+cwpob0+E5hQLn4az1pWbt3cOh+nYGx/wY6bhznB0WOcEMVQV6yKjkJ0DyE
+	 gCeB2Q2dD8ExQ==
 Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4chgzR65yxz9rxS;
-	Wed,  8 Oct 2025 20:10:43 +0200 (CEST)
+	by submission (posteo.de) with ESMTPSA id 4chgzX1Hr6z9rxK;
+	Wed,  8 Oct 2025 20:10:48 +0200 (CEST)
 From: Markus Probst <markus.probst@posteo.de>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -55,12 +55,14 @@ Cc: Markus Probst <markus.probst@posteo.de>,
 	linux-leds@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] rust: add pinned wrapper of Vec
-Date: Wed, 08 Oct 2025 18:10:45 +0000
-Message-ID: <20251008181027.662616-3-markus.probst@posteo.de>
-In-Reply-To: <20251008181027.662616-2-markus.probst@posteo.de>
+Subject: [PATCH 4/4] leds: add driver for synology atmega1608 controlled LEDs
+Date: Wed, 08 Oct 2025 18:10:49 +0000
+Message-ID: <20251008181027.662616-5-markus.probst@posteo.de>
+In-Reply-To: <20251008181027.662616-4-markus.probst@posteo.de>
 References: <20251008181027.662616-1-markus.probst@posteo.de>
  <20251008181027.662616-2-markus.probst@posteo.de>
+ <20251008181027.662616-3-markus.probst@posteo.de>
+ <20251008181027.662616-4-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -111,147 +113,452 @@ Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
   aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
 OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-Implement a wrapper of Vec that guarantees that its content will never be
-moved, unless the item implements Unpin, allowing PinInit to be
-initialized on the Vec.
+The Atmega1608 is a microcontroller used by synology devices to control
+leds via the i2c bus. It can handle up to 24 leds.
+
+Successfully tested on a Synology DS923+.
 
 Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
- rust/kernel/alloc/kvec.rs | 86 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+ MAINTAINERS                     |   6 +
+ drivers/leds/Kconfig            |   9 +
+ drivers/leds/Makefile           |   1 +
+ drivers/leds/leds_atmega1608.rs | 377 ++++++++++++++++++++++++++++++++
+ 4 files changed, 393 insertions(+)
+ create mode 100644 drivers/leds/leds_atmega1608.rs
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 3c72e0bdddb8..3576929b2e12 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -21,6 +21,7 @@
-     slice,
-     slice::SliceIndex,
- };
-+use pin_init::PinInit;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5881ef69c1d7..c6065751fa15 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24401,6 +24401,12 @@ F:	drivers/dma-buf/sync_*
+ F:	include/linux/sync_file.h
+ F:	include/uapi/linux/sync_file.h
  
- mod errors;
- pub use self::errors::{InsertError, PushError, RemoveError};
-@@ -109,6 +110,11 @@ pub struct Vec<T, A: Allocator> {
-     _p: PhantomData<A>,
- }
- 
-+/// A pinned wrapper of the [`Vec`] type.
-+///
-+/// It is guaranteed that the contents will never be moved, unless T implements Unpin.
-+pub struct PinnedVec<T, A: Allocator>(Vec<T, A>);
++SYNOLOGY ATMEGA1608 LED CONTROLLER DRIVER
++M:	Markus Probst <markus.probst@posteo.de>
++L:	linux-leds@vger.kernel.org
++S:	Maintained
++F:	drivers/leds/leds_atmega1608.rs
 +
- /// Type alias for [`Vec`] with a [`Kmalloc`] allocator.
- ///
- /// # Examples
-@@ -121,6 +127,8 @@ pub struct Vec<T, A: Allocator> {
- /// # Ok::<(), Error>(())
- /// ```
- pub type KVec<T> = Vec<T, Kmalloc>;
-+/// Type alias for [`PinnedVec`] with a [`Kmalloc`] allocator.
-+pub type KPinnedVec<T> = PinnedVec<T, Kmalloc>;
+ SYNOPSYS ARC ARCHITECTURE
+ M:	Vineet Gupta <vgupta@kernel.org>
+ L:	linux-snps-arc@lists.infradead.org
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 6e3dce7e35a4..d04914896235 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -323,6 +323,15 @@ config LEDS_WRAP
+ 	help
+ 	  This option enables support for the PCEngines WRAP programmable LEDs.
  
- /// Type alias for [`Vec`] with a [`Vmalloc`] allocator.
- ///
-@@ -134,6 +142,8 @@ pub struct Vec<T, A: Allocator> {
- /// # Ok::<(), Error>(())
- /// ```
- pub type VVec<T> = Vec<T, Vmalloc>;
-+/// Type alias for [`PinnedVec`] with a [`Vmalloc`] allocator.
-+pub type VPinnedVec<T> = PinnedVec<T, Vmalloc>;
++config LEDS_ATMEGA1608
++	tristate "LED Support for Atmega1608 used in Synology devices"
++	depends on LEDS_CLASS
++	depends on I2C
++	depends on RUST
++	help
++	  This option enables support for the Atmega1608 microcontroller used
++	  as led controller in synology devices.
++
+ config LEDS_COBALT_QUBE
+ 	tristate "LED Support for the Cobalt Qube series front LED"
+ 	depends on LEDS_CLASS
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 9a0333ec1a86..5c1a91344980 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -98,6 +98,7 @@ obj-$(CONFIG_LEDS_UPBOARD)		+= leds-upboard.o
+ obj-$(CONFIG_LEDS_WM831X_STATUS)	+= leds-wm831x-status.o
+ obj-$(CONFIG_LEDS_WM8350)		+= leds-wm8350.o
+ obj-$(CONFIG_LEDS_WRAP)			+= leds-wrap.o
++obj-$(CONFIG_LEDS_ATMEGA1608)		+= leds_atmega1608.o
  
- /// Type alias for [`Vec`] with a [`KVmalloc`] allocator.
- ///
-@@ -147,6 +157,8 @@ pub struct Vec<T, A: Allocator> {
- /// # Ok::<(), Error>(())
- /// ```
- pub type KVVec<T> = Vec<T, KVmalloc>;
-+/// Type alias for [`PinnedVec`] with a [`KVmalloc`] allocator.
-+pub type KVPinnedVec<T> = PinnedVec<T, KVmalloc>;
- 
- // SAFETY: `Vec` is `Send` if `T` is `Send` because `Vec` owns its elements.
- unsafe impl<T, A> Send for Vec<T, A>
-@@ -1294,6 +1306,80 @@ fn drop(&mut self) {
-     }
- }
- 
-+impl<T, A: Allocator> PinnedVec<T, A> {
-+    /// Creates a new [`PinnedVec`] instance with at least the given capacity.
-+    pub fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, AllocError> {
-+        Vec::with_capacity(capacity, flags).map(Self)
+ # Kinetic ExpressWire Protocol
+ obj-$(CONFIG_LEDS_EXPRESSWIRE)		+= leds-expresswire.o
+diff --git a/drivers/leds/leds_atmega1608.rs b/drivers/leds/leds_atmega1608.rs
+new file mode 100644
+index 000000000000..495b6105de04
+--- /dev/null
++++ b/drivers/leds/leds_atmega1608.rs
+@@ -0,0 +1,377 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Led Driver for Synology devices using Atmega1608 as Led Controller.
++//!
++//! Atmega1608 is a microcontroller from Microchip Technology, it is used
++//! as a led controller in synology nas devices.
++//!
++//! It can handle a total of 24 leds. Each led has 4 modes:
++//! * OFF - the led is turned off
++//! * ON - the led is turned on at full brightness
++//! * DIM0 - custom brightness and optional hardware accelerated blinking
++//!
++//! there should also be DIM1 (which should do the same as DIM0), but
++//! according to my own testing it doesn't actually work, so it won't be used.
++//!
++//!
++//! # Limitations
++//!
++//! DIM0 (and DIM1) are shared across all leds, meaning if DIM0 is used by
++//! multiple leds, these multiple leds cannot have different brightness
++//! levels. The same does apply for the hardware accelerated blinking.
++//!
++//! In other words, for all 24 leds there can either only be one brightness other
++//! than 0 and 255, or one hardware accelerated blinking delay.
++//!
++//! Furthermore the off and on delay in hardware accelerated blinking cannot
++//! have different values and have to be equal. We solve this by calculating
++//! the average of those numbers and use it as delay for both. The delay
++//! cannot be larger than 765 ms (255*3).
++//!
++//! While hardware accelerated blinking is on, the led cycles between
++//! the current brightness for the mode and full brightness. Because of this
++//! behaviour, we hardcode the brightness value of 128 if hardware accelerated
++//! blinking is used.
++//!
++//!
++//! # Technical details
++//!
++//! The controller has 6 8-bit i2c registers for led modes. See [`Atmega1608LedAddress`].
++//! Each led has its own 2 bits:
++//!
++//! +=====================================+
++//! | Register  | Leds (2 bits each)      |
++//! +=====================================+
++//! | 0x06      | LED3  LED2  LED1  LED0  |
++//! |-----------+-------------------------+
++//! | 0x07      | LED7  LED6  LED5  LED4  |
++//! |-----------+-------------------------+
++//! | 0x08      | LED11 LED10 LED9  LED8  |
++//! |-----------+-------------------------+
++//! | 0x09      | LED15 LED14 LED13 LED12 |
++//! |-----------+-------------------------+
++//! | 0x0A      | LED19 LED18 LED17 LED16 |
++//! |-----------+-------------------------+
++//! | 0x0B      | LED23 LED22 LED21 LED20 |
++//! |=====================================+
++//!
++//! See [`Atmega1608LedMode`] for the value of each mode.
++//!
++//!
++//! +===============================================+
++//! | Register  | Mode / Meaning                    |
++//! +===============================================+
++//! | 0x01      | turns all leds off if set to 1    |
++//! +-----------------------------------------------+
++//! | 0x02      | blinking delay for Dim0, 1 = 3 ms |
++//! +-----------------------------------------------+
++//! | 0x03      | brightness for Dim0, inverted     |
++//! +-----------------------------------------------+
++//! | 0x04      | blinking delay for Dim1, 1 = 3 ms |
++//! +-----------------------------------------------+
++//! | 0x05      | brightness for Dim1, inverted     |
++//! +===============================================+
++//!
++
++use kernel::{
++    alloc::kvec::KPinnedVec,
++    c_str,
++    error::code::EINVAL,
++    i2c::{self, I2cClient},
++    led::{LedClassDev, LedHandler, LedInitData},
++    new_mutex,
++    prelude::*,
++    str::CString,
++    sync::{Arc, Mutex},
++    types::ARef,
++};
++
++struct Atmega1608LedDriver {
++    client: ARef<I2cClient>,
++    #[expect(
++        dead_code,
++        reason = "leds should be unregistered on device/driver removal"
++    )]
++    leds: KPinnedVec<LedClassDev>,
++}
++
++kernel::module_i2c_driver! {
++    type: Atmega1608LedDriver,
++    name: "atmega1608",
++    authors: ["Markus Probst <markus.probst@posteo.de>"],
++    description: "Led Driver for Synology devices using Atmega1608 as Led Controller",
++    license: "GPL v2",
++}
++
++#[repr(u8)]
++#[derive(Copy, Clone)]
++enum Atmega1608LedAddress {
++    Ls0 = 0x06,
++    Ls1 = 0x07,
++    Ls2 = 0x08,
++    Ls3 = 0x09,
++    Ls4 = 0x0A,
++    Ls5 = 0x0B,
++}
++
++#[repr(u8)]
++#[derive(Copy, Clone)]
++enum Atmega1608LedId {
++    Sel0 = 0,
++    Sel1 = 1,
++    Sel2 = 2,
++    Sel3 = 3,
++}
++
++#[repr(u8)]
++#[derive(Copy, Clone, PartialEq, Eq)]
++enum Atmega1608LedMode {
++    Off = 0b00,
++    On = 0b01,
++    Dim0 = 0b10,
++    #[allow(dead_code)]
++    Dim1 = 0b11,
++}
++
++struct Atmega1608Led {
++    addr: Atmega1608LedAddress,
++    id: Atmega1608LedId,
++
++    client: ARef<I2cClient>,
++
++    mode_lock: Arc<Mutex<()>>,
++}
++
++kernel::of_device_table! {
++    OF_TABLE,
++    MODULE_OF_TABLE,
++    <Atmega1608LedDriver as i2c::Driver>::IdInfo,
++    [(kernel::of::DeviceId::new(c_str!("synology,atmega1608")), 0)]
++}
++
++impl i2c::Driver for Atmega1608LedDriver {
++    type IdInfo = u32;
++
++    const OF_ID_TABLE: Option<kernel::of::IdTable<Self::IdInfo>> = Some(&OF_TABLE);
++
++    fn probe(
++        pdev: &I2cClient<kernel::device::Core>,
++        _id_info: Option<&Self::IdInfo>,
++    ) -> Result<Pin<KBox<Self>>> {
++        let idev = pdev.as_ref();
++
++        let Some(fwnode) = idev.fwnode() else {
++            return Err(EINVAL);
++        };
++
++        let client: ARef<I2cClient> = pdev.into();
++
++        client
++            .write_byte_data(1, 0)
++            .inspect_err(|err| dev_err!(idev, "unable to remove led mask: {err:?}\n"))?;
++
++        let mut leds = KPinnedVec::with_capacity(
++            Atmega1608LedAddress::VALUES.len() * Atmega1608LedId::VALUES.len(),
++            GFP_KERNEL,
++        )?;
++
++        let mut i = 0;
++        for addr in Atmega1608LedAddress::VALUES {
++            let mode_lock = Arc::pin_init(new_mutex!(()), GFP_KERNEL)?;
++
++            for id in Atmega1608LedId::VALUES {
++                let Some(child) =
++                    fwnode.get_child_by_name(&CString::try_from_fmt(fmt!("led@{i}"))?)
++                else {
++                    continue;
++                };
++
++                let client = ARef::clone(&client);
++                let mode_lock = Arc::clone(&mode_lock);
++
++                leds.push_pin_init(LedClassDev::new(
++                    Some(idev),
++                    None,
++                    LedInitData::new().fwnode(&child),
++                    Atmega1608Led {
++                        addr,
++                        id,
++                        client,
++
++                        mode_lock,
++                    },
++                ))?;
++                i += 1;
++            }
++        }
++        Ok(KBox::new(Self { client, leds }, GFP_KERNEL)?.into())
 +    }
++}
 +
-+    /// Shortens the vector, setting the length to `len` and drops the removed values.
-+    /// If `len` is greater than or equal to the current length, this does nothing.
-+    ///
-+    /// This has no effect on the capacity and will not allocate.
-+    pub fn truncate(&mut self, len: usize) {
-+        self.0.truncate(len);
++impl Drop for Atmega1608LedDriver {
++    fn drop(&mut self) {
++        let _ = self
++            .client
++            .write_byte_data(1, 1)
++            .inspect_err(|err| dev_err!(self.client.as_ref(), "unable to set led mask: {err:?}\n"));
++
++        for addr in Atmega1608LedAddress::VALUES {
++            let _ = self
++                .client
++                .write_byte_data(addr as u8, 0)
++                .inspect_err(|err| {
++                    dev_err!(
++                        self.client.as_ref(),
++                        "Unable to turn of leds at address {:#2x}: {err:?}\n",
++                        addr as u8
++                    )
++                });
++        }
 +    }
++}
 +
-+    /// Pin-initializes P and appends it to the back of the [`Vec`] instance without reallocating.
-+    pub fn push_pin_init<E, P: PinInit<T, E>>(&mut self, init: P) -> Result<(), E>
-+    where
-+        E: From<PushError<P>>,
-+    {
-+        if self.0.len() < self.0.capacity() {
-+            let spare = self.0.spare_capacity_mut();
-+            // SAFETY: the length is less than the capacity, so `spare` is non-empty.
-+            unsafe { init.__pinned_init(spare.get_unchecked_mut(0).as_mut_ptr())? };
-+            // SAFETY: We just initialised the first spare entry, so it is safe to
-+            // increase the length by 1. We also know that the new length is <= capacity.
-+            unsafe { self.0.inc_len(1) };
-+            Ok(())
-+        } else {
-+            Err(E::from(PushError(init)))
++impl Atmega1608LedAddress {
++    const VALUES: [Self; 6] = [
++        Self::Ls0,
++        Self::Ls1,
++        Self::Ls2,
++        Self::Ls3,
++        Self::Ls4,
++        Self::Ls5,
++    ];
++}
++
++impl Atmega1608LedId {
++    const VALUES: [Self; 4] = [Self::Sel0, Self::Sel1, Self::Sel2, Self::Sel3];
++
++    const fn mask(self) -> u8 {
++        match self {
++            Self::Sel0 => 0x03,
++            Self::Sel1 => 0x0C,
++            Self::Sel2 => 0x30,
++            Self::Sel3 => 0xC0,
 +        }
 +    }
 +
-+    /// Removes the last element from a vector and drops it returning true, or false if it is empty.
-+    pub fn pop(&mut self) -> bool {
-+        if self.is_empty() {
-+            return false;
++    const fn shift(self) -> u8 {
++        match self {
++            Self::Sel0 => 0,
++            Self::Sel1 => 2,
++            Self::Sel2 => 4,
++            Self::Sel3 => 6,
 +        }
-+
-+        // SAFETY: We just checked that the length is at least one.
-+        let ptr: *mut [T] = unsafe { self.0.dec_len(1) };
-+
-+        // SAFETY: the contract of `dec_len` guarantees that the elements in `ptr` are
-+        // valid elements whose ownership has been transferred to the caller.
-+        unsafe { ptr::drop_in_place(ptr) };
-+        true
 +    }
 +}
 +
-+impl<T, A: Allocator> Deref for PinnedVec<T, A> {
-+    type Target = Vec<T, A>;
++impl LedHandler for Atmega1608Led {
++    const BLOCKING: bool = true;
++    const BLINK: bool = true;
++    const MAX_BRIGHTNESS: u32 = 255;
 +
-+    fn deref(&self) -> &Self::Target {
-+        &self.0
++    fn brightness_set(&self, brightness: u32) -> Result<()> {
++        let brightness = u8::try_from(brightness).unwrap_or(255);
++
++        let mode = self.update_mode(match brightness {
++            0 => Atmega1608LedMode::Off,
++            255 | 254 => Atmega1608LedMode::On,
++            _ => Atmega1608LedMode::Dim0,
++        })?;
++
++        mode.update_prescale(&self.client, 0)?;
++        mode.update_pwm(&self.client, !brightness)?;
++
++        Ok(())
++    }
++
++    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize) -> Result<()> {
++        if *delay_on == 0 && *delay_off == 0 {
++            *delay_on = 90;
++            *delay_off = 90;
++        }
++        let avg = (*delay_on + *delay_off) / 2;
++        let prescale = avg / 3;
++        let prescale = u8::try_from(prescale).unwrap_or(255);
++
++        let delay = prescale as usize * 3;
++        *delay_on = delay;
++        *delay_off = delay;
++
++        let mode = self.update_mode(Atmega1608LedMode::Dim0)?;
++
++        mode.update_prescale(&self.client, prescale)?;
++        mode.update_pwm(&self.client, 127)?;
++
++        Ok(())
 +    }
 +}
 +
-+impl<T: Unpin, A: Allocator> DerefMut for PinnedVec<T, A> {
-+    fn deref_mut(&mut self) -> &mut Self::Target {
-+        &mut self.0
++impl Atmega1608Led {
++    fn update_mode(&self, mode: Atmega1608LedMode) -> Result<Atmega1608LedMode> {
++        let _guard = self.mode_lock.lock();
++
++        let mut current = self
++            .client
++            .read_byte_data(self.addr as u8)
++            .inspect_err(|err| {
++                dev_err!(
++                    self.client.as_ref(),
++                    "failed to read {:#2x}: {err:?}\n",
++                    self.addr as u8
++                );
++            })?;
++
++        current =
++            (current & !self.id.mask()) | (((mode as u8) << self.id.shift()) & self.id.mask());
++
++        self.client
++            .write_byte_data(self.addr as u8, current)
++            .inspect_err(|err| {
++                dev_err!(
++                    self.client.as_ref(),
++                    "failed to write {:#2x}: {err:?}",
++                    self.addr as u8
++                );
++            })?;
++
++        Ok(mode)
 +    }
 +}
 +
-+impl<T, A: Allocator> From<Vec<T, A>> for PinnedVec<T, A> {
-+    fn from(value: Vec<T, A>) -> Self {
-+        Self(value)
++impl Atmega1608LedMode {
++    fn update_prescale(self, client: &I2cClient, prescale: u8) -> Result<()> {
++        let addr = match self {
++            Self::Dim0 => 0x02,
++            Self::Dim1 => 0x04,
++            Self::Off | Self::On => return Ok(()),
++        };
++        client.write_byte_data(addr, prescale).inspect_err(|err| {
++            dev_err!(client.as_ref(), "failed to write {addr:#2x}: {err:?}",);
++        })
++    }
++
++    fn update_pwm(self, client: &I2cClient, pwm: u8) -> Result<()> {
++        let addr = match self {
++            Self::Dim0 => 0x03,
++            Self::Dim1 => 0x05,
++            Self::Off | Self::On => return Ok(()),
++        };
++        client.write_byte_data(addr, pwm).inspect_err(|err| {
++            dev_err!(client.as_ref(), "failed to write {addr:#2x}: {err:?}",);
++        })
 +    }
 +}
 +
-+impl<T: Unpin, A: Allocator> From<PinnedVec<T, A>> for Vec<T, A> {
-+    fn from(value: PinnedVec<T, A>) -> Self {
-+        value.0
++impl From<u8> for Atmega1608LedMode {
++    fn from(value: u8) -> Self {
++        const ON: u8 = Atmega1608LedMode::On as u8;
++        const DIM0: u8 = Atmega1608LedMode::Dim0 as u8;
++        const DIM1: u8 = Atmega1608LedMode::Dim1 as u8;
++
++        match value {
++            ON => Self::On,
++            DIM0 => Self::Dim0,
++            DIM1 => Self::Dim1,
++            _ => Self::Off,
++        }
 +    }
 +}
-+
- #[macros::kunit_tests(rust_kvec_kunit)]
- mod tests {
-     use super::*;
 -- 
 2.49.1
 
