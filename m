@@ -1,60 +1,61 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8CC36E35B;
-	Thu, 30 Oct 2025 18:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A44DDC5;
+	Thu, 30 Oct 2025 22:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761847683; cv=none; b=tmsNNmd9cOlDIxGaiUqthaY/cRfMls1TSTrhtqvN5O8MusOTWiWRnBcFw6XkyE7DGio4BeSlgFdtSHoafBiAyHXLWZbAwH7MeCmLO0zC1PV/b/MvnkA0BBtq1aa+0BOs4GcOu6rGkG0VwdAe1MLUIvQMcJQdj9d3GAR2v058SjA=
+	t=1761863431; cv=none; b=LmJsS9MdKF284Fe6NeY/zaRugnQuM9ALfgAqNGRBqKBUNB4cJWBhw/cOsn2x0+VrviroIUH/rh2JqoHaGlBSAgisgFNlzc0UlP11m33p4g+xiQpc1A7iNhjwzYpoDBbey5eQy9N0NabT8cSiB9dV8IQQLtb1M3F0Ct/MT/sjmco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761847683; c=relaxed/simple;
-	bh=srnTyop+o8WgWjPePpQqFtHWyTRYfI2Cb3A5JDGJp7U=;
+	s=arc-20240116; t=1761863431; c=relaxed/simple;
+	bh=HQgTtvdyf5mlcYfQ6PTEH/1obbJOAS6+b0916Esegpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K0n8Qb/2eDgkDU4pIb508/wud+va45b9KEA6MXkowT8o442V+5TFnwZ7ZW1UGY3PytyTtVHDhgRYUWemXohHg5drooeVdo5M9sV+T9md7UUm6cT9DGYtLaxddtA9Z4TtMt3Btqi8UTQPTjPiXZn1+yC6IDaZ0IPDlG+M0E3xjjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AR5mAwN1; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=mqRAlMQFC96ubw8BtiQbvwzlQA6gGv4/wNYhQrOGDEbzCWTSHkgTx0Qt0VB4ZtcT754SwAI0PF4V5aD615sj5IvGOXtGGGFBtmHZ90F8/ZLnu1fP+j96TohMbJk5017PkQq+hSTH9ltuUOl9IN1HlUvEQl6nX69Js4n6Z1DFmDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E/oU9bJc; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AR5mAwN1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E/oU9bJc"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761847680; x=1793383680;
+  t=1761863429; x=1793399429;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=srnTyop+o8WgWjPePpQqFtHWyTRYfI2Cb3A5JDGJp7U=;
-  b=AR5mAwN1weK/b97A/Aw1NQ9w1BwsouPGYG7X+tWzpAiyfXVRqX3PsGaK
-   CdzkogySmTMqNEw7R3k3SGWLVCfGvkRWPQ0bLZR2WVZFwzxt+6UCniOUh
-   lCJI7vjMuK0GSx4HGzLxZC5zlQZrYlPg5VdxDDGQzg+RJ31gpqrMNkJFW
-   /OEih+xIrajrsVfEP8154uuQNiXfvsBnmInvwA5nMI8snWuKtIl4skpyd
-   BdLx0cmYRP1FNSQ1cPcUDXQz54mOkE2vpD5/3ZM+DZIEo+Hrp8tJXZTrC
-   f7HL5vW7ic2S5RW1itQaZJ3qLjIpzr5JjX5HypcWDtVZ8/QI0I/W5ucMX
+  bh=HQgTtvdyf5mlcYfQ6PTEH/1obbJOAS6+b0916Esegpo=;
+  b=E/oU9bJcoKLLn2TyoCQKFrIjkAPRMXLQzqaxyLdDxzxls3qMI4MG0vUJ
+   VWRWO4AuoEgYEh/Kxka/oFyV3f/RsWSojUJQG+bNSED5+lxwK/w0ZbAi8
+   +5yWGSa0+jXpsO/KGrRrYQgPhAcf09vvpZIdU+bbtFjyNFrS10EAXk3T5
+   zRNGwwNeawSeuFLV6BhX3hl4sCctvRM+4DcH7/AHbGORaKMTzxPxo7wMh
+   8ZmZwP/ddoMJnFTRPGv1BcU+kOlsFYYQLoKUnRAgdVm1H7SSfI6ArBDxl
+   ngTCuP1mXrXO+dY+aGgHTjnu2/pBkKXbZl9NWGZUs2R1VGvTFMORLAkX7
    A==;
-X-CSE-ConnectionGUID: CjqpuL+BSwSfcBkxBYdwDA==
-X-CSE-MsgGUID: RM2PryAgS4eMCkvmQyyU4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="67861538"
+X-CSE-ConnectionGUID: /4/hkiEtSk+jepe57ilpNg==
+X-CSE-MsgGUID: K+XJlmHjQRitXm04NxwawQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64116889"
 X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="67861538"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 11:07:59 -0700
-X-CSE-ConnectionGUID: 3PRBBtEaQ9GXRaTReU7tag==
-X-CSE-MsgGUID: UTFciI0HQLWZEXadIIwWNA==
+   d="scan'208";a="64116889"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 15:30:29 -0700
+X-CSE-ConnectionGUID: 8s9V1NV/TBqxk4UyNpn1gw==
+X-CSE-MsgGUID: OOmffJCdQvmCM4JsgWTEJw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,267,1754982000"; 
-   d="scan'208";a="190366715"
+   d="scan'208";a="191223632"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 30 Oct 2025 11:07:57 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 30 Oct 2025 15:30:27 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vEX3u-000MNz-0g;
-	Thu, 30 Oct 2025 18:07:51 +0000
-Date: Fri, 31 Oct 2025 02:06:27 +0800
+	id 1vEbA0-000MaC-2w;
+	Thu, 30 Oct 2025 22:30:24 +0000
+Date: Fri, 31 Oct 2025 06:29:55 +0800
 From: kernel test robot <lkp@intel.com>
 To: Haotian Zhang <vulab@iscas.ac.cn>, Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>, Markus.Elfring@web.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Haotian Zhang <vulab@iscas.ac.cn>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
 Subject: Re: [PATCH v2] leds: netxbig: fix GPIO descriptor leak in error paths
-Message-ID: <202510310145.tlVMfaP8-lkp@intel.com>
+Message-ID: <202510310640.VxJ2qrj2-lkp@intel.com>
 References: <20251030025312.1623-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -80,21 +81,21 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Haotian-Zhang/leds-netxbi
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
 patch link:    https://lore.kernel.org/r/20251030025312.1623-1-vulab%40iscas.ac.cn
 patch subject: [PATCH v2] leds: netxbig: fix GPIO descriptor leak in error paths
-config: nios2-randconfig-r072-20251030 (https://download.01.org/0day-ci/archive/20251031/202510310145.tlVMfaP8-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310145.tlVMfaP8-lkp@intel.com/reproduce)
+config: sparc64-randconfig-002-20251031 (https://download.01.org/0day-ci/archive/20251031/202510310640.VxJ2qrj2-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310640.VxJ2qrj2-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510310145.tlVMfaP8-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510310640.VxJ2qrj2-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   drivers/leds/leds-netxbig.c: In function 'netxbig_gpio_ext_get':
->> drivers/leds/leds-netxbig.c:428:1: warning: label 'err_free_data' defined but not used [-Wunused-label]
+>> drivers/leds/leds-netxbig.c:428:1: warning: unused label 'err_free_data' [-Wunused-label]
      428 | err_free_data:
-         | ^~~~~~~~~~~~~
+         | ^~~~~~~~~~~~~~
+   1 warning generated.
 
 
 vim +/err_free_data +428 drivers/leds/leds-netxbig.c
