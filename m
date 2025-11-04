@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAB6156C40;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBD426F29F;
 	Tue,  4 Nov 2025 14:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762266670; cv=none; b=QGsGY/akueYQNf5b+gb6B+mREe4hKVeBNIzvBQKN6Am/GqBtiGFZBSU9De/Zb4wSGiZLdRADgGBFSIza5rSVSimqgb1jTWe88mNvRXiAN+5SzmYcAR2sMn66IuN0wOp5p8VQCTe30hAT9RLsQfkA6Rqwyqi0OmCbCoRSnRLdOBo=
+	t=1762266670; cv=none; b=lWQEdCQ3588Sck9UZy/mNKIYdMSsu71umR2jX/p9FHOfL6M9rGtu9ulrU3R7fYZSe6/YhLL3QFSWfBlOjOpwfvSkILpwph0VWco9f7UOaNAuw7c+6fP66uB8RNy+J3UggqNihuqXUdwa/JtA4wua13I/hd0JI243ZNKBU5l+NgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762266670; c=relaxed/simple;
-	bh=NcaeZW4e+lsXcDe5hqIbtTdEyfKMzNjpGnhp1vovOxM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ln8iEFGealboL9r1PnekQ27H+1igiEAB6TpZRHteJm+iUm1pni3eXEM45LcDyrqLgPfPutOPci77XoCPyKhNcvgaEYvLfUgBuame+nxR4eXVD6qWaFYLCwh+W9SfmGwCIAJ1ZXqS3MLBp1PC68d9wUh30YPnKTMGLmT7S1Pe8g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EC/O8JB5; arc=none smtp.client-ip=10.30.226.201
+	bh=/kdKWEYgOEa0rB3Iuuglv71no7mf6j97Cig2+x9T+B4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=npJVxAzOUi8jcSd1sei+AtqtONd4eq1Nvd48VKZVRl5l3m8iyyZ6z1J5jM5KOp8AxAp0eaJD6ZrpCmfgUngsPakUVfeh/qXAJtopfl3SBazbZnpXdtzkyJ/fBjvs7394WM+7n9UtUcJ/5qeB48AS8tXk8eYu3Apd8Ct+Z7V1QRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DpTH4fdi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EC/O8JB5"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BD8FBC19421;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DpTH4fdi"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9DC2CC116B1;
 	Tue,  4 Nov 2025 14:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1762266669; bh=NcaeZW4e+lsXcDe5hqIbtTdEyfKMzNjpGnhp1vovOxM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EC/O8JB5yx8Gd/xIdQlgu59AX4ayxOKaEyAZZ9Yu4UYSrHIKUntTgbhpraGPis3Ya
-	 m4xhJdbLChJ++OtRLlR6VdoqjwBgktSxcRMiahjXsAGNjSTZKJ7u3a+Rz4oj12NxAF
-	 xYlQHJDH49IWq9iOS/yhCykSWfFQ8ExeUOsrdczE=
+	t=1762266669; bh=/kdKWEYgOEa0rB3Iuuglv71no7mf6j97Cig2+x9T+B4=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DpTH4fdi3nv71Gk4FB5nzIcBwdsLFO9hKJHz7zWcuDxLc6+Zf5ZV7cWQATKZCVeP8
+	 +JW95S07qdBChkBW5nLB6rQsRpkANJkqNiqqpyBuZ8C4yYvr2FuhN5xRQnnGedjU6P
+	 OdqFjaKCUkz69swf+ai4+PIRnv1CYUKY6zYluD/g=
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B318BCCFA04;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949A0CCFA06;
 	Tue,  4 Nov 2025 14:31:09 +0000 (UTC)
 From: Richard Leitner <richard.leitner@linux.dev>
-Date: Tue, 04 Nov 2025 15:30:53 +0100
-Subject: [PATCH v8 2/8] media: v4l: ctrls: add a control for enabling
- strobe output
+Subject: [PATCH v8 0/8] Add strobe duration and strobe output enable v4l2
+ ctrl
+Date: Tue, 04 Nov 2025 15:30:51 +0100
+Message-Id: <20251104-ov9282-flash-strobe-v8-0-b91dfef1c65a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -36,10 +36,14 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251104-ov9282-flash-strobe-v8-2-b91dfef1c65a@linux.dev>
-References: <20251104-ov9282-flash-strobe-v8-0-b91dfef1c65a@linux.dev>
-In-Reply-To: <20251104-ov9282-flash-strobe-v8-0-b91dfef1c65a@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABsOCmkC/33Oy27CMBAF0F9BXtfIM37FrPofVReOH8USEGoHi
+ wrx7zVhERSlXd7RnTNzIyXkFArZbW4kh5pKGk4tdG8b4vb29BVo8i0TZCgZZ5wO1WCHNB5s2dM
+ y5qEP1DrVe8ac8UGRtnnOIabrpH58PnMO35eGj88h6W0J1A3HYxp3m6q20NHsBHmU96mMQ/6ZP
+ qowtf89XoEyyqKX2oJUorfvh3S6XLc+1Mmr+GKAWDewGSC8ttgBF+iXBp8NgWbd4M1AYNIF0MZ
+ IXBpiNiTT64ZohsYejXHQa2eWhpwNBX8YshlGK/RWC8+UXBpqNjSodUM9DC4ioA0xcr409GwYB
+ uuGboaXnZdWGWGjezXu9/svxG3EbnsCAAA=
+X-Change-ID: 20250303-ov9282-flash-strobe-ac6bd00c9de6
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
  Dave Stevenson <dave.stevenson@raspberrypi.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
@@ -49,59 +53,107 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
  Hans Verkuil <hverkuil@kernel.org>
 X-Mailer: b4 0.15-dev-509f5
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762266668; l=1947;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762266668; l=4585;
  i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=NcaeZW4e+lsXcDe5hqIbtTdEyfKMzNjpGnhp1vovOxM=;
- b=//KDGid1mOhrFR5x0xxt4ul5uvCNhO92GEjQxju4Fy2vVLJ39oshWsgn4qeBFquBtZ2qK3Ymg
- YQYe8r+dgKKAIREYxgLdIHfkw5dv9muPrMWt/212/8IMha8+guV/lwk
+ bh=/kdKWEYgOEa0rB3Iuuglv71no7mf6j97Cig2+x9T+B4=;
+ b=Y6K/eNkCRS3B2mkeyzDitGHJBnoHXPATLdECblo2ekE/fPDcwq15MClTrzq2IdD5k3N79dzGJ
+ GgoppjMCqMLBrbvjxWtv9Y+0IQiWOtEj5pvOA8ncBkyqMSmvobVXJ7w
 X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
  pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
 X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
  with auth_id=350
 
-Add a control V4L2_CID_FLASH_STROBE_OE to en- or disable the
-strobe output of v4l2 devices (most likely sensors).
+This series adds two new v4l2 controls:
+- V4L2_CID_FLASH_DURATION: "Strobe duration": This control enables
+  setting a desired flash/strobe length/duration in µs.
+- V4L2_CID_FLASH_STROBE_OE: "Strobe output enable": This
+  control enables the hardware strobe output signal of a v4l2 device.
+
+As a first user of these new controls add basic flash/strobe support
+for ov9282 sensors using their "hardware strobe output". The duration
+calculation is only interpolated from various measurements, as no
+documentation was found.
+
+Further flash/strobe-related controls as well as a migration to v4l2-cci
+helpers for ov9282 will likely be implemented in future series.
+
+All register addresses/values are based on the OV9281 datasheet v1.53
+(january 2019). This series was tested using an ov9281 VisionComponents
+camera module.
 
 Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 ---
- drivers/media/v4l2-core/v4l2-ctrls-defs.c | 2 ++
- include/uapi/linux/v4l2-controls.h        | 1 +
- 2 files changed, 3 insertions(+)
+Changes in v8:
+- Minor styling changes across the set
+- Add missing error handling for ov9282 strobe_frame_span writing
+- Rename V4L2_CID_FLASH_HW_STROBE_SIGNAL to V4L2_CID_FLASH_STROBE_OE
+- Drop 02/10: FLASH_DURATION handling in v4l2-flash
+- Drop 08/10: strobe_source in ov9282
+- Link to v7: https://lore.kernel.org/r/20250901-ov9282-flash-strobe-v7-0-d58d5a694afc@linux.dev
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-index 4848423205ff7..765aeeec84fe5 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-@@ -1136,6 +1136,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
- 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
- 	case V4L2_CID_FLASH_DURATION:		return "Strobe Duration";
-+	case V4L2_CID_FLASH_STROBE_OE:		return "Strobe Output Enable";
- 
- 	/* JPEG encoder controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-@@ -1282,6 +1283,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_FLASH_STROBE_STATUS:
- 	case V4L2_CID_FLASH_CHARGE:
- 	case V4L2_CID_FLASH_READY:
-+	case V4L2_CID_FLASH_STROBE_OE:
- 	case V4L2_CID_MPEG_VIDEO_DECODER_MPEG4_DEBLOCK_FILTER:
- 	case V4L2_CID_MPEG_VIDEO_DECODER_SLICE_INTERFACE:
- 	case V4L2_CID_MPEG_VIDEO_DEC_DISPLAY_DELAY_ENABLE:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 9830833b48a52..32ba3b5fb1dd5 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -1187,6 +1187,7 @@ enum v4l2_flash_strobe_source {
- #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
- #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
- #define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
-+#define V4L2_CID_FLASH_STROBE_OE		(V4L2_CID_FLASH_CLASS_BASE + 14)
- 
- 
- /* JPEG-class control IDs */
+Changes in v7:
+- Improved v4l2 uAPI documentation (thanks Sakari)
+- Link to v6: https://lore.kernel.org/r/20250716-ov9282-flash-strobe-v6-0-934f12aeff33@linux.dev
 
--- 
-2.47.3
+Changes in v6:
+- Fix "Alignment should match open parenthesis" by Media-CI bot in v4l2-flash-led-class.c
+- Fix "format string contains non-ascii character (µ)" by Media-CI bot in ov9282.c
+- Introduce new V4L2_CID_FLASH_HW_STROBE_SIGNAL control (as suggested by Sakari)
+- Implement V4L2_CID_FLASH_HW_STROBE_SIGNAL instead of
+  V4L2_CID_FLASH_LED_MODE in ov9282.c (as suggested by Sakari)
+- Drop "media: v4l2-flash: fix flash_timeout comment" as this was
+  applied (thanks Lee)
+- Link to v5: https://lore.kernel.org/r/20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev
+
+Changes in v5:
+- Improve try_ctrl for flash_duration by using DIV_ROUND_UP() and abs() (thanks Sakari)
+- Drop "leds: flash: Add support for flash/strobe duration" as this was applied upstream
+- Add "media: i2c: ov9282: dynamic flash_duration maximum" (thanks Sakari)
+- Link to v4: https://lore.kernel.org/r/20250507-ov9282-flash-strobe-v4-0-72b299c1b7c9@linux.dev
+
+Changes in v4:
+- Fix FLASH_DURATION implementation in v4l2-flash-led-class.c by adding a
+  missing brace and enum entry (thanks Sakari)
+- Fix format of multiline comment in ov9282.c (thanks Sakari)
+- Add missing NULL check in ov9282.c (thanks Sakari)
+- Adapt nr_of_controls_hint for v4l2 handler in ov9282.c (thanks Sakari)
+- Add patch for implementing try_ctrl for strobe_duration (thanks Sakari)
+- Link to v3: https://lore.kernel.org/r/20250429-ov9282-flash-strobe-v3-0-2105ce179952@linux.dev
+
+Changes in v3:
+- create separate patch for leds driver changes (thanks Lee)
+- Link to v2: https://lore.kernel.org/r/20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev
+
+Changes in v2:
+- remove not needed controls in struct ov9282 (thanks Dave)
+- Fix commit message of 3/3 regarding framerate get/set (thanks Dave)
+- Add V4L2_CID_FLASH_STROBE_SOURCE impementation to ov9282
+- Add new V4L2_CID_FLASH_DURATION control (as suggested by Laurent)
+- Use FLASH_DURATION instead of FLASH_TIMEOUT for ov9282
+- Link to v1: https://lore.kernel.org/r/20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev
+
+---
+Richard Leitner (8):
+      media: v4l: ctrls: add a control for flash/strobe duration
+      media: v4l: ctrls: add a control for enabling strobe output
+      Documentation: uAPI: media: add V4L2_CID_FLASH_{DURATION,STROBE_OE}
+      media: i2c: ov9282: add output enable register definitions
+      media: i2c: ov9282: add strobe output enable v4l2 control
+      media: i2c: ov9282: add strobe_duration v4l2 control
+      media: i2c: ov9282: implement try_ctrl for strobe_duration
+      media: i2c: ov9282: dynamic flash_duration maximum
+
+ .../userspace-api/media/v4l/ext-ctrls-flash.rst    |  42 ++++++
+ drivers/media/i2c/ov9282.c                         | 165 ++++++++++++++++++++-
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c          |   3 +
+ include/uapi/linux/v4l2-controls.h                 |   2 +
+ 4 files changed, 206 insertions(+), 6 deletions(-)
+---
+base-commit: 2f112b1c25da9f5346c2261ed35c5b1e0b906471
+change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+
+Best regards,
+--  
+Richard Leitner <richard.leitner@linux.dev>
 
 
