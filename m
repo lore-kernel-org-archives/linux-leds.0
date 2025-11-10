@@ -1,737 +1,191 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FD32E8E0E
-	for <linux-leds@vger.kernel.org>; Mon, 10 Nov 2025 06:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FCB2EDD7E;
+	Mon, 10 Nov 2025 07:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762756552; cv=none; b=tlSqBtjKtCYERhdhjylQ2LSt2GuCyF5B1gKbzt+qriQfFEGWyzmujpkHGF4xO5OcdgpLHy0rQ+rIvby7C2BnG7c9gkRj4Q0XXMDkeXGnIYLWE7M4nldtYOkpsf22b87CInEIZw4hjACZxg5oBjtJpCvBd9vU4NChFD/Jkqc+i5Y=
+	t=1762761324; cv=none; b=Hx7GJtEeOTlI6Cwo428SAKHk3VXnGmLYajFQdGiuzXadFEK8khDNcLy2w0i49ey4ATXxYUERtU0PBhCnWaf1zIZQ7pLA8FHWMt7VZzOre60CP1av3iGSf0RsNWU5Wv31EBWKmPc2l6uylEIEJZiDXtfuU229ch5ceTt9ipHBF00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762756552; c=relaxed/simple;
-	bh=wBU7jXDkqOgG6oV0ACz3qv2g+zA69xrHQite4lYWucM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eHy0HUW3Q8w0N5ZAytIcIAK6/gpPD+I64YfqsVgXu+8ExYcX/Px4i4z4gsJ+Ogzsw6lrVZphDYPUzZuAlKk6liRJJ20AIEDbxLo6EuFDDB/NJ0jRpBAHS6ZnLvtLof1AI2DxGDtjy89AvMXX/AAGCr7KHjXsrnVKXwA+Gr/3BGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1vILV3-0003U0-QL; Mon, 10 Nov 2025 07:35:37 +0100
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Mon, 10 Nov 2025 07:35:34 +0100
-Subject: [PATCH v5 2/2] leds: add support for TI LP5860 LED driver chip
+	s=arc-20240116; t=1762761324; c=relaxed/simple;
+	bh=xNDoA1jhzBeYlvLFMmnMNc96MK4rzhSJ2grihH7lt5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f8TQ1cbmus45jiO4fGI8RUEIB2fceyZCsZ3dnjo/SFY3N335nrBOBvU13DiWg+50k48QY2MbjT27sLZ3hVjGRG3I3jQyfOaghyKW2h99EilbWgREwzVfvZIerLDuyLsnUTi37KlMuc7eIZpIDXGiELKq3u8dQIaB1aVGgl3gwFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLfUNQRB; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLfUNQRB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762761323; x=1794297323;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=xNDoA1jhzBeYlvLFMmnMNc96MK4rzhSJ2grihH7lt5Y=;
+  b=iLfUNQRBGTJTjL+xNEJtc2bpi+22FKVrOvRKThKtCsma73wUKuW1R9sz
+   kfMWhv986TZyEhaV6YfhXWuA3bId10lqw/+FQep6VaCHojIZEp3BJrUuc
+   j4kQq+XgLE37/9E4tLui3EBGLYlx+fIi1Z7pZvNiWCQFHdi8AO0jZAdUZ
+   fXZ4WkL27mA8JK8RhXeOV8aQ+PoFF556cY0XPRYsb+eDoGbxgx73AtVE+
+   jJY14vchxxJJXY+61QoE1Hmh6flTtRN4AI0FIRgZCQ0jD425rQv7CIC+n
+   elpIECApl2D9jsoe/EIDdNniJ7ahzr9zJBc14D3Ee3rOrfRbe8junfwvg
+   A==;
+X-CSE-ConnectionGUID: EcqLsZPmQ9W8c06MFVEAaA==
+X-CSE-MsgGUID: jSJoqXE8Rbu+QaU3XxjjoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11608"; a="64507984"
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="64507984"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 23:55:21 -0800
+X-CSE-ConnectionGUID: QEhJx8awRLKkbxya4bm+lg==
+X-CSE-MsgGUID: 2bqcfyQ1TS+KsBlXJj/k7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,293,1754982000"; 
+   d="scan'208";a="188859479"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.238])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2025 23:55:18 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 990CF1205FC;
+	Mon, 10 Nov 2025 09:55:18 +0200 (EET)
+Date: Mon, 10 Nov 2025 09:55:18 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Hans Verkuil <hverkuil@kernel.org>
+Subject: Re: [PATCH v8 7/8] media: i2c: ov9282: implement try_ctrl for
+ strobe_duration
+Message-ID: <aRGaZptpBRq_iga-@kekkonen.localdomain>
+References: <20251104-ov9282-flash-strobe-v8-0-b91dfef1c65a@linux.dev>
+ <20251104-ov9282-flash-strobe-v8-7-b91dfef1c65a@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251110-v6-14-topic-ti-lp5860-v5-2-5b777b99a905@pengutronix.de>
-References: <20251110-v6-14-topic-ti-lp5860-v5-0-5b777b99a905@pengutronix.de>
-In-Reply-To: <20251110-v6-14-topic-ti-lp5860-v5-0-5b777b99a905@pengutronix.de>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Steffen Trumtrar <kernel@pengutronix.de>, Pavel Machek <pavel@kernel.org>, 
- Mark Brown <broonie@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Steffen Trumtrar <s.trumtrar@pengutronix.de>
-X-Mailer: b4 0.14.3
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251104-ov9282-flash-strobe-v8-7-b91dfef1c65a@linux.dev>
 
-Add support for the Texas Instruments LP5860 LED driver chip
-via SPI interfaces.
+Hi Richard,
 
-The LP5860 is an LED matrix driver for up to 196 LEDs, which supports
-short and open detection of the individual channel select lines.
+On Tue, Nov 04, 2025 at 03:30:58PM +0100, Richard Leitner wrote:
+> As the granularity of the hardware supported values is lower than the
+> control value, implement a try_ctrl() function for
+> V4L2_CID_FLASH_DURATION. This function calculates the nearest possible
+> µs strobe duration for the given value and returns it back to the
+> caller.
+> 
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/i2c/ov9282.c | 55 +++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 52 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index 26296dc1d1b95..7aa74feb3ee44 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -128,6 +128,8 @@
+>  #define OV9282_REG_MIN		0x00
+>  #define OV9282_REG_MAX		0xfffff
+>  
+> +#define OV9282_STROBE_SPAN_FACTOR	192
+> +
+>  static const char * const ov9282_supply_names[] = {
+>  	"avdd",		/* Analog power */
+>  	"dovdd",	/* Digital I/O power */
+> @@ -691,9 +693,8 @@ static int ov9282_set_ctrl_flash_strobe_oe(struct ov9282 *ov9282, bool enable)
+>  	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1, current_val);
+>  }
+>  
+> -static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
+> +static u32 ov9282_us_to_flash_duration(struct ov9282 *ov9282, u32 value)
+>  {
+> -	int ret;
+>  	/*
+>  	 * Calculate "strobe_frame_span" increments from a given value (µs).
+>  	 * This is quite tricky as "The step width of shift and span is
+> @@ -703,7 +704,28 @@ static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
+>  	 * The formula below is interpolated from different modes/framerates
+>  	 * and should work quite well for most settings.
+>  	 */
+> -	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
+> +	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
+> +
+> +	return value * OV9282_STROBE_SPAN_FACTOR / frame_width;
+> +}
+> +
+> +static u32 ov9282_flash_duration_to_us(struct ov9282 *ov9282, u32 value)
+> +{
+> +	/*
+> +	 * As the calculation in ov9282_us_to_flash_duration uses an integer
+> +	 * divison calculate in ns here to get more precision. Then check if
+> +	 * we need to compensate that divison by incrementing the µs result.
+> +	 */
+> +	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
+> +	u64 ns = value * 1000 * frame_width / OV9282_STROBE_SPAN_FACTOR;
+> +
+> +	return DIV_ROUND_UP(ns, 1000);
 
-It can be connected to SPI or I2C bus. For now add support for SPI only.
+Can ns even exceed U32_MAX? It doesn't seem to be useful to multiply and
+then divide by 1000.
 
-The original driver is from an unknown author at Texas Instruments. Only
-the cryptic handle 'zlzx' is known.
+I guess this warrants v9, please fix the other issue for that, too.
 
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
----
- drivers/leds/rgb/Kconfig                  |  27 +++
- drivers/leds/rgb/Makefile                 |   2 +
- drivers/leds/rgb/leds-lp5860-core.c       | 202 ++++++++++++++++++++
- drivers/leds/rgb/leds-lp5860-spi.c        |  89 +++++++++
- include/linux/platform_data/leds-lp5860.h | 305 ++++++++++++++++++++++++++++++
- 5 files changed, 625 insertions(+)
-
-diff --git a/drivers/leds/rgb/Kconfig b/drivers/leds/rgb/Kconfig
-index 222d943d826aa..0cc6400a29753 100644
---- a/drivers/leds/rgb/Kconfig
-+++ b/drivers/leds/rgb/Kconfig
-@@ -26,6 +26,33 @@ config LEDS_KTD202X
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called leds-ktd202x.
- 
-+config LEDS_LP5860_CORE
-+	tristate "Core Driver for TI LP5860"
-+	depends on LEDS_CLASS
-+	depends on OF
-+	select FW_LOADER
-+	select FW_LOADER_USER_HELPER
-+	select REGMAP
-+	help
-+	  This option supports common operations for LP5860 devices.
-+	  The LP5860 is a LED matrix driver with 18 constant current
-+	  sinks and 11 scan switches for 198 LED dots. Each dot can be
-+	  controlled individually and supports 8/16-bit PWM dimming.
-+	  The chip supports individual LED open and short detection.
-+
-+	  The device can be used with SPI or I2C bus.
-+
-+config LEDS_LP5860_SPI
-+	tristate "LED Support for TI LP5860 SPI LED driver chip"
-+	depends on SPI
-+	depends on LEDS_LP5860_CORE
-+	help
-+	  If you say yes here you get support for the Texas Instruments
-+	  LP5860 LED driver for SPI bus connections.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called lp5860_spi.
-+
- config LEDS_NCP5623
- 	tristate "LED support for NCP5623"
- 	depends on I2C
-diff --git a/drivers/leds/rgb/Makefile b/drivers/leds/rgb/Makefile
-index a501fd27f1793..9a4daca5f2acf 100644
---- a/drivers/leds/rgb/Makefile
-+++ b/drivers/leds/rgb/Makefile
-@@ -2,6 +2,8 @@
- 
- obj-$(CONFIG_LEDS_GROUP_MULTICOLOR)	+= leds-group-multicolor.o
- obj-$(CONFIG_LEDS_KTD202X)		+= leds-ktd202x.o
-+obj-$(CONFIG_LEDS_LP5860_CORE)		+= leds-lp5860-core.o
-+obj-$(CONFIG_LEDS_LP5860_SPI)		+= leds-lp5860-spi.o
- obj-$(CONFIG_LEDS_NCP5623)		+= leds-ncp5623.o
- obj-$(CONFIG_LEDS_PWM_MULTICOLOR)	+= leds-pwm-multicolor.o
- obj-$(CONFIG_LEDS_QCOM_LPG)		+= leds-qcom-lpg.o
-diff --git a/drivers/leds/rgb/leds-lp5860-core.c b/drivers/leds/rgb/leds-lp5860-core.c
-new file mode 100644
-index 0000000000000..d87efa2a87c2e
---- /dev/null
-+++ b/drivers/leds/rgb/leds-lp5860-core.c
-@@ -0,0 +1,202 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2025 Pengutronix
-+ *
-+ * Author: Steffen Trumtrar <kernel@pengutronix.de>
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/led-class-multicolor.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/of_platform.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/platform_data/leds-lp5860.h>
-+
-+static struct lp5860_led *mcled_cdev_to_led(struct led_classdev_mc *mc_cdev)
-+{
-+	return container_of(mc_cdev, struct lp5860_led, mc_cdev);
-+}
-+
-+static int lp5860_set_dotonoff(struct lp5860_led *led, unsigned int dot, bool enable)
-+{
-+	unsigned int offset = dot / LP5860_MAX_DOT_ONOFF_GROUP_NUM;
-+	unsigned int mask = BIT(dot % LP5860_MAX_DOT_ONOFF_GROUP_NUM);
-+
-+	if (dot > LP5860_REG_DOT_ONOFF_MAX)
-+		return -EINVAL;
-+
-+	return regmap_update_bits(led->ddata->regmap,
-+				  LP5860_REG_DOT_ONOFF_START + offset, mask,
-+				  enable ? LP5860_DOT_ALL_ON : LP5860_DOT_ALL_OFF);
-+}
-+
-+static int lp5860_set_mc_brightness(struct led_classdev *cdev,
-+				    enum led_brightness brightness)
-+{
-+	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
-+	struct lp5860_led *led = mcled_cdev_to_led(mc_cdev);
-+	int i;
-+
-+	led_mc_calc_color_components(mc_cdev, brightness);
-+
-+	for (i = 0; i < led->mc_cdev.num_colors; i++) {
-+		unsigned int channel = mc_cdev->subled_info[i].channel;
-+		unsigned int led_brightness = mc_cdev->subled_info[i].brightness;
-+		int ret;
-+
-+		ret = lp5860_set_dotonoff(led, channel, led_brightness);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(led->ddata->regmap,
-+				   LP5860_REG_PWM_BRI_START + channel, led_brightness);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int lp5860_enable_toggle(struct lp5860 *led, int enable)
-+{
-+	return regmap_write(led->regmap, LP5860_REG_CHIP_EN, enable);
-+}
-+
-+static int lp5860_led_init_default_state(struct lp5860_led *led,
-+					 unsigned int channel)
-+{
-+	unsigned int brightness;
-+	int ret;
-+
-+	ret = regmap_read(led->ddata->regmap, LP5860_REG_PWM_BRI_START + channel,
-+			  &brightness);
-+
-+	switch (led->default_state) {
-+	case LEDS_DEFSTATE_ON:
-+		led->brightness = LP5860_MAX_BRIGHTNESS;
-+		break;
-+	case LEDS_DEFSTATE_KEEP:
-+		led->brightness = min(brightness, LP5860_MAX_BRIGHTNESS);
-+		break;
-+	default:
-+		led->brightness = 0;
-+		break;
-+	}
-+
-+	return lp5860_set_mc_brightness(&led->mc_cdev.led_cdev, led->brightness);
-+}
-+
-+static int lp5860_init_dt(struct lp5860 *lp)
-+{
-+	struct led_init_data init_data = {};
-+	struct led_classdev *led_cdev;
-+	struct mc_subled *mc_led_info;
-+	struct lp5860_led *led;
-+	int chan;
-+	int i = 0;
-+	int ret;
-+
-+	device_for_each_child_node_scoped(lp->dev, multi_led) {
-+		struct fwnode_handle *led_node = NULL;
-+
-+		led = &lp->leds[i];
-+
-+		init_data.fwnode = multi_led;
-+
-+		/* Count the number of channels in this multi_led */
-+		chan = fwnode_get_child_node_count(multi_led);
-+		if (!chan || chan > LP5860_MAX_LED_CHANNELS)
-+			return -EINVAL;
-+
-+		led->mc_cdev.num_colors = chan;
-+
-+		mc_led_info = devm_kcalloc(lp->dev, chan, sizeof(*mc_led_info), GFP_KERNEL);
-+		if (!mc_led_info)
-+			return -ENOMEM;
-+
-+		led->ddata = lp;
-+		led->mc_cdev.subled_info = mc_led_info;
-+		led->default_state = led_init_default_state_get(init_data.fwnode);
-+		led_cdev = &led->mc_cdev.led_cdev;
-+		led_cdev->max_brightness = LP5860_MAX_BRIGHTNESS;
-+		led_cdev->brightness_set_blocking = lp5860_set_mc_brightness;
-+
-+		chan = 0;
-+		/* Initialize all channels of this multi_led */
-+		fwnode_for_each_child_node(multi_led, led_node) {
-+			u32 channel;
-+			u32 color_index;
-+
-+			ret = fwnode_property_read_u32(led_node, "color",
-+						       &color_index);
-+			if (ret) {
-+				fwnode_handle_put(led_node);
-+				dev_err(lp->dev, "Cannot read 'color' property\n");
-+				return ret;
-+			}
-+
-+			ret = fwnode_property_read_u32(led_node, "reg",
-+						       &channel);
-+			if (ret < 0) {
-+				dev_err(lp->dev, "'reg' property is missing\n");
-+				return ret;
-+			}
-+
-+			mc_led_info[chan].color_index = color_index;
-+			mc_led_info[chan].channel = channel;
-+			lp5860_led_init_default_state(led, chan);
-+
-+			chan++;
-+		}
-+
-+		ret = devm_led_classdev_multicolor_register_ext(lp->dev, &led->mc_cdev,
-+								&init_data);
-+		if (ret) {
-+			dev_err(lp->dev, "Failed to register Multi-Color LEDs\n");
-+			return ret;
-+		}
-+		i++;
-+	}
-+
-+	return 0;
-+}
-+
-+int lp5860_device_init(struct device *dev)
-+{
-+	struct lp5860 *lp = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = lp5860_enable_toggle(lp, LP5860_CHIP_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Set to 8-bit PWM data without VSYNC.
-+	 * Data is sent out for display instantly after received.
-+	 */
-+	ret = regmap_update_bits(lp->regmap, LP5860_REG_DEV_INITIAL,
-+				 LP5860_MODE_MASK,
-+				 LP5860_MODE_1 << LP5860_MODE_OFFSET);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = sysfs_create_group(&lp->dev->kobj, &lp5860_group);
-+	if (ret)
-+		return ret;
-+
-+	return lp5860_init_dt(lp);
-+}
-+
-+void lp5860_device_remove(struct device *dev)
-+{
-+	struct lp5860 *lp = dev_get_drvdata(dev);
-+	int err;
-+
-+	err = lp5860_enable_toggle(lp, LP5860_CHIP_DISABLE);
-+	if (err)
-+		dev_err(lp->dev, "Failed to disable chip during remove.\n");
-+
-+	sysfs_remove_group(&dev->kobj, &lp5860_group);
-+}
-diff --git a/drivers/leds/rgb/leds-lp5860-spi.c b/drivers/leds/rgb/leds-lp5860-spi.c
-new file mode 100644
-index 0000000000000..d6b8d93c09978
---- /dev/null
-+++ b/drivers/leds/rgb/leds-lp5860-spi.c
-@@ -0,0 +1,89 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2025 Pengutronix
-+ *
-+ * Author: Steffen Trumtrar <kernel@pengutronix.de>
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/spi/spi.h>
-+
-+#include <linux/platform_data/leds-lp5860.h>
-+
-+#define LP5860_SPI_WRITE_FLAG BIT(5)
-+
-+static const struct regmap_config lp5860_regmap_config = {
-+	.name = "lp5860-spi",
-+	.reg_bits = 10,
-+	.pad_bits = 6,
-+	.val_bits = 8,
-+	.write_flag_mask = (__force unsigned long)cpu_to_be16(LP5860_SPI_WRITE_FLAG),
-+	.reg_format_endian = REGMAP_ENDIAN_BIG,
-+	.max_register = LP5860_MAX_REG,
-+};
-+
-+static int lp5860_probe(struct spi_device *spi)
-+{
-+	struct device *dev = &spi->dev;
-+	struct lp5860 *lp5860;
-+	unsigned int multi_leds;
-+
-+	multi_leds = device_get_child_node_count(dev);
-+	if (!multi_leds) {
-+		dev_err(dev, "LEDs are not defined in Device Tree!");
-+		return -ENODEV;
-+	}
-+
-+	if (multi_leds > LP5860_MAX_LED) {
-+		dev_err(dev, "Too many LEDs specified.\n");
-+		return -EINVAL;
-+	}
-+
-+	lp5860 = devm_kzalloc(dev, struct_size(lp5860, leds, multi_leds),
-+			      GFP_KERNEL);
-+	if (!lp5860)
-+		return -ENOMEM;
-+
-+	lp5860->leds_count = multi_leds;
-+
-+	lp5860->regmap = devm_regmap_init_spi(spi, &lp5860_regmap_config);
-+	if (IS_ERR(lp5860->regmap)) {
-+		dev_err(&spi->dev, "Failed to initialise Regmap.\n");
-+		return PTR_ERR(lp5860->regmap);
-+	}
-+
-+	lp5860->dev = dev;
-+
-+	spi_set_drvdata(spi, lp5860);
-+
-+	return lp5860_device_init(dev);
-+}
-+
-+static void lp5860_remove(struct spi_device *spi)
-+{
-+	lp5860_device_remove(&spi->dev);
-+}
-+
-+static const struct of_device_id lp5860_of_match[] = {
-+	{ .compatible = "ti,lp5860" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, lp5860_of_match);
-+
-+static struct spi_driver lp5860_driver = {
-+	.driver = {
-+		.name = "lp5860-spi",
-+		.of_match_table = lp5860_of_match,
-+	},
-+	.probe	= lp5860_probe,
-+	.remove = lp5860_remove,
-+};
-+module_spi_driver(lp5860_driver);
-+
-+MODULE_AUTHOR("Steffen Trumtrar <kernel@pengutronix.de>");
-+MODULE_DESCRIPTION("TI LP5860 RGB LED driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/platform_data/leds-lp5860.h b/include/linux/platform_data/leds-lp5860.h
-new file mode 100644
-index 0000000000000..4b5348c743a3c
---- /dev/null
-+++ b/include/linux/platform_data/leds-lp5860.h
-@@ -0,0 +1,305 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2025 Pengutronix
-+ *
-+ * Author: Steffen Trumtrar <kernel@pengutronix.de>
-+ */
-+
-+#ifndef _LEDS_LP5860_COMMON_H
-+#define _LEDS_LP5860_COMMON_H
-+
-+#include <linux/regmap.h>
-+#include <linux/led-class-multicolor.h>
-+
-+#define LP5860_REG_CHIP_EN		0x00
-+#define LP5860_REG_DEV_INITIAL		0x01
-+#define LP5860_REG_DEV_CONFIG1		0x02
-+#define LP5860_REG_DEV_CONFIG2		0x03
-+#define LP5860_REG_DEV_CONFIG3		0x04
-+#define LP5860_REG_GLOBAL_BRI		0x05
-+#define LP5860_REG_GROUP0_BRI		0x06
-+#define LP5860_REG_GROUP1_BRI		0x07
-+#define LP5860_REG_GROUP2_BRI		0x08
-+#define LP5860_REG_R_CURRENT_SET	0x09
-+#define LP5860_REG_G_CURRENT_SET	0x0A
-+#define LP5860_REG_B_CURRENT_SET	0x0B
-+#define LP5860_REG_GRP_SEL_START	0x0C
-+#define LP5860_REG_DOT_ONOFF_START	0x43
-+#define LP5860_REG_DOT_ONOFF_MAX	0x63
-+#define LP5860_REG_FAULT_STATE		0x64
-+#define LP5860_REG_DOT_LOD_START	0x65
-+#define LP5860_REG_DOT_LSD_START	0x86
-+#define LP5860_REG_LOD_CLEAR		0xA7
-+#define LP5860_REG_LSD_CLEAR		0xA8
-+#define LP5860_REG_RESET		0xA9
-+#define LP5860_REG_DC_START		0x0100
-+#define LP5860_REG_PWM_BRI_START	0x0200
-+#define LP5860_MAX_REG			0x038B
-+
-+/* Register chip_enable value */
-+#define LP5860_CHIP_OFFSET		0
-+#define LP5860_CHIP_MASK		BIT(0)
-+#define LP5860_CHIP_DISABLE		0x00
-+#define LP5860_CHIP_ENABLE		0x01
-+
-+/* Register dev_initial value */
-+#define LP5860_MAX_LINE_OFFSET		3
-+#define LP5860_MAX_LINE_MASK		GENMASK(6, 3)
-+#define LP5860_MAX_LINE_11		0x0B
-+#define LP5860_MAX_LINE_10		0x0A
-+#define LP5860_MAX_LINE_9		0x09
-+#define LP5860_MAX_LINE_8		0x08
-+#define LP5860_MAX_LINE_7		0x07
-+#define LP5860_MAX_LINE_6		0x06
-+#define LP5860_MAX_LINE_5		0x05
-+#define LP5860_MAX_LINE_4		0x04
-+#define LP5860_MAX_LINE_3		0x03
-+#define LP5860_MAX_LINE_2		0x02
-+#define LP5860_MAX_LINE_1		0x01
-+
-+#define LP5860_MODE_OFFSET		1
-+#define LP5860_MODE_MASK		GENMASK(2, 1)
-+#define LP5860_MODE_3_1			0x03
-+#define LP5860_MODE_3			0x02
-+#define LP5860_MODE_2			0x01
-+#define LP5860_MODE_1			0x00
-+
-+#define LP5860_PWM_FREQUENCY_OFFSET	0
-+#define LP5860_PWM_FREQUENCY_MASK	BIT(0)
-+#define LP5860_PWM_FREQUENCY_62_5K	0x01
-+#define LP5860_PWM_FREQUENCY_125K	0x00
-+
-+/* Register dev_config1 value */
-+#define LP5860_SW_BLK_OFFSET		3
-+#define LP5860_SW_BLK_MASK		BIT(3)
-+#define LP5860_SW_BLK_05US		0x01
-+#define LP5860_SW_BLK_1US		0x00
-+
-+#define LP5860_PWM_SCALE_MODE_OFFSET	2
-+#define LP5860_PWM_SCALE_MODE_MASK	BIT(2)
-+#define LP5860_PWM_SCALE_EXPONENTIAL	0x01
-+#define LP5860_PWM_SCALE_LINEAR		0x00
-+
-+#define LP5860_PWM_PHASESHIFT_OFFSET	1
-+#define LP5860_PWM_PHASESHIFT_MASK	BIT(1)
-+#define LP5860_PWM_PHASESHIFT_ON	0x01
-+#define LP5860_PWM_PHASESHIFT_OFF	0x00
-+
-+#define LP5860_CS_ON_SHIFT_OFFSET	0
-+#define LP5860_CS_ON_SHIFT_MASK		BIT(0)
-+#define LP5860_CS_DELAY_ON		0x01
-+#define LP5860_CS_DELAY_OFF		0x00
-+
-+/* Register dev_config2 value */
-+#define LP5860_COMP_GROUP3_OFFSET	6
-+#define LP5860_COMP_GROUP3_MASK		GENMASK(7, 6)
-+#define LP5860_COMP_GROUP3_3CLOCK	0x03
-+#define LP5860_COMP_GROUP3_2CLOCK	0x02
-+#define LP5860_COMP_GROUP3_1CLOCK	0x01
-+#define LP5860_COMP_GROUP3_OFF		0x00
-+
-+#define LP5860_COMP_GROUP2_OFFSET	4
-+#define LP5860_COMP_GROUP2_MASK		GENMASK(5, 4)
-+#define LP5860_COMP_GROUP2_3CLOCK	0x03
-+#define LP5860_COMP_GROUP2_2CLOCK	0x02
-+#define LP5860_COMP_GROUP2_1CLOCK	0x01
-+#define LP5860_COMP_GROUP2_OFF		0x00
-+
-+#define LP5860_COMP_GROUP1_OFFSET	2
-+#define LP5860_COMP_GROUP1_MASK		GENMASK(3, 2)
-+#define LP5860_COMP_GROUP1_3CLOCK	0x03
-+#define LP5860_COMP_GROUP1_2CLOCK	0x02
-+#define LP5860_COMP_GROUP1_1CLOCK	0x01
-+#define LP5860_COMP_GROUP1_OFF		0x00
-+
-+#define LP5860_LOD_REMOVAL_OFFSET	1
-+#define LP5860_LOD_REMOVAL_MASK		BIT(1)
-+#define LP5860_LOD_REMOVAL_EN		0x01
-+#define LP5860_LOD_REMOVAL_OFF		0x00
-+
-+#define LP5860_LSD_REMOVAL_OFFSET	0
-+#define LP5860_LSD_REMOVAL_MASK		BIT(0)
-+#define LP5860_LSD_REMOVAL_EN		0x01
-+#define LP5860_LSD_REMOVAL_OFF		0x00
-+
-+/* Register dev_config3 value */
-+#define LP5860_DOWN_DEGHOST_OFFSET	6
-+#define LP5860_DOWN_DEGHOST_MASK	GENMASK(7, 6)
-+#define LP5860_DOWN_DEGHOST_STRONG	0x03
-+#define LP5860_DOWN_DEGHOST_MEDIUM	0x02
-+#define LP5860_DOWN_DEGHOST_WEAK	0x01
-+#define LP5860_DOWN_DEGHOST_OFF		0x00
-+
-+#define LP5860_UP_DEGHOST_OFFSET	4
-+#define LP5860_UP_DEGHOST_MASK		GENMASK(5, 4)
-+#define LP5860_UP_DEGHOST_GND		0x03
-+#define LP5860_UP_DEGHOST_3		0x02
-+#define LP5860_UP_DEGHOST_2_5		0x01
-+#define LP5860_UP_DEGHOST_2		0x00
-+
-+#define LP5860_MAXIMUM_CURRENT_OFFSET	1
-+#define LP5860_MAXIMUM_CURRENT_MASK	GENMASK(3, 1)
-+#define LP5860_MAXIMUM_CURRENT_50	0x07
-+#define LP5860_MAXIMUM_CURRENT_40	0x06
-+#define LP5860_MAXIMUM_CURRENT_30	0x05
-+#define LP5860_MAXIMUM_CURRENT_20	0x04
-+#define LP5860_MAXIMUM_CURRENT_15	0x03
-+#define LP5860_MAXIMUM_CURRENT_10	0x02
-+#define LP5860_MAXIMUM_CURRENT_5	0x01
-+#define LP5860_MAXIMUM_CURRENT_3	0x00
-+
-+#define LP5860_UP_DEGHOST_ENABLE_OFFSET	0
-+#define LP5860_UP_DEGHOST_ENABLE_MASK	BIT(0)
-+#define LP5860_UP_DEGHOST_ENABLE_EN	0x01
-+#define LP5860_UP_DEGHOST_ENABLE_OFF	0x00
-+
-+/* Register PWM */
-+#define LP5860_PWM_GLOBAL_MAX		0xff
-+#define LP5860_PWM_GROUP_MAX		0xff
-+
-+/* Register CC group select */
-+#define LP5860_CC_GROUP_MASK		GENMASK(7, 0)
-+#define LP5860_CC_GROUP_MAX		0x7F
-+
-+/* Register dot group select */
-+#define LP5860_DOT_0_OFFSET		0
-+#define LP5860_DOT_1_OFFSET		2
-+#define LP5860_DOT_2_OFFSET		4
-+#define LP5860_DOT_3_OFFSET		6
-+
-+#define LP5860_DOT_GROUP3		0x03
-+#define LP5860_DOT_GROUP2		0x02
-+#define LP5860_DOT_GROUP1		0x01
-+#define LP5860_DOT_GROUP_NONE		0x00
-+
-+#define LP5860_DOT_ALL_ON		0xff
-+#define LP5860_DOT_ALL_OFF		0x0
-+#define LP5860_PWM_DOT_MAX		0xff
-+/* Dot onoff value */
-+#define LP5860_DOT_CS0_OFFSET		0
-+#define LP5860_DOT_CS1_OFFSET		1
-+#define LP5860_DOT_CS2_OFFSET		2
-+#define LP5860_DOT_CS3_OFFSET		3
-+#define LP5860_DOT_CS4_OFFSET		4
-+#define LP5860_DOT_CS5_OFFSET		5
-+#define LP5860_DOT_CS6_OFFSET		6
-+#define LP5860_DOT_CS7_OFFSET		7
-+
-+#define LP5860_DOT_CS_ON		0x01
-+#define LP5860_DOT_CS_OFF		0x00
-+
-+/* Dot lod value */
-+#define LP5860_DOT_LOD0_OFFSET		0
-+#define LP5860_DOT_LOD1_OFFSET		1
-+#define LP5860_DOT_LOD2_OFFSET		2
-+#define LP5860_DOT_LOD3_OFFSET		3
-+#define LP5860_DOT_LOD4_OFFSET		4
-+#define LP5860_DOT_LOD5_OFFSET		5
-+#define LP5860_DOT_LOD6_OFFSET		6
-+#define LP5860_DOT_LOD7_OFFSET		7
-+
-+#define LP5860_DOT_LOD_ON		0x01
-+#define LP5860_DOT_LOD_OFF		0x00
-+
-+/* dot lsd value */
-+#define LP5860_DOT_LSD0_OFFSET		0
-+#define LP5860_DOT_LSD1_OFFSET		1
-+#define LP5860_DOT_LSD2_OFFSET		2
-+#define LP5860_DOT_LSD3_OFFSET		3
-+#define LP5860_DOT_LSD4_OFFSET		4
-+#define LP5860_DOT_LSD5_OFFSET		5
-+#define LP5860_DOT_LSD6_OFFSET		6
-+#define LP5860_DOT_LSD7_OFFSET		7
-+
-+#define LP5860_DOT_LSD_ON		0x01
-+#define LP5860_DOT_LSD_OFF		0x00
-+
-+/* Register lod state */
-+#define LP5860_GLOBAL_LOD_OFFSET	1
-+#define LP5860_GLOBAL_LOD_STATE		BIT(1)
-+#define LP5860_GLOBAL_LSD_OFFSET	0
-+#define LP5860_GLOBAL_LSD_STATE		BIT(0)
-+
-+#define LP5860_FAULT_STATE_ON		0x01
-+#define LP5860_FAULT_STATE_OFF		0x00
-+
-+#define LP5860_GLOBAL_LOD_CLEAR		0x00
-+#define LP5860_GLOBAL_LSD_CLEAR		0x00
-+
-+
-+#define LP5860_LOD_CLEAR_EN		0xff
-+#define LP5860_LSD_CLEAR_EN		0xff
-+#define LP5860_RESET_EN			0xff
-+
-+#define LP5860_MAX_BRIGHTNESS		255
-+#define LP5860_REG_R_PWM		0x0
-+#define LP5860_REG_G_PWM		0x1
-+#define LP5860_REG_B_PWM		0x2
-+
-+#define LP5860_MAX_LED_CONSTANT		18
-+#define LP5860_MAX_LED_SCAN		11
-+#define LP5860_MAX_LED			(LP5860_MAX_LED_CONSTANT * LP5860_MAX_LED_SCAN)
-+
-+#define LP5860_MAX_DOT_ONOFF_GROUP_NUM	8
-+
-+/*
-+ * Theoretically, there is no max channel per LED,
-+ * limit this to a reasonable value for RGBW LEDs
-+ */
-+#define LP5860_MAX_LED_CHANNELS		4
-+
-+#define LP5860_DEV_ATTR_RW(name)	\
-+	DEVICE_ATTR(name, 0644, lp5860_##name##_show, lp5860_##name##_store)
-+
-+#define LP5860_SHOW_MODE(nr, reg, mask, offset)				\
-+	static ssize_t nr##_show(struct device *dev,			\
-+				 struct device_attribute *attr,		\
-+				 char *buf)				\
-+	{								\
-+		struct lp5860 *led = dev_get_drvdata(dev);		\
-+		unsigned int value = 0;					\
-+		int ret;						\
-+									\
-+		ret = regmap_read(led->regmap, reg, &value);		\
-+		if (ret)						\
-+			return ret;					\
-+		return sysfs_emit(buf, "%d\n", (value & (int)mask) >> (int)offset);\
-+	}
-+
-+#define LP5860_STORE_MODE(nr, reg, mask, offset)			\
-+	static ssize_t nr##_store(struct device *dev,			\
-+				  struct device_attribute *attr,	\
-+				  const char *buf, size_t len) 		\
-+	{								\
-+		struct lp5860 *led = dev_get_drvdata(dev);		\
-+		unsigned int value = 0;					\
-+		int ret;						\
-+									\
-+		if (kstrtoint(buf, 0, &value))				\
-+			return -EINVAL;					\
-+		ret = regmap_update_bits(led->regmap, reg, (int)mask,	\
-+					 value << (int)offset);		\
-+		if (ret < 0)						\
-+			return ret;					\
-+		return len;						\
-+	}
-+
-+struct lp5860_led {
-+	struct lp5860 *ddata;
-+	struct led_classdev_mc mc_cdev;
-+	u8 brightness;
-+	enum led_default_state default_state;
-+};
-+
-+struct lp5860 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	unsigned int leds_count;
-+
-+	DECLARE_FLEX_ARRAY(struct lp5860_led, leds);
-+};
-+
-+int lp5860_device_init(struct device *dev);
-+void lp5860_device_remove(struct device *dev);
-+
-+#endif /* _LEDS_LP5860_H */
+> +}
+> +
+> +static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
+> +{
+> +	int ret;
+> +	u32 val = ov9282_us_to_flash_duration(ov9282, value);
+>  
+>  	ret = ov9282_write_reg(ov9282, OV9282_REG_STROBE_FRAME_SPAN, 1,
+>  			       (val >> 24) & 0xff);
+> @@ -798,9 +820,36 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+>  	return ret;
+>  }
+>  
+> +static int ov9282_try_ctrl(struct v4l2_ctrl *ctrl)
+> +{
+> +	struct ov9282 *ov9282 =
+> +		container_of_const(ctrl->handler, struct ov9282, ctrl_handler);
+> +
+> +	if (ctrl->id == V4L2_CID_FLASH_DURATION) {
+> +		u32 us = ctrl->val;
+> +		u32 fd = ov9282_us_to_flash_duration(ov9282, us);
+> +
+> +		/* get nearest strobe_duration value */
+> +		u32 us0 = ov9282_flash_duration_to_us(ov9282, fd);
+> +		u32 us1 = ov9282_flash_duration_to_us(ov9282, fd + 1);
+> +
+> +		if (abs(us1 - us) < abs(us - us0))
+> +			ctrl->val = us1;
+> +		else
+> +			ctrl->val = us0;
+> +
+> +		if (us != ctrl->val)
+> +			dev_dbg(ov9282->dev, "using next valid strobe_duration %u instead of %u\n",
+> +				ctrl->val, us);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /* V4l2 subdevice control ops*/
+>  static const struct v4l2_ctrl_ops ov9282_ctrl_ops = {
+>  	.s_ctrl = ov9282_set_ctrl,
+> +	.try_ctrl = ov9282_try_ctrl,
+>  };
+>  
+>  /**
+> 
 
 -- 
-2.51.0
+Regards,
 
+Sakari Ailus
