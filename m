@@ -1,191 +1,201 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011047.outbound.protection.outlook.com [52.101.65.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA3E1E3762
-	for <linux-leds@vger.kernel.org>; Mon, 17 Nov 2025 02:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763346155; cv=none; b=axNOrUEZcXTtoSzCafcHk54rs1YZMZFMOmZMvRaOahLGCfae2FKCpwK7gHfA8Q1V3VsdKoUfdqzD6cFzJJmQF2n3Sx+W1eE8rmGgCEfgRzYs4quNMHdlVBogZpz2x7H1qvSFf9v+ed7zXeonvTaAqFDz/uvRyPfJp+qMV9fv0HA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763346155; c=relaxed/simple;
-	bh=e+p48IaoIhLfXRpESvp6/pHVPXSO99iUgRfoHczmL14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QmAoQHEclq/oR4gec8z04QreTF7fPZxG9ix5u2vi7w2neDlKhVHFwlpRVKsGwfmYoBJfroMybhmmRJLJNNea6C9IGwPQ2TZJScI2cNiqPnfrDTE05kvgJ4JUCNewbWiaod3+v7PdxGF9YgiW9f1HNYJeAhhTU2UJQIcAc2aNBQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=i6YZpvcE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FiOFGbja; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168251DDC2B;
+	Mon, 17 Nov 2025 05:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763358321; cv=fail; b=VbRWHrgmAZmqIb+xlV74bbiCd9oyctgJYxMNZTLc2haOrwqXsMx8kvlJYNHmj21Wy9PGhobXb0DR8LSMdSP6IdoGiizcm3e7Vq83RbJSr+FTFm/X1QSGSorbpfjt5h03x3667z7aFbvfCKP1ZQeQKhJMctBjBST6sgNPPcSPBUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763358321; c=relaxed/simple;
+	bh=x73daAYdta9cFHukPD0qcKNwi06gMzwdEOE/Vxycai8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gU5y2ZO3QCQNka0XXHiPpjzecgf3LEL/OENbJIgOg4MBqWo9QUDFYdT4z0NUUZxkfyfN8xSSfEKukNzPg0KeLCUKj9ABsHWdAG92KxPULW/vro+5I/bSadeR/zOFGpEYAyqEJ+K1MoK4i3ECZFyUD+E0jWYFqfCWUhZs3aKNawU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn; spf=fail smtp.mailfrom=leica-geosystems.com.cn; dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b=MXbg/Sum; arc=fail smtp.client-ip=52.101.65.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="i6YZpvcE";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FiOFGbja"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AGH2dnS1680204
-	for <linux-leds@vger.kernel.org>; Mon, 17 Nov 2025 02:22:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zYlVhddMHWTqti30RONS2XolCrlKESX7cb8t/mBL6EM=; b=i6YZpvcEazbBUaFJ
-	o9oxWg0gtdveZ+InITy6kEk6LNd8vy3ZYbbs7D4+9PJD90gnYSdgnWIXYwQaLtuF
-	8AjNQ4aiJFXi0BNbMTdTNq8c7ueltsH5Qle/2uhqvI1jTbWTY88yPKr7Xhd8wzD5
-	yS8sSyD7wxfUw3S/60m5nHhWc9qiX5pgNpK5T8v2rMY76ZYx0TQ49vFH/4/N7K3v
-	Y80H8coHI0Bt5++kSf3GAk9aK8gR6qUrU4d0+DV6cqLQdmsQOsAaVpI6CuYAMYcz
-	CyzPkEpnWkOIMQAB4+fXBZ0avOQ9EtGFO8R4FainGLtSzcw2iNxLaKL/WhP8owzD
-	Q7Xgkg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4aejk1k1dy-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-leds@vger.kernel.org>; Mon, 17 Nov 2025 02:22:32 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-297e5a18652so43567725ad.1
-        for <linux-leds@vger.kernel.org>; Sun, 16 Nov 2025 18:22:32 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=leica-geosystems.com.cn header.i=@leica-geosystems.com.cn header.b="MXbg/Sum"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lnaGQ9wF7oexbzkduNRA1Ir6FL/47AJPFM+L1fmF5hN83tkk6uFWayXsPB3O/hixCay3qJFWz1iXg9VRxlvU1E3fLF5HYfkJtW/UY/qHj9aY7Zzcnk016kifB5Rs03XRVVReHgr7x24MFoB3PNGmSBT7kRyaIXRY9tlI8gun+6iUkYMFoqCErt3jTjtxjVlCttQK5CI1qMq7TFuZiNJjzO9hqd6ic7efO2WoOH94xzNU90SIr7e9JDTb9Bnd8lVyhbneHyzTnJEzNgZrUmkVp0ZDq7KC0AnTY4beFYtZalRpWvEnAX51WRrE/ag4NaUrBMoOgMraK4roq+owQHCZ+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VM12JDWBMCpaadZ9ex+6flIbhRi33p3cI8pTg42btHM=;
+ b=RjdBmPGH0fBPfVsTodHIHcaiPlFmWx0zCe4y8OjTO/TuVYjhrcScV+v6fNF8A//6yS+wpbdqZeTfORD/xtaBSQyhZaASFulYIDdJE9aFqY7dL+Qrv99QtFPuO4hJGIecEqm/eeoFsqgdp8nR6VhfGhMimeT6cHWi5fW57oLmdFeKr3rEnUzMCMv2XFnSqJpYJvEn7UTMdjYUu9QiDpnnmGHi/y8Lan/OIuS1+Qk0aokrCAeDcy7DCzDvR5+chxce7GfVSljJ+fGurC9T57Lp35KJ1QIeZTQzlXtBl6XPGohqqMRgGkWr+goE6fTlgfBglWBTXUKuyC8N3s0dk2OP3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.8.40.99) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=leica-geosystems.com.cn; dmarc=pass (p=reject sp=reject
+ pct=100) action=none header.from=leica-geosystems.com.cn; dkim=none (message
+ not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763346151; x=1763950951; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zYlVhddMHWTqti30RONS2XolCrlKESX7cb8t/mBL6EM=;
-        b=FiOFGbjaRQ6IzE+rGwivZZD+SUfSl+VM5OqioHIMbhRnCoJjIO7wrjJ1VZ2V8M85aC
-         N0TZ1lWrzwUePs/ikslWLM2cmgayqUwAaEZTSYXi+MoYlaf3N5oPvWSmD8FkaLCvntJv
-         cWeWbPCcsSYB0Sg0hS9VZSWo54EgDMbEke4JrD3ovbWtgtRMIXJuFKXp9lGezlq9dsAX
-         fu8QvILu3C6eEuu7R8urjEUVYo6MPSoQOpQ4zqgmk3v+J198qxquj/rLoGV3Roc+9L66
-         SrAhsmQCkvRCmRQ1lY3NC+Hnj0AyCTzjxsOJKegwU2cgTFYl1OXh51sxC4UX1wFMN6vY
-         RnHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763346151; x=1763950951;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zYlVhddMHWTqti30RONS2XolCrlKESX7cb8t/mBL6EM=;
-        b=gvuawYpEIgHepEjm5wjnGXhTnXlg6pCtzsHmHUKyPR8e+FgUSzjGb+8g5alpnW5wcK
-         HBCTCH8lbHaqyEWYMGPLklyww1R6eAHi2KcriUfTuTJzVIhNjoRDljgxMZi/tzhb7cYW
-         wHx68ygK+sLfxt+irl6e2oHcpb6cAdblz+/NIlKLCdAHJzCVpliIeH/dQhl6qAPu/q4G
-         bvdN4uDkrKw0lY8po1/PgT6AhdMZ9Amxv04TlQu0/nCRgMZ4L5BhtZGrHCremWBnPcSu
-         1R0/dd6BesoeC0VPQALJ1cXZvWISzOMqf6umSb//hjHMjGT3bfXpMg4bpzF519fJHdtw
-         WEow==
-X-Forwarded-Encrypted: i=1; AJvYcCVb69nflCupSU1b6YQmktIMp5qGuXuTI4l2WSm95xAxItAuavW6mqezayD2T82t3+5eqojW8tKtiAPX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaIRoqctgZYs6s6XXJlRDlf6Xi7ynN6q3CP45pTjY80ZvNu178
-	ELaOVUJj4BImTsf7KwuzHyfTPiRfXhCMaoj5Ozd9g60Or6YaCXKyrw0cB3WtAumoj4MtMBq6Hi1
-	u5FeGOO6d/ooC9lmQ3/lNfauyaqNuzbt5MG/BasZ2dunmM5T8iZkwB69xH6cElPoQ
-X-Gm-Gg: ASbGncs9VFWbwO5LCpGP3OE5W6M5hQ+SECv1y/OSObmYkS0ZdYpP3DxaBtU+9h7T9De
-	Pilp/6VfFfca8mifeulh3JtYR7rAWMD9yqJBnSiD6rJrZlx7ZgJ97NVhfsXZx6n8SJvPHca1KPv
-	7cMI5StOjdDC1pJz9p/vnUSmls++Q7d0D2yfoRyN+Q+R00Brj3KwHp8FJRXJAbNYs2ETWsk7rpF
-	xE/1EhgkN9w6p/hwbCOfFBGY8q2gX3JPmwpglXs15KqfyVrlcT3QD1vQFxrQnszkqzccV0RHxCT
-	1KL559YOFqDow9LsBtJ/RUXujYftLrILA2PflU5ovIzxDLtAwRo5JuFuJde59GH94PYa0DEbMRS
-	4Lgfshs+B0bo6FPagG4v2KiMloJuqJGaW/IEhVoveZ+JKvT+NnIv7eO/Ufp9FPpkKT/I=
-X-Received: by 2002:a17:902:e947:b0:295:7b8c:6622 with SMTP id d9443c01a7336-2986a6b8751mr131260995ad.11.1763346151450;
-        Sun, 16 Nov 2025 18:22:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE3D3b+HBgeuxjjE3vKDtxkEEvpqpfT69zOTS4Ccxq4aUIezvfTp6KMVKhasPkouV5wkn+nGw==
-X-Received: by 2002:a17:902:e947:b0:295:7b8c:6622 with SMTP id d9443c01a7336-2986a6b8751mr131260715ad.11.1763346150967;
-        Sun, 16 Nov 2025 18:22:30 -0800 (PST)
-Received: from [10.133.33.96] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2bebe1sm120036205ad.82.2025.11.16.18.22.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Nov 2025 18:22:30 -0800 (PST)
-Message-ID: <cc41233d-f270-4cbe-b355-64f4dcd0652d@oss.qualcomm.com>
-Date: Mon, 17 Nov 2025 10:22:23 +0800
+ d=leica-geosystems.com.cn; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VM12JDWBMCpaadZ9ex+6flIbhRi33p3cI8pTg42btHM=;
+ b=MXbg/SumKNShsOO+l7ZJ+UcemheZnD2mCD54UE1IIbAQk4/bTZ1uCjylTsDQyqnM+i50YHguH5daKcwfwWWTlfPA0LZIvyODqRMd0uuNdQ8m/sFw6lg2/uKUKp8Vxs2+hqL/5GrQQcvz4fZ8mOx+yxvdiFfxuDVveeccWv4VCP8=
+Received: from DUZPR01CA0046.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::14) by AM9PR06MB8002.eurprd06.prod.outlook.com
+ (2603:10a6:20b:388::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Mon, 17 Nov
+ 2025 05:45:15 +0000
+Received: from DB1PEPF000509F9.eurprd02.prod.outlook.com
+ (2603:10a6:10:469:cafe::c) by DUZPR01CA0046.outlook.office365.com
+ (2603:10a6:10:469::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.22 via Frontend Transport; Mon,
+ 17 Nov 2025 05:45:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.99)
+ smtp.mailfrom=leica-geosystems.com.cn; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=leica-geosystems.com.cn;
+Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com.cn
+ designates 193.8.40.99 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.8.40.99; helo=hexagon.com; pr=C
+Received: from hexagon.com (193.8.40.99) by
+ DB1PEPF000509F9.mail.protection.outlook.com (10.167.242.155) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 05:45:14 +0000
+Received: from aherlnxbspsrv01.lgs-net.com ([10.61.228.61]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Mon, 17 Nov 2025 06:45:13 +0100
+From: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qing-wu.Li@leica-geosystems.com.cn,
+	liqind@163.com
+Subject: [PATCH V10 2/3] leds: pwm: Add optional GPIO enable pin support
+Date: Mon, 17 Nov 2025 05:45:09 +0000
+Message-ID: <20251117054511.730246-2-Qing-wu.Li@leica-geosystems.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251117054511.730246-1-Qing-wu.Li@leica-geosystems.com.cn>
+References: <20251117054511.730246-1-Qing-wu.Li@leica-geosystems.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: rgb: leds-qcom-lpg: Only enable TRILED when LPG is
- used by LED
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: kernel@oss.qualcomm.com, Lee Jones <lee@kernel.org>,
-        Pavel Machek <pavel@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251114-lpg_triled_fix-v1-1-9b239832c53c@oss.qualcomm.com>
- <7jf4xvqmlymwkyrdp2ulpazfwmhdmfegzigewc5esk2sj323a5@72skiavskrqt>
- <7732165a-4147-4917-b76a-1525aae13c25@oss.qualcomm.com>
- <t453czpauswdttsl5cqxwk5ryc7aau3bz4jfwfe4istkffgp43@ffoiicvnbxzh>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <t453czpauswdttsl5cqxwk5ryc7aau3bz4jfwfe4istkffgp43@ffoiicvnbxzh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Ypt2omYBKWEAWRPi7mkFG76g6VnQBlTL
-X-Authority-Analysis: v=2.4 cv=OpZCCi/t c=1 sm=1 tr=0 ts=691a86e8 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=sxwf-mhpPifykftr7pEA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE3MDAxNyBTYWx0ZWRfXx3AEX16T50YR
- u/wqcJtyTrYCDPDJz9B/1lZKHSHONHCAZgykuUOSCFIif0Xc1ijFAH/1kpdAU9c3mgzMNOc226P
- jn1U3ldH3nuFnYATPbrwXwyO3c1DGthU4HusVanuRQOinUAWXqLatdaraGYzvzEb97YEdWhQJVH
- mv1ZDXIdag2dUVMBHcGchhdbnU4PQwaweHO93oSMigq44w0sOoNvtmXfuq3+zlWLQGzOGCQkLaQ
- v45cjYcJsjmULgF41kaVqK1zd+1PjugjF5lx5lzPoD9bRYXHWi9bmpIpCpuSbqG4JiI8//zUMOc
- +4JjjgtnvwvxOrXYz+IKAyEg11wUWDnB09o/1RXFV37Vhv1UQ92it54bTmVgePLbillYkkYLNy0
- EPh9UmDz2YWQUCIKsOchQhw8KkKJqQ==
-X-Proofpoint-ORIG-GUID: Ypt2omYBKWEAWRPi7mkFG76g6VnQBlTL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-17_01,2025-11-13_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 phishscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511170017
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 17 Nov 2025 05:45:13.0944 (UTC) FILETIME=[58634580:01DC5785]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509F9:EE_|AM9PR06MB8002:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: f7980b86-d746-40ce-1ef6-08de259c7b80
+X-SET-LOWER-SCL-SCANNER: YES
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BNaVnVucmGoDzk05tjgTDCpHNxRb0ch7CYfyNQMwhnNZ3MLjiep/cToq8x1h?=
+ =?us-ascii?Q?7cCjBvA0XE07srUmEKEQBylOq2qelzUfgysLd1AkgMXfl67W98hUzQKTXtAl?=
+ =?us-ascii?Q?KJfiR+2EFipyebRcP/dFX4d2Yf43emjhg6i4HhC0zi/twDck1pe+TZSjoc7l?=
+ =?us-ascii?Q?bUNunomJr9i/QJtwtqkOGGpt67A8yUzv+wt8Y6hd7vzmrTMW/QT+vgbhAqUe?=
+ =?us-ascii?Q?kC962g3NWi3dy2YJwpfO2huWvZjjCNrz5mx1otNPkNZfMhB3r7ipKd9vO1vq?=
+ =?us-ascii?Q?kpTnR/Et46XPFu8X/kc14PpLt08YMfHWpxrOUrQ6Hi7xL4q0meACcvSiXB+X?=
+ =?us-ascii?Q?G2vgR+8FQb2uQeDTjtKx1v/wpnycaJQCPmSgT8ArXdOMV7SnvjglNbILf4aA?=
+ =?us-ascii?Q?p2l7AHKn8SNgeyof/mwmv0YldMgwT8k4CvVRogjUMZnusIn3OCOkGNkIwA+n?=
+ =?us-ascii?Q?Cvr/t2rAN2epymAWqRFaP4EOTR/kQeNuFRBzcJx4y8k1/zMLI9TW6ZYqnM7g?=
+ =?us-ascii?Q?eeQTUFRsLzl2zqMipaU54RGa2qqCYGVzviHtskHkQTOetU5Vdw/fNvfSg1vb?=
+ =?us-ascii?Q?QMX5IvgZuec7xCaR1/NtDEHPPHhXg8K8lVCi991NVKiQKcCLYjajAPtalKzy?=
+ =?us-ascii?Q?Ci+ZnOCA0z1+fLbYmoLy/pWKeYTiilAqu25BHlybhvTQ9WnnYhUsXxwq5Mg+?=
+ =?us-ascii?Q?ik6CLnFJuxgSQimVHkc8lGJge8c5M5VcL8vp0E3rG2tQzOvgCzMH0W5la4er?=
+ =?us-ascii?Q?OvKxA5AbGoLPTZdLClKIuZ3gYB7bx6751csbJTfpHxyuUYJhJOUAMFbAZnEn?=
+ =?us-ascii?Q?1DP86c2Pp5Cu5j6ILUOMwHdpiLwxO7fPCz8Qs7APT8KXjFeFKHUQRbeG8V/w?=
+ =?us-ascii?Q?gkyXPLm4iGpi08kGx/DGWXTdNy1HXf7aqUGOKafaxwP+UCHGDTVfJHS6POmt?=
+ =?us-ascii?Q?wH+SwyQcX0R8G1vV+aGZ3EZzILm5y6LRVpygTleK/RYgyJmJV2tgvfy0fhlK?=
+ =?us-ascii?Q?1sxwXfILTCQgkaHb6+nCvRROvzorqAo/pbI18Cb6Hmt6ia2iMRzd9fi/oMCR?=
+ =?us-ascii?Q?1/mqYQ/Oh+j4bY3WXxsya+7StZHlFUSXR6E42og1/OoeyRwudPp3vQZEZK1z?=
+ =?us-ascii?Q?vm8Pgfr9inibWUMLq8dTX7W58iTn9PnmixgaPgh4md6I5kCkx8EFKt1zYtDk?=
+ =?us-ascii?Q?Gn/lwEk5lDlr2mRcanxbNZ5eZW7Q+ra68NThEhhARVpQUccWb0DaYzmGchdC?=
+ =?us-ascii?Q?k87i9G1vfrorEl+I8lSJHE4I1fodiM+IECmubtfnuI+MT80t4FEAtle4Vln4?=
+ =?us-ascii?Q?er8IeUvRHMkBh7DBN18BIxblH6ZCWPeN1eqPbfF+dfwC1MPHxbJP/sOLFjdI?=
+ =?us-ascii?Q?tLo7C+9Q6JCyzpffynZ8N6nhtQgov8OvsewrfEhWtuqYAK7UzPqOspgi4kHd?=
+ =?us-ascii?Q?Pu7saRkhHVf6gj++pTBD6Jt0vfFKKqd0dZMRaRxZCfr+EWimHJlJ5FdKua0Y?=
+ =?us-ascii?Q?Wcr9RiESgFtnHrrEHXTDUWvIjwrpPZ61beB2nig4agjjbBVIdafNaFEl8497?=
+ =?us-ascii?Q?oBjNhtKv4nfAoeFo9zU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:193.8.40.99;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom51.leica-geosystems.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: leica-geosystems.com.cn
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 05:45:14.8866
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7980b86-d746-40ce-1ef6-08de259c7b80
+X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.99];Helo=[hexagon.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509F9.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR06MB8002
 
+Add support for optional GPIO-based enable pin control to PWM LED driver.
+Some PWM LED driver chips like TPS92380 and LT3743 require a separate
+enable signal in addition to PWM control. Implement support for such
+GPIO control through the "enable-gpios" device tree property, activating
+the pin when LED brightness is non-zero and deactivating it when off.
 
-On 11/14/2025 10:56 PM, Bjorn Andersson wrote:
-> On Fri, Nov 14, 2025 at 03:13:18PM +0800, Fenglin Wu wrote:
->> On 11/14/2025 12:58 PM, Bjorn Andersson wrote:
->>> If chan->in_use, then the channel is exposed as a LED and
->>> lpg_pwm_request() should have returned -EBUSY, so we should never reach
->>> lpg_pwm_apply()?
->> Yes, I agree.
->>
->> Change is trying to ignore enabling TRILED channel when the LPG channel
->> mapping to TRILED is not used for controlling the LED (not defining the LED
->> child nodes).
->>
->> So the fix should be just removing this line instead of adding the if check.
->>
-> Sorry, it's been a while since I looked at this code, but isn't it
-> possible to configure a channel going through the triled to be exposed
-> as a PWM channel and if so, don't we need to enable the TRILED driver
-> for this channel in those cases?
+Tested on i.MX8MP EVK with TPS92380 LED driver chip
 
-Yes, this is possible, and enabling TRILED is not necessary in this 
-case. The signals from the LPG channels mapped to the TRILED channels 
-can also be routed to the PMIC GPIOs by setting the GPIO pinctrl state 
-to the "funcx" function. For example, for LPG channels in PMH0101, based 
-on the PMIC GPIO usage table, these GPIOs can be used to output the PWM 
-signals if they are configured to the "func1" function.
+Signed-off-by: LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+---
+ drivers/leds/leds-pwm.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-GPIO05 -- PWM1
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index c73134e7b951..dac96d91e6bf 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -9,6 +9,7 @@
+  * based on leds-gpio.c by Raphael Assenat <raph@8d.com>
+  */
+ 
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+@@ -26,6 +27,7 @@ struct led_pwm {
+ };
+ 
+ struct led_pwm_data {
++	struct gpio_desc	*enable_gpio;
+ 	struct led_classdev	cdev;
+ 	struct pwm_device	*pwm;
+ 	struct pwm_state	pwmstate;
+@@ -51,6 +53,8 @@ static int led_pwm_set(struct led_classdev *led_cdev,
+ 	if (led_dat->active_low)
+ 		duty = led_dat->pwmstate.period - duty;
+ 
++	gpiod_set_value_cansleep(led_dat->enable_gpio, !!brightness);
++
+ 	led_dat->pwmstate.duty_cycle = duty;
+ 	/*
+ 	 * Disabling a PWM doesn't guarantee that it emits the inactive level.
+@@ -132,6 +136,21 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 		break;
+ 	}
+ 
++	/*
++	 * Claim the GPIO as GPIOD_ASIS and set the value
++	 * later on to honor the different default states
++	 */
++	led_data->enable_gpio = devm_fwnode_gpiod_get(dev, fwnode, "enable", GPIOD_ASIS, NULL);
++	if (IS_ERR(led_data->enable_gpio)) {
++		if (PTR_ERR(led_data->enable_gpio) == -ENOENT)
++			/* Enable GPIO is optional */
++			led_data->enable_gpio = NULL;
++		else
++			return PTR_ERR(led_data->enable_gpio);
++	}
++
++	gpiod_direction_output(led_data->enable_gpio, !!led_data->cdev.brightness);
++
+ 	ret = devm_led_classdev_register_ext(dev, &led_data->cdev, &init_data);
+ 	if (ret) {
+ 		dev_err(dev, "failed to register PWM led for %s: %d\n",
+-- 
+2.43.0
 
-GPIO06 -- PWM2
-
-GPIO11 -- PWM3
-
-GPIO08 -- PWM4
-
-GPIO09 -- PWM4
-
->
->> I will update it in patch v2.
->>
->>> Why do you check chan->triled_mask? I guess we will still read/write the
->>> triled regiter, but don't make any changes if this is 0?
->>>
->>> Or is this the actual issue that you're fixing, that we read/write the
->>> registers when we shouldn't? If so this should be clarified in the
->>> commit message.
->> Yes, there was a case that a LPG channel mapping to TRILED is repurposed to
->> control a fan, and it was seen that the BOB1 (supplies to TRILED) voltage
->> bumped to higher voltage when the PWM channel was enabled.
->>
-> Is the signal still routed through the TRILED, or is it muxed to another
-> driver?
-No, the signals will not be routed to TRILED but through other PMIC GPIOs.
->
-> Regards,
-> Bjorn
->
->>> Regards,
->>> Bjorn
