@@ -1,166 +1,267 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020108.outbound.protection.outlook.com [52.101.69.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCD41FAC42;
-	Wed, 19 Nov 2025 17:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763573697; cv=none; b=uR1Y8loITu/DB6xt8TBDIjUkjpR4ZPoToMqam8O2Mw/Xw1w9Rq5K7j9mRDzV8wQOhz/J6IoMt7FI1pK4b6mu8CMUBGXgyO0svOZu0CKEt9HUgyIFPalCr5sau2kycl0BMLmh2G6uH76ve4h0PaF5w66aUNWlvAbxwqHPHMbeP9o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763573697; c=relaxed/simple;
-	bh=CP1RHwnLKRxiLODuRu9d3QUcRfYZy94bnfo/gKve3d8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=umqo6DKNqn1FfDaHGfhaaign2CgosCxNtWE1IROx7VtWkOIyVPPcuD8lRea0f8TAApP8uu0lZPdweo4ADnJvjM0BNNRYZYh2Viy+yQmrrU5P+x3+71XpCONL+9ZmMHkHa0yDrswJrHQEZTkn0duQJvYvv+3yZiPFlO8lSiUOmr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=yEd2xxua; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C9D33A6FC;
+	Wed, 19 Nov 2025 18:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.108
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763576668; cv=fail; b=JNcQl9TV8yA0AdP2sKF4hL6p/xEvJDjMwZ2iXMVafbg+fPIb57xSUegs7x7QsEMJzEhFYLsbkQ5COYvR1trPoPRDjf4MNi8jebu/f9fSnZzH5kk6C/JA4f7nJRJZdHaiyQCbhSKQgm6QUNCuEZwh+ItDynINk/ldtaI0ONUez3c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763576668; c=relaxed/simple;
+	bh=W8g0mEcKh4EtyjuksMOnCZZ7VOfDbcBbmhs02Ez6aq4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PrVNav0ZtQyTy6QEs/o4aLAnEqonyPKZfS3cYRWR1e5gwZW/dCP7M6sqU4R+Ndw++bXOfopT9Q2drCguVOGaAK01vNTi8WDpujK2NwSSNVXf0f6ka/7yv6NX+K3XmnvYpnmLNEqjcakGIDGjv7FWgcDpzfG4XJkNUsznQDG1dYE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; dkim=pass (1024-bit key) header.d=prodrive-technologies.com header.i=@prodrive-technologies.com header.b=oZwFIu5O; arc=fail smtp.client-ip=52.101.69.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="yEd2xxua"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4dBTBW16zVz9tl0;
-	Wed, 19 Nov 2025 18:34:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1763573683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e8QG+N4/1kcdXJQ/ndyF1FfjMK6+46fe00n91fXl4zg=;
-	b=yEd2xxualOZVytUgw3Cm0xIpSSC+7i0hA/sy4Jpc/iTSCJvNNzs1XQ0HU5b74/FHvDgBb5
-	X6QCpYcnMXyMVeqbdnCjfWM9ZHsbz95+R8P5Ai/2+V9PS0a33sJsxAa4dDebvAqdic28Av
-	obTly/Pir2GjLVbNv/RvwHWdFWAMGgTjrNtwVYuO4LcNRiHgIxDhq/GKupAlfvIkaat3Ad
-	ZvrX+B+wVyf3eErqKyxWbTdt6/oTWudG1hcfgjwQZ3W7cK7yaSGVoO1IGVXreyah4PpCvC
-	9CuOUsy9k9wCuOuGQ98BEHBzpVFOzZ/Ye1MT8O8XtNXvDRi0ciTzMbnOvUaf9Q==
-Message-ID: <d520f61e-1c51-48dd-aa49-6bf4618d6b54@mailbox.org>
-Date: Wed, 19 Nov 2025 17:09:30 +0100
+	dkim=pass (1024-bit key) header.d=prodrive-technologies.com header.i=@prodrive-technologies.com header.b="oZwFIu5O"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qbw4WzluMVQRfSkJhkkVsym+Bf8Fc1KsQtlniO5dUR4uj8t+dcZ+rpm4rL2JePz81e0rSdczzY3o8oYPGO1iOcEjSfpneLIruHIB/0fj5dP261EII/eHPwDrwuBKw1vPAhhHZKX2ZKlQ+NL8QQ0H5BTxd9jdgsUDxqyO7ktoLEpRVqyCVzFI7eo7+LiJl9D5LMdUVq+c6/PQn7EUo/HjqBeYIOveNf26+jIDrJP9CXVJd7xG5CHpyhhFsPDCexsigjQhkw1TI7V3WuFwYT+/abSrN5p4UL3fRUm5U1Bu9gRRSq+x2hTR77aOqc8x4Ld2Kpg2Lsy2x9Wdg+3T1/HjxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XQg4tAZBpH1N09RtIIXy1ZJrAqKbk4qeWg3i3ZjpOg4=;
+ b=ltKjnYVGS9+thVRQ8g7MsJAyMtw0ggINWQ4ekkEde6MjMjiXfnk0fmgjG/pH2xnd4+1MRfIAId24Xno1MeSP9wE8eGip+NyZPI12W6TzGYHdBctIoYQpswtaCOLGHtocN3u5FRe0l96jOI6myDI9NZfIxdHLQVZD4I7iDTz7NoFJaFqAIyB9c8crf8Fz9WtrwaWyMGKTvVRgN1cTy8Q4SEYRWggBFVnn4R+DlhvgoK/qiAz/zfPRlnSLl8yELcOhTkD9ut9tRCYHrZyVsQkdOnO5FMMyOI/K8bUoI71OGFXPzzguOqN5AaBZBfjrndzOhQ+oLG8l3zPZn3Io8fNu2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=prodrive-technologies.com; dmarc=pass action=none
+ header.from=prodrive-technologies.com; dkim=pass
+ header.d=prodrive-technologies.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=prodrive-technologies.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XQg4tAZBpH1N09RtIIXy1ZJrAqKbk4qeWg3i3ZjpOg4=;
+ b=oZwFIu5OwNgYYif0nx4Svj1lEzwdWRnKCmK78ojNkAIcWeyaBNCBBFm3a1w3zSwEpqHLb50l6bE6bcWgnBA0kXYIaP/bEYPny0aR53/X88RMNeGPHQ+5fUBJJcIKDPPy7+Y4aCFNjZmEYNgui52/M3AiE1FAQZZbjzJMSmJutVM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=prodrive-technologies.com;
+Received: from AS8PR02MB9532.eurprd02.prod.outlook.com (2603:10a6:20b:5a8::17)
+ by DB9PR02MB8298.eurprd02.prod.outlook.com (2603:10a6:10:391::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
+ 2025 18:24:14 +0000
+Received: from AS8PR02MB9532.eurprd02.prod.outlook.com
+ ([fe80::4636:d263:14f1:bced]) by AS8PR02MB9532.eurprd02.prod.outlook.com
+ ([fe80::4636:d263:14f1:bced%4]) with mapi id 15.20.9343.009; Wed, 19 Nov 2025
+ 18:24:14 +0000
+Message-ID: <d453c7e3-022e-4f5b-bdf1-a78ed5cef4f4@prodrive-technologies.com>
+Date: Wed, 19 Nov 2025 19:24:13 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] leds: group-multicolor: Add support for initial value.
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251111204556.2803878-1-martijn.de.gouw@prodrive-technologies.com>
+ <20251119165109.GV1949330@google.com>
+Content-Language: en-US
+From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+In-Reply-To: <20251119165109.GV1949330@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM9P250CA0020.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21c::25) To AS8PR02MB9532.eurprd02.prod.outlook.com
+ (2603:10a6:20b:5a8::17)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] leds: trigger: netdev: Check offload ability on interface
- up
-From: Marek Vasut <marek.vasut@mailbox.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-leds@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Christian Marangi <ansuelsmth@gmail.com>,
- Christophe Roullier <christophe.roullier@foss.st.com>,
- Daniel Golle <daniel@makrotopia.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, kernel@dh-electronics.com,
- linux-stm32@st-md-mailman.stormreply.com, netdev@vger.kernel.org,
- Vladimir Oltean <vladimir.oltean@nxp.com>
-References: <20241001024731.140069-1-marex@denx.de>
- <1d72f370-3409-4b0f-b971-8f194cf1644b@lunn.ch>
- <d0411d89-5c83-47b4-bef9-904b63cbc2c0@denx.de>
- <b4ba27e5-a1cc-4477-a254-a318e586ef2a@mailbox.org>
-Content-Language: en-US
-In-Reply-To: <b4ba27e5-a1cc-4477-a254-a318e586ef2a@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 846c09ea91c3b08f769
-X-MBO-RS-META: sx15x14jwms1as3f6qs156fxnrhnbrkr
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR02MB9532:EE_|DB9PR02MB8298:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4dc8ce3-9844-45c3-c602-08de2798d7e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QVN4UDQ2M0JoWDRPSU5EK0ZZRWtUakd5UE53OVVPR1BBV3BuSnlBbWVVWjBs?=
+ =?utf-8?B?aUh3SFlKd0Q4MnRPZU9iRTYyLzNITnVxRU9zRXYzMGVmSFJHTkN4SlhwcVh1?=
+ =?utf-8?B?OTBiWkJGdHREZ2lTTXlIdHgrdkFDbWx2b1hCaDljN2gzN2JSWlJoTndyWjhZ?=
+ =?utf-8?B?Qlp2ZEE4ald5TDlLTlhIZS96V3IvMnlXbWVnSU4rNkVYRWNiK3NLdEZSanQy?=
+ =?utf-8?B?UXFyRVVNaTVaMUllVkhqZDZCdWUxVFZyRnliQUNEdmFRaE1MT2J1dlVOWUJF?=
+ =?utf-8?B?OXhEUjVlY2poZDVQQWdZL1Y5RFhLa3IyQnhCUFE5YnRmRkRWWHB6OWRTQTU4?=
+ =?utf-8?B?aEVwUEVRaTlYT0FBb2EwY2NMUjNhMWp2TXByaEtKVmlhU216bTAwc1o2S1VM?=
+ =?utf-8?B?T0ErUC84K2VMSW0rUjU4N05xOUhDTjJBYjdSbjdmbE5rTnF4cGM0ZlJWREFj?=
+ =?utf-8?B?OGNWaXlweXhYU1BPODJOWXgvcWhMRFU5ck1zL0J4QTNUcTdRQnE2L2dyaWg5?=
+ =?utf-8?B?anJoNVdORytjcC9tdnByUVFheWZ5Y25iYk9CUjFRNEsvWXFvbTg2cGtJYzM1?=
+ =?utf-8?B?VFY3YitJVXFFeGsrWVJnT2QzaW5qZ2l0V3BGZUEvY00xSnFQWTF1dlZiOFRn?=
+ =?utf-8?B?MGo2VDFPSVVVNTNZdUk5Rndyc0tqQmdYOXF0UlJZdlpQN0t6aWRtVXFLTHo4?=
+ =?utf-8?B?WjJoMmxtbGJXWmxESnh5N1ZHQklValdDMUlBQVRFcXVTMXVwTTNIUDBnbVFr?=
+ =?utf-8?B?T0l5cUhUYU5lMGZ0eW1TRzJreVg5VmdPa1hBVlZUYlNCYXZDeitVSUdHd21m?=
+ =?utf-8?B?MEVEeDh0TW4reWc1dFZqdFR5NFhlYzdHRTg0ZUovWHZncUtzS3JlUEorTVla?=
+ =?utf-8?B?RG1UOTFxZURpRXh5Qk5JaTBjMmxOWGtJT0VUb3BNZ3hwRDYvY2hkTTZ5Rkw0?=
+ =?utf-8?B?U05xUVNXMDF0UTlnKzYydWFqYTlSYXdSZWJKZHJyUzRyaURjRjZaaGM4QTBm?=
+ =?utf-8?B?cGtkcXRtTndDR0k5K0V2K3E2aUpUOGlHL0JmbDdFYlNvVnBqME5NRDR3RFVs?=
+ =?utf-8?B?WGVKdlkvbGR0N2VsRWM1eHNjVmhGUGQyR2ovR1l5dG9lZDNlTWlzN2JsVk9t?=
+ =?utf-8?B?NjdhUG5HL1JuQTQrY1NGL0MvMlVLOUJnRlpvK2RkSHhmVkxTajM3MVgzWngz?=
+ =?utf-8?B?TXlmTXk1dWFlVEdQaFh6STIxVURxbzhKbmF0cmczNVZaUmRSa3VrOVo5WkNU?=
+ =?utf-8?B?NXZ1T3o1Q1pIcWlvTVBPeDhQRklmdkFkN2ZyWXJwM2xxK3E4OWpYUm0zQmZL?=
+ =?utf-8?B?UTBlQStZWGFJLzM4RGhKL1lCeTVBUlc2bmFHV081OU5aK1FybnhvWEQzYU1w?=
+ =?utf-8?B?elRDL1lzT2RQUkVzSkhLOEpsNWM0YlQyaUdZYnpod2FrczlBeDZ4L1JuRjZp?=
+ =?utf-8?B?c0V3aW1uZG95bytubG9jelJTYW9iYXpadU9jSUNXSmpPekJrU1N0ay9oMUdy?=
+ =?utf-8?B?cjdhL1c0UHBSZno3UmxBS3BQTjVGZWVvSkwrdkR6Vm1jZUwwVDFMbnpNWmlE?=
+ =?utf-8?B?NzJHYnZiaFg3TXRZZ01kTFRJRUg3aTNZOFdSWXZ2UnhRR1liL01qRmRYdW5v?=
+ =?utf-8?B?UC91Y2l5Y3RkUUtuRldxRFVBRExGZXlqRFd1M2ZQcUlSVGJGUGlXOFk4b3dI?=
+ =?utf-8?B?WGRmK1ZaeE5NVFFYSEhIYlZmazdYM0dHU3BGaktJU0V5Ulg3MUxHVXkrSEla?=
+ =?utf-8?B?dmhxMENNVVYyMFlzelBxaUxET3lHcVhGNXY3NWw3MC9kZHBoM1hXV05UR2hw?=
+ =?utf-8?B?T09CUFdkM3JzNVFaSVJ6SmkxdlkycE1LM3NCN3oyZ2h3NklEUnNpUWpNS3lz?=
+ =?utf-8?B?MDRWQUZ5cUZLMkZsTGdiV055K1VseWdseEFoWllZTlJxMXlUanUyVXV0RTVr?=
+ =?utf-8?Q?yEWRhGHe4kkR6jZC84sJbngIosy6Vbf+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR02MB9532.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WXVuSjZucUtwWkJicFgyREoxTkdkOWordmlwNnFPcFJwT25NQXpxcmFSTVB0?=
+ =?utf-8?B?YVlVcTMwdUZLdCs3YXMvbVRtRGo5alZadnhEMDVESER6WXhuN1dOK0NUMW1m?=
+ =?utf-8?B?bnJkcU5EWjNaZ0ZWTUNReGFIWHlnMi9aYWhSRjg0MGZ3dXNSYytBRmUyMEJD?=
+ =?utf-8?B?RDBSK3VGcXZaTmxZTEowMWE2K1VUaHJjN3FreVlMd2NTRVh1cVhFeC9QK085?=
+ =?utf-8?B?YnZEamR5K0d4eWVxdnFYdU56SkVVc1NLWjk0OTR4Qy9SOUVibE55b25lbTB0?=
+ =?utf-8?B?UVJON1E5ZE5FZVNtOEc5RWQxSHJ6VGgxQWM3eDhjODU4dEVXaUNpbmJlaXc0?=
+ =?utf-8?B?cU80WkNjUEUzMVViR2lMTW1tNWpvM0FoS0dIbGRGOCtzZGdJdTRremU3a09U?=
+ =?utf-8?B?M2NFVnpBYy9NT2NjY0Radll6ejNJdjd1dENsbkNHZ0VFMEY4blFjZ2tWT2Jq?=
+ =?utf-8?B?KzdaSkNoVzY0WE9qRXpiUng5WFI2aHhsWlorcUJSU0E1Y3Zxa2NLZUhxOVha?=
+ =?utf-8?B?Tmc0YmFJN0lobzRpZ3VCTDVwSzFEVCtKdTMrQWJEalIwS1Z1ZitmdlFmTXpJ?=
+ =?utf-8?B?M3BUajdSdzNHME1jNzhmTU1hTmk4cFpLUWlRYzZ6RWUyRlJNUjk4c2Y4dXZ5?=
+ =?utf-8?B?NVhydEJFUm9VcUhvb0c1c0I0ZytIdEZjUE9UWk42N2ttYzZtWmZwUGFvZXIy?=
+ =?utf-8?B?QVhTSjR2Tzl5NWJtdVlTR1lWUDVRU29wbDlhSUlnNDhPM28xK1VNMHpCWkQ4?=
+ =?utf-8?B?cE1qNlZyb1hwZEFTbUIrYzFFMVNEdXEyK1FHUW9TUEhJZFhrdW5ySjVSaEFC?=
+ =?utf-8?B?MkowdDY1cHBOYS9kOWtBMXlHc3RkU2FnQ2lyNFI5aTk5ZnFQUUZkL0dXOTdW?=
+ =?utf-8?B?V3k2dTcrMW42UkErNjk5OFMyMGQwQ284WWk2dUdiVlcrZXI0UXRka1AzMnFz?=
+ =?utf-8?B?NElZZ3Vsc2RnQ2tmaEY3MTQzeDRHRHA4T2wxVmUxaG82NStlZ0JtMS9jTVVh?=
+ =?utf-8?B?eDh0TEtlcVRoclhTVnZUMmdFS0FPd1doU3VNTU9tYXkwYThHZU9icWY4TnFt?=
+ =?utf-8?B?eHRZZHljTGcvVlBnMTZNWDdtYndJMm5KUEd0R2xBU3VqS2UvUGlCWFVtV1Ny?=
+ =?utf-8?B?RVc1aUZDVTE5Rll5QzczRUtXT0VwVjlUNkIvUko5NTczdHNrMzFVN2JIOENR?=
+ =?utf-8?B?Y05reTl4dEZ5VDVzY2VnK2E3M1B0NVhXTlQxdURXQmVIVnZRQjAxVDdZRTY2?=
+ =?utf-8?B?enVFbkMxTEU3bkhrcFRZN2FZN0I0MDBwK0VQcTNLS0RmRWd0TmVSMHZHK3M2?=
+ =?utf-8?B?NmwyMDBiN0twN1FnMzZjcVdUdG0zdlc1ZW5lQlR3UGtDYXdSVFMzK0RqbGxM?=
+ =?utf-8?B?dm5uNXg2d2lqZjZTZmFpVkRDVnJ6M2lhcDJINHhOYzZrdWNlZXUxNEhZSSsx?=
+ =?utf-8?B?OTA5UUIwS1ljQ0xTbk1FNndxR2RLS0wrZURnSHFpSXJQRjQ5L09MM2E0aDFy?=
+ =?utf-8?B?Vk13SHhYZjlQVEs5Q2tLbi80UU82UkU5VGxDMlBHZWlOaUIvbGNUMjE5QWlL?=
+ =?utf-8?B?cmNlUGdKZURnWnVsblYweTNVd3dvQjJ1Y0dlL1VJcmMwdnlhT20wdDNjQVNB?=
+ =?utf-8?B?YUxWRGxxQW0yMzkvZlRvdWt3VTZxUHdKalQrOXFoM1dXTEV2YWdXWWpwcjJP?=
+ =?utf-8?B?YVpMKzNoNStVUDRndVBjcGJlR005dHlUc2tOc1NCTS9ZdzdyMzNRdjBtTnFw?=
+ =?utf-8?B?Q0VLc0dlV2R5ZEk1STZVRldRMmhrSFVzQVEwdzNQTUkyaWxNRmlEN1pjN0p3?=
+ =?utf-8?B?T2VjaXRIWFBTdWVXRmkzZmpwcGFkSm9TL3NLVERUbWg3ek1uSVRJNTRXNXJO?=
+ =?utf-8?B?Y3J2Zks5Q2VraTJKeWJZSmZ4U2JMMlVXck4zZHJuTHh2cVhtL3Jub3gxSEtH?=
+ =?utf-8?B?MFcxeXlXUFU1c2FxWlpWcDd3M0h6TEpvbi9HeFdaRXBnZmtzKzJkV2h5eWxS?=
+ =?utf-8?B?TGxsUFExa29nMUM0NjYyV3VoUkhHU0h0aGRrK0tXeWpFTnlOUTFyWlQyRjVJ?=
+ =?utf-8?B?TWxMU3hjWFpBWUdRNXNSa2VkeE90cllOWXc3a1E0dkE0bFJqeVBiaVljRXd0?=
+ =?utf-8?B?N3oxRVZOOW85NEVEdjkxR3ZrN3YrTEVrTkt4RTdnQXdjNDcwYXZJV0k5cEUy?=
+ =?utf-8?Q?Ua1zei69zL25mnoRb5pXb+ggzgUXFi+0OuRpcD/T/aCh?=
+X-OriginatorOrg: prodrive-technologies.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4dc8ce3-9844-45c3-c602-08de2798d7e0
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB9532.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 18:24:14.5118
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 612607c9-5af7-4e7f-8976-faf1ae77be60
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fI+Pv0oCXe2ByqnpSMIWexjiK3cZCSgOT0DG6U/mKCfSU71N5QF4JqxbNm8es1MaS1EfxvV8IUN+k50CKdrwv9N6K6/2dWtbeFUtSD1lWOb2kJWX1Q4vlmDDr1BaOQp7G7ldt9z1W2u08T8D2Xf2CA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB8298
 
-On 11/17/25 12:18 PM, Marek Vasut wrote:
+Hi,
 
-Hello one more time,
+On 11/19/2025 5:51 PM, Lee Jones wrote:
+> On Tue, 11 Nov 2025, Martijn de Gouw wrote:
+> 
+>> It's possible to set a default state for leds in the dts with
+>> 'default-state', but this was not reflected when the LEDs are grouped.
+>> This patch adds support for keeping the default-state value.
+>>
+>> Signed-off-by: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
+>> ---
+>>  drivers/leds/rgb/leds-group-multicolor.c | 13 +++++++++++--
+>>  1 file changed, 11 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+>> index 548c7dd63ba1e..b3e46a51dfbc7 100644
+>> --- a/drivers/leds/rgb/leds-group-multicolor.c
+>> +++ b/drivers/leds/rgb/leds-group-multicolor.c
+>> @@ -69,6 +69,7 @@ static int leds_gmc_probe(struct platform_device *pdev)
+>>  	struct mc_subled *subled;
+>>  	struct leds_multicolor *priv;
+>>  	unsigned int max_brightness = 0;
+>> +	unsigned int default_brightness = 0;
+>>  	int i, ret, count = 0, common_flags = 0;
+>>  
+>>  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> @@ -96,6 +97,12 @@ static int leds_gmc_probe(struct platform_device *pdev)
+>>  
+>>  		max_brightness = max(max_brightness, led_cdev->max_brightness);
+>>  
+>> +		/* If any LED is on, set brightness to the max brightness.
+>> +		 * The actual brightness of the LED is set as intensity value.
+>> +		 */
+> 
+> I don't know this code well, but if no one complains, I can take your
+> word for this.
+> 
+> However, the comment needs changing to proper multi-line format.
+> 
+>         /*
+>          * This is the preferred style for multi-line
+>          * comments in the Linux kernel source code.
+>          * Please use it consistently.
+>          *
+>          * Description:  A column of asterisks on the left side,
+>          * with beginning and ending almost-blank lines.
+>          */
 
->>>> On STM32MP13xx with RTL8211F, it is enough to have the following 
->>>> udev rule
->>>> in place, boot the machine with cable plugged in, and the LEDs won't 
->>>> work
->>>> without this patch once the interface is brought up, even if they 
->>>> should:
->>>> "
->>>> ACTION=="add", SUBSYSTEM=="leds", KERNEL=="stmmac-0:01:green:wan", 
->>>> ATTR{trigger}="netdev", ATTR{link_10}="1", ATTR{link_100}="1", 
->>>> ATTR{link_1000}="1", ATTR{device_name}="end0"
->>>> ACTION=="add", SUBSYSTEM=="leds", KERNEL=="stmmac-0:01:yellow:wan", 
->>>> ATTR{trigger}="netdev", ATTR{rx}="1", ATTR{tx}="1", 
->>>> ATTR{device_name} ="end0"
->>>> "
->>>
->>> Nice use of udev. I had not thought about using it for this.
-> 
-> I might have been a bit too hasty with this. The following is only a 
-> quick preliminary FYI, I am still investigating the details.
-> 
-> I observe on 6.18-rc6 (ST STM32MP13xx , so STM32 DWMAC ethernet, and 
-> RTL8211F PHY), that if I use the these udev rules (SoC has two MACs, 
-> there are two rules for each MAC, and 2 rules for each of two LEDs on 
-> each MAC PHY , therefore four rules in total ; the rules for both MACs 
-> are identical):
-> 
-> "
-> ACTION=="add|change", SUBSYSTEM=="leds", 
-> KERNEL=="stmmac-0:01:green:wan", ATTR{trigger}="netdev", ATTR{link_10} 
-> ="1", ATTR{link_100}="1", ATTR{link_1000}="1", ATTR{device_name}="ethsom0"
-> ACTION=="add|change", SUBSYSTEM=="leds", 
-> KERNEL=="stmmac-0:01:yellow:wan", ATTR{trigger}="netdev", ATTR{rx}="1", 
-> ATTR{tx}="1", ATTR{device_name}="ethsom0"
-> 
-> ACTION=="add|change", SUBSYSTEM=="leds", 
-> KERNEL=="stmmac-1:01:green:lan", ATTR{trigger}="netdev", ATTR{link_10} 
-> ="1", ATTR{link_100}="1", ATTR{link_1000}="1", ATTR{device_name}="ethsom1"
-> ACTION=="add|change", SUBSYSTEM=="leds", 
-> KERNEL=="stmmac-1:01:yellow:lan", ATTR{trigger}="netdev", ATTR{rx}="1", 
-> ATTR{tx}="1", ATTR{device_name}="ethsom1"
-> "
-> 
-> I get this backtrace. Notice the "sysfs: cannot create duplicate 
-> filename ..." part , I suspect there is some subtle race condition ?
-> 
-> "
-> sysfs: cannot create duplicate filename '/devices/platform/ 
-> soc/5c007000.bus/5800e000.ethernet/mdio_bus/stmmac-1/stmmac-1:01/leds/ 
-> stmmac-1:01:green:lan/link_10'
-> CPU: 0 UID: 0 PID: 153 Comm: (udev-worker) Not tainted 6.18.0-rc6 #1 
-> PREEMPT
-> Hardware name: STM32 (Device Tree Support)
-> Call trace:
->   unwind_backtrace from show_stack+0x18/0x1c
->   show_stack from dump_stack_lvl+0x54/0x68
->   dump_stack_lvl from sysfs_warn_dup+0x58/0x6c
->   sysfs_warn_dup from sysfs_add_file_mode_ns+0xf0/0x130
->   sysfs_add_file_mode_ns from internal_create_group+0x344/0x480
->   internal_create_group from internal_create_groups+0x48/0x6c
->   internal_create_groups from led_trigger_set+0x1e4/0x278
->   led_trigger_set from led_trigger_write+0xe0/0x118
->   led_trigger_write from sysfs_kf_bin_write+0x98/0xa0
->   sysfs_kf_bin_write from kernfs_fop_write_iter+0x14c/0x198
->   kernfs_fop_write_iter from vfs_write+0x170/0x1d4
->   vfs_write from ksys_write+0x7c/0xd0
->   ksys_write from ret_fast_syscall+0x0/0x54
-> Exception stack(0xedbf1fa8 to 0xedbf1ff0)
-> 1fa0:                   00000006 bec4476c 00000015 bec4476c 00000006 
-> 00000001
-> 1fc0: 00000006 bec4476c 000e7698 00000004 00000006 fffffff7 00000000 
-> 000d1710
-> 1fe0: 00000004 bec44578 b6c34397 b6bb15e6
-> leds stmmac-1:01:green:lan: Failed to add trigger attributes
-> "
-> 
-> If I find out more, I will get back to this thread.
+Will do!
 
-I've been tracking it all the way to kernfs, but so far without much 
-success.
+> 
+>> +		if (led_cdev->brightness)
+>> +			default_brightness = max_brightness;
+>> +
+>>  		count++;
+>>  	}
+>>  
+>> @@ -109,14 +116,16 @@ static int leds_gmc_probe(struct platform_device *pdev)
+>>  
+>>  		subled[i].color_index = led_cdev->color;
+>>  
+>> -		/* Configure the LED intensity to its maximum */
+>> -		subled[i].intensity = max_brightness;
+>> +		/* Configure the LED intensity to its current brightness */
+>> +		subled[i].intensity = DIV_ROUND_CLOSEST(led_cdev->brightness * max_brightness,
+> 
+> How does this work?  Won't this value be huge?
 
-I found commit 52c47742f79d ("leds: triggers: send uevent when changing 
-triggers") which indicates the udev rules above are likely wrong, but 
-they still shouldn't corrupt sysfs the way they do, right ?
+It calculates the intensity of the led with respect to the max_brightness of the whole group.
+So actually it's doing:
+subled[i].intensity = group->max_brightness * (led_cdev->brightness/led_cdev->max_brightness).
 
-If you have any hint how to find out what is actually going on, I would 
-be much grateful. I already tried KASAN on this and LOCKDEP, but neither 
-triggers. I was also adding a lot of trace_printk() into netdev LED 
-trigger, but all I could find is the link_* attributes are removed, then 
-added again, and the kernel complains the link_10 attribute already exists.
+I highest value I could find for a max_brightness is 4096 (12 bit). Maybe some PWM LEDs use up to 16bit?
+So I made the assumption that is should not be an issue.
+I wrote it this way, where the multiplication comes first, because integer divisions don't work well.
+> 
+>> +							led_cdev->max_brightness);
+> 
+> Also we said we were going to set actual brightness with the intensity
+> in the comment above, but we appear to be using max_brightness again?
 
-I also noticed that if I try to list /sys/...stmmac-1:01:green:lan/ 
-directory after the splat with netdev trigger set, the result of the 
-listing is not always the same, sometimes there are the netdev trigger 
-attributes, sometimes not, and sometimes they are corrupted.
+I'll try to clarify the comments.
+
+> 
+>>  	}
+>>  
+>>  	/* Initialise the multicolor's LED class device */
+>>  	cdev = &priv->mc_cdev.led_cdev;
+>>  	cdev->brightness_set_blocking = leds_gmc_set;
+>>  	cdev->max_brightness = max_brightness;
+>> +	cdev->brightness = default_brightness;
+>>  	cdev->color = LED_COLOR_ID_MULTI;
+>>  	priv->mc_cdev.num_colors = count;
+>>  
+>> -- 
+>> 2.39.2
+>>
+> 
+
+-- 
+Martijn de Gouw
+Designer
+Prodrive Technologies B.V.
+Mobile: +31 63 17 76 161
+Phone:  +31 40 26 76 200
+
