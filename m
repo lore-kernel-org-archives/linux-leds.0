@@ -1,33 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966A536CE09;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9683836CE14;
 	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763658270; cv=none; b=PEqF7VPoQtQ/D6AP/SGJ95MXNC/REcMpFn+5xhz0sjZaWQMIUK4G0WMKY81J2fyb3QhdfcPppzXo0jZSHf2egg1NvY344VK5vCQBEgbbB0/gvbcUhfia3fUXeIAyztHoQkzGybd8vqXL+vT30yz8nuerzBg+1BDeexPLBVvqM+E=
+	t=1763658270; cv=none; b=MmS8NWrIVCNvLQjLwUzSqK2vR/hGgCUYYDDMPiBXC/uT4SXm2v8QltTKIVUFIYeMf6ziGKkrLEI+m3ti7hjlJn/m48j4NY5VnYFAZzdrknNxIec+cEQIngZP7AuEMong1p7xS6yLyoi1KwIYJxVkDV3kclLSZJmkd7IytgIEneQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763658270; c=relaxed/simple;
-	bh=cMhXmygdZf3b3AgzDH9NcbI8NnOSqpVAq9jj95gyvyo=;
+	bh=nTMOUodaz/NXhF4L146vsKpXqIbsHlK/9A+E95H6+W8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PEI6nKT5z+BYcclEZRQ5MkxVpnnFHE6vGO8nWfX6QAu093XDvqzfduCQ1dUKpHtSGGpnTe6m7v+uwyPkVnQFPgsTzpDpEYloHyAuGAvCDGJFl+fRhgMZmolBLEW5yPYMPcBdIhVNOjl9lU/tGzqdsQ8wRh7JJJ7HTa9uW2MGWbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=utzYGQLe; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=RroAHK46Q6wkmN5n51n7kE56OLN+5tIeu02N2aRQS+pkkogxQBr8ZMgLl9YC6QxU5HGY89W/xpZG9Ti9HmYLihOjI3J42hR/j3bPrLDQR3pJ9TEj8aP9Z+I3BQQoI3nm5raZMd5T0hMAuRF/rEKUK9DYk4hVnHT3WBYSOclVQjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UPeZXQ/I; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="utzYGQLe"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 44188C4AF0B;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UPeZXQ/I"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 18DEFC2BCB1;
 	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1763658270; bh=cMhXmygdZf3b3AgzDH9NcbI8NnOSqpVAq9jj95gyvyo=;
+	t=1763658270; bh=nTMOUodaz/NXhF4L146vsKpXqIbsHlK/9A+E95H6+W8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=utzYGQLeeTgpbxZyUm7zv7MNN29MeJaYaecc/9gOeixWGdpTR90Ba0BbGE/2gVwhI
-	 0Xj1+4L9H7parTn4K15Xop8No5e4mzjTCJhTotdGjncgTKQSIIKibY3sLzqm1zwi1u
-	 eb63XyavldhAPSBA8Idjk2HJZqS5FlxnOsrRx6sc=
+	b=UPeZXQ/Ie7dawUwYl2DbX4e8OXa4Qc3hg8G6IUUSKb1JmERE3YqQx/2xS5hi3zUaO
+	 rzF2szYu98U912HcBkz2D4ZNco2+IKhBOXGLN7P3lnJ0JRjf2yVhL2YFxPe3aSMnEV
+	 OrriGGh7ZIh9AeoQqjPVjTxaYXkDO1SU72cQ2PW8=
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C07CCF9C72;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11496CF9C71;
 	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 From: Richard Leitner <richard.leitner@linux.dev>
-Date: Thu, 20 Nov 2025 18:04:28 +0100
-Subject: [PATCH v9 8/8] media: i2c: ov9282: dynamic flash_duration maximum
+Date: Thu, 20 Nov 2025 18:04:25 +0100
+Subject: [PATCH v9 5/8] media: i2c: ov9282: add strobe output enable v4l2
+ control
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -35,8 +36,8 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251120-ov9282-flash-strobe-v9-8-6c9e3a4301d7@linux.dev>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251120-ov9282-flash-strobe-v9-5-6c9e3a4301d7@linux.dev>
 References: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
 In-Reply-To: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -48,109 +49,85 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
  Hans Verkuil <hverkuil@kernel.org>
 X-Mailer: b4 0.15-dev-a3fc8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=3530;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=2315;
  i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=cMhXmygdZf3b3AgzDH9NcbI8NnOSqpVAq9jj95gyvyo=;
- b=ASi/PHKnG/Uq4cD9JkIM5gYB9bcvH64WBXzx+H7fM6dd/c0Xrqrcfk16qCQ7bNOTmJq/v5TPL
- ZKqbcb0WsejDQ5ehs/7qaDCpXNz/FPJqbvwPMo6O93bNrG1hPUTyTLH
+ bh=nTMOUodaz/NXhF4L146vsKpXqIbsHlK/9A+E95H6+W8=;
+ b=2b0xkeVfzf3ElTahX4TWTx/S2S5AgXb0c+L82SUCB76PxTy44j6SCPYHnWAsmIQnuLIVI3CEx
+ tTLZzgKL5/MCwU/m9s8U8bCn22anRVUZmGcVpH5V02x+MXpE6jbSN99
 X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
  pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
 X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
  with auth_id=350
 
-This patch sets the current exposure time as maximum for the
-flash_duration control. As Flash/Strobes which are longer than the
-exposure time have no effect.
+Add V4L2_CID_FLASH_STROBE_OE enable/disable support using the
+"strobe output enable" feature of the sensor.
+
+All values are based on the OV9281 datasheet v1.53 (january 2019) and
+tested using an ov9281 VisionComponents module.
 
 Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 ---
- drivers/media/i2c/ov9282.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+ drivers/media/i2c/ov9282.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index 823fde579e07..33404630cc0c 100644
+index e67cff6c30ff..6afce803a049 100644
 --- a/drivers/media/i2c/ov9282.c
 +++ b/drivers/media/i2c/ov9282.c
-@@ -199,6 +199,7 @@ struct ov9282_mode {
-  * @exp_ctrl: Pointer to exposure control
-  * @again_ctrl: Pointer to analog gain control
-  * @pixel_rate: Pointer to pixel rate control
-+ * @flash_duration: Pointer to flash duration control
-  * @vblank: Vertical blanking in lines
-  * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
-  * @cur_mode: Pointer to current selected sensor mode
-@@ -221,6 +222,7 @@ struct ov9282 {
- 		struct v4l2_ctrl *again_ctrl;
- 	};
- 	struct v4l2_ctrl *pixel_rate;
-+	struct v4l2_ctrl *flash_duration;
- 	u32 vblank;
- 	bool noncontinuous_clock;
- 	const struct ov9282_mode *cur_mode;
-@@ -612,6 +614,15 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
- 					mode->vblank_max, 1, mode->vblank);
+@@ -670,6 +670,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
+ 				current_val);
  }
  
-+static u32 ov9282_exposure_to_us(struct ov9282 *ov9282, u32 exposure)
++static int ov9282_set_ctrl_flash_strobe_oe(struct ov9282 *ov9282, bool enable)
 +{
-+	/* calculate exposure time in µs */
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+	u32 trow_us = frame_width / (ov9282->pixel_rate->val / 1000000UL);
++	u32 current_val;
++	int ret;
 +
-+	return exposure * trow_us;
++	ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1, &current_val);
++	if (ret)
++		return ret;
++
++	if (enable)
++		current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
++	else
++		current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
++
++	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1, current_val);
 +}
 +
  /**
-  * ov9282_update_exp_gain() - Set updated exposure and gain
-  * @ov9282: pointer to ov9282 device
-@@ -623,9 +634,10 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
- static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- {
- 	int ret;
-+	u32 exposure_us = ov9282_exposure_to_us(ov9282, exposure);
- 
--	dev_dbg(ov9282->dev, "Set exp %u, analog gain %u",
--		exposure, gain);
-+	dev_dbg(ov9282->dev, "Set exp %u (~%u us), analog gain %u",
-+		exposure, exposure_us, gain);
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 1);
- 	if (ret)
-@@ -636,6 +648,12 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
- 		goto error_release_group_hold;
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-+	if (ret)
-+		goto error_release_group_hold;
-+
-+	ret = __v4l2_ctrl_modify_range(ov9282->flash_duration,
-+				       0, exposure_us, 1,
-+				       OV9282_STROBE_FRAME_SPAN_DEFAULT);
- 
- error_release_group_hold:
- 	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
-@@ -1423,6 +1441,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 	const struct ov9282_mode *mode = ov9282->cur_mode;
- 	struct v4l2_fwnode_device_properties props;
- 	u32 hblank_min;
-+	u32 exposure_us;
+  * ov9282_set_ctrl() - Set subdevice control
+  * @ctrl: pointer to v4l2_ctrl structure
+@@ -736,6 +753,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+ 		ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
+ 				       (ctrl->val + ov9282->cur_mode->width) >> 1);
+ 		break;
++	case V4L2_CID_FLASH_STROBE_OE:
++		ret = ov9282_set_ctrl_flash_strobe_oe(ov9282, ctrl->val);
++		break;
+ 	default:
+ 		dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+ 		ret = -EINVAL;
+@@ -1325,7 +1345,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
  	u32 lpfr;
  	int ret;
  
-@@ -1495,8 +1514,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
- 	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
- 			  V4L2_CID_FLASH_STROBE_OE, 0, 1, 1, 0);
+-	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
++	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 11);
+ 	if (ret)
+ 		return ret;
  
--	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
--			  0, 13900, 1, 8);
-+	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
-+	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
-+						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
-+						   0, exposure_us,
-+						   1, OV9282_STROBE_FRAME_SPAN_DEFAULT);
+@@ -1390,6 +1410,10 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+ 						OV9282_TIMING_HTS_MAX - mode->width,
+ 						1, hblank_min);
  
++	/* Flash/Strobe controls */
++	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
++			  V4L2_CID_FLASH_STROBE_OE, 0, 1, 1, 0);
++
  	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
  	if (!ret) {
+ 		/* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
 
 -- 
 2.47.3
