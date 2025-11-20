@@ -1,34 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626B636C5B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966A536CE09;
 	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763658270; cv=none; b=QcCMxZL6amNMDFhfnvAxrLd2rkGNE8pe0NpgpToTbDOyjHQRjDCX3VuNFV2f4y83IKCOQmYX6NIU1DvlWuFkEqjlJZXNbb3GCMCzKQbP651gPIQGLLiDA3ab65ukB3RaIV0lr2bdnlBzP2FV+OWs90z8SDJso7h6QZN8SBQauDQ=
+	t=1763658270; cv=none; b=PEqF7VPoQtQ/D6AP/SGJ95MXNC/REcMpFn+5xhz0sjZaWQMIUK4G0WMKY81J2fyb3QhdfcPppzXo0jZSHf2egg1NvY344VK5vCQBEgbbB0/gvbcUhfia3fUXeIAyztHoQkzGybd8vqXL+vT30yz8nuerzBg+1BDeexPLBVvqM+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763658270; c=relaxed/simple;
-	bh=tBekpthiQ63+sVQeAxYqbIcCsnnV2MHwSMvelKk34hk=;
+	bh=cMhXmygdZf3b3AgzDH9NcbI8NnOSqpVAq9jj95gyvyo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jSaHQl/9A8vX00rNiw+VCrTF5MmmQyxoaxYQ2a9Y7Qzm6igEsABst2euQ6TcHxaExDnlF8aU65TvR9FrNXUicsvAwE5pp5eWEKvCsghQWuQpuhz6IzhXbzFm3JT3zXl2TVG1ydGon+vV5QfnDEooAOk1qSZTLb8WyMctsdJy27A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xDwB1pAz; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=PEI6nKT5z+BYcclEZRQ5MkxVpnnFHE6vGO8nWfX6QAu093XDvqzfduCQ1dUKpHtSGGpnTe6m7v+uwyPkVnQFPgsTzpDpEYloHyAuGAvCDGJFl+fRhgMZmolBLEW5yPYMPcBdIhVNOjl9lU/tGzqdsQ8wRh7JJJ7HTa9uW2MGWbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=utzYGQLe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xDwB1pAz"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 015DAC19423;
-	Thu, 20 Nov 2025 17:04:29 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="utzYGQLe"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44188C4AF0B;
+	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1763658270; bh=tBekpthiQ63+sVQeAxYqbIcCsnnV2MHwSMvelKk34hk=;
+	t=1763658270; bh=cMhXmygdZf3b3AgzDH9NcbI8NnOSqpVAq9jj95gyvyo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=xDwB1pAzVWOp0Iu3B26ifqSwOlL1Tn7cLp/JJTKwapRsuqVC7Ggx/BSwpsHSFMD5S
-	 LRfY2j2JUDN31fwmjvw6LUG/PR3vznsg9IUzl3WYT63pnD8GomYVTwlPhTbzOxOepE
-	 7ZhGqMehkjqgLsK2NT25FH6bllYRXI0ksLTKRp00=
+	b=utzYGQLeeTgpbxZyUm7zv7MNN29MeJaYaecc/9gOeixWGdpTR90Ba0BbGE/2gVwhI
+	 0Xj1+4L9H7parTn4K15Xop8No5e4mzjTCJhTotdGjncgTKQSIIKibY3sLzqm1zwi1u
+	 eb63XyavldhAPSBA8Idjk2HJZqS5FlxnOsrRx6sc=
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D9CCF9C67;
-	Thu, 20 Nov 2025 17:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C07CCF9C72;
+	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 From: Richard Leitner <richard.leitner@linux.dev>
-Date: Thu, 20 Nov 2025 18:04:23 +0100
-Subject: [PATCH v9 3/8] Documentation: uAPI: media: add
- V4L2_CID_FLASH_{DURATION,STROBE_OE}
+Date: Thu, 20 Nov 2025 18:04:28 +0100
+Subject: [PATCH v9 8/8] media: i2c: ov9282: dynamic flash_duration maximum
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -37,7 +36,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251120-ov9282-flash-strobe-v9-3-6c9e3a4301d7@linux.dev>
+Message-Id: <20251120-ov9282-flash-strobe-v9-8-6c9e3a4301d7@linux.dev>
 References: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
 In-Reply-To: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -49,96 +48,109 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
  Hans Verkuil <hverkuil@kernel.org>
 X-Mailer: b4 0.15-dev-a3fc8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=3443;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=3530;
  i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=tBekpthiQ63+sVQeAxYqbIcCsnnV2MHwSMvelKk34hk=;
- b=PrF3n1h9n7HI1En9GXwytLNh/GG8DiYMLV9mlLVe8MGCr3t0l5rPgsFe6WiYT1je1/pATjoQo
- rMADjuvZ4L+AiKM9fcNjuIUr+xssPToHDu7ZY04ydl7RyqDiphXC88J
+ bh=cMhXmygdZf3b3AgzDH9NcbI8NnOSqpVAq9jj95gyvyo=;
+ b=ASi/PHKnG/Uq4cD9JkIM5gYB9bcvH64WBXzx+H7fM6dd/c0Xrqrcfk16qCQ7bNOTmJq/v5TPL
+ ZKqbcb0WsejDQ5ehs/7qaDCpXNz/FPJqbvwPMo6O93bNrG1hPUTyTLH
 X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
  pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
 X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
  with auth_id=350
 
-Add the new strobe duration and hardware strobe output enable to v4l
-uAPI documentation. Additionally add labels for cross-referencing v4l
-controls.
+This patch sets the current exposure time as maximum for the
+flash_duration control. As Flash/Strobes which are longer than the
+exposure time have no effect.
 
 Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 ---
- .../userspace-api/media/v4l/ext-ctrls-flash.rst    | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/media/i2c/ov9282.c | 30 ++++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-index d22c5efb806a..7cf0d33e79ff 100644
---- a/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-+++ b/Documentation/userspace-api/media/v4l/ext-ctrls-flash.rst
-@@ -57,6 +57,8 @@ Flash Control IDs
- ``V4L2_CID_FLASH_CLASS (class)``
-     The FLASH class descriptor.
+diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+index 823fde579e07..33404630cc0c 100644
+--- a/drivers/media/i2c/ov9282.c
++++ b/drivers/media/i2c/ov9282.c
+@@ -199,6 +199,7 @@ struct ov9282_mode {
+  * @exp_ctrl: Pointer to exposure control
+  * @again_ctrl: Pointer to analog gain control
+  * @pixel_rate: Pointer to pixel rate control
++ * @flash_duration: Pointer to flash duration control
+  * @vblank: Vertical blanking in lines
+  * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
+  * @cur_mode: Pointer to current selected sensor mode
+@@ -221,6 +222,7 @@ struct ov9282 {
+ 		struct v4l2_ctrl *again_ctrl;
+ 	};
+ 	struct v4l2_ctrl *pixel_rate;
++	struct v4l2_ctrl *flash_duration;
+ 	u32 vblank;
+ 	bool noncontinuous_clock;
+ 	const struct ov9282_mode *cur_mode;
+@@ -612,6 +614,15 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
+ 					mode->vblank_max, 1, mode->vblank);
+ }
  
-+.. _v4l2-cid-flash-led-mode:
++static u32 ov9282_exposure_to_us(struct ov9282 *ov9282, u32 exposure)
++{
++	/* calculate exposure time in µs */
++	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
++	u32 trow_us = frame_width / (ov9282->pixel_rate->val / 1000000UL);
 +
- ``V4L2_CID_FLASH_LED_MODE (menu)``
-     Defines the mode of the flash LED, the high-power white LED attached
-     to the flash controller. Setting this control may not be possible in
-@@ -80,6 +82,8 @@ Flash Control IDs
++	return exposure * trow_us;
++}
++
+ /**
+  * ov9282_update_exp_gain() - Set updated exposure and gain
+  * @ov9282: pointer to ov9282 device
+@@ -623,9 +634,10 @@ static int ov9282_update_controls(struct ov9282 *ov9282,
+ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+ {
+ 	int ret;
++	u32 exposure_us = ov9282_exposure_to_us(ov9282, exposure);
  
+-	dev_dbg(ov9282->dev, "Set exp %u, analog gain %u",
+-		exposure, gain);
++	dev_dbg(ov9282->dev, "Set exp %u (~%u us), analog gain %u",
++		exposure, exposure_us, gain);
  
+ 	ret = ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 1);
+ 	if (ret)
+@@ -636,6 +648,12 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+ 		goto error_release_group_hold;
  
-+.. _v4l2-cid-flash-strobe-source:
+ 	ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
++	if (ret)
++		goto error_release_group_hold;
 +
- ``V4L2_CID_FLASH_STROBE_SOURCE (menu)``
-     Defines the source of the flash LED strobe.
++	ret = __v4l2_ctrl_modify_range(ov9282->flash_duration,
++				       0, exposure_us, 1,
++				       OV9282_STROBE_FRAME_SPAN_DEFAULT);
  
-@@ -96,6 +100,12 @@ Flash Control IDs
-       - The flash strobe is triggered by an external source. Typically
- 	this is a sensor, which makes it possible to synchronise the
- 	flash strobe start to exposure start.
-+        This method of controlling flash LED strobe has two additional
-+        prerequisites: the strobe source's :ref:`strobe output
-+        <v4l2-cid-flash-strobe-oe>` must be enabled (if available)
-+        and the flash controller's :ref:`flash LED mode
-+        <v4l2-cid-flash-led-mode>` must be set to
-+        ``V4L2_FLASH_LED_MODE_FLASH``.
+ error_release_group_hold:
+ 	ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
+@@ -1423,6 +1441,7 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+ 	const struct ov9282_mode *mode = ov9282->cur_mode;
+ 	struct v4l2_fwnode_device_properties props;
+ 	u32 hblank_min;
++	u32 exposure_us;
+ 	u32 lpfr;
+ 	int ret;
  
+@@ -1495,8 +1514,11 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+ 	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
+ 			  V4L2_CID_FLASH_STROBE_OE, 0, 1, 1, 0);
  
+-	v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
+-			  0, 13900, 1, 8);
++	exposure_us = ov9282_exposure_to_us(ov9282, OV9282_EXPOSURE_DEFAULT);
++	ov9282->flash_duration = v4l2_ctrl_new_std(ctrl_hdlr,
++						   &ov9282_ctrl_ops, V4L2_CID_FLASH_DURATION,
++						   0, exposure_us,
++						   1, OV9282_STROBE_FRAME_SPAN_DEFAULT);
  
-@@ -186,3 +196,35 @@ Flash Control IDs
-     charged before strobing. LED flashes often require a cooldown period
-     after strobe during which another strobe will not be possible. This
-     is a read-only control.
-+
-+.. _v4l2-cid-flash-duration:
-+
-+``V4L2_CID_FLASH_DURATION (integer)``
-+    Duration of the flash strobe pulse generated by the strobe source, when
-+    using external strobe. This control shall be implemented by the device
-+    generating the hardware flash strobe signal, typically a camera sensor,
-+    connected to a flash controller.
-+
-+    The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
-+    must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
-+    mode of operation. For more details please also take a look at the
-+    documentation there.
-+
-+    The unit should be microseconds (µs) if possible.
-+
-+.. _v4l2-cid-flash-strobe-oe:
-+
-+``V4L2_CID_FLASH_STROBE_OE (boolean)``
-+    Enables the output of a hardware strobe signal from the strobe source,
-+    when using external strobe. This control shall be implemented by the device
-+    generating the hardware flash strobe signal, typically a camera sensor,
-+    connected to a flash controller.
-+
-+    Provided the signal generating device driver supports it, the length of the
-+    strobe signal can be configured by adjusting its
-+    :ref:`flash duration <v4l2-cid-flash-duration>`.
-+
-+    The flash controllers :ref:`strobe source <v4l2-cid-flash-strobe-source>`
-+    must be configured to ``V4L2_FLASH_STROBE_SOURCE_EXTERNAL`` for this
-+    mode of operation. For more details please also take a look at the
-+    documentation there.
+ 	ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+ 	if (!ret) {
 
 -- 
 2.47.3
