@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACF236C598;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6262133C19E;
 	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763658270; cv=none; b=W2LbgLOI0+wyk+L7LGkyQCxBlpc9MPJ5NY3JXIyUaD5VE9FXkANwTD4YnQGdTiq2yx/sgaod40f/PGl0DfKTqwVCoJNYEQtpFr9NPXVF0pj7dgyi94MhJLEgtCzLBuLB3YmtARxbPbr8/nDbztWrs2rRvGfXWOsdak7ZkIkkNTM=
+	t=1763658270; cv=none; b=QkOh0KxqE7BlhlA68ltObXK1Fy3rvOOSV225jKKFkKtl55nLIqgMQIhq2smD5mGbqxVFpGdROElvwHFa4cUHzY499gm4kRKuCvJES1IrAvIZg35Srlq2VyTZeWmF3BGzOdPfvFmdymyWRzMNcPl1gFY4lZXDOOcjvQKjoRbl7wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1763658270; c=relaxed/simple;
-	bh=HEPG8i7Tu7I33PPWqSL35rVstPZw+8wnVPXzsGuFHqQ=;
+	bh=9v4+dv39d0N137tk5o+zSa4BYkpVhhMeNIOdncb3etE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jinNNy+yWLtBlhgcAh/iY05xQrZI+H2urYyr9qZo68Iq0aD/C1TnbqNx2rwLzN4l4RVwZCgalHM7gRvSvsrARXrYzZUzVK3fY+5xIJqxF4pIJABC8Jga7/ErLYZRs8XKey69O6ln1LkMaoRClltd5QIkfN/60dNhkqqG1mE6svM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DmbZOjnF; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=PH5jLWQP6NajJTqDM/mG93fxr2o0TaWpsnExTB7ISoyZY/1B2IK4o/hM9qbzzMTe2aKG2GyvoUR4f4Lt3PHv1goNeL33qFifilX1gJtdlwA/Vspo9LiMYaaQpGobnNKYr/a5Lqa8QntvhHgBhr7F9dKe8bzdNtaJKPcvZ+LJYPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ed6Gyp41; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DmbZOjnF"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DB88CC116D0;
-	Thu, 20 Nov 2025 17:04:29 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ed6Gyp41"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0B1B0C2BC9E;
+	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1763658269; bh=HEPG8i7Tu7I33PPWqSL35rVstPZw+8wnVPXzsGuFHqQ=;
+	t=1763658270; bh=9v4+dv39d0N137tk5o+zSa4BYkpVhhMeNIOdncb3etE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DmbZOjnFJ2fDfXnabx2NZ3yVS8zCdY1/v2RhFCUyLf2sVPk+Wrf+nCO5mSP5Lx2kY
-	 3uOLqmeSHuEfLcARtvk4ZCWERTH108dpi0SkEuHrn4VZPcNV6kArA59HdYxwPV/fWP
-	 hGK7WCgcXkMRyq/Hv3qglJxhIc7ij7T041qDTQwk=
+	b=ed6Gyp417FLaCPPmBx79vdgxyHpHeyNhHUOAqwHPzo3O8BQCQNBNvoW/9dyGcW/vK
+	 9yfTUv9Ywt7aAa65OI8uRtYcSvzYI50qlXB5FYzgzC26POR16HTbeCOuPeq/+3j3HX
+	 M85jw/+0H2bDYzvm4WU32j3agWYd5JqDvggx3wBY=
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB39FCF9C6B;
-	Thu, 20 Nov 2025 17:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DEDCF9C72;
+	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
 From: Richard Leitner <richard.leitner@linux.dev>
-Date: Thu, 20 Nov 2025 18:04:21 +0100
-Subject: [PATCH v9 1/8] media: v4l: ctrls: add a control for flash/strobe
- duration
+Date: Thu, 20 Nov 2025 18:04:24 +0100
+Subject: [PATCH v9 4/8] media: i2c: ov9282: add output enable register
+ definitions
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -37,7 +37,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251120-ov9282-flash-strobe-v9-1-6c9e3a4301d7@linux.dev>
+Message-Id: <20251120-ov9282-flash-strobe-v9-4-6c9e3a4301d7@linux.dev>
 References: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
 In-Reply-To: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -49,54 +49,75 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
  Hans Verkuil <hverkuil@kernel.org>
 X-Mailer: b4 0.15-dev-a3fc8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=1816;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=2135;
  i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=HEPG8i7Tu7I33PPWqSL35rVstPZw+8wnVPXzsGuFHqQ=;
- b=vXyGWnjzJkMlgTI3oqAKHnjRXvlVzfTEJT9UrS31rdViQSzfhnfI64gPpfKZeKniqhDBfbHrk
- Dhkh3VxxH45AMtPqFEIpTAxhFmWLxzuiJqU9WRmLxjV9KvnNPJbItHL
+ bh=9v4+dv39d0N137tk5o+zSa4BYkpVhhMeNIOdncb3etE=;
+ b=XH2DmoHBE34RUeqgE96SJEBnOASiqIqOxI2l0gGAwf1WzYvTiyDVuXY/lNXYZt1l8WvXddzDn
+ /ubgcgQeHVMDASWTEIi2YpMniNHWC3P5oBnIk+4Hhj+DotJM14FVhnl
 X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
  pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
 X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
  with auth_id=350
 
-Add a V4L2_CID_FLASH_DURATION control to set the duration of a
-flash/strobe pulse. This controls the length of the flash/strobe pulse
-output by device (typically a camera sensor) and connected to the flash
-controller. This is different to the V4L2_CID_FLASH_TIMEOUT control,
-which is implemented by the flash controller and defines a limit after
-which the flash is "forcefully" turned off again.
+Add #define's for the output enable registers (0x3004, 0x3005, 0x3006),
+also known as SC_CTRL_04, SC_CTRL_05, SC_CTRL_04. Use those register
+definitions instead of the raw values in the `common_regs` struct.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+All values are based on the OV9281 datasheet v1.53 (january 2019).
+
+Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 ---
- drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
- include/uapi/linux/v4l2-controls.h        | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/media/i2c/ov9282.c | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-index ad41f65374e2..4848423205ff 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-@@ -1135,6 +1135,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_FLASH_FAULT:		return "Faults";
- 	case V4L2_CID_FLASH_CHARGE:		return "Charge";
- 	case V4L2_CID_FLASH_READY:		return "Ready to Strobe";
-+	case V4L2_CID_FLASH_DURATION:		return "Strobe Duration";
+diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+index a9f6176e9729..e67cff6c30ff 100644
+--- a/drivers/media/i2c/ov9282.c
++++ b/drivers/media/i2c/ov9282.c
+@@ -37,6 +37,29 @@
+ #define OV9282_REG_ID		0x300a
+ #define OV9282_ID		0x9281
  
- 	/* JPEG encoder controls */
- 	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 2d30107e047e..9830833b48a5 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -1186,6 +1186,7 @@ enum v4l2_flash_strobe_source {
- 
- #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
- #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
-+#define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
- 
- 
- /* JPEG-class control IDs */
++/* Output enable registers */
++#define OV9282_REG_OUTPUT_ENABLE4	0x3004
++#define OV9282_OUTPUT_ENABLE4_GPIO2	BIT(1)
++#define OV9282_OUTPUT_ENABLE4_D9	BIT(0)
++
++#define OV9282_REG_OUTPUT_ENABLE5	0x3005
++#define OV9282_OUTPUT_ENABLE5_D8	BIT(7)
++#define OV9282_OUTPUT_ENABLE5_D7	BIT(6)
++#define OV9282_OUTPUT_ENABLE5_D6	BIT(5)
++#define OV9282_OUTPUT_ENABLE5_D5	BIT(4)
++#define OV9282_OUTPUT_ENABLE5_D4	BIT(3)
++#define OV9282_OUTPUT_ENABLE5_D3	BIT(2)
++#define OV9282_OUTPUT_ENABLE5_D2	BIT(1)
++#define OV9282_OUTPUT_ENABLE5_D1	BIT(0)
++
++#define OV9282_REG_OUTPUT_ENABLE6	0x3006
++#define OV9282_OUTPUT_ENABLE6_D0	BIT(7)
++#define OV9282_OUTPUT_ENABLE6_PCLK	BIT(6)
++#define OV9282_OUTPUT_ENABLE6_HREF	BIT(5)
++#define OV9282_OUTPUT_ENABLE6_STROBE	BIT(3)
++#define OV9282_OUTPUT_ENABLE6_ILPWM	BIT(2)
++#define OV9282_OUTPUT_ENABLE6_VSYNC	BIT(1)
++
+ /* Exposure control */
+ #define OV9282_REG_EXPOSURE	0x3500
+ #define OV9282_EXPOSURE_MIN	1
+@@ -213,9 +236,9 @@ static const struct ov9282_reg common_regs[] = {
+ 	{0x0302, 0x32},
+ 	{0x030e, 0x02},
+ 	{0x3001, 0x00},
+-	{0x3004, 0x00},
+-	{0x3005, 0x00},
+-	{0x3006, 0x04},
++	{OV9282_REG_OUTPUT_ENABLE4, 0x00},
++	{OV9282_REG_OUTPUT_ENABLE5, 0x00},
++	{OV9282_REG_OUTPUT_ENABLE6, OV9282_OUTPUT_ENABLE6_ILPWM},
+ 	{0x3011, 0x0a},
+ 	{0x3013, 0x18},
+ 	{0x301c, 0xf0},
 
 -- 
 2.47.3
