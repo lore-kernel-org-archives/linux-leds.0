@@ -1,175 +1,61 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9678936CE10;
-	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.bugwerft.de (mail.bugwerft.de [46.23.86.59])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AD234FF65
+	for <linux-leds@vger.kernel.org>; Fri, 21 Nov 2025 11:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.23.86.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763658270; cv=none; b=R5xQFahbg1egJH1EyBLEYdqURDlDRlnmc0RbXlUI+or2KRzIDZYc27/4aMd0GQEZ15R8R8GtOpZgKI16P2YToaPv7RkBlZKTSF5L5jO4PgttXkrFYAPXu0bnuP8rB5aFkEUMnS4HJOJLyYTYC4xUkQRvlJWl0BZg3OXbrq9G61w=
+	t=1763724984; cv=none; b=st7LyhqvaGniLDcYIvpdOgcDI2Rln1K24AVML638R5yEczyx/ORQaahOQes3u+CvnVcJMXlBQU1tCKpujWeeVV46LxquEvSJ7w56mkgFL47wEHkanIU+xp7hb8AhfJtMP5CKRAOEY9+0FLdyUsi9NIl3D8YwpZrE5VgzNJ2wURM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763658270; c=relaxed/simple;
-	bh=/QE3iIievH2JfYAOnD9AGXz516t94bu88M9zf7e76u8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HDerR9PqsDUnh8H0+ZHzQT30wSk9kb7a/IWrSHSm1lkiTf8WfkSDlhiTBpHYoSwARJk5K2MGAoSQubpai3E6+TDv945pvY1RO+p55ZiFdhduOe/DsSRnE6B5MFgOEuKJzKdvJV5dKATrwd3/WNOQa7NItbf2FnFyB9uzoyTXKUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h+f48USO; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h+f48USO"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3709BC19421;
-	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux.dev; s=korg;
-	t=1763658270; bh=/QE3iIievH2JfYAOnD9AGXz516t94bu88M9zf7e76u8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=h+f48USONloultW8TGoY0RJFm6wwMXKTPK2+L4myvHc5iSG0L4vznWkLYGJ2ojYZi
-	 qg1498yi73X3Im0FXlpxpUJQGLggLTIepF00nZ6t8kEA+bsno0haR7QuLlVRL5+0Lc
-	 UF2uDV8kJ/wMpaDIGnNcjdHE+LxMUQK5lEqRnSPg=
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC47CF9C6F;
-	Thu, 20 Nov 2025 17:04:30 +0000 (UTC)
-From: Richard Leitner <richard.leitner@linux.dev>
-Date: Thu, 20 Nov 2025 18:04:27 +0100
-Subject: [PATCH v9 7/8] media: i2c: ov9282: implement try_ctrl for
- strobe_duration
+	s=arc-20240116; t=1763724984; c=relaxed/simple;
+	bh=/a545e6fZRml0lFSUSAtl/PqAMTBrvfjRiZVHm6Q4M0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M6RYP6xiJejF/CqzSNSmUQADaNDj4WDhj3FlcE3/MrjCiklttRYb5bdLZg45QkUyYlPZDXazEpbizQCAC3S06v/mP4hHhZXjyc1O4KDWtbnZ9qn+p4UBJiFmo0vP4FXn2xz0Ceutgvh8LfXNHG1Su7RZbnESX3WDOuOUacYfSjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=holoplot.com; spf=fail smtp.mailfrom=holoplot.com; arc=none smtp.client-ip=46.23.86.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=holoplot.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=holoplot.com
+Received: from hq-00595.pfsense.f14 (p4ff24940.dip0.t-ipconnect.de [79.242.73.64])
+	by mail.bugwerft.de (Postfix) with ESMTPSA id C8739281ED5;
+	Fri, 21 Nov 2025 11:36:14 +0000 (UTC)
+From: Daniel Mack <daniel.mack@holoplot.com>
+To: linux-leds@vger.kernel.org
+Cc: lee@kernel.org,
+	Daniel Mack <daniel@zonque.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v3 1/3] dt-bindings: leds: add issi,is31fl3293 to leds-is31fl32xx
+Date: Fri, 21 Nov 2025 12:35:55 +0100
+Message-ID: <20251121113557.77418-2-daniel.mack@holoplot.com>
+X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251121113557.77418-1-daniel.mack@holoplot.com>
+References: <20251121113557.77418-1-daniel.mack@holoplot.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251120-ov9282-flash-strobe-v9-7-6c9e3a4301d7@linux.dev>
-References: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
-In-Reply-To: <20251120-ov9282-flash-strobe-v9-0-6c9e3a4301d7@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, Richard Leitner <richard.leitner@linux.dev>, 
- Hans Verkuil <hverkuil@kernel.org>
-X-Mailer: b4 0.15-dev-a3fc8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1763658268; l=3724;
- i=richard.leitner@linux.dev; s=20250225; h=from:subject:message-id;
- bh=/QE3iIievH2JfYAOnD9AGXz516t94bu88M9zf7e76u8=;
- b=IenrCX+qe6VwATgYXmlAB2f+uwXpAmN7+tpKaZeFDEFs4FT1PqjK8LTmMJUUnyZ+gtsU+VKaY
- +iIy981Qxu8CrtK6lYtzDUidEzugT3/DZKprz6cKv+GfHJwD86yD1IN
-X-Developer-Key: i=richard.leitner@linux.dev; a=ed25519;
- pk=8hZNyyyQFqZ5ruVJsSGBSPIrmJpfDm5HwHU4QVOP1Pk=
-X-Endpoint-Received: by B4 Relay for richard.leitner@linux.dev/20250225
- with auth_id=350
 
-As the granularity of the hardware supported values is lower than the
-control value, implement a try_ctrl() function for
-V4L2_CID_FLASH_DURATION. This function calculates the nearest possible
-µs strobe duration for the given value and returns it back to the
-caller.
+From: Daniel Mack <daniel@zonque.org>
 
-Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+This variant supports 3 channels with 4096 brightness steps.
+
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/media/i2c/ov9282.c | 55 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 52 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-index 26296dc1d1b9..823fde579e07 100644
---- a/drivers/media/i2c/ov9282.c
-+++ b/drivers/media/i2c/ov9282.c
-@@ -9,6 +9,7 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/i2c.h>
-+#include <linux/math.h>
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-@@ -128,6 +129,8 @@
- #define OV9282_REG_MIN		0x00
- #define OV9282_REG_MAX		0xfffff
- 
-+#define OV9282_STROBE_SPAN_FACTOR	192
-+
- static const char * const ov9282_supply_names[] = {
- 	"avdd",		/* Analog power */
- 	"dovdd",	/* Digital I/O power */
-@@ -691,9 +694,8 @@ static int ov9282_set_ctrl_flash_strobe_oe(struct ov9282 *ov9282, bool enable)
- 	return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1, current_val);
- }
- 
--static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-+static u32 ov9282_us_to_flash_duration(struct ov9282 *ov9282, u32 value)
- {
--	int ret;
- 	/*
- 	 * Calculate "strobe_frame_span" increments from a given value (µs).
- 	 * This is quite tricky as "The step width of shift and span is
-@@ -703,7 +705,27 @@ static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
- 	 * The formula below is interpolated from different modes/framerates
- 	 * and should work quite well for most settings.
- 	 */
--	u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+
-+	return value * OV9282_STROBE_SPAN_FACTOR / frame_width;
-+}
-+
-+static u32 ov9282_flash_duration_to_us(struct ov9282 *ov9282, u32 value)
-+{
-+	/*
-+	 * Calculate back to microseconds from "strobe_frame_span" increments.
-+	 * As the calculation in ov9282_us_to_flash_duration uses an integer
-+	 * divison round up here.
-+	 */
-+	u32 frame_width = ov9282->cur_mode->width + ov9282->hblank_ctrl->val;
-+
-+	return DIV_ROUND_UP(value * frame_width, OV9282_STROBE_SPAN_FACTOR);
-+}
-+
-+static int ov9282_set_ctrl_flash_duration(struct ov9282 *ov9282, u32 value)
-+{
-+	int ret;
-+	u32 val = ov9282_us_to_flash_duration(ov9282, value);
- 
- 	ret = ov9282_write_reg(ov9282, OV9282_REG_STROBE_FRAME_SPAN, 1,
- 			       (val >> 24) & 0xff);
-@@ -798,9 +820,36 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
- 	return ret;
- }
- 
-+static int ov9282_try_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct ov9282 *ov9282 =
-+		container_of_const(ctrl->handler, struct ov9282, ctrl_handler);
-+
-+	if (ctrl->id == V4L2_CID_FLASH_DURATION) {
-+		u32 us = ctrl->val;
-+		u32 fd = ov9282_us_to_flash_duration(ov9282, us);
-+
-+		/* get nearest strobe_duration value */
-+		u32 us0 = ov9282_flash_duration_to_us(ov9282, fd);
-+		u32 us1 = ov9282_flash_duration_to_us(ov9282, fd + 1);
-+
-+		if (abs(us1 - us) < abs(us - us0))
-+			ctrl->val = us1;
-+		else
-+			ctrl->val = us0;
-+
-+		if (us != ctrl->val)
-+			dev_dbg(ov9282->dev, "using next valid strobe_duration %u instead of %u\n",
-+				ctrl->val, us);
-+	}
-+
-+	return 0;
-+}
-+
- /* V4l2 subdevice control ops*/
- static const struct v4l2_ctrl_ops ov9282_ctrl_ops = {
- 	.s_ctrl = ov9282_set_ctrl,
-+	.try_ctrl = ov9282_try_ctrl,
- };
- 
- /**
-
+diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+index 926c2117942c..7082ed186dd9 100644
+--- a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
++++ b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+@@ -10,6 +10,7 @@ Required properties:
+ 	issi,is31fl3235
+ 	issi,is31fl3218
+ 	issi,is31fl3216
++	issi,is31fl3293
+ 	si-en,sn3218
+ 	si-en,sn3216
+ - reg: I2C slave address
 -- 
-2.47.3
-
+2.51.1
 
