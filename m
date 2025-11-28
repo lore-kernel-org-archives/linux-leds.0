@@ -1,153 +1,95 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476DF332EA5;
-	Fri, 28 Nov 2025 17:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDE22080C8;
+	Fri, 28 Nov 2025 19:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764352743; cv=none; b=jdClCoyRXKHmU2mE4/hm2azKE2PixuaYGtaFk9BUG+8cdTnbnAWhlR9zN4GcqJ9NSIcSkM+Lq/51qXOwXAo5oMM8sM8DnMgpjMOVZjeZ587igKrAtHvVEgNBSm55EHRUyuV3V6v7WZy7JRYvP10/7wCqy/JvzaT/W8EWydafUSE=
+	t=1764357600; cv=none; b=hr4cfBJuDv5LE28I6+1DUMh+8cxUX//iO+8OVD5fV42XF3G30qAA+UW7s3UpSFrrowWTiG4vMqpo3LGk7E/f4SGlSgPKTCck/LtC3JAcEnJW6ukk61XVY+kfMr9nvEWnmS+4ZPUxzFDxi+Tr27dXrQKAZeSZ++V/Ya1geaFRRzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764352743; c=relaxed/simple;
-	bh=eIR+4ZoRXo9gVjdTs/J+esokOeV0XYwD4+B14GAEskM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLuNtkSvB/li2XHITkIwhIxHMocWAhtX1Ldwp7bObHMcRC/PYAa+JzMqmszQz2swKaN3NEcg+RGRj2lGVbW1hY0BU1dckWcwkyD/PWoyCTLk4P1tbfWbDErQOKs+9ZbFbPNShnD71AH/G2ju2BdLX4sAtsvnpYotNf+E+VW/aC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space; spf=pass smtp.mailfrom=timmermann.space; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timmermann.space
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timmermann.space
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dJ1J75dScz9t8m;
-	Fri, 28 Nov 2025 18:58:47 +0100 (CET)
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of linux@timmermann.space designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=linux@timmermann.space
-From: Lukas Timmermann <linux@timmermann.space>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@timmermann.space
-Subject: [PATCH v12 0/2] Support for Osram as3668 LED driver
-Date: Fri, 28 Nov 2025 18:58:25 +0100
-Message-ID: <20251128175827.649481-1-linux@timmermann.space>
+	s=arc-20240116; t=1764357600; c=relaxed/simple;
+	bh=dTkANfMGELC3lBBkiGRU6SrZpu6EpsHNDVpjSuigasA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=MQeuk1pnnFhVkf8O8lx+xZ7i7Qeimq9Bpu6O04j5mEIoRxzkxHGMWro0RGppIyp9H3jae49dWtMSkSQCqewZ1mrG0PPItwyhR5GJxm6StldYhz8C0H552D+n87jVgB0SWlM1j1x+vC1Uhj19Y5YzKBdfO5d7Q3JAnij+O6VjOYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmeTvPuV; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmeTvPuV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A805C4CEF1;
+	Fri, 28 Nov 2025 19:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764357598;
+	bh=dTkANfMGELC3lBBkiGRU6SrZpu6EpsHNDVpjSuigasA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ZmeTvPuVnLVm4XEV+kHaxbPTKdnnxpr7CHeNoShPX576G5V6U0T5V7IlLnbjo2Gte
+	 5kMdywSvxQbx79gbtmdeauCKDAxgy0lLN/gUeS6rvqtHQqJ1xwJvVKrbBOtKb2mflY
+	 nrvfWFixcSq/c5cHQnBPg8vg80ft9BEQVgC9F3h4cFnab5Yha7H3JbBcw73o2t0+YB
+	 1lO0Oaku6CwKVGonf9IFez9Gqq2Yhm2H+RSQ9NHSIs+eM6TbrN767vRjI8nUCJ7jfR
+	 FbsDiLOslXmlczOko3GACiJmuFk9yw+5Jrftwisvm/hH9bvNFumUOceb9t3fXYW/5A
+	 syWynqU6ZWYZw==
+Date: Fri, 28 Nov 2025 13:19:56 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4dJ1J75dScz9t8m
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: lee@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ krzk+dt@kernel.org, linux-kernel@vger.kernel.org, pavel@kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-leds@vger.kernel.org
+To: Lukas Timmermann <linux@timmermann.space>
+In-Reply-To: <20251128175827.649481-2-linux@timmermann.space>
+References: <20251128175827.649481-1-linux@timmermann.space>
+ <20251128175827.649481-2-linux@timmermann.space>
+Message-Id: <176435759680.2396163.4980372483978246141.robh@kernel.org>
+Subject: Re: [PATCH v12 1/2] dt-bindings: leds: Add new as3668 support
 
-This patch adds basic support for the as3668 driver IC via I2C interface. 
-The IC is capable of driving four individual LEDs up to 25.5mA per 
-channel. Hardware blinking would be theoretically possible, but this chip
-only supports a few set on/off-delays which makes using that feature 
-unfeasable, therefore my driver doesn't offer that capability. 
-It's intended applications is in mobile devices such as phones, 
-tablets and cameras. This driver was tested and is working on 
-a google-manta which is running postmarketOS with a near mainline kernel.
-Also there is a patch in the linux mailing list for that device:
-https://lore.kernel.org/all/20251120201958.1970828-1-linux@timmermann.space/
-The register names and values are taken from the official datasheet which
-can be found here:
-https://www.mouser.com/datasheet/2/588/AS3668_DS000196_1-00-1512816.pdf
 
-Please note: This is my first suggested patch to the kernel. 
-I've read the docs in regards to the led subsystem, 
-coding style and submission of patches, 
-but I'm still a bit unsure about the general workflow. 
+On Fri, 28 Nov 2025 18:58:26 +0100, Lukas Timmermann wrote:
+> The bindings are incomplete, as the GPIO/Audio Input pin
+> is still undocumented. The hardware used for testing this patch series
+> does not allow modification, so the mentioned pin has been omitted.
+> 
+> Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/leds/ams,as3668.yaml  | 74 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 80 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/ams,as3668.yaml
+> 
 
-I will try my best.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Changes in v12:
-- Fixed error handling in ..channel_mode_set(). (@Lee)
-- Link to v11: https://lore.kernel.org/all/20251125114015.355487-1-linux@timmermann.space/
-Changes in v11:
-- Adding mask and register to struct instead of led_id. (@Lee)
-- Renaming reg variables to be more clear. (@Lee)
-- Simplified calling of ..channel_mode_set(). (@Lee)
-- Removed unnecessary pointer dereferencing. (@Lee)
-- Changed error type in ..probe() to -EINVAL. (@Lee)
-- Reworded some error messages to be more clear. (@Lee)
-- Removed error message when removing module. (@Lee)
-- Link to v10: https://lore.kernel.org/all/20251117020008.316648-1-linux@timmermann.space/
-Changes in v10:
-- Reworded some error messages to be more clear. (@Lee)
-- Removed newline. (@Lee)
-- Added enabling and disabling of channels during brightness set. (@Lee)
-- Rearranged and renamed constants.
-- Link to v9: https://lore.kernel.org/all/20251014152604.852487-1-linux@timmermann.space/
-Changes in v9:
-- Tabbed out values. (@Lee)
-- Removed newlines. (@Lee)
-- Renamed chip id constant and variables to be more clear. (@Lee)
-- Removed unnecessary comments. (@Lee)
-- Removed unnecessary debug message. (@Lee)
-- Separate declaration and assignment of err variable. (@Lee)
-- Link to v8: https://lore.kernel.org/all/20250808213143.146732-1-linux@timmermann.space/
-Changes in v8:
-- Rearranged constants.
-- Removed more newlines.
-- Changed error messages to be more clear.
-- Renamed variables.
-- Removed revision check.
-- Removed extra i2c read&write functions.
-- Made initalisation code more readable with bitmasks.
-- The code now wraps around before 100 chars instead of 80.
-- Link to v7: https://lore.kernel.org/all/20250708141114.134950-1-linux@timmermann.space/
-Changes in v7:
-- Simplified multiple error messages. They now use dev_err_probe().
-- Removed some newlines.
-- Link to v6: https://lore.kernel.org/all/20250611083151.22150-1-linux@timmermann.space/
-Changes in v6:
-- Fixed missing error handling during init
-- Fixed missing newline in error messages
-- Fixed size calculation for memory allocation
-- Fixed error handling for memory allocation
-- Link to v5: https://lore.kernel.org/lkml/20250608231854.75668-1-linux@timmermann.space/
-Changes in v5:
-- Fixed debug and error messages using wrong format specifiers.
-- Fixed missing include bitwise.h.
-- Changed commit message for dt file to fit expected style.
-- Link to v4: https://lore.kernel.org/lkml/20250607215049.29259-1-linux@timmermann.space/
-Changes in v4:
-- Fixed some mistakes made in the dt file pointed out in v3.
-- Swapped dt and driver in patch series. DT now comes first.
-- Fixed errors in Kconfig due to last minute changes.
-- Added dt file into MAINTAINERS file.
-- Link to v3: https://lore.kernel.org/lkml/20250604225838.102910-2-linux@timmermann.space/
-Changes in v3:
-- Fixed an extra whitespace in the dt bindings documentation.
-- Sent patch to all related lists and maintainers.
-- Link to v2: https://lore.kernel.org/lkml/20250531120715.302870-4-linux@timmermann.space/
-Changes in v2:
-- Fixed reading led subnodes in dt incorrectly, 
-  which caused wrong numbering and a segfault when removing the driver module
-- Fixed calling of_property_read_u8 with an int, causing a compiler error
-- Added more error checking during writes to the i2c bus
-- Link to v1: https://lore.kernel.org/linux-leds/20250530184219.78085-3-linux@timmermann.space/
+yamllint warnings/errors:
 
-Signed-off-by: Lukas Timmermann <linux@timmermann.space>
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/thermal/thermal-zones.example.dtb: /example-0/soc/thermal-sensor@c263000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-zones.example.dtb: /example-0/soc/thermal-sensor@c263000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-zones.example.dtb: /example-0/soc/thermal-sensor@c265000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-zones.example.dtb: /example-0/soc/thermal-sensor@c265000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-sensor.example.dtb: /example-0/soc/thermal-sensor@c263000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-sensor.example.dtb: /example-0/soc/thermal-sensor@c263000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-sensor.example.dtb: /example-0/soc/thermal-sensor@c265000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
+Documentation/devicetree/bindings/thermal/thermal-sensor.example.dtb: /example-0/soc/thermal-sensor@c265000: failed to match any schema with compatible: ['qcom,sdm845-tsens', 'qcom,tsens-v2']
 
-Lukas Timmermann (2):
-  dt-bindings: leds: Add new as3668 support
-  leds: as3668: Driver for the ams Osram 4-channel i2c LED driver
+doc reference errors (make refcheckdocs):
 
- .../devicetree/bindings/leds/ams,as3668.yaml  |  74 +++++++
- MAINTAINERS                                   |   7 +
- drivers/leds/Kconfig                          |  13 ++
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-as3668.c                    | 201 ++++++++++++++++++
- 5 files changed, 296 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/ams,as3668.yaml
- create mode 100644 drivers/leds/leds-as3668.c
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251128175827.649481-2-linux@timmermann.space
 
--- 
-2.52.0
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
