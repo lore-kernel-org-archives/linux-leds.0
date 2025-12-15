@@ -1,116 +1,233 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB1C291864
-	for <linux-leds@vger.kernel.org>; Mon, 15 Dec 2025 13:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82127322B8E
+	for <linux-leds@vger.kernel.org>; Mon, 15 Dec 2025 17:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765805265; cv=none; b=r1x+xqt17/7UT0eHbsg14iorZrmdivloiWxOEAqB0x3n+SJyv5/AURLE63udcc2ebbke0pqowidN8gBGtYR8Sf8YjUugXYBUz5PWyutas9i4pYXQBgnpOZ0rEKF8HEXtqh9stI8ajXCLyvMWKqiGXMBHXEuCBnjW11qj4YJnOEs=
+	t=1765821092; cv=none; b=mdFdUS5+8bEr860xHAk6Kr3xhs+t4U4PzpuKDD0oAIJtvfqkVZNWh2tL4lvNW/o5cm0hsJMkBO+2ibt2q7EhEfqt5//B629EiMKx63mC9sNtnDAiUVzlIw9YoZyKaC536NZtFs5MOzHeZcc/AOcpwAiCV/9ZnGdQXIuSJUU1xaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765805265; c=relaxed/simple;
-	bh=Bsr8lXOOTjj/n6mLLqWuV51jaTy3lwf0AoraTFJMdPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K0W8VHnCNaTU3w7Cj3wsheDLmiEh902SdWNcxcAQ4WegGj7XXTFuuCsfWpUeOsKUBGC1ZnLwv9C5bOmjNDZW1WUNDtvc6eqFUtbeXC3uEPl2bb3Ngj8qjTyBmOy3A+dxBUoU3Tw6Ij4HS8jQV0L0nXk2xQGvYYbdK8ubRmWBwrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpIBVJNj; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1765821092; c=relaxed/simple;
+	bh=aSBlYp4Qha3Zya9u9B9Eqkd2Og1xwSLgf/0MSa/tgIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=enCxV5+nZxZJs6ZHTvr7iq4nHz6Wz+IS44UPMNxeF1FLGG8EwilSOzcp59e5Q4ZqcdOSxHWw/NBvPJhB2miAU/Kcu2YO+alnH1F7ygI0B1t+d65bZLCTKgKdkxN6EYpu5KUy8HeQOqwvD5g7Pl7bGkDWVKvsKGn9q420xRYwKbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=FGJOSTTs; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpIBVJNj"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-595819064cdso5617147e87.0
-        for <linux-leds@vger.kernel.org>; Mon, 15 Dec 2025 05:27:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765805261; x=1766410061; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NmBz14k7F2CZy0azsuA9GLkJkSsaTofyi1phzk7lTs8=;
-        b=YpIBVJNjZHQ9bdmFAzaABDq5AZRqGMQMW3xYW9+dxDZIfc6REMbe80koFgXWSjR+y5
-         j1RgwXGXUyiIQrPLLm7hkm3DmRJ5eIEAr4J4OANjsoESpXh+QwlCt7OUfMKXZewMHZFB
-         k4PfyyCzpgplKEhKZbhP5PtMIyrd1+NcU/1MUCgaf495nm5n5zrcjN5HRADDCFwOwwPo
-         DUrOvMzZMcMGxw73kBuB8L/ruXXLL5kR/6V9d0OyLK8StwWNGj11vyOyN1v9d02wZTW1
-         0Y/XL6/xAUsRdvzS/ZN+JuApylRdMM6IpNlG8GHwNQuMJ4oc1EdqdukkiNl525lsRuRd
-         hsfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765805261; x=1766410061;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NmBz14k7F2CZy0azsuA9GLkJkSsaTofyi1phzk7lTs8=;
-        b=bmshthDtGwi0IKz3YjJ2q7TXa70PE6klLKYkgDGJLFOI/ASxZpBZ+OLKWFLXTOc8A9
-         zQyfVoSq6kXTcHmoZ6Z13uRYaX/iE0ZqIWXJVMmZNyspgZnVZNeAMJKd/sCTUNUnyZgx
-         lKQ4jaXQ0eMCOROo6vudt0D21pz9VnnlQpUvJPTqpK8ok7jzXcXDtdUuh1NxdWRzNgKt
-         Ecv8QhOjPXNShj8UNKaQdrIf4FhKFa2L0oMyl4zAqIjoNkHsFK9XVmciQ5XWb6F67tuW
-         bRo7ZNHA2YfYfSQy993Y1K+T1ly5x5l4pw6FDpWLzdzar4MlldLYnz/qkh5PaW7DD6xZ
-         N1vA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+kfJuii/DoQ7hoeXhi7FqO3EFnb8L3INLLmX44Ny3+LE1WM1yLmY9Vd5L+007HvUcc8GtOgQVqcOi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxObQ0/wqbLucwleo+RkIaZKbpeMIUhD37zqmM+f9wTiuorJr5c
-	VQooLrrsDqBt2kqk+2P1X3h3GkweDDObHCXzVScS619bmx3eLdnfBOBa
-X-Gm-Gg: AY/fxX5MoDvv1fz5dMZA3U0I8YxdL/1bf6lB8gdpsVH3vmvYct6MRBUzLHxb0DwMvun
-	FZY3f+8Vsp0BdJpGM/pp57ziLF3qkz0Fh2QVtteNZcbFdIUKoRcT5ZoJB9oZRIAxChPy/BfZ7js
-	oHkjplO6pDzCy5mHSqKzAa2K4SYlvLlBt4SmJGckZrMx+V2biofTREMQIze/g1TzaOKNfhJYfeJ
-	wJGO2ZF2sgqDgXY7Oha0iwJgaNg5zzrS2H/BazWSR8ElWcS4KBYp++PdUydyINtw9Ep8l/IYRHw
-	T4rFcpOUqTzFmqyWUj7ysy/RaZW8Mlw61XN5PlWj5dXLlqZ9SXDa7FrRVo7jhqoX6u1RTv3EqQH
-	kFtoVAqwMTp2vAhwNxD9BIc92XbW9H9BJYvW3Xi4u9xHBOQ85MpYYr6hX5eLPFSVZgRUEoYx1p+
-	C4MfpamOvFktNcjYGODczdwasxArkgSPblZ9TnnwsyTDth5TjteBXTVC38ZApnu8EpMArSWzjQE
-	uiyVQQ=
-X-Google-Smtp-Source: AGHT+IHtF9/8gCCfZYm0qwIEIZc0jQIgrSD13Q3Kck8IHizEYRr0Rndx3rb7OqBExae0ujerBryxlg==
-X-Received: by 2002:a05:6512:3d1e:b0:598:ea79:a5ca with SMTP id 2adb3069b0e04-598fa644a9dmr3696212e87.15.1765805261049;
-        Mon, 15 Dec 2025 05:27:41 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-598f2f37ae8sm5611235e87.15.2025.12.15.05.27.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Dec 2025 05:27:40 -0800 (PST)
-Message-ID: <a52fe6d9-35fd-4046-aa76-ba4051a47ee5@gmail.com>
-Date: Mon, 15 Dec 2025 15:27:39 +0200
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="FGJOSTTs"
+Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 8D40E6B1FA3;
+	Mon, 15 Dec 2025 18:51:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1765821082;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gEGImmEoawlt13KAG1f2EyWrDC7lMFFAt0RzzgLEZgY=;
+	b=FGJOSTTsorQ/xw9TU04JIkEyx6oVDN4DfXcrZjneOR3ERty10VM6TjQMzg1eOu+Ncqu0Fg
+	nRvYR/6TgXO8FReKJeRfCwol9CTmVBHRN6suHtaG+8rEaH7CVf2cr5aGFJRuYtIGSecEze
+	+jt0q/cHCvmgG726BxoSpr2SMQj4JzlEQueAI4HyYukWClB0fU7apTd1A+EI1u3v70G2xt
+	f9tmWxWnJnINCtXT69DbCDM4Xm0gwT0jYYCxJ9jk1dCO4hAoOXtj6cJVthfp2JqP14ntWG
+	3Wx0+pA+H+G7DU2aSSd7Q/BffuUgNGW8UORcUkdlOaU0vJoYhLrXgUR5sZJE5w==
+From: Sander Vanheule <sander@svanheule.net>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v9 1/6] dt-bindings: leds: Binding for RTL8231 scan matrix
+Date: Mon, 15 Dec 2025 18:51:09 +0100
+Message-ID: <20251215175115.135294-2-sander@svanheule.net>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20251215175115.135294-1-sander@svanheule.net>
+References: <20251215175115.135294-1-sander@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v6 00/17] Support ROHM BD72720 PMIC
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-References: <cover.1765804226.git.mazziesaccount@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <cover.1765804226.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 15/12/2025 15:16, Matti Vaittinen wrote:
-> Resending the v6
+Add a binding description for the Realtek RTL8231's LED support, which
+consists of up to 88 LEDs arranged in a number of scanning matrices.
 
-// snip
-
-> This series depends on
-> 5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
-> which is in power-supply tree, for-next. Thus, the series is based on
-> it.
-
-I forgot to update this. The 5bff79dad20a is now in v6.19-rc1, and as I 
-wrote above, this is now based on v6.19-rc1, not power-supply tree's 
-for-next.
-
-Yours,
-	-- Matti
-
+Signed-off-by: Sander Vanheule <sander@svanheule.net>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Changes since v8:
+- Add Rob's tag
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+Changes since v7:
+- Move $ref and add unevaluatedProperties for led nodes
+- Drop example redundant with MFD binding
+
+Changes since v6:
+- Relax description formatting
+- Enforce address format for led node names
+- Use absolute paths for schema references
+---
+ .../bindings/leds/realtek,rtl8231-leds.yaml   | 136 ++++++++++++++++++
+ 1 file changed, 136 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+
+diff --git a/Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml b/Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+new file mode 100644
+index 000000000000..c19911582a08
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+@@ -0,0 +1,136 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/realtek,rtl8231-leds.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Realtek RTL8231 LED scan matrix.
++
++maintainers:
++  - Sander Vanheule <sander@svanheule.net>
++
++description: |
++  The RTL8231 has support for driving a number of LED matrices, by scanning
++  over the LEDs pins, alternatingly lighting different columns and/or rows.
++
++  This functionality is available on an RTL8231, when it is configured for use
++  as an MDIO device, or SMI device.
++
++  In single color scan mode, 88 LEDs are supported. These are grouped into
++  three output matrices:
++    - Group A of 6×6 single color LEDs. Rows and columns are driven by GPIO
++      pins 0-11.
++               L0[n]    L1[n]    L2[n]    L0[n+6]  L1[n+6]  L2[n+6]
++                |        |        |        |        |        |
++       P0/P6  --<--------<--------<--------<--------<--------< (3)
++                |        |        |        |        |        |
++       P1/P7  --<--------<--------<--------<--------<--------< (4)
++                |        |        |        |        |        |
++       P2/P8  --<--------<--------<--------<--------<--------< (5)
++                |        |        |        |        |        |
++       P3/P9  --<--------<--------<--------<--------<--------< (6)
++                |        |        |        |        |        |
++       P4/P10 --<--------<--------<--------<--------<--------< (7)
++                |        |        |        |        |        |
++       P5/P11 --<--------<--------<--------<--------<--------< (8)
++               (0)      (1)      (2)      (9)     (10)     (11)
++    - Group B of 6×6 single color LEDs. Rows and columns are driven by GPIO
++      pins 12-23.
++               L0[n]    L1[n]    L2[n]    L0[n+6]  L1[n+6]  L2[n+6]
++                |        |        |        |        |        |
++      P12/P18 --<--------<--------<--------<--------<--------< (15)
++                |        |        |        |        |        |
++      P13/P19 --<--------<--------<--------<--------<--------< (16)
++                |        |        |        |        |        |
++      P14/P20 --<--------<--------<--------<--------<--------< (17)
++                |        |        |        |        |        |
++      P15/P21 --<--------<--------<--------<--------<--------< (18)
++                |        |        |        |        |        |
++      P16/P22 --<--------<--------<--------<--------<--------< (19)
++                |        |        |        |        |        |
++      P17/P23 --<--------<--------<--------<--------<--------< (20)
++              (12)     (13)     (14)    (21)      (22)     (23)
++    - Group C of 8 pairs of anti-parallel (or bi-color) LEDs. LED selection is
++      provided by GPIO pins 24-27 and 29-32, polarity selection by GPIO 28.
++               P24     P25  ...  P30     P31
++                |       |         |       |
++      LED POL --X-------X---/\/---X-------X (28)
++              (24)    (25)  ... (31)    (32)
++
++  In bi-color scan mode, 72 LEDs are supported. These are grouped into four
++  output matrices:
++    - Group A of 12 pairs of anti-parallel LEDs. LED selection is provided
++      by GPIO pins 0-11, polarity selection by GPIO 12.
++    - Group B of 6 pairs of anti-parallel LEDs. LED selection is provided
++      by GPIO pins 23-28, polarity selection by GPIO 21.
++    - Group C of 6 pairs of anti-parallel LEDs. LED selection is provided
++      by GPIO pins 29-34, polarity selection by GPIO 22.
++    - Group of 4×6 single color LEDs. Rows are driven by GPIO pins 15-20,
++      columns by GPIO pins 13-14 and 21-22 (shared with groups B and C).
++           L2[n]    L2[n+6]   L2[n+12]  L2[n+18]
++            |        |         |         |
++       +0 --<--------<---------<---------< (15)
++            |        |         |         |
++       +1 --<--------<---------<---------< (16)
++            |        |         |         |
++       +2 --<--------<---------<---------< (17)
++            |        |         |         |
++       +3 --<--------<---------<---------< (18)
++            |        |         |         |
++       +4 --<--------<---------<---------< (19)
++            |        |         |         |
++       +6 --<--------<---------<---------< (20)
++          (13)     (14)      (21)      (22)
++
++  This node must always be a child of a 'realtek,rtl8231' node.
++
++properties:
++  $nodename:
++    const: led-controller
++
++  compatible:
++    const: realtek,rtl8231-leds
++
++  "#address-cells":
++    const: 2
++
++  "#size-cells":
++    const: 0
++
++  realtek,led-scan-mode:
++    $ref: /schemas/types.yaml#/definitions/string
++    description:
++      Specify the scanning mode the chip should run in. See general description
++      for how the scanning matrices are wired up.
++    enum: [single-color, bi-color]
++
++patternProperties:
++  "^led@([1-2]?[0-9]|3[0-1]),[0-2]":
++    $ref: /schemas/leds/common.yaml#
++    description:
++      LEDs are addressed by their port index and led index. Ports 0-23 always
++      support three LEDs. Additionally, but only when used in single color scan
++      mode, ports 24-31 support two LEDs.
++    type: object
++
++    properties:
++      reg:
++        items:
++          - items:
++              - description: port index
++                maximum: 31
++              - description: led index
++                maximum: 2
++
++    required:
++      - reg
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++  - realtek,led-scan-mode
++
++additionalProperties: false
+-- 
+2.52.0
+
