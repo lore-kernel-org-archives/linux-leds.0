@@ -1,40 +1,38 @@
 Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894DB322C60
-	for <linux-leds@vger.kernel.org>; Mon, 15 Dec 2025 17:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902B0322B62
+	for <linux-leds@vger.kernel.org>; Mon, 15 Dec 2025 17:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765821093; cv=none; b=cc79lFkns9io4CL4yJHvulStLkNrsfgpiHjlZF5Z9NBveEzROnss1hp8ZCG7zQ4xX/pUi7HwUDUw33k0DngsuJIm7F3jOIhDAIWKCmEprNRtg9jQQnUPPlktPbRFJnPJHI7Ma99gMTUHex8FqPl4Ru+HvlVpOmWdIH1/1YL6V94=
+	t=1765821093; cv=none; b=TD/gjKOUQHOpptWKVo4LjuKy3Y5NNv6iaXvytyNU1SqTodaBwBR/1S8zANe9WL2SCf3ND5kDEkvSmW+qgNVx+yEvGsFb/NpeO/SoXoeWhNC5wofc5AmiyEtBd2IifZ0FLBMyRfUN4by+aLWoD2aE/rKtTaMdw8xqs3KRqi1hlz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1765821093; c=relaxed/simple;
-	bh=mTyQaZ69SeO9vT10+lRvofSbw5uX9i/W9l5IGoIyBEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h9C7e0GRwhD8YIW+xCihFBq4q+ImukQ7ua8nupmfAVhSlsvCjEiFHEz1Jzh72ughg3gY56iOIaCFEa1x9m7zvqeQzRHxp7KZ1mdC2u/3utlUjwr9FuxNvQHDMi/XRJrpLMQgjWU/wGvNX3UMhdDj9XYHpB3HvVWHD+JvTsGDpzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=mzRmMPzS; arc=none smtp.client-ip=84.16.241.116
+	bh=hGESFDHN0cScS8HX+PUDAVWfBBgxxynfSPIQOpSViA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K+7PLp2sWlJRvp0+tE2c6FYJbXAokfb0CN1FeR3akpeAza7pGryhmF8rWRxvY0bv/X+a/9VwatXsHMrLQUdQECJnPg4n/LQXdbd9C67M92YF2g73T1evYLyDPTZ3N9GL2A5zcVP+BzA8IGqnppum+TNDAOk+7wU7dSxo2Z9xStk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=P0uuvtuo; arc=none smtp.client-ip=84.16.241.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="mzRmMPzS"
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="P0uuvtuo"
 Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id 159C56B1FA4;
-	Mon, 15 Dec 2025 18:51:23 +0100 (CET)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 94F186B1FA2;
+	Mon, 15 Dec 2025 18:51:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1765821083;
+	s=mail1707; t=1765821082;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6EqGqnARVZzImMSfeiank582V9Vyft3rx7ZApRNUUYo=;
-	b=mzRmMPzSOMnEZmt9pMlOo89x8+Uro62EgKcy4Kd/9kpHXjMd8K2949ythaVkunV6tmznOE
-	cpp+/yUjbUYxw/B0qRAzyN7AQzY8cyAUfTOcNzjPpW8BFF5gD3wjSyYHj2LvRzk6+wlqIR
-	gBZt5ADlZiUx0gLRGDwCQUrMar+kt9Kk6GAZn2Vv4Ot9v/BjAEfy33QB8n4PPBtTod2hEQ
-	sn8iyqNAf8CSKzmG7yT58VPNFnB34JMW4v/r/thlLu3Xy1z82l5UbN68cDUvE3ElNLq7Zz
-	uI18toDacOxN+9md/j8mGAL+Hk14uL9bdA3iQ4f2dz+mBHYG1+Dq0V8+dEZ2fw==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PWl1EwvinAHVTukioGc0f8nDw4G1d0vgl+v+BhLtPtY=;
+	b=P0uuvtuoGH9ZF+BF55NOtW8Fnw7NA2+uq808mfAvxGEjNGzo1owS/Wxj9K9F3DeBjesEy5
+	BYVbVyJ1xPoRfw+iW/bV+UFrWdFi9zIGs73dkBAG1+IJtuiTsAVnbUo17cBVaDMdFY/LyM
+	qcS13qUzACyjyo0sPNH6ac/BYQeQmq1h3DQgKrL7+JEalMspeJQ/FmkY/0FWVb4oVGA7bw
+	kEch30x2SsYmZgtlpkamXIi1A6U95uldN2mDBv1/AysnvWv05qosQWqux95t2yhDTv1cTt
+	q6YrzE5o0kwJLdCzDJhgKNQ1g+MwtwhaxlWRClsp9cNdJ6dF5H5CqtBntg0VCg==
 From: Sander Vanheule <sander@svanheule.net>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -49,251 +47,110 @@ Cc: linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Sander Vanheule <sander@svanheule.net>
-Subject: [PATCH v9 2/6] dt-bindings: mfd: Binding for RTL8231
-Date: Mon, 15 Dec 2025 18:51:10 +0100
-Message-ID: <20251215175115.135294-3-sander@svanheule.net>
+Subject: [PATCH v9 0/6] RTL8231 GPIO expander support
+Date: Mon, 15 Dec 2025 18:51:08 +0100
+Message-ID: <20251215175115.135294-1-sander@svanheule.net>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251215175115.135294-1-sander@svanheule.net>
-References: <20251215175115.135294-1-sander@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a binding description for the Realtek RTL8231, a GPIO and LED
-expander chip commonly used in ethernet switches based on a Realtek
-switch SoC. These chips can be addressed via an MDIO or SMI bus, or used
-as a plain 36-bit shift register.
+The RTL8231 GPIO and LED expander can be configured for use as an MDIO
+or SMI bus device. Currently only the MDIO mode is supported, although
+SMI mode support should be fairly straightforward, once an SMI bus
+driver is available.
 
-This binding only describes the feature set provided by the MDIO/SMI
-configuration, and covers the GPIO, PWM, and pin control properties. The
-LED properties are defined in a separate binding.
+Provided features by the RTL8231:
+  - Up to 37 GPIOs
+    - Configurable drive strength: 8mA or 4mA (currently unsupported)
+    - Input debouncing on GPIOs 31-36
+  - Up to 88 LEDs in multiple scan matrix groups
+    - On, off, or one of six toggling intervals
+    - "single-color mode": 2×36 single color LEDs + 8 bi-color LEDs
+    - "bi-color mode": (12 + 2×6) bi-color LEDs + 24 single color LEDs
+  - Up to one PWM output (currently unsupported)
+    - Fixed duty cycle, 8 selectable frequencies (1.2kHz - 4.8kHz)
 
-Signed-off-by: Sander Vanheule <sander@svanheule.net>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+The patches have been in use downstream by OpenWrt for some months. As
+the original patches are already a few years old, I would like to request
+all patches to be reviewed again (and I've dropped all provided tags and
+changelogs until v6).
+
 ---
+Changes since v8:
+Link: https://lore.kernel.org/lkml/20251119200306.60569-1-sander@svanheule.net/
+- Rebase on top of v6.19-rc1
+- Drop no longer needed __maybe_unused for PM functions
+- No abbreviations in user messages
+- Replace {0,RTL8231_REG_COUNT-1} with RTL8231_REG_{START,END}
+- Replace led_start regmap_field with direct regmap operations
+- Replace SIMPLE_DEV_PM_OPS with DEFINE_SIMPLE_DEV_PM_OPS
+- Switch to REGCACHE_FLAT_S for improved cache performance
+
 Changes since v7:
-- Add Rob's tag
-- Add pincfg-node reference with no additional properties for
-  input-debounce
+Link: https://lore.kernel.org/lkml/20251117215138.4353-1-sander@svanheule.net/
+- All drivers can now be built independently with COMPILE_TEST
+- Fix storage size of pinfunction flags in a more compatible way
+- Add missing OF dependency to pinctrl driver
+- Improve referenced properties in bindings
 
 Changes since v6:
-- Relax description formatting
-- Use absolute paths for schema references
-- Add pinctrl properties to led-controller node in example
----
- .../bindings/mfd/realtek,rtl8231.yaml         | 199 ++++++++++++++++++
- 1 file changed, 199 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+Link: https://lore.kernel.org/lkml/20251021142407.307753-1-sander@svanheule.net/
+- Drop already merged regmap_gpio changes
+- Devicetree bindings:
+  - Relax description formatting
+  - Use absolute paths for schema references
+  - Enforce address format for led node names
+  - Add pinctrl properties to led-controller node in example
+- mfd driver:
+  - Small code refactors, variable renames
+  - Header include sorting
+  - regmap/regcache usage updates
+- pinctrl driver:
+  - Fixed build issue on 64b platforms
+  - Simplify safe direction startup config
+  - Add GPIOLIB dependency
 
-diff --git a/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
-new file mode 100644
-index 000000000000..e8227f15ea03
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
-@@ -0,0 +1,199 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/realtek,rtl8231.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Realtek RTL8231 GPIO and LED expander.
-+
-+maintainers:
-+  - Sander Vanheule <sander@svanheule.net>
-+
-+description: |
-+  The RTL8231 is a GPIO and LED expander chip, providing up to 37 GPIOs, up to
-+  88 LEDs, and up to one PWM output. This device is frequently used alongside
-+  Realtek switch SoCs, to provide additional I/O capabilities.
-+
-+  To manage the RTL8231's features, its strapping pins can be used to configure
-+  it in one of three modes: shift register, MDIO device, or SMI device. The
-+  shift register mode does not need special support. In MDIO or SMI mode, most
-+  pins can be configured as a GPIO output or LED matrix scan line/column. One
-+  pin can be used as PWM output.
-+
-+  The GPIO, PWM, and pin control are part of the main node. LED support is
-+  configured as a sub-node.
-+
-+properties:
-+  compatible:
-+    const: realtek,rtl8231
-+
-+  reg:
-+    description: MDIO or SMI device address.
-+    maxItems: 1
-+
-+  # GPIO support
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+    description:
-+      The first cell is the pin number and the second cell is used to specify
-+      the GPIO active state.
-+
-+  gpio-ranges:
-+    description:
-+      Must reference itself, and provide a zero-based mapping for 37 pins.
-+    maxItems: 1
-+
-+  # Pin muxing and configuration
-+  drive-strength:
-+    description:
-+      Common drive strength used for all GPIO output pins, must be 4mA or 8mA.
-+      On reset, this value will default to 8mA.
-+    enum: [4, 8]
-+
-+  # LED scanning matrix
-+  led-controller:
-+    $ref: /schemas/leds/realtek,rtl8231-leds.yaml#
-+
-+  # PWM output
-+  "#pwm-cells":
-+    description:
-+      Twos cells with PWM index (must be 0) and PWM frequency in Hz. To use
-+      the PWM output, gpio35 must be muxed to its "pwm" function. Valid
-+      frequency values for consumers are 1200, 1600, 2000, 2400, 2800, 3200,
-+      4000, and 4800.
-+    const: 2
-+
-+patternProperties:
-+  "-pins$":
-+    type: object
-+
-+    allOf:
-+      - $ref: /schemas/pinctrl/pincfg-node.yaml#
-+      - $ref: /schemas/pinctrl/pinmux-node.yaml#
-+
-+    additionalProperties: false
-+
-+    properties:
-+      pins:
-+        items:
-+          enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7,
-+                 gpio8, gpio9, gpio10, gpio11, gpio12, gpio13, gpio14, gpio15,
-+                 gpio16, gpio17, gpio18, gpio19, gpio20, gpio21, gpio22, gpio23,
-+                 gpio24, gpio25, gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
-+                 gpio32, gpio33, gpio34, gpio35, gpio36]
-+        minItems: 1
-+        maxItems: 37
-+      input-debounce: true
-+
-+      function:
-+        description:
-+          Select which function to use. "gpio" is supported for all pins, "led" is supported
-+          for pins 0-34, "pwm" is supported for pin 35.
-+        enum: [gpio, led, pwm]
-+
-+    required:
-+      - pins
-+      - function
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    // Minimal example
-+    mdio {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        expander0: expander@0 {
-+            compatible = "realtek,rtl8231";
-+            reg = <0>;
-+
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-ranges = <&expander0 0 0 37>;
-+        };
-+    };
-+  - |
-+    // All bells and whistles included
-+    #include <dt-bindings/leds/common.h>
-+    mdio {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        expander1: expander@1 {
-+            compatible = "realtek,rtl8231";
-+            reg = <1>;
-+
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            gpio-ranges = <&expander1 0 0 37>;
-+
-+            #pwm-cells = <2>;
-+
-+            drive-strength = <4>;
-+
-+            button-pins {
-+                pins = "gpio36";
-+                function = "gpio";
-+                input-debounce = <100000>;
-+            };
-+
-+            pwm-pins {
-+                pins = "gpio35";
-+                function = "pwm";
-+            };
-+
-+            led_matrix: led-pins {
-+                pins = "gpio0", "gpio1", "gpio3", "gpio4";
-+                function = "led";
-+            };
-+
-+            led-controller {
-+                compatible = "realtek,rtl8231-leds";
-+                #address-cells = <2>;
-+                #size-cells = <0>;
-+
-+                pinctrl-names = "default";
-+                pinctrl-0 = <&led_matrix>;
-+
-+                realtek,led-scan-mode = "single-color";
-+
-+                led@0,0 {
-+                    reg = <0 0>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <0>;
-+                };
-+
-+                led@0,1 {
-+                    reg = <0 1>;
-+                    color = <LED_COLOR_ID_AMBER>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <0>;
-+                };
-+
-+                led@1,0 {
-+                    reg = <1 0>;
-+                    color = <LED_COLOR_ID_GREEN>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <1>;
-+                };
-+
-+                led@1,1 {
-+                    reg = <1 1>;
-+                    color = <LED_COLOR_ID_AMBER>;
-+                    function = LED_FUNCTION_LAN;
-+                    function-enumerator = <1>;
-+                };
-+            };
-+        };
-+    };
+RFC for gpio-regmap changes:
+Link: https://lore.kernel.org/lkml/20251020115636.55417-1-sander@svanheule.net/
+
+Patch series v5 (June 2021):
+Link: https://lore.kernel.org/lkml/cover.1623532208.git.sander@svanheule.net/
+
+Sander Vanheule (6):
+  dt-bindings: leds: Binding for RTL8231 scan matrix
+  dt-bindings: mfd: Binding for RTL8231
+  mfd: Add RTL8231 core device
+  pinctrl: Add RTL8231 pin control and GPIO support
+  leds: Add support for RTL8231 LED scan matrix
+  MAINTAINERS: Add RTL8231 MFD driver
+
+ .../bindings/leds/realtek,rtl8231-leds.yaml   | 136 +++++
+ .../bindings/mfd/realtek,rtl8231.yaml         | 199 +++++++
+ MAINTAINERS                                   |  10 +
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-rtl8231.c                   | 285 ++++++++++
+ drivers/mfd/Kconfig                           |   9 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rtl8231.c                         | 188 ++++++
+ drivers/pinctrl/Kconfig                       |  12 +
+ drivers/pinctrl/Makefile                      |   1 +
+ drivers/pinctrl/pinctrl-rtl8231.c             | 533 ++++++++++++++++++
+ include/linux/mfd/rtl8231.h                   |  73 +++
+ 13 files changed, 1458 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/realtek,rtl8231-leds.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl8231.yaml
+ create mode 100644 drivers/leds/leds-rtl8231.c
+ create mode 100644 drivers/mfd/rtl8231.c
+ create mode 100644 drivers/pinctrl/pinctrl-rtl8231.c
+ create mode 100644 include/linux/mfd/rtl8231.h
+
 -- 
 2.52.0
 
