@@ -1,100 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FCC4AC798;
-	Thu,  8 Jan 2026 11:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7893A1A5A;
+	Thu,  8 Jan 2026 11:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767870388; cv=none; b=OnfL+n5XwwZ0SDF8Tw5z1dnT202WSp+Dapcm/b/L8M1K9dZWh+RkbPWfqIJDjlKXD3leWm2i/YiOlzvFGpJaPJrXMlwMO4cNHnXuCeVl4VBi9pl/RRpZglwWJOBxdmQkeiffz17WjxCsTNi9pe8qHs0krDabjOelZPSpzL/iFIs=
+	t=1767871698; cv=none; b=Qhm5XRJxs8ttatgo6FdjaJZ92uFrAcNffDCShVXOf4YTVyF7pUg2e2Il77y+sKMgId30fY4i7TETVGAaPpNw++Rde9W9UnQf/RN0PCXLpR9lWZddoxnook0GgQwZhdgmrYDtMsj1VR6UGCdp1GFWMa0CIj/wT9QL7pOTcZKW11U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767870388; c=relaxed/simple;
-	bh=QJKMun5QRAcxX3jJHl8Ue5cS4f8WEAVqoly+7CYI0AI=;
+	s=arc-20240116; t=1767871698; c=relaxed/simple;
+	bh=3Kjhp0b3kwImrDL2L6LwF5n2i36fqNua3dzRnbIjReU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RcUN//i9EGJbsO59eBEBl5/tZ9CLK6i+A7TLL3R+M+x+kkgEDpwYnfZKNX3EmlBtedR55EcCGfgp+Y6tPRzvtFQqlunWJm/PRNLdYB1cU8BfdhZqZf6RJnbPn8i4LYiE5nA4hw6N5kTfp99WZPcFN8Nc94EQeKEn6VHvmk5bGFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3OiA/V6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhlqB5604pFFggRHglCdPuKhj4TUrK5Q6u+IngZiblKyKjq7mgLkae7cdWZ3lxsne/uODK54Oy8a6CKgM8P7we11e8rIo0X5U7Tp4Flyb0bkg9j/6oYGRy/TskdIm0N4Attv6rqzqCQ4i4nqBJNP57fbKowwhG1Rbh/Dk9kAr2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThLzjdMe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3OiA/V6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC96C116C6;
-	Thu,  8 Jan 2026 11:06:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThLzjdMe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEAC0C16AAE;
+	Thu,  8 Jan 2026 11:28:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767870387;
-	bh=QJKMun5QRAcxX3jJHl8Ue5cS4f8WEAVqoly+7CYI0AI=;
+	s=k20201202; t=1767871697;
+	bh=3Kjhp0b3kwImrDL2L6LwF5n2i36fqNua3dzRnbIjReU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j3OiA/V6pMYF7g1j2PD/2lFiFz2ihmeOchcGAhbEn4suHhWFyDJqPDxG11Y4nwsMZ
-	 3NE4twU5om8u7d5r2ga9/qSvTPCAfNACWgrEGz0PBe31RSj8SXn0qJKs7h4iLOHsV8
-	 mxZgVeGQqUvMEOKvQbvCd6kpgaCeKqYUCsR/3t9BY+Ju4ByJgSkbfN/ihH/fohKfmL
-	 O8u/PmgNzb7NBanm4SOZa5sc7rSyU/TqRv7V9kN5VxMxjBMq5e+SjavPq1aIncYA2d
-	 JQNBJ+uorlUzahXlmdKkaE5g91bZSUDYSQrLmt9Yn29gKcXLZHJvJ1Zi0kSK05ViaK
-	 bV3otHAOf6Pow==
-Date: Thu, 8 Jan 2026 11:06:22 +0000
-From: Lee Jones <lee@kernel.org>
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: pavel@kernel.org, abel.vesa@linaro.org, marijn.suijten@somainline.org,
-	sre@kernel.org, andersson@kernel.org,
-	anjelique.melendez@oss.qualcomm.com, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] leds: qcom-lpg: Check the return value of
- regmap_bulk_write()
-Message-ID: <20260108110622.GD302752@google.com>
-References: <20251204061728.124-1-vulab@iscas.ac.cn>
+	b=ThLzjdMelW930c+ei43cTLAinWpByX4H/unWusBtDJx67SVViBKH2HJp4NN6pfDNJ
+	 S0o7hNKCFpHN/OgGfD6igSGlJ+DPmag7+/e0kTpckOhnpH4/JEH0gfkDq+GHZ7SxYn
+	 sTyyqEFxobiUx11gdTDahJHp0S7VvuoNQkGG/Ur1aZa0Y+nB3xQm4Fkmv34B6GL8QO
+	 Nq7K/rJN9iNmi7PHXBbpiP7k8HzQKFH8gMdUHColDMn4ALEVUyYXDEC8klO5AsygFp
+	 YxojfWXoN1bQ6FS99fp0EAppdIAS45JOYnyHidAfSv8R/GxlvUu1OujF92bEY8vZHy
+	 1hh01tlZp1NfA==
+Date: Thu, 8 Jan 2026 11:28:10 +0000
+From: Daniel Thompson <danielt@kernel.org>
+To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
+Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Kiran Gunda <quic_kgunda@quicinc.com>, Helge Deller <deller@gmx.de>,
+	Luca Weiss <luca@lucaweiss.eu>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Eugene Lepshy <fekz115@gmail.com>,
+	Gianluca Boiano <morf3089@gmail.com>,
+	Alejandro Tafalla <atafalla@dnyon.com>,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/7] backlight: qcom-wled: Support ovp values for
+ PMI8994
+Message-ID: <aV-UyhP7wllSBpYj@aspen.lan>
+References: <20260108-pmi8950-wled-v2-0-8687f23147d7@mainlining.org>
+ <20260108-pmi8950-wled-v2-2-8687f23147d7@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251204061728.124-1-vulab@iscas.ac.cn>
+In-Reply-To: <20260108-pmi8950-wled-v2-2-8687f23147d7@mainlining.org>
 
-On Thu, 04 Dec 2025, Haotian Zhang wrote:
-
-> The lpg_lut_store() function currently ignores the return value of
-> regmap_bulk_write() and always returns 0. This can cause hardware write
-> failures to go undetected, leading the caller to believe LUT programming
-> succeeded when it may have failed.
-> 
-> Check the return value of regmap_bulk_write() in lpg_lut_store and return
-> the error to the caller on failure.
-> 
-> Fixes: 24e2d05d1b68 ("leds: Add driver for Qualcomm LPG")
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+On Thu, Jan 08, 2026 at 04:43:20AM +0100, Barnab·s CzÈm·n wrote:
+> WLED4 found in PMI8994 supports different ovp values.
+>
+> Fixes: 6fc632d3e3e0 ("video: backlight: qcom-wled: Add PMI8994 compatible")
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Barnab·s CzÈm·n <barnabas.czeman@mainlining.org>
 > ---
->  drivers/leds/rgb/leds-qcom-lpg.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-> index 4f2a178e3d26..76734b1520f6 100644
-> --- a/drivers/leds/rgb/leds-qcom-lpg.c
-> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
-> @@ -369,7 +369,7 @@ static int lpg_lut_store(struct lpg *lpg, struct led_pattern *pattern,
->  {
->  	unsigned int idx;
->  	u16 val;
-> -	int i;
-> +	int i, ret;
->  
->  	idx = bitmap_find_next_zero_area(lpg->lut_bitmap, lpg->lut_size,
->  					 0, len, 0);
-> @@ -379,8 +379,10 @@ static int lpg_lut_store(struct lpg *lpg, struct led_pattern *pattern,
->  	for (i = 0; i < len; i++) {
->  		val = pattern[i].brightness;
->  
-> -		regmap_bulk_write(lpg->map, lpg->lut_base + LPG_LUT_REG(idx + i),
-> +		ret = regmap_bulk_write(lpg->map, lpg->lut_base + LPG_LUT_REG(idx + i),
->  				  &val, sizeof(val));
+>  drivers/video/backlight/qcom-wled.c | 41 +++++++++++++++++++++++++++++++++++--
+>  1 file changed, 39 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
+> index a63bb42c8f8b..5decbd39b789 100644
+> --- a/drivers/video/backlight/qcom-wled.c
+> +++ b/drivers/video/backlight/qcom-wled.c
+> @@ -1244,6 +1244,15 @@ static const struct wled_var_cfg wled4_ovp_cfg = {
+>  	.size = ARRAY_SIZE(wled4_ovp_values),
+>  };
+>
+> +static const u32 pmi8994_wled_ovp_values[] = {
+> +	31000, 29500, 19400, 17800,
+> +};
+> +
+> +static const struct wled_var_cfg pmi8994_wled_ovp_cfg = {
+> +	.values = pmi8994_wled_ovp_values,
+> +	.size = ARRAY_SIZE(pmi8994_wled_ovp_values),
+> +};
+> +
 
-Fine, but you need to re-align this to the '(' above.
+Do these *have* to be named after one of the two PMICs that implement
+this OVP range.
 
-> +		if (ret)
-> +			return ret;
->  	}
->  
->  	bitmap_set(lpg->lut_bitmap, idx, len);
-> -- 
-> 2.50.1.windows.1
-> 
+Would something like wled4_alternative_ovp_values[] (and the same
+throughout the patch) be more descriptive?
 
--- 
-Lee Jones [ÊùéÁêºÊñØ]
+
+Daniel.
