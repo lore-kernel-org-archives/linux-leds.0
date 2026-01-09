@@ -1,112 +1,127 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A8B28850E;
-	Fri,  9 Jan 2026 06:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EF93FC9;
+	Fri,  9 Jan 2026 07:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767940580; cv=none; b=hXuYaAXNP7mwfa43SQg9MiAnk1X3hxmdQZ9sjYEimkty6VTSdftQPi3nmjssf/wc5HAdaRjinb+FOe5f2W0roW8OnktGFNCo7ZRUAIVQ4OCdZHCflFCMFMcccj19IvgoM1gooE5TVwM3z3rCpb7zH3TQsPGDi56u2iNSKWxalrQ=
+	t=1767942418; cv=none; b=moyyr9YSboI2lu3ssIcUB+CSSdbvb7g0WWiGDO4KuzDcnmb5XGW8rf0c1vvDoamJfA9hZrhHMazLj7USoeTG3bXCp1CQy9/SvfqV5KFQBkT0Q+aWPp/eFUFZ+rLQXEgfcvItltbnVMhDZHyfM1Sii4dkAvLTAhg6Wfvkh+3+0/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767940580; c=relaxed/simple;
-	bh=k6nAvvx5UVSbHO88lKNTmQGUQoFtGy7kceT8JUpw8Go=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ILf0ejMAdZBXFViN8jr9PYB08weYBeED6OkhUqn99V4yAc1Jy0b9XyKIdnRlTViHXJGahu6vNqxxNuMpAVy4m0mrPCuSdaY2NfgOFmwgqnOAtojhWxeZt4gTxYnmwrzwxytD8kAJfzZTZuKIo5hfNiR/u/ZxFjs3UmIWIqRqqBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Z3k8rymC; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=WkmcQYPp; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1767942418; c=relaxed/simple;
+	bh=thLane9WGF2DpAp0kweUs4aLbMDzqC4LoqUQN4zJ3uA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=CHAiBdCH1XEYirxAGgYf5e7VzUSTMKZ4yjl7rgtw31ndkQMMxtU3LMUMcSnYyBOCF+AZQ8XgVx7UlFQO8s/4zWUNvNNQrcrcCfiARLlY7BayD6pnAwGNKo8SwmjcZXarEvrjLCo/kD5G4U85Lv/ow8cMCcGjUQdg6n3YpTfk23Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=SBvaRiiO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=zj2R0+Kq; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Z3k8rymC";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="WkmcQYPp"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1767940563; bh=KFBoG2fcIxheggmVM+AQApJ
-	yuE3iDl57EzYZzdHaxmg=; b=Z3k8rymCyRPCCIoyqZxbsyayVvG6CGqsrcdjyQLcc/LKkxIegQ
-	vPOzZnySkZG2C00gULRdqZb+Lajp/acC0LJkGFAZ4DgeJBloaNsOSvyT5t+ABWqJnJgqHjwckm5
-	P7LIszibYJqye37DKObXGq1Ih+0lv+0AZ8y0OYYB8dw0ZqrI6tVphU5bB1KOazs9c/KcUDiAr1O
-	DEjiR0PDR2hxgpPzYlL9ufH9LmvCXuqJuDREMPOhJ5RhxFLX45QhCwNAsRnEaSOF132tdVmS4VO
-	cE2RxtWUpIWFUZZURRfPCXFMKg9PtUJhpEO692b3YqMiK4ikZ5/6eO3Bm/AZmDKH67Q==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1767940563; bh=KFBoG2fcIxheggmVM+AQApJ
-	yuE3iDl57EzYZzdHaxmg=; b=WkmcQYPppQ+K2wEGm8QDA4IprDuJbg1u8P1XyGaIOvv7OO0LBh
-	TEfwfdosBtVkxS8JSsxAZ/SmM2HhGojcn4BA==;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="SBvaRiiO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="zj2R0+Kq"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailflow.stl.internal (Postfix) with ESMTP id A0E0313007C5;
+	Fri,  9 Jan 2026 02:06:55 -0500 (EST)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Fri, 09 Jan 2026 02:06:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1767942415;
+	 x=1767949615; bh=0xenDXx7lDvw8yXMh2jnUM4RAGmn8OTIbAIaZ3lsI3s=; b=
+	SBvaRiiOweZGVYYoIssAxkA+VovknFQRgKJBgHY6c7Pl/td7N9Gwfi2Ogl3zfN5E
+	SaxwtzJPvM4WSVtbedbOTW7+p8IwhUz0KJTLP16dDB7srgZRKMCyIqVBQXA6WDKR
+	kD4YP9xPrQQK3Kqovvcatndaovu8VDLEZi3lz6Y2mFh0CdN3b+UwQw2pLLFJstll
+	EKBzFK2Idhs+FhR8X5XzN6Zzn9JgWNwY2sMKY5mGtyPBlc0Emxc2WgII62CLOQ6P
+	NmsRj1FduexkTnTBAGpNNr0rr7tsNW89cWHNwExlJB8fRCG6rJjxoQQjt5I26fOU
+	I7BmGMFhBwj1HAw/5wco4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1767942415; x=
+	1767949615; bh=0xenDXx7lDvw8yXMh2jnUM4RAGmn8OTIbAIaZ3lsI3s=; b=z
+	j2R0+Kq152uZfslXfadj6zOkYSTXM53/Gvjm4NOkbfUAmlgk9Jn7erNAPYPhwLQ3
+	i7cXnPqLzJgaosxar+WHZ0SQJFLSGrg8uVCdwnlWb2wDS4irWquZWVRwLPhBj2qU
+	A+sAstF+L7QmTfuu3nccZFbGJ0Tr7CTVHSCMAbZkxoemSLCtCfyAjvZulw3OB4dc
+	SanxYS81s2WyUR8ZVQCy65BVJUQdXq7EX0xSSXbQpYkJ5uZU8vzetH5lhIMH/kgS
+	TErJrb8yXtWDehOEh+S+BABiZlByqetBd4I0fLOxTHdD9dr9woiQVK85lX2tXIqM
+	rplLb4uyOoHq0xvUiBflA==
+X-ME-Sender: <xms:DqlgaRu_fJGBnNG2oN8aRqVVqNc_VLaWsbEI4YZ4X-qiD9_AUsOZbg>
+    <xme:DqlgaVR0Qni5z9xusGlm7Eop5HeW3Chs0KZYx0pfZjJbyBzywaCfiF77AKQpGV3g7
+    DU5yd_ZSd0EenaAI1WcE1nNY4fMeQaG6tAk6Ihp05l-5VCoT01MMo-N>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddutdekudejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhepgfeiteeffffgieegudekudekfefhfeefhfegjeeiuddtvdeludfhjeehvdegveeu
+    necuffhomhgrihhnpeguthhsrdhsohenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthho
+    pedvfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrnhhivghlsedtgidtfh
+    drtghomhdprhgtphhtthhopehkrhiihihsiihtohhfrdhkohiilhhofihskhhisegtrghn
+    ohhnihgtrghlrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlih
+    guvghrrdgsvgdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvrdhjoh
+    hnvghssehlihhnrghrohdrohhrghdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgv
+    thdprhgtphhtthhopehsrghmsehrrghvnhgsohhrghdrohhrghdprhgtphhtthhopehlih
+    hnuhigsehrvghmphgvlhdqphhrihhvrghtrdguvg
+X-ME-Proxy: <xmx:DqlgafUtq5PUnKACPYLpae3zgBJmVU5D7JSWQ8mD0IS1a-OvYHuhLA>
+    <xmx:DqlgaTR_q4s2sYu3QkkHi4iILGCAdz5E6mZiFdm8nnql9N3NdvqztQ>
+    <xmx:DqlgaWE6hoT4ybEwHjODalszGkC4kmHoSpjviS6fNRPNmA00g_TWyw>
+    <xmx:DqlgabRIMMNHGICrY4naZYXcQ0D_afiEPZ4snybHEIulNP-jbLyoXQ>
+    <xmx:D6lgaQyok1gp3lYljhgCQQ9Jb1jcj9C7lhBmacxDzoopRWT5MUOKz7LN>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 224E8700065; Fri,  9 Jan 2026 02:06:54 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 09 Jan 2026 07:36:03 +0100
-From: barnabas.czeman@mainlining.org
-To: Daniel Thompson <danielt@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Pavel
- Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Kiran Gunda <quic_kgunda@quicinc.com>,
- Helge Deller <deller@gmx.de>, Luca Weiss <luca@lucaweiss.eu>, Konrad Dybcio
- <konradybcio@kernel.org>, Eugene Lepshy <fekz115@gmail.com>, Gianluca Boiano
- <morf3089@gmail.com>, Alejandro Tafalla <atafalla@dnyon.com>,
- dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Thompson
- <daniel.thompson@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-fbdev@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/7] backlight: qcom-wled: Support ovp values for
- PMI8994
-In-Reply-To: <aV-UyhP7wllSBpYj@aspen.lan>
-References: <20260108-pmi8950-wled-v2-0-8687f23147d7@mainlining.org>
- <20260108-pmi8950-wled-v2-2-8687f23147d7@mainlining.org>
- <aV-UyhP7wllSBpYj@aspen.lan>
-Message-ID: <67acbe8ff2496e18a99165d794a7bae8@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+X-ThreadId: Ai76N3Tj7qwR
+Date: Fri, 09 Jan 2026 08:06:33 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Rob Herring" <robh@kernel.org>, "Luka Kovacic" <luka.kovacic@sartura.hr>
+Cc: linux-doc@vger.kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ Max.Merchel@tq-group.com, "Oleksij Rempel" <linux@rempel-privat.de>,
+ "Daniel Palmer" <daniel@0x0f.com>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sam Ravnborg" <sam@ravnborg.org>, krzysztof.kozlowski@canonical.com,
+ pavo.banicevic@sartura.hr, "Jonathan Corbet" <corbet@lwn.net>,
+ "Lee Jones" <lee.jones@linaro.org>, "Pavel Machek" <pavel@ucw.cz>,
+ "Guenter Roeck" <linux@roeck-us.net>, "Jean Delvare" <jdelvare@suse.com>,
+ goran.medic@sartura.hr, luka.perkov@sartura.hr,
+ "Robert Marko" <robert.marko@sartura.hr>
+Message-Id: <dc1826b3-3af6-42f6-9281-52917da2c9ef@app.fastmail.com>
+In-Reply-To: <20260108202907.GA998297-robh@kernel.org>
+References: <20210824124438.14519-1-luka.kovacic@sartura.hr>
+ <20210824124438.14519-2-luka.kovacic@sartura.hr>
+ <20260108202907.GA998297-robh@kernel.org>
+Subject: Re: [PATCH v9 1/7] dt-bindings: Add IEI vendor prefix and IEI WT61P803 PUZZLE
+ driver bindings
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 2026-01-08 12:28, Daniel Thompson wrote:
-> On Thu, Jan 08, 2026 at 04:43:20AM +0100, Barnabás Czémán wrote:
->> WLED4 found in PMI8994 supports different ovp values.
->> 
->> Fixes: 6fc632d3e3e0 ("video: backlight: qcom-wled: Add PMI8994 
->> compatible")
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> ---
->>  drivers/video/backlight/qcom-wled.c | 41 
->> +++++++++++++++++++++++++++++++++++--
->>  1 file changed, 39 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index a63bb42c8f8b..5decbd39b789 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -1244,6 +1244,15 @@ static const struct wled_var_cfg wled4_ovp_cfg 
->> = {
->>  	.size = ARRAY_SIZE(wled4_ovp_values),
->>  };
->> 
->> +static const u32 pmi8994_wled_ovp_values[] = {
->> +	31000, 29500, 19400, 17800,
->> +};
->> +
->> +static const struct wled_var_cfg pmi8994_wled_ovp_cfg = {
->> +	.values = pmi8994_wled_ovp_values,
->> +	.size = ARRAY_SIZE(pmi8994_wled_ovp_values),
->> +};
->> +
-> 
-> Do these *have* to be named after one of the two PMICs that implement
-> this OVP range.
-> 
-> Would something like wled4_alternative_ovp_values[] (and the same
-> throughout the patch) be more descriptive?
-I don't know. I don't like the PMIC naming either but at least it
-descriptive about wich PMIC is needing these values.
-I think PMIC naming would be fine if compatibles what representing the
-same configurations would be deprecated and used as a fallback 
-compatbile
-style.
-I mean we could kept the first added compatible for a configuration.
-Maybe they should be named diferently i don't know if WLEDs have 
-subversion.
-> 
-> 
-> Daniel.
+On Thu, Jan 8, 2026, at 21:29, Rob Herring wrote:
+> On Tue, Aug 24, 2021 at 02:44:32PM +0200, Luka Kovacic wrote:
+>> Add the IEI WT61P803 PUZZLE Device Tree bindings for MFD, HWMON and LED
+>> drivers. A new vendor prefix is also added accordingly for
+>> IEI Integration Corp.
+...
+> I guess working on the driver is abandoned, but we already have this 
+> binding in use in armada-8040-puzzle-m801.dts. So it's either add the 
+> schema or remove the nodes to fix the warnings.
+>
+> Or maybe the whole platform is not used and the entire .dts file can be 
+> removed?
+
+According to the manufacturer's website, the puzzle-m801 product was
+phased out a year ago, along with all other rackmount appliances, so
+it's unlikely that they would still work on it, but it's also recent
+enough that I think it makes sense to keep the dts file around if it
+can be fixed up easily.
+
+     Arnd
