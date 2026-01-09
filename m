@@ -1,228 +1,195 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023123.outbound.protection.outlook.com [52.101.83.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19FE1C3C08
-	for <linux-leds@vger.kernel.org>; Fri,  9 Jan 2026 08:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767946448; cv=none; b=bfrOFDVkGYYfyfjNGicgiNnSCIBo1kHyuG5H+JkKRWgwrZZ6dYEp4PFM6iMhgl7D3b3AZEHZz5HqkwWKl4la6bUF8Tm+9QJUghRlsMmXPHgSg0Nct3nUzfHYXv88zCzbqEbqbogh+uOuWZaqP2OWoHLW41EqQcVz09J33Kl0AUU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767946448; c=relaxed/simple;
-	bh=TegNChNmHEzD8+9WeNnVdBonXBPxxrbHlIIxhxeFES4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J1g2+cJ+UGba8xO5F9HDrOoebJqtUc4gKXeRfppeLdQ40HBNYG9AtAbq7OR8BcJMUVAZtJ5KBmspFUUYXoU8mwKxU9gb1CpWrT+xE06GMadzZce+OyhBlavAP+jNFbKrdqXKEcr01be6TO+V5k8FBvVFDsQpwdM3jvWRgYSmgpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fA7qqshL; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74BB355048;
+	Fri,  9 Jan 2026 08:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.123
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767948948; cv=fail; b=uaMV63hVGf6toLhTWqfLdsy0dL91w/a7aKn2Uer95/iglvuobrro+0u23FFsqHXhIngDTTG8L2zT7YDSikNlUsWZPSAy0AOpAT5ouj4Nuxe566YCyv+i9PjIw/itqt8Vm9NHxR1M7sPvrVmsfJP+PifZjrq5HRpoKEl9X3EeKOY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767948948; c=relaxed/simple;
+	bh=YmHoZuLnpzloTwd4YZxvSCU4l+7s0xayESLkxh5Q8SU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=j4rMgj3DFb+LRPa8zgGbAWJR2OUoZpzLr2qnuHF8AsKersg8mIARbYr7kHHGwIycGvNTaTFVTNkN3/q4ue41Atz1Dqm6X/T4y7MCbBa5FIsE4oL25DmiXPtKejq1hDRaKqDWeyFLMW6JKfoM4WJQ61G3eGnfnvMt+kq/RpfQyCM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=df3H5sBM; arc=fail smtp.client-ip=52.101.83.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fA7qqshL"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b79d6a70fc8so748343166b.0
-        for <linux-leds@vger.kernel.org>; Fri, 09 Jan 2026 00:14:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="df3H5sBM"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pUg/A6cunQ1Q6nEk1c86SCednXAmTEen6606rxLvMdgJMcBe+oNCTzUzzlDu+YucokJXM/xXjAtDsKHSIqbo6v75QMO5asgFEC+wUkYQpZPQA6j/4H1eb7XSDvyIi0vQYDVcTGCS5Nb6CKYrGt/9royXAplibgKqmSsO2nTXJ9+4KY983l7G5DwaJwgxsDyrwVhmih0e/3FW1DtH3dDelE139vxWKIHi2T6Kj5FG5r+ZKrZKWhrKsiamK1Y5LaWB9rNyc/KpYf5aueCXczoOMEeyLa/C3iTe1XYVPPhRkU3IT8AarP2sGbD0eZdtj6oucfo3lpiJbVHHlbmzmVKKWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LV8rXPj3w+Xd+Kr4SaVocr4ESLPg85B+FZ1f05w/FsI=;
+ b=c4i2kwXuZeOpnv9kcM0m4cA3mtDf4FXcqMVGd3blM4pDnCjNe1YI9J30rpY6vecTd1aHuNBylL0pp5FGc03yz3cgr8c6g3lWYWBXgNFL5C9FggLMk2IeGo6Ubqlmk9b/YW5Lfl1eO4h8YTtBITyPdK+CZ5l6suXH6LvA5GYJIp+JJ6g+7yrZdpFpRvlswN4kxjjf3yoqJrxVUgGZEpDvd7x8/NYT4XKusfoz+r+kuyHrR/iLGcEDlW/5tLVTVZWFwTRHQC0K04EiTdWbY7TZVJ+EuytrwKaVolv5xnz9ynm54MPs9tU1Ajiq/3hKZdyD3IaDllzowTOp6QNjj2vrhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=gocontroll.com; dmarc=pass action=none
+ header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1767946445; x=1768551245; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VpBRuHMiMCleFgRr0io9MPn59FZX7HGviJTaLToKJC0=;
-        b=fA7qqshLxoTIJi4tgDR/RtBQ7TGUnPKLFhwL2gXn2LxCZlxAuA6g2IB+G0rf3UbOK1
-         V6eXlAiBP/gXBfLHJ9Dlxpx6nTFORghlrN45QVDYbHj/oEA+7Lc0gOBBJkLju0DA8h9k
-         4DCVlr84LxnQ/sTx29ARDD9DbMm9mfgyTRrv6OIymXIGLM2yevPKggXT6Aux7mep6N/z
-         e++YkkApa1Ad3n4/bdlsHSWRAmXP7+4ZljR00kU7F5CjG9NNhLVjaol4qVGY7EC7l69B
-         /waXNeDGrSp6+IW4F+0jJK5y2QIh83Fte1Abmq8zo2LzYig2Oe83AN5bnjClOiV+oOqr
-         +XEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767946445; x=1768551245;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VpBRuHMiMCleFgRr0io9MPn59FZX7HGviJTaLToKJC0=;
-        b=vzP3xcvm9ppH8w9j7leFfNAcr6yNWHC4rW5LKcJUcVreXD3HuJPp1U+zU/mrpHSjyn
-         ceXzl9uezPtKjP9ehwHSbKmuY9rcpZxH3736sC+R8+zgcPUKYN3NSJ0hF6llrj24pL7Q
-         Jzelk6WTV5mKSx+NzE5Nxz1aq6Or++99CkKZ07buylek6spHnrFE5/BgJ1AxixoBc6iX
-         yoTdHs4p/UGfL4z5pzyh55ulH1/GCaLkWe58MNipdLXzE5Us72Co4qGWeS6kHvUngo/W
-         6f/lNEMrZsc2pilS0d2u23Q+AGGPLVkfH0TWz7JawHH67Z+o0XYvu8O0ratTc+YAfnhA
-         JcYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoUTG/tKWWFODM3v2ADYUUHxxlaBaXhS6KQbxLXrrUoKTdiTJ6bodqM2lrknD0W/uX3wnzpLK39Z+J@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXQd6+D+UNl+nHiIhYG0Bs9l0VqdwbhZt6zDEFxhWJ4rCQo+5b
-	N0CUYX2DN6WFRwTINrkkxdZ8jikpNGIepDj6mLlN/2TPmW58P+72hyAV
-X-Gm-Gg: AY/fxX4SA5O2an0W4AiCZjLNDlHX2jKEwnAh1uXzPPOZ5xZvftpgdXAgOkszWtzUQiz
-	ERdwxQIJ2UT8lF8FxrX0WyPRCSi9imsbHfwARfkQH4YF/uAfX7mKnv+g3RYxG5hn578rOf4yaqr
-	rIu6Fc0aTiEQOAP4dfvodTjYa8ybRAbelmAFNRA2PZa8tkZdZiHH6vHytrsLs4X5ciFUhtQO16T
-	afrDE3sdGnctmYFPFFLFFsDIpJo+HX6gB+wf9CszPqCkeUvkKC6oo3qNssEAJBQnJWxUGhHeEi5
-	Cw6UKr5jiAKnm8vp/geYzXtnEz0ORhGIqs1BeBdXBY+UDPtK+i7IApsynHwCQ+CMPUIUdyTclVb
-	9aM3Sm+n0uW6psSB4ZccopNlh22xvLoJe59KvbhOJIqB6WA6IoMk2D2iA8rgV6onTVj5fRXqE6Q
-	UcWWOnahRo8+NsTJFhIRQnNmR2v2xErzZ2MXKvZkNDzkrY0jFtTpWlW2fVqJeS9qyfPzir0PHhU
-	NwsPw4=
-X-Google-Smtp-Source: AGHT+IEbfnpAwTBpMLXsSD7GLLq4RdVLr81UJhXWfoMR4g3wMxGRElDJAG31EIjk//ER3TZlJZdKiQ==
-X-Received: by 2002:a2e:b8d0:0:b0:382:ff8c:c9c3 with SMTP id 38308e7fff4ca-382ff8ccac1mr27076741fa.3.1767940183581;
-        Thu, 08 Jan 2026 22:29:43 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-382eb7cc214sm21543771fa.22.2026.01.08.22.29.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jan 2026 22:29:42 -0800 (PST)
-Message-ID: <63bc889a-b97e-43c3-9f46-9ca444873b70@gmail.com>
-Date: Fri, 9 Jan 2026 08:29:41 +0200
+ d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LV8rXPj3w+Xd+Kr4SaVocr4ESLPg85B+FZ1f05w/FsI=;
+ b=df3H5sBMBZqHjuB0EpLZlfWv1KXtIQ3ZOZAx0goqLJJ+qOzbh0H2uezimn6+6HfXQQOCE9nkhBDa78Rkorst4Q5hSFNGskXT/ivJ+HUgXM6+PlDTIGxNNiXXmxFVOLFjFUZafSYTlcTBadzAk0FCvHfTkQ3Jto+gXPElePoEfue3W7UrsIPbp/KJ+d6G7HuLd5lH+jU2pGQZCRLRiKiEL6rwRW40tUFQyuqq03Fx3+jVLxk48DoZYxpQWP5pRudxoQLPAq05NXyiBab+xD9et0qwxXcwtpFsxBhdMx2c6Ypw/+ivYiPAWAZzbkplNdv8mXbQcu2ntEHYquGVqaFBFQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=gocontroll.com;
+Received: from AMBPR04MB11741.eurprd04.prod.outlook.com (2603:10a6:20b:6f3::7)
+ by AM8PR04MB7218.eurprd04.prod.outlook.com (2603:10a6:20b:1d9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Fri, 9 Jan
+ 2026 08:55:32 +0000
+Received: from AMBPR04MB11741.eurprd04.prod.outlook.com
+ ([fe80::ee70:7a62:e9f:12b7]) by AMBPR04MB11741.eurprd04.prod.outlook.com
+ ([fe80::ee70:7a62:e9f:12b7%7]) with mapi id 15.20.9499.003; Fri, 9 Jan 2026
+ 08:55:32 +0000
+Message-ID: <fc5aad54-08fe-453e-a3cf-621414c8a060@gocontroll.com>
+Date: Fri, 9 Jan 2026 09:55:18 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/4] backlight: add max25014atg backlight
+To: Daniel Thompson <daniel@riscstar.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20251201-max25014-v6-0-88e3ac8112ff@gocontroll.com>
+ <20251201-max25014-v6-2-88e3ac8112ff@gocontroll.com>
+ <aTG0EK_zuSB-U_bb@aspen.lan>
+ <8a9a59b8-d5c0-46b3-8f86-a4cd910b7af3@gocontroll.com>
+ <aTaqCxsGj_waN92Y@aspen.lan>
+Content-Language: en-US
+From: Maud Spierings <maudspierings@gocontroll.com>
+In-Reply-To: <aTaqCxsGj_waN92Y@aspen.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4PR10CA0004.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5dc::8) To AMBPR04MB11741.eurprd04.prod.outlook.com
+ (2603:10a6:20b:6f3::7)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v6 00/17] Support ROHM BD72720 PMIC
-To: Lee Jones <lee@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-References: <cover.1765804226.git.mazziesaccount@gmail.com>
- <20260108172735.GK302752@google.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20260108172735.GK302752@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMBPR04MB11741:EE_|AM8PR04MB7218:EE_
+X-MS-Office365-Filtering-Correlation-Id: 694bdcaf-0c66-4133-aaee-08de4f5cd84b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTk0UU1MNFZUWUpUUXl5eGxxdEtkTm44b2RQbVk3VWV6TTFsYUtacVduc29z?=
+ =?utf-8?B?alBkS1ltRU1zUEE5S3JQL3lzSXlUMzZvV3M3MnVVK2JucDFoVWVzQzFDSHhY?=
+ =?utf-8?B?UmJpU1RzMW1CTEY0YlJkVGZaRVROQ0hIUDcwY3lLeE5UTlhvVjB5M3dweVhs?=
+ =?utf-8?B?b0lqQXNkUFdOdG8vRnVLVVNIUldYenhranZrUzl4Wi9wYzNSdTVYczB3NGRS?=
+ =?utf-8?B?YVJRVlNyZTFKd2t1WmxsY2tseTlKR1ZmU1l6UXhER3BNN1hkVURzWXpNWXlv?=
+ =?utf-8?B?SGtRWUFpamZ6blFrVEtoTGhCNWtwS0JubWs1UmNzRnErWlg3TGc2SkRYTjdD?=
+ =?utf-8?B?R3l4eElXeDZVVjdHRXJLODl2N0lxZEVMVUxEeTNydmNNaERRS1N6dGhrbG9J?=
+ =?utf-8?B?OFNrTlluLytLL2pySTFCcnlVQ3dLaE85ZFJqRHAyWjJjVVk0QXRDWkUwUWdZ?=
+ =?utf-8?B?VDRlNEdjZ3hVcnNQUWRGNmsrMHdzQ3U2cTU3WlE1cUVRRWV3RmI1QnNBcHVo?=
+ =?utf-8?B?dTlYOEZwUy9QTXBjYUZ1MjhtbG5NTmNGM3ZvVUROR3dUYVQ4SFY0NGlZYytV?=
+ =?utf-8?B?VUtQVmhYbUllS3hZdkttOFN4NHJteTBiODhZVFpBMmR1cGp0bjArblltLzBG?=
+ =?utf-8?B?YUdaY2RyMTFFT3ZHbVE4ZHlndTVSMWl0NWtUMXoxaTRNa1lVc2JwZGJRZ05i?=
+ =?utf-8?B?STdvVUZqbmZJYUV1S3dNUmNOdXk3YTZHTVNoOGZ3UlBaaVZON2J4cXV3UGFV?=
+ =?utf-8?B?R0ZhcWY1Rm9rREZwcUVnbC8wU0h0LzRKLzgxaEtwdGJONnF1MTVFcCsrc2da?=
+ =?utf-8?B?Ykg5RHdLdG1CRzh0RWhCbUdmR1NILzF2QzZ6WmhwNjdVSUpmOStyMGRMeHZh?=
+ =?utf-8?B?K1pEdTBmbWZid2FXYnNNeTBXM3ZVQi8rTkE4bkNxZUFUWVdKUVJMM3pZQ1ho?=
+ =?utf-8?B?TWRTa0pZc1pIWXFFeWsrVDN5azBoZWl0eXJrRlZCc3dWTEpPR2NqVXZpYWx4?=
+ =?utf-8?B?aWhJMWpjNDIrYUJ6S3hZVm5rWkl0NWhSUXd1S2MrWWFyVjN6Z0QvdGpxTjBW?=
+ =?utf-8?B?enloWXh3MEIyYUw3QnQxLzMvVW5lcEhGTVUzMTBjK2JoSU12Y040Wklpd0kw?=
+ =?utf-8?B?Z3RQWHpCSEx6eEp0MSsrTWpHM3gxbHFGRjdFeURpaStjckpZb2tCNDczUExP?=
+ =?utf-8?B?Wk4vSWJIS3VvSFVNNVRPeTNJNWJKTFBvOGRTNXQvOWxwVXR6NG5jZFNwOUxR?=
+ =?utf-8?B?emU2NURoQmdIUzJlM3NPZno0SVpUZXVaQ2ZiTjQvOVZjb2dQSFNlMEh4TEVo?=
+ =?utf-8?B?c2pkanQxbDZRYVZkdDFRL3Y2NGhFaEdjakxBV3YzU0VRTWorOFNyakhuTmhZ?=
+ =?utf-8?B?SEc2d0VQamF4WkFVR0lNTE9Sdm1HQXM1cUpIUFNMWXVhM1pBMWd0VGJscUxE?=
+ =?utf-8?B?bCtNVXlYWllyaFhWcGRWU2lwajFZY0VOQ01KNjNYVVgrNFFuS1phRWpWbVIz?=
+ =?utf-8?B?aGZpY0xhdzFhMXZXbDVWZDlNSDhPSGJ5VlN5NU5pU1JNL2RzRThlSlZ2Vm9N?=
+ =?utf-8?B?bXdyWkJrMUdHTFF2OWVKYlVYWVI1MGUzMXNjbkEyVVNXamloMWxuRUZ4cUdX?=
+ =?utf-8?B?WmN6WWl5elpmVHRVSlRER1RmZWFQS1QrWE5mQ01ZRFdGb1FMT0lvOHdYU2U2?=
+ =?utf-8?B?bjdGM0x3dFVIams3cEMwY2JEeUNnZWU2WDlTb3NRR3JlUXV1WHBxZjhvTXZM?=
+ =?utf-8?B?dFFMdmg3OGg4T0IxbDNNbDFJZzZSMnlrTWVtRTlQbnlDc05Ma2VtVnRRZkE3?=
+ =?utf-8?B?Zjd6MmxyeUgvR0ZvRmVyeE5KNDFoY0g4Mi9Id0xhZHJGT055N05jQmdKdmZl?=
+ =?utf-8?B?VDBJdERnTEdXTmVBaGI4QlptWlE1Mllybkl0Mi9RNWJUWitwUm5BcjdGc0RJ?=
+ =?utf-8?Q?krrGe6ylVYpQGtDluEKuIIPjmbf5uMyR?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AMBPR04MB11741.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TG92NFFvb3V1M1RaYlcvVXFtSEpSMVRocTlhNzhXaTlIa292bFdlNVpsYmFE?=
+ =?utf-8?B?QnhiUkdHYllTZjN0R2NBZ1htWGZia2dhNFNVVkJzbXZsOExjWGRSSVUydkJD?=
+ =?utf-8?B?WHNnVmhZaE44bWE2V2VuaW1qWVFZbHJsc0JFVTRjWitWcExiSmRCeXNhcTJw?=
+ =?utf-8?B?dTRIc1cyeEdwMXN4aVNNblVteWo2K1A0QTdlK1gwekxRTS9tcnU0bUg2dkVJ?=
+ =?utf-8?B?S0JXa2I1MTJwSDl3Z2pIVVl0QWtpQnNiQ1J1VnNQRC9BelRSVHBzK0NFeUNo?=
+ =?utf-8?B?VmRWdFg4OVBZRXB5aFpiMTVtd0NJOXVDZ0gwWnJxRWx3WjMwUUFwV0hVTVdC?=
+ =?utf-8?B?THlVeWZtR20yeG5IMGFCV1gvREtndkEyNmcvSS9sNEFYVGQydGwxVTlDVXpn?=
+ =?utf-8?B?eTNaQ0Q0YjgrK1ZTV3luWlJWMzJnVnltdFlHYkw4dzZiWmV0Y3dOdkowaDd6?=
+ =?utf-8?B?TU9CeitZY0J0TmYyWjZEeTlsM1dmWXIyTnJUanFxUVpYNU5NQytDaUt0WGI1?=
+ =?utf-8?B?Q2FsTW1wbkoxMUZZbG5DN0s4clQwQVU2MzVlN3ZUSWpsd0hEbnNWdHVUZG9t?=
+ =?utf-8?B?aEdXZERSQU42YW8rMndwb2hmUVN6SkQwNFJiTWR3ZWY5WXMrNUFYUDNrdXky?=
+ =?utf-8?B?bmE2OUtwL3ljRmwwTjdPV2gyci9mTXZMVkVEWmhQM0gwem5PTGRqM0ZyTTdY?=
+ =?utf-8?B?NXdQaEtYeHNmRzNkTHZqRnZ0VEdCRUlTQjhkQlJ6YnlYVU9VUmpTU1VwZEdi?=
+ =?utf-8?B?L2FKd1I3VndjSVRVODdhenE2SDFpWitKazFsTmlBNitpNk40SzZ5WmZHZ1FY?=
+ =?utf-8?B?ZlY5bVA4TVRJU1dNZlAvVXh2QXo3Zi9VMmNmTXVUMXdXTFNNcXdqa0l0TExY?=
+ =?utf-8?B?cHFTQnR1bHp2UTlUakJiMVh1VFd1eXRuNlNEcTUyY2xNRCtONThpdldpcEpx?=
+ =?utf-8?B?NG5YTTUzUVlpaGdvbVZDRzJEakVWUlZuZFlveFg4MUl5WFZTczVjamk4azc1?=
+ =?utf-8?B?VjhXL3Rzd3JJNEZjSW0xakR4UG9laFVoem44bTRsLyszL0dCck1ubzZCRUtS?=
+ =?utf-8?B?Yk9TczBSSHpoSW5SRG5QbmJBRDZscURnOU5JZHZJdUY2akVBT2JqMlp2b3hQ?=
+ =?utf-8?B?OUZxdWovd1JWYWtCS1JCZndlenBqaDFSRGRuOUptNTJkYUVIWGx5SUwrRU9K?=
+ =?utf-8?B?RE10d012SnNSeFhQUCswZlRlUUpOd2tpa0NGdkVRVmlZL3hSRlppV21jRVYv?=
+ =?utf-8?B?OFRubVFtL1FKWDJZRnVqL25USVNYVU84dEkybkFmQ2ZpOUlReGFpUU5qYVUr?=
+ =?utf-8?B?YkNnckdDUk83QWxlUkxuNXdBU1F1QXV5RnJ5akNPMmpHYlJVNytMOFZoejJX?=
+ =?utf-8?B?NlFQMFM0c3hrL2IraDc1aGRHR3Rqa0V1WG0xOWZDSjJJY25wemFsTnU0RVpW?=
+ =?utf-8?B?bmN5SXdhRDYzS0VJYXMxQzJTU1J0enRYUTBGRU9hczlWOWw2d1pmL01XdU1Y?=
+ =?utf-8?B?ZTdHcTZZcGdmcE8rR2M1cTlmVW9xWkdPaHNuREdzYTV3UE5BU09vSjMxOXRW?=
+ =?utf-8?B?TldDV1k0aW1rVklrNm81a0ZDd0lhMEtOcFpGV29Fd1haWHpneXFxdmJaME9t?=
+ =?utf-8?B?WFFJTzdXV2oxRmx2YlZCdFQ5ZXZnRjVqaG5ZZ2lwczFQZWsvNzYyOE5Vc0Fw?=
+ =?utf-8?B?M3k5SjJDb0xBSW9iRVBOdGgyM0tGTWZoVmFrZnJRNDZJZ25BeC9TaUt5RFo1?=
+ =?utf-8?B?WXFxalhBWHJjRzFxSXBnRFk4N29JS1RNV1BGZ1dTYVdrQlhrTEZpQVNTZ0ta?=
+ =?utf-8?B?MktOYXZnWGhaZHk3dDVzWnBwYlRrTzdPVXZlWTRTT2c5UURJaGd3SlVvWG5G?=
+ =?utf-8?B?RFZoQ0RveGMzL0pqc3JYbnlPNTlXYUdMRjMzdlluSVZwelVJYnZwWVBPaU5q?=
+ =?utf-8?B?NE90bVpEVEpjSEpkb0w5UkNIRDZReFJRbHI2MzVpbTQ4NVNwRGk2VWNIS0Vu?=
+ =?utf-8?B?b1pmNXdCeFdvNk5NVEIwSERhdjM3OVBFb2pWN0M3SXRVTlcwVkRtTVJZaEdz?=
+ =?utf-8?B?Zk5IUUNidlFrOTRHSER3RFBEYVN0NWpYQUd3TUxHWVBXRW9nY3BRd3NFMGY5?=
+ =?utf-8?B?QWx6RERKbDhOOWdYM0Exd0Z1Nm4zNFExdlNVMTMreTZpMEJNbXhSY3ByZk9j?=
+ =?utf-8?B?QndURzUxc3M4L3hmdm9PQkZqTmwvMVNjcUxrcnYvczlKZ2g4cEh4bXpMcjho?=
+ =?utf-8?B?VGJlL1FzdFNqZ0FCOGNNSnYxWlZmcXRCNkg5Yk1ON0dYQmhEU3dGblBDSURp?=
+ =?utf-8?B?a25FN2plSndtdENKbTVobnJackxxVGg4QjVJdWxPRmQya05OMUdWdVhMdng3?=
+ =?utf-8?Q?HeqBBy06ULfKlomUHejyj3NXTrPIDn6myj7iztGfJziQx?=
+X-MS-Exchange-AntiSpam-MessageData-1: 2UKOxadQYWQMYcTt4JzF62zXPwPfG6PjmMQ=
+X-OriginatorOrg: gocontroll.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 694bdcaf-0c66-4133-aaee-08de4f5cd84b
+X-MS-Exchange-CrossTenant-AuthSource: AMBPR04MB11741.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 08:55:32.0303
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wz4cVAO0IbVSmKYSIKvnJFJLz5Gh1ICGKHHfGk3nZ+Isg1sE3UhvBOXyXbtcgezzBWYbNpgfMDIQg9UuJnd5hgrRVbcVV2UzcviFgmYmtm8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7218
 
-On 08/01/2026 19:27, Lee Jones wrote:
-> On Mon, 15 Dec 2025, Matti Vaittinen wrote:
-> 
->> Resending the v6
->>
->> Series is same as v6 _except_ being rebased on v6.19-rc1 - and adding rb
->> tags which were replied to v6.
->>
->> The ROHM BD72720 is a new power management IC for portable, battery
->> powered devices. It integrates 10 BUCKs and 11 LDOs, RTC, charger, LEDs,
->> GPIOs and a clock gate. To me the BD72720 seems like a successor to the
->> BD71828 and BD71815 PMICs.
->>
->> This series depends on
->> 5bff79dad20a ("power: supply: Add bd718(15/28/78) charger driver")
->> which is in power-supply tree, for-next. Thus, the series is based on
->> it.
->>
->> The testing since v4 has suffered some hardware-issues after I
->> accidentally enabled charging while the PMIC's battery pin was connected
->> to the I/O domain. Some heat was generated, not terribly lot smoke
->> though...
->>
->> After the incident I've had occasional I2C failures. I, however, suspect
->> the root cause is HW damage in I/O lines.
->>
->> Revision history:
->>    v6 resend:
->>    - Rebased on v6.19-rc1 and collected rb-tags from v6.
->>
->>    v5 => v6:
->>    - MFD fixes as suggested by Lee
->>      - Styling mostly
->>      - New patch to Fix comment style for MFD driver
->>    More accurate changelog in individual patches
->>
->>    v4 => v5:
->>    - dt-binding fixes as discussed in v4 reviews.
->>      - Drop rohm,vdr-battery.yaml and add vdr properties to battery.yaml
->>      - Drop 'rohm,' -vendor-prefix from vdr properties
->>    - Link to v4:
->>      https://lore.kernel.org/all/cover.1763022807.git.mazziesaccount@gmail.com/
->>    More accurate changelog in individual patches
->>
->>    v3 => v4:
->>    - dt-binding fixes to the BD72720 MFD example and regulator bindings
->>    More accurate changelog in individual patches
->>
->>    v2 => v3:
->>    - rebased to power-supply/for-next as dependencies are merged to there
->>    - plenty of dt-binding changes as suggested by reviewers
->>    - add new patch to better document existing 'trickle-charging' property
->>    More accurate changelog in individual patches
->>
->>    RFCv1 => v2:
->>    - Drop RFC status
->>    - Use stacked regmaps to hide secondary map from the sub-drivers
->>    - Quite a few styling fixes and improvements as suggested by
->>      reviewers. More accurate changelog in individual patches.
->>    - Link to v1:
->>      https://lore.kernel.org/all/cover.1759824376.git.mazziesaccount@gmail.com/
->>
->> ---
->>
->> Matti Vaittinen (17):
->>    dt-bindings: regulator: ROHM BD72720
->>    dt-bindings: battery: Clarify trickle-charge
->>    dt-bindings: battery: Add trickle-charge upper limit
->>    dt-bindings: battery: Voltage drop properties
->>    dt-bindings: mfd: ROHM BD72720
->>    dt-bindings: leds: bd72720: Add BD72720
->>    mfd: rohm-bd71828: Use regmap_reg_range()
->>    mfd: rohm-bd71828: Use standard file header format
->>    mfd: rohm-bd71828: Support ROHM BD72720
->>    regulator: bd71828: rename IC specific entities
->>    regulator: bd71828: Support ROHM BD72720
->>    gpio: Support ROHM BD72720 gpios
->>    clk: clk-bd718x7: Support BD72720 clk gate
->>    rtc: bd70528: Support BD72720 rtc
->>    power: supply: bd71828: Support wider register addresses
->>    power: supply: bd71828-power: Support ROHM BD72720
->>    MAINTAINERS: Add ROHM BD72720 PMIC
->>
->>   .../bindings/leds/rohm,bd71828-leds.yaml      |    7 +-
->>   .../bindings/mfd/rohm,bd72720-pmic.yaml       |  339 ++++++
->>   .../bindings/power/supply/battery.yaml        |   33 +-
->>   .../regulator/rohm,bd72720-regulator.yaml     |  148 +++
->>   MAINTAINERS                                   |    2 +
->>   drivers/clk/Kconfig                           |    4 +-
->>   drivers/clk/clk-bd718x7.c                     |   10 +-
->>   drivers/gpio/Kconfig                          |    9 +
->>   drivers/gpio/Makefile                         |    1 +
->>   drivers/gpio/gpio-bd72720.c                   |  281 +++++
->>   drivers/mfd/Kconfig                           |   18 +-
->>   drivers/mfd/rohm-bd71828.c                    |  555 ++++++++-
->>   drivers/power/supply/bd71828-power.c          |  160 ++-
->>   drivers/regulator/Kconfig                     |    8 +-
->>   drivers/regulator/bd71828-regulator.c         | 1025 ++++++++++++++++-
->>   drivers/rtc/Kconfig                           |    3 +-
->>   drivers/rtc/rtc-bd70528.c                     |   21 +-
->>   include/linux/mfd/rohm-bd72720.h              |  634 ++++++++++
->>   include/linux/mfd/rohm-generic.h              |    1 +
->>   19 files changed, 3127 insertions(+), 132 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd72720-pmic.yaml
->>   create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd72720-regulator.yaml
->>   create mode 100644 drivers/gpio/gpio-bd72720.c
->>   create mode 100644 include/linux/mfd/rohm-bd72720.h
-> 
-> The MFD parts LGTM.
+Do you have any comments about:
 
-Thanks Lee!
+> +static void max25014_remove(struct i2c_client *cl)
+> +{
+> +	struct max25014 *maxim = i2c_get_clientdata(cl);
+> +
+> +	maxim->bl->props.brightness = 0;
+> +	max25014_update_status(maxim->bl);
+> +	gpiod_set_value_cansleep(maxim->enable, 0);
+> +	regulator_disable(maxim->vin);
+> +}
 
-> What Acks are you waiting on?  What's the merge strategy?
+I'm feeling like the setting of the brightness + update status maybe 
+should be a call to backlight_device_set_brightness() or maybe it 
+shouldn't really be there at all?
 
-I think everything else has been acked by maintainers, except the 
-power-supply parts. I think those have only been looked at by Andreas 
-and Linus W. Haven't heard anything from Sebastian :(
-
-I would love to see the patches 1 - 14 and 17 to be merged (via MFD?). I 
-could then re-spin the 15 and 16 to limited audience as I hope Sebastian 
-had time to take a look at them. However, I don't think any of the other 
-patches in the series depend on the last .
-
-Yours,
-  -- Matti.
-
-
----
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+Kind regards,
+Maud
