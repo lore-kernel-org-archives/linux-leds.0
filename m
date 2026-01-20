@@ -1,335 +1,122 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4C22E8B75
-	for <linux-leds@vger.kernel.org>; Tue, 20 Jan 2026 09:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A0C429801
+	for <linux-leds@vger.kernel.org>; Tue, 20 Jan 2026 12:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768901927; cv=none; b=jj4CrcDlzf1rd9NnDMrAbLuEfXeCgcD5TlP1A7kekciSySD04UpyENEfcwezswkjwqaBYfohanpXtAQ/vdYSCL708o/81sjeivj7cdZMGpQnfgy/i/fkPSDZ60NpPbWhc9ER5hlh/3ztbzm1pGRxifzTZ8esCs9kCW6sgjaiPR8=
+	t=1768913446; cv=none; b=uYDzq+L0KSrI0HM/0M4DOPdewigT5mRrbWSeU9uIqY4Gteen1B0uWbzQ7jE6gQfNQMwxc+89UHZhYMLNSsKyir268TCKK6HB0q4xbXFPcG+nywYfwpABnJtQqwxRWvP9eoWq+cF2jG6k4J0GbCJnfqKWygz23Kq4s2pHQLEzJXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768901927; c=relaxed/simple;
-	bh=fe4X9cUXePaawaT4qNrxQlN770EBdOFRImJxWrnEhUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpl9AY/g6hZ7IoBMOUJrtJFJXFV3agt7m0TQQY1sABzzifMUVYUXfBGDy7fXIPBFIO3YmXx3+vdqcx/i8lfeBCfG+73hlZS/LT9UOd8pqW5MWlIDCyTw42G/fK5pp/rJqv+JOhCKZUevVK5G4wpt+TJVb8pDqyIXd8F8ta/FR3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=GhRrHXHH; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1768913446; c=relaxed/simple;
+	bh=6sMqGXnBsWs7Qtna1yPZgI8g0wHllWWzrqehilIX0J4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SVnZfkZjsL2D9qiT+UqwSUjKcKh81sAHgeSFwhGK3azQsqXyzD0rel4Z3BqVhxmZUbIL+gzTsAh9H4npjQvKCnC7a/e4gc7c0YRAGwntiEdQ218x1JXN7zyszAnm6ZwZ36A9R4ddClk8p7vrNaf0KTEWWAOXtMhURc6VFMrGYu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYfjS2yy; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="GhRrHXHH"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47edffe5540so44484645e9.0
-        for <linux-leds@vger.kernel.org>; Tue, 20 Jan 2026 01:38:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYfjS2yy"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-29f1bc40b35so53754795ad.2
+        for <linux-leds@vger.kernel.org>; Tue, 20 Jan 2026 04:50:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1768901922; x=1769506722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPcPIZUGx04qHWK759PItSENS0mcgGK/1dry0pxcZSU=;
-        b=GhRrHXHHA9XaNb+N7dT+VVb9laC5CpSkVTTKe+PupT/lRLgQ83mBZXWKCkmhAyi2UY
-         CVCzzN67E8BjO7b6BiUpNDt9VF2SlDZlRjP29WGrb83debl1URarYxs1KzgmggvUOlnx
-         8B6dHxQaV2NvYHurlqmcxVTujXImSXzUUoFFVIXzFE4zENdEKN/D0N4+tQ+jPyWtChp1
-         4yb6XglKY4WsOcsujYTZXpK24Abwi37HLyLDVodkjtuzKGf//4fnEbsnuwW0uHW3K910
-         KZ0sxV3yX5yJBUewQhBrB9njahWB7LEHtHVuv3s12+axHmCIxTK7EMcp6/cRS/j80r4A
-         4r9A==
+        d=gmail.com; s=20230601; t=1768913444; x=1769518244; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZJYUWQwQhgkeAbC/dM1w7lsNUkVncAvp21VUFc05s9E=;
+        b=MYfjS2yyNT3EgyCloriC6EOaPE4vKXLkAjxfqTCmte2Ls/zCzZKJk9p90e7f1LquGL
+         f2bCEOyOGziLUZuP8Dy7yBoTSV1DQ4AHNrPu5hkd7AeEhpDENNwKS+K8RXQctTUIg32v
+         dKc+0oVX9MIM3ArcRR/EUH62OLEH3Q6H4r0mSJc36usfYJ06Mq6vKbMQUabZA4vrEU/j
+         FqJ90OACA9cE/BAAwXL7d9LXUMBbJYl8W2tD2N9GagMb87LZWFPBgHGRyD0m/dd0/yaK
+         eOl505ERFcC1/eT1VJ0GNBU/wU7TVP4mksc0q3lfd9cBRcG/ste7VDnx68psnBamMbg6
+         7SqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768901922; x=1769506722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JPcPIZUGx04qHWK759PItSENS0mcgGK/1dry0pxcZSU=;
-        b=lzvSsDGPbKQHtdOxpcFegZQGnUHia13/apcmdJJG934wONX0/C0X+ARRBwTbDs3oQu
-         3/kVUU7v0ixsXQ+rxIakJ4PeAM2RkfxjTKA9K+A8xGlDasTeds6aWtVXDsfSNrdySavm
-         AL59ggQwovjdBM4jKKwpnpIg136ll7eYn9zkc4hAurtV/7yf8jqKuSyndRqws+4+vYQr
-         z1BJhkUoiE/2kMI/0sIkPlb8mv1fbfuaOahuzQlGqP+fElc/QGs+gP7mKDT3FF8FdqAF
-         +bbchrEQ2zUI+aM0bVjkn1eajhc/fmdtZQkVeitYV9VKmpL43CGJCuhvNwuAxxN4FrMx
-         utng==
-X-Forwarded-Encrypted: i=1; AJvYcCXWw80ccYlOH/PeLJ8gm7KLRj4SUdNDgHJSwRrM5jM4MKBTtl522xrSkBCOtW0DJr8hExmpjlFpqHXG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+mB1rx2yK+WMiWD6y6ymjOSXMMBJSAvf9Dzv+zDZEvZJRqfA0
-	RjCeMj9ZrIJr6F6I09aF0hsc0qHQ1FR4qQjmytDU6uBSFgTycBpF8db8R9SxCrk//cA=
-X-Gm-Gg: AY/fxX4oDgZa4Rqoa7ZTiFr8jSELUaRpzSbTmLgJO8oz0IlyKRvo20AMA0ES+8wXAuf
-	J7z2DfE+WAsG4xMmNLta7PZbGoLMCf4r6YsRc79+vNB5nb/W1wDhGTUGbNGWDJLz7qhPdJU8aFR
-	kop2H/7M4/y218UNEMq4pgDadu0xZkmxVeIuerm7iWHqqqJ/GtCYx4s8/sqmfIRxIqS+7a6DqYr
-	X+wa7qZlDDs16Uq2jyspZeZGvJCgJFLe5comzDhOrDJ31XWqYZjV7CRglZYfPJKZWJNwidq3WT+
-	0qU4qF+c9ixi58JS1AebFVYo3KiYWFHIZKEOi5l8/KNC4JQZUN2c7CDLxb1o34MQ9ESDtz0aa1f
-	i+MVMMKvp3YOhC6+DLU4/mVetSJAj5pLIzdMQFv8rxhht2aE5nuthOTI+O01LdjzL23Zfvsx/zv
-	fgEODNNxjzohPEgARNKM+rtKHTo5MzuZL6DwJDyQpFj8wVvpmrmLeCOxNv6VtHhJWbqG2EROU1v
-	1nrM4yrFeMvg0F4Y61NQQp636np/HxOPqgO4x7VmKmrgrHsYz9O0VZXBeM3LUDIHcT9LFbA
-X-Received: by 2002:a05:600c:1d14:b0:47d:4fbe:e6cc with SMTP id 5b1f17b1804b1-4803e7a39damr16391835e9.13.1768901922024;
-        Tue, 20 Jan 2026 01:38:42 -0800 (PST)
-Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47f4b267661sm298932175e9.13.2026.01.20.01.38.40
+        d=1e100.net; s=20230601; t=1768913444; x=1769518244;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZJYUWQwQhgkeAbC/dM1w7lsNUkVncAvp21VUFc05s9E=;
+        b=VPCcNgPJizDklSY165JKarvV/4Wr0bic6cAF8qZFCL0n05HJHyPJbQvaWupAlhPfb0
+         Zv1UQzHIKnD5S06so4VYvBJzQBGy6eT2znNptlPmnAELBqj9Sh8rPNcQIyRqNopywDOF
+         fnXbqt+ZzjZComty1CiB8Q56Orzye3kbddw7EI03hP8ILAzk03ay4gI1PrPaDLd1PgRw
+         j2HnL0Ztzp2HE7gfMDzTDgcjovd85g/a8WHgaEOvca14UxPLiNw0GuBy727cD2CK4a9T
+         fBXeXj8bH2Njl1C8isFVWcYLHZ34xb6dBENf/RNgPVFNLGKgM3qPOdETc3oqUPcmFJtx
+         Px8g==
+X-Forwarded-Encrypted: i=1; AJvYcCX58GdOP5XMPo+cvhQXXBs2L+WP3sE+QiNvX/zp/e/alOv+Sv0F2MpMS+0mgimxKYy2b+XASwQALzka@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9kzKjo3wy069b1CgOZLioykIiegFp4M7AKhnNITZ/TTN4OH4u
+	fVqaG7PaFl8EvzbYi/hoPLAoIey5mJ1BANSLwcFuPx30BP058kM1pHtN
+X-Gm-Gg: AZuq6aLfyoOdYr1xuDCCMX+pM2eRHqRULVHPwC/SQe7TpOmt5eym5bhvwzMDPXj6J0m
+	dZ8F45Id6NAo7p2yJx5hkkHybBdBm8CYmGUJT+qaS9L/yQ3UI8DsFTn4r5IT5sUn7GDlzjHEf2y
+	AS7ucYcZh1Kn0m+GCkCPbZGqSxO2DxayVKFbAzW7QX8ozq1eyVjF5SJsR/r2xWntAv1JZ1779Yx
+	MVEL1pR7znYA0VXuihk8aibgxXjt3HZ12rrkBnDpeuFqIJ5AOwTMip9cBPITDzqx8oSkq0cnmUJ
+	VJj6zqLZBAroeB1KM4RiS9NaNEotQt7zVj3KCByxW2JxIH/JY3HzMO6C+WMgbnEQIk9jhO0Q4xY
+	yguQCBKwuLUkia4MLvwGygXaUe2X92tcG/c4QEpRBYz5gqMAgEHSiDaxeS+bZfKuz3xzLgHv1AC
+	qoC8enXaKHLGgBv7ro4LkJ11HejOy5fFf+XyBz
+X-Received: by 2002:a17:903:1447:b0:298:2afa:796d with SMTP id d9443c01a7336-2a76b26ccd2mr17322155ad.61.1768913443613;
+        Tue, 20 Jan 2026 04:50:43 -0800 (PST)
+Received: from test-HP-Desktop-Pro-G3.. ([103.218.174.23])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a7193dd582sm124973815ad.52.2026.01.20.04.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Jan 2026 01:38:41 -0800 (PST)
-Date: Tue, 20 Jan 2026 09:38:39 +0000
-From: Daniel Thompson <daniel@riscstar.com>
-To: tessolveupstream@gmail.com
-Cc: lee@kernel.org, danielt@kernel.org, jingoohan1@gmail.com, deller@gmx.de,
-	pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] backlight: gpio: add support for multiple GPIOs
- for backlight control
-Message-ID: <aW9NH5GTwSR-m7VQ@aspen.lan>
-References: <20260105085120.230862-1-tessolveupstream@gmail.com>
- <20260105085120.230862-3-tessolveupstream@gmail.com>
- <aVuN7zVUWJ1qsVh8@aspen.lan>
- <1fedb7d7-3a30-4f0f-961f-09613f2a95d0@gmail.com>
- <aWe-QA_grqNwnE4n@aspen.lan>
- <ec7b7af7-1343-4988-b783-9ce9b045c8ae@gmail.com>
+        Tue, 20 Jan 2026 04:50:43 -0800 (PST)
+From: Sudarshan Shetty <tessolveupstream@gmail.com>
+To: lee@kernel.org,
+	danielt@kernel.org,
+	jingoohan1@gmail.com
+Cc: deller@gmx.de,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sudarshan Shetty <tessolveupstream@gmail.com>
+Subject: [PATCH v2 0/2] backlight: gpio: add support for multiple GPIOs for backlight control
+Date: Tue, 20 Jan 2026 18:20:34 +0530
+Message-Id: <20260120125036.2203995-1-tessolveupstream@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec7b7af7-1343-4988-b783-9ce9b045c8ae@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 20, 2026 at 10:22:02AM +0530, tessolveupstream@gmail.com wrote:
->
->
-> On 14-01-2026 21:33, Daniel Thompson wrote:
-> > On Tue, Jan 13, 2026 at 12:47:26PM +0530, tessolveupstream@gmail.com wrote:
-> >>
-> >>
-> >> On 05-01-2026 15:39, Daniel Thompson wrote:
-> >>> On Mon, Jan 05, 2026 at 02:21:20PM +0530, Sudarshan Shetty wrote:
-> >>>> Extend the gpio-backlight driver to handle multiple GPIOs instead of a
-> >>>> single one. This allows panels that require driving several enable pins
-> >>>> to be controlled by the backlight framework.
-> >>>>
-> >>>> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
-> >>>> ---
-> >>>>  drivers/video/backlight/gpio_backlight.c | 61 +++++++++++++++++-------
-> >>>>  1 file changed, 45 insertions(+), 16 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> >>>> index 728a546904b0..037e1c111e48 100644
-> >>>> --- a/drivers/video/backlight/gpio_backlight.c
-> >>>> +++ b/drivers/video/backlight/gpio_backlight.c
-> >>>> @@ -17,14 +17,18 @@
-> >>>>
-> >>>>  struct gpio_backlight {
-> >>>>  	struct device *dev;
-> >>>> -	struct gpio_desc *gpiod;
-> >>>> +	struct gpio_desc **gpiods;
-> >>>> +	unsigned int num_gpios;
-> >>>
-> >>> Why not use struct gpio_descs for this?
-> >>>
-> >>> Once you do that, then most of the gbl->num_gpios loops can be replaced with
-> >>> calls to the array based accessors.
-> >>>
-> >>
-> >> Based on your feedback, I have updated the implementation to use
-> >> struct gpio_descs and array-based accessors, as recommended like
-> >> below:
-> >>
-> >> git diff drivers/video/backlight/gpio_backlight.c
-> >> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> >> index 037e1c111e48..e99d7a9dc670 100644
-> >> --- a/drivers/video/backlight/gpio_backlight.c
-> >> +++ b/drivers/video/backlight/gpio_backlight.c
-> >> @@ -14,22 +14,37 @@
-> >>  #include <linux/platform_device.h>
-> >>  #include <linux/property.h>
-> >>  #include <linux/slab.h>
-> >> +#include <linux/bitmap.h>
-> >>
-> >>  struct gpio_backlight {
-> >>         struct device *dev;
-> >> -       struct gpio_desc **gpiods;
-> >> +       struct gpio_descs *gpiods;
-> >>         unsigned int num_gpios;
-> >>  };
-> >>
-> >>  static int gpio_backlight_update_status(struct backlight_device *bl)
-> >>  {
-> >>         struct gpio_backlight *gbl = bl_get_data(bl);
-> >> -       unsigned int i;
-> >> +       unsigned int n = gbl->num_gpios;
-> >>         int br = backlight_get_brightness(bl);
-> >> +       unsigned long *value_bitmap;
-> >> +       int words = BITS_TO_LONGS(n);
-> >> +
-> >> +       value_bitmap = kcalloc(words, sizeof(unsigned long), GFP_KERNEL);
-> >
-> > Not sure you need a kcalloc() here. If you want to support more than 32
-> > GPIOs then you can pre-allocate space with a devm_kcalloc() in the probe
-> > method rather than reallocate every time it is used.
-> >
-> > To be honest I don't really mind putting a hard limit on the maximum
-> > gpl->num_gpios (so you can just use a local variable) and having no
-> > allocation at all.
-> >
->
-> Thanks for the suggestion. I addressed the kcalloc() concern by
-> moving the bitmap allocation to probe using devm_kcalloc() as
-> below:
->
-> diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-> index 0eb42d8bf1d9..7af5dc4f0315 100644
-> --- a/drivers/video/backlight/gpio_backlight.c
-> +++ b/drivers/video/backlight/gpio_backlight.c
-> @@ -19,32 +19,25 @@
->  struct gpio_backlight {
->         struct device *dev;
->         struct gpio_descs *gpiods;
-> -       unsigned int num_gpios;
-> +       unsigned long *bitmap;
->  };
->
->  static int gpio_backlight_update_status(struct backlight_device *bl)
->  {
->         struct gpio_backlight *gbl = bl_get_data(bl);
-> -       unsigned int n = gbl->num_gpios;
-> +       unsigned int n = gbl->gpiods->ndescs;
->         int br = backlight_get_brightness(bl);
-> -       unsigned long *value_bitmap;
-> -       int words = BITS_TO_LONGS(n);
-> -
-> -       value_bitmap = kcalloc(words, sizeof(unsigned long), GFP_KERNEL);
-> -       if (!value_bitmap)
-> -               return -ENOMEM;
->
->         if (br)
-> -               bitmap_fill(value_bitmap, n);
-> +               bitmap_fill(gbl->bitmap, n);
->         else
-> -               bitmap_zero(value_bitmap, n);
-> +               bitmap_zero(gbl->bitmap, n);
->
-> -       gpiod_set_array_value_cansleep(gbl->gpiods->ndescs,
-> +       gpiod_set_array_value_cansleep(n,
->                                        gbl->gpiods->desc,
->                                        gbl->gpiods->info,
-> -                                      value_bitmap);
-> +                                      gbl->bitmap);
->
-> -       kfree(value_bitmap);
->         return 0;
->  }
->
-> @@ -67,22 +60,25 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->         struct device *dev = &pdev->dev;
->         struct gpio_backlight_platform_data *pdata = dev_get_platdata(dev);
->         struct device_node *of_node = dev->of_node;
-> -       struct backlight_properties props;
-> +       struct backlight_properties props = { };
->         struct backlight_device *bl;
->         struct gpio_backlight *gbl;
-> -       int ret, init_brightness, def_value;
-> -       unsigned int i;
-> +       bool def_value;
-> +       enum gpiod_flags flags;
-> +       unsigned int n;
-> +       int words;
->
-> -       gbl = devm_kzalloc(dev, sizeof(*gbl), GFP_KERNEL);
-> -       if (gbl == NULL)
-> +       gbl = devm_kcalloc(dev, 1, sizeof(*gbl), GFP_KERNEL);
-> +       if (!gbl)
->                 return -ENOMEM;
->
->         if (pdata)
->                 gbl->dev = pdata->dev;
->
->         def_value = device_property_read_bool(dev, "default-on");
-> -
-> -       gbl->gpiods = devm_gpiod_get_array(dev, NULL, GPIOD_ASIS);
-> +       flags = def_value ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
-> +
-> +       gbl->gpiods = devm_gpiod_get_array(dev, NULL, flags);
->         if (IS_ERR(gbl->gpiods)) {
->                 if (PTR_ERR(gbl->gpiods) == -ENODEV)
->                         return dev_err_probe(dev, -EINVAL,
-> @@ -90,12 +86,17 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->                 return PTR_ERR(gbl->gpiods);
->         }
->
-> -       gbl->num_gpios = gbl->gpiods->ndescs;
-> -       if (gbl->num_gpios == 0)
-> +       n = gbl->gpiods->ndescs;
-> +       if (!n)
->                 return dev_err_probe(dev, -EINVAL,
-> -                       "The gpios parameter is missing or invalid\n");
-> +                       "No GPIOs provided\n");
-> +
-> +       words = BITS_TO_LONGS(n);
-> +       gbl->bitmap = devm_kcalloc(dev, words, sizeof(unsigned long),
-> +                                  GFP_KERNEL);
-> +       if (!gbl->bitmap)
-> +               return -ENOMEM;
->
-> -       memset(&props, 0, sizeof(props));
->         props.type = BACKLIGHT_RAW;
->         props.max_brightness = 1;
->         bl = devm_backlight_device_register(dev, dev_name(dev), dev, gbl,
-> @@ -106,50 +107,19 @@ static int gpio_backlight_probe(struct platform_device *pdev)
->         }
->
->         /* Set the initial power state */
-> -       if (!of_node || !of_node->phandle) {
-> +       if (!of_node || !of_node->phandle)
->                 /* Not booted with device tree or no phandle link to the node */
->                 bl->props.power = def_value ? BACKLIGHT_POWER_ON
->                                                     : BACKLIGHT_POWER_OFF;
-> -       } else {
-> -               bool all_high = true;
-> -               unsigned long *value_bitmap;
-> -               int words = BITS_TO_LONGS(gbl->num_gpios);
-> -
-> -               value_bitmap = kcalloc(words, sizeof(unsigned long),
-> -                                      GFP_KERNEL);
-> -               if (!value_bitmap)
-> -                       return -ENOMEM;
-> -
-> -               ret = gpiod_get_array_value_cansleep(gbl->gpiods->ndescs,
-> -                                                    gbl->gpiods->desc,
-> -                                                    gbl->gpiods->info,
-> -                                                    value_bitmap);
-> -               if (ret) {
-> -                       kfree(value_bitmap);
-> -                       return dev_err_probe(dev, ret,
-> -                               "failed to read initial gpio values\n");
-> -               }
-> -
-> -               all_high = bitmap_full(value_bitmap, gbl->num_gpios);
-> -
-> -               kfree(value_bitmap);
-> -               bl->props.power =
-> -                       all_high ? BACKLIGHT_POWER_ON :  BACKLIGHT_POWER_OFF;
-> -       }
-> -
-> -       bl->props.brightness = 1;
-> -
-> -       init_brightness = backlight_get_brightness(bl);
-> +       else if (gpiod_get_value_cansleep(gbl->gpiods->desc[0]) == 0)
-> +               bl->props.power = BACKLIGHT_POWER_OFF;
-> +       else
-> +               bl->props.power = BACKLIGHT_POWER_ON;
->
-> -       for (i = 0; i < gbl->num_gpios; i++) {
-> -               ret = gpiod_direction_output(gbl->gpiods->desc[i],
-> -                                            init_brightness);
-> -               if (ret)
-> -                       return dev_err_probe(dev, ret,
-> -                                       "failed to set gpio %u direction\n",
-> -                                       i);
-> -       }
-> +       bl->props.brightness = def_value ? 1 : 0;
->
-> +       gpio_backlight_update_status(bl);
-> +
->         platform_set_drvdata(pdev, bl);
->         return 0;
->  }
->
-> Kindly confirm whether this approach aligns with your
-> expectations.
+Hi all,
 
-As mentioned yesterday, I'd rather just review a v2 patch than this kind of
-meta-patch. Please send a v2 patch instead.
+This patch extends the gpio-backlight driver and its Device Tree
+bindings to support multiple GPIOs for controlling a single
+backlight device.
 
+Some panels require more than one GPIO to enable or disable the
+backlight, and previously the driver only supported a single GPIO.
+With this change:
+ - The driver now handles an array of GPIOs and updates all of them
+   based on brightness state.
+ - The Device Tree binding has been updated to allow specifying one
+   or more GPIOs for a gpio-backlight node.
 
-Daniel.
+This approach avoids describing multiple backlight devices in DT for a
+single panel.
+
+Changes in v2:
+ - Used devm_gpiod_get_array() and struct gpio_descs
+ - Replaced per-index GPIO handling with descriptor array access
+ - Moved the bitmap allocation to probe using devm_kcalloc().
+ - Updated commit messages.
+
+Thanks,
+Anusha
+
+Sudarshan Shetty (2):
+  dt-bindings: backlight: gpio-backlight: allow multiple GPIOs
+  backlight: gpio: add support for multiple GPIOs for backlight control
+
+ .../leds/backlight/gpio-backlight.yaml        | 24 ++++++-
+ drivers/video/backlight/gpio_backlight.c      | 66 +++++++++++++------
+ 2 files changed, 67 insertions(+), 23 deletions(-)
+
+-- 
+2.34.1
+
