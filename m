@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ED522A80D;
-	Thu, 22 Jan 2026 13:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2276B2F9C32;
+	Thu, 22 Jan 2026 13:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769087791; cv=none; b=QZ/x2gQVUDpBF3YPcg0XZfa9YKmoQqXOGo2hd31OGamLH4vowJgFk3/l5hxSzjElrSm8Cs5VCvoq6ttym0TMrvh2e4eVWlnpDtYno0oClP7CeZUrf9vd2M0UI4xN5Px+h+r5751bJ1g+p1bR2CqZDOL1/nLSlnRmH/UA4xfZZwQ=
+	t=1769087794; cv=none; b=VxrrC3luTztSLmHG1CXig6z5OSqerwK3XUIOLsFEBJBlLsNsBYYaZk6oQdQ103ltp8pR9y3DEV3zJLYAEhzMHAdjuAMDiQU6Cmgd7/f2/B8BraD6aJR1EHgvFbPVgCa6RI0bjZKpmT6LvobNheCU3bkxlwDGPRrayhw8a4wI740=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769087791; c=relaxed/simple;
-	bh=qlrg3DK7A0Isj0taiC4eo/ebU33Got+rHWhQbOioguM=;
+	s=arc-20240116; t=1769087794; c=relaxed/simple;
+	bh=xuBJGovRTjVshbSibhalxYLDBXqf9Ynp6pxi7FKmm7c=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=e0QhG7g/I6WIfCtqfQML+BJ41Z57R21elpMcOX+HjOjkJXnUodrBES7Xlby2elkXFZRQLBvunEai9rDNJlvZ/MkoygjKTWScvUTobzOPqIegFMSwn6eAEleKOLYgWrRBBjZGnMbM8d6LIEfgDIZUTF6clhf/T2CCxVqQop9syl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPP++Ab9; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=q6pB0Sp+ihI6Z2UJdhkWJT3caIEA2l5K93HKyeNjObLKgzA4tU4HrKQUWogyDaUTDt+mqLS42bD7+Ir/+lTBYtayU40DrUE94LtkaDVQjnJdYZnFVLec6b2NCg500ooBMJi1hGOupLhnWFQYwKgjuC0QUpbteGFFQBBI+S4BbdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Az2rfVpB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPP++Ab9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDECC116C6;
-	Thu, 22 Jan 2026 13:16:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Az2rfVpB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 067D1C116C6;
+	Thu, 22 Jan 2026 13:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769087791;
-	bh=qlrg3DK7A0Isj0taiC4eo/ebU33Got+rHWhQbOioguM=;
+	s=k20201202; t=1769087793;
+	bh=xuBJGovRTjVshbSibhalxYLDBXqf9Ynp6pxi7FKmm7c=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uPP++Ab9zhJeSATQUyad9t/ZxPkM3tYbpxm33RFbdoh8EPf5607/mUEMy6qV2sKau
-	 X64rwsZ4DprbEC/3OBhk6nNyt+sLNx8uBCMal29mxsf+PwxdpZfoaE2TXzT3MxfRet
-	 fG4ue6EBw1sP9xDtqLuWze+dskNPjifpqSaA3jMpoJbyS/l6k5T++ANS2RaMhUehU8
-	 fJ4pKmBLL+RRI/tbqOcV4l3CN46GJGgBsom9Vb2pIxloJF6Is0omqdqkF4P2J3hpVd
-	 TeoYKCXH2lpGH28Pvneo49bZEg59SAwGdn6WFM/zGjxnAdocqgTziXjKYHaqutmjKz
-	 hZysudhAb/TPw==
+	b=Az2rfVpBc7tAwcyH0+rZeVrrBVOjuPCiDUWEVoPM1G+6ETjJHKlCdnARMg0IXUVpa
+	 JmjkZr5jYeEQE/0suItei7tqULmfWLQaHszGT4KXneis5mXJ+QBSH+L2hvH0ksXczL
+	 ubRqbGAfnPClZvce6wsSxPVwR5ySJJIS6CZfAsa2KoyaTcOWArUJVGLYazCHervIro
+	 ex62MApbo45M18nMX+9eXhCv7Lpkez0lSEzDXruxgdUHkEOf5F89C+IXS/WG7FRD0C
+	 Hk9M09YYHqIMFdiWZybIPpxa5y1owqLuiYOSAU9dIb+rQA5yf3n17Hmqqyakelko34
+	 Tt/tHnfyn0uHg==
 From: Lee Jones <lee@kernel.org>
 To: lee@kernel.org, pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
  conor+dt@kernel.org, Lukas Timmermann <linux@timmermann.space>
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20251201230601.285641-1-linux@timmermann.space>
-References: <20251201230601.285641-1-linux@timmermann.space>
-Subject: Re: [PATCH v13 0/2] Support for Osram as3668 LED driver
-Message-Id: <176908778931.3924443.13772215058963109403.b4-ty@kernel.org>
-Date: Thu, 22 Jan 2026 13:16:29 +0000
+In-Reply-To: <20260118165010.902086-1-linux@timmermann.space>
+References: <20260118165010.902086-1-linux@timmermann.space>
+Subject: Re: [PATCH v14 0/2] Support for Osram as3668 LED driver
+Message-Id: <176908779171.3924443.2834922090007850430.b4-ty@kernel.org>
+Date: Thu, 22 Jan 2026 13:16:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,7 +46,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-52d38
 
-On Tue, 02 Dec 2025 00:05:59 +0100, Lukas Timmermann wrote:
+On Sun, 18 Jan 2026 17:50:08 +0100, Lukas Timmermann wrote:
 > This patch adds basic support for the as3668 driver IC via I2C interface.
 > The IC is capable of driving four individual LEDs up to 25.5mA per
 > channel. Hardware blinking would be theoretically possible, but this chip
