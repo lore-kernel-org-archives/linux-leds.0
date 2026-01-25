@@ -1,63 +1,63 @@
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1375C1DB375
-	for <linux-leds@vger.kernel.org>; Sun, 25 Jan 2026 15:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A145F325492
+	for <linux-leds@vger.kernel.org>; Sun, 25 Jan 2026 15:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769355259; cv=none; b=oA10hI8SD+SrD0vZeKER9xMaAkOalmxPvGpSzZV4KwzfHhEi/x9abFLdAgs5z243ZKZcMLXy6/EGSKBmxIXhviIENrdDFCxrm5BCzyF2BDTIN14iOMQcTeNk8R1OAlTejlCInvlJ1v/bCCAVRXnehcF5bMBl1inyvcc+djOM9KQ=
+	t=1769355514; cv=none; b=VJ3j2f5zfm/W0rgMSP1GRgh2Sskd5cH0OtgvckpI4O7DupbtHTtqnOO4TkpPT8SaAuT57DLZ2t5lLJ+EuQJJxEzwHLNRm+urq+bcfmqDjLl2Tl/ITaYj5dS2NScTqSeMiSuBmc0Zrv9t076fUfZ2NBMWXtN1KQRUOr0O35rszME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769355259; c=relaxed/simple;
-	bh=E7A9c27yUqkUqACBSnmKRI2cuBoHgawSFZnfB30gBd0=;
+	s=arc-20240116; t=1769355514; c=relaxed/simple;
+	bh=l9NQa79di/jjOBPV+OqER4b7B0YtHihmaNsEeJfrOXo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=coWrQq8ZPKa0ehvt+fx/NixZu3MnNOyaHrNlK6ze4toE4Mz8inZGvM79Y1gjzleMT10r2NbAJ80jHGR6qEskSpw3Rc/KpTa1wB/bE/EJ4hu5QpZCyJa0MwZ44Epo0yxx3WdCsh6K9QWh1yoXKlkXQUkkrz2qh6QQcE+pou9xHjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaaUvFuB; arc=none smtp.client-ip=209.85.208.67
+	 MIME-Version; b=JMPvDBO56gdybk6FsvuX0EzmL2lYvESx5HKlZrL9rBLeRhpoLQ9tz/iVaCK7Tkn6aEOvGeM0BiFyU2gFBhNst0tgsTam2cn3svg5j8J+sptzYrH20SBTLyMA3Z3fb3tXW8pYCHq7CrHWKTJs45t8K/30v4WSbZqz0YJIVg6QwSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUihGu7k; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaaUvFuB"
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-64d02c01865so6055101a12.1
-        for <linux-leds@vger.kernel.org>; Sun, 25 Jan 2026 07:34:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUihGu7k"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47ee3da7447so29863415e9.0
+        for <linux-leds@vger.kernel.org>; Sun, 25 Jan 2026 07:38:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1769355256; x=1769960056; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1769355511; x=1769960311; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=opwAzXZXGpL/t9kjdWql8KWUaKqEP4kujq0iT4W20S8=;
-        b=eaaUvFuBqFNX/Qpz14m/OO1TB0UBbpgQLyB37FyXqBRqMLHDtGEthOrJqp7+/L5BRz
-         SUW8kMAkl+IPmzSt8xFOwkcQszkrmYAcV8vlE1V2NyeYR93xlyuncnBJhBlEetqToVLz
-         rNAeBeP83x4LrmPdpJbGd/nLvowx1GhgX3m4ubnGrTvW2Zi7pGdlxyfFYMRJiox+wfbj
-         2olCkJF45Z812JMQm3JltY5eaOYKvs2gX8eQsfGQdPKgOi1xfuZnfmWq2ZiL1YvPTGNc
-         w0bRAWmg0RuWSj2TfMW/QPtWTm+ERJ0K0Zumats7dsnG7U0DIuZ+dBtobpfB6z9uCX8C
-         LUhw==
+        bh=IlJduHNY4/ATTPZTxaM+BbgtP/PXXrqKo+1qMJ4eq2o=;
+        b=hUihGu7kDfyUQmYph3PN4NPQ37DWDGrnW7JEJ+X/QXgEmW0oHAadDUw9UTCU3mnDFs
+         3jZ+LyDOgSs5qbojkocMAc+Z9tHR4UIF+wvA/AB05cgW12TTw0g1Hmy9hpLdK2WYOcR2
+         9EME0IL4EMpkH8Z/6piXsLCQf8pWipUO9Uf4tl4Y33LV7xL1OgPza7JLNnt//gbG9NCQ
+         BJya7OE+O/VkiYRl0bhS3n9sobvuqJ2K2IQD1m8DbjmqNLKPplfYLQbd4MhzT1k87hwT
+         A8jUx4Q2I/ei5BdG4Ih3gW43La1otPsFU9TZ0yqzei/ZoZvo70QR3C+pTs0Vl7oj2Ohi
+         PS1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769355256; x=1769960056;
+        d=1e100.net; s=20230601; t=1769355511; x=1769960311;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=opwAzXZXGpL/t9kjdWql8KWUaKqEP4kujq0iT4W20S8=;
-        b=t5UW/ZZgy/xfIjv7L1jI0418iAiJdhKuB1e22YCvFHzt8u7ZrAFgiZRjRGK/+kZLbY
-         /hmwY75B9P5AlOjAsC4/a/pDbu3qeHXajLUgBEImwNtGV+sz8GPRm+q7uNnc1fg/St0q
-         AParFBvOVWPTLPChL1y7Y3SXiym8X3h+0dvEkoXr+K2vfVEQ4WYAksamjhxQDOTvtIVW
-         aSjfZ14slp3DaDjVy4QLS4a3hlruVtIYxwmh6nwYiib0Zuue1ukne48gJduC02Wc5gbz
-         fLVI97uG3fjah9oAvYJJ2cTi3sdmur8wtDWowq+Hppm2hjxhcCWyl1oSM3SXRw4iZvsY
-         6h1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYKO2l0F6oKcYe3FGbrFjHVNE6UEB5wTR19t+5Xv9AgEwyq/32F5ZwWPKF/8ORgWEbdPTZ6bjXlpWy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4wbP7c9agnRN6J023c450w4JVwkNeWItUIsMSqOyDDICznbhT
-	gER9VrBe+NzOddlI3VnpESIHTLR9d6q6LPopToyGbaeYyFOi/nFjDeF/1mkX+JsW
-X-Gm-Gg: AZuq6aLVd72Qxx/GdfHEZ0eJoMkMyrNoCohPSXyIBMeMPH5peb8y5TvkoGzFG7/M2xo
-	DcWL4n0NkP0R95xpIFBw+S9AAhC2IXGqO68aT+QNEjBGPMoT2WICAux+bBe0/A19lLFCcvdRhVl
-	FQ2VONiq/83FPDCU0jPbx5KRDElQM/Wx3d/+D00UOMsFZhjSCArsA3yb+2hhJnsYai5ZFmyXjoT
-	r7MRG9cPF3p7eKGq4M+X7ToDr7QwpNiKcJqFM+d13+oCNss3riVCID1u9W7iIMXM24ZUWWevLHs
-	RAURy+ijyZzeRVQINV1j2Pvlrb4FKVG3twDdz0lFy0aI2h2YhsNr1VlBM7AvKT+dgMRSNeXCvmy
-	XAV4A5eINcYNIhRcZo86pzluNfuNBVz3RonJBDyjB0M/Q9d4UecMO6/5NXfDT8CEF4Q1KDf+hfi
-	Wu
-X-Received: by 2002:a05:6000:2483:b0:435:bdc0:48e9 with SMTP id ffacd0b85a97d-435ca1ab666mr2383866f8f.55.1769348600123;
-        Sun, 25 Jan 2026 05:43:20 -0800 (PST)
+        bh=IlJduHNY4/ATTPZTxaM+BbgtP/PXXrqKo+1qMJ4eq2o=;
+        b=Y+A1d0whgshZOnB/TeenPNvXl9YpNZWxB5V4UEg9O/kwy5a2LZwxsaCIAYmdJ8dLrO
+         rnpF6y9qOBMdThnY2k9z8/sfBkoGGQODQa8qA6tMrSY3Xw6LDFIN6tAZdnHIV4kdBVkm
+         BNOKbB1rUK9VK/IaP/AI3+MWMhWo1vt2eoJMynIV2gqF7u6MObWZ0yDxi6bSS3V0uJJp
+         Cf4jSbzD1WQX7xTXa4XejIbumKT3lhG3WwTTo2mqjarGqwONBDrCy4yUpqes7rFtSagL
+         ALRXKhLLha0dAODlL/yA109OIJZkvonGURTNhj51d7nlE/vlN/aPsLAMlQyb5L0ZBuMi
+         9NUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpzxEHkDudJnTqno79yeScUcVI7iLftyB40ygNHuzvIvDxgDk3TpUkg8jJNLbQgDzzLUkcFnVdmJPv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMUd8jUgoleSmUtVRAzVZKXxx/IKlDjHZEAx4RlODahZMml2LJ
+	FneE2UwanHJlNm3BGGECDJzrXvWxfacFytIjDSpn0TUROtkCGaVQzN5z
+X-Gm-Gg: AZuq6aJlD0Z4O/l3oDiPLxuFyfhENXf7LQm07Sa/fg7/l9hwUBDzMcd+SDecYMaKaAs
+	QTvs6I2bojIXwFYnBFt0xDkdydsL/H7LUb14n7Mzq0J/X1guBeD2tirPbvI8jE1hhYd7T3rby/D
+	0HjrdOOtLdRWPCqwTD6Tno9yXk02D7SriUxohoSQvR/eNUr4OowVFbWx7g9CWY+AnK/yChJMIRk
+	QsISpynqVixH8De1/qMN5WsNeSCMtXcxpZcF2L1AlgGn4iN4VVmzFHFOfOLHx/gnAHNZpiXGe+I
+	OqcIwNNiKaZ290UXak0VFa3KYOYCI6qWT/Ccyqpq+7Cj9+4IaCLLM7PBtZNXgUX4g2+/xhy25T2
+	/aRQePpchHKYPZZqgXam0C+ya+8bBTaZuljL2LXQ3MPJH5y7Mys8ga9x5EE18lW9nOSTwmeKf+I
+	XuTQmhFRtoVYo=
+X-Received: by 2002:a05:600c:4f43:b0:477:a54a:acba with SMTP id 5b1f17b1804b1-4805cf5f2b9mr31969485e9.17.1769348592595;
+        Sun, 25 Jan 2026 05:43:12 -0800 (PST)
 Received: from xeon ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c246ecsm22459688f8f.10.2026.01.25.05.43.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-435b1c246ecsm22459688f8f.10.2026.01.25.05.43.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Jan 2026 05:43:19 -0800 (PST)
+        Sun, 25 Jan 2026 05:43:12 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Jonathan Cameron <jic23@kernel.org>,
 	David Lechner <dlechner@baylibre.com>,
@@ -81,9 +81,9 @@ Cc: linux-iio@vger.kernel.org,
 	linux-input@vger.kernel.org,
 	linux-leds@vger.kernel.org,
 	linux-rtc@vger.kernel.org
-Subject: [PATCH v1 07/10] dt-bindings: input: cpcap-pwrbutton: convert to schema
-Date: Sun, 25 Jan 2026 15:42:59 +0200
-Message-ID: <20260125134302.45958-8-clamor95@gmail.com>
+Subject: [PATCH v1 01/10] dt-bindings: regulator: cpcap-regulator: convert to schema
+Date: Sun, 25 Jan 2026 15:42:53 +0200
+Message-ID: <20260125134302.45958-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260125134302.45958-1-clamor95@gmail.com>
 References: <20260125134302.45958-1-clamor95@gmail.com>
@@ -95,57 +95,72 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Convert power button devicetree bindings for the Motorola CPCAP MFD from
-TXT to YAML format. This patch does not change any functionality; the
-bindings remain the same.
+Convert devicetree bindings for the Motorola CPCAP MFD regulator subnode
+from TXT to YAML format. Main functionality preserved and added compatible
+for CPCAP regulator set found in the Mot board.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../bindings/input/cpcap-pwrbutton.txt        | 20 ------------
- .../input/motorola,cpcap-pwrbutton.yaml       | 32 +++++++++++++++++++
- 2 files changed, 32 insertions(+), 20 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
- create mode 100644 Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml
+ .../bindings/regulator/cpcap-regulator.txt    | 35 -------------
+ .../regulator/motorola,cpcap-regulator.yaml   | 51 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 35 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml
 
-diff --git a/Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt b/Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
+diff --git a/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt b/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
 deleted file mode 100644
-index 0dd0076daf71..000000000000
---- a/Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
+index 36f5e2f5cc0f..000000000000
+--- a/Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
 +++ /dev/null
-@@ -1,20 +0,0 @@
--Motorola CPCAP on key
+@@ -1,35 +0,0 @@
+-Motorola CPCAP PMIC voltage regulators
+-------------------------------------
 -
--This module is part of the CPCAP. For more details about the whole
--chip see Documentation/devicetree/bindings/mfd/motorola-cpcap.txt.
+-Requires node properties:
+-- "compatible" value one of:
+-    "motorola,cpcap-regulator"
+-    "motorola,mapphone-cpcap-regulator"
+-    "motorola,xoom-cpcap-regulator"
 -
--This module provides a simple power button event via an Interrupt.
+-Required regulator properties:
+-- "regulator-name"
+-- "regulator-enable-ramp-delay"
+-- "regulator-min-microvolt"
+-- "regulator-max-microvolt"
 -
--Required properties:
--- compatible: should be one of the following
--   - "motorola,cpcap-pwrbutton"
--- interrupts: irq specifier for CPCAP's ON IRQ
+-Optional regulator properties:
+-- "regulator-boot-on"
+-
+-See Documentation/devicetree/bindings/regulator/regulator.txt
+-for more details about the regulator properties.
 -
 -Example:
 -
--&cpcap {
--	cpcap_pwrbutton: pwrbutton {
--		compatible = "motorola,cpcap-pwrbutton";
--		interrupts = <23 IRQ_TYPE_NONE>;
+-cpcap_regulator: regulator {
+-	compatible = "motorola,cpcap-regulator";
+-
+-	cpcap_regulators: regulators {
+-		sw5: SW5 {
+-			regulator-min-microvolt = <5050000>;
+-			regulator-max-microvolt = <5050000>;
+-			regulator-enable-ramp-delay = <50000>;
+-			regulator-boot-on;
+-		};
 -	};
 -};
-diff --git a/Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml b/Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml
+diff --git a/Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml b/Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml
 new file mode 100644
-index 000000000000..643f6b2b1f13
+index 000000000000..b73d32a86904
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml
-@@ -0,0 +1,32 @@
++++ b/Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml
+@@ -0,0 +1,51 @@
 +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/input/motorola,cpcap-pwrbutton.yaml#
++$id: http://devicetree.org/schemas/regulator/motorola,cpcap-regulator.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Motorola CPCAP PMIC power key
++title: Motorola CPCAP PMIC regulators
 +
 +maintainers:
 +  - Svyatoslav Ryhel <clamor95@gmail.com>
@@ -153,20 +168,39 @@ index 000000000000..643f6b2b1f13
 +description:
 +  This module is part of the Motorola CPCAP MFD device. For more details
 +  see Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml. The
-+  power key is represented as a sub-node of the PMIC node on the device
-+  tree.
++  regulator controller is represented as a sub-node of the PMIC node
++  on the device tree.
 +
 +properties:
 +  compatible:
-+    const: motorola,cpcap-pwrbutton
++    enum:
++      - motorola,cpcap-regulator
++      - motorola,mapphone-cpcap-regulator
++      - motorola,mot-cpcap-regulator
++      - motorola,xoom-cpcap-regulator
 +
-+  interrupts:
-+    minItems: 1
-+    description: CPCAP's ON interrupt
++  regulators:
++    type: object
++
++    patternProperties:
++      "$[A-Z0-9]+^":
++        $ref: /schemas/regulator/regulator.yaml#
++        type: object
++        description:
++          Valid regulator names are SW1, SW2, SW3, SW4, SW5, VCAM, VCSI,
++          VDAC, VDIG, VFUSE, VHVIO, VSDIO, VPLL, VRF1, VRF2, VRFREF, VWLAN1,
++          VWLAN2, VSIM, VSIMCARD, VVIB, VUSB, VAUDIO
++
++        required:
++          - regulator-name
++          - regulator-enable-ramp-delay
++          - regulator-min-microvolt
++          - regulator-max-microvolt
++
++        unevaluatedProperties: false
 +
 +required:
 +  - compatible
-+  - interrupts
 +
 +additionalProperties: false
 +
