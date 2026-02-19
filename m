@@ -1,73 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B071372B36;
-	Tue, 17 Feb 2026 17:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0B51F30A4;
+	Thu, 19 Feb 2026 14:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771350889; cv=none; b=DAawOBphh+h8Sj8QZcSg/HAE8IHLVdspnd6+3b8bBTyot+GuvR4bvv134CHzwWHMuZ0wFiwC8jRTnKcnCIbbWShNrwSbyCvGuxA3DSAjGXM5fxUBczycuLfrw71G1kqmKWcl58jCZAg1eveulQVljznuwa7bgnn9UuKpPV1/tFQ=
+	t=1771511680; cv=none; b=oJgU19EuBi7BgsEt+MgOdIdPs/+gQM+HEqfatnMRvMmCHWUUMAom+K/Iakax4ffUUvn/IV7lF2ahLcGEn24yznENa18oBjOHLq5pjBsSuGwNdunBXyW0MFY62ZqQ4pgfQtY4Cm/tkNy4pTv9UGX0vo4m1VyUs5znaQ8hFWGsF4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771350889; c=relaxed/simple;
-	bh=LiiATGb9mLztIHueQqve7IaeHGvQYiZfoTdOKkfC2y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTqXth51HiZ4ecRJVEpN21njelhnGAIgXUKSzdz2SQ+NpF7ylupFZWqKjq3EYHIPams6N3jdIZlNsu4ePq6CSaNvXmCQO7Nb628oCtjStZU+09BLUH7kXebI0TnODrUpC8jE1i6tij+jpYyumKCnYq8NwLFazZlDXiYxjYQLevo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/mnWuBa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771511680; c=relaxed/simple;
+	bh=RG5Hfgymi3riW3PE9yJni3eUxCYk3oiRt1b+niVy5Yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bxZ8iPuBL8R745GwsvqvM2/sa8/Mk11gx2ZioH0FD0oRgV7dvd/rTgO5taaWZpCWJLZp1jTwoxiagtyE8MjaLzznc+yYYsPpXGrDjD6Et1KIilS8ieGMo1C6Go8JrzNtfRvKLLgXlbbszITX4gALWjXclAS4zGaD0DjrG5n2ZuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qwtd0xGt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/mnWuBa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7617AC4CEF7;
-	Tue, 17 Feb 2026 17:54:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771350889;
-	bh=LiiATGb9mLztIHueQqve7IaeHGvQYiZfoTdOKkfC2y0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B/mnWuBa6ZaSwCsP275HJ8f2GIPUygx0S8Cx1qTiQswMOVpdbaQ3DVKSkZQFt5xBO
-	 ujZxauDis9KySFIMUw/dibHNdB5Wrx8jedzDJ1vCgSNp/HPp5rlSTk8tNTEtH8jKfE
-	 xX7u1EnUHMXwCLTXV7Oe1C7AaCAx5n8rux07xMrkr6FUtwerGNXopyaYelWtop404b
-	 AYl/6wbmp7QZujOYu/fQv/T5Yx7cpz3Y88sNqks2tRwxZCw4GimXReACjBd1KUyI1/
-	 q8bseR6W83lOpCIxnXZxgTZnY6Vv6CcpPQUwScsedFBgxoQfGjC7xI00a6MB0GXhZJ
-	 wckizMdp5uPNQ==
-Date: Tue, 17 Feb 2026 17:54:45 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Steffen Trumtrar <kernel@pengutronix.de>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: leds: lp5860: add enable-gpio
-Message-ID: <20260217-shrill-running-283c112a76f3@spud>
-References: <20260217-v6-19-topic-ti-lp5860-enable-gpio-v1-0-f5e8edeb5d74@pengutronix.de>
- <20260217-v6-19-topic-ti-lp5860-enable-gpio-v1-1-f5e8edeb5d74@pengutronix.de>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qwtd0xGt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8B5C116C6;
+	Thu, 19 Feb 2026 14:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1771511679;
+	bh=RG5Hfgymi3riW3PE9yJni3eUxCYk3oiRt1b+niVy5Yc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Qwtd0xGtGRoDIHLCOW3oHZ7TDMAbiHIiShD5BOmZFF3c4WBv2k9tfRvXhohlONMpx
+	 glRjeuq/+wUp1F9WSX+qPoasNlhlli9c0zCoNcqU5BIShdvHKO9L9ofBOsvGf5T3G/
+	 o+eFFN5lzyF1rqYqzQSb0F3l/SX3V5VpAtdzudQE=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	stable <stable@kernel.org>
+Subject: [PATCH] leds: qcom-lpg: Check for array overflow when selecting the high resolution
+Date: Thu, 19 Feb 2026 15:34:35 +0100
+Message-ID: <2026021934-nearby-playroom-036b@gregkh>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gaUxk0/KYR+pFMMw"
-Content-Disposition: inline
-In-Reply-To: <20260217-v6-19-topic-ti-lp5860-enable-gpio-v1-1-f5e8edeb5d74@pengutronix.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1654; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=RG5Hfgymi3riW3PE9yJni3eUxCYk3oiRt1b+niVy5Yc=; b=owGbwMvMwCRo6H6F97bub03G02pJDJnT5atctL9p3XlrsUft3PI3Xmz9jZqbYvr/HZt46/PMf fYVIq43OmJZGASZGGTFFFm+bOM5ur/ikKKXoe1pmDmsTCBDGLg4BWAivrMZ5vAkvXisZac5cXJC 7NzMWDXTO868JgzzXcSztty5vv/oq3f5cnHWIi+4r5ukAwA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
+When selecting the high resolution values from the array, FIELD_GET() is
+used to pull from a 3 bit register, yet the array being indexed has only
+5 values in it.  Odds are the hardware is sane, but just to be safe,
+properly check before just overflowing and reading random data and then
+setting up chip values based on that.
 
---gaUxk0/KYR+pFMMw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Cc: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>
+Cc: linux-leds@vger.kernel.org
+Assisted-by: gkh_clanker_2000
+Cc: stable <stable@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+This issue was found by running a tool to compare a past kernel CVE to
+try to find any potential places in the existing codebase that was
+missed with the original fix.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-pw-bot: not-applicable
+ drivers/leds/rgb/leds-qcom-lpg.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---gaUxk0/KYR+pFMMw
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
+index f54851dfb42f..1da384b07dc0 100644
+--- a/drivers/leds/rgb/leds-qcom-lpg.c
++++ b/drivers/leds/rgb/leds-qcom-lpg.c
+@@ -1273,7 +1273,12 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		return ret;
+ 
+ 	if (chan->subtype == LPG_SUBTYPE_HI_RES_PWM) {
+-		refclk = lpg_clk_rates_hi_res[FIELD_GET(PWM_CLK_SELECT_HI_RES_MASK, val)];
++		unsigned int clk_idx = FIELD_GET(PWM_CLK_SELECT_HI_RES_MASK, val);
++
++		if (clk_idx >= ARRAY_SIZE(lpg_clk_rates_hi_res))
++			return -EINVAL;
++
++		refclk = lpg_clk_rates_hi_res[clk_idx];
+ 		resolution = lpg_pwm_resolution_hi_res[FIELD_GET(PWM_SIZE_HI_RES_MASK, val)];
+ 	} else {
+ 		refclk = lpg_clk_rates[FIELD_GET(PWM_CLK_SELECT_MASK, val)];
+-- 
+2.53.0
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaZSrZQAKCRB4tDGHoIJi
-0tXEAQCjBqeWnBClZMU8ITOrNun1n+OxHfFXbdjvO+DlOcV8bQEApWRzVZG0se7h
-zVHK3v8JUBhTmO4diMslOiqm+Geupwk=
-=VSvy
------END PGP SIGNATURE-----
-
---gaUxk0/KYR+pFMMw--
