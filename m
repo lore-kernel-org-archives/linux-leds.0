@@ -1,32 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DB038F959;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E563D3D1B;
 	Wed, 25 Feb 2026 16:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772035718; cv=none; b=CVXPztO0hILShoD2NouTv7IufUz7kEzx/UJeMViCA6MrW+nqxb5QcH+jukBzDPwF9JzgDtvKP+uBK3SoakNc+Hql080eCQ81YH2ycgHaXy2YJ3FONq04cBMGzdsIouOH8QWwsMLvPD9frlCoF1v4xU9xstN8BC5euPo76haYH+o=
+	t=1772035718; cv=none; b=PPSP21TlwpCWYKOwRCvvmpwpXqt7BcMYp9h+uF38MRCQ+5tpLXuPiIoB/Grp2L8K5zNhIb1K08J/I2HSaXqxv8z4pR8u/SnrcSN6fnjcPSRdzzVyKHxjF7DzSsYgZNqJu6/tZeTR0ysy5byRKlvBo2jHc26aohuqnoQDmDwiABc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772035718; c=relaxed/simple;
-	bh=1R+1GPZ7oHsV11otnMezIlBcaLhpwQJU4kYs2FxjRqU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nL+VerH1s2EHJj0BTpN+2jbAGYhgu0hhnLghPm+cCdQinSo7aW9Rj9OGT51h56He16B376HyLcCwnp9BuLK5iVKHrb8UXjIOxlcInh4G2+5Ir0tfH0Ydst/a4DFsaJAeQ+sdl3IK7s6qrWuH+Qto/z5NZzu1NM+YgN5Uf3V9E2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRUKSeHL; arc=none smtp.client-ip=10.30.226.201
+	bh=eLvucCb55GuE8Q5tfT8jNQeAspRn+aiAF7vdpEhbIZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gWSQO9buIBSJ5lXIQvcb82ieTWayNpjFxaCxguN7bFKRFQYn9MSZ/uZ6dFp1eAwCXCyolF3IMs0eBZnoPmwVZxCLb5MMh8SvmXVL+y9UOudcgAwldtdkUffaHs3t6hyt4/f1QXhlzpJazoKVJcZpiKrDr3KY2xB7QBAmaS4e8mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rR1fiPxf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRUKSeHL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B7D7C116D0;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rR1fiPxf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3497FC4AF0C;
 	Wed, 25 Feb 2026 16:08:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1772035718;
-	bh=1R+1GPZ7oHsV11otnMezIlBcaLhpwQJU4kYs2FxjRqU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FRUKSeHL5v4Yi4cme4faAxkQraoNCEhFqiAL9NAwDPsqOsO9SWGs/vVJDdKFwtNrN
-	 DaPbASyGdK9y9nZaZNWi6HzwjXhm5FucDD/+QUFKmCPzBCkYr61QkYrni78/qXijrZ
-	 1uLeTJDEkouYuIeIR1diPfHY6NF4Jim6724Z1MXd1R2cZTlsZ99eceEhvoO/C4QV5t
-	 tP29mXVCKWYJGdsBB2LmG0TCQLP1aqHRp6rp5XG3byrFAJLOtMQXhFPzgNlCPOZG59
-	 HmvH18ZDgN6yOuzGLhVBYYSJKeoBVpMNPRUxnWOwE/QIvdLsYKLfc7J4tuG1uRP/do
-	 x5J1JPa1lacRA==
+	bh=eLvucCb55GuE8Q5tfT8jNQeAspRn+aiAF7vdpEhbIZc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rR1fiPxfb8dTk5Vty4dou+2INGLQKdOCV9FO+iERkK+ZoqQo6BcoJ9H5z0qx9L8el
+	 9L1wpXPhloRfG7BKm7swbMZC6b5fGq6hCzVzkhI1XUTaA1ggKuTQPjYekfXH+0wOaY
+	 PKFdIHUot6jzHKRRnywfhFELKgJzqevmVstGREgwqDsUkMrQ3A9r36mKzRyNvtaGdE
+	 kS8kOO4V6+RbEUCj8lCW3lWCqNf1xFZBcqWXzG+Ho2lzsZknF1PfMKMj397+FXgXcX
+	 MQ5AlIvMgN25VPdaGL5sKzxg1TE3Q6DfYpCAFvZpfqIw7rxWKc+yu5ktSi4yTkwrgt
+	 cCtMwOnDAmP0Q==
 Received: by wens.tw (Postfix, from userid 1000)
-	id 963C75FEC5; Thu, 26 Feb 2026 00:08:35 +0800 (CST)
+	id AFD005FF06; Thu, 26 Feb 2026 00:08:35 +0800 (CST)
 From: Chen-Yu Tsai <wens@kernel.org>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -41,10 +42,12 @@ Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-leds@vger.kernel.org
-Subject: [PATCH 0/3] arm64: dts: allwinner: sun55i-t527: avaota-a1: Enable LEDs
-Date: Thu, 26 Feb 2026 00:08:23 +0800
-Message-ID: <20260225160828.1687643-1-wens@kernel.org>
+Subject: [PATCH 2/3] arm64: dts: allwinner: sun55i-a523: Add LED controller
+Date: Thu, 26 Feb 2026 00:08:25 +0800
+Message-ID: <20260225160828.1687643-3-wens@kernel.org>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260225160828.1687643-1-wens@kernel.org>
+References: <20260225160828.1687643-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -53,36 +56,57 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi folks,
+The A523 SoC family features an LED controller that is identical to the
+one found on previous SoCs.
 
-This series enables the RGB LEDs found on the Avaota A1 board. The LEDs
-are connected in series to the SoC's LED controller.
+Add a device node for it, and one of the possible pinmux settings. This
+setting is used on the Avaota A1.
 
-Patch 1 adds a new compatible string for the LED controller found in the
-Allwinner A523 SoC family.
+Signed-off-by: Chen-Yu Tsai <wens@kernel.org>
+---
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Patch 2 adds a device node for the LED controller to the dtsi file.
-
-Patch 3 enables the LEDs found on the Avaota A1 board.
-
-
-Please have a look.
-
-
-Thanks
-ChenYu
-
-
-Chen-Yu Tsai (3):
-  dt-bindings: leds: sun50i-a100: Add compatible for Allwinner A523 SoC
-  arm64: dts: allwinner: sun55i-a523: Add LED controller
-  arm64: dts: allwinner: sun55i-t527: avaota-a1: Enable LEDs
-
- .../leds/allwinner,sun50i-a100-ledc.yaml      |  1 +
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 22 ++++++++++
- .../dts/allwinner/sun55i-t527-avaota-a1.dts   | 41 +++++++++++++++++++
- 3 files changed, 64 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+index 09bd149bbf51..b8263e2872af 100644
+--- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+@@ -170,6 +170,13 @@ i2s2_pi_pins: i2s2-pi-pins {
+ 				bias-disable;
+ 			};
+ 
++			/omit-if-no-ref/
++			ledc_ph_pin: ledc-ph-pin {
++				pins = "PH19";
++				function = "ledc";
++				allwinner,pinmux = <5>;
++			};
++
+ 			mmc0_pins: mmc0-pins {
+ 				pins = "PF0" ,"PF1", "PF2", "PF3", "PF4", "PF5";
+ 				allwinner,pinmux = <2>;
+@@ -300,6 +307,21 @@ ccu: clock-controller@2001000 {
+ 			#reset-cells = <1>;
+ 		};
+ 
++		ledc: led-controller@2008000 {
++			compatible = "allwinner,sun55i-a523-ledc",
++				     "allwinner,sun50i-a100-ledc";
++			reg = <0x02008000 0x400>;
++			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_LEDC>, <&ccu CLK_LEDC>;
++			clock-names = "bus", "mod";
++			resets = <&ccu RST_BUS_LEDC>;
++			dmas = <&dma 42>;
++			dma-names = "tx";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		ths1: thermal-sensor@2009400 {
+ 			compatible = "allwinner,sun55i-a523-ths1";
+ 			reg = <0x02009400 0x400>;
 -- 
 2.47.3
 
