@@ -1,44 +1,44 @@
 Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3298C3A7F7C;
-	Fri, 27 Feb 2026 19:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CD63859CB;
+	Fri, 27 Feb 2026 19:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772219234; cv=pass; b=L6W8wXck5mRGfA1VH+PAZcHJ+x6nizFphSOfERPSCGq4KW/crIMpdJVc689uSH2/IgikBSZuZaPkLDbG7SjvglAbqxBxSBjIPLbNXnBflLs86vZ/f3MmAhD/XXD0AAmJTv4BVApbKDt06I9D7+gYbsJ/nR9b4wmQG0m2tIeDxpM=
+	t=1772219241; cv=pass; b=SuXpp5GzAsTIkfkG/CFF4bargoaznwOCaYQWBU2WlExRHRv/s/C4ouMW9Q/t86YFvTf+UU9J0wwRWR/O/7cVpwa6U3mQUnrVDR52n1ssvgzUWJwVZWIW7Aye6Y+OLkm68rAon1aHoaZ7UPiidD1idVD+3sjLAc4RAXpRnLmNh0E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772219234; c=relaxed/simple;
-	bh=46xabc43SVTjpm9Q+KwpSamKHyJ2Sblrwkh97QbKtM8=;
+	s=arc-20240116; t=1772219241; c=relaxed/simple;
+	bh=eQs8UtEW4GMqtNXX/FhanPTQXPpVEotyg/qfpWuDQOg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hfcl+4e4OnHFbSMGNC8nC7KLxCCH1uO4pZc7IxtPjKSP44NtwGqRb73joUCcwRTYDfs2E3YDj4lQK48uVctANDB0xSB5zR92e6RmAw37ohs0iDAMZi1qc3ZngNWydGmhgYhWqRINYjFftJKwsXzFzjnDpG2UXgkeKgXvxI2qYRo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=oomNm/RS; arc=pass smtp.client-ip=136.143.188.12
+	 MIME-Version; b=qGbFD/4QohuZuEIOVL6ZDjcEk/oGeZs/aYWNrQnFQSFFiMER2gHW3WMycIIvG1oRSkPk3wR38skg8NgWM8EdjVeq+1/Ezv916FGTlHOLO6xd+a/bTUgmorw4a+NYteupm8A80QROIi6Pr8/FppGgx0tfkPHephcgsWW3DKcHJ1c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=k16FLxJ3; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="oomNm/RS"
-ARC-Seal: i=1; a=rsa-sha256; t=1772219213; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="k16FLxJ3"
+ARC-Seal: i=1; a=rsa-sha256; t=1772219223; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=oCpvEpLSb3cvYqLbUIHlOwM7+3RqTg8JV1GMGx8QfCWMkGCctWIFB+KV9czW/cE8vs5c3vU+eSjWfTQtjDM3RYbyy3nYTKmVjZ4DX08CuUczbK6y+DHmdS8fdfV2P4qhj/DSIHhz3Fv9bIm4avPxl9Uhbpbz76TFDi5LL3IU+aY=
+	b=HnG2q/yS6tFJL4dj04owLkpugAaRjNNPuMOdzgSG5p+xIrLVMVxlpBPYnZiq9UOheY2qb03fcnkQgfjJM18YeowZBg+l17Cy0E+WaTXTpqZTaZ40du3FkOITqNdGU6UrxZIwTbp9LRSOpvcm3k9J5sd9TFbX83ejmz5b+SNQzRo=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1772219213; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pfwFChO4XxRiKzeQdXTZAod9r1Evqeqe/sBBTyscmDQ=; 
-	b=Jf7bGwwhS8epU3L70GP3sF3Ae7YnFOMNwdAhTvaEjZLGpkEb1lzRUi1QsRyEfiJNX1uw34C+n0Y+eKVqJCP7nEcFFPvKaTDT+30oh0opwTGi+BrL6nsZPHNfH0jnnuTZqvLOsEDtbSlnt+UCcqk74tbxtgMmwkUlkYoaSeLcrKY=
+	t=1772219223; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GBopvb0XLYM5a5cYSz2Hjnrp4LOHHlYa0YRcHewmDc0=; 
+	b=H0AP+gTTbhODpzG9Kc/rBDG3f4nRIQAdpIEaxqPK8a6kS3U1u+Fq3JVQQbKRV32XOQstCzCYFFiMQPHmic6PIGMQPHrSHxFfG0j7y6uaUXL1Pv/lgvGptI+xIiB8K7I3RrAs1t5EVmGlBqtfHn8ZVQz6fjWULNYvgOcN4zgb8oA=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772219213;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1772219223;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=pfwFChO4XxRiKzeQdXTZAod9r1Evqeqe/sBBTyscmDQ=;
-	b=oomNm/RSgyfAVcstKvTaZrPxu4Qu4UNp2dz2qlq5EN/EB+1Oz6i+pFCrSrQLYfe+
-	MkSgoGafQajZCZAcv/3PyeyJZCneyqFNTgHnM4CFMEMK5Bc81yq6P2qKpSIZKn3v08J
-	sSSbplrXTZBQGMF7FdNzvUGIX9ul+L0HNmSPjxgn4mOVQbDKBnnsRvJ5Tz4wyXjf4ib
-	l4FtPn+lgY63jGq6Oca5f/3y4xGs4PCUCD9DebpTqHUqTG16KiER/rUVKDnndwPH6Vi
-	uvOwb4HDoLjoin8ckkKBgj8VQ8n+t81M1FDlcGB5nFmDb59q2tRHhw6kh6hBDfMz3H6
-	boJ9Vjzdlg==
-Received: by mx.zohomail.com with SMTPS id 177221921233793.75743679643915;
-	Fri, 27 Feb 2026 11:06:52 -0800 (PST)
+	bh=GBopvb0XLYM5a5cYSz2Hjnrp4LOHHlYa0YRcHewmDc0=;
+	b=k16FLxJ3V4lraSO9m45g6elJrcK7ai1ECN73M9+noQq9qg4zCdLcpH1wMVyaq2PF
+	Rii66RSjHklDVImNKtc9dTA44AhIbjHG7UGdkt1UXtvJHH8oiOzCotiDgNMEyTfLpde
+	npP4BEK8q3t1jCu+zeaTHfx4BGWplky0p6ZX+Njyt09oMKeKRJrNJn0jJ7FOyrV/A8E
+	M9KY/OojsSsiMZBe1k2BrtfseFUir6nUAey/SE5lTylT6WqjCSKwL0MAwYmdMN4qx4o
+	yiV5pM7EPVgZLtMu1UPmFyXjHe/DrS5LmQv8+TEe0cGgH6tbrvuG1EDXX+9y07mTMp4
+	73i3OQh/5g==
+Received: by mx.zohomail.com with SMTPS id 1772219222496341.97858049630565;
+	Fri, 27 Feb 2026 11:07:02 -0800 (PST)
 From: Rong Zhang <i@rong.moe>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -58,9 +58,9 @@ Cc: Rong Zhang <i@rong.moe>,
 	linux-leds@vger.kernel.org,
 	chrome-platform@lists.linux.dev,
 	platform-driver-x86@vger.kernel.org
-Subject: [RFC PATCH 6/9] leds: Add trigger_may_offload attribute
-Date: Sat, 28 Feb 2026 03:06:03 +0800
-Message-ID: <20260227190617.271388-7-i@rong.moe>
+Subject: [RFC PATCH 8/9] platform/x86: ideapad-laptop: Decouple HW & cdev brightness for kbd backlight
+Date: Sat, 28 Feb 2026 03:06:05 +0800
+Message-ID: <20260227190617.271388-9-i@rong.moe>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260227190617.271388-1-i@rong.moe>
 References: <20260227190617.271388-1-i@rong.moe>
@@ -73,241 +73,202 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-Currently, we have multiple triggers implementing hw control. Only
-"netdev" provides a custom attribute to determine if it's offloaded to
-hardware (i.e., in hw control mode). For other triggers, there is no
-obvious way userspace can determine the hw control state
-programmatically. Moreover, userspace can't even query if an LED device
-supports hw control and the name of hw control trigger.
+Some recent models come with an ambient light sensor (ALS). On these
+models, their EC will automatically set the keyboard backlight to an
+appropriate brightness when the effective "HW brightness" is 3. "HW
+brightness" can't be perfectly mapped to an LED classdev brightness, but
+the EC does use this predefined brightness value to represent auto mode.
 
-Add a new attribute "trigger_may_offload" to the LED core, so that
-userspace can determine:
+Currently, the code processing keyboard backlight is coupled with LED
+classdev, making it hard to expose the auto brightness (ALS) mode to the
+userspace.
 
-- if the LED device supports hw control (supported => visible)
-- which trigger is the hw control trigger
-- if the hw control trigger is selected
-- if the hw control trigger is in hw control
+As the first step toward the goal, decouple HW brightness from LED
+classdev brightness, and update comments about corresponding backlight
+modes.
 
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
- .../obsolete/sysfs-class-led-trigger-netdev   | 15 +++++++
- Documentation/ABI/testing/sysfs-class-led     | 22 ++++++++++
- .../testing/sysfs-class-led-trigger-netdev    | 13 ------
- Documentation/leds/leds-class.rst             |  4 +-
- drivers/leds/led-class.c                      | 22 ++++++++++
- drivers/leds/led-triggers.c                   | 42 +++++++++++++++++++
- drivers/leds/leds.h                           |  2 +
- drivers/leds/trigger/ledtrig-netdev.c         |  2 +
- 8 files changed, 108 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/ABI/obsolete/sysfs-class-led-trigger-netdev
+ drivers/platform/x86/lenovo/ideapad-laptop.c | 114 +++++++++++++------
+ 1 file changed, 80 insertions(+), 34 deletions(-)
 
-diff --git a/Documentation/ABI/obsolete/sysfs-class-led-trigger-netdev b/Documentation/ABI/obsolete/sysfs-class-led-trigger-netdev
-new file mode 100644
-index 0000000000000..d1a7713d45700
---- /dev/null
-+++ b/Documentation/ABI/obsolete/sysfs-class-led-trigger-netdev
-@@ -0,0 +1,15 @@
-+What:		/sys/class/leds/<led>/offloaded
-+Date:		March 2026
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Communicate whether the LED trigger modes are offloaded to
-+		hardware or whether software fallback is used.
-+
-+		If 0, the LED is using software fallback to blink.
-+
-+		If 1, the LED blinking in requested mode is offloaded to
-+		hardware.
-+
-+		Since 7.1, /sys/class/leds/<led>/trigger_may_offload provides
-+		a generic method to query the offloaded state of supported
-+		trigger, so this has been deprecated.
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 0313b82644f24..403f411b09036 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -78,6 +78,28 @@ Description:
- 		(which would often be configured in the device tree for the
- 		hardware).
- 
-+What:		/sys/class/leds/<led>/trigger_may_offload
-+Date:		March 2026
-+KernelVersion:	7.1
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Names and states of triggers that may be offloaded to hardware.
-+		Such triggers are also called "hw control trigger" in some
-+		context.
-+
-+		Only exists when the LED supports trigger offload.
-+
-+		Returns a list of hw control triggers on read. The optional
-+		brackets around the trigger name indicate the state of the
-+		current trigger:
-+
-+		- `foo_trigger`: the trigger is not selected.
-+		- `<foo_trigger>`: the trigger is selected, but falls back to
-+		  software blink for some reason (e.g., incompatible trigger
-+		  parameters)
-+		- `[foo_trigger]`: the trigger is selected and offloaded to
-+		  hardware.
-+
- What:		/sys/class/leds/<led>/inverted
- Date:		January 2011
- KernelVersion:	2.6.38
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-index ed46b37ab8a28..396d37a4b820d 100644
---- a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-@@ -62,19 +62,6 @@ Description:
- 		When offloaded is true, the blink interval is controlled by
- 		hardware and won't reflect the value set in interval.
- 
--What:		/sys/class/leds/<led>/offloaded
--Date:		Jun 2023
--KernelVersion:	6.5
--Contact:	linux-leds@vger.kernel.org
--Description:
--		Communicate whether the LED trigger modes are offloaded to
--		hardware or whether software fallback is used.
--
--		If 0, the LED is using software fallback to blink.
--
--		If 1, the LED blinking in requested mode is offloaded to
--		hardware.
--
- What:		/sys/class/leds/<led>/link_10
- Date:		Jun 2023
- KernelVersion:	6.5
-diff --git a/Documentation/leds/leds-class.rst b/Documentation/leds/leds-class.rst
-index 84665200a88dc..cf7733e30bace 100644
---- a/Documentation/leds/leds-class.rst
-+++ b/Documentation/leds/leds-class.rst
-@@ -177,7 +177,9 @@ limited to blink but also to turn off or on autonomously.
- To support this feature, a LED needs to implement various additional
- ops and needs to declare specific support for the supported triggers.
- 
--With hw control we refer to the LED driven by hardware.
-+With hw control we refer to the LED driven by hardware. In hw control mode,
-+the current trigger is offloaded to hardware. The `trigger_may_offload`
-+attribute can be used to query supported triggers and their states.
- 
- LED driver must define the following value to support hw control:
- 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 0fa45f22246e3..8a661e2616f06 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -90,8 +90,30 @@ static const struct bin_attribute *const led_trigger_bin_attrs[] = {
- 	&bin_attr_trigger,
- 	NULL,
+diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
+index ae1ebb071fab0..b9af0294fc933 100644
+--- a/drivers/platform/x86/lenovo/ideapad-laptop.c
++++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+@@ -134,10 +134,31 @@ enum {
  };
-+
-+static DEVICE_ATTR(trigger_may_offload, 0644, led_trigger_may_offload_show, NULL);
-+static struct attribute *led_trigger_attrs[] = {
-+	&dev_attr_trigger_may_offload.attr,
-+	NULL,
-+};
-+static umode_t led_trigger_is_visible(struct kobject *kobj,
-+				      struct attribute *attr,
-+				      int idx)
+ 
+ /*
+- * These correspond to the number of supported states - 1
+- * Future keyboard types may need a new system, if there's a collision
+- * KBD_BL_TRISTATE_AUTO has no way to report or set the auto state
+- * so it effectively has 3 states, but needs to handle 4
++ * The enumeration has two purposes:
++ *   - as an internal identifier for all known types of keyboard backlight
++ *   - as a mandatory parameter of the KBLC command
++ *
++ * For each type, the HW brightness values are defined as follows:
++ * +--------------------------+----------+-----+------+------+
++ * |            HW brightness |        0 |   1 |    2 |    3 |
++ * | Type                     |          |     |      |      |
++ * +--------------------------+----------+-----+------+------+
++ * | KBD_BL_STANDARD          |      off |  on |  N/A |  N/A |
++ * +--------------------------+----------+-----+------+------+
++ * | KBD_BL_TRISTATE          |      off | low | high |  N/A |
++ * +--------------------------+----------+-----+------+------+
++ * | KBD_BL_TRISTATE_AUTO     |      off | low | high | auto |
++ * +--------------------------+----------+-----+------+------+
++ *
++ * We map LED classdev brightness for KBD_BL_TRISTATE_AUTO as follows:
++ * +--------------------------+----------+-----+------+
++ * |  LED classdev brightness |        0 |   1 |    2 |
++ * | Operation                |          |     |      |
++ * +--------------------------+----------+-----+------+
++ * | Read                     | off/auto | low | high |
++ * +--------------------------+----------+-----+------+
++ * | Write                    |      off | low | high |
++ * +--------------------------+----------+-----+------+
+  */
+ enum {
+ 	KBD_BL_STANDARD      = 1,
+@@ -1592,7 +1613,24 @@ static int ideapad_kbd_bl_check_tristate(int type)
+ 	return (type == KBD_BL_TRISTATE) || (type == KBD_BL_TRISTATE_AUTO);
+ }
+ 
+-static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
++static int ideapad_kbd_bl_brightness_parse(struct ideapad_private *priv,
++					   unsigned int hw_brightness)
 +{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	/* Off, low or high */
++	if (hw_brightness <= priv->kbd_bl.led.max_brightness)
++		return hw_brightness;
 +
-+	if (attr == &dev_attr_trigger_may_offload.attr &&
-+	    !led_cdev->hw_control_trigger)
++	/* Auto, report as off */
++	if (hw_brightness == priv->kbd_bl.led.max_brightness + 1)
 +		return 0;
 +
-+	return attr->mode;
++	/* Unknown value */
++	dev_warn(&priv->platform_device->dev,
++		 "Unknown keyboard backlight value: %u", hw_brightness);
++	return -EINVAL;
 +}
 +
- static const struct attribute_group led_trigger_group = {
- 	.bin_attrs = led_trigger_bin_attrs,
-+	.attrs = led_trigger_attrs,
-+	.is_visible = led_trigger_is_visible,
- };
- #endif
- 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 3066bc91a5f94..f8100381fc684 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -346,6 +346,48 @@ void led_load_hw_control_trigger(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_load_hw_control_trigger);
- 
-+/*
-+ * Caller must ensure led_cdev->trigger_lock held,
-+ * and led_cdev->trigger->name must match led_cdev->hw_control_trigger.
-+ */
-+static bool led_trigger_get_offloaded(struct led_classdev *led_cdev)
-+{
-+	if (likely(led_cdev->trigger->offloaded))
-+		return led_cdev->trigger->offloaded(led_cdev);
-+
-+	dev_err_once(led_cdev->dev,
-+		     "hw control trigger %s doesn't implement offloaded(), this is a bug\n",
-+		     led_cdev->trigger->name);
-+	return false;
-+}
-+
-+ssize_t led_trigger_may_offload_show(struct device *dev,
-+				     struct device_attribute *attr, char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	bool hit, offloaded = false;
-+	int len;
-+
-+	mutex_lock(&led_cdev->led_access);
-+	down_read(&led_cdev->trigger_lock);
-+
-+	hit = led_cdev->trigger && led_match_hw_control_trigger(led_cdev, led_cdev->trigger);
-+	if (hit)
-+		offloaded = led_trigger_get_offloaded(led_cdev);
-+
-+	/* [offloaded] <active_but_not_offloaded> inactive */
-+	len = led_trigger_snprintf(buf, PAGE_SIZE,
-+				   hit ? (offloaded ? "[%s]\n" : "<%s>\n")
-+				       : "%s\n",
-+				   led_cdev->hw_control_trigger);
-+
-+	up_read(&led_cdev->trigger_lock);
-+	mutex_unlock(&led_cdev->led_access);
-+
-+	return len;
-+}
-+EXPORT_SYMBOL_GPL(led_trigger_may_offload_show);
-+
- /* LED Trigger Interface */
- 
- int led_trigger_register(struct led_trigger *trig)
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index e85afd4d04fd0..ee0dbddd411ec 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -28,6 +28,8 @@ ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
- ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- 			const struct bin_attribute *bin_attr, char *buf,
- 			loff_t pos, size_t count);
-+ssize_t led_trigger_may_offload_show(struct device *dev,
-+				     struct device_attribute *attr, char *buf);
- 
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index edde167b60a54..0a4f4469ff9b0 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -482,6 +482,8 @@ static ssize_t offloaded_show(struct device *dev,
++static int ideapad_kbd_bl_hw_brightness_get(struct ideapad_private *priv)
  {
- 	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
+ 	unsigned long value;
+ 	int err;
+@@ -1606,21 +1644,7 @@ static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
+ 		if (err)
+ 			return err;
  
-+	dev_warn_once(dev, "offloaded attribute has been deprecated, see trigger_may_offload.\n");
-+
- 	return sprintf(buf, "%d\n", trigger_data->hw_control);
+-		/* Convert returned value to brightness level */
+-		value = FIELD_GET(KBD_BL_GET_BRIGHTNESS, value);
+-
+-		/* Off, low or high */
+-		if (value <= priv->kbd_bl.led.max_brightness)
+-			return value;
+-
+-		/* Auto, report as off */
+-		if (value == priv->kbd_bl.led.max_brightness + 1)
+-			return 0;
+-
+-		/* Unknown value */
+-		dev_warn(&priv->platform_device->dev,
+-			 "Unknown keyboard backlight value: %lu", value);
+-		return -EINVAL;
++		return FIELD_GET(KBD_BL_GET_BRIGHTNESS, value);
+ 	}
+ 
+ 	err = eval_hals(priv->adev->handle, &value);
+@@ -1630,6 +1654,16 @@ static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
+ 	return !!test_bit(HALS_KBD_BL_STATE_BIT, &value);
  }
  
++static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
++{
++	int hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
++
++	if (hw_brightness < 0)
++		return hw_brightness;
++
++	return ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
++}
++
+ static enum led_brightness ideapad_kbd_bl_led_cdev_brightness_get(struct led_classdev *led_cdev)
+ {
+ 	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
+@@ -1637,24 +1671,31 @@ static enum led_brightness ideapad_kbd_bl_led_cdev_brightness_get(struct led_cla
+ 	return ideapad_kbd_bl_brightness_get(priv);
+ }
+ 
+-static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv, unsigned int brightness)
++static int ideapad_kbd_bl_hw_brightness_set(struct ideapad_private *priv,
++					    unsigned int hw_brightness)
+ {
+-	int err;
+ 	unsigned long value;
+ 	int type = priv->kbd_bl.type;
+ 
+ 	if (ideapad_kbd_bl_check_tristate(type)) {
+-		if (brightness > priv->kbd_bl.led.max_brightness)
+-			return -EINVAL;
+-
+-		value = FIELD_PREP(KBD_BL_SET_BRIGHTNESS, brightness) |
++		value = FIELD_PREP(KBD_BL_SET_BRIGHTNESS, hw_brightness) |
+ 			FIELD_PREP(KBD_BL_COMMAND_TYPE, type) |
+ 			KBD_BL_COMMAND_SET;
+-		err = exec_kblc(priv->adev->handle, value);
++		return exec_kblc(priv->adev->handle, value);
+ 	} else {
+-		err = exec_sals(priv->adev->handle, brightness ? SALS_KBD_BL_ON : SALS_KBD_BL_OFF);
++		value = hw_brightness ? SALS_KBD_BL_ON : SALS_KBD_BL_OFF;
++		return exec_sals(priv->adev->handle, value);
+ 	}
++}
++
++static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv, unsigned int brightness)
++{
++	int err;
+ 
++	if (brightness > priv->kbd_bl.led.max_brightness)
++		return -EINVAL;
++
++	err = ideapad_kbd_bl_hw_brightness_set(priv, brightness);
+ 	if (err)
+ 		return err;
+ 
+@@ -1671,6 +1712,16 @@ static int ideapad_kbd_bl_led_cdev_brightness_set(struct led_classdev *led_cdev,
+ 	return ideapad_kbd_bl_brightness_set(priv, brightness);
+ }
+ 
++static void ideapad_kbd_bl_notify_known(struct ideapad_private *priv, unsigned int brightness)
++{
++	if (brightness == priv->kbd_bl.last_brightness)
++		return;
++
++	priv->kbd_bl.last_brightness = brightness;
++
++	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightness);
++}
++
+ static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
+ {
+ 	int brightness;
+@@ -1682,12 +1733,7 @@ static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
+ 	if (brightness < 0)
+ 		return;
+ 
+-	if (brightness == priv->kbd_bl.last_brightness)
+-		return;
+-
+-	priv->kbd_bl.last_brightness = brightness;
+-
+-	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightness);
++	ideapad_kbd_bl_notify_known(priv, brightness);
+ }
+ 
+ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
 -- 
 2.51.0
 
