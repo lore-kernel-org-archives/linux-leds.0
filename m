@@ -1,79 +1,79 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azhn15010016.outbound.protection.outlook.com [52.102.138.16])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazhn15012016.outbound.protection.outlook.com [52.102.137.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FCB340A57;
-	Thu,  5 Mar 2026 20:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.138.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446F1340A6C;
+	Thu,  5 Mar 2026 20:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.137.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772743037; cv=fail; b=Ga5AHKxBP/XnzLNzil33SVlQDavXSswubeQC3qqJLD8hWpH3dEzDtg0Clo9l4bXBkQgfBPznIexkpvPqg/kX4Gf9vP6j9bSBJkkQ6+/3Iykq+GZ8pGIGE/YXJfDcf7cFvlpZYsIwGN1AKXR20jwdAStS8zxJKlmb31xo5AvVj/U=
+	t=1772743037; cv=fail; b=NciuUj09+yaPl/zSe/MKNPz5wmwwIVOze5Iu68ur78WsCqJZD/P6zUa2aEczGCbMxsXImklPvt1xKSCCRF45MhO2j/mHIS8Z24x9bLktSwQAHEBOUwT7zUdfqIYxn1UmoMmvhIOcmhJi4+UK5CuCmLJRMdk6yL//INPTcufsZs0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772743037; c=relaxed/simple;
-	bh=IlnGY9NhuHzdV18CB3A/F35tD8hbPqohYzDHLCV0HLU=;
+	bh=LIhtjrgLQxFa17u85OcBRK1V4S+OF2p4UzfgxbW+kc4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QaZQNavAvDy4Uch9liNy+2vVgWIr7xREmm6FEd3spmCFLpKAlPFuGTx7LYSH+CxeToR3mip9M526eNfzKJkIjEr5Oz2YfPwEl2YO8HOifO0migZeEULFga+VxI9dks6HTgICaKA/B4YB++W0530GSY+1WZlaAmB2yVpFaWlP6rY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JO8ZXMyL; arc=fail smtp.client-ip=52.102.138.16
+	 MIME-Version:Content-Type; b=CYUZIKUhAXiSY7SkdtB+J3nETl2v9TIbhNQQtQzBRs1q887X0DR2XNzHHwcLF9bmG+6ax7kJsYRRl8c7S5eutO6QIInoQ9a2S/2CYfecWcLgwjEPlJlg5nA6Ysm9f5mguROMaVGzjYbc94lsCC/s7vJqpdUDOUpuw7WoOJ/cGnY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iJ6ChNfX; arc=fail smtp.client-ip=52.102.137.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JO8ZXMyL"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iJ6ChNfX"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bo3d3irfWt1EOBxlS3+Z5wEXZkoeXZyfqmfxaQV09N6PmPXNvTuXp5STYWGRH666md3cvab3EQHjmnDQcdp++DUMgfLwRsqh4tcpumMud1Fq57r8itgR7GSPZuugUc2EXlAKxkbSlGVKZYmUsxIWGRXcGmQHgyy0NpPAaRlbM1LEWLTUGYghYcU2gPE9acVRV0nQfmSTsJp2YtTOVkRjdspQjC/Q+7hP7yjX0A5MYJaUQ/bzifSs/pcGp1I4zrejLoLuaxGBZwwCbjF+NX7TvVbTvWlON6eyAnhossnioXpuIe3D/3AjW+I+49/+/5Ulr7u/z3Rucy8d0gGcw4pt3Q==
+ b=daObdDeGkeofNgfnC9joFi9KCAOkd5XmFMlhD0WSn4X9403Yqo5DO7L4XWENchI8ii1juruWSCUJ0Y5e/HDoPGkWxKNIwHw7lzFZIMPtPfd2oSEBLAcYg5vFQ3tjyEgZ/ytt+qWEc+Z1tHFxI2pz6smVO95u9G/J4a60ofQ4eCZwoVsTTfQgkhEAFKdDw9p90RFiPydqOZuHAi6STMlHsR0jOeMrwOw4Tsqy+0pcA3TvRSOctg82JY2Hy+uAgJPe0GveGE41rZTYBRyvL/2MDvdpHHDXvnKvBAc5PA4tTxtaIeDe7jaiOt+RwtbdnoxOL/FSzbmRsTPtzln9Waj3RQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YzdBa51JLJaT0rdN6l17oaJVwdGe/Cl1Ob1biQSCOUk=;
- b=wJ4DcnftWMAHUZRghufRUWWSHfQDsrzpwj055KTXuoiznyNzmdxsRHSpc2+mfyeZBuVpmMYxQWB7ZmzsPcjepXyFl7IBNw9YdsbXA7uf0BHvLlHIODFRbvUmDHgfYDeUHJQCg93mhULgT1KjsLuBRmZJT8wRiZT71rnv2eUAPbtqCyUNEPmAqUzO+d6gSWj2ZHWFr/GLJd+KeyOk9+/NuZcyekNocdN1Uie47M4MmUCIKfEuwTCq9SiamUAyzG2Ldvk7068e7ZNaF0dqvu8H3mU56GgtlJRDgPaCceLatS3c8QK1phJjjgTLv0VCgueDyWXWZISycq8FcF/quJdDdA==
+ bh=OLUZHimODCrxbNvcVpjeg0i1cH3VE3VKQiQAZ09I2io=;
+ b=D5yUDIaYjVl5sAVnjHqzT5dcTnvoeBKjnp4gNduBCkMukQ6iZRYcS3opcN95VcM2s0s3ubrr5dZDHVWz0axNQxipVokvW4fj5v9c86LTgs5+Ll461QfU6dkLYb1Wstb9/xVGJy3hy5f4QZqoGTyk+YSiJVs2dl/NftzCXWstQ+BWLfQZ94mGG43gkKGYjjoVwuTysx1O3D8PcKjCEoLW14SLbMQjmWyKIyExDIf9JxB1Mn90XzXf6IKf2jc1/kO6Vj/AnZPwBV3ePQ14S56z+HqY1Pb5ZZ3y6p3RWWnC0mCVVSiECbai4XCuohoo0fv+81huD2HiD9jFPcNAYHJ7iw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YzdBa51JLJaT0rdN6l17oaJVwdGe/Cl1Ob1biQSCOUk=;
- b=JO8ZXMyLMSZfyqkiJPme6BjvqgytiVe8Cbfqwx+FWeoHziEFYUQNn04S4pzFkXB48MqFWkCOFoc8+BIafdH2MUle4ybYG62mu7HUHLlMrxBnU/08rghWr+mFjQOpkYj6neZ3T5yTY+Am2Zb4xKoWLn1N+1b9MUhSpvLS1LxwLGw=
-Received: from CH5PR05CA0004.namprd05.prod.outlook.com (2603:10b6:610:1f0::9)
- by MW5PR10MB5714.namprd10.prod.outlook.com (2603:10b6:303:19b::19) with
+ bh=OLUZHimODCrxbNvcVpjeg0i1cH3VE3VKQiQAZ09I2io=;
+ b=iJ6ChNfXLfoptTaXOQpmrNqJURF86nQzTBvaBiTm/GXMUYnT5SKGWq487OlXCZ7ALVAUO7xhOYdR/0xoj5L8giK7dPKaMXcmo9+peR5YGhvxbqjhNbCCCDB4Aa5+rSuTMI8Qa4T6koFAaO62NJSclOu5x1fG+Mq3Gx5tSnZGD1g=
+Received: from SJ0PR05CA0015.namprd05.prod.outlook.com (2603:10b6:a03:33b::20)
+ by LV3PR10MB8059.namprd10.prod.outlook.com (2603:10b6:408:290::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.18; Thu, 5 Mar
- 2026 20:37:09 +0000
-Received: from DS3PEPF000099DE.namprd04.prod.outlook.com
- (2603:10b6:610:1f0:cafe::6c) by CH5PR05CA0004.outlook.office365.com
- (2603:10b6:610:1f0::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.18 via Frontend Transport; Thu,
- 5 Mar 2026 20:37:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ 2026 20:37:13 +0000
+Received: from SJ1PEPF00002323.namprd03.prod.outlook.com
+ (2603:10b6:a03:33b:cafe::63) by SJ0PR05CA0015.outlook.office365.com
+ (2603:10b6:a03:33b::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.21 via Frontend Transport; Thu,
+ 5 Mar 2026 20:37:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- DS3PEPF000099DE.mail.protection.outlook.com (10.167.17.200) with Microsoft
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ SJ1PEPF00002323.mail.protection.outlook.com (10.167.242.85) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9678.18 via Frontend Transport; Thu, 5 Mar 2026 20:37:09 +0000
-Received: from DLEE213.ent.ti.com (157.170.170.116) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9678.18 via Frontend Transport; Thu, 5 Mar 2026 20:37:12 +0000
+Received: from DFLE213.ent.ti.com (10.64.6.71) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 5 Mar
  2026 14:37:09 -0600
-Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE213.ent.ti.com
- (157.170.170.116) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE213.ent.ti.com
+ (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 5 Mar
- 2026 14:37:08 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 14:37:09 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 5 Mar 2026 14:37:08 -0600
+ Transport; Thu, 5 Mar 2026 14:37:09 -0600
 Received: from lelvem-mr05.itg.ti.com ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 625Kb8iM2510342;
-	Thu, 5 Mar 2026 14:37:08 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 625Kb8iO2510342;
+	Thu, 5 Mar 2026 14:37:09 -0600
 From: Andrew Davis <afd@ti.com>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, David Owens
 	<daowens01@gmail.com>
 CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Davis
 	<afd@ti.com>
-Subject: [PATCH 2/5] leds: lp8860: Return directly from lp8860_init
-Date: Thu, 5 Mar 2026 14:37:03 -0600
-Message-ID: <20260305203706.841384-2-afd@ti.com>
+Subject: [PATCH 4/5] leds: lp8860: Remove unused read of STATUS register
+Date: Thu, 5 Mar 2026 14:37:05 -0600
+Message-ID: <20260305203706.841384-4-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20260305203706.841384-1-afd@ti.com>
 References: <20260305203706.841384-1-afd@ti.com>
@@ -88,92 +88,66 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DE:EE_|MW5PR10MB5714:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58cf3322-1805-4d0a-e064-08de7af6f952
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002323:EE_|LV3PR10MB8059:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5d36c50-8c4b-4ca2-5ea9-08de7af6faea
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|34020700016|82310400026|36860700016|1800799024|376014|12100799066;
+	BCL:0;ARA:13230040|82310400026|34020700016|1800799024|36860700016|376014|12100799066;
 X-Microsoft-Antispam-Message-Info:
-	0Y5EROXYNOMl1eTArLdeIHmcgxD5xxH3vf3tIeAO5LR3EQf4Rb2Fgo4z2cjtLHABqchXD3aHM54Koi8I+bbL/DgeNHvg53xoD8z3a7lYPIJWzciaLDcivPRiNQLHRFF5or/xiAXtCQpDdCFmwMSUEJdypH/K+a+ZGXJsugybfp6CjLjvBRbwrG3KU44q1mawmoRnd3dEv2gqwAzMqEisiFYtl0/e78xAy6dpiYClHkMC3oI3Px/inPxS2BsglGUIev0jlRQV1ubSNYBWx97PL7qcJ0BacnJwZviVCZStwO6TAUVKWd5bPNSEK+iIIp0hVuVEcyEQSJo7MVeKm09sok/kJc126DcihZm5KhMrRMh2iEcNWZ4/YcCg/ko5WXYHhpFLhWlugfFYdT1eWbPlfCxO6bumiDaefH3KE+jQgqP/ZXQ7tJ87d2aeJ7SP7HkcpiQMsOrZaTQ1zuanMf5xBeEEFVlBd1kUx/X+e6xTJe1m+zW0rSGt4nA7BX5jPIGSsOe+1zcZmAgLPwfnyCyGtfAUvjOfxh8AqjB/lk0roQQcJFF6DNPaAd2WDM2gPUckc1Ue7+0VH5Y9Wk1aD7SE/gaLs4ks+CTMQ1KkjwSGEHgc8skgKyMQxEmtYF4d5l8NaLpfjtJ0eaeqRrIoZaHPwDlSqmE0E3AUas48MSucNK5z3XWZj2Q/nRzePM2bDxt5DH5T1wgH4welET3XoNWtYq0GqK8y8v9luMBpZg7o8XvrHkqZux0+ON68h1jPEXduyq9Ff0wXT4mcKNFpH0cGGg==
+	ow93IEH5uOtZS9M10flNj4pmbHS3pWLgaiuB/sg0fHVmBn36s9yrq2zbjnTYQLSxYocuXeUqSfdOfG1MjXOuHEPpnN5c2Tt+7eEwGNHreOJuVbUgOEOi6i8y54EHMendfDN1VqjARLfqy7q8f6/zmKNFdpCChREPSaP1vNMCrXhydZRHezXwkeWzyej25/Gmv/tpM8WUZyeM9QHFzmaLSE4wVU9RK/65ijuAF3zFRp/+Kp7ILe5WOPbuC7LXcMKn6bj24J3SvaNNOwIr7Re3YlQf2Ko4OCxXBJ0jpLiuKgiy/7CRJ4vN1E7zu52gIPmvQKfdnq+HcGjE6AYc7ntf503Z500/hY8mE8HkJchVpGsi2UGmwDo0z9jNcfYGJsHL/E76wX5QbIkkERE58Rqp0LX1vd3LPDizvoKWqI4etOL3GM/eW3uFswlAgrBqmmke3YZKaLnOcjQZrwQEZdnqZeEb2PDsNPm175/ArUMrBobj+tjvY3H9ajACFMwbUULxMh36UgUsXJiSLL8p/5Eu5DtcJrHxizKGQoffFI67g5xLcN5jZ4IKo5Hn5yG7l7X5JP+Izgv7ag9yadzQqG+ciTeuo3zoPTh44RS+ur21a9edfDJUBj9j2ugqx6Ii+K02hOtO8cHQeinbn12qqnLoL919WtWcNZUTH+x7n9cfJNfFS92rKNQwPWinS6ZAtgVldAKyNje22P6OaJdhJ9lIvkOFKASXvPDQz+PDQ5SaxJ7mzYBu+vphZ+g8Hi4ZsujSkTtnB7MdEEm8OXkvGFYkaQ==
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(34020700016)(82310400026)(36860700016)(1800799024)(376014)(12100799066);DIR:OUT;SFP:1501;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(34020700016)(1800799024)(36860700016)(376014)(12100799066);DIR:OUT;SFP:1501;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	hoZnLxTugkibH4ASQBwtYbZx5lqGgRjbWwYb7wYwB000NJAvADJS7Aosv6yfbx+MYo+5g5CBpSh08yYSj9DCTTAwRpfkYcjc7tBiCOSqutc1+bTqIotUT9JEZ82EQ2OswN+S6FHtMEOCnuH3Tw6zIyJch+X6i9NuvmduuK8hGV3cRpJL8aruoNyOvWQ7GtRGBQO9nz92G1bfDrUopGoUkL3x3U5amn3RzIu1MsYGtuG/SP/MvQaA95hieGKE9ZQmKi/ijnT+o0GSH+ES8sifI0Lwn+85GezAIhQ6P+aPiYUM5taXAi8y20rsYzc9jtY7y+RiLE1cxMqlfy2bb5McMPYNi9/s+9tuU4GHlHjUPsm1zIFrt0tlkLvsasovYpqNjrAjyw8Gov2YHS+EdlprMYUjY9ZgHwyyuaXkWHS55lssIczWYtDl8AH+D+jQeYuh
+	Z72OSi7GZrljo7DaeJfp0zxzK2q6pfqXsHEd526XWLqehhlqIC84yT4zLgoEx4HC6tX7ckA0147/U2uLl+3ckQ1tgKWK/nOVO0Vn28Psw4smtVcf9DRmmqf0nDTEEsEtB7KyrQLJ1MCa9YHB4CtAq6DjIRr3HfILGjJMJ7n3EP0Ud5/adeoqXOhJ/glkV+0EzgE/6o1nTKtrSglF+K/Kh0+bihjVfUvVo66LmvsH2EAZOZLQxatO9MbtwNrqm4HkBdoaviYdrxOJKm26FvCB1q5mF4IDZukIB6lsWzB1ErRU0N7vxfJUu6ZEWLno5LLD/S4LjvDqZBanAfo8G9gJzkt05A9lLqbMs3YDGL7mcSwxc3J6ryesm9k11sYs7ZQdjKW3iWgMrsMb7iLPBCt625THREcfis2i/xCRRO1p+0zTFnMw0doAk76IuFTpBG38
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 20:37:09.5681
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 20:37:12.2115
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58cf3322-1805-4d0a-e064-08de7af6f952
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5d36c50-8c4b-4ca2-5ea9-08de7af6faea
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DE.namprd04.prod.outlook.com
+	SJ1PEPF00002323.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR10MB5714
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR10MB8059
 
-No need to use goto to jump to a label that also just returns,
-return directly in the if statements.
+This register is read but the contents are never checked, remove
+the read until we add status checking. While here add an error
+message should the preceding fault check fail.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/leds/leds-lp8860.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ drivers/leds/leds-lp8860.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 87d298b6be7d0..71dcd55f0808f 100644
+index 16129ae94d65f..6d1c9434e6d17 100644
 --- a/drivers/leds/leds-lp8860.c
 +++ b/drivers/leds/leds-lp8860.c
-@@ -216,41 +216,38 @@ static int lp8860_init(struct lp8860_led *led)
+@@ -185,18 +185,15 @@ static int lp8860_brightness_set(struct led_classdev *led_cdev,
+ 
+ static int lp8860_program_eeprom(struct lp8860_led *led)
+ {
+-	unsigned int read_buf;
+ 	int ret, reg_count;
+ 
+ 	guard(mutex)(&led->lock);
  
  	ret = lp8860_fault_check(led);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	ret = regmap_read(led->regmap, LP8860_STATUS, &read_buf);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	ret = lp8860_unlock_eeprom(led);
- 	if (ret) {
- 		dev_err(&led->client->dev, "Failed unlocking EEPROM\n");
--		goto out;
-+		return ret;
- 	}
- 
- 	reg_count = ARRAY_SIZE(lp8860_eeprom_disp_regs);
- 	ret = regmap_multi_reg_write(led->regmap, lp8860_eeprom_disp_regs, reg_count);
- 	if (ret) {
- 		dev_err(&led->client->dev, "Failed writing EEPROM\n");
--		goto out;
-+		return ret;
- 	}
- 
- 	ret = regmap_write(led->regmap, LP8860_EEPROM_UNLOCK, LP8860_LOCK_EEPROM);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	ret = regmap_write(led->regmap,
- 			LP8860_EEPROM_CNTRL,
- 			LP8860_PROGRAM_EEPROM);
- 	if (ret) {
- 		dev_err(&led->client->dev, "Failed programming EEPROM\n");
--		goto out;
-+		return ret;
- 	}
- 
--	return ret;
+-	if (ret)
+-		return ret;
 -
--out:
--	return ret;
-+	return 0;
- }
+-	ret = regmap_read(led->regmap, LP8860_STATUS, &read_buf);
+-	if (ret)
++	if (ret) {
++		dev_err(&led->client->dev, "Cannot read/clear faults\n");
+ 		return ret;
++	}
  
- static const struct regmap_range lp8860_reg_ranges[] = {
+ 	ret = regmap_write(led->regmap, LP8860_EEPROM_UNLOCK, LP8860_EEPROM_CODE_1);
+ 	if (ret) {
 -- 
 2.39.2
 
