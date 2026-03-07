@@ -1,139 +1,158 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79243272813;
-	Sat,  7 Mar 2026 00:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF2B288C81;
+	Sat,  7 Mar 2026 00:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772844746; cv=none; b=l12q+nsdeCw9PzH9+19FZlpBcsc0ix+4GrWXfxoRfG52BPGytInnLn3IVx0HERVy/+moVJrax6vT/D12BdUN8RGcs4yXjpenvr4ZhkqWCsQRoOkOtdrLX3DnmxXwHjAsHoa/qVGyzpRsb3YDlj+JckOnSabsg+eqx31wS0aempE=
+	t=1772845084; cv=none; b=I/FEzUkr/cuIBBvtHvFJafGrv/fqoLunWBf+CJKjCvzUwbEfwnNkMqAE/Mv7QNge5+7X0yGLipSTDpJnTnhteXk6pe6kcbZ60EaEHQb434CuNknEGDgVcbmVjgdEtIGo93/hzOrt7Ya6vf1DsD3GacDgV+GmL8GavAIynbRMBVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772844746; c=relaxed/simple;
-	bh=gxSunjcvBRErBew/28rdha/zcYzd5detHG3z951c4Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QHE5B+G+SypCHXnw0hqbpFODz/f5Zkr21iVhQrcw5PF8EXXgbk2SgSO5X1wfJuu5ry13bAhGgChthTbigSHxKhE3L50t48PK3ZPUvpuJkZdHovzKZwVJjZnBmTw/BDnrrwdiOcDuO1YU+0BqvMN/sg1svKjq5IF2PlG0XEiQ0yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y69B5nb+; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1772845084; c=relaxed/simple;
+	bh=RSOssoQDt3tH+xZ9YIlkIHtRUEzMtQAhukhAWru5pcA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TR5ZzImuc/l77wtcyCwSeSJMtBEnqguCKuEzY8JHZ15HIgNqofxcIXQa80Ccn5WK7GW7lwZcV2gY+xXAtBpxncx2WMXYT6dg2O1Ykmu0bSLajxpcT9gRyd2X52p8QjFbRwzl1mEA+M7Lrrlo5xXOvIB7bT93M4whjmiZ2mQPQ4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gmstopi/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y69B5nb+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1772844744; x=1804380744;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gxSunjcvBRErBew/28rdha/zcYzd5detHG3z951c4Vk=;
-  b=Y69B5nb+Q/xRvQrEbTDXnMIbmHEN4+6+l8fZPvgdO2ZfLscl2bX9YmBt
-   45g7eakwZ2BCFuMnDKsSEQo4X/MQ/xi5WzNOsSbHB/OgGo/+EW83mcXdO
-   Ets9ufM+XozOaB5N2KauLM8ItsoTOctrroFSxDMi59WgjUmToxd9m5tXx
-   fqtM9zbxkwRO+yFaTXAP1m0k86hsXCBYTqWNb+RfOZVt/nrnlA0o0ASFg
-   NdPiE5KhtDW56RE5LzmUlm6K8N2LZIxDk+n9yCz6AsopqDhrCzEbj5hfJ
-   0Vt19bMiCtLBExmgQ9wrj5xXO/aI4Ls+vbeEY0TRCjYNwO+7k+/voKgSw
-   w==;
-X-CSE-ConnectionGUID: ynHhHKJ8Q3mxFma1RrMKEg==
-X-CSE-MsgGUID: 4XE1whecQMK2y1+75eLbow==
-X-IronPort-AV: E=McAfee;i="6800,10657,11721"; a="73861669"
-X-IronPort-AV: E=Sophos;i="6.23,105,1770624000"; 
-   d="scan'208";a="73861669"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2026 16:52:23 -0800
-X-CSE-ConnectionGUID: mDquklK+T9SW69HyvsN3Zg==
-X-CSE-MsgGUID: Vmru8usbRN6VOsUsgTzISQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,105,1770624000"; 
-   d="scan'208";a="216893402"
-Received: from lkp-server01.sh.intel.com (HELO 058beb05654c) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 06 Mar 2026 16:52:20 -0800
-Received: from kbuild by 058beb05654c with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vyftx-000000001Wr-283S;
-	Sat, 07 Mar 2026 00:52:17 +0000
-Date: Sat, 7 Mar 2026 08:51:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>, Ion Agorria <ion@agorria.com>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 2/7] mfd: Add driver for ASUS Transformer embedded
- controller
-Message-ID: <202603070848.ib570eG8-lkp@intel.com>
-References: <20260304185751.83494-3-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gmstopi/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A52B4C2BC9E;
+	Sat,  7 Mar 2026 00:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772845083;
+	bh=RSOssoQDt3tH+xZ9YIlkIHtRUEzMtQAhukhAWru5pcA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Gmstopi/TAVZivmWXLsh4zUBxRjq/ougk/82ara6vB9m/pyYpt1hVynD5g/cC657L
+	 /VdXk8fI7TecKXviZLR+Xz07ni8DwKD3Jhdz6lI5o+wP6PJhQ+q4aQ2NkDdlwjWf7t
+	 BYRrznq3ir0eg5s9CbL9oqWxQZnsFEi2oARJlyYioqxMTcGmam+resS3Er8tyzy2yl
+	 uM6ZgpmVM3ZltQe5xPX1D3ldyCuAlN3wZGeZ76dpIHe4XT/9BWWo7ilhjfjNBqTymd
+	 k6LuJj0lypb/7vkJlurRRo/WKYmSjOKoSbeS7uhCSy5yRFzR+MbrGJLXfcJKAvCQzo
+	 pyApuzH+CcBxQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA51FC9EC6;
+	Sat,  7 Mar 2026 00:58:03 +0000 (UTC)
+From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
+Date: Fri, 06 Mar 2026 16:58:02 -0800
+Subject: [PATCH 1/3] dt-bindings: leds: rt8515: Support single-GPIO flash
+ ICs with unlock gate
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260304185751.83494-3-clamor95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260306-expressatt_camera_flash-v1-1-b1996f7cdfdd@gmail.com>
+References: <20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com>
+In-Reply-To: <20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Rudraksha Gupta <guptarud@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772845083; l=2686;
+ i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
+ bh=XkKexDy/wzuB27iB2DnLFEzKOovyf++JmlP+fQT4Q6o=;
+ b=he6Q2vN99zHB/nJKmrP5qVDhXsKuAugWXRoYsVze3J2hDLS/1EGDegxeETpbLfSdCc+i4D8XY
+ PVNa65EVPyMCnkBk9e5dqxgRft8bIKI1MvtPOQ5pHGJcJtxpHI7rYic
+X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
+ pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
+X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
+ auth_id=211
+X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
+Reply-To: guptarud@gmail.com
 
-Hi Svyatoslav,
+From: Rudraksha Gupta <guptarud@gmail.com>
 
-kernel test robot noticed the following build warnings:
+Some flash ICs use the same one-wire pulse-count protocol as the RT8515
+but have only a single GPIO line for both flash and torch modes, plus an
+optional unlock gate (e.g. a PMIC MPP) that must be driven high before
+the chip responds to the enable GPIO.
 
-[auto build test WARNING on sre-power-supply/for-next]
-[also build test WARNING on robh/for-next linus/master v7.0-rc2 next-20260305]
-[cannot apply to dtor-input/next dtor-input/for-linus]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Make ent-gpios optional and add an unlock-gpios property to support
+these variants. Add a oneOf constraint requiring exactly one of
+ent-gpios or unlock-gpios. Add a binding example showing the
+single-GPIO configuration.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Svyatoslav-Ryhel/dt-bindings-embedded-controller-document-ASUS-Transformer-EC/20260305-030907
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
-patch link:    https://lore.kernel.org/r/20260304185751.83494-3-clamor95%40gmail.com
-patch subject: [PATCH v5 2/7] mfd: Add driver for ASUS Transformer embedded controller
-config: powerpc64-randconfig-r133-20260305 (https://download.01.org/0day-ci/archive/20260307/202603070848.ib570eG8-lkp@intel.com/config)
-compiler: clang version 23.0.0git (https://github.com/llvm/llvm-project 9a109fbb6e184ec9bcce10615949f598f4c974a9)
-sparse: v0.6.5-rc1
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260307/202603070848.ib570eG8-lkp@intel.com/reproduce)
+Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+---
+ .../devicetree/bindings/leds/richtek,rt8515.yaml   | 36 +++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202603070848.ib570eG8-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/mfd/asus-transformer-ec.c:482:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const * @@     got char const [noderef] __user *buf @@
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse:     expected void const *
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse:     got char const [noderef] __user *buf
->> drivers/mfd/asus-transformer-ec.c:482:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const * @@     got char const [noderef] __user *buf @@
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse:     expected void const *
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse:     got char const [noderef] __user *buf
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const * @@     got char const [noderef] __user *buf @@
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse:     expected void const *
-   drivers/mfd/asus-transformer-ec.c:482:9: sparse:     got char const [noderef] __user *buf
-   drivers/mfd/asus-transformer-ec.c:476:16: sparse: sparse: dereference of noderef expression
-
-vim +482 drivers/mfd/asus-transformer-ec.c
-
-   467	
-   468	static int dockram_write_one(struct i2c_client *client, int reg,
-   469				     const char __user *buf, size_t count)
-   470	{
-   471		struct dockram_ec_data *priv = i2c_get_clientdata(client);
-   472		int ret;
-   473	
-   474		if (!count || count > DOCKRAM_ENTRY_SIZE)
-   475			return -EINVAL;
-   476		if (buf[0] != count - 1)
-   477			return -EINVAL;
-   478	
-   479		guard(mutex)(&priv->ctl_lock);
-   480	
-   481		priv->ctl_data[0] = (u8)count;
- > 482		memcpy(priv->ctl_data + 1, buf, count);
-   483		ret = asus_dockram_write(client, reg, priv->ctl_data);
-   484	
-   485		return ret;
-   486	}
-   487	
+diff --git a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+index 0356371a6b01..820cf8c55090 100644
+--- a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
++++ b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+@@ -15,6 +15,10 @@ description: |
+   current for each mode is defined in hardware using two resistors
+   RFS and RTS.
+ 
++  This driver also supports single-GPIO flash ICs that use the same
++  one-wire pulse-count protocol on one line for both flash and torch.
++  For these, only enf-gpios is required.
++
+ properties:
+   compatible:
+     const: richtek,rt8515
+@@ -26,6 +30,14 @@ properties:
+   ent-gpios:
+     maxItems: 1
+     description: A connection to the 'ENT' (enable torch) pin.
++      Optional for single-GPIO flash ICs where enf-gpios is used for
++      both flash and torch modes.
++
++  unlock-gpios:
++    maxItems: 1
++    description: Optional GPIO to unlock the flash LED circuit. Some
++      boards use a PMIC MPP pin that must be driven high before the
++      flash IC will respond to the enable GPIOs.
+ 
+   richtek,rfs-ohms:
+     minimum: 7680
+@@ -81,10 +93,15 @@ properties:
+ 
+ required:
+   - compatible
+-  - ent-gpios
+   - enf-gpios
+   - led
+ 
++oneOf:
++  - required:
++      - ent-gpios
++  - required:
++      - unlock-gpios
++
+ additionalProperties: false
+ 
+ examples:
+@@ -108,4 +125,21 @@ examples:
+         };
+     };
+ 
++  - |
++    /* Single-GPIO flash IC with unlock gate */
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    led-controller {
++        compatible = "richtek,rt8515";
++        enf-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
++        unlock-gpios = <&pm8921_mpps 4 GPIO_ACTIVE_HIGH>;
++
++        led {
++            function = LED_FUNCTION_FLASH;
++            color = <LED_COLOR_ID_WHITE>;
++            flash-max-timeout-us = <250000>;
++        };
++    };
++
+ ...
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.53.0
+
+
