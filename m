@@ -1,40 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806422745E;
-	Mon,  9 Mar 2026 18:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60AA2522A7;
+	Mon,  9 Mar 2026 18:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773082164; cv=none; b=g5mJ5zHfu4OFRE0o5RzX81uwypyO8Q+wGHUrmK/c+Sm3E0QR/ssDkuYn3AIZp/8zGZEcxfAAdwntfkSsX536rEBBKSZ3Cp/FALCG1WUoCwz5Mgi03Wp5/j1oXIuFDjW+qQPbuqu4z6CGwnZKLdkyoQrRpgF6BzHQFiETVDB+EMI=
+	t=1773082482; cv=none; b=r6Y3+9DkABCom3voFAO87Gr852m1RIeqPVk2ALo+bg1lo+1lcgVEShbRokJdxV3lFs85fCtB/oe66U6N7uh8w6SN0qqrAY49k/JibLvR6hWlvmvmoyA7Rpk1uMzzlo/rino4Ew6uxTbGQ/uxpYlyTSxLHbDn+D+qZN3QcNcbjUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773082164; c=relaxed/simple;
-	bh=0c7PfNlywEu5YRiPhWq72Cwb/p1gFPYWyAfM/6HbHMc=;
+	s=arc-20240116; t=1773082482; c=relaxed/simple;
+	bh=ItcaXl8i5CYKhNzfahBwz+fIvVyHDL95A85+MWGEj+k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SQ9sIa1/kRNTEtsaU1ISjvjh2aZreodeQ395Xlo16wTXE+eow9aEkZu/Ee2xxBFgufV4s5Le48SNpGoPpMhZQ5WEx8Xb8mqQix5bIkJVrhufBBLy6zn3EaFthzrA7+JRUy2FXTt9/6XkLIoZvaeMA4QW7aln56CL3S4wba2tqdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaJB5kdp; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=RTnfufm+ZK8WPc+KQFl9CJpsjJ0hw7hDLlXZ+BYZs8QFKSKRyg6Jifc3ld2FTuxfo+Cu2UQ77icm9ZXIC6O5DVcw7wMCx9sZNNIWyJvqYEZ2hstPIIh4IaKq5CxVQ1kEoHPucapVupbMG906oRl34v8iCxhIySJ/T4xpZnLI2h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCBUysla; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaJB5kdp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E393EC4CEF7;
-	Mon,  9 Mar 2026 18:49:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCBUysla"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B0BBC4CEF7;
+	Mon,  9 Mar 2026 18:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773082164;
-	bh=0c7PfNlywEu5YRiPhWq72Cwb/p1gFPYWyAfM/6HbHMc=;
+	s=k20201202; t=1773082482;
+	bh=ItcaXl8i5CYKhNzfahBwz+fIvVyHDL95A85+MWGEj+k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QaJB5kdpK9REfw02zPJL5SzA6cp/g2GZpsqa2TqoPYncIbQKaOp5DfMSWS/RL+N+4
-	 4DTu01L5qRpPTThvIEYX2JVaqNSGsutsnMcSw5ML4dyRX6JkuxE1wXnVaDEwyK1K6p
-	 52GzZZe/jCgHWx/7CeWnvx9cj9Jw3NGboJHCZHQrYUL9usxtfTrgcaKTPEBRWmzBpt
-	 A9TndQNrMMTBqPEY0GWMOznIxSUEHItvWBztbjBiyijajHq1O2oGb2ZyS1Dr25zOO+
-	 jJJ5fvQDouHmzXbEDeZlpXjhKr3JW0vSjyAbmU1v+5jZosWHg/rNProaVmleSCYNtp
-	 llfXkt5blg5Aw==
+	b=YCBUyslaEh4FxVZSxBpQjunDjSpSxIHQJ2Osa/O2P2cOqe1W//QWbEKffWInMhfvC
+	 5ZxQDH4uWCo97stqiF7jEv8b389fq4ylY7iw41ji/1iDgpm0rtKUboHAqHZYTgaey9
+	 wq1gH3DZoKf38MHZl3jhpbYN56JJSs5V79fBKXv9md5wa86pQsHSQLM1A2eZajIgLT
+	 96Qn26WuA37vSjIqtj3/rKS+Ij8wOGS9Fv27mPuEINCe8uVO3j1g9U6OEils/XzysM
+	 ONZN81Y3DySxboGPKl6eixOCkOgbM7L6ppS9aTqqeN5lZdis5UsmDjlPebl/EgzsMo
+	 H5T/7EeCkV0bg==
 From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- David Owens <daowens01@gmail.com>, Andrew Davis <afd@ti.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260305203706.841384-1-afd@ti.com>
-References: <20260305203706.841384-1-afd@ti.com>
-Subject: Re: [PATCH 1/5] leds: lp8860: Use a single regmap table
-Message-Id: <177308216264.1638430.17176554849062156181.b4-ty@kernel.org>
-Date: Mon, 09 Mar 2026 18:49:22 +0000
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-pm@vger.kernel.org
+In-Reply-To: <20260222-sc27xx-mfd-cells-v1-2-69526fe74c77@abscue.de>
+References: <20260222-sc27xx-mfd-cells-v1-2-69526fe74c77@abscue.de>
+Subject: Re: (subset) [PATCH 2/6] dt-bindings: leds: sc2731: Add compatible
+ for SC2730
+Message-Id: <177308247887.1642764.10057275958264547150.b4-ty@kernel.org>
+Date: Mon, 09 Mar 2026 18:54:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -45,26 +54,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev-52d38
 
-On Thu, 05 Mar 2026 14:37:02 -0600, Andrew Davis wrote:
-> Instead of a regmap table each for the normal registers and the EEPROM
-> registers, make one table and use an access table to prevent read/write
-> to/from the registers between the two ranges. Slightly simplifies the
-> code.
+On Sun, 22 Feb 2026 14:16:46 +0100, Otto Pflüger wrote:
+> The LED controller found in the SC2730 PMIC is compatible with the one
+> found in the SC2731 PMIC.
 > 
 > 
 
 Applied, thanks!
 
-[1/5] leds: lp8860: Use a single regmap table
-      commit: cfbe3ef10db19c2a39640204be160952754e430c
-[2/5] leds: lp8860: Return directly from lp8860_init
-      commit: c6cde1446602bf990ce8ad81181434f436a16037
-[3/5] leds: lp8860: Hold lock for all of EEPROM programming
-      commit: 34b7e5d805a33263f4297b42922bae4c70c34026
-[4/5] leds: lp8860: Remove unused read of STATUS register
-      commit: e4bacd32bcf0fd0a3dc78363d5ce6aa3cce63563
-[5/5] leds: lp8860: Do not always program EEPROM on probe
-      commit: e5e4ccc8896f9391f718817a19603c08bf8d4cc4
+[2/6] dt-bindings: leds: sc2731: Add compatible for SC2730
+      commit: fc2dfc3392ec52f12d8d6f16a8b13cca838d8bee
 
 --
 Lee Jones [李琼斯]
