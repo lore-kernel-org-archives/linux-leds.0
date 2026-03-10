@@ -1,127 +1,173 @@
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570D64C0401;
-	Tue, 10 Mar 2026 11:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879674218B4;
+	Tue, 10 Mar 2026 12:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773143765; cv=none; b=WNdDxONumdlKT+o1LcUGbOoKq69jHrF2gcKW1JanVYhwZvpLc/6qpTN7CLZjVFfK5n4CNnQPs4tO+u3UqR62/WKacoaBoo6DKHs+UFgZL2sLlBo+6DANojbRxd1Q0o5KNanZANyDdXeBVur14kHXxJ0KyQf9wBBhjvEpnpDdvIA=
+	t=1773144083; cv=none; b=T4gP7YCZTgiWX1MAiNjYn8QdDpoHmd0SAj/jdRY6iKa2PDIbjUE4InU8/eb+e/RpRaT+vKSPE9fInqYH9vA14ewjWa9PjrWAG+IGy5ah1m35Qzn0zjy8Rq6EDlKY2oSfRa64dTsvAkWVK0LUQTHpyPsoynPtbo/bk9QZqcNDSbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773143765; c=relaxed/simple;
-	bh=gOURDJcimLwc0Y7s7mu8KRblXgipzGTYZgiAn3dRwDI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KtzkYuWkXBGkbBH70ZIVNeM1m/vatmw0W2LbUQNeEqp1yWctVF+dGc8P9gSuwtIgoGgtnIJkNZGTgHfmUlyk9GGaucGHkc+SOQT75uoQZSG8TP9al7Kd9am/LTQ2e5tcmM9t4XnZHiLaUAst7WlWgeWcD30mxv4SDxqUMz3is9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=ex53I4YG; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+	s=arc-20240116; t=1773144083; c=relaxed/simple;
+	bh=nX4GFlS7Ni6Bek7pIiBiRr7Oo8oPZgdFTHwAGugHpVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVe7cSdEbwZA6Jht9daSgetJPCW9ML2rrxupamaK3NV0PpS05iBRrvsLLI9AduiJKcV58und8zz1nCC0QXYV4e5KZFntxpCNK19JE0+nkcklI9IsLe/OoOHe7QpoQjm+p18052rVxlPAlk5uBYH/jvw+q+iP4A+/K9PliZc75BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLnbEsoq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="ex53I4YG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1773143728; bh=gOURDJcimLwc0Y7s7mu8KRblXgipzGTYZgiAn3dRwDI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ex53I4YG0KjBerNqRD5wRIiox3FXFKTSd0JtZvKuo0ROgMoNdRRAPThrM/Qsevv02
-	 e8XWjmKIuppAES/QSOjqmEyPMBZJml1FZ+UNb0gDdtCYyQjh8crsZ0vtK8+gKHBfLt
-	 MJw5NhjMOgoL79FPNU9K+5wpre1mwH1utAmpyJeE=
-Received: from [2001:bf0:244:244::71] (helo=mail.avm.de)
-	by mail.avm.de with ESMTP (eXpurgate 4.55.2)
-	(envelope-from <phahn-oss@avm.de>)
-	id 69b006af-b734-7f0000032729-7f0000019c7a-1
-	for <multiple-recipients>; Tue, 10 Mar 2026 12:55:27 +0100
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [IPv6:2001:bf0:244:244::71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Tue, 10 Mar 2026 12:55:27 +0100 (CET)
-From: Philipp Hahn <phahn-oss@avm.de>
-Date: Tue, 10 Mar 2026 12:49:21 +0100
-Subject: [PATCH 55/61] interconnect: Prefer IS_ERR_OR_NULL over manual NULL
- check
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLnbEsoq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B556AC2BC86;
+	Tue, 10 Mar 2026 12:01:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773144083;
+	bh=nX4GFlS7Ni6Bek7pIiBiRr7Oo8oPZgdFTHwAGugHpVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MLnbEsoqYe5qelfPHe3UykmjiVJIgvLVC0hIikqjaIkedf7ztMnEM15m95zTKVHzi
+	 x7LJaHe/9g0UxfDtOju+/t7CM7VfaQgJYOPktJOfBCR+823kkzg5Q2e1E23+tc8NiF
+	 rFTb4bxQPT3QaV36mMYaYDbJacgqDXTcmuUsnXTh/v3Yb/PjyjODXkwcqJqgM2a6xm
+	 FpLSd3ipJNZwiD5ynnhWoIspP8NKOt4WvJSDMi52eUyZLw+e18aSDm6jALrkWB93TG
+	 GQDjEl4tST4BEQtyqaXr04yyTVJMmYukoW3jLMgrQt0cb6yMrSmsEDJ2wdxpc4zFyG
+	 zfJhaeQCrU5Ug==
+Date: Tue, 10 Mar 2026 12:01:16 +0000
+From: Lee Jones <lee@kernel.org>
+To: Rong Zhang <i@rong.moe>
+Cc: Pavel Machek <pavel@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Ike Panhc <ikepanhc@gmail.com>, Vishnu Sankar <vishnuocv@gmail.com>,
+	vsankar@lenovo.com, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [RFC PATCH 1/9] leds: Load trigger modules on-demand if used as
+ hw control trigger
+Message-ID: <20260310120116.GI183676@google.com>
+References: <20260227190617.271388-1-i@rong.moe>
+ <20260227190617.271388-2-i@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260310-b4-is_err_or_null-v1-55-bd63b656022d@avm.de>
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de>
-To: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
- bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
- dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
- gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
- intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
- linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-hyperv@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-mm@kvack.org, 
- linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
- linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
- ntfs3@lists.linux.dev, samba-technical@lists.samba.org, 
- sched-ext@lists.linux.dev, target-devel@vger.kernel.org, 
- tipc-discussion@lists.sourceforge.net, v9fs@lists.linux.dev, 
- Philipp Hahn <phahn-oss@avm.de>
-Cc: Georgi Djakov <djakov@kernel.org>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=974; i=phahn-oss@avm.de;
- h=from:subject:message-id; bh=gOURDJcimLwc0Y7s7mu8KRblXgipzGTYZgiAn3dRwDI=;
- b=owEBbQGS/pANAwAKATQtBlPRrKzbAcsmYgBpsAaR6ZpvsAoRDFUpNu6G6elsfY3kgc27+uFRK
- ZLVDKnVLraJATMEAAEKAB0WIQQ5bPBtrWDUcDQCppg0LQZT0ays2wUCabAGkQAKCRA0LQZT0ays
- 28XJCACYmRByi8P7LIl1oc/g3aO1owAe5Q8Or8oVGhiLH2LhqHs6nfDqZLIqz1sL3qrQVyF7YGk
- kX0mFSo3Tm/dtN68cM8AHWfCx75PDZnJ1klwJaD/a5osoRSf4X3Ik4ZQj/cB7O+Zq1qUVCpMYTg
- XaFUKyzlehYbqEs1YGNkcYOQXSo6Ofkc0rCWX7WPlFeXlek3wVqFGPJYbk8vXFwaghiu8bk1jxs
- 5OWlABLNOMeICixwYBtsJBbBssbgobIHjFZNKGQbzYy6+2+uPNUf9NBHl8iaEQQnS3RZflKIJzs
- X0gv7zaxzUqJp37JtExDbIsVdOxpFm9EpGTYIR5B4gcmwoes
-X-Developer-Key: i=phahn-oss@avm.de; a=openpgp;
- fpr=58AF7C2E007CDBE62C59E078F50EFDCF8AD04B1A
-X-purgate-ID: 149429::1773143727-E55C3A3D-7BA9F82C/0/0
-X-purgate-type: clean
-X-purgate-size: 976
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260227190617.271388-2-i@rong.moe>
 
-Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-check.
+On Sat, 28 Feb 2026, Rong Zhang wrote:
 
-Semantich change: Previously the code only printed the warning on error,
-but not when the pointer was NULL. Now the warning is printed in both
-cases!
+> In the following patches, we are about to support hardware initiated
 
-Change found with coccinelle.
+Let's not talk about other commits.  Only tell us what's happening here.
 
-To: Georgi Djakov <djakov@kernel.org>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
----
- drivers/interconnect/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> trigger transitions to/from the device's hw control trigger. In case
+> the LED hardware switches itself to hw control mode, hw control trigger
+> must be loaded before so that the transition can be processed.
+> 
+> Load the trigger module specified by hw_control_trigger, so that
+> hardware initiated trigger transitions can be processed when the hw
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 8569b78a18517b33abeafac091978b25cbc1acc7..22e92b30f73853d5bd2e05b4f52cb5aa22556468 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -790,7 +790,7 @@ void icc_put(struct icc_path *path)
- 	size_t i;
- 	int ret;
- 
--	if (!path || WARN_ON(IS_ERR(path)))
-+	if (WARN_ON(IS_ERR_OR_NULL(path)))
- 		return;
- 
- 	ret = icc_set_bw(path, 0, 0);
+"hardware"
+
+> control trigger is compiled as a module.
+> 
+> Signed-off-by: Rong Zhang <i@rong.moe>
+> ---
+>  drivers/leds/led-class.c    |  1 +
+>  drivers/leds/led-triggers.c | 33 +++++++++++++++++++++++++++++++++
+>  drivers/leds/leds.h         |  1 +
+>  3 files changed, 35 insertions(+)
+> 
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index d34a194535604..0fa45f22246e3 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -576,6 +576,7 @@ int led_classdev_register_ext(struct device *parent,
+>  
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  	led_trigger_set_default(led_cdev);
+> +	led_load_hw_control_trigger(led_cdev);
+
+led_trigger_load_hw_control
+
+>  #endif
+>  
+>  	mutex_unlock(&led_cdev->led_access);
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index b1223218bda11..3066bc91a5f94 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -313,6 +313,39 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
+>  }
+>  EXPORT_SYMBOL_GPL(led_trigger_set_default);
+>  
+> +static inline bool led_match_hw_control_trigger(struct led_classdev *led_cdev,
+> +						struct led_trigger *trig)
+> +{
+> +	return (!strcmp(led_cdev->hw_control_trigger, trig->name) &&
+> +		trigger_relevant(led_cdev, trig));
+
+
+This is ugly.  Break it out and provide some commentary.
+
+> +}
+> +
+> +void led_load_hw_control_trigger(struct led_classdev *led_cdev)
+> +{
+> +	struct led_trigger *trig;
+> +	bool found = false;
+> +
+> +	if (!led_cdev->hw_control_trigger)
+> +		return;
+> +
+> +	/* default_trigger is handled by led_trigger_set_default(). */
+
+Sentences start with uppercase chars.
+
+> +	if (led_cdev->default_trigger &&
+> +	    !strcmp(led_cdev->default_trigger, led_cdev->hw_control_trigger))
+> +		return;
+
+Do you need to check default_trigger?
+
+strcmp() should be able to handle empty strings.
+
+> +
+> +	down_read(&triggers_list_lock);
+> +	list_for_each_entry(trig, &trigger_list, next_trig) {
+> +		found = led_match_hw_control_trigger(led_cdev, trig);
+> +		if (found)
+> +			break;
+> +	}
+> +	up_read(&triggers_list_lock);
+> +
+> +	if (!found)
+> +		request_module_nowait("ledtrig:%s", led_cdev->hw_control_trigger);
+> +}
+> +EXPORT_SYMBOL_GPL(led_load_hw_control_trigger);
+> +
+>  /* LED Trigger Interface */
+>  
+>  int led_trigger_register(struct led_trigger *trig)
+> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
+> index bee46651e068f..e85afd4d04fd0 100644
+> --- a/drivers/leds/leds.h
+> +++ b/drivers/leds/leds.h
+> @@ -21,6 +21,7 @@ void led_init_core(struct led_classdev *led_cdev);
+>  void led_stop_software_blink(struct led_classdev *led_cdev);
+>  void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value);
+>  void led_set_brightness_nosleep(struct led_classdev *led_cdev, unsigned int value);
+> +void led_load_hw_control_trigger(struct led_classdev *led_cdev);
+>  ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
+>  			const struct bin_attribute *attr, char *buf,
+>  			loff_t pos, size_t count);
+> -- 
+> 2.51.0
+> 
 
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
