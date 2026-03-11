@@ -1,97 +1,266 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5B33D88F5
-	for <linux-leds@vger.kernel.org>; Wed, 11 Mar 2026 09:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18683DF015
+	for <linux-leds@vger.kernel.org>; Wed, 11 Mar 2026 12:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773221546; cv=none; b=kefWfG04ZEWLrFt355ty9msnULu6pVq0OFSgTQg/x4g/XgyHrldo/FLOHub6mEjHtSxSHKMUeCfIsZBq7iUiwfNbFTIei0JpPse34r8eYtsrSKZvhKjQIS6uDjGtKQM3Ib3xfKv8fXkFbvCO8raiEpUCW1hNJS4LzY1w/w/Ft/w=
+	t=1773232062; cv=none; b=qbIbHSzgbkzv85kJly4Maw+wgp4vDM2BhAeixy9dSCqPauZDoNs5sLUDufktEsc0VaLB54VT/1X4gmamhNti8r9mlA4MUYEoBx4GOB1muh2QZU7lOXlce0iJEdF+AITIecKXAbWdjDW3h4n1mywMaraACQGVuClNqM9VHa76iuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773221546; c=relaxed/simple;
-	bh=JGYhPK256pxU9EiY8jbQSSjgozqR8V5kd9EUseD+GRo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lDPbIJX30/OfdLsE2BHzTX7jbYMiPXOpA5j6nZZN0URtgNrQnRggRxPparRQodJln6PKo0iETdOrUjfDMLAU6+mt52wlIj51GDRWbeyEWHKG6nftPOXTd1tMgwd1Ubeyd3mhnJ+hfZD/E/jaONTblzUxAJdIQu923r0pSmwOvoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfVWEI4z; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfVWEI4z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0AFCC2BCB1
-	for <linux-leds@vger.kernel.org>; Wed, 11 Mar 2026 09:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773221545;
-	bh=JGYhPK256pxU9EiY8jbQSSjgozqR8V5kd9EUseD+GRo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JfVWEI4zDrh3iHX+1r4cle8Phcf0RBN0zERjJ8PQNA3EYWSATJ9h5lha/xBvVFGnI
-	 lElqdFOyu5rUcg336ldY8JBHZo/CNZ6A5HFkXurPLCqwCA7763w9Gzh1MrCiovz1O6
-	 4/dhditNlUPPz/o6nb1awN/pC+8W+SveVLbbW1M3XSJ0LknHbar0z1P9mnX5NF58yX
-	 1Uj5dsDyxTrkO1DJZv/qpV8j6iPNzVVJVRqNM1MXMlgjgqpNnn65QlcqD5KydSFEzI
-	 yLns3+tdmVfBsvgohk6ekX61JLdkJkatIbZorvb97Pbamw8/hcF79oQl43JkoSoDtA
-	 x5H4ornHcPhQg==
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-64ae222d87dso12762976d50.2
-        for <linux-leds@vger.kernel.org>; Wed, 11 Mar 2026 02:32:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7aZr7fAzSPvsBKPYq6ATE3ww1QKdnNcgtIu7IlZhUf6IqZMlpJV+IhSla2IwZpOkweLQg9Qhq1RIE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/uWJH777KDYDvPfQIxwtzq4ZUNLeFQKd8KptEjcgsufoDJnaj
-	T1e4INzkya+r/r5JaZ4QW4luzKvUB1LZAuDFSqTPX2i2m9vYKPj4O6QDiV+7Nmee5/qaeqdHxLr
-	Dl/rV0/BQOCyZIn4LHlIBlfev3ptYhDg=
-X-Received: by 2002:a05:690e:144d:b0:64c:e890:fbb9 with SMTP id
- 956f58d0204a3-64d656f696dmr1649157d50.20.1773221544775; Wed, 11 Mar 2026
- 02:32:24 -0700 (PDT)
+	s=arc-20240116; t=1773232062; c=relaxed/simple;
+	bh=gGHm4R+DqstAdiyoqIK+LYoWHwK4l7grCC17b0tMOIY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PBCg7AAHKcJ5gi8MYH6RK6WRZg/GvWpyvxi+2M9fBaz1Dd2J9U5fNt/WFJpYyBePm7IHvG4/kihyX/8nbGvLDzDPun4JrDOyw1B9cGAoXTu3l9inQepCFsGHV5o4eaqHQ8kKgzLjqK+LqN9Mc5XbXJ8gbmD3QRHlSuQncNqHWRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1w0If0-0002PX-3P; Wed, 11 Mar 2026 13:27:34 +0100
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Date: Wed, 11 Mar 2026 13:27:02 +0100
+Subject: [PATCH v2 2/2] leds: lp5860: detect and report fault state
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260310-b4-is_err_or_null-v1-0-bd63b656022d@avm.de> <20260310-b4-is_err_or_null-v1-41-bd63b656022d@avm.de>
-In-Reply-To: <20260310-b4-is_err_or_null-v1-41-bd63b656022d@avm.de>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 11 Mar 2026 10:32:12 +0100
-X-Gmail-Original-Message-ID: <CAD++jLnDv00ErgVdQ4EBpKH9KMWrPD8ODrQ6m846zyQ=wNzCzQ@mail.gmail.com>
-X-Gm-Features: AaiRm52aI8z_G2E4qYaKWPEA43RhLektjwMDQXSLwHd-Xy_BYcin-6heFFY4jM4
-Message-ID: <CAD++jLnDv00ErgVdQ4EBpKH9KMWrPD8ODrQ6m846zyQ=wNzCzQ@mail.gmail.com>
-Subject: Re: [PATCH 41/61] pinctrl: Prefer IS_ERR_OR_NULL over manual NULL check
-To: Philipp Hahn <phahn-oss@avm.de>
-Cc: amd-gfx@lists.freedesktop.org, apparmor@lists.ubuntu.com, 
-	bpf@vger.kernel.org, ceph-devel@vger.kernel.org, cocci@inria.fr, 
-	dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org, 
-	gfs2@lists.linux.dev, intel-gfx@lists.freedesktop.org, 
-	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-mips@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-nfs@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-trace-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, ntfs3@lists.linux.dev, 
-	samba-technical@lists.samba.org, sched-ext@lists.linux.dev, 
-	target-devel@vger.kernel.org, tipc-discussion@lists.sourceforge.net, 
-	v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260311-v6-19-topic-ti-lp5860-fault-v2-2-f9454910f009@pengutronix.de>
+References: <20260311-v6-19-topic-ti-lp5860-fault-v2-0-f9454910f009@pengutronix.de>
+In-Reply-To: <20260311-v6-19-topic-ti-lp5860-fault-v2-0-f9454910f009@pengutronix.de>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>
+X-Mailer: b4 0.14.3
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-On Tue, Mar 10, 2026 at 12:55=E2=80=AFPM Philipp Hahn <phahn-oss@avm.de> wr=
-ote:
+The lp5860 can detect shorts and open circuits. If an open (LOD) or
+short (LSD) is detected, the global bit in LP5860_FAULT_STATE is set.
+The channel that caused this can be read from the corresponding Dot_lsdX
+and Dot_lodX register and bit offset.
 
-> Prefer using IS_ERR_OR_NULL() over using IS_ERR() and a manual NULL
-> check.
->
-> Change generated with coccinelle.
->
-> To: Linus Walleij <linusw@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Philipp Hahn <phahn-oss@avm.de>
+The global bits can be cleared by writing 0xf to the LOD/LSD_clear
+register.
 
-Patch applied to the pinctrl tree as obviously correct.
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+---
+ drivers/leds/rgb/leds-lp5860-core.c       | 143 ++++++++++++++++++++++++++++++
+ include/linux/platform_data/leds-lp5860.h |  19 +++-
+ 2 files changed, 159 insertions(+), 3 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/leds/rgb/leds-lp5860-core.c b/drivers/leds/rgb/leds-lp5860-core.c
+index 28b4d86e11f1a..b62a1db18c05b 100644
+--- a/drivers/leds/rgb/leds-lp5860-core.c
++++ b/drivers/leds/rgb/leds-lp5860-core.c
+@@ -19,6 +19,149 @@ static struct lp5860_led *mcled_cdev_to_led(struct led_classdev_mc *mc_cdev)
+ 	return container_of(mc_cdev, struct lp5860_led, mc_cdev);
+ }
+ 
++static const char *lp5860_led_name(struct lp5860 *lp, unsigned int idx)
++{
++	for (int i = 0; i < lp->leds_count; i++) {
++		struct mc_subled *mc_led_info;
++		struct lp5860_led *led;
++
++		led = &lp->leds[i];
++
++		mc_led_info = led->mc_cdev.subled_info;
++
++		for (int j = 0; j < led->mc_cdev.num_colors; j++) {
++			if (mc_led_info[j].channel == idx)
++				return led->mc_cdev.led_cdev.dev->kobj.name;
++		}
++	}
++
++	return 0;
++}
++
++static ssize_t lp5860_get_fault_state(struct lp5860 *led, char *buf,
++				      unsigned int reg, unsigned int length)
++{
++	int len = 0;
++
++	for (unsigned int dot = 0; dot < length; dot++) {
++		unsigned int offset = 0;
++		unsigned int value;
++		unsigned int max_bits;
++		int ret;
++
++		ret = regmap_read(led->regmap, reg + dot, &value);
++		if (ret)
++			return ret;
++
++		max_bits = BITS_PER_BYTE;
++		/* Every 3rd Dot_x register only has 2 bits */
++		if (dot % 3 == 2)
++			max_bits = 2;
++
++		for (unsigned int bit = 0; bit < max_bits; bit++) {
++			offset++;
++
++			if (value & BIT(bit)) {
++				len += sprintf(buf + len, "%s:%d", lp5860_led_name(led, offset),
++					       offset - 1);
++				len += sprintf(buf + len, " ");
++			}
++		}
++	}
++
++	buf[len++] = '\n';
++
++	return len;
++}
++
++static ssize_t lp5860_fault_state_open_show(struct device *dev,
++					    struct device_attribute *attr,
++					    char *buf)
++{
++	struct lp5860 *led = dev_get_drvdata(dev);
++	unsigned int value;
++	int ret;
++
++	ret = regmap_read(led->regmap, LP5860_REG_FAULT_STATE, &value);
++	if (ret)
++		return ret;
++
++	if (!(value & LP5860_FAULT_STATE_OPEN_DETECTION))
++		return 0;
++
++	return lp5860_get_fault_state(led, buf, LP5860_REG_DOT_LOD_START,
++				      LP5860_DOT_LOD_LENGTH);
++}
++static LP5860_DEV_ATTR_R(fault_state_open);
++
++static ssize_t lp5860_fault_state_short_show(struct device *dev,
++					     struct device_attribute *attr, char *buf)
++{
++	struct lp5860 *led = dev_get_drvdata(dev);
++	unsigned int value;
++	int ret;
++
++	ret = regmap_read(led->regmap, LP5860_REG_FAULT_STATE, &value);
++	if (ret)
++		return ret;
++
++	if (!(value & LP5860_FAULT_STATE_SHORT_DETECTION))
++		return 0;
++
++	return lp5860_get_fault_state(led, buf, LP5860_REG_DOT_LSD_START,
++				      LP5860_DOT_LSD_LENGTH);
++}
++static LP5860_DEV_ATTR_R(fault_state_short);
++
++static ssize_t lp5860_fault_state_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct lp5860 *led = dev_get_drvdata(dev);
++	unsigned int value;
++	int ret;
++
++	ret = regmap_read(led->regmap, LP5860_REG_FAULT_STATE, &value);
++	if (ret)
++		return ret;
++
++	return sysfs_emit(buf, "%d\n", (value & 0x3));
++}
++
++static ssize_t lp5860_fault_state_store(struct device *dev,
++					struct device_attribute *attr,
++					const char *buf, size_t len)
++{
++	struct lp5860 *led = dev_get_drvdata(dev);
++	unsigned int value = 0;
++	int ret;
++
++	if (kstrtoint(buf, 0, &value))
++		return -EINVAL;
++
++	if (value & LP5860_FAULT_STATE_OPEN_DETECTION)
++		ret = regmap_write(led->regmap, LP5860_REG_LOD_CLEAR, 0xf);
++
++	if (value & LP5860_FAULT_STATE_SHORT_DETECTION)
++		ret = regmap_write(led->regmap, LP5860_REG_LSD_CLEAR, 0xf);
++
++	if (ret < 0)
++		return ret;
++
++	return len;
++}
++static LP5860_DEV_ATTR_RW(fault_state);
++
++static struct attribute *lp5860_led_attrs[] = {
++	&dev_attr_fault_state_open.attr,
++	&dev_attr_fault_state_short.attr,
++	&dev_attr_fault_state.attr,
++	NULL,
++};
++
++static const struct attribute_group lp5860_led_group = {
++	.attrs = lp5860_led_attrs,
++};
++
+ static int lp5860_set_dot_onoff(struct lp5860_led *led, unsigned int dot, bool enable)
+ {
+ 	unsigned int offset = dot / LP5860_MAX_DOT_ONOFF_GROUP_NUM;
+diff --git a/include/linux/platform_data/leds-lp5860.h b/include/linux/platform_data/leds-lp5860.h
+index 7bc69a7a550dd..7b2cc88d70e24 100644
+--- a/include/linux/platform_data/leds-lp5860.h
++++ b/include/linux/platform_data/leds-lp5860.h
+@@ -188,7 +188,9 @@
+ #define LP5860_DOT_CS_ON		0x01
+ #define LP5860_DOT_CS_OFF		0x00
+ 
+-/* Dot lod value */
++/* Dot LED open detection (LOD) value */
++#define LP5860_FAULT_STATE_OPEN_DETECTION	BIT(1)
++
+ #define LP5860_DOT_LOD0_OFFSET		0
+ #define LP5860_DOT_LOD1_OFFSET		1
+ #define LP5860_DOT_LOD2_OFFSET		2
+@@ -201,7 +203,11 @@
+ #define LP5860_DOT_LOD_ON		0x01
+ #define LP5860_DOT_LOD_OFF		0x00
+ 
+-/* dot lsd value */
++#define LP5860_DOT_LOD_LENGTH		0x20
++
++/* Dot LED short detection (LSD) value */
++#define LP5860_FAULT_STATE_SHORT_DETECTION	BIT(0)
++
+ #define LP5860_DOT_LSD0_OFFSET		0
+ #define LP5860_DOT_LSD1_OFFSET		1
+ #define LP5860_DOT_LSD2_OFFSET		2
+@@ -214,7 +220,8 @@
+ #define LP5860_DOT_LSD_ON		0x01
+ #define LP5860_DOT_LSD_OFF		0x00
+ 
+-/* Register lod state */
++#define LP5860_DOT_LSD_LENGTH		0x20
++
+ #define LP5860_GLOBAL_LOD_OFFSET	1
+ #define LP5860_GLOBAL_LOD_STATE		BIT(1)
+ #define LP5860_GLOBAL_LSD_OFFSET	0
+@@ -248,6 +255,12 @@
+  */
+ #define LP5860_MAX_LED_CHANNELS		4
+ 
++#define LP5860_DEV_ATTR_R(name)	\
++	DEVICE_ATTR(name, 0444, lp5860_##name##_show, NULL)
++
++#define LP5860_DEV_ATTR_RW(name)	\
++	DEVICE_ATTR(name, 0644, lp5860_##name##_show, lp5860_##name##_store)
++
+ struct lp5860_led {
+ 	struct lp5860 *chip;
+ 	struct led_classdev_mc mc_cdev;
+
+-- 
+2.51.0
+
