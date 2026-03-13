@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F283DFC9B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75773E0228;
 	Fri, 13 Mar 2026 19:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773428608; cv=none; b=q/9ZOe+VaUixWNvXJTEhSAQSy8Qtx+YELYUs0KTrEtfvEQ50YZpB74vX/QhKjJ5sedYb7uWoEl4JH14NXUJXgjhVDNEbfpUY5+KEcts9lKrbfMI/6L5DqqtP0YRyqRG+4yRGm2rVd2KHDreyFPUW5vC9BQC/nZ9YvkIINkLjgwA=
+	t=1773428608; cv=none; b=ZbIwqPyoFQtKzWrLbu8yhl+4zhBk96xJaKcVIWz2gUC/ZOZX+ziNh/ni5sU7YIUaxyJ/D/svhw3nPXoxJ2ionS0oHrDt/E7VLKBZjeq9+aFx71qGN9gRLrUsRKZDaX4hwiZKfzOYq8bmZ1dg4Uep7prO0U3hU9Vn44L7SNj50/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773428608; c=relaxed/simple;
-	bh=IrWyWb2kxV5OzeytoBcovDqq1Y5EzHRPfMuaRrJQiho=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nSpT4FCbmOCcnlEb7LWf9JM8Y35onuwG/By5S9gextVlPZatmoqjtaUfHKWQAeQUI7lhmwU0vDB0apRWgSmpBMCi46D9VxtB1rSRcy3J8p18w5KjkS3T3zfHgGdGf60jc+A0ARRbv2Pcb6mPmcpuDK5Hm8zFoxWyZ5WDGSlbq2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgEIfAdi; arc=none smtp.client-ip=10.30.226.201
+	bh=AlpETrqRCdSTlEzY4ZYJxwPGCgmPKV6yiLLLpTONNWc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pebDcC8kVMcGsK/esAhZhPr9kVeB0FdyJ8K9utzGWaXNF/NFubwFQhw1tghEct5//4yWMESyfqTNpcxokpcDfF59eNSmRPTI2R8uBMxaRXsxodsjw0dI5t1v/z0v/9p3ZvU+iNTX0MEj0xsbaNcix2VtPwmww/JpaVRrre2whf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/pbdra2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgEIfAdi"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1AB74C19421;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/pbdra2"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 395BFC2BC86;
 	Fri, 13 Mar 2026 19:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1773428608;
-	bh=IrWyWb2kxV5OzeytoBcovDqq1Y5EzHRPfMuaRrJQiho=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=PgEIfAdi4hH21js+xQYDmLxMAGezQqjcpHhPO8kAJrAhEw2PVHOt0IR5+5gp7bGpo
-	 q6Lvu3o05VzNOKf5jOo9HqwEboQ+JF9cQMLnoNKb1ZFze3sdJwP6I8YsAeP87+iC9r
-	 kGq7MUpd4Tpyeo37Rm8+lD78P5sU+2aBRhc4nQz7a1T1mmxIvpzgY3b02npEpRKUat
-	 H+5qRzyBtOts9UvPsY0ucWUK6Kw2QS6JT4qco3XLfgIBwqWgel2lsualI9hf7lEs23
-	 SFOmY/HyBepxpgyLdTsgfMyCjXL8pYn3cup2FtK1x6/JVEi6+214gLlLtmg02A/7E5
-	 39xZnowksZ8og==
+	bh=AlpETrqRCdSTlEzY4ZYJxwPGCgmPKV6yiLLLpTONNWc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=L/pbdra2/SHny3jPvMR5mn62SZYdIHt72QCTSXSEm4XBUubDDF4BN9MPWxFJwp0MU
+	 dpAiWYeDx5IH+PRUhZYJSoZJWVR5tBtEqQmo8gELjIld+eQ8PBuMstIWiQCXw9h1QF
+	 j/GG/YPNlw7vhmsX3IiPXrqick0oiJqsbAzAVU43mnwvt0U+0/jQ0AHJpjLcKLYzxT
+	 NEqVvvkIz8xYWg10EGauZ6ihJsAy4waP+dDbD5k2Az3Lw9tPoHB+AUSuF4DOzgt3g+
+	 eAC/dNUSXrDw7RkB3CCVt3rwEBWHZBlzu5epd6QuGcf2qRGclV9Nr28SiNjN06bAyI
+	 kGHlha1LJxHwg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0937C107BCDA;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAFE107BCD7;
 	Fri, 13 Mar 2026 19:03:28 +0000 (UTC)
 From: Markus Probst via B4 Relay <devnull+markus.probst.posteo.de@kernel.org>
-Subject: [PATCH v3 0/7] Introduce Synology Microp driver
-Date: Fri, 13 Mar 2026 20:03:04 +0100
-Message-Id: <20260313-synology_microp_initial-v3-0-ad6ac463a201@posteo.de>
+Date: Fri, 13 Mar 2026 20:03:06 +0100
+Subject: [PATCH v3 2/7] rust: add basic mfd abstractions
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -40,12 +40,9 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGhftGkC/4WPzYqDMBSFX0WynpT8qDGu5j2GIja5aQNqbJKGS
- vHdJ9WBcTPM8lz4vnvOCwXwFgJqixfykGywbsqBfxRI3frpCtjqnBEjrCac1DgskxvcdelGq7y
- bOzvZaPsBEyN0r8RFlLJGmZ49GPvczF/nPXu4P/KDuB9//W2R7RVlVGD/CLHLlTQkDFCVDQVJm
- kq1iaNjpR+E0nJHBtAB97KSRihmhJFtouxNXPoAWLlxtLEtkjgR7BVH70I3G6Lzy7Y80a3RvyM
- TxQQbZQxoqMuyUZ+zCxHcScPmTOzoaf72sOyRvJGy5oZTVR0967p+A3mvwYWXAQAA
-X-Change-ID: 20260306-synology_microp_initial-0f7dac7b7496
+Message-Id: <20260313-synology_microp_initial-v3-2-ad6ac463a201@posteo.de>
+References: <20260313-synology_microp_initial-v3-0-ad6ac463a201@posteo.de>
+In-Reply-To: <20260313-synology_microp_initial-v3-0-ad6ac463a201@posteo.de>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
@@ -68,21 +65,21 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev, 
  Markus Probst <markus.probst@posteo.de>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4556;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11227;
  i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=IrWyWb2kxV5OzeytoBcovDqq1Y5EzHRPfMuaRrJQiho=;
- b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBptF9s60d+pfHXse4ikbSkzVo5yY/0L5v1i+qBg
- TKkCKvUvGyJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCabRfbBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMSwyLDIACgkQNHYf+OetQ9JAbRAAr25iOrm9PmSuwLH7/Y66yv/KUAEuYdW
- exSVg+xJgFhAPn58kruRMn4VglsHwSVAHbkfdBdCS6yCxpZ5WGYGnzOCQHkMQ/BlRWvHl08eDM6
- uSlLgexXZ+xT7ZoF/jhqf5Zc+vmnXUX2vnkFlYxNRSxbJEsAs0eGNLBV1cNOCXfuYnb6usMKf2+
- RWAWNVyPpBkrY3uDl5enzgzCD5haN7sf8QUfBc0q5FOBt5kJuuO3mDhK+uTV9nYSd7IhYv+cUf6
- KpOuxyaumzvP+2rn4KLoewNgnjQOzDeH91ySfAR8LamR4MGksKzrVzqoJ0u4Z0yF7SA62OmHZY/
- o6Wm4VIYa9y9O+FaqSFWi3xBW00XRJbGMtSopeIS6opVoagfs+igz8rVpA+JnIUd3VhJbfiF/t+
- J0cBzpK6GVnk5rCWogmqyBkYnFiOVnNs/inp+rDBX2OffaEm5DYNtT5zwj62/8bS6unyDqxJMFL
- 6suoClqKFH08xiMq1XDjORs3m9WoW3aSpIxsXWCKcLLyPY82WEQSqdnnLMXB9LcNFPchOTgEwMw
- NEMpXvLtM7qoWQ3Hir6QoUMwB9o+4YuiSQZcJCqHq1fLVJOvOAcGz6SKDS7SE6bsHBarqIfFD/C
- QO3aGQVaztrrHVoW5bBNVmND0iyTD5xZBLOAoLheJFvdClt9SCag=
+ bh=ZJYERfpm0n00oI7yjkATxc2bgro8TlTIhPLy6Dly0cY=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBptF9zrNeiJ0tRgQoSJcNbO14e0jlYP/jaFWJju
+ I4P2fGImzCJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCabRfcxsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDIACgkQNHYf+OetQ9L+JQ//QYfpUWXxcV3wTaX3/5kvn1Eyhkd1hT7
+ mKG40Y7ioOAYLZ4qgrmScMXXQyMJUVWbuD4XMkfoGGntf6rHQ1QX/cpVMaXcdyYREzp7tt78ybQ
+ uZicXLXmohsMVNRWJDMxmO/63NycSrtfMCMr8gu/5gDIH95KsvXCe7uJrptggQHxo2ZEqPqcEGf
+ PeMOzfT4SSIwP67OikPQS5xJjA+7AmffJmr40JtXWR4gJPOWnalcgrDTMHSS2AZ/ac+u8W52tQN
+ AybHeoUVAW5sKEZ4a7+3VGUSSn5azkmaejdfPYhxWeyCWlDcwYErImDqwajSph64DWOwCHNDCcq
+ 6/2eAV2jKYKcjBlQxNfQDGBo7zrI4UBWsJbv6LP8hQfw9qNi4spR6pOk8R3EU+cGVNwRUUWDCck
+ sEbFxItpjzI1B6oMeBxADL15eDlh3ULVFcQfqWmwUiSjQecodWUf2VHGOMT1UpBdhJmIe1byWaA
+ OK/CSYIhQ9lngfAujisyAhS1auD2cmCzsMXnMq55igM0BxAmEvuH/nCvUgDbo18IoYiNP7diKVS
+ qW2wcp9ELPmTgOPheeoR1lc+Sl31YInzk+z1qeaQMjSNESX8rnqpwr/1sHQqYisXiP39zqiu/6B
+ UmL94ll1jsleQjm2V6QA+rNopg9F6U9/joL1GDIrJyKUtBpYEt0k=
 X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
  fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
 X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
@@ -90,96 +87,361 @@ X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
 X-Original-From: Markus Probst <markus.probst@posteo.de>
 Reply-To: markus.probst@posteo.de
 
-Apparently my email provider refused to send the whole patch series,
-because of a 100 receiver per hour limit to protect against spam
-(according to the error message). Please ignore the previous submission.
+From: Markus Probst <markus.probst@posteo.de>
 
-Synology uses a microcontroller in their NAS devices connected to a
-serial port to control certain LEDs, fan speeds, a beeper, to handle
-proper shutdown and restart, buttons and fan failures.
+Implement the basic mfd rust abstractions required to register mfd
+sub-devices, including:
+- `mfd::Cell` - a safe wrapper for `struct mfd_cell`
+- `mfd::CellAcpiMatch` - a safe wrapper for `struct mfd_cell_acpi_match`
+- `const MFD_CELLS: Option<&'static [mfd::Cell]>` in each bus device,
+  except auxiliary
 
-This patch series depends on the rust led abstraction [1] and the rust
-serdev abstraction [2].
+The mfd sub-device registration will be done after a successful call to
+probe in each bus device, except auxiliary. This guarantees that
+`mfd_add_devices` will only be run at most once per device. It also
+ensures that the sub-devices will be probed after the drvdata of the
+device has been set.
 
-This only adds the core driver and led driver.
-The following rust abstractions would be required, to implement the
-remaining features:
-- hwmon (include/linux/hwmon.h)
-- input (include/linux/input.h)
-- sysoff handler + hardware protection shutdown (include/linux/reboot.h)
-
-[1] https://lore.kernel.org/rust-for-linux/20260207-rust_leds-v12-0-fdb518417b75@posteo.de/
-[2] https://lore.kernel.org/rust-for-linux/20260313-rust_serdev-v3-0-c9a3af214f7f@posteo.de/
+In order to register mfd sub-devices for a device, the driver needs to
+set `const MFD_CELLS` in their Driver trait implementation to Some.
+A build_assert guarantees that this can only be set to Some, if
+CONFIG_MFD_CORE is enabled.
 
 Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
-Changes in v3:
-- remove `default n` from Kconfig entry, as n is the default already.
-- select RUST_SERIAL_DEV_BUS_ABSTRACTIONS in Kconfig
-- add mfd rust abstraction
-- split core and led parts into their own driver. It should now be considered a
-  MFD device.
-- split led part of dt binding into its own file
-- Link to v2: https://lore.kernel.org/r/20260308-synology_microp_initial-v2-0-9389963f31c5@posteo.de
+ MAINTAINERS                     |   6 +++
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/i2c.rs              |   7 +++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/mfd.rs              | 114 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/pci.rs              |   7 +++
+ rust/kernel/platform.rs         |   7 +++
+ rust/kernel/serdev.rs           |   6 +++
+ rust/kernel/usb.rs              |   7 +++
+ 9 files changed, 156 insertions(+)
 
-Changes in v2:
-- fix missing tabs in MAINTAINERS file
-- remove word binding from patch subject
-- add missing signed-off-by
-- add missing help entry in Kconfig
-- add missing spdx license headers
-- remove no-check{,-cpu}-fan properties from the dt-bindings and replace
-  them with the check_fan module parameter
-- use patternProperties for leds in dt-bindings
-- license dt-binding as GPL-2.0-only OR BSD-2-Clause
-- move driver from staging tree into mfd tree and mark it as work in
-  progress inside Kconfig
-- only register alert and usb led if fwnode is present
-- Link to v1: https://lore.kernel.org/r/20260306-synology_microp_initial-v1-0-fcffede6448c@posteo.de
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 749d63ca18fa..fa49e40836ab 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18082,6 +18082,12 @@ F:	drivers/mfd/
+ F:	include/dt-bindings/mfd/
+ F:	include/linux/mfd/
+ 
++MULTIFUNCTION DEVICES (MFD) [RUST]
++M:	Markus Probst <markus.probst@posteo.de>
++S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git
++F:	rust/kernel/mfd.rs
++
+ MULTIMEDIA CARD (MMC) ETC. OVER SPI
+ S:	Orphan
+ F:	drivers/mmc/host/mmc_spi.c
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index f597fe3352f5..b7c17d1d9ece 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -65,6 +65,7 @@
+ #include <linux/jump_label.h>
+ #include <linux/led-class-multicolor.h>
+ #include <linux/mdio.h>
++#include <linux/mfd/core.h>
+ #include <linux/mm.h>
+ #include <linux/miscdevice.h>
+ #include <linux/of_device.h>
+diff --git a/rust/kernel/i2c.rs b/rust/kernel/i2c.rs
+index bb5b830f48c3..e733b651d878 100644
+--- a/rust/kernel/i2c.rs
++++ b/rust/kernel/i2c.rs
+@@ -14,6 +14,7 @@
+     devres::Devres,
+     driver,
+     error::*,
++    mfd,
+     of,
+     prelude::*,
+     types::{
+@@ -167,6 +168,9 @@ extern "C" fn probe_callback(idev: *mut bindings::i2c_client) -> kernel::ffi::c_
+             let data = T::probe(idev, info);
+ 
+             idev.as_ref().set_drvdata(data)?;
++
++            idev.as_ref().mfd_add_devices(T::MFD_CELLS)?;
++
+             Ok(0)
+         })
+     }
+@@ -328,6 +332,9 @@ pub trait Driver: Send {
+     /// The table of ACPI device ids supported by the driver.
+     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
+ 
++    /// The mfd cells for mfd devices.
++    const MFD_CELLS: Option<&'static [mfd::Cell]> = None;
++
+     /// I2C driver probe.
+     ///
+     /// Called when a new i2c client is added or discovered.
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 311fdf984b87..bacc54ca6aea 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -114,6 +114,7 @@
+ pub mod led;
+ pub mod list;
+ pub mod maple_tree;
++pub mod mfd;
+ pub mod miscdevice;
+ pub mod mm;
+ pub mod module_param;
+diff --git a/rust/kernel/mfd.rs b/rust/kernel/mfd.rs
+new file mode 100644
+index 000000000000..6c47d9211bf2
+--- /dev/null
++++ b/rust/kernel/mfd.rs
+@@ -0,0 +1,114 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Abstractions for the mfd subsystem.
++//!
++//! C header: [`include/linux/mfd/core.h`](srctree/include/linux/mfd/core.h)
++
++use core::{mem::MaybeUninit, ptr};
++
++use crate::{
++    device::{
++        CoreInternal,
++        Device, //
++    },
++    error::to_result,
++    prelude::*, //
++};
++
++/// A mfd cell.
++///
++/// # Invariants
++///
++/// A [`Cell`] instance represents a valid `struct mfd_cell`.
++#[repr(transparent)]
++pub struct Cell(bindings::mfd_cell);
++
++impl Cell {
++    /// Creates a new mfd cell.
++    pub const fn new(name: &'static CStr) -> Self {
++        Self(bindings::mfd_cell {
++            name: name.as_ptr().cast::<u8>(),
++
++            // SAFETY: Always safe to call.
++            // This is the const equivalent to `bindings::mfd_cell::default()`.
++            ..unsafe { MaybeUninit::zeroed().assume_init() }
++        })
++    }
++
++    /// Sets `of_compatible` and optionally `of_reg` and `use_of_reg` on the mfd cell.
++    pub const fn of(self, compatible: &'static CStr, reg: Option<u64>) -> Self {
++        Self(bindings::mfd_cell {
++            of_compatible: compatible.as_ptr().cast::<u8>(),
++            // TODO: Use `unwrap_or` once stabilized in const fn.
++            of_reg: if let Some(reg) = reg { reg } else { 0 },
++            use_of_reg: reg.is_some(),
++
++            ..self.0
++        })
++    }
++
++    /// Sets `acpi_match` on the mfd cell.
++    pub const fn acpi(self, acpi_match: &'static CellAcpiMatch) -> Self {
++        Self(bindings::mfd_cell {
++            acpi_match: &raw const acpi_match.0,
++
++            ..self.0
++        })
++    }
++}
++
++/// A mfd cell acpi match entry.
++///
++/// # Invariants
++///
++/// A [`CellAcpiMatch`] instance represents a valid `struct mfd_cell_acpi_match`.
++#[repr(transparent)]
++pub struct CellAcpiMatch(bindings::mfd_cell_acpi_match);
++
++impl CellAcpiMatch {
++    /// Creates a new mfd cell acpi match entry, using a ACPI PNP ID.
++    pub const fn pnpid(pnpid: &'static CStr) -> Self {
++        Self(bindings::mfd_cell_acpi_match {
++            pnpid: pnpid.as_ptr().cast::<u8>(),
++            adr: 0,
++        })
++    }
++
++    /// Creates a new mfd cell acpi match entry, using a ACPI ADR.
++    pub const fn adr(adr: u64) -> Self {
++        Self(bindings::mfd_cell_acpi_match {
++            pnpid: ptr::null(),
++            adr,
++        })
++    }
++}
++
++impl Device<CoreInternal> {
++    /// Registers child mfd devices.
++    // Always inline to optimize out error path of `build_assert`.
++    #[inline(always)]
++    pub(crate) fn mfd_add_devices(&self, cells: Option<&'static [Cell]>) -> Result {
++        if let Some(cells) = cells {
++            build_assert!(cfg!(CONFIG_MFD_CORE));
++
++            // SAFETY:
++            // - `self.as_raw()` is guaranteed to be a pointer to a valid `device`.
++            // - `cells.as_ptr()` is a guaranteed to be a pointer to a valid `mfd_cell` array
++            //   with the length of `cells.len()`.
++            to_result(unsafe {
++                bindings::devm_mfd_add_devices(
++                    self.as_raw(),
++                    bindings::PLATFORM_DEVID_AUTO,
++                    // CAST: `Cell` is a transparent wrapper of `mfd_cell`.
++                    cells.as_ptr().cast::<bindings::mfd_cell>(),
++                    i32::try_from(cells.len())?,
++                    ptr::null_mut(),
++                    0,
++                    ptr::null_mut(),
++                )
++            })?;
++        }
++
++        Ok(())
++    }
++}
+diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
+index af74ddff6114..6c4cf6cf970b 100644
+--- a/rust/kernel/pci.rs
++++ b/rust/kernel/pci.rs
+@@ -17,6 +17,7 @@
+         from_result,
+         to_result, //
+     },
++    mfd,
+     prelude::*,
+     str::CStr,
+     types::Opaque,
+@@ -116,6 +117,9 @@ extern "C" fn probe_callback(
+             let data = T::probe(pdev, info);
+ 
+             pdev.as_ref().set_drvdata(data)?;
++
++            pdev.as_ref().mfd_add_devices(T::MFD_CELLS)?;
++
+             Ok(0)
+         })
+     }
+@@ -303,6 +307,9 @@ pub trait Driver: Send {
+     /// The table of device ids supported by the driver.
+     const ID_TABLE: IdTable<Self::IdInfo>;
+ 
++    /// The mfd cells for mfd devices.
++    const MFD_CELLS: Option<&'static [mfd::Cell]> = None;
++
+     /// PCI driver probe.
+     ///
+     /// Called when a new pci device is added or discovered. Implementers should
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index 8917d4ee499f..e2bcf8ef093c 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -25,6 +25,7 @@
+         self,
+         IrqRequest, //
+     },
++    mfd,
+     of,
+     prelude::*,
+     types::Opaque,
+@@ -104,6 +105,9 @@ extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> kernel::ff
+             let data = T::probe(pdev, info);
+ 
+             pdev.as_ref().set_drvdata(data)?;
++
++            pdev.as_ref().mfd_add_devices(T::MFD_CELLS)?;
++
+             Ok(0)
+         })
+     }
+@@ -218,6 +222,9 @@ pub trait Driver: Send {
+     /// The table of ACPI device ids supported by the driver.
+     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
+ 
++    /// The mfd cells for mfd devices.
++    const MFD_CELLS: Option<&'static [mfd::Cell]> = None;
++
+     /// Platform driver probe.
+     ///
+     /// Called when a new platform device is added or discovered.
+diff --git a/rust/kernel/serdev.rs b/rust/kernel/serdev.rs
+index d9fea4bd4439..6e702c734ded 100644
+--- a/rust/kernel/serdev.rs
++++ b/rust/kernel/serdev.rs
+@@ -14,6 +14,7 @@
+         to_result,
+         VTABLE_DEFAULT_ERROR, //
+     },
++    mfd,
+     of,
+     prelude::*,
+     sync::Completion,
+@@ -180,6 +181,8 @@ extern "C" fn probe_callback(sdev: *mut bindings::serdev_device) -> kernel::ffi:
+ 
+             private_data.probe_complete.complete_all();
+ 
++            sdev.as_ref().mfd_add_devices(T::MFD_CELLS)?;
++
+             result.map(|()| 0)
+         })
+     }
+@@ -339,6 +342,9 @@ pub trait Driver: Send {
+     /// The table of ACPI device ids supported by the driver.
+     const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> = None;
+ 
++    /// The mfd cells for mfd devices.
++    const MFD_CELLS: Option<&'static [mfd::Cell]> = None;
++
+     /// Serial device bus device driver probe.
+     ///
+     /// Called when a new serial device bus device is added or discovered.
+diff --git a/rust/kernel/usb.rs b/rust/kernel/usb.rs
+index 0e1b9a88f4f1..a64ed6a530f1 100644
+--- a/rust/kernel/usb.rs
++++ b/rust/kernel/usb.rs
+@@ -17,6 +17,7 @@
+         from_result,
+         to_result, //
+     },
++    mfd,
+     prelude::*,
+     types::{
+         AlwaysRefCounted,
+@@ -96,6 +97,9 @@ extern "C" fn probe_callback(
+ 
+             let dev: &device::Device<device::CoreInternal> = intf.as_ref();
+             dev.set_drvdata(data)?;
++
++            dev.mfd_add_devices(T::MFD_CELLS)?;
++
+             Ok(0)
+         })
+     }
+@@ -309,6 +313,9 @@ pub trait Driver {
+     /// The table of device ids supported by the driver.
+     const ID_TABLE: IdTable<Self::IdInfo>;
+ 
++    /// The mfd cells for mfd devices.
++    const MFD_CELLS: Option<&'static [mfd::Cell]> = None;
++
+     /// USB driver probe.
+     ///
+     /// Called when a new USB interface is bound to this driver.
 
----
-Markus Probst (7):
-      rust: Add `parent_unchecked` function to `Device`
-      rust: add basic mfd abstractions
-      acpi: add acpi_of_match_device_ids
-      mfd: match acpi devices against PRP0001
-      dt-bindings: mfd: Add synology,microp device
-      mfd: Add synology microp core driver
-      leds: add synology microp led driver
-
- .../devicetree/bindings/leds/synology,microp.yaml  |  40 +++
- .../devicetree/bindings/mfd/synology,microp.yaml   |  51 ++++
- MAINTAINERS                                        |  14 +
- drivers/acpi/bus.c                                 |   7 +
- drivers/leds/Kconfig                               |  11 +
- drivers/leds/Makefile                              |   1 +
- drivers/leds/leds_synology_microp.rs               | 303 +++++++++++++++++++++
- drivers/mfd/Kconfig                                |  11 +
- drivers/mfd/Makefile                               |   2 +
- drivers/mfd/mfd-core.c                             |  27 ++
- drivers/mfd/synology_microp.rs                     |  46 ++++
- include/acpi/acpi_bus.h                            |   2 +
- rust/bindings/bindings_helper.h                    |   1 +
- rust/kernel/device.rs                              |  25 +-
- rust/kernel/i2c.rs                                 |   7 +
- rust/kernel/lib.rs                                 |   1 +
- rust/kernel/mfd.rs                                 | 114 ++++++++
- rust/kernel/pci.rs                                 |   7 +
- rust/kernel/platform.rs                            |   7 +
- rust/kernel/serdev.rs                              |   6 +
- rust/kernel/usb.rs                                 |   7 +
- 21 files changed, 688 insertions(+), 2 deletions(-)
----
-base-commit: 3daa4f5dc6cc1ac1ab2f95b5b4c16bc5fb87f48f
-change-id: 20260306-synology_microp_initial-0f7dac7b7496
-prerequisite-change-id: 20251217-rust_serdev-ee5481e9085c:v3
-prerequisite-patch-id: 52b17274481cc770c257d8f95335293eca32a2c5
-prerequisite-patch-id: eec47e5051640d08bcd34a9670b98804449cad52
-prerequisite-patch-id: f24b68c71c3f69371e8ac0251efca0a023b31cc4
-prerequisite-patch-id: 3dfc1f7e5ecd3e0dd65d676aeb16f55260847b25
-prerequisite-change-id: 20251114-rust_leds-a959f7c2f7f9:v12
-prerequisite-patch-id: 42c445ef6981e3a3740dbaaf307f4b810042e46f
-prerequisite-patch-id: 90c7b200cca722a592353885e21af069101c4e09
-prerequisite-patch-id: c664a52faa3d47000d252eb7603c9c08382e868a
+-- 
+2.52.0
 
 
