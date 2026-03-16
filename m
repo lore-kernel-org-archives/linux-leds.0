@@ -1,33 +1,33 @@
 Received: from mail.prodrive-technologies.com (mail.prodrive-technologies.com [212.61.153.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82ED355F2C;
-	Mon, 16 Mar 2026 20:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55099329E5A;
+	Mon, 16 Mar 2026 20:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.61.153.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773692321; cv=none; b=bnkIZlvS1Hg+YRztsaJLBzEgO7Z+y51xitCEKwFyw2sDkZRP6irGn00MlRSQq9qZzidmxLW+kGsTi77sB70gj0PF009Dew+FsuYbH0QCCZzzM7ocvoMR8qJX1dHhNRMaFm60/z9t1qEwTDxvkFhuAQHzznhHkUZOKw1yUJxxSvU=
+	t=1773693502; cv=none; b=t0PxxTbEQC/g/FQc1YgQS1FDBb764Xy/BXZNKyOXUQ+Y1du3YT5e29pfIH7zU0fQ55IFWgoDNflyCnB7OzWqIC283Q0uqcGo26UEz4NGSz+6uXe0uYfD+GWn/yaX+g2M8Pn4+GOAGm8MSyZq0zA8X7UbLvpxJ1c3Bxn8HGOByc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773692321; c=relaxed/simple;
+	s=arc-20240116; t=1773693502; c=relaxed/simple;
 	bh=7khXt8AubzrNv1skGfAom51RKjnfE08TSaBPAQ+PN28=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uq7eEuznqzxrwOyWap8M1mC4GcadrbSBDPlh7JmbPLqP5lZF80Mb/lUZnLwX7dqqFhgdonQRymNE+N4k3CeV5a2+rHd84c4HCN9SFvwrm7h38nKMJLAF1s34a4oeMeqgcNEsx3ShSkZ9ZBr1JgQYBH/8dFz/tisTrrGNrxMStjU=
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jBbJ39MUX98VvPbRPzbGMp45F3H2mk0WhGBBVmjPWGM+rIlOBcP4KjsjQpyUtiOTc9euzcfbpOEJc93lQkIuD6ZHLunW2+ykOMKlHngH8eHgBN/jankJ84/8hSYUpbHo7qCa2gFmDlnIV0fI5KH/yH+L6MC43XJ2c5+Ykdhkzv8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com; spf=pass smtp.mailfrom=prodrive-technologies.com; arc=none smtp.client-ip=212.61.153.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prodrive-technologies.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prodrive-technologies.com
 Received: from EXCOP01.bk.prodrive.nl (10.1.0.22) by EXCOP01.bk.prodrive.nl
  (10.1.0.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 16 Mar
- 2026 21:13:29 +0100
+ 2026 21:38:17 +0100
 Received: from lnxdevrm02.prodrive.nl (10.1.1.121) by EXCOP01.bk.prodrive.nl
  (10.1.0.22) with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport;
- Mon, 16 Mar 2026 21:13:29 +0100
+ Mon, 16 Mar 2026 21:38:17 +0100
 From: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>
 To: Jean-Jacques Hiblot <jjhiblot@traphandler.com>, Lee Jones
 	<lee@kernel.org>, Pavel Machek <pavel@kernel.org>
 CC: Martijn de Gouw <martijn.de.gouw@prodrive-technologies.com>,
 	<linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] leds: group-multicolor: Add support for initial value.
-Date: Mon, 16 Mar 2026 21:13:21 +0100
-Message-ID: <20260316201321.2789158-1-martijn.de.gouw@prodrive-technologies.com>
+Subject: [PATCH v3] leds: group-multicolor: Add support for initial value.
+Date: Mon, 16 Mar 2026 21:38:10 +0100
+Message-ID: <20260316203811.3251752-1-martijn.de.gouw@prodrive-technologies.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
