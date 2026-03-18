@@ -1,123 +1,164 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB1835DA51;
-	Wed, 18 Mar 2026 14:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122F83E123D;
+	Wed, 18 Mar 2026 18:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773843953; cv=none; b=QnjLz7hJRVZnCB9U1moOERcIyH6NaV+Ty4kGMCePJf+neqLe08oMWztNuhuST+TTJtKbJH/HDmJh2e8LbU7ShKTFioUXjfWXfyg2AjarHa/aqjW+4pQB80b3uEsm7TYDCIME5ngK7bUCUpJndNRigJP1rcPrgf4iTLVOGxGzqqk=
+	t=1773858881; cv=none; b=CqoTsQEw+4SkRt0gKg0T/YmwB2TaUueAprHJczZx+fT8MlsijufOaE6rLXXGagNk1Q/IbPK/yUNMqpXfl27rMP/UbaxHl4UNJsjhrocQ4eWeglDuGssd30zpQaVPv8TVfZupCmtWgNTM8xEgJKnYnhgTP1yWA//cGTmM9xbJxMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773843953; c=relaxed/simple;
-	bh=N2PsIoPsyaJ7VsnEGCnxDDMZ0OoYPu1Xit7V4zZg28E=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=gA1H3ZqY6sv/8/80bg/2IO9pjFv1PR9qhdffDxDWyqdUKjL68ntE3PPd09RxBcB2KXHF4znUk1+ZZ7HmdKWawmlY89yLFS4ck9qfEyqBAPDsHblQf8jvkZFkTB/UBMSfRcXcEYzLymp3LdCOMNeZ9gnQR/xk+5F5dW7LsFLwgsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jrlVF/nd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JG5w3gV6; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1773858881; c=relaxed/simple;
+	bh=zFPpzhrUFYFmNF065283+r2lfoF7K9r9raXNq+AD6Kc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=G6IOAjWKaoSCAnQi4TDOiiyXk99TPfNmWITG8WrMf5DlNtTSWpxI0SL7kF3c0wYJjxK+zinQwajODUCBrKqOJGHWUu2Bb+6K6/KvT2QQb/A694Pu2Cv/uneOiYh0cmBJKkM9cIFDBbB72ynnqywIVAX8R4vi6xRXZlOSn79GE7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8NGOrV2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jrlVF/nd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JG5w3gV6"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 0799F1400274;
-	Wed, 18 Mar 2026 10:25:50 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-04.internal (MEProxy); Wed, 18 Mar 2026 10:25:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1773843950;
-	 x=1773930350; bh=Fjj1/vwoIE8CU8UbLphlvDEAqDhSGrLkR2VrJeLLjKM=; b=
-	jrlVF/nd+eg7LtForar/W2ZllyLw7tm+DVa7vSLXQOnwR4YiWr/NxxDPZiA3896i
-	JL5S9c+VixyXbA4OvjuSAptvm8qhJIUfZLNNCc2M0Jwj5ckVh/e9gu9+Z42tpaeY
-	k32nFB0HsmyLenZkqdNeNV+QKbbFU2cY3Vll+1ZlLt+AkmLTdHSW4u9TdiJuHm6s
-	BxvvBv9Px6LgDcP9rGYkGXpmXMptzhuJBVpj8Z8loB2n2jDCzlkuD7F35Vl1zr1+
-	eDWFbS4k+8uBSHx/Qx2fVMRiLaAOoaLBBxGwYBVwAfJ5uwbzNdS6FzME1/fwfuJS
-	MwTNehjYAolkJZGnHkLSqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773843950; x=
-	1773930350; bh=Fjj1/vwoIE8CU8UbLphlvDEAqDhSGrLkR2VrJeLLjKM=; b=J
-	G5w3gV6uGTJpdAZot+gW6a22AvM8MRRplHKSq1wQR7T/VhN5VhnmRGsbK/78s/FZ
-	cHMEEBgzAy27+2dEOGL8c0RF13BaBK21hUOgUEkOASMVtEl5i8f/WMmvYygIxKDO
-	HD3xUmirvX3pi73DECRx0u8ZRmQn2wFe0OotoTV6LY9QdWedPKDm/EResHpXW3c1
-	hKv5+U29lw7yWkew18EisdKl2qNwaSeY/h0XdI7Mx8NYw3YNItOfH3Lbj+bMaCBE
-	QF2FrgJHQ66WfoGBsVu+kmjV0mciFr/XZKDPnfjByn3c0gOyp+WJchR7HUSitmaG
-	BQq/oeQudil+TJNXTC1vA==
-X-ME-Sender: <xms:7bW6aWShVGSd5YQ81J6kCGLTpl5lFIP5puBCAWdcESraYZAEIP38tQ>
-    <xme:7bW6aWljxxx0ezet3QAHw4blZaQEq-kGhll-DbIhCBa8ScqqZGoKQVINTTc7aXqwt
-    Gzw2JJtZprgElomnanY6mZVN232nypfu3UPfeAfNX-Fxc75gCOLFw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdegfeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopegsohhothgtse
-    gsohhothgtrdhnvghtpdhrtghpthhtohepjhhimhdrtghrohhmihgvsehgmhgrihhlrdgt
-    ohhmpdhrtghpthhtohepsghrghhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvg
-    gvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhhsfieskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepphgrvhgvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepth
-    hglhigsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhr
-    gh
-X-ME-Proxy: <xmx:7bW6aRom8XOF_BtpNZmhqRa4sqPxSVBZNn0LuiFjeTI0BbRrCNICaA>
-    <xmx:7bW6aeVthtROeNrii4ZvgwB4N5JVTmuHisp_Esqzg7xxJGTtbKMWUQ>
-    <xmx:7bW6aU071DXXAHKBjltQydHPPLb6Q-yBDintmOR8d12ARnvDbHOi8Q>
-    <xmx:7bW6aX0Jyaan0ZAu1bu4Zswn2xj-oHE3PLduP4mP9cE8uO9LdSMX8w>
-    <xmx:7rW6aZCvCwCdB9ey422BjriBGHwVFlh1Zw6xmRZfWHlABq2rEUREaqkQ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id F3F02700065; Wed, 18 Mar 2026 10:25:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8NGOrV2"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D360FC2BCB5;
+	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773858880;
+	bh=zFPpzhrUFYFmNF065283+r2lfoF7K9r9raXNq+AD6Kc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=h8NGOrV2xGhyhP6YQwxfniQqgibl19W6Luyp8ewrMUWGIAExPEDG6a3BfMNPjGROz
+	 vZIrcAWxw3n5oHX+67NdQeTA3R6q57tQgYrxwk4/iGlQEtcB1fvs+ClfrhYEetigEc
+	 T1e2FAb5KSsZwiDeCeDj0wuqXkTTEvVgyQSrzTRX2iays61Qfn+yN5wZW2a4Lz19YM
+	 1CSNLSf7i/FSZMHgnEDKfQJPOtjVMU+uWxG902FlvoZR0MMHhrRPoVXX0fK8/BRoQh
+	 v63hIQvqNE4wryASJR5BYXKCAtzDkGnpKIoqT4E5loc1UbFne5WiKM1f/KaXqLLo5n
+	 3r4yB6iOhxqXQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4371077608;
+	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
+From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
+Date: Wed, 18 Mar 2026 11:34:41 -0700
+Subject: [PATCH v2 3/3] ARM: dts: qcom: msm8960: expressatt: Add camera
+ flash
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ANlOrQyGGoi-
-Date: Wed, 18 Mar 2026 15:25:28 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
- "Jim Cromie" <jim.cromie@gmail.com>, "Thomas Gleixner" <tglx@kernel.org>,
- "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Chris Boot" <bootc@bootc.net>, "Lee Jones" <lee@kernel.org>,
- "Pavel Machek" <pavel@kernel.org>, "Linus Walleij" <linusw@kernel.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Message-Id: <997e3ff4-c394-4fbe-9371-272220ab2aa0@app.fastmail.com>
-In-Reply-To: <20260318-gpio-scx200-header-v1-1-626688284f17@oss.qualcomm.com>
-References: <20260318-gpio-scx200-header-v1-1-626688284f17@oss.qualcomm.com>
-Subject: Re: [PATCH] gpio: scx200: move the header under linux/gpio/
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260318-expressatt_camera_flash-v2-3-5c2b9a623dcb@gmail.com>
+References: <20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com>
+In-Reply-To: <20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773858880; l=2751;
+ i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
+ bh=azmf77v4SGAT8Qy3s0ldETd0CQ8M86C+x8906RvCaTA=;
+ b=6W4N4Z/M2J271yx81scr++OgMBIh65qYQhPNRv+4WahF9Ol2dd2zT2Rh+tVyY8NVYrH9eEwKu
+ eTB7LrYhv7tCxn7EGgbN2ffH8pUsHbcuncooOOUdPgfqgkwce8AyZ+Y
+X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
+ pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
+X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
+ auth_id=211
+X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
+Reply-To: guptarud@gmail.com
 
-On Wed, Mar 18, 2026, at 14:48, Bartosz Golaszewski wrote:
-> Headers exposing symbols specific to individual GPIO drivers should all
-> live under linux/gpio/ for consistency. scx200_gpio.h is currently a
-> top-level header directly under linux/. Move it and update all users.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> ---
-> With Acks from relevant maintainers, I can take it through the GPIO
-> tree.
+From: Rudraksha Gupta <guptarud@gmail.com>
 
-No objections to the change, but I'd point out that while this is a
-driver for gpio registers, it's not a gpiolib driver but rather a
-custom chardev with ioctl interface.
+Add camera flash support for the Samsung Galaxy Express (expressatt).
 
-Since the chip was never as popular as the separate geode/cs553x
-ones, I wonder if there are any users left, maybe Jim has an idea.
+The flash IC uses a one-wire pulse-count protocol on GPIO 3, powered
+by a GPIO-controlled fixed regulator on PMIC MPP 4. The regulator is
+modeled as a regulator-fixed node and supplied to the flash IC via
+vin-supply.
 
-If there are users, they might be able to use drivers/gpio/gpio-cs5535.c
-instead, but I have not checked if the two are compatible.
+Downstream references:
+Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
+Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
 
-     Arnd
+Reviewed-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+---
+ .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
+index c4b98af6955d..ad5169a60937 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8960.h>
+ 
+ #include "qcom-msm8960.dtsi"
+@@ -61,6 +62,32 @@ touchkey_enable: touchkey-enable {
+ 		regulator-boot-on;
+ 	};
+ 
++	flash_gpio_reg: regulator-flash {
++		compatible = "regulator-fixed";
++		regulator-name = "flash_led_en";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pm8921_mpps 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-0 = <&flash_led_unlock>;
++		pinctrl-names = "default";
++	};
++
++	camera_flash: led-controller {
++		compatible = "richtek,rt8515";
++		enf-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&flash_gpio_reg>;
++		richtek,rfs-ohms = <16000>;
++		pinctrl-0 = <&cam_flash_en>;
++		pinctrl-names = "default";
++
++		led {
++			function = LED_FUNCTION_FLASH;
++			color = <LED_COLOR_ID_WHITE>;
++			flash-max-timeout-us = <250000>;
++		};
++	};
++
+ 	i2c-gpio-touchkey {
+ 		compatible = "i2c-gpio";
+ 		#address-cells = <1>;
+@@ -247,6 +274,13 @@ touchkey_irq_pin: touchkey-irq-state {
+ 		drive-strength = <2>;
+ 		bias-disable;
+ 	};
++
++	cam_flash_en: cam-flash-en-state {
++		pins = "gpio3";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-pull-down;
++	};
+ };
+ 
+ &pm8921 {
+@@ -572,3 +606,12 @@ magnetometer@2e {
+ 		/* TODO: Figure out Mount Matrix */
+ 	};
+ };
++
++&pm8921_mpps {
++	flash_led_unlock: flash-led-unlock-state {
++		pins = "mpp4";
++		function = "digital";
++		output-low;
++		power-source = <PM8921_GPIO_S4>;
++	};
++};
+
+-- 
+2.53.0
+
+
