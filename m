@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1238D3E2741;
-	Wed, 18 Mar 2026 18:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124323E2762;
+	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773858881; cv=none; b=N7cwYQbIjIq5B6jJhpaOwyDycYZiAnTqoWbhboqjzsXAVRYYcNO9KZQRCHPv6jKacZ7FHuQ7sWvJdiGp5HMC8YjqDdFvmq2UqVJt8bMKnTWfQFgQBEEen+xdN9YC3FlGOTqCPoveAt3voXraVpJxVY69LV0oH3+GSGQNNbB8vt4=
+	t=1773858881; cv=none; b=nz3ixfUA+EeO27AxlFrmrR+jLXJKlTBYeD+7nURv0difVo3hhNON4zp2S2WE9YHONHBq8HLwEZfAqsT/1jS2RmkeOBVlLzBLsDnZ037H8CY9Lf0fRrUD9nyUHGqDGEaruTfYuytXsu939TW/bR/hK8SZ6bBimltSfSr3xwE44Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1773858881; c=relaxed/simple;
-	bh=E7tnsMC7ZepUXd/Uiotk8REsBsDrkzUH/mRdAkea3ww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LsBE6zOAZTjsupkbHKYKWNZzlPkHIimdLqtHWNfJzZtanUKHClVWb8Tandj4DVyFLoRfYMnviYlVGaRTi2xf0QzIgiBzsCTBnBKlOn8/dXVRl8ZZH4peEnjY9T/soNrbeHLfBaLmbpKxAoQY9Ef5LEgpQc8P2GWV1eqPEIdPA5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxSAA0vB; arc=none smtp.client-ip=10.30.226.201
+	bh=x3uy/XVTTVpT34PL1AIrqtdEtkXWeZVq3ulfI+0NZ8A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YWe3MSqexUA3zO22gw3xyT8y7rmW6Qo9tl6R6mH4/6uSM9O5MI7rzMMefWEki/CTpVVevPm29oadk/u7itAo7AsUWgjlQROny/1VNXDTo0VM0BU5kfeU4UcgVAkakO+JB8iPi9lJHQxBHhBIqc3gjR6pMYILzJPJN6HSo19HEtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXoo6t48; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxSAA0vB"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CC972C2BCAF;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXoo6t48"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id ADD2BC2BC9E;
 	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1773858880;
-	bh=E7tnsMC7ZepUXd/Uiotk8REsBsDrkzUH/mRdAkea3ww=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dxSAA0vBy9WSZvkuaf73yNSg+kI9lqJudHxJIYlfPbA3ds7c5hVKV7b9SH3whZ/y5
-	 PSAn0R7mvPQbEhPn3uMZo4z0rPCnDflGjWRu/+xtwNYDuIH2VWiHpAY/Ko4BlVYiyD
-	 7rX2lRySlisYmARvkjw5wSCMWvzEpNbvhx+TG5FZ3iXhFO8Ri9AYsvR/1BMsfi9ik3
-	 yDt5l0SOxBOt1MqTjEsNk7kET3z7MFLqcEEIOeTauA2FDirybIH9aobnju+YTwdViC
-	 A3onfMCmqWF0pXu86UZaPzOec9grYBuQIJ6uAbLqFvurHnQ+AurOEeV0HxZzNIC6Y3
-	 0dXYupyNTtabg==
+	bh=x3uy/XVTTVpT34PL1AIrqtdEtkXWeZVq3ulfI+0NZ8A=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=RXoo6t48f0C75HZnMXcdBanh9sU3gk+9Fyd63nN9tAW1aSZJxUQMfSPGesAzE5H9D
+	 Rsv5nBdPFmB/nhYNrWNVFaoBuCX5gmt4GDLizfX83NLMWtWWFSmhE2aBlZHgd8IWH6
+	 WbyJo5bwT4/vCZPhVROXgxYWGI5848gPOHCtE1xXue4Ik8kMxwsM+KceainTPEbYtL
+	 1aUWg3vWbtdVJRiSbe/o905QgLfHAYoiXGM0h0MHPG9EqzxggGokxfbvAjzv3BzwnZ
+	 2sr1zTBtxgIUxeI6cPEpRgcmTch1rt+jzY/KrQZZzvu4HdD2rm2+YXNrGny6reInaa
+	 l5lipdQWL/IDw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB591077605;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3E01077604;
 	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
 From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Date: Wed, 18 Mar 2026 11:34:40 -0700
-Subject: [PATCH v2 2/3] leds: flash: rt8515: Support single-GPIO flash ICs
- with vin supply
+Subject: [PATCH v2 0/3] Samsung Expressatt: Camera Flash
+Date: Wed, 18 Mar 2026 11:34:38 -0700
+Message-Id: <20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,9 +40,12 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260318-expressatt_camera_flash-v2-2-5c2b9a623dcb@gmail.com>
-References: <20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com>
-In-Reply-To: <20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAD7wumkC/4WP3WrDMAxGXyXoei6284fDGH2PUoriyI1Z3Wy2G
+ 1pK3n1KerHdDV0dIX2H7wmJoqcEXfGESLNPfroy6LcC7IjXMwk/MIOWupGlbATdvyKlhDmfLAa
+ KeHIXTKNQpVU1tpVuEYG/+cr5+5Z8OL440veNBfm1hLDGbIKueOf8WmlZ/8kXebrZ8ZMeYlaCp
+ 6qq3ujWGlfuzwH9ZWen8LG6ekwkGILPXTE3O2VgVY4+5Sk+tm6z2pz/1mCVFL0ypnGtHdww/Kr
+ guCzLD5MPNYQxAQAA
+X-Change-ID: 20260306-expressatt_camera_flash-13c15a7427aa
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
@@ -52,13 +54,14 @@ To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
  Mark Brown <broonie@kernel.org>
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>
+ phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
+ David Heidelberg <david@ixit.cz>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773858880; l=5198;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773858880; l=1698;
  i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=PKRvCMK0VSbCQ3Z9MBD1bkA0UDBR/q3Gb0zyNbKdvRE=;
- b=MQbNxOMteq4Y3zoIYZ+ythyp8RsNJ2IshduHMf9mzkPG0sMd3jUjq/ybA754Z1jwsX1+ANo6j
- 7eJq3o73ZClBiAr+JxcRNpLmcMfmkMGXrMy7WnV41fbgygRSbwbhtP4
+ bh=x3uy/XVTTVpT34PL1AIrqtdEtkXWeZVq3ulfI+0NZ8A=;
+ b=QvHgY2nmD9UpmbOnF8ObSGoxhgUjgf5v/0kQd55EVTgeJq8lozWe7pBmpUdomdOqb32TAR1HG
+ /PzAtPxvM+bCXaGiKdY0cHR7goegmv+dITjwBJ8kTduQVEB+/ppING+
 X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
  pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
 X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
@@ -66,159 +69,43 @@ X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
 X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
 Reply-To: guptarud@gmail.com
 
-From: Rudraksha Gupta <guptarud@gmail.com>
+This small series adds camera flash to an existing similar mainline
+driver and adds it the the Samsung Expressatt's DTS
 
-Extend the RT8515 driver to support flash ICs that use only a single
-GPIO for both flash and torch modes (no separate ENT pin), with an
-optional vin regulator that gates power to the flash IC.
+Assisted by AI (Claude).
 
-When vin-supply is provided, the driver enables the regulator before
-activating the LED and disables it when turning off.
-
-Make ent-gpios optional and validate at probe time that exactly one of
-ent-gpios or vin-supply is provided. When ent-gpios is absent, the
-driver uses enf-gpios for both flash and torch brightness control.
+Downstream reference:
+Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
+Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
 
 Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
 ---
- drivers/leds/flash/leds-rt8515.c | 64 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 56 insertions(+), 8 deletions(-)
+Changes in v2:
+- dt-bindings: Explain the hardware and not the driver
+- **/*: Use vin-supply instead of unlock-gpio
+- expressatt DTS: Reorder pinctrl-*
+- expressatt DTS: Define rfs-ohms to a default (couldn't find
+                  information about this)
+- Link to v1: https://lore.kernel.org/r/20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com
 
-diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-rt8515.c
-index f6b439674c03..69cfd5cba921 100644
---- a/drivers/leds/flash/leds-rt8515.c
-+++ b/drivers/leds/flash/leds-rt8515.c
-@@ -50,6 +50,7 @@ struct rt8515 {
- 	struct v4l2_flash *v4l2_flash;
- 	struct mutex lock;
- 	struct regulator *reg;
-+	bool reg_enabled;
- 	struct gpio_desc *enable_torch;
- 	struct gpio_desc *enable_flash;
- 	struct timer_list powerdown_timer;
-@@ -66,7 +67,12 @@ static struct rt8515 *to_rt8515(struct led_classdev_flash *fled)
- static void rt8515_gpio_led_off(struct rt8515 *rt)
- {
- 	gpiod_set_value(rt->enable_flash, 0);
--	gpiod_set_value(rt->enable_torch, 0);
-+	if (rt->enable_torch)
-+		gpiod_set_value(rt->enable_torch, 0);
-+	if (rt->reg && rt->reg_enabled) {
-+		regulator_disable(rt->reg);
-+		rt->reg_enabled = false;
-+	}
- }
- 
- static void rt8515_gpio_brightness_commit(struct gpio_desc *gpiod,
-@@ -92,6 +98,7 @@ static int rt8515_led_brightness_set(struct led_classdev *led,
- {
- 	struct led_classdev_flash *fled = lcdev_to_flcdev(led);
- 	struct rt8515 *rt = to_rt8515(fled);
-+	int ret = 0;
- 
- 	mutex_lock(&rt->lock);
- 
-@@ -99,16 +106,33 @@ static int rt8515_led_brightness_set(struct led_classdev *led,
- 		/* Off */
- 		rt8515_gpio_led_off(rt);
- 	} else if (brightness < RT8515_TORCH_MAX) {
--		/* Step it up to movie mode brightness using the flash pin */
--		rt8515_gpio_brightness_commit(rt->enable_torch, brightness);
-+		/* Enable the vin regulator if needed */
-+		if (rt->reg && !rt->reg_enabled) {
-+			ret = regulator_enable(rt->reg);
-+			if (ret)
-+				goto out;
-+			rt->reg_enabled = true;
-+		}
-+		/* Step it up to movie mode brightness */
-+		rt8515_gpio_brightness_commit(rt->enable_torch ?
-+				rt->enable_torch : rt->enable_flash, brightness);
- 	} else {
-+		/* Enable the vin regulator if needed */
-+		if (rt->reg && !rt->reg_enabled) {
-+			ret = regulator_enable(rt->reg);
-+			if (ret)
-+				goto out;
-+			rt->reg_enabled = true;
-+		}
- 		/* Max torch brightness requested */
--		gpiod_set_value(rt->enable_torch, 1);
-+		gpiod_set_value(rt->enable_torch ? rt->enable_torch :
-+				rt->enable_flash, 1);
- 	}
- 
-+out:
- 	mutex_unlock(&rt->lock);
- 
--	return 0;
-+	return ret;
- }
- 
- static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
-@@ -117,10 +141,18 @@ static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
- 	struct rt8515 *rt = to_rt8515(fled);
- 	struct led_flash_setting *timeout = &fled->timeout;
- 	int brightness = rt->flash_max_intensity;
-+	int ret = 0;
- 
- 	mutex_lock(&rt->lock);
- 
- 	if (state) {
-+		/* Enable the vin regulator if needed */
-+		if (rt->reg && !rt->reg_enabled) {
-+			ret = regulator_enable(rt->reg);
-+			if (ret)
-+				goto out;
-+			rt->reg_enabled = true;
-+		}
- 		/* Enable LED flash mode and set brightness */
- 		rt8515_gpio_brightness_commit(rt->enable_flash, brightness);
- 		/* Set timeout */
-@@ -135,9 +167,10 @@ static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
- 	fled->led_cdev.brightness = LED_OFF;
- 	/* After this the torch LED will be disabled */
- 
-+out:
- 	mutex_unlock(&rt->lock);
- 
--	return 0;
-+	return ret;
- }
- 
- static int rt8515_led_flash_strobe_get(struct led_classdev_flash *fled,
-@@ -298,12 +331,27 @@ static int rt8515_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(rt->enable_flash),
- 				     "cannot get ENF (enable flash) GPIO\n");
- 
--	/* ENT - Enable Torch line */
--	rt->enable_torch = devm_gpiod_get(dev, "ent", GPIOD_OUT_LOW);
-+	/* ENT - Enable Torch line (optional for single-GPIO flash ICs) */
-+	rt->enable_torch = devm_gpiod_get_optional(dev, "ent", GPIOD_OUT_LOW);
- 	if (IS_ERR(rt->enable_torch))
- 		return dev_err_probe(dev, PTR_ERR(rt->enable_torch),
- 				     "cannot get ENT (enable torch) GPIO\n");
- 
-+	/* Optional VIN supply (e.g. GPIO-controlled fixed regulator) */
-+	rt->reg = devm_regulator_get_optional(dev, "vin");
-+	if (IS_ERR(rt->reg)) {
-+		if (PTR_ERR(rt->reg) == -ENODEV)
-+			rt->reg = NULL;
-+		else
-+			return dev_err_probe(dev, PTR_ERR(rt->reg),
-+					     "failed to get vin supply\n");
-+	}
-+
-+	/* Exactly one of ENT or VIN must be provided */
-+	if (!rt->enable_torch == !rt->reg)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "exactly one of ent-gpios or vin-supply is required\n");
-+
- 	child = device_get_next_child_node(dev, NULL);
- 	if (!child) {
- 		dev_err(dev,
+---
+Rudraksha Gupta (3):
+      dt-bindings: leds: rt8515: Support single-GPIO flash ICs with vin supply
+      leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
+      ARM: dts: qcom: msm8960: expressatt: Add camera flash
 
+ .../devicetree/bindings/leds/richtek,rt8515.yaml   | 34 +++++++++++-
+ .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   | 43 +++++++++++++++
+ drivers/leds/flash/leds-rt8515.c                   | 64 +++++++++++++++++++---
+ 3 files changed, 132 insertions(+), 9 deletions(-)
+---
+base-commit: e9ec05addd1a067fc7cb218f20ecdc1b1b0898c0
+change-id: 20260306-expressatt_camera_flash-13c15a7427aa
+prerequisite-message-id: <20251205-expressatt-touchkey-v1-1-1444b927c9f3@gmail.com>
+prerequisite-patch-id: 8de4de7909722ccaf385c4224f25a623eaa72c28
+
+Best regards,
 -- 
-2.53.0
+Rudraksha Gupta <guptarud@gmail.com>
 
 
