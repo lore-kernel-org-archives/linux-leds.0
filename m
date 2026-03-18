@@ -1,111 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124323E2762;
-	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D209925A642
+	for <linux-leds@vger.kernel.org>; Wed, 18 Mar 2026 18:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773858881; cv=none; b=nz3ixfUA+EeO27AxlFrmrR+jLXJKlTBYeD+7nURv0difVo3hhNON4zp2S2WE9YHONHBq8HLwEZfAqsT/1jS2RmkeOBVlLzBLsDnZ037H8CY9Lf0fRrUD9nyUHGqDGEaruTfYuytXsu939TW/bR/hK8SZ6bBimltSfSr3xwE44Jc=
+	t=1773858954; cv=none; b=EIMuMMh8OojtLyJ5+cyQD2EhXX2fd/8lSOrnnjffsE9L/YAO6T2Eq811Ae3RXIUhHAU8OJL6vyrr97Tu2SCqPBGuZ4RbK805H6ud6Nr4dFK+5AMJy/bEPbBY3imF1w6YWFjzV9B7SMzH0ISEjsB6YP45DHtCu8TiSC/QPz/T+LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773858881; c=relaxed/simple;
-	bh=x3uy/XVTTVpT34PL1AIrqtdEtkXWeZVq3ulfI+0NZ8A=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YWe3MSqexUA3zO22gw3xyT8y7rmW6Qo9tl6R6mH4/6uSM9O5MI7rzMMefWEki/CTpVVevPm29oadk/u7itAo7AsUWgjlQROny/1VNXDTo0VM0BU5kfeU4UcgVAkakO+JB8iPi9lJHQxBHhBIqc3gjR6pMYILzJPJN6HSo19HEtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXoo6t48; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773858954; c=relaxed/simple;
+	bh=FHbqUJz1qg98S1kFnBdMI5LurL2tKtVKMf2OieQFW/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiBvNsS110v2dfjhP+9lsJE20ORHs9ipSGNfvPv8/66EtqmUdI9sDQNIMyzL7Th8LqeCKiKNOzFjDVCUvQxM+d2t+1b+dZE6sbhhuthL9m40AO0Ieh7OlKwUaDpaI1RXO9O7uzfc3Sv2i76Mo4DmIMJoHH9hapfVK7RzSLLc7e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYZGVDQe; arc=none smtp.client-ip=74.125.82.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXoo6t48"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ADD2BC2BC9E;
-	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773858880;
-	bh=x3uy/XVTTVpT34PL1AIrqtdEtkXWeZVq3ulfI+0NZ8A=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=RXoo6t48f0C75HZnMXcdBanh9sU3gk+9Fyd63nN9tAW1aSZJxUQMfSPGesAzE5H9D
-	 Rsv5nBdPFmB/nhYNrWNVFaoBuCX5gmt4GDLizfX83NLMWtWWFSmhE2aBlZHgd8IWH6
-	 WbyJo5bwT4/vCZPhVROXgxYWGI5848gPOHCtE1xXue4Ik8kMxwsM+KceainTPEbYtL
-	 1aUWg3vWbtdVJRiSbe/o905QgLfHAYoiXGM0h0MHPG9EqzxggGokxfbvAjzv3BzwnZ
-	 2sr1zTBtxgIUxeI6cPEpRgcmTch1rt+jzY/KrQZZzvu4HdD2rm2+YXNrGny6reInaa
-	 l5lipdQWL/IDw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3E01077604;
-	Wed, 18 Mar 2026 18:34:40 +0000 (UTC)
-From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Subject: [PATCH v2 0/3] Samsung Expressatt: Camera Flash
-Date: Wed, 18 Mar 2026 11:34:38 -0700
-Message-Id: <20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYZGVDQe"
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-12732165d1eso301784c88.1
+        for <linux-leds@vger.kernel.org>; Wed, 18 Mar 2026 11:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1773858951; x=1774463751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MGYjogK2bqnTZSNWLTogcS+9CBE/p5Q+uf/wMeebhBo=;
+        b=HYZGVDQeos8Xx79PoZOphhSOCAiRtveMov+4WjwIfA7pbwPPYn7ruS4me94SBEWLxd
+         5ftt9crYK6mY65yexUdIIFSZW1Kw1nbNqDpvPhcOyvQd8jEFlK96j+5eTmBdY5rN8Qyg
+         4rA7KGGE/Pg22J9VmMy6rCenqDgZkyRniVM5rX7uLAL0rr6bjYPvvajjcRk5QyR1waDy
+         zNuS0ElHzP9PIVndyz4zTis0xmNEXy6rDIMJels0pSQ4IHe3sutSN50g66AjQyln+Mco
+         uVEUY6N/2Xg44bwuYTdxcA/0N4HD7bPYf3+Q56wzYufwS4U+2j3BG+i2pnSawt5Sn7+h
+         1/tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773858951; x=1774463751;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MGYjogK2bqnTZSNWLTogcS+9CBE/p5Q+uf/wMeebhBo=;
+        b=k9w9oKjozp+N1rkwYGO1muG3Cy/zwSWQ+F8eIuXwHfdIR2CuqJzkcGfFkPKT2dZjVP
+         Na5ZcgEE6Xfk70LLH1fxE3YBMUiuZEBB8LFL1fPAnSIF+o91KGJjQrmd3rrVDwL+jfWk
+         /jPbavSg+sx+2EDwQgj3ULDW31B+jMW+0i7pcvelXuD7vEKCdk8SZH+DxZySkIX74mI5
+         bG2KBEh0FAyEcR4pDMAasMayzb9FwXtfd7JzEjaq1G8ZDNBezaoNoUNXANX5TiJ9//uy
+         RCBxzjAuHnas3jZiE48AUboxFfxdjk4NwQRI6KN1Tv8gVVKG97nitsTCJdtPacjot3M5
+         R/6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWzOHMyjPE2OGFq4j8wvASJNG7BOElC5Wx/rCw4DIsWP798aQvFvdAwBmdu/Hy3y/a6yq61wSOmkxsZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFFnBuPEPSQ9sdzR7Je5/GOf56fKa/c8iNyKZeMCc7sa1Qgsy8
+	89FAElHPhD5VcG41C3/ZQMMjXCzUaJPQ+0qdMv/CXfGhCpOmwdDV2Xii
+X-Gm-Gg: ATEYQzwNenloml6Q0tOZ/5w13zWZpTrvc9KzdmtDZ+RDJpN43qA5hQzCpsueA6eBYqn
+	W3zCeadOorxHJ7R0CKHlXNp9BQWYBTevGbb9qWXsmTRx+yqgnCejtV+KRBk6Ww7naOQJlOVekcK
+	eoSLf/TnxfEn+6oTWnC6Rct53jZ73rIk24iFkdoH91rWVM7KRya5KqAHhen+QB+BrWj+7YDjT3q
+	CohW1VYRsQnZDHXyJrvGoEJ27wrogpiivyEJg0Sl4Hz64NFE0TyyQg6px+e/J/yJdZIjBpy1lLj
+	S9IH82nHUbP2KVtpQHP4Nq5H7rF2mbTS2NUKPTAAN5TNo7YVDwLqc5VhhXszdb7utKjiyTRUir5
+	17yD3yQFrmIN9HRC3UDtysYdMu1ZTvlb7QR6fWi71r8BS169w1u3D9eC/STZ4hsRSfFnzsE5BtH
+	rxHlz2meS5STOxJNj1oHaBcCw68rH4Xz37jb4bHa7DSIAm25m8CUxHvYy5gDTXArmi1zDKpJ3s/
+	08tUg==
+X-Received: by 2002:a05:7022:239a:b0:127:9cad:1a65 with SMTP id a92af1059eb24-1299ba99df9mr2479792c88.14.1773858950492;
+        Wed, 18 Mar 2026 11:35:50 -0700 (PDT)
+Received: from [192.168.68.65] (104-12-136-65.lightspeed.irvnca.sbcglobal.net. [104.12.136.65])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-129a7153051sm4145211c88.0.2026.03.18.11.35.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Mar 2026 11:35:50 -0700 (PDT)
+Message-ID: <22b1b8f1-b87d-4f34-9e04-0a39758bfe15@gmail.com>
+Date: Wed, 18 Mar 2026 11:35:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: leds: rt8515: Support single-GPIO flash
+ ICs with unlock gate
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com>
+ <20260306-expressatt_camera_flash-v1-1-b1996f7cdfdd@gmail.com>
+ <20260307-fennec-of-nonstop-hurricane-de4f97@quoll>
+Content-Language: en-US
+From: Rudraksha Gupta <guptarud@gmail.com>
+In-Reply-To: <20260307-fennec-of-nonstop-hurricane-de4f97@quoll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAD7wumkC/4WP3WrDMAxGXyXoei6284fDGH2PUoriyI1Z3Wy2G
- 1pK3n1KerHdDV0dIX2H7wmJoqcEXfGESLNPfroy6LcC7IjXMwk/MIOWupGlbATdvyKlhDmfLAa
- KeHIXTKNQpVU1tpVuEYG/+cr5+5Z8OL440veNBfm1hLDGbIKueOf8WmlZ/8kXebrZ8ZMeYlaCp
- 6qq3ujWGlfuzwH9ZWen8LG6ekwkGILPXTE3O2VgVY4+5Sk+tm6z2pz/1mCVFL0ypnGtHdww/Kr
- guCzLD5MPNYQxAQAA
-X-Change-ID: 20260306-expressatt_camera_flash-13c15a7427aa
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1773858880; l=1698;
- i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=x3uy/XVTTVpT34PL1AIrqtdEtkXWeZVq3ulfI+0NZ8A=;
- b=QvHgY2nmD9UpmbOnF8ObSGoxhgUjgf5v/0kQd55EVTgeJq8lozWe7pBmpUdomdOqb32TAR1HG
- /PzAtPxvM+bCXaGiKdY0cHR7goegmv+dITjwBJ8kTduQVEB+/ppING+
-X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
- pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
-X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
- auth_id=211
-X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
-Reply-To: guptarud@gmail.com
-
-This small series adds camera flash to an existing similar mainline
-driver and adds it the the Samsung Expressatt's DTS
-
-Assisted by AI (Claude).
-
-Downstream reference:
-Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
-Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
-
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
----
-Changes in v2:
-- dt-bindings: Explain the hardware and not the driver
-- **/*: Use vin-supply instead of unlock-gpio
-- expressatt DTS: Reorder pinctrl-*
-- expressatt DTS: Define rfs-ohms to a default (couldn't find
-                  information about this)
-- Link to v1: https://lore.kernel.org/r/20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com
-
----
-Rudraksha Gupta (3):
-      dt-bindings: leds: rt8515: Support single-GPIO flash ICs with vin supply
-      leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
-      ARM: dts: qcom: msm8960: expressatt: Add camera flash
-
- .../devicetree/bindings/leds/richtek,rt8515.yaml   | 34 +++++++++++-
- .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   | 43 +++++++++++++++
- drivers/leds/flash/leds-rt8515.c                   | 64 +++++++++++++++++++---
- 3 files changed, 132 insertions(+), 9 deletions(-)
----
-base-commit: e9ec05addd1a067fc7cb218f20ecdc1b1b0898c0
-change-id: 20260306-expressatt_camera_flash-13c15a7427aa
-prerequisite-message-id: <20251205-expressatt-touchkey-v1-1-1444b927c9f3@gmail.com>
-prerequisite-patch-id: 8de4de7909722ccaf385c4224f25a623eaa72c28
-
-Best regards,
--- 
-Rudraksha Gupta <guptarud@gmail.com>
 
 
+On 3/7/26 07:46, Krzysztof Kozlowski wrote:
+> On Fri, Mar 06, 2026 at 04:58:02PM -0800, Rudraksha Gupta wrote:
+>> Some flash ICs use the same one-wire pulse-count protocol as the RT8515
+>> but have only a single GPIO line for both flash and torch modes, plus an
+>> optional unlock gate (e.g. a PMIC MPP) that must be driven high before
+>> the chip responds to the enable GPIO.
+>>
+>> Make ent-gpios optional and add an unlock-gpios property to support
+>> these variants. Add a oneOf constraint requiring exactly one of
+>> ent-gpios or unlock-gpios. Add a binding example showing the
+>> single-GPIO configuration.
+>>
+>> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+>> ---
+>>   .../devicetree/bindings/leds/richtek,rt8515.yaml   | 36 +++++++++++++++++++++-
+>>   1 file changed, 35 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+>> index 0356371a6b01..820cf8c55090 100644
+>> --- a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+>> +++ b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+>> @@ -15,6 +15,10 @@ description: |
+>>     current for each mode is defined in hardware using two resistors
+>>     RFS and RTS.
+>>   
+>> +  This driver also supports single-GPIO flash ICs that use the same
+> Drop reference to driver and explain the hardware here.
+>
+>> +  one-wire pulse-count protocol on one line for both flash and torch.
+>> +  For these, only enf-gpios is required.
+>> +
+>>   properties:
+>>     compatible:
+>>       const: richtek,rt8515
+>> @@ -26,6 +30,14 @@ properties:
+>>     ent-gpios:
+>>       maxItems: 1
+>>       description: A connection to the 'ENT' (enable torch) pin.
+>> +      Optional for single-GPIO flash ICs where enf-gpios is used for
+>> +      both flash and torch modes.
+> So what happens with ENT GPIO on such boards? How is it connected?
+
+Hello Krzysztof,
+
+Thanks for these comments. I have addressed these in v2
+
+Rudraksha
+
+>
+> Best regards,
+> Krzysztof
+>
