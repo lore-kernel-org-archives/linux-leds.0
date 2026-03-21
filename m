@@ -1,52 +1,62 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from szelinsky.de (szelinsky.de [85.214.127.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7485D2D73BC;
-	Sat, 21 Mar 2026 10:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC391A6814;
+	Sat, 21 Mar 2026 17:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.127.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774088531; cv=none; b=DdCyYoycH3fG9z31I+dlTH/q04XVwVkY5oPD7FUODcztxQswL6dpKwGAyVI24pjN3TY4jwN3H10SB2nGoMoPJt5bMV910HoMCNXB4FY+IJBZ4mGJJitByvNWYCRxiq1EHTJLWBZotLCxmI6EnCnOJNsiMiGzOZKy2IHfnhNgf0U=
+	t=1774115795; cv=none; b=uV/xIRVmJ6frb70i4k3afGW5ds9wgwqS32NSsf54fyFdWgmMxb/AugJwwD94GJWAMxqjNrTppZp2yx2rKWW/sBpzMBrevLtO91sAjzrzmkuGJLLjToZ8xlDQ+O+K+VFGy7ESVHuFeVdIHwHQYGkgSGAWOmPQUW/Pxoif4E3o7s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774088531; c=relaxed/simple;
-	bh=KGUwFR3tbeAl/rolCYburD6Ef5XFQ/7AX04PeIeiH9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pbhcy3NWTdHGr1M+IJ0rmsCHL7WO74Fc+eT2T16C69KRzwcuUKLD4NAb/qquukGdmfS5btBeEY/KqjxtNhbqirlQ9Wy3N4RbkaiNFknhHGwwHEy8YYLl4IcZnbdBmCUjKzpu+Z8pEUC6bChJjX0wvWWF8+ajNkOY3ysVkOCZY7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vvAKUc0Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zGcu2u5P; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1774115795; c=relaxed/simple;
+	bh=eGd/5gQP4aOLgyBo2zFexp1yWCxsCnmks/OBoAs5zL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dyFYnAHGGNFUjqbeeNWAPfvWQrMtJpc9XtPci1Gni14+mxcbdoLTkW1uaruDpXeJD2h/q7wMIWefTjuMW6IUCsXCKSwA+99vny0a43GT2Ut3yriOCpdlQjTrl4Ze6X/tBR20tMKF5gEDTN/fV2w6u7mFxqWgVyZxJYMg19vDIRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de; spf=pass smtp.mailfrom=szelinsky.de; dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b=J0zMkjbB; arc=none smtp.client-ip=85.214.127.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szelinsky.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vvAKUc0Y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zGcu2u5P"
-From: Tobias Deiminger <tobias.deiminger@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1774088528;
+	dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b="J0zMkjbB"
+Received: from localhost (localhost [127.0.0.1])
+	by szelinsky.de (Postfix) with ESMTP id B901AE86EBA;
+	Sat, 21 Mar 2026 18:56:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=szelinsky.de;
+	s=mail; t=1774115785;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IThn9WP7G6JtyKZvemXfdgx26GTVf5GdA7bWMYp+5hU=;
-	b=vvAKUc0YK2aVBcsveyaitA/Cdy6DRAs/2rt6Gpr+UUa2NCCAVYFGXyeCCM5JKnnxzr4shu
-	3caQ2BA/K6cRq2yFxpjs+9FMxGTLFdjiYKaXH1xv1UcNLFcYsJfUc9lUwohkqml/5Le/t8
-	xwp+HGPpxz4wINLLBJ7BgBIbPhGBDTNPNauXhP9iy/yKXwowaekvlhXRx/jZXmZbeD768s
-	Zdhi/mEPv1w2CJXNSi5lQ+8douZwWwx+xrahqkRtbI95qGH7neYfFb50mri0R14W+uzUJb
-	lVO2Y75lBRMav4n8oyYk891jerFU9cP4GfR6SKjiL2nGs7AkTNVLmZ38ubVgPw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1774088528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IThn9WP7G6JtyKZvemXfdgx26GTVf5GdA7bWMYp+5hU=;
-	b=zGcu2u5PAZSJbmygcz13z1EU0LQtQOzeTWB+e1622Zbej2Dqars5GEDxlLSVWlOtN6Vy6g
-	oyJyYdCsMHOpXGDw==
-To: lee@kernel.org,
-	pavel@kernel.org
-Cc: eajames@linux.ibm.com,
-	j.weitzel@phytec.de,
-	riku.voipio@iki.fi,
-	linux-leds@vger.kernel.org,
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VYg/kHwNIcAR96l2jUMR6xh3BlsGVQTE1qtMPiN2MFg=;
+	b=J0zMkjbBIZjAUnFqrwbK+gqMmVbsAxKAxFVcGKPUi4oRjt268QC+mFXUquCYUzJKfRPPfJ
+	+D4B7gll4f0kp27GMKhWM4rEEQB3zbdXZllZJ1mDaPgiugF7r8l6ZUttPFaUjaHIj09IkZ
+	wXkPYSvNupOTeLoC2plA2mE58ibakNfv5KOL6w3fpeP58eQMh77qJKHiepmjWB/32++qWp
+	gaEp5PNrMo09TNFX0PjAFvujeT/gV7AhiHFlDVokgIh8IJQvoHLFy1cSfnSHEdCLqWzrIF
+	ECD3vhZPOg49TFVJJLbjC5QXFEc6hz/jqxvA1r6D0j94wzF8I/dVNbpzPQIPBg==
+X-Virus-Scanned: Debian amavisd-new at szelinsky.de
+Received: from szelinsky.de ([127.0.0.1])
+	by localhost (szelinsky.de [127.0.0.1]) (amavisd-new, port 10025)
+	with ESMTP id RdB47ymolZ5G; Sat, 21 Mar 2026 18:56:25 +0100 (CET)
+Received: from p14sgen5.lan (p57843ab9.dip0.t-ipconnect.de [87.132.58.185])
+	by szelinsky.de (Postfix) with ESMTPSA;
+	Sat, 21 Mar 2026 18:56:25 +0100 (CET)
+From: Carlo Szelinsky <github@szelinsky.de>
+To: andrew@lunn.ch
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	github@szelinsky.de,
+	kory.maincent@bootlin.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Tobias Deiminger <tobias.deiminger@linutronix.de>
-Subject: [PATCH] leds: pca9532: don't stop blinking for non-zero brightness
-Date: Sat, 21 Mar 2026 11:21:21 +0100
-Message-ID: <20260321102121.1563365-1-tobias.deiminger@linutronix.de>
+	netdev@vger.kernel.org,
+	o.rempel@pengutronix.de,
+	pabeni@redhat.com,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH] net: pse-pd: add LED trigger support
+Date: Sat, 21 Mar 2026 18:55:46 +0100
+Message-ID: <20260321175546.282181-1-github@szelinsky.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <b42fb036-89da-48cd-9525-d05a065096d5@lunn.ch>
+References: <b42fb036-89da-48cd-9525-d05a065096d5@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -55,53 +65,22 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-pca9532 unexpectedly stopped blinking when changing brightness to a
-non-zero value. To reproduce:
+Hey Kory, Hey Oleksij,
 
- echo timer > /sys/class/leds/led-1/trigger   # blinks
- echo 255 > /sys/class/leds/led-1/brightness  # blinking stops, light on
- cat /sys/class/leds/led-1/trigger            # still claims [timer]
+Thanks again for taking the time to give detailed feedback. I am not really experienced with working on the kernel, so I took some time to process and get a clear picture. I will try to implement and test it asap... My action points would be the following:
+                                                                                                                              
+1. Replace the LED specific polling with some generic devm_pse_poll_helper() that is based on the existing pse_isr() logic but in a timer instead of an IRQ - pushing events through ntf_fifo / pse_send_ntf_worker() like other IRQ-based controllers already do.
+2. Fire LED triggers from the notification path, not from a separate poll loop: LEDs react to state changes e.g. they don't drive their own polling.
+3. Fix pse_pw_d_is_sw_pw_control() - it currently requires pcdev->irq to be set in the PSE_BUDGET_EVAL_STRAT_DISABLED path, so poll-only controllers like hs104 would never enter software power control. Needs to also check for an active poll worker.
+4. Add #define for the default poll interval (e.g. 500ms) with a comment explainin why.
 
-According to Documentation/leds/leds-class.rst, only brightness = 0
-shall be a stop condition:
+Did I understand you correctly to not waste any time?
 
-> You can change the brightness value of a LED independently of the
-> timer trigger. However, if you set the brightness value to LED_OFF it
-> will also disable the timer trigger.
+Unclear is for me still:
+* Poll helper design: new devm_pse_poll_helper() vs extending devm_pse_irq_helper() with IRQ=0 fallback? I suggest a separate devm_pse_poll_helper() - it keeps the IRQ and poll paths clean and symmetric, and avoids overloading devm_pse_irq_helper() with conditional logic.
+* Who decides to poll? The driver explicitly calls the poll helper, or the core auto-detects missing IRQ? I suggest the driver decides explicitly - the driver knows its hardware best, and an explicit call is easier to review and reason about than auto-detection magic.
+* DT property: rename led-poll-interval-ms to poll-interval-ms since polling is now generic? I suggest yes - the polling is no longer LED-specific, so the property name should reflect that.
+* Kory mentioned two distinct cases: (a) controller has no IRQ support at all (like the hs104), (b) controller supports IRQ but it's not wired on the board. Should both cases be handled by the same poll helper, or does (b) need different treatment? I suggest the same devm_pse_poll_helper() handles both - from the core's perspective the situation is identical: no IRQ available, need to poll. The driver just calls the poll helper instead of the IRQ helper in either case.
 
-Therefore add a guard to continue blinking when brightness != LED_OFF,
-similar to how pca955x does it since 575f10dc64a2 ("leds: pca955x: Add
-HW blink support").
-
-Signed-off-by: Tobias Deiminger <tobias.deiminger@linutronix.de>
----
-
-Notes:
-    A more advanced solution was to not simply return early on
-    set_brightness, but actually support blinking at arbitrary brightness.
-    This would however require conditional fallback to SW blinking, since
-    PCA 9532 doesn't support routing PWM 0 (dim) and PWM 1 (blink) in
-    series. The bugfix here keeps it simple. Optional SW blinking could be
-    tried in a separate patch.
-
- drivers/leds/leds-pca9532.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 0344189bb991..3de20e087334 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -184,6 +184,8 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
- 
- 	if (value == LED_OFF)
- 		led->state = PCA9532_OFF;
-+	else if (led->state == PCA9532_PWM1)
-+		return 0; /* non-zero brightness shall not stop HW blinking */
- 	else if (value == LED_FULL)
- 		led->state = PCA9532_ON;
- 	else {
-
-base-commit: b2c87f5e98cd88095dbc6802197526703d5e4e48
--- 
-2.47.3
-
+Have a nice weekend,
+cheers.
