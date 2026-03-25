@@ -1,39 +1,41 @@
-Received: from srv01.abscue.de (abscue.de [89.58.28.240])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211B73DDDC0;
-	Wed, 25 Mar 2026 13:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A5A3DB642;
+	Wed, 25 Mar 2026 14:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774446906; cv=none; b=sJTKx5Smliw/C/yL5Hb6bQ79eDjsoztY7+QYdBaBicGUTu8V/DFBH0kWFVl4AyYkN8W7yryc++2P9J93+DYtP4AMemUiJgZWOh+IzgQAZRIe/KmYxRSG0Erb0rMDE1iXCyzOPOBTtmU/K9nGjJCAN2sY122qpGNllB4dCIYRT2g=
+	t=1774448209; cv=none; b=TIryzuRPfsH3uQnMetNcx07KPwL0YhaEoi9J2Zaib1Pe8GJD4atYle7qHo58a9k/LOFxMzCJih4EmBQQolsn54iwLZSA+fWG49xPNM9KS7QgxgrqwoXmmke5GegKoyPBO3AbxwGcMDtDQfGHAxySAuJG0wNkwKq0uPj5D2vb7OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774446906; c=relaxed/simple;
-	bh=iDKvaeDvnMyZNEDCO+iH5La4SPaeOS8gVVZsISM+/78=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jOmPqG4msEieK545DXm0a1oEcgqs/jXifen73JJ2m9TzoZLow/OP7nIzcrpdA/VZtyRlAm+R5RYWcJDBoo3FuQPzlKaSs7LRRtnYCXazzUBNxlPS7Evy5Gh3ZZ+THAggS56i7OywBL7ON8dBTyMCdr8ronyGjVLtJFA2vSjDBls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; dkim=pass (2048-bit key) header.d=abscue.de header.i=@abscue.de header.b=FRoR1cQ9; arc=none smtp.client-ip=89.58.28.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
+	s=arc-20240116; t=1774448209; c=relaxed/simple;
+	bh=19CEqX8oPDnlJt0THizujet/yCZ5SVpLk5Dh2CPvAtw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Q8wqMBnNBY1EhZvtYbNZOFBOtDusmHHy3Nj5tXxRXbmhkJBva4H8MpRoHkvbQqZolSgWuyyLNw2R+6Al2cf02rpjyO7pCRFAEncTuplnt0Zx8ee1Ngg1H/kQqlE28jS7v9VNEhWJAU4rrMYZm5zicSnx82k0OwmKVlSkt+8ZbPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H56xfmJC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=abscue.de header.i=@abscue.de header.b="FRoR1cQ9"
-Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cde0:9600:8d27:ae39:1dce:2212])
-	by srv01.abscue.de (Postfix) with ESMTPSA id 93D7E1C3A8B;
-	Wed, 25 Mar 2026 14:54:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=abscue.de; s=dkim;
-	t=1774446895;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Vvz9BBCdCjmAKX3x6b5LHDmFkQb7BZeGItD0dshHTs=;
-	b=FRoR1cQ9xfDn68CQwKYxV7tH5hnWgj9zu9G9i7k3rUs4SZ3Drfe7AXK2vPw0Gt/2ed38YG
-	9dYIYc66WmjmbxWQCmVAYxH6wEKxcRKBgJsOIaDtOdaXxmYdYAg5tXNnyY+JONWDZgR00/
-	00Yprj+4KWWRkPdW32sxcrbAbtYOZKi/UJWofvW1XY7r23vERCPEWHxigic5mIPbJVQd72
-	zdCb9+aBGOsy27L+MUifumctiYAFXWTzh9AhFwSa2BQDBt82NyVVIzTEbHCcaii7B1dyjV
-	bNZ0EFRxRazNrxFrWote6ckkZmkkxnNnrohBgrDMdR3X7n5VWkP7wYEowsSdfw==
-From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Date: Wed, 25 Mar 2026 14:53:47 +0100
-Subject: [PATCH v2 5/5] regulator: sc2731: Add platform_device_id table
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H56xfmJC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DDCDC116C6;
+	Wed, 25 Mar 2026 14:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774448209;
+	bh=19CEqX8oPDnlJt0THizujet/yCZ5SVpLk5Dh2CPvAtw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=H56xfmJCo4dRGU2g52sJrf8BASoTQxcSyF4j8gM9nI/swrbuORRhdOsGDqSrKjKJJ
+	 6lbyUER80io8j0pVB4MdL5GeIejiKdtZvLCprYgio2qTuY4elBzTEcGCeWuPX7chwQ
+	 eiIBLtANYTe/BrPZvTJigwmVzTLAKUkqcYkXcF/YT6pbLg2sUbL7ByZuvxWImhNvic
+	 lG15aIrLOy7VJJ0k9iP+beBPzZ7DU9JT7Dm2mq/aBQH8q2aB8IxonD+2t1vTWho9SV
+	 /5FElBZ8QoKeOlgnS9b+pYguJZbYUaNR7CJN4RsTVsPEGhTVl7FQhvKn9coyl0eOht
+	 ZgTENhOTHkHXA==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, pavel@kernel.org, 
+ Lukas Kraft <rebootrequired42@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260312210958.48467-1-rebootrequired42@gmail.com>
+References: <20260312210958.48467-1-rebootrequired42@gmail.com>
+Subject: Re: (subset) [PATCH] leds: lgm-sso: Fix typo in macro for src
+ offset
+Message-Id: <177444820780.1299095.2893727011051817345.b4-ty@b4>
+Date: Wed, 25 Mar 2026 14:16:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -42,82 +44,16 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260325-sc27xx-mfd-cells-v2-5-d0ebb60aa4a7@abscue.de>
-References: <20260325-sc27xx-mfd-cells-v2-0-d0ebb60aa4a7@abscue.de>
-In-Reply-To: <20260325-sc27xx-mfd-cells-v2-0-d0ebb60aa4a7@abscue.de>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-X-Mailer: b4 0.14.3
+X-Mailer: b4 0.16-dev-ad80c
 
-Make the regulator driver for the SC2731 PMIC probe automatically. Using
-a platform_device_id table instead of DT compatible matching avoids the
-need for a separate compatible property in the "regulators" node, which
-simplifies the DT bindings and makes the parent MFD device responsible
-for selecting the correct regulator driver for the PMIC.
+On Thu, 12 Mar 2026 22:09:52 +0100, Lukas Kraft wrote:
+> Replace unused argument pinc with used argument pin.
 
-However, this means that the regulator device is not automatically
-associated with the "regulators" node. Tell the regulator core to
-perform device tree lookups using the parent MFD device instead of
-the regulator sub-device and set the .regulators_node member in all
-regulator definitions so that the "regulators" sub-node is used.
+Applied, thanks!
 
-Acked-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
----
- drivers/regulator/sc2731-regulator.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+[1/1] leds: lgm-sso: Fix typo in macro for src offset
+      commit: 0e2287999f0432b51a54c235db660789ca657f53
 
-diff --git a/drivers/regulator/sc2731-regulator.c b/drivers/regulator/sc2731-regulator.c
-index 5447e1a47d15..93c8156c5110 100644
---- a/drivers/regulator/sc2731-regulator.c
-+++ b/drivers/regulator/sc2731-regulator.c
-@@ -131,6 +131,7 @@ static const struct regulator_ops sc2731_regu_linear_ops = {
- 			  vstep, vmin, vmax) {			\
- 	.name			= #_id,				\
- 	.of_match		= of_match_ptr(#_id),		\
-+	.regulators_node	= of_match_ptr("regulators"),	\
- 	.ops			= &sc2731_regu_linear_ops,	\
- 	.type			= REGULATOR_VOLTAGE,		\
- 	.id			= SC2731_##_id,			\
-@@ -226,7 +227,7 @@ static int sc2731_regulator_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	config.dev = &pdev->dev;
-+	config.dev = pdev->dev.parent;
- 	config.regmap = regmap;
- 
- 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
-@@ -242,12 +243,19 @@ static int sc2731_regulator_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct platform_device_id sc2731_regulator_id_table[] = {
-+	{ "sc2731-regulator" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, sc2731_regulator_id_table);
-+
- static struct platform_driver sc2731_regulator_driver = {
- 	.driver = {
- 		.name = "sc27xx-regulator",
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.probe = sc2731_regulator_probe,
-+	.id_table = sc2731_regulator_id_table,
- };
- 
- module_platform_driver(sc2731_regulator_driver);
-
--- 
-2.51.0
+--
+Lee Jones [李琼斯]
 
