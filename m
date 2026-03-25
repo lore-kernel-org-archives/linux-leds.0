@@ -1,85 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from srv01.abscue.de (abscue.de [89.58.28.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992EF2609E3;
-	Wed, 25 Mar 2026 13:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C2E3D333A;
+	Wed, 25 Mar 2026 13:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774445920; cv=none; b=VRekzjr3GEPaQzoaiaHVaHk+i2Ny76nZSaGnniUa+OEritECEtAWiZR9fEipagH0Xq8wgPABe2yrfz4BRoWz3xCXH1J7o+0tPAs+ymf4GooLWhwGjxeseO2A+d0a6z4kC/c6y4PB4rLIItOH114IbjzUR4WAVs9NSG982pBuXoA=
+	t=1774446903; cv=none; b=CKodrxgJAKTp92zYEKeOCYeuXv/YlijuDtr7incZ7HKnpT6eIJCiDBQArvAf6d31PRbyRMPuMZH7b6kvdl+QfnpLMu+4cpp4hLoLJv3/f5VFPq4A0pRhYdMX9qrUB9cWWiqMNMri/8lAruJmcirLFToAwTcuk0/qCtdo0Ed1vXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774445920; c=relaxed/simple;
-	bh=qxWrdAmfeUeLHOzPUJPDa2LECeKQYhDSm/W6aT8Tu6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntoPxAh8MvwcNyiNsFsrGKRODDUMLXnt05aFxP/jTTGeZ+8/aC+2M3LcqI0Kqp7SL/hYsaONDFXOjwJW2Lt9j2Wdmw8l50OSWnh+7p5iOH0MeKHF/06BHibeLlDhKABX7eoI1NVm3iG3HmQgNmCsIR75CkZVzCLN9j2ZWQLY4+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LW6lSWKX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774446903; c=relaxed/simple;
+	bh=zOiHRiD7dxKBfhbPbB4OMZm22V5rmCiucuIOzalEXSY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bQrWE/xlM1nJgMHzqXH9FMMyKfpGvqrzqQPLNoECT2xpZ7pSCBh6NfZ81FqLW16gN+b/pUmXsnA6VNKvDL/CnVm/Ve+IB9HaQsOcQ5cOU7YJEZcV0hMWVtGctxsElIAdL8VspgTURJoERlJE090RBpdhtYFCqMYj3sG0zLvulj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; dkim=pass (2048-bit key) header.d=abscue.de header.i=@abscue.de header.b=fquBHHCz; arc=none smtp.client-ip=89.58.28.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LW6lSWKX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDF1C4CEF7;
-	Wed, 25 Mar 2026 13:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774445919;
-	bh=qxWrdAmfeUeLHOzPUJPDa2LECeKQYhDSm/W6aT8Tu6Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LW6lSWKXA5yEDLQE8y3Kur1rm5uX7rooSNpvyqQWrGE/sqdMNRKAJn11H6EYn/gtN
-	 vFp3IkFmxa4Fsmywt5JLVwxKSKzOdbHdpkuNRoYOo4989CIp0h6eF3ViPZgbJzyRpL
-	 gD1BqQzlcVb7B0gCMsut72u0CezHEnpFqeuaFGhYUcPhwgric+CP6xG0VKcBS+7A2r
-	 hzKwEO/w2jtAJzEEGv/Rm8if5QrOcXZgmpOjvfiLwOhUet207hV9E38XR/LaWTMlNg
-	 qFma452tg3RxUgGArz1Rwa6UxdLD2czp+TA8Bb5NkeQdvkcY0hsN/tOh51U6Rz+ZL/
-	 qsTn3VtEeOLCQ==
-Date: Wed, 25 Mar 2026 13:38:36 +0000
-From: Lee Jones <lee@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Fall back to using software node name as LED name
-Message-ID: <20260325133836.GB1141718@google.com>
-References: <20260311-led-swnode-name-v1-0-798a49e041c6@gmail.com>
+	dkim=pass (2048-bit key) header.d=abscue.de header.i=@abscue.de header.b="fquBHHCz"
+Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cde0:9600:8d27:ae39:1dce:2212])
+	by srv01.abscue.de (Postfix) with ESMTPSA id AE0491C006F;
+	Wed, 25 Mar 2026 14:54:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=abscue.de; s=dkim;
+	t=1774446893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KDZ5Sh45takfz5M+ly8guwVTBtTFzIYC7hXhR2y5yk4=;
+	b=fquBHHCzMBq4Q3M0HbwDIjI3Q71S+GRI93VLNHcNmV0QeO7+/Cifjxod3Gi1IGoH3EI9Ws
+	d3ggCEgPGiv/y96pVM/8BHTdbC6YC1TVandAtyml56JXuIn8MDItEk5JjR+/ohvxTeSuJc
+	gG2WBdU460oDuzV2FXjDeYylftBTqEM7z8VgbniFjS5t6+lZCy2ys8oqjsd8AMHltjx5Jc
+	WO8DaBtisKMMHmm1JoXJ6/6CdUpC9LSwOVKNHLk+4aro7k2hNvXN8ei3jhYbgyjjmsRWGY
+	BhXG+mzfoy1X/Kee5gDjpkIMobuljbxt3tC1iwIGQtULVCtmGd9jw8/fN/h2YQ==
+From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+Date: Wed, 25 Mar 2026 14:53:43 +0100
+Subject: [PATCH v2 1/5] dt-bindings: rtc: sc2731: Add compatible for SC2730
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260311-led-swnode-name-v1-0-798a49e041c6@gmail.com>
+Message-Id: <20260325-sc27xx-mfd-cells-v2-1-d0ebb60aa4a7@abscue.de>
+References: <20260325-sc27xx-mfd-cells-v2-0-d0ebb60aa4a7@abscue.de>
+In-Reply-To: <20260325-sc27xx-mfd-cells-v2-0-d0ebb60aa4a7@abscue.de>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+X-Mailer: b4 0.14.3
 
-On Wed, 11 Mar 2026, Dmitry Torokhov wrote:
+The RTC block found in the SC2730 PMIC is compatible with the one found
+in the SC2731 PMIC.
 
-> This allows setting just name in software node representing an LED
-> instance and forego "label" or other properties needed to form a name.
-> This is helpful when converting old boards using bespoke platform data
-> to software nodes/static device properties.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> Dmitry Torokhov (2):
->       leds: core: implement fallback to software node name for LED names
->       leds: core: fix formatting issues
-> 
->  drivers/leds/led-core.c | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
-> ---
-> base-commit: 7109a2155340cc7b21f27e832ece6df03592f2e8
-> change-id: 20260311-led-swnode-name-6db2e5757071
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+---
+ Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I'm happy with the set, but it failed to apply to leds-next.
-
-diff a/drivers/leds/led-core.c b/drivers/leds/led-core.c        (rejected hunks)
-@@ -584,8 +582,9 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
-        } else if (is_software_node(fwnode)) {
-                n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s",
-                             fwnode_get_name(fwnode));
--       } else
-+       } else {
-                return -EINVAL;
-+       }
+diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
+index 5756f617df36..1deae2f4f09d 100644
+--- a/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
+@@ -13,7 +13,12 @@ maintainers:
  
-        if (n >= LED_MAX_NAME_SIZE)
-                return -E2BIG;
-
-Please rebase and [RESEND].
+ properties:
+   compatible:
+-    const: sprd,sc2731-rtc
++    oneOf:
++      - items:
++          - enum:
++              - sprd,sc2730-rtc
++          - const: sprd,sc2731-rtc
++      - const: sprd,sc2731-rtc
+ 
+   reg:
+     maxItems: 1
 
 -- 
-Lee Jones [李琼斯]
+2.51.0
+
