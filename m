@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A97934751C;
-	Thu, 26 Mar 2026 09:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31E434EF17;
+	Thu, 26 Mar 2026 09:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774517535; cv=none; b=ovm3zi/9Xg6CxAEEnSfrbfKfkE/LU4IbY/e/QnU5605iqzfAv9IqWyl8W8hHqrG2xsfERPfm3iFe4ilVurUHf7zlx+zAicXTS/jRMpjrzQYbNa7fojaqmpB+rX3W7u7nNBOIqiwnjMPoWjg3wAay5Ji6b5lkQZDYQMdQyHUohro=
+	t=1774517536; cv=none; b=Ih1moHfgLHL5sdc/vRwa3p02wdvaLhVUMyAiB3a2jbH3DIgHn/Zjer0sNosqnVLhdwWb/2EpZdrZbWBSmCHkbzzhPGbYUoh2/7TjkwyzWHrPGwhg3o85jAux0TOAer9628HiFiHlWdchXwkyKNWveDRaiARiRfBnX+HjBB9q3AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774517535; c=relaxed/simple;
-	bh=Eyio1EiCGp5TcRzdbDSUF4iB1OKQ8SxmQVWyCx2px/Q=;
+	s=arc-20240116; t=1774517536; c=relaxed/simple;
+	bh=dHEuja9+7HhmNpxkX0MBgrul8w1apERhj52whn6gSzA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jgI9EToSidwIH+1kAlQ8mUvRfBqPaIZ3dpf3+fgAvKjYUR3HEk4wDiTmjjjuSW4oha5yrT9GtGA34ty7N0HnEJ5y8pawmrsmnTfSoi4lEcaYKWgtWc8TGITulqwzWGIii47fQ+hklvswwoGjVLqkA8qAyIvO63hUlMU0G7hUYHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLt2Eps5; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=pESaq20KV+IsUu3/sQNcqiEWDyUzKZLqvT7+8AZqt+uJdU70j1PzCg7nMLhL+0aCShQ+1U9DFEeX7BE0+yCsD1POR7vXQgQc5agt53coHTK1f5tkjsMJIzdTGS25qFmCskYgaiUCoI/pAwDr+aTVFdyIFO7r2sEYzYUb82RZ+Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNK1TTgG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLt2Eps5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DEDC116C6;
-	Thu, 26 Mar 2026 09:32:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNK1TTgG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E7AC19423;
+	Thu, 26 Mar 2026 09:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774517534;
-	bh=Eyio1EiCGp5TcRzdbDSUF4iB1OKQ8SxmQVWyCx2px/Q=;
+	s=k20201202; t=1774517536;
+	bh=dHEuja9+7HhmNpxkX0MBgrul8w1apERhj52whn6gSzA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=vLt2Eps5rMzRV5ehBuk8D0n4neHmrxqfaLfPsEVdz4e6A0pypCCMhuJT0aRIdYheR
-	 vbfTqHt180m3VA6LnwqE/TnRHeuMiOLnsbYXTBG1HDwZF6ZEKleK99+3ozzak91HB8
-	 v1nG7niqF9RrLLEpvTXbvyr3BUcjXX+HOulP2pCuaTaJK0HBzDm2Y5B0npDdFg2tm4
-	 JWcP4FokcCRQBlWqPCUgP+d/D5Sl7NPavyVlD7Fax46r6c8Cv1FSAdsQywPeCMP7zi
-	 L6cae4cqfh4+vmKZstq6li58+ej25n4bYDj282zZRPp/GgCgJC5nKbFKHDKDgfZzWk
-	 pM/1DyI8TwR1A==
+	b=cNK1TTgGXqCIw56O7hMwMuKUaza7v6ndb4zio8qEFft6k6wufo6zeQPTXWzSibOTC
+	 Yck7q50yGwWTGj3YPnYRgpSDfNlPD/dp+Vp4CeLMhyNsjjPbpcxwyI6H4y2PVzFP7g
+	 Qj6WHl6SDRIWnXRiQJICSgYqWzmHxjAsrnwck7k4mv8lUGwP3K09SENvU5pFT/i2eP
+	 gCgR72iBlcwKgSPbw5bsiV3ZR6BnDXH5bDO/sZ7NX1DhOfhlyQKU/URdhC+szjCBR4
+	 FOAfiNT/fGTD1AkcBcBPtjvzrz57k39HOYsMiK4U2kzRAoA47kL8yddh1zOze0dPH4
+	 8XQiZbEYvHnNg==
 From: Lee Jones <lee@kernel.org>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260311-led-swnode-name-v1-2-798a49e041c6@gmail.com>
-References: <20260311-led-swnode-name-v1-2-798a49e041c6@gmail.com>
-Subject: Re: (subset) [PATCH 2/2] leds: core: fix formatting issues
-Message-Id: <177451753339.1867408.2785898838522534835.b4-ty@b4>
-Date: Thu, 26 Mar 2026 09:32:13 +0000
+In-Reply-To: <20260311-led-swnode-name-v1-0-798a49e041c6@gmail.com>
+References: <20260311-led-swnode-name-v1-0-798a49e041c6@gmail.com>
+Subject: Re: [PATCH 0/2] Fall back to using software node name as LED name
+Message-Id: <177451753505.1867408.15957400779792545142.b4-ty@b4>
+Date: Thu, 26 Mar 2026 09:32:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -45,13 +45,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.16-dev-ad80c
 
-On Wed, 11 Mar 2026 18:43:28 -0700, Dmitry Torokhov wrote:
-> Fix formatting issues reported by checkpatch.pl, such as extra empty
-> lines, lack of braces on some branches, and misaligned function
-> arguments.
+On Wed, 11 Mar 2026 18:43:26 -0700, Dmitry Torokhov wrote:
+> This allows setting just name in software node representing an LED
+> instance and forego "label" or other properties needed to form a name.
+> This is helpful when converting old boards using bespoke platform data
+> to software nodes/static device properties.
 
 Applied, thanks!
 
+[1/2] leds: core: implement fallback to software node name for LED names
+      commit: 4f530c65487636dc1536b3fa1041f9a877a66a7f
 [2/2] leds: core: fix formatting issues
       commit: 91dc0c2a152373c4004df7e36de45190b82089ab
 
