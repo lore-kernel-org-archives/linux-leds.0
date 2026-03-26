@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2AA3B6364;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C843B6BE2;
 	Thu, 26 Mar 2026 07:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774511853; cv=none; b=tR+FIVNAL8d5ClQT8ZKFG+luwjbNHRXbfWL0s6fwhW0ADsHpL7ktwPXotd8Et2ZOObtNxvYRNt5/YXA363jR2m5meK6df6Ew/ffOR/ybBuWyDCm/lApV2P0gc419MEo3b48gc8tDudm0BVuMZ8T+0iSryw+G6k1LWpO/4Sb0u7g=
+	t=1774511853; cv=none; b=e+0R+z4AyXD/EHf9katwZxN+fq/C9FpIlfefpLZ7yDuccR2z4+iT2ebhf/d9TGS2/8EVgJR7foIS6M12WK9r225T66sHbwGN4Dgssn4TeZKG+WlyJcosJ8e+xmVGLqrpsTc+2oHimf3BebkujZ4ICXnyjH88lNIvH89h+eYXrDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1774511853; c=relaxed/simple;
-	bh=vtWkUX7nJXT4VBvGcL/Y+2qsHiE82woSkLVt9snsg2I=;
+	bh=xDLWcXbFRmCefCm+pbQPSZwGrH6dkIj26hBraq/lSrg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fF5tpY3X/iIFtBAzSdQKmiU8ihLrgyobPgHd1BOfUQWWRNi2v/tCv2g3Z80SCPpT7MScVF/8wkGGEw/K/XZLeJOCHhRoxVrXPN04sNnXN/OVCrQjYyvxWpUqsQwPUWLDMWI1WtcHDQ1AixWvvI6BZyGxJViKeH4lezTgzodtzqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spV/vS4n; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=uWsard8RzoASY/FQrgW3w0g4cccCT5fQvFtSakQM1V3HYYzf6yZCuS6jL+sdq7V3xqEoks+jsAD28zhauwHAtQ+CLyIoseGVQojBYqR+9f/ueaeGN8xDfi1KQJowgzrPOAO5Sf3msf5SFs6EhBG6Uj+Jyy6VMfEgcbKdIsp42AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jRxKOUup; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spV/vS4n"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D02DDC2BC87;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jRxKOUup"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E7F37C2BCB6;
 	Thu, 26 Mar 2026 07:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774511852;
-	bh=vtWkUX7nJXT4VBvGcL/Y+2qsHiE82woSkLVt9snsg2I=;
+	s=k20201202; t=1774511853;
+	bh=xDLWcXbFRmCefCm+pbQPSZwGrH6dkIj26hBraq/lSrg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=spV/vS4nhb3kViGo8Kl3MNZJio1YqbA6a+cuo3k/Ma5/Fh/zY/OmE7N+3T+Lbv9un
-	 5pL/7PluFmZ8535zyc2wBuSgS7inOAPTdKXQ/AopStiTqSsGjFuGCWeXpGffh+Zo9q
-	 vJBfXu5TkrFQfNUcJCmcjFrLG16zEEwzM9HmTZVh7kyDlUq3G44MOuXyCObVSEn4KR
-	 sbKfguh+2TcOCn0D/T1apc9S2rn6JNC7Ko6UuvWRgNxsksP3Fae1aWw5PPRFphIxIO
-	 +JUoXLsaHzuhIvDXFcbv5+sJvdfthc4rQk/75kW06Ec9v6OJH/L2qRgEZ6z1nsPctc
-	 qRiXtMr08BbZA==
+	b=jRxKOUupnWneaVTnuY5bCmp+zXMxm64RRLQUeaKByfi2NgyRH2sg6woJj+bUEOn/Z
+	 A14JGuJsA9q5zIj4+eLcsRD/jBVB9ojQMLdnw/QGMLTbyM5q0dFatlZ7z9CwZQJ47m
+	 i46WfLjayw7HtDO8bIDzVSVe1eNj1vE51+Z2/UrXpfVxFJ5RKGu/qY32c3LOvTZ47X
+	 pOtvqnPqth2CHaJAxJ20IIW+B5rwCLD+mRKFxmg+k4r3cGmVxJ+5mc/nPp5HImXx0j
+	 00BVgczDgP4PfNGCokLj4iM88kYitv01fmHZs4C5/nZWwFnwh3tJTCKLMqZR4twBfJ
+	 eVaJ8xfY1wUAQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE94E106F2E8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF95A106F2E9;
 	Thu, 26 Mar 2026 07:57:32 +0000 (UTC)
 From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Date: Thu, 26 Mar 2026 00:57:31 -0700
-Subject: [PATCH v3 1/3] dt-bindings: leds: rt8515: Support single-GPIO
- flash ICs with vin supply
+Date: Thu, 26 Mar 2026 00:57:33 -0700
+Subject: [PATCH v3 3/3] ARM: dts: qcom: msm8960: expressatt: Add camera
+ flash
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260326-expressatt_camera_flash-v3-1-e75e5d58990f@gmail.com>
+Message-Id: <20260326-expressatt_camera_flash-v3-3-e75e5d58990f@gmail.com>
 References: <20260326-expressatt_camera_flash-v3-0-e75e5d58990f@gmail.com>
 In-Reply-To: <20260326-expressatt_camera_flash-v3-0-e75e5d58990f@gmail.com>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -53,13 +53,13 @@ To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>
+ David Heidelberg <david@ixit.cz>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1774511852; l=2722;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1774511852; l=2769;
  i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=3x0hUrCLPBGYYoXg/LCYnxv46dNWEF519f2FRG1sBE0=;
- b=8TOw20x4xSxnXws/3MeyRTo1c6YiWeDxoLkOcW50WnaS4RS9KgYUoCHwLpX0ej5bCtjYgyync
- X3NwnI1V5FvDer4M9wORUZ930gLNjnpTTnvfzvKyR4LoNQ2kbeq6SWl
+ bh=E3bvoy4yC0bIqkNCh6mchqNlZsPxKTVNKTYXqgkkJOA=;
+ b=hc5OnPVs0kdOQ0weHsoKi54CZFSnCzCNylJgdSXsqUKnLh9pHh7R4LYveHiDkwHv2OjFwB/c+
+ I1TZi3ZgSYWC/lV9hm1coRg2PMRtnrt7v8RMFN9ciV5ejzxlD4IgJeO
 X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
  pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
 X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
@@ -69,91 +69,95 @@ Reply-To: guptarud@gmail.com
 
 From: Rudraksha Gupta <guptarud@gmail.com>
 
-Some flash ICs use the same one-wire pulse-count protocol as the RT8515
-but have only a single enable line for both flash and torch modes, plus
-an optional input voltage supply (e.g. a GPIO-controlled fixed
-regulator) that gates power to the chip.
+Add camera flash support for the Samsung Galaxy Express (expressatt).
 
-Make ent-gpios optional and add a vin-supply property to support these
-variants. Add a oneOf constraint requiring exactly one of ent-gpios or
-vin-supply. Add a binding example showing the single-GPIO configuration
-with an input supply.
+The flash IC uses a one-wire pulse-count protocol on GPIO 3, powered
+by a GPIO-controlled fixed regulator on PMIC MPP 4. The regulator is
+modeled as a regulator-fixed node and supplied to the flash IC via
+vin-supply.
+
+Downstream references:
+Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
+Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
 
 Assisted-by: Claude:claude-opus-4.6
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Reviewed-by: David Heidelberg <david@ixit.cz>
 Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
 ---
- .../devicetree/bindings/leds/richtek,rt8515.yaml   | 34 +++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
-index 0356371a6b01..ab3c5139132c 100644
---- a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
-+++ b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
-@@ -15,6 +15,10 @@ description: |
-   current for each mode is defined in hardware using two resistors
-   RFS and RTS.
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
+index c4b98af6955d..35514fd53e3d 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8960.h>
  
-+  Some flash ICs use the same one-wire pulse-count protocol but have
-+  only a single enable line for both flash and torch modes. For these
-+  single-channel variants, only enf-gpios is needed.
-+
- properties:
-   compatible:
-     const: richtek,rt8515
-@@ -26,6 +30,11 @@ properties:
-   ent-gpios:
-     maxItems: 1
-     description: A connection to the 'ENT' (enable torch) pin.
-+      Not present on single-channel flash ICs that use only one enable
-+      line for both flash and torch modes.
-+
-+  vin-supply:
-+    description: Optional input supply for the flash IC.
+ #include "qcom-msm8960.dtsi"
+@@ -61,6 +62,32 @@ touchkey_enable: touchkey-enable {
+ 		regulator-boot-on;
+ 	};
  
-   richtek,rfs-ohms:
-     minimum: 7680
-@@ -81,10 +90,15 @@ properties:
- 
- required:
-   - compatible
--  - ent-gpios
-   - enf-gpios
-   - led
- 
-+oneOf:
-+  - required:
-+      - ent-gpios
-+  - required:
-+      - vin-supply
++	vreg_flash: regulator-flash {
++		compatible = "regulator-fixed";
++		regulator-name = "VREG_FLASH_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pm8921_mpps 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-0 = <&flash_led_unlock>;
++		pinctrl-names = "default";
++	};
 +
- additionalProperties: false
++	led-controller {
++		compatible = "richtek,rt8515";
++		enf-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&vreg_flash>;
++		richtek,rfs-ohms = <16000>;
++		pinctrl-0 = <&cam_flash_en>;
++		pinctrl-names = "default";
++
++		led {
++			function = LED_FUNCTION_FLASH;
++			color = <LED_COLOR_ID_WHITE>;
++			flash-max-timeout-us = <250000>;
++		};
++	};
++
+ 	i2c-gpio-touchkey {
+ 		compatible = "i2c-gpio";
+ 		#address-cells = <1>;
+@@ -172,6 +199,13 @@ touchscreen@4a {
+ };
  
- examples:
-@@ -108,4 +122,22 @@ examples:
-         };
-     };
- 
-+  - |
-+    /* Single-channel flash IC with input supply */
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/leds/common.h>
+ &tlmm {
++	cam_flash_en: cam-flash-en-state {
++		pins = "gpio3";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-pull-down;
++	};
 +
-+    led-controller {
-+        compatible = "richtek,rt8515";
-+        enf-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
-+        vin-supply = <&flash_reg>;
-+        richtek,rfs-ohms = <16000>;
+ 	spi1_default: spi1-default-state {
+ 		mosi-pins {
+ 			pins = "gpio6";
+@@ -572,3 +606,12 @@ magnetometer@2e {
+ 		/* TODO: Figure out Mount Matrix */
+ 	};
+ };
 +
-+        led {
-+            function = LED_FUNCTION_FLASH;
-+            color = <LED_COLOR_ID_WHITE>;
-+            flash-max-timeout-us = <250000>;
-+        };
-+    };
-+
- ...
++&pm8921_mpps {
++	flash_led_unlock: flash-led-unlock-state {
++		pins = "mpp4";
++		function = "digital";
++		output-low;
++		power-source = <PM8921_GPIO_S4>;
++	};
++};
 
 -- 
 2.53.0
