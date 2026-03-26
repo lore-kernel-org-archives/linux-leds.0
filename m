@@ -1,43 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E103BA226;
-	Thu, 26 Mar 2026 09:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F302635CB6F;
+	Thu, 26 Mar 2026 09:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774516384; cv=none; b=XpzPoABbzV99M3XkbdIe6WzZ5trPUdM7z1SJySnfiEeSzXrFbEvEbYMSLmJJAhTOloVq0cNhiNPRAufTMoQiCnuvx2pDAZK7mDa24u894faGctLaX5SadHIjukv4z9of9lbWGzFTTHTduj8jfMAjl0muD8Ycl+KYlq86p/MMb1U=
+	t=1774516446; cv=none; b=fG1Dm7xXDcoS0CQgezyEQXHdhEx1G+Yt84sPS6BvvBK65wcNmraLdLbPshnHc3EMTxr0P6WzVeVF25jrXRWq+CcpYHHMpYpPBKEpYtKHoab1n9iTHWGJ/tA8cAZsHTo+SKOWQrRSq4PXtQyK+2J1pmB+C6TLoB+589MS7wtCPrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774516384; c=relaxed/simple;
-	bh=KreQQwoe/j0embYBbdy1ol5U6gJ3mN4FHZ9+chWPmvk=;
+	s=arc-20240116; t=1774516446; c=relaxed/simple;
+	bh=ICaDmlVlOI2ON2amlvJM5Q0rinkuBd/FinCz7z5Cpjg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMkfUNeoi8apvSSMiuI1P2eRrpr8ZwsmmlldhSRIDgMePEp3qDEdGxlKmvAfYF+2uUr+hzpblQCD9MA+A9AcC0mwfg1boVHLqyRvwg5vuOQ1dKjnKhHDhyP4Y6LnKBucGKnL/vDwrOHZg3Rgoss1p2fC8wdRF5icWx3oPlX9c7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftEu6ZdU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UiHKty75/Xi2VDf8CunYPX8VkFMyzeKSL3AoOwLFxanTCkg2vVOKeifq3PG450NX9ZWTA1g6vVk1/FfI5AjYPUjHjICFV6ouGejxCgpnoleIhRcm3f8V0dVaRMNLzgfgMhFsDG+bFQFAL8fCknhk08xcYxvwZ8gukuBO7dw+qFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtGvdbQp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftEu6ZdU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E922C116C6;
-	Thu, 26 Mar 2026 09:13:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtGvdbQp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4B5C116C6;
+	Thu, 26 Mar 2026 09:14:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774516383;
-	bh=KreQQwoe/j0embYBbdy1ol5U6gJ3mN4FHZ9+chWPmvk=;
+	s=k20201202; t=1774516445;
+	bh=ICaDmlVlOI2ON2amlvJM5Q0rinkuBd/FinCz7z5Cpjg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftEu6ZdUz0LKUlNVXcSQdiPbXa6modxU+s+KbfE7TSxd2nZsTNI9Rm2RpnKEb9qzX
-	 dkgYLUiObElEx1kMD4/UP+EQhJdOohRvSvDbbJcsNCuZTXp/V/hcSLgeWVTqUS4RxH
-	 98RF9Woam1G+gv9M0cft30/JzV/xtyEUQO9zvPwn39NSrsMaOjbahqyGPDMGeId5Tb
-	 Ao4pxW/cI4cVb0DPs0piEMTA29ToRkbEPXCMgzNtpPeQIwyDTKIMqoRc5qSqFTzeUv
-	 yqlP6HlOdsGnQTd4BpfW5cwmc/SawzWc0qm9jGtJ8XHA3379e9BWi6EXejpcf61pWY
-	 8blbms/JrdV1A==
-Date: Thu, 26 Mar 2026 10:13:01 +0100
+	b=WtGvdbQpkp6A5ySYuD2JKSBTnt8Kkr0XYGaDv+i9SVnBY3QjhUmn7AuCiKAMboyw2
+	 sWX9hT0BQiyYl6d4iCDTeHOH02JyNTpfU0WzHCzVyLjez3NgQq7k2HQWpsgRGv+u4J
+	 qu7x0u7y1Kw8uFLwVAFWdKBBqwBQc75l8ewPglYgBoWXxFhYjWM7JkRjH28RuFkMY1
+	 4O6rjLx47Pdylg5Qgqn2Rf3n55UYNQNgrJnEIRGzMilQS6B3q8dOMPFu9CXCUrrH6e
+	 NjuRBJIjM4HV3ltRFlqQUL8AGXqZJtfr5zU36MMM6CdIRB+tND5bEksEoLrh6/PNN5
+	 IG43ArDvUYXFQ==
+Date: Thu, 26 Mar 2026 10:14:03 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jan Carlo Roleda <jancarlo.roleda@analog.com>
 Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: leds: Document LTC3208 Multidisplay
- LED Driver
-Message-ID: <20260326-nimble-sociable-sawfly-515a36@quoll>
+Subject: Re: [PATCH v2 1/3] Add Maintainers to LTC3208 LED Driver
+Message-ID: <20260326-analytic-singing-panther-ebffe5@quoll>
 References: <20260326-upstream-ltc3208-v2-0-3dbc992b6098@analog.com>
- <20260326-upstream-ltc3208-v2-3-3dbc992b6098@analog.com>
+ <20260326-upstream-ltc3208-v2-1-3dbc992b6098@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,176 +45,34 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260326-upstream-ltc3208-v2-3-3dbc992b6098@analog.com>
+In-Reply-To: <20260326-upstream-ltc3208-v2-1-3dbc992b6098@analog.com>
 
-On Thu, Mar 26, 2026 at 06:30:12AM +0800, Jan Carlo Roleda wrote:
-> Add Documentation for LTC3208 Multidisplay LED Driver.
-
-Please organize the patch documenting the compatible (DT bindings)
-before the patch using that compatible.
-See also: https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
-
+On Thu, Mar 26, 2026 at 06:30:10AM +0800, Jan Carlo Roleda wrote:
+> Adds maintainer reference for the LTC3208 LED Driver.
 > 
 > Signed-off-by: Jan Carlo Roleda <jancarlo.roleda@analog.com>
 > ---
->  .../devicetree/bindings/leds/adi,ltc3208.yaml      | 158 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 159 insertions(+)
+>  MAINTAINERS | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/leds/adi,ltc3208.yaml b/Documentation/devicetree/bindings/leds/adi,ltc3208.yaml
-> new file mode 100644
-> index 000000000000..c139937936bc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/adi,ltc3208.yaml
-> @@ -0,0 +1,158 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (c) 2026 Analog Devices, Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/adi,ltc3208.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LTC3208 Multidisplay LED Controller from Linear Technologies (Now Analog Devices).
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 55af015174a5..3f3331d7272a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15126,6 +15126,12 @@ W:	https://ez.analog.com/linux-software-drivers
+>  F:	Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
+>  F:	drivers/iio/temperature/ltc2983.c
+>  
+> +LTC3208 LED DRIVER
+> +M:	Jan Carlo Roleda <jancarlo.roleda@analog.com>
+> +L:	linux-leds@vger.kernel.org
+> +S:	Maintained
+> +W:	https://ez.analog.com/linux-software-drivers
 
-Drop full stop
+This is pointless change. You do not maintain here anything. Apply this
+patch alone and see - does it have any effect?
 
-> +
-> +maintainers:
-> +  - Jan Carlo Roleda <jancarlo.roleda@analog.com>
-> +
-> +description:
-> +  The LTC3208 is a multidisplay LED controller that can support up to 1A to all
-> +  connected LEDs.
-> +
-> +  The datasheet for this device can be found in
-> +  https://www.analog.com/en/products/ltc3208.html
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,ltc3208
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-
-Use consistent quotes, either ' or "
-
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  adi,disable-camhl-pin:
-> +    type: boolean
-> +    description:
-> +      Configures whether the external CAMHL pin is disabled.
-> +      if disabled then the output pins associated with CAM will always select
-
-s/if/If/.
-
-> +      the CAM register's high half-byte brightness.
-> +
-> +  adi,cfg-enrgbs-pin:
-> +    type: boolean
-> +    description:
-> +      Configures which channel the ENRGBS pin toggles when it receives a signal.
-> +      ENRGBS pin controls the SUB channel's output pins if this is set,
-> +      or RGB channel's output pins if this is unset.
-> +
-> +  adi,disable-rgb-aux4-dropout:
-> +    type: boolean
-> +    description:
-> +      Configures the RGB and AUX4 dropout signals to be disabled.
-> +
-> +  adi,aux1-channel:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      LED Channel that the AUX1 output pin mirrors its brightness level from.
-> +    enum: [aux, main, sub, cam]
-> +    default: aux
-> +
-> +  adi,aux2-channel:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      LED Channel that the AUX2 output pin mirrors its brightness level from.
-> +    enum: [aux, main, sub, cam]
-> +    default: aux
-> +
-> +  adi,aux3-channel:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      LED Channel that the AUX3 output pin mirrors its brightness level from.
-> +    enum: [aux, main, sub, cam]
-> +    default: aux
-> +
-> +  adi,aux4-channel:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      LED Channel that the AUX4 output pin mirrors its brightness level from.
-> +    enum: [aux, main, sub, cam]
-> +    default: aux
-> +
-> +patternProperties:
-> +  "^led@[0-7]$":
-> +    type: object
-> +    $ref: /schemas/leds/common.yaml#
-> +    unevaluatedProperties: false
-> +    properties:
-> +      reg:
-> +        description:
-> +          LED Channel Number. each channel maps to a specific channel group used
-> +          to configure the brightness level of the output pins corresponding to
-> +          the channel.
-> +        enum:
-> +          - 0 # Main Channel (8-bit brightness)
-> +          - 1 # Sub Channel (8-bit brightness)
-> +          - 2 # AUX Channel (4-bit brightness)
-> +          - 3 # Camera Channel, Low-side byte (4-bit brightness)
-> +          - 4 # Camera Channel, High-side byte (4-bit brightness)
-> +          - 5 # Red Channel (4-bit brightness)
-> +          - 6 # Blue Channel (4-bit brightness)
-> +          - 7 # Green Channel (4-bit brightness)
-> +    required:
-> +      - reg
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-
-Where do you use it?
-
-> +    #include <dt-bindings/leds/common.h>
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      led-controller@1b {
-> +        compatible = "adi,ltc3208";
-> +        reg = <0x1b>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        adi,disable-camhl-pin;
-> +        adi,cfg-enrgbs-pin;
-> +        adi,disable-rgb-aux4-dropout;
-> +
-> +        led@0 {
-> +          reg = <0>;
-
-Please list other applicable properties. Otherwise listing all these
-children is pointless - feels deducible from the compatible.
-
-> +        };
-> +
-> +        led@1 {
-> +          reg = <1>;
-> +        };
+Squash it with the next patch.
 
 Best regards,
 Krzysztof
