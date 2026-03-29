@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDF627281D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AAB386578;
 	Sun, 29 Mar 2026 18:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774807360; cv=none; b=FmXZxO1Zt3PdLLCtL51uP9oj/X48V5mC/y3wCZRJ4MGlwwYbhJFcGuEQQ4MZLdrmB2NLeb4IfeCd6+eGs5vndWdVdvmlE/zoAzCghCNWKy3GoOj3HOsJyMYs9DSOt3jVafF6uUqgr5xzHrlQhjdGanBSYpjy9HqR54xHrE0Gtvc=
+	t=1774807361; cv=none; b=rP4dSj9l4Jj/x4llbxsgAToUAv9Vky+OK9Gc3I2q2l3uKXv2r6owAj6Icbb/afuNT+v7os5gTlEN1FcW7zhxNl37WsAsIWu+BljX5ay6+Rw5K9KcWF7925AxjnaIRXL/Q3KaQItcgHgbLxwER6KIdqFPfg3ijUHDwv+34ePWcjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774807360; c=relaxed/simple;
-	bh=e9f+BMD2N11b9ib6ZSQd0dqaXGkaOaje80ss+t/0DIw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s9n0NMEB5LaM8Yr+/yNbfjDZO8NPVaVG08d9wlESgHSAOf2WS64ciBZaIv3UuZzTVyk0Lk6MsLeUXyN8Hd86iI6wzYIfHWSz2OYZZ6n7OATJtcmKIe4v7dX+7iiJu1uDnSUipp6GRZF7JwKD/pVQ9pKyhlzdIsj6wUEKVu/8ctI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGjaSeBo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774807361; c=relaxed/simple;
+	bh=G0FGzYXDDW4R9eGPWkahJ7X/ZrWEJvdqlnXvnLxXd54=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JkevLbs2G4dCoWeN7g/OJZKPYrMaDGNkfTmScIvVpMbPIYMGsVYPQKwL0FeWUz7GP36Ll9DeKGM1sjpemUVeKxvhQrTXrdg7u6m/SeIW6njFq7V6v0KiIqm+ULEiiB0OteI8iWU/d7Nyv0q2TnaAr5X2Ef+GHfasPXbvHGNazwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8Fnndf2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGjaSeBo"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 485E1C116C6;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8Fnndf2"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 704A8C2BCB1;
 	Sun, 29 Mar 2026 18:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1774807360;
-	bh=e9f+BMD2N11b9ib6ZSQd0dqaXGkaOaje80ss+t/0DIw=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=nGjaSeBoXXXuEodbE8MhnZMq9Yy089MQNUvTfroXxFO587/k4eUzeX4BcvTcKkfo4
-	 zNrGbd9uwANGioKjyuAf3WdX9ZsbVECMCTVLANFuxnwVqgmBGuc/8sZ/03lHSDBTQ9
-	 xUIK0Ioj5g+XKg5RQ/YG8oJYYcG1MJCQTtY/iAx6i2HyNITwMlnQaqIF4kpf7MopN2
-	 vy+e4pag7mqWF7kdbB2KLpIe7fNT8fwJTUTe8EOgU9WzMW7udHAmquG03drtfkJeio
-	 Fgxr4a8rz02nJCZutTKB49WFGpAQJcTQtG8IJd2Nd8YstQo1uMS0v5JJ1old1oUB3L
-	 phKbjmXcHdMvg==
+	bh=G0FGzYXDDW4R9eGPWkahJ7X/ZrWEJvdqlnXvnLxXd54=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Y8Fnndf220bgT/tYw+7Ak/AswOVy0Gd3/haR9ABW7nxutHIt0S1zvdwQCh61SiEuj
+	 bo22MEVBEqdEGs3I6ftGkydkhfPIu1DsIacDqBhSRX1VNd6Y7NfVm8CnoRvX1PrPil
+	 udMXNwrJriAA51OmPoWznf9uvlG0hlltd84suuGjBQuIQTBKvbxbGZztT6kEY57hJA
+	 /fHHIex20nxUj61wM6ZkcWeIJ+MmnPRZ63O/tSnq9hbC7hwK/O7RqwfMPa6lWin3b+
+	 IQKSNw0frRlH4wIZ0gjbf2I2h0NLPNO3frVl0CJMs/6nh34Boi8X1Na+Qh4KUDZDKN
+	 1NdsgQosXQwvA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30469F3D60E;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDD7F3D61F;
 	Sun, 29 Mar 2026 18:02:40 +0000 (UTC)
 From: Markus Probst via B4 Relay <devnull+markus.probst.posteo.de@kernel.org>
-Subject: [PATCH v5 0/4] Introduce Synology Microp driver
-Date: Sun, 29 Mar 2026 20:02:14 +0200
-Message-Id: <20260329-synology_microp_initial-v5-0-27cb80bdf591@posteo.de>
+Date: Sun, 29 Mar 2026 20:02:16 +0200
+Subject: [PATCH v5 2/4] ACPI: of: match PRP0001 in of_match_device
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -40,13 +40,9 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACZpyWkC/4XP32rDIBgF8FcJXs/if2Ou9h5jFKufrdDGVFNZK
- X33uXSwUCi7PML5eb4bKpAjFDR0N5ShxhLT2IJ865A72HEPOPqWESNMEU4ULtcxHdP+uj1Fl9O
- 0jWOcoz1iErS3Tu+0MAq19pQhxK9F/vh85AznS/tgfjz++UPXdEkZ1ThfyrxtkzxUDCBFT8GQX
- rqhcrSe9FuhVDwqR/AFWyNN0I4FHcxQ6dLY2QLYpdMpzkNX9Ybg7CT6GXSIZU75ulxe6bLo3yM
- rxQQHFwJ4UEL07n1KZYa08bCYla2d/rXDmmN4b4zigVMnnx2+cih/7fDmWK+sE4pbRuizI1YOI
- 68d0RwiGPd+13Nnxdq53+/fqYwUBCcCAAA=
-X-Change-ID: 20260306-synology_microp_initial-0f7dac7b7496
+Message-Id: <20260329-synology_microp_initial-v5-2-27cb80bdf591@posteo.de>
+References: <20260329-synology_microp_initial-v5-0-27cb80bdf591@posteo.de>
+In-Reply-To: <20260329-synology_microp_initial-v5-0-27cb80bdf591@posteo.de>
 To: Hans de Goede <hansg@kernel.org>, 
  =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
  Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Lee Jones <lee@kernel.org>, 
@@ -66,21 +62,21 @@ Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org,
  rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org, 
  Markus Probst <markus.probst@posteo.de>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4452;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3479;
  i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=e9f+BMD2N11b9ib6ZSQd0dqaXGkaOaje80ss+t/0DIw=;
- b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBpyWk2rUhmZ7TPhVuN6wydRwT1dix2jIFFv5vla
- /grj/FHqNaJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCaclpNhsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMSwyLDIACgkQNHYf+OetQ9LiHw//T9vdWAmurrnC0s622dhpTVgbKSQHzQG
- 5yblR8VQwWCtwnBBEjNhKYBGVX2xzsTH7rgQwHOSvti+wigT56uPtNyboK/6MPIKytjJOI1lSsd
- Aafbg0El+YVHvgt350Wd4QiUFwwRqvJBY+umM1w85+2EIoNPMLLus9Tfa8szuL5w9vsne8+tfv3
- lVKoBTELOZDEShIG40lNJ9WtC63jT+j9FJDkzr/YQmXiCBJMMGNZBqNnckQRSvjx5mwO3TXkRq8
- BMc3wXUvyX3ihe2j7Q08gM9V1wcczqnGpq2DV2cejiqXAooDVicTO8qsmPOqw7vdgRxAqopv6/B
- pKmn0DGrgSY/4fKf6XAjMOifov9Io0UVZDlNnuZxuznz7nzYGpIjD9ixj7BejrmnuUxTKfPVG4a
- 3fkk/cuXTVB+NAIaTjTKLSSE+07UZzPn9HZZWL2Gt2trZ6hP3bwG41k6Jsb96woTWJKIUGYB7hZ
- kiJzosBB6f5MTZH17FnyHMh9zGz9nFI2BALl4TNiG5v0wfqfqqeqExdF9dUs6WR6easfuOD5kgj
- Lt/5KqF7VuOr4HmU6AWz6jaYsYD+al/akn5Rnz8LfqOzcLRL6jjprgK37irs+npw2ZZsjKW9cK3
- WR0NfJLntEeHN+wRyhvUprKHWV6Z/QJOJvgccX43WEigzODILB5w=
+ bh=HMCBaJI1P1YqAkteFmwT2ODjJk1KjOq1Yh0ug86s1zs=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBpyWk64tit0EV5IRL2Ka6xmKM30y1j9EVJH02Ji
+ fJerO0lS5+JAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCaclpOhsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMSwyLDIACgkQNHYf+OetQ9J7HhAAjkadI0ejYpWk+cSPgdRrBvZshABIbgZ
+ GQxgme4t6lF1yir06RFgZ4DX9OiuYb3uNNb9sEML4Rc+pmpQMqj49ucyUWhmJ8Ck8GsFJZy3uz1
+ x52L159LhE7fnrRpft71UTe9QuN7KbK8hVW3l/HYQOpa+bh0K1s/dNcH8G7JMyJk6cLX9Dgu/uJ
+ R1VWPjOcCyM+wQdZ9Nsx27sUInClzLYS3IkFFIF0aCm5K0X4GdsCQOzsNJHVEdNMQwtTfKSBZKo
+ XDR1D46AGw8atrYG/Lz18Q0nKzjTnYrQimTiv2SkzON6c9z1o/OFC7jQNH1ewKTy8+pQ0omYHUN
+ 2QgE0iLkoSVJxW6CLIQd8r1V+wOurWApv0dI01lzIa28uNrn1uxLUCmtC3ugdxoudexVj3XR5xZ
+ F0bbHkrm+1lVIA6cK46JaFCbJ/eFKCOx28q9uzRmHcCGnRuuItmtogtRiVVf5lIy+6uFp491/0l
+ yFsIhX27UgnOEMGPdyEPKi9eskCdpM+F6Uzjhf+MIZxRB1bK5vtJV5mpKgJ5r+/DtKqCx+1+WGb
+ VhtDnr91ra0PsNEKzqJoHjdfFZrZjDeQo5GReIeWr1BVPUVqHU7QfnotHPItj6dhzcSP3LyMIB3
+ Dhd4hoPqw/HnYDOvAxwf5IhSzTTfCw/RQ7GuTNwZTmF5Gs2918pU=
 X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
  fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
 X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
@@ -88,96 +84,104 @@ X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
 X-Original-From: Markus Probst <markus.probst@posteo.de>
 Reply-To: markus.probst@posteo.de
 
-Synology uses a microcontroller in their NAS devices connected to a
-serial port to control certain LEDs, fan speeds, a beeper, to handle
-proper shutdown and restart, buttons and fan failures.
+From: Markus Probst <markus.probst@posteo.de>
 
-This patch series depends on the rust led abstraction [1] and the rust
-serdev abstraction [2].
+Export `acpi_of_match_device` function and use it to match for PRP0001
+in `of_match_device`, if the device does not have a device node.
 
-This is only a initial version of the driver able to control LEDs.
-The following rust abstractions would be required, to implement the
-remaining features:
-- hwmon (include/linux/hwmon.h)
-- input (include/linux/input.h)
-- sysoff handler + hardware protection shutdown (include/linux/reboot.h)
-
-[1] https://lore.kernel.org/rust-for-linux/20260329-rust_leds-v13-0-21a599c5b2d1@posteo.de/
-[2] https://lore.kernel.org/rust-for-linux/20260313-rust_serdev-v3-0-c9a3af214f7f@posteo.de/
+This fixes the match data being NULL when using ACPI PRP0001, even though
+the device was matched against an of device table.
 
 Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
-Changes in v5:
-- add esata led support
-- use different compatible for each model
-- add visibility modifier to of_device_table macro
-- fix match data missing when using PRP0001
-- Link to v4: https://lore.kernel.org/r/20260320-synology_microp_initial-v4-0-0423ddb83ca4@posteo.de
+ drivers/acpi/bus.c   |  7 ++++---
+ drivers/of/device.c  |  9 +++++++--
+ include/linux/acpi.h | 11 +++++++++++
+ 3 files changed, 22 insertions(+), 5 deletions(-)
 
-Changes in v4:
-- convert to monolithic driver and moved it into drivers/platform
-- removed mfd rust abstraction
-- moved dt-bindings to embedded-controller
-- Link to v3: https://lore.kernel.org/r/20260313-synology_microp_initial-v3-0-ad6ac463a201@posteo.de
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index 2ec095e2009e..cd02f04cf685 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -831,9 +831,9 @@ const struct acpi_device *acpi_companion_match(const struct device *dev)
+  * identifiers and a _DSD object with the "compatible" property, use that
+  * property to match against the given list of identifiers.
+  */
+-static bool acpi_of_match_device(const struct acpi_device *adev,
+-				 const struct of_device_id *of_match_table,
+-				 const struct of_device_id **of_id)
++bool acpi_of_match_device(const struct acpi_device *adev,
++			  const struct of_device_id *of_match_table,
++			  const struct of_device_id **of_id)
+ {
+ 	const union acpi_object *of_compatible, *obj;
+ 	int i, nval;
+@@ -866,6 +866,7 @@ static bool acpi_of_match_device(const struct acpi_device *adev,
+ 
+ 	return false;
+ }
++EXPORT_SYMBOL_GPL(acpi_of_match_device);
+ 
+ static bool acpi_of_modalias(struct acpi_device *adev,
+ 			     char *modalias, size_t len)
+diff --git a/drivers/of/device.c b/drivers/of/device.c
+index f7e75e527667..128682390058 100644
+--- a/drivers/of/device.c
++++ b/drivers/of/device.c
+@@ -11,6 +11,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
++#include <linux/acpi.h>
+ 
+ #include <asm/errno.h>
+ #include "of_private.h"
+@@ -26,8 +27,12 @@
+ const struct of_device_id *of_match_device(const struct of_device_id *matches,
+ 					   const struct device *dev)
+ {
+-	if (!matches || !dev->of_node || dev->of_node_reused)
+-		return NULL;
++	if (!matches || !dev->of_node || dev->of_node_reused) {
++		const struct of_device_id *id = NULL;
++
++		acpi_of_match_device(ACPI_COMPANION(dev), matches, &id);
++		return id;
++	}
+ 	return of_match_node(matches, dev->of_node);
+ }
+ EXPORT_SYMBOL(of_match_device);
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 4d2f0bed7a06..1cf23edcbfbb 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -736,6 +736,10 @@ const struct acpi_device_id *acpi_match_acpi_device(const struct acpi_device_id
+ const struct acpi_device_id *acpi_match_device(const struct acpi_device_id *ids,
+ 					       const struct device *dev);
+ 
++bool acpi_of_match_device(const struct acpi_device *adev,
++			  const struct of_device_id *of_match_table,
++			  const struct of_device_id **of_id);
++
+ const void *acpi_device_get_match_data(const struct device *dev);
+ extern bool acpi_driver_match_device(struct device *dev,
+ 				     const struct device_driver *drv);
+@@ -965,6 +969,13 @@ static inline const struct acpi_device_id *acpi_match_device(
+ 	return NULL;
+ }
+ 
++static inline bool acpi_of_match_device(const struct acpi_device *adev,
++					const struct of_device_id *of_match_table,
++					const struct of_device_id **of_id)
++{
++	return false;
++}
++
+ static inline const void *acpi_device_get_match_data(const struct device *dev)
+ {
+ 	return NULL;
 
-Changes in v3:
-- remove `default n` from Kconfig entry, as n is the default already.
-- select RUST_SERIAL_DEV_BUS_ABSTRACTIONS in Kconfig
-- add mfd rust abstraction
-- split core and led parts into their own driver. It should now be considered a
-  MFD device.
-- split led part of dt binding into its own file
-- Link to v2: https://lore.kernel.org/r/20260308-synology_microp_initial-v2-0-9389963f31c5@posteo.de
-
-Changes in v2:
-- fix missing tabs in MAINTAINERS file
-- remove word binding from patch subject
-- add missing signed-off-by
-- add missing help entry in Kconfig
-- add missing spdx license headers
-- remove no-check{,-cpu}-fan properties from the dt-bindings and replace
-  them with the check_fan module parameter
-- use patternProperties for leds in dt-bindings
-- license dt-binding as GPL-2.0-only OR BSD-2-Clause
-- move driver from staging tree into mfd tree and mark it as work in
-  progress inside Kconfig
-- only register alert and usb led if fwnode is present
-- Link to v1: https://lore.kernel.org/r/20260306-synology_microp_initial-v1-0-fcffede6448c@posteo.de
-
----
-Markus Probst (4):
-      dt-bindings: embedded-controller: Add synology microp devices
-      ACPI: of: match PRP0001 in of_match_device
-      rust: add visibility to of_device_table macro
-      platform: Add initial synology microp driver
-
- .../synology,ds923p-microp.yaml                    |  65 +++++
- MAINTAINERS                                        |   6 +
- drivers/acpi/bus.c                                 |   7 +-
- drivers/of/device.c                                |   9 +-
- drivers/platform/Kconfig                           |   2 +
- drivers/platform/Makefile                          |   1 +
- drivers/platform/synology_microp/Kconfig           |  13 +
- drivers/platform/synology_microp/Makefile          |   3 +
- drivers/platform/synology_microp/TODO              |   7 +
- drivers/platform/synology_microp/command.rs        |  55 ++++
- drivers/platform/synology_microp/led.rs            | 276 +++++++++++++++++++++
- drivers/platform/synology_microp/model.rs          | 171 +++++++++++++
- .../platform/synology_microp/synology_microp.rs    |  54 ++++
- include/linux/acpi.h                               |  11 +
- rust/kernel/of.rs                                  |   5 +-
- 15 files changed, 678 insertions(+), 7 deletions(-)
----
-base-commit: d1d81e9d1a4dd846aee9ae77ff9ecc2800d72148
-change-id: 20260306-synology_microp_initial-0f7dac7b7496
-prerequisite-change-id: 20251217-rust_serdev-ee5481e9085c:v3
-prerequisite-patch-id: 52b17274481cc770c257d8f95335293eca32a2c5
-prerequisite-patch-id: eec47e5051640d08bcd34a9670b98804449cad52
-prerequisite-patch-id: f24b68c71c3f69371e8ac0251efca0a023b31cc4
-prerequisite-patch-id: 3dfc1f7e5ecd3e0dd65d676aeb16f55260847b25
-prerequisite-change-id: 20251114-rust_leds-a959f7c2f7f9:v13
-prerequisite-patch-id: 818700f22dcb9676157c985f82762d7c607b861e
-prerequisite-patch-id: b15ffa7d95d9260151bfb116b259c4473f721c82
-prerequisite-patch-id: 8c47e0d107530f577a1be0b79f8ee791f95d3cbe
+-- 
+2.52.0
 
 
