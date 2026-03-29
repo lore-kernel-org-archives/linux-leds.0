@@ -1,41 +1,43 @@
 Received: from szelinsky.de (szelinsky.de [85.214.127.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AE52AD00;
-	Sun, 29 Mar 2026 15:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025D237AA9D;
+	Sun, 29 Mar 2026 15:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.127.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774798326; cv=none; b=pgGsAe6GLe5bRjbxRM94ZBi3a0+m5HM3u+CPcIlyqXZTd92Hs3JbKwIeGJPyDsi30VSkIxfSKROo2G3Il18jgv6aLc2CG+F4FlNmhfNXHJWje01i44NP8AUxWy4NDM5Pf+PGA3kXhM5F8MiHPmqb964livqP4tIzbRgZYoRyO4k=
+	t=1774798328; cv=none; b=aqZQ2679Y2G+mTyClnNEZKWQ8z2q70JwZJWy5tLC+W2LjjI42j6neDoAO2Kf8igjYJ9pHTCi3+EkAX1JCBTqEQ/TDNIuJL1QHaugHm1U96+k90QepPUmNlvES6F20/vTFj6z2uKF6MoQMzdc5lYyQFNtRl7oNH377suRCccU714=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774798326; c=relaxed/simple;
-	bh=PYE5OK7z7Jdd7yR96lM9fSnbK9gChfg3ShSKL5aGE6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m4MQ0tQ1cgKI57Dp0qJ1r6gilTTWjkuTBzmJ+bhX9ZFM/+hlMTJ9NHd9Y+hSFUjyg1len+MgsHHi444oqGH3Za7x08TECIZzUu5BhmgxZbEK39p3RRaYNY6bRIVt+x5Dpcby4DzhG/Vv86GFinUE0AByT1/oZ1He7iZon0AYdWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de; spf=pass smtp.mailfrom=szelinsky.de; dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b=kVKPlvN8; arc=none smtp.client-ip=85.214.127.56
+	s=arc-20240116; t=1774798328; c=relaxed/simple;
+	bh=pQEl61Ld355JdFpBhzD7t5kMB8wSVfZ7RjLG69EOToE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pUPlVy+w3xsAdMTp80DyQ73zBlbhQbmMArt5DdLJOq2A8j+MX1FK7M7FlGxN0juNBhwA8ST27wCeIdw0bsPKheccx1PmphM3ub1WPPkwRCyNoU+Ot79JWJfNJIRaFrDoN/PvnlC7nqDeBOYRnpmQDFEWyQLp4a/iS85T4UcWLYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de; spf=pass smtp.mailfrom=szelinsky.de; dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b=SJ8oniBE; arc=none smtp.client-ip=85.214.127.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szelinsky.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b="kVKPlvN8"
+	dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b="SJ8oniBE"
 Received: from localhost (localhost [127.0.0.1])
-	by szelinsky.de (Postfix) with ESMTP id 4D56FE83AA3;
-	Sun, 29 Mar 2026 17:31:56 +0200 (CEST)
+	by szelinsky.de (Postfix) with ESMTP id 2E003E83AA4;
+	Sun, 29 Mar 2026 17:32:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=szelinsky.de;
-	s=mail; t=1774798316;
+	s=mail; t=1774798325;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cISj67w4spQ8WTae0MkZOWZQZ+Y8dFzeDvusrBQfhFs=;
-	b=kVKPlvN8z82NJLTxn9/GUGYf0Q1aRQTxll5j/WHSrCTABRpuvuySR6MT4n3jJYWnvF0r2A
-	Au8CM4ei7BNMRoFhAF3VzhtaCMNMUhljPb6oVCgxAE/c/pqE8kg2fsGbEsQ4Cy3baZTUZ3
-	haRPGKfHv1SozA+WfL/x/cVd/p8JWuSzjZFe2TAm55kF5D8c42K5l3iXsQXDDCZXH6NRrL
-	tZfyvRqJ/5xOPvNCz9dMPWdmRJTppKJ9epjAfGN+RDuw3AF64Bu/hR82yNQog0AL7Fxbsi
-	8ob+6orzxlus5nekb/oXkGxFb/upcIKW5I39GWMfyhsGnAHHAiJFHEi0onVK3g==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4K6WqSAjwh3NL8zDobckyek5utyu1AveOlGlUj/60rk=;
+	b=SJ8oniBEkVa3PRsapaiilYUXhiNQda9jf/ruaEi0njEOdKzBvKJ/JThPd+kiHkgE3KVfdb
+	v8pL02NtDyWP/gDWb3T0RkAxa7xeBtTjqd4ymCffWzEkErB4OYrzSNjMuKNKDDLlQTjWpu
+	k5RkOY8mYlpCmgiSL3usiMblRzYIl7rFXPD27cLSyC+hiZQFueXJ94ZhGpO60aN/Xstb8q
+	5xmQHGD72UNjjtNJ2Fq40r0XcAAMrAK1bcQSzYXcsq8OqLiRuSlxylreQzWe+7pKOdshx8
+	tK1bqcpkc8LlAfPV2U1dos3NqKpW2iXu+51NopIrA2otJ2qyQfkjmaYIC7S1MA==
 X-Virus-Scanned: Debian amavisd-new at szelinsky.de
 Received: from szelinsky.de ([127.0.0.1])
 	by localhost (szelinsky.de [127.0.0.1]) (amavisd-new, port 10025)
-	with ESMTP id v9mje7p7lZZu; Sun, 29 Mar 2026 17:31:56 +0200 (CEST)
+	with ESMTP id Kjin04ifB6pW; Sun, 29 Mar 2026 17:32:05 +0200 (CEST)
 Received: from p14sgen5.fritz.box (dslb-002-205-089-102.002.205.pools.vodafone-ip.de [2.205.89.102])
 	by szelinsky.de (Postfix) with ESMTPSA;
-	Sun, 29 Mar 2026 17:31:55 +0200 (CEST)
+	Sun, 29 Mar 2026 17:32:04 +0200 (CEST)
 From: Carlo Szelinsky <github@szelinsky.de>
 To: Oleksij Rempel <o.rempel@pengutronix.de>,
 	Kory Maincent <kory.maincent@bootlin.com>
@@ -53,95 +55,49 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
 	linux-kernel@vger.kernel.org,
 	linux-leds@vger.kernel.org,
 	Carlo Szelinsky <github@szelinsky.de>
-Subject: [PATCH net-next v3 0/3] net: pse-pd: add poll path and LED trigger support
-Date: Sun, 29 Mar 2026 17:31:21 +0200
-Message-ID: <20260329153124.2823980-1-github@szelinsky.de>
+Subject: [PATCH net-next v3 1/3] dt-bindings: net: pse-pd: add poll-interval-ms property
+Date: Sun, 29 Mar 2026 17:31:22 +0200
+Message-ID: <20260329153124.2823980-2-github@szelinsky.de>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260329153124.2823980-1-github@szelinsky.de>
+References: <20260329153124.2823980-1-github@szelinsky.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Big thanks to Kory, Oleksij and Krzysztof for all the helpful feedback
-on v2 — really appreciate the time you put into reviewing this.
-I learned a lot!
+Add the optional poll-interval-ms property for PSE controllers that
+use poll-based event detection instead of interrupts. Defaults to
+500ms if not specified.
 
-This series adds poll-based event detection and LED trigger support
-to the PSE core subsystem.
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+Signed-off-by: Carlo Szelinsky <github@szelinsky.de>
+---
+ .../devicetree/bindings/net/pse-pd/pse-controller.yaml    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Patches 1-2 introduce the poll path independently of LED support,
-so it can be tested in isolation on boards with and without IRQ
-configured.
-
-Patch 3 adds LED triggers that hook into the shared event handling
-path introduced by patch 2.
-
-Note: pse_handle_events() and the existing pse_isr() pass notifs_mask
-as a single unsigned long, which limits the bitmask to BITS_PER_LONG
-PI lines. This is a pre-existing constraint in the IRQ path and is
-sufficient for all current PSE controllers (max 48 ports vs 64-bit
-unsigned long), but may need to be converted to DECLARE_BITMAP() if
-future hardware exceeds this limit.
-
-Changes since v2:
-- Based on net-next/main, added net-next subject prefix
-- Added --base tree information
-- Added CC for devicetree list and DT maintainers
-- Collected Reviewed-by from Kory Maincent on patch 1/3
-- Fixed build error when CONFIG_LEDS_TRIGGERS is disabled:
-  moved LED registration before list_add(), removing the
-  pcdev->pi_led_trigs = NULL assignment on conditionally
-  compiled struct member (reported by kernel test robot)
-- Fixed use-after-free on device unbind: poll work is now
-  cancelled via devm_add_action_or_reset() to ensure correct
-  devres teardown ordering (poll_work cancelled before
-  poll_notifs is freed)
-- Used system_freezable_wq for poll worker to prevent hardware
-  access during system suspend
-- Added PoDL power status and admin state checks to LED triggers
-  so they work for both C33 and PoDL controller types
-- Used dev_name(dev) for LED trigger names to ensure uniqueness
-  across multiple PSE controllers (of_node->name can be generic)
-- Added initial LED state query at registration so already-active
-  ports are reflected immediately
-- Added pse_led_update() calls in regulator enable/disable paths
-  so ethtool admin state changes are reflected in LEDs
-- Moved LED trigger registration before list_add() to prevent
-  race where IRQ/poll could invoke pse_led_update() on partially
-  initialized triggers
-
-Changes since v1:
-- Split single patch into 3 separate patches
-- Extracted pse_handle_events() and devm_pse_poll_helper() as a
-  standalone poll path (patches 1-2), testable without LED code
-- Added DT binding for poll-interval-ms as a separate patch
-- Renamed led-poll-interval-ms to poll-interval-ms for generic use
-- Fire LED triggers from the notification path rather than a
-  separate poll loop
-
-Tested on Realtek RTL9303 with HS104 PoE chip, poll path only
-(without IRQ configured). Verified PD connect/disconnect notifications
-and LED trigger state changes.
-
-Link: https://lore.kernel.org/all/20260323201225.1836561-1-github@szelinsky.de/
-Link: https://lore.kernel.org/all/20260314235916.2391678-1-github@szelinsky.de/
-
-Carlo Szelinsky (3):
-  dt-bindings: net: pse-pd: add poll-interval-ms property
-  net: pse-pd: add devm_pse_poll_helper()
-  net: pse-pd: add LED trigger support via notification path
-
- .../bindings/net/pse-pd/pse-controller.yaml   |   8 +
- drivers/net/pse-pd/pse_core.c                 | 298 ++++++++++++++++--
- include/linux/pse-pd/pse.h                    |  34 ++
- 3 files changed, 309 insertions(+), 31 deletions(-)
-
-
-base-commit: ced629dc8e5c51ff2b5d847adeeb1035cd655d58
+diff --git a/Documentation/devicetree/bindings/net/pse-pd/pse-controller.yaml b/Documentation/devicetree/bindings/net/pse-pd/pse-controller.yaml
+index cd09560e0aea..329d020f054c 100644
+--- a/Documentation/devicetree/bindings/net/pse-pd/pse-controller.yaml
++++ b/Documentation/devicetree/bindings/net/pse-pd/pse-controller.yaml
+@@ -27,6 +27,14 @@ properties:
+       subnode. This property is deprecated, please use pse-pis instead.
+     enum: [0, 1]
+ 
++  poll-interval-ms:
++    description:
++      Polling interval in milliseconds for PSE controllers using
++      poll-based event detection instead of interrupts. Used when the
++      controller lacks IRQ support or the IRQ line is not wired.
++    default: 500
++    minimum: 50
++
+   pse-pis:
+     type: object
+     description:
 -- 
 2.43.0
 
