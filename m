@@ -1,117 +1,160 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1537E387345;
-	Sun, 29 Mar 2026 18:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77421377EBC;
+	Mon, 30 Mar 2026 06:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774807361; cv=none; b=QbVVhA9WoYdL/woF4ZY348gcyiXISIFhZfgxmAnTyZnJJl1MMgOVaPrx5D7ODqBzRs37RCcbx7jHLQd8m1SrAuNN/u+nelqzvQXxOS5NRzkyXeeHHTMOLpm6teu09K7ga3yAt1u2foX+gkmvw2npKBXGxNbZgC3lQerS6n2MF1I=
+	t=1774853482; cv=none; b=j4sR/OMZEcd1ir+ZgT5Cegi0heJzLtmZclzgHtmzIYNOURXquK7KvoA3YNVvgWwxY8sVzcBjtdKDbcSVlpHfajmkHgIWTN1B7NlicrrUVWu7jJgnEaLvfJLEc4QhXMn4mEBsEi2dOJv3/sE0XeLAGnp/gsP9XUGpN9R/mgpnsD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774807361; c=relaxed/simple;
-	bh=FJhC27+7zeXo83uPgrYf71tU8fzeZWxPfJuQirmjthA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FdnBfibrOv+IRYkBGJ1EuWhVnw+lWyPimrAs3p0hjZttfYF1tpsv/BOEJBiggUfzhYB9gwy/je59uOu7Hp1GC0t9lg1V64k5Z0GckGMOyj4Ma42d1Rw0gycUcN6EehqHkg5CQWxWndA3xqg6SZmYQIsalqucoZnGtsEd0PDrblA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDyEDx6g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774853482; c=relaxed/simple;
+	bh=gQyUyl8YD6k4B58YpRgvURamdz7rvzjMLHIryhZuXsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ogXV3r4p7TO/fZkFqhxXrSlw0ETQMXtayu8kDaykpFfnFyy4JYferKydd8VCFGaeMDk5oPT1pdJqerQPwKMv9ilF/UMKDIvbSnbToRbKAEjTITHXs4mjoqIyAgKdoxSksl2aDicD8wIfnzzzDcV6t2MDwNfLPiqomPUJP1dd4WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctYOedid; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDyEDx6g"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 93DE1C2BCB2;
-	Sun, 29 Mar 2026 18:02:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctYOedid"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD13C4CEF7;
+	Mon, 30 Mar 2026 06:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774807360;
-	bh=FJhC27+7zeXo83uPgrYf71tU8fzeZWxPfJuQirmjthA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VDyEDx6gwxhqYOjuDddQZYEe2HcnYWgXwryfk/pwFuHIpU2e0an2WXC3PMcBaXilk
-	 8oZldrp43Qbg3BaZaJavhip72k8p6kKf6cj/1dHaiSqbOxmLv2lUBuB5/dwBtgpaYU
-	 k1yG0ZLJ3adsTyfaCuFIglJODiu1joz/1PZ/WSQ4WzJxnZhqMSz6GEQR3hSgZ/NrMP
-	 fY/GTEKJbEreqnbe1f65EJ28Ryj4dBF812/87zkuG7cI/hckyljOFvPmPTKFqp+c5S
-	 3Nc5dIa0dYHcdl8qHFSBNR2TVnoZMFC+vnvGInUndzXkozStM3B2Mr/8c4ZLCnWsNX
-	 nHkWY35A2Id0g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A2DF3D60E;
-	Sun, 29 Mar 2026 18:02:40 +0000 (UTC)
-From: Markus Probst via B4 Relay <devnull+markus.probst.posteo.de@kernel.org>
-Date: Sun, 29 Mar 2026 20:02:17 +0200
-Subject: [PATCH v5 3/4] rust: add visibility to of_device_table macro
+	s=k20201202; t=1774853482;
+	bh=gQyUyl8YD6k4B58YpRgvURamdz7rvzjMLHIryhZuXsc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ctYOedidqrD1pdhir1bUbwHkoStlyL+6xQPN479c+xckBPFBt5hmRkjd3FusIeRcz
+	 VOUpM7U99Jbz5CD4HjBaXEOsNB5OGGlgGKGEFwarBhClz/r3GIxL+2MvitM8D/bCtc
+	 CemmIjz9wvYp4kG+enD/hKKPjTkk9n/F7b1DzIFPCqYS+igXU/CimDYpZzmuF96aK3
+	 gPxgWTVyRZsnvZYdsg14cSGzH1GWToR7bNywnyH+obUo9N4aVFx5bWiEvdO+XpeuCe
+	 HA6HO4BRkg924/Rppai6TV1CYY/ladN7mlQb5TYaf12uh+kS+mpYV6cYDPjm1Bh2QH
+	 VzM3wvUh2xkig==
+Message-ID: <6d2fb01a-216b-4f51-8a26-527d724002d7@kernel.org>
+Date: Mon, 30 Mar 2026 08:51:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260329-synology_microp_initial-v5-3-27cb80bdf591@posteo.de>
-References: <20260329-synology_microp_initial-v5-0-27cb80bdf591@posteo.de>
-In-Reply-To: <20260329-synology_microp_initial-v5-0-27cb80bdf591@posteo.de>
-To: Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] platform: Add initial synology microp driver
+To: markus.probst@posteo.de, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
  Saravana Kannan <saravanak@kernel.org>
-Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org, 
- Markus Probst <markus.probst@posteo.de>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1069;
- i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=iV2l67bhv+wCuyTeTqB9BVUr9sNOMqsg1qsymLG7EsM=;
- b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBpyWk80jz8hwYduy2NVO16Nw+QmCcnfOUz4un+D
- flz7346mdyJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCaclpPBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMSwyLDIACgkQNHYf+OetQ9L1IhAAmOHqW05kUkziFxXtscbD5JGUieX/6Xe
- ONLSKTl/BtzYFwSZZOnvkhewlw5jN/37XUDGkFdu8ol6LY8XRd5hff+AV3JpM0oclvwbMOQABRc
- 4gi67cvMB8iOGnIRN1/YcJl4NLbbyfYkugxE7CSF8wwnhRdOTzK7lyBLVPQUMg7OUpcijlEn92w
- 85BW3OVkrRd19axOEFPR+Rkj0fOncuHqXiE5LWxmhrVJV5FPB/ylysA2sWHzZ9Y93ozYaF00iIX
- 0Lbjeg8TkNnqesjS6D104WW7rBSMeV40f5cQr+RWqid3jDvc0h20sM0Aj73FDG+C5pwgI/DIaIV
- T+joE6ZUQb+GaVBLRjBlxmYk/rDzfQYuS6qhLd/DFq15Qd9S6V++H4kUJfTl0dZLfzAgmJpJE0y
- saDHowfRam5yf2gSWRPbnYOL0PNDaivmi6ppJG4sdcb7OlHiYTJ83meAJTfoIYY8gu8h2sKwH3p
- jtfjoOj11bGwZMQubldnHPl10SyA6ABxrqB2RzX2CzV7BLEvWxOgenRXq0uXeVXaF8Gikp+AwRL
- qsqVm8hkZpDXLiQIUK+ShWyZlibpj34PM2u7xg5x0MPOEcYmcta2rfgrZX2NuxipHvJtabHUEeN
- OCJE7QzLwafk3BsbFSqdnzgFvEXMeDIkZhQBggpkMJmKaNoV9hzk=
-X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
- fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
-X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
- auth_id=680
-X-Original-From: Markus Probst <markus.probst@posteo.de>
-Reply-To: markus.probst@posteo.de
+Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20260329-synology_microp_initial-v5-0-27cb80bdf591@posteo.de>
+ <20260329-synology_microp_initial-v5-4-27cb80bdf591@posteo.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260329-synology_microp_initial-v5-4-27cb80bdf591@posteo.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Markus Probst <markus.probst@posteo.de>
+On 29/03/2026 20:02, Markus Probst via B4 Relay wrote:
+> +
+> +kernel::of_device_table!(
+> +    pub(crate) OF_TABLE,
+> +    MODULE_OF_TABLE,
+> +    Model,
+> +    models![
+> +        apollolake @ [
+> +            ds918p,
+> +        ],
+> +        evansport @ [
+> +            ds214play,
+> +        ],
+> +        geminilakenk @ [
+> +            ds225p.led_usb_copy(),
+> +            ds425p,
+> +        ],
+> +        pineview @ [
+> +            ds710p.led_esata(),
+> +            ds1010p.led_alert(Color::Orange),
+> +        ],
+> +        r1000 @ [
+> +            ds923p,
+> +            ds723p,
+> +            ds1522p,
+> +            rs422p.led_power(Color::Green),
+> +        ],
+> +        r1000nk @ [
+> +            ds725p,
+> +        ],
+> +        rtd1296 @ [
+> +            ds118,
+> +        ],
+> +        rtd1619b @ [
+> +            ds124,
+> +            ds223.led_usb_copy(),
+> +            ds223j,
+> +        ],
+> +        v1000 @ [
+> +            ds1823xsp,
+> +            rs822p.led_power(Color::Green),
+> +            rs1221p.led_power(Color::Green),
+> +            rs1221rpp.led_power(Color::Green),
+> +        ],
+> +        v1000nk @ [
+> +            ds925p,
+> +            ds1525p,
+> +            ds1825p,
+I don't see any compatible strings here. Actually, nowhere in the
+driver. If that's how you write Rust drivers then NAK. Compatibles must
+be greppable. Not only for humans but also for ABI check.
 
-Add visibility argument to macro to allow defining an of device table in
-a different module than the driver, which can improve readability.
-
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
----
- rust/kernel/of.rs | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index 58b20c367f99..a0de98a23416 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -53,8 +53,9 @@ pub const fn new(compatible: &'static CStr) -> Self {
- /// Create an OF `IdTable` with an "alias" for modpost.
- #[macro_export]
- macro_rules! of_device_table {
--    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
--        const $table_name: $crate::device_id::IdArray<
-+    ($table_vis:vis $table_name:ident, $module_table_name:ident, $id_info_type: ty,
-+        $table_data: expr) => {
-+        $table_vis const $table_name: $crate::device_id::IdArray<
-             $crate::of::DeviceId,
-             $id_info_type,
-             { $table_data.len() },
-
--- 
-2.52.0
-
-
+Best regards,
+Krzysztof
