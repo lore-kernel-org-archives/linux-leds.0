@@ -1,60 +1,59 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4EB381AEA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B3A381B0B;
 	Tue, 31 Mar 2026 18:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774981861; cv=none; b=Qjrlb7GQ8dJ75DRHmsDJ75mmU4pJ5EZSgvS+AqnTlW0n5c2ZFKLyhNSmWUQzlk7PYVq4wJgGHcCEHwIveKMuQ0zjd3C9inS6Y2B+x1AgIGzxReo9I2CGjKUovZ+bq34skJ54yKQK4qdG82Dh3ejvJnudgtAIGezFKJd2JI/9FsE=
+	t=1774981862; cv=none; b=Y0N8hjJ/2Pu5pM4cS/8qEdeVqH/dhT9MPwBpyA/nbd51DJjeCD+reeBnLylmscgwD9eamV/1PzF+zqxJUDQAMev4STplOVLQ/sIDdqM5fyZK8uUkhdrH+0jj08iYKPom6gQaIEX5HuHxP7T7XXxdRBZBtrKvY4+lPKWpfqoEyTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774981861; c=relaxed/simple;
-	bh=522hjp91dw7JR1XgDkg2FMoJVtGsvvmKWbIFx5YybA8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oAmt8yljfL2n8muO3Ofoyc9CzBrSlk2pFlvnDPlw4mV1AonlW/8wJuxnkeedcBjjZAbAQs+2401+aETXgfcta6doniZ7xTDVlSh+jC3nhWcZIBY62i7/6DgG4m3jZHpLP1TIm7Dhe+wL+Bc9aPvjNZMT9mHkHD1u6q13UCBDYDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eFdVc/BN; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1774981862; c=relaxed/simple;
+	bh=r++qpR0g60SJxWDF3lstz49v1bI87IncDSutxNWST+A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VGXN0x2uUi1sLxrta0vgmt3ZZB2wIDfxqO4G1NVnrWnFDh1xw6ZY37rEI/CD4jTDERDFcyExP6bkxodxvU0A5NQpGaPPnZlDXbaVRSa7W6SFxGomJmsg3o4GkZGnSuKYrhfXPpU3qvZiQoOexEysUNlP/9aZcUIJEaLBGs8PyCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PGZHGPq0; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eFdVc/BN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PGZHGPq0"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1774981860; x=1806517860;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=522hjp91dw7JR1XgDkg2FMoJVtGsvvmKWbIFx5YybA8=;
-  b=eFdVc/BNLgijBqV1ez4+6N+R28526sIwkNSxcY7a2dM/WpKfGdb12N7u
-   qTx0bhzNA05cLR6GG9yFW2f5Nf1WvIuzOgrT+tGPBMQ+0bSEsbd1Tv09U
-   0DqaKL+cR3A83UDNZW0QyJI7A3LgX+ImgzuoGYKDZ7om5sB5uA7iHiUBP
-   +DFovk1KuB6i1529KI6yVxCdLP+ZBOnB3fodPxwFVOl7thzvZ4hfen/8L
-   mGfFSP588JukijvPl7l+fe35o0ai76gPORe/qnpI4ubIE79Tjg0qZUJR+
-   D5eDOAwlkhAF9GTgyklHnHURpCJJHePs/YjaeuY+p7VNKOrltHqkXfSLc
-   Q==;
-X-CSE-ConnectionGUID: 5OKx+2BXRPaEihJgGQe1cw==
-X-CSE-MsgGUID: vlkvbuwlSJ2jN0Lg4D+5lA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11745"; a="101459634"
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=r++qpR0g60SJxWDF3lstz49v1bI87IncDSutxNWST+A=;
+  b=PGZHGPq0exrYXdBiwoJrUsQqc6UBz7BqE4vR7iWowVeM23yrvqbS4wEh
+   903ys7q2maqx3Eqd+Lm3WQcr0XzweyCJprsyaHvIkjSeTUVrnChykiUP4
+   ZX508LelSqfBgMC3bhb7U10XeXX0OxabAIro3qGmXuUN1ZHqz9P9a0rgn
+   9V0787BRcJXRvfC1V+RYE1EtrMSxW5IxnMvSpkxvPs7lSiLP1lIkw4UB0
+   EOBEX5BpoGnax1JA00lyKSt1cf5wD0i+tu/sqftIzbWszEHhhLKr06KQ+
+   gHsEob2QrSPy1kAJdj4ZC6VSiOAMMBce+ppP47cgwWZgA5IGTRJBZbLH5
+   g==;
+X-CSE-ConnectionGUID: kLjMAZJpTH+PUZ2Cf9jOXw==
+X-CSE-MsgGUID: uQDIJOERQzCmWoryN3Ak1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11745"; a="75891191"
 X-IronPort-AV: E=Sophos;i="6.23,152,1770624000"; 
-   d="scan'208";a="101459634"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2026 11:30:59 -0700
-X-CSE-ConnectionGUID: QTJ0liTJQ9K4rZgkNk7jIw==
-X-CSE-MsgGUID: o45z7g0fQrSV+ZRFkIfwGw==
+   d="scan'208";a="75891191"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Mar 2026 11:30:59 -0700
+X-CSE-ConnectionGUID: YpcIbbPfSfS25PSsOJVt8Q==
+X-CSE-MsgGUID: uJFpVrnARKmRp+9/PxqkMw==
 X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,152,1770624000"; 
+   d="scan'208";a="225619059"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa003.fm.intel.com with ESMTP; 31 Mar 2026 11:30:57 -0700
+  by orviesa010.jf.intel.com with ESMTP; 31 Mar 2026 11:30:58 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 63CF798; Tue, 31 Mar 2026 20:30:56 +0200 (CEST)
+	id 612DA95; Tue, 31 Mar 2026 20:30:56 +0200 (CEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/2] leds: class: Make led_remove_lookup() NULL-aware
-Date: Tue, 31 Mar 2026 20:28:28 +0200
-Message-ID: <20260331183055.1209526-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 0/2] leds: class: improve led_remove_lookup()
+Date: Tue, 31 Mar 2026 20:28:27 +0200
+Message-ID: <20260331183055.1209526-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260331183055.1209526-1-andriy.shevchenko@linux.intel.com>
-References: <20260331183055.1209526-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -63,29 +62,22 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It is a usual pattern in the kernel to make releasing functions be NULL-aware
-so they become a no-op. This helps reducing unneeded checks in the code where
-the given resource is optional.
+This mini-series targets led_remove_lookup() to be more handy for
+the optional resources. The first patch makes it no-op for NULL
+pointer and the second one makes it idempotent.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/led-class.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changelog v2:
+- added patch 2
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index cad55e2beafa..b53ebe3a0faa 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -421,6 +421,9 @@ EXPORT_SYMBOL_GPL(led_add_lookup);
-  */
- void led_remove_lookup(struct led_lookup_data *led_lookup)
- {
-+	if (!led_lookup)
-+		return;
-+
- 	mutex_lock(&leds_lookup_lock);
- 	list_del(&led_lookup->list);
- 	mutex_unlock(&leds_lookup_lock);
+v1: 20260327102729.797254-1-andriy.shevchenko@linux.intel.com
+
+Andy Shevchenko (2):
+  leds: class: Make led_remove_lookup() NULL-aware
+  leds: class: Reinitialise list after dropping from lookup table
+
+ drivers/leds/led-class.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
 -- 
 2.50.1
 
