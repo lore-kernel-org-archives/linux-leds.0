@@ -1,110 +1,132 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA50A21B9DA
-	for <linux-leds@vger.kernel.org>; Mon,  6 Apr 2026 03:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414DA17736;
+	Mon,  6 Apr 2026 05:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775447352; cv=none; b=jL6jSVY+JKi2crxpXGqYDb6O1ZRMK7wFRPQ9sTVUaOw1tE9A7OagW9uujUSmugwKy1i83Lqig51dJlieeYlPafMMIiaizh1VhzF36eQIjEkuCaNabT5crDro9bZ9fhIOgCEkGrHdCxfsHV1HhJjopxT8keTZ9zFykYFiMLcymCE=
+	t=1775452619; cv=none; b=o/3kFcFq3bGqRq0rXC3EY3qzBsFYkVKWFkR1jJ+mbO3sGZIWGi40gO+hyRJMs/2n5ixwycAfm2YZOadrafUa/e/FGz6i30n0K4WLMJNKJTgKtYK0PDP5HN0dJxuW8YT+ReOUvlcokroR1OvFhP+4StAEqgOC/2NwSbVvvsc5/HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775447352; c=relaxed/simple;
-	bh=TlTVsunSfixzAFsGvAOwd9wYDz24NEgIjzO47N7EVqg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WmQAmPAfBN5cfF7NQ2b0UHAqHa/s6pI/Sy/FBugkF6u9p2PE5syQmNp3vWcKzDxVCuad1U3wA4ebgawstIMgunwtTIQ1ptM2jkT3bWUcL3rF5BO+m6hHKq1BPIeciEOcBrS0DVwPrjiuRr2pKctUFZhjqm593gM+hUtZ7mWv7cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOeOpI3q; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1775452619; c=relaxed/simple;
+	bh=xNcZFgEqDIUns0Obvn61O5XixASjDMHrcRowxJhKaoo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=r3bIxGi6DuH+zdZclN7FjqxT0mmYup9k9UmqQ8YVl8FsmAq1R2je0G9b6KDoS3EildAwkzt2X4zGcGFghprL9mTJ0dOqlRd7mlCRyJvWd3+nSScXf4BOSmPPggQAKfZQ880xW0si2YafZysHu61Kkwv5Y9YGVjozQ412uwzpqXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmucSSJu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOeOpI3q"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2ad9516a653so17213585ad.0
-        for <linux-leds@vger.kernel.org>; Sun, 05 Apr 2026 20:49:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1775447350; x=1776052150; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0BKCAT7lBswurLoR7rMAQLaCTljOPGjzlcHbLP4ufpU=;
-        b=DOeOpI3q4GUahaAWXNyT0PzWAuYt3enTeyOpLDSMy8uxYd9cEUoaXy+9JvwFvHhWYF
-         Z6bHz4zniwvJp5v7ba2kFrPALolgoi+B+brY+vgqEMD8Iu3M9R0jrNLSSmsfkdYZA3X1
-         RSR5aWKWIoUMaoYrkMzC7rKgG56IpKF9QmwMiwkFtBWs2eXUrx7lDW/PKdqdeQfpYTHi
-         9chOfTTT/Csn0LW3CRtPLR+xurqF3BtFFkekbtqbI6P0rlR0C/C8zyPP2dSVK8U5CfG8
-         /bWA+S5RTUNKdhGof/XqV/i3XQZYvJkGe7gRsLqxz2zpAIjo9SePy6YPV8KP/K97iCEL
-         u4Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775447350; x=1776052150;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0BKCAT7lBswurLoR7rMAQLaCTljOPGjzlcHbLP4ufpU=;
-        b=aWjyVUqFh9qraZnybfyytvXSAMPIbl6z30xBhaSe2ThUCdJeQeMOjYFKR6yNjCqABm
-         TnlCHlIBvTjKXkZsJynRFGPfxiAOQNRU7r8+oL51AU8URoS+46FXmj/0vuPPjBPR+ROY
-         juCfZ9wlbhuS5RUSl17RgOsu6yYMVVqAVtWnTICWLG9qSVk/gvu37ZlAXuKvpbF4xyoc
-         pbN/F1LpDg1CQ8LuoDO4A4URgbMhRTIUBu9o8/3FmI+jfmzULkdZ1aH4gbUsA/hDn6df
-         rrg1C0zd/NQPZCocAiUISxg7vtMRD0886MZW6kJccuYg5ZlWvxn+nhlatkQxnZpWHKgV
-         YStg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpPKrVtkwvFGNL2zGQFxsdPGTxbxcYIidsAJOJr1EXA1U9/DALsgYsF3XkUZDyf111E4fxf99Ungoz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ9W4zfGI1TEJ6QW5EMbD4u6C5SZYYMtNcs4zRQykVpOIxlEK4
-	+ytpHWOx2appgxYO4GYH+uFqgW5eCLfL/XyWpAxxLDXOsKb9kFWyAPQ2
-X-Gm-Gg: AeBDiev0iHKGXdOgOF0NcN0My6EhjrD3k5SLabNVAu7jgiigxN7n6ohat+yLDlh8xwz
-	bQTSYGPXucApgX/3PxkJtWMpk8cJ8YmysETxdsrJ14F2mPgV+riJpzw6mSKgylnTAQVYkSCVA9i
-	KlZLFfRlpWWo6PQmEpJ5QETY4oKjf6sZkV0P7z47EsJ6XntaHVCKblofCdOB+cYnABYhRP5J5eo
-	1Cozr7GE89lR5S1zxVcGP3l/k82YX2tJOLZSVt2XgHRSSTgojsemiGyy+0zCPBSeT380Aw7Ky7i
-	hVVIXLYL7IRBSpiy/xWRZrAC3FAZABg4o3g78VUveCmDi0pyKDGerCYdT93muUR25bga2TpW04w
-	1eK0CZf1PRURWbBc28hPE7aHQNfU59FcK3+MGim1U32GRa+CJOGISurh+X5GwauPX+NFmUOLdB2
-	00mbf0XPnhEQDJ3DblxFehIOuFF6+aLdEL3rawo2tX7JJ9X/sp67xEsEh2gPMwepRPenfFKHzHs
-	7mnhb/J5xIaarKiJI06CLJwsf1Jhf2XSis8BmtQY25Q3Ux4YQ==
-X-Received: by 2002:a17:903:388f:b0:2b0:708f:4dc7 with SMTP id d9443c01a7336-2b281789c6dmr125370095ad.29.1775447350149;
-        Sun, 05 Apr 2026 20:49:10 -0700 (PDT)
-Received: from ?IPV6:2401:d002:300f:4a00:69b1:854d:1478:44a6? (7zyfljft9qk2ch4xzw86.ip6.superloop.au. [2401:d002:300f:4a00:69b1:854d:1478:44a6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b27475bc2asm128031385ad.19.2026.04.05.20.49.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Apr 2026 20:49:09 -0700 (PDT)
-Message-ID: <51b03477-8007-4d43-aa09-39b80dec931a@gmail.com>
-Date: Mon, 6 Apr 2026 13:49:07 +1000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmucSSJu"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id ED062C2BCAF;
+	Mon,  6 Apr 2026 05:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775452619;
+	bh=xNcZFgEqDIUns0Obvn61O5XixASjDMHrcRowxJhKaoo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=AmucSSJumEnytgtzcd4GFcwyI02m9vC3fNxNCz8/P9EDJcoayNIuDCD4vLCr8RAt6
+	 urLJbqcCibMLmyFQVKHGPA7PxG9bR38cU9F3p3idZ0IcIwHlAsvVDF700uWQoqv0iw
+	 ku8qwnpaS5T/ReUa04Qz3B9Q/I5+NS6pLuXOmt11KxbWKOKkbcgoD9JKRwCOa52LOa
+	 IYGIvSVPCV/hVoDP6CfSdGC9KwiHpx6RiJZ52bxB3uQJnsswYLkXY1HkV09GZyWjmf
+	 x5DIGefUeS3sMPmp9QiTVWzu58pUM/ar+f14Zn9ax7weLFnYF+1wyGp0bGE9e03ZvK
+	 nAzqazFskX5hQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE2DE9D834;
+	Mon,  6 Apr 2026 05:16:58 +0000 (UTC)
+From: Alexandre Messier via B4 Relay <devnull+alex.me.ssier.org@kernel.org>
+Date: Mon, 06 Apr 2026 01:16:57 -0400
+Subject: [PATCH v2 1/4] ARM: dts: qcom: msm8974pro-htc-m8: add status LEDs
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] leds: syscon: Add tristate option
-From: Bevan Weiss <bevan.weiss@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260308015824.2318366-1-bevan.weiss@gmail.com>
- <20260308015824.2318366-2-bevan.weiss@gmail.com>
- <20260319101327.GH554736@google.com>
- <20260319223335.5e1913a4@openwrt-virtual-machine>
-Content-Language: en-AU
-In-Reply-To: <20260319223335.5e1913a4@openwrt-virtual-machine>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260406-m8-dts-additions-v2-1-c4c4bd50af48@me.ssier.org>
+References: <20260406-m8-dts-additions-v2-0-c4c4bd50af48@me.ssier.org>
+In-Reply-To: <20260406-m8-dts-additions-v2-0-c4c4bd50af48@me.ssier.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Luca Weiss <luca@lucaweiss.eu>, linux-arm-kernel@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Alexandre Messier <alex@me.ssier.org>, 
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ linux-leds@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1775452618; l=1446;
+ i=alex@me.ssier.org; s=20240603; h=from:subject:message-id;
+ bh=3h5eC7Cp5T5BYkF0l8ntqlN3+V3NGs9ZIeqd8JvOxHw=;
+ b=sT3B97jdTe8Yb/ZHQ+q1ZRpJQ68qZtgaFiRNDGqvLlpowcS/qjCejlAw3utpaVFmInN/ye8fg
+ /cs7prl6aO1BxL2M2iwoqLHHdr4rAoW2JMSczMMPwKnaDx0p4WybynC
+X-Developer-Key: i=alex@me.ssier.org; a=ed25519;
+ pk=JjRqVfLd2XLHX2QTylKoROw346/1LOyZJX0q6cfnrKw=
+X-Endpoint-Received: by B4 Relay for alex@me.ssier.org/20240603 with
+ auth_id=168
+X-Original-From: Alexandre Messier <alex@me.ssier.org>
+Reply-To: alex@me.ssier.org
 
-On 19/03/2026 10:33 pm, Bevan Weiss wrote:
->>> +MODULE_LICENSE("GPL");
->>
->> The MODULE_LICENSE() string should match the SPDX identifier at the
->> top of the file.
->>
-> 
-> Sorry, I'm not quite understanding this in the context of other files.
-> Most modules within the led subsystem seem to have
-> 'GPL-2.0-or-later' as the SPDX identifier, and MODULE_LICENSE("GPL"),
-> as I currently have here.
-> Is there a different subtlety I'm missing?
-> e.g. leds-adp5520.c, leds-as3668.c, leds-blinkm.c
-> Perhaps MODULE_LICENSE("GPL v2+")? although I don't see similar
-> anywhere in the kernel.
-> I'd expect MODULE_LICENSE("GPL v2") to be for 'GPL-2.0-only' licenses.
-> 
+From: Alexandre Messier <alex@me.ssier.org>
 
-I've got a v3 mostly ready to send, but was hoping for resolution of the 
-MODULE_LICENSE query before submitting.
-Can I proceed with MODULE_LICENSE("GPL")?
-If not, what value should be here?
+Add support for the notification LEDs on the HTC One M8.
+
+Two LEDs are available, one orange and one green. Together,
+they both form a single notification source, so use a
+multicolor LED node to describe this arrangement.
+
+Cc: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>
+Cc: linux-leds@vger.kernel.org
+Signed-off-by: Alexandre Messier <alex@me.ssier.org>
+---
+ arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts | 25 +++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+index 402372834c53..37df271dbdeb 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
++++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+@@ -3,6 +3,7 @@
+ #include "pm8841.dtsi"
+ #include "pm8941.dtsi"
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ 
+ / {
+ 	model = "HTC One (M8)";
+@@ -64,6 +65,30 @@ vreg_vph_pwr: vreg-vph-pwr {
+ 	};
+ };
+ 
++&pm8941_lpg {
++	qcom,power-source = <1>;
++
++	status = "okay";
++
++	multi-led {
++		color = <LED_COLOR_ID_MULTI>;
++		function = LED_FUNCTION_STATUS;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		led@6 {
++			reg = <6>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@7 {
++			reg = <7>;
++			color = <LED_COLOR_ID_ORANGE>;
++		};
++	};
++};
++
+ &pm8941_vib {
+ 	status = "okay";
+ };
+
+-- 
+2.53.0
 
 
-Regards,
-Bevan Weiss
