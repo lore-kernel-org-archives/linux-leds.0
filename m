@@ -1,346 +1,115 @@
-Received: from szelinsky.de (szelinsky.de [85.214.127.56])
+Received: from 18.mo581.mail-out.ovh.net (18.mo581.mail-out.ovh.net [188.165.56.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D4B1E5B9A;
-	Fri, 10 Apr 2026 12:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.127.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD08D324B1F
+	for <linux-leds@vger.kernel.org>; Fri, 10 Apr 2026 13:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.56.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775825114; cv=none; b=adpAbRa35vIEo2k5NDTuRPQT9IGO0ApX9SJxgvGRQpvOqjKAr7y/xkjvozgGqDJhaCvC52NdfQqFpe05F44sAkO9Jo0zDnZlSHGxDYJYSgqTmbHIWYyyhTgul/hUAb1RD89wqJKYuHFNGOCR5w57KRku1vvCyvROJfKzob4wwO4=
+	t=1775826652; cv=none; b=ulB4Jd0yy1mWvnWsd/6uB0fLDfq6rxQMxkWM2RHKLmEer8MK49L+6avhB2Y5L6xQeb1DXjFKumXjXrikRgRklPKR3Hb4vB1n16CFHuOgVopAgPewWY/5fLqM8Oz6pDtKtpO90tjol1/bVuflcfV+8k7bmsKBjh5nYfwasNOJUow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775825114; c=relaxed/simple;
-	bh=JVKCIjSEjXkoIs2Kc7tpybTuPn45OutIXF3Wz7khgX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=csLBuVPNI4NVDM1G979Rc5ZTM7GyJ791enr/1U9QbGZud5IM/txyjShcK9JyIQs0bIjz5/v28TYlS42GylF1rmJKGaKFQ5Wd9IvxR814lefzZEfYERGj11hUWsjEwQ3KtJSM1egTlJELKsbWLZzw4fmhN8/W7+a3BkI42+2h4zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de; spf=pass smtp.mailfrom=szelinsky.de; dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b=DOEv11Si; arc=none smtp.client-ip=85.214.127.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szelinsky.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szelinsky.de
+	s=arc-20240116; t=1775826652; c=relaxed/simple;
+	bh=3CW4diUM/JB8LiWZnoXA4stnM/1uNg2TuLFEj95TcXU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=L4vhiEKKwxYAqDURHVDpKcgf+8KqtrSNz6uLqnBkH2/jQaFoiX1hxs8UM3uhsB8bLQhf0X+vMYJgD+89gJ8V/6tNVo4xOzzsQ/TUBNhvtTDLXKx/K5z2uDu7jmlWHCz6TqCSxMiyhvhsz2CyG3oZZUYGXBBFtLFlq39AXeUCYnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl; spf=pass smtp.mailfrom=milecki.pl; dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b=pElMn0Jl; arc=none smtp.client-ip=188.165.56.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=milecki.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=milecki.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=szelinsky.de header.i=@szelinsky.de header.b="DOEv11Si"
-Received: from localhost (localhost [127.0.0.1])
-	by szelinsky.de (Postfix) with ESMTP id EC23CE839FB;
-	Fri, 10 Apr 2026 14:45:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=szelinsky.de;
-	s=mail; t=1775825109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=azwLzJpT42EVMDaAK406Ouw+675VeRplpbKZU+nYqBk=;
-	b=DOEv11SibUH+sK9Mns6MT42Zv9AwnL4z08BIX6wngqxAvQjyEyh+UgUbscajNvIQTsMlZH
-	XY8eGlwfC1W3uGp1zOhwot9TPyJSIEKkETtvKBJFtc5RWMRoX9K1HPk3I03nYlMVtXzXo7
-	ciYZ4Kv8C+6+Wodwcp0K1bzkD1vRsu/Gj6owIBuY3EeoEaSfG2eXi9QeByfOCjRMi4YhKe
-	ZNaX8bAhYTBTu0BI3SbDHqZlXoDYNxVdGzmDtn8YbU+hTHPrxv9gOnicvvYw51XzEGIPVL
-	OXRggZS+7HJiJp4REkaTiE94eWVALM+P1NGO0ieoeTpWW7yMscMS2sAMLtySwQ==
-X-Virus-Scanned: Debian amavisd-new at szelinsky.de
-Received: from szelinsky.de ([127.0.0.1])
-	by localhost (szelinsky.de [127.0.0.1]) (amavisd-new, port 10025)
-	with ESMTP id mqgd0-d9VW6h; Fri, 10 Apr 2026 14:45:09 +0200 (CEST)
-Received: from p14sgen5.fritz.box (dslb-002-205-089-102.002.205.pools.vodafone-ip.de [2.205.89.102])
-	by szelinsky.de (Postfix) with ESMTPSA;
-	Fri, 10 Apr 2026 14:45:09 +0200 (CEST)
-From: Carlo Szelinsky <github@szelinsky.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	Carlo Szelinsky <github@szelinsky.de>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH net-next v4 2/2] net: pse-pd: add LED trigger support via notification path
-Date: Fri, 10 Apr 2026 14:44:28 +0200
-Message-ID: <20260410124428.809943-3-github@szelinsky.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260410124428.809943-1-github@szelinsky.de>
-References: <20260410124428.809943-1-github@szelinsky.de>
+	dkim=pass (2048-bit key) header.d=milecki.pl header.i=@milecki.pl header.b="pElMn0Jl"
+Received: from director8.ghost.mail-out.ovh.net (unknown [10.109.249.43])
+	by mo581.mail-out.ovh.net (Postfix) with ESMTP id 4fsZvH1JRMz5vTp
+	for <linux-leds@vger.kernel.org>; Fri, 10 Apr 2026 11:53:31 +0000 (UTC)
+Received: from ghost-submission-7d8d68f679-thxv6 (unknown [10.110.101.93])
+	by director8.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 3F4F5C015D;
+	Fri, 10 Apr 2026 11:53:30 +0000 (UTC)
+Received: from milecki.pl ([37.59.142.108])
+	by ghost-submission-7d8d68f679-thxv6 with ESMTPSA
+	id Q1CoCbrk2GlosAsA37Gi0A
+	(envelope-from <rafal@milecki.pl>); Fri, 10 Apr 2026 11:53:30 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-108S0026f3801b7-5a6d-45c8-a682-cbea1b95ff79,
+                    CB257AE30968F6DC1ADB9B1DFC9DF9D0FAE0E632) smtp.auth=rafal@milecki.pl
+X-OVh-ClientIp:91.134.92.225
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Fri, 10 Apr 2026 13:53:27 +0200
+From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To: =?UTF-8?Q?Corvin_K=C3=B6hne?= <corvin.koehne@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Pavel Machek
+ <pavel@kernel.org>, devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Corvin_K=C3=B6hne?=
+ <c.koehne@beckhoff.com>, Ashley Towns <mail@ashleytowns.id.au>, Dan Murphy
+ <dmurphy@ti.com>, Gergo Koteles <soyer@irl.hu>, INAGAKI Hiroshi
+ <musashino.open@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Olliver Schinagl <oliver@schinagl.nl>, Pavel Machek <pavel@ucw.cz>, Roderick
+ Colenbrander <roderick@gaikai.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: [PATCH v2] dt-binding: leds: publish common bindings under dual
+ license
+In-Reply-To: <20260408062942.7128-1-corvin.koehne@gmail.com>
+References: <20260408062942.7128-1-corvin.koehne@gmail.com>
+Message-ID: <4fbad496f9f52e11f4ff3efe2a5ae4d0@milecki.pl>
+X-Sender: rafal@milecki.pl
+X-Webmail-UserID: rafal@milecki.pl
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+x-ovh-tracer-id: 16481767265536823906
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: dmFkZTEVdcfbvIOBJB2+bRFZN5uvglsDeTJ8QMQd6jIracklhyuhdcBcD8Ww3maFkZ8kXin/gDDz2L3u1T8MRzCXgDZz9SBrqf2axe7f3Va00KRBaXT9+sbp4qW3HcpxWQmyur05ln8PZ94dlYoKVza273GShBBSxFdgTntIEPD4yn4CBJSLMeWHD3I0Mz88aYvdWye5Tsl8VMrmv6aoKXWMYBPyEE4kKcTZR9K037BOc5yAoZEwhaSvlD71Bqzcb0exZDvDw34EHVv+u5aGyMOORbMK4NIRxUmDf0acHbqlRkUZNCm6NN3v0XK9owFAZhkWv0za+YkvRpfr0AdSSIv+SrfWZkFYreGCIx5IdYx6i+67HcX24ashb/r+4anb9qpag4ozhD0FjwWIPvimxpBCHnvEwPG/NV1pAN/YNIvR+hR4bb8lTC/YKPKGhPaVgvL6rWZMqncj9SVTppjjf1qg5kAYO/l2wFbY7faWMRCdiPXrD7WxO+hOGBzWCepfnMl3Y+kevLDLbAWD7CgcX7TbXcBOdtgxO3F+FPU8L7E3qRDfS21L2ldtPcuScQFAumJ2XEv+gC5x1WfRzs1iap/f0z83EKZ27SgFK+xLqY4ZjOMJL0H0V8BvSQjSeezoUOR7JEaAXDRMDgYxrr2fQ35KVVfn+v52biH+feD1Ndm4upXHPQ
+DKIM-Signature: a=rsa-sha256; bh=m8v0/pj5YIHBXmpmtcD4RBpe85xEWaB0LLlNYUt+3rU=;
+ c=relaxed/relaxed; d=milecki.pl; h=From; s=ovhmo3028686-selector1;
+ t=1775822011; v=1;
+ b=pElMn0Jli13QIPOARmikAjJsixTLKCgaScBCOR9rtLEH3yGDOjs6CrodNZyQjZmveXH3mzl1
+ BNa/s1h2UvNggNzi5Iq3u3F8zDP06QJdyrcGbmucS1dZyk6iiYsgxrmh4eI0jXzX60lcHxQdOBw
+ gEG9aH5M29MMumfbHNXdJTY1/ZRGnlNFuCYvdNtH9Hcly+kmxqJSJO9/M1WgjOrw97++UChFC2k
+ r0CyPHv+0lMAmCLGF+wvvoOWyf47aAu5EkP5b7lO205bhrtfpdCrjLYHpucLAuEO028PTlmAUr1
+ 58W2QMHWKX1elB4Swz2E05FlljcqXJ88X4byyk5NkcqTA==
 
-Add per-PI "delivering" and "enabled" LED triggers to the PSE core
-subsystem. LED state is updated from the shared pse_handle_events()
-function whenever the IRQ or poll path detects a state change, as well
-as from the regulator enable/disable paths so that host-initiated
-admin state changes via ethtool are immediately reflected.
+On 2026-04-08 08:29, Corvin Köhne wrote:
+> Changes leds/common.h DT binding header file to be published under 
+> GPLv2
+> or BSD-2-Clause license terms. This change allows this common LED
+> bindings header file to be used in software components as bootloaders
+> and OSes that are not published under GPLv2 terms.
+> 
+> All contributors to leds/common.h file in copy.
 
-Both C33 and PoDL power status and admin state are checked so that LED
-triggers work for both controller types.
+Acked-by: Rafał Miłecki <rafal@milecki.pl>
 
-Trigger names use dev_name(dev) (e.g. "pse-1-003c:port0:delivering")
-to ensure uniqueness when multiple PSE controllers are present on the
-same system.
 
-Initial LED state is queried at registration time so already-active
-ports are reflected immediately without waiting for a hardware event.
+> Cc: Ashley Towns <mail@ashleytowns.id.au>
+> Cc: Dan Murphy <dmurphy@ti.com>
+> Cc: Gergo Koteles <soyer@irl.hu>
+> Cc: INAGAKI Hiroshi <musashino.open@gmail.com>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Olliver Schinagl <oliver@schinagl.nl>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Rafał Miłecki <rafal@milecki.pl>
+> Cc: Roderick Colenbrander <roderick@gaikai.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Corvin Köhne <c.koehne@beckhoff.com>
+> ---
+>  include/dt-bindings/leds/common.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/dt-bindings/leds/common.h 
+> b/include/dt-bindings/leds/common.h
+> index 4f017bea0123..b7bafbaf7df3 100644
+> --- a/include/dt-bindings/leds/common.h
+> +++ b/include/dt-bindings/leds/common.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) */
+>  /*
+>   * This header provides macros for the common LEDs device tree 
+> bindings.
+>   *
 
-LED trigger registration is performed before adding the controller to
-the global list, avoiding a race where an IRQ or poll event could
-invoke pse_led_update() on a partially initialized trigger.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202603251254.o5PqMBRU-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202603251250.cuMCk5Yv-lkp@intel.com/
-Signed-off-by: Carlo Szelinsky <github@szelinsky.de>
----
- drivers/net/pse-pd/pse_core.c | 134 +++++++++++++++++++++++++++++++++-
- include/linux/pse-pd/pse.h    |  22 ++++++
- 2 files changed, 154 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/pse-pd/pse_core.c b/drivers/net/pse-pd/pse_core.c
-index f641a6fa087f..dfc84340afb9 100644
---- a/drivers/net/pse-pd/pse_core.c
-+++ b/drivers/net/pse-pd/pse_core.c
-@@ -12,9 +12,10 @@
- #include <linux/phy.h>
- #include <linux/pse-pd/pse.h>
- #include <linux/regulator/driver.h>
-+#include <linux/leds.h>
-+#include <linux/workqueue.h>
- #include <linux/regulator/machine.h>
- #include <linux/rtnetlink.h>
--#include <linux/workqueue.h>
- #include <net/net_trackers.h>
- 
- #define PSE_PW_D_LIMIT INT_MAX
-@@ -670,6 +671,111 @@ static int _pse_pi_delivery_power_sw_pw_ctrl(struct pse_controller_dev *pcdev,
- 	return 0;
- }
- 
-+#if IS_ENABLED(CONFIG_LEDS_TRIGGERS)
-+/**
-+ * pse_led_update - Update LED triggers for a PI based on current state
-+ * @pcdev: PSE controller device
-+ * @id: PI index
-+ *
-+ * Queries the current power status and admin state of the PI and
-+ * fires LED trigger events on state changes. Called from the
-+ * notification path and the regulator enable/disable paths.
-+ *
-+ * Must be called with pcdev->lock held.
-+ */
-+static void pse_led_update(struct pse_controller_dev *pcdev, int id)
-+{
-+	struct pse_pi_led_triggers *trigs;
-+	struct pse_pw_status pw_status = {};
-+	struct pse_admin_state admin_state = {};
-+	bool delivering, enabled;
-+
-+	if (!pcdev->pi_led_trigs)
-+		return;
-+
-+	trigs = &pcdev->pi_led_trigs[id];
-+	if (!trigs->delivering.name)
-+		return;
-+
-+	if (pcdev->ops->pi_get_pw_status(pcdev, id, &pw_status))
-+		return;
-+	if (pcdev->ops->pi_get_admin_state(pcdev, id, &admin_state))
-+		return;
-+
-+	delivering = pw_status.c33_pw_status ==
-+		ETHTOOL_C33_PSE_PW_D_STATUS_DELIVERING ||
-+		pw_status.podl_pw_status ==
-+		ETHTOOL_PODL_PSE_PW_D_STATUS_DELIVERING;
-+	enabled = admin_state.c33_admin_state ==
-+		ETHTOOL_C33_PSE_ADMIN_STATE_ENABLED ||
-+		admin_state.podl_admin_state ==
-+		ETHTOOL_PODL_PSE_ADMIN_STATE_ENABLED;
-+
-+	if (trigs->last_delivering != delivering) {
-+		trigs->last_delivering = delivering;
-+		led_trigger_event(&trigs->delivering,
-+				  delivering ? LED_FULL : LED_OFF);
-+	}
-+
-+	if (trigs->last_enabled != enabled) {
-+		trigs->last_enabled = enabled;
-+		led_trigger_event(&trigs->enabled,
-+				  enabled ? LED_FULL : LED_OFF);
-+	}
-+}
-+
-+static int pse_led_triggers_register(struct pse_controller_dev *pcdev)
-+{
-+	struct device *dev = pcdev->dev;
-+	const char *dev_id;
-+	int i, ret;
-+
-+	dev_id = dev_name(dev);
-+
-+	pcdev->pi_led_trigs = devm_kcalloc(dev, pcdev->nr_lines,
-+					   sizeof(*pcdev->pi_led_trigs),
-+					   GFP_KERNEL);
-+	if (!pcdev->pi_led_trigs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < pcdev->nr_lines; i++) {
-+		struct pse_pi_led_triggers *trigs = &pcdev->pi_led_trigs[i];
-+
-+		/* Skip PIs not described in device tree */
-+		if (!pcdev->no_of_pse_pi && !pcdev->pi[i].np)
-+			continue;
-+
-+		trigs->delivering.name = devm_kasprintf(dev, GFP_KERNEL,
-+							"pse-%s:port%d:delivering",
-+							dev_id, i);
-+		if (!trigs->delivering.name)
-+			return -ENOMEM;
-+
-+		ret = devm_led_trigger_register(dev, &trigs->delivering);
-+		if (ret)
-+			return ret;
-+
-+		trigs->enabled.name = devm_kasprintf(dev, GFP_KERNEL,
-+						     "pse-%s:port%d:enabled",
-+						     dev_id, i);
-+		if (!trigs->enabled.name)
-+			return -ENOMEM;
-+
-+		ret = devm_led_trigger_register(dev, &trigs->enabled);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+#else
-+static inline void pse_led_update(struct pse_controller_dev *pcdev, int id) {}
-+static int pse_led_triggers_register(struct pse_controller_dev *pcdev)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_LEDS_TRIGGERS */
-+
- static int pse_pi_enable(struct regulator_dev *rdev)
- {
- 	struct pse_controller_dev *pcdev = rdev_get_drvdata(rdev);
-@@ -695,6 +801,7 @@ static int pse_pi_enable(struct regulator_dev *rdev)
- 			pcdev->pi[id].admin_state_enabled = 1;
- 			ret = 0;
- 		}
-+		pse_led_update(pcdev, id);
- 		mutex_unlock(&pcdev->lock);
- 		return ret;
- 	}
-@@ -702,6 +809,7 @@ static int pse_pi_enable(struct regulator_dev *rdev)
- 	ret = ops->pi_enable(pcdev, id);
- 	if (!ret)
- 		pcdev->pi[id].admin_state_enabled = 1;
-+	pse_led_update(pcdev, id);
- 	mutex_unlock(&pcdev->lock);
- 
- 	return ret;
-@@ -719,6 +827,7 @@ static int pse_pi_disable(struct regulator_dev *rdev)
- 	ret = _pse_pi_disable(pcdev, id);
- 	if (!ret)
- 		pi->admin_state_enabled = 0;
-+	pse_led_update(pcdev, id);
- 
- 	mutex_unlock(&pcdev->lock);
- 	return 0;
-@@ -1108,6 +1217,20 @@ int pse_controller_register(struct pse_controller_dev *pcdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = pse_led_triggers_register(pcdev);
-+	if (ret) {
-+		dev_warn(pcdev->dev, "Failed to register LED triggers: %d\n",
-+			 ret);
-+	}
-+
-+	/* Query initial LED state for all PIs so already-active ports
-+	 * are reflected immediately without waiting for a hardware event.
-+	 */
-+	for (i = 0; i < pcdev->nr_lines; i++) {
-+		if (pcdev->no_of_pse_pi || pcdev->pi[i].np)
-+			pse_led_update(pcdev, i);
-+	}
-+
- 	mutex_lock(&pse_list_mutex);
- 	list_add(&pcdev->list, &pse_controller_list);
- 	mutex_unlock(&pse_list_mutex);
-@@ -1265,7 +1388,14 @@ static void pse_handle_events(struct pse_controller_dev *pcdev,
- 		struct pse_ntf ntf = {};
- 		int ret;
- 
--		/* Do nothing PI not described */
-+		/* Update LEDs for described PIs regardless of consumer state.
-+		 * LED triggers are registered at controller init, before any
-+		 * PHY claims a PSE control, so rdev may still be NULL here.
-+		 */
-+		if (pcdev->no_of_pse_pi || pcdev->pi[i].np)
-+			pse_led_update(pcdev, i);
-+
-+		/* Skip regulator/netlink path for PIs without consumers */
- 		if (!pcdev->pi[i].rdev)
- 			continue;
- 
-diff --git a/include/linux/pse-pd/pse.h b/include/linux/pse-pd/pse.h
-index 44d5d10e239d..0058636a6299 100644
---- a/include/linux/pse-pd/pse.h
-+++ b/include/linux/pse-pd/pse.h
-@@ -10,6 +10,7 @@
- #include <linux/kfifo.h>
- #include <uapi/linux/ethtool.h>
- #include <uapi/linux/ethtool_netlink_generated.h>
-+#include <linux/leds.h>
- #include <linux/regulator/driver.h>
- 
- /* Maximum current in uA according to IEEE 802.3-2022 Table 145-1 */
-@@ -266,6 +267,23 @@ struct pse_pi {
- 	int pw_allocated_mW;
- };
- 
-+#if IS_ENABLED(CONFIG_LEDS_TRIGGERS)
-+/**
-+ * struct pse_pi_led_triggers - LED trigger state for a PSE PI
-+ *
-+ * @delivering: LED trigger for power delivering state
-+ * @enabled: LED trigger for admin enabled state
-+ * @last_delivering: cached delivering state for change detection
-+ * @last_enabled: cached enabled state for change detection
-+ */
-+struct pse_pi_led_triggers {
-+	struct led_trigger delivering;
-+	struct led_trigger enabled;
-+	bool last_delivering;
-+	bool last_enabled;
-+};
-+#endif
-+
- /**
-  * struct pse_ntf - PSE notification element
-  *
-@@ -303,6 +321,7 @@ struct pse_ntf {
-  * @ntf_work: workqueue for PSE notification management
-  * @ntf_fifo: PSE notifications FIFO
-  * @ntf_fifo_lock: protect @ntf_fifo writer
-+ * @pi_led_trigs: per-PI LED trigger state array
-  */
- struct pse_controller_dev {
- 	const struct pse_controller_ops *ops;
-@@ -327,6 +346,9 @@ struct pse_controller_dev {
- 	struct work_struct ntf_work;
- 	DECLARE_KFIFO_PTR(ntf_fifo, struct pse_ntf);
- 	spinlock_t ntf_fifo_lock; /* Protect @ntf_fifo writer */
-+#if IS_ENABLED(CONFIG_LEDS_TRIGGERS)
-+	struct pse_pi_led_triggers *pi_led_trigs;
-+#endif
- };
- 
- /**
 -- 
-2.43.0
-
+Rafał Miłecki
