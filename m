@@ -1,705 +1,510 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79887370D6D;
-	Sat, 11 Apr 2026 15:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EF3266565;
+	Sat, 11 Apr 2026 15:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775921269; cv=none; b=By4giwFcCXxkjbyzAUsle935klRG7NdbPxMF7qnWcAjGph7QS7S/RZNesYkIGkD+ASdklaEmRb9VJm4kTQrdHxevEFgoSh3aq8RvY6r8yLxeBpWexHbJdiVEiHo8UwAbKGPYbfd7inmOC9qpiBdyfsBY9k9UmrYvslrhGpYRKZk=
+	t=1775921506; cv=none; b=ZdOab2PKH58nFAg8B8021N7qlrmcjNeTS5ibJN7VDyx8R8MPZaZ5FGdMHBcNllU86ao/uap2Ux9Vc7jzn92EPoicTBR68LJdUfZLf2pnMdVCUHWl6ka4pKjrl0fdQ2kg5KrcJSGlltlDjEMQ+5RcEbBF2JuvxYWiMYI5CvasKhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775921269; c=relaxed/simple;
-	bh=o1Sqp9WfNbP7gwNDU5kP5Kjy57GqjmMwpsnUmTHoVuc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QYTA0lXr00HD9/fR6VRxVmi2a5eJjdXC7zounF0hz/6TmfQqUjFDOuKX4gV2hbc/1mQxPWslWdPuVFskMOJYfz9vx5zaHWNw9dZsbsChRdiHqowWiIsnVjQvfW0TbBeI46JhpwdyIzxaNPAevfxHARMpReYdR/JMqk577ImAP58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mo6oB285; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775921506; c=relaxed/simple;
+	bh=3zfExYh/jlCqYlEMfDscKAW2c415tnf37aOCwtbfDm8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=TWXN7wX9JwapYlu46a2+ppf37XvU8qUdwpjZszhDv9NsJvjWfvuBSgHqNwNHUI0/QscryfUOZ/yl6jxEPCcnx1qUCIdrwHif4ETqWA5raw7iN2mAdhpuvM5qf6nIEEKt3gn7D5ZCaqZVmnoiqC8HO7XdT/OK9R79krV17y9cW1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=fddTkCoH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TyyGgspf; arc=none smtp.client-ip=202.12.124.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mo6oB285"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C406C19425;
-	Sat, 11 Apr 2026 15:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775921269;
-	bh=o1Sqp9WfNbP7gwNDU5kP5Kjy57GqjmMwpsnUmTHoVuc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=mo6oB285fBujPV29Gy902PqAefS3pFbDhqkv5fpYvBB0Q/XdmCPELKwjyFvytoUvX
-	 UjN62HEkDkvq79O7CHB6nBqCoudjeZWlyRfjvHeM6B5KMwN1VU/FFV0Ubxls1q44t8
-	 7xuehQhO3Ti+mRChmJaT9CN9AwwZQHWnvHhLDsiF2tJgHHhsrws8E2ljvrCzpVc+y+
-	 /kkv8Q82k43/Z5zf41xQLa+vCqvTy48UtR0rBK/7wQzPw+Sjid1tcCLUR17cakRlYX
-	 YwlluT2cWTmFKOD1HCieQF7TLDfLLj7nTylAcsgK4fcGi4w3hqP8qpI1l1FsIOn8C3
-	 W9p0a7i1CFJaQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04955F3ED57;
-	Sat, 11 Apr 2026 15:27:49 +0000 (UTC)
-From: Markus Probst via B4 Relay <devnull+markus.probst.posteo.de@kernel.org>
-Date: Sat, 11 Apr 2026 17:27:34 +0200
-Subject: [PATCH v7 1/2] platform: Add initial synology microp driver
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="fddTkCoH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TyyGgspf"
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 03E261D00070;
+	Sat, 11 Apr 2026 11:31:42 -0400 (EDT)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-02.internal (MEProxy); Sat, 11 Apr 2026 11:31:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1775921502;
+	 x=1776007902; bh=fJ8raC5M/6xWKBdtGU0bBF59cK2OLFJLClw37anQkAU=; b=
+	fddTkCoHG5MWuskYn6O6oGNnhktSxZxKB3Xwp2CJlleU1wYX/CBok3Aj5vgMkwJ7
+	B/lI+Zx55NeOjAIi5Bz5fKss9fmarKgS5kWL5M+wdQbsEY3TBW///y/bfyQcTeKa
+	8eZ+34II/ntzQjalVnemCsF88HpGqyJQqpYACU/JW/N/1RFv67S28TZ+BLFL+1NX
+	hGunmBE2I/GqADUKzReqnj86qKkggtZzxFL28/3MNGjeW0rpCM6VjzecZ9Et0anL
+	B2WeAN20UhdrI4CXLoUi/ky7C/6lFyGma9UWgkHZSCELNM2uMY899VBtjEQj5+vW
+	h94KbLGmKT7l3fGDXTLuJQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1775921502; x=
+	1776007902; bh=fJ8raC5M/6xWKBdtGU0bBF59cK2OLFJLClw37anQkAU=; b=T
+	yyGgspf9LBTZ9n9BVUJ45GLpYLnNBSJ/KQenP7boWxMgB6cCOXp2bbFZ7JQnQLeU
+	diRNXM9wqe4YSBIgjfk8pAlzbcb2jtIcxM8Kr78Tx1Znw1J8mtK/uHAhVaezbYtv
+	jLQ873iE7t9bF0+eEjgGe+nlfPAOWg0VeXjLLv1jwacpNtCUT8vtPQh1nyBkJ6Gj
+	lLALSy4FHGKy4+JnsRN5LG4PLPQiHn2NunEBrdMfQRlkZmfp5z5oVggxJaMBityi
+	f4aGytWvGPAuAAkFeAeD3RJ9z+jcnMJ/WwP6g5jLbHmJp5EQ1CW6U4gv+T9s0FQV
+	uDIa1xWbY0Z9uJpcsyOTw==
+X-ME-Sender: <xms:XmnaaUzDdpOpZV0Et9IXJ5KxEUlaQpo0aN_OXMtir4dTLwN1s4i6pA>
+    <xme:XmnaaTFDpkq6aNv1_zN7uWUO3bprexFouzbcf86FZR7Cs5fd88xKKfYsz3EnRZcj9
+    J-pTLFCWdbb3tURd3woQEKXKUJgLIeD0wN_qQ9ESfSEG33Ft8OvD0M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdefvdejvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdforghrkhcu
+    rfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrg
+    eqnecuggftrfgrthhtvghrnhephefgleekudejuefggfdufeffhffhtefhgeevtdejueet
+    leelgffhfeeiffefkedunecuffhomhgrihhnpehkuggvrdhorhhgnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghn
+    ohhvohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopegslhgvuhhnghestghhrhhomhhiuhhmrdhorhhgpdhrtghp
+    thhtohepghhrohgvtghksegthhhrohhmihhumhdrohhrghdprhgtphhtthhopeguvghrvg
+    hkjhhohhhnrdgtlhgrrhhksehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhkvghprghn
+    hhgtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepvhhishhhnhhuohgtvhesghhmrghilh
+    drtghomhdprhgtphhtthhopehhrghnshhgsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehkrggsvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehprghvvghlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:XmnaaZbq4al-4VeCH-4ykiIqNBAODUS1QGKdFzey3TX6uixmYM5VlQ>
+    <xmx:XmnaaYVcMqjgvnKqU3qONNHlRbQlmQx8HQEad-2N9gi9kZvSPe6Fug>
+    <xmx:XmnaaTLs0pI68QJC95oQCODyCiabJ9133Twu9-4T_7fotz1cP64a7w>
+    <xmx:XmnaaeHa_jKUZI9e20WPS4QNMsZ4UAtTHoon3BYTeNL7ZTeSLZDHmA>
+    <xmx:Xmnaabw5ZwhSSihE9sBugqr3KRDkRnI77nAGCXo8YBeDLI_peyAk_d4S>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 09AE72CE3F93; Sat, 11 Apr 2026 11:31:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260411-synology_microp_initial-v7-1-9a3a094e763a@posteo.de>
-References: <20260411-synology_microp_initial-v7-0-9a3a094e763a@posteo.de>
-In-Reply-To: <20260411-synology_microp_initial-v7-0-9a3a094e763a@posteo.de>
-To: Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, Markus Probst <markus.probst@posteo.de>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19449;
- i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=xnqKc9hHfA5/2JRmdkxrCXsXLl+S+C1kBjNtAxIkx+k=;
- b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBp2mhzx23KikbRQGLMD7DYiPa0iXB2QDiRSYOcH
- GgMFnnwJ9yJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCadpocxsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9KF9Q/9FboI56OPoBee37NFRaOsSJlv1S//fhy
- TQ8pYwnISGPa2pdA8cS/MMy3jjr62TsVUMksdd7cM1ErVeAUJLLLaNXGMorUCmKk7ic8pjO/IRC
- KeK2uRU//S4yJsAfw7klknhoTo4kiXehOWAY83ECSidfnJANRpKwf0eow06HbQ6Ijhq7inJSqJp
- i/wIFgMfqeOaLUR6g8zrKa80+47KFUPiZD+F0GnXLXA7FcHfdziw7XsO1wpIex/PCQm022Absd4
- Sa8R45E+tjA/6cGFluD2V7p/CsQGW6K9AFvyzWuBjkawuHbooT09N1mMUFf8BSlFJGNKNh44iun
- D18OjHmQXn4HZarxO1U1Q8VEbgqEwN52s3AOKvrqCm5mmsvFK+7AQt3oCpsjv37tgYJr47INn3V
- HDyotTmN3iOd/G57SlYkk6KvVCw+LGrwXzKK/vm2m9+lJQ/gR5m1MCmh3rovlDacBnDWoA6kc2F
- s3tOZMUnM6ozRTziX2ENmubeJMBEBsFCHyNVnwRcbk3ZQsdTzRQ/0r2Buwi61QdZ60v/2BUXbze
- VTlTcX8lHQaQOA8Bate3ItNaD7yP66EY7oc7d5QqKvyC2mUwtd401B2pgOB/Pn3jIPmyGuFUR3Y
- fwMLTcBh/bQ+7d7nSnF5foZre3uizeZcQL6dKBpQipQsOJdmU7V4=
-X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
- fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
-X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
- auth_id=680
-X-Original-From: Markus Probst <markus.probst@posteo.de>
-Reply-To: markus.probst@posteo.de
+X-ThreadId: Aq-ebexNQroV
+Date: Sat, 11 Apr 2026 11:31:21 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Rong Zhang" <i@rong.moe>, "Andrew Lunn" <andrew@lunn.ch>,
+ "Lee Jones" <lee@kernel.org>
+Cc: "Pavel Machek" <pavel@kernel.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ "Benson Leung" <bleung@chromium.org>, "Guenter Roeck" <groeck@chromium.org>,
+ =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ "Hans de Goede" <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Ike Panhc" <ikepanhc@gmail.com>, "Vishnu Sankar" <vishnuocv@gmail.com>,
+ "Vishnu Sankar" <vsankar@lenovo.com>, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, chrome-platform@lists.linux.dev,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+Message-Id: <7437cc09-7958-4172-aec2-4429cfa98141@app.fastmail.com>
+In-Reply-To: <2ac0c46c-805d-4749-a6e0-94b16b104a72@app.fastmail.com>
+References: <20260227190617.271388-1-i@rong.moe>
+ <20260227190617.271388-2-i@rong.moe>
+ <500dfc4b-ebd7-4637-bed0-130fc571923c@lunn.ch>
+ <b48993998e6e48d4448f8c6dc758f4e260d0f857.camel@rong.moe>
+ <353713de-b121-4e27-a46f-6ca1941888a6@lunn.ch>
+ <8b25e1ea9bff414442fa47475b9c9ac5b29049d7.camel@rong.moe>
+ <60e60c42-f776-424a-a5b4-7286d33175d1@lunn.ch>
+ <d2d321fe39c41ebd896eef63f3909df29f5a1622.camel@rong.moe>
+ <4e839e55-4daa-45cd-b403-d1d6eae63d8d@app.fastmail.com>
+ <cc4398e1512dceb531ba3bd5dd0d20cf2042bb84.camel@rong.moe>
+ <2ac0c46c-805d-4749-a6e0-94b16b104a72@app.fastmail.com>
+Subject: Re: [RFC PATCH 1/9] leds: Load trigger modules on-demand if used as hw control
+ trigger
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Markus Probst <markus.probst@posteo.de>
+On Sat, Mar 14, 2026, at 3:02 PM, Mark Pearson wrote:
+> On Fri, Mar 13, 2026, at 10:01 AM, Rong Zhang wrote:
+>> Hi Mark,
+>>
+>> On Thu, 2026-03-12 at 17:46 -0400, Mark Pearson wrote:
+>>>=20
+>>> On Thu, Mar 12, 2026, at 2:01 PM, Rong Zhang wrote:
+>>> > Hi Andrew,
+>>> >=20
+>>> > On Wed, 2026-03-11 at 22:29 +0100, Andrew Lunn wrote:
+>>> > > > We just can't prevent the EC from responding to the Fn+Space s=
+hortcut.
+>>> > > > So it's essentially user's choice to switch to the hw control =
+trigger
+>>> > > > and make it offloaded to hardware (sorry if my cover letter an=
+d replies
+>>> > > > didn't express this well).
+>>> > >=20
+>>> > > Do you have any control over the EC?
+>>> > >=20
+>>> > > You have a two bosses dilemma. You need to eliminate one of the
+>>> > > bosses. Either the EC controls the LED, or Linux does. Having bo=
+th
+>>> > > controlling it is just going to work out badly.
+>>> >=20
+>>> > I agree that the manufacturers designed the interface poorly :-/
+>>> >=20
+>>> > I am not affiliated with any laptop manufacturers so I am just spe=
+aking
+>>> > for myself:
+>>> >=20
+>>> > IMO the real boss is the user. Both the shortcut (Fn+Space) and the
+>>> > ACPI interface are just "message channels" for the EC to know abou=
+t the
+>>> > user's choice.
+>>> >=20
+>>> > Being able to press such a shortcut always implies that the user is
+>>> > physically in front of the device. In this case it no longer about
+>>> > whether Linux or the EC controls the LED, but both should respect
+>>> > user's choice. That was why brightness_hw_changed was introduced to
+>>> > respect user's choice and pass it to the userspace. So far there h=
+as
+>>> > been ~10 drivers utilizing the brightness_hw_changed interface.
+>>> >=20
+>>> I am affiliated with a laptop manufacturer :) Happy to take suggesti=
+ons on what should be improved or is missing (can't promise anything but=
+ happy to consider it and take it for review).
+>>>=20
+>>> We can set the brightness, get the status, and the FW sends events w=
+hen it changes - all supported on Linux (for Lenovo devices). This looks=
+ like a pretty decent API to me. What is it missing?
+>>
+>> IMO, one missing thing is that there's no approach for the OS to
+>> prevent the EC from responding to Fn+Space. Hence no 100% pure softwa=
+re
+>> control is possible. We end up have a mixed SW + EC control.
+>>
+>> Another missing thing is that there's no approach for the OS to
+>> query/set the ALS-to-brightness curve (or trip points, whatever you
+>> call it) of the EC driven auto brightness mode. Therefore, should we
+>> have a kernel mode ALS-based software trigger, we would never know if
+>> our curve could be offloaded.
+>>
+>> That being said, I don't think either of these two missing things is a
+>> big deal, since most laptops (if not all) are just designed to work
+>> like this and I don't think we would have a kernel mode ALS-based
+>> software trigger any soon. No 100% pure software control wasn't, isn't
+>> and shouldn't be a blocker of using an LED classdev. As I've said,
+>> that's exactly why brightness_hw_changed was introduced.
+>>
+> Got it - thanks for the input.
+>
+> My personal opinion (not feedback from the FW team)
+>  - disabling the FN+spacebar is not a useful feature. It's not exactly=20
+> something you would trigger accidentally. I can't think when people=20
+> would need to disable it rather than just choosing to not use it.
+>  - Programming the curve would be more interesting - but becomes a bit=20
+> of a pro-user use case. Happy to suggest it, but it's a nice-to-have=20
+> feature IMO.
+>
+> Agreed that neither of these seem a valid reason to block the implemen=
+tation.
+>
+>>>=20
+>>> I don't understand the two bosses issue I'm afraid. The user ('Linux=
+' in your description?) tells the EC what it wants the LED to be, and th=
+e EC does it. The EC is not a boss.
+>>
+>> The "user" means the one (i.e., a human) who is using the device. And
+>> "message channels" mean:
+>>
+>> User -> pressing Fn+Space -> EC -> update keyboard backlight
+>>
+>> User -> LED classdev / manufacturer utilities -> ACPI -> EC -> update
+>> keyboard backlight
+>>
+>> They are all about the user, as a human, tells their intention to the
+>> device. Of course there may be some userspace software or kernel
+>> trigger blinking the LED, but again, that's still the user's choice a=
+nd
+>> intention. Hence I don't think EC is a boss either, and the user is t=
+he
+>> real boss.
+>>
+> I think we're in agreement :)
+>
+>>>=20
+>>> > >=20
+>>> > > > As my previous reply said, it's common that an LED driver can'=
+t prevent
+>>> > > > hardware from changing its state autonomously. Prior to the
+>>> > > > introduction of auto brightness mode, brightness_hw_changed is=
+ enough
+>>> > > > to handle this. The issue only emerges when recent models star=
+t to
+>>> > > > provide an auto brightness mode based on the ALS sensor.
+>>> > >=20
+>>> > > Do you have a software driven brightness mode based on an ALS? W=
+hat
+>>> > > API do you use to control this? Can you use that API, and accele=
+rate
+>>> > > it?
+>>> >=20
+>>> > All devices I've seen implement an EC driven auto brightness mode =
+based
+>>> > on an ALS.
+>>> >=20
+>>> > @Mark, do you know any device implementing a software driven auto
+>>> > brightness mode?
+>>> >=20
+>>>=20
+>>> I don't - to my knowledge in auto mode it's always driven by the HW/=
+FW.
+>>
+>> Thanks.
+>>
+>>>=20
+>>> If there was a SW approach it would read the sensor and set the brig=
+htness to low/medium/high (and not to auto) so I'm struggling to underst=
+and the issue here. What am I missing?
+>>
+>> My understanding of Andrew's words (see also his previous replies) is:
+>>
+>>    hw control trigger is fundamentally an accelerated (offloaded)
+>>    software trigger. Only if there is a software-driven ALS-based
+>>    trigger and the curve matches the FW one can we treat the auto
+>>    brightness mode as a hw control trigger.
+>>
+>> But those laptops with an ALS and keyboard backlight are not designed
+>> to work like this, and the curve may be very specific to the ALS and
+>> the luminance of the keyboard backlight. So I asked you to confirm if
+>> there is any device designed to use an software driven auto brightness
+>> mode (even under Windows).
+>>
+>> Hmm, forgot to ask about that... Is there any device comes with ALS-
+>> based auto brightness mode but Linux cannot read the the ALS? If such
+>> devices exist, the "accelerated software trigger" model is no longer
+>> relevant.
+>>
+> I don't know of any SW driven auto brightness mode.
+>
+> Afraid I also don't know about reading the ALS. I'll see if I can find=20
+> out - but I don't think it's directly important to this series which i=
+s=20
+> about supporting the new HW automated feature.
+> We're not trying to implement an automated SW based control feature=20
+> with this series :)
+>
+>> Also that's why we have private LED triggers -- it's useful when the
+>> HW/FW has its own triggering functionality. For example, "cros-ec-led"
+>> has a private trigger and declares it as its hw control trigger.
+>>
+>
+> ack
+>
+>>>=20
+>>> > >=20
+>>> > > > FYI, desktop environments (e.g., GNOME, KDE) can control the b=
+acklight
+>>> > > > brightness of keyboards through sliders and heavily depend on
+>>> > > > brightness_hw_changed to update the sliders and display OSD on=
+ce the
+>>> > > > shortcut is pressed.
+>>> > >=20
+>>> > > Hold up. Terminology problem. I'm a networking guy, i know netwo=
+rking
+>>> > > terms. By slider, do you mean a software scroll bar sort of thin=
+g?=C2=A0
+>>> >=20
+>>> > Yes. See
+>>> > https://blogs.kde.org/2024/09/04/brightness-controls-for-all-your-=
+displays/
+>>> >=20
+>>> > (it was about display backlight but it also showed the keyboard on=
+e in
+>>> > the same image)
+>>> >=20
+>>> > > I'm
+>>> > > an XFCE users. I can control the display backlight with a slider=
+ on
+>>> > > the battery charge applet. And i can use Fn F4/F5. I've not seen=
+ a
+>>> > > software scroll bar for the keyboard backlight, but i think
+>>> > > <CTRL><SPC> allows me to change the keyboard backlight.
+>>> > >=20
+>>> > > So we have a slider, which is purely software, Linux. And we hav=
+e key
+>>> > > presses, which you are calling shortcut, which the EC acts on, a=
+nd
+>>> > > might tell Linux, maybe, but not about the key press, but the ac=
+tion
+>>> > > the EC took because of the key press.
+>>> >=20
+>>> > "might tell", "maybe"
+>>> >=20
+>>> > It always tells the OS that the state of keyboard backlight has
+>>> > changed.
+>>> >=20
+>>> > >=20
+>>> > > You have some API to the EC to ask it nicely to act on the softw=
+are
+>>> > > slide, but it is the EC which really controls the LED, not Linux.
+>>> > >=20
+>>> > > To me a Linux LED is a poor fit for what you want, and i think a
+>>> > > trigger is even worse. The problems you have are because the
+>>> > > LED+trigger model, plus using the hardware for acceleration, doe=
+s not
+>>> > > fit with the EC actually controlling the hardware.
+>>> > >=20
+>>> > > I would suggest you look at the API the EC exports and find a be=
+tter
+>>> > > model for it.
+>>> >=20
+>>> > An LED classdev may be unable to perfectly fit this, but nothing is
+>>> > perfect and so far it's the best thing we have. It's a fortunate to
+>>> > have the LED subsystem. Windows, without a similar interface, ends=
+ up
+>>> > being filled with disgusting software pre-installed by the
+>>> > manufacturer.
+>>> >=20
+>>>=20
+>>> Afraid I don't understand what we are debating here.
+>>>=20
+>>> Isn't the whole goal of this patch to make it so LED classdev is a b=
+etter fit to address missing functionality? Why would switching to somet=
+hing else (I have no idea what) be better? Especially given the the keyb=
+oard backlight is currently a LED device, and changing that would potent=
+ially break things for users.
+>>>=20
+>>> From my perspective if I could just tear this out and have a Lenovo =
+only keyboard_backlight implementation under (for example) /sys/devices/=
+thinkpad_acpi it would be so much easier. But I don't think it is the ri=
+ght thing to do. My experience is if we define a common approach then al=
+l vendors will use it going forward - which is better for the Linux expe=
+rience overall.
+>>> Or we don't have fully implemented features for Linux users? That's =
+kinda sucky.
+>>
+>> I agreed with you. Just some supplemental information:
+>>
+>> ideapad-laptop has an custom attribute "fn_lock". This used to be
+>> the=C2=A0only way for userspace to turn on/off FnLock. The attribute =
+does
+>> not support any notification mechanism.
+>>
+>> Since devices with FnLock also come with an LED indicating the status
+>> of FnLock, an LED classdev has been added with a new
+>> LED_FUNCTION_FNLOCK macro for dt-bindings and UAPI. See commit
+>> 7ab6c64663a0 ("dt-bindings: leds: Add LED_FUNCTION_FNLOCK") and commit
+>> 07f48f668fac ("platform/x86: ideapad-laptop: add FnLock LED class
+>> device"). Since then, userspace receives notifications through
+>> brightness_hw_changed when the user presses Fn+Esc.
+>>
+>> I think this shows that an LED classdev, as a common interface, has i=
+ts
+>> vitality even when being used in a very specific use case.
+>>
+>>>=20
+>>> I don't think the two bosses argument is valid (or at least I don't =
+understand it). Are there any other critical implementation details that=
+ make this a poor choice and will bite us in the long run?
+>>>=20
+>>> I personally find the implementation more complicated than I origina=
+lly expected, but having looked at it and understood better what Rong wa=
+s proposing I understand the benefits and I think it works. We're still =
+checking it out on Thinkpad to confirm that, but this patch is a RFC so =
+I think that's part of the process.
+>>>=20
+>>> > IMO the presence of brightness_hw_changed proves that an LED class=
+dev,
+>>> > as long as appropriate interfaces are provided, can work well with=
+ such
+>>> > hardware. And I don't think there is too much difference between EC
+>>> > setting a static brightness value due to a shortcut being pressed =
+and
+>>> > EC turning on/off the auto brightness mode due to the same shortcu=
+t --
+>>> > if we can handle the former well, we can also implement a similar
+>>> > mechanism for the latter.
+>>> >=20
+>>> >=20
+>>> > Do you have any recommendations for a "better model"?
+>>> >=20
+>>> > Did you mean do not register LED classdevs at all? This isn't real=
+ly
+>>> > viable and will break userspace. Some drivers has been using LED
+>>> > classdevs for keyboard backlight for over a decade. And many
+>>> > `*::kbd_backlight' LEDs rely on brightness_hw_changed, so it's very
+>>> > common that we can't take 100% control over EC. LED classdevs and =
+EC-
+>>> > controlled keyboard backlight have lived in harmony for a long tim=
+e.
+>>> >=20
+>>> > If we still register the keybaord backlight as an LED classdev but=
+ use
+>>> > a custom attribute to report/set the auto brightness mode. IMO thi=
+s is
+>>> > even uglier than LED+trigger, as writing to such a non-brightness
+>>> > attribute will interfere with the brightness attribute and the act=
+ive
+>>> > trigger and vice versa. Even if we rule out the EC's action, such
+>>> > interference still exists as long as users use the attribute.
+>>> >=20
+>>> >=20
+>>> > As for the software-vs-hardware priority issue, how about adding an
+>>> > attribute "hw_change_policy" so that users can select if the softw=
+are
+>>> > state should be always reimposed to hardware?
+>>>=20
+>>> Is this needed? When wouldn't this be the case?
+>>>=20
+>>> If the SW sets a specific brightness that should become the setting.=
+ It would override any previous choices and tell the HW that is what is =
+wanted now - don't change it (until the user says otherwise).
+>>> If we're in auto mode and the HW changes the brightness - it doesn't=
+ change the setting from auto mode, just the reported brightness level i=
+f queried.
+>>
+>> My understanding of Andrew's words is:
+>>
+>>    Linux LED should always be the boss. Tell the HW: don't change it =
+*even
+>>    if the user presses Fn+Space*. Failing to accomplish this means th=
+at we
+>>    are in "a two bosses dilemma", hence "a Linux LED is a poor fit for
+>>    what you want" and "a trigger is even worse".
+>>
+>> Since Andrew cares about the software's precedence, the best thing we
+>> can do is adding an attribute for users to select their preference. T=
+he
+>> attribute's default value must not be reimpose, otherwise it breaks
+>> existing userspace programs relying on brightness_hw_changed and
+>> confuses most users.
+>>
+>
+> For the current HW, the attribute is not going to be supported. There'=
+s=20
+> no way to disable FN+space as it goes directly to the BIOS (which then=20
+> notifies the OS).
+>
+> I guess the OS can get the notification and then say 'nope - despite=20
+> the fact they just pressed the FN + spacebar, they actually don't want=20
+> anything to change', and revert the setting to the previous setting.=20
+> If the user had to specifically set the attribute to do this it's fine=20
+> - but it feels like something that nobody would ever use and a whole=20
+> bunch of extra complexity, to me
+>
+>> But yeah, personally I don't think it's needed either. It's been 9
+>> years since the introduction of brightness_hw_changed, and there's no
+>> complaint about HW/FW overriding the software configured brightness.
+>> After all, it's the user who decides to press the shortcut and asks t=
+he
+>> EC to change the brightness or turn on/off the auto brightness mode.
+>>
+>
+> I think you and I are both in agreement.=20
+>
+> Andrew - are you still against the current proposal or have your=20
+> concerns been addressed?
+>
+> How do we proceed on finding something that we can move forward with?
+>
 
-Add a initial synology microp driver, written in Rust.
-The driver targets a microcontroller found in Synology NAS devices. It
-currently only supports controlling of the power led, status led, alert
-led and usb led. Other components such as fan control or handling
-on-device buttons will be added once the required rust abstractions are
-there.
+Hi maintainers - a gentle nudge on this one. Would like some direction i=
+f we can move ahead with the series. If not, what is required?
 
-This driver can be used both on arm and x86, thus it goes into the root
-directory of drivers/platform.
+On our side I know Vishnu has implemented the thinkpad driver using this=
+ and confirmed the design works there too.
 
-Tested successfully on a Synology DS923+.
+Would like to get this upstream so we can start working with the user-sp=
+ace folk on updating their pieces.
 
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
----
- MAINTAINERS                                        |   5 +
- drivers/platform/Kconfig                           |   2 +
- drivers/platform/Makefile                          |   1 +
- drivers/platform/synology_microp/Kconfig           |  13 +
- drivers/platform/synology_microp/Makefile          |   3 +
- drivers/platform/synology_microp/TODO              |   7 +
- drivers/platform/synology_microp/command.rs        |  55 ++++
- drivers/platform/synology_microp/led.rs            | 276 +++++++++++++++++++++
- drivers/platform/synology_microp/model.rs          |  49 ++++
- .../platform/synology_microp/synology_microp.rs    | 109 ++++++++
- 10 files changed, 520 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a667f4efb66e..78c99d831431 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25554,6 +25554,11 @@ F:	drivers/dma-buf/sync_*
- F:	include/linux/sync_file.h
- F:	include/uapi/linux/sync_file.h
- 
-+SYNOLOGY MICROP DRIVER
-+M:	Markus Probst <markus.probst@posteo.de>
-+S:	Maintained
-+F:	drivers/platform/synology_microp/
-+
- SYNOPSYS ARC ARCHITECTURE
- M:	Vineet Gupta <vgupta@kernel.org>
- L:	linux-snps-arc@lists.infradead.org
-diff --git a/drivers/platform/Kconfig b/drivers/platform/Kconfig
-index 312788f249c9..996050566a4a 100644
---- a/drivers/platform/Kconfig
-+++ b/drivers/platform/Kconfig
-@@ -22,3 +22,5 @@ source "drivers/platform/arm64/Kconfig"
- source "drivers/platform/raspberrypi/Kconfig"
- 
- source "drivers/platform/wmi/Kconfig"
-+
-+source "drivers/platform/synology_microp/Kconfig"
-diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
-index fa322e7f8716..2381872e9133 100644
---- a/drivers/platform/Makefile
-+++ b/drivers/platform/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_SURFACE_PLATFORMS)	+= surface/
- obj-$(CONFIG_ARM64_PLATFORM_DEVICES)	+= arm64/
- obj-$(CONFIG_BCM2835_VCHIQ)	+= raspberrypi/
- obj-$(CONFIG_ACPI_WMI)		+= wmi/
-+obj-$(CONFIG_SYNOLOGY_MICROP)	+= synology_microp/
-diff --git a/drivers/platform/synology_microp/Kconfig b/drivers/platform/synology_microp/Kconfig
-new file mode 100644
-index 000000000000..7c4d8f2808f0
---- /dev/null
-+++ b/drivers/platform/synology_microp/Kconfig
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+config SYNOLOGY_MICROP
-+	tristate "Synology Microp driver"
-+	depends on LEDS_CLASS && LEDS_CLASS_MULTICOLOR
-+	depends on RUST_SERIAL_DEV_BUS_ABSTRACTIONS
-+	help
-+	  Enable support for the MCU found in Synology NAS devices.
-+
-+	  This is needed to properly shutdown and reboot the device, as well as
-+	  additional functionality like fan and LED control.
-+
-+	  This driver is work in progress and may not be fully functional.
-diff --git a/drivers/platform/synology_microp/Makefile b/drivers/platform/synology_microp/Makefile
-new file mode 100644
-index 000000000000..63585ccf76e4
---- /dev/null
-+++ b/drivers/platform/synology_microp/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-y += synology_microp.o
-diff --git a/drivers/platform/synology_microp/TODO b/drivers/platform/synology_microp/TODO
-new file mode 100644
-index 000000000000..1961a33115db
---- /dev/null
-+++ b/drivers/platform/synology_microp/TODO
-@@ -0,0 +1,7 @@
-+TODO:
-+- add missing components:
-+  - handle on-device buttons (Power, Factory reset, "USB Copy")
-+  - handle fan failure
-+  - beeper
-+  - fan speed control
-+  - correctly perform device power-off and restart on Synology devices
-diff --git a/drivers/platform/synology_microp/command.rs b/drivers/platform/synology_microp/command.rs
-new file mode 100644
-index 000000000000..5b3dd715afac
---- /dev/null
-+++ b/drivers/platform/synology_microp/command.rs
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+use kernel::{
-+    device::Bound,
-+    error::Result,
-+    serdev, //
-+};
-+
-+use crate::led;
-+
-+#[derive(Copy, Clone)]
-+#[expect(
-+    clippy::enum_variant_names,
-+    reason = "future variants will not end with Led"
-+)]
-+pub(crate) enum Command {
-+    PowerLed(led::State),
-+    StatusLed(led::StatusLedColor, led::State),
-+    AlertLed(led::State),
-+    UsbLed(led::State),
-+    EsataLed(led::State),
-+}
-+
-+impl Command {
-+    pub(crate) fn write(self, dev: &serdev::Device<Bound>) -> Result {
-+        dev.write_all(
-+            match self {
-+                Self::PowerLed(led::State::On) => &[0x34],
-+                Self::PowerLed(led::State::Blink) => &[0x35],
-+                Self::PowerLed(led::State::Off) => &[0x36],
-+
-+                Self::StatusLed(_, led::State::Off) => &[0x37],
-+                Self::StatusLed(led::StatusLedColor::Green, led::State::On) => &[0x38],
-+                Self::StatusLed(led::StatusLedColor::Green, led::State::Blink) => &[0x39],
-+                Self::StatusLed(led::StatusLedColor::Orange, led::State::On) => &[0x3A],
-+                Self::StatusLed(led::StatusLedColor::Orange, led::State::Blink) => &[0x3B],
-+
-+                Self::AlertLed(led::State::On) => &[0x4C, 0x41, 0x31],
-+                Self::AlertLed(led::State::Blink) => &[0x4C, 0x41, 0x32],
-+                Self::AlertLed(led::State::Off) => &[0x4C, 0x41, 0x33],
-+
-+                Self::UsbLed(led::State::On) => &[0x40],
-+                Self::UsbLed(led::State::Blink) => &[0x41],
-+                Self::UsbLed(led::State::Off) => &[0x42],
-+
-+                Self::EsataLed(led::State::On) => &[0x4C, 0x45, 0x31],
-+                Self::EsataLed(led::State::Blink) => &[0x4C, 0x45, 0x32],
-+                Self::EsataLed(led::State::Off) => &[0x4C, 0x45, 0x33],
-+            },
-+            serdev::Timeout::Max,
-+        )?;
-+        dev.wait_until_sent(serdev::Timeout::Max);
-+        Ok(())
-+    }
-+}
-diff --git a/drivers/platform/synology_microp/led.rs b/drivers/platform/synology_microp/led.rs
-new file mode 100644
-index 000000000000..a78a95588456
---- /dev/null
-+++ b/drivers/platform/synology_microp/led.rs
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+use kernel::{
-+    device::Bound,
-+    devres::{
-+        self,
-+        Devres, //
-+    },
-+    led::{
-+        self,
-+        LedOps,
-+        MultiColorSubLed, //
-+    },
-+    new_mutex,
-+    prelude::*,
-+    serdev,
-+    str::CString,
-+    sync::Mutex, //
-+};
-+use pin_init::pin_init_scope;
-+
-+use crate::{
-+    command::Command,
-+    model::Model, //
-+};
-+
-+#[pin_data]
-+pub(crate) struct Data {
-+    #[pin]
-+    status: Devres<led::MultiColorDevice<StatusLedHandler>>,
-+    power_name: CString,
-+    #[pin]
-+    power: Devres<led::Device<LedHandler>>,
-+}
-+
-+impl Data {
-+    pub(super) fn register<'a>(
-+        dev: &'a serdev::Device<Bound>,
-+        model: &'a Model,
-+    ) -> impl PinInit<Self, Error> + 'a {
-+        pin_init_scope(move || {
-+            if let Some(color) = model.led_alert {
-+                let name = CString::try_from_fmt(fmt!("{}:alarm", color.as_c_str().to_str()?))?;
-+                devres::register(
-+                    dev.as_ref(),
-+                    led::DeviceBuilder::new().color(color).name(&name).build(
-+                        dev,
-+                        try_pin_init!(LedHandler {
-+                            blink <- new_mutex!(false),
-+                            command: Command::AlertLed,
-+                        }),
-+                    ),
-+                    GFP_KERNEL,
-+                )?;
-+            }
-+
-+            if model.led_usb_copy {
-+                devres::register(
-+                    dev.as_ref(),
-+                    led::DeviceBuilder::new()
-+                        .color(led::Color::Green)
-+                        .name(c"green:usb")
-+                        .build(
-+                            dev,
-+                            try_pin_init!(LedHandler {
-+                                blink <- new_mutex!(false),
-+                                command: Command::UsbLed,
-+                            }),
-+                        ),
-+                    GFP_KERNEL,
-+                )?;
-+            }
-+
-+            if model.led_esata {
-+                devres::register(
-+                    dev.as_ref(),
-+                    led::DeviceBuilder::new()
-+                        .color(led::Color::Green)
-+                        .name(c"green:esata")
-+                        .build(
-+                            dev,
-+                            try_pin_init!(LedHandler {
-+                                blink <- new_mutex!(false),
-+                                command: Command::EsataLed,
-+                            }),
-+                        ),
-+                    GFP_KERNEL,
-+                )?;
-+            }
-+
-+            Ok(try_pin_init!(Self {
-+                status <- led::DeviceBuilder::new()
-+                    .color(led::Color::Multi)
-+                    .name(c"multicolor:status")
-+                    .build_multicolor(
-+                        dev,
-+                        try_pin_init!(StatusLedHandler {
-+                            blink <- new_mutex!(false),
-+                        }),
-+                        StatusLedHandler::SUBLEDS,
-+                    ),
-+                power_name: CString::try_from_fmt(fmt!(
-+                    "{}:power",
-+                    model.led_power.as_c_str().to_str()?
-+                ))?,
-+                power <- led::DeviceBuilder::new()
-+                    .color(model.led_power)
-+                    .name(power_name)
-+                    .build(
-+                        dev,
-+                        try_pin_init!(LedHandler {
-+                            blink <- new_mutex!(true),
-+                            command: Command::PowerLed,
-+                        }),
-+                    ),
-+            }))
-+        })
-+    }
-+}
-+
-+#[derive(Copy, Clone)]
-+pub(crate) enum StatusLedColor {
-+    Green,
-+    Orange,
-+}
-+
-+#[derive(Copy, Clone)]
-+pub(crate) enum State {
-+    On,
-+    Blink,
-+    Off,
-+}
-+
-+#[pin_data]
-+struct LedHandler {
-+    #[pin]
-+    blink: Mutex<bool>,
-+    command: fn(State) -> Command,
-+}
-+
-+#[vtable]
-+impl LedOps for LedHandler {
-+    type Bus = serdev::Device<Bound>;
-+    type Mode = led::Normal;
-+    const BLOCKING: bool = true;
-+    const MAX_BRIGHTNESS: u32 = 1;
-+
-+    fn brightness_set(
-+        &self,
-+        dev: &Self::Bus,
-+        _classdev: &led::Device<Self>,
-+        brightness: u32,
-+    ) -> Result<()> {
-+        let mut blink = self.blink.lock();
-+        (self.command)(if brightness == 0 {
-+            *blink = false;
-+            State::Off
-+        } else if *blink {
-+            State::Blink
-+        } else {
-+            State::On
-+        })
-+        .write(dev)?;
-+
-+        Ok(())
-+    }
-+
-+    fn blink_set(
-+        &self,
-+        dev: &Self::Bus,
-+        _classdev: &led::Device<Self>,
-+        delay_on: &mut usize,
-+        delay_off: &mut usize,
-+    ) -> Result<()> {
-+        let mut blink = self.blink.lock();
-+
-+        (self.command)(if *delay_on == 0 && *delay_off != 0 {
-+            State::Off
-+        } else if *delay_on != 0 && *delay_off == 0 {
-+            State::On
-+        } else {
-+            *blink = true;
-+            *delay_on = 167;
-+            *delay_off = 167;
-+
-+            State::Blink
-+        })
-+        .write(dev)
-+    }
-+}
-+
-+#[pin_data]
-+struct StatusLedHandler {
-+    #[pin]
-+    blink: Mutex<bool>,
-+}
-+
-+impl StatusLedHandler {
-+    const SUBLEDS: &[MultiColorSubLed] = &[
-+        MultiColorSubLed::new(led::Color::Green).initial_intensity(1),
-+        MultiColorSubLed::new(led::Color::Orange),
-+    ];
-+}
-+
-+#[vtable]
-+impl LedOps for StatusLedHandler {
-+    type Bus = serdev::Device<Bound>;
-+    type Mode = led::MultiColor;
-+    const BLOCKING: bool = true;
-+    const MAX_BRIGHTNESS: u32 = 1;
-+
-+    fn brightness_set(
-+        &self,
-+        dev: &Self::Bus,
-+        classdev: &led::MultiColorDevice<Self>,
-+        brightness: u32,
-+    ) -> Result<()> {
-+        let mut blink = self.blink.lock();
-+        if brightness == 0 {
-+            *blink = false;
-+        }
-+
-+        let (color, subled_brightness) = if classdev.subleds()[1].intensity == 0 {
-+            (StatusLedColor::Green, classdev.subleds()[0].brightness)
-+        } else {
-+            (StatusLedColor::Orange, classdev.subleds()[1].brightness)
-+        };
-+
-+        Command::StatusLed(
-+            color,
-+            if subled_brightness == 0 {
-+                State::Off
-+            } else if *blink {
-+                State::Blink
-+            } else {
-+                State::On
-+            },
-+        )
-+        .write(dev)
-+    }
-+
-+    fn blink_set(
-+        &self,
-+        dev: &Self::Bus,
-+        classdev: &led::MultiColorDevice<Self>,
-+        delay_on: &mut usize,
-+        delay_off: &mut usize,
-+    ) -> Result<()> {
-+        let mut blink = self.blink.lock();
-+        *blink = true;
-+
-+        let (color, subled_intensity) = if classdev.subleds()[1].intensity == 0 {
-+            (StatusLedColor::Green, classdev.subleds()[0].intensity)
-+        } else {
-+            (StatusLedColor::Orange, classdev.subleds()[1].intensity)
-+        };
-+        Command::StatusLed(
-+            color,
-+            if *delay_on == 0 && *delay_off != 0 {
-+                *blink = false;
-+                State::Off
-+            } else if subled_intensity == 0 {
-+                State::Off
-+            } else if *delay_on != 0 && *delay_off == 0 {
-+                *blink = false;
-+                State::On
-+            } else {
-+                *delay_on = 167;
-+                *delay_off = 167;
-+
-+                State::Blink
-+            },
-+        )
-+        .write(dev)
-+    }
-+}
-diff --git a/drivers/platform/synology_microp/model.rs b/drivers/platform/synology_microp/model.rs
-new file mode 100644
-index 000000000000..715d8840f56b
---- /dev/null
-+++ b/drivers/platform/synology_microp/model.rs
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+use kernel::led::Color;
-+
-+pub(crate) struct Model {
-+    pub(crate) led_power: Color,
-+    pub(crate) led_alert: Option<Color>,
-+    pub(crate) led_usb_copy: bool,
-+    pub(crate) led_esata: bool,
-+}
-+
-+impl Model {
-+    pub(super) const fn new() -> Self {
-+        Self {
-+            led_power: Color::Blue,
-+            led_alert: None,
-+            led_usb_copy: false,
-+            led_esata: false,
-+        }
-+    }
-+
-+    pub(super) const fn led_power(self, color: Color) -> Self {
-+        Self {
-+            led_power: color,
-+            ..self
-+        }
-+    }
-+
-+    pub(super) const fn led_alert(self, color: Color) -> Self {
-+        Self {
-+            led_alert: Some(color),
-+            ..self
-+        }
-+    }
-+
-+    pub(super) const fn led_esata(self) -> Self {
-+        Self {
-+            led_esata: true,
-+            ..self
-+        }
-+    }
-+
-+    pub(super) const fn led_usb_copy(self) -> Self {
-+        Self {
-+            led_usb_copy: true,
-+            ..self
-+        }
-+    }
-+}
-diff --git a/drivers/platform/synology_microp/synology_microp.rs b/drivers/platform/synology_microp/synology_microp.rs
-new file mode 100644
-index 000000000000..f02c4dade76c
---- /dev/null
-+++ b/drivers/platform/synology_microp/synology_microp.rs
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Synology Microp driver
-+
-+use kernel::{
-+    device,
-+    led::Color,
-+    of::{
-+        DeviceId,
-+        IdTable, //
-+    },
-+    of_device_table,
-+    prelude::*,
-+    serdev, //
-+};
-+use pin_init::pin_init_scope;
-+
-+use crate::model::Model;
-+
-+pub(crate) mod command;
-+mod led;
-+mod model;
-+
-+kernel::module_serdev_device_driver! {
-+    type: SynologyMicropDriver,
-+    name: "synology_microp",
-+    authors: ["Markus Probst <markus.probst@posteo.de>"],
-+    description: "Synology Microp driver",
-+    license: "GPL v2",
-+}
-+
-+#[rustfmt::skip]
-+of_device_table!(
-+    OF_TABLE,
-+    MODULE_OF_TABLE,
-+    Model,
-+    [
-+        // apollolake
-+        (DeviceId::new(c"synology,ds918p-microp"), Model::new()),
-+
-+        // evansport
-+        (DeviceId::new(c"synology,ds214play-microp"), Model::new()),
-+
-+        // geminilakenk
-+        (DeviceId::new(c"synology,ds225p-microp"), Model::new().led_usb_copy()),
-+        (DeviceId::new(c"synology,ds425p-microp"), Model::new()),
-+
-+        // pineview
-+        (DeviceId::new(c"synology,ds710p-microp"), Model::new().led_esata()),
-+        (DeviceId::new(c"synology,ds1010p-microp"), Model::new().led_alert(Color::Orange)),
-+
-+        // r1000
-+        (DeviceId::new(c"synology,ds923p-microp"), Model::new()),
-+        (DeviceId::new(c"synology,ds723p-microp"), Model::new()),
-+        (DeviceId::new(c"synology,ds1522p-microp"), Model::new()),
-+        (DeviceId::new(c"synology,rs422p-microp"), Model::new().led_power(Color::Green)),
-+
-+        // r1000nk
-+        (DeviceId::new(c"synology,ds725p-microp"), Model::new()),
-+
-+        // rtd1296
-+        (DeviceId::new(c"synology,ds118-microp"), Model::new()),
-+
-+        // rtd1619b
-+        (DeviceId::new(c"synology,ds124-microp"), Model::new()),
-+        (DeviceId::new(c"synolody,ds223-microp"), Model::new().led_usb_copy()),
-+        (DeviceId::new(c"synology,ds223j-microp"), Model::new()),
-+
-+        // v1000
-+        (DeviceId::new(c"synology,ds1823xsp-microp"), Model::new()),
-+        (DeviceId::new(c"synology,rs822p-microp"), Model::new().led_power(Color::Green)),
-+        (DeviceId::new(c"synology,rs1221p-microp"), Model::new().led_power(Color::Green)),
-+        (DeviceId::new(c"synology,rs1221rpp-microp"), Model::new().led_power(Color::Green)),
-+
-+        // v1000nk
-+        (DeviceId::new(c"synology,ds925p-microp"), Model::new()),
-+        (DeviceId::new(c"synology,ds1525p-microp"), Model::new()),
-+        (DeviceId::new(c"synology,ds1825p-microp"), Model::new()),
-+    ]
-+);
-+
-+#[pin_data]
-+struct SynologyMicropDriver {
-+    #[pin]
-+    led: led::Data,
-+}
-+
-+#[vtable]
-+impl serdev::Driver for SynologyMicropDriver {
-+    type IdInfo = Model;
-+    const OF_ID_TABLE: Option<IdTable<Self::IdInfo>> = Some(&OF_TABLE);
-+
-+    fn probe(
-+        dev: &serdev::Device<device::Core>,
-+        model: Option<&Model>,
-+    ) -> impl PinInit<Self, kernel::error::Error> {
-+        pin_init_scope(move || {
-+            let model = model.ok_or(EINVAL)?;
-+
-+            dev.set_baudrate(9600).map_err(|_| EINVAL)?;
-+            dev.set_flow_control(false);
-+            dev.set_parity(serdev::Parity::None)?;
-+
-+            Ok(try_pin_init!(Self {
-+                led <- led::Data::register(dev, model),
-+            }))
-+        })
-+    }
-+}
-
--- 
-2.52.0
-
-
+Thanks
+Mark
