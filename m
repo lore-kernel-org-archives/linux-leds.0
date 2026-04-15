@@ -1,72 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719373ED13B;
-	Tue, 14 Apr 2026 16:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6460A39A059;
+	Wed, 15 Apr 2026 07:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776183940; cv=none; b=OWfFi2pnUCLtsVPEIbGqNM0IcpAjEg/LfyMQT3VVmFJ5CDWeLNrOPueBZRJsX/b8DTcs+5HFdavPO6Hw76sLLq4f6rh0/UVW3G+UuktIMgK6wc3Rs8DEccaPjGCtcgEzdx+UcUqeb4zlyIJhxZgj5aXBv6eHouDXY56J2pezCoY=
+	t=1776236589; cv=none; b=VfsnZx9vHrx5DoRIfdzRgY9qqE7/TfaBV6wZbtA6yGWyFPYbIrDAWSmAEXJmW5T81hU0msIAHBjFmXNYghvURyPAZ/+5CxMMCAUoflfmxmH+zT1HrP4fXaGbEZqkWwLbH3PYBplNjYnsIqk3UEYD9Rp0LW++s2s4kseQzOxrWDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776183940; c=relaxed/simple;
-	bh=oXPr6DICSQAjrstqrDQl8dHMx2EjDycoyikzXqoN0vE=;
+	s=arc-20240116; t=1776236589; c=relaxed/simple;
+	bh=A6xYpGKAm4YWq1q2d+qVyrsufYXmANaYso0Fpfc6hbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3f+F9wh+fD8Czf2DKBFl29piMpyf/DIBnyAnEVeTzrJHSShYab+BNgdcxDgJjAGqF805hw5tmFuh/r8LexYBmPyLUAK9rKmJ6D8dN6BYXl+cM4cJ+kfexV02gORRLqqEYTjVOAvmHvQl1EMRZKWWiEqBatioNJFFECEpWncvGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le96GiwR; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZxE2OygeSL7lATL7rkXPpLOBU5CTVGvWD9bf4Z4nNns1x1OQpN2ltEvCEKppWLAwjm9B0v6xibSMNKVFKMKR9baSABOvZSR0JWRYn4CEHWHwRT3kAWERHocnuV+eBU4hF/QlAEMogVYdJbEtoCx9hM0Go7T9+6WbI3k8fdzNbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qagzsw/G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le96GiwR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FDAC19425;
-	Tue, 14 Apr 2026 16:25:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qagzsw/G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE4BC19424;
+	Wed, 15 Apr 2026 07:03:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776183940;
-	bh=oXPr6DICSQAjrstqrDQl8dHMx2EjDycoyikzXqoN0vE=;
+	s=k20201202; t=1776236589;
+	bh=A6xYpGKAm4YWq1q2d+qVyrsufYXmANaYso0Fpfc6hbk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Le96GiwRQmFJpXkrBR1cBOh46m9m12Vv3tth2mtOZn+E/McBgQSC6NTjAm3pzLW8F
-	 HTB8OQYqn0LsCwhhCQOu2J8aE33FBef3DHAaVo392gLOBXzSnaitm2oBHKo0vQD8Po
-	 Gl1rA8URvIDp06I51J74CENBcfomdPB+K3F535Nm4XQV9PFfN5lv8VWWXeYWZr7O4w
-	 KMwe+I1EVfiZfEzGc3xiNhyMnmIW/YjWfjirDW9j7jG8+TVN/s3C+tqlX8c9M2Y8ar
-	 zE9Sw31MS0sN9owOuR10RezkhbtR1oyGp6jk3jH0vAaeifMMmbVOkVZQ94GSMRI2fD
-	 Q1PBd8udugN3A==
-Date: Tue, 14 Apr 2026 17:25:32 +0100
-From: Daniel Thompson <danielt@kernel.org>
-To: maudspierings@gocontroll.com
-Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 1/4] dt-bindings: backlight: Add max25014 support
-Message-ID: <ad5qfDzaHZhjZsLs@aspen.lan>
-References: <20260407-max25014-v8-0-14eac7ed673a@gocontroll.com>
- <20260407-max25014-v8-1-14eac7ed673a@gocontroll.com>
+	b=qagzsw/GS2DXfaqbiZw2FjaOEopavs9TSqqmJMgfFif3scL/ouPdi9+O8UD38xf1F
+	 hBKJQUEe7ELxMnYg2vxfoZKIYf8Z2jvpoQOODFZBbsN9Npz25OejBUj9OoQh4tVW+1
+	 IzHtcTC7Z94iYFt6AmPvr17rV7FO4t2zCgyaxRzAHnmF7fJUX1zdTFTHukC0LUM+Ox
+	 Zo/RCRPtjPcpALr+rNWWnrYDucT1A74zrI9D+P1GK77ijj8LmKBDZcflwdEJh52Pzk
+	 Va2stT3DMxcI+gbYY7VqvQyFAtMfL/vgxTbAVlXMfcv3o91ImFfwlRvNhrZ8TK6YR5
+	 xyhkB6q2RYxgw==
+Date: Wed, 15 Apr 2026 09:03:06 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Nam Tran <trannamatk@gmail.com>, =?utf-8?B?xYF1a2FzeiBMZWJpZWR6acWEc2tp?= <kernel@lvkasz.us>, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 02/13] dt-bindings: leds: document Samsung S2M series
+ PMIC RGB LED device
+Message-ID: <20260415-sensible-kiwi-of-argument-44d6ed@quoll>
+References: <20260414-s2mu005-pmic-v4-0-7fe7480577e6@disroot.org>
+ <20260414-s2mu005-pmic-v4-2-7fe7480577e6@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260407-max25014-v8-1-14eac7ed673a@gocontroll.com>
+In-Reply-To: <20260414-s2mu005-pmic-v4-2-7fe7480577e6@disroot.org>
 
-On Tue, Apr 07, 2026 at 04:41:42PM +0200, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
->
-> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
-> with integrated boost controller.
->
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+On Tue, Apr 14, 2026 at 12:02:54PM +0530, Kaustabh Chakraborty wrote:
+> +description: |
+> +  The Samsung S2M series PMIC RGB LED is a three-channel LED device with
+> +  8-bit brightness control for each channel, typically used as status
+> +  indicators in mobile phones.
+> +
+> +  This is a part of device tree bindings for S2M and S5M family of Power
+> +  Management IC (PMIC).
+> +
+> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml for
+> +  additional information and example.
+> +
+> +allOf:
+> +  - $ref: common.yaml#
 
-Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
+Rob's comment is still valid:
+1. How do you address one of three LEDs in non-RGB case?
+2. Where is multi-color?
 
+And based on this alone without other properties, I say this should be
+part of top-level schema.  Separate node is fine, but no need for
+separate binding.
 
-Daniel.
+Best regards,
+Krzysztof
+
