@@ -1,64 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029C8391E75;
-	Thu, 16 Apr 2026 08:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA26839FCD7;
+	Thu, 16 Apr 2026 12:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776328872; cv=none; b=ohf3u9UpPe0IEatoOWHGlBAZ7Q12tJDGLP2i1xeFxWIbOv2oZYwwHLZTN4ujiJ0bs/NBsqk0axbu6mGBlqc4wuLihXj+6Tr1gYccTvCtDTln/f1/XSd4DEVAcVSutHnuQz1zdRRNJeXEZJVWG3OPP49Uoq7o1MSGW4BtjNIfI28=
+	t=1776341761; cv=none; b=lTPLg9oQ3gwrrazUKgODYEfCkd7jjJxAwblRxuaKKJDT95O3JNJequKS3+RhyVdrjMfHPom3RoYrh/4d9E4Ct9CRFbsoUbTkqbQQLKKAcB/jDLSHc2CqeSsvQq54wEYePWp0ZdPuAzxuNuBG8b6DOLtccQXOz5tMnGZx5XRHqBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776328872; c=relaxed/simple;
-	bh=GfqXt/wMT0iXCm/W4GFpDMmdmYvM8l6qUCpcwZHvo/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FssTb0iVa3m6WzyDPRuvgr7RcP/ZYttGYmj8CfVecHOnbqS+i20EyH1fP5vJTLK/xN9GMriCeE1nYbBAv4uXFnkMDXx+I44TAvpeWC/riaghHWDtWY4AVZ4eO2Cw02uxLIAchOzynXRXJc4Z5s11AQf4+WNfoyPmYckCCgBU0y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=octJ4uzb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776341761; c=relaxed/simple;
+	bh=gZLO9lN2kJhvahZVktWGr0uWFAt2YTX/UxFa5gJq4A8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=oSwzCM+QvK7GCVlyRsnBticF0MXmXzk+u1Vk/OPpp6jkJGtYFqLEvDyWPIi0HCIcYRqiymwyjiXdJM1GKnXrfkyu++VcELlMwP0w+dokA74lVkrdGsUdQjCTM9naHapg+bISksjAGn7ZMmrMurQRRN96Pdc5gqTjmAilQ+AWHR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=S7USaVxd; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="octJ4uzb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5C5C2BCAF;
-	Thu, 16 Apr 2026 08:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776328871;
-	bh=GfqXt/wMT0iXCm/W4GFpDMmdmYvM8l6qUCpcwZHvo/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=octJ4uzbc6dTUSD36wzgHeDgVT9NDJcbvn1xU6VfAHVHEB5B4Gw8sTRgJe1JonsYz
-	 wkajWS3awphY9PFlV8AI/QmqKCgVekwLDGycgKx9MTMwUoD31XaTujQOEQEek8tRBb
-	 nKng748kEzR8PJKXrcmBdwTRMR7LXua0VELrc30yuVS7axU2Y1IkgN1kJky5aWfZ1S
-	 5xi1lOnuIP0wqUskeXHFx/Vv4ukuWnXz7i80yShGqpPB5HOV4Zh1GojxTQOIuvZX57
-	 F/Ii40Q60wafCVzBGIUlegoIjLo+e+KFRaKfHWm5JMTmwbN238AfsSYgf0100rZOq7
-	 ek7FldYYPYkxw==
-Date: Thu, 16 Apr 2026 10:41:09 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Jan Carlo Roleda <jancarlo.roleda@analog.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: leds: Document LTC3208 Multidisplay
- LED Driver
-Message-ID: <20260416-radiant-active-caracara-e2e410@quoll>
-References: <20260416-upstream-ltc3208-v4-0-3884ed3e49f5@analog.com>
- <20260416-upstream-ltc3208-v4-1-3884ed3e49f5@analog.com>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="S7USaVxd"
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id D25DF2652E;
+	Thu, 16 Apr 2026 14:15:56 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id X6_CcIs2Vbau; Thu, 16 Apr 2026 14:15:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1776341756; bh=gZLO9lN2kJhvahZVktWGr0uWFAt2YTX/UxFa5gJq4A8=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=S7USaVxd65Og3uIBkajZCPvp5uwQZmZ7aCXvg10iCZY+jeBRc/BMfVzEvDleesVkg
+	 zLq8XGpCS0tbNavffePMl5DA6RCAH0jOM3KNEmy5DCj6a0BoGV38qsN26VB1WglB7t
+	 fT2puLTOvqjZiVoA4BPCbpyKRCY7189XIxmioDYpRAAY/NN3q5RkjOBI0gRM7u6zGc
+	 +egLI8//Sm2SGNidrv5TEjS9Gga2NeNfGKOSFk/CdPDViYFLc2W7m+N52QVgB0Wml0
+	 w4rlnKVUAdQ3K9UVfY7NGHeml8SVHt8HFxkwEyJRqhYpuUgRRuJ8tdEmGnjN2t1UzP
+	 GQiJcPVvGWHEQ==
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260416-upstream-ltc3208-v4-1-3884ed3e49f5@analog.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 Apr 2026 17:45:32 +0530
+Message-Id: <DHUKLAE757OT.XQW1LJYKC2FM@disroot.org>
+Subject: Re: [PATCH v4 02/13] dt-bindings: leds: document Samsung S2M series
+ PMIC RGB LED device
+From: "Kaustabh Chakraborty" <kauschluss@disroot.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Kaustabh Chakraborty"
+ <kauschluss@disroot.org>
+Cc: "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "MyungJoo Ham"
+ <myungjoo.ham@samsung.com>, "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Sebastian Reichel" <sre@kernel.org>, =?utf-8?q?Andr=C3=A9_Draszik?=
+ <andre.draszik@linaro.org>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <skhan@linuxfoundation.org>, "Nam Tran" <trannamatk@gmail.com>,
+ =?utf-8?q?=C5=81ukasz_Lebiedzi=C5=84ski?= <kernel@lvkasz.us>,
+ <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-samsung-soc@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+References: <20260414-s2mu005-pmic-v4-0-7fe7480577e6@disroot.org>
+ <20260414-s2mu005-pmic-v4-2-7fe7480577e6@disroot.org>
+ <20260415-sensible-kiwi-of-argument-44d6ed@quoll>
+ <DHTWNPSQ06IJ.24A9E1FL1RWER@disroot.org>
+ <20260416-upbeat-archetypal-mantis-1ede48@quoll>
+In-Reply-To: <20260416-upbeat-archetypal-mantis-1ede48@quoll>
 
-On Thu, Apr 16, 2026 at 10:39:06AM +0800, Jan Carlo Roleda wrote:
-> Add Devicetree Documentation for LTC3208 Multidisplay LED Driver.
-> 
-> Signed-off-by: Jan Carlo Roleda <jancarlo.roleda@analog.com>
-> ---
->  .../devicetree/bindings/leds/adi,ltc3208.yaml      | 181 +++++++++++++++++++++
->  MAINTAINERS                                        |   7 +
->  2 files changed, 188 insertions(+)
+On 2026-04-16 10:23 +02:00, Krzysztof Kozlowski wrote:
+> On Wed, Apr 15, 2026 at 11:00:16PM +0530, Kaustabh Chakraborty wrote:
+>> On 2026-04-15 09:03 +02:00, Krzysztof Kozlowski wrote:
+>> > On Tue, Apr 14, 2026 at 12:02:54PM +0530, Kaustabh Chakraborty wrote:
+>> >> +description: |
+>> >> +  The Samsung S2M series PMIC RGB LED is a three-channel LED device =
+with
+>> >> +  8-bit brightness control for each channel, typically used as statu=
+s
+>> >> +  indicators in mobile phones.
+>> >> +
+>> >> +  This is a part of device tree bindings for S2M and S5M family of P=
+ower
+>> >> +  Management IC (PMIC).
+>> >> +
+>> >> +  See also Documentation/devicetree/bindings/mfd/samsung,s2mps11.yam=
+l for
+>> >> +  additional information and example.
+>> >> +
+>> >> +allOf:
+>> >> +  - $ref: common.yaml#
+>> >
+>> > Rob's comment is still valid:
+>> > 1. How do you address one of three LEDs in non-RGB case?
+>> > 2. Where is multi-color?
+>>=20
+>> Yes, multi-color should have been added here.
+>>=20
+>> >
+>> > And based on this alone without other properties, I say this should be
+>> > part of top-level schema.  Separate node is fine, but no need for
+>> > separate binding.
+>>=20
+>> BTW, for loading the sub-device driver via platform (as it won't be a
+>> separate binding) the driver *must* be built-in. Although not related to
+>> bindings, this seems counter-intuitive. I see the same problem with the
+>
+> I don't understand that comment. If it has nothing to do with the
+> binding, what is the problem?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+It was an unrelated user-space issue, so ignore.
 
-Best regards,
-Krzysztof
+>
+> Best regards,
+> Krzysztof
 
