@@ -1,99 +1,93 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from outbound.qs.icloud.com (qs-2005d-snip4-11.eps.apple.com [57.103.86.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EDD1EA65;
-	Wed, 22 Apr 2026 08:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241E936DA08
+	for <linux-leds@vger.kernel.org>; Wed, 22 Apr 2026 13:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.86.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776845771; cv=none; b=XOXlus6F/Ts7/ODyJyke0cf0trtgLTmXi7eFDZDD+5mp2cJ9XbJKX3Id3YTX/cKesZL/fQjhuVhuhsU+CuxSrD+qRi9Q5Ksv+Y5r1g/oP1PPITzH+ujrUxn6Dvb1Re+ebF30qqVfKRrgDiJU7hG2bwvF+T44mEpZpTpFfY7GJ2Y=
+	t=1776865801; cv=none; b=MyKeFWqU/zrdMBjgswLz2zx0CnBq+BSjguAGmnIob0Gzkkwjh9cI8UDZPbz3ez1ABsZ+XE91ACJL/LPLgXOuEobNRocJ4urr5/r3K4G+sa4Wkv4gLg3d69xjO+Jcu5Pwy8LzLokKBDMUEL8mMw2igyHZmZml26PgB7+43UTwKgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776845771; c=relaxed/simple;
-	bh=S3RJimmHuTYRQQQMvkSvYrxOF0apqhX4CR6cgtltNXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSbH1/Jys5IsZ2muoljO+nh6Makl/y1fMWmdCnFRjn17Qb5W5aAJLxPCs8PNh+PTsq4KFSBxKI6IublO1Jo1TKMmsGBwtLQVARFC52IALVIVdszjlu4gK++Rj5b2+YDqXf8Mf4wzsI23saFzbhb7coXSTMa0bEs3W6kj5JCCHyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SRN1CEeN; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1776865801; c=relaxed/simple;
+	bh=EK6R/ppVQCbJp84Dc4nejfzdRb4ywHL1WEEgEYIH74A=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GMOCPUmWklQdQv69XThH0xDLcKM6XVDps2qeyQxbO3F8Ke5ArtyLwbrJg/tSw51oNbmOHs3155iWsg0sf95rRFpP6YBB1T2IYix3PDOFjU1Fhei2jA+W6RZiKPeWF4XLjDLsc1dR2YaAyn+H5jFyBkcGt/0PRBNNg0va7S4zyNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliasing.net; spf=pass smtp.mailfrom=aliasing.net; dkim=pass (2048-bit key) header.d=aliasing.net header.i=@aliasing.net header.b=AQxeUZCg; arc=none smtp.client-ip=57.103.86.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aliasing.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aliasing.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SRN1CEeN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1776845768; x=1808381768;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=S3RJimmHuTYRQQQMvkSvYrxOF0apqhX4CR6cgtltNXg=;
-  b=SRN1CEeNIyU2rMi+ftEMm1alfrVEu+ZWBtvS32p0rZvWG1MjhFHw8vn6
-   XSYUqIMOd0ASHZmrmV/ZsbvkyXNDO8IgbjJS1ooIq52Ytdio1qGif5iDs
-   FlQlEg63bsNa4DVUk9N+1O1hzImczovOt+NK+dt6r8tOU33D2XF5xXlUU
-   hy67ktAsFPb/UIk+kZ7nqo8jYBChY38SQb4RvDwuIO1K2cx9oPgVGQaid
-   Ox9cAxoAIO603ky7LHG6ZQOkGhQoQBzpOZAe7jClGpBeHdPDkDry9mtmC
-   wZv37ENe1qiloLlxm2WrgiNyyAxV1eY0t3+onSOquZMu5vny1v1lzjUKW
-   Q==;
-X-CSE-ConnectionGUID: pVj6uGxHRxCHlQEvoYQ+ig==
-X-CSE-MsgGUID: /V3qNYhxQtijORxqaAgP8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="77808185"
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; 
-   d="scan'208";a="77808185"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2026 01:16:07 -0700
-X-CSE-ConnectionGUID: 70nQnxXfT3++K+WtPvPXfw==
-X-CSE-MsgGUID: vezEoLJLRKKtaMBPtJu5Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; 
-   d="scan'208";a="229122702"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.208])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2026 01:16:04 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 8F28C120D05;
-	Wed, 22 Apr 2026 11:16:03 +0300 (EEST)
-Date: Wed, 22 Apr 2026 11:16:03 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] media: i2c: lm3560: Add support for PM features
-Message-ID: <aeiDw0dhA4OPLo5s@kekkonen.localdomain>
-References: <20260419093412.40796-1-clamor95@gmail.com>
- <20260419093412.40796-6-clamor95@gmail.com>
- <aeepbB72uWDxvnE_@kekkonen.localdomain>
- <CAPVz0n1sNoJv=JcAZdv3srRY0vecrRO0spnqg58-VLnYdkfPSw@mail.gmail.com>
- <aefXJebe2F4Z193F@kekkonen.localdomain>
- <CAPVz0n111oHa2UdJ9LO8PTYcRuAmUem6tQdPKABRq1YHH8ZDgw@mail.gmail.com>
- <aeiAq_eep_fqwewN@kekkonen.localdomain>
- <CAPVz0n13wS1TnF_z-muwtnP0BK6FKiu4-6h5k6s6hm3p4i=0_w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=aliasing.net header.i=@aliasing.net header.b="AQxeUZCg"
+Received: from outbound.qs.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-east-2d-100-percent-3 (Postfix) with ESMTPS id AF3EF18154DF;
+	Wed, 22 Apr 2026 13:49:51 +0000 (UTC)
+X-ICL-Out-Info: HUtFAUMHWwJACUgBTUQeDx5WFlZNRAJCTQhNAEMFXwBeC0oCQwZfBlBcHA4ZWAZdMFgUWgxEAlwXFxZWGRcNVk1NF14CdwpeGVgLWgNQRVwVTVhBDgpYAFBRHV8CCgRHBFsXRgNTRUMDFxFQAVgeVl5aF15NRx9ATWJJAVoZWxxAF0puTVMPDxFVEVIeXgVVXlcdR01aAlZNBUoDXwFbBkILVgFfA1MGRxdKAl8CXANHCEkCXg5TB0kMSQtYGQ1HGlAMUi1VDldOGQxKHVJWUQVKDFwAaA9dHVgRXQ==
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aliasing.net; s=sig1; t=1776865796; x=1779457796; bh=EK6R/ppVQCbJp84Dc4nejfzdRb4ywHL1WEEgEYIH74A=; h=Date:Message-Id:To:Subject:From:Mime-Version:Content-Type:x-icloud-hme; b=AQxeUZCgNP4MoxRAeFrkOHD94e8IrPEp0U2GRRLUMSgFwcoK2oUmzajYGxSlNx0zOxW+bDZYiZZbUbEIF062SExb/jS9jxmwFx6/T/IVjf/SktjHEEPyjoceizD913oticwgkO+6m9G+J63zxxHTgBIUvC58MYV4dhwKvzbgZ2bmu1FXkhFBvIM1rKjcNnFgydH5gw4D1p7/DglNncCvo2MvXYiAUCDxY2txGRcRHHHxM97lW+ZXpUbgwIvciLhoCXUrywh0zf9NicpBVXoMoiZUATcwdEI8RiDwkTr4h6aD1UmVfg6r7NPtkJxuWhXPplHWEsM5VxYUX6WeAEJ2xw==
+mail-alias-created-date: 1769500909675
+Received: from localhost (unknown [17.57.155.37])
+	by p00-icloudmta-asmtp-us-east-2d-100-percent-3 (Postfix) with ESMTPSA id CF1BB18154D9;
+	Wed, 22 Apr 2026 13:49:45 +0000 (UTC)
+Date: Wed, 22 Apr 2026 22:48:47 +0900 (JST)
+Message-Id: <20260422.224847.2125717111398595185.fujita@bee>
+To: miguel.ojeda.sandonis@gmail.com
+Cc: markus.probst@posteo.de, a.hindborg@kernel.org, boqun@kernel.org,
+ fujita.tomonori@gmail.com, frederic@kernel.org, lyude@redhat.com,
+ tglx@kernel.org, anna-maria@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, ilpo.jarvinen@linux.intel.com, hansg@kernel.org,
+ bryan.odonoghue@linaro.org, lee@kernel.org, pavel@kernel.org,
+ ojeda@kernel.org, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ lossin@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+ dakr@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ gregkh@linuxfoundation.org, platform-driver-x86@vger.kernel.org,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v8 2/2] platform: Add initial synology microp driver
+From: FUJITA Tomonori <tomo@aliasing.net>
+In-Reply-To: <CANiq72k=8fmi0fJnNV=GgR5_HO_COWGynKDF-xzoX1nDAdxdrw@mail.gmail.com>
+References: <e166861c-e75d-d1c2-61e8-f611e6ee1ef2@linux.intel.com>
+	<1cc39657ac50f3930dfa27de41a1b4605a7167d9.camel@posteo.de>
+	<CANiq72k=8fmi0fJnNV=GgR5_HO_COWGynKDF-xzoX1nDAdxdrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n13wS1TnF_z-muwtnP0BK6FKiu4-6h5k6s6hm3p4i=0_w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: base64
+X-Authority-Info-Out: v=2.4 cv=IqQTsb/g c=1 sm=1 tr=0 ts=69e8d202
+ cx=c_apl:c_pps:t_out a=bsP7O+dXZ5uKcj+dsLqiMw==:117
+ a=bsP7O+dXZ5uKcj+dsLqiMw==:17 a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=quj8a31CzFAiuebbDgUA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: Qm1pbyuctvrbTi3ps4QEHVGq62ptDXKM
+X-Proofpoint-ORIG-GUID: Qm1pbyuctvrbTi3ps4QEHVGq62ptDXKM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIyMDEzNCBTYWx0ZWRfX/EGxVhedDk8X
+ shVORPt36bM4bXQ18VZy/5kczIDlLQXZuvGmA9H1lURgkuUbc6z4EIPDNiBuF8/nAsAVdYpknti
+ djBVLZGxBTPHg0dhMpyroUYMpvpHNJDen6lmX8T6NIglgUuKRhgJkcOxcBCcWbIc4gVSTeHgA8l
+ WrB8L4mmhNGZc4QyxdGLQBkcDemRCsr6QaT4ajWm1OeNtmwpK0Y0Xk4x5TBsq803I837ANbDken
+ zxzhmt7cQInQjrTCoIwQTjQWPmviUD3vEfuSqpQ41w9jpAd4gmLzgPNRuiGqYN2xpj7gwbgkaDe
+ p4h3pjBnB8udgib+IorfJlUWwQaIcP868pN1EjqVtHUnY7GIO+RaBCbnmnjOCU=
 
-On Wed, Apr 22, 2026 at 11:13:25AM +0300, Svyatoslav Ryhel wrote:
-> ср, 22 квіт. 2026 р. о 11:02 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
-> >
-> > Hi Svyatoslav,
-> >
-> > On Wed, Apr 22, 2026 at 09:29:51AM +0300, Svyatoslav Ryhel wrote:
-> > > Noted. Any changes required into the other patches of the patchset?
-> >
-> > Please see my reply to the bindings.
-> >
-> 
-> I am closely monitoring all your replies, and I will apply everything
-> we have agreed on. I assume other patches from this patchset which you
-> did not leave comments need no adjustments?
-
-Correct.
-
--- 
-Sakari Ailus
+T24gVHVlLCAyMSBBcHIgMjAyNiAyMDo0Njo1OSArMDIwMA0KTWlndWVsIE9qZWRhIDxtaWd1ZWwu
+b2plZGEuc2FuZG9uaXNAZ21haWwuY29tPiB3cm90ZToNCg0KPiBPbiBUdWUsIEFwciAyMSwgMjAy
+NiBhdCA4OjIx4oCvUE0gTWFya3VzIFByb2JzdCA8bWFya3VzLnByb2JzdEBwb3N0ZW8uZGU+IHdy
+b3RlOg0KPj4NCj4+IERlbHRhIHN0b3JlcyBpdCBpbiBuYW5vIHNlY29uZHMsIHNvIGl0IHdpbGwg
+cmVxdWlyZSBhbiBhZGRpdGlvbmFsDQo+PiBgLmFzX21pbGxpcygpYCBjYWxsIG9uIHVzZS4gSSBh
+c3N1bWUgcnVzdCB3aWxsIG9wdGltaXplIHRoYXQgb3V0LCBzbyBpdA0KPj4gd2lsbCBiZSBmaW5l
+LiBJIHdpbGwgdXNlIHRoZSBgRGVsdGFgIHR5cGUgbGlrZSBNaWd1ZWwgc3VnZ2VzdGVkIGluIHRo
+ZQ0KPj4gbmV4dCByZXZpc2lvbi4NCj4gDQo+IEkgdGhpbmsgaXQgc2hvdWxkIChhdCBsZWFzdCBp
+biB0aGUgNjQtYml0IGNhc2UgLS0gd2UgZG8gaGF2ZSBhDQo+IGBiaW5kaW5nczo6YCBDIGNhbGwg
+aW4gdGhlIDMyLWJpdCBjYXNlLCBzbyBsaWtlbHkgbm90IGluIHRoYXQgY2FzZSksDQo+IGJ1dCBw
+bGVhc2UgZG91YmxlLWNoZWNrIHRoZSBjb2RlZ2VuLg0KPiANCj4gSW4gYW55IGNhc2UsIG15IHN1
+Z2dlc3Rpb24gd2Fzbid0IG5lY2Vzc2FyaWx5IGFib3V0IHVzaW5nIGBEZWx0YWAsDQo+IHdoaWNo
+IGlzIGRlZmluaXRlbHkgYW4gb3B0aW9uIHRvIGNvbnNpZGVyLCBidXQgcmF0aGVyIG1vcmUgZ2Vu
+ZXJhbGx5DQo+IGFib3V0IHVzaW5nIG5ld3R5cGVzLCBlLmcuIGl0IG1heSBiZSB0aGF0IHdlIHdh
+bnQgdG8gaGF2ZSBhIGZldyBzaW1wbGUNCj4gdGltZSB1bml0IHR5cGVzIChwcm9iYWJseSB3aXRo
+IHN1cHBvcnQgZm9yIGBjb25zdGApIGZvciBjYXNlcyBsaWtlDQo+IHRoZXNlIGlmIHBlb3BsZSBh
+cmUgZ29pbmcgdG8gdXNlIHByaW1pdGl2ZXMgZXZlcnl3aGVyZSB0byBkZWZpbmUgdGhlaXINCj4g
+YGNvbnN0YHMgLS0gQ2MnaW5nIHRoZSB0aW1la2VlcGluZyBSdXN0IGZvbGtzLg0KDQpDdXJyZW50
+bHksIE1zZWNzIGlzIGEgdHlwZSBhbGlhcywgc28gaXQgcHJvdmlkZXMgbm8gdHlwZSBzYWZldHks
+IGFuZA0KaXQgaGFzIG5vIHVzZXJzIGluIHRoZSBrZXJuZWwuIEkgdGhpbmsgd2Ugc2hvdWxkIHJl
+bW92ZSBpdC4NCg0KSSB0aGluayB0aGF0IERlbHRhIHdvcmtzIGZpbmUgZm9yIEJMSU5LX0RFTEFZ
+LiBPbiAzMi1iaXQgdGhlcmUgaXMgYQ0Kc21hbGwgb3ZlcmhlYWQgaW4gYXNfbWlsbGlzKCksIGJ1
+dCBJIGRvbid0IHRoaW5rIHRoYXQgd2lsbCBiZSBhDQpwcm9ibGVtIHNpZ25pZmljYW50IGVub3Vn
+aCB0byBqdXN0aWZ5IGludHJvZHVjaW5nIG5ldyB0eXBlcy4NCg0K
