@@ -1,40 +1,38 @@
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF9E3F20F0
-	for <linux-leds@vger.kernel.org>; Mon, 27 Apr 2026 17:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA1E3DD50D;
+	Mon, 27 Apr 2026 18:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777312794; cv=none; b=Jk/rDG4UbGYHMIS5PptncMGRDEEEogHShufcx6+9AQpXrEpPIAp1EasK6Q/NEE9pR2OTO8Ty2MGt4Y+aC7Uk7dzB/qPptuIYT3OK3YeN4SQJR7Z8PjcedLmDYK292HfBvLinQuIwRfghlwdRLZzEBgZ3dUfyvIccKHU4n1Tq58k=
+	t=1777313563; cv=none; b=Id/8gf1MAhXxop7PgRRD6i6GcQMkALz0IFka30uJ8x60dmZJpJlybXw4qns6QtIe+JAzPNLHC2gImmWY2lGGI2pGQzrpltO7e+jkevaZkksNcWnARsLlEJVipJD9Y12wSxxIW8sNUXkxJj68prVgTi1c+nQJNMJt9SMNCamABik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777312794; c=relaxed/simple;
-	bh=VsM4RLEQ/NU2Qb+JGe27tDoUy0skTDdwEvmYPpVMMwU=;
+	s=arc-20240116; t=1777313563; c=relaxed/simple;
+	bh=44NA6rUhVair067G7uXMUjokLii9afZLzuTWi8578y8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EYduPmJQ7u8Qm7JB46GgrvszZGog0kSWlln5nlulpUROk+RuCSL0CLNh0SY/MABulJNH71CceYqdubNJKmMl73VjdhnII6T5ADya9H/V3vaEWKRzpovcg1MXCxPUOzjfzBpgzevoCVFIUcdx4rsV+I6QBE3/JLKr35jC/63DnzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=Psk/VWgY; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	 In-Reply-To:To:Cc; b=epuNFVMAyHkWzlHwei7B+jtqIKOg2Z6KzZeK/C40l4J/4FhyrrfkSy5EJGpJlqPqCfyIMubti5UoeEEaTT9fCoU8I13kV43UEV3AlDyBPNhfEx0fDlM9fA8+7T6QhgSB7ChRDeXWbnnpI6EUpNtS8+8SmfELniIA3p58qnK8xC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPwFJUpH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="Psk/VWgY"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 2DB9324002B
-	for <linux-leds@vger.kernel.org>; Mon, 27 Apr 2026 19:59:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1777312789; bh=sAPPHQGEF3BxMXTZa0C2G6r3nnEA18wk5GVDrUcrkKU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:Autocrypt:OpenPGP:From;
-	b=Psk/VWgYa8ONPwitA6IzyItbzNsDV4PlF9hW8SM6KfqoimoYLZtAPqlQYrG2jlGdQ
-	 b+0beo58KLli35RSk0rXEjwpGLorG7qqAvE9MnsMcbhHwyNzR3Dqv9JyCYQS4mWhlH
-	 qJ+K3Cpj40ijQvH6k3Gv9xhv15UROeypx8z3oLUvzyAmqOTR2H8zip6mzodGprIEzS
-	 wY1ZJBfbzj5ZghouXF2q6UGOjFaS1W1zyPL2v7OuKVqeBmg73LL250TYv4UR1s4hG4
-	 pxNPi6YlAcmxgZMujsYbJtKNRpzhjYAxIGDaEmB1yPdJJEF0tr1MWyYN13X8F2jUmF
-	 PvqZJoO0Ae9fg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4g4BD21m0nz9rxR;
-	Mon, 27 Apr 2026 19:59:46 +0200 (CEST)
-From: Markus Probst <markus.probst@posteo.de>
-Date: Mon, 27 Apr 2026 17:59:48 +0000
-Subject: [PATCH v14 3/3] rust: leds: add multicolor classdev abstractions
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPwFJUpH"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 760CDC2BCB5;
+	Mon, 27 Apr 2026 18:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1777313563;
+	bh=44NA6rUhVair067G7uXMUjokLii9afZLzuTWi8578y8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=IPwFJUpHhJVa+QZ3bq+hmmzQmXNChGLYPtCdZ8jfzRZvdj9BsSBbqzsTfWS+UNH32
+	 vgLxp+7WkWpH0QTM2asH1Glt2ksLAXcNibnR4ZCThU7ZaMUngwpCiXNdcHcJRmXbpt
+	 E0wbqbNHKxh0cio5ti0cctIW7wMKlf7oEbq3Vil4/CT/P6DHz8jGQG+tS/YsBeAEwE
+	 b+6PcpGihsrSkRQqXFjjl3ytFt5BEMP5EQTMb7vV8PUOR2u2UZfKkY/vNirTk5UGlU
+	 d/6O3EpnqF8T1uN+hxTy/dBpxThqhkjWfyZQhWG3Re6n9LR19AgFubm980UaHu8UTL
+	 xzt3mPFPvwQ/w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6441DFF8860;
+	Mon, 27 Apr 2026 18:12:43 +0000 (UTC)
+From: Markus Probst via B4 Relay <devnull+markus.probst.posteo.de@kernel.org>
+Date: Mon, 27 Apr 2026 20:12:39 +0200
+Subject: [PATCH v11 1/2] dt-bindings: embedded-controller: Add synology
+ microp devices
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -43,567 +41,177 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260427-rust_leds-v14-3-4f4b17e5d516@posteo.de>
-References: <20260427-rust_leds-v14-0-4f4b17e5d516@posteo.de>
-In-Reply-To: <20260427-rust_leds-v14-0-4f4b17e5d516@posteo.de>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+Message-Id: <20260427-synology_microp_initial-v11-1-9c1bd5a6f3ed@posteo.de>
+References: <20260427-synology_microp_initial-v11-0-9c1bd5a6f3ed@posteo.de>
+In-Reply-To: <20260427-synology_microp_initial-v11-0-9c1bd5a6f3ed@posteo.de>
+To: Hans de Goede <hansg@kernel.org>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
  =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
  Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
  Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Boqun Feng <boqun@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- Markus Probst <markus.probst@posteo.de>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=20791;
+ Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: platform-driver-x86@vger.kernel.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, Markus Probst <markus.probst@posteo.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4079;
  i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=VsM4RLEQ/NU2Qb+JGe27tDoUy0skTDdwEvmYPpVMMwU=;
- b=owEBiAJ3/ZANAwAIATR2H/jnrUPSAcsmYgBp76QLHdpzk4Ko0oHmF9t/jTH+N78ZAryDduZOg
- unV8SxayTaJAk4EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCae+kCxsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9K4yA/4wymPsQCKq3gmf/TfLMCmkYvk5MMsEET
- kcgKSc7DEkCsdxWpkJBqpguxFQKqU36YXFsfB6aph0Ixf9Qm6Y0gTSgFLVnAVwtUkRi9n7RiUAU
- Yg2mAI63SvY9YPybCpOvWursTw8YePxYnNxtD+R1VhD+wEbksLTysfD7mpflr7fmRph4AB15MHi
- mGZiLCTqN2wzOVitgkEbZXM5UYPcGXnPIVbFg0n3Y9Ig0M2l2IuO3txa++DwMcVwuAykbKqJcyQ
- Z1bdQxwx4uDT0RevXw05Jv4Yi1DwGuj8WDxhW+IPK/6GffV+NXdAC3MRFREoekxMRUq9b0z8DSH
- fhNHZ39NU6aOqhZl01bX/u0BOckfG1KPhFI5oc7UivHrLDdMjNoriiCnOIaLHAa4NSk9lW1/Ywa
- ApFix8F8kkWxpbegTKcY6e3joELsK+pITH7RHUlvSJvbUvfK4kDhMOgq8IRwEQ30uNrvTV2z2Yb
- g26X1fWcBhn9QT6v2rPKl+LvcEj9jeDOSPpJ5MW7RyQoF5uIMNGCA8JVk0hBWW+pvk50tZ88ssQ
- BhU7YpXTWXXzdCz6ge0WtXru+tqmYBZ90Bj9xcyb0obiOvebhon+NfILmM4x7GZtiJQZf9sq11o
- 9AzwMCzOBjjE8oeosZnBeffvpDygxryqgHc+iio8jVPLiV2H+Xw==
+ bh=alrwaULuLrijlaEQo59qC6IZr7fepf0GBhjIrFXTxGk=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBp76cZgaw/kugHrB+H9nhX/zUS5elOTE6Lrh3Ex
+ v28+PbVvBCJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCae+nGRsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9JGMxAAs24Bm6w/nmdxqdqRPBk/mWmdsuf6gl0
+ gKHUoBw4ljA8Sjfl5QRdGm1jZtYWJiO/q9+99E7e6PhYDFnM0T6q8YVWD74yZlVwi7GYMhFm4Tg
+ 6eHxDv/iFSWKD/cBHx7UcwVjEhKh/BUGCVnqQZOPgvSmdqL5Pm7JDYa2GMjdJAa+t502dOpnCD9
+ 4gQiW1spOM4TkIWtt9CluZEHcdCyBSm26eyUA+xGxYnXiL5r3C1Xqwsn6uaFay2/thjbWGHlcGq
+ iF8/0mUiQTkgsE3RQOWNAaRoE1d1oGl1YZXF3SyGfzmiMxJBUGFqxt/CzzLbp7vUi8NtAOdBrY0
+ YQPxduxut5Zd7t2vFi/LVFedVT1Mm9kzQ4xkFYV2lr9ocGWSB5NEhl7UlpDQT7eLodQdKSdSL1K
+ cddKu6zHENEnCA9qOF5eSSC1OCCAhJI7kZXVuFoahh+bUS77iZngfAp46yMx9dvsKXpaN+dKs1q
+ LOFjL4YRFEpr1ZtRVCTmRNW3Y2+Y3n0Q3CcrgtIri8gn/2juOWpKlxQ3v344mYrZvgctYsBZSr9
+ RswLBbC2utrGD1az1/UJbUuuxeg+6jKmKinXAdUNMRnA4+DIRbrg6FsvgNAbqkqGEgkpExBwUrv
+ 7ZT3TzrdgChocaUcs0r9SwDZWF4WXnzGLtf454KIH4i/uzXbFs90=
 X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
  fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
+ auth_id=680
+X-Original-From: Markus Probst <markus.probst@posteo.de>
+Reply-To: markus.probst@posteo.de
 
-Implement the abstractions needed for multicolor led class devices,
-including:
+From: Markus Probst <markus.probst@posteo.de>
 
-* `led::MultiColor` - the led mode implementation
+Add the Synology Microp devicetree bindings. Those devices are
+microcontrollers found on Synology NAS devices. They are connected to a
+serial port on the host device.
 
-* `MultiColorSubLed` - a safe wrapper arround `mc_subled`
+Those devices are used to control certain LEDs, fan speeds, a beeper, to
+handle buttons, fan failures and to properly shutdown and reboot the
+device.
 
-* `led::MultiColorDevice` - a safe wrapper around `led_classdev_mc`
+The device has a different feature set depending on the Synology NAS
+model, like having different number of fans, buttons and leds. Depending
+on the architecture of the model, they also need a different system
+shutdown behaviour.
 
-* `led::DeviceBuilder::build_multicolor` - a function to register a new
-  multicolor led class device
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/led.rs              |  30 +++-
- rust/kernel/led/multicolor.rs   | 387 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 417 insertions(+), 1 deletion(-)
+ .../synology,ds918p-microp.yaml                    | 100 +++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 446dbeaf0866..17b5461453e0 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -67,6 +67,7 @@
- #include <linux/iosys-map.h>
- #include <linux/jiffies.h>
- #include <linux/jump_label.h>
-+#include <linux/led-class-multicolor.h>
- #include <linux/mdio.h>
- #include <linux/mm.h>
- #include <linux/miscdevice.h>
-diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
-index e8a69efd3066..8ec95c4f230c 100644
---- a/rust/kernel/led.rs
-+++ b/rust/kernel/led.rs
-@@ -31,8 +31,12 @@
-     types::Opaque, //
- };
- 
-+#[cfg(CONFIG_LEDS_CLASS_MULTICOLOR)]
-+mod multicolor;
- mod normal;
- 
-+#[cfg(CONFIG_LEDS_CLASS_MULTICOLOR)]
-+pub use multicolor::{MultiColor, MultiColorDevice, MultiColorSubLed};
- pub use normal::{Device, Normal};
- 
- /// The name of the led is determined by the driver.
-@@ -277,7 +281,24 @@ pub enum Color {
-     Violet = bindings::LED_COLOR_ID_VIOLET,
-     Yellow = bindings::LED_COLOR_ID_YELLOW,
-     Ir = bindings::LED_COLOR_ID_IR,
-+    #[cfg_attr(
-+        CONFIG_LEDS_CLASS_MULTICOLOR,
-+        doc = "Use this color for a [`MultiColor`] led."
-+    )]
-+    #[cfg_attr(
-+        not(CONFIG_LEDS_CLASS_MULTICOLOR),
-+        doc = "Use this color for a `MultiColor` led."
-+    )]
-+    /// If the led supports RGB, use [`Color::Rgb`] instead.
-     Multi = bindings::LED_COLOR_ID_MULTI,
-+    #[cfg_attr(
-+        CONFIG_LEDS_CLASS_MULTICOLOR,
-+        doc = "Use this color for a [`MultiColor`] led with rgb support."
-+    )]
-+    #[cfg_attr(
-+        not(CONFIG_LEDS_CLASS_MULTICOLOR),
-+        doc = "Use this color for a `MultiColor` led with rgb support."
-+    )]
-     Rgb = bindings::LED_COLOR_ID_RGB,
-     Purple = bindings::LED_COLOR_ID_PURPLE,
-     Orange = bindings::LED_COLOR_ID_ORANGE,
-@@ -317,7 +338,14 @@ fn try_from(value: u32) -> core::result::Result<Self, Self::Error> {
- ///
- /// Each led mode has its own led class device type with different capabilities.
- ///
--/// See [`Normal`].
-+#[cfg_attr(
-+    CONFIG_LEDS_CLASS_MULTICOLOR,
-+    doc = "See [`Normal`] and [`MultiColor`]."
-+)]
-+#[cfg_attr(
-+    not(CONFIG_LEDS_CLASS_MULTICOLOR),
-+    doc = "See [`Normal`] and `MultiColor`."
-+)]
- pub trait Mode: private::Sealed {
-     /// The class device for the led mode.
-     type Device<T: LedOps<Mode = Self>>;
-diff --git a/rust/kernel/led/multicolor.rs b/rust/kernel/led/multicolor.rs
+diff --git a/Documentation/devicetree/bindings/embedded-controller/synology,ds918p-microp.yaml b/Documentation/devicetree/bindings/embedded-controller/synology,ds918p-microp.yaml
 new file mode 100644
-index 000000000000..726fdaf068cb
+index 000000000000..eb1c9d3fac07
 --- /dev/null
-+++ b/rust/kernel/led/multicolor.rs
-@@ -0,0 +1,387 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/embedded-controller/synology,ds918p-microp.yaml
+@@ -0,0 +1,100 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/embedded-controller/synology,ds918p-microp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+//! Led mode for the `struct led_classdev_mc`.
-+//!
-+//! C header: [`include/linux/led-class-multicolor.h`](srctree/include/linux/led-class-multicolor.h)
++title: Synology NAS on-board Microcontroller
 +
-+use crate::alloc::KVec;
++maintainers:
++  - Markus Probst <markus.probst@posteo.de>
 +
-+use super::*;
++description: |
++  Synology Microp is a microcontroller found in Synology NAS devices.
++  It is connected to a serial port on the host device.
 +
-+/// The led mode for the `struct led_classdev_mc`. Leds with this mode can have multiple colors.
-+pub enum MultiColor {}
-+impl Mode for MultiColor {
-+    type Device<T: LedOps<Mode = Self>> = MultiColorDevice<T>;
-+}
-+impl private::Sealed for MultiColor {}
++  It is necessary to properly shutdown and reboot the NAS device and
++  provides additional functionality such as led control, fan speed control,
++  a beeper and buttons on the NAS device.
 +
-+/// The multicolor sub led info representation.
-+///
-+/// This structure represents the Rust abstraction for a C `struct mc_subled`.
-+#[repr(C)]
-+#[derive(Copy, Clone, Debug)]
-+#[non_exhaustive]
-+pub struct MultiColorSubLed {
-+    /// the color of the sub led
-+    pub color: Color,
-+    /// the brightness of the sub led.
-+    ///
-+    /// The value will be automatically calculated.
-+    /// See `MultiColor::pre_brightness_set`.
-+    pub brightness: u32,
-+    /// the intensity of the sub led.
-+    pub intensity: u32,
-+    /// arbitrary data for the driver to store.
-+    pub channel: u32,
-+}
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - synology,ds1221rpp-microp
++              - synology,rs822p-microp
++              - synology,rs422p-microp
++          - const: synology,rs1221p-microp
 +
-+// We directly pass a reference to the `subled_info` field in `led_classdev_mc` to the driver via
-+// `Device::subleds()`.
-+// We need safeguards to ensure `MultiColorSubLed` and `mc_subled` stay identical.
-+const _: () = {
-+    use core::mem::offset_of;
++      - items:
++          - const: synology,ds1825p-microp
++          - const: synology,ds1823xsp-microp
 +
-+    const fn assert_same_type<T>(_: &T, _: &T) {}
++      - items:
++          - enum:
++              - synology,ds725p-microp
++              - synology,ds225p-microp
++              - synology,ds723p-microp
++              - synology,ds710p-microp
++          - const: synology,ds214play-microp
 +
-+    let rust_zeroed = MultiColorSubLed {
-+        color: Color::White,
-+        brightness: 0,
-+        intensity: 0,
-+        channel: 0,
++      - items:
++          - enum:
++              - synology,ds425p-microp
++              - synology,ds1525p-microp
++              - synology,ds925p-microp
++              - synology,ds923p-microp
++              - synology,ds1522p-microp
++              - synology,ds1010p-microp
++              - synology,ds411p-microp
++          - const: synology,ds918p-microp
++
++      - items:
++          - enum:
++              - synology,ds124-microp
++              - synology,ds223j-microp
++              - synology,ds223-microp
++          - const: synology,ds118-microp
++
++      - enum:
++          - synology,ds118-microp
++          - synology,ds1823xsp-microp
++          - synology,rs1221p-microp
++          - synology,ds918p-microp
++          - synology,ds214play-microp
++
++  fan-failure-gpios:
++    description: GPIOs needed to determine which fans stopped working on a fan failure event.
++    minItems: 2
++    maxItems: 3
++
++required:
++  - compatible
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - synology,ds918p-microp
++              - synology,rs422p-microp
++    then:
++      required:
++        - fan-failure-gpios
++    else:
++      properties:
++        fan-failure-gpios: false
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    embedded-controller {
++      compatible = "synology,ds923p-microp", "synology,ds918p-microp";
++
++      fan-failure-gpios = <&gpio 68 GPIO_ACTIVE_HIGH>, <&gpio 69 GPIO_ACTIVE_HIGH>;
 +    };
-+    let c_zeroed = bindings::mc_subled {
-+        color_index: 0,
-+        brightness: 0,
-+        intensity: 0,
-+        channel: 0,
-+    };
-+
-+    assert!(offset_of!(MultiColorSubLed, color) == offset_of!(bindings::mc_subled, color_index));
-+    assert_same_type(&0u32, &c_zeroed.color_index);
-+
-+    assert!(
-+        offset_of!(MultiColorSubLed, brightness) == offset_of!(bindings::mc_subled, brightness)
-+    );
-+    assert_same_type(&rust_zeroed.brightness, &c_zeroed.brightness);
-+
-+    assert!(offset_of!(MultiColorSubLed, intensity) == offset_of!(bindings::mc_subled, intensity));
-+    assert_same_type(&rust_zeroed.intensity, &c_zeroed.intensity);
-+
-+    assert!(offset_of!(MultiColorSubLed, channel) == offset_of!(bindings::mc_subled, channel));
-+    assert_same_type(&rust_zeroed.channel, &c_zeroed.channel);
-+
-+    assert!(size_of::<MultiColorSubLed>() == size_of::<bindings::mc_subled>());
-+};
-+
-+impl MultiColorSubLed {
-+    /// Create a new multicolor sub led info.
-+    pub const fn new(color: Color) -> Self {
-+        Self {
-+            color,
-+            brightness: 0,
-+            intensity: 0,
-+            channel: 0,
-+        }
-+    }
-+
-+    /// Set arbitrary data for the driver.
-+    pub const fn channel(mut self, channel: u32) -> Self {
-+        self.channel = channel;
-+        self
-+    }
-+
-+    /// Set the initial intensity of the subled.
-+    pub const fn initial_intensity(mut self, intensity: u32) -> Self {
-+        self.intensity = intensity;
-+        self
-+    }
-+}
-+
-+/// The multicolor led class device representation.
-+///
-+/// This structure represents the Rust abstraction for a multicolor led class device.
-+#[pin_data(PinnedDrop)]
-+pub struct MultiColorDevice<T: LedOps<Mode = MultiColor>> {
-+    #[pin]
-+    ops: T,
-+    #[pin]
-+    classdev: Opaque<bindings::led_classdev_mc>,
-+}
-+
-+impl<'a, S: DeviceBuilderState> DeviceBuilder<'a, S> {
-+    /// Registers a new [`MulticolorDevice`].
-+    pub fn build_multicolor<T: LedOps<Mode = MultiColor>>(
-+        self,
-+        parent: &'a T::Bus,
-+        ops: impl PinInit<T, Error> + 'a,
-+        subleds: &'a [MultiColorSubLed],
-+    ) -> impl PinInit<Devres<MultiColorDevice<T>>, Error> + 'a {
-+        Devres::new(
-+            parent.as_ref(),
-+            try_pin_init!(MultiColorDevice {
-+                ops <- ops,
-+                classdev <- Opaque::try_ffi_init(|ptr: *mut bindings::led_classdev_mc| {
-+                    let mut used = 0;
-+                    if subleds.iter().any(|subled| {
-+                        let bit = 1 << (subled.color as u32);
-+                        if (used & bit) != 0 {
-+                            true
-+                        } else {
-+                            used |= bit;
-+                            false
-+                        }
-+                    }) {
-+                        dev_err!(parent.as_ref(), "duplicate color in multicolor led\n");
-+                        return Err(EINVAL);
-+                    }
-+                    let mut subleds_vec = KVec::new();
-+                    subleds_vec.extend_from_slice(subleds, GFP_KERNEL)?;
-+                    let (subled_info, num_colors, capacity) = subleds_vec.into_raw_parts();
-+                    debug_assert_eq!(num_colors, capacity);
-+
-+                    // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write.
-+                    // `led_classdev_mc` gets fully initialized in-place by
-+                    // `led_classdev_multicolor_register_ext` including `mutex` and `list_head`.
-+                    unsafe {
-+                        ptr.write(bindings::led_classdev_mc {
-+                            led_cdev: bindings::led_classdev {
-+                                brightness_set: (!T::BLOCKING)
-+                                    .then_some(Adapter::<T>::brightness_set_callback),
-+                                brightness_set_blocking: T::BLOCKING
-+                                    .then_some(Adapter::<T>::brightness_set_blocking_callback),
-+                                brightness_get: T::HAS_BRIGHTNESS_GET
-+                                    .then_some(Adapter::<T>::brightness_get_callback),
-+                                blink_set: T::HAS_BLINK_SET
-+                                    .then_some(Adapter::<T>::blink_set_callback),
-+                                max_brightness: T::MAX_BRIGHTNESS,
-+                                brightness: self.initial_brightness,
-+                                default_trigger: self
-+                                    .default_trigger
-+                                    .map_or(core::ptr::null(), CStrExt::as_char_ptr),
-+                                color: self.color as u32,
-+                                name: self.name.map_or(core::ptr::null(), CStrExt::as_char_ptr),
-+                                ..bindings::led_classdev::default()
-+                            },
-+                            num_colors: u32::try_from(num_colors)?,
-+                            // CAST: The safeguards in the const block ensure that
-+                            // `MultiColorSubLed` has an identical layout to `mc_subled`.
-+                            subled_info: subled_info.cast::<bindings::mc_subled>(),
-+                        })
-+                    };
-+
-+                    let mut init_data = bindings::led_init_data {
-+                        fwnode: self
-+                            .fwnode
-+                            .as_ref()
-+                            .map_or(core::ptr::null_mut(), |fwnode| fwnode.as_raw()),
-+                        default_label: core::ptr::null(),
-+                        devicename: self
-+                            .devicename
-+                            .map_or(core::ptr::null(), CStrExt::as_char_ptr),
-+                        devname_mandatory: self.devname_mandatory,
-+                    };
-+
-+                    // SAFETY:
-+                    // - `parent.as_ref().as_raw()` is guaranteed to be a pointer to a valid
-+                    //    `device`.
-+                    // - `ptr` is guaranteed to be a pointer to an initialized `led_classdev_mc`.
-+                    to_result(unsafe {
-+                        bindings::led_classdev_multicolor_register_ext(
-+                            parent.as_ref().as_raw(),
-+                            ptr,
-+                            if self.name.is_none() {
-+                                &raw mut init_data
-+                            } else {
-+                                core::ptr::null_mut()
-+                            },
-+                        )
-+                    })
-+                    .inspect_err(|_err| {
-+                        // SAFETY: `subled_info` is guaranteed to be a valid array pointer to
-+                        // `mc_subled` with the length and capacity of `num_colors`.
-+                        drop(unsafe { KVec::from_raw_parts(subled_info, num_colors, num_colors) });
-+                    })?;
-+
-+                    core::mem::forget(self.fwnode); // keep the reference count incremented
-+
-+                    Ok::<_, Error>(())
-+                }),
-+            }),
-+        )
-+    }
-+}
-+
-+impl<T: LedOps<Mode = MultiColor>> MultiColorDevice<T> {
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::MultiColorDevice`.
-+    unsafe fn from_raw<'a>(led_cdev: *mut bindings::led_classdev) -> &'a Self {
-+        // SAFETY: The function's contract guarantees that `led_cdev` points to a `led_classdev`
-+        // field embedded within a valid `led::MultiColorDevice`. `container_of!` can therefore
-+        // safely calculate the address of the containing struct.
-+        let led_mc_cdev = unsafe { container_of!(led_cdev, bindings::led_classdev_mc, led_cdev) };
-+
-+        // SAFETY: It is guaranteed that `led_mc_cdev` points to a `led_classdev_mc`
-+        // field embedded within a valid `led::MultiColorDevice`. `container_of!` can therefore
-+        // safely calculate the address of the containing struct.
-+        unsafe { &*container_of!(Opaque::cast_from(led_mc_cdev), Self, classdev) }
-+    }
-+
-+    fn parent(&self) -> &device::Device<Bound> {
-+        // SAFETY: `self.classdev.get()` is guaranteed to be a valid pointer to `led_classdev_mc`.
-+        unsafe { device::Device::from_raw((*(*self.classdev.get()).led_cdev.dev).parent) }
-+    }
-+
-+    /// Returns the subleds passed to [`Device::new_multicolor`].
-+    pub fn subleds(&self) -> &[MultiColorSubLed] {
-+        // SAFETY: The existence of `self` guarantees that `self.classdev.get()` is a pointer to a
-+        // valid `led_classdev_mc`.
-+        let raw = unsafe { &*self.classdev.get() };
-+        // SAFETY: `raw.subled_info` is a valid pointer to `mc_subled[num_colors]`.
-+        // CAST: The safeguards in the const block ensure that `MultiColorSubLed` has an identical
-+        // layout to `mc_subled`.
-+        unsafe {
-+            core::slice::from_raw_parts(
-+                raw.subled_info.cast::<MultiColorSubLed>(),
-+                raw.num_colors as usize,
-+            )
-+        }
-+    }
-+}
-+
-+// SAFETY: A `led::MultiColorDevice` can be unregistered from any thread.
-+unsafe impl<T: LedOps<Mode = MultiColor> + Send> Send for MultiColorDevice<T> {}
-+
-+// SAFETY: `led::MultiColorDevice` can be shared among threads because all methods of `led::Device`
-+// are thread safe.
-+unsafe impl<T: LedOps<Mode = MultiColor> + Sync> Sync for MultiColorDevice<T> {}
-+
-+struct Adapter<T: LedOps<Mode = MultiColor>> {
-+    _p: PhantomData<T>,
-+}
-+
-+impl<T: LedOps<Mode = MultiColor>> Adapter<T> {
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::MultiColorDevice`.
-+    /// This function is called on setting the brightness of a led.
-+    unsafe extern "C" fn brightness_set_callback(
-+        led_cdev: *mut bindings::led_classdev,
-+        brightness: u32,
-+    ) {
-+        // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+        // `led_classdev` embedded within a `led::MultiColorDevice`.
-+        let classdev = unsafe { MultiColorDevice::<T>::from_raw(led_cdev) };
-+        // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+        let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+        // SAFETY: `classdev.classdev.get()` is guaranteed to be a pointer to a valid
-+        // `led_classdev_mc`.
-+        unsafe { bindings::led_mc_calc_color_components(classdev.classdev.get(), brightness) };
-+
-+        let _ = classdev.ops.brightness_set(parent, classdev, brightness);
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::MultiColorDevice`.
-+    /// This function is called on setting the brightness of a led immediately.
-+    unsafe extern "C" fn brightness_set_blocking_callback(
-+        led_cdev: *mut bindings::led_classdev,
-+        brightness: u32,
-+    ) -> i32 {
-+        from_result(|| {
-+            // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+            // `led_classdev` embedded within a `led::MultiColorDevice`.
-+            let classdev = unsafe { MultiColorDevice::<T>::from_raw(led_cdev) };
-+            // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+            let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+            // SAFETY: `classdev.classdev.get()` is guaranteed to be a pointer to a valid
-+            // `led_classdev_mc`.
-+            unsafe { bindings::led_mc_calc_color_components(classdev.classdev.get(), brightness) };
-+
-+            classdev.ops.brightness_set(parent, classdev, brightness)?;
-+            Ok(0)
-+        })
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::MultiColorDevice`.
-+    /// This function is called on getting the brightness of a led.
-+    unsafe extern "C" fn brightness_get_callback(led_cdev: *mut bindings::led_classdev) -> u32 {
-+        // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+        // `led_classdev` embedded within a `led::MultiColorDevice`.
-+        let classdev = unsafe { MultiColorDevice::<T>::from_raw(led_cdev) };
-+        // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+        let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+        classdev.ops.brightness_get(parent, classdev)
-+    }
-+
-+    /// # Safety
-+    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-+    /// `led::MultiColorDevice`.
-+    /// `delay_on` and `delay_off` must be valid pointers to `usize` and have
-+    /// exclusive access for the period of this function.
-+    /// This function is called on enabling hardware accelerated blinking.
-+    unsafe extern "C" fn blink_set_callback(
-+        led_cdev: *mut bindings::led_classdev,
-+        delay_on: *mut usize,
-+        delay_off: *mut usize,
-+    ) -> i32 {
-+        from_result(|| {
-+            // SAFETY: The function's contract guarantees that `led_cdev` is a valid pointer to a
-+            // `led_classdev` embedded within a `led::MultiColorDevice`.
-+            let classdev = unsafe { MultiColorDevice::<T>::from_raw(led_cdev) };
-+            // SAFETY: `classdev.parent()` is guaranteed to be contained in `T::Bus`.
-+            let parent = unsafe { T::Bus::from_device(classdev.parent()) };
-+
-+            classdev.ops.blink_set(
-+                parent,
-+                classdev,
-+                // SAFETY: The function's contract guarantees that `delay_on` points to a `usize`
-+                // and is exclusive for the period of this function.
-+                unsafe { &mut *delay_on },
-+                // SAFETY: The function's contract guarantees that `delay_off` points to a `usize`
-+                // and is exclusive for the period of this function.
-+                unsafe { &mut *delay_off },
-+            )?;
-+            Ok(0)
-+        })
-+    }
-+}
-+
-+#[pinned_drop]
-+impl<T: LedOps<Mode = MultiColor>> PinnedDrop for MultiColorDevice<T> {
-+    fn drop(self: Pin<&mut Self>) {
-+        let raw = self.classdev.get();
-+        // SAFETY: The existence of `self` guarantees that `self.classdev.get()` is a pointer to a
-+        // valid `led_classdev_mc`.
-+        let dev: &device::Device = unsafe { device::Device::from_raw((*raw).led_cdev.dev) };
-+
-+        let _fwnode = dev
-+            .fwnode()
-+            // SAFETY: the reference count of `fwnode` has previously been
-+            // incremented in `led::Device::new`.
-+            .map(|fwnode| unsafe { ARef::from_raw(NonNull::from(fwnode)) });
-+
-+        // SAFETY: The existence of `self` guarantees that `self.classdev` has previously been
-+        // successfully registered with `led_classdev_multicolor_register_ext`.
-+        unsafe { bindings::led_classdev_multicolor_unregister(raw) };
-+
-+        // SAFETY: `raw` is guaranteed to be a valid pointer to `led_classdev_mc`.
-+        let led_cdev = unsafe { &*raw };
-+
-+        // SAFETY: `subled_info` is guaranteed to be a valid array pointer to `mc_subled` with the
-+        // length and capacity of `led_cdev.num_colors`. See `led::MulticolorDevice::new`.
-+        drop(unsafe {
-+            KVec::from_raw_parts(
-+                led_cdev.subled_info,
-+                led_cdev.num_colors as usize,
-+                led_cdev.num_colors as usize,
-+            )
-+        });
-+    }
-+}
 
 -- 
 2.53.0
+
 
