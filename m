@@ -1,291 +1,164 @@
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499823CD8D8
-	for <linux-leds@vger.kernel.org>; Fri,  1 May 2026 14:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6F036C59A
+	for <linux-leds@vger.kernel.org>; Sat,  2 May 2026 12:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777646176; cv=none; b=HkD/f9Mu8Lw6KSMMO3jrTi6x2v+mCv5/lg8AuSuC3ZYTjK+pVywcjjvGI8B1MBJk7aMv5W3uVbzsylAKLDDdq3YKuiURjPt7n48eFTvPtqs9ctPsPEN0kuujUoBn8buU5104WZWpWClFbbuKuXlNVZxQGa4T0sElffWlkhhkvLg=
+	t=1777725677; cv=none; b=okWqo3Nh2Fm93RJNc676+24EM93F4e/Qf4JmFi/zGb3KI8bs7WpPgF0+ipp/VQl6W2NOSrf9qnEQEvY2iSlss6O2Wt80saXUwno49wWETYvoTLS4fjQ1xOMrb/Ac88PdaZ73thvS4gfH+44YymtFn9db5n9BiMUO5Mej3zugwQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777646176; c=relaxed/simple;
-	bh=E3bzm3QfblHpymqQiQxNq+2D7OfbgIrNy1j3vjDCsY8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nJNnQAW29802Up2dQlXS6H+zgKa6vMoHsjUMAalLlAbPr18jO0I7F44u4KJimpgdI4jXJNs+tRhzjDgdHPP2TuZS3MbIKoWZFs6NamaKd3tRIvY6hUa+DX1CKJFn5i3OF1EqUegtvOsI56MlVnzjq9a/hQ2tqxJHbDHt+8IHQ0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=lMnSkLCg; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1777725677; c=relaxed/simple;
+	bh=bzK7TuhI7iXeChjCRE/yKbFe3uEBIwi8ReixnO3VzD0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zllg1beNapfBeCWJgV0rloQWBITs64MHuzES0Na1yUrsUac4tWbvqNnITJ8XeLYxs8K+Kjs1Qu9DiQrcoQgK5TMkozNSKuabDCRhl14dQMbghsY24q2I+29hqfVK/o6ZQLIxhPeiPD3zwetXUG+2yzej209920kdd9RQ8UoyO+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=szC/F6aa; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="lMnSkLCg"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id DEB1524002A
-	for <linux-leds@vger.kernel.org>; Fri,  1 May 2026 16:36:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1777646166; bh=ACUzYLr3qqQMmbokYLGbria4mjdatKFkWDd5VxD8PSs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:Autocrypt:OpenPGP:From;
-	b=lMnSkLCgQDUSA/5TDV0o6DEBihB4O8d8m4bdlFo1WwwW0XNQxi8SpDSfaGRsTgcHB
-	 5BEsaQVlaR81efRPN8W9qkc43hP14Lb41z0PVAjPoOkrnWdkXMLxo9ZwoZFe3wNrAr
-	 dQ5VbvdM/PS4Jvdfc9b1x6XIGLzR6DTMHlZu8UcmjkmOZDTGBBqHjcv4tPyZyhhFtW
-	 Kc20jKCmP2g0EDt54FKt/Ic46hrnxCH/Swu9/k2h4b7oTSkYXrEJp1VnWL/+kDSrwL
-	 el/6zbIjrPJP0zxQ+86vlEKKcSvqdnJ9uOTuPvbycKCfzmx5hp9hVrli7U7bs4TP3b
-	 /v4T6LGnpp/Mw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4g6YW84MvPz9rxG;
-	Fri,  1 May 2026 16:36:04 +0200 (CEST)
-From: Markus Probst <markus.probst@posteo.de>
-Date: Fri, 01 May 2026 14:36:05 +0000
-Subject: [PATCH v16 2/3] rust: leds: add Mode trait
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="szC/F6aa"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6794b8699b8so3509434a12.1
+        for <linux-leds@vger.kernel.org>; Sat, 02 May 2026 05:41:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777725674; x=1778330474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HBPNRk7v8mm7QEjJvKG3bZ2ji7O0ntCyzGjvZOc47Jg=;
+        b=szC/F6aaQSGgS0XWpir9o5lO6cfT0oCt/xvdG5zbZfgRpZRZRei1DER181TJBgW3kZ
+         HG2LQMX5Wh0nqXLmesIugpj+EaiV8Z8LkjgHgMonkEl+f8c84+dc8A+K4WNaaNPfFTPz
+         2z5bnoHs8lDj0Xpg7hKi9GpAYaypNrUNNiNZ8oIwv6M2l8icQTeM9XGorcwjHzVL85n0
+         S5W1N77C0pkKYzK6FUHO092IDvVSJw4AyT6aFFkq3GGXHkOD1RaPEgOX8vXNoxSE4QGy
+         fx4oq0Vb1MVgIAs9zLRBMUobAs5IcXvdDRiyKiXAqsQSi2oTpViCsOKceO0LYYPD1xgR
+         T7xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777725674; x=1778330474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HBPNRk7v8mm7QEjJvKG3bZ2ji7O0ntCyzGjvZOc47Jg=;
+        b=Qe2jrVTHuLzyIHppimgJD0w+9JfZ1FRdjqkZofjjN5q5IBi3zsdfBNP8GquP68TTd0
+         610V317JTf3CvI8WNqnLWdXWOa3A9yKwqyeSa8ZrWKIoVQ7sT01Vdtk1zw3BjMAPZRRr
+         QH84WnoimBvgAc6Nu8dVAWpABlndVBZZ2qNEMEYSyOyRU45US+mT6wFIRa/aLHO0ZvFg
+         IJQxdP+bY1JG+LXcIRsSSz8XTqJ4q0I171Eny5W1aTCrG9Bu2LdcOyuODB07qnzX73Zd
+         tI6+XSHfkn2UwHnIfluRmJsVeQbWg3LW6AaDD5hKVn/IIHNqIQM/hy5POvR8SmBsTYpm
+         9yBQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/31kIvDmlANnn9//UREhKa6quBWE52TOU5KLmXFCfKzUK1I8gUCv10NZyx4/ZPigJ+k0tqoU/2+NYV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlbA6qA4pILYkjrWsqztq/5hftYgowIBD+QTekXnhZjQ8WxHli
+	dD8AXA0WQwNcPLy35dJAU2FDjNHbWOhInDvBVRYx2e7Fc/FWxX3xsBDX
+X-Gm-Gg: AeBDiespiIljE0TyY1v5RPQEGLamnllnl6QCkErl+Yy+jGlglrbF9t5khHd27kQijuh
+	367XTorRsbjBSJEkduTR97WCAshH+TnQgAUvBcy1BKZJcZ/yaVSYfcmU5zLw0w0NIXgcC94iFDT
+	0CjqcsaPGCVxgk9ktPU4o9AoqYx5CD+4lCMbhhlAlPR2fCeWCvU+roPFb6f2InVm7liUwbgA7Wa
+	GK/+zq/+KIFclhpqfX67kLYmGxYwQsaCd+hAyrivUf+huBvfnij3c8FeIdhHo0w/crePw13kDyQ
+	uR5C3zoiZvcPLlo45m8iPlsKxOMZi9giwJxc48fMAf9tv8Xtq96BC2NUdZRV4PS1z0vzGdAZ25f
+	nVGGOY04ycmsvyGua9uO3ptUhsV6Kn+khgCsQFjVlLTHJC8e/vsWewCIix5guAwNLJdyen2u8Fo
+	xpWHBg8yDTYaBalLt4uR5IS7M=
+X-Received: by 2002:a05:6402:1209:b0:665:3d68:c46c with SMTP id 4fb4d7f45d1cf-67c1ada368fmr865771a12.14.1777725674231;
+        Sat, 02 May 2026 05:41:14 -0700 (PDT)
+Received: from xeon ([188.163.112.56])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-67b85e281cdsm1649649a12.3.2026.05.02.05.41.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 May 2026 05:41:13 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Ion Agorria <ion@agorria.com>,
+	=?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v6 0/7] mfd: Add support for Asus Transformer embedded controller
+Date: Sat,  2 May 2026 15:40:48 +0300
+Message-ID: <20260502124055.22475-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260501-rust_leds-v16-2-9f329fdedcd9@posteo.de>
-References: <20260501-rust_leds-v16-0-9f329fdedcd9@posteo.de>
-In-Reply-To: <20260501-rust_leds-v16-0-9f329fdedcd9@posteo.de>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Boqun Feng <boqun@kernel.org>, Boqun Feng <boqun@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
- Markus Probst <markus.probst@posteo.de>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5332;
- i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=E3bzm3QfblHpymqQiQxNq+2D7OfbgIrNy1j3vjDCsY8=;
- b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBp9LpQPk288lLbmRXPjYIv3XlTbqajWBkB1Wi2I
- PMxfPGWaiCJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCafS6UBsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9Lr/RAAjLKd9iLV4ghqqKSRVJGKIIq2NDZmBlK
- W6JmmWzqQaDNOsr0RBCtofqc4emDZ/IYEyCgYG87YyI0AloIL2hNOT9sZTcIAJ4adMQvrRPDFLC
- 71iDEy6aCJtdVKiLjIthgaOXE4jfcF8sZ4q6j0o4IMpClEDWktpWO3PseBHyokZuLvAfaM/jXsP
- hy8qqUR0JGgvBNxe96jO8KYAE2jgoYQHdFoJio+0+acgZCzbnaOudg0+4bAnxjmpg/nxDA2gjM5
- HLFyoCS4mmTu2VBHh+Uih4kwmmnDfIH69t3OxXPPifvb/P75EnvEMKV11tyUrXTeAJHqakSud6k
- U96fpcN+Yz2nK/wkKGt3rkCg3MFGjjt78JwjmZ58B1VNqWtneqkiXA6UF/7K1s2qS/X/pKqL0ay
- wdBr9Y+qjFKL5FG7VVW6rVH4SvjhJuUgWqRRN4eWPfi1vMOy+egSmLM4HfR3Jka5MgwFPFQ6TCm
- 4QRb0/ynV/ufCYXPTC42VWAhGAeHE2d/y2Z3HgIyMKf6RJB548Meb1UoE7MUrrtku6cvaLQUz5t
- JNHCxBKCRpVxtzGL4/YIb98qoZbzm/yyEwZGZOKOCscAfAabP6k5GNOgYBnSULGv6t1JMsojAKP
- nPS6wCINjDvyZcqKAstBI4FW8/nATRBbnDRqd0GajjpR+FBhvljQ=
-X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
- fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=xsFNBGiDvXgBEADAXUceKafpl46S35UmDh2wRvvx+UfZbcTjeQOlSwKP7YVJ4JOZrVs93qReNLkO
-  WguIqPBxR9blQ4nyYrqSCV+MMw/3ifyXIm6Pw2YRUDg+WTEOjTixRCoWDgUj1nOsvJ9tVAm76Ww+
-  /pAnepVRafMID0rqEfD9oGv1YrfpeFJhyE2zUw3SyyNLIKWD6QeLRhKQRbSnsXhGLFBXCqt9k5JA
-  RhgQof9zvztcCVlT5KVvuyfC4H+HzeGmu9201BVyihJwKdcKPq+n/aY5FUVxNTgtI9f8wIbmfAja
-  oT1pjXSp+dszakA98fhONM98pOq723o/1ZGMZukyXFfsDGtA3BB79HoopHKujLGWAGskzClwTjRQ
-  xBqxh/U/lL1pc+0xPWikTNCmtziCOvv0KA0arDOMQlyFvImzX6oGVgE4ksKQYbMZ3Ikw6L1Rv1J+
-  FvN0aNwOKgL2ztBRYscUGcQvA0Zo1fGCAn/BLEJvQYShWKeKqjyncVGoXFsz2AcuFKe1pwETSsN6
-  OZncjy32e4ktgs07cWBfx0v62b8md36jau+B6RVnnodaA8++oXl3FRwiEW8XfXWIjy4umIv93tb8
-  8ekYsfOfWkTSewZYXGoqe4RtK80ulMHb/dh2FZQIFyRdN4HOmB4FYO5sEYFr9YjHLmDkrUgNodJC
-  XCeMe4BO4iaxUQARAQABzRdtYXJrdXMucHJvYnN0QHBvc3Rlby5kZcLBkQQTAQgAOxYhBIJ0GMT0
-  rFjncjDEczR2H/jnrUPSBQJog714AhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEDR2
-  H/jnrUPSgdkQAISaTk2D345ehXEkn5z2yUEjaVjHIE7ziqRaOgn/QanCgeTUinIv6L6QXUFvvIfH
-  1OLPwQ1hfvEg9NnNLyFezWSy6jvoVBTIPqicD/r3FkithnQ1IDkdSjrarPMxJkvuh3l7XZHo49GV
-  HQ8i5zh5w4YISrcEtE99lJisvni2Jqx7we5tey9voQFDyM8jxlSWv3pmoUTCtBkX/eKHJXosgsuS
-  B4TGDCVPOjla/emI5c9MhMG7O4WEEmoSdPbmraPw66YZD6uLyhV4DPHbiDWRzXWnClHSyjB9rky9
-  lausFxogvu4l9H+KDsXIadNDWdLdu1/enS/wDd9zh5S78rY2jeXaG4mnf4seEKamZ7KQ6FIHrcyP
-  ezdDzssPQcTQcGRMQzCn6wP3tlGk7rsfmyHMlFqdRoNNv+ZER/OkmZFPW655zRfbMi0vtrqK2Awm
-  9ggobb1oktfd9PPNXMUY+DNVlgR2G7jLnenSoQausLUm0pHoNE8TWFv851Y6SOYnvn488sP1Tki5
-  F3rKwclawQFHUXTCQw+QSh9ay8xgnNZfH+u9NY7w3gPoeKBOAFcBc2BtzcgekeWS8qgEmm2/oNFV
-  G0ivPQbRx8FjRKbuF7g3YhgNZZ0ac8FneuUtJ2PkSIFTZhaAiC0utvxk0ndmWFiW4acEkMZGrLaM
-  L2zWNjrqwsD2zsFNBGiDvXgBEADCXQy1n7wjRxG12DOVADawjghKcG+5LtEf31WftHKLFbp/HArj
-  BhkT6mj+CCI1ClqY+FYU5CK/s0ScMfLxRGLZ0Ktzawb78vOgBVFT3yB1yWBTewsAXdqNqRooaUNo
-  8cG/NNJLjhccH/7PO/FWX5qftOVUJ/AIsAhKQJ18Tc8Ik73v427EDxuKb9mTAnYQFA3Ev3hAiVbO
-  6Rv39amVOfJ8sqwiSUGidj2Fctg2aB5JbeMln0KCUbTD1LhEFepeKypfofAXQbGwaCjAhmkWy/q3
-  IT1mUrPxOngbxdRoOx1tGUC0HCMUW1sFaJgQPMmDcR0JGPOpgsKnitsSnN7ShcCr1buel7vLnUMD
-  +TAZ5opdoF6HjAvAnBQaijtK6minkrM0seNXnCg0KkV8xhMNa6zCs1rq4GgjNLJue2EmuyHooHA4
-  7JMoLVHcxVeuNTp6K2+XRx0Pk4e2Lj8IVy9yEYyrywEOC5XRW37KJjsiOAsumi1rkvM7QREWgUDe
-  Xs0+RpxI3QrrANh71fLMRo7LKRF3Gvw13NVCCC9ea20P4PwhgWKStkwO2NO+YJsAoS1QycMi/vKu
-  0EHhknYXamaSV50oZzHKmX56vEeJHTcngrM8R1SwJCYopCx9gkz90bTVYlitJa5hloWTYeMD7FNj
-  Y6jfVSzgM/K4gMgUNDW/PPGeMwARAQABwsF2BBgBCAAgFiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IF
-  AmiDvXgCGwwACgkQNHYf+OetQ9LHDBAAhk+ab8+WrbS/b1/gYW3q1KDiXU719nCtfkUVXKidW5Ec
-  Idlr5HGt8ilLoxSWT2Zi368iHCXS0WenGgPwlv8ifvB7TOZiiTDZROZkXjEBmU4nYjJ7GymawpWv
-  oQwjMsPuq6ysbzWtOZ7eILx7cI0FjQeJ/Q2baRJub0uAZNwBOxCkAS6lpk5Fntd2u8CWmDQo4SYp
-  xeuQ+pwkp0yEP30RhN2BO2DXiBEGSZSYh+ioGbCHQPIV3iVj0h6lcCPOqopZqyeCfigeacBI0nvN
-  jHWz/spzF3+4OS+3RJvoHtAQmProxyGib8iVsTxgZO3UUi4TSODeEt0i0kHSPY4sCciOyXfAyYoD
-  DFqhRjOEwBBxhr+scU4C1T2AflozvDwq3VSONjrKJUkhd8+WsdXxMdPFgBQuiKKwUy11mz6KQfcR
-  wmDehF3UaUoxa+YIhWPbKmycxuX/D8SvnqavzAeAL1OcRbEI/HsoroVlEFbBRNBZLJUlnTPs8ZcU
-  4+8rq5YX1GUrJL3jf6SAfSgO7UdkEET3PdcKFYtS+ruV1Cp5V0q4kCfI5jk25iiz8grM2wOzVSsc
-  l1mEkhiEPH87HP0whhb544iioSnumd3HJKL7dzhRegsMizatupp8D65A2JziW0WKopa1iw9fti3A
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add the `led::Mode` trait to allow for other types of led class devices
-in `led::LedOps`.
+Add support for embedded controller used in Asus Transformers for
+managing power and input functions.
 
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
- rust/kernel/led.rs        | 31 +++++++++++++++++++++++++++----
- rust/kernel/led/normal.rs | 24 ++++++++++++++++--------
- 2 files changed, 43 insertions(+), 12 deletions(-)
+Changes in v2:
+- converted sysfs debug exports into debugfs
+- added kernel-doc comments for exposed functions
+- fixed minor typos and inconsistencies
 
-diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
-index 57746b0b08ca..5ddfee47f911 100644
---- a/rust/kernel/led.rs
-+++ b/rust/kernel/led.rs
-@@ -33,7 +33,10 @@
- 
- mod normal;
- 
--pub use normal::Device;
-+pub use normal::{
-+    Device,
-+    Normal, //
-+};
- 
- /// The name of the led is determined by the driver.
- pub enum Named {}
-@@ -162,6 +165,7 @@ pub fn name(self, name: &'a CStr) -> Self {
- /// #[vtable]
- /// impl led::LedOps for MyLedOps {
- ///     type Bus = platform::Device<device::Bound>;
-+///     type Mode = led::Normal;
- ///     const BLOCKING: bool = false;
- ///     const MAX_BRIGHTNESS: u32 = 255;
- ///
-@@ -194,6 +198,11 @@ pub trait LedOps: Send + Sync + 'static + Sized {
-     #[allow(private_bounds)]
-     type Bus: AsBusDevice<Bound>;
- 
-+    /// The led mode to use.
-+    ///
-+    /// See [`Mode`].
-+    type Mode: Mode;
-+
-     /// If set true, [`LedOps::brightness_set`] and [`LedOps::blink_set`] must perform the
-     /// operation immediately. If set false, they must not sleep.
-     const BLOCKING: bool;
-@@ -206,12 +215,16 @@ pub trait LedOps: Send + Sync + 'static + Sized {
-     fn brightness_set(
-         &self,
-         dev: &Self::Bus,
--        classdev: &Device<Self>,
-+        classdev: &<Self::Mode as Mode>::Device<Self>,
-         brightness: u32,
-     ) -> Result<()>;
- 
-     /// Gets the current brightness level.
--    fn brightness_get(&self, dev: &Self::Bus, classdev: &Device<Self>) -> Result<u32> {
-+    fn brightness_get(
-+        &self,
-+        dev: &Self::Bus,
-+        classdev: &<Self::Mode as Mode>::Device<Self>,
-+    ) -> Result<u32> {
-         let _ = (dev, classdev);
-         build_error!(VTABLE_DEFAULT_ERROR)
-     }
-@@ -227,7 +240,7 @@ fn brightness_get(&self, dev: &Self::Bus, classdev: &Device<Self>) -> Result<u32
-     fn blink_set(
-         &self,
-         dev: &Self::Bus,
--        classdev: &Device<Self>,
-+        classdev: &<Self::Mode as Mode>::Device<Self>,
-         delay_on: &mut usize,
-         delay_off: &mut usize,
-     ) -> Result<()> {
-@@ -291,6 +304,16 @@ fn try_from(value: u32) -> core::result::Result<Self, Self::Error> {
-     }
- }
- 
-+/// The led mode.
-+///
-+/// Each led mode has its own led class device type with different capabilities.
-+///
-+/// See [`Normal`].
-+pub trait Mode: private::Sealed {
-+    /// The class device for the led mode.
-+    type Device<T: LedOps<Mode = Self>>;
-+}
-+
- mod private {
-     pub trait Sealed {}
- }
-diff --git a/rust/kernel/led/normal.rs b/rust/kernel/led/normal.rs
-index 6715ddf911be..ad69ed85feb0 100644
---- a/rust/kernel/led/normal.rs
-+++ b/rust/kernel/led/normal.rs
-@@ -6,11 +6,19 @@
- 
- use super::*;
- 
-+/// The led mode for the `struct led_classdev`. Leds with this mode can only have a fixed color.
-+pub enum Normal {}
-+
-+impl Mode for Normal {
-+    type Device<T: LedOps<Mode = Self>> = Device<T>;
-+}
-+impl private::Sealed for Normal {}
-+
- /// The led class device representation.
- ///
- /// This structure represents the Rust abstraction for a led class device.
- #[pin_data(PinnedDrop)]
--pub struct Device<T: LedOps> {
-+pub struct Device<T: LedOps<Mode = Normal>> {
-     #[pin]
-     ops: T,
-     #[pin]
-@@ -19,7 +27,7 @@ pub struct Device<T: LedOps> {
- 
- impl<'a, S: DeviceBuilderState> DeviceBuilder<'a, S> {
-     /// Registers a new [`Device`].
--    pub fn build<T: LedOps>(
-+    pub fn build<T: LedOps<Mode = Normal>>(
-         self,
-         parent: &'a T::Bus,
-         ops: impl PinInit<T, Error> + 'a,
-@@ -88,7 +96,7 @@ pub fn build<T: LedOps>(
-     }
- }
- 
--impl<T: LedOps> Device<T> {
-+impl<T: LedOps<Mode = Normal>> Device<T> {
-     /// # Safety
-     /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-     /// `led::Device`.
-@@ -107,17 +115,17 @@ fn parent(&self) -> &device::Device<Bound> {
- }
- 
- // SAFETY: A `led::Device` can be unregistered from any thread.
--unsafe impl<T: LedOps + Send> Send for Device<T> {}
-+unsafe impl<T: LedOps<Mode = Normal> + Send> Send for Device<T> {}
- 
- // SAFETY: `led::Device` can be shared among threads because all methods of `led::Device`
- // are thread safe.
--unsafe impl<T: LedOps + Sync> Sync for Device<T> {}
-+unsafe impl<T: LedOps<Mode = Normal> + Sync> Sync for Device<T> {}
- 
--struct Adapter<T: LedOps> {
-+struct Adapter<T: LedOps<Mode = Normal>> {
-     _p: PhantomData<T>,
- }
- 
--impl<T: LedOps> Adapter<T> {
-+impl<T: LedOps<Mode = Normal>> Adapter<T> {
-     /// # Safety
-     /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
-     /// `led::Device`.
-@@ -210,7 +218,7 @@ impl<T: LedOps> Adapter<T> {
- }
- 
- #[pinned_drop]
--impl<T: LedOps> PinnedDrop for Device<T> {
-+impl<T: LedOps<Mode = Normal>> PinnedDrop for Device<T> {
-     fn drop(self: Pin<&mut Self>) {
-         let raw = self.classdev.get();
-         // SAFETY: The existence of `self` guarantees that `self.classdev.get()` is a pointer to a
+Changes in v3:
+- dropped DockRAM commits (both schema and driver)
+- integrated DockRAM functionality directly into the controller driver
+- EC schema moved to embedded controllers folder
+- removed all cell descriptions from the schema
+- removed all compatibles from the cell drivers
+- adjusted naming conventions to better align with the ASUS Transformers
+- defined EC variant sets to provide coverage for all known devices
+
+Changes in v4:
+- grouped known programming models of EC chronologically (both schema
+  and driver)
+- call debugfs init only if CONFIG_DEBUG_FS is enabled
+
+Changes in v5:
+- added asus,tf600t-ec-dock compatible to schema
+- rebased on top of v7.0
+- kzalloc > kzalloc_obj in keys and kbc
+
+Changes in v6:
+- removed asus_ec_handle_smi casting
+- asus_dockram_access_ctl > asus_ec_get_ctl in control_reg_*
+- fixed battery Kconfig description
+---
+
+Michał Mirosław (6):
+  mfd: Add driver for ASUS Transformer embedded controller
+  input: serio: Add driver for ASUS Transformer dock keyboard and
+    touchpad
+  input: keyboard: Add driver for ASUS Transformer dock multimedia keys
+  leds: Add driver for ASUS Transformer LEDs
+  power: supply: Add driver for ASUS Transformer battery
+  power: supply: Add charger driver for Asus Transformers
+
+Svyatoslav Ryhel (1):
+  dt-bindings: embedded-controller: document ASUS Transformer EC
+
+ .../asus,tf201-ec-pad.yaml                    | 119 +++
+ drivers/input/keyboard/Kconfig                |  10 +
+ drivers/input/keyboard/Makefile               |   1 +
+ .../input/keyboard/asus-transformer-ec-keys.c | 272 +++++++
+ drivers/input/serio/Kconfig                   |  15 +
+ drivers/input/serio/Makefile                  |   1 +
+ drivers/input/serio/asus-transformer-ec-kbc.c | 147 ++++
+ drivers/leds/Kconfig                          |  11 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-asus-transformer-ec.c       |  79 ++
+ drivers/mfd/Kconfig                           |  14 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/asus-transformer-ec.c             | 762 ++++++++++++++++++
+ drivers/power/supply/Kconfig                  |  22 +
+ drivers/power/supply/Makefile                 |   2 +
+ .../supply/asus-transformer-ec-battery.c      | 272 +++++++
+ .../supply/asus-transformer-ec-charger.c      | 193 +++++
+ include/linux/mfd/asus-transformer-ec.h       | 162 ++++
+ 18 files changed, 2084 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/embedded-controller/asus,tf201-ec-pad.yaml
+ create mode 100644 drivers/input/keyboard/asus-transformer-ec-keys.c
+ create mode 100644 drivers/input/serio/asus-transformer-ec-kbc.c
+ create mode 100644 drivers/leds/leds-asus-transformer-ec.c
+ create mode 100644 drivers/mfd/asus-transformer-ec.c
+ create mode 100644 drivers/power/supply/asus-transformer-ec-battery.c
+ create mode 100644 drivers/power/supply/asus-transformer-ec-charger.c
+ create mode 100644 include/linux/mfd/asus-transformer-ec.h
 
 -- 
-2.53.0
+2.51.0
 
