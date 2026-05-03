@@ -1,207 +1,192 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D97E3AA4F9;
-	Sun,  3 May 2026 21:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8938D21D3D6
+	for <linux-leds@vger.kernel.org>; Sun,  3 May 2026 22:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777844597; cv=none; b=irvNyqFV2hb5P32ycaGbW23LmLDmv07krQM96o9nj1LvF7vcFfFlgqFiUSKXTEg5SzYNwyKjiEEWCM26C6VPpdFgoo4Q+YSxAiLiaPKeCc7fLibbo3J6j1VpRB0sUyrsCSUot6dSAWo2NDeFWkCI0sXAXj60r2LOu0xhDv7WAfY=
+	t=1777847003; cv=none; b=Ras9BM2xMID3uV5SVPUbmaJjsHqeOe/i2AQRhLPhAPTFik/cKi/Fr+3DnHrfTckGp/a3eCZmrUXNalrExtOPDkAq4iBiIbXXVkOJ2Ied+G0HU8Lot6NocYMiXhmgUzivVSYAHCs/QfTDF0vkI/BWQOue/Rt+S71mMiktzrOptY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777844597; c=relaxed/simple;
-	bh=iDvvmgMnzPPa9SOCDBpACDK2Hc5WSuZ2cl8tKe58wy8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kr8zFKcCwRNd8ZqJ/rU7lHBX85WB5iPBr0x+PYMD7n3KuYtdK4a14Ge5tf8UyzpkYDTVnme63CSm9t7/Im9kkCUy3yr3aj7wpPKSzn7TsHoUM93akykNg85vMw1loIfbVgVksmTeScr2AoSi6OggTNPg1/BpDXVkE5avKVhAHFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmTljv5Y; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777847003; c=relaxed/simple;
+	bh=9fhISSEjEljI+YFj2CEgMlJYTahbYUFiMYNtnnbK9xM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PRbPoxNR/ZJ2fswJAZYiG6Ghule6q5NRFc0c9t/DTEKTJCTwQMuleM+smg+FaKLYv+i7Yr8w9DfNQc4ni/QFS4T5E22vw+nab5WdmX62WuGZY2/W1Da2Mjky2nA9mROedgOI8UfyNyzUi6r5QlBBB1P4desd66fOYDBC8ME+hdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dcQlmnOq; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmTljv5Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5B167C2BCFB;
-	Sun,  3 May 2026 21:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777844597;
-	bh=iDvvmgMnzPPa9SOCDBpACDK2Hc5WSuZ2cl8tKe58wy8=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=tmTljv5YUpM1Y2UulX9L1wM0Kx79WScoB4ycXBZMkmX2spBS6jTLpDHTruswqFzZk
-	 0We2Qa8gVsqXFu+Z8q4369rzlJ40c7OpAkBl7gUNb6XcK4cmQMU1qmtU1aZ1Q0Yknp
-	 MqAcge9zSqLhiffUjEB201y4riAMHkBxsEOi+/jG0hMB0P5TM4qQZuIP/Rux3hk+9q
-	 KholqkxeJlhsh0dL3LAyeAkM5NzMG1jtbLn5YND7SqbkWmKKkTOTD/J7lsbLhWyRsc
-	 /Kz8fDZaEs686vYGY5Xeoaa2ILEQ2LIgvb9T6d8Dmmzf3ggdJ3jIpe4IPDJCpy1m5D
-	 lBvbe4p/1NQ8w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DC2FF886F;
-	Sun,  3 May 2026 21:43:16 +0000 (UTC)
-From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Subject: [PATCH v5 0/3] Samsung Expressatt: Camera Flash
-Date: Sun, 03 May 2026 14:43:14 -0700
-Message-Id: <20260503-expressatt_camera_flash-v5-0-95524506a799@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dcQlmnOq"
+Message-ID: <2974e45f-24ff-4999-be0e-02cf2e00ed59@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1777846999;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NJy9agwAL2TNxkPqvEGKUYqRpmr/ZbXYC7ogel4yNy4=;
+	b=dcQlmnOqURdSyOFWBwF5URbFd+zJvlItR/pqLEIXBQboCqflAtH9yJsmWG08AYMgMlr1Zb
+	knv+DRFz3+bgCKCEiEU4Ug95Bqmb2WAF1o18HlIU7x4onJJyMaoFD6d8osN7JqGlyAd0oZ
+	Q4JEwSUkrAzCWQVT5lfvtC4K28BFtn0=
+Date: Mon, 4 May 2026 00:23:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XP3WrDIBTA8VcJXs/iR4w1jLH3GKMYPTayptnUh
- paSd5+1N1LodnlEf3/PFUUIHiLqmysKsPjo52MexEuDzKiPe8De5hkxwjrCSYfh/B0gRp3Szug
- Jgt65g44jptxQoWXLpNYov863nD8X+ePzPgf4OeVAuh+i6caUQN+8Fl8QXvk4zSczfsEFLxRT7
- KS1wg5dC8S+7yftDxszT2+31qAj4DxMPvXNIjcE3Yqjj2kOl7LaQkvy3y1yieCBKtU5aayzVam
- YC6scun3usOwIwwalO8atGR4dXjnsj//w7IAUIKzYKkXco9NWDqfPnTY7joJSrpWtoLx21nX9B
- crZcLgIAgAA
-X-Change-ID: 20260306-expressatt_camera_flash-13c15a7427aa
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>, David Heidelberg <david@ixit.cz>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1777844595; l=4663;
- i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=iDvvmgMnzPPa9SOCDBpACDK2Hc5WSuZ2cl8tKe58wy8=;
- b=QkyVbXwKR5OjOF3vJrisabWX1C29thoLfVHFC27V1PS38+0g9Sv83mDWfuZ1Iq394PvEjIH1C
- XSLJ4f2t1t4DpHZIRWFkQyTdv2TjFzmuoPWbkTZ8rzG9p6HjKkVg/CM
-X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
- pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
-X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
- auth_id=211
-X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
-Reply-To: guptarud@gmail.com
-
-This small series adds camera flash to an existing similar mainline
-driver and adds it to the Samsung Expressatt's DTS
-
-// Tests
-
-// # Navigate to LED
-sudo su
-cd /sys/class/leds/white:flash
-
-// # Should stay at dim brightness
-echo 1 > brightness
-echo 1 > brightness
-echo 1 > brightness
-echo 1 > brightness
-echo 0 > brightness           # LED_OFF
-
-// # Max Brightness
-echo 50 > brightness
-echo 0 > brightness           # LED_OFF
-echo 99 > brightness
-echo 0 > brightness           # LED_OFF
-echo 1000 > brightness
-echo 0 > brightness           # LED_OFF
-echo 100 > brightness
-echo 0 > brightness           # LED_OFF
-
-// # Should increase in brightness
-for i in $(seq 1 16); do echo $i > brightness; sleep 1; done
-echo 0 > brightness           # LED_OFF
-
-// # Test flash strobe (rt8515_led_flash_strobe_set)
-cat max_flash_timeout          # check max
-echo 200000 > flash_timeout    # 200ms
-echo 1 > flash_strobe          # strobe ON → brightness_commit + timer
-cat flash_strobe               # should read 1, then 0 after timeout
-sleep 1
-cat flash_strobe               # should be 0 (timer fired)
-
-// # Test manual strobe cancel
-echo 1 > flash_strobe ; echo 0 > flash_strobe          # immediate off
-
-// # Check regulator error handling
-dmesg | tail -20                     # look for any "failed to turn off LED" msgs
-
-// # Multiple strobes shouldn't cause errors
-echo 200000 > flash_timeout
-echo 1 > flash_strobe
-echo 1 > flash_strobe
-sleep 1
-cat flash_strobe
-dmesg | tail -20
-
-// # Multiple strobes shouldn't cause errors (extreme test)
-for i in $(seq 1 500); do echo 1 > flash_strobe; echo 0 > flash_strobe; done
-dmesg | tail -20
-
-// # Test minimal timeout (turns on briefly)
-echo 1 > flash_timeout
-echo 1 > flash_strobe
-sleep 0.1
-cat flash_strobe
-dmesg | tail -20
-
-// # Flash strobe overrides brightness and flashes at full brightness
-echo 200000 > flash_timeout
-echo 1 > brightness
-echo 1 > flash_strobe
-sleep 1
-cat flash_strobe
-cat brightness
-dmesg | tail -20
-
-Downstream reference:
-Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
-Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
-
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
----
-Changes in v5:
-- Address Lee Jones's comments:
-    - formatting
-    - use devm_regulator_get_optional()
-    - use a workqueue instead of a timer
-    - previously we were validating ent-gpios xor vin-supply at probe,
-        but was removed. update the commit msg to reflect this
-- Link to v4: https://lore.kernel.org/r/20260331-expressatt_camera_flash-v4-0-f1e99f474513@gmail.com
-
-Changes in v4:
-- Driver:
-    - revert function renames
-    - add comment to use flash instead if torch pin not available
-- Link to v3: https://lore.kernel.org/r/20260326-expressatt_camera_flash-v3-0-e75e5d58990f@gmail.com
-
-Changes in v3:
-- DTS:
-    - Renamed and reordered nodes
-- Driver:
-    - Use regulator_is_enabled() instead of reg_enabled
-    - remove ent xor vin check
-    - remove rt->reg == -ENODEV check
-    - rename functions to reflect what they do and added ret's
-    - Fixed: LED was increasing in brightness when setting the same
-        brightness multiple times
-- Link to v2: https://lore.kernel.org/r/20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com
-
-Changes in v2:
-- dt-bindings: Explain the hardware and not the driver
-- **/*: Use vin-supply instead of unlock-gpio
-- expressatt DTS: Reorder pinctrl-*
-- expressatt DTS: Define rfs-ohms to a default (couldn't find
-                  information about this)
-- Link to v1: https://lore.kernel.org/r/20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com
-
----
-Rudraksha Gupta (3):
-      dt-bindings: leds: rt8515: Support single-GPIO flash ICs with vin supply
-      leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
-      ARM: dts: qcom: msm8960: expressatt: Add camera flash
-
- .../devicetree/bindings/leds/richtek,rt8515.yaml   |  34 +++++-
- .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   |  43 +++++++
- drivers/leds/flash/leds-rt8515.c                   | 130 +++++++++++++++++----
- 3 files changed, 181 insertions(+), 26 deletions(-)
----
-base-commit: 3131ff5a117498bb4b9db3a238bb311cbf8383ce
-change-id: 20260306-expressatt_camera_flash-13c15a7427aa
-prerequisite-message-id: <20260503-expressatt-touchkey-v1-1-f7dd5db64e0d@gmail.com>
-prerequisite-patch-id: 8de4de7909722ccaf385c4224f25a623eaa72c28
-
-Best regards,
--- 
-Rudraksha Gupta <guptarud@gmail.com>
+Subject: Re: [PATCH 3/6] HID: asus: add support for T3304 detachable keyboard
+To: James Ye <jye836@gmail.com>, jikos@kernel.org, bentiss@kernel.org,
+ lee@kernel.org, pavel@kernel.org
+Cc: linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260503072643.2774762-1-jye836@gmail.com>
+ <20260503072643.2774762-4-jye836@gmail.com>
+Content-Language: en-US, it-IT, en-US-large
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Denis Benato <denis.benato@linux.dev>
+In-Reply-To: <20260503072643.2774762-4-jye836@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
+On 5/3/26 09:26, James Ye wrote:
+> ASUSTek Computer, Inc. T3304 Soft Keyboard [0b05:1aad] is the detachable
+> keyboard of the ASUS Vivobook 13 Slate OLED (T3304). It presents as a
+> USB device with two interfaces: a keyboard and a pointing device
+> (touchpad).
+>
+> Basic keyboard and full touchpad functionality work out-of-the-box with
+> hid-generic and hid-multitouch, but function key combos e.g. volume,
+> brightness control, home/end/pgup/pgdown require initialization.
+>
+> Bind the keyboard interface to hid-asus for initialization. The
+> OEM-specific report descriptors required for this are present only on
+> the touchpad interface, not the keyboard, so a quirk is used to add the
+> required feature descriptor.
+Reviewed-By: Denis Benato <denis.benato@linux.dev>
+> Signed-off-by: James Ye <jye836@gmail.com>
+> ---
+>  drivers/hid/hid-asus.c | 58 +++++++++++++++++++++++++++++++++++++++---
+>  drivers/hid/hid-ids.h  |  1 +
+>  2 files changed, 56 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index ef9d5eba4dc9..e4c97fddfaf1 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -99,6 +99,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+>  #define QUIRK_ROG_CLAYMORE_II_KEYBOARD	BIT(12)
+>  #define QUIRK_ROG_ALLY_XPAD		BIT(13)
+>  #define QUIRK_HID_FN_LOCK		BIT(14)
+> +#define QUIRK_T3304_KEYBOARD		BIT(15)
+>
+>  #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
+>  						 QUIRK_NO_INIT_REPORTS | \
+> @@ -494,6 +495,14 @@ static int asus_kbd_init(struct hid_device *hdev, u8 report_id)
+>  		return ret;
+>  	}
+>
+> +	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
+> +
+> +	/* T3304 keyboard always replies with 16 0xff bytes. Don't check for
+> +	 * acknowledgment.
+> +	 */
+> +	if (drvdata->quirks & QUIRK_T3304_KEYBOARD)
+> +		return 0;
+> +
+>  	u8 *readbuf __free(kfree) = kzalloc(FEATURE_KBD_REPORT_SIZE, GFP_KERNEL);
+>  	if (!readbuf)
+>  		return -ENOMEM;
+> @@ -1312,10 +1321,12 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  		hid_warn(hdev, "Failed to initialize backlight.\n");
+>
+>  	/*
+> -	 * For ROG keyboards, skip rename for consistency and ->input check as
+> -	 * some devices do not have inputs.
+> +	 * For ROG and T3304 keyboards, skip rename for consistency.
+> +	 * For ROG keyboards, skip ->input check as some devices do not have
+> +	 * inputs.
+>  	 */
+> -	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD)
+> +	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD ||
+> +	    drvdata->quirks & QUIRK_T3304_KEYBOARD)
+>  		return 0;
+>
+>  	/*
+> @@ -1369,6 +1380,22 @@ static const __u8 asus_g752_fixed_rdesc[] = {
+>          0x2A, 0xFF, 0x00,		/*   Usage Maximum (0xFF)       */
+>  };
+>
+> +static const __u8 asus_t3304_fixed_rdesc[] = {
+> +	0x06, 0x31, 0xff,              // Usage Page (Vendor Usage Page 0xff31)
+> +	0x09, 0x76,                    // Usage (Vendor Usage 0x76)
+> +	0xa1, 0x01,                    // Collection (Application)
+> +	0x05, 0xff,                    //  Usage Page (Vendor Usage Page 0xff)
+> +	0x85, 0x5a,                    //  Report ID (90)
+> +	0x19, 0x00,                    //  Usage Minimum (0)
+> +	0x2a, 0xff, 0x00,              //  Usage Maximum (255)
+> +	0x15, 0x00,                    //  Logical Minimum (0)
+> +	0x26, 0xff, 0x00,              //  Logical Maximum (255)
+> +	0x75, 0x08,                    //  Report Size (8)
+> +	0x95, 0x0f,                    //  Report Count (15)
+> +	0xb1, 0x02,                    //  Feature (Data,Var,Abs)
+> +	0xc0,                          // End Collection
+> +};
+> +
+>  static const __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		unsigned int *rsize)
+>  {
+> @@ -1473,6 +1500,28 @@ static const __u8 *asus_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+>  		}
+>  	}
+>
+> +	/* T3304 keyboard's vendor descriptors are on the touchpad interface,
+> +	 * not the keyboard. But we need hid-multitouch to handle the touchpad,
+> +	 * Add a descriptor with only the config report so that this driver can
+> +	 * perform initialization.
+> +	 */
+> +	if (drvdata->quirks & QUIRK_T3304_KEYBOARD) {
+> +		__u8 *new_rdesc;
+> +		size_t new_size = *rsize + sizeof(asus_t3304_fixed_rdesc);
+> +
+> +		new_rdesc = devm_kzalloc(&hdev->dev, new_size, GFP_KERNEL);
+> +		if (new_rdesc == NULL)
+> +			return rdesc;
+> +
+> +		hid_info(hdev, "Fixing up Asus T3304 keyboard report descriptor\n");
+> +		memcpy(new_rdesc, rdesc, *rsize);
+> +		memcpy(new_rdesc + *rsize, asus_t3304_fixed_rdesc,
+> +		       sizeof(asus_t3304_fixed_rdesc));
+> +
+> +		*rsize = new_size;
+> +		rdesc = new_rdesc;
+> +	}
+> +
+>  	return rdesc;
+>  }
+>
+> @@ -1536,6 +1585,9 @@ static const struct hid_device_id asus_devices[] = {
+>  	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>  	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+>  		USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD) },
+> +	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
+> +		USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_T3304_KEYBOARD),
+> +	  QUIRK_T3304_KEYBOARD },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(hid, asus_devices);
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 0cf63742315b..ecf30e36a99d 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -219,6 +219,7 @@
+>  #define USB_DEVICE_ID_ASUSTEK_T100CHI_KEYBOARD	0x8502
+>  #define USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD	0x183d
+>  #define USB_DEVICE_ID_ASUSTEK_T304_KEYBOARD	0x184a
+> +#define USB_DEVICE_ID_ASUSTEK_T3304_KEYBOARD	0x1aad
+>  #define USB_DEVICE_ID_ASUSTEK_I2C_KEYBOARD	0x8585
+>  #define USB_DEVICE_ID_ASUSTEK_I2C_TOUCHPAD	0x0101
+>  #define USB_DEVICE_ID_ASUSTEK_ROG_KEYBOARD1 0x1854
+> --
+> 2.54.0
