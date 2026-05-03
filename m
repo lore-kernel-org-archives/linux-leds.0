@@ -1,335 +1,122 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252F5377EC7
-	for <linux-leds@vger.kernel.org>; Sun,  3 May 2026 16:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7583D092A
+	for <linux-leds@vger.kernel.org>; Sun,  3 May 2026 18:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777826714; cv=none; b=G1Wk+eOHSg5GylU8eHjf/0ofXsVVemlGLKSZIsr98+R+TAdAud/kya8ya9H0kYIpvRwCmDcUUtUQyjlWSUnGWtUC9SGdXSLUTzu04Ys8Qg0s2N4t1twY6a66tfk2Jk0237SeVeSuDpN8mzlg4RNzxl9vwVlrxLntAVeD/WMRomM=
+	t=1777832396; cv=none; b=DE3qrXLgsAYwxT3M3TrU/IlX2sdSMpFBcVJBmdIi/dnB2tdm4ikNwamQA195DuHf734QMqdju2SvwrXrQZK3uDX9Akk6bElvFPBFC3tgkFwNj9LHXSx+E/eRGfTujYtr7I1K2Vg9Oaj5fRluqdpyA6YXzHgmqCVYWS+3vvmnq5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777826714; c=relaxed/simple;
-	bh=PXMbL35meuA3K4hWiUmh26Ifh+2vO6KRGqztajociNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JGcgpI8H2qY23MTVfSCHC+KfspezSUSsXcOt6BH3k6fQZhPhcdauTCMdYPr4gKIidyhpIZL6vBch8/rROj+faSZNtg21h0/WRBmixhkL7AloKSoWTI9IPUrm8f7WfsOzSNcdrG02TnvtHghbUt7l4Ru3GAqfQ24vuGlgo3yypWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElGr9luZ; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElGr9luZ"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-678adefbd26so6122201a12.3
-        for <linux-leds@vger.kernel.org>; Sun, 03 May 2026 09:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777826704; x=1778431504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sRXkstlVfDTEdoKTn7b1ddY7nla/Jav5UO7h+m11Go8=;
-        b=ElGr9luZA0OJ5FVLJTAGW7vaysrroq6JUTWHJLSizlBnhGbc+KWWvi1LFYVgv1AbxC
-         GC5ML+UZupBN8CSarMuTOKFW9XdjvMlMPq8AtURO7u4Luom1dfkHPTv9b8JKyAnIkSR6
-         3Yp5N3D90g885uJONZgupf4ShUTvdM53Nn1tGyw+Hpxhs4816bjfxinnDT8yLE+Z6cz3
-         GWtBpYaRuXtrjzYB9jankuJm8MEeoEWeWpyLWx3sy/3bxXiRtL2cIpQNvvL2MCqS+78a
-         37M8tELMGYjqdbWIp7KpB8/KAGe3Ll+RcB0U5rOzIls2SCgN7ub27OKvMZYEGgzkzNvb
-         nHFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777826704; x=1778431504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sRXkstlVfDTEdoKTn7b1ddY7nla/Jav5UO7h+m11Go8=;
-        b=qrnBZyEcN1EpJqAdHUnarEdXmR5olNwdr+hz0OrSbgSf6HyBTuDZbtm8nEKmAEqslJ
-         a021Ky5mXPmlyT7MtzAUupftcW32CemBNcLr/eY9gu4c+ErW4sI0ZIM7lJmfJPfSwIpn
-         6VGAhkDpg36/AnOhC8NB0B9n/zfS/2/sKP+HzxDGABgYNHxLN7njEr7G0k5H+2t9Crnf
-         W3OwT++LMiNdDyD4bCo0aM/Mfat/obxdeQKJjeFEsqAW8shv/OmUdcGcBo9VM6LEOkA9
-         37K8bqXgUHNWqXlw/J/04W0qvmXJYqwsJ2ytkSlGnk0jT3ypekDYBcXcdDUEuwoVTZV7
-         FPnA==
-X-Gm-Message-State: AOJu0YwN7YO4/nDDnXl94nB37OOX4vXowZyjElPvUFrk67OtPLmsq5Q4
-	F1ihE3vFs7fE+v42xT01GxrJwXNHtD2+hEYGi4crgk5iZlKT761KgXX0
-X-Gm-Gg: AeBDiet7AoRgA+7QPtS6wzMJ94j+pLli3hA8Uc7LRLjHX1FTJyRG5wmB1j729aYMg90
-	OqoRzlcpFs8tt2QTo+pK0XtfL/PlSEHP0WCy+4gtBIBYsyiSkezlP8YzeNpt2ObWNJXG+3KGE33
-	cIVUHx9k4nxxonypVdGA2XxnnMwedgdZgWs3rSMm9a/JgPgB3Yq51ddlnN1IlDx2VZ8BMSwkmuD
-	1NjI7swYh4TnVtP0QDi4nCgImaRfy2XLs0jXYZoravbWptLMsWunBn4wPxmWazPHF8tTEAzGzEX
-	wYkNVIy6x6P5T1VALB+N0JK6SRSKZEWF0gJ9JQtVxDBPVCfkE1YCcUXKo1ke7Z4c1pPJZi5TZ07
-	20jMG9EChriM2e2vx61YB5CwCFF0udcs9sf2kKpceMuBj9wnk796lhXh1c2k/0/UY4xpz//+Er5
-	78Gd7hQp7YEU8OtcU4yI57/u0=
-X-Received: by 2002:a17:907:930d:b0:bad:52bd:8764 with SMTP id a640c23a62f3a-bbffcf919b4mr313501666b.24.1777826704242;
-        Sun, 03 May 2026 09:45:04 -0700 (PDT)
-Received: from xeon ([188.163.112.56])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bc237ef8297sm27430566b.57.2026.05.03.09.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 May 2026 09:45:03 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH v5 5/6] media: i2c: lm3560: Add support for PM features
-Date: Sun,  3 May 2026 19:44:44 +0300
-Message-ID: <20260503164445.215540-6-clamor95@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260503164445.215540-1-clamor95@gmail.com>
-References: <20260503164445.215540-1-clamor95@gmail.com>
+	s=arc-20240116; t=1777832396; c=relaxed/simple;
+	bh=EwfUIgf1uwwZUx1klfb7s5OuRBYwXyEZ7OfAHCLmM6Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=d0KnAPVZn6hirQbzxPIuEwiAfZdAXhiVNkkX8VEWXnDSvZvy4lpd/GTAkDpTCxRyD3N54mHDbFhyCfmIqXr4JitsUISOMdSPmGxQY+EZ31GSUv5iJq5lUsUgLW575FwlLKW3GuyB6FgEO7+Rg2othgACa0FCwWvpkBT1ntpAYc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.pengutronix.de)
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1wJbPt-0005PX-1M; Sun, 03 May 2026 20:19:45 +0200
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Nam Tran <trannamatk@gmail.com>,  Lee Jones <lee@kernel.org>,  Pavel
+ Machek <pavel@kernel.org>,  linux-kernel@vger.kernel.org,
+  linux-leds@vger.kernel.org
+Subject: Re: [PATCH v9] leds: add support for TI LP5860 LED driver chip
+In-Reply-To: <aae0901b-ebfd-4d40-9880-116b881c9a90@gmail.com> (Jacek
+	Anaszewski's message of "Sun, 26 Apr 2026 14:41:09 +0200")
+References: <20260424-v6-14-topic-ti-lp5860-v9-1-b44d7025d741@pengutronix.de>
+	<aae0901b-ebfd-4d40-9880-116b881c9a90@gmail.com>
+User-Agent: mu4e 1.12.13; emacs 30.2
+Date: Sun, 03 May 2026 20:19:44 +0200
+Message-ID: <87zf2gqrsv.fsf@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; format=flowed
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-Add support for power management features to better control the LM3560
-within the media framework. To achieve the desired PM support, the HWEN
-GPIO and VIN power supply were added and configured into power on/off
-sequences. Added PM operations along with the PM configuration setup.
+On 2026-04-26 at 14:41 +02, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/media/i2c/lm3560.c | 117 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 110 insertions(+), 7 deletions(-)
+Hi,
 
-diff --git a/drivers/media/i2c/lm3560.c b/drivers/media/i2c/lm3560.c
-index ce4b09d1f208..15741ea5684f 100644
---- a/drivers/media/i2c/lm3560.c
-+++ b/drivers/media/i2c/lm3560.c
-@@ -12,13 +12,16 @@
- #include <linux/bitmap.h>
- #include <linux/delay.h>
- #include <linux/module.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/slab.h>
- #include <linux/mod_devicetable.h>
- #include <linux/mutex.h>
- #include <linux/of.h>
-+#include <linux/pm_runtime.h>
- #include <linux/property.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/videodev2.h>
- #include <media/i2c/lm3560.h>
- #include <media/v4l2-ctrls.h>
-@@ -49,6 +52,8 @@ enum led_enable {
-  * @dev: pointer to &struct device
-  * @regmap: reg. map for i2c
-  * @lock: muxtex for serial access.
-+ * @hwen_gpio: line connected to HWEN pin
-+ * @vin_supply: line connected to IN supply (2.5V - 5.5V)
-  * @led_mode: V4L2 LED mode
-  * @ctrls_led: V4L2 controls
-  * @subdev_led: V4L2 subdev
-@@ -63,6 +68,9 @@ struct lm3560_flash {
- 	struct regmap *regmap;
- 	struct mutex lock;
- 
-+	struct gpio_desc *hwen_gpio;
-+	struct regulator *vin_supply;
-+
- 	enum v4l2_flash_led_mode led_mode;
- 	struct v4l2_ctrl_handler ctrls_led[LM3560_LED_MAX];
- 	struct v4l2_subdev subdev_led[LM3560_LED_MAX];
-@@ -177,12 +185,17 @@ static int lm3560_get_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
- 	struct lm3560_flash *flash = to_lm3560_flash(ctrl, led_no);
- 	int rval = -EINVAL;
- 
-+	if (!pm_runtime_get_if_in_use(flash->dev))
-+		return 0;
-+
- 	if (ctrl->id == V4L2_CID_FLASH_FAULT) {
- 		s32 fault = 0;
- 		unsigned int reg_val;
- 		rval = regmap_read(flash->regmap, REG_FLAG, &reg_val);
--		if (rval < 0)
-+		if (rval < 0) {
-+			pm_runtime_put(flash->dev);
- 			return rval;
-+		}
- 		if (reg_val & FAULT_SHORT_CIRCUIT)
- 			fault |= V4L2_FLASH_FAULT_SHORT_CIRCUIT;
- 		if (reg_val & FAULT_OVERTEMP)
-@@ -192,6 +205,8 @@ static int lm3560_get_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
- 		ctrl->cur.val = fault;
- 	}
- 
-+	pm_runtime_put(flash->dev);
-+
- 	return rval;
- }
- 
-@@ -201,6 +216,9 @@ static int lm3560_set_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
- 	u8 tout_bits;
- 	int rval = -EINVAL;
- 
-+	if (!pm_runtime_get_if_in_use(flash->dev))
-+		return 0;
-+
- 	switch (ctrl->id) {
- 	case V4L2_CID_FLASH_LED_MODE:
- 		flash->led_mode = ctrl->val;
-@@ -246,6 +264,8 @@ static int lm3560_set_ctrl(struct v4l2_ctrl *ctrl, enum lm3560_led_id led_no)
- 		break;
- 	}
- 
-+	pm_runtime_put(flash->dev);
-+
- 	return rval;
- }
- 
-@@ -409,6 +429,38 @@ static int lm3560_init_device(struct lm3560_flash *flash)
- 	return rval;
- }
- 
-+static int __maybe_unused lm3560_power_off(struct device *dev)
-+{
-+	struct lm3560_flash *flash = dev_get_drvdata(dev);
-+
-+	gpiod_set_value_cansleep(flash->hwen_gpio, 0);
-+	regulator_disable(flash->vin_supply);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused lm3560_power_on(struct device *dev)
-+{
-+	struct lm3560_flash *flash = dev_get_drvdata(dev);
-+	int rval;
-+
-+	rval = regulator_enable(flash->vin_supply);
-+	if (rval < 0) {
-+		dev_err(flash->dev, "failed to enable vin power supply\n");
-+		return rval;
-+	}
-+
-+	gpiod_set_value_cansleep(flash->hwen_gpio, 1);
-+
-+	rval = lm3560_init_device(flash);
-+	if (rval < 0) {
-+		lm3560_power_off(dev);
-+		return rval;
-+	}
-+
-+	return 0;
-+}
-+
- static void lm3560_subdev_cleanup(struct lm3560_flash *flash)
- {
- 	int led_no;
-@@ -442,6 +494,17 @@ static int lm3560_probe(struct i2c_client *client)
- 
- 	bitmap_zero(flash->led_id, LM3560_LED_MAX);
- 
-+	flash->hwen_gpio = devm_gpiod_get_optional(flash->dev, "enable",
-+						   GPIOD_OUT_LOW);
-+	if (IS_ERR(flash->hwen_gpio))
-+		return dev_err_probe(flash->dev, PTR_ERR(flash->hwen_gpio),
-+				     "failed to get hwen gpio\n");
-+
-+	flash->vin_supply = devm_regulator_get(flash->dev, "vin");
-+	if (IS_ERR(flash->vin_supply))
-+		return dev_err_probe(flash->dev, PTR_ERR(flash->vin_supply),
-+				     "failed to get vin-supply\n");
-+
- 	flash->peak = LM3560_PEAK_1600mA;
- 	rval = device_property_read_u32(flash->dev,
- 					"ti,peak-current-microamp", &peak_ua);
-@@ -469,9 +532,19 @@ static int lm3560_probe(struct i2c_client *client)
- 				 &flash->max_flash_timeout);
- 	flash->max_flash_timeout /= 1000;
- 
-+	rval = regulator_enable(flash->vin_supply);
-+	if (rval < 0)
-+		return dev_err_probe(flash->dev, rval,
-+				     "failed to enable vin power supply\n");
-+
-+	gpiod_set_value_cansleep(flash->hwen_gpio, 1);
-+
- 	rval = lm3560_init_device(flash);
- 	if (rval < 0)
--		return rval;
-+		goto error_disable;
-+
-+	pm_runtime_set_active(flash->dev);
-+	pm_runtime_enable(flash->dev);
- 
- 	for_each_available_child_of_node(dev_of_node(flash->dev), node) {
- 		u32 reg;
-@@ -492,10 +565,10 @@ static int lm3560_probe(struct i2c_client *client)
- 
- 			rval = lm3560_subdev_init(flash, reg, node);
- 			if (rval < 0) {
--				lm3560_subdev_cleanup(flash);
--				return dev_err_probe(flash->dev, rval,
--						    "failed to register led%d\n",
--						    reg);
-+				dev_err(flash->dev,
-+					"failed to register led%d: %d\n",
-+					reg, rval);
-+				goto error_clean;
- 			}
- 
- 			set_bit(reg, flash->led_id);
-@@ -504,7 +577,23 @@ static int lm3560_probe(struct i2c_client *client)
- 
- 	i2c_set_clientdata(client, flash);
- 
-+	pm_runtime_set_autosuspend_delay(flash->dev, 1000);
-+	pm_runtime_use_autosuspend(flash->dev);
-+	pm_runtime_idle(flash->dev);
-+
- 	return 0;
-+
-+error_clean:
-+	pm_runtime_disable(flash->dev);
-+	pm_runtime_set_suspended(flash->dev);
-+
-+	lm3560_subdev_cleanup(flash);
-+
-+error_disable:
-+	gpiod_set_value_cansleep(flash->hwen_gpio, 0);
-+	regulator_disable(flash->vin_supply);
-+
-+	return rval;
- }
- 
- static void lm3560_remove(struct i2c_client *client)
-@@ -512,8 +601,22 @@ static void lm3560_remove(struct i2c_client *client)
- 	struct lm3560_flash *flash = i2c_get_clientdata(client);
- 
- 	lm3560_subdev_cleanup(flash);
-+
-+	/*
-+	 * Disable runtime PM. In case runtime PM is disabled in the kernel,
-+	 * make sure to turn power off manually.
-+	 */
-+	pm_runtime_disable(&client->dev);
-+	if (!pm_runtime_status_suspended(&client->dev)) {
-+		lm3560_power_off(&client->dev);
-+		pm_runtime_set_suspended(&client->dev);
-+	}
- }
- 
-+static const struct dev_pm_ops lm3560_pm_ops = {
-+	SET_RUNTIME_PM_OPS(lm3560_power_off, lm3560_power_on, NULL)
-+};
-+
- static const struct of_device_id lm3560_of_match[] = {
- 	{ .compatible = "ti,lm3559" },
- 	{ .compatible = "ti,lm3560" },
-@@ -532,7 +635,7 @@ MODULE_DEVICE_TABLE(i2c, lm3560_id_table);
- static struct i2c_driver lm3560_i2c_driver = {
- 	.driver = {
- 		   .name = LM3560_NAME,
--		   .pm = NULL,
-+		   .pm = pm_ptr(&lm3560_pm_ops),
- 		   .of_match_table = lm3560_of_match,
- 		   },
- 	.probe = lm3560_probe,
+> Hi Steffen,
+> 
+> On 4/24/26 3:28 PM, Steffen Trumtrar wrote:
+> > Add support for the Texas Instruments LP5860 LED driver chip
+> > via SPI interfaces.
+> > The LP5860 is an LED matrix driver for up to 196 LEDs, which supports
+> > short and open detection of the individual channel select lines.
+> > It can be connected to SPI or I2C bus. For now add support for SPI only.
+> > Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> > ---
+> [...]
+> > diff --git a/drivers/leds/rgb/leds-lp5860-core.c b/drivers/leds/rgb/leds-lp5860-core.c
+> > new file mode 100644
+> > index 0000000000000..648bf168f94bf
+> > --- /dev/null
+> > +++ b/drivers/leds/rgb/leds-lp5860-core.c
+> > @@ -0,0 +1,231 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2025 Pengutronix
+> > + *
+> > + * Author: Steffen Trumtrar <kernel@pengutronix.de>
+> > + */
+> > +
+> > +#include <linux/led-class-multicolor.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/property.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +#include "leds-lp5860.h"
+> > +
+> > +static struct lp5860_led *mcled_cdev_to_led(struct led_classdev_mc *mc_cdev)
+> > +{
+> > +	return container_of(mc_cdev, struct lp5860_led, mc_cdev);
+> > +}
+> > +
+> > +static int lp5860_set_dot_onoff(struct lp5860_led *led, unsigned int dot, bool enable)
+> > +{
+> > +	unsigned int offset = dot / LP5860_MAX_DOT_ONOFF_GROUP_NUM;
+> > +	unsigned int mask = BIT(dot % LP5860_MAX_DOT_ONOFF_GROUP_NUM);
+> > +
+> > +	if (dot > LP5860_MAX_LED)
+> > +		return -EINVAL;
+> > +
+> > +	return regmap_update_bits(led->chip->regmap,
+> > +				  LP5860_REG_DOT_ONOFF_START + offset, mask,
+> > +				  enable ? LP5860_DOT_ALL_ON : LP5860_DOT_ALL_OFF);
+> > +}
+> > +
+> > +static int lp5860_set_mc_brightness(struct led_classdev *cdev,
+> > +				    enum led_brightness brightness)
+> > +{
+> > +	struct led_classdev_mc *mc_cdev = lcdev_to_mccdev(cdev);
+> > +	struct lp5860_led *led = mcled_cdev_to_led(mc_cdev);
+> 
+> You need mutex locking while accessing hw to avoid leaving the
+> device in an inconsistent state in case of two parallel requests from
+> different processes.
+>
+
+The hw is only accessed via regmap. It handles locking AFAIK or do I misunderstand you?
+
+
+Best regards,
+Steffen
+
 -- 
-2.51.0
-
+Pengutronix e.K.                | Dipl.-Inform. Steffen Trumtrar |
+Steuerwalder Str. 21            | https://www.pengutronix.de/    |
+31137 Hildesheim, Germany       | Phone: +49-5121-206917-0       |
+Amtsgericht Hildesheim, HRA 2686| Fax:   +49-5121-206917-5555    |
