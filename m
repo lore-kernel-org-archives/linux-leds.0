@@ -1,82 +1,81 @@
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83D0377542
-	for <linux-leds@vger.kernel.org>; Tue,  5 May 2026 14:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C174238F65D
+	for <linux-leds@vger.kernel.org>; Tue,  5 May 2026 14:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777991559; cv=none; b=XQtd4jRgAcdXClz/Y7Macz8ScX6Qft896PqvLj9adB6aCoY30T9BP/RqEnYluGA7ck2c4kpIKKf9zN7+xB6o1pySwPUvIQ0RW1J1zg8X11Ix+oz3AIGyZYrd2gKeB/mL/MuKdLflb8gDkQVuM0/lVX6Lo9UIDG2rNyYjqb8rzG0=
+	t=1777992851; cv=none; b=ipxK4Y4H9EXOGVcR8fJESCwq/coL/AunK9nPTjWQ8QsgeE8nilVX/uyNFveg6OexFaUvvNMZvfpAg9VI8lEw4hhJWGwh0aEGPMO+6g/O129gcfFU6XnrOv0XGYEsn9GVkoZ3TN1d74osBlsyPp71CWxQGwJnXnUtQntsu+48z2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777991559; c=relaxed/simple;
-	bh=FDHbGuhskbBYK9B3ZIhL8JMcMmvyjfLkUA3LYinKnrs=;
+	s=arc-20240116; t=1777992851; c=relaxed/simple;
+	bh=naaaBMARr1xhh3oHzvjOIJ8WvTYfmmL+aUoB+HUe6SY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=swkXqrvKXPdtIFr12lBScKPC7dkZTEXKKZoycchkkShFtyGRcb4WmiFvt0vcDGbktQkTjpaJWsQNr/WQb6XAKL84+hQ0zV6Ul5JTPY06c1HA1O8+dIrENVHZOqUD2kQwYXavQ+hwlnrct5G+D4/6LpM5CsaXNtqrq2H781SXXJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAsz+C2b; arc=none smtp.client-ip=74.125.82.182
+	 MIME-Version; b=lerfvJ7PniyvSvUkQgQCR/UOdpLeehYsXDEGqIU7S0nemJG4q1ZAMk1x3V95VXg4zh+YFA7yun2gIJgRUQUdY1GlHkviMqi16l7Fq3GoFHBiM3THNMImKMlQic8doTstmbXZsZGnK0WWsH9p3ZouhP7pywud9oeZuPyo7fBi274=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4ky92cg; arc=none smtp.client-ip=74.125.82.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAsz+C2b"
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-2b4520f6b32so8068546eec.0
-        for <linux-leds@vger.kernel.org>; Tue, 05 May 2026 07:32:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4ky92cg"
+Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-2bdd40d3c61so6784251eec.1
+        for <linux-leds@vger.kernel.org>; Tue, 05 May 2026 07:54:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777991556; x=1778596356; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1777992848; x=1778597648; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c88BAr8bO221fRKGDOrgPFzIl4l9xrFfjEQLmK4BdhM=;
-        b=JAsz+C2bnaQanMnMgZkPtYQcRLIjFDR01mIkrNxBPD5T56XgbWbHqbAnnWfIGiOZEJ
-         LVE4I4cLf050fLRUyl4fXfDlBqu84emJw0VBlFjFyhizfmBUDBPMVd9GlRc+xDo3Bk0C
-         pDG4FiEOv1ZEmlFtoO4AQb35AJhEon0jV6HoXfXKJ03dZ7nLPpE54S/PBy6791OSN6vn
-         YJr9Cf5GwjrKftGhiB25M9DABE3KkvcBuLGST++5XrPYEnRVdx4vOnlWYmPtLbOUgDmD
-         oGNIH/mROxxCmTB2+xvpiSGPsaMlUpsUAFZ69dxgNWINw9cP2oDXSVooX0rg1Wuox2mO
-         rRPg==
+        bh=yS2i4W3Iab7ck7sMJR72EpBwPoerYuIemmfxcFlxotw=;
+        b=W4ky92cgF5wf7BTGp9WHPj7qwM8GUk66dqpBk4ymuFc1joKP862Fi1AKAVM0sNLPn0
+         4iKlcgjKkIl6ZyxyYLsDFJTn/bweN8SLetz64ux3ne4WxDaAIRTxJBfTkiGRmob1iK7j
+         7liAkRnNvq54a2G3dxOGXrRl/Urro5lexLZ7d7F6g1PUMXF+HW9eTIQt6qBHXcVnVeZS
+         +X3swxPP049u7sK6OTp8yLb3YvEbkRH6uhV6hMqPwGG2XMlAlsen+wLB+gQfOkkpCDbE
+         iFw7JmDuvW4xKmj75mU1cuu4S2kC0rkU9pM8OfSvHb59JsWcQpDvb/YY+UTou9Y7lv+S
+         o8zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777991556; x=1778596356;
+        d=1e100.net; s=20251104; t=1777992848; x=1778597648;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=c88BAr8bO221fRKGDOrgPFzIl4l9xrFfjEQLmK4BdhM=;
-        b=Rwz295C6s3WWkOTUhkuEvbcYfjiJlD9a9Q41QxLmVmpwOvp6a6/QwOI/x6gBkeWOvc
-         4L1jYLY+P8Yi+sO37+Vi9CCaiIqpKCcw2x30avYlKbP6GIN/r+gQHrRjniOWKxaF69UE
-         GYNFStncplAlxOwj0bpZR4vHevJrnTKHINmfzVije84r7IP4AUz4BXWZSvG9uxLR3OcS
-         Jndu6X2PfUbi5Dm7dFn/TWbDvCMc36g/fp4b/iNFos6bWvVlGJKAMj1nZgYCkRlPKh/j
-         xbES4/a3JOpU9GYUnW0bu7nVFHJt4V/Omu+RWPiS374U9AnempupEbi4rk2Xtb0AeuQP
-         9Eaw==
-X-Forwarded-Encrypted: i=1; AFNElJ8UK1HktfbjCgXd2ddjYPPzzRPvNiHvjC70eTKdyCQMUcUApuXta0ZOlrSrt5DbgG3KncAc0NOWPBTD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyajd/+pxF9GTEcLWRioxwNolj9huzM/JePOqZYc4VERhM/Gwb5
-	GpETCQe9ik+8o6rggHLDggx867P6xHpDsP69Yftng5+bAYLltLkOrwRE
-X-Gm-Gg: AeBDieu+iTtCCyDmVVjDNChhM88YfVoynRxPayYrprhzpaf7zA5FrKAk9zq2mskwDFz
-	rAhpWA0/9lg/XC74XtSLLJvcDyC86YlvrWutWZxMvW9AgspSMeFxJxlrS7KKxkR1zt566tGBoYS
-	P6wjUDkLUvQUpp/wvzFh5em0pMao2wbzU6Wcp3zzj2cv1cKCZ8P3F67yiX/SRf9+6TaI3ZqMti/
-	PI4cqrwmkdAEiXucIgKm4LMlA4NvgM8cqY/mHgApE+c2pKLd7BPJnLLHQCLvhKSMp6CFYGV7VZe
-	IQhIP3e2G/fPW7LMs8RKqUrONu1zCydeFHNsH0QpN0AbUh5Q1ADrqGdk1uBCaQpC7wydp0suBh5
-	L9ii+l968YxVd9kk+YM9yQWEtcLkUVnLMZ1KTcSX2wmFnTo9Zd/KzZ99JVI42Dy1R++Y910gEDv
-	VX+YXhbxeQjJ0cvXhj/QbaTSsSdzOaGSY=
-X-Received: by 2002:a05:7300:d0f:b0:2ef:2878:7ad0 with SMTP id 5a478bee46e88-2efba5a7783mr6780606eec.27.1777991555590;
-        Tue, 05 May 2026 07:32:35 -0700 (PDT)
+        bh=yS2i4W3Iab7ck7sMJR72EpBwPoerYuIemmfxcFlxotw=;
+        b=K+4xAbiowKlhxmn+E8rRUrg8pdCfs5AukOCRC3Aijsi8NvELM6tIs1crT1cG30Gd5W
+         yeZ5A0Q2xU5CDuVQOsUJPxLpkM3XBt1AnVlwc8iq/+ZCPVE/dNMVtnfKn6bmqUpgBk94
+         41Wio2esHqfPwNpVOr5v9genX4TLUv+eoFCt7Z3lfXeQXWO9B/dpqEQhzmtMMOWHNF4H
+         1/sZe9zK3gHkVLm/cLko8M2z/t8Oh8dkTm2H/rA0Nzgp+0MkYAl4Cw0/OaEY8nelBbLF
+         RnBzosxBlGMSNj/k80HAaK6y+Ka7+X350NYACQE+5/iB9unwZE7HKTHb/o8DKyaS0vY/
+         uOgw==
+X-Forwarded-Encrypted: i=1; AFNElJ8N1rHJfGzZo5ZqThFSSZ+m/evWrOoq0HKsEfJQkext34k0mAEH6DhOoCWW3WC2DAruldf6tS3sU+Te@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRu3kET6Ss5WWhdKzFVURBablkbs6SZNXK7ufy0KLL+P4SY8Fw
+	fidIoh1a8BcrZZGL1HU/vrnvf/7mArEMXqursZySA6jUKVyzaIiD8zjz
+X-Gm-Gg: AeBDieve1AqEAF5GeEnkmDz9opj1vwTHyBlEUn4KxXyX5+QzYMe4e7XV9hUB3DaJ8Pe
+	o9jO2529G1R+IVjkrlRC23yGH/IBiCFyxpRqfWeqplJjWAwbpcyr8KlG2h+ijf9m2SVZDHd1z0z
+	xWvZFauiSm8719mZiPRkl3R/nXDmRaHy6XwGAL/gvdfQwU+DTF6ei6g3gxBOXwrryfufSfrHZrg
+	WYhnVrJqtVnt6c+eSkQ4atLJ+JU0fCA/JNa2tAl+vqbmwYmD5RHOtBOshOIh82FCqbeOLRxsjbb
+	XDm8WN+vfGPSmJJO49Uy7lXg6ilJZ+XkYyigvLo/4FiThiHdF45iNbl9rF1tOw70ivDOFD3ofJS
+	JxJyNGjlcqR8E33PIK1+BIJUhSDDIS81hbDrCe+S+oPxgCBBCy5QRHQVwhFq0VQQkwRrJ0hQxcu
+	0Y7nUIiliGeW/qUOzV6SojvTwH6QfDlPY=
+X-Received: by 2002:a05:7300:b54b:b0:2ed:6f94:9d96 with SMTP id 5a478bee46e88-2f4097d361fmr1523773eec.19.1777992847643;
+        Tue, 05 May 2026 07:54:07 -0700 (PDT)
 Received: from arch.localdomain ([2409:8a28:a59:55d1::1002])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ee3b29b11fsm20803843eec.19.2026.05.05.07.32.30
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2f3bf67cf8dsm5793545eec.6.2026.05.05.07.54.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 07:32:35 -0700 (PDT)
+        Tue, 05 May 2026 07:54:07 -0700 (PDT)
 From: Jun Yan <jerrysteve1101@gmail.com>
-To: krzk@kernel.org
-Cc: conor+dt@kernel.org,
-	daniel@zonque.org,
+To: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	jerrysteve1101@gmail.com,
+	linux-leds@vger.kernel.org
+Cc: lee@kernel.org,
+	robh@kernel.org,
 	krzk+dt@kernel.org,
-	lee@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
+	conor+dt@kernel.org,
 	luccafachinetti@gmail.com,
 	pzalewski@thegoodpenguin.co.uk,
-	robh@kernel.org
-Subject: Re: [PATCH v2 3/5] dt-bindings: leds: leds-is31fl32xx: Add shutdown-gpios property
-Date: Tue,  5 May 2026 22:32:27 +0800
-Message-ID: <20260505143227.1263876-1-jerrysteve1101@gmail.com>
+	daniel@zonque.org,
+	Jun Yan <jerrysteve1101@gmail.com>
+Subject: [PATCH v4 1/5] dt-bindings: leds: is31fl32xx: convert the binding to yaml
+Date: Tue,  5 May 2026 22:53:50 +0800
+Message-ID: <20260505145354.1267095-2-jerrysteve1101@gmail.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <b50cbdf4-a101-4ec5-8767-b62dcdb7d1e9@kernel.org>
-References: <b50cbdf4-a101-4ec5-8767-b62dcdb7d1e9@kernel.org>
+In-Reply-To: <20260505145354.1267095-1-jerrysteve1101@gmail.com>
+References: <20260505145354.1267095-1-jerrysteve1101@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -85,40 +84,248 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> On 28/04/2026 04:33, Jun Yan wrote:
-> > The IS31FL32XX series features an SDB shutdown pin.
-> > Driving it low (active low) places the chip into hardware shutdown mode
-> > for power saving, while all register contents are preserved
-> > and registers are not reset.
-> > 
-> > Add shutdown-gpios property to describe the GPIO connected to the
-> > SDB pin of IS31FL32XX series LED controllers.
-> > 
-> > Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
-> > ---
-> >  .../devicetree/bindings/leds/issl,is31fl32xx.yaml    | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml b/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml
-> > index 25ce67940c88..4654aa07dc63 100644
-> > --- a/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml
-> > +++ b/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml
-> > @@ -45,6 +45,15 @@ properties:
-> >        When present, the chip's PWM will operate at ~22kHz as opposed
-> >        to ~3kHz to move the operating frequency out of the audible range.
-> >  
-> > +  shutdown-gpios:
-> 
-> powerdown-gpios (see gpio-consumer-common)
+Convert leds-is31fl32xx to DT schema format.
 
-Thanks for the reminder.This has already been implemented in v3. 
-Sorry for the late reply.
+Co-developed-by: Lucca Fachinetti <luccafachinetti@gmail.com>
+Signed-off-by: Lucca Fachinetti <luccafachinetti@gmail.com>
+Co-developed-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+---
+ .../bindings/leds/issl,is31fl32xx.yaml        | 163 ++++++++++++++++++
+ .../bindings/leds/leds-is31fl32xx.txt         |  53 ------
+ 2 files changed, 163 insertions(+), 53 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
 
->
-> > +    maxItems: 1
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+diff --git a/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml b/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml
+new file mode 100644
+index 000000000000..cb4741dee12e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/issl,is31fl32xx.yaml
+@@ -0,0 +1,163 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/issl,is31fl32xx.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IS31FL32xx and Si-En SN32xx LED controller
++
++maintainers:
++  - Lucca Fachinetti <luccafachinetti@gmail.com>
++  - Pavel Machek <pavel@ucw.cz>
++  - Jun Yan <jerrysteve1101@gmail.com>
++
++description: |
++  The IS31FL32xx/SN32xx family of LED drivers are I2C devices with multiple
++  constant-current channels, each with independent 256-level PWM control.
++  Each LED is represented as a sub-node of the device.
++
++  For more product information please see the links below:
++    https://www.lumissil.com/assets/pdf/core/IS31FL3216_DS.pdf
++    https://www.lumissil.com/assets/pdf/core/IS31FL3218_DS.pdf
++    https://www.lumissil.com/assets/pdf/core/IS31FL3235_DS.pdf
++    https://www.lumissil.com/assets/pdf/core/IS31FL3236_DS.pdf
++    https://www.lumissil.com/assets/pdf/core/IS31FL3293_DS.pdf
++
++properties:
++  compatible:
++    enum:
++      - issi,is31fl3216
++      - issi,is31fl3218
++      - issi,is31fl3235
++      - issi,is31fl3236
++      - issi,is31fl3293
++      - si-en,sn3216
++      - si-en,sn3218
++
++  reg:
++    maxItems: 1
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^led@([1-9])+$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        description:
++          LED channel number (1..N)
++        minimum: 1
++        maximum: 36
++
++    required:
++      - reg
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3293
++    then:
++      patternProperties:
++        "^led@([1-9])+$":
++          properties:
++            reg:
++              maximum: 3
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3216
++              - si-en,sn3216
++    then:
++      patternProperties:
++        "^led@([1-9])+$":
++          properties:
++            reg:
++              maximum: 16
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3218
++              - si-en,sn3218
++    then:
++      patternProperties:
++        "^led@([1-9])+$":
++          properties:
++            reg:
++              maximum: 18
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3235
++    then:
++      patternProperties:
++        "^led@([1-9])+$":
++          properties:
++            reg:
++              maximum: 28
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - issi,is31fl3236
++    then:
++      patternProperties:
++        "^led@([1-9])+$":
++          properties:
++            reg:
++              maximum: 36
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@3c {
++            compatible = "issi,is31fl3236";
++            reg = <0x3c>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            led@1 {
++                reg = <1>;
++                color = <LED_COLOR_ID_RED>;
++                function = LED_FUNCTION_STATUS;
++            };
++
++            led@5 {
++                reg = <5>;
++                color = <LED_COLOR_ID_GREEN>;
++                function = LED_FUNCTION_POWER;
++                linux,default-trigger = "default-on";
++            };
++        };
++    };
++...
++
+diff --git a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt b/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
+deleted file mode 100644
+index 7082ed186dd9..000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-is31fl32xx.txt
++++ /dev/null
+@@ -1,53 +0,0 @@
+-Binding for ISSI IS31FL32xx and Si-En SN32xx LED Drivers
+-
+-The IS31FL32xx/SN32xx family of LED drivers are I2C devices with multiple
+-constant-current channels, each with independent 256-level PWM control.
+-Each LED is represented as a sub-node of the device.
+-
+-Required properties:
+-- compatible: one of
+-	issi,is31fl3236
+-	issi,is31fl3235
+-	issi,is31fl3218
+-	issi,is31fl3216
+-	issi,is31fl3293
+-	si-en,sn3218
+-	si-en,sn3216
+-- reg: I2C slave address
+-- address-cells : must be 1
+-- size-cells : must be 0
+-
+-LED sub-node properties:
+-- reg : LED channel number (1..N)
+-- label :  (optional)
+-  see Documentation/devicetree/bindings/leds/common.txt
+-- linux,default-trigger :  (optional)
+-  see Documentation/devicetree/bindings/leds/common.txt
+-
+-
+-Example:
+-
+-is31fl3236: led-controller@3c {
+-	compatible = "issi,is31fl3236";
+-	reg = <0x3c>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-
+-	led@1 {
+-		reg = <1>;
+-		label = "EB:blue:usr0";
+-	};
+-	led@2 {
+-		reg = <2>;
+-		label = "EB:blue:usr1";
+-	};
+-	...
+-	led@36 {
+-		reg = <36>;
+-		label = "EB:blue:usr35";
+-	};
+-};
+-
+-For more product information please see the links below:
+-http://www.issi.com/US/product-analog-fxled-driver.shtml
+-http://www.si-en.com/product.asp?parentid=890
+-- 
+2.53.0
 
