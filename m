@@ -1,103 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.xn--rombobjrn-67a.se (nestor.xn--rombobjrn-67a.se [188.126.83.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD6E39FCCA;
-	Sun, 10 May 2026 17:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B3C81732;
+	Sun, 10 May 2026 19:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.126.83.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778432886; cv=none; b=YonrmmY/DtHpCWEJWsNa7k+Va5RVybJ8+O5yEpHEfZq1qd2kF99jY45LdIIqMFdFcaiNdiASufuCHCUssVoXqQBh1Khzea93f7E5hquJwxoUzyIe+m8iXywpW29q28EOOgtL2FXpm8649PqEFsRpkjEJy/Rhzt5VTf0Pdd7O9RY=
+	t=1778442584; cv=none; b=J0h27knqkNsKgAR1VW9PwbujYDxJ+b9vQp1Fp+Hg40AxnQhSqYICJi6tnzytQK1BX79z2GMqlJ2WS4/e0YRmcw+lwd3RpJqyZ38O1TpXEvxSpXXR9bSLV6wr/heRnn8K9dbuLQNahwaFOcVInLxp9rf6becWSArRkqRbK1VHVNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778432886; c=relaxed/simple;
-	bh=j9Ye8Bo4e4CCLXroVD+JMNJOsB6GNLf669OJjbSVu6I=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TTi7WFmsDwnZxmSk/NaFmE5gTlkCvNvqX8fmfBWmFmBIIaE+N9ed44Sde/hQNQUAN5JzcBqRmXI9mmw8LsKfkG0aVS4YLotDMSW7b89AFHwM4wV8GOWeZ1i17Jt2OySu3DapM4vRV4P/tfyJy2iyFDOhReEa9aScwfVHcUOoTzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncMDpR4w; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778442584; c=relaxed/simple;
+	bh=KoJ2odYCEQhTTQfZSeAaS/5IH8FrhRU1cqddkrINZ08=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DNHWjUJKaS7mFL/+kJcxnpZrRDFOMboz9PeADov5mvjJclwR6DXrd4jzVcgxlm0QjEd3upHl2YHUu6XjKRkwDaLst+Q5Z9nMZsv+S7wPCG92hSCogSBwryBZTYefsKMCCtnqA0UJGBkBJ9H/33UCBNMeIoeXKfL+Uy0+9c6VCGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xn--rombobjrn-67a.se; spf=pass smtp.mailfrom=xn--rombobjrn-67a.se; dkim=pass (2048-bit key) header.d=xn--rombobjrn-67a.se header.i=@xn--rombobjrn-67a.se header.b=D/qP+nt8; arc=none smtp.client-ip=188.126.83.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xn--rombobjrn-67a.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--rombobjrn-67a.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncMDpR4w"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BF519C2BCB8;
-	Sun, 10 May 2026 17:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778432885;
-	bh=j9Ye8Bo4e4CCLXroVD+JMNJOsB6GNLf669OJjbSVu6I=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=ncMDpR4wEvVdO2WufqBBelMu49cRmk+imUtCuK/a/t51iIdPCcKvPa199ZmkDrerU
-	 Jk+mTpZyvFvYPsX1syuHITyVQyb+IqwQlLzP+kFmsi6xgLIa9lh8Yw7LJBddFECq7G
-	 2MVLBRXGxoopwfxMxmHwUVRYFLzClbKVhcL0q1Z94iVPZ0sVLWsX8R13GwELVPXo5I
-	 Gp6UoA+EPiE5BUySxmLprRnq5KcQYUY5Cq8xwWopXLCtF62fbsPVon/t2HRMZQg12T
-	 qqOI9+3ziD4Vpb4n0zwtkTWdq1gwrVmmwaU695VZbzXHx7IBbYbyMNwmXAG0bJVXxG
-	 35WT6K/O9VgMw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF9BCD37B9;
-	Sun, 10 May 2026 17:08:05 +0000 (UTC)
-From: Alexandre Hamamdjian via B4 Relay <devnull+azkali.limited.gmail.com@kernel.org>
-Subject: [PATCH 0/2] backlight: add support for Silergy SY7758
-Date: Mon, 11 May 2026 00:08:01 +0700
-Message-Id: <20260511-sy7758-v1-0-999a33081304@gmail.com>
+	dkim=pass (2048-bit key) header.d=xn--rombobjrn-67a.se header.i=@xn--rombobjrn-67a.se header.b="D/qP+nt8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xn--rombobjrn-67a.se;
+	s=a; t=1778442218; bh=KoJ2odYCEQhTTQfZSeAaS/5IH8FrhRU1cqddkrINZ08=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:From:Sender:Reply-To:Original-From:
+	 Organization:To:CC:Subject:Original-Subject:Date:Message-ID:
+	 In-Reply-To:References:Original-Message-ID:
+	 Disposition-Notification-To:Disposition-Notification-Options:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type:
+	 Content-Features:Content-Alternative:Content-Location:
+	 TLS-Report-Domain:TLS-Report-Submitter:MT-Priority;
+	b=D/qP+nt82amgXuffCuwBqMINQ+u/lmXqZEr/7nlSZXLTgmXNYY9+obBXmvm77J6nG
+	 p1x6zChw0sNR0GUozjG7tnc/zXSkYPW4JUcXiePmq4M57fVJu5NYY0j90a/PbySDWP
+	 cZThJS/zUM0l10oF7/dr/lkeiu40GwELbdPBDOpcdF4unuFFf/qWqqlGKhPVfSkQr1
+	 UhuAY67+Y4PBcP4a5P3Tzfr8FXIM23cv8DIkduR6d5EqwBB48DBDZESiAs4WKKDlLQ
+	 ruN36Yn+e0U57thbm8YIhtXkS3cV8sBH2v0Q79OHQWqzXYrjsmS/+ocMROzz+uNZQ1
+	 N8Of3t7DARx7w==
+Received: from tag.xn--rombobjrn-67a.se (tag.xn--rombobjrn-67a.se [192.168.72.9])
+	by smtp.xn--rombobjrn-67a.se (Postfix) with ESMTPSA id AA5CB409082F;
+	Sun, 10 May 2026 21:43:38 +0200 (CEST)
+Date: Sun, 10 May 2026 21:43:08 +0200
+From: =?UTF-8?B?QmrDtnJu?= Persson <Bjorn@xn--rombobjrn-67a.se>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah
+ Khan <skhan@linuxfoundation.org>, linux-leds@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: leds: uleds: Make the documentation match the
+ code.
+Message-ID: <20260510214308.09652225@tag.xn--rombobjrn-67a.se>
+In-Reply-To: <20260507131128.GM305027@google.com>
+References: <20260402220811.4804DD8F722@tag.xn--rombobjrn-67a.se>
+ <20260423152655.GF170138@google.com>
+ <20260424194714.71de0ef6@tag.xn--rombobjrn-67a.se>
+ <20260507131128.GM305027@google.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMyw5AMBCF4VeRWWtSopd4FbFAB2OBdBDSeHfF8
- kv+cwIwekKGMgng8SCmZY7I0gS6sZkHFOSiIZe5liqTgi9jlBVYaGdV76Q1GmK8euzp/I6q+jf
- v7YTd9q7hvh8sVWe/agAAAA==
-X-Change-ID: 20260510-sy7758-e46d85fd0876
-To: Philippe Simons <simons.philippe@gmail.com>, Lee Jones <lee@kernel.org>, 
- Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fbdev@vger.kernel.org, 
- Alexandre Hamamdjian <azkali.limited@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1778432883; l=1464;
- i=azkali.limited@gmail.com; s=20260510; h=from:subject:message-id;
- bh=j9Ye8Bo4e4CCLXroVD+JMNJOsB6GNLf669OJjbSVu6I=;
- b=xi7FLiPtS8KaNvygEBd7kai0RXgNgf3tewAGPMcel307gKtZBLi1SkfUK93Nvs4rIUSdJSRTS
- rE6EmwAJrwbBrceXgxoALcRSGzmr/4CK13LRMrGtba/6eON2lxG7NLv
-X-Developer-Key: i=azkali.limited@gmail.com; a=ed25519;
- pk=I0Z0IdCdQJqNGX+FQUnXhrHg950u3cM6Xzz3YT6JOyQ=
-X-Endpoint-Received: by B4 Relay for azkali.limited@gmail.com/20260510 with
- auth_id=774
-X-Original-From: Alexandre Hamamdjian <azkali.limited@gmail.com>
-Reply-To: azkali.limited@gmail.com
+Content-Type: multipart/signed; boundary="Sig_/T26XZ=bGSRSST3leRrRkr4W";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
 
-The Silergy SY7758 is an I2C-controlled multi-channel LED backlight
-driver used to drive the edge-lit LED strings of LCD panels. It is
-present on the Ayaneo Pocket DS handheld, where it drives the panel
-backlight, and is required before the panel can be lit.
+--Sig_/T26XZ=bGSRSST3leRrRkr4W
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This series adds the device tree binding for the new "silergy,sy7758"
-compatible and the matching driver. The driver registers a backlight
-class device with a 12-bit linear brightness range and programs the
-chip's mode and current configuration registers on the first non-zero
-brightness update.
+Lee Jones wrote:
+> On Fri, 24 Apr 2026, Bj=C3=B6rn Persson wrote:
+>=20
+> > Lee Jones wrote: =20
+> > > On Thu, 02 Apr 2026, Bj=C3=B6rn Persson wrote:
+> > >  =20
+> > > > +The current brightness is found by reading a whole int from the ch=
+aracter   =20
+> > >=20
+> > > Try not to shorten names in documentation "integer". =20
+> >=20
+> > The type is named "int" in C. There are many integer types, but it would
+> > be wrong to try to read a uint16_t or a size_t or any other integer
+> > type. The document needs to use the actual type name to make it clear to
+> > the reader that they must read sizeof(int) bytes. =20
+>=20
+> Right, but you're not writing in C.
 
-The Ayaneo Pocket DS device tree, posted as a separate series, depends
-on the binding introduced here to describe its panel backlight.
+That's technically true, as I wrote my program in C++. It's far from my
+favorite, but I had to use a language that can include C header files
+and use C types, because /dev/uleds is a very C-centric interface.
 
-Signed-off-by: Alexandre Hamamdjian <azkali.limited@gmail.com>
----
-Alexandre Hamamdjian (2):
-      dt-bindings: leds: backlight: add Silergy SY7758
-      backlight: sy7758: add Silergy SY7758 backlight driver
+If API documentation isn't allowed to name a type, then I withdraw the
+patch. It's pointless to continue. The next programmer will also have to
+read the code to find out what the true API is, like I did.
 
- .../bindings/leds/backlight/silergy,sy7758.yaml    |  47 ++++++
- MAINTAINERS                                        |   7 +
- drivers/video/backlight/Kconfig                    |  14 ++
- drivers/video/backlight/Makefile                   |   1 +
- drivers/video/backlight/sy7758.c                   | 169 +++++++++++++++++++++
- 5 files changed, 238 insertions(+)
----
-base-commit: e98d21c170b01ddef366f023bbfcf6b31509fa83
-change-id: 20260510-sy7758-e46d85fd0876
+Bj=C3=B6rn Persson
 
-Best regards,
---  
-Alexandre Hamamdjian <azkali.limited@gmail.com>
+--Sig_/T26XZ=bGSRSST3leRrRkr4W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signatur
 
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCgAdFiEE52SginNFTPmg+iBb4Tha3NZK5j8FAmoA38wACgkQ4Tha3NZK
+5j/GeRAAvsV7X5CAynQjGiGbtWjeFZVGcUIpyyXBGfiXEGPnwIVoZez41KUzKlkt
+QIw5qMTwe/k3iV7uBRdQ+KmTHQTQV2oZVWXBKO7WEvSi2rZHH+SGTF+ZhwsBr0Iv
+joLOJS+m5vs49IiWnauaW86SWvXvF/xV5y9jRaecehdpPLnTucoig24bduV+C+nO
+N9QvReK+DvSu1fpsMKzn1EAIqkF8xDP4ymcvKKNI1ljlAwC9cW7rtqOB+qQ34CbE
+yeb9DnA9Mkrd09Z8SI5P90HkH20QFsmREZj49QW252eCBVoiXWPy5z1oAoulVW9C
+aZxjVxRphNXHXhLnMXZh8Z/RAaJMcTAb1BTsz1V+gl9yELEdQav6wvArpCWFhcmw
+P55y9ocyO36PSM3QHIyeL8ViZWna1qZrBYntjxPpNvsOtaK7n8iHExk9u3QB9ERJ
+UrXCQPIbn4OxI8Gs7nUWH7g1u/47QmKssasA1AG8/Kehz8Mfccr7pUC5CRjjcbxO
+k0ubmhAqyA7GulXZHU+cE2fLL+Qh7iiJ0zJv2Cpja5AgLPecDaScrTQf8BuMM2EH
+DXwkEN/4gC59E/ceqGXMEkyxJxqpp+WW8Nyd3fBI/eI1iR/eJErQsv848stNIawP
+DGwwq2xY25/omBlz8tvolzSMT1AYVKwGbJXlkw2+9EhgFW85/KU=
+=qBgJ
+-----END PGP SIGNATURE-----
+
+--Sig_/T26XZ=bGSRSST3leRrRkr4W--
