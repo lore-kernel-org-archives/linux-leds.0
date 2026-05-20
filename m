@@ -1,96 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6683612F6;
-	Wed, 20 May 2026 20:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D6033D4E8;
+	Wed, 20 May 2026 20:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779308021; cv=none; b=oM5za1ZlTA461miqvRRF/+ICIxwYEPWVpqjLnsKDFDaL7/H9oqGAhPnsedelMh1IlTD+zfS7cJPsQRJAAmUT347XUge742Pt8KFm7vhH5UxxzThvYnjqulfdj2AP8WR/7mbFSKBv8R1wFaZX2SSnbfXO1RjCt6hPnseqZOw9hcA=
+	t=1779308121; cv=none; b=SY1FAp8WAEu6UU6Y2Mo8KEKP913rcCAe1mdwVM9Yp9pcsdYgDDkjq2dKe5+V4HLGGMPOzlX/U1wZRF4HL7dU0+a3P0p7v3jFZlWFgjcO7v1Z8Wplhxqy7XN4aIwPjVH156z9ryaZD4uY9jGv6BiP0cDvywHrR03GzVB5QrtCnYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779308021; c=relaxed/simple;
-	bh=euEms7TYqrmZeVjCBuiSh+bd9lVKE84VjjxrkAif1Ho=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=B2aZaNyZI75p7mojWe9CtFUe9mhbshE04X5OJhOkk8EOmacxe7h5F+HlvTeXn50DTdiBJ1gle5ucXYCnIXZ+WPE2q77OcWTPvdPVoVt4DfO0kEH6kkk66duajNPUM4wWCXsS7OJYXp5gufNSEwNeCS04mkHXIUByzCILzfSa7LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8gqUlyw; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779308121; c=relaxed/simple;
+	bh=IH7dRv0KgUy49qjCBLZhEhoNIeVeZlhUjkZK0WeVIVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IF4kS4lsM/yFzZ2X/K+K4RCjHVzdfcImlYlaK72O1YKq6FP8b7NAWHFfa7o7zbjZdM7THg/QJafml83gpfkY7CLU0I3yTIajzgvFTj/ECCR7JFiEVZNWvVIH+07ANFCSpG70LX3CRkyA3QNY6rPG7Y4/y457kIVkOuGeF8T1sT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1B9bMQZu; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8gqUlyw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B21A1F00A39;
-	Wed, 20 May 2026 20:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779308020;
-	bh=Tsdb10MCYeVuX9T+8C6WQO30wsviGsRuozwkSNDJ4+0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=b8gqUlywO68AJVjSw6858va6PLMLoLRNok5oYtr2P3jDUX7fZdS9kLk+YHJ3NoM9C
-	 ZTPnveb5ii2sQq4F4InWqZxJVSkNsDBPTuqy3shqaNLlDR6ZSRIrt+F4Oi0mWbhYBx
-	 ohDSxjNHAG3K4Vioc+Z5uUj503qOK0KbRjD5a8FdIC8u/6JXZyn+V0QepoqHkYackZ
-	 fdAcd8B+H7ckm6P7I3JkElwRnr71yKYsbA4MOeeqlVLgGlum6KzkAumEVz7MxxI+5a
-	 XM/+SO2X5B/ipkw0CXNEjuVjZ54v2w+nO+poH/UyXA6bv5lJmxXkXbWU5G5bRaptye
-	 Jxdxp/5os3PBA==
-Date: Wed, 20 May 2026 15:13:39 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1B9bMQZu"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bXMK+gd4wGZ4tCeBW1FQjrPBlHTcDMWzxfhiyewkKok=; b=1B9bMQZu6759LQQerkZ6GTq/eS
+	gfyzcq5OOXLJVbldVejASrFzil0b0K6Tt71SVX2mRniqqVcQMly3i76kUIG+a5e+EXoINVTRAmlaB
+	yH+GKF9Sb8ks+3kjdX+pVRjCGIh59b6k/PgXCycuaVNX07FDCwieu7CKQ/ZtzKBWoU1A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wPnJW-003tkl-3t; Wed, 20 May 2026 22:14:46 +0200
+Date: Wed, 20 May 2026 22:14:46 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: mike.marciniszyn@gmail.com
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Daniel Golle <daniel@makrotopia.org>, Kees Cook <kees@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Dimitri Daskalakis <dimitri.daskalakis1@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>, Lee Trager <lee@trager.us>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Chengfeng Ye <dg573847474@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] dd LED support for fbnic
+Message-ID: <48c64757-dc3c-4d05-a269-fa4f50c299c3@lunn.ch>
+References: <20260520200337.204431-1-mike.marciniszyn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org, 
- devicetree@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20260520182124.117863-3-clamor95@gmail.com>
-References: <20260520182124.117863-1-clamor95@gmail.com>
- <20260520182124.117863-3-clamor95@gmail.com>
-Message-Id: <177930801875.740485.17278647053731389937.robh@kernel.org>
-Subject: Re: [PATCH v6 2/6] dt-bindings: input: cpcap-pwrbutton: convert to
- DT schema
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260520200337.204431-1-mike.marciniszyn@gmail.com>
 
+On Wed, May 20, 2026 at 04:03:34PM -0400, mike.marciniszyn@gmail.com wrote:
+> From: "Mike Marciniszyn (Meta)" <mike.marciniszyn@gmail.com>
 
-On Wed, 20 May 2026 21:21:20 +0300, Svyatoslav Ryhel wrote:
-> Convert power button devicetree bindings for the Motorola CPCAP MFD from
-> TXT to YAML format. This patch does not change any functionality; the
-> bindings remain the same.
-> 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/input/cpcap-pwrbutton.txt        | 20 ------------
->  .../input/motorola,cpcap-pwrbutton.yaml       | 32 +++++++++++++++++++
->  2 files changed, 32 insertions(+), 20 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
->  create mode 100644 Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml
-> 
+The Subject: of this email has an off 'dd' in it.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> The second patch stors the max speed from the firmware dialog
 
-yamllint warnings/errors:
+stores
 
-dtschema/dtc warnings/errors:
-
-
-doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
-Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
-Documentation/devicetree/bindings/input/motorola,cpcap-pwrbutton.yaml: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
-Documentation/devicetree/bindings/mfd/motorola-cpcap.txt: Documentation/devicetree/bindings/input/cpcap-pwrbutton.txt
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260520182124.117863-3-clamor95@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+  Andrew
