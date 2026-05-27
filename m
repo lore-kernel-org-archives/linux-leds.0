@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE63F39E7;
-	Wed, 27 May 2026 15:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21AC2EF652;
+	Wed, 27 May 2026 15:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779894879; cv=none; b=m4hn5kM6ixIJc+lj00uBw5TjhZQKLntPW7iyeiCU8VnRKYQruFL00OVIXUNOI9T9rDPTLki61beq98piUzJrZCCmMWZbfgA+CzOkRFkSLX36SDhyf/ZsXyar1dZkWEmr//4jkojncTtaaEImUQrnd/Lk0NaOsVxkFqTQ+F+8l1o=
+	t=1779895069; cv=none; b=Pzdh/7BdAtIk9OFIWIS4jMxJZHEnQzHw8A+zWqydoapLi6jPWRkFow6Ot3QFPjzWeScwz53eNWb6WFCmSr7mTndBHudsrt1lpNRt8NlSolD4Ezfj+jIwusoLZw4giCSWfQjdly6ZSHetRoOIlpZ1MwOCW3NJzLu5crRP0ksHcI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779894879; c=relaxed/simple;
-	bh=CkVRDl7JtrPlhtOWqW/TdSHfBpEh9uwbVkQ7lTHRIWw=;
+	s=arc-20240116; t=1779895069; c=relaxed/simple;
+	bh=38rAyioNU6OWTqjTTNN2Wg2rr/lC3hqa9Hrhie3g+FY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S3xi2f7hp2aUBM0VZQCa+oowk58xaEZKQE4kwO11qd8V/QxWNgP0kA6UdLFLAcNfXGb6ioK7M9WMvSQQFcL7LFzLo/LsCkOpBPdipZtTkHP65K9hTTEE+rL6+3WcD8qQacfYKl3ewBfqQOK65ttafQ9wE4lNvcfE/tCLWTqevCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+vEE9UK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=fDenBlXMJDQ2LeF/+Qwa0gZD2UfyV1Dkz8nlTBzFcKEAu/OcMPCly9qfTE5GhUYL1xeX1Hp8jUiZE1f4wvOK7Lvp609QqnobjGiEj9HdM8O691U4e57GYXe3AJo2t1stOqi+dD2TBv2XyWFTZCCh067uhcR4TR4LNObbV1+9+5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvCWYrCJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+vEE9UK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C621F00ADB;
-	Wed, 27 May 2026 15:14:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvCWYrCJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3F11F000E9;
+	Wed, 27 May 2026 15:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779894876;
-	bh=mR/wkWNLtDH1OpyIumZcTTvKwUNdOx63byGpFa1s3N0=;
+	s=k20260515; t=1779895068;
+	bh=agrESt33FjKI9sUZg4Nsx9u+qkDeyGqeXH9fcwdmxhg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=b+vEE9UKPVuxsmdYPXO1kQiQ0Y13bXC1BsMgxdYEX9FxlG+zD8wxpCKuBXzkpw1zj
-	 gcM6C07g5V2qI9Mx7qc4KW3IMnaLQAXHALW0GUZ/mz+ujRPe5YKIe1RVY2p5yT24JP
-	 Mu/9lF75LbF3AWUPURDliyIa9OJtdS+Q97YKY3C9kPdvxOHgRGivMS1deXSk8YVklt
-	 /vU8c0u1DyaCtHXVvyTRQEDCtqBQjlNgZV+8DmKRvC/4y6RKLJS7cmC/o6AtupPzVl
-	 2vduvxajYFZj8tTFeYq+sV+XHEMVluGiRM9zsO6iM3xhiZJTb0iTkBetg2gWPQ7z4g
-	 +gO/UEV0DcQ4w==
-Date: Wed, 27 May 2026 16:14:32 +0100
+	b=CvCWYrCJZco+GUmpDaNCqvaer1WcZNZTRut8D/iEyYrjqgC50kUypy9/K5eQGXxGW
+	 NBSq1Qo2HlLkfIHMrL2og+7hAHv24AoPQAs2YmC130ZRrYa5oQK+AblGpeWbUlxYFO
+	 Wl0z76t3DMbhLqYLlkfJgGz24YU3LhBzxaw1NG+4xPayIOSeLxSt5wmdK8VG0RzqHT
+	 fyP7+hFprOhcXvBrScooHwS6sze4IJh+gttLwbdNaSNyAo4N1HVjWYZY7+qtIIIKcb
+	 48orC/Oh2yh9xRc4led3038Hs75aL8X2W3iFDeYJhf18vF6x8WdC6PSXPXdforGjUX
+	 aJLAOfmIrMvdQ==
+Date: Wed, 27 May 2026 16:17:43 +0100
 From: Lee Jones <lee@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 0/6] mfd: cpcap: convert documentation to schema and
- add Mot board support
-Message-ID: <20260527151432.GE671544@google.com>
-References: <20260520182124.117863-1-clamor95@gmail.com>
+To: Jun Yan <jerrysteve1101@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, luccafachinetti@gmail.com,
+	pzalewski@thegoodpenguin.co.uk, daniel@zonque.org
+Subject: Re: [PATCH v7 4/6] leds: is31fl32xx: Add powerdown pin for hardware
+ shutdown mode
+Message-ID: <20260527151743.GA712405@google.com>
+References: <20260520135659.1430008-1-jerrysteve1101@gmail.com>
+ <20260520135659.1430008-5-jerrysteve1101@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,24 +46,81 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260520182124.117863-1-clamor95@gmail.com>
+In-Reply-To: <20260520135659.1430008-5-jerrysteve1101@gmail.com>
 
-On Wed, 20 May 2026, Svyatoslav Ryhel wrote:
+On Wed, 20 May 2026, Jun Yan wrote:
 
-> The initial goal was only to add support for the CPCAP used in the Mot
-> Tegra20 board; however, since the documentation was already partially
-> converted, I decided to complete the conversion to schema too.
+> The IS31FL32XX series features an SDB shutdown pin.
+> Driving it low (active low) places the chip into hardware shutdown
+
+Nit: No need to wrap for a new sentence.
+
+> mode for power saving, while all register contents are preserved
+> and registers are not reset.
 > 
-> The CPCAP regulator, leds, rtc, pwrbutton and core files were converted
-> from TXT to YAML while preserving the original structure. Mot board
-> compatibility was added to the regulator and core schema. Since these
-> were one-line patches, they were not separated into dedicated commits;
-> however, the commit message notes this for both cases.
+> Deassert/assert the pin accordingly during probe() and remove()
+> to manage hardware shutdown mode.
 > 
-> Finally, the CPCAP MFD was slightly refactored to improve support for
-> multiple subcell compositions.
+> Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+> ---
+>  drivers/leds/leds-is31fl32xx.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+> index fe07acbb103a..5b9ed5a1818f 100644
+> --- a/drivers/leds/leds-is31fl32xx.c
+> +++ b/drivers/leds/leds-is31fl32xx.c
+> @@ -10,6 +10,7 @@
+>   */
+>  
+>  #include <linux/device.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/i2c.h>
+>  #include <linux/kernel.h>
+>  #include <linux/leds.h>
+> @@ -60,6 +61,7 @@ struct is31fl32xx_led_data {
+>  struct is31fl32xx_priv {
+>  	const struct is31fl32xx_chipdef *cdef;
+>  	struct i2c_client *client;
+> +	struct gpio_desc *powerdown_gpio;
+>  	unsigned int num_leds;
+>  	struct is31fl32xx_led_data leds[];
+>  };
+> @@ -421,6 +423,14 @@ static int is31fl32xx_parse_dt(struct device *dev,
+>  	const struct is31fl32xx_chipdef *cdef = priv->cdef;
+>  	int ret = 0;
+>  
+> +	/* Driving this GPIO line low takes the chip out of shutdown,
+> +	 * as it is flagged as GPIO_ACTIVE_LOW in provider (such as the device tree).
+> +	 */
 
-Once you've fixed the DT issues that Rob pointed out, I'll merge the set.
+Please use properly formatted multi-line comments.
+
+> +	priv->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown", GPIOD_OUT_LOW);
+> +	if (IS_ERR(priv->powerdown_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(priv->powerdown_gpio),
+> +				"Failed to get powerdown gpio\n");
+
+Nit: GPIO
+
+> +
+>  	if ((cdef->output_frequency_setting_reg != IS31FL32XX_REG_NONE) &&
+>  	    of_property_read_bool(dev_of_node(dev), "issi,22khz-pwm")) {
+>  
+> @@ -609,6 +619,9 @@ static void is31fl32xx_remove(struct i2c_client *client)
+>  	if (ret)
+>  		dev_err(&client->dev, "Failed to reset registers on removal (%pe)\n",
+>  			ERR_PTR(ret));
+> +
+> +	if (priv->powerdown_gpio)
+> +		gpiod_set_value(priv->powerdown_gpio, 1);
+>  }
+>  
+>  /*
+> -- 
+> 2.54.0
+> 
+> 
 
 -- 
 Lee Jones
