@@ -1,63 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138CF34E764;
-	Wed, 27 May 2026 14:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770B03BE635;
+	Wed, 27 May 2026 15:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779893186; cv=none; b=gLaWbNM1SVmTql0feHZmFum0uUWnT4oSYa0T3o7sACprIhZyJYGXzzfsxD62c8NA2z/deMaIomxn1ibN0NJaYOYaDfDaLBqQ+7cnJNFO7mv6jKpTYIarVHI+7E2X2PX3+4PQIJJKkBuVfSpl0R6tW2Z/Wa9npQQvG5sadc1DwfM=
+	t=1779894748; cv=none; b=UkYPfJegaWOMWkVi3N1K/nI8bmrceTfHClV0SE+IvfgdGsyh1uMX6EoQ1wEFeB72vEt6l153IrN/BlwYPdIXTq+Q1L3/qQXYuk8N07HFGg2rnjykGBjRndlGEN/SlnVpcQLlCWK+oat0+WFmJYe0xujIKV8Q3djFJId7iCqq8CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779893186; c=relaxed/simple;
-	bh=xFQMrbAjqAe+1dNeRKFuktRv41PIA6iEbe6pHIU444U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/SEM6yzryLsHfi4QLhJCCCQ61RTV12J/n4CAk2zYy4zU9Ig6D/o9A5D67XQlHzEhRSgRtd7e9eCjabA40fUNJd/EzrkGvbamIz9tWiXoB1WgsmEST2fR7198e4C7j3GSpycZUkmEoDxHHDd8RiYBUpnhYSi0iJhpySg+Ah7xFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hulfetsg; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779894748; c=relaxed/simple;
+	bh=48mGc3kLEQncBz1ZFMmrzdFfnAmFNUWVe7d1/a+QTtA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ShDt+x8kS87hFw6ETj+czK332MJ+1qGRAtvoxoSA4sNCsa+h+m4QP0tOHpK+ks2GriN274EKzC1au4SRVgJ1VWqtGG5PZArgCG7d0U6rii12mUSjVfyDNHSq/QZGd6uE9pw+4yHdl39Bcygwi/ACUlqJmFIouyYBW1xszm0eKPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2Um7UJF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hulfetsg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7DE21F00A3D;
-	Wed, 27 May 2026 14:46:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2Um7UJF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34BCE1F000E9;
+	Wed, 27 May 2026 15:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779893184;
-	bh=g4+j3ka9qQEevfco8FAowrQvCaf03gTn2X1D0P2KtPQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Hulfetsgz+CTnlKQjyDa5nvmikyCu0GkZD4GMwe3aFQ8iHSp1/AR5aIaK5wpcMF5p
-	 zovWEbrWmzaQPPa8C/v51oDNBd/V4IatFT/aiKsss1R4it0g+anH0qx9bZJkFrBwpK
-	 /UVPbWicLo4xrenrXXxkKDXvnKaTRRT6G6CQ08oX/MZIxUj4NnoQcsd52Ij6BOm/Q2
-	 tZvx7BRKOV7lL3wx7GcQuovy3k50AROMiX+SyTUn4410mzXVSaJVosak+oqYYoq6mZ
-	 SgImPTRPsvOJDqXo7wiL5dPGyL7Q5UhYFtznPdGWBklYIq7B6JZ3LRgVnj1tNQcthN
-	 oPyDikhg7TzNg==
-Date: Wed, 27 May 2026 15:46:19 +0100
+	s=k20260515; t=1779894747;
+	bh=4Up06g5MJwmonMECIKMCRc3erP96nBO7ojr/YyxBGsY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=F2Um7UJFgrMsGciExdxUE7v8nUodrKF1oCu0+EphlwChK6fi5vqhHAfQh6Pqhj5Uz
+	 CciVqySIcbB5kYoedR9AqTaYHq3Q7fdPpRpifWQPInyw+kLj0E/BQVR97yvXzefBi7
+	 GbCSq/J5EIq//0W5Ndyz3eDSj5ZGOHFcwH8SffqcxhP5v6Yxa10qc+pMvBl5+VxuFh
+	 l4aX2v1SJCZsTPOsXPkvD1RYSXHo1ASH3VVAE88gI+Ca0Jl0FRthj7lGehCJrQh2SL
+	 U127iNzEhG7mpVe0mM0roGKMPGVNcVzb84UayntOhxw9kHGJ+ntKoD0GIKUuKiPath
+	 QJARAs5HcZQtw==
 From: Lee Jones <lee@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Ion Agorria <ion@agorria.com>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] mfd: Add support for Asus Transformer embedded
- controller
-Message-ID: <20260527144619.GA671544@google.com>
-References: <20260518095907.36158-1-clamor95@gmail.com>
+To: linux-leds@vger.kernel.org, Alban Bedel <alban.bedel@lht.dlh.de>
+Cc: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20260513115853.1584230-1-alban.bedel@lht.dlh.de>
+References: <20260513115853.1584230-1-alban.bedel@lht.dlh.de>
+Subject: Re: (subset) [PATCH v2] leds: class: Use firmware nodes for device
+ lookup
+Message-Id: <177989474597.709655.6083515940845325663.b4-ty@b4>
+Date: Wed, 27 May 2026 16:12:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260518095907.36158-1-clamor95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-On Mon, 18 May 2026, Svyatoslav Ryhel wrote:
+On Wed, 13 May 2026 13:58:53 +0200, Alban Bedel wrote:
+> Replace the OF based lookup with the fwnode equivalent to get support
+> for ACPI and software nodes.
 
-> Add support for embedded controller used in Asus Transformers for
-> managing power and input functions.
+Applied, thanks!
 
-Once you have your Input Acks, I'll merge everything through MFD.
+[1/1] leds: class: Use firmware nodes for device lookup
+      commit: 38cb54cada737fd9511dcb5d1a7cca728b81571c
 
--- 
-Lee Jones
+--
+Lee Jones [李琼斯]
+
