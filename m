@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81589233947;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8160D253B73;
 	Thu, 28 May 2026 02:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779935672; cv=none; b=KLo6V8xzqASURs1QbPtnA1NnGfjyjSaqEjbm/+ACcja3prc4qhw4MktP9CuzetSLrokLyDecu3qNgdeHjV+YZeJw7HquE52gBE2Xks9NkYqAPw0dMThb8ax1Vq73ZvjuPgdG6Vhf5H45DAyyjqXbUp5yTkyRf4oD5CdS/PmwH6A=
+	t=1779935672; cv=none; b=SeKnGO0xA5kvz/60V5+A43OMK/N/Fu9qNY+y0/J45PmE0yuQ3ReuFXYb9LN09rJfYOztlDSYOBT0+D/tESdvcieAn0lL9MZe68It6CEd2R9z9GLohfaa3OCU19khlnvT5o7sYPOt54x2tTaT5K/LqI0rfJ7ZB0sdvJdrq0OH7JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1779935672; c=relaxed/simple;
-	bh=J+2nkkgXcCLD+tG5tT12zCWjVq1fGvc4r680m2gpWrs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HMhbp4bQ3EheqKfzU33opKF2bxB9qvciyJmyRcU+EetM4mVa8urKv0BqTlD+OjtwOwU+lGVgEOHlgLmHZX4xdE2iBmkTopTx8yqJUzsoB8XKjt7i6xtEvAHrLpVAQkH/BVUjYJGoKPNBt18uZhMwHs2Uskmfp6c429JhpcMOygs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iWqsgCw1; arc=none smtp.client-ip=10.30.226.201
+	bh=hyWGe4LoKdOz2ufuUZwugNnXg7/lcAA7rw4Pu1D+Mk4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=TXFxG0B1pekVoYnZFoWgB8e5CLs1RsKVctxYqlSVEuAUHsBP2BU5ywIBnApKzG5YxULIttRNQ/TEOY3EPis+ZK+nBYiubNkhXus6pJO/+rk+0Sl/s4rz4/V6TXiIh4iCWCNJj3YZ3Zb2PuyWZiVTb+Q4c5CWIpMJymo6MpqFraE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6dhiBcT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iWqsgCw1"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1A6A8C19425;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6dhiBcT"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4017FC2BCF5;
 	Thu, 28 May 2026 02:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1779935672;
-	bh=J+2nkkgXcCLD+tG5tT12zCWjVq1fGvc4r680m2gpWrs=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=iWqsgCw1iSxPs9ikKzOcPGhR8/Bp4OIHItocDAh+x3yUpejP3fL5+mFkiQP+yiwsP
-	 CEzMd+AzvgVhSxp3ovhnWRlTHGIr/It5pXzi6GhFkuLJH4bkR45iNUF0ubkfIcGt3o
-	 XAyrn5TfBxk+QbGDPOAARI26ViFBXN3UCZhdxVul6xvstKIyAkU1wMaGw7pA90deut
-	 LcfJ0qSFhhpngPxd+PKntuC6LQitA+xH0ELlhzJIdQDWXDNef9m4PxtvHSJVgtI36J
-	 3i3nZ8951xqT7DRzhB3W9KP1MexsPJTfKeCkFRGE078JmkS/G/tUGRrRRnUvxRZYfU
-	 vZcSlbHTSRu0A==
+	bh=hyWGe4LoKdOz2ufuUZwugNnXg7/lcAA7rw4Pu1D+Mk4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=i6dhiBcTzc33gMR9Z329RR/Sg6r3GAhHoPQyxu2PhbLdOZ6nt98w9ZAW+KhDEG1/2
+	 QhsapmtyIR+dBq5eqyMG6IHipvbjiHpxrd/4aoXrN9VAjfhnaJQw2nKlKNXOBsCLhi
+	 ZMPYD9les4OQgCm1/5+ndkx+WVs+EZ1oDb/05RKE5BKBtBAVE33DPlgVHIJ2a2/sBb
+	 gd59atKlin+FIlm5CfRhwq4iHTkQe/NmabbMD46oNuUkRvq1UU97PjTa0ejoBwYN2K
+	 72PAxqobHZX6kKRPddo+73uYCS0lu8vDWRFVMuFgA/Ax/b1UvmNz2FaoIx1uzXbQXY
+	 Hnr6kMRtmAh+A==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3278CD5BD0;
-	Thu, 28 May 2026 02:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3322ACD6E48;
+	Thu, 28 May 2026 02:34:32 +0000 (UTC)
 From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Subject: [PATCH v6 0/3] Samsung Expressatt: Camera Flash
-Date: Wed, 27 May 2026 19:34:29 -0700
-Message-Id: <20260527-expressatt_camera_flash-v6-0-de0f150024e4@gmail.com>
+Date: Wed, 27 May 2026 19:34:32 -0700
+Subject: [PATCH v6 3/3] ARM: dts: qcom: msm8960: expressatt: Add camera
+ flash
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -39,14 +40,10 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XPS2rDMBCA4asYraug11iRKaX3KCWM9YhF47i1H
- JMQfPfKziImkHY5Qvp+zZUk30efSFVcSe/HmGJ3zEP5UhDb4HHvaXR5JoKJkklWUn/+7n1KOAw
- 7i63vcRcOmBrKpeWAWgmNSPLrfCvE8yJ/fN7m3v+ccmC4HZJ2ZpZAVbwuPgi98unQnWzz5S90F
- JRTpoyzqHiwEt/3LcbDxnbt29yqMXmahzYOVTHqDSNzsYlp6PrLstrIl+S/W4y5Q2tuTBm0dcG
- 5e2kxR7Fy+Pa5I7IDVtQGSyGdrR8duXLEH/+R2fEaPDjYGsPCo6NWjuTPHZWdwL0xQWkFXD46c
- HeAyecOZMcACAWsRG3M2pmm6Rd4b9JaUAIAAA==
-X-Change-ID: 20260306-expressatt_camera_flash-13c15a7427aa
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260527-expressatt_camera_flash-v6-3-de0f150024e4@gmail.com>
+References: <20260527-expressatt_camera_flash-v6-0-de0f150024e4@gmail.com>
+In-Reply-To: <20260527-expressatt_camera_flash-v6-0-de0f150024e4@gmail.com>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
@@ -56,14 +53,14 @@ To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
  phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>, David Heidelberg <david@ixit.cz>, 
+ David Heidelberg <david@ixit.cz>, 
  Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1779935671; l=4870;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779935671; l=2830;
  i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=J+2nkkgXcCLD+tG5tT12zCWjVq1fGvc4r680m2gpWrs=;
- b=1WdZlTXwS4Jb+lCGhynv0ZnTjkNbvCzqZkvvOq6qZkvTcarK89IvoSxZ/FsKsnMuvgI3n+S9m
- WURMm5o0CMrDaRoexTis8p8xfa996cE6NWh0pDfqGm0bTv3o2Jz7mjh
+ bh=c3pguP4p4sJML5y1bS/4w0Oy/+Pm7okFRZWMElZDoA0=;
+ b=pKnBUSBZ/y8XHkVPgoy6GGUDn7DbsvbBzUygzI/ILQdXmPBmLzBg2DfKnfqSF+PLm+T7kSNhv
+ tMUfSjsMOgaD/QodEFB7stFNWblAhbLmPKbPkLfsypfK8MVvkS0ac4+
 X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
  pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
 X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
@@ -71,143 +68,100 @@ X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
 X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
 Reply-To: guptarud@gmail.com
 
-This small series adds camera flash to an existing similar mainline
-driver and adds it to the Samsung Expressatt's DTS
+From: Rudraksha Gupta <guptarud@gmail.com>
 
-// Tests
+Add camera flash support for the Samsung Galaxy Express (expressatt).
 
-// # Navigate to LED
-sudo su
-cd /sys/class/leds/white:flash
+The flash IC uses a one-wire pulse-count protocol on GPIO 3, powered
+by a GPIO-controlled fixed regulator on PMIC MPP 4. The regulator is
+modeled as a regulator-fixed node and supplied to the flash IC via
+vin-supply.
 
-// # Should stay at dim brightness
-echo 1 > brightness
-echo 1 > brightness
-echo 1 > brightness
-echo 1 > brightness
-echo 0 > brightness           # LED_OFF
-
-// # Max Brightness
-echo 50 > brightness
-echo 0 > brightness           # LED_OFF
-echo 99 > brightness
-echo 0 > brightness           # LED_OFF
-echo 1000 > brightness
-echo 0 > brightness           # LED_OFF
-echo 100 > brightness
-echo 0 > brightness           # LED_OFF
-
-// # Should increase in brightness
-for i in $(seq 1 16); do echo $i > brightness; sleep 1; done
-echo 0 > brightness           # LED_OFF
-
-// # Test flash strobe (rt8515_led_flash_strobe_set)
-cat max_flash_timeout          # check max
-echo 200000 > flash_timeout    # 200ms
-echo 1 > flash_strobe          # strobe ON → brightness_commit + timer
-cat flash_strobe               # should read 1, then 0 after timeout
-sleep 1
-cat flash_strobe               # should be 0 (timer fired)
-
-// # Test manual strobe cancel
-echo 1 > flash_strobe ; echo 0 > flash_strobe          # immediate off
-
-// # Check regulator error handling
-dmesg | tail -20                     # look for any "failed to turn off LED" msgs
-
-// # Multiple strobes shouldn't cause errors
-echo 200000 > flash_timeout
-echo 1 > flash_strobe
-echo 1 > flash_strobe
-sleep 1
-cat flash_strobe
-dmesg | tail -20
-
-// # Multiple strobes shouldn't cause errors (extreme test)
-for i in $(seq 1 500); do echo 1 > flash_strobe; echo 0 > flash_strobe; done
-dmesg | tail -20
-
-// # Test minimal timeout (turns on briefly)
-echo 1 > flash_timeout
-echo 1 > flash_strobe
-sleep 0.1
-cat flash_strobe
-dmesg | tail -20
-
-// # Flash strobe overrides brightness and flashes at full brightness
-echo 200000 > flash_timeout
-echo 1 > brightness
-echo 1 > flash_strobe
-sleep 1
-cat flash_strobe
-cat brightness
-dmesg | tail -20
-
-Downstream reference:
+Downstream references:
 Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
 Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
 
+Assisted-by: Claude:claude-opus-4.6
+Reviewed-by: David Heidelberg <david@ixit.cz>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
 ---
-Changes in v6:
-- Address Lee Jones's comments:
-    - formatting
-    - use cancel_delayed_work_sync()
-- Link to v5: https://lore.kernel.org/r/20260503-expressatt_camera_flash-v5-0-95524506a799@gmail.com
+ .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-Changes in v5:
-- Address Lee Jones's comments:
-    - formatting
-    - use devm_regulator_get_optional()
-    - use a workqueue instead of a timer
-    - previously we were validating ent-gpios xor vin-supply at probe,
-        but was removed. update the commit msg to reflect this
-- Link to v4: https://lore.kernel.org/r/20260331-expressatt_camera_flash-v4-0-f1e99f474513@gmail.com
+diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
+index 5a3d88e31cf5..8fcd5e8574fa 100644
+--- a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
++++ b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ #include <dt-bindings/reset/qcom,gcc-msm8960.h>
+ 
+ #include "qcom-msm8960.dtsi"
+@@ -61,6 +62,32 @@ touchkey_enable: touchkey-enable {
+ 		regulator-boot-on;
+ 	};
+ 
++	vreg_flash: regulator-flash {
++		compatible = "regulator-fixed";
++		regulator-name = "VREG_FLASH_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pm8921_mpps 4 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-0 = <&flash_led_unlock>;
++		pinctrl-names = "default";
++	};
++
++	led-controller {
++		compatible = "richtek,rt8515";
++		enf-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
++		vin-supply = <&vreg_flash>;
++		richtek,rfs-ohms = <16000>;
++		pinctrl-0 = <&cam_flash_en>;
++		pinctrl-names = "default";
++
++		led {
++			function = LED_FUNCTION_FLASH;
++			color = <LED_COLOR_ID_WHITE>;
++			flash-max-timeout-us = <250000>;
++		};
++	};
++
+ 	i2c-gpio-touchkey {
+ 		compatible = "i2c-gpio";
+ 		#address-cells = <1>;
+@@ -171,6 +198,13 @@ touchscreen@4a {
+ };
+ 
+ &tlmm {
++	cam_flash_en: cam-flash-en-state {
++		pins = "gpio3";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-pull-down;
++	};
++
+ 	spi1_default: spi1-default-state {
+ 		mosi-pins {
+ 			pins = "gpio6";
+@@ -571,3 +605,12 @@ magnetometer@2e {
+ 		/* TODO: Figure out Mount Matrix */
+ 	};
+ };
++
++&pm8921_mpps {
++	flash_led_unlock: flash-led-unlock-state {
++		pins = "mpp4";
++		function = "digital";
++		output-low;
++		power-source = <PM8921_GPIO_S4>;
++	};
++};
 
-Changes in v4:
-- Driver:
-    - revert function renames
-    - add comment to use flash instead if torch pin not available
-- Link to v3: https://lore.kernel.org/r/20260326-expressatt_camera_flash-v3-0-e75e5d58990f@gmail.com
-
-Changes in v3:
-- DTS:
-    - Renamed and reordered nodes
-- Driver:
-    - Use regulator_is_enabled() instead of reg_enabled
-    - remove ent xor vin check
-    - remove rt->reg == -ENODEV check
-    - rename functions to reflect what they do and added ret's
-    - Fixed: LED was increasing in brightness when setting the same
-        brightness multiple times
-- Link to v2: https://lore.kernel.org/r/20260318-expressatt_camera_flash-v2-0-5c2b9a623dcb@gmail.com
-
-Changes in v2:
-- dt-bindings: Explain the hardware and not the driver
-- **/*: Use vin-supply instead of unlock-gpio
-- expressatt DTS: Reorder pinctrl-*
-- expressatt DTS: Define rfs-ohms to a default (couldn't find
-                  information about this)
-- Link to v1: https://lore.kernel.org/r/20260306-expressatt_camera_flash-v1-0-b1996f7cdfdd@gmail.com
-
----
-Rudraksha Gupta (3):
-      dt-bindings: leds: rt8515: Support single-GPIO flash ICs with vin supply
-      leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
-      ARM: dts: qcom: msm8960: expressatt: Add camera flash
-
- .../devicetree/bindings/leds/richtek,rt8515.yaml   |  34 ++++-
- .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   |  43 ++++++
- drivers/leds/flash/leds-rt8515.c                   | 148 ++++++++++++++++-----
- 3 files changed, 188 insertions(+), 37 deletions(-)
----
-base-commit: 3131ff5a117498bb4b9db3a238bb311cbf8383ce
-change-id: 20260306-expressatt_camera_flash-13c15a7427aa
-prerequisite-message-id: <20260527-expressatt-touchkey-v2-1-049dca41fc3a@gmail.com>
-prerequisite-patch-id: 2b24e9ba47500ef05d38e37b40d8ca2dceb4716a
-
-Best regards,
 -- 
-Rudraksha Gupta <guptarud@gmail.com>
+2.54.0
 
 
