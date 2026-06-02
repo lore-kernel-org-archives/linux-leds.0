@@ -1,82 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29024183CC3;
-	Tue,  2 Jun 2026 19:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8B6392C2A
+	for <linux-leds@vger.kernel.org>; Tue,  2 Jun 2026 20:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780429569; cv=none; b=UnJ9Kzyi8FvomiaF6y7jVgzGxZcSr67lVWzH1FwTd5Rn9XPU7YU0mnWXZJdQlm+9PU0jM5m94qaSW1wdHOo5M+TZ0xT5KqRaD/vL8wygS+vKFWVng/Md5uC30kPZx3VPaBWcPaR5chPB5z3IA400bg2ha/R925U1SwZl1ji4C+I=
+	t=1780433496; cv=none; b=aWS3FG1Apl0/VLVplNguLmgOcVrLWx/z0rUeef73a4EIQZDROwsgkbYt/9U5ewYhJMhhJZzFstedOW+dgu4y7OPAPs8AvcgsgMyTMHq9FwAouqhnhONMG+OlWk/LLw6bK1sUuAz8TVd8Prv9U3msJVRULw27OZjMpesWUFxeT1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780429569; c=relaxed/simple;
-	bh=z3qmunTjQCTFibnWGcF0LuJ4zhe83D3cuLD+x/yWAlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NAsda8coTFgla9T0liUMD7lQdE9KtFSQKqElJOugdoT8homgu2j4fHd/H0JVMiIqcaywwjQkQwcfKD7hWv1CHZa0pIlSTeHOwrcJyyv1jE3g7kDfrK20Vkxx2IRRc3g33rYMJgobgJ6Zy6TfB3Yi2snLCiJPkd4oGV4amoScntk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftskL0vw; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780433496; c=relaxed/simple;
+	bh=KRGTT4AQ+Oey7inw8PS07TanUxbhPBY4tf+cjHXWYBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jHy4OQiSymgDljAggY+dbRGClqAPjNet3nRtuSEKp2Kq20VhfMyWtVaN3VO12uwlOR8bCOb+9DDIhp4+35DeV1mwPVAs/pJQ+a61GIKhdyrTq+9CMgrKJiR6/1mlSyv+SDhGtjN25SLL2dF6ftjziGbcujsOyoMghlFNre9hmms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsQo944G; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftskL0vw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9415A1F00893;
-	Tue,  2 Jun 2026 19:46:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsQo944G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F1F1F008A4
+	for <linux-leds@vger.kernel.org>; Tue,  2 Jun 2026 20:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780429566;
-	bh=FK+MzLh50k4KgIQIJX2KAuivt6XGuoiQBPlt2hCLlsw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ftskL0vwH9XUbViZ3GXIeCx3ef2akjJZ/roPPniGDZUzamobfFZmVCE/e65438GjC
-	 LsYfUf5sJSl+D+LD4ICxhjim03UQ5NKIHgZzeQlxyebeP1vHc7860uz+r7Z1Toy0rN
-	 IqGKOX1BfjIDkArZOmYbS75KyXcQSFaZFHxqkmxuiZ8XoWZcUn5CCbE7z1VjmKZYqV
-	 +K50W9uJaA1sW3viTYurNanm+1iSbzxVMY/uUgG2Z4aJdBsu7gAnYjp/Ox5SBe1fGO
-	 Ro6eq6xwr3o7xOapAqvsfnLMYY+cFTRma/FPPbA7FA0ADa5BF+f0ewS8sqvdSRBxHu
-	 KTt0toQdM85iQ==
-Date: Tue, 2 Jun 2026 14:46:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Nam Tran <trannamatk@gmail.com>,
-	=?utf-8?B?xYF1a2FzeiBMZWJpZWR6acWEc2tp?= <kernel@lvkasz.us>,
-	Yassine Oudjana <y.oudjana@protonmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v7 02/10] dt-bindings: extcon: document Samsung S2M
- series PMIC extcon device
-Message-ID: <20260602194606.GA1043828-robh@kernel.org>
-References: <20260516-s2mu005-pmic-v7-0-73f9702fb461@disroot.org>
- <20260516-s2mu005-pmic-v7-2-73f9702fb461@disroot.org>
+	s=k20260515; t=1780433494;
+	bh=G6rZ7t6/DhXfpQVj0UlyYqS4gIMH66eg2Oc1gFXbhJ0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=WsQo944GDchg/wLfBxF995MDsIQlWR94qpNUGNWfmtj0cc9Cm6IAvLYK49Jz+sub+
+	 cCz9hX3qvk2i7XzqttjMLfpB2FTj81X0WI8T9GOEFst61x7uetTvHoQlZHBhkw3wj+
+	 pWEXAl35dtpSL5N9q+XzcWkaBdzolGpamWnG3Ut+8eiWiblT+djxuby3gRu3VBbNTW
+	 b5gX5xDdjGnEk3Uf3Rhjs7eEYv4grJDMr3ZOHMMp2kabifDBAot1ZDAITd3RH9n/oV
+	 ENGlOonCAxXOF1Zy8Nr8B/0OQsXqHHxsvHFgQOc4sUtBFr0j9jX5I0vS+C7g/hnM3X
+	 sTT2vS+XYtAaA==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7ddd3d67084so61135227b3.3
+        for <linux-leds@vger.kernel.org>; Tue, 02 Jun 2026 13:51:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9CDaodXeiDcBhnK3UkHp3Hhky4Tp2YVC2LH4KPuyE2wefsyzbQYPozhgpczwoOX2D6n8qSXoiNDcmU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2B48oEfsfux47NfBjGoFn5VZXZhhzdQtmE4PgAW3Gbp1oVPLg
+	WxtLhHs+YxH6iyMUP1uCYqvqdFU2GE3IrkuI8Ftj8Klm4Ly/5IA8EdPue/VIKuLJ9Ybqn3OGALH
+	yM7JxfRTEVB5/NjFhluPYciwgIUKTYBY=
+X-Received: by 2002:a05:690c:620f:b0:7b3:edc7:9b97 with SMTP id
+ 00721157ae682-7ea4400dc8fmr7795367b3.0.1780433493990; Tue, 02 Jun 2026
+ 13:51:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260516-s2mu005-pmic-v7-2-73f9702fb461@disroot.org>
+References: <20260304-gpio-of-kconfig-v1-0-d597916e79e7@oss.qualcomm.com> <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
+In-Reply-To: <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
+From: Timur Tabi <timur@kernel.org>
+Date: Tue, 2 Jun 2026 15:50:57 -0500
+X-Gmail-Original-Message-ID: <CAOZdJXXetr-FPZUSX_nzS5nZc+bbv5b1m78sCcZzrDJi7C05vw@mail.gmail.com>
+X-Gm-Features: AVHnY4IltjGxIj5Fh6-JK6uSKIHTP0yZBU085pIyp8WmlCvLfmlYl2sow6Y3Jn0
+Message-ID: <CAOZdJXXetr-FPZUSX_nzS5nZc+bbv5b1m78sCcZzrDJi7C05vw@mail.gmail.com>
+Subject: Re: [PATCH 07/14] pinctrl: Kconfig: drop unneeded dependencies on OF_GPIO
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Vineet Gupta <vgupta@kernel.org>, Scott Wood <oss@buserror.net>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, 
+	Wells Lu <wellslutw@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sebastian Reichel <sre@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-leds@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 16, 2026 at 03:08:34AM +0530, Kaustabh Chakraborty wrote:
-> Certain Samsung S2M series PMICs have a MUIC device which reports
-> various cable states by measuring the ID-GND resistance with an internal
-> ADC. Document the devicetree schema for this device.
-> 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
->  .../bindings/extcon/samsung,s2mu005-muic.yaml      | 40 ++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+On Wed, Mar 4, 2026 at 3:07=E2=80=AFAM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
+>
+> @@ -557,7 +549,6 @@ config PINCTRL_ST
+>  config PINCTRL_STMFX
+>         tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
+>         depends on I2C
+> -       depends on OF_GPIO
+>         depends on HAS_IOMEM
+>         select GENERIC_PINCONF
+>         select GPIOLIB_IRQCHIP
 
-As the rest of the series was applied without this, I've applied it to 
-fix errors in dt_binding_check.
+This change causes the following warning on builds:
 
-Rob
+WARNING: unmet direct dependencies detected for MFD_STMFX
+Depends on [n]: HAS_IOMEM [=3Dy] && I2C [=3Dy] && OF [=3Dn]
+Selected by [m]:
+- PINCTRL_STMFX [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dy] && HAS_IOMEM [=3Dy]
+
+WARNING: unmet direct dependencies detected for MFD_STMFX
+Depends on [n]: HAS_IOMEM [=3Dy] && I2C [=3Dy] && OF [=3Dn]
+Selected by [m]:
+- PINCTRL_STMFX [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dy] && HAS_IOMEM [=3Dy]
+
+I believe the proper fix is to have PINCTRL_STMFX depend on CONFIG_OF,
+since this driver actually does depend on CONFIG_OF.  The warning
+comes because if CONFIG_OF is disabled, PINCTRL_STMFX can still be
+enabled, but in doing so it selects MFD_STMFX which does depend on
+CONFIG_OF.
+
+Adding "depends on OF" to "config PINCTRL_STMFX" seems to fix the
+problem, but I'm not familiar with this driver so I'm not sure this is
+the right fix.  I'll post a patch.
