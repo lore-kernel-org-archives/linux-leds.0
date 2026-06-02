@@ -1,120 +1,159 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B102248A8;
-	Tue,  2 Jun 2026 11:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780398479; cv=none; b=eFov4wTzc2+mmEHVIhmDWhZJDK5BSIvDydgXqTDgycSbmKCDY7ZqFIDt+O0a0KukfNuYyIoDrxRLBbTcAc/8e/Tpc7q6e+ZhgJXTcO290gctgx469J4TALMknESQ8f7KKD5ZXeAbdUrLRu3FtKyfJWwry/XslfO5DGvbwoVPceg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780398479; c=relaxed/simple;
-	bh=mFctebV6efZPkxdiXhNEx0eARojG2bev1G/ivejaxqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5wKO8m96znIGQ/0XMMQP7T7KO+4pogBlQAeP5k+mz0MgyGHLW62+e7/BevmT3b6NTZhXvXkPY+qlXwjfeHAzUUayzDZT7hwZN0w1uedJGVW5ZPDutvrDsVaJc6j/Wvi6gTJegP2sFnvBpO2iDfbVYyzXg2VxOIHjnKpa8Y8m8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nmoBBVOr; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A191323D7DF
+	for <linux-leds@vger.kernel.org>; Tue,  2 Jun 2026 11:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.178
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780401559; cv=pass; b=F6bMFSLTiMaV1o98xyk3SF3uleY2tEEUuUcURms1sLBUEQLCi3lW+IxML7d9gGk0StaFKi4CY3YrDR0Tb97i67RqluqiYwO6T/PuXNm4WdYXgGzRNGbyazqWd40oJg6DRQTR5+tLFZ31KOO0vweT5s657uFNUkK9LNet5Nf9LMg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780401559; c=relaxed/simple;
+	bh=Ylt5hXVNR3LTkhF9xMnTUwL+GT8ti/XzIGNIjpX5U+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jHLUby19gr3WfHyl9kuGZRyW8SM9LiTTULR6VxFdoUq+A4q72h9C8lzjnvdxw53tQabKSo3ZA7p/Vtp87MQ1WHuzO3ZS7AjzX4v+zq6bhMZyYQ5tJLNBuv8lFc1ddIx99yr52IXwwL5f+GBNfsNa+Reba2GfhPkjfu0wBesJSjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+i0zebN; arc=pass smtp.client-ip=74.125.82.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nmoBBVOr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780398478; x=1811934478;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=mFctebV6efZPkxdiXhNEx0eARojG2bev1G/ivejaxqo=;
-  b=nmoBBVOrwCFnArKyPsbRh2FzPl9jwRcZOXoLNpFrFLjddrEvZmlZfG/v
-   /QXsOWkVLe8NH9Xs6+JLb7cBlw62RvEmm/OciI4i6wvzdCW4v1MU4Cd2w
-   YS6vTxn1ep4t898jFGxkMebeSof0l3zILA6pY2Yb/h1jjYcdlzApxrM6P
-   PSbQzaAarTyQM9wH+nnTCHqtngFD/zXzqh5iYspCTfrLUFc3DHt//x5nx
-   DjlZFl7x6LbKi+LrQELFP+ramY9+p67RIHmH12PZrFLhUVQ41qyGDxOru
-   hWhOA7BN45MXBZgLaNM0cFAJsXbixOLJdXSV4NzEOZinf73HOS96Wx3Pt
-   g==;
-X-CSE-ConnectionGUID: I7V0s52lSaCsHjS5TnTuVg==
-X-CSE-MsgGUID: bT+99yrZQBGd+OXYk9skhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11804"; a="81207825"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="81207825"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 04:07:57 -0700
-X-CSE-ConnectionGUID: lhiRJlaQQHmUbKHn1VV+4A==
-X-CSE-MsgGUID: r7XmoXFkTjavabE0tmKG2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="243975444"
-Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 04:07:52 -0700
-Date: Tue, 2 Jun 2026 14:07:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Helge Deller <deller@gmx.de>,
-	Johan Hovold <johan@kernel.org>, dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v3 08/11] video: backlight: lm3533_bl: Improve linear
- sysfs logic
-Message-ID: <ah65hfgoM67V6-iR@ashevche-desk.local>
-References: <20260601151831.76350-1-clamor95@gmail.com>
- <20260601151831.76350-9-clamor95@gmail.com>
- <ah6PxFtoJUWkd79P@ashevche-desk.local>
- <CAPVz0n0P7Jk17cM2M1zuHZfySo2=Uibr5izwKU2tqiBpBcg0FQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+i0zebN"
+Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-304fb780deaso3574088eec.1
+        for <linux-leds@vger.kernel.org>; Tue, 02 Jun 2026 04:59:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1780401558; cv=none;
+        d=google.com; s=arc-20240605;
+        b=Uzt9BJJ7AEXNNHXqGT+hezjA7gf9ZclzHciu5ENN6pL42vkWTY1OsgyEgoglgwnenI
+         MgR8QVzz++zTPe2bTa5hpqMSiFTLo26EI7ENe4Qbfwhb9uIVx9Aw/yxBx2ETJ2Vbv5jZ
+         XWKMDQClsMc4JQRJZoU7abkAWKzhcOqYoN8jnv9XE0exxeKY/jGI+zZY8G2xcQ4Bgugd
+         ocXcSPL0JSutvqc6QDgkXnLmjyXLTRmupdOcs10aW5W7L8r9cSGV7x3HzVH1uy81eZ0+
+         dPKqEH9EN/xZ0+FbPf4U9K6IvHdzKsqZna5PPQ7367YEd21f1AxGIgD10PNz016u1gnd
+         bUQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=QwoGUg+AbKtXga7fuYSOtkP7mpOfS4rBc+JAo9UwGTw=;
+        fh=OHRQg2sgYyOtCCR4T4o/56nb756Uz+iV7IbWJD+LTM8=;
+        b=M4fS5IlWmHeqxHlcJrxYVOkN0Fqhldh2kMOknLRoDgX4wrePuJHsNpMJZ4j2yurz6Z
+         ND2WMswBHJPM6krOzPZslJWkaarQvcejpnZJxZvlIcIFxFzL/DpGdKp8BiHKjj7nMIZJ
+         ea/KPb52Io6Sq2ta1nMYy5Pg+Uy9IWUL2/fjv4Ba4lRAMUplYbC/s2gLX5T1v3HPY64q
+         USv/TX0u6VhMM77FwSWO9u3KV0sn5PoQd3N/VazZXpFx/PeQjeKYAyFe26PZEMvQZeRy
+         NxW4eQNT/XozH6clKrobMtjn6azRRstqzlYWW01gdVibxC/hcrhKbAcfEu01h/QnXvKN
+         PFxg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780401558; x=1781006358; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QwoGUg+AbKtXga7fuYSOtkP7mpOfS4rBc+JAo9UwGTw=;
+        b=D+i0zebNudh0YjRVZbcwm2tiAX6+eLuVdjhng/hb2GBzm1G7Ny7UVck00J6L5iEqJF
+         sRh26UJBKc2ea5QyZbGvw95QLpRT/yxnGqh0Cu0tSZxDcSpj/zTfI6KYRPMt8weZNIWz
+         nJEYhhKbokyH5ooAzPhIaTqCRIVi4gqM7l4CFeA4jXoC7kUiasZ5guEpLD5+dbnL8LbS
+         bzhuhyLkHAWsDruWQSg4K8D4OQ2gWhOr0MRgl5dtZdjQUcPImVPJd6WuWzRJHtSqyxF5
+         YBygyqeZU99cYMYWm+9lwA9BrUe6kgYpQ3IR2McwgllSud3fyVl4b5cCVJv55MqLeNb2
+         QOpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780401558; x=1781006358;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=QwoGUg+AbKtXga7fuYSOtkP7mpOfS4rBc+JAo9UwGTw=;
+        b=eniGZGJHU8RFBmg30CS5AH+3RS+75dSyjQbM6vPfHcxGuNdrE411qXcPRaLE3IFqL2
+         iNxlXdLc72q+hsVK2GGH2P8bas80+Q1ZKqJPf9qPvg7HKYd4331Dhom6/aga+EhhvOwC
+         rOJvPSSg7hrDl0KIV1slxDXqs138384Cd3Au5wkTMjlHZoWVhgFD2oAJeXs4gSzvM+I9
+         cBGWCHtCnN8EneMU1sopt78WzY3ZxSF3oNIeB3T6dVM7MakR9qrstGKr3+N3RCkkZ0ri
+         Wb5PbrL1E3QA9ZbbooLwKDiRnspbgB/wXpPCPXWVeMjwwGfwqUw6+0sly1nH07fpS4E6
+         k0Hw==
+X-Forwarded-Encrypted: i=1; AFNElJ/YOjVtdDA0ntIgySyKd+FoTfgv1I6Mk3spGOBab5fx9yiJXL5SvHJBnaJnbhM03BEvUz7O18yxhN4Y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6GVomKeSLVJfRg0xVmy0ox/F+8i6U2UGHJPZ0pyadr8y3xnMC
+	h24MVPH2SkP88OP4+dF1jwso+4/NV8XmeoAgZA2uU7Y0GOU+UGDAfwvs2SOfBsonQ7BHi3YHPTy
+	z7W6/NH675F77dUaZc6Be4YNYv6/IPiQ=
+X-Gm-Gg: Acq92OH0k3PBLxyFa+7XZ8jjm5bFt8TxVN1KbNIKk494GrgVbs04dYhcZ1hZ3bEU682
+	mnVuVQQSfPAkwIYubinOy9HNnmr7ROnwZDoyvp0br9kkxoXOPEiags8xKnsr2sMEOVMlC5ZEbJw
+	7WLql54acUeCyMMZbkbYhOfwxUIBpaW3fI3k0GS5v6C4pByOFv6YrLTZUp/2HhBoFYqe4C/wvaG
+	WgJcYtpb7To4vwqF1QdkAuE9+ienjjs6MVrqiHz5D28rwbBkf/9SNBuGQ/PlpgGyuafFeZixQ8E
+	Mq1j/Z2+wUt+PpAM0jI=
+X-Received: by 2002:a05:7300:e58b:b0:2ea:edc0:4fbe with SMTP id
+ 5a478bee46e88-304fa5230d9mr7590808eec.14.1780401557759; Tue, 02 Jun 2026
+ 04:59:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n0P7Jk17cM2M1zuHZfySo2=Uibr5izwKU2tqiBpBcg0FQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260601151831.76350-1-clamor95@gmail.com> <20260601151831.76350-9-clamor95@gmail.com>
+ <ah6PxFtoJUWkd79P@ashevche-desk.local> <CAPVz0n0P7Jk17cM2M1zuHZfySo2=Uibr5izwKU2tqiBpBcg0FQ@mail.gmail.com>
+ <ah65hfgoM67V6-iR@ashevche-desk.local>
+In-Reply-To: <ah65hfgoM67V6-iR@ashevche-desk.local>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 2 Jun 2026 14:59:06 +0300
+X-Gm-Features: AVHnY4K2SWFA6Gct86VkeqymRy-YvpCnhDFWoUYjixtaQro8Ol55fBi-H9259ik
+Message-ID: <CAPVz0n2V_a8Qf-yzsOipDRDtpH6h3ECJAXTYuavvMdj5-Fk=aw@mail.gmail.com>
+Subject: Re: [PATCH v3 08/11] video: backlight: lm3533_bl: Improve linear
+ sysfs logic
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Helge Deller <deller@gmx.de>, Johan Hovold <johan@kernel.org>, 
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 02, 2026 at 01:19:00PM +0300, Svyatoslav Ryhel wrote:
-> вт, 2 черв. 2026 р. о 11:09 Andy Shevchenko <andriy.shevchenko@intel.com> пише:
-> > On Mon, Jun 01, 2026 at 06:18:28PM +0300, Svyatoslav Ryhel wrote:
-
-...
-
-> > >       if (kstrtoul(buf, 0, &linear))
-> > >               return -EINVAL;
+=D0=B2=D1=82, 2 =D1=87=D0=B5=D1=80=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 14:07=
+ Andy Shevchenko <andriy.shevchenko@intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Tue, Jun 02, 2026 at 01:19:00PM +0300, Svyatoslav Ryhel wrote:
+> > =D0=B2=D1=82, 2 =D1=87=D0=B5=D1=80=D0=B2. 2026=E2=80=AF=D1=80. =D0=BE 1=
+1:09 Andy Shevchenko <andriy.shevchenko@intel.com> =D0=BF=D0=B8=D1=88=D0=B5=
+:
+> > > On Mon, Jun 01, 2026 at 06:18:28PM +0300, Svyatoslav Ryhel wrote:
+>
+> ...
+>
+> > > >       if (kstrtoul(buf, 0, &linear))
+> > > >               return -EINVAL;
+> > >
+> > > Besides _assign_bits() in the below, side note here to unshadow error=
+ codes:
+> > >
+> > >         ret =3D kstrtoul(buf, 0, &linear);
+> > >         if (ret)
+> > >                 return ret;
+> > >
+> > > (obviously in a separate change).
 > >
-> > Besides _assign_bits() in the below, side note here to unshadow error codes:
-> >
-> >         ret = kstrtoul(buf, 0, &linear);
-> >         if (ret)
-> >                 return ret;
-> >
-> > (obviously in a separate change).
-> 
-> Won't happen in this patches.
+> > Won't happen in this patches.
+>
+> You mean both suggestions or you are talking about kstrotoul() only? If i=
+t's
+> only about the latter, it's fine with me, but _assign_bits() makes sense =
+to do
+> in this patch as you already change the parameters enough to make it bett=
+er.
+>
 
-You mean both suggestions or you are talking about kstrotoul() only? If it's
-only about the latter, it's fine with me, but _assign_bits() makes sense to do
-in this patch as you already change the parameters enough to make it better.
+only kstrotoul()
 
-...
-
-> > >       ret = regmap_update_bits(bl->lm3533->regmap, LM3533_REG_CTRLBANK_AB_BCONF,
-> > > -                              mask, val);
-> > > +                              CTRLBANK_AB_BCONF_MODE(id),
-> > > +                              linear ? CTRLBANK_AB_BCONF_MODE(id) : 0);
-> > >       if (ret)
-> > >               return ret;
-
-^^^ left for the context.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> ...
+>
+> > > >       ret =3D regmap_update_bits(bl->lm3533->regmap, LM3533_REG_CTR=
+LBANK_AB_BCONF,
+> > > > -                              mask, val);
+> > > > +                              CTRLBANK_AB_BCONF_MODE(id),
+> > > > +                              linear ? CTRLBANK_AB_BCONF_MODE(id) =
+: 0);
+> > > >       if (ret)
+> > > >               return ret;
+>
+> ^^^ left for the context.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
