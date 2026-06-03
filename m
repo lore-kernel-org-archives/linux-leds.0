@@ -1,63 +1,62 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7992035F19A
-	for <linux-leds@vger.kernel.org>; Wed,  3 Jun 2026 11:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B89E47F2FD
+	for <linux-leds@vger.kernel.org>; Wed,  3 Jun 2026 12:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780485312; cv=none; b=QORmwxV08uIIhmMEQcM4p/pIddbkC2O4Iu2SeXuiRzB0iGMj2xvNbxxatuKHHaeWW+Y3eYY8v+CCRkdBO8Q/DpuyPdNGQNZxkyDsSo2NobhpC9G5rz3pt7MEIyDqTexQDWAFjlfW3t6PeCARvhKawiH9z3orYC3HhGa2U4oqzrg=
+	t=1780490838; cv=none; b=qIYLoZIsL52HNHskqgrsiG+lP2PorHF+c3NNcNiw7YE8LdDW0YICCGSXPz2uk5lZhP2F30oT0hCWJb2HGGQ85htQ5+je/1fBK8tpbDDp9yiu5ul8OKbppp/lpnDn2y9KdU8nln+Lhpm+2Ri4bwO3pVQPv7HzDcCDLWLkZ6CzXBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780485312; c=relaxed/simple;
-	bh=IYQ2aNeY+X4nQfJBL0t13iSGFwakR7F2aCt2177FAvo=;
+	s=arc-20240116; t=1780490838; c=relaxed/simple;
+	bh=UqiTc5uJeCStJmC9RpnHPzx217mtLCKEuO3YakKuRZo=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f/wJFJ5fcAi6L4RfMiVHu0KVDiDY+KJ1TxSszqVMh3TThBn0LJoX7kzdjL0ZCA6QefLMV7mNC0QOObKQQPDeJeNHWlLoxhE4v0uRIg6JInD0Mz6ExBf44DHu5oSVUTYB+u5KLh/dh/d5z2BNBwAm0g6BHMAGmMs98EXzhTiI9VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=WF05GNAu; arc=none smtp.client-ip=209.85.208.50
+	 MIME-Version:Content-Type; b=JO28gav9w4iQJRP50PaHTA7w5XejRNDZ+awipRq2uOtoh9iptvB1D5WOWwSitq4YyLsZLFvakIMp3yYGBZcFF7Y35/6fr1pNdCRph3jEg2ao+VsfOQ7t5pYoAMlYF3DP5DCMk5txXSNEQ6c3vvfl0B+6C6r2ecR52qSxQUC/zu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=G18ErR6B; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="WF05GNAu"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-68c76fb8009so6906436a12.0
-        for <linux-leds@vger.kernel.org>; Wed, 03 Jun 2026 04:15:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="G18ErR6B"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-bec3f69d343so528165866b.0
+        for <linux-leds@vger.kernel.org>; Wed, 03 Jun 2026 05:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1780485310; x=1781090110; darn=vger.kernel.org;
+        d=cloudflare.com; s=google09082023; t=1780490833; x=1781095633; darn=vger.kernel.org;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hw0XW6MjQE4Q5GmtRBciMOYe8JFJUy2Q42SiJpNGiVM=;
-        b=WF05GNAuQR0KINPBBRORhhKTz6ecvHNw28vGLi+p1FbhvWYUn3EEcezPO97xWtnC8U
-         aKQQ+Bz3oIsDO1hVDV8nTFYKXC5FLWE8D0GdJcXv53M7DdQ067YI2qIKw+xa/Nr+Z+VM
-         e1QhNq7bE7hpUWqev2Z7qVVRJo4wlYMvpalRW0gcRGDBydbdWQPjXpNfYTZLbdMriUlv
-         UxzocdsFIzoWHIne+9XNpMthpjAVxpo6qfJQWu4rJbUq30RxETenina5QOM0Lxgmknp7
-         6G8rKSoNY4/XsaWwGjowJ7PzEIDrSyOLnMJxuAzwLaKYQLuN8HlXHpNjcUdLAFab2qs2
-         Ph8A==
+        bh=C8IHtiFTYRJaSwK/lgA40BX6+K7NCg68jEs/RoM3v8w=;
+        b=G18ErR6BEly0K+5NGJfw9qWzr+KWN6yubENy+7Mt+bNF1Wc+DuGuwO1iL4l18AMwie
+         6AVRrUM+tXw8Gj+0wattnN32jlCeOcO6QM0GlbEyEgV09DHGBLqmVew6EL0HGybHipFq
+         ZRH0rDV0WhLv/rx8KcnWnaNlohdiXG9DqTtwjlHtCjTQ4H05ouGYhNe2qdDmXXO5vBEo
+         k3v5e2LwlgiGP9p+4XqzAp8KDtmctUfned7hn2/7xDBqctMwguo5bNTb7SHuawnmnbnF
+         x8pF4uGVrg/1y4fAx3UOzKxpf6rOhWytgGpUCWac+6fiYL4a591DjpTZe/bJUZ4UtRfn
+         ewpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780485310; x=1781090110;
+        d=1e100.net; s=20251104; t=1780490833; x=1781095633;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hw0XW6MjQE4Q5GmtRBciMOYe8JFJUy2Q42SiJpNGiVM=;
-        b=C9O3j11d2lCdfUDD/GMFgOTsCGOhU7Qu0Z3vIVe0Tyj7rg2A6fXKdZKxZLjeQutQdd
-         agmJZLhzGroA3SSwRhgW0AabRXjyfj2xgBIdjrhQDqIwVy3nUY8uAtkDg9VESm1d0th4
-         4OdDVv+kU8vKOygX8xRDvs0GDZWy8NGKexNQomc9DrAMvv6oy9P3mN18EOJnzYZqpDuN
-         Q17q/NJq5fKUhAjUcwRdXveM9k4+OhQ4J3bFtOB8Z83FtniqCVSeTHRBG9pEne7rel1S
-         kie6pGjGokxGlthp+06D+LSNU7CgN0Xsaqr1aHEZoYPNwxU76lmsDtVU48mtvQ97KOVt
-         5fwg==
-X-Forwarded-Encrypted: i=1; AFNElJ9iJSLDYDisc3SPQI9UvAJn2wzL+Y0YHhCBa47vTSLmXKQzUGdPbddsDUlU1sSiJTzUlITW/VzVp/hP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE83VbKjd4Rc2aJHnxfdAhoU0N4n7apJl53pwzDl47IhFTSD82
-	GozML8+Dk5o8wDERAo7pBVRBDYgke8np7YI/NoSBCDJmoLWVfVcXqp4AfJN/Ghb6fvw=
-X-Gm-Gg: Acq92OHJyzTs8pZLGZYT8igFd0LuPhtYbDpRK4USuM2V4Gv9rKdX8JgxCUGzZuro89t
-	4aIUi+PcW0fO4mp2yFgYEGZ6fa9eG2LhbB8NJc9zHMYNssEsHLtF47wwvw8TZ+0M2pDcTWuCU4K
-	H9i5rix/A02++BP4hgM5bRN71ESFjiMC91xqeBi6jLQd+XCWz/P6eua3xVMf8W+ArZg+skhw3V4
-	rN5ONLhlomZfWaN6gNzX/REIJJ+RlcGdr7KkDNxKpTOb0swZrSp5gECgOLl7d6akX8kYsFiLt05
-	YvEKhyUVRIWlcIOMQ+lH6AkRlvXdys70pIqFFJaE6vcgHpeTJHEht1JmKYINFaoLFARV4m6rc/I
-	cXgHixDtfWlGmM+/QFcMXZwBtPDeh+3dxmBZRFvpdXAkM7ZbBoUifNCPGM8ix+WmWLIbQejkEZi
-	37JNgPDf5bCIpxplK3dJRp3WfznSMdrj+4Y/i3sEGo1zEkaTmO9jqL0cQK52kYX1dBIa1aTzYKa
-	LJbP8uvJfs=
-X-Received: by 2002:a05:6402:50d0:b0:68b:5418:bee5 with SMTP id 4fb4d7f45d1cf-68e71aa2f01mr1359654a12.25.1780485309927;
-        Wed, 03 Jun 2026 04:15:09 -0700 (PDT)
-Received: from cloudflare.com (79.184.120.122.ipv4.supernova.orange.pl. [79.184.120.122])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68e65c542c7sm1018281a12.31.2026.06.03.04.15.08
+        bh=C8IHtiFTYRJaSwK/lgA40BX6+K7NCg68jEs/RoM3v8w=;
+        b=FTpCu5PTXhUnwfQhGCZL9NyTVenuqTpS5KYC1Iz/ET4o9auCzVZnIubJ9GWELdD8Nn
+         s48Iz0AAeMV9HGPIRQy1NLFZKS6VACCs7akC4q9tV+ec05YVvbk7orFlhjKA3xo9a+Eh
+         y5irjTKxsK8c583+cFrRX/ULuqkBEhXOGtZFVkf02V/OkziotTqZXQyE1722ZB2rYh8t
+         NXSVa6Qm0rTJhTCQFtTbvlE04y54vrf2GeNdvhQ8Qemgy34KjOkWBt6qAY1Qz5K70MMP
+         r/DJIkTGWn/5ir2XmsFgucBN1bKUODvLKEzulxoMLorAWfsTzMb3xt/eFXA2sWKRS+f0
+         igNg==
+X-Forwarded-Encrypted: i=1; AFNElJ9i7hdEijak43ukrNU/TAK/PgcEu/AdBabgg8Ndo4Kusc9ozzA5Exn0vZQ7rzfKBv3ecCJnzQsXOqDa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT83fOuxio2vsnjrMYO7gL7RojB28ieZa6jiZzqSLv+E3Wogpu
+	gM2/NeRQGAH0u0ZI0UR5AFfGNqyqB4S3WX37l53hJLZ3L7QEVh20JU6bRyrVF1i5bXc=
+X-Gm-Gg: Acq92OGDoVV/rY6QELGq6BtYcYW6sXSCfYKl7TUIA/eS4kW4LZHUNBWVLRG1BL1/Edy
+	uPmTXJM/WGwCkdIkI8lRb9mSsvnKqrk/J1oqKllZGg6Wc3H0YBgpKGt9yfLcgxv25Fh8EEIFReT
+	TPKSKXsky8dMPWUFgQJj1TRup93M+4Ch6BMV5sg1IzX79v6PWQzoQfcengJRwrTvKMmKPJ2K0GS
+	oc+LlWYUSSKpaKWt3ZG05f3EFiB3WSqzQ1nKZ73HjOtC2pkG1v+wATfugilgpXn/zXx9k+6Gu8F
+	WAJr71WSnEADE7k4Q3XHDv/AgHyxYLDl6JPH8zRkQrg1Ubw8uVmL66DsjXlXmMThf9+MXjbo8fQ
+	wrB5JGcgqz2nu56BhY7UeyVzL08OAGo6m0OvOA0cOfgyg/FDoVu0RYMqA15KIjzYHlkp/4qmMa1
+	MUfNtdSRnPptf+8QFybVGSMsOG1xpSLVS98jPiJoOAH4zKIdk=
+X-Received: by 2002:a17:907:d8b:b0:beb:3dd8:f896 with SMTP id a640c23a62f3a-bf0ae9fc852mr160451566b.34.1780490833586;
+        Wed, 03 Jun 2026 05:47:13 -0700 (PDT)
+Received: from cloudflare.com ([104.28.21.182])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bf051770c7csm151899166b.12.2026.06.03.05.47.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2026 04:15:09 -0700 (PDT)
+        Wed, 03 Jun 2026 05:47:13 -0700 (PDT)
 From: Jakub Sitnicki <jakub@cloudflare.com>
 To: Jakub Kicinski <kuba@kernel.org>
 Cc: davem@davemloft.net,  netdev@vger.kernel.org,  edumazet@google.com,
@@ -67,13 +66,14 @@ Cc: davem@davemloft.net,  netdev@vger.kernel.org,  edumazet@google.com,
   michael.chan@broadcom.com,  jhs@mojatatu.com,  vinicius.gomes@intel.com,
   idosch@nvidia.com,  razor@blackwall.org,  hare@suse.de,
   jhasan@marvell.com,  danieller@nvidia.com
-Subject: Re: [PATCH net-next v2 01/11] net: rename netdev_ops_assert_locked()
-In-Reply-To: <20260603012840.2254293-2-kuba@kernel.org> (Jakub Kicinski's
-	message of "Tue, 2 Jun 2026 18:28:30 -0700")
+Subject: Re: [PATCH net-next v2 03/11] net: document NETDEV_CHANGENAME as
+ ops locked
+In-Reply-To: <20260603012840.2254293-4-kuba@kernel.org> (Jakub Kicinski's
+	message of "Tue, 2 Jun 2026 18:28:32 -0700")
 References: <20260603012840.2254293-1-kuba@kernel.org>
-	<20260603012840.2254293-2-kuba@kernel.org>
-Date: Wed, 03 Jun 2026 13:15:07 +0200
-Message-ID: <87zf1b50zo.fsf@cloudflare.com>
+	<20260603012840.2254293-4-kuba@kernel.org>
+Date: Wed, 03 Jun 2026 14:47:12 +0200
+Message-ID: <87v7bz4wq7.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -83,23 +83,15 @@ MIME-Version: 1.0
 Content-Type: text/plain
 
 On Tue, Jun 02, 2026 at 06:28 PM -07, Jakub Kicinski wrote:
-> Jakub suggests renaming the existing assert to match
-> the netdev_lock_ops_compat() semantics.
+> NETDEV_CHANGENAME is only emitted from netif_change_name().
+> netif_change_name() has two callers both of which hold netdev_lock_ops()
+> around the call site:
+>  - dev_change_name()
+>  - do_setlink()
 >
-> We want netdev_assert_locked_ops() to mean - if the driver
-> is ops locked - check that it's holding the device lock.
+> Document NETDEV_CHANGENAME as always ops locked.
 >
-> The existing helper check for either ops lock or rtnl_lock,
-> which is the locking behavior of netdev_lock_ops_compat().
->
-> The reason for naming divergence is likely that
-> netdev_ops_assert_locked() predated the _compat() helpers.
->
-> Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
 > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> ---
-> v2:
->  - new patch
 > ---
 
 Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
