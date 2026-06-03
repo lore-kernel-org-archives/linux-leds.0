@@ -1,110 +1,117 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8E225A354;
-	Tue,  2 Jun 2026 21:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E172E7377;
+	Wed,  3 Jun 2026 01:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780436057; cv=none; b=GObf+jKI9v+sQYSWbIlTQpRSbe8HtodZsMYcS863kzZTTPxn2Z1Mlueh1ow55LDdrxgFfqi2bFOMmD+GtSwUHRpBhbuxVkN32djkdQcgXKmtINOUejWer7336xreKFj7dfXaBpqyRjQfqBbgp61Kw+ksj0r1yr/gwtLLkEhxhRU=
+	t=1780450129; cv=none; b=ad6TiwKYxWqHauyzH/AW+Su0rip/Yg6XhnncHSD5UWuVbBVrKXjYLBu7hguIygDGhCK87ClArPh5krQ/xrV6ZQaJeoCYvLcNIgWkHwak/dAul1fvV4xJG1UZaL/75uhYmvhBU8GVENC3X8IjbA0t9CQwP7Z1ElxJyJl6tWFzTcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780436057; c=relaxed/simple;
-	bh=0sFcW2X1E1AgGGPXJn22H9fGatEbESdFMFY3VY2TYc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiZEHOYr0BBCi71yRzYJ9Df4nXYMIr7JlxiBZRFyL/p8zoZjrrVixSNuUKmEfeo54c9KOHiwDey4PDJRufmr6m1vnd8dX5GMNCkwpPR5ER3gKra8WilBPFL+ZST/ZjrnqpdOLFZQvj44Jy5rGTjqKjeG8+lG8h+4rZeAw40miHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiTKFFih; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1780450129; c=relaxed/simple;
+	bh=dEGFOYjO4S1JkPj3GKMQH/aL0Vk5M8CzYuezgWewo1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b0cErFDreDFfQU2pyXcHgIbNitq/BUq/huoQHL5J+2e1MYcI9Xb9nCUsoMMcFU6AAXGkMf2TSvxA9sYV8qRFUATx6NRxXT/SdykvJWjm6TXDZZpJlc8JyD38NWZt4u/tyQ2yy/1qmFI3HakoO+1mWCLVROJtVWcrEooIalA8ckA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iT4qpd3u; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiTKFFih"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780436056; x=1811972056;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0sFcW2X1E1AgGGPXJn22H9fGatEbESdFMFY3VY2TYc0=;
-  b=OiTKFFihzb+SFnJ9r0qnwwwUeUHYXYqSQ/EkmaqaqlohaNgYlm6Nimyf
-   EbcdQs5jgtZYsJ7vYXU/wNdq0DDyJ4Khq2kRR+9/fyAP4Zp49ZQxqRgrZ
-   gaTNoObh+uvbK4SZ0WDidBEL4YQoYs/YbcZcfIlOaTYI1A2BoHz13wF8i
-   LSm4d2tiHo4yGf/bwOdu0jR2H7eoKSrj+ZRHLE7CvaZT+nnyJ9rwyO6Pz
-   jsbtC8CNOYFiU7IREKFBk1bo1QWXYNhOsAD6e+9APJ70MaYgPssunWYqz
-   HlLKVJdjC+vjVCV6oh4ASuHGLpND8pmptU4iSdgrCbdCcYLVGksBuzw/l
-   Q==;
-X-CSE-ConnectionGUID: zA0xnocLTLu1+zZrEqGgEA==
-X-CSE-MsgGUID: Z5BSXtjvTVCGoFBO5WELcA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="80971946"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="80971946"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 14:34:16 -0700
-X-CSE-ConnectionGUID: LQKt6rLgQk2hFVaSLAmpkA==
-X-CSE-MsgGUID: lALpSXqKQLq8cywPAi7sAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="239574756"
-Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.229])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 14:34:10 -0700
-Date: Wed, 3 Jun 2026 00:34:08 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, mike.marciniszyn@gmail.com,
-	Pavel Machek <pavel@kernel.org>,
-	Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Daniel Golle <daniel@makrotopia.org>, Kees Cook <kees@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Dimitri Daskalakis <dimitri.daskalakis1@gmail.com>,
-	Jacob Keller <jacob.e.keller@intel.com>, Lee Trager <lee@trager.us>,
-	Mohsin Bashir <mohsin.bashr@gmail.com>,
-	Alok Tiwari <alok.a.tiwari@oracle.com>,
-	Chengfeng Ye <dg573847474@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] dd LED support for fbnic
-Message-ID: <ah9MUFXpPTycrO4A@ashevche-desk.local>
-References: <20260520200337.204431-1-mike.marciniszyn@gmail.com>
- <48c64757-dc3c-4d05-a269-fa4f50c299c3@lunn.ch>
- <20260521110324.GB2921053@google.com>
- <d87c9ad1-f180-45c8-a525-40c1b39c4265@lunn.ch>
- <20260521133316.GB3591266@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iT4qpd3u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 766821F00893;
+	Wed,  3 Jun 2026 01:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780450128;
+	bh=hWkDGQ/3/sU3GIemiXrKZ3F/RMQcnTg11+gRqtyKsSE=;
+	h=From:To:Cc:Subject:Date;
+	b=iT4qpd3uUjw7fyicosVo1rE3HKc1VyVupRYMom6rp401HNzopqFNyawExs22tlboG
+	 x6Xt6rcs28bjYup/cUr97Gxxac0BLeJgh5yTxwMLXvL0NGLrIa2DKipQJ/UWJBzQO2
+	 92E/yVbUmBlZAAuegce26uD3uxk+94OSGgaCbDf5L6vhi0y8tP+XjVJz2N5PsTyNOJ
+	 Wsl0V8YnnngiVqhlnWt1pplkgFP4YHsmLtT6lFMqtuxwSdiBqfWuh03dc4jR08xbyO
+	 Jr/cDO0pEQNX8pUqcoWV2D0VxXfopCWLSDrNqucU20XHyOcPtiyBvsTAydZ3AJfHgn
+	 dyHVFe+a2P2+w==
+From: Jakub Kicinski <kuba@kernel.org>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	jakub@cloudflare.com,
+	maxime.chevallier@bootlin.com,
+	nb@tipi-net.de,
+	lee@kernel.org,
+	linux-leds@vger.kernel.org,
+	pavel@kernel.org,
+	jv@jvosburgh.net,
+	michael.chan@broadcom.com,
+	jhs@mojatatu.com,
+	vinicius.gomes@intel.com,
+	idosch@nvidia.com,
+	razor@blackwall.org,
+	hare@suse.de,
+	jhasan@marvell.com,
+	danieller@nvidia.com,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH net-next v2 00/11] net: ethtool: make sure __ethtool_get_link_ksettings() is ops-locked
+Date: Tue,  2 Jun 2026 18:28:29 -0700
+Message-ID: <20260603012840.2254293-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260521133316.GB3591266@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 21, 2026 at 02:33:16PM +0100, Lee Jones wrote:
-> On Thu, 21 May 2026, Andrew Lunn wrote:
-> > On Thu, May 21, 2026 at 12:03:24PM +0100, Lee Jones wrote:
-> > > On Wed, 20 May 2026, Andrew Lunn wrote:
+This is prep for the series which will make most of the ethtool ops
+run without rtnl_lock. The AI bots surfaced a number of callers of
+__ethtool_get_link_ksettings() which need fixing, so I decided to
+send that as a smaller prep-series. Each driver changed separately
+for ease of review.
 
-...
+Full series unlocking ethtool ops AKA v1:: 
+https://lore.kernel.org/20260528231637.251822-1-kuba@kernel.org
 
-> > > It's also just a cover-letter.
-> > 
-> > It depends on the Maintainers workflow, but for netdev, a patch series
-> > is imported into a branch, and the cover letter is used for the text
-> > of the merge commit into net-next.
-> > 
-> > A well written cover letter contains the big picture, what does this
-> > set of patches do, so it has useful information in it, so we want to
-> > have it in the git history.
-> 
-> Interesting.  This is new to me.  As you were.
+Jakub Kicinski (11):
+  net: rename netdev_ops_assert_locked()
+  net: ethtool: cmis_cdb: hold instance lock for ops locked devices
+  net: document NETDEV_CHANGENAME as ops locked
+  net: ethtool: add netif_get_link_ksettings() for correct ops-locked
+    use
+  net: bonding: don't recurse on the slave's netdev ops lock
+  net: team: don't recurse on the port's netdev ops lock
+  net: bridge: don't recurse on the port's netdev ops lock
+  net: sched: don't recurse on the netdev ops lock in qdiscs
+  leds: trigger: netdev: don't recurse on the netdev ops lock
+  scsi: fcoe: don't recurse on the netdev's ops lock
+  net: ethtool: make sure __ethtool_get_link_ksettings() is ops-locked
 
-I also do this from time to time (depending on the series at hand), this is so
-cool with `b4 shazam ...`.
+ Documentation/networking/netdevices.rst   |  1 +
+ include/linux/ethtool.h                   |  2 ++
+ include/net/netdev_lock.h                 | 12 ++++++--
+ drivers/leds/trigger/ledtrig-netdev.c     | 37 +++++++++++++----------
+ drivers/net/bonding/bond_main.c           | 21 ++++++++++---
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |  2 +-
+ drivers/net/team/team_core.c              |  4 ++-
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c         |  3 ++
+ drivers/scsi/fcoe/fcoe.c                  |  6 ++--
+ drivers/scsi/fcoe/fcoe_transport.c        |  4 ++-
+ net/bridge/br_if.c                        |  7 +++--
+ net/core/dev.c                            | 26 ++++++++--------
+ net/core/dev_addr_lists.c                 |  2 +-
+ net/core/link_watch.c                     |  2 +-
+ net/core/lock_debug.c                     |  3 +-
+ net/core/netdev_queues.c                  |  2 +-
+ net/ethtool/cmis_cdb.c                    |  3 ++
+ net/ethtool/cmis_fw_update.c              |  8 ++---
+ net/ethtool/ioctl.c                       | 21 +++++++++++--
+ net/ethtool/linkinfo.c                    |  4 +--
+ net/ethtool/linkmodes.c                   |  4 +--
+ net/ethtool/module.c                      |  2 ++
+ net/ethtool/netlink.c                     |  4 +--
+ net/ipv6/addrconf.c                       |  2 +-
+ net/sched/sch_cbs.c                       |  2 +-
+ net/sched/sch_taprio.c                    |  2 +-
+ net/xdp/xsk_buff_pool.c                   |  2 +-
+ 27 files changed, 121 insertions(+), 67 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.54.0
 
