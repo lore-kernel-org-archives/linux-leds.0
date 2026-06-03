@@ -1,39 +1,39 @@
 Received: from mail.tipi-net.de (mail.tipi-net.de [194.13.80.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40C7399031;
-	Wed,  3 Jun 2026 07:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDAA39DBFC;
+	Wed,  3 Jun 2026 07:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.13.80.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780471012; cv=none; b=b4XDH3XxKu47gYnjqIVu+7bhJIbbkCRu9PRLNkYMMW7CrXRzmV90iU3PLkkZRLFdE8dBVODPHvj1npv7jIngy25YS6uSw/uZotq5twfxf+gRFpPax4MEEunwrOqqzG9Cl/tKG3s6h7TnmgM5xdIzfKbQB8DFtwows2hKx7wfdCA=
+	t=1780471108; cv=none; b=dAONig5s+vUGCgoWp+wfT+hXrD5M4x9TXjzQlK8ehgrm6Y88LkKt1G6Jlvv66u8O4683BhQwNtOtdJCOIfGOuvkfEksO6kOcLXUBY4R2ExQ4CKW6GjOZ5Q2FlBUaDZKtSoett1CiloqE8eoFXd1oE3Hi7Hh0dtU5i+O2jgg8Q+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780471012; c=relaxed/simple;
-	bh=vyz0Xa1//X2cgKiA8x50y0o6xktJFDyDe1/KFcEJfHM=;
+	s=arc-20240116; t=1780471108; c=relaxed/simple;
+	bh=eopH5zYjoqqXWPlP9/1em1VNH5BgMfP/OFiOmHs9DCU=;
 	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=VGT7Na5o/UOh4xOAi5MaA0CoNzjqqiGdU4zQZpORbXUORMuy3QZAall8qVlLfTWlLS64eKgpajjn7zOGyYu7CrcR2tpEigvwvyl5w3oniDZo7K1EwgB4tUV7pb6u5Ji+7wfvIx3nqo7XmAj5M6n1Cxy6G4Di2qQZnPETluyl0Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de; spf=pass smtp.mailfrom=tipi-net.de; dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.b=kd8n+8rs; arc=none smtp.client-ip=194.13.80.246
+	 Message-ID:Content-Type; b=iu2icVZe8Oo96LLJ/0oVt8gcZ6A8+Nkr6chX8lqwfEEIbYDMG6f0wexGwb2BJCYEd6Y9YvFlNQ3UDZ/JmPuB3AzFJ5Yl/3eXgDBslZyd8Lve8dDRX5EU5wiwVsDO7ILJADgPT6GcO1BiJIz0F+hyJUnPlkVr85JlrX3x/RWgT3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de; spf=pass smtp.mailfrom=tipi-net.de; dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.b=Zoa7geZH; arc=none smtp.client-ip=194.13.80.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tipi-net.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.b="kd8n+8rs"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 41481A03C2;
-	Wed,  3 Jun 2026 09:16:39 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.b="Zoa7geZH"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 24507A03C2;
+	Wed,  3 Jun 2026 09:18:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tipi-net.de; s=dkim;
-	t=1780471004; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1780471104; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Vg2AJcCFLJnI5vjShorKN1fo6tPDywI2MFm003N7eXg=;
-	b=kd8n+8rsaOLBhSjImTzV783fbvAdIg74RlEsJ0zpTD3S8PbK+0LiFSgREPyaNtf84kDL3q
-	U0nufqHfCsDLjve40u7PUAyjB1sWOLBJ2/HflKjaeHAc7FCiugpbHjoyEwa0vCKjFL7GZb
-	Pr7370v6gAJJF2WZf/eHjd/+5esDiByMyr95VDei2E5GE6b8gldv+wl0fw5/Pf5HNlQp5x
-	+S5WDjqdGP9HrVslMn0ImpqAL2IqQ/HhBzwT26Fv/6Eq/Jn6nF1AZsEGE5RLKqgWiHnxKe
-	1NmalZ3RjJtdumVkip05o0GH8Ant/Czm2rT704AIlrLFOeBliea5zubwqxnqJQ==
+	bh=unD7fVDej0gDVMjXgolcmQ3vJZ292FaMOu0mhGLUp/w=;
+	b=Zoa7geZHCSxG7jx+fMSeAIApF6d+/cbc2PcgzMxaBKdgd9n0XmKdTtrCXFIXFnge/HyA7e
+	Jpwc/WzlLbwFLBQhHNru1Fw7lQ0CzrDL+QYrWUXzz7CAsfhvPEtkN+naOVv8aaZ9bvhiY8
+	ctoCuSydyXnFZxAtkaB4uEcXnEgfnrNeaaf/GEGSjuqMHhO3HAzmqyhm5DnpMPpQ09ktej
+	ZyGVur03EYSZUs4TJ/2wsm7mGVTkmw2HL0Uf2S1xUbfQz8Vbn6RJqWoJDGlqWmHpRp2FVN
+	2L1OgmXxjSd5cv/eUDuIPiwE/OrY78XlsOy6vy1sdKP7r02Bfs5QF6y5Cauczw==
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 03 Jun 2026 09:16:39 +0200
+Date: Wed, 03 Jun 2026 09:18:23 +0200
 From: Nicolai Buchwitz <nb@tipi-net.de>
 To: Jakub Kicinski <kuba@kernel.org>
 Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
@@ -43,12 +43,12 @@ Cc: davem@davemloft.net, netdev@vger.kernel.org, edumazet@google.com,
  michael.chan@broadcom.com, jhs@mojatatu.com, vinicius.gomes@intel.com,
  idosch@nvidia.com, razor@blackwall.org, hare@suse.de, jhasan@marvell.com,
  danieller@nvidia.com
-Subject: Re: [PATCH net-next v2 07/11] net: bridge: don't recurse on the
- port's netdev ops lock
-In-Reply-To: <20260603012840.2254293-8-kuba@kernel.org>
+Subject: Re: [PATCH net-next v2 11/11] net: ethtool: make sure
+ __ethtool_get_link_ksettings() is ops-locked
+In-Reply-To: <20260603012840.2254293-12-kuba@kernel.org>
 References: <20260603012840.2254293-1-kuba@kernel.org>
- <20260603012840.2254293-8-kuba@kernel.org>
-Message-ID: <b9a0430bb83cc76096488ce4bf239368@tipi-net.de>
+ <20260603012840.2254293-12-kuba@kernel.org>
+Message-ID: <6cedf5898b770e430cb60fa7ae011802@tipi-net.de>
 X-Sender: nb@tipi-net.de
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
@@ -58,60 +58,45 @@ X-Last-TLS-Session-Version: TLSv1.3
 Hi Jakub
 
 On 3.6.2026 03:28, Jakub Kicinski wrote:
-> port_cost() calls __ethtool_get_link_ksettings() on the port device,
-> which will soon take the port's ops lock. br_port_carrier_check()
-> is reached via the NETDEV_CHANGE notifier from linkwatch, which
-> already holds the port's ops lock, so the call would deadlock.
-> 
-> Make port_cost() expect the port's ops lock held and switch to
-> netif_get_link_ksettings(). The only other caller is new_nbp(),
-> make sure it takes the lock explicitly.
+> All drivers which may call *_get_link_ksettings() on ops-locked
+> devices from paths already holding the ops lock are ready now.
+> Make __ethtool_get_link_ksettings() take the ops lock, and assert
+> that it's held in netif_get_link_ksettings().
 > 
 > Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 > ---
->  net/bridge/br_if.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  net/ethtool/ioctl.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
-> index d39571e13744..049d1d25bc26 100644
-> --- a/net/bridge/br_if.c
-> +++ b/net/bridge/br_if.c
-> @@ -19,6 +19,7 @@
->  #include <linux/if_ether.h>
->  #include <linux/slab.h>
->  #include <net/dsa.h>
-> +#include <net/netdev_lock.h>
->  #include <net/sock.h>
->  #include <linux/if_vlan.h>
->  #include <net/switchdev.h>
-> @@ -30,13 +31,13 @@
->   * Determine initial path cost based on speed.
->   * using recommendations from 802.1d standard
->   *
-> - * Since driver might sleep need to not be holding any locks.
-> + * Since driver might sleep, we need to not be holding any bridge 
-> spinlocks.
->   */
->  static int port_cost(struct net_device *dev)
+> diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
+> index 49da873b673d..a4b0cbae4063 100644
+> --- a/net/ethtool/ioctl.c
+> +++ b/net/ethtool/ioctl.c
+> @@ -439,7 +439,7 @@ struct ethtool_link_usettings {
+>  int netif_get_link_ksettings(struct net_device *dev,
+>  			     struct ethtool_link_ksettings *link_ksettings)
 >  {
->  	struct ethtool_link_ksettings ecmd;
+> -	/* once callers fixed - assert ops locked */
+> +	netdev_assert_locked_ops_compat(dev);
 > 
-> -	if (!__ethtool_get_link_ksettings(dev, &ecmd)) {
-> +	if (!netif_get_link_ksettings(dev, &ecmd)) {
->  		switch (ecmd.base.speed) {
->  		case SPEED_10000:
->  			return 2;
-> @@ -436,7 +437,9 @@ static struct net_bridge_port *new_nbp(struct 
-> net_bridge *br,
->  	p->br = br;
->  	netdev_hold(dev, &p->dev_tracker, GFP_KERNEL);
->  	p->dev = dev;
+>  	if (!dev->ethtool_ops->get_link_ksettings)
+>  		return -EOPNOTSUPP;
+> @@ -456,10 +456,14 @@ EXPORT_SYMBOL(netif_get_link_ksettings);
+>  int __ethtool_get_link_ksettings(struct net_device *dev,
+>  				 struct ethtool_link_ksettings *link_ksettings)
+>  {
+> +	int ret;
+> +
+>  	ASSERT_RTNL();
+> 
+> -	/* once callers fixed - take the ops lock around this call */
+> -	return netif_get_link_ksettings(dev, link_ksettings);
 > +	netdev_lock_ops(dev);
->  	p->path_cost = port_cost(dev);
+> +	ret = netif_get_link_ksettings(dev, link_ksettings);
 > +	netdev_unlock_ops(dev);
->  	p->priority = 0x8000 >> BR_PORT_BITS;
->  	p->port_no = index;
->  	p->flags = BR_LEARNING | BR_FLOOD | BR_MCAST_FLOOD | BR_BCAST_FLOOD;
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(__ethtool_get_link_ksettings);
 
 Reviewed-by: Nicolai Buchwitz <nb@tipi-net.de>
 
