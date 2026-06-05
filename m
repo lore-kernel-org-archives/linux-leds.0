@@ -1,26 +1,39 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B6D477981
-	for <linux-leds@vger.kernel.org>; Fri,  5 Jun 2026 07:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F9547F2FC;
+	Fri,  5 Jun 2026 07:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780644481; cv=none; b=rjueWktzq2CK2HRHtEWDEn+QT5AAZA91sB1W3pG+aHIjGC0eolnRuCJ625RdhashIUk+jd0e3kv4ylcURsKvjSdqGH++S2qyOnYga8YKjkWI13AO0PTXxRx7FnJLbAVjf02Kkhsi6cG3fqqFPXutriVJFb5cdZpRooOKRRBggmQ=
+	t=1780645529; cv=none; b=Zx0RorIVZLYzMHfHFKwyXlQ/mtINTs8BzWs6pZuZv/AVlVDsh5ozE1qVWaivRZlD3A7KLGpTq9aZFeYBBFJCEKyM8HSxYECi90KgI11UtozB7F73PGFzYg/zhskRYxt4v5WtajAucRDPi/xz+6uBC8UAPJGzuP24GHBbPDWUbWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780644481; c=relaxed/simple;
-	bh=BROUQMEs5SYTB1khzHzfUbPjtunqMoKqykCd5QseKuw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kzt5XRtVRN+lQEIs6HVC/4fHzDR+WbA3FaGoeObqvgKwV8SA4tVsbkRmCvEPHmVy5eSmzYVwaVVKp6svOwbL3EQH5vvuIthjQIxl6BSE06NcGy8rrgyTbYz6puj5FnLVLYwuK1S3dtIP8f6vlqQNp9ieXMkEbLqq83NV9PUAokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <jre@pengutronix.de>)
-	id 1wVOy9-0007Tn-37; Fri, 05 Jun 2026 09:27:53 +0200
-From: Jonas Rebmann <jre@pengutronix.de>
-Date: Fri, 05 Jun 2026 09:27:47 +0200
-Subject: [PATCH v2 1/2] dt-bindings: leds: Add default-intensity property
+	s=arc-20240116; t=1780645529; c=relaxed/simple;
+	bh=429CBdm2kK6AmmLW4WHTjGVkDXomgP9jz+1HYnL19OI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MykmAs0PZ8aSKvOO3Qakb1ji2U39q6sc56TteoVIdPJjsaUuUqL7NMuL/UfOmTWAOuoYVNuePzCQ5P9c/JYzVKGjGBiRz/ZFJ2g9iwbGu1kdjhgoB4f++jN6f3oS4dyXMJec0TuPCDQQgJf1GghzcMB3q2aEbQqszFlivkTY65Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZSXhMf9; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZSXhMf9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DD31F00893;
+	Fri,  5 Jun 2026 07:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780645527;
+	bh=4z0XKWwvj1/uLpf3ETLlK913vPnUA0EB0ybPj6eJQnc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=kZSXhMf9WElWVcr++bPUrdEDRuj9CsQtjE4m1L7gbF4gxjH8M8UMa/nDE2c+WNOSN
+	 j+5FepS1bsjFxxW6B5gUaZL2XLRouxx1u6OoMAqyVqns9k6WGe705oLNoKJR02h8wa
+	 9BQ5eGZp2obdEceyY4oD+0nGPWi9/ePwrBeABndkTewpyhvHc1NVjCjOmcLza/dyOL
+	 XQ2RfY+Hu2n+X/WOwnizZYYNuyW5cirSnK5YZ72uNxH4cHEh3zJYAiSxDRFDjN8yfO
+	 98nQ+uupbrN/lPdNWM9p0fklt1d82WO4KHfyNU2yqxOfgkpXC6R0UCoNYMuNbXslRc
+	 M+24+Er7izKhA==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, pavel@kernel.org, Armin Wolf <W_Armin@gmx.de>
+Cc: corbet@lwn.net, linux-leds@vger.kernel.org, linux-doc@vger.kernel.org
+In-Reply-To: <20260527001422.51111-1-W_Armin@gmx.de>
+References: <20260527001422.51111-1-W_Armin@gmx.de>
+Subject: Re: (subset) [PATCH] leds: Fix sysfs ABI date
+Message-Id: <178064552642.523529.10416312564557000722.b4-ty@b4>
+Date: Fri, 05 Jun 2026 08:45:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -28,95 +41,19 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260605-multicolor-default-v2-1-ed07271df6b0@pengutronix.de>
-References: <20260605-multicolor-default-v2-0-ed07271df6b0@pengutronix.de>
-In-Reply-To: <20260605-multicolor-default-v2-0-ed07271df6b0@pengutronix.de>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
- Sven Schwermer <sven.schwermer@disruptive-technologies.com>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2389; i=jre@pengutronix.de;
- h=from:subject:message-id; bh=BROUQMEs5SYTB1khzHzfUbPjtunqMoKqykCd5QseKuw=;
- b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYshSqioP7GjJepB2cALD6ZO8+d/ud+dnS5YXfjtv7Hhj7
- oYtp/laOkpZGMS4GGTFFFli1eQUhIz9r5tV2sXCzGFlAhnCwMUpABM5yM3wP9fj8bLPNrqy06tn
- dvtyvajX/WJk0hvHcIE/2WG71rENdxkZZnPeNZp8OU3CnslviUbtM4Gvp2Qex8908dK+9kz9jPx
- zdgA=
-X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
- fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
-X-SA-Exim-Mail-From: jre@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-leds@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-Document the default-intensity property to set a default color on
-multicolor LEDs.
+On Wed, 27 May 2026 02:14:22 +0200, Armin Wolf wrote:
+> The "multi_max_intensity" sysfs attribute was not included
+> in kernel 7.1, so update the KernelVersion and Date tags
+> accordingly.
 
-Update pwm-multicolor to support it and update the example to turn the
-LED red on boot.
+Applied, thanks!
 
-Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
----
- Documentation/devicetree/bindings/leds/common.yaml            | 11 +++++++++++
- .../devicetree/bindings/leds/leds-pwm-multicolor.yaml         |  4 ++++
- 2 files changed, 15 insertions(+)
+[1/1] leds: Fix sysfs ABI date
+      commit: fa252b55ea6126729b7e0c1de975268056673464
 
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index f4e44b33f56d..a34de0a34b42 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -73,6 +73,17 @@ properties:
-       - keep
-     default: off
- 
-+  default-intensity:
-+    description:
-+      The initial intensity of the LED color component. Used only during
-+      initialization. Defaults to 0. As the intensity of each sub-LED is
-+      multiplied with the overall brightness, without this property on a
-+      sub-LED, the leds-pwm-multicolor-LED is effectively initialized at
-+      minimum brightness regardless of its linux,default-trigger and
-+      default-brightness properties.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 0
-+
-   linux,default-trigger:
-     description:
-       This parameter, if present, is a string defining the trigger assigned to
-diff --git a/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
-index a31a202afe5c..7bf687c89411 100644
---- a/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
-@@ -45,6 +45,8 @@ properties:
- 
-           color: true
- 
-+          default-intensity: true
-+
-         required:
-           - pwms
-           - color
-@@ -63,12 +65,14 @@ examples:
- 
-         multi-led {
-             color = <LED_COLOR_ID_RGB>;
-+            linux,default-trigger = "default-on";
-             function = LED_FUNCTION_INDICATOR;
-             max-brightness = <65535>;
- 
-             led-red {
-                 pwms = <&pwm1 0 1000000>;
-                 color = <LED_COLOR_ID_RED>;
-+                default-intensity = <65535>;
-             };
- 
-             led-green {
-
--- 
-2.54.0.129.g3edf2eeba9
+--
+Lee Jones [李琼斯]
 
