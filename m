@@ -1,92 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7458830D3E7;
-	Thu,  4 Jun 2026 23:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98C847DF87
+	for <linux-leds@vger.kernel.org>; Fri,  5 Jun 2026 07:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780616303; cv=none; b=rzDZyOFx4zhQ+GzSAq+vUDh1hK9KOhlIH+wCc3lenJMZ/cW5mOf8wlacHHyZEHsVZy3Rfus8yceVBBm5EKkVI4jx4GJz1K7NJ6SkPQCTw/gdiM7eDIJx0ZB0zVQ6XWBnIbscvgwVhSZfQjncxH3uakyVaRQNge0XLWX9Whbzuuo=
+	t=1780644481; cv=none; b=u5zSwLf44ou1LnBiMZ+Qa7EILqJZIfHPxdC/q0rXtCQxVNAii0nuY5xbfXU6XonglBCbJJiDelOWSrNzLdSWbwOj+jbpjETw2ob9DvM6Sp+pKHS2epJ3ONLreDqvRyEPGKIcM0s6KHnmNYdJgCvukXOrfJy4Tii8lYOd2sVomw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780616303; c=relaxed/simple;
-	bh=AIQIr0ForNnFUac72qlS61qyI7V+ThigyEDuZnZVggc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YKYYwWs81HR/L5BwwmUiJFnoJPwvyOlisBsW3UrRpbO3kZWSRI8Bz4EbxFB9wQExTa5+txsUEejujA67yLJuvjLFJkghIEHEpZv1cT8jcnXJNbxuUVzPGwuCiP9r58xCOsF0NN5JOVPTnkPuxDOL8aJepwwXBnwuhTh76bK8DLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MLkgRTsA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MLkgRTsA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780616303; x=1812152303;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=AIQIr0ForNnFUac72qlS61qyI7V+ThigyEDuZnZVggc=;
-  b=MLkgRTsA4wqeNG3CFvCPsm90I7v99kMmSUnnDm3bAQR/54SIkf5HNhGQ
-   caWXiQgaIiLPet3khnX9YqWl4Hv48hFG9Kyy0lU1NuVwnOcFYd/kRwMH3
-   C/XTqWtBZLJxCvK467Hf3HqUKkEZ6GrOHr+RJiprQbINyTDNmrRd0UTTy
-   ObpCYXaF7MDcNTodRRglKU9+aXD0hXy6W9moLq/qnw3hxDoy26ERrYWF7
-   llTPDYfgwh79vjQv/jUY1FnAYsYPB2K68YXkIaCdpkxkXzfZwNE4GV+NQ
-   guy1ZH4q/7ipFIXLmO3BSh8zLyJh9E2fJIg1vVJwdT34h/QgozGEwki+t
-   g==;
-X-CSE-ConnectionGUID: OkCK6wYBTdSAW22TxnE8Lg==
-X-CSE-MsgGUID: LqQDiDQoREe7nW6WcsuI4Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11807"; a="85075913"
-X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; 
-   d="scan'208";a="85075913"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 16:38:20 -0700
-X-CSE-ConnectionGUID: 8i1oTar4QXezo2FSoxBVCQ==
-X-CSE-MsgGUID: LcsHNHCoTGCVhaZdDEqLlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,188,1774335600"; 
-   d="scan'208";a="244744337"
-Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.88.27.144])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2026 16:38:16 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net
-Cc: netdev@vger.kernel.org, edumazet@google.com, pabeni@redhat.com,
- andrew+netdev@lunn.ch, horms@kernel.org, jakub@cloudflare.com,
- maxime.chevallier@bootlin.com, nb@tipi-net.de, lee@kernel.org,
- linux-leds@vger.kernel.org, pavel@kernel.org, jv@jvosburgh.net,
- michael.chan@broadcom.com, jhs@mojatatu.com, idosch@nvidia.com,
- razor@blackwall.org, hare@suse.de, jhasan@marvell.com,
- danieller@nvidia.com, Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [PATCH net-next v2 08/11] net: sched: don't recurse on the
- netdev ops lock in qdiscs
-In-Reply-To: <20260603012840.2254293-9-kuba@kernel.org>
-References: <20260603012840.2254293-1-kuba@kernel.org>
- <20260603012840.2254293-9-kuba@kernel.org>
-Date: Thu, 04 Jun 2026 16:38:16 -0700
-Message-ID: <87ldctq3kn.fsf@intel.com>
+	s=arc-20240116; t=1780644481; c=relaxed/simple;
+	bh=m3EVhKuHhihMKDIb4q7QUoYR/Lso17Rn5p1IoK+IwW4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HSyPldK1ns0ykefjMWNVSvkhBv7bwFvv/y3POdfaaDmyDpj28mHZ8kTY7lsKsLVz0j52Ss4a5Pk/MT1NqB213VmF25uLvmRDG9BCV56HF+mab1jmxhMrs9zUn3JAhHURWAxzlSI1ILRGm8vD5PAf8llVWvDhr01qgFwHBtGRn1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1wVOy9-0007Tn-4t; Fri, 05 Jun 2026 09:27:53 +0200
+From: Jonas Rebmann <jre@pengutronix.de>
+Date: Fri, 05 Jun 2026 09:27:48 +0200
+Subject: [PATCH v2 2/2] leds: pwm-multicolor: Introduce default-intensity
+ property
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260605-multicolor-default-v2-2-ed07271df6b0@pengutronix.de>
+References: <20260605-multicolor-default-v2-0-ed07271df6b0@pengutronix.de>
+In-Reply-To: <20260605-multicolor-default-v2-0-ed07271df6b0@pengutronix.de>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+ Sven Schwermer <sven.schwermer@disruptive-technologies.com>
+Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Jonas Rebmann <jre@pengutronix.de>
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1213; i=jre@pengutronix.de;
+ h=from:subject:message-id; bh=m3EVhKuHhihMKDIb4q7QUoYR/Lso17Rn5p1IoK+IwW4=;
+ b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYshSqqow7nhjtO+G7vqC13FTZrN12eeVGyfq1D+5/YLj0
+ A2nl+ukOkpZGMS4GGTFFFli1eQUhIz9r5tV2sXCzGFlAhnCwMUpABM5FsPwv9ZufpjwJ0FDzuO7
+ Jkgsvy9+p+NchWPEodDor61v+o1dcxn+WbcsZ2acu2TpfK8PqWF251/dzM3/XpV616frS7NgXMk
+ fTgA=
+X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
+ fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-Jakub Kicinski <kuba@kernel.org> writes:
+Like all LED drivers, pwm-multicolor supports turning on an LED on boot
+by setting linux,default-trigger, e.g. to "default-on". pwm-multicolor
+however scales the brightness of the color-component sub-LEDs with their
+individual intensity value. Since these intensities are
+zero-initialized, on boot a trigger is invisible until colors are set
+from userspace.
 
-> cbs_set_port_rate() and taprio_set_picos_per_byte() are reached from
-> two paths and both already hold the device's ops lock:
->
->  *_change(), via tc_modify_qdisc() which calls netdev_lock_ops(dev)
->     before dispatching to the qdisc ops.
->
->  *_dev_notifier() on NETDEV_UP / NETDEV_CHANGE, where caller
->     holds the ops lock across the notifier chain.
->
-> Switch to netif_get_link_ksettings() to avoid deadlock once
-> __ethtool_get_link_ksettings() starts taking the netdev lock.
->
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> ---
+Fix linux,default-trigger for pwm-multicolor by allowing for nonzero
+default-intensities but default to 0 for backwards-compatibility.
 
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+---
+ drivers/leds/rgb/leds-pwm-multicolor.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
+index e0d7d3c9215c..3e515df40583 100644
+--- a/drivers/leds/rgb/leds-pwm-multicolor.c
++++ b/drivers/leds/rgb/leds-pwm-multicolor.c
+@@ -95,6 +95,8 @@ static int iterate_subleds(struct device *dev, struct pwm_mc_led *priv,
+ 		}
+ 
+ 		subled[priv->mc_cdev.num_colors].color_index = color;
++		fwnode_property_read_u32(fwnode, "default-intensity",
++					 &subled[priv->mc_cdev.num_colors].intensity);
+ 		priv->mc_cdev.num_colors++;
+ 	}
+ 
 
-Cheers,
 -- 
-Vinicius
+2.54.0.129.g3edf2eeba9
+
