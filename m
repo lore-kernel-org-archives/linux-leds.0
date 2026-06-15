@@ -1,104 +1,289 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68CB339708;
-	Mon, 15 Jun 2026 10:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BC73E5EFB
+	for <linux-leds@vger.kernel.org>; Mon, 15 Jun 2026 12:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781520233; cv=none; b=Wjx44uOUfGTiO/ScBM2daqEhP2iMZ4U8YWXHWYI//BwUKdeezdBwW8/d1cmpI7cdd8I69+KW6r79F1tfzm7Cp6IaFRBO+yHw3qks733VD6lwMqRu1CxR3GoIDtB00suL3z0HfyutBPnpeJ3NxKeYjmH64rUIxWRAiApUywcraBo=
+	t=1781525052; cv=none; b=AeIyRZGmGEVqZeVZr3JtmV8wrnQXqAuobUq8ZW/6yXe9QUYF7MLarz/qN1sDwuCcHQV4/c1OuWk+eQ/GsE1AHiROclFDF9yO+IA/1q4idazBsQVSSZaLpHppfwOl9YlSV5DYF+CoCNRyiZeiFxz3JHW+f1PDa/7wCWbYPjNaRfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781520233; c=relaxed/simple;
-	bh=oVfd44ufR+op111XMW1UXh0Dk/Avy9DCMpoW+by1up8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6zf9w9OuO0ugr/TjXFDSh5Y4SxKLIEX/GMLUaJEbqkkssPP0Llz++56hJTFP7yDlJWpfxshz4qShW/zG9shhgGixEb+48gGo4W6AzeDw6lLByT4Vzgxz4JmXXSrJJ33iJlUTmm859M9SfQKzZYUV9B+uecB/UN6xGQxZdlp55A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1wZ4ey-0000JJ-00; Mon, 15 Jun 2026 12:35:16 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C060CC084D; Mon, 15 Jun 2026 12:33:22 +0200 (CEST)
-Date: Mon, 15 Jun 2026 12:33:22 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Lamparter <chunkeey@googlemail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH 05/10] [v2] mips: select legacy gpiolib interfaces where
- used
-Message-ID: <ai_U8j3uOoIzoYrJ@alpha.franken.de>
-References: <20260520183815.2510387-1-arnd@kernel.org>
- <20260520183815.2510387-6-arnd@kernel.org>
+	s=arc-20240116; t=1781525052; c=relaxed/simple;
+	bh=sWlMr/SC9/o1ef7nUsKbQ7R1KXehA1OX6f8zErz0EV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LXScv7e2zE7fud4ZM9n16TQyIqFe8BnuDK5W1y4HJYEqwWeCGXTXTqUKurzNLEI1ZNLiL8++y0vMy2GctanIVLCnYDrIMVVsSxHCqN0VBdcrJt/3/2yuEBiw7RALieWextFeHtAs066Lyb/LRJpsZVqObMotz9rJ+IxYfiaYNmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=lGYvKlmS; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="lGYvKlmS"
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20260615120358efd907aedc000207af
+        for <linux-leds@vger.kernel.org>;
+        Mon, 15 Jun 2026 14:03:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=kfviCFmmVXESKpqwYOHN1tzc25WNDVOaT5tGn2iOj50=;
+ b=lGYvKlmSoizJac/jQQQED7veF6GXTVcUrAb6xb0R1eFO3C0jINpA8+xBcM1WZQl1+H8Y5G
+ /Mc1kTJDpHNUnzgwv8vDvyIfb72piXQQXt8XBUCjxYmwd8TcKqn4XZhzS2JXBKu+ncBhnRBI
+ OeiquP2ZjhRzS2mnI48REWmfE5dzbJjDZF8mHkU8hfnEZlCW/D26tVZxucdOxVvZYqx/8TU/
+ KoQxiYnHPPpsCnl+14OcB/YrwrH9exy0v+WbiB3yzl3mDW6/++HxrrWNxCu6Po3SpmemhZQm
+ n4IZLGmH4f4/ZI8GRiFlPTknXkfJWDIqpnQk+vsUOMG9L/uh4G39YvDA==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-leds@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Andrew Davis <afd@ti.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: [PATCH 2/3] leds: lp8864: Rename struct lp8864_led and local variables
+Date: Mon, 15 Jun 2026 14:03:48 +0200
+Message-ID: <20260615120353.3409035-3-alexander.sverdlin@siemens.com>
+In-Reply-To: <20260615120353.3409035-1-alexander.sverdlin@siemens.com>
+References: <20260615120353.3409035-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260520183815.2510387-6-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-On Wed, May 20, 2026 at 08:38:10PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A few old machines have not been converted away from the old-style
-> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
-> symbol so the code still works where it is needed but can be left
-> out otherwise.
-> 
-> This is the list of all gpio_request() calls in mips:
-> 
->   arch/mips/alchemy/devboards/db1000.c:           gpio_request(19, "sd0_cd");
->   arch/mips/alchemy/devboards/db1000.c:           gpio_request(20, "sd1_cd");
->   arch/mips/alchemy/devboards/db1200.c:   gpio_request(215, "otg-vbus");
->   arch/mips/bcm47xx/workarounds.c:        err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
->   arch/mips/bcm63xx/boards/board_bcm963xx.c:              gpio_request_one(board.ephy_reset_gpio,
->   arch/mips/txx9/rbtx4927/setup.c:        gpio_request(15, "sio-dtr");
-> 
-> Most of these should be easy enough to change to modern gpio descriptors
-> or remove if they are no longer in use.
-> 
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: no changes. There was no discussion on this, but the patch
->     has so far not made it into the linux-mips tree, so I'm including
->     it for completeness.
-> ---
->  arch/mips/Kconfig         | 5 +++++
->  arch/mips/alchemy/Kconfig | 1 -
->  arch/mips/txx9/Kconfig    | 1 +
->  3 files changed, 6 insertions(+), 1 deletion(-)
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-applied to mips-next
+Rename struct lp8864_led to struct lp8864 and the local variable 'led'
+to 'priv' throughout the driver. The LED functionality will become
+optional in a subsequent patch that adds backlight class support, so
+having the driver's private data structure and variables named after
+LED-specifics is misleading.
 
-Thomas.
+No functional change.
 
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ drivers/leds/leds-lp8864.c | 70 +++++++++++++++++++-------------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/leds/leds-lp8864.c b/drivers/leds/leds-lp8864.c
+index 3afd729d2f8a6..d05211b970c94 100644
+--- a/drivers/leds/leds-lp8864.c
++++ b/drivers/leds/leds-lp8864.c
+@@ -69,32 +69,32 @@ static const char *const lp8864_led_status_msg[] = {
+ };
+ 
+ /**
+- * struct lp8864_led
++ * struct lp8864
+  * @client: Pointer to the I2C client
+  * @led_dev: led class device pointer
+  * @regmap: Devices register map
+  * @led_status_mask: Helps to report LED fault only once
+  */
+-struct lp8864_led {
++struct lp8864 {
+ 	struct i2c_client *client;
+ 	struct led_classdev led_dev;
+ 	struct regmap *regmap;
+ 	u16 led_status_mask;
+ };
+ 
+-static int lp8864_fault_check(struct lp8864_led *led)
++static int lp8864_fault_check(struct lp8864 *priv)
+ {
+ 	int ret, i;
+ 	unsigned int val;
+ 
+-	ret = regmap_read(led->regmap, LP8864_SUPPLY_STATUS, &val);
++	ret = regmap_read(priv->regmap, LP8864_SUPPLY_STATUS, &val);
+ 	if (ret)
+ 		goto err;
+ 
+ 	/* Odd bits are status bits, even bits are clear bits */
+ 	for (i = 0; i < ARRAY_SIZE(lp8864_supply_status_msg); i++)
+ 		if (val & BIT(i * 2 + 1))
+-			dev_warn(&led->client->dev, "%s\n", lp8864_supply_status_msg[i]);
++			dev_warn(&priv->client->dev, "%s\n", lp8864_supply_status_msg[i]);
+ 
+ 	/*
+ 	 * Clear bits have an index preceding the corresponding Status bits;
+@@ -102,25 +102,25 @@ static int lp8864_fault_check(struct lp8864_led *led)
+ 	 * Status bit.
+ 	 */
+ 	if (val)
+-		ret = regmap_write(led->regmap, LP8864_SUPPLY_STATUS, val >> 1 | val);
++		ret = regmap_write(priv->regmap, LP8864_SUPPLY_STATUS, val >> 1 | val);
+ 	if (ret)
+ 		goto err;
+ 
+-	ret = regmap_read(led->regmap, LP8864_BOOST_STATUS, &val);
++	ret = regmap_read(priv->regmap, LP8864_BOOST_STATUS, &val);
+ 	if (ret)
+ 		goto err;
+ 
+ 	/* Odd bits are status bits, even bits are clear bits */
+ 	for (i = 0; i < ARRAY_SIZE(lp8864_boost_status_msg); i++)
+ 		if (val & BIT(i * 2 + 1))
+-			dev_warn(&led->client->dev, "%s\n", lp8864_boost_status_msg[i]);
++			dev_warn(&priv->client->dev, "%s\n", lp8864_boost_status_msg[i]);
+ 
+ 	if (val)
+-		ret = regmap_write(led->regmap, LP8864_BOOST_STATUS, val >> 1 | val);
++		ret = regmap_write(priv->regmap, LP8864_BOOST_STATUS, val >> 1 | val);
+ 	if (ret)
+ 		goto err;
+ 
+-	ret = regmap_read(led->regmap, LP8864_LED_STATUS, &val);
++	ret = regmap_read(priv->regmap, LP8864_LED_STATUS, &val);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -128,31 +128,31 @@ static int lp8864_fault_check(struct lp8864_led *led)
+ 	 * Clear already reported faults that maintain their value until device
+ 	 * power-down
+ 	 */
+-	val &= ~led->led_status_mask;
++	val &= ~priv->led_status_mask;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lp8864_led_status_msg); i++)
+ 		if (lp8864_led_status_msg[i] && val & BIT(i))
+-			dev_warn(&led->client->dev, "%s\n", lp8864_led_status_msg[i]);
++			dev_warn(&priv->client->dev, "%s\n", lp8864_led_status_msg[i]);
+ 
+ 	/*
+ 	 * Mark those which maintain their value until device power-down as
+ 	 * "already reported"
+ 	 */
+-	led->led_status_mask |= val & ~LP8864_LED_STATUS_WR_MASK;
++	priv->led_status_mask |= val & ~LP8864_LED_STATUS_WR_MASK;
+ 
+ 	/*
+ 	 * Only bits 14, 12, 10 have to be cleared here, but others are RO,
+ 	 * we don't care what we write to them.
+ 	 */
+ 	if (val & LP8864_LED_STATUS_WR_MASK)
+-		ret = regmap_write(led->regmap, LP8864_LED_STATUS, val >> 1 | val);
++		ret = regmap_write(priv->regmap, LP8864_LED_STATUS, val >> 1 | val);
+ 	if (ret)
+ 		goto err;
+ 
+ 	return 0;
+ 
+ err:
+-	dev_err(&led->client->dev, "Failed to read/clear faults (%pe)\n", ERR_PTR(ret));
++	dev_err(&priv->client->dev, "Failed to read/clear faults (%pe)\n", ERR_PTR(ret));
+ 
+ 	return ret;
+ }
+@@ -160,31 +160,31 @@ static int lp8864_fault_check(struct lp8864_led *led)
+ static int lp8864_brightness_set(struct led_classdev *led_cdev,
+ 				 enum led_brightness brt_val)
+ {
+-	struct lp8864_led *led = container_of(led_cdev, struct lp8864_led, led_dev);
++	struct lp8864 *priv = container_of(led_cdev, struct lp8864, led_dev);
+ 	/* Scale 0..LED_FULL into 16-bit HW brightness */
+ 	unsigned int val = brt_val * 0xffff / LED_FULL;
+ 	int ret;
+ 
+-	ret = lp8864_fault_check(led);
++	ret = lp8864_fault_check(priv);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_write(led->regmap, LP8864_BRT_CONTROL, val);
++	ret = regmap_write(priv->regmap, LP8864_BRT_CONTROL, val);
+ 	if (ret)
+-		dev_err(&led->client->dev, "Failed to write brightness value\n");
++		dev_err(&priv->client->dev, "Failed to write brightness value\n");
+ 
+ 	return ret;
+ }
+ 
+ static enum led_brightness lp8864_brightness_get(struct led_classdev *led_cdev)
+ {
+-	struct lp8864_led *led = container_of(led_cdev, struct lp8864_led, led_dev);
++	struct lp8864 *priv = container_of(led_cdev, struct lp8864, led_dev);
+ 	unsigned int val;
+ 	int ret;
+ 
+-	ret = regmap_read(led->regmap, LP8864_BRT_CONTROL, &val);
++	ret = regmap_read(priv->regmap, LP8864_BRT_CONTROL, &val);
+ 	if (ret) {
+-		dev_err(&led->client->dev, "Failed to read brightness value\n");
++		dev_err(&priv->client->dev, "Failed to read brightness value\n");
+ 		return ret;
+ 	}
+ 
+@@ -208,14 +208,14 @@ static void lp8864_disable_gpio(void *data)
+ static int lp8864_probe(struct i2c_client *client)
+ {
+ 	int ret;
+-	struct lp8864_led *led;
++	struct lp8864 *priv;
+ 	struct device_node *np = dev_of_node(&client->dev);
+ 	struct device_node *child_node;
+ 	struct led_init_data init_data = {};
+ 	struct gpio_desc *enable_gpio;
+ 
+-	led = devm_kzalloc(&client->dev, sizeof(*led), GFP_KERNEL);
+-	if (!led)
++	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
+ 		return -ENOMEM;
+ 
+ 	child_node = of_get_next_available_child(np, NULL);
+@@ -237,24 +237,24 @@ static int lp8864_probe(struct i2c_client *client)
+ 	if (ret)
+ 		return ret;
+ 
+-	led->client = client;
+-	led->led_dev.brightness_set_blocking = lp8864_brightness_set;
+-	led->led_dev.brightness_get = lp8864_brightness_get;
++	priv->client = client;
++	priv->led_dev.brightness_set_blocking = lp8864_brightness_set;
++	priv->led_dev.brightness_get = lp8864_brightness_get;
+ 
+-	led->regmap = devm_regmap_init_i2c(client, &lp8864_regmap_config);
+-	if (IS_ERR(led->regmap))
+-		return dev_err_probe(&client->dev, PTR_ERR(led->regmap),
++	priv->regmap = devm_regmap_init_i2c(client, &lp8864_regmap_config);
++	if (IS_ERR(priv->regmap))
++		return dev_err_probe(&client->dev, PTR_ERR(priv->regmap),
+ 				     "Failed to allocate regmap\n");
+ 
+ 	/* Control brightness by DISPLAY_BRT register */
+-	ret = regmap_update_bits(led->regmap, LP8864_USER_CONFIG1, LP8864_BRT_MODE_MASK,
++	ret = regmap_update_bits(priv->regmap, LP8864_USER_CONFIG1, LP8864_BRT_MODE_MASK,
+ 								   LP8864_BRT_MODE_REG);
+ 	if (ret) {
+-		dev_err(&led->client->dev, "Failed to set brightness control mode\n");
++		dev_err(&priv->client->dev, "Failed to set brightness control mode\n");
+ 		return ret;
+ 	}
+ 
+-	ret = lp8864_fault_check(led);
++	ret = lp8864_fault_check(priv);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -262,7 +262,7 @@ static int lp8864_probe(struct i2c_client *client)
+ 	init_data.devicename = "lp8864";
+ 	init_data.default_label = ":display_cluster";
+ 
+-	ret = devm_led_classdev_register_ext(&client->dev, &led->led_dev, &init_data);
++	ret = devm_led_classdev_register_ext(&client->dev, &priv->led_dev, &init_data);
+ 	if (ret)
+ 		dev_err(&client->dev, "Failed to register LED device (%pe)\n", ERR_PTR(ret));
+ 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.54.0
+
