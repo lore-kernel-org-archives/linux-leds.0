@@ -1,104 +1,104 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716FF212566;
-	Mon, 15 Jun 2026 06:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68CB339708;
+	Mon, 15 Jun 2026 10:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781506211; cv=none; b=R+vXC/3KaqRNRT2MlbOPt7sIc5RV/wC4eEtLJZOMscuXkJilJzqJPaIueRM819SeRCjNj/lxoZf8TfQzs4Ls0kit+nzwi1DoyeCJ0jRDDsGvn3pgjrTbhOm3h3na73Oq5uG+pH9uwRpE+GrsA4YH2NnfLLaVBbfDJwUmWbkOKXg=
+	t=1781520233; cv=none; b=Wjx44uOUfGTiO/ScBM2daqEhP2iMZ4U8YWXHWYI//BwUKdeezdBwW8/d1cmpI7cdd8I69+KW6r79F1tfzm7Cp6IaFRBO+yHw3qks733VD6lwMqRu1CxR3GoIDtB00suL3z0HfyutBPnpeJ3NxKeYjmH64rUIxWRAiApUywcraBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781506211; c=relaxed/simple;
-	bh=iid6G0z1OkZ7c32Iam5YBTzEffqOZ3LF+ETQ7EIzt8g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TVwaAPLqhjhWnUE2EyjZcvZ4LTFuGQ8cZ2eL6Rw1gK5q2pjfXsF2YOoNdLovRwp2r32y7P6wqV+9vY9xAuhmXwa6t39stlTWOjAuZp2meyRYrpKWW9pM8G9ljYgbaS4cFShqg0mv7OhW9vCB5Z7Sl2lvV/pafXKxVR+rh6mcXc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.245.140])
-	by APP-05 (Coremail) with SMTP id zQCowAAXbhGeoC9qS92TEw--.24765S2;
-	Mon, 15 Jun 2026 14:50:06 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: pengpeng@iscas.ac.cn
-Subject: [PATCH] leds: lp55xx: roll back engine sysfs group on failure
-Date: Mon, 15 Jun 2026 14:49:13 +0800
-Message-ID: <20260615064913.58433-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1781520233; c=relaxed/simple;
+	bh=oVfd44ufR+op111XMW1UXh0Dk/Avy9DCMpoW+by1up8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6zf9w9OuO0ugr/TjXFDSh5Y4SxKLIEX/GMLUaJEbqkkssPP0Llz++56hJTFP7yDlJWpfxshz4qShW/zG9shhgGixEb+48gGo4W6AzeDw6lLByT4Vzgxz4JmXXSrJJ33iJlUTmm859M9SfQKzZYUV9B+uecB/UN6xGQxZdlp55A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1wZ4ey-0000JJ-00; Mon, 15 Jun 2026 12:35:16 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id C060CC084D; Mon, 15 Jun 2026 12:33:22 +0200 (CEST)
+Date: Mon, 15 Jun 2026 12:33:22 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Lamparter <chunkeey@googlemail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-wireless@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-sh@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH 05/10] [v2] mips: select legacy gpiolib interfaces where
+ used
+Message-ID: <ai_U8j3uOoIzoYrJ@alpha.franken.de>
+References: <20260520183815.2510387-1-arnd@kernel.org>
+ <20260520183815.2510387-6-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAXbhGeoC9qS92TEw--.24765S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ur4DuF4ruF4DtryUtrWrXwb_yoW8ArW5pF
-	s8GFyYvws5Ja1jq39xAas0va4fKan5trWUGFWxJ3srAr17Jr1fur1rt34jvFW3AFyxCr12
-	vFWrtFyUursxCr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
-	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU089NUU
-	UUU
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260520183815.2510387-6-arnd@kernel.org>
 
-lp55xx_register_sysfs() creates the common engine sysfs group before
-creating the optional chip-specific sysfs group.
+On Wed, May 20, 2026 at 08:38:10PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> A few old machines have not been converted away from the old-style
+> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
+> symbol so the code still works where it is needed but can be left
+> out otherwise.
+> 
+> This is the list of all gpio_request() calls in mips:
+> 
+>   arch/mips/alchemy/devboards/db1000.c:           gpio_request(19, "sd0_cd");
+>   arch/mips/alchemy/devboards/db1000.c:           gpio_request(20, "sd1_cd");
+>   arch/mips/alchemy/devboards/db1200.c:   gpio_request(215, "otg-vbus");
+>   arch/mips/bcm47xx/workarounds.c:        err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
+>   arch/mips/bcm63xx/boards/board_bcm963xx.c:              gpio_request_one(board.ephy_reset_gpio,
+>   arch/mips/txx9/rbtx4927/setup.c:        gpio_request(15, "sio-dtr");
+> 
+> Most of these should be easy enough to change to modern gpio descriptors
+> or remove if they are no longer in use.
+> 
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: no changes. There was no discussion on this, but the patch
+>     has so far not made it into the linux-mips tree, so I'm including
+>     it for completeness.
+> ---
+>  arch/mips/Kconfig         | 5 +++++
+>  arch/mips/alchemy/Kconfig | 1 -
+>  arch/mips/txx9/Kconfig    | 1 +
+>  3 files changed, 6 insertions(+), 1 deletion(-)
 
-If the chip-specific group creation fails, the function returns the
-error directly and leaves the engine group published even though probe
-fails and the chip state will be torn down.
+applied to mips-next
 
-Remove the engine group when the later chip-specific group creation
-fails.
+Thomas.
 
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
----
- drivers/leds/leds-lp55xx-common.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index ea131177de96..501762b02667 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -1090,6 +1090,7 @@ static int lp55xx_register_sysfs(struct lp55xx_chip *chip)
- {
- 	struct device *dev = &chip->cl->dev;
- 	const struct lp55xx_device_config *cfg = chip->cfg;
-+	bool engine_group_created = false;
- 	int ret;
- 
- 	if (!cfg->run_engine || !cfg->firmware_cb)
-@@ -1098,10 +1099,17 @@ static int lp55xx_register_sysfs(struct lp55xx_chip *chip)
- 	ret = sysfs_create_group(&dev->kobj, &lp55xx_engine_attr_group);
- 	if (ret)
- 		return ret;
-+	engine_group_created = true;
- 
- dev_specific_attrs:
--	return cfg->dev_attr_group ?
--		sysfs_create_group(&dev->kobj, cfg->dev_attr_group) : 0;
-+	if (!cfg->dev_attr_group)
-+		return 0;
-+
-+	ret = sysfs_create_group(&dev->kobj, cfg->dev_attr_group);
-+	if (ret && engine_group_created)
-+		sysfs_remove_group(&dev->kobj, &lp55xx_engine_attr_group);
-+
-+	return ret;
- }
- 
- static void lp55xx_unregister_sysfs(struct lp55xx_chip *chip)
 -- 
-2.50.1 (Apple Git-155)
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
