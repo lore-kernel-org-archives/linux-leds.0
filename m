@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14754326D55;
-	Mon, 29 Jun 2026 19:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACDF326D55;
+	Mon, 29 Jun 2026 19:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782763084; cv=none; b=mnTx6B3/uN85SBRkhO07QMBCgUuZ7QFOq3LZosd/rdLVuvbdhCOW6qi/60IEutMuY2aMS7+nJdjUoIZqidjXKvQVmplOBn3nuJjBrb0QjpPMPC3Cwf26xRD75Lgg4HDDgZmCoY69XXvSdq9YlrrdHwt3ffoB5RFGjLY31Nk0L98=
+	t=1782763109; cv=none; b=V7+9Q2bN8QusJDpy1YotXmr4IDpRibo6fT6Liq6VGA4KSc0VUgs0yax1m7Wlmdi4JL/KDkMjTG8BjWQ9uC5B5Yt9bZ64CbU5uHXzk4dyPgBKytaGDxZkERWZ+1iXCC6OoTOWnZA4g2AR6nJkkSa2lPcRwqsv2v6Jneog8nsfuio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782763084; c=relaxed/simple;
-	bh=6fczMAklCviWZVOnDk8Mtw/rbsJeuDdHxP1iw1nRQgU=;
+	s=arc-20240116; t=1782763109; c=relaxed/simple;
+	bh=Pr/4p417Yk+ccHUFysFdvgfkeFU/iwtNQqn2sEz9GwI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=nQY+KfpOsHCsmalyGIY8FmIL5DNBdAynCcc0jhhhry7AGIyZ1GfxqL2f5dZeNur0cb4zvsovy3FKrSmI44y/WB8z59HQJLku1InkBEsalmsUvnR/73EYagAOY+xN5ZfSUV8rDLrV1L8IkXBW1cy9heMTTZL4lIMOwHNcp+TiLBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6ZuOkow; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=uzIyzGZoFcRSxl06O/FdC3norUr2KhmNFmtnjlxwC55sWcQ3rzHV3xt9Nrfin16uheMmNg3XlCpz0E1aR0+cM6/dVo9qKKHJYa9SQtvn1AM6QAm2TJMdE2x6ObS+f2Z8v2BUvn4TfuUFZFmAtdtQhrWYbVkT1+RSh0db02VbfWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+xyyRKZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6ZuOkow"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543081F000E9;
-	Mon, 29 Jun 2026 19:58:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+xyyRKZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 308D81F000E9;
+	Mon, 29 Jun 2026 19:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782763082;
-	bh=NeY9lEdUmnL1ZoI/ZqVxJ7I0pyO24/jJQ1/p15Vo/eY=;
+	s=k20260515; t=1782763108;
+	bh=iI9do+iageJ9x8NdPf8FlGva8q2GnSSKd09PZjSMCWI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=W6ZuOkowaqwm+dyIJsxBJF+QvkB6pL5sY0HRWTZ4Bt50sleuRA/zXARwQ9xaL6wop
-	 ACmn/BDioqQm4PXLI6ZoNM/OYK7nXC/kmPYKwwIpYBBTlnZuRr6wuzOiPxa/ei4WbZ
-	 8UQyHLqSK4D+zmLmMeYB14cwCQiLxs1gCURg0+9gXPcybCfLRo7bHZw5sRtWkl49eU
-	 KZtYuhHMLchtgk2BpKvFf4p19vxa+4XHPwR9yZpZte/TGJJ5LinTHAQ5ih7o2WyrFJ
-	 RYjUf1H7e7INI/QTsXVG2Fyz85QPjZJ189A4cNWSktGZ0G09XEywGFGrop4X9wQb40
-	 oyFKPGcm1ExXQ==
+	b=X+xyyRKZIRAZSMKe7OvrxaZjuZIbWejGrR3eHOZJPPROtNPFSnjSByo83WtUIEJW6
+	 OiCV8GXRYWK47CQCZICZ8/mLb7p00scwXBdzLdQbO65uIVMQ8bBR/Bb7u0xyrtS7cS
+	 UloXyviSIZyhoakBchYfPya+EtEkZDH9W/Poq5jQf0LqqwiA0mLNTebAU2DFIhUBu2
+	 L3qohVj4RNmkxkOi45e++bNr5/tGodixTs1vpDsdK1eV9LMjpNENC7/YE62VWpoPT8
+	 EUEbb/EFvXtWfqGQkmgqHn5xnlw0jcXqUQpP/1GL7avESRDGLwLasH3ujn5sK6w5SZ
+	 4CmWhSiY5yoKQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: leds: nxp,pca963x: add multicolor LED
- support
+Subject: Re: [PATCH 3/3] arm64: dts: monaco-arduino-monza: microcontroller
+ LEDs
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Loic Poulain" <loic.poulain@oss.qualcomm.com>
-Cc: lee@kernel.org, robh@kernel.org, conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260629-monza-leds-v1-1-0cf7c0a7dc14@oss.qualcomm.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
+In-Reply-To: <20260629-monza-leds-v1-3-0cf7c0a7dc14@oss.qualcomm.com>
 References: <20260629-monza-leds-v1-0-0cf7c0a7dc14@oss.qualcomm.com>
- <20260629-monza-leds-v1-1-0cf7c0a7dc14@oss.qualcomm.com>
+ <20260629-monza-leds-v1-3-0cf7c0a7dc14@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 29 Jun 2026 19:58:01 +0000
-Message-Id: <20260629195802.543081F000E9@smtp.kernel.org>
+Date: Mon, 29 Jun 2026 19:58:27 +0000
+Message-Id: <20260629195828.308D81F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,54 +47,61 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] Schema validation bypass for nested physical LED channels inside mu=
-lti-led nodes.
+- [Low] Device tree unit addresses for `led@10` and `led@11` are incorrectl=
+y formatted in decimal instead of hexadecimal.
 --
 
-commit c073ead1ec3207da7ebd98641e041ef2bd14a16a
+commit 21dc3bc44056192e48843a18f3858786db53ea22
 Author: Loic Poulain <loic.poulain@oss.qualcomm.com>
 
-dt-bindings: leds: nxp,pca963x: add multicolor LED support
+arm64: dts: monaco-arduino-monza: microcontroller LEDs
 
-This commit adds support for grouping individual PCA963x channels into a
-multicolor LED by introducing a multi-led@N node pattern. It follows the
-convention established by other multicolor LED drivers.
+This commit adds a led controller compatible with PCA9635 to the Monaco
+Arduino Monza board. It configures four RGB LEDs controlled via channels
+0-2, 3-5, 6-8, and 9-11.
 
-> diff --git a/Documentation/devicetree/bindings/leds/nxp,pca963x.yaml b/Do=
-cumentation/devicetree/bindings/leds/nxp,pca963x.yaml
-> index 938d0e48fe51b..09ec140c50929 100644
-> --- a/Documentation/devicetree/bindings/leds/nxp,pca963x.yaml
-> +++ b/Documentation/devicetree/bindings/leds/nxp,pca963x.yaml
+> diff --git a/arch/arm64/boot/dts/qcom/monaco-arduino-monza.dts b/arch/arm=
+64/boot/dts/qcom/monaco-arduino-monza.dts
+> index 379b796f261f4..71685e54a3781 100644
+> --- a/arch/arm64/boot/dts/qcom/monaco-arduino-monza.dts
+> +++ b/arch/arm64/boot/dts/qcom/monaco-arduino-monza.dts
 
 [ ... ]
 
-> @@ -84,13 +117,13 @@ allOf:
->                - nxp,pca9633
->      then:
->        patternProperties:
-> -        "^led@[0-9a-f]+$":
-> +        "^.*led@[0-9a-f]+$":
+> +		multi-led@3 {
+> +			reg =3D <3>;
+> +			label =3D "stm-led-4";
+> +			color =3D <LED_COLOR_ID_RGB>;
+> +			function =3D LED_FUNCTION_STATUS;
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			led@9 {
+> +				reg =3D <9>;
+> +				color =3D <LED_COLOR_ID_RED>;
+> +			};
+> +
+> +			led@10 {
+> +				reg =3D <10>;
+> +				color =3D <LED_COLOR_ID_GREEN>;
+> +			};
+> +
+> +			led@11 {
 
 [Severity: Low]
-Does this pattern property correctly enforce the maximum limit on nested LED
-channels?
+This isn't a functional bug, but should the unit addresses for led@10 and l=
+ed@11
+be formatted as lowercase hexadecimal (e.g. led@a and led@b) to match their=
+ reg
+properties and avoid dtc unit_address_format warnings?
 
-Since JSON schema patternProperties evaluate at the current object level and
-do not recurse, wouldn't changing this regex only apply the maximum reg
-constraint to the multi-led node itself, completely bypassing the limit
-for the nested physical hardware channels?
-
->            properties:
->              reg:
->                maximum: 3
->      else:
->        patternProperties:
-> -        "^led@[0-9a-f]+$":
-> +        "^.*led@[0-9a-f]+$":
->            properties:
->              reg:
->                maximum: 7
+> +				reg =3D <11>;
+> +				color =3D <LED_COLOR_ID_BLUE>;
+> +			};
+> +		};
+> +	};
+> +};
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260629-monza-leds=
--v1-0-0cf7c0a7dc14@oss.qualcomm.com?part=3D1
+-v1-0-0cf7c0a7dc14@oss.qualcomm.com?part=3D3
