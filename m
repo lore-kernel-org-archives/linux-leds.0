@@ -1,120 +1,106 @@
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45C43BFE31;
-	Mon, 29 Jun 2026 15:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A5439003
+	for <linux-leds@vger.kernel.org>; Mon, 29 Jun 2026 16:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782748733; cv=none; b=h35ufDrJ4ls053ZBBhSsE2AS37A8B2W7WkxeXXfes0LM+FznY1C6lV+pkK0yQlgPGpTrF+lGTUTYZmXkjuqSPGaV35zbXHnhDzZaGMpgUjNYQKp9oAhFpoNLO2lRn2bSZ1fomjmuSzZz+kyzEb9oJOyD0k+c+mIa0+x9Vt/X618=
+	t=1782749076; cv=none; b=orlULQ4GIXC2oQZPE1trwGdMGGxj5kk337q2fdlRlwJoSCYTeXiKKVcotIX5fsUXgbnUyafi+rzzlMnzQ3PBH2Cg37r3huJ0oV+Zdl0n2nC1GsHbsKRGOOK/Qjp3T/lZnGdpJTndLwUDcxergi9Myn/gVduNr+mhKGPGd3nMEyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782748733; c=relaxed/simple;
-	bh=d5BwqC0cMGhB/yHU5TajGc8g/0DMChTci91aN6c+LVc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RwbRjv9qfWPU5JgKgQ8EJLh8MRUN28KkX5MWd1cbObRoJfft6vVb3wiOg3nCyoSsU6RnfhEXz6QV13FHRrrEdbaB5JRZYUQN3eQ+2/V2ACmDLRF7SWGNZVx6VHJhK5kMvwA8Oa5LH1dtavARZG2Igcj381zIRoRJ6dXtCPvBpnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YhBpqC4Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=i7aSpo/X; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YhBpqC4Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="i7aSpo/X"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B96D97A014D;
-	Mon, 29 Jun 2026 11:58:50 -0400 (EDT)
-Received: from phl-imap-05 ([10.202.2.95])
-  by phl-compute-04.internal (MEProxy); Mon, 29 Jun 2026 11:58:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1782748730;
-	 x=1782835130; bh=b4ZTqrFakiv/4uAjstRpcZ9hDrTSibG0rs7DMVqbzHE=; b=
-	YhBpqC4Ycwv0BCfPTE6bP2vW2pgp1KwJLZkkj/g1r5whxjlzi7CaFfL1VVCcSjhs
-	lkgt4iNN9jFeYbrBD1uORU0eSDk+K3GBnWUK7ZsB8TSwegdpXWQQXD58lrbmb/2C
-	0aPJqpsnnhh2qwf8+5KOFKCSgUJ9tJAMTIiNfSxpDTImVaxtM98iVj6v8bUObjk6
-	R/A+z5KAwAmc+TXoLNK2c2z0Ii+WT2ML4/q5zGPAX37VTfZY/UF/anG2mdJh9wLG
-	dK3zvD5L2q367VO6Fk00k2o6FGFeiIyVxTG+p+F2LjqtMQq89lv6+FWXKpJWKK2n
-	5Y9QOYzQI2MC1tXQpZgvlg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1782748730; x=
-	1782835130; bh=b4ZTqrFakiv/4uAjstRpcZ9hDrTSibG0rs7DMVqbzHE=; b=i
-	7aSpo/XIOC/s549pcAQ+Mg/0UMuanu87KkF2Rh2KRIugHXtPitJEuVnwnm6S5bkg
-	LSagr9tpn3EUbg1sA6TGE9B6tDYGftJ929siGZJsvfi7xeQwg42w8wi2iRY8nF+y
-	4B7oFg3ZZCLs3dZz7D16XO2rBlx0R0Z/D9HEMoFu/DEnUbyMdG4r7NfIaY+/VG4i
-	o0UmLKM1vbFQMZb/YjklvbgaNbUIRYaM7z+yRYRYmwObXuyC0zQoIWN0Q3/d82xb
-	eCXoXSc4k4YoLpeoxCe30x8YU9qiHBeYLDoNlSSQAi7PnBwWFcXg/zANqWKXne9x
-	2YrTGENYk9CMILmbteDKw==
-X-ME-Sender: <xms:OZZCaslqOwGn7tmNE2fDzKb_HBbM8HceKlzJ6N-Q9QRBUrZ_4OvQ5w>
-    <xme:OZZCamrhF4MpsMCsSFt49-0i4PcKKTG6CW2hIvuYfZ_UuXucYqv_Zqlv5kY2mVKnL
-    JsqI3q7z1vPp3d1s3pEfTG0ACXSr-ehwZ8SyPONe5z9tDDyBGdR3ds>
-X-ME-Proxy-Cause: dmFkZTGsmgE4f0lFyTBd5OI1eu1Tfr2ENDvtcElZuiNEeb0W/WVe3ZP70G3sRT/AKzNSvd
-    JfRrpWS2/5PlFR451eBtVoH/c2Ca5vnmEoeDw88tUXCxneyhYlTESivrVyDn0Ivw6NnIA7
-    VuMpL5vWOdb67CLJ+dTybHsJTlherkrGoMhnvdMLXMkRRwHKI3UIhkaLoquKTlRjJQrnJ/
-    cPKSfuQp2xabPtdvC2VX8V10gXQgIaMfbvkPkD4oErRKWSCZKbrYriA9BVRTURF6OjVKqY
-    g8mz9xtkwpXBHglKkbafISDO55WPfRXpwvOpzTL+LZKaC7TFfzPDNwsmv7+EPgLxL0fcgX
-    p6pYsTe23/jdndpr654Zu5310s3MwrpWBgkzO3tIZh0lT5VUpXNVDuzC7NxE0PkaKZgXy3
-    AElLvJ8plrd4dCJxsFhnyr77uJ9Vg1TVfrmTpqZKEL9Mlc/yjJs2o9rijV0V9GykAHEn2V
-    SHCNQJhz7uxirmWH7ihCovpnxOmtoOM5VmJTw76YsW4/fWMfdZ3CJQADYH5Xcf8EJ+wNkS
-    l5f8CHYJnuPGN0U4KQwj0f++NV+JESIvPhBPiPsnpMczdeT89tZ53mDcuyOY5Q5IbWGwz/
-    sXwtubN3E7VpvpEfj1VpoXCl+64A4DKnpR4ObGaHcJo9IGqduSWiBTXp+8tw
-X-ME-Proxy: <xmx:OZZCavVfHNA5Oye-HHsuz-FLKY-V16aJUkKZYuTa-5ZGKKS8mi-jPA>
-    <xmx:OZZCaoDAkyEbEddIOAqMjAkaz_vkQHlMuWPRLP9XS-fTALvoXPqxUw>
-    <xmx:OZZCag06mlUsKX9zdZpz6zvZNB2ytiy39i3XspwRmWEYHKuZbjTrBw>
-    <xmx:OZZCaoS8BuPj9613ru8hpq0TOUc6NfRthVBun9h51n6Jg9GNt_kJ3w>
-    <xmx:OpZCaiiBngGffy-sm-4IQ-WglLlTYAMcBJ5CVlJTzb-G7Yo587qn7dgk>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BC7D5182007E; Mon, 29 Jun 2026 11:58:49 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1782749076; c=relaxed/simple;
+	bh=LHZ+CtSrs1sFgqxg1SDgUv6SV2Q72AbvoN/75du65As=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bO01ofj6rueH2FFMla9bBjLOC7pOrlmlMZKe5xA7Ncf3dh7YiLZoWqykqJ/93Hv9uUxpuE5lz/jSwqHAy160iiQOfldOJI4rUUWdbFiZvZLKCh4aA5GdpLOAEWPX2JueM6bfjqxv9Q+jROuytyiZzo+bcoAfDQKATGS3CXHNZ3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-59d4aa96ef2so2779910e0c.1
+        for <linux-leds@vger.kernel.org>; Mon, 29 Jun 2026 09:04:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782749073; x=1783353873;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sEWuyLm9nvyhq9LS7vVK2FWNUi6758jMrQo6mncWdtU=;
+        b=F/qA0oNRhBmm5V9Ca96v6jL7OfQq8q+AxZ7JMibMPPbAXp4EDG4hDj8M0yQWKrBQBF
+         jEivdlktmcPWR7vILhcL4HF5FpQEidYhraeQ+C1lA7J94n6/aJsFctQbRGhJobJ2VD7Q
+         P9+Gq99/yOSRoWELnljhrZ2LEpxY9O2Lyg4oe8lry13fi6jgFIMTfkvb07VTKaeeUIYv
+         KQ3DmsDTXXALqZBir+DDOyfw8K3xThmSDX5JqpaIreB9RUSoLyGtiyOCTVWe8jfNFNP7
+         8y3Fe+Vb1EzGqBwT0+srEB4CBUIJHfoEmh3h8WK+tnG/9jZCfoxS9a3afJi3+bLeTlNi
+         jY/w==
+X-Forwarded-Encrypted: i=1; AHgh+RpmXKoVCDRtml66CuOvU7+XTikE5qmcp/8M2dMMEO47eL6tlv2BwCwjMyeTvsYpge16le7qgixG/IIM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxym+m4Z2C4M+/rybn5o8y/VCrT1tlA+DH12dS4m6ybNSOJZpkR
+	NoycYX3auvw8Tpvxbr2mBlV4oOm7ZBKQV0PcWNvxI5IqW+wGZFbB8mbJROSVJrPzTM8=
+X-Gm-Gg: AfdE7cmYzDnxBlMrmX+sqktv2ZW5TwsvkYl//cYqxtZEuGbnNE9XV+0jSGBTPEsX1Xy
+	qLdLhgsKYxNY67y0bBRVDki/qEXqrVnxN//Mhf/kRX0ltzdglJID+LHU3FxOnEDJU8yghF6vxx+
+	XpHd8HRt+b0hb7vL+ezgBLLUPIQfeYdaQJ5BF7lcXTZ12u2n2KDbkWZSqZW/UYXmp5fP7Wl0E78
+	CjfQHInGF9MMtOlFvVckzjSnbGcYhwE12o/5SAOYnZbgpgLo/K7xRUpMmkMxzvOIoyrvGihXj4i
+	j5B/FuQ7TY2wwyJqPL0s6xaZzNh/avu/TBtLOtKim3XvQOahjOA9VnDYktFEGOoQbymG5PPdcSx
+	jeW0RV67EXgRFrlXyKfMCtMMmWuHrTuqT4wOpSehs2zSRusZmyVYKanlKK6PSWQnu+AAhwAnZZw
+	uT6IRM7uM5Ivn3qhsMkO+QuDzU4B6kHyMYmSMZdqYjiBRLkmvzsQ==
+X-Received: by 2002:a05:6122:3112:b0:59e:f988:51e with SMTP id 71dfb90a1353d-5bdbec3481fmr263957e0c.5.1782749072749;
+        Mon, 29 Jun 2026 09:04:32 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5bd78c3248esm5938201e0c.0.2026.06.29.09.04.30
+        for <linux-leds@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jun 2026 09:04:30 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-96358d0a024so3392473241.3
+        for <linux-leds@vger.kernel.org>; Mon, 29 Jun 2026 09:04:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpI1hue5WVTcp1BKqaZNysfXkv7RRwduQiOVrg6a9HNuDXEVLa4KzHr77Nlh8HezOmZvuMzlzDGg7vT@vger.kernel.org
+X-Received: by 2002:a05:6102:148a:b0:738:ff1b:940 with SMTP id
+ ada2fe7eead31-73a365e2846mr277383137.4.1782749070424; Mon, 29 Jun 2026
+ 09:04:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Adgpzz6p-dFk
-Date: Mon, 29 Jun 2026 17:58:29 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Thomas Gleixner" <tglx@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, "Linus Walleij" <linusw@kernel.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Lee Jones" <lee@kernel.org>,
- "Pavel Machek" <pavel@kernel.org>, linux-sh@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org,
- "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Message-Id: <8d5e4ad6-9e1e-43d1-b555-729bbede4a77@app.fastmail.com>
-In-Reply-To: <akKKxHB6RMymG70Z@ashevche-desk.local>
-References: <20260629130329.1291953-1-arnd@kernel.org>
- <20260629130329.1291953-6-arnd@kernel.org>
- <akKKxHB6RMymG70Z@ashevche-desk.local>
-Subject: Re: [PATCH 5/6] [v5] leds: gpio: make legacy gpiolib interface optional
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20260629130329.1291953-1-arnd@kernel.org> <20260629130329.1291953-7-arnd@kernel.org>
+In-Reply-To: <20260629130329.1291953-7-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Jun 2026 18:04:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXjJRCW2v=ocjaG1xv2Bhhn1fcgL1YKsV3+MWbhboFtpw@mail.gmail.com>
+X-Gm-Features: AVVi8CeLP4wAatdqRaN_LpUF4e5DDi2Drj76tc85gOykWJhBx1i_jZadj7vLGOk
+Message-ID: <CAMuHMdXjJRCW2v=ocjaG1xv2Bhhn1fcgL1YKsV3+MWbhboFtpw@mail.gmail.com>
+Subject: Re: [PATCH 6/6] [v5] gpiolib: turn off legacy interface by default
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Thomas Gleixner <tglx@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 29, 2026, at 17:09, Andy Shevchenko wrote:
-> On Mon, Jun 29, 2026 at 03:03:28PM +0200, Arnd Bergmann wrote:
+On Mon, 29 Jun 2026 at 15:18, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
->>  	gpiod = devm_gpiod_get_index_optional(dev, NULL, idx, GPIOD_OUT_LOW);
->> -	if (IS_ERR(gpiod))
->> -		return gpiod;
+> All users of the legacy interface now select CONFIG_GPIOLIB_LEGACY,
+> so it can be turned off by default and only get built on platforms
+> that still have one unconverted driver.
 >
-> We can leave these and rather have
+> Allow turning it on manually for compile testing, in order to keep
+> the build coverage of the legacy drivers in allmodconfig and
+> randconfig.
 >
-> 	gpiod_set_consumer_name(gpiod, template->name);
-> 	return gpiod;
->
-> than introduce irregular pattern.
->
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v5: added patch, now that we are getting closer to completing
+>     the series
 
-Ok, changed now.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-      Arnd
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
