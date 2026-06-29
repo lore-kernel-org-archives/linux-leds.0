@@ -1,43 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC4E36EAA7;
-	Mon, 29 Jun 2026 13:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A28B1ACEDE;
+	Mon, 29 Jun 2026 13:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782739507; cv=none; b=cg6Y0mV4Zujb+zB6djwAvDmTtyA9roqUqGplY4+f/qnoxSwKUGbBUjVOPXMF5RlzpZy3RT7rT3AEjbbFsfINmGFkI+N1pqdkDafPWrLzqrKK6U+4nRONPhVr85k27ONRkEh22C0qL3HFB7OTh7t0Z7BHW5NrmANnU9G9uVis0MI=
+	t=1782739923; cv=none; b=skbBwqzpDU1tsjX/pVkg7EYYb7A521QH3Ioaq1zPQ6j1LORgNxTaO0yGSFBr9JIZAV/stHopShzCOKO+31ml9BiZpNyMd5JDfSzdpmyhZuZDDU/heBuiSIpIJhqGhGxRLM5O4sxQbLcKsy87FclU2ICiPALWFk0vx6eIxek00+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782739507; c=relaxed/simple;
-	bh=1hmK4kR6HF7Gta7tXwU42CkYKLd5g0ySBKIpa0699d4=;
+	s=arc-20240116; t=1782739923; c=relaxed/simple;
+	bh=UkwcG2uO6Own9BFxIH8ER5JD24SKVvOinkrPfwNTNKo=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=aLo7SpJdozBlxbX6WRloA7JT0MEp7fQ1BIT+4QCXWCO+0fJTTOi5uLTVF3XH1TVXz4x8RTZCQegCRGLNuR4TslRX4BZho1a6pUwZmLUSnAuDc5atvFYbjJB9sQhLDoFTea1JLYYGBOCnbumLs+DzbN9LCVEnbDlGnTqTvtgetPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqVlWE1j; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=N6V+8qZe3GBUuPUHL8Yg3iufO7K/y4nRSbe5tKVOSCoilOih0jAVrfCYfDg4zZfVyWXwzq5bmRFw4iOiASiq0X5ijoQDvZDgZ5djIRc8YEUzA4wEvna7guuyC5oSvybWfvVSakaZtE4KVWx89W0voDSmn7BMrK00s/0zDxAzcBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFVMDnom; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqVlWE1j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A53EB1F000E9;
-	Mon, 29 Jun 2026 13:25:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFVMDnom"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE78E1F000E9;
+	Mon, 29 Jun 2026 13:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782739506;
-	bh=sgRsY4zYtIbLv8rc2NSjx7kjzejcvcpW4xrjI6sFxYQ=;
+	s=k20260515; t=1782739922;
+	bh=vdikD+4Kh+7Ra8FylUThHN8QZevrrJLOLL6HRk/crpA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=aqVlWE1jmO2Gfb0adrc11FvVfgpThXO75fChvAIafjVEl5O4gqNLxCU5ZfrugpfQW
-	 TN+K71uwsmzKOPQB23HjhJYZkS3ftqyLQD2Pg4B9F6qVow5tlE69lDv0TKMGUC+C9i
-	 ilRoxjdogoYbHaxrkrXlCMBagbHoiXZPuXLBsR5PtUCApHqVhzjnhpMzyAYap/xbFw
-	 Niz+KQibNssVK7KQAZq2n7xDg6QWmXEPYh+D+YlQPCGD5W9p8KgclHxa1mKhYNhmHX
-	 A8uNTJsaOrXkLAP8burFvOm5rZ3vo8e7YOBgpc9wOrZMFOzfZ/vd1VZ8E5pWrclBMa
-	 kf3AQEVVPSjwQ==
+	b=QFVMDnomhkpXk2EqW6RP+MULPcvSVUz/kAuw4wluIa3NOxVw7xEl+RhW6m7ubc79+
+	 dGLAnB4CeY6jkckSW3UvToy8c2dwl5ibeG/qvmLX1RDa7jOWVLAW9sMALJ8uTKjn97
+	 gcCXhU23pA4oBktVg19/i6hWLt6A6dXpKVD+LReX+GLsnE8GV/ZLCdmx2G1wzXExKN
+	 Z+oDtE1vRjOivPraHipsY5mkQLe2RDXnFiXT35l1Srd1r4XT1B+D2S/blYFeMpxz4z
+	 HjqxW/92UJ4zA2oHYjEVWQZNthhLX14KA2U7Pumd7RVsGwK09SkDo7ODiOKJh5YbRU
+	 Q3OS9d8mque5w==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/6] [v5] x86/olpc: select GPIOLIB_LEGACY
+Subject: Re: [PATCH 4/6] [v5] Input: gpio-keys: make legacy gpiolib optional
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Arnd Bergmann" <arnd@kernel.org>
-Cc: linux-input@vger.kernel.org, lee@kernel.org, dmitry.torokhov@gmail.com, linux-leds@vger.kernel.org
-In-Reply-To: <20260629130329.1291953-3-arnd@kernel.org>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org, linux-input@vger.kernel.org, dmitry.torokhov@gmail.com
+In-Reply-To: <20260629130329.1291953-5-arnd@kernel.org>
 References: <20260629130329.1291953-1-arnd@kernel.org>
- <20260629130329.1291953-3-arnd@kernel.org>
+ <20260629130329.1291953-5-arnd@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 29 Jun 2026 13:25:05 +0000
-Message-Id: <20260629132505.A53EB1F000E9@smtp.kernel.org>
+Date: Mon, 29 Jun 2026 13:32:01 +0000
+Message-Id: <20260629133201.DE78E1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,60 +46,58 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] The patch introduces `#include <linux/gpio/legacy.h>` but this file=
- does not exist in the tree, causing a fatal compiler error.
+- [High] The target patch breaks button hold and debounce functionality for=
+ legacy boards that specify both a GPIO and an IRQ in their platform data.
 --
 
-commit 0da87dc4a65872189dc6e83e56582e1870d842f6
+commit 7c2e3c482d0d5858bfbdee73da72e2a7bcba0509
 Author: Arnd Bergmann <arnd@arndb.de>
 
-x86/olpc: select GPIOLIB_LEGACY
+Input: gpio-keys: make legacy gpiolib optional
 
-This commit selects CONFIG_GPIOLIB_LEGACY for the OLPC platform to resolve
-implicit declaration warnings for legacy GPIO functions. It also updates
-dependencies for the cs5535audio driver to require the legacy GPIO library.
+This commit makes the legacy gpiolib interfaces optional in the gpio-keys
+and gpio-keys-polled drivers by enclosing them in an #ifdef block. It also
+modifies the gpio-keys driver to ignore the GPIO number if an IRQ is passed
+to keep the Rohm PMIC drivers working.
 
-[ ... ]
+Link: https://lore.kernel.org/all/b3c94552-c104-42e3-be15-7e8362e8039e@gmai=
+l.com/
+Link: https://lore.kernel.org/all/afJXG4_rtaj3l2Dk@google.com/
+Link: https://lore.kernel.org/all/ajQ-CtU131FAJ9ES@google.com/
 
-> diff --git a/arch/x86/platform/olpc/olpc-xo1-sci.c b/arch/x86/platform/ol=
-pc/olpc-xo1-sci.c
-> index 30751b42d54ef..a5b47960ba32e 100644
-> --- a/arch/x86/platform/olpc/olpc-xo1-sci.c
-> +++ b/arch/x86/platform/olpc/olpc-xo1-sci.c
-> @@ -9,7 +9,7 @@
-> =20
->  #include <linux/cs5535.h>
->  #include <linux/device.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/legacy.h>
-
-[Severity: Low]
-Does this cause a build failure when setup_ec_sci() and other functions in
-this file are compiled? It appears include/linux/gpio/legacy.h does not exi=
-st
-in the tree, and the legacy GPIO APIs might still be declared directly in
-include/linux/gpio.h.
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/=
+gpio_keys.c
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
 
 [ ... ]
 
-> diff --git a/sound/pci/cs5535audio/cs5535audio_olpc.c b/sound/pci/cs5535a=
-udio/cs5535audio_olpc.c
-> index 122170a410d9e..cfdcc5bf4341e 100644
-> --- a/sound/pci/cs5535audio/cs5535audio_olpc.c
-> +++ b/sound/pci/cs5535audio/cs5535audio_olpc.c
-> @@ -9,7 +9,7 @@
->  #include <sound/info.h>
->  #include <sound/control.h>
->  #include <sound/ac97_codec.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/legacy.h>
+> @@ -528,7 +528,8 @@ static int gpio_keys_setup_key(struct platform_device=
+ *pdev,
+>  			 */
+>  			bdata->gpiod =3D NULL;
+>  		}
+> -	} else if (gpio_is_valid(button->gpio)) {
+> +#ifdef CONFIG_GPIOLIB_LEGACY
+> +	} else if (!button->irq && gpio_is_valid(button->gpio)) {
 
-[Severity: Low]
-Could this missing include file similarly break the compilation of
-olpc_analog_input() in the sound driver?
+[Severity: High]
+Does this skip requesting the legacy GPIO descriptor if an IRQ is provided,
+breaking platforms that explicitly provide both?
+
+Legacy boards (like assabet, collie, or h3xxx) use both a GPIO and an IRQ
+to allow reading the button state alongside a custom IRQ trigger.
+
+By skipping the GPIO setup when an IRQ is provided, bdata->gpiod remains
+NULL. The driver then falls back to its IRQ-only mode where it can no
+longer read the physical state of the GPIO, instead simulating an immediate
+key press and release via a timer.
+
+Could this break button hold and debounce functionality for these legacy
+machines?
 
 [ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260629130329.1291=
-953-1-arnd@kernel.org?part=3D2
+953-1-arnd@kernel.org?part=3D4
