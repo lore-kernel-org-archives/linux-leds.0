@@ -1,68 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043A4348C53;
-	Thu,  2 Jul 2026 16:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783009907; cv=none; b=qbv63i2PZZTX/MAD56B7/Q61USqQZkZlb6Ci+zruQJHzMicrJbFSgMOcmSqEoA0d1hVXqXhVrxq1kgpBz/Z00PpylkZFYdkb3LNIpSA3caWgDOY8UoIBMpIFZIkF149ZqeKKuFiJEU1kuDue2Nh4R8lDZ/AJ8q7E9J/9dO+PDik=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783009907; c=relaxed/simple;
-	bh=6p9oJw5MFDn+kSUamq/zaTSh6Mx38EjNSlPb/ngjyHw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fNmEWJF+vTdwzBUox2dpXb++YQfsKLQVGN7ZTQ7mVP7OPcwvqMJdQL8PC8j2Qx2stwBB9gRLdWYmd+3QONyeI6ncCeIMuLfjEE7vQXlc9Dfx68wf+fHSyMe+LyjdgkYiZ4LoZRnkHt/zMgLXT7zy/zAn2OnWlKLEDOlKx7d8E4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpMAF901; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50672360EF0
+	for <linux-leds@vger.kernel.org>; Thu,  2 Jul 2026 17:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783012990; cv=pass; b=nzCtqLBU2ELPUvGW9LprdDlyyIybXE6xgEmeAcj/x+QRJ5k0l8bEBq7G0BJGu/WK3VJ3Yst2jYJWgffOXkVSwsnHkyDwJ6wTIOh4aYsL2Dfj0Esl4PM8gWaFn/pEcLDyQR9h5MB4ACoXxPllNk7mQCQ6yj0gqG8hNKTTvufHpmo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783012990; c=relaxed/simple;
+	bh=3LAd77ag775ZkK3gX8tuU5QMN4OfcfzmGMwVCEUf2CI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oAg1Y09I5jOjHQjw9ApfdP/pRwhgd18A3kuuc9lMQ30AZMhs5xpsF26pI1QM767flTfIUFWoYkfUJT53fDXuQUrvJCkBRVdqzapDxEltaUCd/onNovTz7dFM8DoA8Hsjn8LUYTZvQ0le4tP2nPx51Enc5OWT0mmBJVLCGbAVDgc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=tKWsGpzw; arc=pass smtp.client-ip=74.125.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpMAF901"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B82AB1F000E9;
-	Thu,  2 Jul 2026 16:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783009906;
-	bh=RzzfmIogOoChfCuB1Ba9o2vBi864tKCQNnuaaTtA2d0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=FpMAF901KOCXsLd9Peup0g2nFxlws6YELsM6AeOcDUdHrNZTxBbYwbFPemRHFOrPm
-	 WeoMU7b24n0MLm0SN62gtXKt6cOaVz1trQF1m6P6xawmpvqbHMtuekkcUE2BKRN8oy
-	 iNtPaMFUFktzbSTbZSgrhOaVguNpvX0/clrZNEZoRJ0UeEkYhXB6HmPh5Q6K/0Tn2w
-	 dlbUR0TG0l/hGuupWcYnV6+Ze6hQtoQIOx0dbDSduHKInlWJ5HkcVqY8dh6h1xsZp8
-	 1SO7zYM2TcWCJjyBxxdwyQ66uyj2W11jhZ3BZHot3XYroQmTM1PHfj2EoYrca9LoZL
-	 U6evvTzS2aACA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fbdev@vger.kernel.org, KancyJoe <kancy2333@outlook.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260529-topic-sm8650-ayaneo-pocket-s2-sy7758-v5-0-03aacd49747c@linaro.org>
-References: <20260529-topic-sm8650-ayaneo-pocket-s2-sy7758-v5-0-03aacd49747c@linaro.org>
-Subject: Re: [PATCH v5 0/2] backlight: Add SY7758 6-channel High Efficiency
- LED Driver support
-Message-Id: <178300990349.2239788.13080024963462152507.b4-ty@b4>
-Date: Thu, 02 Jul 2026 17:31:43 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tKWsGpzw"
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-664eb8cb631so1882981d50.3
+        for <linux-leds@vger.kernel.org>; Thu, 02 Jul 2026 10:23:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783012983; cv=none;
+        d=google.com; s=arc-20260327;
+        b=kocICBxkqvM70N2izTnwEnTMjBguYHorAzOPK/et2Tz+7wJvJNFPETHhYlXxe0/wmO
+         zHUa9I2+lC+tabi01eVk4Y2WANzA2ipwHixLJbs+vu/Af1gNMsZ9Lo4BNiKR620oTiAT
+         xrjUBCAOSLMS7Omak0+5pDUo+L1G+79mmKRG5Cagw18tKM3UgjPF/Dy34s+Lhk138stj
+         W5YWSyPVKnrVJ9Gd4wPurabaOAqJzs4bswXjBgSyRDhqo2OcMRN1OJIF29613Xe5OupG
+         ZyK9oYc1z5pH82IKbYQ94CIDDvDP1wMiNHgmCkJV72wRK7QY8rhzoDpwHFouaFYjTtUE
+         UYtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=3LAd77ag775ZkK3gX8tuU5QMN4OfcfzmGMwVCEUf2CI=;
+        fh=22eO4cM2adSbgc73V0TqA0ZVR1oyW7mFKJDaWbl8o5Q=;
+        b=REcuKPRRVXnSklVHp3XViA+zjUV+xEUZbBAk2hwrPu0wCiaFHMqkY7fWkdf6fh7HcP
+         AZ1vPN2lNjBXJa2NLSh5bA1+EnaeXX6IV//GwiZGkhjhRAWI+bP61IV1RcVnmNP++cyE
+         Vx5InJHXPqkOiMjjxXHKKrueeWMEECbButdLXaGqEBHddl1vd0Vc0l+/FOc9XidN6ob+
+         9m0S4/3kp5RgijcXh9WM+AzvLesWThkGFNMpWvVCgkAcCVsZicWRmC6qDULfEY5fsBiD
+         foTbPJhA+rHDBwoyGSF3psA0juIfVKpNHPpzOtmgLMseCGFuqKkbYAskzrCmrX9XVaNc
+         anOg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1783012983; x=1783617783; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3LAd77ag775ZkK3gX8tuU5QMN4OfcfzmGMwVCEUf2CI=;
+        b=tKWsGpzwuTp8rMEH8YoBl0T+NEbGOGiNxyqU3MJ6ElwAn+JJUpAMXGuLlr/oayjltA
+         0B7BvT6X2qFgOO9/n67Ux7qEd/E7X7JDJvmzsdxuWMl2SphDuaU7puKkr/T3YIMmjmDP
+         ydaY7zuJPDAY6cr84b6SmokVVtBPYIF6aWdtiGjS3MTvVHkYFc3cTp/jLTsQSFDYaToo
+         RFcE1OC7SJSy8J+YDUGBrRUrtHB8eujFgmT7QZOtk8yHRQmp+/yln6GhKCDEva+cZg0y
+         9sRCmJCbThf9qFpOVximglNBSopyZnR0na5kInLMyOhCcf8TEIrFRdWxfk+onlFnJM92
+         gMTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783012983; x=1783617783;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=3LAd77ag775ZkK3gX8tuU5QMN4OfcfzmGMwVCEUf2CI=;
+        b=qgNq4nXiIYsp44bmD/QP1CjjW838rTqb1c6W9twoQi5o9vwZrllkcT/Nv7qh06Xzf4
+         Ikt+id3c175/LgYWMTb3WHpaytxgQH5nUyHLd8Wu+JEHc8zYKVeuyOGfhR2uaoh8SwoI
+         vVbh7sBm223pd2uhoTPQ4BNlq0A4wOyNJKj4YQNQ+2QyCB3klh3fsv9pTh3++1d3LpOP
+         CnCgCnxIG+7rzLOoushCwYml3PsYZTBs4UjLzlge/cOsoPiAf/ZoN3MGuVSQsCFaQbWb
+         FRVYpo1z20cA6lkk1C/1eu/OWEY0Uh7JDpQ0Hc8F+ZlyWbmpOM7gE9MAdsIHvBhDd13j
+         qtDQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rrb4JPniSceWtFn+5nT+DFOE8ca3g5n0oTRkA0jOJCHQiTPF0WC/tPZkWBOOdR3MMarPVJ++LMTNYxd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcZu/psP1yFO82HTDuT6aIc85v2cjzQ02gaYGQs5zAbUXrRn0a
+	YFz7z15Y0VFB4CEPBP8dljJkEO99BM2Agd/mZiAA2PVDaBfSzq9Z0YPuyAa24ZL7vJ5E8C+g7JW
+	f/wKWui5LPc9melNOMYjeeVKaz3j0dgo=
+X-Gm-Gg: AfdE7cnS2oDK8K6Abj0tHdsc1ai1wa+ECfLKVjucY1FRaq0u1zymqVxbZMItT78xYIU
+	NWw6AFD/26cLJflLLAhsc0/+PQjKqecKy/4VTvZDNRL9ON+v70iFOHneqfRWGzbyjp/r7opTNAR
+	knU5OqvjDpqqzsNvMIsWQIDWcJtXO32SF6QFKkybX9fNj+wXmaeRW7wgoJJ8JZ7D9SAMIHKyYAU
+	6YEyYavQsYjVnSU4zbcDQdTfbcp248I66y4boulj7cpBIryKwVEKle54XQvffVKQPOIq6Z0UMDa
+	2PzpKmor7PtqAORDcrMhP19V97I=
+X-Received: by 2002:a05:690e:43d9:b0:664:e6d2:1411 with SMTP id
+ 956f58d0204a3-66596608627mr3795974d50.65.1783012982830; Thu, 02 Jul 2026
+ 10:23:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
+References: <20260618142133.27377-1-mertsftl@gmail.com> <20260702134935.GO2108533@google.com>
+In-Reply-To: <20260702134935.GO2108533@google.com>
+From: Mert Seftali <mertsftl@gmail.com>
+Date: Thu, 2 Jul 2026 19:22:51 +0200
+X-Gm-Features: AVVi8CcUNZ2TztlQAGGSB7_LPGbJWMRXimw9i-75Xj8moxw4lFKjobtcVDULLKY
+Message-ID: <CAA3NooobiVAzHcoJPTuFur9n1F=z5z9aYRqSJtD0CR3i5qYtfw@mail.gmail.com>
+Subject: Re: [PATCH v2] leds: lp5860: Return an error for an out-of-range
+ 'reg' property
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, Dan Carpenter <error27@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 29 May 2026 21:23:07 +0200, Neil Armstrong wrote:
-> Implement support for the Silergy SY7758 6-channel High Efficiency LED Driver
-> used for backlight brightness control in the Ayaneo Pocket S2 dual-DSI panel.
+On Thu, 2 Jul 2026, Lee Jones wrote:
+> This isn't a bug introduced by this patch, but while reviewing the driver
+> I noticed a double unlock in lp5860_device_init():
+[...]
+> If lp5860_init_dt() fails, doesn't the jump to err_disable result in
+> calling mutex_unlock() on an already unlocked mutex?
 
-Applied, thanks!
+Confirmed, i'll move the unlock out of err_disable so it can't fire twice.
 
-[1/2] dt-bindings: leds: backlight: document the SY7758 6-channel High Efficiency LED Driver
-      commit: 2019a2a7268f6f7387f052110558b9f90b500324
-[2/2] backlight: Add SY7758 6-channel High Efficiency LED Driver support
-      commit: 110d67699a430daf0316f941254c46221e3f0914
+> This is also a pre-existing issue, but I noticed a potential
+> use-after-destroy involving the same mutex in the removal path:
+[...]
+> Does this sequence result in lp5860_chip_enable() locking a mutex that
+> was just destroyed by lp5860_remove()?
 
---
-Lee Jones [李琼斯]
+i'll swap the order so device_remove() runs before
+mutex_destroy().
 
+I'll send both as a small two-patch series crediting you as
+Reported-by or let me know if you'd rather the Sashiko findings be credited
+to the tool instead.
+
+thanks for flagging these!
+Mert
