@@ -1,119 +1,174 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A485361DC3
-	for <linux-leds@vger.kernel.org>; Thu,  2 Jul 2026 17:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9AA381EB6
+	for <linux-leds@vger.kernel.org>; Thu,  2 Jul 2026 17:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783014966; cv=none; b=Zbujx5Dz50N79z/XfOIZx5Q8J4GM1Qraa4wKGyF0e9nptt9HUNwAkWzvoEZHqcs995Ko1qi4ZKivBZlzF8MZTk6f17NykU6+rddRpFiQA5w/XHjGK4GB1S2KE+dulACNc9H0zqRcfZkia8+XOYEhb2bpCpH4WEG5e+b1DS87Fvs=
+	t=1783015100; cv=none; b=NmmbBCKtdJiEL/86O5VmCJyjplAoAUlSzRWzEDs5NPeN80jAQgmtuulh3zRa+UidnbHsO7xL/Gk+Lx04TdtKTt2GyAEIX7zbmuiA2Q3XFyxkVt9/A8Vgn9WSiDn+zBIsiya+FsKZOJ/uv9ISSzhYIwEAKwCS2U48tjO9fFc0zT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783014966; c=relaxed/simple;
-	bh=M+KITOMCskLiX20robjtssNWzr+W2oUrHsvghamkdZw=;
+	s=arc-20240116; t=1783015100; c=relaxed/simple;
+	bh=MLQQMnZYLgvWZPpWiJbNA6B3rClxHKt+UKZ6pppnT7Y=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=FJ5jgq+6PgvVxKQYBy3snqnMQqgbtbsjCpwKePFU/8tOqej/r2nIbgEF7tLW4GmpZ1NiFZ7/4Wm3hRps2Ih5K9ONcGZGoxkIPZY7dhu3OBefM1NnRc8v92Iw2rV73atn0B10Oqd/5IR5I4vJ8+L4rkCRxRKRin8CorQ7x7C3Bck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCpli4yz; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=t4sQq1bmlGnjrc3Md3lUm/GMU06RDKRQcHVSmAFQ/yRd5YapeZ0EgauKcBf4CbF2mQL32WMjH5tq0c/S4UuNy9C51yGtEsw2U6GXDNUOdcZ4FCC7Rvq2o5kvJ4A/P0BHyQQ/WMpSohFx4b42jVew6yA5DwY3yy5gx6A2F+MuXpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlXQ7B0r; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCpli4yz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF84D1F000E9;
-	Thu,  2 Jul 2026 17:56:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlXQ7B0r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F221F000E9;
+	Thu,  2 Jul 2026 17:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783014964;
-	bh=jgSqCabi2FTH27JLAWki5tWfbo9Aldga6GbKR3hlxr0=;
+	s=k20260515; t=1783015099;
+	bh=6uXym3GOXUzZKDxtMuE4vE7hZMg58inWXFsbguJnSD4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RCpli4yzJ4FV4D2wg/goPVWe2trxrnJg3sOf8RCjPwBmm0xNgcDN1+k1fM3aNM2E2
-	 iEmqZANiY2+wEC3SOGa+7sNERhgN/17JNx8hzMLyZiRaoru102cedBI1iWETTOf5Z4
-	 +dxQ7gpBILzjaMxZiPwEnYU7cS3IvAf0hgKuRFxupg3424Qfv+dX7zdZtcjQ2vlwQB
-	 nY53zk4kkDpceLiEnhExV0dAmyxT+CFGdm0q4vD+XcWePN8pOIM97xMbQFQY6QvoPI
-	 scox4CzUpWYxwMt+kPBzQ12d/BZVg2TE0wj9FLZQCx9zPOySBdaA5RHcWulgW7Z4SQ
-	 d0hayxma61T+Q==
+	b=IlXQ7B0rzIdLf4abxsp3heA1iF7ZWc0MDiMk4sYcfn1K5jc1z6SqNMwU7HZrIvOY1
+	 wKa35aVra7Jw7OAslvZLTMIcpQgXzmQxxx9/UwgvioCWkzRBH/MConwquR/NYY5v+o
+	 ZF9f47CkblQP2ENQw4OxRqUrgeHPCSaaSh14aFzPt/vG/61vRuLujE0UOPyYPsiYmF
+	 0pRTkzRD+O805VyVF54tw9H+x+z/lzCzF+/iANHZHOVaaJemo54kOmvMDf328qzA42
+	 m7Ik9h5MO8xKHbnjQIMKWth3HCuFNKV9derFaan2R4L0n5+7OQR/6xZ2aksuqy9j7c
+	 zh1DYbc/KgvCQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 6/9] leds: st1202: fix brightness having no effect
- while pattern mode is active
+Subject: Re: [PATCH v6 7/9] leds: st1202: disable channel when brightness is
+ set to zero
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Manuel Fombuena" <fombuena@outlook.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <GV1PR08MB849785BF89E2291C387E1AF4C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <GV1PR08MB84973C517D12B589ECA77649C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com>
 References: <GV1PR08MB84972A16ED557BFB96D63F57C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com>
- <GV1PR08MB849785BF89E2291C387E1AF4C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com>
+ <GV1PR08MB84973C517D12B589ECA77649C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 02 Jul 2026 17:56:04 +0000
-Message-Id: <20260702175604.AF84D1F000E9@smtp.kernel.org>
+Date: Thu, 02 Jul 2026 17:58:19 +0000
+Message-Id: <20260702175819.65F221F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
 
-New issues:
-- [Medium] The newly added loop in `st1202_brightness_set` ignores I2C erro=
-r returns, continuing blindly on bus failures.
-
 Pre-existing issues:
-- [High] The `st1202_brightness_set` function is incorrectly registered as =
-the non-blocking `brightness_set` callback, but it sleeps by acquiring a mu=
-tex and performing I2C operations.
+- [High] The driver incorrectly registers a sleeping function for the non-b=
+locking `brightness_set` callback, leading to 'scheduling while atomic' pan=
+ics.
+- [High] `st1202_led_set` (mapped to `brightness_set_blocking`) fails to ap=
+ply the requested brightness level.
+- [High] The driver saves `fwnode` pointers from a scoped device tree itera=
+tor without incrementing their reference counts.
+- [High] The `pattern_set` implementation fails to clear unused pattern slo=
+ts when a pattern sequence shorter than 8 steps is provided.
 --
 
-commit d9b4d02ea7dfd72ef99f875246743455506af12f
+commit 8a281666b5378bc7bda3d6eddc8d9626baa87b6e
 Author: Manuel Fombuena <fombuena@outlook.com>
 
-leds: st1202: fix brightness having no effect while pattern mode is active
+leds: st1202: disable channel when brightness is set to zero
 
-This commit sets all 8 PWM slots for a channel to full duty cycle before
-writing ILED to ensure brightness changes take effect when a hardware
-pattern is running. It enables static brightness control without halting
-the global sequencer.
+When brightness_set() is called with LED_OFF, only the ILED register is
+zeroed; the channel enable bit is left set from probe time. A hardware
+channel enabled with ILED=3D0 still draws a small residual current, causing
+a dim glow even when the LED is supposed to be off.
 
 > diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> index b8a5712829009..4909985ade04b 100644
+> index 4909985ade04b..2ecd36aae336a 100644
 > --- a/drivers/leds/leds-st1202.c
 > +++ b/drivers/leds/leds-st1202.c
-> @@ -136,6 +136,8 @@ static void st1202_brightness_set(struct led_classdev=
- *led_cdev,
-> =20
->  	guard(mutex)(&chip->lock);
-
-[Severity: High]
-This is a pre-existing issue, but does st1202_brightness_set() sleep in an
-atomic context?
-
-This function acquires a mutex and performs I2C operations which can sleep,
-but it appears to be registered as the non-blocking brightness_set callback
-in st1202_dt_init():
-
-led->led_cdev.brightness_set =3D st1202_brightness_set;
-
-Activating a software trigger (like 'timer' or 'heartbeat') executes
-brightness_set() from a timer softirq context, where acquiring a mutex or
-performing synchronous I2C operations is illegal and causes a system crash.
-
-While not introduced by this patch, adding a loop inside this atomic
-section that executes 16 additional synchronous I2C writes significantly
-prolongs the illegal blocking duration.
-
+[ ... ]
+> @@ -188,6 +160,40 @@ static int st1202_channel_set(struct st1202_chip *ch=
+ip, int led_num, bool active
+[ ... ]
+> +static void st1202_brightness_set(struct led_classdev *led_cdev,
+> +				enum led_brightness value)
+> +{
+> +	struct st1202_led *led =3D cdev_to_st1202_led(led_cdev);
+> +	struct st1202_chip *chip =3D led->chip;
+> +
+> +	guard(mutex)(&chip->lock);
+> +
 > +	for (int patt =3D 0; patt < ST1202_MAX_PATTERNS; patt++)
 > +		st1202_pwm_pattern_write(chip, led->led_num, patt, ST1202_PATTERN_PWM_=
 FULL);
+> +	st1202_write_reg(chip, ST1202_ILED_REG0 + led->led_num, value);
+> +	__st1202_channel_set(chip, led->led_num, !!value);
+> +}
 
-[Severity: Medium]
-Is it safe to ignore the return value of st1202_pwm_pattern_write() here?
+[Severity: High]
+This isn't a bug introduced by this patch, but this function sleeps by
+acquiring a mutex and performing I2C operations.
 
-If an I2C transaction fails (e.g., due to a temporary bus error), this loop
-does not break and unconditionally attempts all 8 iterations. Because the
-underlying st1202_write_reg() internally calls dev_err() on failure, a
-single bus error will cause 16 consecutive error messages to flood the
-kernel log, while pointlessly blocking to attempt writes that are
-guaranteed to fail.
+Since this function is assigned to led_cdev.brightness_set (which is expect=
+ed
+to be non-blocking and can be called from atomic contexts like software bli=
+nk
+timers), will this lead to a scheduling while atomic panic? Should this be
+assigned to brightness_set_blocking instead?
 
-Should the loop check the return value and abort early on failure?
+[ ... ]
+>  static int st1202_led_set(struct led_classdev *ldev, enum led_brightness=
+ value)
+>  {
+>  	struct st1202_led *led =3D cdev_to_st1202_led(ldev);
 
->  	st1202_write_reg(chip, ST1202_ILED_REG0 + led->led_num, value);
->  }
+[Severity: High]
+This is a pre-existing issue, but st1202_led_set() discards the requested
+brightness level.
+
+Based on the surrounding code, this function only toggles the channel boole=
+an:
+
+    return st1202_channel_set(led->chip, led->led_num, !!value);
+
+Since this function is mapped to the brightness_set_blocking callback,
+wouldn't this mean sysfs writes fail to apply the actual requested brightne=
+ss
+to the hardware register, effectively breaking brightness control?
+
+> @@ -257,6 +263,10 @@ static int st1202_led_pattern_set(struct led_classde=
+v *ldev,
+>  	if (ret !=3D 0)
+>  		return ret;
+> =20
+> +	ret =3D __st1202_channel_set(chip, led->led_num, true);
+> +	if (ret !=3D 0)
+> +		return ret;
+> +
+>  	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, (ST1202_CONFIG_REG_PA=
+TSR |
+>  							ST1202_CONFIG_REG_PATS | ST1202_CONFIG_REG_SHFT));
+>  	if (ret !=3D 0)
+>  		return ret;
+
+[Severity: High]
+This is a pre-existing issue, but does st1202_led_pattern_set() fail to cle=
+ar
+unused pattern slots?
+
+If a pattern sequence shorter than 8 steps (ST1202_MAX_PATTERNS) is provide=
+d,
+the loop writes up to len but doesn't explicitly write a 0 duration to the
+remaining pattern slots. If a longer sequence was previously set, will the
+hardware continue executing leftover uninitialized steps using stale data a=
+nd
+cause erratic flashing?
+
+[Severity: High]
+Additionally, there is a pre-existing use-after-free issue in
+st1202_dt_init() which isn't shown in this diff.
+
+When saving fwnode pointers from a scoped device tree iterator:
+
+    for_each_available_child_of_node_scoped(dev_of_node(dev), child) {
+        ...
+        led->fwnode =3D of_fwnode_handle(child);
+    }
+
+The scoped iterator automatically drops the reference to the child node when
+advancing or exiting. Since fwnode_handle_get() is not called, are we stori=
+ng
+dangling pointers that could be freed before being passed to
+devm_led_classdev_register_ext() later in the probe?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/GV1PR08MB84972A16ED=
-557BFB96D63F57C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D6
+557BFB96D63F57C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D7
