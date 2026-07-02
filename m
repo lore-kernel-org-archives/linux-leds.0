@@ -1,112 +1,152 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8AD3191CE
-	for <linux-leds@vger.kernel.org>; Thu,  2 Jul 2026 15:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783006817; cv=pass; b=uI1k3ICRviFMrj6x4hnweS+xmj2vvXO3VA6n5t0bzw80tzGndge8ot8l49xXrR5GboG0cMiaDhMRigA7XfMEKFexzdE8wOnWx1dHEdXITHklmKu4vZBw7PPNqpueE+IiQaMp5CtgcOBT9Oaepj72tPRrT1agMauW/PWCJm2ikSM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783006817; c=relaxed/simple;
-	bh=iNinoTrCwBOfPghiG9xKszZ45U+jYGs9LkTKb4QIfns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kyklJGYPuu/3l+bet7Fgjfl0lNJTyNKiFeZZuRxibDMF6GIez5bbMmNjRGcssxNFb9kdtO3oCKRJv76/uRZLsNYl1in14rZASRNuRHCwT6dX6emONFPriqhfTZGZ6XKiDfxMfcwkedjLEdW61sYtINfCCaEHgzFEfSaMQPWfHAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=owyn69JM; arc=pass smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE03123EAAD;
+	Thu,  2 Jul 2026 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783007102; cv=none; b=IIeuRdmMw3SDyAXbp2Mz7/FIeZJXdkk03uZMPAqT0jECs1CZZBizOQA/315+2j+1Ug9EnyS+oDNnix+q8n48K+VcY6CkGqct2jVJxIXPj3dsnXPCUvYwgADMvw0HFns+4c+0OQQxeaj6eDpr6gmYXNs/9xYNu8Vefv7oqppIukQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783007102; c=relaxed/simple;
+	bh=eTfY8k4xGyCGMnMhmTSmsQt7Cl763Xi3GeVLUWLh0u4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MxoLdKRs2C4XkG9AQ5K/VEv+S+luBiy5TM2fyiJQB4VALgmSMyztqebBFe5xIHocJ77ib6EA91ledD35CxcDJizhuTTGvqbR29JeyfW1l/OHFfHE7u8tAK4+ii+lWOavKrivNkK5flCzO8LO+RqMVgVGXLzXbSEAx1c3njJtIZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bwmFWMRx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="owyn69JM"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-664d910cc75so2630097d50.1
-        for <linux-leds@vger.kernel.org>; Thu, 02 Jul 2026 08:40:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783006815; cv=none;
-        d=google.com; s=arc-20260327;
-        b=JafmdwRIm63tO4/2FYU/mbBiI4yGzY5Hi4Uq0dGsBhmJBnSz2sCCyrudYAco6z1TTy
-         kDm9yM1E1Fip0i2YLvTnvV7kifZCaUK9dDfEIpNOukVgS8QujmXV19ZjYRtu8Y96JQAE
-         N67XY5GmHX5aZjjmhy4//7GjssGQIi0q0ljK/thOCsIYseNaNsn5ImGf8salWjCW/LbN
-         iu6j78YPuOejF+4r3RhBM00seYEUb5w4wnTiG+Ce6MmzxGcHYss8sOzEQvKHIxk2DeST
-         JyANNJaJnLKodVkgDus6I08EU8GxnyVZk2zKDRHekqaU2GZ6fPSvb/qKVTeIy5EXRfz/
-         CWJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=g09CPOiEjRdcq2MSHfeKmcvTW5xcwBZpYTF7uAPIEtE=;
-        fh=7fjvjSFc3jap8PyCgJMxbnw2tIMiV+HEzsrIiwqcH38=;
-        b=UkSUnOJ4wBL8/5SGTIgku1qLSZIv0/mqHignjlu+krgAZ8+l8oSL3kE6wpB6ZHeBFA
-         HTPXxOlyqXWd/s7NHuJGfRw4dTS0bIVZDwYFhDS8P/GxSaaiyMt4wKEBRzGUNj3b1Kmo
-         8s4aRGwLxq2Gfr2+6mkjO0FBWl4Hnj2+nr6+lQPHTiRaJuX7LzDMuNftZBVWJpRSKznR
-         FJ2Ozy5Ho35qI/Ss7eKUC3HAccbro5oZd+VO1HYd/9R1AoLDp+bqWP9M87IWcvhJvJUm
-         5QZyvlb3M5OW4FaGN7Q6YBf8aDf98khobbGtK3fsZTsD4/t29imiCwp9u00vh4HrAjkp
-         hEKw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783006815; x=1783611615; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g09CPOiEjRdcq2MSHfeKmcvTW5xcwBZpYTF7uAPIEtE=;
-        b=owyn69JMgWIe33F2L6G0dfmipYqoD2ITP9aY0nbn49UJHkmw0+8uxcRl+G6hMl0xSn
-         SrURKwgF2cRUCAEcxRwbmJEFpuBQdRuI7B1C3ovB+XzjMv15tZjzZo44KBpz5C/R4mD7
-         EE9Izrzs64TxyEdFdxJXxGjkEv6M1lGU4EGBKvuerQ3NQ2Qr2vP+szp8Gm1XwERcgHH4
-         TWEx7Pikis+fg3bn9o8SD2ZQdRNTDXV1zxIlj0RvVcPzv8gBg9FxzsT0csWGr/T6smi0
-         TJqBwNWIJdcTXLBH1tcRbUxXj7hVDpA7CLiWv3N49w7EVv8VslKwLIwOZkXEzKJcEV2+
-         RBdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783006815; x=1783611615;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g09CPOiEjRdcq2MSHfeKmcvTW5xcwBZpYTF7uAPIEtE=;
-        b=e4rZY3g3zOfFHAJcLSiKNWWSx68gkj885F39yDronqp5ARqxRY228/Hxq9a83vSXGY
-         xGbKuM2OYdv/7c6LbzGTV6QyPbJbZKySGcWBshZqjQ1/Md8+mO+1R78gfV1L2GXYdH+k
-         HgH2RbmriJGCyqjNehooS8PLE1IWe+NpwN7ZynyEW9K8Lo8Ai1IhjcwOiXhlFj7BbZg1
-         tzPFMoGwHFd0kB43AcV3MgTqvhhuOT/RrTJIN4Sgdn9y7F+n3Fc9rGbD7IQWqvwqYRV9
-         +P5wGnV6hTLQJbqsDsNr1uFa6GCJaVXUmlMBWBYWCFRO9DpM+WpNxxmFc5sZS3jNkWv9
-         Hv2A==
-X-Forwarded-Encrypted: i=1; AHgh+RpWjDVmASKtEkn1azzoLgu9bJrrkKxNCHZ9T5zvPCs3DW8WgtJNFGeYhUJ0fEa3XC+QnMrwp59d706a@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbjMPHpyk5BkjD4DltB5ZC4U8xvnjY6VI21wQ2Hk7XRvQdfzLw
-	2YiAtV3GRI0QqlDrn8FVBhBzb5eqBy9ijepNcJx3PobYS3T8zh6XWxYnn9wAdQJAUeUjc+PyPYL
-	y0U9HU7k0OY4/UZsib/iYYcLzBMKJBLE=
-X-Gm-Gg: AfdE7claiIO+Y/A2QSNoXW3KoPnWQpcRWlGvF5pwRb6o3unaVFbhplM1JD4OzuTVIHR
-	lTmKxaXRhmF34JdcItU70Iyr2EC3nJgnHft40H6L6PRhoK1YgEBeptKKpkxGpVyp4sijCcZoDS8
-	+CUl4xBaTati7F4Vzb8+Nea8uGw23cO4enb/nKWebFqjtX+VSn2OnqH1hOtqS5na61g/M1BMR7G
-	dUMn6Blgh0gTw/ZuR9z2U6qq8T2NI7ihNpv4o3JZ3oWsrtpwJLGMoyYLqhxmbGL/QAVb2Uolioq
-	in79z+c68dfojHKdZ1f1ctqpopQ=
-X-Received: by 2002:a05:690e:dc8:b0:664:e8ac:21ce with SMTP id
- 956f58d0204a3-665964e61ebmr5869169d50.24.1783006797047; Thu, 02 Jul 2026
- 08:39:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bwmFWMRx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742DC1F00A3A;
+	Thu,  2 Jul 2026 15:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783007098;
+	bh=fO/vTLMNlcA3KEWIRo0suAACLUwE0Sf3YPtBgQNBElM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=bwmFWMRxuGCUA1TPIAovZ3a074gL+NgEMrxMoxgEid+bx8eXDOHwvor2JlW7eo1vE
+	 41igzBgMu+2RYbGG1AZMlkWNbo13hAXqvSUoO7dSnxRsogHMvf/HaT+knDn0riJNrh
+	 Ucv25Q17/9WAli3OlIm2ds5nPE9DJ1KUYnWSwdk5mUHEJGEzStLgZtqr5M/oYNRvJw
+	 tiOeo9Ozn7yJ4jMmEaU5OAVGw1qt2G3tG1Q8Rm/p+0vv7ccg5yE5sWlcyTT7S4Qm3B
+	 Ki35ddx1txySRptxtSV66WvqRo+i/4JSgn2tTTXjSfS1UAg+oyLRPEjrlXk+f2i/sh
+	 Upe4J8CclL7Wg==
+Date: Thu, 2 Jul 2026 16:44:53 +0100
+From: Lee Jones <lee@kernel.org>
+To: =?iso-8859-1?Q?Bj=F6rn?= Persson <Bjorn@xn--rombobjrn-67a.se>
+Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>, linux-leds@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: leds: uleds: Make the documentation match the
+ code.
+Message-ID: <20260702154453.GT2108533@google.com>
+References: <20260622125516.25EC8F47BE9@tag.xn--rombobjrn-67a.se>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260619162113.416864-1-mertsftl@gmail.com> <20260702144917.GR2108533@google.com>
-In-Reply-To: <20260702144917.GR2108533@google.com>
-From: Mert Seftali <mertsftl@gmail.com>
-Date: Thu, 2 Jul 2026 17:39:45 +0200
-X-Gm-Features: AVVi8CdExbWLEvBCfGNhooVePIPil_ClyKDRJeEVzspcRHcseRGv_6iZ-6EaIdI
-Message-ID: <CAA3NooqNH4Pu2EaiwOJOmDV5oQ9HNw1aAu_naXS75LL=EnmRzQ@mail.gmail.com>
-Subject: Re: [PATCH] leds: pwm: Annotate leds[] with __counted_by()
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>, linux-leds@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260622125516.25EC8F47BE9@tag.xn--rombobjrn-67a.se>
 
-On Fri, 19 Jun 2026, Lee Jones wrote:
-> Nit, why not keep the variable names the same rather than use the for
-> iterator?  i's and j's are usually for throw-away variables, but this is
-> counting something real.
->
-> Or if you wanted to be even smarter, why not just pass the priv->leds[n]
-> that you want to operate on and increment num_leds here instead?
-> Less args == more better.
+On Mon, 22 Jun 2026, Björn Persson wrote:
 
-Sure, that's tidier, i'll do both. Passing the led_pwm_data element in
-means led_pwm_add doesn't need priv or the index anymore, so it drops to
-(dev, led_data, led, fwnode). And bumping num_leds in the loop means it
-doubles as the index, so the throw-away i goes away too.
+> From: Björn Persson <Bjorn@Rombobjörn.se>
+> 
+> The description in uleds.rst omits the field max_brightness and claims
+> falsely that the maximum brightness is always 255. Leaving max_brightness
+> uninitialized or omitting it when writing to /dev/uleds won't work. It
+> must be given a value, and that value becomes the maximum brightness.
+> 
+> The document is also wrong about the type of brightness values. It says
+> that a single byte shall be read at a time. That's actually not allowed.
+> Then the word "unsigned" gives the impression that the type is unsigned.
+> In fact a signed type is used even though the values are never negative.
+> 
+> Change the document to describe the true API.
+> 
+> Signed-off-by: Björn Persson <Bjorn@Rombobjörn.se>
+> ---
+> Changes in v2:
+> Replaced "given" with "specified" to prevent misinterpretation of "given name", avoided mentioning a type name outside of C code fragments, and rewrote the commit message to read more like speech, as requested.
+> 
+>  Documentation/leds/uleds.rst | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/leds/uleds.rst b/Documentation/leds/uleds.rst
+> index 83221098009c..f985048c641f 100644
+> --- a/Documentation/leds/uleds.rst
+> +++ b/Documentation/leds/uleds.rst
+> @@ -17,16 +17,23 @@ structure to it (found in kernel public header file linux/uleds.h)::
+>  
+>      struct uleds_user_dev {
+>  	char name[LED_MAX_NAME_SIZE];
+> +	int max_brightness;
+>      };
+>  
+> -A new LED class device will be created with the name given. The name can be
+> -any valid sysfs device node name, but consider using the LED class naming
+> -convention of "devicename:color:function".
+> +A new LED class device will be created with the specified name and maximum
+> +brightness. The name can be any valid sysfs device node name, but consider
+> +using the LED class naming convention of "devicename:color:function".
+>  
+> -The current brightness is found by reading a single byte from the character
+> -device. Values are unsigned: 0 to 255. Reading will block until the brightness
+> -changes. The device node can also be polled to notify when the brightness value
+> -changes.
+> +Although max_brightness is signed, only positive values are valid: 1 to INT_MAX.
+> +
+> +The current brightness shall be read from the character device like so::
+> +
+> +    int brightness;
+> +    result = read(file, &brightness, sizeof(brightness));
+> +
+> +The possible values are 0 to max_brightness. Reading will block until the
+> +brightness changes. The device node can also be polled to notify when the
+> +brightness value changes.
+>  
+>  The LED class device will be removed when the open file handle to /dev/uleds
+>  is closed.
 
-will prepare v2, thanks for the review!
+b4 isn't loving this patch:
 
-Mert
+Fetching patch(es)
+Looking up https://lore.kernel.org/all/20260622125516.25EC8F47BE9@tag.xn--rombobjrn-67a.se/
+Analyzing 1 messages in the thread
+Analyzing 0 code-review messages
+Checking attestation on all messages, may take a moment...
+---
+  ✓ [PATCH v2] docs: leds: uleds: Make the documentation match the code.
+    + Link: https://patch.msgid.link/20260622125516.25EC8F47BE9@tag.xn--rombobjrn-67a.se
+    + Signed-off-by: Lee Jones <lee@kernel.org>
+Traceback (most recent call last):
+  File "/home/joneslee/projects/b4/src/b4/command.py", line 535, in <module>
+    cmd()
+    ~~~^^
+  File "/home/joneslee/projects/b4/src/b4/command.py", line 518, in cmd
+    cmdargs.func(cmdargs)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/home/joneslee/projects/b4/src/b4/command.py", line 103, in cmd_am
+    b4.mbox.main(cmdargs)
+    ~~~~~~~~~~~~^^^^^^^^^
+  File "/home/joneslee/projects/b4/src/b4/mbox.py", line 1246, in main
+    make_am(msgs, cmdargs, msgid)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/joneslee/projects/b4/src/b4/mbox.py", line 238, in make_am
+    am_msgs = lser.get_am_ready(noaddtrailers=cmdargs.noaddtrailers, addmysob=cmdargs.addmysob, addlink=cmdargs.addlink,
+                                cherrypick=cherrypick, copyccs=cmdargs.copyccs, allowbadchars=cmdargs.allowbadchars,
+                                showchecks=cmdargs.check)
+  File "/home/joneslee/projects/b4/src/b4/__init__.py", line 972, in get_am_ready
+    msg = lmsg.get_am_message(add_trailers=add_trailers, extras=extras, copyccs=copyccs,
+                              addmysob=addmysob, allowbadchars=allowbadchars)
+  File "/home/joneslee/projects/b4/src/b4/__init__.py", line 2888, in get_am_message
+    hfrom = format_addrs([(str(i.get('Author', '')), str(i.get('Email')))])
+  File "/home/joneslee/projects/b4/src/b4/__init__.py", line 4233, in format_addrs
+    addrs.append(email.utils.formataddr(pair))
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/email/utils.py", line 87, in formataddr
+    address.encode('ascii')
+    ~~~~~~~~~~~~~~^^^^^^^^^
+UnicodeEncodeError: 'ascii' codec can't encode character '\xf6' in position 13: ordinal not in range(128)
+
+-- 
+Lee Jones
