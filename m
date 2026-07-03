@@ -1,131 +1,186 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0743239E80
-	for <linux-leds@vger.kernel.org>; Fri,  3 Jul 2026 01:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DEA1D6BB
+	for <linux-leds@vger.kernel.org>; Fri,  3 Jul 2026 01:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783042933; cv=none; b=qldG88eYoqY9zLRqp1Mm4E+pCezn4Z49pXXEmlfqnE2FIPJRD+2/QoFFkO+u0tVXyTp6A58ioLt5qjqK6nX8gW+7qQ5Kq21braV1ucr3MEAgtoJ/GBww2xkRSEXw4HZJMvDZkDblzPIAZaHj9YgBc4J1IA6idWUsjAaglUlv58k=
+	t=1783043496; cv=none; b=GO/0a5cuEv+dvVu0ODPMGtD3Md4XGL3poKdmWQFVpb8DZ8hGJHGrqelpnES+mq2SKCOUaI7JLs/4rm51MCiVUQ4SOYTv6yIsQHKewISCVLvJdZ9uMjp5j+OU4ZdirRJo+PY7vgOMhynurZza9Cq1kqM6/umn7MSjVY4ZEJYKlhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783042933; c=relaxed/simple;
-	bh=5v7r4afiWttDE5QEdQ0mFJ//RayoGtlyppLyHK96n1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AAGfVGWidSDfatQUNrUtg5t+KkJP/ZTlwOTf3cqqxvnVdnnRgGg5aZg/aEwPKtIB1w9hwsjf8URZiHoapSxTnECxx38IYYEKXsYbqtcAPhfeMZllzuszha6j8VMYLQTiCkvvjFEzYRhIYAhQxQy9rA80UYYVg03x5Wz2watNLgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Raei81j4; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783043496; c=relaxed/simple;
+	bh=cHTG7e/W2PZc9n6wac1SniD0zUXGNUBls9F7Sf4BRBU=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=e8j4F0BSrfQyb0CjWuY1WlMc+RHXGsrbNF55tT6Yyb3b13vTdp4cElXxiJgSbjkuIQ5NMHUJUIIL0YJiZy+T+y0AtBoO14cEc/UNl9EbDO/SQEnLQflljwtUrbyz8rqnYebm2qBG14cHSmgo22Mjy0bmdFBx//mNrYNePRBTKrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9CXQAb9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Raei81j4"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2ca64c3ce5fso189965ad.3
-        for <linux-leds@vger.kernel.org>; Thu, 02 Jul 2026 18:42:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783042930; x=1783647730; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bdl/nI02rLhhr4XYsH9/1vppwU3vIyQAjQiCX5x8z48=;
-        b=Raei81j4JEYlZ7xxMCI+CzbQ7lpzdQP4QGk+lYiNC+AExmxivRaN3Jv4HJXgi8okBy
-         wINlPdL/5bX/XUsiREs6wbnLrGlLvjPKpg48Zf9gV1uT0zbbREXj1yz1TRKi1576s86Q
-         Of4EwqLs+F7aProUsUQHCteP0VrOrWvaxiEHHzMXbuvcwWhoMB5NWdOT6Ut0tKxU3Mtg
-         z3HYSzXFV3ILFa/8Y28eECq3u5jE7f7rmj+VWmCY8AFCoB1Fd2Xe9S+gsjG1JX7Bcgab
-         GSYi+eszbExNGHDg5CVlQxt2QzpwDpXZxtQk2PDHCso0TwkIin/JgEqMTGVY1YJnpkKg
-         Mmtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783042930; x=1783647730;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bdl/nI02rLhhr4XYsH9/1vppwU3vIyQAjQiCX5x8z48=;
-        b=L7SuXDR/c7lM/bSxNUolPXPlAFmKdaQ+nQR2nv8GfvSSVvFCg+RzS6lLulu1+ggeHz
-         BqmeRvA3nXCPQFI9KKahg4K6dc9cbxVzYPIOKI06M1GMbHMGedKJkRp7Qrg1U0W29V5S
-         lJf4gBt+1NNROQsea+YDM4E47pd5tYTNJ3qHCNdMhrruWs7tk1a0HmXy+m6c4z0sa4pm
-         vujNnOQEb71KqK9zFIJyGfRREDZv+08iPUS6kJqNPs/ijXBFdH8aTJh0vTBabTrgM+Pw
-         TvOVI383hrzew96L90QIpcGeBnlWMVMFQlY9F5ljfYGBQGv+8YXqzQqHaKShvVcHOyvf
-         wYWg==
-X-Forwarded-Encrypted: i=1; AHgh+Rrt0Fh2zogEZjDabzRgoDC8i7P+cPUszJza1b+/thfigICAqHePG25h/43fphSvIXMdIYyJzVbFwMQ6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGSDEGALbB9x63NF2SrvrInv1VY9MNidUIFNmYoOjhLSnAuFyo
-	GPPatnP4JkIz+mVfca9oaKiQh3f5Pyr+TjY9vm3dhQe1PlnN/i4ONiGE
-X-Gm-Gg: AfdE7cnELWZfAWaZgL59r9vh6ZCWan0imtqsswT0AsRu1nrLgkjd+c+18LtGaaS2Mkc
-	K1dUCr/ktwQf+bAU4waUi+Q1veOFdSwjg+1Ig+NjZeDJq84fBecGzOJQse7bboJT2VTZzrda+pB
-	4Sw+Hf2l1aAsqZp0bKwq9HDwUdaY9pzWSz6dq6ChjsWFPhp/Qz3ukDejNSzExMAJmkNm3X7GRdZ
-	MjKx5zycNGPGifTh5TdSKhE41Ipqo9XcZwPDni4dEnJl7RfTaQBzrEesJEiFqVlmzDVb2ky9mkc
-	MFNKZ5YKnbGeUWCfxM+XXMXz1lcZ1xHU7lYNXe2/4CVcedh16ap5EVeu7Y4XdSy58d8eGKFAIgy
-	L2NmH6lVGY3CU+VxD+CKEeHzzd0n7AwPOLc8DUhLY/7yDw3+fg94g9+X5ygbi9LUbFho/ZeSVMp
-	1T53Ww4uoU/JvZQz8yr8Yrb35mGW4Jbnk/Y+kUVh4zHHKIpYZflmLMhObpkME=
-X-Received: by 2002:a17:902:ecc6:b0:2ca:ca48:c36a with SMTP id d9443c01a7336-2caca48d3ebmr24445935ad.18.1783042929874;
-        Thu, 02 Jul 2026 18:42:09 -0700 (PDT)
-Received: from cosmo-ubuntu-2404.. (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cad7140a13sm1250695ad.30.2026.07.02.18.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 18:42:09 -0700 (PDT)
-From: Cosmo Chou <chou.cosmo@gmail.com>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	riku.voipio@iki.fi
-Cc: linusw@kernel.org,
-	brgl@kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	cosmo.chou@quantatw.com,
-	Cosmo Chou <chou.cosmo@gmail.com>
-Subject: [PATCH v2] leds: pca9532: Fix inverted GPIO output polarity
-Date: Fri,  3 Jul 2026 09:42:01 +0800
-Message-ID: <20260703014201.69829-1-chou.cosmo@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9CXQAb9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 119F31F000E9;
+	Fri,  3 Jul 2026 01:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783043494;
+	bh=arV99sbkA3eezHLTifitkNq67Fk6rQG4Mdf3Pur6bnQ=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=E9CXQAb9FmCDwaUw6eaDkWfg7yZO8r5/KRC9OmFLqXlQtyulZhf67iaYCP8IcB1W4
+	 IXmV5cB017yTA5RgaeV6AzzPyKcsZy/isIYHXHPFZhu3vCzH/AHw8fqIU4SkGHbL4i
+	 ePQBKgoi3rYR0SVODFW0q7T0rmv9vHGG79zlTOBzha7ahalNzE4UPbJrqgQ+unu6no
+	 WdpoGpoQ+REION/H83LqlOhLhZBKWcO7mNdL2/d+ay4j+q6t750ZZJlyEpRZkubxKS
+	 tCaqlP5qIh92ZL3qPLkQ2jYzBlpeAYCfhB4+RJXYG7egZklswPMKR9ipCvlw9Jsz5i
+	 vqrOvoTyG/jOA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] leds: pca9532: Fix inverted GPIO output polarity
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cosmo Chou" <chou.cosmo@gmail.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260703014201.69829-1-chou.cosmo@gmail.com>
+References: <20260703014201.69829-1-chou.cosmo@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 03 Jul 2026 01:51:33 +0000
+Message-Id: <20260703015134.119F31F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The pca9532_gpio_set_value() function incorrectly mapped the requested
-value to PCA9532_ON and PCA9532_OFF, inverting the GPIO output polarity.
-A requested logical high (val=1) incorrectly enabled the LED output
-driver, which on this open-drain device pulls the pin low, while a
-requested logical low (val=0) released the pin.
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
 
-Correct the mapping so that val=1 yields PCA9532_OFF (pin released /
-high-impedance) and val=0 yields PCA9532_ON (pin driven low).
+Pre-existing issues:
+- [High] Silent register state corruption due to unchecked I2C errors in pc=
+a9532_setled().
+- [High] I2C read errors are silently masked and truncated in pca9532_gpio_=
+get_value(), reporting invalid GPIO states.
+- [High] A race condition during device removal can cause a use-after-free =
+if an input event occurs after the workqueue is cancelled.
+--
 
-pca9532_gpio_direction_input() is also updated to pass val=1 to
-pca9532_gpio_set_value() to align with the corrected polarity mapping,
-ensuring the pin remains not driven when configured as an input.
+commit b1c20f70bc549eb29df798aedbdcc982c3294090
+Author: Cosmo Chou <chou.cosmo@gmail.com>
 
-Fixes: 3c1ab50d0a31 ("drivers/leds/leds-pca9532.c: add gpio capability")
-Signed-off-by: Cosmo Chou <chou.cosmo@gmail.com>
----
-Changes in v2:
-- Correct the format of "Fixes:" tag.
+leds: pca9532: Fix inverted GPIO output polarity
 
- drivers/leds/leds-pca9532.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This patch corrects the GPIO output polarity in the pca9532 driver.
+It fixes an issue where a requested logical high incorrectly enabled
+the LED output driver, pulling the open-drain pin low, and updates
+the input direction configuration to match.
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index f3bf59495b68..2d37e00e459d 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -327,9 +327,9 @@ static int pca9532_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
- 	struct pca9532_led *led = &data->leds[offset];
- 
- 	if (val)
--		led->state = PCA9532_ON;
--	else
- 		led->state = PCA9532_OFF;
-+	else
-+		led->state = PCA9532_ON;
- 
- 	pca9532_setled(led);
- 
-@@ -349,7 +349,7 @@ static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
- static int pca9532_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- {
- 	/* To use as input ensure pin is not driven */
--	pca9532_gpio_set_value(gc, offset, 0);
-+	pca9532_gpio_set_value(gc, offset, 1);
- 
- 	return 0;
- }
--- 
-2.43.0
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index f3bf59495b68d..2d37e00e459de 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
+> @@ -327,9 +327,9 @@ static int pca9532_gpio_set_value(struct gpio_chip *g=
+c, unsigned int offset,
+>  	struct pca9532_led *led =3D &data->leds[offset];
+> =20
+>  	if (val)
+> -		led->state =3D PCA9532_ON;
+> -	else
+>  		led->state =3D PCA9532_OFF;
+> +	else
+> +		led->state =3D PCA9532_ON;
+> =20
+>  	pca9532_setled(led);
 
+[Severity: High]
+This is a pre-existing issue, but does pca9532_setled() handle I2C read
+failures safely?
+
+When pca9532_setled() is called here, it performs an unchecked read:
+
+drivers/leds/leds-pca9532.c:pca9532_setled() {
+    ...
+	reg =3D i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
+	/* zero led bits */
+	reg =3D reg & ~LED_MASK(led->id);
+	/* set the new value */
+	reg =3D reg | (led->state << LED_SHIFT(led->id));
+	i2c_smbus_write_byte_data(client, LED_REG(maxleds, led->id), reg);
+    ...
+}
+
+If i2c_smbus_read_byte_data() fails and returns a negative error code
+like -EIO, this value is stored directly into a char, truncating it.
+
+Could this result in masking the corrupted data and blindly writing it back,
+permanently corrupting the state of the other three pins sharing this same
+8-bit register?
+
+> @@ -349,7 +349,7 @@ static int pca9532_gpio_get_value(struct gpio_chip *g=
+c, unsigned offset)
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does pca9532_gpio_get_value()
+silently mask I2C read errors and report invalid GPIO states?
+
+Looking at pca9532_gpio_get_value():
+
+drivers/leds/leds-pca9532.c:pca9532_gpio_get_value() {
+    ...
+	unsigned char reg;
+
+	reg =3D i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset));
+
+	return !!(reg & (1 << (offset % 8)));
+    ...
+}
+
+The result of i2c_smbus_read_byte_data() is stored in an unsigned char.
+If the I2C read fails, the negative error code is truncated into a positive
+8-bit value, which is then evaluated as valid GPIO input data.
+
+Since the gpiolib .get callback returns an int and supports returning
+negative error codes, could this truncation cause downstream drivers to
+act on logically invalid input states instead of properly handling the
+I2C failure?
+
+>  static int pca9532_gpio_direction_input(struct gpio_chip *gc, unsigned o=
+ffset)
+>  {
+>  	/* To use as input ensure pin is not driven */
+> -	pca9532_gpio_set_value(gc, offset, 0);
+> +	pca9532_gpio_set_value(gc, offset, 1);
+> =20
+>  	return 0;
+>  }
+
+[Severity: High]
+This is a pre-existing issue, but is there a use-after-free race condition
+during device removal if an input event occurs after the workqueue is
+cancelled?
+
+In pca9532_destroy_devices() (called from pca9532_remove), the workqueue is
+cancelled:
+
+drivers/leds/leds-pca9532.c:pca9532_destroy_devices() {
+    ...
+		case PCA9532_TYPE_N2100_BEEP:
+			if (data->idev !=3D NULL) {
+				cancel_work_sync(&data->work);
+				data->idev =3D NULL;
+			}
+			break;
+    ...
+}
+
+However, because data->idev is managed by devm_input_allocate_device(), it
+remains fully registered until devres cleanup begins after pca9532_remove()
+returns.
+
+If an input event (like SND_BELL) is triggered in this window,
+pca9532_event() will reschedule the work:
+
+drivers/leds/leds-pca9532.c:pca9532_event() {
+    ...
+	schedule_work(&data->work);
+
+	return 0;
+}
+
+When devres subsequently unregisters the input device and frees the data
+structure, won't the unexpectedly scheduled work later execute and
+dereference the freed data pointer?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260703014201.6982=
+9-1-chou.cosmo@gmail.com?part=3D1
