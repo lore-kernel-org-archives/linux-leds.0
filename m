@@ -1,102 +1,59 @@
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC85D3B52E7
-	for <linux-leds@vger.kernel.org>; Mon,  6 Jul 2026 07:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCD83126DF;
+	Mon,  6 Jul 2026 07:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783323227; cv=none; b=Dihz0GEB65tPKAZIbRWdHeV6fYAhdYp8716MyT8+NDm0Wnol8UE3KDq1oG4SqWwtxmLRw9ytheoA5G5Ld2yaoG9xAWmAQ0sr7kqnY4j/5bCwp3QWQO/ijJZMNW9tG6U3AkqLgfokAhl3F+tmvqkaG4HLgAxsJPMbc6PT9LHFqPk=
+	t=1783323325; cv=none; b=eCHOriGg5ggTeeLBRUG56aGPspdaFytvEPOQdRWJPSWEk2Bck2Zy2urxnxb+bExgCOF72QS+Z4PzCdh9J1ZsbAjBCZv81hYZeBkHYgfGofnR1uM8pex1nq8J9Uhbv1PJtScvGWnx4xpHrpaF/39BaNXGrOT/XIvsFOLaKrmbRck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783323227; c=relaxed/simple;
-	bh=IXOdl84cTugwPj55zjdyTLLGe46XdXULoxKrjlpPzPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ed5Swmirr/ReyzxnP+XXxcE72Zs+9OkVK7wbdcVCI5HuoNdQhtP8TtFgRvuVTuHYN83mQJiHA6PZM0my+MDYembC23Hl7ASSD7wdV0VkxCrlXuo/QzTnm25H+68X8IZ7v8dtKcxL3HVZBtZdTc3WP4Zs6JcYBcsCi0XA8t6Pveg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qedg4/Yn; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1783323325; c=relaxed/simple;
+	bh=1VKGll8VO7q01/u+rSZ+/ZBVXEteUob5QpHa0DFBAYE=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=du7g1QCQdSrPw8BPQ7JtRElW7QP1j56duiJPjpSAPbZ/so21O/Qf9fNeW7UR6JpGY10rPSS6E9W44b/zQry/ByPv4oKeGKlbovUm9WugZ21IjTQZweJVJ5E/aK0KSvHN9wEwz/NI2+UtKvINsW46skSepWFHqEleWO23uVUAJGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h152Xv1c; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qedg4/Yn"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1783323203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gB6sYSLbvHVUh7F5r4zsG9au/6lTVdK57G8fJgTB8VE=;
-	b=qedg4/YnW//2bnk6PtAIsEFlNcA0wmSYaahp8ZsYWmAc3dJpdPKRMmIjKvC7orEbsHKf3+
-	oVBHhVU5c7u03tgt82KbzN1QrtGVzIi4MIpCu3Wvs9bNfaZjezWB65Kr/Z+fPwnHeBEXuO
-	kCt1PsQXejU/AnuxxFlxRu8Gi5SfOfI=
-From: Junjie Cao <junjie.cao@linux.dev>
-To: lee@kernel.org,
-	danielt@kernel.org,
-	jingoohan1@gmail.com,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	krzysztof.kozlowski@oss.qualcomm.com,
-	junjie.cao@linux.dev
-Subject: [PATCH v2] MAINTAINERS: update my email address for the AW99706 backlight driver
-Date: Mon,  6 Jul 2026 15:33:07 +0800
-Message-ID: <20260706073307.1038430-1-junjie.cao@linux.dev>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h152Xv1c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE07E1F00A3A;
+	Mon,  6 Jul 2026 07:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783323317;
+	bh=1VKGll8VO7q01/u+rSZ+/ZBVXEteUob5QpHa0DFBAYE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=h152Xv1c9JnC7ZCYhL0We4s2tV2ZYo7OBn6zlfHoygP9aMXxe4XWzKsN7bMyys8r0
+	 30fI2b7aStcYWwjVLxrLJjNTB4zX2+0v9z+iFyD3mlTFm1HgsGXyJOGLDvaTbICtLP
+	 zwlu5xbbdU+oKaG2emZVYZGkst23hdq1wf6izMKItDk4+wdoCw/u3BvrK4jA4xgRHP
+	 hv3ZWcVp48dhhqLAb84vDJDAhl9JCBmFaBTU8XEDFgbeBx/SO/lNzAryiejLyAFDt9
+	 bYibfj9gWDd9lHiIYnB3glcUMdqEIJsUB/FIQXnjQUaXOTM/YY77h4fvSEYtKBVDql
+	 FaztXIHN+JDSA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: update my email address for the AW99706
+ backlight driver
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Junjie Cao" <junjie.cao@linux.dev>
+Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, lee@kernel.org, robh@kernel.org, linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <20260706073307.1038430-1-junjie.cao@linux.dev>
+References: <20260706073307.1038430-1-junjie.cao@linux.dev>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 06 Jul 2026 07:35:16 +0000
+Message-Id: <20260706073516.BE07E1F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Switch my maintainer entry for the Awinic AW99706 WLED backlight
-driver from my personal Gmail address to junjie.cao@linux.dev.
+> Switch my maintainer entry for the Awinic AW99706 WLED backlight
+> driver from my personal Gmail address to junjie.cao@linux.dev.
+>=20
+> Update both MAINTAINERS and the device-tree binding maintainers field.
+>=20
+> Signed-off-by: Junjie Cao <junjie.cao@linux.dev>
 
-Update both MAINTAINERS and the device-tree binding maintainers field.
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-Signed-off-by: Junjie Cao <junjie.cao@linux.dev>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
-v2:
- - Rebase onto the current for-leds-next / linux-next (Lee Jones).
- - Pick up Krzysztof's Ack.
-
-v1: https://lore.kernel.org/all/20260701133533.32585-1-junjie.cao@linux.dev/
-
- .../devicetree/bindings/leds/backlight/awinic,aw99706.yaml      | 2 +-
- MAINTAINERS                                                     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
-index f48ce7a3434d..60eae50ff742 100644
---- a/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
-+++ b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Awinic AW99706 6-channel WLED Backlight Driver
- 
- maintainers:
--  - Junjie Cao <caojunjie650@gmail.com>
-+  - Junjie Cao <junjie.cao@linux.dev>
- 
- allOf:
-   - $ref: common.yaml#
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 15011f5752a9..780f80766780 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4388,7 +4388,7 @@ S:	Maintained
- F:	drivers/media/pci/hws/
- 
- AWINIC AW99706 WLED BACKLIGHT DRIVER
--M:	Junjie Cao <caojunjie650@gmail.com>
-+M:	Junjie Cao <junjie.cao@linux.dev>
- S:	Maintained
- F:	Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
- F:	drivers/video/backlight/aw99706.c
-
-base-commit: 7ddc04d1bd08f80ffc1e2fb97f3fc6cacab0ffc0
--- 
-2.43.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260706073307.1038=
+430-1-junjie.cao@linux.dev?part=3D1
 
