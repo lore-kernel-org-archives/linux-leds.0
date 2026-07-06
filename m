@@ -1,48 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13882434E42;
-	Mon,  6 Jul 2026 16:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8122D97B7
+	for <linux-leds@vger.kernel.org>; Mon,  6 Jul 2026 17:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783357007; cv=none; b=Ix+2rK+DSBGkVXfOscMRkWHtiD+LH2khwmxSTF3on3dyup2BomkAluxHgAeUFGyNzUErd6Pc62aO2C05uuiVEItYPSyIEI3klxThpHq0dmh4omOZKpGq45LXpt6IdXrW8SEzVCN8KwRZqwZD3qcX0h1ldK1xdO8oqYtpaTHbotc=
+	t=1783358303; cv=none; b=LWSyclQNAFdH2DeqdngCGyu9OTzlVgZjMKB1iPkTcdFRIbbdsISMYrbTe3J0HBtLUK/NPiVksgUMKn79ATIm6dFyM36dGD3bfLjysC29T+O+l7XHAN0Unk5TYNTHLFhqVGEMCK+XhOhKTpp/a041nMXXNMBXDWMGuJmwnVbC8oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783357007; c=relaxed/simple;
-	bh=IkavAcNEz0PfF07O5rjSVXWtxZ/qVex1flxHuikSL0M=;
+	s=arc-20240116; t=1783358303; c=relaxed/simple;
+	bh=YmjH+Y3Kgb9Hbty0PPKiNXVdL4sCaB2vOqcjzHXfyzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RuvHCIgJuByUPnemLTU+QEvCFFvRMFo3ieVtu6z5M7hl2ZsZrazrVCTL6YPh0699RSbQU3VaTBWmH9Q6zHZD1bTPJKGfIH6oC4/OcOva36ZYbI0wp2l8kZ9DPATY2CSbHLxYsPqAtqj+vcJ4OvqSJ1O5Q3NmOBhOzbxf/aRlU1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHs40R6G; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=YwsaDt2pUW+Npe9alT5IwPhOHO8nRx2S8+zGQ/zrROmE+K5r9mEY/ru+xuV7CrIMwdWAeq++cIv2igh9I9B4uDwupKaa52EPrEjo3mR3B6rRRef3i5JghPvYDROrU/svLCPXS19VfNL8i16BHJEdXwKyPeN1RWtOUD1NyS273kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=KP5EJ8x5; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHs40R6G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297951F000E9;
-	Mon,  6 Jul 2026 16:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783357004;
-	bh=8Zb7HmMSNT0dYjvG51xeECDrIe9PtU2siXTvPJaZIg4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fHs40R6GdHgXM0M1t2EyjomJ/OwN6IwGJ1f3Wc+kjNscP0u7Eu75pHVwSaiOPLYFs
-	 u/DxzwpQ9Ugf4dcPrI4ILJ2vV8gDh+Do7I/CUwHqAkRKW1ygSxx2a0YQDKXm1d/nr8
-	 yI8cy4iVIPpYX/cqA8D4gKDCJSeRJKMEz0UpgnbD8dI5a8zbF4wgaJHXdKRSYL7fre
-	 lrW6OBrv+43jseu8WZDNkk2C3dJYUMK8/jaNVRC2uFUeEkOy80H1LiHwwuoGRBrrXH
-	 XI1FzEr8n/c8uCfsXef1vwtbBGGDditNcxEJFWrHEvdcrd+B3nkERUsqHq6VvnsL9c
-	 NlRdxgDgm2lxg==
-Date: Mon, 6 Jul 2026 17:56:40 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Loic Poulain <loic.poulain@oss.qualcomm.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: leds: nxp,pca963x: add multicolor
- LED support
-Message-ID: <20260706-account-harsh-093c6354bca5@spud>
-References: <20260706-monza-leds-v3-0-37ea8c988363@oss.qualcomm.com>
- <20260706-monza-leds-v3-2-37ea8c988363@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="KP5EJ8x5"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-474560436c3so3207619f8f.0
+        for <linux-leds@vger.kernel.org>; Mon, 06 Jul 2026 10:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1783358300; x=1783963100; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=YmjH+Y3Kgb9Hbty0PPKiNXVdL4sCaB2vOqcjzHXfyzk=;
+        b=KP5EJ8x5tLj6T3WH3qG3/lCyzdtqkBQVklvAeqCQ0JQ23FrA0F600viRQhg8X77vji
+         qgzB7eQBqqvT92u0Gqz3JMb75o2zzFFEGc2pZDSu4Oj+1RoLKTdZFO+i9QfTIeEd9vgX
+         OGGOQzTanZ4DeMZsC8DvFZ4Dnk9Y0UXXhbn11pr82SMI80EEynByb5DWCnrT2CC6BdLf
+         cx9+HXDPi5hk0Rm7ZmyGFlJmzzJIVs4brdXZgZ7wnvNSbMofh4bS26KQccZekmpDpCe3
+         LCVOgG8V9y4OhYfET2AUX57brxDqCySda1FAglLri2X8SSoi0ORPwysLN2vbG5Td7x9M
+         kQxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783358300; x=1783963100;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=YmjH+Y3Kgb9Hbty0PPKiNXVdL4sCaB2vOqcjzHXfyzk=;
+        b=bUqCGTxC9suGgX82pCILv/r/RgEFpamY6JLwvOw54P7Rp49LHcC5+YCDe7F97NkEqm
+         K7I0w24NO4qZpxEGBEZDip4rnd/nEmQiwolwG4sIZRUfB/UBSNniX9LKAKCxpd6P7y7W
+         am9oCndWBCid7nriAqI0g80852Nr0mxGsrgWTkwxQflbHSFyoa2oNQ2+gg+Pf8sdYyG8
+         9ujkxDuy8tisHU1p1bEzyY4P/F29+j0T9VWoj/0UaPjFcXShmoE0pOruPMOb2/M+xTLG
+         9WqqSAA8DoMNumv9NIFwq+PZ1wmchlxG3KJdQyne76xy0fnhucauXHflFtb52Hk2lszK
+         1oeQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rq1GwCvfHvZfRwegdo2VSKjyZ6Jk7QvvG6N2er0NTEQD30MmQ9b2m7BS0/MEcME/2TyhX37cQvn8YWP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG3VpD9vAtNvpGcwtiaAaXIbLN0eHgOXR/44k65/tQf0DRJe1/
+	fb/vFyr85C8AFOBKwjvmNPbTo9JGQXflCB5JY47IRgxgjuC2T1rKwrErriACzM9KQ5c=
+X-Gm-Gg: AfdE7ckbwCZ3NSFAR4STeF4gyrUchPYu14/pDi6P5VGd4hCuAMoblyte4r7x7s3al4m
+	LnYXsEyvOxp8yRS/oUGpQ7yve3UVNXPLo+DCYEpT496C8g6RPjy5I1vNtiT5cfTH0H+4F4D6CJn
+	bQHZLU/Sh7aXiPkANdgX3GGo4P4QgUs8gqiy2XtF4N2ixCNEWjNLAbTq2Zv4hOe4cFhKaIVZIOq
+	xdtoFXCkQ3l+LMxR+8HPL0+pclRnbh/sM1mgvEGjuBoBxGkf+xJYHzpwB3Dd3FWgcZoK3DbbsM1
+	zu3IU/syweiEc3eKhfWxhJ4mmEGbmDGQ+y9e/XVimDAAQ8NH1zeuCOD9vnf0YO5AXI13lkrYMFX
+	WY9pL9oU8yD0xTzYtM5AIeL6kFqJkDFSNL30CFD56lA5RvSu9nKSG+hkXZ1APfYOD8szLcwIBc/
+	YOJc1+k4tXna7yn7xwb5vlulkt5gsxe8vl5iCCWEGdVGj8p5Y6GcTDsWxVsk1fH+tTzcIF38JLG
+	uU=
+X-Received: by 2002:adf:e909:0:b0:475:f0d1:eb5d with SMTP id ffacd0b85a97d-47de66e3e5amr1182516f8f.56.1783358300487;
+        Mon, 06 Jul 2026 10:18:20 -0700 (PDT)
+Received: from localhost (p200300f65f47db0404eb41111570ffdc.dip0.t-ipconnect.de. [2003:f6:5f47:db04:4eb:4111:1570:ffdc])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47aa039b0cesm26168854f8f.22.2026.07.06.10.18.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jul 2026 10:18:19 -0700 (PDT)
+Date: Mon, 6 Jul 2026 19:18:18 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Edelweise Escala <edelweise.escala@analog.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 2/2] leds: ltc3220: Add Support for LTC3220 18
+ channel LED Driver
+Message-ID: <akvjRus_i5ZdqKGC@monoceros>
+References: <20260703-ltc3220-driver-v12-0-d4f0da2985e2@analog.com>
+ <20260703-ltc3220-driver-v12-2-d4f0da2985e2@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -50,208 +79,42 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/p782kKd6CXzkAlU"
+	protocol="application/pgp-signature"; boundary="uiv27xnpipz6mahf"
 Content-Disposition: inline
-In-Reply-To: <20260706-monza-leds-v3-2-37ea8c988363@oss.qualcomm.com>
+In-Reply-To: <20260703-ltc3220-driver-v12-2-d4f0da2985e2@analog.com>
 
---/p782kKd6CXzkAlU
-Content-Type: text/plain; charset=us-ascii
+
+--uiv27xnpipz6mahf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v12 2/2] leds: ltc3220: Add Support for LTC3220 18
+ channel LED Driver
+MIME-Version: 1.0
 
-On Mon, Jul 06, 2026 at 05:49:56PM +0200, Loic Poulain wrote:
-> Add support for grouping individual PCA963x channels into a multicolor
-> LED by introducing a multi-led@N node pattern. This follows the
-> convention established by other multicolor LED drivers such as
-> kinetic,ktd202x.
->=20
-> This is necessary to support and model hardware setups where multiple
-> PWM channels drive a single physical RGB LED.
->=20
-> Signed-off-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/leds/nxp,pca963x.yaml      | 104 +++++++++++++++=
-+++++-
->  1 file changed, 101 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/nxp,pca963x.yaml b/Do=
-cumentation/devicetree/bindings/leds/nxp,pca963x.yaml
-> index 4034139e3f770a1035208490a9436bdc33387279..dccdb1d9421199a51cac5c7f3=
-f7da503caa35622 100644
-> --- a/Documentation/devicetree/bindings/leds/nxp,pca963x.yaml
-> +++ b/Documentation/devicetree/bindings/leds/nxp,pca963x.yaml
-> @@ -74,6 +74,40 @@ patternProperties:
->      required:
->        - reg
-> =20
-> +  "^multi-led@[0-9a-f]+$":
-> +    type: object
-> +    $ref: leds-class-multicolor.yaml#
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        minimum: 0
+Hello,
 
-I still don't understand this, minimum zero is literally useless since
-this cannot be negative.
-If anything, you should be constraining the maximum value. Remember,
-outside of conditional sections the maximum permitted values should be
-defined. Conditional sections should just narrow the constraints.
+On Fri, Jul 03, 2026 at 12:10:51PM +0800, Edelweise Escala wrote:
+> +#include <linux/mod_devicetable.h>
 
-Same below.
-pw-bot: changes-requested
+Please don't add new users for this header file. Only use those
+<linux/device-id/*.h> that you actually need.
 
-> +
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^led@[0-9a-f]+$":
-> +        type: object
-> +        $ref: common.yaml#
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          reg:
-> +            minimum: 0
-> +
-> +        required:
-> +          - reg
-> +          - color
-> +
-> +    required:
-> +      - reg
-> +      - "#address-cells"
-> +      - "#size-cells"
-> +
->  allOf:
->    - if:
->        properties:
-> @@ -84,10 +118,16 @@ allOf:
->                - nxp,pca9633
->      then:
->        patternProperties:
-> -        "^led@[0-9a-f]+$":
-> +        "^.*led@[0-9a-f]+$":
->            properties:
->              reg:
->                maximum: 3
-> +        "^multi-led@[0-9a-f]+$":
-> +          patternProperties:
-> +            "^led@[0-9a-f]+$":
-> +              properties:
-> +                reg:
-> +                  maximum: 3
->    - if:
->        properties:
->          compatible:
-> @@ -96,16 +136,28 @@ allOf:
->                - nxp,pca9634
->      then:
->        patternProperties:
-> -        "^led@[0-9a-f]+$":
-> +        "^.*led@[0-9a-f]+$":
->            properties:
->              reg:
->                maximum: 7
-> +        "^multi-led@[0-9a-f]+$":
-> +          patternProperties:
-> +            "^led@[0-9a-f]+$":
-> +              properties:
-> +                reg:
-> +                  maximum: 7
->      else:
->        patternProperties:
-> -        "^led@[0-9a-f]+$":
-> +        "^.*led@[0-9a-f]+$":
->            properties:
->              reg:
->                maximum: 15
-> +        "^multi-led@[0-9a-f]+$":
-> +          patternProperties:
-> +            "^led@[0-9a-f]+$":
-> +              properties:
-> +                reg:
-> +                  maximum: 15
+Thanks
+Uwe
 
-Is this 15 the maximum for all devices?
-If so, why does your regex permit values greater than 15?
-
-Cheers,
-Conor.
-
-> =20
->  additionalProperties: false
-> =20
-> @@ -149,4 +201,50 @@ examples:
->          };
->      };
-> =20
-> +  - |
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        led-controller@62 {
-> +            compatible =3D "nxp,pca9633";
-> +            reg =3D <0x62>;
-> +            #address-cells =3D <1>;
-> +            #size-cells =3D <0>;
-> +
-> +            /* Three channels controlling one RGB LED */
-> +            multi-led@0 {
-> +                    reg =3D <0>;
-> +                    color =3D <LED_COLOR_ID_RGB>;
-> +                    function =3D LED_FUNCTION_STATUS;
-> +                    #address-cells =3D <1>;
-> +                    #size-cells =3D <0>;
-> +
-> +                    led@0 {
-> +                            reg =3D <0>;
-> +                            color =3D <LED_COLOR_ID_RED>;
-> +                    };
-> +
-> +                    led@1 {
-> +                            reg =3D <1>;
-> +                            color =3D <LED_COLOR_ID_GREEN>;
-> +                    };
-> +
-> +                    led@2 {
-> +                            reg =3D <2>;
-> +                            color =3D <LED_COLOR_ID_BLUE>;
-> +                    };
-> +            };
-> +
-> +            /* Remaining channel used as a plain white LED */
-> +            led@3 {
-> +                    reg =3D <3>;
-> +                    color =3D <LED_COLOR_ID_WHITE>;
-> +                    function =3D LED_FUNCTION_STATUS;
-> +            };
-> +        };
-> +    };
-> +
->  ...
->=20
-> --=20
-> 2.34.1
->=20
-
---/p782kKd6CXzkAlU
-Content-Type: application/pgp-signature; name=signature.asc
+--uiv27xnpipz6mahf
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCakveRwAKCRB4tDGHoIJi
-0tc+AQD1xWa8YoKk5j+v3k7ziF0N2XUvIIXdj8pFG+U/UqsfqQD/d+BCU2t5T76N
-T+yLT7v74sTvfECiMylgSuB9LSoS9go=
-=dyQW
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpL41cACgkQj4D7WH0S
+/k5JbAf/cryojVeqrUz0kxo7uqSdT74K5dDv86lDbYDbMwsUBUlKrMUtRiqoeRuB
+/meKtGAcJ6Lhtc/EM/kPL13XbuQ4XXUyVqeZcv13kvKwjozPfhJQVvxxz4sAnNZ2
+Yxv0z1QkwyvKFTJ2pZzz0ZFPM6t4etJ0/Ufb2jUir2s5+NYlWHQAMTZ7kVPSEFRQ
+sAG8GHhJTZAK3YOqnvR1ixHkGn+LUNvy28iZipbEJbsNbmDim5JituncZFTDsipt
+eD2dR5fMlrzkmnNneU3QocsdWL1Z+UYPeJXFqe+LCUbB1b/oGOEfOu5vwLALcYhx
+7cOcr0mLPD1LAj61L0XPO0W7ik6Bng==
+=8rWl
 -----END PGP SIGNATURE-----
 
---/p782kKd6CXzkAlU--
+--uiv27xnpipz6mahf--
