@@ -1,134 +1,94 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D072E92B3
-	for <linux-leds@vger.kernel.org>; Tue,  7 Jul 2026 02:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E4B37266D;
+	Tue,  7 Jul 2026 03:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783391110; cv=none; b=pJxxtjfetGS7vjUZtAeHRBzak6vQHx9FIMQi6L69vFpuf1ZJxHQUNlOu0GmIfP8ofsrECEn4cB5XrBtk9HuwqYqfcj9bFa0MKgDMRd9tf4zI0rv1aUR3d+I/GBZvtYDt0ef52N93DCQtFRn5StDYnUpGkfyWbQdGeLsOYnMWRg8=
+	t=1783394530; cv=none; b=MbATW9+i0lD8MxJeY0EbNoeGKN0xme0gYpPMsgn2hPu+6fSD2QDAVs+Vqwdgx+aLQGN9PwAxzISECb8yyJnyIn4ZXYpJcfqD8YSBO8z3+aQeA3G+6KUi/6zy0Sx+guCLBI5VQKuoQtdb67HEwRD4QHRBjrTLARW5PTsokUvO3m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783391110; c=relaxed/simple;
-	bh=2KmZ7Hb3On5nh1GAU6ccvCHBoNxXzKsIit/vgYPVkic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItbrGtAPTzWG7GaGrZFp2T07yM7T8bSnHaFMIp6906wAc9lnmoC9wjGYx2/6xAlLzMcWRtvGWDe9ze4gONn3a9C5TQxNODpZpKMqYyjNaV5GVuMwRgnMkI7jxBRFGwJQAXf9QZ0PXMKk83z9P/D16uQuk8Mlfe0B0wLtL+78h2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=n7szU3LS; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783394530; c=relaxed/simple;
+	bh=uifYgKU3HWleDJ1V51l/6/3x0LKaVLQJVdYJHTT2Nk8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RHHqrIhvUCat7whvIXYwexeG+0GzRhCVRv0rSq/DFxXwwpGdbVdD3UaGNOIBfSmfQ/yBvZmLSbOCYqkT4xrnq/L4D7kDX/g6ZuIMGCzF7tVYZv5yg4GHVMSBvQqxwkKVTVt4UL34B3j919IPOwxSbbzrABFej78qQuVwk1NFa74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkGBTtwg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n7szU3LS"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-381c51fde6bso3963152a91.2
-        for <linux-leds@vger.kernel.org>; Mon, 06 Jul 2026 19:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783391109; x=1783995909; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=IWwXV2NoQ084hyR/IchuMFSWerplFFVpf5f6Ij6vjU0=;
-        b=n7szU3LS+bhgNJgWgskrhYxfjug4wTGvWS6pWZWrj10H12XKcFhFmU3Et+ChAhmd4Y
-         W8xgQTCdf2q1RxOuNf4MMgTerSGTQSNR3SQdp7pv5p0YkyGMHPMU/onPJA6Xj2M+lKBf
-         hncDXR83ASEMnJLnRB3woWx/ccnfMIbKBhAfh6kPvaZboAKcSrXiqrgWiSn0G0/8JWMm
-         FmrCa1+A7ugbOWIS/bDnv44cOvOb69JAAlCEx7ePexjO62C5OSARwOjBl5tAQnhQacUi
-         XMq1spAZqezMq04lxhv95kg2bfIliKGqXS2DfVKcZx+aJj481FHv03OLh2vEbq/CcFIr
-         tulA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783391109; x=1783995909;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IWwXV2NoQ084hyR/IchuMFSWerplFFVpf5f6Ij6vjU0=;
-        b=eALfgknsuY8D256mASbpvfIWvyIjfasczYhV5zVp6kjUFzBfDvbnCaCpmchfSVSq7F
-         JCYbR0DEeP0BV9QBhPYBKXrGlSl3sZXsVlLKeiRjusBYMGtgYP+8DXqSA9d9Lq/qEX3b
-         V2/9J9MT2L3ReU/WNzwLuemR3NgYnSNAzvTnKqwl4ZxE9fdCgzyevk0ZcCD4FMITTqx8
-         VGHu3Ae9o8d8RHqw+OcjV4QY0+QjxnN8Fifg1NvG6FejVcLqM9+LVIfBRneB/UL8q+Dv
-         vrEw7Fzfu0lRJbBld2E4nnsdsOn/t23UYTBxD6vBpKKGcM0QDwGV5h/zI3qr35KCMK1w
-         L68Q==
-X-Forwarded-Encrypted: i=1; AHgh+RoQ1HkIwk2B9zjZR/Q5MDjrOIg8+TgL7u+qubIFC68dDkwDjtq1UiZyKWhqVwtLVSTKoNpuGRrzFcJ4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMmkq9hCFfzZpgij/otIRMW6m0McEnS+OsO2iLI7p9ouKD36VN
-	VpfXa1WHQG7Q6DrBk0BRi3RIISjI0YbpTJ38TsFtl8XfoJFOYZXkLKHo
-X-Gm-Gg: AfdE7ckMQzMCRsH9G9ncWpDBlOQJSYm4UTnt5T73QqMr6e9JJ/Kb9BuySLh3E/r+x0e
-	yUw8D0BvdsDgHbj29FgIT+MDirzk6SwZuLiNsfuDJdDmQkMKVgeLJtPjzmSvjPDXE22dDlBrrsr
-	IPLFLlEUA0un3k6UMJqYA2NXeCVhVgEwdSIMN4NYnrfWyH9FbzBPKwLBbMIedHrf5qX/76hdaSo
-	DW+1t2EJ8iIrY6MI6czZs62gN/AXWI8ZFuzznXJoRsVKk+mBnqJIHs+30mii9gJLj54EMu5G9KR
-	C+Wrq7cVl7ogSIU8Na/GadmX++PIXKvRvgKiqoHIXUUxRjTKbX2WNKIXlagtC+jb3v54Xkrbl89
-	ch0p8Alh4d4gzh6AlUp9gNlA95/pvgoNeTPY9sxQ1RI3iHrM4sIxCimUnRl7wWVkdg+uZTiXf+a
-	78Iu41Hbb69hL5vGRqbObfhPcrVG8YEt+UgYRH0ae1fmXvH4kud6zmRg==
-X-Received: by 2002:a17:90b:2dcd:b0:37f:c683:e643 with SMTP id 98e67ed59e1d1-3875920ccabmr3345962a91.24.1783391108945;
-        Mon, 06 Jul 2026 19:25:08 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:d89b:1fdd:a8f2:dbeb])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31174a56848sm2378094eec.16.2026.07.06.19.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 19:25:08 -0700 (PDT)
-Date: Mon, 6 Jul 2026 19:25:04 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Thomas Gleixner <tglx@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, linux-sh@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] gpiolib: fence off legacy interfaces
-Message-ID: <akxjQtCTcx2TOQMk@google.com>
-References: <20260629130329.1291953-1-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkGBTtwg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B901F00A3A;
+	Tue,  7 Jul 2026 03:21:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783394520;
+	bh=Pp3QGx4MI0wMm1/tu5AIhwHgnRl0wO+oCUAfozdxYPU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=GkGBTtwg3fkvelnnB9ePsx319TKYpkyY120ukz7J9mXwDL3F2SzlhOQXOykAPNXSt
+	 T9hTCoVaRJNePFrs/NDXVp9wnzqatoW7OMOdbknTQe4P2M33cfbuNxRW1tDwUvEfYl
+	 nBCh0bG1DBfJOf5Xg7RmIxDkxQUIeZnxvrZQsCAOCC2QNoSqb067N2oG8Yl7LQIwer
+	 usfq7vYi3tzceYNHbKDJblKy4Z9Q7q2t3rW9isJVflPWzWU90TN5g6OHh4KHeiQe1O
+	 FB814nrxxka8MCU/ItGGi5evHQqyZLk7NJMLo5TpplcLD+OcCau2vm+UB1jehnriqH
+	 5OBWbiPk5xgew==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Sean Young <sean@mess.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Martin Botka <martin.botka@somainline.org>,
+	Biswapriyo Nath <nathbappai@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v3 0/7] Add vibrator, IR transmitter and USB-C handling in xiaomi-ginkgo
+Date: Mon,  6 Jul 2026 22:21:33 -0500
+Message-ID: <178339449904.1938770.3052050232768803324.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
+References: <20260330-ginkgo-add-usb-ir-vib-v3-0-c4b778b0d7f8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260629130329.1291953-1-arnd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 29, 2026 at 03:03:23PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> This is the remainder of the series previously posted as v2
-> in [1]. I've changed the version to v5 for all patches to
-> not confuse b4 too much, but the patches are mostly unchanged.
-> 
-> The patch "Input: soc_button_array - select CONFIG_GPIOLIB_LEGACY"
-> was not part of the series last time, but the build bots reported
-> this as a regression since I had dropped that since v1.
-> 
-> I hope that all that remains now can just get merged through the
-> gpio tree. The gpio-keys patch needs a bit coordination with
-> another patch addressing the same issue that is already in
-> flight, so I expect that I'll rebase my series once more when
-> that is in a stable branch, but the state I have here should
-> just work as-is on top of v7.2-rc1.
-> 
->      Arnd
-> 
-> [1] https://lore.kernel.org/all/20260520183815.2510387-1-arnd@kernel.org/
-> 
-> Arnd Bergmann (6):
->   [v5] sh: select legacy gpiolib interface
->   [v5] x86/olpc: select GPIOLIB_LEGACY
->   [v5] Input: soc_button_array - select CONFIG_GPIOLIB_LEGACY
->   [v5] Input: gpio-keys: make legacy gpiolib optional
->   [v5] leds: gpio: make legacy gpiolib interface optional
->   [v5] gpiolib: turn off legacy interface by default
-> 
->  arch/sh/Kconfig                           |  1 +
->  arch/sh/boards/Kconfig                    |  8 ++++
->  arch/sh/boards/mach-highlander/Kconfig    |  1 +
->  arch/sh/boards/mach-rsk/Kconfig           |  3 ++
->  arch/x86/Kconfig                          |  1 +
->  arch/x86/platform/olpc/olpc-xo1-sci.c     |  2 +-
->  drivers/gpio/Kconfig                      |  9 +++-
->  drivers/input/keyboard/gpio_keys.c        |  9 ++--
->  drivers/input/keyboard/gpio_keys_polled.c |  4 +-
->  drivers/input/misc/Kconfig                |  3 ++
->  drivers/input/misc/soc_button_array.c     |  2 +-
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com> # for input
+On Mon, 30 Mar 2026 10:13:47 +0000, Biswapriyo Nath wrote:
+> This patch series add support for various components in Xiaomi Redmi
+> Note 8.
+> 
+> Most notably:
+> - IR transmitter
+> - USB-C OTG
+> - Vibrator
+> 
+> [...]
 
-Could this be done as an immutable branch?
+Applied, thanks!
 
-Thanks.
+[1/7] arm64: dts: qcom: sm6125: Use 64 bit addressing
+      commit: 88f8e2ca76ee9999c1f21d020362e6588a6d5ef5
+[3/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Enable vibrator
+      commit: 222f161a873f198301497f22ae0dd089f30e9b75
+[4/7] arm64: dts: qcom: sm6125: Enable USB-C port handling
+      commit: 3df39679bfcb46a3475b0e8d0b31cfcb07def9c4
+[5/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add PMI632 Type-C property
+      commit: c1da9374c3e08c6eb06106256cac3875fb5c467f
+[7/7] arm64: dts: qcom: sm6125-xiaomi-ginkgo: Add IR transmitter
+      commit: 474dedd7f653be26ce5385f46ff2b7a3282a359f
 
+Best regards,
 -- 
-Dmitry
+Bjorn Andersson <andersson@kernel.org>
