@@ -1,172 +1,258 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from alistairbell.org (alistairbell.org [88.208.227.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE4E241CB7;
-	Sun, 12 Jul 2026 17:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E973A9D9A
+	for <linux-leds@vger.kernel.org>; Sun, 12 Jul 2026 18:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.208.227.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783878155; cv=none; b=OOMdHG/JPv7fEZsFof4ZxginsrWWtzNep1pPQcYrKhG3+BZxKFnwps0sWQu5vFa46y4R1FjiY15liGSoeLA8WGiXncN3TemMF91On0Yxi9OM8MZDA0Wo+EyXM3ykdnUluWDCZNJxTfsWMgLD32aIR/Hyd+OUOeeV/i8esUg8csk=
+	t=1783882215; cv=none; b=D/NSGv4hIwLSomwMlbfqaJMN+zWlrHXt7/qWLjZKtKYQuiEznQq/KPhUgrN7fg8qGa3iA1oKQv+aB5y+NezP4Jqy6la/Wk2GxaFJaWuPHvdXamXhXwjLypu3cL4cBK1k0rIN4v/UG2Pnqk26gL+SZMI8/0f0OYWLLPMwXBQ5VLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783878155; c=relaxed/simple;
-	bh=XXSmvUqKYkjxJW5RdcI+U+ckwNWBEWNVYPSU+ZRdKME=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=K1R3Nm3XMzm8Gsj0O1XiTFvDDH7ksKiZJtIB89lktFu6NvuYgYOgdef4UhXuR+6KlMgy3cs7bbNu6iVrMgB+Ie/PdNH5/98aICxd5TyL+h+SGfJxC6rpfmw06Il0RQL6rDOnxutU9FUT+ZlcJKIf6KrP3TY8lWTS54ALFue4PVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HRoLogRf; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783882215; c=relaxed/simple;
+	bh=+6nX9JhD+UGNxoWDaD7olf9l8ds4+JHBb/+Ck/JRixc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZjbS3jxAK+/1jblhDjq4pZ7/7+LEQxT2M/Fl+Kr8W9RjusP8tAaqvHFO0iLHyss6RP69x3WiNnk1udEL7QdCvlgcpjfoPm+pY9Kq0oivNW76ZX/yvaHmFbYw4vylzi4mQRn9HObhdJKA81gh6bCLDbdrey6mU2dgUfchsktOJgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=alistairbell.org; spf=pass smtp.mailfrom=alistairbell.org; dkim=pass (2048-bit key) header.d=alistairbell.org header.i=@alistairbell.org header.b=R56aRzo1; arc=none smtp.client-ip=88.208.227.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=alistairbell.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alistairbell.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HRoLogRf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D17E1F000E9;
-	Sun, 12 Jul 2026 17:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783878153;
-	bh=hhJACipbEfiF13bfNQ0EewP0VVo5SoqJbX4Ev8wBfDM=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=HRoLogRfJas+fQU3peoSSrNlvWHIjC1EH5ylrXUvm0b3ar7Taplgga9X6WBEY5UYx
-	 NHCIqAVfZk0x/YrVRZ/F9KT7VG+NazRLSUViTpe/36IiuAW4N2weZ9IKArcSESNQSH
-	 ou8vj9PWMJTgpy3WYQ4C+mzLjxRiTG8Rb5Zv3tAy44rKXGn8rhgwQSp7Nz9T/PLTF8
-	 NBsdZ2DCXv2VG+qTWz4Mp4u2k+EkTaVDCy2XDPhInf6n+A3u9hQyRL8mFAvoMdWJWk
-	 fefs8uBYdVZmgQkjmq0M3TeQhxBizSn4ujgcnOqRAbdMWSEQkaPMB2gWO7rP+NR580
-	 cfuukuNGDnhtA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v22 1/3] rust: leds: add basic led classdev abstractions
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Markus Probst" <markus.probst@posteo.de>
-Cc: ojeda@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, linux-pci@vger.kernel.org
-In-Reply-To: <20260712-rust_leds-v22-1-055b0459a079@posteo.de>
-References: <20260712-rust_leds-v22-0-055b0459a079@posteo.de>
- <20260712-rust_leds-v22-1-055b0459a079@posteo.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 12 Jul 2026 17:42:32 +0000
-Message-Id: <20260712174233.5D17E1F000E9@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=alistairbell.org header.i=@alistairbell.org header.b="R56aRzo1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=alistairbell.org;
+	s=mail; t=1783881845;
+	bh=+6nX9JhD+UGNxoWDaD7olf9l8ds4+JHBb/+Ck/JRixc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=R56aRzo1hNaypgBslLxEeqkZpsZoN02n3F1OqtsXJDQ6kVROrIzCXsD5JUxn4BI9O
+	 5GCj/PhKIbMwgCHEVGMIYxhyOXtk018pwO9HCZjFZiXRPvaJD78WGZGhzFHxRwNqdn
+	 nHIi7n3vK3ZDHwMbC/W1CTtAK78SinAK/brjSlFSChexELQ7P+seUM/85S9Qh3T/xj
+	 2WHHp6ZIsjrQn6GhgVoRIdImqv7DFI7wAGwaRIwKfc6vREpGuC4alxp4+vM3QLrdfs
+	 lI8hTSDKvez8UF+BS2GD4I7H0LxkogS8lkjPztCSrtinsWHh9DioSsQVDrsEOfxmOJ
+	 R4KJw6djyn1LA==
+Received: from localhost (host-78-150-86-125.as13285.net [78.150.86.125])
+	by alistairbell.org (Postfix) with ESMTPSA id 1B1564EC8;
+	Sun, 12 Jul 2026 18:44:05 +0000 (UTC)
+From: Alistair Bell <dev@alistairbell.org>
+To: linux-leds@vger.kernel.org
+Cc: lee@kernel.org,
+	pavel@kernel.org,
+	Alistair Bell <dev@alistairbell.org>
+Subject: [PATCH 2/2] dt-bindings: leds: Add binding for ti,lp5816
+Date: Sun, 12 Jul 2026 19:43:18 +0100
+Message-ID: <20260712184318.78852-3-dev@alistairbell.org>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260712184318.78852-1-dev@alistairbell.org>
+References: <20260712184318.78852-1-dev@alistairbell.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] The firmware node reference is insecurely tracked by assuming the =
-C layer's `dev->fwnode` field remains unmodified, which can lead to referen=
-ce count underflow, use-after-free, or memory leaks.
-- [Medium] The LED device is registered using the unmanaged `led_classdev_r=
-egister_ext()` instead of the managed `devm_led_classdev_register_ext()`, v=
-iolating subsystem lifecycle guidelines and introducing devres LIFO orderin=
-g hazards.
---
+Add devicetree binding for Texas Instruments LP5816
+4-channel I2C LED device.
 
---- Patch [1]: [PATCH v22 1/3] rust: leds: add basic led classdev abstracti=
-ons ---
-commit 7eff903565ff4a4fae9e842098053e60f2989206
-Author: Markus Probst <markus.probst@posteo.de>
+Signed-off-by: Alistair Bell <dev@alistairbell.org>
+---
+ .../ABI/testing/sysfs-class-leds-lp5816       | 123 ++++++++++++++++++
+ .../devicetree/bindings/leds/ti,lp5816.yaml   |  45 +++++++
+ MAINTAINERS                                   |   2 +
+ 3 files changed, 170 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-leds-lp5816
+ create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5816.yaml
 
-rust: leds: add basic led classdev abstractions
+diff --git a/Documentation/ABI/testing/sysfs-class-leds-lp5816 b/Documentation/ABI/testing/sysfs-class-leds-lp5816
+new file mode 100644
+index 000000000..2d1fd107a
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-leds-lp5816
+@@ -0,0 +1,123 @@
++What: /sys/class/leds/<device>/fade
++Date: July 2026
++KernelVersion: 7.2
++Contact: <dev@alistairbell.org>
++Description:
++	Enables/disables hardware fading of each individual LED and sets transition duration
++	between an old intensity and new intensity
++
++	Format: <enable_red> <enable_green> <enable_blue> <enable_white> <duration>
++
++	Possible values for <enable> are:
++
++	== =======
++	0  disable
++	1  enable
++	== =======
++
++	Disable: The LED intensity will change instantaneous
++	Enable: The LED intensity will transition between the old and new value either
++	linearly or exponentially based on their individual fade_mode over a period
++	specified by <duration>
++
++	Possible values for <duration> are:
++
++	==    =====
++	0     0.00s
++	1     0.05s
++	2     0.10s
++	3     0.15s
++	4     0.20s
++	5     0.25s
++	6     0.30s
++	7     0.35s
++	8     0.40s
++	9     0.45s
++	10    0.50s
++	12    2.00s
++	13    4.00s
++	14    6.00s
++	15    8.00s
++	==    =====
++
++	Reading this attribute returns the current fade configuration in the same
++	format as writing to it
++
++	Example:
++
++		$ echo 0 1 0 1 14 > /sys/class/leds/<device>/fade
++
++		Enables fade for the green and white channels whilst disabling red and blue.
++		Sets the duration to 6.0s
++
++		$ cat /sys/class/leds/<device>/fade
++		0 1 0 1 14
++
++		$ echo 0 1 0 0 > /sys/class/leds/<device>/multi_intensity
++		If the green LED is not already at full intensity you should notice it slowly getting
++		brighter until reaching 100% brightness after 6.0 seconds
++
++	Notes:
++		By default the driver initialises all fade modes to be disabled and a duration
++		of 0.0s
++
++
++What: /sys/class/leds/<device>/fade_mode
++Date: July 2026
++KernelVersion: 7.2
++Contact: <dev@alistairbell.org>
++Description:
++	Sets the fade transition of each individual LED to either linear or exponential
++
++	Format: <mode_red> <mode_green> <mode_blue> <mode_white>
++
++	Possible values for <mode_> are:
++
++	== ===========
++	0  linear
++	1  exponential
++	== ===========
++
++	Linear:
++
++	100% |           x
++	 80% |         x
++	 60% |       x
++	 40% |     x
++	 20% |   x
++	  0% |_____________   Time
++		 0 1 2 3 ... D
++
++	Constant increase/decrease in LED intensity between 0.0s and <duration>
++
++	Exponential:
++
++	100% |
++	 80% |          x
++	 60% |         x
++	 40% |        x
++	 20% |  x x x
++	  0% |_____________   Time
++		 0 1 2 3 ... D
++
++	Initially only a small visible change from the initial intensity then
++	will appear to quickly and smoothly transition to the brightness target
++
++	Example:
++		$ cat /sys/class/leds/<device>/fade_mode
++		0 0 0 0
++
++		Notice the default configuration is all LEDs in linear mode
++
++		$ echo 1 1 0 0 > /sys/class/leds/<device>/fade_mode
++
++		Sets red and green to use exponential mode and blue and white to linear
++
++		$ cat /sys/class/leds/<device>/fade_mode
++		1 1 0 0
++
++		Configuration stored and returned in the same format as was written to
++
++	Note:
++		If /sys/class/leds/<device>/fade is disabled on a specific color this configuration will
++		be saved for when fading is enabled
+diff --git a/Documentation/devicetree/bindings/leds/ti,lp5816.yaml b/Documentation/devicetree/bindings/leds/ti,lp5816.yaml
+new file mode 100644
+index 000000000..d33489c30
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/ti,lp5816.yaml
+@@ -0,0 +1,45 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/ti,lp5816.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments LP5816 4-Channel I2C RGBW LED Driver
++
++maintainers:
++  - Alistair Bell <dev@alistairbell.org>
++
++description: |
++  The LP5816 is a 4-channel I2C interface RGBW LED driver from Texas Instruments.
++  It supports independent control of red, green, blue, and white leds with
++  configurable fade effects and dimming.
++
++properties:
++  compatible:
++    const: ti,lp5816
++    description: |
++      Specifies device as LP5816 and the uses that kernel driver
++
++
++  reg:
++    maxItems: 1
++    description: I2C slave address
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++      compatible = "vendor,i2c-controller";
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      led-controller@2c {
++        compatible = "ti,lp5816";
++        reg = <0x2c>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b6a8c812a..5835f929d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -26765,6 +26765,8 @@ TEXAS INSTRUMENTS' LP5816 RGBW LED DRIVER
+ M:	Alistair Bell <dev@alistairbell.org>
+ L:	linux-leds@vger.kernel.org
+ S:	Maintained
++F:	Documentation/ABI/testing/sysfs-class-leds-lp5816
++F:	Documentation/devicetree/bindings/leds/ti,lp5816.yaml
+ F:	drivers/leds/Kconfig
+ F:	drivers/leds/Makefile
+ F:	drivers/leds/leds-lp5816.c
+-- 
+2.54.0
 
-This commit introduces core abstractions for LED class devices in Rust. It
-implements traits for handling LED operations, a device builder, and a safe
-wrapper for led_classdev.
-
-> diff --git a/rust/kernel/led/normal.rs b/rust/kernel/led/normal.rs
-> index 0000000000000..816db7c576894
-> --- /dev/null
-> +++ b/rust/kernel/led/normal.rs
-
-[ ... ]
-
-> @@ -65,22 +65,22 @@ impl<'init, S: DeviceBuilderState> DeviceBuilder<'ini=
-t, S> {
->                  // SAFETY:
->                  // - `parent.as_ref().as_raw()` is guaranteed to be a po=
-inter to a valid
->                  //    `device`.
->                  // - `ptr` is guaranteed to be a pointer to an initializ=
-ed `led_classdev`.
->                  to_result(unsafe {
->                      bindings::led_classdev_register_ext(
-
-[Severity: Medium]
-Does calling the unmanaged bindings::led_classdev_register_ext() instead of
-the managed bindings::devm_led_classdev_register_ext() violate the LED
-subsystem lifecycle guidelines?
-
-Relying on manual PinnedDrop for unregistration appears to decouple the
-device lifecycle from the C driver core's devres cleanup. Could this
-introduce devres teardown ordering hazards, use-after-free, or resource
-leaks if user-space sysfs attributes are accessed after device removal?
-
->                          parent.as_ref().as_raw(),
->                          ptr,
->                          if self.name.is_none() {
->                              &raw mut init_data
->                          } else {
->                              core::ptr::null_mut()
->                          },
->                      )
->                  })?;
-> =20
->                  core::mem::forget(self.fwnode); // keep the reference co=
-unt incremented
-
-[Severity: High]
-If the driver was built without an fwnode (where self.fwnode is None), but
-the C layer assigns a node to dev->fwnode during the device's lifetime, will
-dev.fwnode() return Some(fwnode) during unregistration?
-
-It seems this would unconditionally create an ARef from this unowned pointer
-and drop it, decrementing a reference count it never acquired.
-
-Similarly, if the C layer replaces a previously provided node, could the
-original node leak and the new node be improperly decremented?
-
-> =20
->                  Ok::<_, Error>(())
->              }),
->              _p: PhantomData,
->          })
->      }
->  }
-
-[ ... ]
-
-> @@ -211,20 +211,20 @@ impl<T: LedOps> Adapter<T> {
->  #[pinned_drop]
->  impl<'bound, T: LedOps + 'bound> PinnedDrop for Device<'bound, T> {
->      fn drop(self: Pin<&mut Self>) {
->          let raw =3D self.classdev.get();
->          // SAFETY: The existence of `self` guarantees that `self.classde=
-v.get()` is a pointer to a
->          // valid `led_classdev`.
->          let dev: &device::Device =3D unsafe { device::Device::from_raw((=
-*raw).dev) };
-> =20
->          let _fwnode =3D dev
->              .fwnode()
->              // SAFETY: the reference count of `fwnode` has previously be=
-en
->              // incremented in `led::DeviceBuilder::build`.
->              .map(|fwnode| unsafe { ARef::from_raw(NonNull::from(fwnode))=
- });
-
-[Severity: High]
-As mentioned above, if the fwnode was dynamically assigned or replaced by t=
-he
-C layer, is it safe to unconditionally construct an ARef from the dev->fwno=
-de
-pointer here?
-
-> =20
->          // SAFETY: The existence of `self` guarantees that `self.classde=
-v` has previously been
->          // successfully registered with `led_classdev_register_ext`.
->          unsafe { bindings::led_classdev_unregister(raw) };
-
-[Severity: Medium]
-As asked earlier, could relying on manual unregistration here during Drop
-break standard C-level devres lifecycle ordering?
-
->      }
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260712-rust_leds-=
-v22-0-055b0459a079@posteo.de?part=3D1
