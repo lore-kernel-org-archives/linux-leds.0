@@ -1,116 +1,123 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37823382F4
-	for <linux-leds@vger.kernel.org>; Mon, 13 Jul 2026 20:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F953446B9
+	for <linux-leds@vger.kernel.org>; Mon, 13 Jul 2026 20:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783973332; cv=none; b=Tka1juvzgM2irW6ttMGKxZrsz1INRaX+QO3HSg0oC7cIIEzq1tQD6kgFL2e1PgtJZ46uC0cGB03OGk3X2Ih/YcHtOxWyPxoYfpTGy2T3POTRl7QCOwrVHFSl1Ljnb0yPWBAR8aEjuy+LX00aaTsIMERzMfFSoxaNS0zizeNNYeY=
+	t=1783973711; cv=none; b=AshG68kJqBH0+GcOIBsKkNt6PAwtOBKflUcQawNsvBxWNzerhAZwEoC/tS0XwFdklccXUTW9tFQ/zuh4mU19TnpotZr5+Vs4hxedmJY1dsKvuRCYTA6pYXlRSbsFok2nIM8RAe9AMGXi1EYFkYs2qoLWed2BSPmWbrbU/xJOfEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783973332; c=relaxed/simple;
-	bh=LJE3g8X7w+egYkCP2rXaOfca3XP81M04fwSuY2MnR3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oDUM9ALuuDWIP9RSjQzVmOJbNEjJ2PoC19IyQVhYr9+5uNNB/QXpAR3S2Xgv3RSbalmWHnv2ArHpF+MGt2i5mYBnBGftFBJ5iig3ayY9IzqCJsGstNkNcNqqVFBgV1ATsX7PMG9MhCiG1fbcOM3AnbXiSFAINMGGhrpnwff4Ifs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHPK/yWp; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783973711; c=relaxed/simple;
+	bh=mI0v/YNMJ+i+xqr84E9wXFrovpAD/GMIIfQd94M9kak=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=LiG2cXeRkJvFBWWVtOydLd1gHG8EL6wKT8V8sVjIcfev2FIPrqIxdiOAyVD6Cz4FcZ98j/DNXrOOPQqYyvH2Pr07HQ/K/gPBvJrC2RN48xx2PlZ7e0E0tU6S0vy1grCg8P6Xx1kprVKoKZN4NrkFAgThe+r1P7m514EhoSTwAzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koVlrFMI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHPK/yWp"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-38e071ed6aeso879418a91.0
-        for <linux-leds@vger.kernel.org>; Mon, 13 Jul 2026 13:08:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783973331; x=1784578131; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=svkyQVAUK9Tk0TyurgUHC7rUmk29GdL4jMQcYPSE8LA=;
-        b=AHPK/yWp4ZEFraQ4SMN4Jls+qSC7knAOmh8myQfVyk7DuMnnZ3HXNJtrPy80y46OFM
-         viDnxPv9GaR8Yl7VNSQTrMAEnsY9EOuye8bao1J3rhTUu5cYmwJrYtQvSyY7YBMiNyEI
-         TSM3723W9MdSdAPP0uthSF6hEy20Qh+rmZhR3uA4DQHocyUw5otWXH6MCjJww0DJLVqX
-         DVTJQI52RER2Z6NGk7aLnc/JGWhBwUQYCvoPsZYag4Z93EGo3IQXL3jnkFUKPJAzztas
-         KdhahToxE5bik7Yvpnvu/0cuUhEm5BzraIO303z6RV7RPNt0Vde++V5Ho43oY4yZ4URv
-         XRoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783973331; x=1784578131;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=svkyQVAUK9Tk0TyurgUHC7rUmk29GdL4jMQcYPSE8LA=;
-        b=D5TKl0GOGbeJEcQP+Uop1Igk0sFnjbeGsZlFy4sJl1YOl5t0JVvYBYkOKKKlQ1LKHh
-         KtUma9T8wL72hot1E8UqndcuJGpEGPStGSGkgim8P0NPE66w8XG3VOAzOCQg93Vo5Kiw
-         Y7VajtnnNUyaOZE7rq9+UGcfy/eYhGjtQ7MuTNH3/GMJ619oEWNCiNHR6py6xIjqMD6N
-         AOeUhRy0KRq3viA1+rDsfWHAWc9RpXp9VytkI0KqjXi/a12wG2Hevh3XpqNqTEcBKxWS
-         ZHPH2kYG0Cx+CcKKHF2t4lZTcrTTp0maRN4W7BrfaN0tXT9i+phISzuZyRzj/FIlzxj2
-         FD/g==
-X-Forwarded-Encrypted: i=1; AHgh+Rppp3OYWN3kmGlSQgKErsZIna5Rj6cONW8AgFY0SIgGKZuRZcjq2wgEn7tIS9Py8RjyvSyC3gGiWl1h@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ulayv05PsH44CKovTRDbCiQb82zppOu3/KfSJnvYhqonwVaO
-	s7KflvwKvlGiJ2in2oYv4Ts6N8ocrPDL321NC596WcftaXOr5nmDJexP
-X-Gm-Gg: AfdE7ckHiRs90bC5t5pB7aHpyR0V+v9Y67ZtJQxVflb2QA4WIpBCCL7xwgVMUOPQ3+2
-	sioeMjBEbQvwk+S2Qpdmnp4/AMAcpK51yTwfyDqpaGcS6qYMe+DRhYJWmd/MhnAcVCgXyDwSQZD
-	pY2BSRcvuutX09XSEp+xBHlkbKzHkVIV0TpUaOSrtS5DNeIYrgBQDYAoBoZxU3qTcix3KtoE0ra
-	oG+lu7XaGgZHv0n710OeH2A/2eddnfT1gUwMgEocpBrX/OF1Ys700jzF1FRLwJ21ZaIMCnSYlbX
-	FHGYwOQDVqfSLpObMdN6JUkSqR/yx/0BBYoGjkn7vfHYPiOZjl10/xpwQzmWnE0QWjed+ajmsEz
-	q9y9a17IvgabHdp2n/ogkKmL+Mb9d4NsBDOLc0CbiLNlTVrPrwYNNEyP/QCLsds3yWvJ5IEmEvt
-	iJLHtc++uXpcVLdXg1NXVVN1ObP2YSGFokcaStInx+fxWymziZ88jZ1yc+gZIrH/azGAtdLMUPz
-	6wqQBVmqYrOYvL+rJ5J3YDeuZ19
-X-Received: by 2002:a17:90b:4c4c:b0:38e:dc4:3f64 with SMTP id 98e67ed59e1d1-38e0dc4412fmr2193622a91.38.1783973331046;
-        Mon, 13 Jul 2026 13:08:51 -0700 (PDT)
-Received: from fedora ([202.179.95.46])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311747f5975sm68238202eec.4.2026.07.13.13.08.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 13:08:50 -0700 (PDT)
-From: Ninad Naik <ninadnaik07@gmail.com>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	william.zhang@broadcom.com,
-	anand.gore@broadcom.com,
-	kursad.oney@broadcom.com,
-	florian.fainelli@broadcom.com,
-	rafal@milecki.pl,
-	linux@weissschuh.net,
-	krzysztof.kozlowski@oss.qualcomm.com,
-	tzungbi@kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	me@brighamcampbell.com,
-	Ninad Naik <ninadnaik07@gmail.com>
-Subject: [PATCH] leds: bcm63138: Use %pe to print pinctrl error instead of %ld
-Date: Tue, 14 Jul 2026 01:37:32 +0530
-Message-ID: <20260713200732.2470666-1-ninadnaik07@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koVlrFMI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 426191F000E9;
+	Mon, 13 Jul 2026 20:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783973708;
+	bh=r5eDDMNCrObAduanMoLu5mAEjAb9pdjhyH0ilehmNZc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=koVlrFMIWm6kdrhzGCl0TNmvJihzE7BH9DbQbwgJXCgoeG7CvCpxrdjh2xxVP9epO
+	 YhEnMLRTOQFYaucy2OQYa8Ee7XX0YjIi70u24ndwK3AErdp086u6PGk1htvRVVoO7a
+	 pAiXk3kvRfVwnqiB+pUAZYOAwWcw5RMl8yidsjR6VOoXV9r5wZF8DC39n65Zu1ShAB
+	 ha7NvbKQ6Mw2it2aXNvLZbdXBp1znK5bGb9Yg8oFiS2ebqsDQVgozuyboN5w4ts1Ze
+	 aARnDZLOBCwY8U+vmMFIAEM63gHXUyu1gXJJDykYNC2zjXDJroWKaUBz2hbYFhy5/v
+	 r9Mr1GoWs5WVg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] leds: bcm63138: Use %pe to print pinctrl error instead
+ of %ld
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ninad Naik" <ninadnaik07@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260713200732.2470666-1-ninadnaik07@gmail.com>
+References: <20260713200732.2470666-1-ninadnaik07@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 13 Jul 2026 20:15:07 +0000
+Message-Id: <20260713201508.426191F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+
+Pre-existing issues:
+- [High] The driver ignores `-EPROBE_DEFER` from `devm_pinctrl_get_select_d=
+efault()`, failing to properly defer probe when the pinctrl driver is not y=
+et ready.
+- [High] Hardware initialization occurs without holding the required spinlo=
+ck after the LED is exposed to user space, causing a data race on shared ha=
+rdware registers.
+--
+
+--- Patch [1]: [PATCH] leds: bcm63138: Use %pe to print pinctrl error inste=
+ad of %ld ---
+commit 11674fcbe14b4d4811e6f7f83c90fb13ea7bf5ac
+Author: Ninad Naik <ninadnaik07@gmail.com>
+
+leds: bcm63138: Use %pe to print pinctrl error instead of %ld
 
 Pass the pinctrl error pointer directly to %pe to print the
-symbolic error name.
-Detected by Coccinelle. Tested by compiling.
+symbolic error name. Detected by Coccinelle. Tested by compiling.
 
-Signed-off-by: Ninad Naik <ninadnaik07@gmail.com>
----
- drivers/leds/blink/leds-bcm63138.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> diff --git a/drivers/leds/blink/leds-bcm63138.c b/drivers/leds/blink/leds=
+-bcm63138.c
+> index 2cf2761e49145..78a87e1df4d7c 100644
+> --- a/drivers/leds/blink/leds-bcm63138.c
+> +++ b/drivers/leds/blink/leds-bcm63138.c
+> @@ -237,8 +237,8 @@ static void bcm63138_leds_create_led(struct bcm63138_=
+leds *leds,
+> =20
+>  	pinctrl =3D devm_pinctrl_get_select_default(led->cdev.dev);
+>  	if (IS_ERR(pinctrl) && PTR_ERR(pinctrl) !=3D -ENODEV) {
+> -		dev_warn(led->cdev.dev, "Failed to select %pOF pinctrl: %ld\n",
+> -			 np, PTR_ERR(pinctrl));
+> +		dev_warn(led->cdev.dev, "Failed to select %pOF pinctrl: %pe\n",
+> +			 np, pinctrl);
+>  	}
 
-diff --git a/drivers/leds/blink/leds-bcm63138.c b/drivers/leds/blink/leds-bcm63138.c
-index 45c0662df933..12b70ee31b9a 100644
---- a/drivers/leds/blink/leds-bcm63138.c
-+++ b/drivers/leds/blink/leds-bcm63138.c
-@@ -236,8 +236,8 @@ static void bcm63138_leds_create_led(struct bcm63138_leds *leds,
- 
- 	pinctrl = devm_pinctrl_get_select_default(led->cdev.dev);
- 	if (IS_ERR(pinctrl) && PTR_ERR(pinctrl) != -ENODEV) {
--		dev_warn(led->cdev.dev, "Failed to select %pOF pinctrl: %ld\n",
--			 np, PTR_ERR(pinctrl));
-+		dev_warn(led->cdev.dev, "Failed to select %pOF pinctrl: %pe\n",
-+			 np, pinctrl);
- 	}
- 
- 	bit = BIT(led->pin);
--- 
-2.55.0
+[Severity: High]
+This is a pre-existing issue, but does this code ignore -EPROBE_DEFER from
+devm_pinctrl_get_select_default()?
 
+If the pinctrl provider is probed after this LED driver, it would return
+-EPROBE_DEFER. Because the driver merely logs a warning and continues inste=
+ad
+of returning the error (e.g. via dev_err_probe), the LED device registers
+successfully but remains physically non-functional since its pins are never
+multiplexed.
+
+> =20
+>  	bit =3D BIT(led->pin);
+>  	bcm63138_leds_update_bits(leds, BCM63138_PARALLEL_LED_POLARITY, bit,
+>  				  led->active_low ? 0 : bit);
+>  	bcm63138_leds_update_bits(leds, BCM63138_HW_LED_EN, bit, 0);
+>  	bcm63138_leds_set_flash_rate(leds, led, 0);
+>  	bcm63138_leds_enable_led(leds, led, led->cdev.brightness);
+
+[Severity: High]
+This is also a pre-existing issue, but is it safe to initialize the hardware
+without holding the required spinlock after the LED is exposed to user spac=
+e?
+
+bcm63138_leds_update_bits() performs a non-atomic read-modify-write on shar=
+ed
+hardware registers. Calling it locklessly here can race with
+bcm63138_leds_brightness_set() from another CPU, which locks leds->lock and
+performs its own read-modify-write on the same registers, corrupting the
+hardware state of previously registered LEDs.
+
+User space can concurrently write to sysfs attributes of this or other LEDs
+during this lockless initialization sequence because
+devm_led_classdev_register_ext() was already called earlier in this functio=
+n.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260713200732.2470=
+666-1-ninadnaik07@gmail.com?part=3D1
