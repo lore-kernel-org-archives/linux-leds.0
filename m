@@ -1,60 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AC13F0A87;
-	Tue, 14 Jul 2026 07:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784014825; cv=none; b=j0xHlEpeiPUNh3XUj296+MHYzczL/hvLS6S2HiMF+bdw2IL0jZ5EuN+dP+PC1p8bfQvNJWVpFUooFpOv9l4aUuzknVdg0fs67ciU6e/BubvJmtTQcSj1LIvhz+os2V0hpJYzF/YZTgIChEqsmWpXV8oaFu0JUZ9D7yOLwdHiqXI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784014825; c=relaxed/simple;
-	bh=CSLB7OceZ4CS65riZ0IP71V/R7k3hpwJEqPZaBXDeZc=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=gE8GhiKGdm6HRHODh5d827lxm0QoMgqwdAvb2hHr5KrtoXoKf0jzuDbGF+VXzXjsfYRDOKRBsPCsBxuuI51Z1754zcIUEBJNTx1J3CY8/YmQs3RQOr/tdXIYUfF9LKh41CVe500zof37xZe4P4ncKdES4SN8wiP+sVbFAf88dcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShSw1eFa; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65503368BF
+	for <linux-leds@vger.kernel.org>; Tue, 14 Jul 2026 13:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784035623; cv=pass; b=iAqSgi7Y1WEOA2yJc+33T/dIJzweHViq7RbwxKWXGhJNLZ1Dl1AurzOZc0Meya4RgfKeYuehsoufcgT2QtenINCBwX0RYQAmM5iyc9bIVtQ9aJprNmCk8yyOFIlzLDgeBMvIrCmLN7m7j4Gn7VS0xtk4gmcfNz5suLfsB0r6wKU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784035623; c=relaxed/simple;
+	bh=nO1TZgVYGZMERjIgcqsTAqDB/ZWtf6AUfRwRoLJPVvc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nQpjbf+jGUNrchYLm0YO5qaVpZESLsxYdPfPffObS2XE57xQqbGH+pLACgT999KcG1j7KlZ48uNCc9wddSVZmcuJTnKTAEKB9+cNQntUG5N89oJkd57nfIcEU2MKAucvwrCy2LKqdfIn93LC3z/VkBghLlUOG2hzTk2FGKbDBc8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZf1aXd0; arc=pass smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShSw1eFa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54BF1F000E9;
-	Tue, 14 Jul 2026 07:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784014824;
-	bh=CSLB7OceZ4CS65riZ0IP71V/R7k3hpwJEqPZaBXDeZc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ShSw1eFaK27d+8047aGGSIQbU5mey2SvbULw0gTrdTC9WUp8THl/Bqax1K314TyIf
-	 gDOxFdphY2ajeOYiEI4Yu/7NwuLtytj0TxXy3ffTbjHNK7cG0MxYlLZ8DGO8E6+jpY
-	 rVShX8E26HD8Zw9ypXfB039FydmjGQ+jvhi1ikjpbEBbRZQGG2K1mFECluVyln5tAb
-	 FJIOisPwyWvTil2CzrMMO63JvZg8+u6JFYu7X7/4NwgMGk+jXTYlAyLTqWcIO6gw0h
-	 0qxgEeE8VjI/pasax/lw+FOdcggAk4CMjYJEoXk3x0+YMViwdd3qTENtGGY7GCAHHj
-	 LZ9VDEh2Jec3g==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4] dt-bindings: leds: Add default-intensity property
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jonas Rebmann" <jre@pengutronix.de>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org
-In-Reply-To: <20260714-multicolor-default-v4-1-c2335b32bc39@pengutronix.de>
-References: <20260714-multicolor-default-v4-1-c2335b32bc39@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 14 Jul 2026 07:40:23 +0000
-Message-Id: <20260714074023.C54BF1F000E9@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZf1aXd0"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-848d21bbaffso3254039b3a.0
+        for <linux-leds@vger.kernel.org>; Tue, 14 Jul 2026 06:27:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1784035621; cv=none;
+        d=google.com; s=arc-20260327;
+        b=sCtVY4UiL+h5b+vUIagjlHk0ZgRv0aTPRxThYIKgQOqMZxCkB4dPrfm7t8OFmNYB3o
+         FXR4X001dGuD2qZQJgpfUT8EaeONu8Phq+mShK4gcexXIPctPJz5c4+wxM93T6CUmpDL
+         ECJKd3DHyIUFfm7ScKyCaq0FbF2KkNZeSC+ifNHls876VrLUjYLmBCYSv/xKo7IGeAr1
+         EH0dTbpTcSQIfNpEbENa3qs1xriLWdZ6Q7QRhawedtlOTVzBnja5HWHJOi+3AyjAv9G1
+         W/AWtWoKDx9/QsjTWsh2cE9ubnEKxJla7nXXR0TTLqJjMvqckYboC2Ac44RbpmEFRgP1
+         XxTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=nO1TZgVYGZMERjIgcqsTAqDB/ZWtf6AUfRwRoLJPVvc=;
+        fh=31+N2Exzf/5A/oZPD8vInQ5fsFailXAvCkPla4O079c=;
+        b=moo8WEyqVuFVpemc/BjfP4idrOTFjdx+W2GAyu+C0ZlWXCY5nfHXhAd8GloriL454j
+         WmNtC6RXo8xAKyZqPzMRmOJluv8EUhrGH2GmCkNNnIPE03ew8gsYMDrqJB7qzS8umOB4
+         p+69VklWKXwqMgXLuJiYqQdKv0pC4YTi0/Fc7Z6xYCcXyFDy5yKEfi7J67tVvbAplYct
+         Q+LiRsUkvk5Vuw5fMbjd/riTezo/S/5/I+2vIelMYm6vztuNxRr1CLlEDeUdd8+AEOpq
+         9fZTmVHiVnR6lwFAO+avhNEA1xMuJugs/6NnIUzmyipeksTy7DYDHd6B+t5v/kQHtZNc
+         U3zw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784035621; x=1784640421; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=nO1TZgVYGZMERjIgcqsTAqDB/ZWtf6AUfRwRoLJPVvc=;
+        b=LZf1aXd0NDZy+HyoV9fvHRsX5BLLkFdBKmoUP+hsams104OkhJru3dmMG/oz6E0o9P
+         0rBAvVrCSCSIhCrYr1gNqDhOAvm3PLyO58snWKTApbRtlPeiTym32NPpIKOblXD7z4Au
+         XPt5nXHEqkOwfqPqyrJhnwospmkSKWhwS0H/L5pvhr62cA74ZAcmldmq8cvN3/FhWLda
+         ubfOxB4awH73kFJIDmWFoVzv1PT8p7cjjTzZTp67yTxK32oHIm+PEFbUlkuQtf0pJRUo
+         ZYu+Ih1/KqqwSaHohotBUtpxiEb1E2iGPgYnM25zKGGTr25K0BBTuVvChnaBs+5J/TMp
+         A2zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784035621; x=1784640421;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=nO1TZgVYGZMERjIgcqsTAqDB/ZWtf6AUfRwRoLJPVvc=;
+        b=SrM03o3yheWVduNOmVwgw9cxnjFYkmo2HCouh6crfjBeatM4YThjvPkQHQmlN4n+t5
+         FQVhP8kGu6m2eeq1pdYD41AtIYseGkG+FylDFeh4O3sdGPucLZtoSeJYdtEDFljdNeTa
+         RC1KYW3gPrqGJNYbHTO2APkKjBh4vfBnljnLwtw7ylUcX2TQHTsY5e8nVc0jmgWq/FLQ
+         Kr1UGqxsMEPHJXplMIib4e6GFUUxqqdMMlXTAik75TfN66JIDB5Z2QB3gUc9LujBdC1C
+         fgz0QWNvyXhsgyK+gDRgzhZ7XD+adBBxeN61qKpCY7tFhctcwW7J65Mv2ccrRCDpdv+3
+         PVdg==
+X-Forwarded-Encrypted: i=1; AHgh+RoiG/wwPrui7I2vZYG7+uH7wn1kidi0X0i9IXB83jp/SDk0oaMkibIE2yDLRDyBOU6tP0Nh5D/onQo8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm4VvKZyI9ssaW9QjBYgwvqw0inr2iFxPDy61JhYgAiniQuGsp
+	b5N6a4U4Ibe8NfGeCXJOVj1GOATpzZrc0dRUCyulZpHw6Qm0Dx2DmixrA8ZywbwA3lhEnJNk0EI
+	+EoChiiaTtqJSUeDv95JSqd6gdMt+KvY=
+X-Gm-Gg: AfdE7cmfwKGPzWrQEyGhjcz52bqvvAqGHv9mU02y7//p8Wc60g9jyT6YK2CH4+XRP/p
+	KbqRFvuvWIjjRN2yO6RjOB5oPpjFOm2w+aVZvhYcu/aTgZTRcIuNyNhhMe3FCs4lKAzimEc9QP0
+	0HcXiGa37r5sIr9dxPYi9QYC6Ke+mZ7Vb41dZ1IPhFLy9LQP1RbyYfdqObI+ueiElPEjr+Mm+KZ
+	Gy9gPIkOBwdrq2yMFrwvlrf98vWT6eE/DizvAZ3cDZLppJqgXnJHlPWLKdQV/rDuOt25OKalwZ8
+	5SpDpMQ7OQU3PNOPkp97ozbhTVmQNQ==
+X-Received: by 2002:a05:6a21:730e:b0:3c1:279c:526c with SMTP id
+ adf61e73a8af0-3c3576426d3mr2584439637.63.1784035620851; Tue, 14 Jul 2026
+ 06:27:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260617080031.99156-1-clamor95@gmail.com> <20260617080031.99156-3-clamor95@gmail.com>
+ <akeEd0GcHSqScGIl@hovoldconsulting.com>
+In-Reply-To: <akeEd0GcHSqScGIl@hovoldconsulting.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 14 Jul 2026 16:26:49 +0300
+X-Gm-Features: AUfX_mylEu9Yyzm1iZHwnL_3qQ4wX-qy21nMalz6S1BYQvhN4kmLF8d5IT5che8
+Message-ID: <CAPVz0n1aYREgo9Mqb2fioQKTKa478rhMYPJJjcUagjCGNTzMgw@mail.gmail.com>
+Subject: Re: [PATCH v5 02/14] mfd: lm3533: Remove driver specific regmap wrappers
+To: Johan Hovold <johan@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-fbdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Document the default-intensity property to set a default color on
-> multicolor LEDs.
->=20
-> Update pwm-multicolor to support it and update the example to turn the
-> LED red on boot.
->=20
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+=D0=BF=D1=82, 3 =D0=BB=D0=B8=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 12:44 Johan=
+ Hovold <johan@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Jun 17, 2026 at 11:00:19AM +0300, Svyatoslav Ryhel wrote:
+> > Remove driver-specific regmap wrappers in favor of using regmap helpers
+> > directly.
+>
+> The commit message should explain why you think this is a good idea.
+>
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Removing custom wrappers over standard regmap helpers is always a good
+idea, that is self explanatory.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260714-multicolor=
--default-v4-1-c2335b32bc39@pengutronix.de?part=3D1
+> Based on a quick look you lose the errnos that were logged on errors and
+> also the register debugging provided by those helpers.
+>
 
+That is not true, regmap helpers will provide logging and you should
+not include debug stuff into the final submitted driver unless you
+have a extremely valid justification for this, debug logs should have
+been removed once the driver development was completed.
+
+> Johan
