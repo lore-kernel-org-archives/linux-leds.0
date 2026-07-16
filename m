@@ -1,167 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8B22D0606;
-	Thu, 16 Jul 2026 18:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273D3346E44;
+	Thu, 16 Jul 2026 21:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784227217; cv=none; b=aSG49sV+5hbMg7rUd9UJf7bEgIla7bR1qDHL+SQhONbigXBcgYGmYXIZGM3Mw6tBx0XtmAG3hHH0IwxmTQii9JpKLXrowXwOYNh6+x7KL15BVAlptjWk7icoAtSMmib3eo7fg1ViG1KlOn81mIwPVOwC9WgebMocSiqWyPTWdwY=
+	t=1784239186; cv=none; b=or47sM+Dr9UWwBFLzRFK9LTuXTAixhqpAmI2EUsPX2LanZjqIsZa+3IgunE3n75cZcOHa45prYGZEQ/d8KQ6IF833C49VHEXLsmGY012ajNbBFJ+zaFtNoVxcTcNQ/HF4HqjH5lYo4jKO1+Nb26mIcNomjbtxfk7QpLm+D9oJRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784227217; c=relaxed/simple;
-	bh=nNajq5Uz/R7hdFpuRja9k4T86FzE0trcFMQlGcJUFMQ=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Q31nKwldCwRGMCGb/7hBfNgoKMjydwJMOwvw4sxAMke+mw3AEtee+vdnajee/zD56B8eV4uesne5xQBitV8LNikE2exc/rDHqoRF0r5Zl83cs1SH2lwHgClNoZdW4x9CyyD3UIDGx4/kJiyUPVytXcVblQ1nlKsaecjwYA8x6VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S10jf+6M; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784239186; c=relaxed/simple;
+	bh=Sn3KEh5gZtV4HohruYsJ8KZSmBEFSHM603qjbtgshJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=loFlLD4gDrvZdaKy7r5M3RLlbDwAs6kfdB9U33+Foa8QkfDece8VOSbhdKOITrf2SVC52ATWGhiBeK6k1WkoF8uuew8d5uSwAnsvrwdGod7edfQDbyLdAp6oqRJgqXXejq0Prrfn+e7yMtTK7U2vvWGz24FQB3CqGuITPwP1doY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lavuRxVk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S10jf+6M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB0C1F000E9;
-	Thu, 16 Jul 2026 18:40:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lavuRxVk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6A31F000E9;
+	Thu, 16 Jul 2026 21:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784227216;
-	bh=eFaZ00LK8u59YWFyd/Z/PmLBIlOS84pfDO+bupcq6qg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=S10jf+6MKQjT8kcKOojuPwsB35nDZnw2TZI9GRam/pvXkTNwi2lZh1yeJ2C9TYZSU
-	 dSvSgQSY8Ga5/zWPalSR+oCI0kivGE4jcywN0iS35pqkqqfGegOekuWyMeXkQyxYv0
-	 IoStQL+wxVtZ+ph63LNXqsP0xBh3ZVaN7PxycLmWHvKwD9wE2QePsUnwuj1AJ9i5aq
-	 97kSkzQ/pVFFmI/w4t/2obrIjqfU6gHYVfSQjuOq0pdswaiBSBoEDBV+B/i6qVJsTN
-	 dqFXD9m/oAV3q7AI+wb9GMzKVwBrvtOC3Xgz3wLq5nY+QLtVPzK/OYuCKI5OAWXDH8
-	 1tVEMGZGaUgvg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v23 1/3] rust: leds: add basic led classdev abstractions
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Markus Probst" <markus.probst@posteo.de>
-Cc: linux-leds@vger.kernel.org, linux-pci@vger.kernel.org, lee@kernel.org, ojeda@kernel.org
-In-Reply-To: <20260716-rust_leds-v23-1-e91f5b608b56@posteo.de>
-References: <20260716-rust_leds-v23-0-e91f5b608b56@posteo.de>
- <20260716-rust_leds-v23-1-e91f5b608b56@posteo.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 16 Jul 2026 18:40:15 +0000
-Message-Id: <20260716184015.CAB0C1F000E9@smtp.kernel.org>
+	s=k20260515; t=1784239184;
+	bh=NL8nrXbhMyw0sqSoXscTAfs+iPN6PpWSYafdJERYE0M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=lavuRxVkFdXZYV3IzAT1QUG6KVhQR3/Ee/vgOAO0uuCdGvVgqs+filTKj2U3N/0+P
+	 B6grnvHq/ZGrBpQQ5JdS4u81n88yVBu6pioZYrdlU7CfTabgvwhvmXKRzvFerVoMLw
+	 RMz0wwTrmHQYAjYME0vqLUu1le3OVLtXNqosX5YgTiWzt17QAWci+8VEzrGzwlpglR
+	 YBUP9DPoc4MCdSa0vQnd7VUS4KgIKW2YVekY75OVTnRpdpAO7GkPqcEeADr/2Uf3hq
+	 YDyO9f110075T5ojhsLEdejA/tvJ/fKyXDTVuRpO2+VSo6b+jwwbN/2Tmr1mtBh+1E
+	 H0jHxt1goR8oA==
+Date: Thu, 16 Jul 2026 16:59:44 -0500
+From: Rob Herring <robh@kernel.org>
+To: Eduard Bostina <egbostina@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+	daniel.baluta@nxp.com, simona.toaca@nxp.com, goledhruva@gmail.com,
+	m-chawdhry@ti.com
+Subject: Re: [PATCH] dt-bindings: leds: backlight: Convert TPS65217 to DT
+ schema
+Message-ID: <20260716215944.GA1491596-robh@kernel.org>
+References: <20260708123317.1768641-1-egbostina@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260708123317.1768641-1-egbostina@gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] Incorrect lifecycle management of the `FwNode` reference count in =
-`Device::drop` leads to reference count underflow and Use-After-Free.
-- [Medium] Lifetime erasure in `DeviceBuilder::build` allows a short-lived =
-`CStr` to be used for the LED device name, resulting in a dangling pointer.
-- [Low] Commit message format and naming convention violation for the LED s=
-ubsystem.
---
+On Wed, Jul 08, 2026 at 12:33:17PM +0000, Eduard Bostina wrote:
+> Convert the Texas Instruments TPS65217 PMIC bindings to DT schema.
+> 
+> During the conversion, the following updates were made:
+> - Make the 'backlight' node optional to resolve dtbs_check warnings.
+>   Some boards declare a bare TPS65217 node without implementing the
+>   backlight configuration.
+> - Document the 'isink-en' property in the backlight subnode to resolve
+>   dtbs_check warnings. This property is used (am335x-guardian.dts)
+>   to manage the backlight current sinks. It was missing from the old
+>   txt binding.
+> - 'additionalProperties: true' is at the top level because the
+>   TPS65217 node is documented across multiple independent schemas
+>   matching the same compatible string.
 
---- Patch [1]: [PATCH v23 1/3] rust: leds: add basic led classdev abstracti=
-ons ---
-commit e26d9a00db56264a527df58257bc8e40409dcdca
-Author: Markus Probst <markus.probst@posteo.de>
+We can't have true here.
 
-rust: leds: add basic led classdev abstractions
-   =20
-Implement the core abstractions needed for led class devices, including
-LedOps, DeviceBuilder, and Device.
+Looks to me like you just need to define all the child nodes like 
+'regulators' (and its children)  and 'charger' (which already has a 
+schema). 
 
-> rust: leds: add basic led classdev abstractions
-
-[Severity: Low]
-This isn't a bug, but the commit message violates the mandated subsystem
-format. Should it be capitalized after the subsystem prefix and ordered
-as "leds: rust: Add basic led classdev abstractions"?
-
-> diff --git a/rust/kernel/led/normal.rs b/rust/kernel/led/normal.rs
+> 
+> Signed-off-by: Eduard Bostina <egbostina@gmail.com>
+> ---
+>  .../bindings/leds/backlight/ti,tps65217.yaml  | 82 +++++++++++++++++++
+>  .../leds/backlight/tps65217-backlight.txt     | 27 ------
+>  2 files changed, 82 insertions(+), 27 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml b/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
 > new file mode 100644
-> index 0000000000000..816db7c576894
+> index 000000000000..07b15cab4b63
 > --- /dev/null
-> +++ b/rust/kernel/led/normal.rs
+> +++ b/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/ti,tps65217.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TPS65217 family of regulators
+> +
+> +maintainers:
+> +  - Eduard Bostina <egbostina@gmail.com>
+> +
+> +description: |
 
-[ ... ]
+Don't need '|' if no formatting.
 
-> @@ -33,26 +33,26 @@ impl<'init, S: DeviceBuilderState> DeviceBuilder<'ini=
-t, S> {
->                  unsafe {
->                      ptr.write(bindings::led_classdev {
->                          brightness_set: (!T::BLOCKING)
->                              .then_some(Adapter::<T>::brightness_set_call=
-back),
->                          brightness_set_blocking: T::BLOCKING
->                              .then_some(Adapter::<T>::brightness_set_bloc=
-king_callback),
->                          brightness_get: T::HAS_BRIGHTNESS_GET
->                              .then_some(Adapter::<T>::brightness_get_call=
-back),
->                          blink_set: T::HAS_BLINK_SET.then_some(Adapter::<=
-T>::blink_set_callback),
->                          max_brightness: T::MAX_BRIGHTNESS,
->                          brightness: self.initial_brightness,
->                          color: self.color as u32,
->                          name: self.name.map_or(core::ptr::null(), CStrEx=
-t::as_char_ptr),
+> +  The TPS65217 chip contains a boost converter and current sinks which can be
+> +  used to drive LEDs for use as backlights.
 
-[Severity: Medium]
-Does this code introduce a dangling pointer by erasing the lifetime of the
-name field?
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,tps65217
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: I2C slave address
+> +
+> +  backlight:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      Node for specifying WLED1 and WLED2 lines in TPS65217.
+> +
+> +    properties:
+> +      isel:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [1, 2]
+> +        description: |
+> +          Selection bit. Valid values:
+> +            1 - ISEL1 (low-level)
+> +            2 - ISEL2 (high-level)
+> +
+> +      fdim:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [100, 200, 500, 1000]
+> +        description:
+> +          PWM dimming frequency in Hz.
+> +
+> +      default-brightness:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        minimum: 0
+> +        maximum: 100
+> +
+> +      isink-en:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Enable backlight current sinks.
 
-The short-lived 'init lifetime on CStr is converted to a raw pointer and
-permanently stored in the led_classdev structure. The returned
-Device<'bound, T> entirely erases the 'init lifetime constraint.
+Constraints? 0 or 1?
 
-This permits safe Rust code to pass a temporary CString, build the device,
-and drop the CString while the Device remains registered, leaving a
-dangling pointer in led_classdev.name.
+Not used by any driver, so perhaps it should be removed from the .dts 
+file.
 
->                          ..bindings::led_classdev::default()
->                      })
->                  };
-
-[ ... ]
-
-> @@ -211,20 +211,20 @@ impl<T: LedOps> Adapter<T> {
->  #[pinned_drop]
->  impl<'bound, T: LedOps + 'bound> PinnedDrop for Device<'bound, T> {
->      fn drop(self: Pin<&mut Self>) {
->          let raw =3D self.classdev.get();
->          // SAFETY: The existence of `self` guarantees that `self.classde=
-v.get()` is a pointer to a
->          // valid `led_classdev`.
->          let dev: &device::Device =3D unsafe { device::Device::from_raw((=
-*raw).dev) };
-> =20
->          let _fwnode =3D dev
->              .fwnode()
->              // SAFETY: the reference count of `fwnode` has previously be=
-en
->              // incremented in `led::DeviceBuilder::build`.
->              .map(|fwnode| unsafe { ARef::from_raw(NonNull::from(fwnode))=
- });
-
-[Severity: High]
-Does this lifecycle management of the FwNode reference count lead to an
-underflow and use-after-free?
-
-If an LED device is built without explicitly providing a firmware node,
-self.fwnode is None. The device is then registered, and the kernel driver
-core invokes platform notifiers which can dynamically discover and bind a
-firmware node to the device.
-
-Later, when the Rust Device is dropped, it unconditionally fetches the node
-via dev.fwnode(), converts it to an ARef, and drops it. Because Rust never
-incremented the refcount for this dynamically attached node, dropping the
-ARef performs an unbalanced decrement.
-
-Would it be safer for the Device struct to explicitly store its own
-Option<ARef<FwNode>> instead of blindly trusting dev.fwnode()?
-
-> =20
->          // SAFETY: The existence of `self` guarantees that `self.classde=
-v` has previously been
->          // successfully registered with `led_classdev_register_ext`.
->          unsafe { bindings::led_classdev_unregister(raw) };
->      }
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260716-rust_leds-=
-v23-0-e91f5b608b56@posteo.de?part=3D1
+Rob
