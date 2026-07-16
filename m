@@ -1,96 +1,109 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5143C9EF3;
-	Wed, 15 Jul 2026 19:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE33330D34
+	for <linux-leds@vger.kernel.org>; Thu, 16 Jul 2026 07:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784144390; cv=none; b=YQ16DgNsA1I5enZPyaGyfDJj7c3vGHUSXx/4yCunpQT3uGDvl571fsa2bQnG+T9hvKhC+CAmfj9MHGjlZP3rtjHPRu8mVxK+StEhh09PHK1PC5Dq+3MW/bwaJt/AQHHhZU3SYlUOHazHVnj2nQby3d8yREgD/NX/5CHk4t7DN/I=
+	t=1784187080; cv=none; b=lB4XOljlbNYxldaqyL3YE7v5JKUX1KT1n6siPjkC/GYK7KD6+n6ecfIiyy8KWzu9ViVydG7TqWF/xxiswrKd5gFnKNYfUuIvwWuDtyZ+arRkX3OC+I7UxOolayFGX5st1h9WNh+7SQylTcWJPqVNjGChnBVmbh767jD3srOt0D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784144390; c=relaxed/simple;
-	bh=pSagzAX8TaM8JIR0ogC7aJiQTGit49snLSxZlQJswK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oEEaCd+FsV0g93tPUpn2O11hlB6dlXKrSir+Sb5UEQxfYNxHlPQfOZNbK5NeqT5Nv63mZN5RGRc4bENJuamTyR7M4SXkUcRUjPjYH0USMCHyw9cXaRu0uZmnahmqAyXR76FAt8S1bQpX1MzdtLTTg9KCTcwjuGSkbYIxXywt8aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=CGcQHJzn; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="CGcQHJzn"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=j+6+H0npw2UjZHclxHO/x3Tf61uejqeU1dWQ47818Ho=; b=CGcQHJzn/z84paToQNvEkEm1xB
-	UYrz08wsSopEY5sWUeO/VYpZRuVHC/WUY9pRsu3gWbhwW1dmwdgH1HWw+AkwKWzbpKzKgaZZ4Iwmv
-	dTgY+mSo9HHUtMsV6itBqfCiBb76a+82fNCA4qWJNwCDEeXx7zHkB/TEXCceh9svmaeQGueJY8CsH
-	FzGzCDpnBrSUouY3mLQ/u1dSyjlZrpt6wOvb7q32L+UWlP2/9We0NS5z0nf9f60GS42Przdv9sim7
-	RketPXqv+Df4gaJJtP29tX1RfPEfU4apka4d+f9RlOMicQAGahOxayBgOnSlN4jLCd6PV6WWNK/pZ
-	IaC8N1Bw==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Samuel Holland <samuel@sholland.org>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>
-Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH 1/4] dt-bindings: leds: Document "gpio" trigger
-Date: Wed, 15 Jul 2026 21:39:43 +0200
-Message-ID: <5188715.0VBMTVartN@phil>
-In-Reply-To: <20260711192842.845048-2-samuel@sholland.org>
-References:
- <20260711192842.845048-1-samuel@sholland.org>
- <20260711192842.845048-2-samuel@sholland.org>
+	s=arc-20240116; t=1784187080; c=relaxed/simple;
+	bh=QCkCKrqn5+bhLdTzCLwxeYCnpD2o24mk9JMH1WQrJk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iReIo0vBY4RltJkZ2i2TP8TXZ+xI4hu5+yXQVwi1N9/S+y7ChBt0Kt5Vrj2QRjlR4pgyrik5KYic3LDge6Tus8a4bGkHsHx7cJi6WuXsDcgqf6XtTwY3Pcq/vv1pVO2tOWcjZY8decnkOzkEMPY/0t6ibl3Xr+7HN5jYNcmmFl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1wkGYj-0007ws-Ca; Thu, 16 Jul 2026 09:31:05 +0200
+Message-ID: <24f25df5-d240-4313-9162-a52ec9d7b84f@pengutronix.de>
+Date: Thu, 16 Jul 2026 09:31:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dt-bindings: leds: Add default-intensity property
+To: Stefan Wahren <wahrenst@gmx.net>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Sven Schwermer <sven.schwermer@disruptive-technologies.com>
+Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@pengutronix.de, Conor Dooley <conor.dooley@microchip.com>
+References: <20260714-multicolor-default-v4-1-c2335b32bc39@pengutronix.de>
+ <1a458220-daa9-42a2-8a68-7281afc82eb4@gmx.net>
+From: Jonas Rebmann <jre@pengutronix.de>
+Content-Language: en-US
+In-Reply-To: <1a458220-daa9-42a2-8a68-7281afc82eb4@gmx.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-leds@vger.kernel.org
 
-Hi Samuel,
+Hi Stefan,
 
-Am Samstag, 11. Juli 2026, 21:28:25 Mitteleurop=C3=A4ische Sommerzeit schri=
-eb Samuel Holland:
-> The "gpio" trigger is used to control LEDs by the level of a GPIO input
-> referenced by the trigger-sources property. This is already documented
-> in the trigger-sources property description and is used in at least one
-> devicetree (am335x-regor.dtsi). Document it so validation of those and
-> future DTs will pass.
->=20
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+On 2026-07-15 18:55, Stefan Wahren wrote:
+> Am 14.07.26 um 09:35 schrieb Jonas Rebmann:
+>> +  default-intensity:
+>> +    description:
+>> +      The initial intensity of the LED color component. As the intensity of
+>> +      each sub-LED is multiplied by the overall brightness, without this
+>> +      property on a sub-LED, it may effectively be initialized at a brightness
+>> +      of 0 regardless of its linux,default-trigger and default-brightness
+>> +      properties.
+> I have some reservations about the wording. It isn't wrong, but in my
+> view, it isn't entirely clear that the initial value depends on the
+> implementation.
+> 
+> Maybe something like this?
+> 
+> without this property on a sub-LED, the initial intensity value depends
+> on the implementation regardless of its linux,default-trigger and
+> default-brightness properties.
 
-having Lee only in Cc in a longer patch series might make it difficult
-to notice this change.
+I wrote the sentence as a warning: You would rightfully expect that
+turning an LED on, at maximum brightness would in fact turn on the LED
+regardless of the driver. But beware: default-intensity may be needed to
+produce the expected behavior.
 
-I guess this patch needs to be applied or at least "Acked-by" by them.
+To me, this is the important (surprising) piece of information.
+
+How about:
+
+The initial intensity of the LED color component. As the intensity of
+each sub-LED is multiplied by the overall brightness, without this
+property on a sub-LED, it will be initialized at a brightness of 0
+regardless of its linux,default-trigger and default-brightness
+properties, for drivers with initial intensity values of 0.
+
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +
+>>      panic-indicator:
+>>        description:
+>>          This property specifies that the LED should be used, if at all possible,
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
+>> index a31a202afe5c..08e28c5f08a8 100644
+>> --- a/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
+>> +++ b/Documentation/devicetree/bindings/leds/leds-pwm-multicolor.yaml
+>> @@ -45,6 +45,9 @@ properties:
+>>    
+>>              color: true
+>>    
+>> +          default-intensity:
+>> +            default: 0
+>> +
 
 
-Heiko
-
-> ---
->=20
->  Documentation/devicetree/bindings/leds/common.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documen=
-tation/devicetree/bindings/leds/common.yaml
-> index f4e44b33f56d..e148b4277a6f 100644
-> --- a/Documentation/devicetree/bindings/leds/common.yaml
-> +++ b/Documentation/devicetree/bindings/leds/common.yaml
-> @@ -106,6 +106,8 @@ properties:
->            - bluetooth-power
->              # LED indicates camera flash state
->            - flash
-> +            # LED indicates level of GPIO input referenced by trigger-so=
-urces
-> +          - gpio
->              # LED indicated keyboard capslock
->            - kbd-capslock
->              # LED indicates MTD memory activity
->=20
-
-
-
-
+-- 
+Pengutronix e.K.                           | Jonas Rebmann               |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
