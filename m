@@ -1,61 +1,63 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130AD379EDA
-	for <linux-leds@vger.kernel.org>; Sat, 18 Jul 2026 21:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A52379ED2
+	for <linux-leds@vger.kernel.org>; Sat, 18 Jul 2026 21:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784411816; cv=none; b=WHLEkMY8psk4afIovQnWZBuTZQPgcEaQKG9xv9Kh6pypmKK7731ZgTDhZ6HOWcSszeZNLsDo+FeIyOe10ibVNvFk79IES4gB6rKb43CfbO7TjxTRX1Y8WNswsktuvxv4yR9RCLjy2ww7ZAJPy9ng8vr8q1q6NHaLlf75XxSNoMY=
+	t=1784411818; cv=none; b=G3XhHNV3Ex+x4bF2rG+irkSlkY+7MikqTYfGH5a7jvVf7k44R/jJHxwMsLBP3DZDKVn/N6NRnYESW7KGcL7nhf0Hw0tMqAGFAfRrcEUi0hNCbXOVMKrIjxeNLILN9AN6xzd1DYNT24qISBg4ZEFIvIQ1+FFfHYGUvemN9cpms7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784411816; c=relaxed/simple;
-	bh=rzwO6KWzTXHWycRBHAGWS0dbS7KaZgmt4k1yCVLlY8Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dmqjZYAON2XdQ3ECcihTCGrQsEKLqkB0Rtm9W+DMzPfEwWyQpSZ1Rj5I/qBCRScSNLTtm3v/ysTF+bd6S6RfU1An2INZpVlkUTWqe/Wmrd0foANeeARz8ebrs18Ee14A3YrXoZ8WW1ubIQeL29ftxPqpStxUsWTk/61U1da9yTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frgKMBK3; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1784411818; c=relaxed/simple;
+	bh=o2glR0HHqR0WEABSYUab9f3puWpFplzNf7xndkCI/0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SfL0+VRJ+qUy/5yU+LQRFYRK7HUusG7uk2B4Q5IsuQX9M0zyxQgLUXrmIlw3VCM7gKIuuV9WeDw0tXd2kTwH71j8iUlPVhvKljfwMwotC0KxisAhR7YqMady9Q24LzEpS3+3sNuW2YXGQ0L9DJlkDYrk8dXCCCOWMbJMVtq/Uz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKSdsx4/; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frgKMBK3"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4954df200ddso6989755e9.0
-        for <linux-leds@vger.kernel.org>; Sat, 18 Jul 2026 14:56:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKSdsx4/"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4954a2e73a9so10762005e9.3
+        for <linux-leds@vger.kernel.org>; Sat, 18 Jul 2026 14:56:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784411812; x=1785016612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9u5KL9RtfMSzVJ4pDX8HPR4lAEE6w6qofkrh2nVYcFI=;
-        b=frgKMBK3F4/h1Xe7+pQ0UdV4lS7KT3WDlcQMBN6ugZkmgXdqpk5wDnKbvPPIPW4G7d
-         7SBxDX3vKRtfAOY2/nY4zMPivGZY/gH8KJXXKhbLfS5JvSH9873IyCGUrP6Q9JF63L6e
-         CTHpIDgmls57LzMRRlhd5PyU9oyke4PiDBWcoW7+kyqbujLiO5r+UBtynViMdTlTlmgd
-         X1QtZCefvnQRKhrZyD8YKCsp7veCHbxlecqC4D4/z6ERxkmT/0gAlzJ3LAWITE3a6lOZ
-         k4fVRvY5qspALLAQnGrMSjBnA0Lhk9GBr9ndCqs+3h3EPsJDDf8KfP7Fk4/VPm8zmHyv
-         LHcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784411812; x=1785016612;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1784411815; x=1785016615; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9u5KL9RtfMSzVJ4pDX8HPR4lAEE6w6qofkrh2nVYcFI=;
-        b=TOxrF3yHNlRV4EkmGIkz6M1x6QnpXHdUdC4UWj5VMCSwHSQQRarfKIcK0SH5R5FXnY
-         uIN/IVGegeQvMc4UoUvT8nnAmCdKZWOYCOVMyNqBVPIrjBS8rwntTas3kcG+PQTm47kO
-         fDe15Xza0xh9LqIhulbbjsoB2WFJQPfwvfICoY+/Lf932qKJKJcNiN6DgXgGHwZZ3by2
-         CaNQ5F0jKQKph5ppEHhUspQWR6zkDEsvAojGEAkgwWvxSTFdPKCVHJrd8Aw9D29IXVUu
-         TSXr4Fwl10fZXUV7ucUW68SIGP5BlMxA29BWIPvT1qtyk1Za45u0SX9HLFwAYvTSNXKy
-         BcIA==
-X-Forwarded-Encrypted: i=1; AHgh+RpUnKYMbz+1/e3EZYFNHYyxHtuqeUEpLJa1BxDZo++bPZy1Py4GU2cNlsj1RRhBvgZjDOylPPB8me00@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfBwBLNIHnXNQFehAh3zy9F0gB75Ptx1JwWWiFLYq/SUUrZqcb
-	zuzFL8X13YVP1qKXpd3yhNRwgIKWi5raAkNbLK4rbINGE982SwQBkRSB
-X-Gm-Gg: AfdE7cnJjmGH79yb0DjoAh2v2VIf4aFX7VXlG8Qlp4Bk669g0Eo5buaF4pSTyUPizi+
-	hyBnY40Rjq+8oo9mYQCZBITLuRCS7hAGvj5I+YVVdUicYpkOxI9188uglDvmMBdEkOEb1EXaajb
-	BxBDsXP6/wnNDueVUfWi6V9S24NwZebGXrPyl2NHffchXdYQGjB+57jD6h7ULk+4rBo5vC21tGa
-	zBXbXJ1rXIL7jberW14VjIwjgtm/pn/yTiubUYYCfgpjwwF7zdbGBeZgrjeMeEPzq9BU9rqf+F0
-	Sf9VZy2ta+Lye0iNjrK5lZhGLIC6RcUVOA/PwZrRrqxVRkexobl+R2vRGz29qE8TD2mj7gCqZiX
-	GFRru5G0unxvIoOSybsOrshL+hS2EZJkuPbzWQ0PYyBgh72x3v1eH6GpgTBUuR0t8g5kdynvYy7
-	V6FUAr/MNNerfE+77JTcXkjlUNObhzYqU1p5TCy3PAR3DW
-X-Received: by 2002:a05:600c:3b1b:b0:495:443b:1bbb with SMTP id 5b1f17b1804b1-4954a50c473mr78247845e9.25.1784411812179;
-        Sat, 18 Jul 2026 14:56:52 -0700 (PDT)
+        bh=Ix301uMLUVdMn58C2UIAphmLJhOXCWVoJrX02MWxSZA=;
+        b=JKSdsx4/MgULp/4uvVEMDlllpZlYlEnk+Uwj5u0UmLK3x/toEaoUlexRhLR3Fu4Ajr
+         z7kCnE28qZQ5t6QVsI91+1wzH2xqkDw6qjCKNwC22AB1RDNXoY4vuojDQa1yCQhkDmRM
+         3Ky7YUYYT/DU5jCFABQ72dEUEaqbMf39JBlrBCZpEvdMuKdinWWEXuP7NayBBAvAoxXO
+         DW932m3lTOXlTPjSIw6xkatqAg52NBPEjEsYaggbDo+/wU/GzLGF0Fjlc1+UowIS7Isy
+         HlgUi4a7qgnepn7G4w9eMAd1FzIBI+78x7LIxHCwnqmEcicZeSSBgnmPwIQUpsL1f2pI
+         9Aug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784411815; x=1785016615;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Ix301uMLUVdMn58C2UIAphmLJhOXCWVoJrX02MWxSZA=;
+        b=F9ThsVlgIJHffdGbvblfJ+i73uekNwZU/WF6AfKK86bVh2l3l0xU3zF9+FEjxlDln+
+         PrmJlOxo/2Eq1SM8oDSuYXHrV8NccareNgbn15bWy9UTt4F8VpnpGO0WMroRRT8GVSZr
+         34LJK0EkCuZxVDybTMp0pej0LgnDO7yYow4xbDrkSBwrDQuhmBAWAHUWt9mav38Bf/Qe
+         mhnpRr0cNafH9U8twJW+22nwDCPNOTFflCHZ5oG3sMVxmttLJW7uZn4k36fbYcYNHCT0
+         G7LuM9ZqNdVJyhcjvWPQWJpfnMwIwmgY4ojlVcrvOCokobGwIq/oiI3PtSGAzghjIMCt
+         PMfQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpjffLOB+upme4HtS5WS8WQmPKpwD0m4t0TjaG5+hwA67Ogq82TfTLnhGHA/QhH0BAf7ArevTUfSqth@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvoYeaTSpTYMMmWWZ9wdPkKyt+ZVIABArDtX0yIrsYbJWpHh8S
+	7qz3Bdf90OqboGjtCSY598K+6VE2CGl0OqMNPw10ROCdH3U6eLuxiaoJ
+X-Gm-Gg: AfdE7ckMuvBCgy8X2q+IvFi47nkW0jLULim3GD4X9h2lpof66uvx7Md31Oi1o+Tflsc
+	VC0NUB80EKo3daRA5I/u23WapVPxJ/BY6ZNbKZuw42E0H1CMlYkBkBhqnJydMDVAjxSdNSEWsVV
+	YGBQVgryIh2d4AfDIYKUuMC0ocJGQr8alBWRmjWj+QrzpW1L2GeZq928/W1rc/Xx3NWnH5U4fAe
+	2mLzVfgVyxZ3rxf4nP3s7Qu0uPlVYpxa9BoYkRNMaYl2byUEu8rjWX296EAVt+4jqItLC9S3Zbo
+	vv2Dj8kp5fhq98fY3Qx42KTcgspUnDOzDeeP+2EfDAsCy0RG9llsDnTSNQvWirVB8X4uLZ6Ov8h
+	mExUpNx4wQLPprlLjJM5+9OBtCKB9d2x7FySG+c+4u+8BVXI5QROtDFueGAfh68L0r5vqpCMbMs
+	1iyPxu8knLyjJ+cqLML97UqyeRloGkKyu8zmpz9ZGBaQCl
+X-Received: by 2002:a05:600c:4e86:b0:495:3b8a:5e17 with SMTP id 5b1f17b1804b1-4954a3e41d5mr90987515e9.16.1784411815010;
+        Sat, 18 Jul 2026 14:56:55 -0700 (PDT)
 Received: from localhost.localdomain ([188.26.50.240])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4954c0a81f7sm101199835e9.1.2026.07.18.14.56.50
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4954c0a81f7sm101199835e9.1.2026.07.18.14.56.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Jul 2026 14:56:51 -0700 (PDT)
+        Sat, 18 Jul 2026 14:56:54 -0700 (PDT)
 From: Eduard Bostina <egbostina@gmail.com>
 To: Aaro Koskinen <aaro.koskinen@iki.fi>,
 	Andreas Kemnade <andreas@kemnade.info>,
@@ -81,10 +83,12 @@ Cc: daniel.baluta@nxp.com,
 	simona.toaca@nxp.com,
 	goledhruva@gmail.com,
 	m-chawdhry@ti.com
-Subject: [PATCH v2 0/3] dt-bindings: Convert TI TPS65217 to DT schema
-Date: Sat, 18 Jul 2026 21:56:29 +0000
-Message-ID: <20260718215632.3295049-1-egbostina@gmail.com>
+Subject: [PATCH v2 1/3] ARM: dts: ti: am335x-guardian: Drop unused isink-en property
+Date: Sat, 18 Jul 2026 21:56:30 +0000
+Message-ID: <20260718215632.3295049-2-egbostina@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260718215632.3295049-1-egbostina@gmail.com>
+References: <20260718215632.3295049-1-egbostina@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -93,35 +97,28 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series converts the Texas Instruments TPS65217 PMIC bindings to DT
-schema.
+The 'isink-en' property is not read by any driver, so remove it from the
+TPS65217 backlight node.
 
-Changes in v2:
-- Set 'additionalProperties' to false and documented all child nodes
-  ('regulators', 'charger', 'pwrbutton').
-- Documented the 'interrupts', 'interrupt-controller', '#interrupt-cells'
-  and 'ti,pmic-shutdown-controller' properties.
-- Dropped 'isink-en' from the schema. It is not read by any driver, so it
-  is now removed from am335x-guardian.dts instead.
-- Added the power button conversion and referenced it from
-  the leds schema.
+Signed-off-by: Eduard Bostina <egbostina@gmail.com>
+---
+ arch/arm/boot/dts/ti/omap/am335x-guardian.dts | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Eduard Bostina (3):
-  ARM: dts: ti: am335x-guardian: Drop unused isink-en property
-  dt-bindings: input: Convert TI TPS65217 power button to DT schema
-  dt-bindings: leds: backlight: Convert TPS65217 to DT schema
-
- .../bindings/input/ti,tps65217-pwrbutton.yaml |  42 ++++++
- .../bindings/input/tps65218-pwrbutton.txt     |  30 -----
- .../bindings/leds/backlight/ti,tps65217.yaml  | 123 ++++++++++++++++++
- .../leds/backlight/tps65217-backlight.txt     |  27 ----
- arch/arm/boot/dts/ti/omap/am335x-guardian.dts |   3 -
- 5 files changed, 165 insertions(+), 60 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/ti,tps65217-pwrbutton.yaml
- delete mode 100644 Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
- delete mode 100644 Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
-
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
+index 6ce3a2d029ee..d595e79d6b05 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
+@@ -320,9 +320,6 @@ backlight {
+ 		isel = <1>;  /* 1 - ISET1, 2 ISET2 */
+ 		fdim = <500>; /* TPS65217_BL_FDIM_500HZ */
+ 		default-brightness = <50>;
+-		/* 1(on) - enable current sink, while initialization */
+-		/* 0(off) - disable current sink, while initialization */
+-		isink-en = <1>;
+ 	};
+ 
+ 	regulators {
 -- 
 2.43.0
 
