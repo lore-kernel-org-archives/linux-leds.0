@@ -1,57 +1,134 @@
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549173F7A94
-	for <linux-leds@vger.kernel.org>; Fri, 17 Jul 2026 12:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973E337DEB7
+	for <linux-leds@vger.kernel.org>; Sat, 18 Jul 2026 08:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784291430; cv=none; b=LLMRp5AWHtL6bdYbmsjvIZE+qzX9Bxb7LbMkKTif0JozAw9v6Nxi4gLq8qc8BCq78u3cVoMj+Ck4qgQj5JgWQSePNpqQOO6BKRtkZWqp6ObOl2O4MdkSStCG8lKyt4zG6P+9zgtMN82/gegT3KXwF7gGWhY3rAQHSrpSYyRmNVQ=
+	t=1784362549; cv=none; b=G1MQGE9CYTvVX1b96rzzvDCb4yyLPtY1XT1m5uEnCzT887q++SJw8uvrE0oiV9sMoD3g3O5pcPGPwjUzNMq4SnpTViXahq/OLqyUj9kUe7nbRE58fjvF1VIDD7oDcjdt81wct4uBl1pkfCFRheoyhdY5LD15zL95aJ+Ql6j4lZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784291430; c=relaxed/simple;
-	bh=1QSHXywn4I6FhGv21LTgB+HqCHPxJwx8a+ayIgPrR1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N0rGcJMzK+MC4zJBwQEw5TlQNdJwx77edz96mZrZMREINRz3T6vMrkP1YIYgTC44fSKXrqpZidetfhHPS01sQPsRKy8tk4Hs9CBKmGiF8q02tzWiW1CCDpBsFOljUWrTzRROEFDZuvD9Mn2xdZpZ8wcb9Mrc6Z+UncfEDXFotvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Au0kuC3f; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1784362549; c=relaxed/simple;
+	bh=EzqbWeSzT85oPY2MHsX+tDDam0WXfL2C/ffFGRTeXHY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=duBVFvZqO5sH1Tr3HRigsnHhjNA7Dh5JbBinnrnxEOKGAX8fTkwpcA94J7WbAAh803lHs1QRCNV0dChkJ6W6A+tBn+mbX0+9bGU0GcjdCCAOopv/rUeaGtk+16yz8J5L/iwepx8ey+p5zngZXiHZFgnmlwIP8eeHLf+q0Q6GQxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYs7jRGu; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Au0kuC3f"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1784291424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1QSHXywn4I6FhGv21LTgB+HqCHPxJwx8a+ayIgPrR1E=;
-	b=Au0kuC3fj4oAuqSoO8tn7/uoMBJ5LHQLoaq0VnbQjpYZgh89b0kCqMjiKgOGhFeXSkUEd1
-	B8SVvdsU7g1NTdvPyYCK0jDN84EJyDuTAAL71gknSh7zqy2ot3/WrSyoq04JqXeMhoyZ6k
-	njmTO7+AD1akk8I4+Wfq+YrEyA2UoWM=
-From: Junjie Cao <junjie.cao@linux.dev>
-To: lee@kernel.org,
-	danielt@kernel.org,
-	jingoohan1@gmail.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mitltlatltl@gmail.com
-Subject: Re: [PATCH 1/2] backlight: aw99706: Fix DT property names to match binding
-Date: Fri, 17 Jul 2026 05:30:11 -0700
-Message-ID: <20260717123011.442600-1-junjie.cao@linux.dev>
-In-Reply-To: <20260701133918.33487-1-junjie.cao@linux.dev>
-References: <20260701133918.33487-1-junjie.cao@linux.dev>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYs7jRGu"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2cf452def93so3695895ad.1
+        for <linux-leds@vger.kernel.org>; Sat, 18 Jul 2026 01:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784362548; x=1784967348; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=bSp1oXB6t0r670gpxmHzNoI/B82n3yPGLeuK8fscBxA=;
+        b=JYs7jRGu43g3WCEqlZAkH0ZMJ8CI5ngBxe/Akp3r5/JB/S5cDDka76Gz0raky/OVtl
+         ODNYSrMYLk69/QBS/ecS16lX0sjRGK3HnEbf6LsscL6pldoUbqYFS/uTScersW4Drs+G
+         mPHK2oe8uXu0z3G0Oivixh82oOV7OgT8ZwqTBxckAk/DbgRmJMq/q+N679PREbrDNLZK
+         kUz2+QNc2j5TdNXB8VviL8hN7GI2ULUWx1XaPnHgd7vlDoheJ1U6ty9MApkd1IxhNU14
+         k4xuyWSDso4FaLT0+2WJkWGDw0vr6TV8Oc7vbI/4h2JJcQN3NemNOHpyvpKnLEai5qlc
+         YdmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784362548; x=1784967348;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=bSp1oXB6t0r670gpxmHzNoI/B82n3yPGLeuK8fscBxA=;
+        b=kV9EgwL0O7ON9Vx/+ZHeKXrsbHjSWAsTfgx0pCsQDhi1vBKiRNeQfJf7I4vfEPoAqP
+         ZNVETKtJ1rHZijRPvQNDAnBYQIBtKN2m6jIaAO/TYXjcLccvJ698NcoZlzYztSMq4fqh
+         NbXQg2BToieLx3H0FHS3gW4YQwN7M8kF85LzP8jkFwIhGAKr1fRKQoQNMNmSuPtUWWjp
+         NttcYgCpDlZ7DyGIib75Jqg4Px6lhAzlXdlw1FM1J/wg6Mf+sWk2XSbpc21NCd2hIPCi
+         lkSxVO6U5OzLlcnUm9g3Tdo9reYfMCyVuAJU+PcTxOYEhj/KA9m3hADvcC2WTJHKjufl
+         G3gg==
+X-Gm-Message-State: AOJu0YwpZB4mH7jivZ3TwJ0/RffNGsIDAvb+CuZMe371lwf5zYPE3f8X
+	/itVvkmDWkMfxNbJyR8ZqBRw8ZifbHsDFproxUxgIwOzZ/wUbapMTXbK
+X-Gm-Gg: AfdE7ckskkKl14Ozs+JIDW1Rh7+XvbVHbf8WLpP/hby5M7vEgrhxwKNCg51jk/nmHpn
+	c5b+3bx+I7DEJ8w2HFzHCSk92j55or5h969L4Ca4Zkptt3rE9IaDy4nFHKq9r7clCUd1bGXXqge
+	/ey5EAaFhrXPxbOJCQ9slfwjPVSE+jeVnHDvI281wvW8UQKqGZpKyi7wS+JEuDy8E00yG20aYUJ
+	D7UGgLaGSsrabPLgoSFBH18niKPfqrx8EiWNLcBe+peMOx/2/lUQ8NiILBk0km7oOHKvCCa4t2d
+	eAo8z9GSMBU1f3rbpJDHSYbWGA7PkXEZpoIpOGTuXurnLW4P8C0Sx006hmgFVpIxeVKmb3ftI1F
+	7YfdqoQXuKI8MeWyZBH8OOfqCQqyfALsA/CQK4I+usKiVK1ysG33jnPmqHrFtkl4bhunDYFBmwC
+	h5jQrPZpVCcK0dMAMzg/F/3KHZFiPGtWmmn9jS7OR/WouRrPoy9q4y5haCUwo0SbTa67gHrHYOZ
+	hg9GSNZJKewVe2S0ZwiedMW091Fqi4cL7HIECpBpdOd
+X-Received: by 2002:a05:6a21:e082:b0:3b4:8c67:51d4 with SMTP id adf61e73a8af0-3c38dc7b38dmr11363127637.39.1784362547811;
+        Sat, 18 Jul 2026 01:15:47 -0700 (PDT)
+Received: from [192.168.0.100] ([202.179.95.46])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1dde81sm27605069eec.21.2026.07.18.01.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 18 Jul 2026 01:15:47 -0700 (PDT)
+Message-ID: <2f1795b5-cab3-4241-b3f8-532a7fc4df9b@gmail.com>
+Date: Sat, 18 Jul 2026 13:45:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+From: Ninad Naik <ninadnaik07@gmail.com>
+Subject: Re: [PATCH] dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
+To: Rob Herring <robh@kernel.org>, sashiko-reviews@lists.linux.dev
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, lee@kernel.org,
+ conor+dt@kernel.org
+References: <20260701175330.1645927-1-ninadnaik07@gmail.com>
+ <20260701180553.473121F000E9@smtp.kernel.org>
+ <20260716173939.GB534222-robh@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20260716173939.GB534222-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi all,
 
-Gentle ping on these.
+On 16/07/26 11:09 pm, Rob Herring wrote:
+> On Wed, Jul 01, 2026 at 06:05:52PM +0000,sashiko-bot@kernel.org wrote:
+>> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+>> - [Low] The schema conversion incorrectly restricts LED child node names to `^led(-[0-9a-z]+)?$`, which breaks `dtbs_check` validation for all existing upstream device trees using this binding.
+>> --
+>>
+>> commit 6c59295f22b17d02a2b26847db54458f820fa4f3
+>> Author: Ninad Naik<ninadnaik07@gmail.com>
+>>
+>> dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
+>>
+>> Convert lacie,ns2-leds to DT schema.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
+>>> new file mode 100644
+>>> index 0000000000000..679a618906d80
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
+>>> @@ -0,0 +1,87 @@
+>> [ ... ]
+>>> +properties:
+>>> +  compatible:
+>>> +    const: lacie,ns2-leds
+>>> +
+>>> +patternProperties:
+>>> +  "^led(-[0-9a-z]+)?$":
+>> [Severity: Low]
+>> Will this restrictive regex cause existing device trees to fail dtbs_check?
+>>
+>> The old text binding example used a child node named blue-sata, which does
+>> not match this pattern. Since additionalProperties is set to false below,
+>> nodes in existing device trees that don't start with led will be rejected
+>> during validation.
+>>
+>> Should this regex be relaxed to allow existing node names, or should those
+>> device tree files be updated alongside this conversion?
+> While yes we prefer what you did, it's perhaps not worth changing these
+> old .dts files to match the preference.
+>
+> Rob
+
+I understand this. Should I relax the regex to allow any pattern so that 
+the existing as well
+
+as new DTS files could be properly validated?
 
 Thanks,
-Junjie
+
+Ninad Naik
+
