@@ -1,117 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DDE1FC8;
-	Sat, 18 Jul 2026 22:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DCA35975
+	for <linux-leds@vger.kernel.org>; Sun, 19 Jul 2026 17:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784412270; cv=none; b=PsKg2uzN+anYqaAdAxQNjkkG4oUxJPr3DCTeM1QojYxTS4PexMnXeMPkLjgiUTfGPkdwL9+z5ksBm4Otu/6N0X/XfH9JKdtWTK2yYatuLze6nQm0uWXbzA8elJa46Xkq2EQ3aSv1T4iOhk/VX+1W17BAe1cEABEse6uFHxfL3eQ=
+	t=1784481186; cv=none; b=kZ0VbvroLd4Kv0Hc5MXSRZ9oShuEAaPdAH5VwLeWCmXMywVy8tC2fEKs8MXnVgiPfTxpyXnw7W+HN0kgxT0wCoRHI/JUFjFRB+O8jDzutnqqNyv8uKGIEdVZ79olAYuvJhrYrTYMof6rdxbuq02K/4xAAyXvn9MdqSIuH5+W+58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784412270; c=relaxed/simple;
-	bh=bZhN8OOlRjUK8xhIIm2slfnXqQJdDxMB2i8u6hPZ0as=;
+	s=arc-20240116; t=1784481186; c=relaxed/simple;
+	bh=+1k/lGYzQlYe3doiXWqR3/XbhKwIgfEUnnISBQQGoSE=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=hDpuu51ye05r4dlMhwQpRfOEUqpIWNHuumPrJyjV66RkkqMsvonTV84vw+6OR8L0SjXTLwtU3+dz7RvfDRvnUcYX9WtytZsjAToODaMUT8Qj05+DLjhzRtHXksA3FFQUPPkCf6Mr1/3dvcjztDB0z2zcW2Gc84nSAVkMQcQpwSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzSanViu; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=HLZ7GWnCSuoGN8V11bAE6fp03eX0GnBrlmbRQuLsKdaj5zj/ofWxDJZX2atxT3tDRwmNliqqabtULUqiQhiA92H/4VphqK275wwfZdu3HfKLP5jWZzNhr50eFnUdjH4CvsfZeZfTG8E4xJuRwoyNmPGvyZrBvsXNiJWbg0/0gZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dI+slKeD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzSanViu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91301F000E9;
-	Sat, 18 Jul 2026 22:04:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dI+slKeD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2609D1F000E9;
+	Sun, 19 Jul 2026 17:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784412269;
-	bh=t9fJdyKtbTjoZvZ4Qaab9SXbJza23w5VJsqQLQ/nc8U=;
+	s=k20260515; t=1784481183;
+	bh=+1k/lGYzQlYe3doiXWqR3/XbhKwIgfEUnnISBQQGoSE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SzSanViuseiziUGZFLn3q3TofU500fXUMvp9n4U1XzcTh1yZzBpPHQvndhAwY11Dq
-	 2DS8rWvhNRuwzwIc5h92Agq6VrxCXNDzX3/c0GYxaUy0qHhuYj+zpwnvPicxagWNzr
-	 +n72LZ1fXCyO4Vn63M8bBOUPPlg+mYwWKS9AdtcE5O6OrNWtAjbe8AN19+7j8h0esE
-	 AuDWOGN/RKZoteYvdsOFooC+xz+ILQxjVpqBpsvV77A+PwgWcYB7IZwSJZyflADfKs
-	 s15oaGYHo6FuTPG4zha1AkhOZGh4a77O0pkw8VkHxfyJ45v6wCsL6+dhe/iTsupWMe
-	 faizFYsp7mQyA==
+	b=dI+slKeDBz6RK+jLF1NPHZeSfIwU9FQql6vTren99EFVB23fkdM/TdRsDpblH6Hmo
+	 pI+VjAPpry+t4nN0Rj1Y+RZIe8vtftk8I7FsMzDyeghksg6qhUoTS6QAJxVk5Z+Ns+
+	 JPTTbRJFKd77vmy4HSEiREd9xKjKSy+Dpqc8t1CJfbBC4SxJKTrvgN4d0msBBxNlM8
+	 gYdZZFaYO88iwWMSVtHql6N1UQCPWLDDnWnXqZlPJ8BNzwusU6AnAQrFzTzz/142KC
+	 RZXbLprd5+k5PKJPr+2tkUQ15uqIp/q52DYjPd1OGNCuhHlShW1MP70HBazjhoOUcS
+	 /LScSJ/bcehzQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: leds: backlight: Convert TPS65217
- to DT schema
+Subject: Re: [PATCH RFC v3 04/11] leds: cros_ec: trigger: Implement
+ offloaded() callback
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Eduard Bostina" <egbostina@gmail.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, lee@kernel.org, linux-leds@vger.kernel.org, robh@kernel.org, linux-input@vger.kernel.org, dmitry.torokhov@gmail.com, conor+dt@kernel.org
-In-Reply-To: <20260718215632.3295049-4-egbostina@gmail.com>
-References: <20260718215632.3295049-1-egbostina@gmail.com>
- <20260718215632.3295049-4-egbostina@gmail.com>
+To: "Rong Zhang" <i@rong.moe>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260719-leds-trigger-hw-changed-v3-4-5fb55722e36e@rong.moe>
+References: <20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe>
+ <20260719-leds-trigger-hw-changed-v3-4-5fb55722e36e@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 18 Jul 2026 22:04:28 +0000
-Message-Id: <20260718220428.B91301F000E9@smtp.kernel.org>
+Date: Sun, 19 Jul 2026 17:13:02 +0000
+Message-Id: <20260719171303.2609D1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] Stale and conflicting regulator text binding not deleted during =
-schema conversion.
-- [Low] Missing `required` constraint for `reg` property in regulator child=
- nodes.
+- [Low] The commit message description violates the LED subsystem capitaliz=
+ation and prefix guidelines.
 --
 
---- Patch [3]: [PATCH v2 3/3] dt-bindings: leds: backlight: Convert TPS6521=
-7 to DT schema ---
-commit 0671f0f93114029deaa2c3fee6b27ad8abd2cb2d
-Author: Eduard Bostina <egbostina@gmail.com>
+--- Patch [4]: [PATCH RFC v3 04/11] leds: cros_ec: trigger: Implement offlo=
+aded() callback ---
+commit 0bac1c63d12afa93687a92119005931f3bd9f550
+Author: Rong Zhang <i@rong.moe>
 
-dt-bindings: leds: backlight: Convert TPS65217 to DT schema
+leds: cros_ec: trigger: Implement offloaded() callback
 
-This commit converts the Texas Instruments TPS65217 backlight binding to YA=
-ML
-schema. It also documents missing child nodes, interrupt properties, and
-updates regulator names to match what the boards use.
+This commit implements the offloaded() callback for the chromeos-auto
+private hardware control trigger. The callback always returns true to
+reflect that it stays in hardware control.
 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/ti,tps65217=
-.yaml b/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
-> new file mode 100644
-> index 0000000000000..9586e08f1b1fc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
-> @@ -0,0 +1,123 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/ti,tps65217.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TPS65217 family of regulators
-
-[Severity: Medium]
-Should Documentation/devicetree/bindings/regulator/tps65217.txt also be
-deleted in this patch?
-
-The new YAML schema defines the full MFD device, but conflicts with the
-undeleted regulator text binding. The old regulator text binding expects
-regulator nodes to be named dcdc[1-3] and ldo[1-4], while the new schema
-expects regulator@[0-6], which could cause validation inconsistencies.
-
-[ ... ]
-
-> +    patternProperties:
-> +      "^regulator@[0-6]$":
-> +        type: object
-> +        $ref: /schemas/regulator/regulator.yaml#
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          reg:
-> +            maxItems: 1
-> +
-> +          regulator-compatible:
-> +            $ref: /schemas/types.yaml#/definitions/string
+> leds: cros_ec: trigger: Implement offloaded() callback
 
 [Severity: Low]
-Does this schema need to specify the reg property as required?
+This isn't a bug, but the commit message subject does not follow the LED
+subsystem capitalization and prefix guidelines. The standard format requires
+the description after the subsystem and driver prefix to be capitalized.
 
-Since these regulator child nodes have a unit address in the pattern
-(^regulator@[0-6]$), DT validation could incorrectly pass nodes that contai=
-n a
-unit address but lack the mandatory reg property without a required block.
+Could the subject be adjusted to something like "leds: cros_ec: Implement
+offloaded() trigger callback" to align with the standard format?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260718215632.3295=
-049-1-egbostina@gmail.com?part=3D3
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260719-leds-trigg=
+er-hw-changed-v3-0-5fb55722e36e@rong.moe?part=3D4
