@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110B23ACA5A
-	for <linux-leds@vger.kernel.org>; Sun, 19 Jul 2026 17:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5478B3AB29D
+	for <linux-leds@vger.kernel.org>; Sun, 19 Jul 2026 17:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784481195; cv=none; b=rdZI+UyM5IeTd+pBp0xOSSJoAe0CMtEH88i7xF9oO4Ul0DQDtpKEefdNAk8Gvib5LVsMiO7pqimj4TvBEgvI9sj5GGaae2h9XxQ5EkbaSP2/gH0XJi0qKpJmxIiHv3HhshmwYFAh7XmgJBN/uLxFnNYySkBmmKAOIh9xWh6vGFs=
+	t=1784481195; cv=none; b=d+SLK3mjzE8RYcIFgX/KDVLdvbdGXrTcAaZRenJ6+vrpDZXPbxvGWUTApuQnwQISzoSkck0pStmRnFcUPLH9FTNa6dCJYAjTaScd9rkNxfr18o08u94fQNfBsqKNVfXq+cXL8pvqPcElT0QyzIw8yijkuZiKP4Jj3eYwJDH8wsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784481195; c=relaxed/simple;
-	bh=sgXICkWwo+TacwCPeBSqRMcxnSDsKqc+PEAsBMXuilE=;
+	bh=tRBebeywZimYSZ6rTkadfaWSUxznpHpiOwFATQMUa4Q=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=DFkYkIDfKxZuyCDgt91hYJ4KJqQaAdDxoHBFLLCbmq1Yrxk2MWVe/35cMnB2qwD30nka0VOJQh5zWJVMOsu50Jd7QpK9D29ZcRQlBHlyJqNLqXNjVLzUsX6hw8sH/qvydUqi8yOny1GGVyrteyZXor9xSghRpW6fkUhgnVkXluU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwbLOj4G; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=Ar/DTvmbqfZkEZG9ewLf3g41LFD3FbUqC3VFwNxoQE7E6YKDiMLfHBk9RJFNGrN+vNJhJbLeDzeaDwQZqZejhYwXfxyJPtNITojscMfUTTSirWYzwFU3Jo9QmDLN67FeTDaHmYH+E7qGYtzCU6Mqe2GrqdRSxFz/Ixt6qksOg20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yc+h88eI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwbLOj4G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145A21F00A3E;
-	Sun, 19 Jul 2026 17:13:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yc+h88eI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75C81F00A3D;
+	Sun, 19 Jul 2026 17:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784481192;
-	bh=TDvRAMjKXTQ/WM3SP+qmVw84p/QZPsfRlLBxNKSpSP0=;
+	s=k20260515; t=1784481190;
+	bh=DorrKHwIA4F8M02qr/AJATvCxiNLaH/HBl6h0jloihk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OwbLOj4GviEfaPgyF5Ku8NzBIIn6bFEAyHkv+kc4T3QSegI9F4snLntSPmDmFsGsw
-	 UKvdt/qN8Aob7uIb9Q8vDw6ktosBfNvHAiPn6g/ATSW1JMVPR7XEImQooLrwcNWgbH
-	 a8Pz80OUlXl/VipQ6yfSDTBlYBgwUpoypwdvIIJX6RfUBv6NlyO0xRGomwhf2dYoIa
-	 /LjjsVcadd/SvfrYoksSpuPL8CfnKr84GqP92M8SkppOAt2CCgVu0FTO2a0pbQzC9X
-	 XHBNpXKHQa6wvkS32ua2KdJY2aGOsKAKgoZ7plPVkIuQn3odypmBAz8JtTkYixHOBg
-	 W2BcXSs3xGDpg==
+	b=Yc+h88eIX11GttWB6PKbI8z8TJLJm3nkZLC5rrkm/0pfqZIVJBUZ7mPeGjlQVFNUb
+	 KMRXYKuFXTjvKVxvMySFzOiZY5Xd4USgbMjyZ5ltUIAfK/fV+8/8o4XHpKmNkbU8EK
+	 zUn+G2RXQv42TiaMAyBBQaaJzZfVS88nZaGvLCaFqPM1cDGI4RC9iQmijEog54ilWV
+	 2d8c9Lm/EY7J/DaUlgRrDvQasgTGQn/n5CE2rtO9g4z4FLNNckC4niKuiXmuBhebId
+	 MKQmn+G635qxWiFP3+4Fy150tUYBfhDdwuF1pHE1v1HT6/na1MOyUWumzi5YvU2VCh
+	 2jGOj/iprMdNw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v3 11/11] platform/x86: ideapad-laptop: Fully
- support auto keyboard backlight
+Subject: Re: [PATCH RFC v3 08/11] leds: trigger: Add
+ led_trigger_notify_hw_control_changed() interface
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260719-leds-trigger-hw-changed-v3-11-5fb55722e36e@rong.moe>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260719-leds-trigger-hw-changed-v3-8-5fb55722e36e@rong.moe>
 References: <20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe>
- <20260719-leds-trigger-hw-changed-v3-11-5fb55722e36e@rong.moe>
+ <20260719-leds-trigger-hw-changed-v3-8-5fb55722e36e@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 19 Jul 2026 17:13:11 +0000
-Message-Id: <20260719171312.145A21F00A3E@smtp.kernel.org>
+Date: Sun, 19 Jul 2026 17:13:09 +0000
+Message-Id: <20260719171309.E75C81F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,67 +47,91 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] Unconditional hardware control notifications trigger a WARN_ON b=
-acktrace in the LED subsystem if the LED trigger fails to register.
+
+Pre-existing issues:
+- [High] Race condition between asynchronous hardware notification (or sysf=
+s writes) and LED unregistration leads to a Use-After-Free of the led_class=
+dev.
 --
 
---- Patch [11]: [PATCH RFC v3 11/11] platform/x86: ideapad-laptop: Fully su=
-pport auto keyboard backlight ---
-commit 7889db12361e6ba0be277517fc8919a461f9e5eb
+--- Patch [8]: [PATCH RFC v3 08/11] leds: trigger: Add led_trigger_notify_h=
+w_control_changed() interface ---
+commit 9103c7dadab6a0041a92ad3edeff977ceadf9820
 Author: Rong Zhang <i@rong.moe>
 
-platform/x86: ideapad-laptop: Fully support auto keyboard backlight
+leds: trigger: Add led_trigger_notify_hw_control_changed() interface
 
-This commit introduces support for the auto brightness mode of the keyboard
-backlight on IdeaPad laptops. It decouples the brightness processing from t=
-he
-LED classdev and adds a private hardware control trigger named ideapad-auto.
-Registration failures of this new trigger are handled non-fatally.
+This commit adds a new interface led_trigger_notify_hw_control_changed() to
+allow LED drivers to notify the LED core about hardware-initiated control
+transitions. It handles switching between "none" and a private trigger based
+on autonomous hardware state changes.
 
-> diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platf=
-orm/x86/lenovo/ideapad-laptop.c
-> index 66e16abda5e36..253d2962b9276 100644
-> --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index 726fa7bf88cfd..6ae28cbd1c778 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
 
 [ ... ]
 
-> @@ -1714,9 +1714,58 @@ static int ideapad_kbd_bl_led_cdev_brightness_set(=
-struct led_classdev *led_cdev,
-> +static void ideapad_kbd_bl_notify_hw_control(struct ideapad_private *pri=
-v,
-> +					     int hw_brightness, int last_hw_brightness)
+> @@ -467,6 +488,63 @@ int devm_led_trigger_register(struct device *dev,
+
+[ ... ]
+
+> +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev=
+, bool activate)
 > +{
-> +	bool hw_control, last_hw_control;
+> +	struct led_trigger *trig;
 > +
-> +	if (priv->kbd_bl.type !=3D KBD_BL_TRISTATE_AUTO)
+> +	/* Restricted to private triggers. */
+> +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
+> +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
 > +		return;
 > +
-> +	hw_control =3D hw_brightness =3D=3D KBD_BL_AUTO_MODE_HW_BRIGHTNESS;
-> +	last_hw_control =3D last_hw_brightness =3D=3D KBD_BL_AUTO_MODE_HW_BRIGH=
-TNESS;
+> +	scoped_guard(rwsem_read, &triggers_list_lock) {
+> +		list_for_each_entry(trig, &trigger_list, next_trig) {
+> +			if (trig->trigger_type =3D=3D led_cdev->trigger_type &&
+> +			    !strcmp(trig->name, led_cdev->hw_control_trigger)) {
+> +				guard(rwsem_write)(&led_cdev->trigger_lock);
 > +
-> +	if (hw_control !=3D last_hw_control)
-> +		led_trigger_notify_hw_control_changed(&priv->kbd_bl.led, hw_control);
+> +				led_trigger_do_hw_control_transition(led_cdev, activate, trig);
 
-[Severity: Medium]
-Will this unconditionally trigger a WARN_ON backtrace in the LED subsystem =
-if
-the LED trigger fails to register during initialization?
+[Severity: High]
+This isn't a bug introduced by this patch, but could this new API expose a
+race condition with device unregistration?
 
-Since the driver supports running in a degraded state when trigger
-registration fails, the LED_TRIG_HW_CHANGED flag is skipped on the LED
-classdev. However, if the hardware backlight state changes (e.g., via
-pressing the Fn+Space hotkey), this notification is dispatched without
-checking if the trigger was successfully registered.
+Looking at led_classdev_unregister() in drivers/leds/led-class.c, the
+trigger_lock is released before the LED_UNREGISTERING flag is set:
 
-Could this be avoided by checking ideapad_kbd_bl_auto_trigger_registered or
-the LED_TRIG_HW_CHANGED flag before calling
-led_trigger_notify_hw_control_changed() here in
-ideapad_kbd_bl_notify_hw_control()?
+led_classdev_unregister(struct led_classdev *led_cdev) {
+    ...
+    led_trigger_set(led_cdev, NULL);
+    up_write(&led_cdev->trigger_lock);
+    ...
+    led_cdev->flags |=3D LED_UNREGISTERING;
+}
 
+If device removal (like a USB unplug or sysfs unbind) happens concurrently
+with a hardware transition event, could led_trigger_notify_hw_control_chang=
+ed()
+acquire the trigger_lock here and successfully attach a trigger to the dying
+LED device?
+
+If led_classdev_unregister() then finishes and the LED memory is freed,
+wouldn't this leave a dangling pointer in the trigger's led_cdevs list,
+leading to a use-after-free memory corruption when the trigger later fires?
+
+> +				return;
+> +			}
+> +		}
+> +	}
+> +
+> +	dev_err(led_cdev->dev,
+> +		"%s() is called, but the private trigger (%s) is not properly register=
+ed\n",
+> +		__func__, led_cdev->hw_control_trigger);
 > +}
+> +EXPORT_SYMBOL_GPL(led_trigger_notify_hw_control_changed);
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260719-leds-trigg=
-er-hw-changed-v3-0-5fb55722e36e@rong.moe?part=3D11
+er-hw-changed-v3-0-5fb55722e36e@rong.moe?part=3D8
