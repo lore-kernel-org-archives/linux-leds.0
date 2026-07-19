@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE923ACA61
-	for <linux-leds@vger.kernel.org>; Sun, 19 Jul 2026 17:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDD43ABDA5
+	for <linux-leds@vger.kernel.org>; Sun, 19 Jul 2026 17:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784481191; cv=none; b=c1qZWMBwxTXQeJJQ0z+ZRc1dtxcoizkT9Oa/g1bQ/cNzPr7xxwsz9csYZnYEWXX61/0pX/gMCjBihhuEo3COdoFNRJtlzbCt668C2XnMQF/GtT/uH8du/5YbGgBl9kK1u29SFWZ27BHdVctXPg4NU8QaoSKk2QrB1yahfiPwvCY=
+	t=1784481192; cv=none; b=hG9zuo99XKRuOcwpAAArotdaHoROk1Yr2S+N3k8R+CxZ6+EdwVX73doDLBSxOexYi47XDP3o0cGYRJAJAKtoVZFKI/9Vpw7QpW9TvTSa1K3q0/oLapsjnuSeWdZ2CGgqY8TevK+UYCpODfpYCmgKgJ2OXX46kqrk4y9txg6PY9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784481191; c=relaxed/simple;
-	bh=EKSqCmG8GcYAw5x6hCR84lROWbJCCctOVnNO7Jh+jE0=;
+	s=arc-20240116; t=1784481192; c=relaxed/simple;
+	bh=wmQhnTvIGwaXZVZB53avrr758epE3EasRm43MxQr0T4=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=I2yWiCYtEHS32uZYflwYOCLzKfhKNRC8eEPBo9LDQDkbAKjmmyE2upnWuRE7nwPDTvc/7FIAXb8IqQ43/CJ01dloAl/UdJamKYBI+b2nJ+gB9nW9S5fyvpghxXw/psOnURtU+gE7OC4gEkOgq/tEr7qn528lQD78QhScj6wMY2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFywsrv4; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=t2KjzSbkvEQ06WHHAx74dGtzZPc2rF9YaAqcbLggBu61O9FlRPy+IrUuA+djvrgEur07Fu3Bxsckar10YcyPyc2nIbgkkUDU0R3HsVMQOAFm8qBCSQJgpdD0sEkLMig6MmO3bXdPCqNZZL3PcAam4whkP33+xgk8eWImFxh5vPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozy7g92g; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFywsrv4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 574BB1F00A3E;
-	Sun, 19 Jul 2026 17:13:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozy7g92g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741ED1F00AC4;
+	Sun, 19 Jul 2026 17:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784481186;
-	bh=z8gbWlqa7xdY/pwv80dEXE7juT1hIP3mck44hxee5M0=;
+	s=k20260515; t=1784481188;
+	bh=2fO3GqXB9fPBXDXtS53oGYWlnxge19XgSQpvZqg/G7M=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=nFywsrv4lh4pDaTL4zWMfX8KjcVFKXk4CUCd37NU1RltQl7vz9iegPugDQIc3/MLB
-	 WQjuOob2871TDmzj6eN0bpJvecqh4oWbJpp3iWENBFqAVbd0xaVKYpUFC1yZEjfvlA
-	 7pK59f8PUDCydUjTAje6JVJqRZSVlAs08NSJeQgDrD6k/8TR8le5Qtzf8nT4as35C6
-	 YRRB8A1nnf8UQf1d6SyFJi0i7gfKnPhuR5IiUtOTz1f6/+PofgAruOEOH+ljTngDMg
-	 mH54rxISwbFCLUD0tS/YfavXEfNGJ/26ER8yCT6LeMvGl1op5aDdP/4mYnsDmQ/ua4
-	 NyVSEQSR94lfg==
+	b=ozy7g92ggsAQb7PaR3ddbg1KAiHnL/fB7CxefGbq4EWbz8NuG0CrXRZ8Bz8qy3Cmj
+	 x1rBk2AKp5NcwcIQX2QKh2zaM5XJmzjbfchpvRSVY6RJnU1rd76ekr/nfvmtHRHJ2V
+	 tPKbHPM88ZfkUrzAMOolSvE3uvqeek596Vk7nBly+s2fnvm6tJ3ZcnSiIWeFjhWKjb
+	 qSAQXAyYHdjeH0phBaK9pom+BkuVcXiGrPEJVhMKZi1+FlCk3Pq7LOvcp3lVfRIv1M
+	 zBL5NhG02IEzSo3lsqDEjQdQJZBCVWZ+IMjDqPkjpGOhk5u01PcdYII7YF4Im5dFce
+	 RA6OBZfUu0STQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v3 09/11] platform/x86: ideapad-laptop: Decouple
- hardware & classdev brightness for keyboard backlight
+Subject: Re: [PATCH RFC v3 05/11] leds: turris-omnia: trigger: Implement
+ offloaded() and declare hw_control_trigger
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260719-leds-trigger-hw-changed-v3-9-5fb55722e36e@rong.moe>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260719-leds-trigger-hw-changed-v3-5-5fb55722e36e@rong.moe>
 References: <20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe>
- <20260719-leds-trigger-hw-changed-v3-9-5fb55722e36e@rong.moe>
+ <20260719-leds-trigger-hw-changed-v3-5-5fb55722e36e@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 19 Jul 2026 17:13:05 +0000
-Message-Id: <20260719171306.574BB1F00A3E@smtp.kernel.org>
+Date: Sun, 19 Jul 2026 17:13:08 +0000
+Message-Id: <20260719171308.741ED1F00AC4@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,95 +47,70 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] The refactored initialization path drops hardware brightness val=
-idation, allowing registration of buggy hardware states.
+
+Pre-existing issues:
+- [High] Calling `devm_led_trigger_register()` on a statically allocated gl=
+obal `struct led_trigger omnia_hw_trigger` causes list corruption and poten=
+tial kernel panics if multiple driver instances are probed.
 --
 
---- Patch [9]: [PATCH RFC v3 09/11] platform/x86: ideapad-laptop: Decouple =
-hardware & classdev brightness for keyboard backlight ---
-commit c04be41ffaebded5f3d78556c570769ff717d019
+--- Patch [5]: [PATCH RFC v3 05/11] leds: turris-omnia: trigger: Implement =
+offloaded() and declare hw_control_trigger ---
+commit 2d28a7cfbe3bd11a356a1c04d42e4a480011bb29
 Author: Rong Zhang <i@rong.moe>
 
-platform/x86: ideapad-laptop: Decouple hardware & classdev brightness for k=
-eyboard backlight
+leds: turris-omnia: trigger: Implement offloaded() and declare hw_control_t=
+rigger
 
-This commit decouples the hardware brightness from the LED classdev
-brightness for keyboard backlights. It converts the last hardware
-brightness state into an atomic_t to prevent race conditions and refactors
-the initialization path.
+"omnia-mcu" is a private hardware control trigger which always stays in
+hardware control mode. Implement offloaded() callback with its return
+value to be always true to reflect this.
 
-> diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platf=
-orm/x86/lenovo/ideapad-laptop.c
-> --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-=
+omnia.c
+> index ed6a47bbb44f9..32d40d176d3f1 100644
+> --- a/drivers/leds/leds-turris-omnia.c
+> +++ b/drivers/leds/leds-turris-omnia.c
 
 [ ... ]
 
-> @@ -1700,21 +1745,30 @@ static int ideapad_kbd_bl_init(struct ideapad_pri=
-vate *priv)
->  	if (WARN_ON(priv->kbd_bl.initialized))
->  		return -EEXIST;
-> =20
-> -	if (ideapad_kbd_bl_check_tristate(priv->kbd_bl.type))
-> -		priv->kbd_bl.led.max_brightness =3D 2;
-> -	else
-> -		priv->kbd_bl.led.max_brightness =3D 1;
-> +	hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
-> +	if (hw_brightness < 0)
-> +		return hw_brightness;
-> =20
-> -	brightness =3D ideapad_kbd_bl_brightness_get(priv);
-> -	if (brightness < 0)
-> -		return brightness;
-> +	atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
+>  static struct led_trigger omnia_hw_trigger =3D {
+>  	.name		=3D "omnia-mcu",
+>  	.activate	=3D omnia_hwtrig_activate,
+>  	.deactivate	=3D omnia_hwtrig_deactivate,
+> +	.offloaded	=3D omnia_hwtrig_offloaded,
+>  	.trigger_type	=3D &omnia_hw_trigger_type,
+>  };
 
-[Severity: Medium]
-Does this refactored initialization path drop the validation of the initial
-hardware brightness?
+[Severity: High]
+This is a pre-existing issue, but does calling devm_led_trigger_register()
+on this statically allocated global structure cause list corruption if
+multiple driver instances are probed?
 
-In the old code, ideapad_kbd_bl_brightness_get() validated the brightness
-against max_brightness, returning -EINVAL if the firmware returned an inval=
-id
-value. This safely aborted the initialization.
+If a privileged user instantiates a second instance of the driver on the
+same I2C bus via sysfs:
 
-In this new flow, ideapad_kbd_bl_hw_brightness_get() just returns the raw
-hardware value without validation, because max_brightness is not set until
-later in this function, and ideapad_kbd_bl_brightness_parse() is bypassed.
+drivers/leds/leds-turris-omnia.c:omnia_leds_probe() {
+    ...
+    ret =3D devm_led_trigger_register(dev, &omnia_hw_trigger);
+    ...
+}
 
-If the firmware boots in a buggy state with an out-of-range brightness, will
-this allow the LED class device to register successfully, only to spam dmesg
-with "Unknown keyboard backlight value" warnings on every subsequent user-s=
-pace
-read?
+The led_trigger_register() core function unconditionally executes
+INIT_LIST_HEAD() and spin_lock_init() before checking if the trigger is
+already registered:
 
-> -	priv->kbd_bl.last_brightness =3D brightness;
->  	priv->kbd_bl.led.name                    =3D "platform::" LED_FUNCTION_=
-KBD_BACKLIGHT;
->  	priv->kbd_bl.led.brightness_get          =3D ideapad_kbd_bl_led_cdev_br=
-ightness_get;
->  	priv->kbd_bl.led.brightness_set_blocking =3D ideapad_kbd_bl_led_cdev_br=
-ightness_set;
->  	priv->kbd_bl.led.flags                   =3D LED_BRIGHT_HW_CHANGED | LE=
-D_RETAIN_AT_SHUTDOWN;
-> =20
-> +	switch (priv->kbd_bl.type) {
-> +	case KBD_BL_TRISTATE_AUTO:
-> +	case KBD_BL_TRISTATE:
-> +		priv->kbd_bl.led.max_brightness =3D 2;
-> +		break;
-> +	case KBD_BL_STANDARD:
-> +		priv->kbd_bl.led.max_brightness =3D 1;
-> +		break;
-> +	default:
-> +		/* This has already been validated by ideapad_check_features(). */
-> +		unreachable();
-> +	}
-> +
->  	err =3D led_classdev_register(&priv->platform_device->dev, &priv->kbd_b=
-l.led);
->  	if (err)
->  		return err;
+drivers/leds/led-triggers.c:led_trigger_register() {
+    ...
+    spin_lock_init(&trig->leddev_list_lock);
+    INIT_LIST_HEAD(&trig->led_cdevs);
+    ...
+}
+
+Could this destroy the lock and the list of attached LEDs for the active
+trigger, creating dangling pointers that lead to use-after-free or panics
+during teardown before the duplicate name check returns -EEXIST?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260719-leds-trigg=
-er-hw-changed-v3-0-5fb55722e36e@rong.moe?part=3D9
+er-hw-changed-v3-0-5fb55722e36e@rong.moe?part=3D5
