@@ -1,120 +1,173 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04E33C76BC
-	for <linux-leds@vger.kernel.org>; Mon, 20 Jul 2026 10:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B690F3CF211
+	for <linux-leds@vger.kernel.org>; Mon, 20 Jul 2026 10:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784543434; cv=none; b=gt3pKvfDuUjzQ6mHTMko+NB8GabPKu45oNZ1TQ+NCEzH0j4scMy+GqSr2IB9E8QscMRpNewzJmom5OYIrCnzfWvOuTSu09gcfQZPBpovvTbX/BjbSygy7eJ9Nm5eSahTsUHNgDiL/pHtcieL41wLUf1BTilXxjUGmKCpsATGPGI=
+	t=1784543823; cv=none; b=MyrTaNSzPNLVAJR5la7lPFK0KGV9mScsXy5JeJwpZ6pr56o92attOhwPCN+X9oxp1GjhgA3EnlhJwwy2OBGdhq0L4Qi5LvHLZPlnh1gMn4NcGYBHjJMcjL0wTkcfhGso0osl1hQ+NSW5z4wpyYJ+gA0e4G4qAiEBg96hx6LwQBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784543434; c=relaxed/simple;
-	bh=9v8IcUjat8TEIAwG7AjNbu0pZK52X7TrT1s9XlSPBt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GpwLhjNdW804ctkTyxr7DQM09LlqfkCqMGntzdIFI8CsviVNoY681sygyNAl6ClJQ+V1kJwiQsUG0bAtl85+Y6yeo9sWu16Yl1olJMsKw6nTX4XDBBmO5W69//JgOmleYOSHVjrRCNIwK7bz0t4If6a4/qQiAictVmJzYU7FyVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mSQqc5t/; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784543823; c=relaxed/simple;
+	bh=m3v03enS2hPpJiA5F3cCOmKJh7ax7kqph41Ik5zJaAw=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=cC7RKEz9nGN4cjXTXCES0A1tSSdZYkfZIuOQhAhM92Jn72LBn9bMcWC5sc0hTI6KxG2IryhcKc/MgW8lYZE4ZP9/uezcTzivMb5ybAgux+DDnaB13vPqQeb9PfTZmvbTcLzUscKU6Bk5r1DegwwSHO5wpbWWFiDcz+ahztncCDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJ+blEVg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSQqc5t/"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2ccf2360620so58201185ad.3
-        for <linux-leds@vger.kernel.org>; Mon, 20 Jul 2026 03:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784543432; x=1785148232; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=W6kuUw7/fNv5m3n/7oR0Zyz7m4/Uu2x3pL7qRujVGGo=;
-        b=mSQqc5t/MFcxx6bU7ftZwFiEJoQQ78rZvAkNLsxmF/9fi3dSmXIDbCa9MGiB0/ceAe
-         Q6A1n9XjCRG5frXJyQw3MZq9mGLyZ4EnGd5W989oew1yXlkxf18L9UaUWlH+eZMx9lDL
-         nyVwlf9C04AT8x9GYBr1D2x9BOUWoq21kxeLz+OKbAjvmv/MiPYcUP3H5AOhXUHIzNBD
-         aHAGIqkDgumCd7cK3LzHNU+74HZruxF5C2wARMfS9ltPqWQrofCmx8h82osYRNbU5mX1
-         zR9cnwZhYqDWV/yELZ8egTnHStk7gxabrA1o1VGzl9UIDb223ucxwpvYEfdx8ln61hZu
-         1uXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784543432; x=1785148232;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=W6kuUw7/fNv5m3n/7oR0Zyz7m4/Uu2x3pL7qRujVGGo=;
-        b=Md9t4Y0yQ73dRQF3/QE1tRIu9q4FBnISVCv8iNLdc6bF0rDnZatTshDx/72LlrurKu
-         cNc41VfaXNcg1PwWo9SAMWr6B1Bk5/fmGcVHsXgKAZuzq06s4/0rongl+cSdlqHeTNjW
-         C5WxnCvPVl9gA4m5/3u8kfnnNZIgBrJuyxDylKo3cVaPgN5s959/F2+ICipnKOp16/az
-         D4d8JP20MufcQf9YbGvVej/SREoE/gQVjGD8dhY6iMaGwzHcJzzWSyF5EkkUjjZhxc+P
-         aNu9FRhfH+YVjAZ7UiBq0epl59SL8HAsnKyTw3HnYwmer3zhul6YoqKB2GCZrGyNYbVP
-         aX4g==
-X-Forwarded-Encrypted: i=1; AHgh+Rooi5JNfJ1vPbGZitDj7u8gdU6cW2KWvLzCI0z0PLsoixHJ6RFZNuCchc48xOlNA3/c5rwGCuQKeOij@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEUz1u0EvMqdBvBRME+fGszqS08bADeHSbuLokjSfqc4i15cTH
-	QB5q1J4ZTFTAZXF1vXTdp0t1+i0vVsZQQ5Vz5240zN+HZTBiGChxT6E=
-X-Gm-Gg: AfdE7ckBKQ2gU3fOoIxAKqBgVmZv0YmVbLHpv2GMhfiaBxbL3VlE3M8a5QFceW6pIYD
-	RZfvDVKcSmdLU80tEEA5VomvN2nccBQPuIhbmZhfvIulYx3ZwCuEHh754nWS14JTQG9aHipImvj
-	Edq8pgyNmDHf/Djuu8e/imHkTaFk0gntaZhyfCNelv0Lnyt56/xk9xi8SRsF0W8BYrL4uWGIHeB
-	7Lc+gy7MyV2dztxbHoPYiLvWB2nOg67tEGNiCCM0XO3xh88gZ3udf8K0vt2ME+YdpUzJ/wgWLQD
-	PhrSoXaMDel4iH7WxPc0QE4qMzN8HqBbjsfrTL7YkoPHjMJ7WPLH9crTnmKRRxsN7Uh9kUg4voM
-	fK4kQ4QjFELJ1N2JkmOD49gsC4hFXMmcYDqRIoHA1t67xIyz1Xex9YoXMM2h5zQtpFYwIwk1dIc
-	IReL/mNBiBx2uLUBJt7ml1yIeMYQ==
-X-Received: by 2002:a05:6a20:3ca3:b0:3c3:7ecd:72df with SMTP id adf61e73a8af0-3c3ad86ab89mr15283565637.30.1784543431946;
-        Mon, 20 Jul 2026 03:30:31 -0700 (PDT)
-Received: from t-rex ([2401:4900:c200:8f2e:8d2c:f805:595:9600])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a20c158sm38054425eec.29.2026.07.20.03.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2026 03:30:31 -0700 (PDT)
-From: kr494167@gmail.com
-To: lee@kernel.org,
-	pavel@kernel.org
-Cc: s.trumtrar@pengutronix.de,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	surendra <kr494167@gmail.com>
-Subject: [PATCH] leds: lp5860: reject out-of-range channel IDs
-Date: Mon, 20 Jul 2026 16:00:17 +0530
-Message-ID: <20260720103017.88090-1-kr494167@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJ+blEVg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195E61F000E9;
+	Mon, 20 Jul 2026 10:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784543822;
+	bh=6TUbQhMn8obz+8+HTf3ALfyw2rFH2oMY7Y4Xky0IdGw=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=XJ+blEVgrZDbepSUk/bMxTs3hQRj03hgeuG5x+Nz2yDwzbLvc0SvFRnR48bgwGCn6
+	 hQT73sJBbzls6YB/6tXzSILRgvjTO6jZ1brhnOSXLzTloOdgTN0IhIg4dNIoY0Q7qV
+	 srsRP0YBNJHu2GMDJtBQb9cnyxHDyEnbP62VtIF+Q0hb2oXiB9URGMR7xLrU+6soCI
+	 tyPqCC39ircYJ11CoMpYOtdsWPrpJf3l9iVvxTU+WwFOWwTHyR75OMeFVe33oq15py
+	 g47Fq7WpHgOAMiQAibpdcWlmIcr3ZsXfdRoaldkG454rt6hxkjpeF9iQoXSPdXdsFs
+	 aMcFqpbXAkY9A==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] leds: lp5860: fix init error-path locking
+Reply-To: sashiko-reviews@lists.linux.dev
+To: kr494167@gmail.com
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260720102525.86475-1-kr494167@gmail.com>
+References: <20260720102525.86475-1-kr494167@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 20 Jul 2026 10:37:01 +0000
+Message-Id: <20260720103702.195E61F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: surendra <kr494167@gmail.com>
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
 
-lp5860_iterate_subleds() detects a channel ID greater than the
-hardware limit, but returns the successful result of
-fwnode_property_read_u32(). The caller therefore treats the malformed
-sub-LED description as valid and uses the invalid ID for register
-addressing.
+New issues:
+- [Medium] The commit message falsely claims a deadlock existed on the `reg=
+map_update_bits()` error path.
+- [Low] The commit message prefix and description violate subsystem capital=
+ization guidelines.
 
-Return -EINVAL when the channel ID is out of range.
+Pre-existing issues:
+- [High] The driver destroys its primary mutex in `.remove()` before execut=
+ing hardware teardown and devres cleanup, causing multiple use-after-destro=
+y locking violations.
+- [High] LEDs are unregistered via devres after the chip is manually disabl=
+ed, risking invalid hardware accesses.
+--
 
-Fixes: f0a66563aa2d ("leds: Add support for TI LP5860 LED driver chip")
-Signed-off-by: surendra <kr494167@gmail.com>
----
- drivers/leds/rgb/leds-lp5860-core.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+--- Patch [1]: [PATCH] leds: lp5860: fix init error-path locking ---
+commit 2979577a641c15da3d90ccaf3a97200e7e476dbb
+Author: surendra <kr494167@gmail.com>
 
-diff --git a/drivers/leds/rgb/leds-lp5860-core.c b/drivers/leds/rgb/leds-lp5860-core.c
-index e21d5f2302be..75498311b080 100644
---- a/drivers/leds/rgb/leds-lp5860-core.c
-+++ b/drivers/leds/rgb/leds-lp5860-core.c
-@@ -114,12 +114,18 @@ static int lp5860_iterate_subleds(struct lp5860_led *led, struct led_init_data *
- 		}
- 
- 		ret = fwnode_property_read_u32(led_node, "reg", &channel);
--		if (ret < 0 || channel > LP5860_MAX_LED) {
-+		if (ret < 0) {
- 			dev_err_probe(led->chip->dev, ret,
- 				      "%pfwP: 'reg' property is missing. Skipping.\n", led_node);
- 			fwnode_handle_put(led_node);
- 			return ret;
- 		}
-+		if (channel > LP5860_MAX_LED) {
-+			dev_err(led->chip->dev, "%pfwP: 'reg' property is out of range.\n",
-+				led_node);
-+			fwnode_handle_put(led_node);
-+			return -EINVAL;
-+		}
- 
- 		led->mc_cdev.subled_info[subled].color_index = color_index;
- 		led->mc_cdev.subled_info[subled].channel = channel;
--- 
-2.55.0
+leds: lp5860: fix init error-path locking
 
+This commit addresses a locking issue in the initialization error path for
+the lp5860 driver. It releases the lock immediately after the regmap update,
+avoiding potential lock mismanagement in the subsequent error paths.
+
+> leds: lp5860: fix init error-path locking
+
+[Severity: Low]
+According to the LED subsystem naming conventions, should the description
+after the subsystem prefix be capitalized? So "fix" would become "Fix".
+
+> lp5860_device_init() jumps to err_disable with the mutex held when
+> regmap_update_bits() fails. The error handler calls lp5860_chip_enable(),
+> which tries to acquire the same mutex and deadlocks.
+>
+> Conversely, an lp5860_init_dt() failure reaches the same handler after the
+> mutex has been released, causing mutex_unlock() to operate on an unlocked
+> mutex.
+
+[Severity: Medium]
+Is this description of a deadlock accurate?
+
+Looking at the original code, the err_disable block explicitly executed=20
+a mutex_unlock() before calling lp5860_chip_enable():
+
+err_disable:
+	mutex_unlock(&lp->lock);
+	lp5860_chip_enable(lp, LP5860_CHIP_DISABLE);
+	return ret;
+
+Since lp5860_chip_enable() uses guard(mutex)(&lp->lock), it safely=20
+re-locks the just-released mutex. Could the commit message be updated to=20
+clarify that this fixes a double-unlock bug when lp5860_init_dt() fails,=20
+rather than a deadlock on the regmap_update_bits() path?
+
+> diff --git a/drivers/leds/rgb/leds-lp5860-core.c b/drivers/leds/rgb/leds-=
+lp5860-core.c
+> index fd0e2f6e6e0f4..e21d5f2302be0 100644
+> --- a/drivers/leds/rgb/leds-lp5860-core.c
+> +++ b/drivers/leds/rgb/leds-lp5860-core.c
+> @@ -204,9 +204,9 @@ int lp5860_device_init(struct device *dev)
+>  	mutex_lock(&lp->lock);
+>  	ret =3D regmap_update_bits(lp->regmap, LP5860_REG_DEV_INITIAL, LP5860_M=
+ODE_MASK,
+>  				 LP5860_MODE_1 << LP5860_MODE_SHIFT);
+> +	mutex_unlock(&lp->lock);
+>  	if (ret)
+>  		goto err_disable;
+> -	mutex_unlock(&lp->lock);
+> =20
+>  	ret =3D lp5860_init_dt(lp);
+>  	if (ret)
+> @@ -215,7 +215,6 @@ int lp5860_device_init(struct device *dev)
+>  	return 0;
+> =20
+>  err_disable:
+> -	mutex_unlock(&lp->lock);
+>  	lp5860_chip_enable(lp, LP5860_CHIP_DISABLE);
+
+[Severity: High]
+This is a pre-existing issue, but does destroying the mutex in=20
+lp5860_remove() before calling hardware teardown lead to a=20
+use-after-destroy violation?
+
+In the spi driver, we have:
+
+lp5860_remove() {
+	...
+	mutex_destroy(&lp5860->lock);
+	lp5860_device_remove(&spi->dev);
+}
+
+But lp5860_device_remove() calls lp5860_chip_enable(), which acquires=20
+the just-destroyed mutex:
+
+lp5860_chip_enable() {
+	guard(mutex)(&lp->lock);
+	...
+}
+
+Will this cause a kernel crash when lock debugging is enabled?
+
+
+[Severity: High]
+This is also a pre-existing issue, but does unregistering the LEDs via=20
+devres after manually disabling the chip cause invalid hardware accesses?
+
+The driver uses devm_led_classdev_multicolor_register_ext() to register=20
+LEDs, which handles unregistration automatically via devres during device=20
+removal. However, the manual lp5860_device_remove() call happens before=20
+devres cleanup:
+
+lp5860_remove() {
+	...
+	lp5860_device_remove(&spi->dev);
+}
+
+The automatic devres cleanup will eventually set the brightness to 0,=20
+invoking lp5860_set_mc_brightness(). Since the chip was already disabled=20
+manually in lp5860_remove(), could this result in regmap I/O to disabled=20
+hardware over SPI? Should the hardware teardown be synchronized via a=20
+managed devres action instead?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260720102525.8647=
+5-1-kr494167@gmail.com?part=3D1
