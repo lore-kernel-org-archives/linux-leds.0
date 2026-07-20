@@ -1,137 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5478B3AB29D
-	for <linux-leds@vger.kernel.org>; Sun, 19 Jul 2026 17:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131DA3AFD00;
+	Mon, 20 Jul 2026 06:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784481195; cv=none; b=d+SLK3mjzE8RYcIFgX/KDVLdvbdGXrTcAaZRenJ6+vrpDZXPbxvGWUTApuQnwQISzoSkck0pStmRnFcUPLH9FTNa6dCJYAjTaScd9rkNxfr18o08u94fQNfBsqKNVfXq+cXL8pvqPcElT0QyzIw8yijkuZiKP4Jj3eYwJDH8wsk=
+	t=1784530151; cv=none; b=UOmt/SM1NSGVfhiNsP/5swhZAtkEsg9qyf8GvoG3oTQSVsbdJXMmiDS8qhHKUQF2XLxcQ2jXkLAEuTfOjwc7Qtjs5dABaP4KGq+elqsbU32Z4xUQoV5tKmHJ8YAbl9oSGCWJ7zmeJA5gfSxbgXSXYhOsRgbTBfdHQNFt6Pjga/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784481195; c=relaxed/simple;
-	bh=tRBebeywZimYSZ6rTkadfaWSUxznpHpiOwFATQMUa4Q=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Ar/DTvmbqfZkEZG9ewLf3g41LFD3FbUqC3VFwNxoQE7E6YKDiMLfHBk9RJFNGrN+vNJhJbLeDzeaDwQZqZejhYwXfxyJPtNITojscMfUTTSirWYzwFU3Jo9QmDLN67FeTDaHmYH+E7qGYtzCU6Mqe2GrqdRSxFz/Ixt6qksOg20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yc+h88eI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784530151; c=relaxed/simple;
+	bh=Ry9+H351PRVIvu5vCfIer432Q6M8xqRP0Sn/miUHYkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQUJXkVD12BsD4rChqCa5h4blWi7Yo8Y1YNjtcFlmQHf410KAl+LcHAArYXJqO7yrzGxU2JanXGWJs5nyf6PczVBrFAqCwo9amYD/0wHWsSy4Jersn3JJF1LvyqcILkzhK1Kp7MWsdPoWjlIDC9HkE0I56t2tGFTOExlpl6BwPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nde6GuEr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yc+h88eI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E75C81F00A3D;
-	Sun, 19 Jul 2026 17:13:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nde6GuEr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D7EF1F000E9;
+	Mon, 20 Jul 2026 06:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784481190;
-	bh=DorrKHwIA4F8M02qr/AJATvCxiNLaH/HBl6h0jloihk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Yc+h88eIX11GttWB6PKbI8z8TJLJm3nkZLC5rrkm/0pfqZIVJBUZ7mPeGjlQVFNUb
-	 KMRXYKuFXTjvKVxvMySFzOiZY5Xd4USgbMjyZ5ltUIAfK/fV+8/8o4XHpKmNkbU8EK
-	 zUn+G2RXQv42TiaMAyBBQaaJzZfVS88nZaGvLCaFqPM1cDGI4RC9iQmijEog54ilWV
-	 2d8c9Lm/EY7J/DaUlgRrDvQasgTGQn/n5CE2rtO9g4z4FLNNckC4niKuiXmuBhebId
-	 MKQmn+G635qxWiFP3+4Fy150tUYBfhDdwuF1pHE1v1HT6/na1MOyUWumzi5YvU2VCh
-	 2jGOj/iprMdNw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v3 08/11] leds: trigger: Add
- led_trigger_notify_hw_control_changed() interface
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Rong Zhang" <i@rong.moe>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260719-leds-trigger-hw-changed-v3-8-5fb55722e36e@rong.moe>
-References: <20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe>
- <20260719-leds-trigger-hw-changed-v3-8-5fb55722e36e@rong.moe>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 19 Jul 2026 17:13:09 +0000
-Message-Id: <20260719171309.E75C81F00A3D@smtp.kernel.org>
+	s=k20260515; t=1784530149;
+	bh=Ry9+H351PRVIvu5vCfIer432Q6M8xqRP0Sn/miUHYkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nde6GuEr7OlZiPypguZ1cJnwb3Qwsv0SJG6vGPlgn/HdybXuagqtMMNzQPpy03iYj
+	 pOYLpshQ9s8ytGcVd3hVXJgvar756OtCIteylABt4yOEwBw+z25FxD7f2tGndKR1KA
+	 84SHixNIGqUbo6cmf1+3Zzrl8bdKYXV5CKMbk9hX7fk6TZgjigadigeyKq/qhQmf2T
+	 +BBw0z7rpupjz5WKoTulj5uPlBpGZPWzJbsQy2IUMgW46P21XGvW1NM00Fey8yb4Oe
+	 jiN/46wfxPy2DWT4a/T1ZdMjMby6lTkefLa4+sGeNanxwXIAHDhKmRzcIBr8quHM+V
+	 y0H/88c/+k2tQ==
+Date: Mon, 20 Jul 2026 08:49:05 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Eduard Bostina <egbostina@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, 
+	Daniel Thompson <danielt@kernel.org>, devicetree@vger.kernel.org, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, dri-devel@lists.freedesktop.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, daniel.baluta@nxp.com, simona.toaca@nxp.com, 
+	goledhruva@gmail.com, m-chawdhry@ti.com
+Subject: Re: [PATCH v2 1/3] ARM: dts: ti: am335x-guardian: Drop unused
+ isink-en property
+Message-ID: <20260720-debonair-calculating-muskox-830657@quoll>
+References: <20260718215632.3295049-1-egbostina@gmail.com>
+ <20260718215632.3295049-2-egbostina@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260718215632.3295049-2-egbostina@gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
+On Sat, Jul 18, 2026 at 09:56:30PM +0000, Eduard Bostina wrote:
+> The 'isink-en' property is not read by any driver, so remove it from the
 
-Pre-existing issues:
-- [High] Race condition between asynchronous hardware notification (or sysf=
-s writes) and LED unregistration leads to a Use-After-Free of the led_class=
-dev.
---
+"...is not documented and not read by any driver..."
 
---- Patch [8]: [PATCH RFC v3 08/11] leds: trigger: Add led_trigger_notify_h=
-w_control_changed() interface ---
-commit 9103c7dadab6a0041a92ad3edeff977ceadf9820
-Author: Rong Zhang <i@rong.moe>
+> TPS65217 backlight node.
 
-leds: trigger: Add led_trigger_notify_hw_control_changed() interface
+With this change:
 
-This commit adds a new interface led_trigger_notify_hw_control_changed() to
-allow LED drivers to notify the LED core about hardware-initiated control
-transitions. It handles switching between "none" and a private trigger based
-on autonomous hardware state changes.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index 726fa7bf88cfd..6ae28cbd1c778 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
+Best regards,
+Krzysztof
 
-[ ... ]
-
-> @@ -467,6 +488,63 @@ int devm_led_trigger_register(struct device *dev,
-
-[ ... ]
-
-> +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev=
-, bool activate)
-> +{
-> +	struct led_trigger *trig;
-> +
-> +	/* Restricted to private triggers. */
-> +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
-> +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
-> +		return;
-> +
-> +	scoped_guard(rwsem_read, &triggers_list_lock) {
-> +		list_for_each_entry(trig, &trigger_list, next_trig) {
-> +			if (trig->trigger_type =3D=3D led_cdev->trigger_type &&
-> +			    !strcmp(trig->name, led_cdev->hw_control_trigger)) {
-> +				guard(rwsem_write)(&led_cdev->trigger_lock);
-> +
-> +				led_trigger_do_hw_control_transition(led_cdev, activate, trig);
-
-[Severity: High]
-This isn't a bug introduced by this patch, but could this new API expose a
-race condition with device unregistration?
-
-Looking at led_classdev_unregister() in drivers/leds/led-class.c, the
-trigger_lock is released before the LED_UNREGISTERING flag is set:
-
-led_classdev_unregister(struct led_classdev *led_cdev) {
-    ...
-    led_trigger_set(led_cdev, NULL);
-    up_write(&led_cdev->trigger_lock);
-    ...
-    led_cdev->flags |=3D LED_UNREGISTERING;
-}
-
-If device removal (like a USB unplug or sysfs unbind) happens concurrently
-with a hardware transition event, could led_trigger_notify_hw_control_chang=
-ed()
-acquire the trigger_lock here and successfully attach a trigger to the dying
-LED device?
-
-If led_classdev_unregister() then finishes and the LED memory is freed,
-wouldn't this leave a dangling pointer in the trigger's led_cdevs list,
-leading to a use-after-free memory corruption when the trigger later fires?
-
-> +				return;
-> +			}
-> +		}
-> +	}
-> +
-> +	dev_err(led_cdev->dev,
-> +		"%s() is called, but the private trigger (%s) is not properly register=
-ed\n",
-> +		__func__, led_cdev->hw_control_trigger);
-> +}
-> +EXPORT_SYMBOL_GPL(led_trigger_notify_hw_control_changed);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260719-leds-trigg=
-er-hw-changed-v3-0-5fb55722e36e@rong.moe?part=3D8
