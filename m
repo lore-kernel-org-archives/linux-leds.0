@@ -1,229 +1,127 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E85470102
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2026 19:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF5346E005;
+	Tue, 21 Jul 2026 19:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784662172; cv=none; b=RUFn2uhivFSFXHhtfdR2EzOH2R+dxo/AfCBL/TzP/pMmvlgylEip3JSl9gpBfXVApHb8tpK+dOTFVwBT8rYlp2k/ZOChhP5fpHK7ZiS1C5mGtigeFPqDqWV2WWjipfAdZj1S6KyX3/w7kLjluNCjfS5RXsIFD6c+kyN95f2X0io=
+	t=1784662731; cv=none; b=sfVg2Z2DMLY1tx/yL+0EVy9c2Eqx+5wUqW80zmFKOpjRD31/ci+lqv5pSUdVS1qj+GAJ5WIQVgAnrrVMhq50pBT+oV2fObRjaxkIGQ6esyjqqfljO6lmpIC9H6xCUTrx8hHfFE5ajsI9XbqVV9ROkyXTllWe7RENJfpv5oyhWME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784662172; c=relaxed/simple;
-	bh=5uHrJY3HeWlIs8TynVILl3KyFkLfOhYuUo74OAadzzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MsO6a9iQ9kiAW9f52sOeueDH0S3nTuVZb4BHbuJGjnPgK+RrvcgTWDcVWpQjyEr17PrR9dafyODCkQDc61EGszEPZhMGvHMfiZLasKR3AhyOJr0vyq5ILK9IA4vz13oEgTuko0Rc4ZuK6ibWDVenBvCFM2JUKaSUXRKtmmANha0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZBen4NA; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784662731; c=relaxed/simple;
+	bh=5Zev5SQHNatqxrvr1p33DwKX82qqiBWnGthUYfP0Ui0=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=oz1qng5qgzLkQDjCn4FLLkkgRxhLNv2UGfgoAEgMC1YyKuyDXkSgwSNYnLgpiCOcZZ78VO8D+iIziLmhyuWlHcLWSoDOygZ54N5GAqDxAYfwf/nWDamAItH0cYuTO3Dd3vSByWwd9ivS6fCKjULOtQIqZjF94/Ukz6mosauSjAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEH6fHx/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZBen4NA"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2cf27856f9cso64663285ad.2
-        for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2026 12:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784662170; x=1785266970; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=748lzqKN3J88b3BEuBiWg6WchFFUdy2hlfv06NfZifk=;
-        b=ZZBen4NAc6oARBow/vHmuiQ1kEhttkgQfiS+3/GBzFzXV7ihRdaWwDefeefXgQi6mY
-         w4Wc0E5vzTXRa6GXb0XhUUyVi5Mh6viHSt0Pg8CgOJWKVqM/pVynHKg2r+r55+728ob5
-         LgGs8acZNmpFu3f2+AMen/glx8gGtwkTTQy3q9RzPexjyyND+vTI8oZNfae8dvMnpWPG
-         O4t8QMSCKePsUKn82t+RZu3jxSr7Ki/A/hYR0gEmK8+CUvzlUtbl3aiPaIm79umPmyOE
-         C592ZQNn/6C+T9pQND/NVGH6C/kPX3UqDBamjTzoCVUEn7JlQ0Z/zzq69KTSNlHeNxAG
-         Ku+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784662170; x=1785266970;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=748lzqKN3J88b3BEuBiWg6WchFFUdy2hlfv06NfZifk=;
-        b=eUb/TRAX/aCwkd/HwEkKkuC+TDf1P6tJ3cEDbhAERIGKIsglfFRlRIvDkVFE/MsfHi
-         QcyVk2akBbQaeCqU3ka4uVd2p8RyYcqQvnw16L3xxlztSCg4l1WYkdXGUfor7hmQDUCh
-         OKQgoK+U5TvtcI8kJcAxNWP/d36c9CMaUUogDYqSrDQxp2J24fAJLyVMdguUAMGnzPD5
-         0yomqGuYtEim37x4dzagJXRTMjGSm4ziq+DTAhZAvtocouW9yTWBFCIXlmO0tR+QQN+d
-         58HxXpnBnOg1v0SBOBB9UEpMF40WT3F4lRShdx5wBRzjXrEHtcgOgUImrMi28SqfvhKG
-         kH6A==
-X-Gm-Message-State: AOJu0Yyn577SwTInA7zrAoeRFr9ir4UJlj+gQXfVRJn8C/NR+clABXYA
-	O0f2LYmMTELnp3ApNt036AU8tu7F9TJFdokB7UwNkweD4rP8UmKeC1Q6
-X-Gm-Gg: AR+sD10bEGI9ChqHzg5kA0rwO4pDVfEIrklpS8QGQMdmkeg7Fo3CxOveoYDzxHmxXAv
-	vUKg+6Dwzq3hYeimkyaqlhrCLhr6/FAWVrQM7QpqPQ26H+vuHbJbtKnBxZqXb9Tb/LULEuB3heg
-	4Bw1PZQkB8tmcO+5Sm/hMVaHINZwrSLOUTjaw1X84e3hXMQUrDADxhMuxnpvt8Tu2CxPE4YDecm
-	Ii74J968A7TKBvel7OMJpzSdSsl79x1CyqBBuSNgkgZXMmwb3tvfxra5Dl8b7SvB486uRL2EEGE
-	ftxOk2+xgCbHycNW++R9ecwIf8gktieIPrjgF2cutwf0XOWRManFD/04QiIGfBJglTA8Fzni84B
-	Teqp+tOdunWSrjpLfNEAtHiDQgQDsaSp5miUMZLZqFEl7d81KCL/omFLUSjqgosQN3GnNO/9o2i
-	Q/VzJUzxtwYszFw1sfypXodcAKwu3hLJLLpAdQ2oqlcbDd21FUuxF+mnSQ4msXfGoNN/Bw3Metz
-	ZKAekMUS9E92eLntghzUaG2/Ktdc3W3mllH/1iB4q8xjpuXG5en
-X-Received: by 2002:a17:902:d4cc:b0:2c9:e9db:8167 with SMTP id d9443c01a7336-2cf348193f5mr215886905ad.7.1784662169923;
-        Tue, 21 Jul 2026 12:29:29 -0700 (PDT)
-Received: from localhost.localdomain ([202.179.95.46])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147e07000fsm3063164eec.21.2026.07.21.12.29.25
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 21 Jul 2026 12:29:29 -0700 (PDT)
-From: Ninad Naik <ninadnaik07@gmail.com>
-To: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	simon.guinot@sequanux.org
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	me@brighamcampbell.com,
-	linux-kernel-mentees@lists.linux.dev,
-	skhan@linuxfoundation.org,
-	Ninad Naik <ninadnaik07@gmail.com>
-Subject: [PATCH v2] dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
-Date: Wed, 22 Jul 2026 00:57:54 +0530
-Message-ID: <20260721192754.46344-1-ninadnaik07@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEH6fHx/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B0F1F00A3D;
+	Tue, 21 Jul 2026 19:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784662730;
+	bh=4mbftGSFBc6TlOsJJwuuRQlvSN+PsWYM9ETDUfJDG/E=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=UEH6fHx/gCmr/0sMHTQNrdj+QwMiaD9Fp6JOYgzd+4nYFMd53ch4xVlM8SVMzLhxN
+	 WlMo7jlImO4rTBaN0QAJZ3vLYjcD/k946tLnJkZYAue/32Eqa5/v/2HI9ivlKCACyE
+	 QNg60IVd5bDJXtzzA2FE3ifNRQqOB8mvw2lDTffxbzw1t3gFrR0h2xWjatuliB35ai
+	 TzdzSMqXuYqwc42qwuUBZZjlqbnwtjcNqanGNChlVUtr+B8b8XIgMkAKPL6RozgbSf
+	 Fy8q81qRHSZfp5ctiz6tO0qDay+CX3NDZZi/RPkBgZqnspUhUKiu2OTqFcD3c3yati
+	 JLT9ja1ZFhG/Q==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] dt-bindings: leds: lacie,ns2-leds: Convert to DT
+ schema
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ninad Naik" <ninadnaik07@gmail.com>
+Cc: conor+dt@kernel.org, robh@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260721192754.46344-1-ninadnaik07@gmail.com>
+References: <20260721192754.46344-1-ninadnaik07@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 21 Jul 2026 19:38:49 +0000
+Message-Id: <20260721193849.D2B0F1F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Convert lacie,ns2-leds to DT schema.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Low] Using `additionalProperties` at the root level to define child node=
+s incorrectly restricts standard properties on the parent node, breaking de=
+vice tree validation.
+- [Low] The schema omits the `num-modes` property, causing `dtbs_check` fai=
+lures for existing in-tree device trees.
+--
 
-Signed-off-by: Ninad Naik <ninadnaik07@gmail.com>
----
-Changes in v2: 
-- Change maintainers from the subsystem maintainers to Simon Guinot. 
-- Drop "|" from the description field and update the description. 
-- Remove patternProperties field and instead use additionalProperties.
+--- Patch [1]: [PATCH v2] dt-bindings: leds: lacie,ns2-leds: Convert to DT =
+schema ---
+commit d6e2084ac319cdcc30d00614f66ec071bc9c5c1a
+Author: Ninad Naik <ninadnaik07@gmail.com>
 
- .../bindings/leds/lacie,ns2-leds.yaml         | 80 +++++++++++++++++++
- .../devicetree/bindings/leds/leds-ns2.txt     | 35 --------
- 2 files changed, 80 insertions(+), 35 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
- delete mode 100644 Documentation/devicetree/bindings/leds/leds-ns2.txt
+dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
 
-diff --git a/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
-new file mode 100644
-index 000000000000..1976669d2218
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/lacie,ns2-leds.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Dual-GPIO LEDs found on Network Space v2 (and parents)
-+
-+maintainers:
-+  - Simon Guinot <simon.guinot@sequanux.org>
-+
-+description:
-+  The Network Space v2 dual-GPIO LED is wired to a CPLD. Three different LED
-+  modes are available, off, on and SATA activity blinking. The LED modes are
-+  controlled through two GPIOs (command and slow), each combination of values
-+  for the command/slow GPIOs corresponds to a LED mode.
-+
-+properties:
-+  compatible:
-+    const: lacie,ns2-leds
-+
-+additionalProperties:
-+  type: object
-+  $ref: common.yaml#
-+  unevaluatedProperties: false
-+
-+  description: Each child node represents a single LED
-+
-+  properties:
-+    cmd-gpio:
-+      maxItems: 1
-+      description: GPIO connected to the command LED output
-+
-+    slow-gpio:
-+      maxItems: 1
-+      description: GPIO connected to the slow LED output
-+
-+    modes-map:
-+      $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+      description:
-+        A mapping between LED modes (off, on or SATA activity blinking) and
-+        the corresponding cmd-gpio/slow-gpio values. All the GPIO values
-+        combinations should be given in order to avoid having an unknown
-+        mode at driver probe time.
-+
-+      items:
-+        items:
-+          - description: LED mode
-+            enum: [0, 1, 2]
-+          - description: Command GPIO level
-+            enum: [0, 1]
-+          - description: Slow GPIO level
-+            enum: [0, 1]
-+
-+  required:
-+    - cmd-gpio
-+    - slow-gpio
-+    - modes-map
-+
-+required:
-+  - compatible
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/leds-ns2.h>
-+
-+    led-controller {
-+        compatible = "lacie,ns2-leds";
-+
-+        led-0 {
-+            label = "ns2:blue:sata";
-+            slow-gpio = <&gpio0 29 0>;
-+            cmd-gpio = <&gpio0 30 0>;
-+            modes-map = <NS_V2_LED_OFF  0 1
-+                         NS_V2_LED_ON   1 0
-+                         NS_V2_LED_ON   0 0
-+                         NS_V2_LED_SATA 1 1>;
-+        };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/leds/leds-ns2.txt b/Documentation/devicetree/bindings/leds/leds-ns2.txt
-deleted file mode 100644
-index 9f81258a5b6e..000000000000
---- a/Documentation/devicetree/bindings/leds/leds-ns2.txt
-+++ /dev/null
-@@ -1,35 +0,0 @@
--Binding for dual-GPIO LED found on Network Space v2 (and parents).
--
--Required properties:
--- compatible: "lacie,ns2-leds".
--
--Each LED is represented as a sub-node of the ns2-leds device.
--
--Required sub-node properties:
--- cmd-gpio: Command LED GPIO. See OF device-tree GPIO specification.
--- slow-gpio: Slow LED GPIO. See OF device-tree GPIO specification.
--- modes-map: A mapping between LED modes (off, on or SATA activity blinking) and
--  the corresponding cmd-gpio/slow-gpio values. All the GPIO values combinations
--  should be given in order to avoid having an unknown mode at driver probe time.
--
--Optional sub-node properties:
--- label: Name for this LED. If omitted, the label is taken from the node name.
--- linux,default-trigger: Trigger assigned to the LED.
--
--Example:
--
--#include <dt-bindings/leds/leds-ns2.h>
--
--ns2-leds {
--	compatible = "lacie,ns2-leds";
--
--	blue-sata {
--		label = "ns2:blue:sata";
--		slow-gpio = <&gpio0 29 0>;
--		cmd-gpio = <&gpio0 30 0>;
--		modes-map = <NS_V2_LED_OFF  0 1
--			     NS_V2_LED_ON   1 0
--			     NS_V2_LED_ON   0 0
--			     NS_V2_LED_SATA 1 1>;
--	};
--};
--- 
-2.55.0
+Convert the lacie,ns2-leds binding text document to a DT schema.
 
+> diff --git a/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml b=
+/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
+> new file mode 100644
+> index 0000000000000..1976669d2218c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
+
+[ ... ]
+
+> +properties:
+> +  compatible:
+> +    const: lacie,ns2-leds
+> +
+> +additionalProperties:
+> +  type: object
+> +  $ref: common.yaml#
+> +  unevaluatedProperties: false
+
+[Severity: Low]
+Does setting additionalProperties to type: object at the root level break
+standard parent device tree properties like status =3D "okay" or pinctrl-na=
+mes?
+
+By enforcing that any unlisted top-level property must be an object, standa=
+rd
+properties (which are strings or arrays) will fail validation with type
+mismatch errors during make dtbs_check.
+
+Is it better to use patternProperties: "^led(-[0-9a-f]+)?$": for the child
+nodes and set additionalProperties: false at the root instead?
+
+> +
+> +  description: Each child node represents a single LED
+> +
+> +  properties:
+> +    cmd-gpio:
+> +      maxItems: 1
+> +      description: GPIO connected to the command LED output
+
+[Severity: Low]
+Will this schema omission cause dtbs_check failures for existing in-tree
+device trees?
+
+The new schema strictly allows only documented properties via
+unevaluatedProperties: false on the child nodes. However, existing in-tree
+device trees contain an undocumented num-modes property:
+
+arch/arm/boot/dts/armada-370-seagate-nas-4bay.dts:white-sata2 {
+        ...
+        slow-gpio =3D <&pca9554 2 GPIO_ACTIVE_HIGH>;
+        num-modes =3D <4>;
+        modes-map =3D <NS_V2_LED_SATA 0 0
+        ...
+}
+
+Since num-modes is omitted from this new schema, validation will fail when
+checking those boards. Should num-modes be added to the schema (perhaps with
+deprecated: true), or removed from the DTS files as part of this patch seri=
+es?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260721192754.4634=
+4-1-ninadnaik07@gmail.com?part=3D1
