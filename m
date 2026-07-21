@@ -1,124 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708FB37AA77
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2026 14:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1248400E1A;
+	Tue, 21 Jul 2026 15:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784643830; cv=none; b=NrmrGU2/vpOQD85nPmBuYFckudQm/WrzMOtqYD0dkxt8eMyis1DO56/K+mnfhGo3WXLGyvOJX0ecSDeQ2Rh8vZC00avTumT9ZeCS5rfnuPZ/IjQcWhRccCB1NNan6fMvNQtNnZMpb4gC3tFMU9Q2kDXk0427xZLs1eyhLs0Pupo=
+	t=1784646169; cv=none; b=txiBrg8XXJRAmftgBDX8OJI/P2wh7cr7mLyFXfDkm0aI6fGSyI5YZWe51pVedEi/Tv5cu/Sp20ccvu4exNs91v+Dk072BlxLYhhpiMVJLaOEYtcYD58WS6tZbYcyEbhNMVhmEClQzXMBOSYtXvYh/nsiX4yVEk9Ahz3cmrwTcZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784643830; c=relaxed/simple;
-	bh=YbE3FIEf16hP8H+mbp4mAxHDf1jtRYXry1/q9zHuyWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dCqvRcnsCXgaG8CL1fwzQzic8/qOFSQMkYc1upuPOyiXUqGYa7fhvS2Ao6G/dGihXHc8fmmsnjZVR/u+p37UrbLhHEeWJcvoCjfxo6xuXhjVt0h1rMFbFQCusgTr5sVjGuR7cr0cgShxc5I9xqe30aALTKa3Eznc/MXE22ij5I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5SmH4BX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784646169; c=relaxed/simple;
+	bh=xDVAjw1evmPbhCtSHBvAWHar0M7/zS3n1eBSUkO14R0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJxjhShxp6CvbWCfW3TQaFbBgS7pYODYU6/g2+EsIi9SnwLUdwELs8TNhTqKYEsvXqodgSrdKRz5yxx4WHdkuy8hGm9tghkzdt2+nsq7LedrqZ+x80zrhrFFU7W/wy3zpnlEqBmW73gf/gnAxK4xuDY2Hii1WNsEQWfRQqFMAZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPBZDEjG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5SmH4BX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F201F00A3A
-	for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2026 14:23:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPBZDEjG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 751AE1F000E9;
+	Tue, 21 Jul 2026 15:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784643829;
-	bh=W872MX1aaB+YZmKQrLunW/vuC3RmxtdDHd9xnW6ge+I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=M5SmH4BXlce5RIkeR7JLaR+DYcExoVzvJZxY15mNd/86gVy+IIZEAbVLqrabl/fae
-	 dRHYHv0Rzwi/98UDdgLJ4BuqS1gyLzWIzptNDaFWK+Lqr4tQOvzEORiwGWoq9w42ON
-	 aLwhIFaccqMXjGqR+CeG2FDMEYGEJnC7OUawXHKrMFVq10lNdvdJB29+clOYAM/eWG
-	 HRxRXKMzncodK3Y/9VB2d14OTWMgXo5Noi6XuOoAa9VT77n5QlUeLZTQuwymB2aIwH
-	 sGfx9HEIW5GZ81KEJESowJn5MqU21Cc8ceB7Wq+0oZnNNhMx7cNaW7QJXIXuDNN12u
-	 XFcTxv8DBL0fQ==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c167aa9500dso869076366b.3
-        for <linux-leds@vger.kernel.org>; Tue, 21 Jul 2026 07:23:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq3LneGPHAWy51Fe1i5VlX05mwI347V/uTTbryf4fYkcEAqQjG4j3Wg5pxPkqPhgDAMeWvnRuU9GyeU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY3X1yvM2MhG9XfYdJzYMfiQBTpzZkJTSO0pS0oW+22Lmxk9gy
-	CQXEMGoGyvXuIgLtKkzMfZvV1ec4H4Olj7d0bYxE9IZ1ob97I902DUAISVkhPjxHvGy7pdtEDGi
-	fuo2y+Vig/SzESrYtIfcIBMJ+P9p/pg==
-X-Received: by 2002:a17:907:741:b0:c12:1dd4:13ea with SMTP id
- a640c23a62f3a-c16b4765b7amr761810866b.30.1784643827828; Tue, 21 Jul 2026
- 07:23:47 -0700 (PDT)
+	s=k20260515; t=1784646168;
+	bh=eRxy9o7bxYedbpNQw5m8RnT/2fuzGv+0CqJ7qJPopw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=fPBZDEjGx4jjMacBFM4owxlS8aPseFZd/MW3q3Pq9fEjSM3BRd2V44b6MZoVB0uob
+	 N1QHjh4dKn/SnC8rkUqGFvKsPy2ZTgiNMsCOQeV/7gf4ZftUVW1PAZIEtV2NBqqSvY
+	 um+ljf+VZho7K1fPcEsY0759OuVP/0yHYfa3WZDJiWikO4PWhoYiM+CyjdYKiRy466
+	 Lgra2Gll9qOnJk6sxh7i0P0LUR+0+E7tDbM4F9mlShSeLx43WrcGCaS04m2IB5IBJB
+	 Kaj0CJffjWcHG5JT+1O8eobw39OvAFo+myCINfb0frqCBF9B+6+PjINoaakxrI8uo2
+	 uXoPfg2wZMgYw==
+Date: Tue, 21 Jul 2026 10:02:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Eduard Bostina <egbostina@gmail.com>, conor+dt@kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	lee@kernel.org, dmitry.torokhov@gmail.com
+Subject: Re: [PATCH v3 3/4] dt-bindings: input: Convert TI TPS65217 power
+ button to DT schema
+Message-ID: <20260721150247.GA3820183-robh@kernel.org>
+References: <20260721112133.70382-1-egbostina@gmail.com>
+ <20260721112133.70382-4-egbostina@gmail.com>
+ <20260721113408.655C01F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260701175330.1645927-1-ninadnaik07@gmail.com>
- <20260701180553.473121F000E9@smtp.kernel.org> <20260716173939.GB534222-robh@kernel.org>
- <2f1795b5-cab3-4241-b3f8-532a7fc4df9b@gmail.com>
-In-Reply-To: <2f1795b5-cab3-4241-b3f8-532a7fc4df9b@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 21 Jul 2026 09:23:35 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJEbkPU2oYB2p0vBsq=XdzkXurdDUzZdJDOM=MpENLbYQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxEjh-9RPB6Ab6fyhpFd_zD5BN0wQFo33UhJrt5AZbs4HA5Micyu-a_32A
-Message-ID: <CAL_JsqJEbkPU2oYB2p0vBsq=XdzkXurdDUzZdJDOM=MpENLbYQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
-To: Ninad Naik <ninadnaik07@gmail.com>
-Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, lee@kernel.org, conor+dt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260721113408.655C01F000E9@smtp.kernel.org>
 
-On Sat, Jul 18, 2026 at 3:15=E2=80=AFAM Ninad Naik <ninadnaik07@gmail.com> =
-wrote:
->
->
-> On 16/07/26 11:09 pm, Rob Herring wrote:
-> > On Wed, Jul 01, 2026 at 06:05:52PM +0000,sashiko-bot@kernel.org wrote:
-> >> Thank you for your contribution! Sashiko AI review found 1 potential i=
-ssue(s) to consider:
-> >> - [Low] The schema conversion incorrectly restricts LED child node nam=
-es to `^led(-[0-9a-z]+)?$`, which breaks `dtbs_check` validation for all ex=
-isting upstream device trees using this binding.
-> >> --
-> >>
-> >> commit 6c59295f22b17d02a2b26847db54458f820fa4f3
-> >> Author: Ninad Naik<ninadnaik07@gmail.com>
-> >>
-> >> dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
-> >>
-> >> Convert lacie,ns2-leds to DT schema.
-> >>
-> >>> diff --git a/Documentation/devicetree/bindings/leds/lacie,ns2-leds.ya=
-ml b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
-> >>> new file mode 100644
-> >>> index 0000000000000..679a618906d80
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
-> >>> @@ -0,0 +1,87 @@
-> >> [ ... ]
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    const: lacie,ns2-leds
-> >>> +
-> >>> +patternProperties:
-> >>> +  "^led(-[0-9a-z]+)?$":
-> >> [Severity: Low]
-> >> Will this restrictive regex cause existing device trees to fail dtbs_c=
-heck?
-> >>
-> >> The old text binding example used a child node named blue-sata, which =
-does
-> >> not match this pattern. Since additionalProperties is set to false bel=
-ow,
-> >> nodes in existing device trees that don't start with led will be rejec=
-ted
-> >> during validation.
-> >>
-> >> Should this regex be relaxed to allow existing node names, or should t=
-hose
-> >> device tree files be updated alongside this conversion?
-> > While yes we prefer what you did, it's perhaps not worth changing these
-> > old .dts files to match the preference.
-> >
-> > Rob
->
-> I understand this. Should I relax the regex to allow any pattern so that
-> the existing as well
->
-> as new DTS files could be properly validated?
+On Tue, Jul 21, 2026 at 11:34:07AM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
+> 
+> Pre-existing issues:
+> - [High] Missing NULL check on `dev_get_regmap` can lead to a kernel panic in the IRQ handler.
+> - [High] The driver incorrectly masks `platform_get_irq()` error codes with `-EINVAL`, breaking probe deferral.
+> --
 
-I doubt there will be new DTS files here, so you could just list the
-node names in use. Or to just allow anything, you can do:
+Why is sashiko pointing out driver issues on a DT binding patch? This 
+series doesn't even touch the driver. This seems to be a re-occurring 
+problem.
 
-additionalProperties:
-  type: object
-  ...
+Rob
