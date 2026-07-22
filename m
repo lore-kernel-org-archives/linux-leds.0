@@ -1,63 +1,63 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4944322F7
-	for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 16:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2A33E4C98
+	for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 16:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784736947; cv=none; b=on9xFYtC5LZem9VXnfxu6lp5E7MXrcJfGkiruupvAFb8PsUp0ih1/7pqrBDVLTr4imXH0daaz8e5uvddoJUhjE6nzyVLgfuLIUMjsS3AE4OQz+Bic/s6QiUYIZq/tcZzPNS7ndA1FNTZfM4Suy9qPJzFTO73Uf2vp/tdKQkJpco=
+	t=1784736953; cv=none; b=rVF6BJj9RGtmg1S4sKxS8yG+GsyV2xpkw7ggfHdavb4Ftna+13A1HsrrheQs9mTysFWjR9EfLOnFi3MPOm/Xbvj3aRbBN1qYZs6vQeW/lI7jvH/zqD1RqQBGyeDz/xWX1uctUU72x1gLKbeNpqEmf53A2HGmfnnkoHwNLxinA2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784736947; c=relaxed/simple;
-	bh=1WjDDJIs2KpwQ8QZiN+WTOjS6oF6XQb/0PQCbzOEvpM=;
+	s=arc-20240116; t=1784736953; c=relaxed/simple;
+	bh=/AWH4TVkzjZlmGyul2I4eG0vLDHnmIL4x+qTUTM31ZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wng6g70HDDUhbpLy3roYvZW0gWlSgJssQsiZKR0s1iMyknMjziNB9CZM0Razqfw8H5zHmFwJ9nQn9SK9qgM3ba2OXAxPqqI+3miJMsmnQ87piNx0azeaHkWh3QT8BgW2hSm/TYcZs3ZVaIEMuZSRDXjrd83h4r7NaXS85D7dgtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UI1Si5cr; arc=none smtp.client-ip=209.85.215.171
+	 MIME-Version; b=bAOJ53YsYs9CPTMrmN1U/ThgLutEwsTdAWQ60F+eyHkL48rc1hOEJFQemYvbRQnV/9pkRkTjUf7T8oDh3FQDvtMrbtl4/DnnbCU3Mofd1Z8cB73v3hJXVbhb4BOW77izK5vbTmcfUPZ6VcIDYU93VpcNj0Sc/fYpsKTtGYBPWEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWbV94Tz; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UI1Si5cr"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-c96c92c0980so6207503a12.3
-        for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 09:15:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWbV94Tz"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2ce98cb8165so69369685ad.1
+        for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 09:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784736945; x=1785341745; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784736951; x=1785341751; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=J5y6lwPBQTK8Q5EI0nQrZABCngKWM2qP9sIU4ndSGI4=;
-        b=UI1Si5cru3RwicWXcBwdSVSvgLSCfk+K1AqFRfwbu4Y3Kob2jP/227ixbu2Iuc3Rm1
-         tA9i1N63yFLtIsNQZfoDg8gkBWgu/je7dfhhdhUei3lD0xY9ZN3YOO5l884a52x+Mfbo
-         50bxBu/W6tVtDqhCZ19wvXMctkAqNetZBISpXu2smce+TBiTzVmpOzqYTKBbQfHGCCfX
-         DoujCiWYUE4luT+kxBfV3imEwpoY5OvHSngRCT1WwbZHTnvh68Z+NdfBMQ+vbMnAlyPZ
-         eD9TSxZdcEoAS8+tZxizfgldWZsh0MBOubzxmCRHQxgUzI3hhW/TZ7LrmYrRtdED+aqA
-         TuiA==
+        bh=C4eG33ks6I0ktj16HGNoVGjOMuTcAcc6qdfPtWq1IkM=;
+        b=QWbV94Tz2+K9Ceug2wHEZy4FXtC6OVaHztFjH4jXD3gxFux2qlAyw1KUFxUQ1QVjW0
+         3gYP9qAu/9j4vNxOjjnSVodAw+2YdWKKNTloiLfN50xyDUxAO6Z8rfWXoq1Tq//6pSI1
+         myk1WdnsH+YiBnxGe9yb9mUhxVLYcIqR4ut01e5BOM/mid7H2aR+6wmsSpBGK5GuRd0g
+         uJ2SGJnW6DTIONyQG88SCS8r9chAcZA0ZF96KhvWZgYNsTHuyk7fD59lDsP4qXhRddC3
+         eRHU9wOFE7IHwrLIMtPSznsllVVqsfQEvtuWxwR0MCUKkGo0Mu5XE+hL4TqAGVQHCZ8r
+         fbGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784736945; x=1785341745;
+        d=1e100.net; s=20251104; t=1784736951; x=1785341751;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=J5y6lwPBQTK8Q5EI0nQrZABCngKWM2qP9sIU4ndSGI4=;
-        b=BL00JWOPw3ebqom7J3pE5kLBQtYAH2/c+2kzSKDiFLNHj+d1ZSIWOgD4+yyAkXf26A
-         OrfJy2TW/EXOIuDwnvBpFmwPqAlJth8OYwLtNuXoAPaULBW2JptLPegpoaLcq87hMe8D
-         xHNi31uF+ezA50BXtR4lCB3klC45uQVzae4zamSk/Z02Xix1eqS8XtdVMK1VKjS4m7KS
-         GVF0M2LM3yypEi8xnE1Gs+wdppZHphr/ATFr96sCpzZ87xQ7+fYyoEkNm1ZxGGEIj4b6
-         v/6xNPU2Dt7khzI4rJbI+Y3MaOiGsc+Txac5gFRNgT7uopHypI4Mq/gR0P9fRBjPX4Lb
-         tKug==
-X-Forwarded-Encrypted: i=1; AHgh+RquxMR5tZKNFiBkyVFrQQDynO6fC9IQ6zgWyCRzIfLVxVSgFmNSgjkPRe8DFWxkWmTzyc/FDBKVHPoE@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc714k+8KQs3P1YYYt8HEaccqxEUWNrfAadWL7H60YcxpZCFlg
-	zsBm3SFbQt74Oyg65x8NS4BRQvs5wD6xnZYWBqMcY3i0j2XEVR35qE8=
-X-Gm-Gg: AR+sD128W+oQMPlEmfAPKsKVODAFdYssnrBzN1D/v1eJKcVJrCvqfVkCMrA4gPAheD9
-	IIfzZbbnzYjwTm9qrKNKXYhSokaM/kHNP2jLbOTyH0mlq8l4wm7pLzew7DELTBTEWl3XDI3S0JJ
-	uO1EAN4x4NJUKfCWg8l3G6JLxNVCQZDoot7zBVoJf5EZ6GVLFYH4x36zaHhYHpHrMvy+mri89wM
-	Khd6cEu9M0IoiWfeV6iv8sxNfoaKREFToYtCIg/w1Hwf6XqqlMEIvbCLgYOSEmHu9xdxHzKuGgi
-	0svsqdPIWRb4BdpUr87kl3ztYf5WcuIyAKpWcLiW3SFdlcdQgnWkmNysUnC/w+BzXV5/5VMFWqa
-	gUgDL3yyVBVYiAnyN75tdA3rzEWyJjppiambIQiLV3ShcGCk6WLh+MDopXltJj+TRR0Fz+cgERB
-	h0hzj6il6S/kKqdGBJbkJHT5BkRg==
-X-Received: by 2002:a05:6a21:6f06:b0:3bf:6c08:2b27 with SMTP id adf61e73a8af0-3c3ada195f6mr26726098637.47.1784736944935;
-        Wed, 22 Jul 2026 09:15:44 -0700 (PDT)
+        bh=C4eG33ks6I0ktj16HGNoVGjOMuTcAcc6qdfPtWq1IkM=;
+        b=hz8ibD9NP9DjFscRiplRd0ESAu5fr3PwcK+oOaWAyXUljPto+YX9do+8tyUq9tK7qO
+         jQxqo/drlw5dn9nyimrOuqHhAa7YIYtIs0CG02Aav5EupHFquHT8upmcz5ovhQDqr1K1
+         HWoxTLXTlLUpIcCQ67N2j49fe5LD5fgGzyEbVYjw/5WqjLiOgT1hO2tcqMwvgob7N4O4
+         Pqlf/7Luc2HNtFeZyGQrckS0aWy1V7o5gWBy/S5bDEIW7CU90wsdNzY1Mc2x9qzjGORw
+         zC36JwdLq/F+paQBHXrgnE9YDHtL6TLvH8lJ0w8YY9A6OR7qtjLiSFiRqay+Ntxyk819
+         rjqA==
+X-Forwarded-Encrypted: i=1; AHgh+RogbV2+Jk5QrVC/jM5Yo28k2wgE5trM+/t6YaAEayP89cVBd4LUGpsMZGusGxGrMoTb3krgnffq2tpu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+LVMRWr2Ng8t38hOSZRr3Z0us/u41EHtMnYOU8pzCuR+fkUy7
+	tyf5hb2S8mOYTPjDePzADWWqMwfMUaTrGW6Z/8xCRhI5x85SRMBRV+o=
+X-Gm-Gg: AR+sD10mWbCvM5u3CvhL9aP3qPEzqpWfgk/G91EqfUZdLLnCJW0saOyVysUopEduOy9
+	J/jLKWR7fp2F2p5icCBduuNy3bynNJZZAXK12484KXBc71HGfNDNd7FeQiqK3RXGy58MHoeSvLd
+	ReQE6nsiMJwT4JrbflI+W0632mHq/5/bDb3fq0Rrwaisn0GrlHXgmqR74qbNGcUiQUdjvuNHF3n
+	334WftF7X65QYfn4EIJrbP+hWvZ6z3DZrBqImME2m7i8YkwbMgudu7O6VmSTPfayApAu+YwSIxA
+	Lr4gj9kBeRnKnnVabiRBEAZ+b14U7tZGLcaDITYSTrzu79+73wdT+9/idCcb4qamczXRDWyR3qB
+	cg/G/fcSIYf0HK+Tnq6tX7OOXEyTP/ifK8bWHSRbJp8ztLob/GRtTQYdAoAwWNesgYo84749wTX
+	qUDNgEP5Ba3vMSxiEIJJCbQSn/NiGh1KJzZ2nM
+X-Received: by 2002:a17:903:384d:b0:2cc:10c1:352e with SMTP id d9443c01a7336-2cf8ddae3camr44679535ad.21.1784736951332;
+        Wed, 22 Jul 2026 09:15:51 -0700 (PDT)
 Received: from t-rex ([2401:4900:c212:546e:3d3e:f0d9:52c0:8a0])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147dc193f8sm21024650eec.1.2026.07.22.09.15.40
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147dc193f8sm21024650eec.1.2026.07.22.09.15.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 09:15:44 -0700 (PDT)
+        Wed, 22 Jul 2026 09:15:50 -0700 (PDT)
 From: kr494167@gmail.com
 To: lee@kernel.org,
 	pavel@kernel.org
@@ -65,9 +65,9 @@ Cc: kauschluss@disroot.org,
 	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Surendra <kr494167@gmail.com>
-Subject: [PATCH v2 1/2] leds: rgb: s2m: Wire up of_match_table in platform driver
-Date: Wed, 22 Jul 2026 21:45:18 +0530
-Message-ID: <20260722161519.9610-2-kr494167@gmail.com>
+Subject: [PATCH v2 2/2] leds: flash: s2m: Wire up of_match_table in platform driver
+Date: Wed, 22 Jul 2026 21:45:19 +0530
+Message-ID: <20260722161519.9610-3-kr494167@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260722161519.9610-1-kr494167@gmail.com>
 References: <20260722161519.9610-1-kr494167@gmail.com>
@@ -81,54 +81,53 @@ Content-Transfer-Encoding: 8bit
 
 From: Surendra <kr494167@gmail.com>
 
-The driver defines and registers s2m_rgb_of_match_table via
+The driver defines and registers s2m_fled_of_match_table via
 MODULE_DEVICE_TABLE(of, ...) but never assigns it to the platform
 driver's .of_match_table field. As a result, the kernel never matches
-this driver against a DT node with compatible "samsung,s2mu005-rgb",
+this driver against a DT node with compatible "samsung,s2mu005-flash",
 making the MODULE_DEVICE_TABLE entry dead code.
 
 Wire the table up so that DT-based probing and module auto-loading
-work as intended. In addition, validate dev->parent in s2m_rgb_probe()
+work as intended. In addition, validate dev->parent in s2m_fled_probe()
 to prevent a NULL pointer dereference if probed without parent driver data.
 
-Fixes: 63ccd117f425 ("leds: rgb: Add support for Samsung S2M series PMIC RGB LED device")
+Fixes: 02149db273a9 ("leds: flash: Add support for Samsung S2M series PMIC flash LED device")
 Signed-off-by: Surendra <kr494167@gmail.com>
 ---
- drivers/leds/rgb/leds-s2m-rgb.c | 10 +++++++++-
+ drivers/leds/flash/leds-s2m-flash.c | 10 +++++++++-
  1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/leds/rgb/leds-s2m-rgb.c b/drivers/leds/rgb/leds-s2m-rgb.c
-index d239f54eee90..7ac2b1160c1e 100644
---- a/drivers/leds/rgb/leds-s2m-rgb.c
-+++ b/drivers/leds/rgb/leds-s2m-rgb.c
-@@ -363,11 +363,18 @@ static const struct mc_subled s2mu005_rgb_subled_info[] = {
- static int s2m_rgb_probe(struct platform_device *pdev)
+diff --git a/drivers/leds/flash/leds-s2m-flash.c b/drivers/leds/flash/leds-s2m-flash.c
+index 6ee8db094611..6097c75b681b 100644
+--- a/drivers/leds/flash/leds-s2m-flash.c
++++ b/drivers/leds/flash/leds-s2m-flash.c
+@@ -279,10 +279,17 @@ static int s2mu005_fled_init_channel(struct s2m_led *led, struct device *dev,
+ static int s2m_fled_probe(struct platform_device *pdev)
  {
  	struct device *dev = &pdev->dev;
--	struct sec_pmic_dev *pmic_drvdata = dev_get_drvdata(dev->parent);
-+	struct sec_pmic_dev *pmic_drvdata;
- 	struct s2m_rgb *rgb;
- 	struct led_init_data init_data = {};
+-	struct sec_pmic_dev *ddata = dev_get_drvdata(dev->parent);
++	struct sec_pmic_dev *ddata;
+ 	struct s2m_led *led;
  	int ret;
  
 +	if (!dev->parent)
 +		return -ENODEV;
 +
-+	pmic_drvdata = dev_get_drvdata(dev->parent);
-+	if (!pmic_drvdata)
++	ddata = dev_get_drvdata(dev->parent);
++	if (!ddata)
 +		return -ENODEV;
 +
- 	rgb = devm_kzalloc(dev, sizeof(*rgb), GFP_KERNEL);
- 	if (!rgb)
+ 	led = devm_kzalloc(dev, sizeof(*led) * MAX_CHANNELS, GFP_KERNEL);
+ 	if (!led)
  		return -ENOMEM;
-@@ -415,6 +422,7 @@ MODULE_DEVICE_TABLE(of, s2m_rgb_of_match_table);
- static struct platform_driver s2m_rgb_driver = {
+@@ -339,6 +346,7 @@ MODULE_DEVICE_TABLE(of, s2m_fled_of_match_table);
+ static struct platform_driver s2m_fled_driver = {
  	.driver = {
- 		.name = "s2m-rgb",
-+		.of_match_table = s2m_rgb_of_match_table,
+ 		.name = "s2m-flash",
++		.of_match_table = s2m_fled_of_match_table,
  	},
- 	.probe = s2m_rgb_probe,
- 	.id_table = s2m_rgb_id_table,
+ 	.probe = s2m_fled_probe,
+ 	.id_table = s2m_fled_id_table,
 -- 
 2.55.0
 
