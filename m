@@ -1,115 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71698149DF1;
-	Wed, 22 Jul 2026 12:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EC934CFC3;
+	Wed, 22 Jul 2026 13:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784724742; cv=none; b=g7/rEvSlMRChp4ZBXGOO1Net1ZXhVDQkAZMeE/VHQesWdbp3lY55JM7swimJWhPVPm1MKG6RlNrnS9OEqhzP5Y1OekvTCJDnCJBgfUiuzSnTClpZpLc3zpZ1TkrkPP6cdQjBdjLp/JnAbpbEAu5bAnpnxTaarqOD3XcHm4UAE/4=
+	t=1784727451; cv=none; b=N5OgTUtoq9r+UlA0VJBBfifjXytpij7DPLHfyJ66qjqb/htxCst53mT+VGp4MN7FwtFtrtK0UqpYDT4+XVqr5wvs4wAnLQhNuWARtF4IOy5XXMdjy/kHBeNx785fTQXOqVhJUeMUCBzeR+KVSlV81ImDm9jCQS042xdXmhZ93wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784724742; c=relaxed/simple;
-	bh=WopNwOAMk11gwarrL/7/TaqO5H2xN2gVAnlRJb7wAOs=;
+	s=arc-20240116; t=1784727451; c=relaxed/simple;
+	bh=r3VC1GSygiRSXu0beX5TP6n8xrX+7egHQdEPWcNoAwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZ0xt7gQUBT5mqspR2BALKzel5x8bu6fmjcx3Uitql4M/v9kyaz47lnv6wold88BRPfaJKzW4W9roRdWqvwUXvDb5c6FOmVsM9DXlQXdXKMcvDvxxNWyJIeGyrW6FGgMAlFCQ601FoGReN2Fj78fK0AtV56+HDSEavNVKgoJQ2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2aL4jeG; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=DW/As0YG/B0PK874swqzY6vHmOEb0WA+F3nzDg3tBGA6LJobrBO8PmVQjfw/B0iiRBUbhI6glNx7M5QlK58Z/9VeUnBUKiauxVXije1bV12OcPF9LVjypvjTZ6oK5+LG7KRPHIc5Gk4EBLr0wgBq/5JGFSCKf7etDCkSzz32cnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjWvqyuM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2aL4jeG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F841F000E9;
-	Wed, 22 Jul 2026 12:52:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjWvqyuM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF9391F000E9;
+	Wed, 22 Jul 2026 13:37:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784724741;
-	bh=7bpjXwSQ7nvMtwqEfdQ1aGjqnHSfXs7DM2lWFG7w/Bc=;
+	s=k20260515; t=1784727450;
+	bh=V6hTSTk75S8dOLUKHL7MYuvzuR3G2u+R/z+/rMPW3PI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=c2aL4jeGVEXeNI2FNLh2itNlU4ijobGl+r+DipPdgwH7QKSzuCN5LrVhGmunG+u6g
-	 Yhj4wbAqfe3k3fRhpDbMBuVrio1uFo16xhsT24166wdKAkFQsNqI+ndpxS4xYxVeBR
-	 3C1tI/kIdvxgZ1gZ3IbYE+/U5N4n5i+S4M0U1zjw7IlqJjNGMu78CGuNCFkJrLoaQb
-	 u/drO/5IUSdre2bA7mUW4QY6Acp51odz8Qvdxh/dvWNYmbxAt2Jcal3F1zyAPXVdyy
-	 /YihCBpf36FeGcUPYeZ5ZysjgFHcjd0rX9lo/cWLfuMvAEA3i77xaITrYCeU/aKS38
-	 XTbkbe/l9PcQg==
-Date: Wed, 22 Jul 2026 13:52:17 +0100
-From: Lee Jones <lee@kernel.org>
+	b=ZjWvqyuMFE5v0Jc4S8c2rvwHNMoYZw7UBdD7bT9Twrtq1dbUtFWjodYqIaj2+q8Wu
+	 PN2s4p60AAdznLpyDRGpXZNjCv7/fcxeVyGS0/AJDjYu4D/dn0PZXOcGbUu1DFdd9s
+	 jUe/X7sVjqBJqdbk8iE4U4PbUa3pP+ikTOiVbCCEl97TUeeEgiYsBO62fBuARmIt4X
+	 A6kS7gTAjzqO5GSDPYWZbBnw7dCOJOsB2IeYgyLEgWFzOButrHHBdcqDXLLDL3jERQ
+	 NkX/WS65xCrPQlFkrCNvSfMWxJVp4dWardVFFcX4+GEqyatBl3JivPAYBxgGyHOIX1
+	 KujJpw/aABwsw==
+Date: Wed, 22 Jul 2026 08:37:29 -0500
+From: Rob Herring <robh@kernel.org>
 To: sashiko-reviews@lists.linux.dev
-Cc: kr494167@gmail.com, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 1/2] leds: rgb: s2m: wire up of_match_table in platform
- driver
-Message-ID: <20260722125217.GC11805@google.com>
-References: <20260721054846.34318-1-kr494167@gmail.com>
- <20260721054846.34318-2-kr494167@gmail.com>
- <20260721055807.A673C1F000E9@smtp.kernel.org>
+Cc: Ninad Naik <ninadnaik07@gmail.com>, conor+dt@kernel.org,
+	linux-leds@vger.kernel.org, lee@kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: leds: lacie,ns2-leds: Convert to DT
+ schema
+Message-ID: <20260722133729.GA389001-robh@kernel.org>
+References: <20260721192754.46344-1-ninadnaik07@gmail.com>
+ <20260721193849.D2B0F1F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260721055807.A673C1F000E9@smtp.kernel.org>
+In-Reply-To: <20260721193849.D2B0F1F00A3D@smtp.kernel.org>
 
-On Tue, 21 Jul 2026, sashiko-bot@kernel.org wrote:
-
+On Tue, Jul 21, 2026 at 07:38:49PM +0000, sashiko-bot@kernel.org wrote:
 > Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
-> - [High] Wiring up `.of_match_table` without validating `dev->parent` allows arbitrary device tree instantiation, leading to a NULL pointer dereference or type confusion.
-> - [Low] The commit message description after the subsystem prefix is not capitalized, violating the LED subsystem guidelines.
+> - [Low] Using `additionalProperties` at the root level to define child nodes incorrectly restricts standard properties on the parent node, breaking device tree validation.
+> - [Low] The schema omits the `num-modes` property, causing `dtbs_check` failures for existing in-tree device trees.
 > --
 > 
-> --- Patch [1]: [PATCH 1/2] leds: rgb: s2m: wire up of_match_table in platform driver ---
-> commit b11896849c3c9816b4973c7b324b0ca877cb4766
-> Author: surendra <kr494167@gmail.com>
-
-Please use your full name.
-
-> leds: rgb: s2m: wire up of_match_table in platform driver
+> --- Patch [1]: [PATCH v2] dt-bindings: leds: lacie,ns2-leds: Convert to DT schema ---
+> commit d6e2084ac319cdcc30d00614f66ec071bc9c5c1a
+> Author: Ninad Naik <ninadnaik07@gmail.com>
 > 
-> This commit wires up the of_match_table in the s2m-rgb platform driver.
-> This enables device tree based probing and module auto-loading, fixing an
-> issue where the MODULE_DEVICE_TABLE entry was dead code.
+> dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
 > 
-> > leds: rgb: s2m: wire up of_match_table in platform driver
+> Convert the lacie,ns2-leds binding text document to a DT schema.
+> 
+> > diff --git a/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
+> > new file mode 100644
+> > index 0000000000000..1976669d2218c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/lacie,ns2-leds.yaml
+> 
+> [ ... ]
+> 
+> > +properties:
+> > +  compatible:
+> > +    const: lacie,ns2-leds
+> > +
+> > +additionalProperties:
+> > +  type: object
+> > +  $ref: common.yaml#
+> > +  unevaluatedProperties: false
 > 
 > [Severity: Low]
-> This isn't a bug, but the commit description after the subsystem prefix
-> should be capitalized according to LED subsystem guidelines.
+> Does setting additionalProperties to type: object at the root level break
+> standard parent device tree properties like status = "okay" or pinctrl-names?
 > 
-> > diff --git a/drivers/leds/rgb/leds-s2m-rgb.c b/drivers/leds/rgb/leds-s2m-rgb.c
-> > index d239f54eee901..28964de6920ca 100644
-> > --- a/drivers/leds/rgb/leds-s2m-rgb.c
-> > +++ b/drivers/leds/rgb/leds-s2m-rgb.c
-> > @@ -415,6 +415,7 @@ MODULE_DEVICE_TABLE(of, s2m_rgb_of_match_table);
-> >  static struct platform_driver s2m_rgb_driver = {
-> >  	.driver = {
-> >  		.name = "s2m-rgb",
-> > +		.of_match_table = s2m_rgb_of_match_table,
+> By enforcing that any unlisted top-level property must be an object, standard
+> properties (which are strings or arrays) will fail validation with type
+> mismatch errors during make dtbs_check.
 > 
-> [Severity: High]
-> Does wiring up the of_match_table here allow the driver to be probed via
-> an arbitrary device tree node?
+> Is it better to use patternProperties: "^led(-[0-9a-f]+)?$": for the child
+> nodes and set additionalProperties: false at the root instead?
+
+No.
+
 > 
-> If the driver is instantiated via a standalone DT node instead of through
-> the expected MFD parent, dev->parent might not contain the expected driver
-> data.
+> > +
+> > +  description: Each child node represents a single LED
+> > +
+> > +  properties:
+> > +    cmd-gpio:
+> > +      maxItems: 1
+> > +      description: GPIO connected to the command LED output
 > 
-> In s2m_rgb_probe(), the driver relies on the parent's drvdata:
+> [Severity: Low]
+> Will this schema omission cause dtbs_check failures for existing in-tree
+> device trees?
 > 
-> drivers/leds/rgb/leds-s2m-rgb.c:s2m_rgb_probe() {
-> 	...
-> 	struct sec_pmic_dev *pmic_drvdata = dev_get_drvdata(dev->parent);
-> 	...
-> 	rgb->regmap = pmic_drvdata->regmap_pmic;
-> 	...
+> The new schema strictly allows only documented properties via
+> unevaluatedProperties: false on the child nodes. However, existing in-tree
+> device trees contain an undocumented num-modes property:
+> 
+> arch/arm/boot/dts/armada-370-seagate-nas-4bay.dts:white-sata2 {
+>         ...
+>         slow-gpio = <&pca9554 2 GPIO_ACTIVE_HIGH>;
+>         num-modes = <4>;
+>         modes-map = <NS_V2_LED_SATA 0 0
+>         ...
 > }
 > 
-> Could this result in a NULL pointer dereference or type confusion if
-> pmic_drvdata is NULL or points to an unrelated structure?
-> 
-> >  	},
-> >  	.probe = s2m_rgb_probe,
-> >  	.id_table = s2m_rgb_id_table,
-> >  };
-> 
-> -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20260721054846.34318-1-kr494167@gmail.com?part=1
+> Since num-modes is omitted from this new schema, validation will fail when
+> checking those boards. Should num-modes be added to the schema (perhaps with
+> deprecated: true), or removed from the DTS files as part of this patch series?
 
--- 
-Lee Jones
+This should be fixed.
+
+Rob
