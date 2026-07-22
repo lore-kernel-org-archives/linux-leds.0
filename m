@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635C93F328C
-	for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 16:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7E43F3295
+	for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 16:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784737765; cv=none; b=lottqO2F2IJzhyDCDy8sDMXFao/xcWIbQnloHvB7fNfhIWoKawM/MZ1Css/4Xj/jnGBSCnPGvcXqjctuTL+DRmhlJ825R+3edOsS2iPy0Jg4NpjmXW+6QKVQ6WiBhlBivB14cybM+7sNHzDkXQSdMY50q4R87iR2bKkz7nTAVVE=
+	t=1784737776; cv=none; b=fSN/OIiqWNYVs7NnPSmTsod+P9rPt9Ac6saNGnJ6sxQz/UThY3S6BB4sQdQXl2MfwWymagROJoZQ1aEEyKQUttfP/49fKWS3f3x7JVP3zI7sWRcPdNIE+xsZa3ChuxGeFUmDl7vF/qjF1CTI/6OcLIA1XTUfdvankFQ/O9GZpHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784737765; c=relaxed/simple;
-	bh=Fa5L3yNhIMS8M6FND+7gj4m8amGwXr59N1pbIfaI+Ao=;
+	s=arc-20240116; t=1784737776; c=relaxed/simple;
+	bh=K8kEFitRuTGWL/N4HjFpSvc2m5VZYNldND5h8L3Qpa0=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Oc6gwf+0Ok7TdaqmR7Y8Ob/0wQLRkbtNiBj4SAZ3yKCt1sUuJsQFe6+lQw11cC+5iHXffHKqP48E9F6Nhmt4IDk28DnBsdcaYo/pyRGrOHYP+0IEq8HBt/AP5Sc7/j6Ogd2buNnoyL1xmRQUX4iZ3Rx4yWW9rnejI9Y8+wIZLho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CaSihOJ+; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=aNnKpo9LA48FpCVqsbJ343bsszP03pkiCyKUmkf9H9qRehZHtJQYs/22uKFOP/0B2fRbG40P1u026J++A/WE6zfONEq/i+vTf27BMILUsaz6nwALYamoqK0E6K87ymiU9yucRp29DQTDsFZRNkE1Bgf1IiRfQs+5FSZBcYUs6EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mfe7oL7X; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CaSihOJ+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4A21F000E9;
-	Wed, 22 Jul 2026 16:29:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mfe7oL7X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73B141F000E9;
+	Wed, 22 Jul 2026 16:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784737763;
-	bh=YdbWntaOeSeE1GbDfJk9xbR0lwqI3TPX4V0RFglh5zc=;
+	s=k20260515; t=1784737774;
+	bh=nwGlkhojdYiMAONHhTwhxcUBv1pBucoBTX7qjJkhKBM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CaSihOJ+Ep6jo90peqB+6EDlTWAjN3iCoDM4PB5+dZ000XnYLmAka4sS3/ltuN9gB
-	 3reC0s9ehozkMQ90c4x4b9yGC0DH+/YW08TWGedIyK3cPum2IsQixA0+mwL+zHJVjy
-	 SGGWzCFH/rjy1RcsQaTb6gymc0UST6um2savkTcGqN/t46/LeVfEZQ/DpB8gzVvpJq
-	 TDu5OWeduOa1UZ0wrpsK/un6J1RIfYFsiIVaO84WBwrXJaDg3jCY/ToYnKZIcNdiXB
-	 iY8GtjcZdbQ4ZRQIfJHOu3ktT1qLG+SeG1o29F/AbG3qn4RVr/eKfgyAM7Cv6a8KSx
-	 in2km+CMFi+RA==
+	b=Mfe7oL7Xlayb+V6FITYxoQNuj5ZVNBn392+PU/FLzUdq6UdTLf8ahq4kdiXp4Zmk6
+	 fCDeTTT4V+YTqLfUJrJ6aaOMEQelcnD9L0mfhXqYKEZBdnBhilF6FmUilZK/26xLBn
+	 t06eer3TpR0JG/rX06QWItSao9jKI1jiVjYZ5PCBTZE24/Ifst6MDOOLQy6zuqLExD
+	 Pl4oRPWqUeyeSFUA3mR2loybhxhQx8dIrwaNf6f3CzBkjy/w9wPp9XiacUXa6lNwTl
+	 Y773AvBPLrAi7152i+Y26QvR1hREsw47e1KEBb0BiNHSclrRbNZpMAh9ln3TxIhNgH
+	 KfhGXM1eYFYvA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/2] leds: flash: s2m: Wire up of_match_table in
+Subject: Re: [PATCH v2 1/2] leds: rgb: s2m: Wire up of_match_table in
  platform driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: kr494167@gmail.com
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260722161519.9610-3-kr494167@gmail.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260722161519.9610-2-kr494167@gmail.com>
 References: <20260722161519.9610-1-kr494167@gmail.com>
- <20260722161519.9610-3-kr494167@gmail.com>
+ <20260722161519.9610-2-kr494167@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 22 Jul 2026 16:29:23 +0000
-Message-Id: <20260722162923.AE4A21F000E9@smtp.kernel.org>
+Date: Wed, 22 Jul 2026 16:29:34 +0000
+Message-Id: <20260722162934.73B141F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,78 +47,77 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] Wiring up `.of_match_table` enables direct Device Tree instantia=
-tion, exposing a type confusion vulnerability when fetching parent driver d=
-ata.
+- [Medium] Type confusion and potential crash due to unsafe cast of parent =
+drvdata when probed via Device Tree.
 --
 
---- Patch [2]: [PATCH v2 2/2] leds: flash: s2m: Wire up of_match_table in p=
-latform driver ---
-commit cd6fb1d1b9477929b7cbc1702f65841f007fe9ea
+--- Patch [1]: [PATCH v2 1/2] leds: rgb: s2m: Wire up of_match_table in pla=
+tform driver ---
+commit fe8555b3e7add30597af4722b7f9538af69ac8af
 Author: Surendra <kr494167@gmail.com>
 
-leds: flash: s2m: Wire up of_match_table in platform driver
+leds: rgb: s2m: Wire up of_match_table in platform driver
 
-This commit assigns s2m_fled_of_match_table to the platform driver's
-of_match_table to enable DT-based probing and module auto-loading. It also
-adds validation for the parent device and its driver data in the probe
-function to prevent null pointer dereferences.
+This commit assigns the of_match_table in the platform driver to enable
+Device Tree matching. It also adds validation for the parent device and its
+driver data to prevent a NULL pointer dereference during probe.
 
-> --- drivers/leds/flash/leds-s2m-flash.c
-> +++ drivers/leds/flash/leds-s2m-flash.c
-> @@ -279,10 +279,17 @@ static int s2mu005_fled_init_channel(struct s2m_led=
- *led, struct device *dev,
->  static int s2m_fled_probe(struct platform_device *pdev)
+> diff --git a/drivers/leds/rgb/leds-s2m-rgb.c b/drivers/leds/rgb/leds-s2m-=
+rgb.c
+> index d239f54eee901..7ac2b1160c1e3 100644
+> --- a/drivers/leds/rgb/leds-s2m-rgb.c
+> +++ b/drivers/leds/rgb/leds-s2m-rgb.c
+> @@ -363,11 +363,18 @@ static const struct mc_subled s2mu005_rgb_subled_in=
+fo[] =3D {
+>  static int s2m_rgb_probe(struct platform_device *pdev)
 >  {
 >  	struct device *dev =3D &pdev->dev;
-> -	struct sec_pmic_dev *ddata =3D dev_get_drvdata(dev->parent);
-> +	struct sec_pmic_dev *ddata;
->  	struct s2m_led *led;
+> -	struct sec_pmic_dev *pmic_drvdata =3D dev_get_drvdata(dev->parent);
+> +	struct sec_pmic_dev *pmic_drvdata;
+>  	struct s2m_rgb *rgb;
+>  	struct led_init_data init_data =3D {};
 >  	int ret;
 > =20
 > +	if (!dev->parent)
 > +		return -ENODEV;
 > +
-> +	ddata =3D dev_get_drvdata(dev->parent);
-
-[Severity: Medium]
-Since the driver can now be instantiated directly via the device tree
-because of the of_match_table addition below, is it safe to blindly cast
-the parent's driver data to struct sec_pmic_dev here?
-
-If the device tree node is placed under a generic bus like simple-pm-bus
-instead of the expected sec-core MFD parent, the parent will be valid but
-will have unrelated driver data. Accessing ddata->regmap_pmic would then
-read from an arbitrary offset, potentially causing memory corruption or a
-kernel panic.
-
-Could this be safely mitigated by using dev_get_regmap(dev->parent, NULL)
-instead of assuming the exact driver data layout?
-
-> +	if (!ddata)
+> +	pmic_drvdata =3D dev_get_drvdata(dev->parent);
+> +	if (!pmic_drvdata)
 > +		return -ENODEV;
 > +
-
-[ ... ]
-
-> @@ -339,6 +346,7 @@ MODULE_DEVICE_TABLE(of, s2m_fled_of_match_table);
->  static struct platform_driver s2m_fled_driver =3D {
+>  	rgb =3D devm_kzalloc(dev, sizeof(*rgb), GFP_KERNEL);
+>  	if (!rgb)
+>  		return -ENOMEM;
+> @@ -415,6 +422,7 @@ MODULE_DEVICE_TABLE(of, s2m_rgb_of_match_table);
+>  static struct platform_driver s2m_rgb_driver =3D {
 >  	.driver =3D {
->  		.name =3D "s2m-flash",
-> +		.of_match_table =3D s2m_fled_of_match_table,
+>  		.name =3D "s2m-rgb",
+> +		.of_match_table =3D s2m_rgb_of_match_table,
 
 [Severity: Medium]
-Does wiring up the of_match_table here expose the driver to generic OF
-matching, allowing direct DT instantiation without enforcing the expected
-parent type?=20
+By enabling Device Tree matching here, the driver can be probed natively=20
+via DT. This exposes the driver to being probed under arbitrary parents=20
+rather than strictly the expected MFD parent.
 
-This appears to bypass the MFD core's controlled instantiation, making the
-type confusion issue mentioned above possible.
+If probed under an unexpected parent (such as an I2C controller or another
+platform device), that parent's driver data is blindly cast to=20
+struct sec_pmic_dev * earlier in s2m_rgb_probe():
+
+    pmic_drvdata =3D dev_get_drvdata(dev->parent);
+
+Could this lead to memory corruption or a crash when the type-confused=20
+pointer is later dereferenced in s2m_rgb_probe() to fetch the regmap?
+
+    rgb->regmap =3D pmic_drvdata->regmap_pmic;
+
+Would it be safer to retrieve the regmap using dev_get_regmap() instead,=20
+to ensure we safely get a valid regmap pointer regardless of the parent=20
+device type?
 
 >  	},
->  	.probe =3D s2m_fled_probe,
->  	.id_table =3D s2m_fled_id_table,
+>  	.probe =3D s2m_rgb_probe,
+>  	.id_table =3D s2m_rgb_id_table,
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260722161519.9610=
--1-kr494167@gmail.com?part=3D2
+-1-kr494167@gmail.com?part=3D1
