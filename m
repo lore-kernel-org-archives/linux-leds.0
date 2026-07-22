@@ -1,55 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE2D2C2363;
-	Wed, 22 Jul 2026 12:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71698149DF1;
+	Wed, 22 Jul 2026 12:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784723963; cv=none; b=S/NeZbrPW9xw/4SEuFOvMEzDpy770Bp01JMJiBTIw5OwmtPcHdLevTZcsZJbsM5lgBZ2ggq+aAEtvFk3i0NZAg2tQgWyOiNTzzvnfMtBHGzTjyB1XGrDyztuPRraCECu7d7eJGaMruy5N8ZWp+e7Okcq0g3agGlw81kqFXcHByM=
+	t=1784724742; cv=none; b=g7/rEvSlMRChp4ZBXGOO1Net1ZXhVDQkAZMeE/VHQesWdbp3lY55JM7swimJWhPVPm1MKG6RlNrnS9OEqhzP5Y1OekvTCJDnCJBgfUiuzSnTClpZpLc3zpZ1TkrkPP6cdQjBdjLp/JnAbpbEAu5bAnpnxTaarqOD3XcHm4UAE/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784723963; c=relaxed/simple;
-	bh=iL7uKBS9ZTP3BZnab4HLX+ObqIPaRdDovUxz2Fw7DPY=;
+	s=arc-20240116; t=1784724742; c=relaxed/simple;
+	bh=WopNwOAMk11gwarrL/7/TaqO5H2xN2gVAnlRJb7wAOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbt5CPMJL1mjm1dh75xLIuU1tAmvVfhYeUPiVSi03hJD/vRc4mtDCuCmXAbLf0EHWYQ2+y5pwb5DIuKnkTYvAqf2U1JizRsRwexEPScjMq+WKqdyUurZ3RpRumZ9/ITiCG7rpVyiqISOjUfhfr9qpUk58MxenkAFzsV8s/LPreI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nonz2WAb; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=WZ0xt7gQUBT5mqspR2BALKzel5x8bu6fmjcx3Uitql4M/v9kyaz47lnv6wold88BRPfaJKzW4W9roRdWqvwUXvDb5c6FOmVsM9DXlQXdXKMcvDvxxNWyJIeGyrW6FGgMAlFCQ601FoGReN2Fj78fK0AtV56+HDSEavNVKgoJQ2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2aL4jeG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nonz2WAb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1CEC1F000E9;
-	Wed, 22 Jul 2026 12:39:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2aL4jeG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F841F000E9;
+	Wed, 22 Jul 2026 12:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784723961;
-	bh=dRwyKxedZ4yIxwSgRnxCGHxbxnMNH/WOYZBQpkVdgro=;
+	s=k20260515; t=1784724741;
+	bh=7bpjXwSQ7nvMtwqEfdQ1aGjqnHSfXs7DM2lWFG7w/Bc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nonz2WAbMlhZCtilBux70ccvt4sBpr393hP4ODcRKMY37SF97JArCBdxmNoZ/OQ4U
-	 xvMhfr03erEl6EdH3M7MD77sAeKHnWFNceceLA3Y9SHPmnLu4Yd57EATkQGCqa2ile
-	 PxPgDQBh3opVjIjpCQcx6Wuq4KKmLLxd9UQpaTJL8UHXvsW3xdwXDoBwkzVcuIAikM
-	 QzWGUpaxeuMnHxyaU0sEnHWybWrjjyo9qxYekRCijB+cPttnyHf8fDKya9Yzg/sbdX
-	 SA8hPPdz4NNxYEx/slPZNvd5faG8YxDgG1/9XoiAXGVy81m/gBxgZWNaJTUsWNrvKA
-	 lwpBDJRw4y09w==
-Date: Wed, 22 Jul 2026 13:39:13 +0100
+	b=c2aL4jeGVEXeNI2FNLh2itNlU4ijobGl+r+DipPdgwH7QKSzuCN5LrVhGmunG+u6g
+	 Yhj4wbAqfe3k3fRhpDbMBuVrio1uFo16xhsT24166wdKAkFQsNqI+ndpxS4xYxVeBR
+	 3C1tI/kIdvxgZ1gZ3IbYE+/U5N4n5i+S4M0U1zjw7IlqJjNGMu78CGuNCFkJrLoaQb
+	 u/drO/5IUSdre2bA7mUW4QY6Acp51odz8Qvdxh/dvWNYmbxAt2Jcal3F1zyAPXVdyy
+	 /YihCBpf36FeGcUPYeZ5ZysjgFHcjd0rX9lo/cWLfuMvAEA3i77xaITrYCeU/aKS38
+	 XTbkbe/l9PcQg==
+Date: Wed, 22 Jul 2026 13:52:17 +0100
 From: Lee Jones <lee@kernel.org>
-To: Rong Zhang <i@rong.moe>
-Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"Derek J. Clark" <derekjohn.clark@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Ike Panhc <ikepanhc@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Vishnu Sankar <vishnuocv@gmail.com>,
-	Vishnu Sankar <vsankar@lenovo.com>, linux-leds@vger.kernel.org,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH RFC v3 00/11] leds: Add support for hardware-initiated
- hardware control trigger transition
-Message-ID: <20260722123913.GB11805@google.com>
-References: <20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe>
+To: sashiko-reviews@lists.linux.dev
+Cc: kr494167@gmail.com, linux-leds@vger.kernel.org
+Subject: Re: [PATCH 1/2] leds: rgb: s2m: wire up of_match_table in platform
+ driver
+Message-ID: <20260722125217.GC11805@google.com>
+References: <20260721054846.34318-1-kr494167@gmail.com>
+ <20260721054846.34318-2-kr494167@gmail.com>
+ <20260721055807.A673C1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -59,173 +45,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe>
+In-Reply-To: <20260721055807.A673C1F000E9@smtp.kernel.org>
 
-Why is this still an RFC?
+On Tue, 21 Jul 2026, sashiko-bot@kernel.org wrote:
 
-> Some laptops can tune their keyboard backlight according to ambient
-> light sensors (auto mode). This capability is essentially a hardware
-> control trigger. Meanwhile, such laptops also offer a shrotcut for
-> cycling through brightness levels and auto mode. For example, on
-> ThinkBook, pressing Fn+Space ("shortcut") cycles keyboard backlight
-> levels in the following sequence:
+> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
+> - [High] Wiring up `.of_match_table` without validating `dev->parent` allows arbitrary device tree instantiation, leading to a NULL pointer dereference or type confusion.
+> - [Low] The commit message description after the subsystem prefix is not capitalized, violating the LED subsystem guidelines.
+> --
 > 
->   1 => 2 => 0 => auto => 1 ...
+> --- Patch [1]: [PATCH 1/2] leds: rgb: s2m: wire up of_match_table in platform driver ---
+> commit b11896849c3c9816b4973c7b324b0ca877cb4766
+> Author: surendra <kr494167@gmail.com>
+
+Please use your full name.
+
+> leds: rgb: s2m: wire up of_match_table in platform driver
 > 
-> Recent ThinkPad models should have similar sequence too.
+> This commit wires up the of_match_table in the s2m-rgb platform driver.
+> This enables device tree based probing and module auto-loading, fixing an
+> issue where the MODULE_DEVICE_TABLE entry was dead code.
 > 
-> However, there are some issues preventing us from using a private
-> hardware control trigger:
+> > leds: rgb: s2m: wire up of_match_table in platform driver
 > 
-> 1. We want a mechanism to tell userspace which trigger is the hardware
->    control one, so that userspace can determine if auto mode is on/off,
->    as well as turing it on/off programmatically without obtaining the
->    trigger's name via other channels
-> 2. Writing brightness has the side effect of disabling hardware control,
->    but the hardware control trigger remains active, resulting in the
->    software and hardware being out of sync. Most LED drivers that
->    supports hardware control also suffer from the same issue
-> 3. Turing on/off auto mode via the shortcut cannot activate/deactivate
->    the corresponding hardware control trigger, making the software state
->    out of sync
-> 4. Even with #3 solved, deactivating the hardware control trigger has
->    the side effect of emitting LED_OFF, breaking the shortcut cycle,
->    especially "auto => 1"
+> [Severity: Low]
+> This isn't a bug, but the commit description after the subsystem prefix
+> should be capitalized according to LED subsystem guidelines.
 > 
-> This RFC series tries to demonstrate a path on solving these issues:
+> > diff --git a/drivers/leds/rgb/leds-s2m-rgb.c b/drivers/leds/rgb/leds-s2m-rgb.c
+> > index d239f54eee901..28964de6920ca 100644
+> > --- a/drivers/leds/rgb/leds-s2m-rgb.c
+> > +++ b/drivers/leds/rgb/leds-s2m-rgb.c
+> > @@ -415,6 +415,7 @@ MODULE_DEVICE_TABLE(of, s2m_rgb_of_match_table);
+> >  static struct platform_driver s2m_rgb_driver = {
+> >  	.driver = {
+> >  		.name = "s2m-rgb",
+> > +		.of_match_table = s2m_rgb_of_match_table,
 > 
-> - Introduce an attribute "trigger_may_offload", so that userspace can
->   determine:
->   - if the LED device supports hardware control (supported => visible)
->   - which trigger is the hardware control trigger selected by the LED
->     device
->   - if the trigger is selected ("<foo_trigger>")
->   - if the trigger is offloaded ("[foo_trigger]")
->     - A callback offloaded() is added so that LED triggers can report
->       their hardware control state
-> - Remove hardware control trigger when writing brightness
-> - Add led_trigger_notify_hw_control_changed() interface, so that LED
->   drivers can notify the LED core about hardware-initiated hardware
->   control transitions. The LED core will then determine if the
->   transition is allowed and switching between "none" (i.e., no trigger)
->   and the device's private trigger accordingly
->   - This capability is restricted to the device's private trigger. If
->     the current trigger is neither the private trigger nor "none", no
->     transition will be made
->   - This interface is gated behind Kconfig LEDS_TRIGGERS_HW_CHANGED and
->     LED device flag LED_TRIG_HW_CHANGED
-> - Tune the logic of trigger deactivation so that it won't emit LED_OFF
->   when the deactivation is triggered by hardware
+> [Severity: High]
+> Does wiring up the of_match_table here allow the driver to be probed via
+> an arbitrary device tree node?
 > 
-> The last three patches are included in the RFC series to demonstrate how
-> to these interfaces are supposed to be utilized, so that ideapad-laptop
-> can expose the auto mode of ThinkBook's keyboard backlight. They can be
-> submitted separately once the dust settles, if preferred.
+> If the driver is instantiated via a standalone DT node instead of through
+> the expected MFD parent, dev->parent might not contain the expected driver
+> data.
 > 
-> [ Summary of other approaches ]
+> In s2m_rgb_probe(), the driver relies on the parent's drvdata:
 > 
-> < custom attribute >
+> drivers/leds/rgb/leds-s2m-rgb.c:s2m_rgb_probe() {
+> 	...
+> 	struct sec_pmic_dev *pmic_drvdata = dev_get_drvdata(dev->parent);
+> 	...
+> 	rgb->regmap = pmic_drvdata->regmap_pmic;
+> 	...
+> }
 > 
-> Pros:
-> - simplicity, KISS
-> - no need to touch the LED core
-> - extensible as long as it has a sensor-neutral name
->   - a sensor-related name could potentially lead to a mess if a future
->     device implements auto mode based on multiple different sensors
+> Could this result in a NULL pointer dereference or type confusion if
+> pmic_drvdata is NULL or points to an unrelated structure?
 > 
-> Cons:
-> - must have zero influence on brightness_set[_blocking] callbacks
->   in order not to break triggers
->   - potential interference with triggers and the brightness attribute,
->     can't solve #2
-> - weird semantic (an attribute other than "brightness" and "trigger"
->   changes the brightness)
+> >  	},
+> >  	.probe = s2m_rgb_probe,
+> >  	.id_table = s2m_rgb_id_table,
+> >  };
 > 
-> < private hardware control trigger (this series) >
-> 
-> Pros:
-> - mutually exclusive with other triggers and the brightness attribute
->   (hence less chaos)
-> - semantic correctness
-> - acts as an aggregate switch to turn on/off auto mode even a future
->   device implements auto mode based on multiple different sensors
->   - extensibility (through trigger attributes)
-> 
-> Cons:
-> - complexity
-> 
-> [ Previous discussion threads ]
-> 
-> https://lore.kernel.org/r/08580ec5-1d7b-4612-8a3f-75bc2f40aad2@app.fastmail.com
-> https://lore.kernel.org/r/1dbfcf656cdb4af0299f90d7426d2ec7e2b8ac9e.camel@rong.moe
-> 
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> ---
-> Changes in v3:
-> - Integrate https://lore.kernel.org/all/20260712-leds-hw-control-brightness-set-v1-1-1de593b09d26@rong.moe/
->   into the series
->   - Adopt __led_trigger_is_hw_controlled() in the rest of the series
-> - Rearrange the series so that the code using the offloaded() callback is
->   introduced before the driver implementation (thanks Thomas Weißschuh)
-> - Reword documentations and commit messages (ditto)
-> - Adopt guard() and lockdep (ditto)
-> - Address concerns from Sashiko
->   - Fix a race condition in ideapad_kbd_bl_led_cdev_brightness_set()
->   - Fix trigger re-registration of ideapad_kbd_bl_auto_trigger
->   - https://sashiko.dev/#/patchset/20260618-leds-trigger-hw-changed-v2-0-c28c44053cf3%40rong.moe
-> - Make registration failures of ideapad_kbd_bl_auto_trigger non-fatal
-> - Link to v2: https://patch.msgid.link/20260618-leds-trigger-hw-changed-v2-0-c28c44053cf3@rong.moe
-> 
-> Changes in v2:
-> - Restrict the led_trigger_notify_hw_control_changed() interface to
->   private triggers only
->   - Drop PATCH v1 1/9 ("leds: Load trigger modules on-demand if used as
->     hw control trigger"), not relavant any more
-> - Gate the led_trigger_notify_hw_control_changed() interface behind
->   Kconfig LEDS_TRIGGERS_HW_CHANGED and LED device flag
->   LED_TRIG_HW_CHANGED
-> - Fix lock ordering inversion
-> - ideapad-laptop:
->   - Only call led_trigger_notify_hw_control_changed() when needed
->   - Serialize keyboard backlight notifications
-> - Reword commit messages and documentations
-> - Link to v1: https://patch.msgid.link/20260227190617.271388-1-i@rong.moe
-> 
-> ---
-> Rong Zhang (11):
->       leds: Move led_trigger_is_hw_controlled() to the right place
->       leds: class: Remove hardware control trigger when writing brightness
->       leds: trigger: Add offloaded() callback and provide trigger_may_offload attribute
->       leds: cros_ec: trigger: Implement offloaded() callback
->       leds: turris-omnia: trigger: Implement offloaded() and declare hw_control_trigger
->       leds: trigger: netdev: Implement offloaded() callback
->       leds: trigger: Enforce strict checks in led_trigger_is_hw_controlled()
->       leds: trigger: Add led_trigger_notify_hw_control_changed() interface
->       platform/x86: ideapad-laptop: Decouple hardware & classdev brightness for keyboard backlight
->       platform/x86: ideapad-laptop: Serialize keyboard backlight notifications
->       platform/x86: ideapad-laptop: Fully support auto keyboard backlight
-> 
->  Documentation/ABI/testing/sysfs-class-led          |  25 ++
->  .../ABI/testing/sysfs-class-led-trigger-netdev     |   3 +
->  Documentation/leds/leds-class.rst                  |  72 ++++++
->  drivers/leds/led-class.c                           |  35 ++-
->  drivers/leds/led-triggers.c                        | 146 +++++++++++-
->  drivers/leds/leds-cros_ec.c                        |   6 +
->  drivers/leds/leds-turris-omnia.c                   |   7 +
->  drivers/leds/leds.h                                |   2 +
->  drivers/leds/trigger/Kconfig                       |   9 +
->  drivers/leds/trigger/ledtrig-netdev.c              |   8 +
->  drivers/platform/x86/lenovo/Kconfig                |   1 +
->  drivers/platform/x86/lenovo/ideapad-laptop.c       | 264 ++++++++++++++++-----
->  include/linux/leds.h                               |  19 ++
->  13 files changed, 532 insertions(+), 65 deletions(-)
-> ---
-> base-commit: 1229e2e57a5c2980ccd457b9b53ea0eed5a22ab3
-> change-id: 20260506-leds-trigger-hw-changed-96a62188cbdf
-> 
-> Thanks,
-> Rong
-> 
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20260721054846.34318-1-kr494167@gmail.com?part=1
 
 -- 
 Lee Jones
