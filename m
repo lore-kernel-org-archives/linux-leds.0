@@ -1,112 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0750C30E0C0;
-	Wed, 22 Jul 2026 01:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95454476062;
+	Wed, 22 Jul 2026 07:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784683847; cv=none; b=Vq3pevUR91McRJnvSiC6kCetswU/uZPpVuQjFGK3vyjwTsd+I40mvv7PBN5cX3Fnc9e8fPCNMVaq4pDmakDwksv5h4NlRUM0t1RG+RclEmqxb442jqvc73F4xOPtTK2Wf1YiYUrjrOF63m2U/d2AwBPQ/Y5SJVy6gBraIEztNww=
+	t=1784706267; cv=none; b=I9b3OgauZSMuTczyWtXVKb7h3I6MkrTRpUbxP6eWFU+NLMK3ldtjzyEQNXh4sxZ63R95g1s2A8ma1Ss67sjtjmCPjWm1+zi2jaeThPO5JoPLdM+YkIJpowHzbyrFF6vpsXycRpSkiTWt+ICuiBm96SG5ERIeTAuR9WwrcJ6g9JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784683847; c=relaxed/simple;
-	bh=c/hzX8VEjHDYGRzBBhQdUj1/4KmrnTqCIWBCgDnghPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ucs2Q2W/77fqut22pZK2rqQGrb6UQ9spiDvSvq/rD3GJ6ubuJXwFKx/4gKpGtQPNb217uZsI2TnbNkrkIYO1jK7Y7I/+oAQPqHNBY3sHHYvlRlujtmx9vEAPbIKFklYYGWwFs8jdgUYSjmaZQHgkHOKa7B4LYOPHsIQdh6LhDKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOyBVgs7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784706267; c=relaxed/simple;
+	bh=qXm+p7zcqfPvMBHTU21Ju8ppUnIsyl5IYr8Q3lZ/z5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hmwWp4fb9ZsmIf5RWqAgEy7lNIhVmuLmUb2Zjb+3Yn6bjgbeorLepoIoscdP20EWkMZEpPWgCPkT7kJQtX2Vs2//+KibODV3mpmNtK34dqwaWFDs6vowNljhj9cS5gVet2atGN4xityDrVDb68YgodUM48k7MB4jkPLCoMf1JZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVrUwtL1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOyBVgs7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98AB41F000E9;
-	Wed, 22 Jul 2026 01:30:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVrUwtL1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66EF11F000E9;
+	Wed, 22 Jul 2026 07:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784683845;
-	bh=uG4Kz4uliUZ5KVz+j/aepLp9XaY4xs8RaE90LkqBj5o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=OOyBVgs76bsXIjzqTECEkkcxjJTnlg052XBUnPuATmEhVkFxyHQhR1d04dOqAtIKg
-	 vhxL1t6En1dmL9qgJ70naRI1hPQw//SKtdumrR30iBszJIPRNuSuESoYdV/pxGdkh+
-	 u1VAj8PKIrhDyvB4Wz5FDHWyt+v220YFbMLXMhYyRaC30ec9YnwuCh9tLcii+/LThe
-	 AHiHpuOs44EYiOkmSU6S0hWaZIKJ/jYBKTxPsvC44ef+LS0C8n3G74T2hrHsnRYNbA
-	 96Y2dbOFG0lmuxRwEvlt5eYIQ4fPC4G/e1C44ZL1Ws7GM0ehxw0SUOeBz+q1YfLQF4
-	 1R7+3mPqUE0ow==
-Date: Wed, 22 Jul 2026 02:30:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Johan Hovold <johan@kernel.org>, Lee Jones <lee@kernel.org>, Daniel
- Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Pavel
- Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Helge Deller
- <deller@gmx.de>, dri-devel@lists.freedesktop.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v5 08/14] mfd: lm3533: Convert to use OF bindings
-Message-ID: <20260722023037.776f4bcb@jic23-huawei>
-In-Reply-To: <CAPVz0n2trouADTziWXnpt=-hwKdsZWGQib+-nVCLaSLibTbATg@mail.gmail.com>
-References: <20260617080031.99156-1-clamor95@gmail.com>
-	<20260617080031.99156-9-clamor95@gmail.com>
-	<akeXAOpb13hupUGM@hovoldconsulting.com>
-	<CAPVz0n2trouADTziWXnpt=-hwKdsZWGQib+-nVCLaSLibTbATg@mail.gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	s=k20260515; t=1784706263;
+	bh=V4l0bgJu4dNffwU2H6XOh7AyQgVAynIIBVSAvtuEEbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=FVrUwtL1R2NHyf4dsixrMSxCVF7LbcNDxl3A3VrXZ/rL9ZRCXQrUcDfiM8WT+NaRl
+	 TnWwMIUZA1YPcaOEXh2gey4o6D9tUTosCR/wvcxEW5Sp4y91+MfBo02cYaaykOudGK
+	 wpSThs96GvD5AioSAtdsYVT0RsEqj3Rfaciupj8mwl3FbyiCuLDNZfSTReoPYnjORK
+	 qM+NE2tG9MeT8A9rZXaJcC1EPKKGIM3QR6xHABxRN39sOjW81oIm0wm6XN7TLTnmDq
+	 m/TjOPG/iVvWI+qbFaDN5B2MYeWeEFFxSSAGw7avFPNOaEcJIEWsyYsP2OKGSH3uRR
+	 2jZeEEyqf4r5A==
+Date: Wed, 22 Jul 2026 09:44:19 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Eduard Bostina <egbostina@gmail.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, 
+	Daniel Thompson <danielt@kernel.org>, devicetree@vger.kernel.org, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, dri-devel@lists.freedesktop.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, linux-omap@vger.kernel.org, 
+	Mark Jackson <mpfj@newflow.co.uk>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, daniel.baluta@nxp.com, 
+	simona.toaca@nxp.com, goledhruva@gmail.com, m-chawdhry@ti.com
+Subject: Re: [PATCH v3 4/4] dt-bindings: leds: backlight: Convert TPS65217 to
+ DT schema
+Message-ID: <20260722-ochre-alpaca-of-tact-ef17e3@quoll>
+References: <20260721112133.70382-1-egbostina@gmail.com>
+ <20260721112133.70382-5-egbostina@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260721112133.70382-5-egbostina@gmail.com>
 
-On Tue, 14 Jul 2026 16:57:01 +0300
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+On Tue, Jul 21, 2026 at 11:21:28AM +0000, Eduard Bostina wrote:
+> Convert the Texas Instruments TPS65217 bindings to DT schema.
+> 
+> During the conversion, the following updates were made:
+> - Documented the 'regulators', 'charger' and 'pwrbutton' child nodes,
+>   which are used by the boards but were missing from the old txt
+>   binding.
+> - Documented the 'interrupts', 'interrupt-controller', '#interrupt-cells'
+>   and 'ti,pmic-shutdown-controller' properties, which are used by the
+>   am335x boards and read by the driver.
+> 
+> Signed-off-by: Eduard Bostina <egbostina@gmail.com>
+> ---
+>  .../bindings/leds/backlight/ti,tps65217.yaml  | 170 ++++++++++++++++++
+>  .../leds/backlight/tps65217-backlight.txt     |  27 ---
 
-> =D0=BF=D1=82, 3 =D0=BB=D0=B8=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 14:03 Joh=
-an Hovold <johan@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Wed, Jun 17, 2026 at 11:00:25AM +0300, Svyatoslav Ryhel wrote: =20
-> > > Since there are no users of this driver via platform data, remove the
-> > > platform data support and switch to using Device Tree bindings.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org> #for bac=
-klight
-> > >       indio_dev->name =3D dev_name(&pdev->dev);
-> > > -     iio_device_set_parent(indio_dev, pdev->dev.parent); =20
-> >
-> > Why are you reparenting the iio device here?
-> > =20
->=20
-> Because every cell has its own binding now and using phandle to parent
-> when device has its own node is not a good practice.
+Biinding looks fine to me, but as pointed out you missed to remove old
+TXT binding.
 
-It is however a good point.  So should at very least the ABI break should
-be called out in the patch description with a brief mention of what the
-path change actually is.
+Best regards,
+Krzysztof
 
->=20
-> > That's an ABI break.
-> > =20
->=20
-> This driver does not have any active users in the kernel and no
-> activity for more then 2 years.
-
-...
-
-> > > +     u32 count =3D 0, reg, nchilds; =20
-> >
-> > Don't mix multiple declarations with initialisation like this.
-> > =20
->=20
-> Checkpatch does not complain on style issue, hence this is not prohibited.
-
-Prohibition vs taste.  I fully agree with John on this one!  Those mixes are
-messy and hard to read.
-
-Checkpatch is a helpful tool but there are both rules and preferred style t=
-hings
-it does not catch.
-
-Jonathan
-
->=20
-> > >       int ret;
-> > >
