@@ -1,43 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5CE3905E7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640A39524B
 	for <linux-leds@vger.kernel.org>; Thu, 23 Jul 2026 16:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784825812; cv=none; b=DTd1jz4CWv+lQ/Md22bFFGUTHqT5rokQo/95H6MsDjhf8Pdp+rDYXwytL9TuCQQCNdQdTAehF+IIzevmfWyOLD0kvidO81Vcfvuu9sACLaYecpBX3ztXdT+pAtX7K1J48d3QktEuMdp8wuRIj9cX5pgifH0VWrXNbkznz/bIDpQ=
+	t=1784825813; cv=none; b=qpYcRQLNm5ZZZX31sDrASbHDrexNG2Bj6Krxa1sDW/F2NX8O/ckWEmaLRVaeAbs0V5QimMz32QyoA1u/rLfCdGIkNyxDkGWOuSwqojh7uvHDQ5qw8IDkJKqYFk6jxBz/VI/yFBBDwn1bQpvsXjNafIMqWCl/VXGW6WlvxacvvCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784825812; c=relaxed/simple;
-	bh=JyM8+QQ6RLczyyt6kS8bNAlbSv6H1wAaexldBeK/nvU=;
+	s=arc-20240116; t=1784825813; c=relaxed/simple;
+	bh=h3ZzUd4+1Z7ojOIJrmrQvGJ7BG7AHu8lgINAlr/8wdo=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=dq1i3u7dJuX/pIrS5yJGTz6lbjC276M42RTqYnEldDdpN49qBq3I0lVyfTexYft0zRIpvvF22dixjNd6pzIzyOAIRcOWHp2XNWb8n5lz4b2bRFb3xh4iVshYWmXNaiYkUfMRtQCIEj3fCqW3JiLop4lhhBySesDpgE5FcAdp+8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbQomV/j; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=KEjWMk9luirDxW9Po8YSPWpMO7aRjGwxZHh3Haclpj0pYrSM4gRp7jYMyHfvhPYnPqRveSposq8nRsJyAeYnncCXo4rszkDA8I9kve1csIMecr4QgDhRhrPn6CTtlYm4aTw5ehlnSBvPzNdq9mXJURQrQfpqXg3aqgDkNFBOauM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRDF2aCN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbQomV/j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D619D1F000E9;
-	Thu, 23 Jul 2026 16:56:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRDF2aCN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E6501F00A3A;
+	Thu, 23 Jul 2026 16:56:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1784825811;
-	bh=FhQnqkyHC+8RlzXOL15ZK9oXiJK69AB8zNBPYZ3VNe0=;
+	bh=s1UdVqE35qqF8Lf89zgSEG50GOKee5MOJkhSsTmnzYg=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LbQomV/j5fec4ig4aYK/GdEEISYGFPFphAkQ7yRm4k0py7bYY+g7P3jiBIjRZOZLJ
-	 sZtUmMkuKVdni1H+CfDgPpBsD5Xq2cqJD9TC56lBIYGlrHIcPefKZJOzvBBx50a3zI
-	 29BEm/ajaXucz8g37e40oWLImnU86Tgv9hG/3YB3yshb6S67nZEHZMUBxGsMEjF1oy
-	 rBhEvxum8qqUnj9V91voy0ODR+JflMUo/PdEgKfd1yrCeJ1KWoUhzpUqhK6I50OCHR
-	 lvI/unJcy4z+fDBklLzVfKI81KwBtfhG2iHNMOSspkjxeshcu3qMG/EfYzBTSlP28q
-	 8TUWUmW0HD+Pg==
+	b=NRDF2aCNsB9GG5StMoUtZX/QZGDQjcfSq8EuB8Xf5BVOxEfzPXQMVWlwxVL2gVThS
+	 uLr7DwjvjDo18IOsbgg3WaB5dvkA5Ulk9+0h6KweH8+hkjSqSK+3nYWoRgPxoyuw+g
+	 2Llfcp3QxwWGPdZBOZd8tIaTlHZoo24v1zQkPezwBY7py4p3lpeV/9LLx5AzmJI8O3
+	 lu/VuKT28xyxyH9muN0sXJA4uMAyNpj2Zy6rMdV5Bw+5+qgBTYFrut2C+kOZ53r4N3
+	 vLSUTQzWwcyRJHrn3aEqioTQkhImGcVuCqAdZ4MYwqEUZKGKcAmVwius/csJaPjn1H
+	 W9HFFix/SuWtw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/4] leds: menf21bmc: convert to dev_err_probe()
+Subject: Re: [PATCH v2 1/4] leds: cobalt-raq: add missing MODULE_DESCRIPTION
 Reply-To: sashiko-reviews@lists.linux.dev
 To: Arunachalam <arun07172003@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260723164612.3146-3-arun07172003@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260723164612.3146-1-arun07172003@gmail.com>
 References: <20260723164612.3146-1-arun07172003@gmail.com>
- <20260723164612.3146-3-arun07172003@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 23 Jul 2026 16:56:50 +0000
-Message-Id: <20260723165650.D619D1F000E9@smtp.kernel.org>
+Date: Thu, 23 Jul 2026 16:56:51 +0000
+Message-Id: <20260723165651.8E6501F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -48,77 +47,69 @@ Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
 
 New issues:
-- [Low] The commit message description is not capitalized.
+- [Low] The commit message claims MODULE_DESCRIPTION is required by modpost=
+ for this driver, but the driver is unconditionally built-in.
+- [Low] The commit message description is not capitalized, violating subsys=
+tem guidelines.
 
 Pre-existing issues:
-- [Critical] The driver manages LED instances using a shared static global =
-array `leds`, causing kernel list corruption and use-after-free crashes if =
-multiple devices probe or unbind.
-- [High] The LED brightness control callback `menf21bmc_led_set` sleeps but=
- is incorrectly assigned to the non-blocking `brightness_set` hook.
+- [High] Unmanaged LED registration combined with managed memory mapping wi=
+thout a `.remove` callback leads to a use-after-free on device unbind.
 --
 
---- Patch [3]: [PATCH v2 3/4] leds: menf21bmc: convert to dev_err_probe() -=
---
-commit 256232e59da7fa918a47e5b2a0fabb6d2df03b37
+--- Patch [1]: [PATCH v2 1/4] leds: cobalt-raq: add missing MODULE_DESCRIPT=
+ION ---
+commit f1b0026d062cbcf0e980882e66d901b8eb8e018f
 Author: Arunachalam <arun07172003@gmail.com>
 
-leds: menf21bmc: convert to dev_err_probe()
-   =20
-Replace open-coded dev_err() + return pattern with dev_err_probe(),
-which also handles -EPROBE_DEFER correctly.
+leds: cobalt-raq: add missing MODULE_DESCRIPTION
 
-> leds: menf21bmc: convert to dev_err_probe()
+Add the missing MODULE_DESCRIPTION() macro, which is required by
+modpost and was missing from this driver.
+
+> leds: cobalt-raq: add missing MODULE_DESCRIPTION
 
 [Severity: Low]
-This isn't a bug introduced by this patch, but subsystem guidelines mandate
-that the description after the subsystem prefix must be capitalized for LED
-drivers. Should this be "Convert to dev_err_probe()"?
+This isn't a bug, but the subsystem guidelines request capitalizing the
+description after the prefix. Should this be "Add missing MODULE_DESCRIPTIO=
+N"?
 
-> diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
-> index 6b1b471606026..a7e4db4879d81 100644
-> --- a/drivers/leds/leds-menf21bmc.c
-> +++ b/drivers/leds/leds-menf21bmc.c
-> @@ -84,10 +84,8 @@ static int menf21bmc_led_probe(struct platform_device =
-*pdev)
->  		leds[i].cdev.brightness_set =3D menf21bmc_led_set;
+> Add the missing MODULE_DESCRIPTION() macro, which is required by
+> modpost and was missing from this driver.
+
+[Severity: Low]
+Is this description accurate? This driver is defined as a bool in Kconfig,
+meaning it can only be built-in. Modpost only checks for MODULE_DESCRIPTION
+in loadable modules, so is this macro actually required here?
+
+> diff --git a/drivers/leds/leds-cobalt-raq.c b/drivers/leds/leds-cobalt-ra=
+q.c
+> index 045c239c7328e..5b5acaa8c3215 100644
+> --- a/drivers/leds/leds-cobalt-raq.c
+> +++ b/drivers/leds/leds-cobalt-raq.c
+> @@ -101,5 +101,5 @@ static struct platform_driver cobalt_raq_led_driver =
+=3D {
+>  		.name	=3D "cobalt-raq-leds",
+>  	},
+>  };
 
 [Severity: High]
-This is a pre-existing issue, but does assigning menf21bmc_led_set to the
-non-blocking brightness_set hook risk a scheduling while atomic panic?
+This is a pre-existing issue, but does the lack of a .remove callback here
+leave a use-after-free window?
 
-If the LED is set to blink via sysfs, led_timer_function executes in atomic
-softirq context and calls this brightness_set callback. However,
-menf21bmc_led_set() takes a mutex and performs I2C transactions which can
-sleep.
+If a privileged user unbinds the driver via sysfs, the driver core will
+automatically release devm resources, unmapping led_port. Since the LEDs we=
+re
+registered with led_classdev_register() in cobalt_raq_led_probe() without
+using the managed API, they remain registered.
 
-Should this be assigned to brightness_set_blocking instead?
+Would a subsequent write to the LED's brightness file trigger
+raq_web_led_set() and write to the now-unmapped led_port?
 
->  		leds[i].i2c_client =3D i2c_client;
->  		ret =3D devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
-
-[Severity: Critical]
-This is a pre-existing issue, but does registering a globally shared static
-cdev object risk linked list corruption?
-
-The driver manages LED instances using a single static global array (leds).
-If multiple devices are probed or if a user unbinds and rebinds the device,
-devm_led_classdev_register() will be called on the same leds[i].cdev
-structure.
-
-The LED core calls list_add_tail() on a node already in a linked list, which
-corrupts the global leds_list.
-
-> -		if (ret < 0) {
-> -			dev_err(&pdev->dev, "failed to register LED device\n");
-> -			return ret;
-> -		}
-> +		if (ret < 0)
-> +			return dev_err_probe(&pdev->dev, ret, "failed to register LED device\=
-n");
->  	}
->  	dev_info(&pdev->dev, "MEN 140F21P00 BMC LED device enabled\n");
+> -
+> +MODULE_DESCRIPTION("LEDs driver for the Cobalt Raq series");
+>  builtin_platform_driver(cobalt_raq_led_driver);
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260723164612.3146=
--1-arun07172003@gmail.com?part=3D3
+-1-arun07172003@gmail.com?part=3D1
