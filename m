@@ -1,72 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABAA47886E;
-	Thu, 23 Jul 2026 11:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CB847ECCB;
+	Thu, 23 Jul 2026 12:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784807532; cv=none; b=Td0T3N/zrNCaCS/r2Uu4NKjpScfMshjVzWOFY3I4TLZ1lSHIeDehycIzdTqotcRwO1ZQqVP0rs8wGrK84+9cKjVwm0metxw8bEa/MCU5+d8nQRjFMVo+zkWf5zZpc87v+cb2tAcry/xeKbTkzf3uavuckCAinQZg8+nrDt6bKKI=
+	t=1784808157; cv=none; b=HxEzF5w7Oy2x7OQoD+rFO4eqWTjTLB0SaV7haBTALqbkaYF3HLU9dRCMp8sEr9m169Ms53H7lmzrShjmZoC8DOcMR25BYOIEHgTz9ofFYhIlpMDx5BUs7VlvNZQcb8XRAt517tk/zeT++Zfn0QtYmZYha8vI3mwDo+AO4Vr/uPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784807532; c=relaxed/simple;
-	bh=5Aeda3tYL1GjuxDi01NBEakRq/GFPPUfPSYRwRUHEbI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=re/UWDXWHuVdgxZmFFls+mHnkf2NaH1EZ3/x6BawklUHLyI0/ws91i92seHWQbCMOoyKQoIaNR1KDeH/IwImm6CR3aGpqcoCh2wft8eMzZ4F3w4aeRIs5/kVUyBT06bYZiaYRC9Xd5myw+GLomfakiAA12ZK0kEKxG4zuEm2m9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVUQqlH7; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVUQqlH7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F9A1F000E9;
-	Thu, 23 Jul 2026 11:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784807524;
-	bh=9j2nLdyru6ubKUpJUXNHKFV5tgfei3+wpK7rs2jNFW8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=LVUQqlH7yyEEmRE6f51Rev8g0QN3h4pQJFMybORgpcdBjrTa5Bi+P+rS+PiIbJpWa
-	 0XVBU7pSo1MHbXn8XePyga0kxrggxR8agpDg8yFad4Y1ugT+HODZzZr4ZNHaqtZPef
-	 a0zRj6RmJi+m28y6XAcCTxzxhrqxxGwfutKofE4oVtPs6k4Jmm6l9eWtLmhgrZdUhR
-	 qaxZO21fZIVp+L4/6U5q7mfF5Yn6/t55iDddch2lNJICA3qFm7BLTvb/1fGyiR2mYu
-	 RtIhbmOPbmNdCVwiOdsSj2jO4iyh1xi9LjZn1u7Wd4DzH0eVsAkCoEJs/N76lrcVVY
-	 9sl9zfpZ4efjA==
+	s=arc-20240116; t=1784808157; c=relaxed/simple;
+	bh=D97POoTjUhrgSur29RAIp4djCDgjb7+myJEXpXFbpBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OifXF/OrB1vTGX1l77hrDaA+w6wv40gTJ9iC40T7fvpDGyvFhLXqrBnBxbkgOIhkJPfX4nynPB4mCTjKegBsQAbYf0veDTE+gNmnYRxuNtSBxqzvMEwuAIBG2JiLqfDYf1KkZ9IqsvPWQEVrNpmu3uXB1P9c1Ln5pgrE2D0jD6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFD81F000E9;
+	Thu, 23 Jul 2026 12:02:22 +0000 (UTC)
+Date: Thu, 23 Jul 2026 13:01:50 +0100
 From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
- Sven Schwermer <sven.schwermer@disruptive-technologies.com>, 
- Jonas Rebmann <jre@pengutronix.de>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de
-In-Reply-To: <20260713-multicolor-default-v3-1-fb43f3f789cf@pengutronix.de>
-References: <20260713-multicolor-default-v3-1-fb43f3f789cf@pengutronix.de>
-Subject: Re: (subset) [PATCH RESEND v3] dt-bindings: leds: Add
- default-intensity property
-Message-Id: <178480752172.3382996.300395263332006645.b4-ty@b4>
-Date: Thu, 23 Jul 2026 12:52:01 +0100
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] leds: rgb: leds-group-multicolor: Implement
+ default-intensity
+Message-ID: <20260723120150.GF3363113@google.com>
+References: <20260708224652.106632-1-wahrenst@gmx.net>
+ <20260708224652.106632-3-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260708224652.106632-3-wahrenst@gmx.net>
 
-On Mon, 13 Jul 2026 10:50:28 +0200, Jonas Rebmann wrote:
-> Document the default-intensity property to set a default color on
-> multicolor LEDs.
+On Thu, 09 Jul 2026, Stefan Wahren wrote:
+
+> Until now the driver initialized all LEDs with maximum intensity.
+> This isn't useful for LEDs, which needs to be initialized via DT.
+> So introduce a new DT property to define the default intensity of all
+> indiviual LEDs. In case the property is missing, the old behavior
+> is kept.
 > 
-> Update pwm-multicolor to support it and update the example to turn the
-> LED red on boot.
+> Additionally this also works with triggers. So it should be possible
+> to blink with a specific RGB color.
 > 
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> ---
+>  drivers/leds/rgb/leds-group-multicolor.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+> index 548c7dd63ba1..19913a43b8a1 100644
+> --- a/drivers/leds/rgb/leds-group-multicolor.c
+> +++ b/drivers/leds/rgb/leds-group-multicolor.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/math.h>
+>  #include <linux/module.h>
+>  #include <linux/mod_devicetable.h>
+> +#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/property.h>
+>  
+> @@ -106,11 +107,27 @@ static int leds_gmc_probe(struct platform_device *pdev)
+>  
+>  	for (i = 0; i < count; i++) {
+>  		struct led_classdev *led_cdev = priv->monochromatics[i];
+> +		u32 intensity;
+>  
+>  		subled[i].color_index = led_cdev->color;
+>  
+> -		/* Configure the LED intensity to its maximum */
+> -		subled[i].intensity = max_brightness;
+> +		ret = of_property_read_u32_index(pdev->dev.of_node, "default-intensity",
+> +						 i, &intensity);
 
-Applied, thanks!
+What about using the firmware agnostic 'device_property_read_u32_array()'
+before the loop to save some cycles?
 
-[1/1] dt-bindings: leds: Add default-intensity property
-      commit: 2ebd1cb772b00d1223895718155a03af4c56f396
+> +		if (ret) {
+> +			if (ret != -EINVAL && ret != -ENOSYS) {
+> +				return dev_err_probe(dev, ret,
+> +						     "Unable to get default-intensity[%d]\n", i);
+> +			}
 
---
-Lee Jones [李琼斯]
+Deserves a comment I think.
 
+> +			subled[i].intensity = max_brightness;
+> +		} else if (intensity > max_brightness) {
+> +			return dev_err_probe(dev, -EINVAL, "default-intensity[%d] is invalid\n",
+> +					     i);
+
+Nit: This is an ugly place to wrap.
+
+> +		} else {
+> +			subled[i].intensity = intensity;
+> +		}
+> +
+> +		dev_dbg(dev, "subled[%d]: color_index: %u, intensity: %u\n",
+> +			i, subled[i].color_index, subled[i].intensity);
+
+How helpful is this outside of development?
+
+-- 
+Lee Jones
