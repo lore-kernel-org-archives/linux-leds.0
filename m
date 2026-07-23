@@ -1,87 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE8143B3E7;
-	Thu, 23 Jul 2026 10:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF7846DFFF;
+	Thu, 23 Jul 2026 11:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784802869; cv=none; b=VPzvByBKGV2vjwO4zHthg003mLU6l7TR5t2r6l9H5UgYN1xhrbULCEtwDeesLFp/iPpVz1ID42WLCAiBZIduyQwEmm2BL7GmBZMR0Oxzcw+3Q7FLeh7YArPTnVPqe2Li5r7qTQVwhnSkpFAtQQtXWvhkTjExRk7ze0cbI0wATRU=
+	t=1784805500; cv=none; b=IKipXb036ET6l8/GLuCIZ639MnkW3E8/uTygm5TFDZbCd6tYBqjWWH1OFelqiBGXF5IqNjr/iNL/eNyRAQ8gXGW7F7X2QepgBHE0FXAuZCgWEpVcghh/4xdiCP/YtuDNbXm3Ro9fZvzTDTmbsmxngw+bKaUmavUI3FpW4NeVznI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784802869; c=relaxed/simple;
-	bh=K7FsJb35z6jEDs1gKdsMSV+AYBwMwJHCmZGh7clmwVs=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=CdcWqE/vhjD+dAVYS965iLmlgPtLZYNoZ5bIh1i8NsIj3uGzYC0/gTANLNAtbAtDJkyvANsB33ZOmP0olMD0qIbv2aXkhmRdqttAdFw0hOr185GsLeAbXbn1XgsUVkrG5KQcM/EH2QGsviAq3AswojpgFrrm9TI8qtUczXu2cDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 510A11F000E9;
-	Thu, 23 Jul 2026 10:34:27 +0000 (UTC)
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 4/4] dt-bindings: leds: backlight: Convert TPS65217
- to DT schema
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Eduard Bostina" <egbostina@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, lee@kernel.org, dmitry.torokhov@gmail.com, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org
-In-Reply-To: <20260723100605.628882-5-egbostina@gmail.com>
-References: <20260723100605.628882-1-egbostina@gmail.com>
- <20260723100605.628882-5-egbostina@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 23 Jul 2026 10:34:26 +0000
-Message-Id: <20260723103427.510A11F000E9@smtp.kernel.org>
+	s=arc-20240116; t=1784805500; c=relaxed/simple;
+	bh=xA6h8zsdnaX+TM6BX4y+1bdb+WO3NhRSnDhwMvw5JWA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=E/WgX010MHNttPcGc4w85eHCKGhav6I8trMRzUhCub1Y0mtVuRHn7ylaJCj/1VziNX9xQZQxslpHXvOw70qG5neCcYM6obIl+zd7xMMljSc3OfII2c2Ea+9Jg/AVLCu/dkIvj63ej22gAkLGw9wEvTfufBRiIEQ+1T6GGMjdo+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uo+fB922; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uo+fB922"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 127A81F000E9;
+	Thu, 23 Jul 2026 11:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784805492;
+	bh=ExTSV7lRp5vBSXIfUcF2r6dTI+azVWTcAtt1ZPH9Rcs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=Uo+fB922sAzNmaihDq8sVghUlYy/6B5tf14Hl4GJqwm5OXm8azGh/lZ1kSGT0eq8G
+	 40/W4uprF/9oguObCj0myRytAXYMNA3bDI1VovD2RBGQFPicNUZd9MRuzugy+rDEOA
+	 mG2tP+LB3sUN5GaRHuV/ApeC8iiojki6Dln/U0IrH975V9D2TEAZgl1VPxevnXOQiJ
+	 98nBd4jwbt5BgXQhBvb54Ym4R2Y8W3fQHKufEgpZWKQZVsZVeGwvEzmo5lxi2opWlt
+	 k5akrqmYnCp+1Tbc9ULkwSTffGmMRqMai7jQylPqoXKh7HPrKsoOxP8CCGyNtn/2E4
+	 OSajG9TbQ7vlg==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Edelweise Escala <edelweise.escala@analog.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+In-Reply-To: <20260709-ltc3220-driver-v13-0-9b53237642eb@analog.com>
+References: <20260709-ltc3220-driver-v13-0-9b53237642eb@analog.com>
+Subject: Re: [PATCH v13 0/2] Add Support for LTC3220 18 Channel LED Driver
+Message-Id: <178480548980.3362882.161757609550080567.b4-ty@b4>
+Date: Thu, 23 Jul 2026 12:18:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] The converted MFD (Multifunction Device) core binding is incorre=
-ctly placed in the `leds/backlight/` directory.
-- [Low] The commit message uses an incorrect subsystem prefix for a Multifu=
-nction Device (PMIC).
+On Thu, 09 Jul 2026 08:41:18 +0800, Edelweise Escala wrote:
+> The LTC3220/LTC3220-1 is a multi-display LED driver, which contains a
+> high-efficiency, low-noise charge pump to provide power to up to
+> 18 LED current sources. The LEDs are individually configurable to
+> 64-step linear brightness control, blinking and gradation control
+> via 2-wire I2C interface. The blinking and gradation configuration
+> is shared across all LED.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] dt-bindings: leds: Add LTC3220 18 channel LED Driver
+      commit: 3c28d9d0b7e0890df3c16dc7ad5f0fd17e775ab4
+[2/2] leds: ltc3220: Add Support for LTC3220 18 channel LED Driver
+      commit: 07e028d93a57fa6217cf8eb1375ec29e7d1e4b27
+
 --
+Lee Jones [李琼斯]
 
---- Patch [4]: [PATCH v4 4/4] dt-bindings: leds: backlight: Convert TPS6521=
-7 to DT schema ---
-commit 1f4c2bf543a28045151b5cf16c5be1f7c2cee8e1
-Author: Eduard Bostina <egbostina@gmail.com>
-
-dt-bindings: leds: backlight: Convert TPS65217 to DT schema
-
-This commit converts the Texas Instruments TPS65217 bindings to DT schema.
-It consolidates the old regulator and backlight bindings into a single
-schema file while documenting additional child nodes and properties.
-
-> dt-bindings: leds: backlight: Convert TPS65217 to DT schema
-
-[Severity: Low]
-Is the subsystem prefix correct for this device? The TPS65217 is a PMIC=20
-and its core driver resides in drivers/mfd/tps65217.c. Since this patch=20
-consolidates the bindings for a Multifunction Device into a single unified=
-=20
-schema, should the prefix reflect the MFD subsystem instead, such as
-dt-bindings: mfd: ti,tps65217:?
-
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/ti,tps65217=
-.yaml b/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
-> new file mode 100644
-> index 0000000000000..4d2f4dbd2d52e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
-> @@ -0,0 +1,170 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/ti,tps65217.yaml#
-
-[Severity: Medium]
-Since this schema consolidates the regulator, backlight, and other PMIC
-functions into a single file, should this be placed in the mfd/ directory=20
-rather than leds/backlight/? Placing it in leds/backlight/ seems to=20
-categorize the device's primary role as a dedicated backlight rather than=20
-an MFD. If moved, the id and file path would become=20
-http://devicetree.org/schemas/mfd/ti,tps65217.yaml#.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260723100605.6288=
-82-1-egbostina@gmail.com?part=3D4
