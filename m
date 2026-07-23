@@ -1,51 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B243A439004;
-	Thu, 23 Jul 2026 13:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E14D43E9DF;
+	Thu, 23 Jul 2026 13:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784812132; cv=none; b=c5qWIDoPZVoCqF05JNT+j7TYCGfZQW+XBPjeWvK9LYlTT+UwlqP9Gc+HfPFwDUlMxd8VFGj+ro7UxYbIOOXlBwhAilUGngEu0/3L7IExM2Eeui0z9VfzGsw2NJ7rFkuMltsn6bgFzkM9tqtdZSQNBmuqxc3krsCS/hboVS9nU1A=
+	t=1784814683; cv=none; b=qwoC9DWhJXF5rwrbQhj4rbouP6l4Qx2eQw+n2TT+a4RMByZuXR7cNX0TDKJODclWfV3OdG8ceXLPN4Uz/anim1rmC4T7Un0Fl1qU9Ee/pnw4i/5dxy5Flmv6NJI+4q7AtK6sYk+KiBy5/VP3RkDSoChT9GMm3YIin0ylF0+viMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784812132; c=relaxed/simple;
-	bh=w9AIHzf7LFF59gxBCBHzIraohlYaZHVMBRfXRZKzW8w=;
+	s=arc-20240116; t=1784814683; c=relaxed/simple;
+	bh=MzoR27tifuWzDBS7by+J3zZ2PzBEyw8+5dj2cuC8V+Q=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RO240lNCDjAmpN4J4LQ42PjJlrB2umx0YKTSjBZ2sgUcJXqLh6ZdvOuWm25fdFFbbf+h0HcKYSynVmaeQAdstXDuGAB1wEtp6vQL18RFmv92471pYomCudCTmAY6mwCeOgYqNbXPgFQHRLNNoEld+KHoIUXSlbrCKvJTeppH97o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKSsPoFM; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKSsPoFM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6F51F000E9;
-	Thu, 23 Jul 2026 13:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784812131;
-	bh=wad4Pd8/YVNnivX2PPnlTUYq3rt95UA1cJctIX6KXhQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=oKSsPoFMGIAz2QwZ4sgl1uImujsUSAr92lYs7/sRMp1RnaABmQUvbg1kQC2/5E+8C
-	 0cZY/4yFd8/NYTw8lP8tqCVI5niiCobHz1pCqZh/1rQ5XVOqDBmBB76990m0wfXJYv
-	 0UH5pEoJZQ/E1mpnyGpduULD2GEm0qhckOeUMiyeyTu0F6VLh4bn+aSwOMbvFTk+r1
-	 W7fl811ItHFurMft7QWdKbvRDnEK3vj0ACIZu3/IJ1TQXBi4TSHeXDoqMkhj+8xLjJ
-	 tv91qgeHGp8j6p9zUSt0B9yBeGR4BjoecI14mvsukiLN3iVaJVNQ0WLAEovF7ZOz4Z
-	 bXZMsw6pKUXdw==
+	 MIME-Version:Content-Type; b=eOLF34F+ZIau9L4dMfRDMLoNViqVNn7vahfre6/G8MUE9+3f/U4zKtHLsiAby7yfutH2/ikaezQ5McEcZVdUrRCJKx/hnAF0MnSQN1v6MZs2MwD8hl5XXhNP3rZifpNYAEjR+FGo3qg92+FJuxNqtBANhtiX1u679a5ALlHeZ0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99E211F000E9;
+	Thu, 23 Jul 2026 13:51:17 +0000 (UTC)
 From: Lee Jones <lee@kernel.org>
-To: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, linux-sh@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-leds@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260710211854.1371746-4-arnd@kernel.org>
-References: <20260710211854.1371746-4-arnd@kernel.org>
-Subject: Re: (subset) [PATCH 3/6] [v6] leds: gpio: make legacy gpiolib
- interface optional
-Message-Id: <178481212701.3434788.4491931763676610326.b4-ty@b4>
-Date: Thu, 23 Jul 2026 14:08:47 +0100
+To: lee@kernel.org, pavel@kernel.org, riku.voipio@iki.fi, 
+ Cosmo Chou <chou.cosmo@gmail.com>
+Cc: linusw@kernel.org, brgl@kernel.org, linux-leds@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ cosmo.chou@quantatw.com
+In-Reply-To: <20260715080747.1638097-1-chou.cosmo@gmail.com>
+References: <20260715080747.1638097-1-chou.cosmo@gmail.com>
+Subject: Re: (subset) [PATCH] leds: pca9532: Fix phantom device
+ registration on missing hardware
+Message-Id: <178481467735.3460330.9170439328076726240.b4-ty@b4>
+Date: Thu, 23 Jul 2026 14:51:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -56,22 +36,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.16-dev-ad80c
 
-On Fri, 10 Jul 2026 23:18:51 +0200, Arnd Bergmann wrote:
-> There are still a handful of ancient mips/armv5/sh boards that use the
-> gpio_led:gpio member to pass an old-style gpio number, but all modern
-> users have been converted to gpio descriptors.
+On Wed, 15 Jul 2026 16:07:47 +0800, Cosmo Chou wrote:
+> The initial PWM and PSC register writes in pca9532_configure() do not
+> check the return values of i2c_smbus_write_byte_data(). If the I2C
+> device is physically absent from the bus, the write fails with -ENXIO.
+> However, the driver ignores this error and allows probe() to complete
+> successfully.
 > 
-> While the CONFIG_GPIOLIB_LEGACY option that guards devm_gpio_request_one()
-> and related helpers is currently turned on in all kernel builds,
-> the plan is to only enable it on the few platforms that actually
-> pass gpio numbers in any platform_data.
+> This results in the registration of phantom LED class devices and
+> gpiochips backed by non-existent hardware. Subsequent GPIO reads from
+> these phantom chips return bogus values (due to -ENXIO being truncated
+> to an unsigned char in pca9532_gpio_get_value()), silently corrupting
+> hardware state tracking in userspace.
 > 
 > [...]
 
 Applied, thanks!
 
-[3/6] leds: gpio: make legacy gpiolib interface optional
-      commit: 98c5c7b0d4269ecabfc86b8b49ffcfa47979e99d
+[1/1] leds: pca9532: Fix phantom device registration on missing hardware
+      commit: 8d6b6c05b8e33d11e3fb3203309385e1a9cceecd
 
 --
 Lee Jones [李琼斯]
