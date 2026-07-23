@@ -1,162 +1,141 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281383859CB
-	for <linux-leds@vger.kernel.org>; Thu, 23 Jul 2026 06:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BE743B3FB
+	for <linux-leds@vger.kernel.org>; Thu, 23 Jul 2026 10:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784787920; cv=none; b=GiX855Tw1U240QdAsTebdWDqv9d5tlc/Fu1VxsDYmSIWSb4Q7dY6gGDMUuyZEc3LN+zI7iX7xUx83WX6RqZ11+Yjm3nNefMvZojNdCd6NQ9+V4EBHAz1Km/U3vvmxrIqfZN8Is7TjqsK2FVpP+WNM43b050L7gKPOoQmR5CwBoc=
+	t=1784801180; cv=none; b=SzQHpLkFFbVQoM9LClegv6umPGaQQ/bQwEn5mH4ZdrNyBG61MaYpzQEM7kgQ+8m4ysvwLJB0K+xODEBZ7luY6zKwm7FG9YSVfxdiyG+TdhkyyCaigD8+gvfqzcXlMnjEsoOQvg3TQxITWnwwM9s8KRB1tBOEM0w3whG41+xax9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784787920; c=relaxed/simple;
-	bh=lR4BrEKUWwFUgV5r/hY0SmpZYAvqTCmveLJxkUYJjco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFhnuFNIcQ+X/l1io9GbTIYfjChJUoYyMh3D7iXHz72OBhHBhTA3y/5X6/ja+fjwl3JBfFRGNEE8i7HMC3A8W5VX0yuYu81UOZcio1DsvR1cW6Ol4ENY7CrtqsjW+ul3U2jc7y+gIaPiIjPUWXS6EpzqUn8qnbCjgVi71MjWQpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=EbSO3bwx; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784801180; c=relaxed/simple;
+	bh=+Wyfo2vtIbswyXq9efM7rosBVsTJwzmKdaBzzC/aYRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ea3M+EOPB9kJqps2mZkcc07xcEbz81xyCktV6S4Pddf9UIJX07UAmhyvdOQ6lyIpxMsxKlUTd36yhafyi0/fLOA2I9O9Ca3+Ts36nWIumrFA2eGQHz1MzYcjvSagW27RJh91DN2m+y5zyhD7wXYuedPslG3Pf8KaCMPMoVcCaGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXwYL5Cp; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="EbSO3bwx"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4728c12ba97so99770f8f.0
-        for <linux-leds@vger.kernel.org>; Wed, 22 Jul 2026 23:25:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXwYL5Cp"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4954d383e64so2934435e9.1
+        for <linux-leds@vger.kernel.org>; Thu, 23 Jul 2026 03:06:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784787915; x=1785392715; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=rY35TAUlD5S7ktpUnfbUq2XEBmoTSaPuxjiwa+138dw=;
-        b=EbSO3bwxvI+2nmAxICX4zeRqbAsg2kMl/e2dR3cbMAVLVsPoeguIg8TtU6k8y2Qo+T
-         mdPhKrw1sNBlySFpfgpqejlNKxtnoDAhfzr61hfvB0mFc/wkNCAnloURPSxM1eI0/gB6
-         N2mnyIlcBRVejMB87U/beyiogkWg8LbHcRvRjGUBJOd63kjTToRqnhatqpDx6KJpwZkW
-         bv/1wY9kKqvFarDvo+pHhuntl5RAC7nIinKoHMIr35dz4Lb7R9PB16yIW82Fa0EX6KXf
-         mBDf34RABR6x0W0KbcSIS5EhrEVONSXArH7mYZghNodTmvxAH34fUT4ROLPdQot417Xm
-         ukMw==
+        d=gmail.com; s=20251104; t=1784801176; x=1785405976; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=BcGqlv2rED4NMS/3uzjzLmpezgSMOIuZyea8FmG7iIE=;
+        b=FXwYL5CpobBGYaEXcsi7sfU/6zrVN+9MWYNCWa0tCT18D4dDmbXrVK5NqH0gOsWfCe
+         TrFl0WWlwGXcPvIK8yWyaUTM6alsB06ngOdyMJJYnhiybARvXq1MyS7QIXhveZPHIPCH
+         SfPLk2lk2XWkzMq806Cru7wBi8yLywO+i+Crk5TwdRwRUPJ3jDTOKfUCe1tqEuCmIPcQ
+         u53zSiyYtRvDPkwxUQ64OV6pjw2IedJVh5EZHucUAULDCYp0AKU94k0bq0xF1TYn5b14
+         7r7wd+CMhTXXhJiXQV/KP0JFKzwRwg4eTflMaxb6p3WO6oTwu9kka5mdNgtqPURVXmV9
+         6F1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784787915; x=1785392715;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=rY35TAUlD5S7ktpUnfbUq2XEBmoTSaPuxjiwa+138dw=;
-        b=GVdSg3LGwHk9Q/aGb36MJrbqks69kg16VAh1UuJ8OeOaBvCwOlTaslZIy8kCSIqbjT
-         X0durpEc/cKLaOYa1LznVRAoKBIDwY8Z58kj8yaxB6BQ3KlOafQrq68TUFgwQtnSq5rh
-         yCZ6AKrsupU6SQ2eGn/6VALlH4cJtu5ou7Hp5PdZB5fNUxn5Gwyfv01c0M9r+2b56GhC
-         XERkYeo0uiu7lHFgFtCLSg4QK+9SIIfcWWdfMjraOWE2MfQ+F275+htz96YRcISSfTdJ
-         vz0CRg1bIdps9YRsCWd3T6xv7Xdf5ubjuze3N5zP9iXGF0D/6jh+4kPUaJ+lgMJRAam7
-         ivhQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rpq4xXvwW5WWvV2foSZeorH6d9XSUPf8F4Bt+KSiC9KIGcvO2hmaaOWlTbQ4kg0BubRGIXGyU34k5C1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIkiX73rWiDjigN54dcS3ACgPxgwPKsOuqWjL3in0IQRF9b4KS
-	4wSF3Ml6RZO7axKeE96X3OLeC+OnB3Wc73wC8NTwmG6ZvGTWWgNttfJ+kDOvSfVvHzo=
-X-Gm-Gg: AR+sD12xC6bBskKNCJLpOUx7gCdre+rc5QZ4PNB5py6YQJQ0/FeVKx6WR6zdKyuOm6M
-	C/I6PSju3+VJSezXFUKHg7VsrYLXulNvjEsKPEWD5hxwFC+QOqd6sKn1/JD2SsGhXPuOM8QRY0V
-	X3EiTXOH4lkKbI8yAaWgLxjYDO/VKoShUMU29Xjvn5+qNQPJMXdPaeNrLTEJaUg5UGjCaqH0yol
-	etGLkSqwOBlB2nBfPzKGdbJxYeKZL53wYCQe46GI7XwksVlwC+dhJJdChsqO5mmbUhoc9mY0kH6
-	l2VKkPfy9jhWmN98OHQ/fIgGHse4BbgCAXuJ8n+cwrUfLP0qWoQAZWqYfNdMubqcYL1PPaEftSQ
-	dnfhnTgQfhlpuCoXefqVk0+kJxUWeD8jy5Ek6XxOdu6CpMcedocHaOTFYkWwyR2VDET7kaYRw6R
-	n/mq9aOsQlUJ8G3Cto5A==
-X-Received: by 2002:a05:6000:46db:b0:47f:91e3:3cbf with SMTP id ffacd0b85a97d-47f91e33d93mr526287f8f.19.1784787915407;
-        Wed, 22 Jul 2026 23:25:15 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c6f076sm12633187f8f.34.2026.07.22.23.25.14
+        d=1e100.net; s=20251104; t=1784801176; x=1785405976;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=BcGqlv2rED4NMS/3uzjzLmpezgSMOIuZyea8FmG7iIE=;
+        b=sc7M3oPzNSG/PKDAWXZ/2N19E8JFOtAAeX+R4U0v59qU6up3TYSU7grYEmDczCE4ud
+         VFEFgJvCW8xNHGMFCJ2IeeMntU9dzuVtNYzwqWrLufi/4x+FpVYU3ETYQCzibCAu+uFK
+         ujOFnZA+oa+7HIDLfbmAlv98meHKbfB/19uDGXTYARwQAi05WRFoP7QMSOmuR1KYBxGG
+         0KBLqDoI0v/CApcYtd+2ph17Hjlf+5F0QpmJT3EPKnway3Eb6xRV6zqPUjPQ3Xd5+wMl
+         BhEsE1lqcGHONRs3fa6RZtlbGX2JMCuNigy42t5nrp4GlsmpmCjEebXkBkyOpNgv8DY4
+         a9Ow==
+X-Forwarded-Encrypted: i=1; AHgh+Rrh2nVZbtQywZXm0IqT7rIE5WOIDzRHWDCOg4whVdIgm8RiRB/nS1jIQvj3LI5r9Oa+KwBykX5t4mhR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE0qgOdKGCkNfTjzmSK4J8ScFYlsO5ypZI6/dHU1paAiqov61B
+	9+QSTZfeKslHdk2ziX/gj3EkLU5WNc1sAV0EBBmbop6HgAaUgkif80gL
+X-Gm-Gg: AR+sD12eRZiolUkm/BG/ssUIcY+1N7PRUTshwTz65rEEWilCWIRjc72yv4Pd+iLsyVH
+	ewmolI9HW2/BMx4sXbfj9xnXJu8dZZmw0yJ7hNwmuDUenqD+03L/6nFBNanIXaNyc1vAKH4O9um
+	UchyxsNe/iXaPE+sGJg0Nh6z0c3YlpNyheFobeLyexIOyH9nhkijw+ajbEv5Qey7DpBH8bmaMoK
+	nTe9baywspoCWHEaH+AvJLpBHcXa+6VbceHRY5TtW99qYtwfCfOC+Xh1fJ6+BH4a3PXXOrS9HoQ
+	wVKD2AqDJpJWjG0QC/XTmyTh4DpRTITuK96EpIwvgUIR3vHbXq6+MB6epyb7ddpXDZ86nvTM2Zj
+	h6uKZERShnohsSJzjBxF/GZCk6KfN2OXOltR+cc+xCNJFpZ5ZHbspfVltJ/jcSCejq15hYv+efM
+	kvaBq4rEZBr0Q/x4ssD7Fk7yw7/wg5vNX0Qn775V/VQftW
+X-Received: by 2002:a05:600c:1914:b0:495:4d00:2fc0 with SMTP id 5b1f17b1804b1-49573ccb598mr27399575e9.12.1784801175908;
+        Thu, 23 Jul 2026 03:06:15 -0700 (PDT)
+Received: from localhost.localdomain ([86.126.27.145])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-47f85b9a60asm14212163f8f.3.2026.07.23.03.06.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 23:25:14 -0700 (PDT)
-Date: Thu, 23 Jul 2026 08:25:13 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Ion Agorria <ion@agorria.com>, 
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v10 2/7] mfd: Add driver for ASUS Transformer embedded
- controller
-Message-ID: <amGx2fJCUB4_XW1M@monoceros>
-References: <20260721095233.420823-1-clamor95@gmail.com>
- <20260721095233.420823-3-clamor95@gmail.com>
+        Thu, 23 Jul 2026 03:06:15 -0700 (PDT)
+From: Eduard Bostina <egbostina@gmail.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	Eduard Bostina <egbostina@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Mark Jackson <mpfj@newflow.co.uk>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>
+Cc: daniel.baluta@nxp.com,
+	simona.toaca@nxp.com,
+	goledhruva@gmail.com,
+	m-chawdhry@ti.com
+Subject: [PATCH v4 0/4] dt-bindings: Convert TI TPS65217 to DT schema
+Date: Thu, 23 Jul 2026 10:05:58 +0000
+Message-ID: <20260723100605.628882-1-egbostina@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hohtbe7p7bme7m4a"
-Content-Disposition: inline
-In-Reply-To: <20260721095233.420823-3-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+This series converts the Texas Instruments TPS65217 PMIC bindings to DT
+schema.
 
---hohtbe7p7bme7m4a
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v10 2/7] mfd: Add driver for ASUS Transformer embedded
- controller
-MIME-Version: 1.0
+Changes in v4:
+- Removed the regulator/tps65217.txt binding. It documented the same
+  'ti,tps65217' compatible and is now fully covered by the new schema.
 
-Hello,
+Link to v3:
+https://lore.kernel.org/all/20260721112133.70382-1-egbostina@gmail.com/
 
-On Tue, Jul 21, 2026 at 12:52:28PM +0300, Svyatoslav Ryhel wrote:
-> From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
->=20
-> Support Nuvoton NPCE795-based ECs as used in Asus Transformer TF201,
-> TF300T, TF300TG, TF300TL and TF700T pad and dock, as well as TF101 dock
-> and TF600T, P1801-T and TF701T pad. This is a glue driver handling
-> detection and common operations for EC's functions.
->=20
-> Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+The binding covers the whole PMIC, so leds/backlight/ may not be the best
+location. I can move it to mfd/ or regulator/ if preferred.
 
-Documentation/process/submitting-patches.rst has:
+Eduard Bostina (4):
+  ARM: dts: ti: am335x-guardian: Drop unused isink-en property
+  ARM: dts: Rename the TPS65217 regulator nodes
+  dt-bindings: input: Convert TI TPS65217 power button to DT schema
+  dt-bindings: leds: backlight: Convert TPS65217 to DT schema
 
-	[...] the ordering of Signed-off-by: tags should reflect the
-	chronological history of the patch insofar as possible [...]
+ .../bindings/input/ti,tps65217-pwrbutton.yaml |  42 +++++
+ .../bindings/input/tps65218-pwrbutton.txt     |  30 ----
+ .../bindings/leds/backlight/ti,tps65217.yaml  | 170 ++++++++++++++++++
+ .../leds/backlight/tps65217-backlight.txt     |  27 ---
+ .../bindings/regulator/tps65217.txt           |  78 --------
+ .../boot/dts/ti/omap/am335x-bone-common.dtsi  |  14 +-
+ .../arm/boot/dts/ti/omap/am335x-chilisom.dtsi |  14 +-
+ arch/arm/boot/dts/ti/omap/am335x-guardian.dts |  17 +-
+ arch/arm/boot/dts/ti/omap/am335x-nano.dts     |  14 +-
+ .../dts/ti/omap/am335x-osd335x-common.dtsi    |  14 +-
+ arch/arm/boot/dts/ti/omap/am335x-pepper.dts   |  14 +-
+ arch/arm/boot/dts/ti/omap/am335x-shc.dts      |  31 +---
+ arch/arm/boot/dts/ti/omap/am335x-sl50.dts     |  14 +-
+ arch/arm/boot/dts/tps65217.dtsi               |  31 +---
+ 14 files changed, 275 insertions(+), 235 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/ti,tps65217-pwrbutton.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/tps65218-pwrbutton.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/ti,tps65217.yaml
+ delete mode 100644 Documentation/devicetree/bindings/leds/backlight/tps65217-backlight.txt
+ delete mode 100644 Documentation/devicetree/bindings/regulator/tps65217.txt
 
-So your S-o-b should be last when you submit a patch.
+-- 
+2.43.0
 
-> +#include <linux/i2c.h>
-> [...]
-> +#include <linux/mod_devicetable.h>
-
-<linux/mod_devicetable.h> will go away soon. Please rely on
-<linux/i2c.h> to provide a definition of struct of_device_id and drop
-the #include of mod_devicetable.h.
-
-> +static const struct of_device_id asus_ec_match[] =3D {
-> +	{
-> +		.compatible =3D "asus,sl101-ec-dock",
-> +		.data =3D &asus_ec_sl101_dock_data
-> +	}, {
-> +		.compatible =3D "asus,tf101-ec-dock",
-> +		.data =3D &asus_ec_tf101_dock_data
-> +	}, {
-> +		.compatible =3D "asus,tf201-ec-pad",
-> +		.data =3D &asus_ec_tf201_pad_data
-> +	}, {
-> +		.compatible =3D "asus,tf600t-ec-pad",
-> +		.data =3D &asus_ec_tf600t_pad_data
-> +	},
-> +	{ /* sentinel */ }
-> +};
-
-Trailing comma after the assignments to .data please.
-
-Best regards
-Uwe
-
---hohtbe7p7bme7m4a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmphs8YACgkQj4D7WH0S
-/k5hUggAntVLl+JSiaF4SxkXV/Dfehd2NCWtfs+cUwmB6WJFteJP+BcAhhOkk+1E
-ttUWLQylbkdzFp3xbddXPZWpS5IFjn4vqMbpPOZvtx/sWiA+m4vBqFCozSGwu8/F
-9UNUZa3I0cptOeMgAnAVDApboD4tQ3pZlKAF31EzAJnDEz9mFj+5IgedjpVENEeN
-5bDcmqTS8xRqlkYuBDphF6wxnp1epbtkJ7knefFwNEqHz/B4ZQc1gtAWgJyIMklZ
-fasfEq+2cwMArlqDN/bb6iJTIXh9QxBHHuVUqCCHuI4QgEI+QijDdeXmUN56PebB
-UR+136xjTmkYxJ2dIDxPAY7dj/DVaw==
-=58oj
------END PGP SIGNATURE-----
-
---hohtbe7p7bme7m4a--
