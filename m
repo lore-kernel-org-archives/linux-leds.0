@@ -1,83 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6F23B1B3
-	for <linux-leds@vger.kernel.org>; Sat, 25 Jul 2026 14:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6766245039
+	for <linux-leds@vger.kernel.org>; Sat, 25 Jul 2026 17:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784988135; cv=none; b=u2qub8xZD/p9yaKr2dS6dLC5A24HDWTttIgtQ5eHsvyrFWmwWPGPbETguCTx3gBK0X80RrPb37qxZ7u920Nl1OWMnu/MaiWOKxmXv90jG9Phc19w1ej9x4Cr2kIfCRdfvHBcc9LGIeQ7oW3Fw/qaxLETdrGXIGSXgf8mjCvr13g=
+	t=1785001923; cv=none; b=vCRMyNyk6B6IZgH1D3SFtQgP13R0QfcGPmbxGsgYeLji5VknUi3iUvbuUy7W9NLPk+O2m7Yu5mh1Anw97qAzgvvW1v9JdE72oVH8PCXqSbflCFHEs6Lujz9hozHzFnRzHzoWLM8HVNXwT76jRJ6mDio81teb/2KvtNcOkLyIXlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784988135; c=relaxed/simple;
-	bh=BKCqcrD0RzoSyvvZLCPX5LJ1shYDr/pz/kCB7Ep3vhY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cetVy/grsy/pImJ3IufiO2H5jLyuFZ4/x+tQwjwafFt7fAdGX82dAREisA89jgnWpkFoBhS6m67Ky28gdg7FIrfq3xnQlQxxAi0puYdYk2wDdQ7cXvoZXOwrhqZnbOTkFXGV8/WcAGRB31uTNeIcydJZjPl2pUJun/4xkqcUlEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UB5NfpPa; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785001923; c=relaxed/simple;
+	bh=dmSLaF3JmSG03N473oGR1xv44ugjuUkoBFljlg4wI2s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IHiG72bxyUMCcQqSKVZKBM44TbFGaK6T28lyLwhz2cX+9XsBULW9DpJWwzcsEPQMNzXIxAf6oDSQSqRmlI8CpWhhjVGEyHJnxcOxplB7nR3/J9xolVzyJgJO96YpJvSPC7AOWC8xTZYZcast/5jPaS7LHG7+KOuh2YRT/twGgok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pyJZn+uB; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UB5NfpPa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C111F00A3D
-	for <linux-leds@vger.kernel.org>; Sat, 25 Jul 2026 14:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784988134;
-	bh=P+dklRexGZN1T9IuNACHVZ61aN8aiII+79MTcQXbTYc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=UB5NfpPa7NG1unaEkJGtiI/ywZe/PGSOgTQiO/A3QcPDMSkKXyxtrbR2QyMYaASGQ
-	 eRmvV+7ou0MoqcaF5cINb9B1rTyPFIGgcaTGY1iKcgfJof3BkplbFv2pxGsC/QLTx6
-	 ywaq+UmEekK38B6KsQI35MHF06p3DLB7ojsTA9pVutYPxE4xmfn+gS6Vtk/Bw9fPKI
-	 85yyH2n927ehUsAes5gWkO8P3fzUf1FpvPUvEMVDJO9QR6q5tqzfTTd66H6ZOWPsus
-	 Ap0RQP4gVe9Epa2dB0FoorunbD4RLkJdAFzFujPLuOafXbiOsEakn36jafphBYd0O0
-	 wspcnMbupUKDw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so1181264e87.0
-        for <linux-leds@vger.kernel.org>; Sat, 25 Jul 2026 07:02:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrhzKoMchevEGlnaXJbN5mJTRNVfsYSjJHImG/3AhyDHvhhwrgS5NXO8f65craownTvkVPRJa2ymNlO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyuHi59hBNZmXlzPCfZn1FbpFBusYYiLsMpMx1A0OZ/jJLBcWn
-	xgVnQf59HmtKBjUem1RKzbw1mas+/atXg87xH86Z1t10rHIlTIn/l7Ox8wBusQYYoyToPGSingQ
-	60krwzmDoXkFzuBk8k7UY39wjp6ltcRE=
-X-Received: by 2002:a05:6512:308b:b0:5ae:baa7:5ed2 with SMTP id
- 2adb3069b0e04-5b2c1b52811mr439464e87.63.1784988133654; Sat, 25 Jul 2026
- 07:02:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pyJZn+uB"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-38ea87caafeso1110665a91.3
+        for <linux-leds@vger.kernel.org>; Sat, 25 Jul 2026 10:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785001922; x=1785606722; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QTyixV4W5r/eynqu0K/4hqgUBWxGM5A/HW+QpMLLe5U=;
+        b=pyJZn+uBWe7k/32lvG/lMlriprT/pIoUlpBqYWWD/vQUAq+Ct7BG4PWOSKhJY1am/B
+         CtJROx4OpDEY4ArWjOuanEX7Bfx3RbpjGEczS0WvxXIZxz0mbbSl2FyOWteRTjukOk15
+         eC54kkxGq+kBP1qVcOveni97E0RaWlvfl1S0v5biwsCCVLGYmlCGCnWC2eTpdYECrjS3
+         wEMXgvd07nHZtfk9WRydqb+AolGamuBxvhROyZqkU1yfllJjgEi1WFU+E07/9Gg3Vgyb
+         OtN1fL70I8guESiK3Pr2kp216sFxhQL3Obn5lqLPkay++dOaT7kVQBk2J8srlYbtStAI
+         GFKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785001922; x=1785606722;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QTyixV4W5r/eynqu0K/4hqgUBWxGM5A/HW+QpMLLe5U=;
+        b=IOQ6fiNvAn94uooEncRUvbM4D2a4qWwyKhhujZvDG3oz52vaDnq0QKDiVBaGcIKA35
+         m4xWE1JnS0DvXhIn6xhSDi9tVjWrjulaT3yHidh9qdgyJL6F13Ck0NnbJxkEK0sR1KDY
+         8oQdwEWZYKVNoq+sJuHD8kGRoQMk4UUOJjlVqAs3Md/H1WgB3DSSbeppzwkO75Hm81mY
+         HTr9tvZTnTKukQZXg64le+FgacB7k/0P5Z/r6K00xBNztRN6kJM0U0ge6Aty84vV107a
+         frTc3mmBgj3JHdL+n7E5/GlRwuJg8z0guN4OKKXMX+iaP0riHin7BKJOwqlE79edIplZ
+         45ZQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rpg+vLBjfdJMnOK46zzwhRk2lvECOKqfphY4cAZf+OGCAzKhSe1klxQFXDvz91Qe5aNXt5y9GcxraX8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHT0AXRg2OL1zL/klwhQLB9MUvZgM4kP0P5cz1H4aAZLLEYBHO
+	O0ZX7omR4gVyQ6dnoXtX1082ygcd47jLRg8NqufPTN5OzBakiG5Bjs9u
+X-Gm-Gg: AR+sD12Z/RqS2Mj1Gjs6AaoIw6QX4vSIMnQ/uK9OWZtb6BT+x/uWNI1QiKVZ4z/PGkX
+	KpkFTZvI7u4hmeB0Ht1tv7XLQqxiTJ7PdeFIn4C0IzZ28LLrZf4ZIBxKLgE4Sqbda//1SOkobgl
+	w1JcQFzy01Jug7glzMDHj16EZyoD0Don38qSa69F5jM8IMoAYmpmYPgm7JY+2SJNft9Nygoa8MJ
+	QKeysG39EVBfzaHv1YniotVQnJRHMSeu9k6WwHVMr0RmkqSIhvnzB5pOEeqzkfJSC/zDLi99Lqf
+	pH6sTBFAIOq/+zkoFYSM46S4enf2TYsgWxwZ4IJ2GZpUzISW7Avrdr5q3yfpFGUNtgI9qztPlaS
+	9yp7oHWMsrZMTrohCJvAr6oUTHG9FDw2gHZn/VPF36Y5ts5zTTes2SdnzjAQjVYjIvsDC1CBt/z
+	+v6xRdsD6jlZyKK0UHTdk4
+X-Received: by 2002:a17:90b:3811:b0:385:d033:d9f1 with SMTP id 98e67ed59e1d1-38f2961363cmr3133372a91.28.1785001921667;
+        Sat, 25 Jul 2026 10:52:01 -0700 (PDT)
+Received: from localhost.localdomain ([2409:408d:79f:1f48:d3f7:8b5a:7633:b67])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d2d1d0d1esm15485573c88.0.2026.07.25.10.51.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Jul 2026 10:52:01 -0700 (PDT)
+From: Arunachalam <arun07172003@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Andreas Werner <andreas.werner@men.de>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arunachalam <arun07172003@gmail.com>
+Subject: [PATCH 1/2] leds: menf21bmc: Use brightness_set_blocking instead of brightness_set
+Date: Sat, 25 Jul 2026 23:21:45 +0530
+Message-Id: <20260725175145.31984-1-arun07172003@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20260725081938.422B11F000E9@smtp.kernel.org>
+References: <20260725081938.422B11F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710150841.19669-1-sdunnaga@redhat.com> <20260724180412.43150-1-sdunnaga@redhat.com>
-In-Reply-To: <20260724180412.43150-1-sdunnaga@redhat.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 16:02:00 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnfebNT-XJrVVamfGkFF3-dLgbqS0sGK7DGmHn4HRYnvg@mail.gmail.com>
-X-Gm-Features: AUfX_mz1RKV5pAY_rkJPQ1mz2SCJsDv1pnF_JwVtNdGXCBBF0VXe-5kZbcLF8lE
-Message-ID: <CAD++jLnfebNT-XJrVVamfGkFF3-dLgbqS0sGK7DGmHn4HRYnvg@mail.gmail.com>
-Subject: Re: [PATCH v2] leds: gpio: Clear error pointers for skipped LEDs
-To: Steve Dunnagan <sdunnaga@redhat.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 24, 2026 at 8:04=E2=80=AFPM Steve Dunnagan <sdunnaga@redhat.com=
-> wrote:
+menf21bmc_led_set() takes a mutex and performs an I2C transaction, both
+of which can sleep. It was assigned to the non-blocking brightness_set
+callback, which the LED core may invoke from atomic context (e.g. via
+the timer or heartbeat triggers), risking a scheduling-while-atomic bug.
 
-> gpio_led_get_gpiod() returns an error pointer when a platform-data
-> LED's GPIO is unavailable. gpio_led_probe() skips registration in that
-> case, but leaves the error pointer in led_dat->gpiod.
->
-> The skipped entry remains included in priv->num_leds. During shutdown,
-> gpio_led_shutdown() walks those entries and passes the error pointer to
-> gpio_led_set(), producing:
->
->   gpiod_set_value: invalid GPIO (errorpointer: -ENOENT)
->
-> Clear led_dat->gpiod before skipping the LED so skipped entries do not
-> retain error-valued descriptors.
->
-> Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
-> Suggested-by: Lee Jones <lee@kernel.org>
-> Assisted-by: ChatGPT:GPT-5.5-Thinking
-> Signed-off-by: Steve Dunnagan <sdunnaga@redhat.com>
+Switch to brightness_set_blocking, which the LED core dispatches from
+a workqueue in safe, sleepable context. This also allows propagating
+I2C failures via the function's return value instead of silently
+discarding them.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Arunachalam <arun07172003@gmail.com>
+---
+ drivers/leds/leds-menf21bmc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
+index a7e4db487..6b09e433a 100644
+--- a/drivers/leds/leds-menf21bmc.c
++++ b/drivers/leds/leds-menf21bmc.c
+@@ -49,7 +49,7 @@ static struct menf21bmc_led leds[] = {
+ 
+ static DEFINE_MUTEX(led_lock);
+ 
+-static void
++static int
+ menf21bmc_led_set(struct led_classdev *led_cdev, enum led_brightness value)
+ {
+ 	int led_val;
+@@ -67,10 +67,11 @@ menf21bmc_led_set(struct led_classdev *led_cdev, enum led_brightness value)
+ 	else
+ 		led_val |= led->led_bit;
+ 
+-	i2c_smbus_write_byte_data(led->i2c_client,
++	led_val = i2c_smbus_write_byte_data(led->i2c_client,
+ 				  BMC_CMD_LED_GET_SET, led_val);
+ err_out:
+ 	mutex_unlock(&led_lock);
++	return led_val;
+ }
+ 
+ static int menf21bmc_led_probe(struct platform_device *pdev)
+@@ -81,7 +82,7 @@ static int menf21bmc_led_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(leds); i++) {
+ 		leds[i].cdev.name = leds[i].name;
+-		leds[i].cdev.brightness_set = menf21bmc_led_set;
++		leds[i].cdev.brightness_set_blocking = menf21bmc_led_set;
+ 		leds[i].i2c_client = i2c_client;
+ 		ret = devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
+ 		if (ret < 0)
+-- 
+2.39.5
+
