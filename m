@@ -1,137 +1,224 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazolkn19012008.outbound.protection.outlook.com [52.103.32.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE433FC5AA;
-	Tue, 28 Jul 2026 09:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785232666; cv=none; b=jVbTL07YJP23cteHBb57r8D237dDbQEWPub810Btp8Dw5qctcLjQ4uu1oK4J11mKurmpk5V4Z3YXcTfpU23PVPiNrYUDWcYxOvxTKNRyaamwiGJdYLJHm7lut2qn6ooHLaf2HqCB+CJgKH9fZFYfP0MksGXnkABQV+taNOyMRGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785232666; c=relaxed/simple;
-	bh=ec91sqki9o5YTUZ1Nu9bgb0IjRlMfjMfRuoIuMpyP54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B5smccG9QQOiuEo0CH+ZeGNJJs1T0n6sWgLzM3At3oMhggFU0yNZYyVj3W5MfG4NH7omE8g6gZKgPHbMqGeKSTZ41A1riCfTXaM1E/KZAaRh3QTBqXypEQh68+wg4MH2YOE/KzEARUpXQytJXU4xek3GpUtpGru3wttTRNuBIl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WnZIBl5Y; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580321E5B68;
+	Tue, 28 Jul 2026 10:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.32.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785235955; cv=fail; b=BThebmRhyJHAuebYJzN/jH6Afx2uSczThbBfg1dTCYRNmG6E4mnE0B6pXPJNgH9GyoUVrXYFVXVi3mBzxYKYN7RPvxJv5LiOpkoFObuaBoaNMUV9ELRCvLzlyrH99Gz8q3P46+Aa2tgAOOHAam5pReVBY+jzWHOT74PQM5jCydY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785235955; c=relaxed/simple;
+	bh=gb9z2INfVKEU5uO1zNrPYBlw+S8Bmom34iff0NyI2uQ=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=S3k9kpt8aOrdMQtbTWscNsOIj+2r3qgiys8GtgSzQ9JQYc7Aguf3XrLiiWNYRWxjbyOhHtTCnANjfoJgyTTdSz48ZVaO/CbVVTevx+pDlE8AqoSUZ5gJFBU1ySvq43rELfeFuUjh/Sa1swB31gD6r4tFKmLZT/WvXkSgfn/fkM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=uuTFPvji; arc=fail smtp.client-ip=52.103.32.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WnZIBl5Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A23D1F000E9;
-	Tue, 28 Jul 2026 09:57:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785232665;
-	bh=4tXd8I5pqXC2v1qhFiDaUbQ3ghmvMsfhvy0VvyhID4M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=WnZIBl5YyDJ8S0mxzfQjQc7UqP2VgKLB8WzKVJFsUvHPZ6HsXBtX7FnPE/ZLEO5iY
-	 9EDJXEItxZofzHHXuZ+nQC3whoZyDC3maAozy/0TJu+x7AvTcYGZG2bftAp4+q1Ykn
-	 MA0uI95YAhSqIUUQ5VfU8YrAevGikSNflUJ/xD5GUf5xJxUleFs2nNHdT/4xkn3VOG
-	 DoWJ9C9SHSvQiBG3GU/E8+go8ramhRM+KbLDOK7tajATjaHH/kVR9plGc/rWAX7UPc
-	 /jRulPG1ISydJMsdSNFBouY6sidThiFOOoVoSqIdAg9kOKos6hc6k7Zm3RbwL0Zf21
-	 AdzpQ0+6tjEuw==
-Message-ID: <1a96515b-5f6a-4f0d-81d3-2640f7a3b7c8@kernel.org>
-Date: Tue, 28 Jul 2026 11:57:35 +0200
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="uuTFPvji"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=v645cQvMNovKNwOnUgVaT1yZ70SHHKuMD73+c8lwuPu7AaLxKYdZ+vMc+UuH3oBNPKuWxzKL7Y2DQeXmNrysRKTIOrya6HhEtNV8dZauztHRRLDkOBfc0gqc6r4s8e58pLkRZ0V7gZkvBpNVnDTxcpI5Qw1uJKSqaBcgz7lJSNE3/BuxvmjSbxFDtRszCeBEI4JO6NNNnpgRXMfQCqutWvQuBVAf7HYBjxrzUAM2n6UMEsY3IohBhJduQhGdXpcW0wFS0dYiCfV826Q+xzE2zhUQ/tobmdu3WmdR382uia4Y0M/AEZlAxjb2UQs/u9T8jgK+EsgzEWC2KXUVz3HkzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jvN44n3tjKpR+rQJKKSxXqBaeKFxTjUd3CG6RovC6RE=;
+ b=k0bIqUzHH4e0RSu9vHryGglhywueyymqZn7mWhTqJKTYA+KzevKCbyXTyiF+04ynCtCf3v0qM34rtOe36kZqghRzpb47z+TjWcXWJVi7a485ghanvF87b7QL6Be3mPsNTK87zNIn6MfZAx6yPZEpWLhUYKKUrNcr6v9TVl41XuTpj6Loph81jbPF/MVn9dlD4QHU0swbAm0okO+aZr8/hFRrVB3Oudot8NQQuFfxdaHZBAJ05HcVZ0Rv9WReFud01C115xQ4KBMFh0h3lbcl7ejLxDRN4j7KH1Xq6XxVR2MpKV5a6L0wFoWXMkdAhGTqHmJgX9N55cqdS+EhpdLfkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jvN44n3tjKpR+rQJKKSxXqBaeKFxTjUd3CG6RovC6RE=;
+ b=uuTFPvjiBBYt199gWps8UwQvL0W2WVQKYGgNQw3CyYu0K2wi6E1xmqZg4zyooWVZ5LirSfFZ0YPlm2KWSuANQj43GBeBoxHq1mbYvIrOD9dSswcQbge4tzHxoR81IKoUUAO95WikVNWkhl3mbjx1BHVUIRWVYbq5rcUGGsh/CONO+XGupa2qF78hmJg1K7BRZGB5MDyjvKrqTPBTKjEIOdMLjbXC53nqIZOF5RZIplWUY4O9eXTAxqIM1kmruqelyrxxjki+120cErCqVtIgP8APsxZeDissJa3Aiw9peVJsD6ASuHrbx65qbkJGzdnTO0sCwwXFtTxKas5SwERXyQ==
+Received: from GV1PR08MB8497.eurprd08.prod.outlook.com (2603:10a6:150:81::22)
+ by DBAPR08MB5704.eurprd08.prod.outlook.com (2603:10a6:10:1a1::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.12; Tue, 28 Jul
+ 2026 10:52:23 +0000
+Received: from GV1PR08MB8497.eurprd08.prod.outlook.com
+ ([fe80::705b:d4a3:1c1f:b9a2]) by GV1PR08MB8497.eurprd08.prod.outlook.com
+ ([fe80::705b:d4a3:1c1f:b9a2%5]) with mapi id 15.21.0245.012; Tue, 28 Jul 2026
+ 10:52:23 +0000
+From: Manuel Fombuena <fombuena@outlook.com>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	vicentiu.galanopulo@remote-tech.co.uk,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/1] leds: st1202: Add hardware-accelerated blink support
+Date: Tue, 28 Jul 2026 11:52:06 +0100
+Message-ID:
+ <GV1PR08MB8497E3103AD32162BD05D907C5CB2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+X-Mailer: git-send-email 2.55.0
+Reply-To: fombuena@outlook.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0030.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:151::17) To GV1PR08MB8497.eurprd08.prod.outlook.com
+ (2603:10a6:150:81::22)
+X-Microsoft-Original-Message-ID:
+ <20260728105208.336129-1-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: leds: lacie,ns2-leds: Convert to DT
- schema
-To: Ninad Naik <ninadnaik07@gmail.com>
-Cc: lee@kernel.org, pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, simon.guinot@sequanux.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- me@brighamcampbell.com, linux-kernel-mentees@lists.linux.dev,
- skhan@linuxfoundation.org, kernel test robot <lkp@intel.com>
-References: <20260724162332.32291-1-ninadnaik07@gmail.com>
- <20260728-garrulous-wild-jellyfish-a6e0e4@quoll>
- <b004a0f5-1dcd-4d40-84c7-33108eb20395@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <b004a0f5-1dcd-4d40-84c7-33108eb20395@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR08MB8497:EE_|DBAPR08MB5704:EE_
+X-MS-Office365-Filtering-Correlation-Id: 443b1d23-5cdf-4c24-c711-08deec964cfc
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5062599005|51005399006|8060799015|19110799012|37011999003|23021999003|25010399006|24021099003|15080799012|6090799003|5072599009|10035399007|40105399003|1602099012|440099028|3412199025|4302099013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eVZ4NVR3RFJHZ1BoM3htYlNKM1pOc050RnQ2cnVJdDZlU0Z1QlIyamRiRndH?=
+ =?utf-8?B?WnNHUHJrN3ZpdUVDcVFIRkZpYWZ1V0toejlmeTVub1VQa2ZBcVhvNDZrcFly?=
+ =?utf-8?B?U3duY3YzNWZNdXJNdVNka1lEN1ViYkRBa0lHYTlGUzY3YkRubDV2WTR6aHN3?=
+ =?utf-8?B?SzlZSEVyRDVQdnUwWFZEcWtHbHVCRVVJZ0N0NktBUkNRaWl3eVVMYk1CRy9X?=
+ =?utf-8?B?RndrMk0xalpBK0ZXTlZiaWJ0M0lBYXNIaURkRHBod2JaMHNUSnAza2xtSG5q?=
+ =?utf-8?B?NHdpRnVBNmJPVEMrdy8yZUlwM1ZjWEcxSGJqKzk3ZGdyVHZBMm9hcjVXY3Jv?=
+ =?utf-8?B?MHZBdlRUWGtSRWNqaDBnV0VMdkM2Wjd5RmxrSGxoU01VcVFmWUJ6eEdRVW5C?=
+ =?utf-8?B?MUZLTFZIRW5mdXBpbENkVGZrb1BEL3FTbzFOaFl3QUlCMHVuMDVXVkRubWJR?=
+ =?utf-8?B?N2lHKzB5bFA2RkZwNGRqaEhMVzBnelZ0NC9pTjh2a0NjUjBWK1U4MWhXVGVO?=
+ =?utf-8?B?eHNoOFZpR1ZuZVF0UVM0VXlxTGd6eW40VGp0clQzWmErWDNORUY1Sk0xQnQv?=
+ =?utf-8?B?OFB5Si9VdG5rTC8yZUZzWEhWV0NNbUpobml1QkdlaDBEbG0vaUVvcXFwbXVm?=
+ =?utf-8?B?Y2dUT09PeHQ2dzRxbG9GQ1l5SUx3bmZOQk9ZWWwvenZDYVUwNXlRRXREU3hy?=
+ =?utf-8?B?eHl2amtjQ1Z1NWR6VDZnclYyeXNhOURrWk5vS0twT0o3NDFGdEpmdjFBZjZ6?=
+ =?utf-8?B?cHJmQmJxUnlmWGRNNTBVbUN6SmgzbnZXR3U1T3VpMWpQMXhPb1h5V2xmZE90?=
+ =?utf-8?B?S0dyM3lHVTJLVlZnbDFMN0hIaFNhdWVQakVFQzRxWE0xV05UMWZ4TEpERHk3?=
+ =?utf-8?B?WXltRTlkMkJYckhPbkhUYjkxTVA5WW1hUjZ6V084RVdjbHpyQkJwS0tNUFRV?=
+ =?utf-8?B?ZFNkMVNuWklaR2RITjE4RmRUT1RwRE5oMUczdER6S1p3YUUva1piOEN5RER4?=
+ =?utf-8?B?NmJtWHRkWDM3a1RycUlVeGdzSEdKdDNBMG9uc3BzaVh6eC9kRDI3YmVEK2FH?=
+ =?utf-8?B?MWhpcTA0L0xMY2swOHY1ZHd3bjNXdm5FcUNuY1pYOG00SjFDaGZoNUhialBJ?=
+ =?utf-8?B?cENBSlBIZGxIRElFUjFLQnRQNit0V3hhTHd4ZkhYK2ZzL3dvOG9JNGNHS0Vw?=
+ =?utf-8?B?NFRiZnN6bTNmdmk3QUVFVWI0aFYyZ0Y5clRBZGljNmRCZ2x3YXJzZ2VMeXdy?=
+ =?utf-8?B?VHFxRGYzL0xVVGxJMXdnS1J6L3lLQVpjR3FuRE81dVc5cDdaa1Y3cjFzVmNF?=
+ =?utf-8?B?ZVRJQmpnckhDQi83Z2x2MllEVVc5aXZvZ3hVMk1vMytsTFlQZC9HdzJ4YVEw?=
+ =?utf-8?B?Wk9YWWlkQ0k1NnRQMnJQSXJIc3FPWWJPbGdVSFU1OGR2NUduNCtjSnpCOWtO?=
+ =?utf-8?Q?OpRsL+P4?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?blc4NFcyOXRaRW9rNWF5ejlmeTFSSmRrL2t5YjM0ZVg5aTF2dTIrZmV4aU5v?=
+ =?utf-8?B?RThpMmVhOGJtcHFKd2pVRnlZQ0UyY2F4Rzc5WHB4ZnVPcWRHWmpPTWx4bHhM?=
+ =?utf-8?B?eUt3MGZxQWx6bXdWaWVTZHF0Z09ISFRhSmhORHlkck1hbytMVUJkT3RzY1py?=
+ =?utf-8?B?MmhwSnhBaEs0TmJmM2pYRVU0VGV1aWprVm9IM0haUk9iNW1QKzYxYU8yUXM0?=
+ =?utf-8?B?blhraUpuSWVsOWV1MEZyWTRiNjRYYy9neVpXWU8xeWhsUkpaOUhKUU56cDky?=
+ =?utf-8?B?M2VZR255Z2g0emtaL2t6bk1lT29nOThadkRsa2M3eVhBb1BWdG9iZkhvVVN4?=
+ =?utf-8?B?K0dHWnE5ZzFZWEY4U0Q4alBydy9ITlo5cUxPZjlQTWQydGk4L0dUQmIxOGoz?=
+ =?utf-8?B?c2dtT2ZBOGIzUHpuOG9WbGsvTTFTNkZKUytuYmxPdjdoUitsaU5xbTFCclRM?=
+ =?utf-8?B?SzBZaVFGV0ZpVE1nNUtWTlJMZ2dzYjlDMTEvUXBkZitvRkRPZFZ5TWlLUk1y?=
+ =?utf-8?B?aUwwbmVWQkw0bTQ0eWF4WWFLbWJWQ0tFdDZMTVdUcENGeXYybHRGVXRnM0RU?=
+ =?utf-8?B?VUZOdmJaLzJSeFdHR0xhVkdWcDEwZFNMVDNZaHhlcmRxb01BMHlMcXlGN1dQ?=
+ =?utf-8?B?V1VwcnlncFg3ZVJRSVpSVmxtQzhIa3Q5TEo2YVJhMUN1VDVKRnFKZTFCcys4?=
+ =?utf-8?B?M1dKS094YVZWZ09ReGVkYms5elhRcEdkdGJKcGpsbEJoQ2pwckhIU1Vackdt?=
+ =?utf-8?B?RjhWK0xhN292Z1d6V0dlemcyOEUxVUpQSE5HMnFkemV2RmNsNVpaZEcxcGxD?=
+ =?utf-8?B?WjhNUFdxeFVRVnc4a2lKWlEwbXNwLzR1RzVtd0FiQitMN2J5Qm4rcmRZdTZV?=
+ =?utf-8?B?YTRCTW9PZm1Pd01paE0raTB5QVFMakwrOFgwcHRtbmpqZTFuMWxvNjcrTjBF?=
+ =?utf-8?B?TEE0enhNMjM2QXRKV3FuUWh4L3piRXF5NVZLcHU3bUlhUjJaM0RCRXhMc3hO?=
+ =?utf-8?B?NGpPMjFMQ29GQmtsbjNkYll3V1hoMEYrTTZ4QUd0clNwc3BTUGoveHZMSE5t?=
+ =?utf-8?B?cHZGU0VXUVlkYnpISDZvL3RGcThjVUFHbHpGcy9BR214S1dLOEtjRlc3b2Mw?=
+ =?utf-8?B?bHpGc2dmVStCT0VBcThaZ1drbTVyeDZBZ01lZVhpNGpkM2QzQlNaRGF3TGxI?=
+ =?utf-8?B?cmNzSXZiZ3dQU2tpc0NTSDN0cmVsTWpMa2JIZGlTdnFYS3VMVXpzVFp3cEZr?=
+ =?utf-8?B?c3J2RDRTRUNnTkt1amtqWnB1MXNtaEZjc0lrTlV5dHVvWXhYaTJ6c2RvOHNn?=
+ =?utf-8?B?RkNaUDFqR0JLWUU3NXpzaGhwd0JnTTZlb1dnZ2s0bXk3cWlJNHJCbTJhdDlz?=
+ =?utf-8?B?R0ZGTkN4MWRhbVZ6SG96NlRqU0xBTTZucnhFQUFCUlFmZUUxdnhFb0kxOWJD?=
+ =?utf-8?B?Z24rV3doTXFVc3AwUjdWWFZqdnJUZmV1UFM4amFIYUZkLzZUQXhrR2RkUUFR?=
+ =?utf-8?B?eHZCQ1BJYVJOcmhMZ0V2TWVJQUFMZVBnUXJFTzVJNzRJS2JFMnZnbTlIRjdU?=
+ =?utf-8?B?MGxzblBNOXQ5NWUxSkRMYWh4UWFvdDErdDNOUDhHMm1IVGVtR29Ma3l4QlNl?=
+ =?utf-8?B?NFkvWnVQNHhnQXJxQm01MGxHUGQyRnNmQXBaNVFPMGpyZjZTQ2R6NG4xL1Vj?=
+ =?utf-8?B?WXVack5FY0dWTlg2TVduWEYySHp6WmZaQmFJTXpUdEVWVmxPa3hBc3V0a2lS?=
+ =?utf-8?B?UW92SldRM0tNSy9nMzRIVUs5UXBhU2JJdU44ZHBMVGNsZkpIbzE5UVkzYWFF?=
+ =?utf-8?B?TWYxU3VTcFl2UGlZN1QrVDZRV1RUZ3BpTzBvQVJ0NHQ4WVBITTZtM3pESnFh?=
+ =?utf-8?B?aUYvRWRSTitycm5TeXpKVnZVZFE3VDNxdkMzZXFOSDBnNHd5dTRyZmgxN21v?=
+ =?utf-8?Q?R2xDB3vvLkOxvTd1xRKC7TxcAG7tx1Ve?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 443b1d23-5cdf-4c24-c711-08deec964cfc
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR08MB8497.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2026 10:52:22.6962
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR08MB5704
 
-On 28/07/2026 10:37, Ninad Naik wrote:
-> 
-> On 28/07/26 1:24 pm, Krzysztof Kozlowski wrote:
->> On Fri, Jul 24, 2026 at 09:53:32PM +0530, Ninad Naik wrote:
->>> Convert lacie,ns2-leds to DT schema.
->>>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes: https://lore.kernel.org/r/202607231542.6ovJrInT-lkp@intel.com/
->> Drop both. You need to read that report again.
-> Sorry, I missed the line which says not to include the tags in a new 
-> version of the same patch. Will remove.
->>
->>> Signed-off-by: Ninad Naik <ninadnaik07@gmail.com>
->>> ---
->>> Changes in v3:
->>> - Add optional property num-modes to the schema.
->> Missing rest of the changelog.
->>
->> What happened here?
->>
->> Rest looks good, so with dropping incorrect tags (really, please read
->> the email you received):
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Should I carry over this tag in v4?
+This patch adds blink_set() to the ST1202 LED driver, enabling
+hardware-accelerated blinking via the timer trigger.
 
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here ('b4 trailers -u ...'). However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for tags received on the version they apply.
+A series of nine fixes to the pattern engine and brightness handling
+was recently applied to for-leds-next:
 
-Full context and explanation:
-https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+https://lore.kernel.org/all/GV1PR08MB8497C0B898789BB73ACE6EE3C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com/
 
+With those fixes in place, the pattern engine can be used reliably to
+implement blink_set(): a two-step pattern (full brightness for delay_on,
+off for delay_off) is programmed and started in infinite repeat mode.
+Requested delays are clamped to the hardware range and rounded up to
+the nearest 22ms step.
 
-Best regards,
-Krzysztof
+During review of the fix series, several pre-existing issues were
+identified in the driver — including brightness_set() being assigned to
+a non-blocking callback, the global sequencer affecting all channels on
+pattern operations, and missing brightness scaling in pattern_set().
+These do not affect blink_set(): the callback is not invoked from atomic
+context, the function explicitly programs all other channels' PWM slots
+to zero before starting the sequencer, and channel brightness is set
+directly via the ILED register. The pre-existing issues will be
+addressed in a follow-up submission.
+
+Tested on LED1202 hardware via I2C on a Linksys MX4200v2 router running
+OpenWrt. Hardware blinking confirmed functional with the timer trigger.
+
+--- Changes in v4 ---
+
+  Fix delay clamping and rounding order following a review of the
+  changes introduced across v2 and v3:
+
+  v2 moved roundup() before clamp_val() so that rounding could not push
+  the result past the hardware maximum. However, this left roundup()
+  exposed to integer overflow for extreme inputs near ULONG_MAX, since
+  roundup(x, 22) internally computes x + 21 before dividing.
+
+  v3 addressed the overflow by prepending a min_t() cap at MAX before
+  roundup(), and retained a trailing clamp_val() for the full range.
+  The trailing clamp_val() turned out to be unreachable: ST1202_MILLIS_
+  PATTERN_DUR_MAX (5610) is an exact multiple of ST1202_MILLIS_PATTERN_
+  DUR_MIN (22), so roundup() on a value already capped at 5610 returns
+  5610 unchanged, and the result is always within range before the
+  trailing clamp_val() runs.
+
+  v4 reverts to clamp_val() before roundup(). Clamping first prevents
+  overflow for extreme inputs, and since MAX is an exact multiple of MIN
+  the rounded result cannot exceed MAX, addressing the v1 concern
+  without the redundant operations introduced in v3.
+
+--- Changes in v3 ---
+
+  In response to automated review feedback (Sashiko) on v2:
+
+  Clamp delay inputs to the hardware maximum before calling roundup() to
+  prevent integer overflow for extreme values near ULONG_MAX.
+
+  Other pre-existing issues identified by the automated review are
+  outside the scope of this patch and will be addressed in a follow-up
+  submission.
+
+--- Changes in v2 ---
+
+  In response to maintainer (Lee Jones) review on v1:
+
+  Use short-form ternary for default delay substitution.
+  Perform roundup before clamp_val to ensure rounding cannot exceed
+  the hardware maximum.
+  Capitalise commit subject per LED subsystem convention.
+  Drop Assisted-by tag per maintainer suggestion.
+
+Manuel Fombuena (1):
+  leds: st1202: Add hardware-accelerated blink support
+
+ drivers/leds/leds-st1202.c | 82 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
+
+-- 
+2.55.0
+
