@@ -1,148 +1,194 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0C73DDAEA;
-	Wed, 29 Jul 2026 07:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27FB380FCC;
+	Wed, 29 Jul 2026 07:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785311573; cv=none; b=EHuCdEJ2olgIIwiBnTqWeV7tCsM33XUi4Z24inz682UD0Duju/q2oEYTImvI7UVr4P5hRyAqnT6cOyznQS/jx0khqOdJ8Jk/qnqZxckZkULU8jJMk1q6x382cdkIKq9he2xaoGyxhxF+vg8B2iNe+5dGgasNef9ZbivbvVfgbsY=
+	t=1785311711; cv=none; b=ALoH1Q5otICeIYCWLhUzh7Ovi9zX2pUDbU8BUWvU6pTYLHrKEs0vMBDP+/WyybtauW5QUM4P5GSCT2jFjnLeDcOII/WVC3sBNQlpY3Mx2XLLl9JNk5HwIfhx8GHpxM5BlU0PzsnqpVTn/i0L2UKk5W8kJbDw3UR/mkOQ9LhypdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785311573; c=relaxed/simple;
-	bh=Gos1e25U0o2cpUAn8uF6ZMD+LMgDu2CEh9xAtIQRHI8=;
+	s=arc-20240116; t=1785311711; c=relaxed/simple;
+	bh=uIesNXsbfypRPGkFAi4oGNRysTq2NGi/3Xh3f6ZX7iI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=AWunudAYSqe37L0HM+CnxMdWAKeEKS/GEpgQrOy+PCWqI6Xn7kISCcTOyv38gXm2S9k3Lgf4fywpqfG+hHJT884WAYWqjje77onuMZbJ80NPrlYDD6qr+lLnukkYA7D3RtEMdgpUpzemcH3WICGSc0XxltOuCD4AWKrdpxk4SUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGk6Y0Df; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=Q75nPc0v1mws8ePP3bwX3krKGI/N3ByHWUkwYNGpq2hUJnHI3JbsJRALXmUzQrv/nwjaGaXgr6CmNLhihhTds3Kfd3oZG/kqNi5ZRljvrpbyk3S06bkEQb8ZJ93lDyllHOKaRu1HGy/cErhuBKUP64tvmrrJGMIsLXZjSpxi8jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HX94FW7y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGk6Y0Df"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD191F000E9;
-	Wed, 29 Jul 2026 07:52:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX94FW7y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1211F000E9;
+	Wed, 29 Jul 2026 07:55:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785311572;
-	bh=qp+TqS76JFFTouHj3Yf0x0C/k01bGu1P1mKxSi1rKz0=;
+	s=k20260515; t=1785311709;
+	bh=ch9aaCo6MUw2L7HbyvHGDqvTr9+b46qSSbkjnV19OWU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=IGk6Y0Df63fuYmDulabgOfOZ+UtV6oM0lGw4Z8G888PrJK2qwUuKXOVY22dPq5NQS
-	 vWzC+29TJPO6DcFzzeX7H39pkjgNC1YF60w0HKNV1p0xLQEu6Tc3DsiBEpqO0XMXv3
-	 EwxzLj4EOiPdpbEZhHo0VYN2hwMzafFf4gbirTxc9ReLuT5bnpvasbPhBFNYIaQ+20
-	 6EqS4LE8kbgKk0k3sdrULdtYl4x8CO6pv4Tqmi5qMwjbFACDrrib6WDkEd0pAFJmtp
-	 tjYqtPL24+WSrXqVfm7YnZED/qgc5EhmsMlpI5IBOXWnQyJHNm1m/GsHWBVyGUgdKU
-	 Te+Tq7UtIn9BQ==
+	b=HX94FW7yxg5e/PkC/xijqRZa/pD5cbf1zyktfHB8IaE1gjJ28BuF+YhSasKYExTyY
+	 DV+xpVAymPWkAhLWtD4jKVf/XnObsEkNMDbUWhk00ah+xEcGboadtz3cjR+rYU2LvM
+	 xn6elB9ockadXEPi6tRSO06EO5wImmAmQY0SrR+SUc8Hi20/SM18ieyn6AoMjuSNub
+	 Hb9ot0B1Kb5dngdQbLbBfxJ4wyB72XyOu5Ua73RhjvXp1rBDM3REeIYG/y7wZ6FHcm
+	 862ykf/iVSMTBtyh8P1b/KYsQ/UVP/yDqUpneTZnPqE84l382FG2yWL6NeLQ6iKsQ7
+	 tXl27QoPUQ9vg==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 3/4] leds: pca9532: check return value in
- pca9532_gpio_get_value()
+Subject: Re: [PATCH v2 1/4] leds: pca9532: check i2c_smbus_read_byte_data()
+ return value
 Reply-To: sashiko-reviews@lists.linux.dev
 To: haibo.chen@oss.nxp.com
-Cc: Frank.Li@kernel.org, imx@lists.linux.dev, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260729-led-fix-v2-3-09ad218457bd@nxp.com>
+Cc: imx@lists.linux.dev, linux-leds@vger.kernel.org, Frank.Li@kernel.org, lee@kernel.org
+In-Reply-To: <20260729-led-fix-v2-1-09ad218457bd@nxp.com>
 References: <20260729-led-fix-v2-0-09ad218457bd@nxp.com>
- <20260729-led-fix-v2-3-09ad218457bd@nxp.com>
+ <20260729-led-fix-v2-1-09ad218457bd@nxp.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 29 Jul 2026 07:52:51 +0000
-Message-Id: <20260729075252.3BD191F000E9@smtp.kernel.org>
+Date: Wed, 29 Jul 2026 07:55:08 +0000
+Message-Id: <20260729075509.4B1211F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
 s) to consider:
 
 New issues:
-- [Medium] Unratelimited warning log in the GPIO read callback can flood th=
-e kernel log.
-- [Low] The commit message description after the subsystem prefix is not ca=
-pitalized.
+- [Low] Commit message description capitalization violates LED subsystem st=
+andards.
 
 Pre-existing issues:
-- [High] Race condition in driver teardown leaves input workqueue active af=
-ter device data is freed, causing a Use-After-Free.
+- [High] The patch addresses an unhandled I2C read error in `pca9532_getled=
+()` but leaves identical, critical vulnerabilities unpatched in `pca9532_se=
+tled()` and `pca9532_gpio_get_value()`.
+- [High] Input event workqueue race condition leads to a Use-After-Free dur=
+ing device removal.
+- [High] A malformed Device Tree with duplicate beeper definitions will tri=
+gger a BUG_ON() and crash the kernel.
 --
 
---- Patch [3]: [PATCH v2 3/4] leds: pca9532: check return value in pca9532_=
-gpio_get_value() ---
-commit 40e01af05e0100f229b670bf1dcf0b63a92a90f8
+--- Patch [1]: [PATCH v2 1/4] leds: pca9532: check i2c_smbus_read_byte_data=
+() return value ---
+commit 815cd02e98d4a21b790e3fbfdbff33af4f337f2d
 Author: Haibo Chen <haibo.chen@nxp.com>
 
-leds: pca9532: check return value in pca9532_gpio_get_value()
+leds: pca9532: check i2c_smbus_read_byte_data() return value
 
-pca9532_gpio_get_value() reads the input register with
-i2c_smbus_read_byte_data() but stores the result in an unsigned char and
-never checks for failure. On an I2C read error the negative error code
-(e.g. -EIO) is truncated to an unsigned byte, and a bit is extracted and
-returned as a valid GPIO level. This masks hardware errors and lets
-kernel or userspace consumers silently receive corrupt data.
+This commit fixes an integer underflow in pca9532_getled() by checking the
+return value of i2c_smbus_read_byte_data().
 
-> leds: pca9532: check return value in pca9532_gpio_get_value()
+> leds: pca9532: check i2c_smbus_read_byte_data() return value
 
 [Severity: Low]
-This isn't a bug, but the subsystem guidelines request capitalizing the
-description after the prefix. Should "check" be capitalized to "Check"?
+Does this commit message violate the LED subsystem capitalization rules?
+
+The subsystem guideline requires capitalizing the description after the
+subsystem prefix, but "check" is lowercase.
 
 > diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index adfb5aa50e8e1..cee398d8275b8 100644
+> index 2d37e00e459de..e8ee17b8bd547 100644
 > --- a/drivers/leds/leds-pca9532.c
 > +++ b/drivers/leds/leds-pca9532.c
-> @@ -345,9 +345,14 @@ static int pca9532_gpio_set_value(struct gpio_chip *=
-gc, unsigned int offset,
->  static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
->  {
->  	struct pca9532_data *data =3D gpiochip_get_data(gc);
-> -	unsigned char reg;
+> @@ -298,12 +298,15 @@ static enum pca9532_state pca9532_getled(struct pca=
+9532_led *led)
+>  	struct i2c_client *client =3D led->client;
+>  	struct pca9532_data *data =3D i2c_get_clientdata(client);
+>  	u8 maxleds =3D data->chip_info->num_leds;
+> -	char reg;
+> -	enum pca9532_state ret;
 > +	int reg;
+> +	enum pca9532_state ret =3D PCA9532_OFF;
 > =20
->  	reg =3D i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset=
-));
-> +	if (reg < 0) {
-> +		dev_warn(&data->client->dev,
-> +			 "failed to read input register: %d\n", reg);
-
-[Severity: Medium]
-Could this dev_warn() flood the kernel log if the I2C bus fails while
-userspace is actively polling the GPIO value? Would it be safer to use
-dev_warn_ratelimited() here?
-
-> +		return reg;
-> +	}
-> =20
->  	return !!(reg & (1 << (offset % 8)));
+>  	mutex_lock(&data->update_lock);
+>  	reg =3D i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
+> -	ret =3D (reg & LED_MASK(led->id)) >> LED_SHIFT(led->id);
+> +	if (reg >=3D 0)
+> +		ret =3D (reg & LED_MASK(led->id)) >> LED_SHIFT(led->id);
+> +	else
+> +		dev_warn(&client->dev, "failed to read LED register: %d\n", reg);
+>  	mutex_unlock(&data->update_lock);
+>  	return ret;
 >  }
 
 [Severity: High]
-This is a pre-existing issue, but does driver teardown leave the input
-workqueue active after device data is freed, causing a use-after-free?
+This isn't a bug introduced by this patch, but doesn't this same issue still
+exist in pca9532_setled() and pca9532_gpio_get_value()?
 
-Looking at pca9532_destroy_devices(), cancel_work_sync() is called but
-the input device remains registered because it relies on devres for
-unregistration:
+In pca9532_setled(), if i2c_smbus_read_byte_data() returns a negative error,
+the error is truncated into the char reg variable. This value is bitwise
+modified and written back to the device via i2c_smbus_write_byte_data():
+
+drivers/leds/leds-pca9532.c:pca9532_setled() {
+    ...
+	char reg;
+    ...
+	reg =3D i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
+	/* zero led bits */
+	reg =3D reg & ~LED_MASK(led->id);
+	/* set the new value */
+	reg =3D reg | (led->state << LED_SHIFT(led->id));
+	i2c_smbus_write_byte_data(client, LED_REG(maxleds, led->id), reg);
+    ...
+}
+
+Are the other 3 innocent LEDs sharing the same I2C register overwritten?
+
+Similarly, in pca9532_gpio_get_value(), the error is cast to unsigned char
+and evaluated in a boolean context:
+
+drivers/leds/leds-pca9532.c:pca9532_gpio_get_value() {
+    ...
+	unsigned char reg;
+    ...
+	reg =3D i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset));
+    ...
+}
+
+Should these regressions be fixed as well?
+
+[Severity: High]
+This is a pre-existing issue, but does pca9532_destroy_devices() have a
+race condition leading to a use-after-free regression during device removal?
+
+During driver unbind, pca9532_remove() calls pca9532_destroy_devices(),
+which cancels the work:
 
 drivers/leds/leds-pca9532.c:pca9532_destroy_devices() {
     ...
-    cancel_work_sync(&data->work);
-    data->idev =3D NULL;
+	cancel_work_sync(&data->work);
+	data->idev =3D NULL;
     ...
 }
 
-If an event comes in after pca9532_remove() finishes but before devres
-cleans up the input device, could pca9532_event() blindly reschedule
-the work?
+However, the managed input device data->idev remains active until devres
+cleanup. If an input event arrives after the work is cancelled but before
+devres cleanup, does this code schedule the work again?
 
 drivers/leds/leds-pca9532.c:pca9532_event() {
     ...
-    schedule_work(&data->work);
+	schedule_work(&data->work);
     ...
 }
 
-Since devres unregisters the device and frees data, the scheduled work
-could be left dangling. When pca9532_input_work() finally executes,
-would it dereference the freed data pointer?
+If devres then frees the data structure, does the system workqueue execute
+the scheduled work on a freed pointer?
 
-drivers/leds/leds-pca9532.c:pca9532_input_work() {
+[Severity: High]
+This isn't a bug introduced by this patch, but can a malformed Device Tree
+cause a BUG_ON() regression in pca9532_configure()?
+
+If the device tree contains more than one node with type PCA9532_TYPE_N2100=
+_BEEP,
+the driver allocates data->idev on the first iteration. On the second itera=
+tion,
+would this BUG_ON() trigger?
+
+drivers/leds/leds-pca9532.c:pca9532_configure() {
     ...
-    mutex_lock(&data->update_lock);
+		case PCA9532_TYPE_N2100_BEEP:
+			/* PWM1 is reserved for beeper so blink will not use hardware */
+			data->hw_blink =3D false;
+			BUG_ON(data->idev);
     ...
 }
+
+Should this fail gracefully instead?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260729-led-fix-v2=
--0-09ad218457bd@nxp.com?part=3D3
+-0-09ad218457bd@nxp.com?part=3D1
