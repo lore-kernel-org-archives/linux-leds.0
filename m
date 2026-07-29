@@ -1,166 +1,148 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C843B6DD;
-	Wed, 29 Jul 2026 07:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0C73DDAEA;
+	Wed, 29 Jul 2026 07:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785311463; cv=none; b=dS10TwqCXyNQOUbSCVKkHEKxbVQqZDBKEP7DgJ+u0cZF/R2K/VdEz8aFULl5XalXkMIMMdQhmMQJg4xxg881TFhKZJ2iHa8m3KKCs9oEbsQkRo/P1VKNsOuhFU/bbFNE8V7bchr0uVzhCX7LXJUOE9rfIpONVUyHvB6h58vO/3M=
+	t=1785311573; cv=none; b=EHuCdEJ2olgIIwiBnTqWeV7tCsM33XUi4Z24inz682UD0Duju/q2oEYTImvI7UVr4P5hRyAqnT6cOyznQS/jx0khqOdJ8Jk/qnqZxckZkULU8jJMk1q6x382cdkIKq9he2xaoGyxhxF+vg8B2iNe+5dGgasNef9ZbivbvVfgbsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785311463; c=relaxed/simple;
-	bh=+9N/3HUhPZr6Y0AnQ/0s4O8kliwj/6ewRRsCM5EuCwo=;
+	s=arc-20240116; t=1785311573; c=relaxed/simple;
+	bh=Gos1e25U0o2cpUAn8uF6ZMD+LMgDu2CEh9xAtIQRHI8=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=OB3LO1wxMhQXuEE0nrdv1S9fhwWEw6hRRcdNjkH4Xsf/WVPBqkNAdXunR4YJ4OsDQR8uHq7owfecEZ9DCnWRGBnQ4nKLxqpazUl5kgh+cY1+dgkOFugNhAU4jwWLGwbaaXyKyEYNp4w6d7jD4CepvUYAwuSQVwWpdCWHDbnLZts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqQKn9jH; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=AWunudAYSqe37L0HM+CnxMdWAKeEKS/GEpgQrOy+PCWqI6Xn7kISCcTOyv38gXm2S9k3Lgf4fywpqfG+hHJT884WAYWqjje77onuMZbJ80NPrlYDD6qr+lLnukkYA7D3RtEMdgpUpzemcH3WICGSc0XxltOuCD4AWKrdpxk4SUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGk6Y0Df; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqQKn9jH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED70A1F00A3D;
-	Wed, 29 Jul 2026 07:50:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGk6Y0Df"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD191F000E9;
+	Wed, 29 Jul 2026 07:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785311456;
-	bh=tlD91KNtE50GnDMk3TE9IVovFMjNuBOF2RHx+XCyows=;
+	s=k20260515; t=1785311572;
+	bh=qp+TqS76JFFTouHj3Yf0x0C/k01bGu1P1mKxSi1rKz0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EqQKn9jHclr/49ZPeisFCs4SSv5m3Ke7miG2z0ZuwXV3wCNM9ORFWBAYT7y41bNmU
-	 2CYnSLS1FdFs+N8CwndzrSY/DEdAuLZVN0IRvs3hy6htk/xsQJP1VeCYJ5w0zf5Jq/
-	 vImugkIXLtlaIZ2Pd0Azdu4o/q2OjnaKcKZzmjwvfNy0exFHSem6TBHdeAfmn5j5/Y
-	 buosvSxVv42v+D+0pCTLG5x+P5bePuMSf7Da36idc/z7SoxV7TDXluK6ZZkjLvqK94
-	 xe8ZDnf9hmswDdH6ZkMoN5MUkdmPSBvNCkqzW0nQwA71r37zMiZULIO/pSoSBpF1/5
-	 05ZO5eHQ+HJ+g==
+	b=IGk6Y0Df63fuYmDulabgOfOZ+UtV6oM0lGw4Z8G888PrJK2qwUuKXOVY22dPq5NQS
+	 vWzC+29TJPO6DcFzzeX7H39pkjgNC1YF60w0HKNV1p0xLQEu6Tc3DsiBEpqO0XMXv3
+	 EwxzLj4EOiPdpbEZhHo0VYN2hwMzafFf4gbirTxc9ReLuT5bnpvasbPhBFNYIaQ+20
+	 6EqS4LE8kbgKk0k3sdrULdtYl4x8CO6pv4Tqmi5qMwjbFACDrrib6WDkEd0pAFJmtp
+	 tjYqtPL24+WSrXqVfm7YnZED/qgc5EhmsMlpI5IBOXWnQyJHNm1m/GsHWBVyGUgdKU
+	 Te+Tq7UtIn9BQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 4/4] leds: pca9532: fix use-after-free on unbind with
- N2100 beeper
+Subject: Re: [PATCH v2 3/4] leds: pca9532: check return value in
+ pca9532_gpio_get_value()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: haibo.chen@oss.nxp.com
-Cc: imx@lists.linux.dev, linux-leds@vger.kernel.org, lee@kernel.org, Frank.Li@kernel.org
-In-Reply-To: <20260729-led-fix-v2-4-09ad218457bd@nxp.com>
+Cc: Frank.Li@kernel.org, imx@lists.linux.dev, linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260729-led-fix-v2-3-09ad218457bd@nxp.com>
 References: <20260729-led-fix-v2-0-09ad218457bd@nxp.com>
- <20260729-led-fix-v2-4-09ad218457bd@nxp.com>
+ <20260729-led-fix-v2-3-09ad218457bd@nxp.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 29 Jul 2026 07:50:55 +0000
-Message-Id: <20260729075055.ED70A1F00A3D@smtp.kernel.org>
+Date: Wed, 29 Jul 2026 07:52:51 +0000
+Message-Id: <20260729075252.3BD191F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
 
 New issues:
-- [High] Explicitly calling `input_unregister_device()` on a device allocat=
-ed via `devm_input_allocate_device()` violates input subsystem managed reso=
-urce integration guidelines.
-- [Low] The commit message description is not capitalized.
+- [Medium] Unratelimited warning log in the GPIO read callback can flood th=
+e kernel log.
+- [Low] The commit message description after the subsystem prefix is not ca=
+pitalized.
 
 Pre-existing issues:
-- [High] Unprotected read and write access to shared driver state (`data->p=
-wm`, `data->psc`, and `led->state`) leads to data races between concurrent =
-LED operations and input events.
-- [High] `pca9532_probe` uses `BUG_ON(data->idev)` which allows malformed d=
-evice tree data to panic the kernel.
+- [High] Race condition in driver teardown leaves input workqueue active af=
+ter device data is freed, causing a Use-After-Free.
 --
 
---- Patch [4]: [PATCH v2 4/4] leds: pca9532: fix use-after-free on unbind w=
-ith N2100 beeper ---
-commit cbc774be651cc4a48a4aeff9054da59aafa6a737
+--- Patch [3]: [PATCH v2 3/4] leds: pca9532: check return value in pca9532_=
+gpio_get_value() ---
+commit 40e01af05e0100f229b670bf1dcf0b63a92a90f8
 Author: Haibo Chen <haibo.chen@nxp.com>
-leds: pca9532: fix use-after-free on unbind with N2100 beeper
 
-The commit attempts to fix a use-after-free during device unbind by explici=
-tly
-unregistering the input device before cancelling the workqueue. This preven=
-ts
-new events from requeuing the work after it has been cancelled but before t=
-he
-devm cleanup runs.
+leds: pca9532: check return value in pca9532_gpio_get_value()
 
-> leds: pca9532: fix use-after-free on unbind with N2100 beeper
+pca9532_gpio_get_value() reads the input register with
+i2c_smbus_read_byte_data() but stores the result in an unsigned char and
+never checks for failure. On an I2C read error the negative error code
+(e.g. -EIO) is truncated to an unsigned byte, and a bit is extracted and
+returned as a valid GPIO level. This masks hardware errors and lets
+kernel or userspace consumers silently receive corrupt data.
+
+> leds: pca9532: check return value in pca9532_gpio_get_value()
 
 [Severity: Low]
-This isn't a bug, but the subsystem guidelines request that the description
-after the prefix is capitalized. Should this be "Fix use-after-free..."?
+This isn't a bug, but the subsystem guidelines request capitalizing the
+description after the prefix. Should "check" be capitalized to "Check"?
 
 > diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index cee398d8275b8..eeb91b7466419 100644
+> index adfb5aa50e8e1..cee398d8275b8 100644
 > --- a/drivers/leds/leds-pca9532.c
 > +++ b/drivers/leds/leds-pca9532.c
-> @@ -385,6 +385,12 @@ static void pca9532_destroy_devices(struct pca9532_d=
-ata *data, int n_devs)
->  			break;
->  		case PCA9532_TYPE_N2100_BEEP:
->  			if (data->idev !=3D NULL) {
-> +				/*
-> +				 * Unregister the input device first so that no
-> +				 * new EV_SND events can re-queue the work after
-> +				 * it has been cancelled.
-> +				 */
-> +				input_unregister_device(data->idev);
+> @@ -345,9 +345,14 @@ static int pca9532_gpio_set_value(struct gpio_chip *=
+gc, unsigned int offset,
+>  static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
+>  {
+>  	struct pca9532_data *data =3D gpiochip_get_data(gc);
+> -	unsigned char reg;
+> +	int reg;
+> =20
+>  	reg =3D i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset=
+));
+> +	if (reg < 0) {
+> +		dev_warn(&data->client->dev,
+> +			 "failed to read input register: %d\n", reg);
+
+[Severity: Medium]
+Could this dev_warn() flood the kernel log if the I2C bus fails while
+userspace is actively polling the GPIO value? Would it be safer to use
+dev_warn_ratelimited() here?
+
+> +		return reg;
+> +	}
+> =20
+>  	return !!(reg & (1 << (offset % 8)));
+>  }
 
 [Severity: High]
-Does explicitly unregistering a device allocated with
-devm_input_allocate_device() violate the managed resource integration
-guidelines?
+This is a pre-existing issue, but does driver teardown leave the input
+workqueue active after device data is freed, causing a use-after-free?
 
-The input subsystem documentation states that explicitly calling
-input_unregister_device() on a device allocated via
-devm_input_allocate_device() can lead to double-unregistration.
+Looking at pca9532_destroy_devices(), cancel_work_sync() is called but
+the input device remains registered because it relies on devres for
+unregistration:
 
-Would it be safer to register a managed action using devm_add_action_or_res=
-et()
-to cancel the workqueue before calling input_register_device()? Since devres
-executes actions in LIFO order, this would guarantee the input device is
-cleanly unregistered before the workqueue is automatically canceled.
-
->  				cancel_work_sync(&data->work);
->  				data->idev =3D NULL;
->  			}
-
-[Severity: High]
-This is a pre-existing issue, but can concurrent access to the shared driver
-state lead to data corruption of I2C hardware state?
-
-The input event handler pca9532_event() can locklessly modify data->pwm:
-
-pca9532_event() {
+drivers/leds/leds-pca9532.c:pca9532_destroy_devices() {
     ...
-    data->pwm[PCA9532_PWM_ID_1] =3D 127;
+    cancel_work_sync(&data->work);
+    data->idev =3D NULL;
+    ...
 }
 
-Concurrently, pca9532_update_hw_blink() can be called from sysfs to set a
-blink rate, which also modifies data->pwm locklessly:
+If an event comes in after pca9532_remove() finishes but before devres
+cleans up the input device, could pca9532_event() blindly reschedule
+the work?
 
-pca9532_update_hw_blink() {
+drivers/leds/leds-pca9532.c:pca9532_event() {
     ...
-    data->psc[PCA9532_PWM_ID_1] =3D psc;
-    data->pwm[PCA9532_PWM_ID_1] =3D (delay_on * PCA9532_PWM_DUTY_DIV) /
-                                  (delay_on + delay_off);
+    schedule_work(&data->work);
+    ...
 }
 
-Additionally, pca9532_set_brightness() reads led->state locklessly in
-pca9532_calcpwm(). Could this data race lead to incorrect LED brightness or
-blink rates when userspace triggers sysfs writes and input events at the
-same time?
+Since devres unregisters the device and frees data, the scheduled work
+could be left dangling. When pca9532_input_work() finally executes,
+would it dereference the freed data pointer?
 
-[Severity: High]
-This is a pre-existing issue, but does pca9532_probe() allow malformed devi=
-ce
-tree data to panic the kernel?
-
-If a device tree contains more than one LED node configured as
-PCA9532_TYPE_N2100_BEEP, the first iteration successfully allocates and
-registers data->idev. The second iteration reaches pca9532_configure() and =
-hits:
-
-pca9532_configure() {
+drivers/leds/leds-pca9532.c:pca9532_input_work() {
     ...
-    BUG_ON(data->idev);
+    mutex_lock(&data->update_lock);
+    ...
 }
-
-Should the driver log an error and return -EINVAL instead of triggering a
-kernel panic?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260729-led-fix-v2=
--0-09ad218457bd@nxp.com?part=3D4
+-0-09ad218457bd@nxp.com?part=3D3
