@@ -1,150 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C59C27707;
-	Sun,  2 Aug 2026 12:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C265237180
+	for <linux-leds@vger.kernel.org>; Sun,  2 Aug 2026 15:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785672708; cv=none; b=k7lk2PQ76O8v3c1+5JhUZMbN3Jwzsd2ulCnc1J5MJ+0OvQg9BlOADhZn0eagxO+KHfWgRaLcNlu/Yw6dCDYlpHAnITI6357XDjDmK82QpvinK5f62bRFh6ZrrkK+HeSBBLw9FjoSbs19xiwDSvA9XhU5fzhWer6U//MrZS8byaI=
+	t=1785685589; cv=none; b=NvG6PJlXIaBXpfWVjf460KKFRbm4D0PVcBPRTnqpdQgxtV4cM0StEM4rZTMD7X6p31a6znEvqR9osfGnfYDRk2RovKj0QoYCT+ge9W5YL2pOzIc34ktIqHdZVGn/5IhKf9kK5nHgjSjQynLE9M+/0qm0BY3+3Or7mA6ZKSuVzXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785672708; c=relaxed/simple;
-	bh=8H05jnG4ozk2RdnuX2njil2TQnwBcQN++4KHq7BmntE=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=cVR52wyyBBbWCaPRQEiZP983pzMhIdzN4pq5wO8ySn+S/GHfZ9m5VxslQENDwB9hRBd4urs1PeIlUFdkVrCGpJcVsMY8H9OvDbrv2RMHQ/utWshbDatwXZsJlDO3ESEzcY53VMf/5eMGvatmguLrtZOQf7w8jsvLOR/3wOcjaFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFOCCF+s; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785685589; c=relaxed/simple;
+	bh=+jvAOF5SO3XqNwhCfQ0NZDjaKKztJGcQ5/Rywfk07Pw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bVJoSGdBRb2CdJ6T/1RUlLlPHvcU/ZA22LxanJSkp/UTYkHzoK+KBYGc0zltpZ4+bm6DadGl00oxHh+k+wZUn1FeSES3OMvTwHkG/P02MxzcZOWMIhe6vL1cDvVB4yilP2rW9qw4N2hAJpiLzglVQHqJP09ycasZQWFJrdNmPuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sDr9yjWh; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFOCCF+s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 483D11F000E9;
-	Sun,  2 Aug 2026 12:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785672706;
-	bh=MLzgeqYO5SoX0WQN6Y0lA932waDHEPHd5uSKtpq5T+U=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=IFOCCF+sERyHYq1VA6r2U3Pd6SMNYO1pL4IozrTOHoJHSt4COl5pGCLx7JN9yxBgl
-	 UOqzR19KRoFvvz34A+F/eaxRVITmHB+WO7PMJl4x+pFNfp9B2BxQeg5sDK1o6KL0HT
-	 RuUGnjgMT3Xw+WIVLEwCAQ19NqgQwpS37Xk08RnW3dXk+hgY+s0TT9Ez5iR0z5aTM6
-	 7tbedTaRCmiY154uxYilZ/WzylTdUR9uV2eJtweQ41G3QxqqgC7L3VsCKihc5NeiK8
-	 zw8bTxtZ0zCP8Nx6xJaZvMFxx+ursrAcQ6YlNaP6/NOt9astG/PbmBkqnwK66uu45p
-	 P/uoDRGzFRWtg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH V2 2/2] leds: rgb: leds-group-multicolor: Implement
- default-intensity
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Stefan Wahren" <wahrenst@gmx.net>
-Cc: robh@kernel.org, conor+dt@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260802115727.50411-3-wahrenst@gmx.net>
-References: <20260802115727.50411-1-wahrenst@gmx.net>
- <20260802115727.50411-3-wahrenst@gmx.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 02 Aug 2026 12:11:45 +0000
-Message-Id: <20260802121146.483D11F000E9@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sDr9yjWh"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-38101f85591so2658865a91.1
+        for <linux-leds@vger.kernel.org>; Sun, 02 Aug 2026 08:46:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785685587; x=1786290387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=kbnrAvB6TS3MK29/B8lpsoG39eR5hWxmezJin1MS/dY=;
+        b=sDr9yjWhsKeQY1txWWd/tHo+LXjUCXGNe+B15bh06Jzx77XCQcZoPacj/MLXU2r8BF
+         qp2kGLCDUp2sd5UQCMv0zTgfHRc6e6R+qKc0cuZcfNr6Cxm+LKTGoWsylsD/xwFy1Hee
+         ThJwno5M59GZG628WuCQuxoFk03SMZC8czkGZ/i4D92Uq/CY3ZWOV+Brd/jNZD0cEqzU
+         inHSkEr5UCLXf8wlndPYx6S7SN8aoVTmYb5zcT0D+bVw1YNPJ8KjT3t5U5SocOnUAdL0
+         atWEPiyhK8vJqbprWb6iK/dOssksGFrh66EH0Ixn3wMAgOUG7A/J6ShvO3kiqaQfNsp2
+         5wEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785685587; x=1786290387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=kbnrAvB6TS3MK29/B8lpsoG39eR5hWxmezJin1MS/dY=;
+        b=nGuOeE7SR81SzIr5oGn0v1kKzkSw3h9C+q7F5jsrLz8Dn4E6Yhj6iTsgfNw+G1ankQ
+         xi0IwmRsSTOE61YCHsc8uONKulqG09Ko+tfpCQv8ChEE8RdmZr++JBdxk4neni2Xefx9
+         VHOPLVuxIAvdAQZHBpgwTC5TAzqd4Pydu9VI44hvJbFGoOyce+32P+GKcjKREteaEvBd
+         fr1uaW/Gt+uALipOEcbzViTaXjmgGRg0Hh+Ah5yIJCfW1V6OsL+RP7zHNxd+lkAkvLTe
+         sNM1T/luvQkcdl3bFIkk8XZsqPCaQEoRuU44GC226/gPdjD2hk1/+2ZYNY0+mE2AI3+l
+         FUFA==
+X-Forwarded-Encrypted: i=1; AHgh+RpsMEfrdZz+qcI3KGEqEDXPfSAR7Vg7669YiLyq7yF6aW63mNYXgQMBuoHdZWpFg9HwLWhotGjhXiTL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj4CIcIcIEXXnqkhmpo8qb2hxTryEVBhFBvbGnATWRKba1qchX
+	wXJz8DaIh0OmvfMBNaOJs14uEj0Z1um0C/jLIfVlPH35pQXcWlQH+tLY
+X-Gm-Gg: AR+sD13qOM0KFnxgNIozo4+zfyUmZrMQdR5ZpHh2YIx6FqLHoUQEIpcZsCktsM751qA
+	0F3lEZqGtouN+tTvetUqBZ+My9dMcpwCz451/zKYaigYoKkT3LfRUKzb3gh7x+cbAk7HFOxFpY7
+	YjtANImWlACknrspL8Rvp3T4xKUZVYAiyRNLE4Heie79S/lI9MXNFTsMw8adu3kkLBqKonT7aSU
+	u4fogv7O+gS9tarmRxs+zfg2Ol8rooze2jNfpt8TmnzhXjoDdaviNdzBkyMV690o4RzFdRZWKmC
+	q/iET+PrlUyzWtB68lyyBSUxIq1FxMDFMYZU8GPHIbzggUq9wmcVjs7DPru6oL6RakRwQ+axgSS
+	+IDDZ7CwUzj1H+rpTCNeLCjsLEltfiOK8lRxC/oqQFh+wNG1/LQZ7r7CMK5BJx9giS4F/J+VXBw
+	Bwfw0od/MvBEhu3ILWZa8jLx0lXXDhiGaVHruQinl25JhNWeiD0KNGFWiG9Pcwgk18ZnK/W2PIc
+	2k0W6kb0OiQOqf0qdq1zxtH5bsnaUyPTEK+2Bs=
+X-Received: by 2002:a05:6a21:6089:b0:3c4:2cd3:f0bb with SMTP id adf61e73a8af0-3c91a777750mr9595530637.10.1785685587512;
+        Sun, 02 Aug 2026 08:46:27 -0700 (PDT)
+Received: from Mac.net (198-27-228-154.fiber.dynamic.sonic.net. [198.27.228.154])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3153e29a126sm30602192eec.31.2026.08.02.08.46.26
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 02 Aug 2026 08:46:26 -0700 (PDT)
+From: Ahmad Byagowi <ahmadexp@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Peter Rosin <peda@lysator.liu.se>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ahmad Byagowi <ahmadexp@gmail.com>
+Subject: [RFC net-next 0/4] ptp: ocp: Add R4006 I2C peripheral support
+Date: Sun,  2 Aug 2026 08:46:16 -0700
+Message-ID: <cover.1785684064.git.ahmadexp@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
+The R4006 Time Card places a PCA9546 I2C mux behind the FPGA XIIC
+controller. Its downstream buses contain temperature, humidity, and
+pressure sensors, an 18-channel LED controller, and a BNO08x inertial
+sensor. The current ptp_ocp driver exposes the root bus but does not
+describe these peripherals.
 
-New issues:
-- [Medium] Device Tree Binding & Implementation Mismatch for `default-inten=
-sity`
+This RFC adds the generic infrastructure and board description needed to
+let existing subsystem drivers bind to the R4006 devices:
 
-Pre-existing issues:
-- [High] 32-bit unsigned integer overflow and potential division by zero in=
- brightness scaling calculation
---
+  1. A binding for the Lumissil IS32FL3207 LED controller.
+  2. A generic IS32FL3207 LED class driver with individual and multicolor
+     LED support and per-output current limits.
+  3. Software-node propagation from an I2C mux to its channel adapters.
+  4. EEPROM-based R4006 detection and a per-card software-node topology
+     in ptp_ocp.
 
---- Patch [2]: [PATCH V2 2/2] leds: rgb: leds-group-multicolor: Implement d=
-efault-intensity ---
-commit 3299ece4693e9a064de7eb3b6ca548536d4ca2ef
-Author: Stefan Wahren <wahrenst@gmx.net>
+The BNO08x is intentionally not instantiated because there is no upstream
+driver for it. LED status policy is also left to userspace. The kernel
+exports one multicolor LED class device for GNSS and one for each SMA
+connector.
 
-leds: rgb: leds-group-multicolor: Implement default-intensity
+The zero-based IS32FL3207 output mapping, confirmed on production
+hardware, is:
 
-Currently it is not possible to specify the initial color of a LED multicol=
-or
-group during boot. This commit implements the default-intensity property
-similar to the leds-pwm-multicolor driver, falling back to the maximum
-intensity if the property is missing.
+             red  green  blue
+  GNSS        13    12    14
+  SMA1         7     6     8
+  SMA2        10     9    11
+  SMA3         1     0     2
+  SMA4         4     3     5
 
-> diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/=
-leds-group-multicolor.c
-> index a707d51c6a4bd..f0e6c2a25a070 100644
-> --- a/drivers/leds/rgb/leds-group-multicolor.c
-> +++ b/drivers/leds/rgb/leds-group-multicolor.c
-> @@ -108,8 +108,14 @@ static int leds_gmc_probe(struct platform_device *pd=
-ev)
-> =20
->  		subled[i].color_index =3D led_cdev->color;
-> =20
-> -		/* Configure the LED intensity to its maximum */
-> -		subled[i].intensity =3D max_brightness;
-> +		ret =3D fwnode_property_read_u32(led_cdev->dev->fwnode, "default-inten=
-sity",
-> +					       &subled[i].intensity);
+Questions for this RFC:
 
-[Severity: Medium]
-Will this parse the default-intensity property from the correct node?
+  - Should IS32FL3207 remain a standalone multicolor driver, or should
+    support be integrated into the older is31fl32xx driver?
+  - Is assigning software-node children in the generic I2C mux core the
+    preferred way to describe PCI-card mux topologies?
+  - Which tree should carry the cross-subsystem series once the LED and
+    I2C changes are reviewed?
 
-Based on the device tree binding documentation for leds-group-multicolor, t=
-he
-default-intensity property is expected to be located in the parent multicol=
-or
-group node.
+Validation performed:
 
-However, in leds_gmc_probe(), the driver attempts to read it from the
-monochromatic sub-LED fwnode instead:
+  - dt_binding_check, including schema lint and example compilation
+  - ARM64 and x86-64 W=1 builds of all three modified driver objects
+  - x86-64 sparse C=2 checks with endian checking enabled
+  - strict checkpatch and git diff --check
+  - I2C addresses and LED channel mapping validated on an R4006 using the
+    existing downstream implementation
 
-    ret =3D fwnode_property_read_u32(led_cdev->dev->fwnode, "default-intens=
-ity",
-                                   &subled[i].intensity);
+The complete upstream series has not yet been boot-tested on the card.
+One portability limitation is that the ICP10100 has a fixed 1.8 V board
+rail but its driver requires a vdd regulator. ACPI server systems provide
+the dummy regulator used by this PCI target; an ACPI-disabled system may
+leave the pressure sensor unbound. Feedback on whether that supply needs
+an explicit representation before v1 would be useful.
 
-Does this code ignore valid configurations where the property is placed in =
-the
-parent node according to the schema?
+Ahmad Byagowi (4):
+  dt-bindings: leds: Add IS32FL3207 controller
+  leds: rgb: Add IS32FL3207 controller driver
+  i2c: mux: Propagate software nodes to channel adapters
+  ptp: ocp: Add R4006 I2C peripheral topology
 
-> +
-> +		/* In case default-intensity is missing, fallback to maximum */
-> +		if (ret)
-> +			subled[i].intensity =3D max_brightness;
-> +		else if (subled[i].intensity > max_brightness)
-> +			subled[i].intensity =3D max_brightness;
->  	}
-> =20
->  	/* Initialise the multicolor's LED class device */
+ .../bindings/leds/issi,is32fl3207.yaml        | 204 +++++++
+ MAINTAINERS                                   |   7 +
+ drivers/i2c/i2c-mux.c                         |  55 ++
+ drivers/leds/rgb/Kconfig                      |  11 +
+ drivers/leds/rgb/Makefile                     |   1 +
+ drivers/leds/rgb/leds-is32fl3207.c            | 541 ++++++++++++++++++
+ drivers/ptp/ptp_ocp.c                         | 485 +++++++++++++++-
+ 7 files changed, 1278 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml
+ create mode 100644 drivers/leds/rgb/leds-is32fl3207.c
 
-[Severity: High]
-This is a pre-existing issue, but is there a potential integer overflow and
-division by zero when scaling brightness in leds_gmc_set()?
 
-When leds_gmc_set() calculates the brightness for the monochromatic sub-LED=
-s,
-it uses 32-bit unsigned arithmetic:
-
-drivers/leds/rgb/leds-group-multicolor.c:leds_gmc_set() {
-    ...
-    mono_brightness =3D DIV_ROUND_CLOSEST(brightness * intensity * mono_max=
-_brightness,
-                                        group_max_brightness * group_max_br=
-ightness);
-    ...
-}
-
-If the underlying LEDs have high max_brightness values configured (for exam=
-ple,
-65535 for a PWM period), the numerator can wrap around, resulting in a
-calculated brightness of 0.
-
-Furthermore, if group_max_brightness happens to be exactly 65536, the
-denominator overflows to exactly 0, which would lead to a division by zero
-panic during brightness adjustment.
-
-Could this arithmetic be adjusted to prevent overflows with high brightness
-values?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260802115727.5041=
-1-1-wahrenst@gmx.net?part=3D2
+base-commit: 69963a0678a347d57c4ac8b16939dba216eb95ce
+-- 
+2.50.1 (Apple Git-155)
