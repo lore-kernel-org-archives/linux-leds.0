@@ -1,105 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458F9233926
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80AC22FDE6
 	for <linux-leds@vger.kernel.org>; Sun,  2 Aug 2026 17:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785691909; cv=none; b=P1qOrJm9LofWMlHNH3TgBJBCPd9Tfscsi31j0CVggXd8M7HKtcREYFz+gSsrD1m7qlm2bOdIsyBOiDKUMjnnPhcc64esdFL2wG5MtA9glnKLgiYCxm7Apf9+neYiD+NswuihgLVVTIqMeUTK3e7N1I3pULFQwQ4KyBGhAsVQ0ko=
+	t=1785691909; cv=none; b=WyTNy32h55QGbbSlomIv9Z51jdAzHffKkgNrcTz0T7nzMU8sNJQLjTo2IRUI6zsfA0ngX4OaFgPhBb5Qfv0iL2CxSpIn0U5dzjLeFWrk4sfJdnnNFVI3gd4cNPoXHzlj0byAXc5F8LhWxU14MwuHDCxGzW6D21jgw+Cmfk37fBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785691909; c=relaxed/simple;
-	bh=SnqWdYdBy/2IT/Ezy/cRwNP3DDM/Lj0jjgluYPsDCJ8=;
+	bh=/YnHUt0oeO1m40HapoH9X91MTGNJo8cAs2PX0SEpUgQ=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=LQKC/1EKaPeSb6SWMVwxrybgUJkiOr0IUuZMsUkYt9MelIT43DTBBo2E00MlG316Pnoid9JzPxsighYYoSleNVA+8jd1O7VLhotwcv4RHcCDNktFFpBwbjRnlRjc+XoMBMzoflzZNPkDd9wVC2DtBAn006K2bPR8cw0gmA1lgMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYKAO3xD; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=nGd2ONUH6/gZh+8Ggldhm6jZI44t9/1Nifjtk9hb6bF3t6bIhfQRRx6NP69HEqYlDoGjGdoFo1lOnb0WGVsah3kjhbgUkw1ByQTuq/ETNUPGUQUMrLsgv6e1TBQ9UFDKfrfgxB/cWoP7V9Q5PZUugVuAkuW/7uBLxqk1Lz/jgFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISevkXSq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYKAO3xD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE361F000E9;
-	Sun,  2 Aug 2026 17:31:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISevkXSq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958501F00A3A;
+	Sun,  2 Aug 2026 17:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1785691908;
-	bh=2rbfIly0X6OQLMk4f1PTixgZoOkVNHtrSu0wusR5Jls=;
+	bh=W9mYR70p/9kd3irxFIj1ka5heoDd6YhhW7xNbbG+r4s=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JYKAO3xDYcfvOZzagpc9k34yyJmV6mqytU6cnK6hyBQaSaOF72uj4pqMi5u4YqBxb
-	 qCzFNpI1Eaop2O/NCkodhv5IHFrrAVcCrBmYZZAnWxf+XbbeXWcJi1b4/52ipUyjUk
-	 YS3Xp2Eq4NJ106JC86585swy1wLMV1t/jGbzvRX0WGCvb1HqBbQzcRFXAH3gYOmEFQ
-	 JJMXN2/1I63DDBEhOCvP4Q8gNwQuE7e5cvlKjaaqbpjIoJngFtfm9i7MDOVGhVCrZW
-	 cBQ06qep5RIwf1qjfHa3Oh3H2NwSDz+IX271j7/ECBaW01FZbVstsmHXjZpAN0SGPo
-	 gUgOtKDiHfahA==
+	b=ISevkXSqXmeOFL7h1vYaaVIKl3Znp6N3sXs1Qo74OiG/JIdmnv4uWW9TWEwKyfKFm
+	 HCYItHZe+vIJKNu5T6L7eYxkEBbdhG7L4ghZ6fciiCdRbkbbX20EaXWkyvtTwBv+u0
+	 PV66uPeLNmivxvnd0dy8CC4T4mJTVclsLcNIycoxaoWK8cu7ksu9hG9c4DV5Nvhczd
+	 HQSK1kO7CKhmLAOuqBZrx6wkGoYWZtyFXTZgoU8lebKSS3p2NeOmNValHnVVjjOcZc
+	 fRpwsbZxAvWZNv+oJKxkuHSTFNOEMlMS8RlaCr52VBxdR5AGG5fTiOELt9nwpQXobi
+	 o6VHhQ1Er6pJw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 04/12] leds: cros_ec: Implement offloaded() trigger
- callback
+Subject: Re: [PATCH v4 03/12] leds: trigger: Add offloaded() callback and
+ provide trigger_may_offload attribute
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260802-leds-trigger-hw-changed-v4-4-f97e2ca976fe@rong.moe>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260802-leds-trigger-hw-changed-v4-3-f97e2ca976fe@rong.moe>
 References: <20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe>
- <20260802-leds-trigger-hw-changed-v4-4-f97e2ca976fe@rong.moe>
+ <20260802-leds-trigger-hw-changed-v4-3-f97e2ca976fe@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 02 Aug 2026 17:31:47 +0000
-Message-Id: <20260802173147.EAE361F000E9@smtp.kernel.org>
+Date: Sun, 02 Aug 2026 17:31:48 +0000
+Message-Id: <20260802173148.958501F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
+> There are multiple triggers implementing hardware control. However, the
+> LED trigger core doesn't really know the hardware control (offloaded)
+> state since the coordination is done directly between the trigger and
+> the LED driver. It can only assume private triggers as offloaded and
+> generic ones as not offloaded.
+>=20
+> Add an offloaded() callback so that triggers can report their offloaded
+> states to the LED trigger core. When unimplemented, it defaults to true
+> for private triggers and false for generic ones to keep the current
+> behavior unchanged.
+>=20
+> With that, provide a new attribute "trigger_may_offload", so that
+> userspace can determine:
+>=20
+> - if the LED device supports hardware control (supported =3D> visible)
+> - which trigger is the hardware control trigger selected by the LED
+>   device
+> - if the trigger is selected ("<foo_trigger>")
+> - if the trigger is offloaded ("[foo_trigger]")
+>=20
+> Note: the documentation describes the attribute as "returning a list"
+> despite the LED core currently only supports one hardware control
+> trigger per LED device. This is intentional to make the attribute
+> extensible in the future without breaking userspace.
+>=20
+> Signed-off-by: Rong Zhang <i@rong.moe>
 
-Pre-existing issues:
-- [High] Registering a global static `led_trigger` structure in a driver's =
-probe function causes list corruption and lock re-initialization if the dri=
-ver is probed multiple times.
---
-
---- Patch [4]: [PATCH v4 04/12] leds: cros_ec: Implement offloaded() trigge=
-r callback ---
-commit 74008c8c0e283ff69ceee35b25286706470006e0
-Author: Rong Zhang <i@rong.moe>
-
-leds: cros_ec: Implement offloaded() trigger callback
-   =20
-"chromeos-auto" is a private hardware control trigger which always stays
-in hardware control. Implement offloaded() callback with its return
-value to be always true to reflect this.
-
-> diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
-> index 1844d0cd5f528..6db83d0152775 100644
-> --- a/drivers/leds/leds-cros_ec.c
-> +++ b/drivers/leds/leds-cros_ec.c
-[ ... ]
->  static struct led_hw_trigger_type cros_ec_led_trigger_type;
-> =20
->  static struct led_trigger cros_ec_led_trigger =3D {
->  	.name =3D "chromeos-auto",
->  	.trigger_type =3D &cros_ec_led_trigger_type,
->  	.activate =3D cros_ec_led_trigger_activate,
-> +	.offloaded =3D cros_ec_led_trigger_offloaded,
->  };
-
-[Severity: High]
-This is a pre-existing issue, but registering a global static led_trigger
-structure in a driver's probe function can cause list corruption and lock
-re-initialization if the driver is probed multiple times.
-
-When cros_ec_led_probe() calls devm_led_trigger_register() and passes
-this global static cros_ec_led_trigger struct, led_trigger_register()
-unconditionally re-initializes the led_cdevs list and leddev_list_lock
-on the passed pointer before checking if it already exists:
-
-drivers/leds/led-triggers.c:led_trigger_register() {
-    ...
-    spin_lock_init(&trig->leddev_list_lock);
-    INIT_LIST_HEAD(&trig->led_cdevs);
-    ...
-}
-
-Does this corrupt the state of the active trigger if a subsequent probe
-(such as for a second EC or manually via sysfs) calls it again with the
-exact same static pointer?
+Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260802-leds-trigg=
-er-hw-changed-v4-0-f97e2ca976fe@rong.moe?part=3D4
+er-hw-changed-v4-0-f97e2ca976fe@rong.moe?part=3D3
+
