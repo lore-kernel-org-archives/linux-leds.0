@@ -1,66 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DC33DA7CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D930375F96;
 	Tue,  4 Aug 2026 20:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785876660; cv=none; b=axInWJudVSyjQ8W4uS7l8BneBNg4vOANT3XtNiw/RO9km7DxSw9wTmNPpHCmTx9x/AxHdxYR6GFkTvcddTt7kWUwhU7xpPVzyos/skM5FRaNW+pEKr36XQN+oefT76LayPkfJQExsOcMlRHWp9sNy0PwrqTUvDtg4P4t2xDL/rU=
+	t=1785876660; cv=none; b=oe99v5AkM/oie42p2lfJwoaoe+bQOLZXvTJHUxkIsY0YNU+Ob0kqE6DDnm0rEEOoYGnkQwltvV0CQ6szkWiQaEIxee1ckA971CN5TrRs8JSjsBH0P7eQfgL69U1BoO21AIG6tqbpy4XrVQaMuXYAkv10Qr1C2gOe4Xued/IHoN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785876660; c=relaxed/simple;
-	bh=I2Z3yjWFf6DKUPbxBf3GwB9GlPLw4F8qWF3DrRGt/cA=;
+	bh=DAmmWfTZBOO1zFZ3d4sVcKAC79TtYzFNsoLcL4WgCP4=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=FR7r0g5DbDZW8UeXWN+E+hfCwW9LfB5Dptvg3W/66s8YID0zFAUM5OTaEPp/F0QcV9MnIRtRAk/pXREQTvgP1K8jlHCIF1Lx7Za9e5M4mugRjQZe1oMl1VgR9PTpqrK5tSelT4rCrmN+ALuWRkyV55ZyduW+q6dsxd9Mi39gy5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4OgqVhy; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=XVY7mluqupTYyBbjGPpNb3zkI99INSahKZ1HE/kNLXP+ZsVZqHGzpsfcEsS31Lkn082dVvzb44Ei2y1lsyhqW7m/u5ROWKpPtXPyFwVGUoipMHteTvqpCEhGPnVuxLXNYSJdd0k/bPLGMXZgOMFu3HHyBdf3y3TkeUFCY16XT1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMdoOJFV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4OgqVhy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FC01F00A3A;
-	Tue,  4 Aug 2026 20:50:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMdoOJFV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A071F000E9;
+	Tue,  4 Aug 2026 20:50:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785876655;
-	bh=I2Z3yjWFf6DKUPbxBf3GwB9GlPLw4F8qWF3DrRGt/cA=;
+	s=k20260515; t=1785876654;
+	bh=DAmmWfTZBOO1zFZ3d4sVcKAC79TtYzFNsoLcL4WgCP4=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=E4OgqVhyQf+gM9mlGx8NOTocUkqnTYBNg+kFhYBQTdIkIdelQ/6pHqKq0YxKwFSaM
-	 m6eW5VgF1RtEyxg+b2uC77Y70RTcd9ymvcvc2SheVMkdJndA2p9BFvD/KmkCKquXTA
-	 +PSMiv1+gSO30/U4xK7jjvyY8XQU3WsFjolT7qBrWL/aCDovmXXinCnQFEWokpyKx2
-	 ZQEU1rxmL4WNDMpEjob4G34uBD1ZVBnRJt6v4viAWPDCamiRBN0fDjj1pDwdnCdBQ2
-	 k+M5l41WBK0r8pf+Yt7hf3K5FDhqyfomvl12h/VwesDy4gj42jrV0i+t49+eZNufwE
-	 Kc8Re76a0sF1w==
+	b=DMdoOJFV0It/pTF7tcKQWwU4svEIV1ZhW+tUzZ7XVzf33N/A/hfpIpwQJX5QpOYD2
+	 9wOUCCDV1kQHMXEF4iBIOgjXlrSbqXLCP/KWUa8HVzhOX/0G4NwzvPxZ0wFAlPP76D
+	 cpDevxPLiMnNC1dSA54chsC0C65SUty8wRFzsC9NlQ7iyaZjZnVIutzZmVDLmU7Jc2
+	 PM7BMlIipLrM2DCXXa/FZLh6kzfdzsiJj+Pe3A0oczZP7WYIVT0ySnBzBphN/R5dzb
+	 w7CmW/IknNwb8CSoLcTJQ+xPqiirSqL26vpIpWzvfmUGhlhwGFezL+84vfpTrJD+3l
+	 jPIj4xHaxs7+g==
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC net-next v2 5/6] ptp: ocp: Add R4006 I2C peripheral
- topology
+Subject: Re: [RFC net-next v2 1/6] dt-bindings: leds: Add IS32FL3207
+ controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Ahmad Byagowi" <ahmadexp@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260803205011.1249-6-ahmadexp@gmail.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, lee@kernel.org, robh@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260803205011.1249-2-ahmadexp@gmail.com>
 References: <20260803205011.1249-1-ahmadexp@gmail.com>
- <20260803205011.1249-6-ahmadexp@gmail.com>
+ <20260803205011.1249-2-ahmadexp@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 04 Aug 2026 20:50:54 +0000
-Message-Id: <20260804205055.67FC01F00A3A@smtp.kernel.org>
+Date: Tue, 04 Aug 2026 20:50:53 +0000
+Message-Id: <20260804205054.34A071F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> R4006 cards place a PCA9546 mux behind the FPGA I2C controller. The mux
-> exposes three LM75B temperature sensors, an SHT3x humidity sensor, an
-> ICP10100 pressure sensor, and an IS32FL3207 controller for the GNSS and
-> SMA LEDs.
+> The IS32FL3207 is an 18-channel constant-current LED controller
+> with per-output PWM and current scaling.
 >=20
-> Describe the per-card topology with software nodes and instantiate
-> standard I2C clients after their adapters appear. Use a reusable board
-> profile selected only when the validated EEPROM ID begins with "R4006".
-> PCI IDs are shared by multiple PCB revisions and cannot safely select
-> LED wiring.
->=20
-> Leave the channel containing the BNO08x empty because no upstream driver
-> exists. Retry asynchronous population with a bounded budget. Serialize
-> population against controller and mux driver bind/unbind, remove the mux
-> when the root adapter disappears, and support adapter reappearance. Limit
-> the existing i2c sysfs link to the root adapter.
+> Describe I2C addressing, power and shutdown controls, RISET, and
+> individual or multicolor output groupings. Require board current limits
+> for each output.
 >=20
 > Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
 
@@ -68,5 +58,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260803205011.1249=
--1-ahmadexp@gmail.com?part=3D5
+-1-ahmadexp@gmail.com?part=3D1
 
