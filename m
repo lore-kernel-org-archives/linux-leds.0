@@ -1,97 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC04A30DD00;
-	Tue,  4 Aug 2026 20:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265CD41E6A7;
+	Tue,  4 Aug 2026 20:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785876665; cv=none; b=pNlPLwvg9Z/VlZKaMuwJgEphaZU7Az/zsDYs0E4awzz7MTsUYodRiCzC6iX0cZhjm3PZ8TycFAW8St1trhVsaPZIHnIB9QhRCrwd6Q5g7sPwPXgfWTsddTLlSRsbdH9qLDP8wktS451tJsjYYnRxBQSGOKdYmWFxtVQUc1re/8Y=
+	t=1785876666; cv=none; b=Zt5nmR030EqOu3xqalIXXnk5gli08k9BXo0C6HRaGMpH/vYn/rK4Wr1lJptUJ7T8DP1dsyt69yr2KYt2PwbTsg/9fxQguQ5prLeTsUgCxeQ/2hFI5y/7Wlyz9nDDnn7CUIw190fdrdz2GENVYchL4GgvA3kS4/hsF2aiG4Gu7k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785876665; c=relaxed/simple;
-	bh=k70ZY9qemGMXMmEVeJYGhJWzkWvHuCTacbrMvOsimOY=;
+	s=arc-20240116; t=1785876666; c=relaxed/simple;
+	bh=gsDh9izgbL9hc+feYoBr/YZgMBuKrd1ALi7tezJ15Oo=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=C5r/kAnraAKCWnAocleOgH9QS2r0XGSJS48ln9IHGFdrQTepMHf5SoGvjVC+6wfoJOKy9hYurrU4awse5qBm8kEhOnn/2E+shybdc6W3chhkNsrd1BAO2q8EZT8qK9PwgTS78qiRe6WZBN3YxtJ/jxAwmn2UdGQzEw03ROE2ItA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJJKxDH1; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=bSEqNxBmNpiEwQ3hBBSWNweE5MfFg5QGgpzdRkg+IqA98wlVQuLcnFkW2u/DGaThF62F36N+T3JgCRxDaDfRK7iH7cmN86J66wm25h8SpMBQSwkVPeAEpwshN9k7HvWZUMkRfkZuukHs8FsppGXqtjnsyqc9UUid6RC6Who2BZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVAApjMa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJJKxDH1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BA81F00A3E;
-	Tue,  4 Aug 2026 20:50:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVAApjMa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B4A1F000E9;
+	Tue,  4 Aug 2026 20:51:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785876659;
-	bh=PbFe7x4MUuNf4rw+mtGQYdNnR0h462hqgqecd6ZGlho=;
+	s=k20260515; t=1785876661;
+	bh=gsDh9izgbL9hc+feYoBr/YZgMBuKrd1ALi7tezJ15Oo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JJJKxDH1KPwNCBB1EP/liamXOn6wLGzaCIbeWSHnpgSgrFMmRC5ah8B+faeBtkCxb
-	 LxUxm5LiR1LwOveiVCpmKN8N6PZrP07fOXbofKXcQFzCs28Vuic/6ySkUoTGn3V/e7
-	 jlnFyDr9u8wv3WBNu3yibofm0gPEQiW3ZxOjHjc0uvdceDJ0yT9Bekc0D5Xfoqc1vO
-	 EJYVATGwr0T4LnTdE4sxdsiK5arDbdpsPdEBt/DmXKeW4zoelpeDMnwSvqlFeCu7BL
-	 lBG8cTMnSIbUlusVXLV6dcQBZnKnAvslCJLYFwFwWEkVLDnpU+QYCd8HsktZT6yEuN
-	 eB7pIFTxm2oXw==
+	b=IVAApjMaP7QjtBeqW8UMLzIEodfAihojjtVyFLQtBigUPSc05KUwhbnwLwDHOMImc
+	 iCIZLJFDZuChRQ4EOQBG32hdXk/zmEZZvQgAOH0FRQkz1pVS6mTYV1lOSy0cJ5mjPP
+	 f7G3rE/1dvNdqNrLC/WYhZMrLCPsuhp9selwOueDYYhz8h+ZzuFa02IWUMR8BCHLUX
+	 620Wf9dEueaxiT7xBLhQ++q8YI57TrZAlqPudKDXg6lI0uxGFfwaCKOFCkgyWDHm+x
+	 pWzBFJwWl8RKMBRQwFMWeE0UcfhW9DZoI/9Cs3RN6j6mGEtMMXozfGaQ8tdyXjmYLI
+	 BXqysSJKnETPg==
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC net-next v2 2/6] leds: rgb: Add IS32FL3207 controller
- driver
+Subject: Re: [RFC net-next v2 3/6] i2c: mux: Propagate software nodes to
+ channel adapters
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Ahmad Byagowi" <ahmadexp@gmail.com>
-Cc: robh@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, lee@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260803205011.1249-3-ahmadexp@gmail.com>
+Cc: robh@kernel.org, conor+dt@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20260803205011.1249-4-ahmadexp@gmail.com>
 References: <20260803205011.1249-1-ahmadexp@gmail.com>
- <20260803205011.1249-3-ahmadexp@gmail.com>
+ <20260803205011.1249-4-ahmadexp@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 04 Aug 2026 20:50:57 +0000
-Message-Id: <20260804205058.69BA81F00A3E@smtp.kernel.org>
+Date: Tue, 04 Aug 2026 20:51:00 +0000
+Message-Id: <20260804205100.E4B4A1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Low] The commit message uses a non-standard prefix for the LED subsystem.
-- [Low] The driver's private data structure instance uses a generic name in=
-stead of the recommended convention.
---
+> Device Tree channel nodes are associated with the adapters created by
+> i2c-mux, but equivalent software-node descriptions are not.
+>=20
+> Find the software-node child whose reg value matches the channel and
+> assign it to the new adapter. Keep a reference for the adapter lifetime
+> so downstream clients can find the channel by firmware node.
+>=20
+> Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
 
---- Patch [2]: [RFC net-next v2 2/6] leds: rgb: Add IS32FL3207 controller d=
-river ---
-commit 85f9f1b2acee8fe8b7b8accc04c2fd34496cf682
-Author: Ahmad Byagowi <ahmadexp@gmail.com>
-
-leds: rgb: Add IS32FL3207 controller driver
-
-This commit adds a generic I2C driver for the Lumissil IS32FL3207 18-channel
-LED controller.
-
-> leds: rgb: Add IS32FL3207 controller driver
-
-[Severity: Low]
-This isn't a bug, but does the commit message prefix follow the standard na=
-ming
-conventions? The LED subsystem guidelines specify using leds: <Driver>:
-<Capitalized description>. Would leds: is32fl3207: be a more appropriate
-prefix here?
-
-> diff --git a/drivers/leds/rgb/leds-is32fl3207.c b/drivers/leds/rgb/leds-i=
-s32fl3207.c
-> new file mode 100644
-> --- /dev/null
-> +++ b/drivers/leds/rgb/leds-is32fl3207.c
-[ ... ]
-> @@ -424,6 +424,6 @@ static const struct regmap_config is32fl3207_regmap_c=
-onfig =3D {
->  static int is32fl3207_probe(struct i2c_client *client)
->  {
->  	struct device *dev =3D &client->dev;
->  	struct is32fl3207 *chip;
-
-[Severity: Low]
-This isn't a bug, but does this code use the recommended variable name for =
-the
-private data structure instance in is32fl3207_probe()? The LED subsystem
-guidelines recommend using ddata instead of generic terms like chip or info.
-
->  	unsigned int count;
+Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260803205011.1249=
--1-ahmadexp@gmail.com?part=3D2
+-1-ahmadexp@gmail.com?part=3D3
+
