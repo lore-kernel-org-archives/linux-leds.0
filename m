@@ -1,218 +1,76 @@
-Received: from out-165.mta1.migadu.com (out-165.mta1.migadu.com [95.215.58.165])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFF34562A2
-	for <linux-leds@vger.kernel.org>; Tue,  4 Aug 2026 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8782349CD3
+	for <linux-leds@vger.kernel.org>; Tue,  4 Aug 2026 14:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785851758; cv=none; b=kqWD1i7naD78FJ0hqKYenmj/jIbvnHcQLXrH5Xz6ib0AV2r9yHgrpo8nQKJ0t6M4IcthbmJMPqAvfm0hAxr3PcgCAizhyAVPfFGZ5+kpF4A92lYiYif/IPxg30GUutopyToHLxsw7zzFD44imX86hNjHgLNVVVvWRKM95sf462U=
+	t=1785854470; cv=none; b=IB/YJBzN+n++4YwnE2ScVTImE/Oi2RU5EQokPkUcbSWgV7JcQdNsaKGYYY6l0K7sDT68+KyZnzRvmzpiaAqKINdROO1DNC5R3ho/NBLgbS6MOorDJxvIikyBx+hawlgx3GyKxG19MN5cn/8xKoQhJ2QmAkOd+A29dUsNqauc+aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785851758; c=relaxed/simple;
-	bh=LcYiPqB4tVrRiy7Cltegl8juqIwND8gItntjWapowOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rNenCaK2A/R9+rlxJw5+QcV4CC/LE33eRROB2Wdljhyqr/4tryJST42Qfv/uLgA/9QSgI5JlM37bmoG04RqrRvoK8XziDTAWLHhpHzmC1d0Wg8uOgk043ZELHin39eJMACLjmwa5rJMBFpXTL1FA/QJrGwDEp3OG0/epRxlG4HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FYZtil51; arc=none smtp.client-ip=95.215.58.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1785854470; c=relaxed/simple;
+	bh=cq0nHALLi0tMHAVAK/aPY3SV7ESZLUW+ZjXlOpXq2LU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GtOXLw1TIrE165qr5LJewAHRRd+6sVY05YtT5ERXSzzinPWF9Picpu6vqTzlSgTcpC8Cj1YxNh/DVNji/Bv6jCkn1WA2HZAbQiNErR+qmJOcUUH1g6ci6Ihfg6NQyX52t3YW4cm2NcScaACUKe4WJo2k+41bjwV5oZg61I8FNDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=pHZDzj+t; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FYZtil51"
-Message-ID: <4ef01fa0-969f-4ec0-997b-5f5f3f67e11a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1785851742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gYaRYJJ4lK/MLOWAM2e1uCFUmqoZIVPfPNaQ31GMp0Q=;
-	b=FYZtil51LzrZNx/hTwezUS2eYSm/487ebVTBuTingdSO8uBcyrhjubzK1fAG6PcwWSkRPD
-	zBrz32hja2gVCBTzht+8r03mrRntjCdIpIvmrBDfj3qKue+wASayNRuJEd3iYBE708hwp2
-	46ODWFVYxV9tghywi/XhsIpsaAGZbZM=
-Date: Tue, 4 Aug 2026 14:55:17 +0100
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="pHZDzj+t"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=umx+0Xbf1pGIjPYZoWYg8y6Brc8GBYfdVPjn8jMxYQI=; t=1785854469; x=1787064069; 
+	b=pHZDzj+txQHNEaHiLTCegW1lFCLbaXMLcIHRmJ3h0qCamAsnQ8q+1O7HkwgZjpg30P0/L31iR3t
+	hkzgCu4RsYe5cCHVQiODjAJG2oonTMU3Dr7HL0GylkDgmEH3iZ3El/OP/em3QDVyXWnUyni/prPG9
+	xLmlzUkfbMMz4ERyzWL3sOMCcz0RN21o/OasvyPgv78cLKOFbHObWcgHm/pAurZ8gn6Q5UnW17R4J
+	UMKA8cJVAB8BHj81nH/VQD0dVHVuaQyRUDocYAxYVINwQIKR3oUCvFanK/amyya0LLoWEQbltNi70
+	e+pqx/gDCyiByEdQL1gc8g8Ofr7qgiPiFNXA==;
+Date: Tue, 4 Aug 2026 16:41:01 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: sashiko-bot@kernel.org
+Cc: sashiko-reviews@lists.linux.dev, lee@kernel.org,
+ linux-leds@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH v3] leds: is31fl319x: modernize registration
+Message-ID: <20260804164101.43753f1b@kemnade.info>
+In-Reply-To: <20260804135515.5DBFC1F000E9@smtp.kernel.org>
+References: <20260804-led-modern-v3-1-297720eec19f@kemnade.info>
+	<20260804135515.5DBFC1F000E9@smtp.kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC net-next v2 4/6] ptp: ocp: Validate EEPROM board IDs
-To: Ahmad Byagowi <ahmadexp@gmail.com>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-i2c@vger.kernel.org, netdev@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Peter Rosin <peda@lysator.liu.se>, Nam Tran <trannamatk@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20260803205011.1249-1-ahmadexp@gmail.com>
- <20260803205011.1249-5-ahmadexp@gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20260803205011.1249-5-ahmadexp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-On 03/08/2026 21:50, Ahmad Byagowi wrote:
-> The EEPROM board ID is a fixed 13-byte field. It is stored without room
-> for a terminator and passed to devlink as a C string. An erased EEPROM
-> therefore exposes 0xff bytes and can make devlink read beyond the field
-> while formatting board.id.
+On Tue, 04 Aug 2026 13:55:14 +0000
+sashiko-bot@kernel.org wrote:
+
+> > leds: is31fl319x: modernize registration  
 > 
-> Reserve a trailing byte, classify erased and malformed contents, and
-> publish board.id only when the field contains printable text with valid
-> padding. Continue reporting the serial number when the board ID is
-> absent.
-> 
-> Fixes: 0cfcdd1ebcfe1a9b262f6ad8419580720dc843c4 ("ptp: ocp: add nvmem interface for accessing eeprom")
+> [Severity: Low]
+> This isn't a bug, but should the description after the subsystem prefix be
+> capitalized? The LED subsystem guidelines recommend formatting commit messages
+> as "leds: <Driver>: <Capitalized description>".
 
-use short format of hash to provide commit to fix:
 
-Fixes: 0cfcdd1ebcfe ("ptp: ocp: add nvmem interface for accessing eeprom")
+~/linux$ grep -R 'leds: <Driver>: <Capitalized description>"' Documentation/
+~/linux$ ls Documentation/leds/
+index.rst                  leds-lp5521.rst      leds-sc27xx.rst
+leds-blinkm.rst            leds-lp5523.rst      leds-st1202.rst
+leds-cht-wcove.rst         leds-lp5562.rst      ledtrig-oneshot.rst
+leds-class-flash.rst       leds-lp55xx.rst      ledtrig-transient.rst
+leds-class-multicolor.rst  leds-lp5812.rst      ledtrig-usbport.rst
+leds-class.rst             leds-mlxcpld.rst     uleds.rst
+leds-el15203000.rst        leds-mt6370-rgb.rst  well-known-leds.txt
+leds-lm3556.rst            leds-qcom-lpg.rst
+leds-lp3944.rst            leds-s2m-rgb.rst
 
-And as this is a fix, it has to go to net rather than net-next
+nothing look like special guidelines for the system. I do not want to
+see such comments without a reference.
+Also MAINTAINERS does not show any additional policy for the LED subsystem.
 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
-> ---
->   drivers/ptp/ptp_ocp.c | 69 +++++++++++++++++++++++++++++++++++++++++--
->   1 file changed, 66 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-> index 35e911f1a..cec936bd1 100644
-> --- a/drivers/ptp/ptp_ocp.c
-> +++ b/drivers/ptp/ptp_ocp.c
-> @@ -347,6 +347,13 @@ struct ptp_ocp_serial_port {
->   #define OCP_SIGNAL_NUM			4
->   #define OCP_FREQ_NUM			4
->   
-> +enum ptp_ocp_board_id_state {
-> +	OCP_BOARD_ID_UNREAD,
-> +	OCP_BOARD_ID_VALID,
-> +	OCP_BOARD_ID_ERASED,
-> +	OCP_BOARD_ID_INVALID,
-> +};
-> +
->   enum {
->   	PORT_GNSS,
->   	PORT_GNSS2,
-> @@ -401,8 +408,9 @@ struct ptp_ocp {
->   	bool			fw_loader;
->   	u8			fw_tag;
->   	u16			fw_version;
-> -	u8			board_id[OCP_BOARD_ID_LEN];
-> +	char			board_id[OCP_BOARD_ID_LEN + 1];
->   	u8			serial[OCP_SERIAL_LEN];
-> +	enum ptp_ocp_board_id_state board_id_state;
->   	bool			has_eeprom_data;
->   	u32			pps_req_map;
->   	int			flash_start;
-> @@ -472,18 +480,23 @@ struct ptp_ocp_eeprom_map {
->   	.len = sizeof_field(struct ptp_ocp, member),		\
->   	.bp_offset = offsetof(struct ptp_ocp, member)
->   
-> +#define EEPROM_ENTRY_LEN(addr, member, entry_len)		\
-> +	.off = addr,						\
-> +	.len = entry_len,					\
-> +	.bp_offset = offsetof(struct ptp_ocp, member)
-> +
->   #define BP_MAP_ENTRY_ADDR(bp, map) ({				\
->   	(void *)((uintptr_t)(bp) + (map)->bp_offset);		\
->   })
->   
->   static struct ptp_ocp_eeprom_map fb_eeprom_map[] = {
-> -	{ EEPROM_ENTRY(0x43, board_id) },
-> +	{ EEPROM_ENTRY_LEN(0x43, board_id, OCP_BOARD_ID_LEN) },
->   	{ EEPROM_ENTRY(0x00, serial), .tag = "mac" },
->   	{ }
->   };
->   
->   static struct ptp_ocp_eeprom_map art_eeprom_map[] = {
-> -	{ EEPROM_ENTRY(0x200 + 0x43, board_id) },
-> +	{ EEPROM_ENTRY_LEN(0x200 + 0x43, board_id, OCP_BOARD_ID_LEN) },
->   	{ EEPROM_ENTRY(0x200 + 0x63, serial) },
->   	{ }
->   };
-> @@ -1969,6 +1982,52 @@ ptp_ocp_nvmem_device_put(struct nvmem_device **nvmemp)
->   	*nvmemp = NULL;
->   }
->   
-> +static enum ptp_ocp_board_id_state
-> +ptp_ocp_classify_board_id(char *board_id)
-> +{
-> +	bool all_zero = true;
-> +	bool all_ones = true;
-> +	bool terminated = false;
-> +	unsigned int i;
-> +
-> +	board_id[OCP_BOARD_ID_LEN] = '\0';
-> +	for (i = 0; i < OCP_BOARD_ID_LEN; i++) {
-> +		u8 value = board_id[i];
-> +
-> +		all_zero &= value == 0;
-> +		all_ones &= value == 0xff;
-> +	}
-> +
-> +	if (all_zero || all_ones) {
-> +		board_id[0] = '\0';
-> +		return OCP_BOARD_ID_ERASED;
-> +	}
-> +
-> +	for (i = 0; i < OCP_BOARD_ID_LEN; i++) {
-> +		u8 value = board_id[i];
-> +
-> +		if (terminated) {
-> +			if (value)
-> +				goto invalid;
-> +			continue;
-> +		}
-> +
-> +		if (!value) {
-> +			terminated = true;
-> +			continue;
-> +		}
-> +		if (value < 0x20 || value > 0x7e)
-> +			goto invalid;
-> +	}
-> +
-> +	if (board_id[0])
-> +		return OCP_BOARD_ID_VALID;
-> +
-> +invalid:
-> +	board_id[0] = '\0';
-> +	return OCP_BOARD_ID_INVALID;
-> +}
-> +
->   static void
->   ptp_ocp_read_eeprom(struct ptp_ocp *bp)
->   {
-> @@ -2001,6 +2060,7 @@ ptp_ocp_read_eeprom(struct ptp_ocp *bp)
->   			goto fail;
->   	}
->   
-> +	bp->board_id_state = ptp_ocp_classify_board_id(bp->board_id);
->   	bp->has_eeprom_data = true;
->   
->   out:
-> @@ -2177,6 +2237,9 @@ ptp_ocp_devlink_info_get(struct devlink *devlink, struct devlink_info_req *req,
->   	if (err)
->   		return err;
->   
-> +	if (bp->board_id_state != OCP_BOARD_ID_VALID)
-> +		return 0;
-> +
-
-why don't simply
-snprintf(buf, OCP_BOARD_ID_LEN + 1, "%s", bp->board_id); ?
-
-buf is already used in the function, let's reuse it
-
->   	err = devlink_info_version_fixed_put(req,
->   			DEVLINK_INFO_VERSION_GENERIC_BOARD_ID,
->   			bp->board_id);
-
+Regards,
+Andreas
