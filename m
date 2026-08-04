@@ -1,210 +1,73 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB363D411A;
-	Tue,  4 Aug 2026 13:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49286468C00
+	for <linux-leds@vger.kernel.org>; Tue,  4 Aug 2026 13:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785850512; cv=none; b=OBb6wvGxoBs7BlIopbpGVIE2jFJ+W2m3H+FTXlk2NQMk/CAsCBjXdJ5XBm38U6ijrmjJDP39+6tstMcjyHOvnH2Nw2AKePy+wMs3kYNSNfGBPlnZYonGUNB/Hweo/QJhSWFC+x3zq0F3IjmH6gcLiL5boVK2G4xytAKhQqq6+WM=
+	t=1785851717; cv=none; b=Vu8RwYXdxTjaFMdwzaU/FIVUKxIQtljwNXZeapmeojvAi0wMsjBHSAZNLdSkBiTEBQqc+i1rNYeqkZTmC6ZPQbLIG49WYFrezsgYhzTTZdy1gHEoR86WZao8Kbx3N2D/erqMzxCZtwJK/Z3oX/5KmGuAPuqvPl1yzFpT5WlDZVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785850512; c=relaxed/simple;
-	bh=d8XagGACG09Cjlr5NxcDIsqck9AIt9BGcrzXBfbJRxM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=toYn5aeELFLshZQT3VLBTruxRF/09Ejcy5nDO6sLptqCoqpYbCWt+xJUg0dRdQAQ0ID55WZ30Z1UtH3GvDKHV3mAlsTqjfcg51D1PcMp/YtDqptTH1Smv96DRBV5Ehhs2QtXamK3X9oCEtNbhJu7Z6hesrpSusnXGbUcy2oXXqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=EHoyJErx; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1785851717; c=relaxed/simple;
+	bh=acOHr1Y330WkMn4lvs5hrC9L7BXoAy5giDryFnLUqQE=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=DIGYID1+cBYM+udlywoYQBpmfGZL48NqIwShi7SLI5vhH4oLF2sn0t93bYp8JFIm72koNj89+Jrd2sjpfUKpen2or7m6s0LM4i4b4OhrdtCqaoV5iIqrRU+fKNIab4WdHzBX9oUfoJmjT4undpFb1xfzmk4DMEJbmFLCxbkFjiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dG3oJ2Z2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="EHoyJErx"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:To:Subject:From:Reply-To:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=hHjiFq/M4O9iu1JuePDSxDZgLfVpfuQSu3TRjFiDmig=; t=1785850511; x=1787060111; 
-	b=EHoyJErxBeroozXJXl66HQWrZcXF7tfnlp9JcURiSlgAMnkOKl121POUP01b3rkHiR1BziG0g0M
-	T1URp36nLE3PVdsYuYngpR7+MA3X7TxLe6r1ujmlE6Gmfhra7c9QHknTWjuyUl9sL6nJCASD7ZsMt
-	Zrl9kAcHj6zrN8qDnboFeii9wKPtDy/f1yGZMyEvXzYkgzNNocp4xw9mQyHY6Gzr7Fcp9gLeQcYjq
-	WjAICK8hjrYXSvv/xveQwVE0sjFunbAXJJikmsQBvDNNwe80M7GQ357+1dPBiFeaUCykww1YONjZV
-	UDJu5tkq9YwfT//zhMA4nubm/zleCT2c9Kbw==;
-From: Andreas Kemnade <andreas@kemnade.info>
-Date: Tue, 04 Aug 2026 15:34:44 +0200
-Subject: [PATCH v3] leds: is31fl319x: modernize registration
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dG3oJ2Z2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DBFC1F000E9;
+	Tue,  4 Aug 2026 13:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785851715;
+	bh=acOHr1Y330WkMn4lvs5hrC9L7BXoAy5giDryFnLUqQE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=dG3oJ2Z2CrS65o42i959HNRx00XgzfsaSQWXyA+L9BEKFOKwOSW4fruSBj89lUAOT
+	 aGYkIGraD0aBkLbNSAww8YiRukyce7RgTTwUc+cNmh1wd9BAiEnP5ti8uJ7l0ZVvV+
+	 DKL44AHCgc6glMVJGpg8Ln+gCpOOiYDay8zPH+y5zxJCnxOGR+dJRmiZ+2Th5Nsczg
+	 b2VKdZ99kJ1mY5GDNJicKvXNX37Vb/HDTRu8Gs5DiSmz8yjGBkVpmgnV29G3dXPbbd
+	 fw3XEA4QtEaAHtx06feBMaTXkUHUel+O5deTR/HceR59jWENJoA+rmRM5xlEOt4z/v
+	 kVHucbDl69dQw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3] leds: is31fl319x: modernize registration
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Andreas Kemnade" <andreas@kemnade.info>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260804-led-modern-v3-1-297720eec19f@kemnade.info>
+References: <20260804-led-modern-v3-1-297720eec19f@kemnade.info>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 04 Aug 2026 13:55:14 +0000
+Message-Id: <20260804135515.5DBFC1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-led-modern-v3-1-297720eec19f@kemnade.info>
-X-B4-Tracking: v=1; b=H4sIAHPqcWoC/22NwQ7CIBAFf8XsWQzQhqon/8N4wO5iUQsGKtE0/
- XehXtR4nOTNvBEiBUsRtosRAiUbrXcZquUC2k67EzGLmUFyqXjDJbsSst4jBcewlg0hF8KsK8j
- CLZCxjzm2P7w53o9naodSKIvOxsGH5/yWRNn9DSfBBNO1NpI2WqPiuwv1TiOtrDMeSjvJT7v6s
- mW2kTeIHBW1yvzY0zS9ANhUMFf3AAAA
-X-Change-ID: 20260702-led-modern-d427ed011f83
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org, hns@goldelico.com, 
- linux-kernel@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5232; i=andreas@kemnade.info;
- h=from:subject:message-id; bh=d8XagGACG09Cjlr5NxcDIsqck9AIt9BGcrzXBfbJRxM=;
- b=owGbwMvMwCUm/rzkS6lq2x3G02pJDFmFr+r+80Wfin2xKtJlk8qX2SVXzpg2frGOZc2tvMzvY
- OIsttero5SFQYyLQVZMkeWXtYLbJ5VnucFTI+xh5rAygQxh4OIUgImsOcfw32mnrdfdpm5DlnUK
- BVzH5jOy2t3ey72Yl83AXP/NtC1tExj+h3fyTtPfHqYouePyqn723KcM1zbbZHgnPLOe9WSycDQ
- fMwA=
-X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
 
-Use _ext version to have properties parsed to avoid needing to parse
-them in the driver itself. More modern properties are recognized and
-the leds can be referenced via phandle.
-Due to the maximum current mechanics, leds are not registered right
-in the first iteration over the nodes.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] The commit message description starts with a lowercase letter, whic=
+h violates the LED subsystem guidelines.
+--
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Changes in v3:
-- fix typo (Sashiko)
-- check availability of device match data (Sashiko)
-- Link to v2: https://patch.msgid.link/20260703-led-modern-v2-1-d07dd0d6ec6f@kemnade.info
+--- Patch [1]: [PATCH v3] leds: is31fl319x: modernize registration ---
+commit 8ca9b33466bf8fe661e87d3758c14a3394d87a31
+Author: Andreas Kemnade <andreas@kemnade.info>
 
-Changes in v2:
-- put node free action after cdef is initialized (Sashiko)
-- Link to v1: https://patch.msgid.link/20260702-led-modern-v1-1-a4af2e9aad60@kemnade.info
+leds: is31fl319x: modernize registration
 
-To: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/leds/leds-is31fl319x.c | 61 +++++++++++++++++++++---------------------
- 1 file changed, 31 insertions(+), 30 deletions(-)
+This commit updates the IS31FL319x LED driver to use the extended managed
+registration API for parsing properties automatically. It also adds proper
+fwnode lifecycle management and defers LED registration until the maximum
+aggregated current is calculated.
 
-diff --git a/drivers/leds/leds-is31fl319x.c b/drivers/leds/leds-is31fl319x.c
-index 80f38dba0fba..83cb769d8cb4 100644
---- a/drivers/leds/leds-is31fl319x.c
-+++ b/drivers/leds/leds-is31fl319x.c
-@@ -98,7 +98,7 @@ struct is31fl319x_chip {
- 		struct is31fl319x_chip  *chip;
- 		struct led_classdev     cdev;
- 		u32                     max_microamp;
--		bool                    configured;
-+		struct fwnode_handle *fwnode;
- 	} leds[IS31FL319X_MAX_LEDS];
- };
- 
-@@ -363,31 +363,17 @@ static const struct of_device_id of_is31fl319x_match[] = {
- };
- MODULE_DEVICE_TABLE(of, of_is31fl319x_match);
- 
--static int is31fl319x_parse_child_fw(const struct device *dev,
--				     const struct fwnode_handle *child,
--				     struct is31fl319x_led *led,
--				     struct is31fl319x_chip *is31)
-+static void is31_free_fwnode(void *data)
- {
--	struct led_classdev *cdev = &led->cdev;
--	int ret;
--
--	if (fwnode_property_read_string(child, "label", &cdev->name))
--		cdev->name = fwnode_get_name(child);
-+	struct is31fl319x_chip *is31 = data;
-+	int i;
- 
--	ret = fwnode_property_read_string(child, "linux,default-trigger", &cdev->default_trigger);
--	if (ret < 0 && ret != -EINVAL) /* is optional */
--		return ret;
-+	for (i = 0; i < is31->cdef->num_leds; i++) {
-+		if (is31->leds[i].fwnode)
-+			fwnode_handle_put(is31->leds[i].fwnode);
- 
--	led->max_microamp = is31->cdef->current_default;
--	ret = fwnode_property_read_u32(child, "led-max-microamp", &led->max_microamp);
--	if (!ret) {
--		if (led->max_microamp < is31->cdef->current_min)
--			return -EINVAL;	/* not supported */
--		led->max_microamp = min(led->max_microamp,
--					is31->cdef->current_max);
-+		is31->leds[i].fwnode = NULL;
- 	}
--
--	return 0;
- }
- 
- static int is31fl319x_parse_fw(struct device *dev, struct is31fl319x_chip *is31)
-@@ -402,6 +388,12 @@ static int is31fl319x_parse_fw(struct device *dev, struct is31fl319x_chip *is31)
- 				     "Failed to get shutdown gpio\n");
- 
- 	is31->cdef = device_get_match_data(dev);
-+	if (!is31->cdef)
-+		return -ENODEV;
-+
-+	ret = devm_add_action_or_reset(dev, is31_free_fwnode, is31);
-+	if (ret)
-+		return ret;
- 
- 	count = 0;
- 	device_for_each_child_node_scoped(dev, child)
-@@ -427,14 +419,20 @@ static int is31fl319x_parse_fw(struct device *dev, struct is31fl319x_chip *is31)
- 
- 		led = &is31->leds[reg - 1];
- 
--		if (led->configured)
-+		if (led->fwnode)
- 			return dev_err_probe(dev, -EINVAL, "led %u is already configured\n", reg);
- 
--		ret = is31fl319x_parse_child_fw(dev, child, led, is31);
--		if (ret)
--			return dev_err_probe(dev, ret, "led %u DT parsing failed\n", reg);
-+		led->max_microamp = is31->cdef->current_default;
-+		ret = fwnode_property_read_u32(child, "led-max-microamp", &led->max_microamp);
-+		if (!ret) {
-+			if (led->max_microamp < is31->cdef->current_min)
-+				return dev_err_probe(dev, -EINVAL, "invalid maximum current\n");
-+
-+			led->max_microamp = min(led->max_microamp,
-+						is31->cdef->current_max);
-+		}
- 
--		led->configured = true;
-+		led->fwnode = fwnode_handle_get(child);
- 	}
- 
- 	is31->audio_gain_db = 0;
-@@ -531,7 +529,7 @@ static int is31fl319x_probe(struct i2c_client *client)
- 	 */
- 	aggregated_led_microamp = is31->cdef->current_max;
- 	for (i = 0; i < is31->cdef->num_leds; i++)
--		if (is31->leds[i].configured &&
-+		if (is31->leds[i].fwnode &&
- 		    is31->leds[i].max_microamp < aggregated_led_microamp)
- 			aggregated_led_microamp = is31->leds[i].max_microamp;
- 
-@@ -545,14 +543,17 @@ static int is31fl319x_probe(struct i2c_client *client)
- 
- 	for (i = 0; i < is31->cdef->num_leds; i++) {
- 		struct is31fl319x_led *led = &is31->leds[i];
-+		struct led_init_data init_data = {};
- 
--		if (!led->configured)
-+		if (!led->fwnode)
- 			continue;
- 
-+		init_data.fwnode = led->fwnode;
-+
- 		led->chip = is31;
- 		led->cdev.brightness_set_blocking = is31->cdef->brightness_set;
- 
--		err = devm_led_classdev_register(&client->dev, &led->cdev);
-+		err = devm_led_classdev_register_ext(&client->dev, &led->cdev, &init_data);
- 		if (err < 0)
- 			return err;
- 	}
+> leds: is31fl319x: modernize registration
 
----
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
-change-id: 20260702-led-modern-d427ed011f83
+[Severity: Low]
+This isn't a bug, but should the description after the subsystem prefix be
+capitalized? The LED subsystem guidelines recommend formatting commit messa=
+ges
+as "leds: <Driver>: <Capitalized description>".
 
-Best regards,
---  
-Andreas Kemnade <andreas@kemnade.info>
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260804-led-modern=
+-v3-1-297720eec19f@kemnade.info?part=3D1
