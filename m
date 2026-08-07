@@ -1,82 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1792147F795;
-	Thu,  6 Aug 2026 20:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023EB2DCF55
+	for <linux-leds@vger.kernel.org>; Fri,  7 Aug 2026 06:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786048616; cv=none; b=Lv3kGWpeuyCUjr2U6xy12qG6Gk3Cs8L3VBdUHo8dfxRXPYHFCmafRJxH0GuHRJsu+eDebCXpjU08b1XueUpYsuaDfUYEez3xTXGHaldeCJ/w6FMgYDJyVvYsFt04lxrTgU5Wgx+37x6zSOY0BoV+dyJG1yy1etOUkU62zDzaPCg=
+	t=1786085172; cv=none; b=d9YsprXz36mfPA98lgC4DegDYp0vI9FDMNpwXcLUjpAVMbNvpNOcZeGTxaFUzV6SYr52bOIOfVizdrUdJjrVtf0PMG6brvrN6K/4JW4Aqwx2jJkigmVFADw05oTuGdQPH8+mr+vBtePL2Uhzl+qUJceH9HMpwIdodfgzX6lGQLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786048616; c=relaxed/simple;
-	bh=kJbVqecujajyRc6zDYJskHihJSI5wE6raPXoPsh8z1E=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=PDAhnSWxpnb8JzuOKl8RL9F+VlnTyKSJanVsVPy+SfakYr/wdUKyIImXpOWuUM8PMPu54UpZJ9pvgkA+LmbQBINHpLQZ31oxjhEh+BxuuhCFo2Paxeb2Oci+1agu/EI7ioBDX3dNmV/DbTVzBTYetBzPs0Y6tQNj19joDp5nF8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSfBU9Sj; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786085172; c=relaxed/simple;
+	bh=Eq81xTU6unw+QhgDZGrLcP0j5hAsW/46xnoeNiiM8is=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N+e7k2N50dhJQT0todlF0Qnvoe8m6nlJTI8UbPdLIfF4jHtz/hQ0VaXKzU6Gwnl3riEJtQ52+G7b6nmGj0MSI0fWVQBMM9ra0irSDs/3NVjmocY1fVEHrA8kfzF4DSETqWQPYtrc1OPr9REemCVPieOmLg8DPEoiXuOHwGNuq9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=OKco9wO2; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSfBU9Sj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 542301F000E9;
-	Thu,  6 Aug 2026 20:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786048614;
-	bh=QU8R7dJXp8ZoyOhMFrV+/sxVkWHJi8tv7msFXuZ2xQ8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=nSfBU9SjGcR5T50xZ9Xp1VzEdoFljVkfix00fjWdOVxxmIKNgo5mzmuGeSy8iNFEi
-	 gNxZZj6l8wGvEUJqXatKQuxiDT15OH3f9NAag2EgVE2lruL4W/mm1Op9X3kd6x4bE/
-	 jG1L11FLtcgsXdSv+Wtd4JraN1WJn9ClxFcfd3getTzXRCotvded5oD2fVqmcSQNeU
-	 mCwnN0Dr6BuWxaYC0Od2kQS5twR/EtHwhb8McevK79nIHNOCAXzNiH02HW8d8j69hj
-	 hMt8CKafMRkuO0omzBq2SOxDoEG+WOG3hFs69KAZbexb8J085f6u93craLhMuCKogl
-	 bCx5ZMZl2kRxQ==
-From: sashiko-bot@kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="OKco9wO2"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4955de8797cso20165075e9.3
+        for <linux-leds@vger.kernel.org>; Thu, 06 Aug 2026 23:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786085169; x=1786689969; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fuxZgv9NDap5lx/vLVQf2iAz+mvVDGMWBjZuHXXwkDc=;
+        b=OKco9wO2HgiQ2sHHMKx9tcZeBKCjk47uROzMk05jaAbXk8+STKCyhV20X+AnJ2waSX
+         QshdPkeRjudqWRGy0Bef7pbw35Yhqpys92MIk+4wedD36FRtIJokx6ikjjOhGeq9Q17U
+         N1jnCK5ypq6Xb5G/TtZGaLocNAQuEvmK6rXOsbw5Ie0U3rAPP/uX++/N2oJHg5b4HwDH
+         1DUwOxDwDGqUq3L7Zauk6j+PUXdRrx0e0Wx/QFBq0wmL063OcOld1kLxQKKGryvklvx9
+         t/AaQRXnYMCv+J5/LCoL9Bcni8tTaZtbEoY2T811Zc85Wz06kBHkUg4OPdPlmOtdRiDP
+         VydQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786085169; x=1786689969;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fuxZgv9NDap5lx/vLVQf2iAz+mvVDGMWBjZuHXXwkDc=;
+        b=CBxAEnAa5xGxxWO0pTy8Gal+BQgEtxh/F8w8XnYS/+kDptGJK+MewwQ6NN2y3pwnZK
+         nEmEujl6hW9kkhCDFg8njM8ITwc/Fp9oyM4GPzSHyoDPIeC0j9TMszkukvy2cqv94AJ8
+         IKsmkqMOhXvkhZYduoQjxXaG7kkHe/gXtvuNuDQxPs2aUompfh0xcZCIJguP7NbCDtBc
+         f5ktbLLTa9WBbpSLwBh8QFLmmbHtT0XM9AG9HOUmajO75n3LOOVdDO+Qo1WppXOpM1fX
+         IHV+h0BMCYL7x4gpHQfcMMjzNafPCmTLWEXnQRyR6CqnZVpVsmk+WFleiTue6Cn5s/4e
+         qrwg==
+X-Forwarded-Encrypted: i=1; AHgh+RqMWZAEFRZM4cRAUZGwZeCtDkgnhpMpyf7lNtjp2H31LUrFmatPlr65ZhTYsCq4zKAOrIeu1kameAYv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrk5M72UFkWiYmyHLF2O3uX5xizbS4vESvYiZFMEjBgjyQzmcb
+	7Sq5eCkyZziB/yOQIfJfXkuowwn96N2SnseeRdDI8i65yGmxKQOHedJ6JuIyBE3wNr8=
+X-Gm-Gg: AR+sD10JqLp3jtbSw+flW7dfSuD3FugtTL7DSTeS2SK7cNPP3tu9822xUWinkZ5mNrU
+	13ieCIEmvDM0MVHT8uYXAncmeVFyN1/90O6wNEuvsRO/mrulVk5zvhuf52o83NQJ0mX6sOkI1Gk
+	Ar3C2M1Y2Hx0RCKXLLeMJs/AwILU1SdkIsAGF/+K37mZZo9e1F4aD02wlePL/T1S8yGyYIu8t+b
+	FBFAs7GMkGoUPTzaOfgsKNYarFEMy6O68oFIeQpo8E3lxo6LKKiB7Z0PgHF5TcSngc3kZzZt3gS
+	n36T78VgNJkrxnN7561UaUyQWZg2VLXuvyZegY1SQA2g+sf/BZ6KrtXrTAVG4GoJEFmgqF/C+jo
+	bg/VCAhMX1micvp3ruoC1yswplKanQWh7zueC4gzrkg6Yu+1FBpsdQHVWeD2bVYNOvqEVMqJLbG
+	Phn2R4ualp0eno/Y9Ksfu3zSvTR6/pWZQ65m7l7nX7M6BwtWsRS19Nd2U02ks5NC2rkoZWEdnq8
+	d7cHzKvFMo9o8a0tf/NjKCRPuMZZn5RX3CDEpG2/A6zNa4LGTaq
+X-Received: by 2002:a05:600c:4fcb:b0:495:5890:8f6c with SMTP id 5b1f17b1804b1-4995e084875mr16033505e9.7.1786085169192;
+        Thu, 06 Aug 2026 23:46:09 -0700 (PDT)
+Received: from localhost (p200300f65f017104bf0aa590e17c3201.dip0.t-ipconnect.de. [2003:f6:5f01:7104:bf0a:a590:e17c:3201])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4995ea2e038sm9844665e9.14.2026.08.06.23.46.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Aug 2026 23:46:08 -0700 (PDT)
+Date: Fri, 7 Aug 2026 08:46:07 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Wim de With <wf@dewith.io>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org
 Subject: Re: [PATCH 2/2] backlight: Add support for Orient Chip OCP8178
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Wim de With" <wf@dewith.io>
-Cc: lee@kernel.org, robh@kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260806201541.101304-3-wf@dewith.io>
+Message-ID: <anV9EBIaZvoTz-lp@monoceros>
 References: <20260806201541.101304-1-wf@dewith.io>
  <20260806201541.101304-3-wf@dewith.io>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 06 Aug 2026 20:36:53 +0000
-Message-Id: <20260806203654.542301F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iwu3m4uskszqhttb"
+Content-Disposition: inline
+In-Reply-To: <20260806201541.101304-3-wf@dewith.io>
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
-- [High] Restoring interrupts while the GPIO is driven low exposes the End-=
-Of-Sequence pulse to arbitrary timing extension.
-- [High] The driver calls `gpiod_set_value()` inside an atomic section with=
-out verifying if the GPIO can sleep.
-- [Medium] Missing onewire protocol re-initialization on system resume.
-- [Medium] The protocol transaction is split across multiple atomic section=
-s, exposing the inter-byte gap to interrupt latency.
---
 
---- Patch [2]: [PATCH 2/2] backlight: Add support for Orient Chip OCP8178 -=
---
-commit a17d436f493c13ff679b7f63c64445e13b71e314
-Author: Wim de With <wf@dewith.io>
+--iwu3m4uskszqhttb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 2/2] backlight: Add support for Orient Chip OCP8178
+MIME-Version: 1.0
 
-backlight: Add support for Orient Chip OCP8178
-   =20
-Add a driver for the Orient Chip OCP8178 backlight controller.
-   =20
-The OCP8178 supports either PWM or a vendor-specific onewire protocol
-over GPIO. This driver implements the single-wire protocol, which
-enables setting static brightness levels without requiring a continuous
-PWM signal from the host CPU.
+On Thu, Aug 06, 2026 at 10:15:41PM +0200, Wim de With wrote:
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
 
-> diff --git a/drivers/video/backlight/ocp8178_bl.c b/drivers/video/backlig=
-ht/ocp8178_bl.c
-> new file mode 100644
-> --- /dev/null
-> +++ b/drivers/video/backlight/ocp8178_bl.c
+Please don't use <linux/mod_devicetable.h> in new code.
+<linux/platform_device.h> already provides struct of_device_id, so you
+should be able to just drop the include for <linux/mod_devicetable.h>.
 
-[ ... ]
-
+> [...]
 > +static void ocp8178_bl_write_u8(struct ocp8178_bl *ocp8178, u8 value)
 > +{
 > +	unsigned long flags;
@@ -86,22 +108,9 @@ ht/ocp8178_bl.c
 > +
 > +	local_irq_save(flags);
 > +
-> +	for (int i =3D 7; i >=3D 0; i--) {
+> +	for (int i = 7; i >= 0; i--) {
 > +		if ((value >> i) & 1) {
 > +			gpiod_set_value(ocp8178->gpiod, 0);
-
-[Severity: High]
-Could this trigger a scheduling while atomic bug if the GPIO controller is
-behind an I2C or SPI expander?
-
-Since this bit-banging occurs inside a local_irq_save() block where hardware
-interrupts are disabled, any GPIO accesses must not sleep. If the driver
-is instantiated via Device Tree with a sleepable GPIO, gpiod_set_value()
-will attempt to sleep in an atomic context.
-
-Should probe() explicitly reject sleepable GPIOs by checking
-gpiod_cansleep()?
-
 > +			udelay(OCP8178_1W_HIGH_BIT_T_LOW_US);
 > +			gpiod_set_value(ocp8178->gpiod, 1);
 > +			udelay(OCP8178_1W_HIGH_BIT_T_HIGH_US);
@@ -119,84 +128,62 @@ gpiod_cansleep()?
 > +
 > +	udelay(OCP8178_1W_T_EOS_US);
 > +	gpiod_set_value(ocp8178->gpiod, 1);
-
-[Severity: High]
-Is there a risk that the end-of-sequence pulse gets extended arbitrarily he=
-re?
-
-By calling local_irq_restore() while the GPIO is driven low, any pending
-interrupts will run immediately. If system interrupt processing or softirqs
-delay execution by more than 2.5ms (OCP8178_T_OFF_MS), the hardware will
-interpret this extended low pulse as a command to disable the onewire mode.
-
-This could cause the controller to unexpectedly power off and revert to PWM
-mode, breaking backlight control.
-
-Would it be safer to restore interrupts after the final gpiod_set_value()
-call?
-
 > +}
-> +
-> +static void ocp8178_bl_set_brightness(struct ocp8178_bl *ocp8178, u8 bri=
-ghtness)
+
+Is this function open-coding stuff that already exists in drivers/w1?
+(Just asking because you call that onewire).
+
+> [...]
+> +static int ocp8178_bl_probe(struct platform_device *pdev)
 > +{
-> +	u8 data =3D 0;
+> +	[...]
 > +
-> +	dev_dbg(ocp8178->dev, "setting brightness to %u\n", brightness);
-> +
-> +	data |=3D FIELD_PREP(OCP8178_DATA_ADDR, 0);
-> +	data |=3D FIELD_PREP(OCP8178_DATA_VALUE, brightness);
-> +
-> +	ocp8178_bl_write_u8(ocp8178, OCP8178_DEVICE_ADDRESS);
-> +	ocp8178_bl_write_u8(ocp8178, data);
+> +	dev_info(dev, "probed, brightness=%u/%u\n", brightness, max_brightness);
 
-[Severity: Medium]
-Does the controller require strict timing between the address and data byte=
-s?
+IMHO this is just noise once the code hits mainline. The amount of log
+lines like these during boot is just annoying and makes it hard to
+identify the relevant lines. So if you're confident that your driver
+works, users are probably not interested in that line and you can drop
+it (or degrade to dev_dbg).
 
-Since ocp8178_bl_write_u8() only disables interrupts for the duration of a
-single byte, an interrupt could fire between these two calls. If the 1-wire
-hardware state machine has a maximum idle time, arbitrary interrupt latency
-in the inter-byte gap might cause the controller to reset and drop the
-brightness update.
-
-> +}
-
-[ ... ]
-
-> +static const struct backlight_ops ocp8178_bl_ops =3D {
-> +	.options	=3D BL_CORE_SUSPENDRESUME,
-> +	.update_status	=3D ocp8178_bl_update_status,
+> +static const struct of_device_id ocp8178_bl_of_match[] = {
+> +	{ .compatible = "ocs,ocp8178" },
+> +	{ /* sentinel */ }
 > +};
+> +MODULE_DEVICE_TABLE(of, ocp8178_bl_of_match);
+> +
+> +static struct platform_driver ocp8178_bl_driver = {
+> +	.driver		= {
+> +		.name		= "ocp8178-bl",
+> +		.of_match_table	= ocp8178_bl_of_match,
+> +	},
+> +	.probe		= ocp8178_bl_probe,
 
-[Severity: Medium]
-Is BL_CORE_SUSPENDRESUME sufficient for restoring this hardware after suspe=
-nd?
+I'm not a fan of aligning the = chars. But opinions differ.
 
-If the platform cuts power to the backlight controller during system suspen=
-d,
-the hardware will wake up in its default PWM mode. The backlight core will
-simply call update_status() on resume to restore brightness, but the onewire
-brightness commands will be ignored because the onewire mode hasn't been
-re-enabled.
+> +};
+> +module_platform_driver(ocp8178_bl_driver);
+> +
+> +MODULE_AUTHOR("Wim de With <wf@dewith.io>");
+> +MODULE_DESCRIPTION("Orient Chip OCP8178 Backlight Driver");
+> +MODULE_LICENSE("GPL");
 
-Should the platform driver provide pm operations to re-execute
-ocp8178_bl_enable_onewire() on system resume?
+Best regards
+Uwe
 
-[ ... ]
+--iwu3m4uskszqhttb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +	ocp8178->gpiod =3D devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
-> +	if (IS_ERR(ocp8178->gpiod))
-> +		return dev_err_probe(dev, PTR_ERR(ocp8178->gpiod),
-> +				     "gpio missing or invalid\n");
+-----BEGIN PGP SIGNATURE-----
 
-[Severity: High]
-As mentioned above, since the driver requires microsecond precision
-bit-banging in an atomic context, should we check gpiod_cansleep() here
-and fail probe if the GPIO requires sleeping?
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmp1fywACgkQj4D7WH0S
+/k6jeQgAoLN+VXXOB+z1f0HbZb9ikcQC2mevDd4JHgtRG5bJK1LekQ92vTBtDHGL
+5hOxcoN7X7DorPQZt5zDoq3PNK5UsyLgdqJ/CqlIOrMccsctk//nNFo56WWOkxfz
+h5TJ6Czia5t0ELTDvtse7QaRDg9cGvpecxIhAuUFd4g2DCwROUEdO4y6m7gmsAUt
+deIIMXTb7K5CKQIQ3zju+QKd/bNxNnEcxcZiCDxRJGpGjzTmWihSCayXP7vPTtQN
+Tm1Mi/MBwcbB9Mqz03LSGsp6UNLZCUcgPYWZrix7v/MtfmfA/T/IZzjTZNX5jLVY
+nWDYA61X1eCKGjX1tgCngtThRezv5Q==
+=aE0N
+-----END PGP SIGNATURE-----
 
-[ ... ]
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260806201541.1013=
-04-1-wf@dewith.io?part=3D2
+--iwu3m4uskszqhttb--
