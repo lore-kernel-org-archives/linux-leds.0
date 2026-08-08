@@ -1,239 +1,178 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from meve.dewith.io (meve.dewith.io [157.90.20.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09253B6363
-	for <linux-leds@vger.kernel.org>; Sat,  8 Aug 2026 09:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B1A3C9EE8;
+	Sat,  8 Aug 2026 10:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.20.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786180334; cv=none; b=VyiOar+Q8zI8W/JXA86BoQrqnrDQcWKOQdCdE5rCxUDXxObR/1tqFCp55erHG6sMrTsyl+HKPaCftrYskAdIGkBpUm4jKJ4hHQwZ31Ya4vxffVJUFyEsXiVJV45SK/U3NA+H0wM7guesdePK6902KEpSX5hJO0d1aUlrWRddTcw=
+	t=1786185434; cv=none; b=aIS6K79KxtQuFZr9H6nh5Uenimq5HDb7uuZmEb4D139S0op977mgkLfjL6pR9PCvGjF4ZnSE1bVkR5MIGjujC7fpRiVYItwDWMuvg8Xh7dsW2PjLS9OZ2t9Gp9iKpDfaGMJNolrU+tgcjkkHZp8Ch8tcQF5lRecgXxbOoFgHg4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786180334; c=relaxed/simple;
-	bh=p3GNSCIxKZ4cODnbNsZevdLSfzqd1qdcbUSj5EfFFXo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=FwQIfFWoi96cKzjzdL/9ImndhYlQqncDBR+yVIcWNUIt9SVbhMz6JvgP5oS9ZmRGY2jrBc4h7q+puyg8kS34NRMTuURLHOLGzZgp1Hx54T9h3uz3yIX8Gf8VQntyYGtwFsm/mUtXmWvP67cmX9MtchwWFkaxfOHCnzQrl+O06iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SY/t1qEl; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1786185434; c=relaxed/simple;
+	bh=s/I0xdOx+n7VnNTPht8TffgnXTNOSrOv20s7+rZj9U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2IrDbuC3eeaTGuEENfDvbDBNXoJcp2ZZNdRUhg8e/LH2LHf34CQHzsxj+AoNW3j7KXQRpFv6I7f2bzkB/XRsKc41nPoL6GHKyYYKhwMOdw921gVBuo2M65LaHp4dacAEwXlWiGuQ0ChLoq41l5uamKSbKw+lDN4lEKQrRGqeSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io; spf=pass smtp.mailfrom=dewith.io; dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b=gnSL7tzt; arc=none smtp.client-ip=157.90.20.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dewith.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SY/t1qEl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786180331; x=1817716331;
-  h=date:from:to:cc:subject:message-id;
-  bh=p3GNSCIxKZ4cODnbNsZevdLSfzqd1qdcbUSj5EfFFXo=;
-  b=SY/t1qElEIe1BBRTxkLbICNVtv4J5UR2U3KhAa6vpdp+MfXm/xW1vK1p
-   Nyajdnyf9scwYw8U9pPmMbCe4jNW7JONHd+wG/NOwOwE1TXE7JD5g+W9V
-   vfXktxurmNV4vuVDx3y+MEVrk5urLA0Ry8GRarXiNrGk86lL0/voe//bD
-   lRI4VvslRQevn8X+q4kR0ycvspmpsjUIJqkQbQTv95PQpLIjZ0o/sYxE8
-   7TH4iQaucEKXpRR19rT3EopkUXeRrxqagIq8iPXRSYN4JBHIpYQyKdVHe
-   ZrLE2QINkKz/06Q+inQLePIUQFXiHCZSwBT4xKVExgqt9m/vd2JISZ/N/
-   g==;
-X-CSE-ConnectionGUID: jHUTlS2+RsaU+EXcEAHlsQ==
-X-CSE-MsgGUID: izIujiDcRuyvUhhohJoUlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11868"; a="90590662"
-X-IronPort-AV: E=Sophos;i="6.25,211,1779174000"; 
-   d="scan'208";a="90590662"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2026 02:12:09 -0700
-X-CSE-ConnectionGUID: pUeIBjAPTza6P6Rs7tyN8A==
-X-CSE-MsgGUID: ZkigIQ/8QPm062JhCQLOcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,211,1779174000"; 
-   d="scan'208";a="267769268"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 08 Aug 2026 02:12:08 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wsd65-00000000K2D-44ES;
-	Sat, 08 Aug 2026 09:12:05 +0000
-Date: Sat, 08 Aug 2026 17:11:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org
-Subject: [lee-leds:for-leds-next] BUILD SUCCESS
- e36f8825616b73a09cd2308f2644aa12d7fb6db0
-Message-ID: <202608081752.CToObewv-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b="gnSL7tzt"
+Received: from localhost (37-74-132-17.biz.kpn.net [37.74.132.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by meve.dewith.io (Postfix) with ESMTPSA id DBE5A20157;
+	Sat,  8 Aug 2026 10:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dewith.io; s=default;
+	t=1786185424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMBaPAYHToijBVahmID/bRSHm7hl1KFROWZe+Ee2lu8=;
+	b=gnSL7tztfhUSFv4oQ1kEHZvH5rbDhNeMvYW6eGeittWdRtE7jhARpF/TBJixsqlWe/aZdx
+	C5bUlSlk7nhWLGw3DwhFiJMczvTsHO+dk6+w3OkRAgby6vD3YkIlPf1TJY0zdtYBJr6FKq
+	hbZ0UrsItw7iW/+e8yIu1agKYQSu92U=
+Date: Sat, 8 Aug 2026 12:28:16 +0200
+From: Wim de With <wf@dewith.io>
+To: sashiko-reviews@lists.linux.dev
+Cc: lee@kernel.org, robh@kernel.org, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH 2/2] backlight: Add support for Orient Chip OCP8178
+Message-ID: <A02AA15C-FF70-41E1-B2F7-1DC157CCB544@dewith.io>
+References: <20260806201541.101304-1-wf@dewith.io>
+ <20260806201541.101304-3-wf@dewith.io>
+ <20260806203654.542301F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260806203654.542301F000E9@smtp.kernel.org>
+User-Agent: K-9 Mail for Android
+X-K9mail-Identity: !l=5700&o=27&fo=27&pl=4796&po=0&qs=PREFIX&f=HTML&m=%2
+ 3%3AMTRjYmVhM2ItMTllMS00ZTVmLTlkNGUtYTgwNWZmMmI3MTBj%3AMTk%3D%3AMjI%3D&
+ p=4124&q=NONE
+X-TUID: LDDKbQpo27r7
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-branch HEAD: e36f8825616b73a09cd2308f2644aa12d7fb6db0  dt-bindings: leds: lacie,ns2-leds: Convert to DT schema
+On Thu, Aug 06, 2026 at 08:36:53PM +0000, sashiko-bot@kernel.org wrote:
+> > +static void ocp8178_bl_write_u8(struct ocp8178_bl *ocp8178, u8 value)
+> > +{
+> > + unsigned long flags;
+> > +
+> > + gpiod_set_value(ocp8178->gpiod, 1);
+> > + udelay(OCP8178_1W_T_START_US);
+> > +
+> > + local_irq_save(flags);
+> > +
+> > + for (int i = 7; i >= 0; i--) {
+> > + if ((value >> i) & 1) {
+> > + gpiod_set_value(ocp8178->gpiod, 0);
+> 
+> [Severity: High]
+> Could this trigger a scheduling while atomic bug if the GPIO controller is
+> behind an I2C or SPI expander?
+> 
+> Since this bit-banging occurs inside a local_irq_save() block where hardware
+> interrupts are disabled, any GPIO accesses must not sleep. If the driver
+> is instantiated via Device Tree with a sleepable GPIO, gpiod_set_value()
+> will attempt to sleep in an atomic context.
 
-elapsed time: 2504m
+> Should probe() explicitly reject sleepable GPIOs by checking
+> gpiod_cansleep()?
 
-configs tested: 162
-configs skipped: 1
+I didn't realize that the spinlock safety is a property of the GPIO
+itself. Applying this suggestion means that we don't need to use
+gpiod_set_value_cansleep() at all in this driver.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I took inspiration from the ktd253 driver, which also has tight timing
+requirements on GPIO bit-banging. This driver does not check
+gpiod_cansleep() either and mixes gpiod_set_value() and
+gpiod_set_value_cansleep(), which is incorrect.
 
-tested configs:
-alpha                            allnoconfig    gcc-16.1.0
-alpha                           allyesconfig    gcc-16.1.0
-alpha                              defconfig    gcc-16.1.0
-arc                             alldefconfig    gcc-16.1.0
-arc                             allmodconfig    gcc-16.1.0
-arc                             allyesconfig    gcc-16.1.0
-arc                  randconfig-001-20260807    gcc-14.3.0
-arc                  randconfig-001-20260808    gcc-9.5.0
-arc                  randconfig-002-20260807    gcc-14.3.0
-arc                  randconfig-002-20260808    gcc-9.5.0
-arm                  randconfig-001-20260807    gcc-14.3.0
-arm                  randconfig-001-20260808    gcc-9.5.0
-arm                  randconfig-002-20260807    gcc-14.3.0
-arm                  randconfig-002-20260808    gcc-9.5.0
-arm                  randconfig-003-20260807    gcc-14.3.0
-arm                  randconfig-003-20260808    gcc-9.5.0
-arm                  randconfig-004-20260807    gcc-14.3.0
-arm                  randconfig-004-20260808    gcc-9.5.0
-arm64                randconfig-001-20260807    gcc-16.1.0
-arm64                randconfig-001-20260808    gcc-11.5.0
-arm64                randconfig-002-20260807    gcc-16.1.0
-arm64                randconfig-002-20260808    gcc-11.5.0
-arm64                randconfig-003-20260807    gcc-16.1.0
-arm64                randconfig-003-20260808    gcc-11.5.0
-arm64                randconfig-004-20260807    gcc-16.1.0
-arm64                randconfig-004-20260808    gcc-11.5.0
-csky                            allmodconfig    gcc-16.1.0
-csky                 randconfig-001-20260807    gcc-16.1.0
-csky                 randconfig-001-20260808    gcc-11.5.0
-csky                 randconfig-002-20260807    gcc-16.1.0
-csky                 randconfig-002-20260808    gcc-11.5.0
-hexagon              randconfig-001-20260807    clang-18
-hexagon              randconfig-001-20260808    gcc-16.1.0
-hexagon              randconfig-002-20260807    clang-18
-hexagon              randconfig-002-20260808    gcc-16.1.0
-i386                            allmodconfig    gcc-14
-i386       buildonly-randconfig-001-20260807    gcc-13
-i386       buildonly-randconfig-002-20260807    gcc-13
-i386       buildonly-randconfig-003-20260807    gcc-13
-i386       buildonly-randconfig-004-20260807    gcc-13
-i386       buildonly-randconfig-005-20260807    gcc-13
-i386       buildonly-randconfig-006-20260807    gcc-13
-i386                          randconfig-001    clang-22
-i386                 randconfig-001-20260807    gcc-14
-i386                 randconfig-001-20260808    clang-22
-i386                 randconfig-002-20260807    gcc-14
-i386                 randconfig-002-20260808    clang-22
-i386                 randconfig-003-20260807    gcc-14
-i386                 randconfig-003-20260808    clang-22
-i386                 randconfig-004-20260807    gcc-14
-i386                 randconfig-004-20260808    clang-22
-i386                 randconfig-005-20260807    gcc-14
-i386                 randconfig-005-20260808    clang-22
-i386                 randconfig-006-20260807    gcc-14
-i386                 randconfig-006-20260808    clang-22
-i386                 randconfig-007-20260807    gcc-14
-i386                 randconfig-007-20260808    clang-22
-i386                 randconfig-011-20260807    clang-22
-i386                 randconfig-012-20260807    clang-22
-i386                 randconfig-013-20260807    clang-22
-i386                 randconfig-014-20260807    clang-22
-i386                 randconfig-015-20260807    clang-22
-i386                 randconfig-016-20260807    clang-22
-i386                 randconfig-017-20260807    clang-22
-loongarch                          defconfig    clang-24
-loongarch            randconfig-001-20260807    clang-18
-loongarch            randconfig-001-20260808    gcc-16.1.0
-loongarch            randconfig-002-20260807    clang-18
-loongarch            randconfig-002-20260808    gcc-16.1.0
-m68k                      m5275evb_defconfig    gcc-16.1.0
-mips                          ip32_defconfig    clang-17
-nios2                           allmodconfig    gcc-11.5.0
-nios2                            allnoconfig    gcc-11.5.0
-nios2                randconfig-001-20260807    clang-18
-nios2                randconfig-001-20260808    gcc-16.1.0
-nios2                randconfig-002-20260807    clang-18
-nios2                randconfig-002-20260808    gcc-16.1.0
-parisc                          allmodconfig    gcc-16.1.0
-parisc                          allyesconfig    gcc-16.1.0
-parisc                             defconfig    gcc-16.1.0
-parisc               randconfig-001-20260807    gcc-8.5.0
-parisc               randconfig-001-20260808    gcc-8.5.0
-parisc               randconfig-002-20260807    gcc-8.5.0
-parisc               randconfig-002-20260808    gcc-8.5.0
-powerpc              randconfig-001-20260807    gcc-8.5.0
-powerpc              randconfig-001-20260808    gcc-8.5.0
-powerpc              randconfig-002-20260807    gcc-8.5.0
-powerpc              randconfig-002-20260808    gcc-8.5.0
-powerpc64                       alldefconfig    clang-17
-powerpc64            randconfig-001-20260807    gcc-8.5.0
-powerpc64            randconfig-001-20260808    gcc-8.5.0
-powerpc64            randconfig-002-20260807    gcc-8.5.0
-powerpc64            randconfig-002-20260808    gcc-8.5.0
-riscv                         randconfig-001    clang-24
-riscv                         randconfig-001    gcc-12.5.0
-riscv                randconfig-001-20260807    gcc-12.5.0
-riscv                randconfig-001-20260808    clang-24
-riscv                randconfig-002-20260807    gcc-12.5.0
-riscv                randconfig-002-20260808    clang-24
-s390                 randconfig-001-20260807    gcc-12.5.0
-s390                 randconfig-001-20260808    clang-24
-s390                 randconfig-002-20260807    gcc-12.5.0
-s390                 randconfig-002-20260808    clang-24
-sh                                 defconfig    gcc-16.1.0
-sh                   randconfig-001-20260807    gcc-12.5.0
-sh                   randconfig-001-20260808    clang-24
-sh                   randconfig-002-20260807    gcc-12.5.0
-sh                   randconfig-002-20260808    clang-24
-sparc                         randconfig-001    gcc-16.1.0
-sparc                randconfig-001-20260807    gcc-16.1.0
-sparc                randconfig-002-20260807    gcc-16.1.0
-sparc64              randconfig-001-20260807    gcc-16.1.0
-sparc64              randconfig-002-20260807    gcc-16.1.0
-um                   randconfig-001-20260807    gcc-16.1.0
-um                   randconfig-002-20260807    gcc-16.1.0
-x86_64     buildonly-randconfig-001-20260807    clang-22
-x86_64     buildonly-randconfig-001-20260808    gcc-14
-x86_64     buildonly-randconfig-002-20260807    clang-22
-x86_64     buildonly-randconfig-002-20260808    gcc-14
-x86_64     buildonly-randconfig-003-20260807    clang-22
-x86_64     buildonly-randconfig-003-20260808    gcc-14
-x86_64     buildonly-randconfig-004-20260807    clang-22
-x86_64     buildonly-randconfig-004-20260808    gcc-14
-x86_64     buildonly-randconfig-005-20260807    clang-22
-x86_64     buildonly-randconfig-005-20260808    gcc-14
-x86_64     buildonly-randconfig-006-20260807    clang-22
-x86_64     buildonly-randconfig-006-20260808    gcc-14
-x86_64                                 kexec    clang-22
-x86_64               randconfig-001-20260807    clang-22
-x86_64               randconfig-002-20260807    clang-22
-x86_64               randconfig-003-20260807    clang-22
-x86_64               randconfig-004-20260807    clang-22
-x86_64               randconfig-005-20260807    clang-22
-x86_64               randconfig-006-20260807    clang-22
-x86_64                        randconfig-011    clang-22
-x86_64               randconfig-011-20260807    clang-22
-x86_64               randconfig-011-20260808    clang-22
-x86_64               randconfig-012-20260807    clang-22
-x86_64               randconfig-012-20260808    clang-22
-x86_64               randconfig-013-20260807    clang-22
-x86_64               randconfig-013-20260808    clang-22
-x86_64               randconfig-014-20260807    clang-22
-x86_64               randconfig-014-20260808    clang-22
-x86_64               randconfig-015-20260807    clang-22
-x86_64               randconfig-015-20260808    clang-22
-x86_64               randconfig-016-20260807    clang-22
-x86_64               randconfig-016-20260808    clang-22
-x86_64               randconfig-071-20260807    clang-22
-x86_64               randconfig-071-20260808    gcc-14
-x86_64               randconfig-072-20260807    clang-22
-x86_64               randconfig-072-20260808    gcc-14
-x86_64               randconfig-073-20260807    clang-22
-x86_64               randconfig-073-20260808    gcc-14
-x86_64               randconfig-074-20260807    clang-22
-x86_64               randconfig-074-20260808    gcc-14
-x86_64               randconfig-075-20260807    clang-22
-x86_64               randconfig-075-20260808    gcc-14
-x86_64               randconfig-076-20260807    clang-22
-x86_64               randconfig-076-20260808    gcc-14
-x86_64                          rhel-9.4-bpf    gcc-14
-xtensa               randconfig-001-20260807    gcc-16.1.0
-xtensa               randconfig-002-20260807    gcc-16.1.0
+> > + udelay(OCP8178_1W_HIGH_BIT_T_LOW_US);
+> > + gpiod_set_value(ocp8178->gpiod, 1);
+> > + udelay(OCP8178_1W_HIGH_BIT_T_HIGH_US);
+> > + } else {
+> > + gpiod_set_value(ocp8178->gpiod, 0);
+> > + udelay(OCP8178_1W_LOW_BIT_T_LOW_US);
+> > + gpiod_set_value(ocp8178->gpiod, 1);
+> > + udelay(OCP8178_1W_LOW_BIT_T_HIGH_US);
+> > + }
+> > + }
+> > +
+> > + gpiod_set_value(ocp8178->gpiod, 0);
+> > +
+> > + local_irq_restore(flags);
+> > +
+> > + udelay(OCP8178_1W_T_EOS_US);
+> > + gpiod_set_value(ocp8178->gpiod, 1);
+> 
+> [Severity: High]
+> Is there a risk that the end-of-sequence pulse gets extended arbitrarily here?
+> 
+> By calling local_irq_restore() while the GPIO is driven low, any pending
+> interrupts will run immediately. If system interrupt processing or softirqs
+> delay execution by more than 2.5ms (OCP8178_T_OFF_MS), the hardware will
+> interpret this extended low pulse as a command to disable the onewire mode.
+> 
+> This could cause the controller to unexpectedly power off and revert to PWM
+> mode, breaking backlight control.
+> 
+> Would it be safer to restore interrupts after the final gpiod_set_value()
+> call?
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This is indeed a problem and I'll fix it in v2. The datasheet states
+that T_EOS must be between 2 and 360 us. Interrupt handling may
+exceed this value.
+
+> > +static void ocp8178_bl_set_brightness(struct ocp8178_bl *ocp8178, u8 brightness)
+> > +{
+> > + u8 data = 0;
+> > +
+> > + dev_dbg(ocp8178->dev, "setting brightness to %u\n", brightness);
+> > +
+> > + data |= FIELD_PREP(OCP8178_DATA_ADDR, 0);
+> > + data |= FIELD_PREP(OCP8178_DATA_VALUE, brightness);
+> > +
+> > + ocp8178_bl_write_u8(ocp8178, OCP8178_DEVICE_ADDRESS);
+> > + ocp8178_bl_write_u8(ocp8178, data);
+> 
+> [Severity: Medium]
+> Does the controller require strict timing between the address and data bytes?
+> 
+> Since ocp8178_bl_write_u8() only disables interrupts for the duration of a
+> single byte, an interrupt could fire between these two calls. If the 1-wire
+> hardware state machine has a maximum idle time, arbitrary interrupt latency
+> in the inter-byte gap might cause the controller to reset and drop the
+> brightness update.
+
+For sending a single byte, we need to disable interrupts for about 58
+us. The datasheet doesn't put a maximum on T_START (which is the start
+of sequence period) so I would need to test the practical limitation.
+Regardless though, disabling interrupts for both writes would take 118
+us and I'm not sure if that is preferable over failing a brightness
+update in rare situations.
+
+> > +static const struct backlight_ops ocp8178_bl_ops = {
+> > + .options = BL_CORE_SUSPENDRESUME,
+> > + .update_status = ocp8178_bl_update_status,
+> > +};
+> 
+> [Severity: Medium]
+> Is BL_CORE_SUSPENDRESUME sufficient for restoring this hardware after suspend?
+> 
+> If the platform cuts power to the backlight controller during system suspend,
+> the hardware will wake up in its default PWM mode. The backlight core will
+> simply call update_status() on resume to restore brightness, but the onewire
+> brightness commands will be ignored because the onewire mode hasn't been
+> re-enabled.
+> 
+> Should the platform driver provide pm operations to re-execute
+> ocp8178_bl_enable_onewire() on system resume?
+
+I'm not sure if this is just LLM-hallucination or actually relevant.
+Should I account for the power cutting to the controller if the driver
+itself doesn't implement the power cutting?
