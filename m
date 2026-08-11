@@ -1,235 +1,101 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B122032B130
-	for <linux-leds@vger.kernel.org>; Tue, 11 Aug 2026 05:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F77242D77B
+	for <linux-leds@vger.kernel.org>; Tue, 11 Aug 2026 09:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786424584; cv=none; b=vEVBg/Kb8sS0jAZq1R/1prCjmf2dkFEwrvm8gNaM8TBxs/nM0O6Zv2zVZSbIY3ueSAz6+LF4zEEFWEUIsXiq9LLW1TAKFGIi3W8QrDQr2HsBxWkH/EYsH9sqRtmgzSrp/zt9Y5w8FgLeP4sG135ONtsDXf4jDVHXNfBclBhBBK8=
+	t=1786440687; cv=none; b=dzDdXvtm/8xraFW7z97c1Cs0rthg6422HCpub/MhPevGJrwLJa3if7SW9pDlIS0Q6iy8iNSCV4puv2xKYlOFzuopNHpdorjwDX+3ScFirAdkEtpA6gpWSC8D/JZiBqXBsqOpSow7K8NA3RherYLwbZSVhYB+RnSLMD3/h2efSME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786424584; c=relaxed/simple;
-	bh=GfzBwg4ZHphT0HU4JIpIzgvGvublxLx3VU0uduAtHN8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jumWILE8PfCS9JZ+0SdwrTeefYjlD7UvcUJio1uSRwy2irR2KTiCMAe7irO3MPPSUZp7z5w6Lw8rB+K/3P5267nuAKL9ybLU9SRfRBt+kr8Jq2q2rD6PQKyLmhrIRcwx73XGREyH/DSmufLrQlAYknEkKK+jBdd0SjXBSwZnjQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SINizHnq; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1786440687; c=relaxed/simple;
+	bh=8QXwmcpvLOgS2HJEcrVuGl3PSKJiGBxtH2I13j0yeZA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=iikAJiVjLFx/4cX9bLZwiwOXo/05SogZ09KPpcqo5tNrzd5IQrS5BNyNATlbBBc1CDxyrwedHb9hkfQe7uf/P7EZE3uFGxr8pcg9+slUdZmKjgFWvNwzE2jaQrFYOOIHGTmroaj7BBqKvHTjNd3X2ypVwzU2Inr9SCIZ3SjQ3Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyk18MWH; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SINizHnq"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-c9cf07d2df6so2030253a12.2
-        for <linux-leds@vger.kernel.org>; Mon, 10 Aug 2026 22:02:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyk18MWH"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2d004f135b1so7378675ad.3
+        for <linux-leds@vger.kernel.org>; Tue, 11 Aug 2026 02:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786424575; x=1787029375; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=/70XqHwKtpkb8Nem1mvPAp3age5VnZSIpQXUrCBp0Sw=;
-        b=SINizHnqCGCjyEBUdA2HTT8VNbxB6jGkoPBjT1PkxzNvfoAEEWJ+EF440Pvjo9VdLC
-         dOVcum7R+XjGAFnFDjGKkPSh7YMIhpclrH0J4YOZoqM5USz/Qr5M6M57AJZbThdo7LHN
-         /IR0qIEUcuGSS9umTLdeex/Hhkj8Sx8yOjX295VvScNJxrF1KdRrWLLv6djCCFkM2psu
-         m4o+XxgcKsusz5dZkl+JSqjikHyrEk/YdDmcKHpUNdGX2FbnoAHk86yPHtVBE+VC9YHT
-         cmLW3kF02QFyaO2GqgCkdvJJkSB5sBan1LykDnxQr8sbKLgUgsGdeEc9NX5j7MX2OejW
-         No3Q==
+        d=gmail.com; s=20251104; t=1786440685; x=1787045485; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=24lOYUM9cZxkUEGLRg6JPIJ8J7Sm+k+/AF/RPaqeH9Q=;
+        b=lyk18MWH3cpWuRrJa34S3ofIqp+Sfl4k2izTx9zDN4o0Tkx5V5kKXyAaUtxyKP7nf/
+         KSZlWbU2ZcxU3Uy8AmbXgYuUn5aK6HLDqyKrJROXvzwzgxlaEOphmZyR6InS+5JKd1uL
+         0mAyD2NfhFMEP8Jc/UdIh8LH0dcZwMIoI5vwFCjZW24bXZZ6znSVF6b8peNarhZ00Hng
+         J3o21LzWuQfo0IZcF6FqG9zCSBl5Z2lCYz0Hk/IROCNaA9QdiouqkQfEwgtHLNl1OJ8m
+         MjswBXSo45pACCZnkKE0DpHtOGexSZIvbZdBcHyg2PDBDUx7ao9nFLI0Vl4q/TGh7Gw4
+         1aKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786424575; x=1787029375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=/70XqHwKtpkb8Nem1mvPAp3age5VnZSIpQXUrCBp0Sw=;
-        b=PqFYCl7HjWeS/CRzqOOCUQyRxDWhiw7DpySJpUwJxWef1kmt9P0HRKlhdR/Sr9jgqp
-         3+LlsZH0ogwprCNevyotrcHcjVZvNR553PJ0VmcL30cAFfL9vjIfW++Y7+Qg8OWAcbAK
-         m2sOgUeTluIKx5xH1qnBNwxwNTkXmXrlgBn2rKRUcj7cWxwxg2Oy3yIv1ztPb/s6cNPi
-         9fQMtmjrXswuZ7wD+BtLfzL4vwzYpMwJuTosxaUg4/r0q0dfzAcJWqZacedXXKbNFYxB
-         6PyWKex99HpZ5bGDESUWO+Pl8FyDdCqGBAURUxfgpAiMjUkNtNeNm7Pw7t3TwHSgXQq4
-         urzA==
-X-Forwarded-Encrypted: i=1; AHgh+Rrjt+n/n+SZoXN3UaevjRso0tX9HrcewkmNXxeW2IiYPFaWo+1srKxSw2RLzhm1ejOYStSCShzTYI06@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfMHB5uOUXVonH28NxiSu/TzH9mXmbGEgqwdjy06EuG5X4HO+7
-	Ez+nfB796JZYViJ8j7ujnGRarJBYwlDR1AoZghJWchBSswM/nBg8BP3FERwY7t1l1ds=
-X-Gm-Gg: AR+sD10TxHLzHWk6sXLP57oAVzyWOrbOGZYqrl40Yl21mCXPqnL9Kw+vw4fI9AsFwRe
-	7RhzvSYjIoKRbw2djBttJUCL2jOIZgLDxVYLcgkn10iWVH0Xjh72wzWUVGPX9mNorW+gfj6PLwO
-	3T/Kw/oCH26tKpABYelrMFF3H7543m0CRR7h0R6q2IBeFIkDH1PF+/nAnlCqEQ6KhbZaYgRptgO
-	feVrEoUtfIRACo8v7wlHWZZTkUTAeKCaC2eluuymsl6hqnaWe4l2c4SCFkc2JKdUDH6UmkalSAu
-	QOef1p+gMj4FtgW0f96qkumNPYdzOyUx7P29z8zlnbU3mu4sHHfsNG09CS94S4fL8mMSO5FK8ve
-	upqji7/KD7aTwRzwwP2lCWPHOZbqeZVpo3nXL8KkWkVZ6nroqLiSuY4evThRLlVKUkLOgl1R8w+
-	ta6EQpyAgil2D8/jXpm3ce27lnHRPL41ihMudFaHCzRXHhbi4JiRsr+mGK1fdVVOByZKH2lqUfZ
-	/izu1mX1VyuHPFPrXbzArwDObZsZSFI2DeHi2RTAaUcVOiaQ1gS5mvaaTL8
-X-Received: by 2002:a05:6a20:2d13:b0:3c4:397a:69ba with SMTP id adf61e73a8af0-3cc2bac423emr1261864637.28.1786424574951;
-        Mon, 10 Aug 2026 22:02:54 -0700 (PDT)
-Received: from Mac.localdomain (198-27-228-154.fiber.dynamic.sonic.net. [198.27.228.154])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31c619cf07dsm660421eec.4.2026.08.10.22.02.53
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 10 Aug 2026 22:02:54 -0700 (PDT)
-From: Ahmad Byagowi <ahmadexp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nam Tran <trannamatk@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Peter Rosin <peda@lysator.liu.se>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH net-next v3 5/5] ptp: ocp: Add Time Card V9 I2C peripheral topology
-Date: Mon, 10 Aug 2026 22:02:44 -0700
-Message-ID: <1931d6019cdaa80c681c38b6ff4d0359ec42230d.1786423898.git.ahmadexp@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1786423898.git.ahmadexp@gmail.com>
-References: <cover.1786423898.git.ahmadexp@gmail.com>
+        d=1e100.net; s=20251104; t=1786440685; x=1787045485;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=24lOYUM9cZxkUEGLRg6JPIJ8J7Sm+k+/AF/RPaqeH9Q=;
+        b=NSCdvOS7VfFkrh2Ryhb4N2U4avTr2j+cxwPkbb8xArlHJplGxFtghIuwPk0Z32Io/F
+         neJzD6d/yCW6UVojUdn1YMpONtrqkI3n8Yp6izQ7xG/y35UgFawtU0WEGYRWHyYoEtcp
+         qWhZwAbrSg5mmJyisPgloYuS6/5NYBoBCNWr4sFUJMi0jSUR1OS1LU6xGxCZ+dSO73+B
+         W5zXKc3deN3PZqYDGL3bZE879DYKDIENlUBvXG4CPAeax5qUXQVq16uZnBRVV/v326iy
+         Mye2b64i1ldburVt0IdWYjLr1rjIQLQpaG3F3MqpjEz5ZsRxHAVSFfAUir7+9n1XQf4F
+         D/dQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqIb5c+H0vv2g48rWplHVRtuTwW5lqTBFKZblgNwG8FaCzx1ftV5+tpfeRFDkZ0YefiXue8IgBMI/fQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8oGwi0qgS6hgB5NHEuqcu4KCMnoE5JM9ZZJZmZsA94K+WRSg/
+	g/M7CcU0tfOwRk8soznApL/fjanVqbEVy2YKPwtrHD5O5qbgIJ2gjEkY
+X-Gm-Gg: AR+sD114oXXE09khOn0ui0JkaX4vBCvMpRMzH0Z/5oEbICK0yp0oir4e31WzBpPc18c
+	xwcjdChOnkFddqEKGvaC8gZF1qgdBuvL3YuNmT1f3V+K85yez0gHYe32bauMEKuJuBHUTPSUAqZ
+	SRnCW4TkhxK/TAuSWkm433D8fga2vmV9i7z++gJVa2yyH+w6hL5b50VLdv0bubXnTgMzMQCI5fV
+	Ci3RBOUMZFapc8h68vJb/YyXgFGH93MNDBCFbeyHexhCQp2YQRmXj+w0LfhcLSJpFnbGt10cQlU
+	gczmI5r4LTSd4RfDpCK8Z7ws1RgWyxfMzC5ehPzc49na9k8ldfKWKo6SO0Y/ZKGb+u4X7b39dO5
+	RmbX4LSydWe517X1B1RdnpwcPFC8ZXD/8ZCzX6OYaEMuWmSlAgNoOQ9cton54+gZ38n3W4Scfh9
+	UMKq2yPpTe8PuCm40nLEE8GA4yfVNlhl/cKsfowgUtSdGZvYTPdoiwztflp7cJxhNIvTkGdS8ia
+	XFuqr5HqTLju3/YCDgf3vq0jhI6z8LaRbt7AfGELTU=
+X-Received: by 2002:a17:903:944:b0:2bf:9760:b94d with SMTP id d9443c01a7336-2d31792b495mr25426375ad.15.1786440684729;
+        Tue, 11 Aug 2026 02:31:24 -0700 (PDT)
+Received: from [192.168.68.65] (104-12-136-65.lightspeed.irvnca.sbcglobal.net. [104.12.136.65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d315f3f33csm4781325ad.26.2026.08.11.02.31.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2026 02:31:24 -0700 (PDT)
+Message-ID: <73033a32-4efe-4ed2-9319-ffb205d28719@gmail.com>
+Date: Tue, 11 Aug 2026 02:31:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: devnull+guptarud.gmail.com@kernel.org
+Cc: andersson@kernel.org, broonie@kernel.org, conor+dt@kernel.org,
+ conor.dooley@microchip.com, david@ixit.cz, devicetree@vger.kernel.org,
+ guptarud@gmail.com, konrad.dybcio@oss.qualcomm.com, konradybcio@kernel.org,
+ krzk+dt@kernel.org, lee@kernel.org, lgirdwood@gmail.com, linusw@kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, pavel@kernel.org, phone-devel@vger.kernel.org,
+ robh@kernel.org
+References: <20260527-expressatt_camera_flash-v6-0-de0f150024e4@gmail.com>
+Subject: Re: [PATCH v6 0/3] Samsung Expressatt: Camera Flash
+Content-Language: en-US
+From: Rudraksha Gupta <guptarud@gmail.com>
+In-Reply-To: <20260527-expressatt_camera_flash-v6-0-de0f150024e4@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Time Card V9 places a BME280 at 0x76, a BNO055 at 0x29, and an
-IS32FL3207 at 0x37 on PCA9546 channel 1.
+Hello,
 
-Describe GNSS1 and GNSS2 as RGB LEDs on outputs 0 through 5 and SMA1
-through SMA4 on outputs 6 through 17. The board uses a 4.7 kohm RISET
-resistor, sequential red, green, and blue output wiring, and an 8100 uA
-per-output limit.
 
-Select this profile only for the exact fixed-width EEPROM ID
-"TIMECARD-V9". Earlier revisions expose the same I2C devices with
-different LED routing, so probing cannot distinguish them safely. Leave
-erased, malformed, and unknown board IDs unconfigured.
+https://lore.kernel.org/all/20260527-expressatt_camera_flash-v6-0-de0f150024e4@gmail.com/#t
 
-Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
----
- drivers/ptp/ptp_ocp.c | 73 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 72 insertions(+), 1 deletion(-)
+This series seems to have fallen in between the cracks. Should I resend 
+this patch series?
 
-diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-index f2c2979daaf1..a843198796ab 100644
---- a/drivers/ptp/ptp_ocp.c
-+++ b/drivers/ptp/ptp_ocp.c
-@@ -353,7 +353,7 @@ struct ptp_ocp_serial_port {
- 
- #define OCP_I2C_MUX_CHANNELS		4
- #define OCP_I2C_MAX_SENSOR_COUNT	5
--#define OCP_I2C_MAX_LED_COUNT		5
-+#define OCP_I2C_MAX_LED_COUNT		6
- #define OCP_I2C_MAX_LED_COMPONENT_COUNT	(3 * OCP_I2C_MAX_LED_COUNT)
- #define OCP_I2C_MUX_NAME_LEN		32
- #define OCP_I2C_MUX_COMPATIBLE		"nxp,pca9546"
-@@ -613,9 +613,61 @@ static const struct ptp_ocp_led ptp_ocp_r4006_leds[] = {
- 	},
- };
- 
-+static const struct ptp_ocp_i2c_device ptp_ocp_v9_sensors[] = {
-+	{ "pressure@76", "bosch,bme280", "bme280", 1, 0x76 },
-+	{ "imu@29", "bosch,bno055", "bno055", 1, 0x29 },
-+};
-+
-+static const struct ptp_ocp_led ptp_ocp_v9_leds[] = {
-+	{
-+		.node_name = "multi-led@0",
-+		.function = LED_FUNCTION_STATUS,
-+		.function_enumerator = 1,
-+		.has_function_enumerator = true,
-+		.channel = { 0, 1, 2 },
-+	},
-+	{
-+		.node_name = "multi-led@3",
-+		.function = LED_FUNCTION_STATUS,
-+		.function_enumerator = 2,
-+		.has_function_enumerator = true,
-+		.channel = { 3, 4, 5 },
-+	},
-+	{
-+		.node_name = "multi-led@6",
-+		.function = LED_FUNCTION_INDICATOR,
-+		.function_enumerator = 1,
-+		.has_function_enumerator = true,
-+		.channel = { 6, 7, 8 },
-+	},
-+	{
-+		.node_name = "multi-led@9",
-+		.function = LED_FUNCTION_INDICATOR,
-+		.function_enumerator = 2,
-+		.has_function_enumerator = true,
-+		.channel = { 9, 10, 11 },
-+	},
-+	{
-+		.node_name = "multi-led@c",
-+		.function = LED_FUNCTION_INDICATOR,
-+		.function_enumerator = 3,
-+		.has_function_enumerator = true,
-+		.channel = { 12, 13, 14 },
-+	},
-+	{
-+		.node_name = "multi-led@f",
-+		.function = LED_FUNCTION_INDICATOR,
-+		.function_enumerator = 4,
-+		.has_function_enumerator = true,
-+		.channel = { 15, 16, 17 },
-+	},
-+};
-+
- static_assert(ARRAY_SIZE(ptp_ocp_r4006_sensors) <=
- 	      OCP_I2C_MAX_SENSOR_COUNT);
- static_assert(ARRAY_SIZE(ptp_ocp_r4006_leds) <= OCP_I2C_MAX_LED_COUNT);
-+static_assert(ARRAY_SIZE(ptp_ocp_v9_sensors) <= OCP_I2C_MAX_SENSOR_COUNT);
-+static_assert(ARRAY_SIZE(ptp_ocp_v9_leds) <= OCP_I2C_MAX_LED_COUNT);
- 
- static const struct ptp_ocp_i2c_profile ptp_ocp_r4006_profile = {
- 	.name = "r4006",
-@@ -630,6 +682,19 @@ static const struct ptp_ocp_i2c_profile ptp_ocp_r4006_profile = {
- 	.led_max_microamp = 8150,
- };
- 
-+static const struct ptp_ocp_i2c_profile ptp_ocp_v9_profile = {
-+	.name = "v9",
-+	.sensors = ptp_ocp_v9_sensors,
-+	.sensor_count = ARRAY_SIZE(ptp_ocp_v9_sensors),
-+	.leds = ptp_ocp_v9_leds,
-+	.led_count = ARRAY_SIZE(ptp_ocp_v9_leds),
-+	.led_node_name = "led-controller@37",
-+	.led_mux_channel = 1,
-+	.led_address = 0x37,
-+	.led_riset_ohms = 4700,
-+	.led_max_microamp = 8100,
-+};
-+
- #define bp_assign_entry(bp, res, val) ({				\
- 	uintptr_t addr = (uintptr_t)(bp) + (res)->bp_offset;		\
- 	*(typeof(val) *)addr = val;					\
-@@ -2230,6 +2295,7 @@ static const struct ptp_ocp_i2c_profile *
- ptp_ocp_i2c_select_profile(struct ptp_ocp *bp)
- {
- 	static const char r4006_id[] = "R4006";
-+	static const char v9_id[] = "TIMECARD-V9";
- 	size_t board_id_len;
- 
- 	if (!ptp_ocp_has_eeprom_data(bp))
-@@ -2242,6 +2308,11 @@ ptp_ocp_i2c_select_profile(struct ptp_ocp *bp)
- 	    !memcmp(bp->board_id, r4006_id, sizeof(r4006_id) - 1))
- 		return &ptp_ocp_r4006_profile;
- 
-+	/* Older revisions share V9's I2C devices but not its LED wiring. */
-+	if (board_id_len == sizeof(v9_id) - 1 &&
-+	    !memcmp(bp->board_id, v9_id, sizeof(v9_id) - 1))
-+		return &ptp_ocp_v9_profile;
-+
- 	return NULL;
- }
- 
--- 
-2.50.1 (Apple Git-155)
+
+Thanks,
+
+Rudraksha
 
