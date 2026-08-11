@@ -1,247 +1,390 @@
-Received: from meve.dewith.io (meve.dewith.io [157.90.20.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C3B40B364;
-	Mon, 10 Aug 2026 17:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.20.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5480A314A9E
+	for <linux-leds@vger.kernel.org>; Tue, 11 Aug 2026 05:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786381838; cv=none; b=DTyIlkiECBt6k1JQmBl0rxqQSrqe/MQuBqbx9sBHMg9yX++kzqE4VKh4mscB97oEwDXQ/OpAnJ6aIbSlNwRusjxV9eyPdfAsvL2y5fSojTrr9xkODMY52HwrAGZxzD9EzfS5GURtIHOlQfyAJSU3yAIRxgVk1gWJu5pJHhvlsS0=
+	t=1786424571; cv=none; b=P4k2LJPoFcOv98Llc8cyL7Kznvn6inMnTAOQiSUMjhrk39xzwi/16gr1ObS9GwU+2l8Qv0bULhMLiuX6mgGzxHtMS5n5Rkpbg/T+rkwKhR5w6sP3xUOGfszD5k3itkEDCuTV0SsttPGUtAVmPi2ijDEKYQwQ6TO0zebCn5UV+aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786381838; c=relaxed/simple;
-	bh=U05IaZCt9defcc1yBLtFROR8MKd1m0y3f66KSqzwKso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpzblldMddXrMEE3fYbofRMcRtEKO3VvQWZnWf0537BPj3ziDqnGjr7yVxd/bR5vsy0RRC1rCAmOQphuys1mJBltlLeTyTn0+3DAHirdjoveMoZsrAp60NXOJVkEvXOKjzQOryWXztzYTIrzcwbjcE3SmrSlRG88pJ4ReXs2vek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io; spf=pass smtp.mailfrom=dewith.io; dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b=pb3nrYYW; arc=none smtp.client-ip=157.90.20.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dewith.io
+	s=arc-20240116; t=1786424571; c=relaxed/simple;
+	bh=cgOyPqDoAVmQIdEVzceGAUOAHO3s4QFFGfpc4LKyOz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XWtbOjmwY+lRuiDqDQaU0V7w6aoSPP2vxtqdnDZPyvF+nYFBOTpXf3iTUtc1yGZcCTm3X/Ja9Y0JsSpsikfjeapYR+pusDKVUdAeozUrcU5RgZmW4swTzrbMVb2QyQQYgjt9PsYdIOors6byUgURU1Nz0zyGkXNRrnODsExYraE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTgg2tYq; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b="pb3nrYYW"
-Received: from localhost (70-26-208-87.ftth.glasoperator.nl [87.208.26.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by meve.dewith.io (Postfix) with ESMTPSA id 4A7F31FC16;
-	Mon, 10 Aug 2026 17:10:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dewith.io; s=default;
-	t=1786381828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zRlDAn2w48ZOZSZja/33WF3x7tTj9Ajju1bg/9k60To=;
-	b=pb3nrYYWp3nNM+k9njiYwFJaTuEL9Ade7KEZPKnuZ+jtdjeD8fwDTt0KqqaeJxucPeNAHL
-	ehglFj142Zbwq0lELcvxmtSBzHjLCNHBhsIVOlbqE4UfKx9lfRN8q1GDMmKduoBYg1Anfr
-	j812+YNlLlQi/oYgc4zNqXYxZTf6Zss=
-Date: Mon, 10 Aug 2026 19:10:22 +0200
-From: Wim de With <wf@dewith.io>
-To: Daniel Thompson <danielt@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTgg2tYq"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-84a652535dcso1499423b3a.3
+        for <linux-leds@vger.kernel.org>; Mon, 10 Aug 2026 22:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786424568; x=1787029368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vzcklR1752px28ASDR7vjX+YItV4G0zo+zCsAv5XG1k=;
+        b=OTgg2tYqHiO6uyGwDU67EVKFnU3oUg5KopP5g95V15g0Zmn3Y5g6xOixOSy10eLM3K
+         Uchso8Km3vMjJh9gkRzo5GZwmtfVOKOfdRU13LXn3nFgPD23yOGXW0qK0iywVxSmnBcx
+         DT7FWE7Ujg1aJxUiccxkSRq0meCruB8nCvvWHZ9Gx0ID5dmn+9g3FC8e3bAxkbj+xB0S
+         DgTIHvthW/NXwaRf3vcGUdbNNi9zez4PiTElTmVLVjgHQDe3x8hf1lgvnEnepfsTAeZ2
+         V4mOVBaCB962HI6wp3A0IKLzbCN/mucn4FcLCqmE8Pt4bTwI008F3Z+oQr7oJPvOKrZp
+         Nqhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786424568; x=1787029368;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=vzcklR1752px28ASDR7vjX+YItV4G0zo+zCsAv5XG1k=;
+        b=M3p1f/rKCSNS1K76v1FoeTQ0m3gBuif3huORMPatodFHkSYWccQJHc/9dcGhI3yuEO
+         nA/KD2z8+aGXq9E3lQvv+76Ug1NMMuSGdpSZOm6Cjxa3en0lkbI3HH5UpZyxgTxkntgC
+         b5UMI6poT9amoROadaWx4XVMvl9o6g4xzJTGUuayjJgRqc9jekqBqfFJWDSHK8hFHlFj
+         ShfePF+TPybPYGdurlHufYNHXFVShQI7MHp2mr7K4eA6oq0VkGdQtNVwYy5Kea5rTAqz
+         2zSnDGA29OXIwUdbaQh41yNBumkMSM5Qjoj2y46YCuXxVIRSYHmt+IGb6MYdx4xjQI06
+         r+hg==
+X-Forwarded-Encrypted: i=1; AHgh+RokoDzeRTGpFMDviy9AUO1dg0LCFh9dRbUXQMWm3w3osdho7Vp7062RYl/qscCLP8miBOPkIVOE/8Ai@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj2xTmpnhZzKEZRla6zu/ylDB9rxm7bkXYQTmeO8cmTTtQ9bIx
+	hLvWewTa/dbxNHNHoTcZRdhEd9SlsBp0FLPyGd8+sl8YQ8bX8anUiYcF
+X-Gm-Gg: AR+sD11ANqLKxpvggT+I5RTWFs3B/+wxEI3Pj1fecfhQcBtUdLK0Cy8pOsMIpw7gSRr
+	qh1puxpiRHAnUrVS3sEaXQlfsC4G5dmAOOv8dygV/b6eTGhEBsaS9xrwI3hWU5L74dBJCGrCZUb
+	GY92vi3AqqqP95uE4tg6N88eCaPdHHZeZBBwFWwaJFe2aOb/DkB9Vd/DCSHU2MxVD2tF72HH8zs
+	QJvXY9evzy4WVALZyJTjz2X6ky0nQzyP0aWUvGhwxJw5VhU2EXBM06bZPur7MJjDcwLgZF5LAj+
+	u7HZRkhY9j0PtCHJxOdpTw33AatH32KgW2bYc66Yc5/BQsNGzs/1cnKDtS/w98MEXSzdxBY3nCv
+	ezZBtO+vFHAHgkrjWzz6FO72EiUh4JeJqqbn331vkXjP9Ii15nsLP7hy+pzc8E1O/oe5BT70WvB
+	KCbu3xl/Kg/sTNpN9pG2P5z5Zm4fvucHXVBJs+NzfN+A1F1eckNGeFWeMsyssEuJBSe0S9RUIcS
+	1byrr5ExH2HW9rsOHG7IJRvCyoWzmXrynsOqZxPg/s8ZCKdVQ==
+X-Received: by 2002:a05:6a21:7008:b0:398:7ed3:a001 with SMTP id adf61e73a8af0-3cc2b7a6ae5mr1303294637.2.1786424568459;
+        Mon, 10 Aug 2026 22:02:48 -0700 (PDT)
+Received: from Mac.localdomain (198-27-228-154.fiber.dynamic.sonic.net. [198.27.228.154])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31c619cf07dsm660421eec.4.2026.08.10.22.02.47
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 10 Aug 2026 22:02:47 -0700 (PDT)
+From: Ahmad Byagowi <ahmadexp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 2/2] backlight: Add support for Orient Chip OCP8178
-Message-ID: <anoF_hOjV-BRvYBI@dewith.io>
-References: <20260806201541.101304-1-wf@dewith.io>
- <20260806201541.101304-3-wf@dewith.io>
- <anm3DY86P_TGxj3a@aspen.lan>
+	Conor Dooley <conor+dt@kernel.org>,
+	Nam Tran <trannamatk@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Peter Rosin <peda@lysator.liu.se>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH net-next v3 1/5] dt-bindings: leds: Add IS32FL3207 controller
+Date: Mon, 10 Aug 2026 22:02:40 -0700
+Message-ID: <8088c3333f464545297a642816316a090dcd3099.1786423898.git.ahmadexp@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <cover.1786423898.git.ahmadexp@gmail.com>
+References: <cover.1786423898.git.ahmadexp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <anm3DY86P_TGxj3a@aspen.lan>
+Content-Transfer-Encoding: 8bit
 
-Thanks for the review.
+The IS32FL3207 is an 18-channel constant-current LED controller
+with per-output PWM and current scaling.
 
-On Mon, Aug 10, 2026 at 12:33:33PM +0100, Daniel Thompson wrote:
-> On Thu, Aug 06, 2026 at 10:15:41PM +0200, Wim de With wrote:
-> > +static void ocp8178_bl_write_u8(struct ocp8178_bl *ocp8178, u8 value)
-> > +{
-> > +	unsigned long flags;
-> > +
-> > +	gpiod_set_value(ocp8178->gpiod, 1);
-> > +	udelay(OCP8178_1W_T_START_US);
-> > +
-> > +	local_irq_save(flags);
-> > +
-> > +	for (int i = 7; i >= 0; i--) {
-> > +		if ((value >> i) & 1) {
-> > +			gpiod_set_value(ocp8178->gpiod, 0);
-> > +			udelay(OCP8178_1W_HIGH_BIT_T_LOW_US);
-> > +			gpiod_set_value(ocp8178->gpiod, 1);
-> > +			udelay(OCP8178_1W_HIGH_BIT_T_HIGH_US);
-> > +		} else {
-> > +			gpiod_set_value(ocp8178->gpiod, 0);
-> > +			udelay(OCP8178_1W_LOW_BIT_T_LOW_US);
-> > +			gpiod_set_value(ocp8178->gpiod, 1);
-> > +			udelay(OCP8178_1W_LOW_BIT_T_HIGH_US);
-> > +		}
-> > +	}
-> > +
-> > +	gpiod_set_value(ocp8178->gpiod, 0);
-> > +
-> > +	local_irq_restore(flags);
-> > +
-> > +	udelay(OCP8178_1W_T_EOS_US);
-> 
-> Given this happens after we restore local irqs this should probably be
-> fsleep().
+Describe I2C addressing, power and shutdown controls, RISET, and
+individual or multicolor output groupings. Require board current limits
+for each output.
+
+Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
+---
+ .../bindings/leds/issi,is32fl3207.yaml        | 251 ++++++++++++++++++
+ MAINTAINERS                                   |   6 +
+ 2 files changed, 257 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml
+
+diff --git a/Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml b/Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml
+new file mode 100644
+index 000000000000..4ee9db964ecc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml
+@@ -0,0 +1,251 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/issi,is32fl3207.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Lumissil IS32FL3207 18-channel LED controller
++
++maintainers:
++  - Ahmad Byagowi <ahmadexp@gmail.com>
++
++description: |
++  The IS32FL3207 is an I2C LED controller with 18 individually controlled
++  constant-current outputs. Each output has 8-bit current scaling. PWM
++  brightness control uses the controller's default 8-bit, 62 kHz mode.
++  Outputs may be exposed as individual LEDs or grouped as multicolor LEDs.
++
++  The data sheet is available at:
++    https://www.lumissil.com/assets/pdf/core/IS32FL3207_DS.pdf
++
++properties:
++  compatible:
++    const: issi,is32fl3207
++
++  reg:
++    enum: [0x34, 0x35, 0x36, 0x37]
++
++  vcc-supply:
++    description: Regulator providing power to the VCC pin.
++
++  enable-gpios:
++    maxItems: 1
++    description: GPIO connected to SDB, asserted to enable the controller.
++
++  issi,riset-ohms:
++    minimum: 2000
++    maximum: 76500000
++    description: |
++      Resistance in ohms of the external RISET resistor. The resistor sets the
++      maximum output current according to IOUT(MAX) = 76.5 / RISET amperes.
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^led@[0-9a-f]+$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 17
++        description: |
++          Zero-based LED output number. Values 0 through 17 correspond to
++          OUT1 through OUT18.
++
++      led-max-microamp:
++        minimum: 1
++        maximum: 38250
++
++      color:
++        oneOf:
++          - minimum: 0
++            maximum: 7
++          - minimum: 10
++            maximum: 14
++
++      max-brightness:
++        minimum: 1
++        maximum: 255
++
++      default-state:
++        description:
++          The controller is reset during initialization, so an existing state
++          cannot be preserved.
++        enum: ["on", "off"]
++
++      default-brightness:
++        maximum: 255
++        description: |
++          Brightness used when default-state is "on". This value must not
++          exceed max-brightness when max-brightness is specified.
++
++    anyOf:
++      - required:
++          - function
++      - required:
++          - color
++
++    required:
++      - reg
++      - led-max-microamp
++
++  "^multi-led@[0-9a-f]$":
++    type: object
++    $ref: leds-class-multicolor.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 15
++        description: |
++          Zero-based lowest-numbered LED output used by the group. Values 0
++          through 15 correspond to OUT1 through OUT16. A group based at
++          channel 15 (OUT16) may include channels 16 and 17 (OUT17 and OUT18).
++
++      "#address-cells":
++        const: 1
++
++      "#size-cells":
++        const: 0
++
++      max-brightness:
++        minimum: 1
++        maximum: 255
++
++      default-state:
++        description:
++          The controller is reset during initialization, so an existing state
++          cannot be preserved.
++        enum: ["on", "off"]
++
++      default-brightness:
++        maximum: 255
++        description: |
++          Brightness used when default-state is "on". This value must not
++          exceed max-brightness when max-brightness is specified.
++
++    patternProperties:
++      "^led@[0-9a-f]+$":
++        type: object
++        $ref: common.yaml#
++        unevaluatedProperties: false
++
++        properties:
++          reg:
++            minimum: 0
++            maximum: 17
++            description: |
++              Zero-based LED output number. Values 0 through 17 correspond to
++              OUT1 through OUT18.
++
++          led-max-microamp:
++            minimum: 1
++            maximum: 38250
++
++          color:
++            oneOf:
++              - minimum: 0
++                maximum: 7
++              - minimum: 10
++                maximum: 14
++
++          max-brightness: false
++
++          default-state: false
++
++          default-brightness: false
++
++          retain-state-shutdown: false
++
++        required:
++          - reg
++          - color
++          - led-max-microamp
++
++    anyOf:
++      - required: [led@0]
++      - required: [led@1]
++      - required: [led@2]
++      - required: [led@3]
++      - required: [led@4]
++      - required: [led@5]
++      - required: [led@6]
++      - required: [led@7]
++      - required: [led@8]
++      - required: [led@9]
++      - required: [led@a]
++      - required: [led@b]
++      - required: [led@c]
++      - required: [led@d]
++      - required: [led@e]
++      - required: [led@f]
++
++    required:
++      - reg
++      - "#address-cells"
++      - "#size-cells"
++
++required:
++  - compatible
++  - reg
++  - issi,riset-ohms
++  - "#address-cells"
++  - "#size-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/leds/common.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led-controller@34 {
++            compatible = "issi,is32fl3207";
++            reg = <0x34>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            vcc-supply = <&led_3v3>;
++            enable-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
++            issi,riset-ohms = <4700>;
++
++            multi-led@0 {
++                reg = <0>;
++                color = <LED_COLOR_ID_RGB>;
++                function = LED_FUNCTION_STATUS;
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    color = <LED_COLOR_ID_RED>;
++                    led-max-microamp = <8100>;
++                };
++
++                led@1 {
++                    reg = <1>;
++                    color = <LED_COLOR_ID_GREEN>;
++                    led-max-microamp = <8100>;
++                };
++
++                led@2 {
++                    reg = <2>;
++                    color = <LED_COLOR_ID_BLUE>;
++                    led-max-microamp = <8100>;
++                };
++            };
++        };
++    };
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a82b6ec9c567..85e19b1c46cf 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13822,6 +13822,12 @@ S:	Maintained
+ F:	Documentation/filesystems/isofs.rst
+ F:	fs/isofs/
  
-This one is wrong, the IRQs should be restored after this delay and
-following GPIO set, as noted by Sashiko.
++ISSI IS32FL3207 LED DRIVER
++M:	Ahmad Byagowi <ahmadexp@gmail.com>
++L:	linux-leds@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml
++
+ IT87 HARDWARE MONITORING DRIVER
+ M:	Jean Delvare <jdelvare@suse.com>
+ L:	linux-hwmon@vger.kernel.org
+-- 
+2.50.1 (Apple Git-155)
 
-> > +	gpiod_set_value(ocp8178->gpiod, 1);
-> > +}
-> > +
-> > +static void ocp8178_bl_set_brightness(struct ocp8178_bl *ocp8178, u8 brightness)
-> > +{
-> > +	u8 data = 0;
-> > +
-> > +	dev_dbg(ocp8178->dev, "setting brightness to %u\n", brightness);
-> 
-> Do we really need the dev_dbg() here?
-
-We don't, it adds no value. I'll remove it in v2.
-
-> > +
-> > +	data |= FIELD_PREP(OCP8178_DATA_ADDR, 0);
-> > +	data |= FIELD_PREP(OCP8178_DATA_VALUE, brightness);
-> > +
-> > +	ocp8178_bl_write_u8(ocp8178, OCP8178_DEVICE_ADDRESS);
-> > +	ocp8178_bl_write_u8(ocp8178, data);
-> > +}
-> > +
-> > +static int ocp8178_bl_update_status(struct backlight_device *bl)
-> > +{
-> > +	struct ocp8178_bl *ocp8178 = bl_get_data(bl);
-> > +	u8 brightness = backlight_get_brightness(bl);
-> > +
-> > +	/*
-> > +	 * Setting brightness to 0 turns the backlight off but retains the
-> > +	 * onewire mode. If we disable the controller, we would need to enable
-> > +	 * the onewire mode again.
-> > +	 */
-> > +	if (backlight_is_blank(bl))
-> > +		brightness = 0;
-> 
-> This is not needed. It will happen inside backlight_get_brightness().
-
-Will remove in v2.
-
-> > +
-> > +	ocp8178_bl_set_brightness(ocp8178, brightness);
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct backlight_ops ocp8178_bl_ops = {
-> > +	.options	= BL_CORE_SUSPENDRESUME,
-> > +	.update_status	= ocp8178_bl_update_status,
-> > +};
-> > +
-> > +static int ocp8178_bl_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct backlight_device *bl;
-> > +	struct backlight_properties props;
-> > +	struct ocp8178_bl *ocp8178;
-> > +	u32 max_brightness, brightness;
-> > +	int ret, retries;
-> > +
-> > +	ocp8178 = devm_kzalloc(dev, sizeof(*ocp8178), GFP_KERNEL);
-> > +	if (!ocp8178)
-> > +		return -ENOMEM;
-> > +
-> > +	ocp8178->dev = dev;
-> > +
-> > +	ret = device_property_read_u32(dev, "max-brightness", &max_brightness);
-> > +	if (ret)
-> > +		max_brightness = OCP8178_MAX_BRIGHTNESS;
-> > +	if (max_brightness > OCP8178_MAX_BRIGHTNESS) {
-> > +		dev_warn(dev, "max brightness exceeds hardware limit\n");
-> > +		max_brightness = OCP8178_MAX_BRIGHTNESS;
-> > +	}
-> > +
-> > +	ret = device_property_read_u32(dev, "default-brightness", &brightness);
-> > +	if (ret)
-> > +		brightness = max_brightness;
-> > +	if (brightness > max_brightness) {
-> > +		dev_warn(dev, "default brightness exceeds max brightness\n");
-> > +		brightness = max_brightness;
-> > +	}
-> > +
-> > +	ocp8178->gpiod = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
-> > +	if (IS_ERR(ocp8178->gpiod))
-> > +		return dev_err_probe(dev, PTR_ERR(ocp8178->gpiod),
-> > +				     "gpio missing or invalid\n");
-> > +	gpiod_set_consumer_name(ocp8178->gpiod, dev_name(dev));
-> > +
-> > +	for (retries = 0; retries < OCP8178_1W_INIT_MAX_RETRIES; retries++) {
-> > +		ret = ocp8178_bl_enable_onewire(ocp8178);
-> > +		if (!ret)
-> > +			break;
-> > +		if (ret != -EAGAIN)
-> > +			return ret;
-> > +		msleep(OCP8178_1W_INIT_SLEEP_MS);
-> 
-> fsleep()?
-
-Sure, and I'll make the udelay() for the ~100 us in the initialization
-use usleep_range because those timings aren't that precise.
-
-> 
-> > +	}
-> > +	if (retries >= OCP8178_1W_INIT_MAX_RETRIES)
-> > +		return dev_err_probe(dev, -ETIMEDOUT,
-> > +				     "failed to initialize onewire protocol");
-> > +
-> > +	props = (typeof(props)){
-> > +		.type		= BACKLIGHT_RAW,
-> > +		.brightness	= brightness,
-> > +		.max_brightness = max_brightness,
-> > +		.power		= BACKLIGHT_POWER_ON,
-> > +		.scale		= BACKLIGHT_SCALE_NON_LINEAR,
-> > +	};
-> > +
-> > +	bl = devm_backlight_device_register(dev, dev_name(dev), dev, ocp8178,
-> > +					    &ocp8178_bl_ops, &props);
-> > +	if (IS_ERR(bl))
-> > +		return dev_err_probe(dev, PTR_ERR(bl),
-> > +				     "failed to register backlight\n");
-> > +
-> > +	platform_set_drvdata(pdev, bl);
-> > +	backlight_update_status(bl);
-> > +
-> > +	dev_info(dev, "probed, brightness=%u/%u\n", brightness, max_brightness);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct of_device_id ocp8178_bl_of_match[] = {
-> > +	{ .compatible = "ocs,ocp8178" },
-> > +	{ /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, ocp8178_bl_of_match);
-> > +
-> > +static struct platform_driver ocp8178_bl_driver = {
-> > +	.driver		= {
-> > +		.name		= "ocp8178-bl",
-> > +		.of_match_table	= ocp8178_bl_of_match,
-> > +	},
-> > +	.probe		= ocp8178_bl_probe,
-> > +};
-> 
-> I'm with Uwe on the indentation here. No padding needed after the
-> = IMHO.
-
-Will fix in v2.
-
-> 
-> Daniel.
-
-Regards,
-Wim
