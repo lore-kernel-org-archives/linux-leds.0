@@ -1,124 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A56D46EC6C;
-	Tue, 11 Aug 2026 19:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBCA387362;
+	Wed, 12 Aug 2026 03:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786475624; cv=none; b=hvLNiS7wEcUp8WCheYb91HleYORddx1uBIJVck6+YuSQslG8OjMb69U0EBRFZRJq0uiqfUdQWq+TKGKCpqU7zMpuvXvXw7AdPG9F/AG4YDS65d/kEZIAVhfUKSl5l00AKUpCj2Vs1TAsuYsoNWnbQJKgvyf0qU7MhMbt5ivIX7w=
+	t=1786504251; cv=none; b=gcFuwsejkhV35WYh19fmx+RazGJkWn/6hAZtyN6J5PKl36xVJTGS+mDqYM1UiXGd/d4blWZw1FWFXcsFGAoJr3uugOdWdIWQwJH8N5wcEdmBwCvWk7p7TfQFp7G62OhwjP7YjOyRR/C4iH2SNKSKh+dBWMmpLUO5ZZfvXnxFJ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786475624; c=relaxed/simple;
-	bh=V5RwdF+sXBsK2q17W44zvYAKz6WPfrbdqPANwizPAak=;
+	s=arc-20240116; t=1786504251; c=relaxed/simple;
+	bh=OkUTIdFwxkAvH77JL1OgM+1gYacRAK75ccwbtZ/rD1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6hFZrSFbAHFNns3w3YGfesERSfPRODITz4z7t7bNNWECP9zonnM63GXxXGwQdd7IP9JaQ1JW+TDo35UA6vFprznur91LMJ7JKDI0pah9zRPdsrXDNi0jBtHIHBIOxWT8zx95ZERYJO04YddvbQK/+Bndx8lc7I6VtHr/1tNPZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PoUjYQzd; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pz8oNduqcmPKoG1INJZzCKlwNtjXHgayTNG6m6M3ynT+cL86HX0RmTlX+KJzxxgMwlk0VByIw9cWmI/MGf2Fa4LexNdoGqZSVzpziyvmbsoV86SKw3B039s7r5+XPsJ3Adsh+DCezlDwYmOTAJWpiSRl361RqOU89hxncO02n98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuU7ipvf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoUjYQzd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC221F000E9;
-	Tue, 11 Aug 2026 19:13:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuU7ipvf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6661D1F000E9;
+	Wed, 12 Aug 2026 03:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786475622;
-	bh=KNyxyn8ozpUumARXsrqS03j1tXJsd2DCWe5VYWBcFS4=;
+	s=k20260515; t=1786504246;
+	bh=LE3W24wS75BSIMOFlefIC8ZjafXejnzU7cRNPUtlVmo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PoUjYQzdIEW7aevl01zrKOpzBG/pzomLT5PoCKJ3ZWRukq/T3EQnzqVx+OAf69zdN
-	 Gd0K3VPtfvVFBxQWd0HO4Via44Ad1/gWK8doFIozWph9kPk+Nm840JDvQaOzp6e0dk
-	 SZFUHwvYJ1Nr5mHElcqGE4K2D6jHiXF+S9dAYvccI1aIuT5uow3RQffScNDDRB47DE
-	 4RmtNSzExe84gM5SzYxxnAHuT5wC0UnYPOCS33eANx5OZqRvQIDLDv0dITsfkjvbU+
-	 jBrCkvqiogevZIbBzsOXBpwQwvyPu7EPkVCsG1YQuZiC7Fc7S6NJXgjnahybIpyRTT
-	 RZEvupKisjlDQ==
-Date: Tue, 11 Aug 2026 20:13:38 +0100
-From: Lee Jones <lee@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Rong Zhang <i@rong.moe>, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v4 09/12] leds: trigger: Add
- led_trigger_notify_hw_control_changed() interface
-Message-ID: <20260811191338.GC1072730@google.com>
-References: <20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe>
- <20260802-leds-trigger-hw-changed-v4-9-f97e2ca976fe@rong.moe>
- <20260802173152.4F94A1F00A3D@smtp.kernel.org>
+	b=fuU7ipvftV6NBq8GsZ6wtII+FkKlGgo80Jqmt2JbzmsXhE4gnwgJKawgPDN9wG/1B
+	 Xw8XCIZgy1JFVwCMFUpQcRmaKnDK30nB7/wCogNa0Iy2al1VM5ME5Zr8jL9MCLhsYa
+	 bwFkvui5xsFY9VpdMACj8p05FGQef82RvfQcqPaDDg3t6xAyFwjFQaE89a8fUIxsJ/
+	 v42n+fkQI2XcEOHJR8m89ySzGT4WOxXjLJ0IggOB4syQ7a2cvGi//hQP1U7bpcDpIw
+	 5n8pvvX1+SnYh/nKzqe+7gmFFQ1iYZg/mYlD8/Re1SzLvq6KkIrZ6yMsWLYJJgXR5W
+	 L+Z8EimPAYWkg==
+Date: Tue, 11 Aug 2026 22:10:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wim de With <wf@dewith.io>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: backlight: Add Orient Chip OCP8178
+Message-ID: <20260812031045.GA657686-robh@kernel.org>
+References: <20260806201541.101304-1-wf@dewith.io>
+ <20260806201541.101304-2-wf@dewith.io>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260802173152.4F94A1F00A3D@smtp.kernel.org>
+In-Reply-To: <20260806201541.101304-2-wf@dewith.io>
 
-On Sun, 02 Aug 2026, sashiko-bot@kernel.org wrote:
+On Thu, Aug 06, 2026 at 10:15:40PM +0200, Wim de With wrote:
+> Add device tree bindings for the Orient Chip OCP8178 LED backlight
+> driver.
+> 
+> Signed-off-by: Wim de With <wf@dewith.io>
+> ---
+>  .../bindings/leds/backlight/ocs,ocp8178.yaml  | 46 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 ++
+>  2 files changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml b/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+> new file mode 100644
+> index 0000000000000..9a4df1ef91edd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/ocs,ocp8178.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Orient Chip OCP8178 backlight
+> +
+> +maintainers:
+> +  - Wim de With <wf@dewith.io>
+> +
+> +description: |
 
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Medium] The `led_trigger_notify_hw_control_changed()` API performs sleepable operations without an internal deferral mechanism, creating a trap for driver authors who might call it directly from hardware interrupt handlers.
+Don't need '|'.
 
-Please review, explain or fix the Sashiko review(s).
+> +  The Orient Chip OCP8178 is a white LED backlight driver controlled by a single
+> +  GPIO line with a vendor-specific onewire protocol.
+> +
+> +allOf:
+> +  - $ref: common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: ocs,ocp8178
+> +
+> +  enable-gpios:
+> +    description: GPIO to use to enable/disable and dim the backlight.
+> +    maxItems: 1
+> +
+> +  default-brightness:
+> +    maximum: 31
 
-If this is a set, this request includes the other patches too.
+blank line
 
-> --
-> 
-> --- Patch [9]: [PATCH v4 09/12] leds: trigger: Add led_trigger_notify_hw_control_changed() interface ---
-> commit 21d51858b3771f2be6da6b9704657f9342549cfc
-> Author: Rong Zhang <i@rong.moe>
-> 
-> leds: trigger: Add led_trigger_notify_hw_control_changed() interface
-> 
-> This commit introduces a new interface, led_trigger_notify_hw_control_changed(),
-> allowing LED drivers to notify the LED core about autonomous hardware
-> control transitions. The core will then transition the trigger between
-> "none" and the device's private trigger.
-> 
-> > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> > index 64bc95d0bfeb7..2db9fcd1350b8 100644
-> > --- a/drivers/leds/led-triggers.c
-> > +++ b/drivers/leds/led-triggers.c
-> [ ... ]
-> > @@ -471,6 +492,63 @@ int devm_led_trigger_register(struct device *dev,
-> [ ... ]
-> > +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev, bool activate)
-> > +{
-> > +	struct led_trigger *trig;
-> > +
-> > +	/* Restricted to private triggers. */
-> > +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
-> > +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
-> > +		return;
-> > +
-> > +	scoped_guard(rwsem_read, &triggers_list_lock) {
-> 
-> [Severity: Medium]
-> Will driver authors likely call this API directly from hardware interrupt
-> handlers when an autonomous hardware control transition occurs?
-> 
-> This function acquires a sleepable rw_semaphore (triggers_list_lock) and
-> can subsequently call __led_trigger_set() which uses synchronize_rcu().
-> Calling this from an atomic context like a hardirq handler would trigger a
-> 'sleeping in atomic context' bug or a deadlock.
-> 
-> Since there is no internal workqueue deferral mechanism (unlike
-> led_trigger_event()) and no might_sleep() annotation, could this become a
-> trap for driver authors?
-> 
-> > +		list_for_each_entry(trig, &trigger_list, next_trig) {
-> > +			if (trig->trigger_type == led_cdev->trigger_type &&
-> > +			    !strcmp(trig->name, led_cdev->hw_control_trigger)) {
-> > +				guard(rwsem_write)(&led_cdev->trigger_lock);
-> > +
-> > +				led_trigger_do_hw_control_transition(led_cdev, activate, trig);
-> > +				return;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> > +	dev_err(led_cdev->dev,
-> > +		"%s() is called, but the private trigger (%s) is not properly registered\n",
-> > +		__func__, led_cdev->hw_control_trigger);
-> > +}
-> 
-> -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe?part=9
-> 
-
--- 
-Lee Jones
+> +  max-brightness:
+> +    maximum: 31
