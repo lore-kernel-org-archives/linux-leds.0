@@ -1,57 +1,58 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from sender6-op-o15.zoho.com (sender6-op-o15.zoho.com [165.173.180.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1F63126D6
-	for <linux-leds@vger.kernel.org>; Wed, 12 Aug 2026 12:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B043433038
+	for <linux-leds@vger.kernel.org>; Wed, 12 Aug 2026 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786538863; cv=pass; b=T3iE10rqjTMbftG5GeM7GNhYXnOhlU2rZs8nb/e0VKOZbLUlXsupm4W31LepKn0vtfcByA0dp4MLiv9a8V3MDWu6BBbSSR69uChLDKEDfj6DHpjgufTVO5JvYXzGWvsDGZ5cD0hNHyldg91Za1YBqHaugsNa9tRH4pAJ/LGmNus=
+	t=1786539004; cv=pass; b=p8898dKppPOjw+WZzLa7Z4IUFUijZGw53WuzZFPtn4Y0R7jgYXzPFq3ncWQxJv1DxV3eho8juVkCCso1+PxYdKm49HkLfd7+HThPGS3wxL89f1eIf/eeytTuOROWmODjDOYu1lRWjKbNPxhXysnp0il5JiMUe5Eik5GkMXDK9lY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786538863; c=relaxed/simple;
-	bh=tHk7slGgpZpmJWgZhrCe80uIO/hFyURoZgJG3Vq7VzA=;
+	s=arc-20240116; t=1786539004; c=relaxed/simple;
+	bh=ZWvw6MH+XBXH6aZV7sbj5eBcaP0ivuFeObBSz93+TXg=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=UC1zh01TOzahYpxDU0ZJrPxe4JWtToxhJD9FCmpHlXVZgrkePagnki7zU/aMephJkVFBPQtuwFZLR/WY/nfDcef129S3I/AY5wb6r7aJOk5n1YFceRK2exgQkWkCyCwTtnomInyZAunuP6KSr2xJPbmVexXYAyjw8kbHZNBc9RQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=eMGS6mU7; arc=pass smtp.client-ip=136.143.188.15
+	 Date:MIME-Version; b=NeJjT7cswOAS88zh7iGrc61vbpODMRKV/LDdv0DC+IC2d0WGLLql0SnLE1RQoaHg+xUfzrsnnpR7ssWI8J5UofJDnrGnGV0DYjcg9srdTaFG1xJhZ2yCk7EQBDAJ0+0Imr9nj1phM/xEUarulP5rlNJZQIDzzyf+abVeidW0arQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=cbwcbc9R; arc=pass smtp.client-ip=165.173.180.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="eMGS6mU7"
-ARC-Seal: i=1; a=rsa-sha256; t=1786538855; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="cbwcbc9R"
+ARC-Seal: i=1; a=rsa-sha256; t=1786538987; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=F42/GTfErZPb+F4p4DWTP1Hyg/9Z+hcNSgjs37KXeaM+koOHdvjtcEXNDF5YKeM/xMLF1o5atyKkFsP8bg5mjfaN2RM3gjahOlNR97rsEWGWH5rm5DtGvSdo+VnTfXulq5hPHKdbtsK99MdU3aAttV/FX/wu1qWblobDRqMDd2k=
+	b=DZabFFoVoMR+K4/FgssBCKlpmo8ToC7tm9DEMq6vwcJ/MomyGOSZxas1IYUlzxWSXAw7BHHpcI9OBmK3MU1JjSLrIfhN9iLDldGbwAPa3Uf8P9f+haJh9DIird1jRqopTepQtCaI1lgayhu/Zg9gxlE7QLnO2yBoyuImIgHPMU4=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1786538855; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wdSuBoMQGcPtNruTObanq8jyIKnqIGXumw/rQEGLLLg=; 
-	b=WFXQtOUfbnmo956OXOc2zg6FgyXv3X4aqWer9HCs9VTtAfHJbBowPpt6F+7TDgtZi/cTEfEcxOeTvV4ZhAucmV8XxIeWA1EDbLSHKhoKRcKnq7LJHrcV/kYoGapM26Xfbzg5kcNlDybTvBUKn2Z+fcn1uHKKBDcG7VtiXxsklg0=
+	t=1786538987; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3VtInDbKgR6nW8B3kF8oIDWTRpQdtOCFQPwptScwssA=; 
+	b=YSyng+RYfUvL3ybn5ni6E+Ex/m6mYeybd57Oxhchq8DKXoZlugyKni8s9sdrq1dR1TCRn8lBsRIPcbM1DLy8cJDHnX5SmXH6FVXLgevHGdbG6PUeasxjyqQzJ3+M2doX2LNmiTtH1WDiNHAjH3IPr9XFR0J+2u9ctZyOmPozNwY=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1786538855;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1786538987;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=wdSuBoMQGcPtNruTObanq8jyIKnqIGXumw/rQEGLLLg=;
-	b=eMGS6mU742yi9kiA664oFzU0+/jEsmcUfEa8spUVCc1Je6uY741g/o+OXhM9sxDp
-	hezblxemf584WonF5YWn6qtppwp/WyCn3a+kKvPynBc22IvVnRiKPqxtYhKmitIp78M
-	bhwT6Xz1qs71RstecUzwLB45gJlEvqW9cJzBPsiQH9Szwc2XKyLit9uiGNumY93FzJr
-	F3H9WC+FZWCPRmb/kxAOeqOgEgISP8DCbtxCEdbCcKFvHiWtT3tRHvcroX+9WwGuvWL
-	4RvTNedXHTo2kQUtvmsRpQmDFVLj7yo7QRDp1vFCnkZNK2dijO0rxKbC5052f5M8RQe
-	oJKXwEQYYg==
-Received: by mx.zohomail.com with SMTPS id 1786538853919427.98978997276424;
-	Wed, 12 Aug 2026 05:47:33 -0700 (PDT)
-Message-ID: <f979ae9d96cacd6375e1c296d550f2a469a6cbf9.camel@rong.moe>
-Subject: Re: [PATCH v4 08/12] leds: trigger: Do not attach trigger to a
- removing LED
+	bh=3VtInDbKgR6nW8B3kF8oIDWTRpQdtOCFQPwptScwssA=;
+	b=cbwcbc9RIpdKhsiDUifkx8Ve9MIEgFYjaZUDCYhf2DLKdMfdxoHVA60SYVnX2NIe
+	RhNoNEaLJUyYAze5eZuo8ByDQaj49b4y7lF9t+WhpoSVN8ApvYABccZIdpxbsbsp8e3
+	owpPbEZldySjP8nsQnk1T4bVJDxJB/eeH1YBp7r0IiN6lTZqImebuTzMj9hfvdlh1wj
+	kuXHq/Uw7iRRatDAGNeq4MrER+DjP6YE3MMj68oZOzVoCrpR52XzUm2xbEdROAUGvaN
+	gWUMwM84qDWyHRiWpXANKpa0xDzaEGJYIeD/ZGy0MuUxLzuGCAFr77ikrFzjRXjtymI
+	/Kd0MP9s9A==
+Received: by mx.zohomail.com with SMTPS id 1786538985774643.5768978556791;
+	Wed, 12 Aug 2026 05:49:45 -0700 (PDT)
+Message-ID: <45400b78b5749704e5ab74af809f978629f1bd57.camel@rong.moe>
+Subject: Re: [PATCH v4 09/12] leds: trigger: Add
+ led_trigger_notify_hw_control_changed() interface
 From: Rong Zhang <i@rong.moe>
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260802173150.F31FB1F000E9@smtp.kernel.org>
+To: Lee Jones <lee@kernel.org>, sashiko-reviews@lists.linux.dev
+Cc: linux-leds@vger.kernel.org
+In-Reply-To: <20260811191338.GC1072730@google.com>
 References: <20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe>
-	 <20260802-leds-trigger-hw-changed-v4-8-f97e2ca976fe@rong.moe>
-	 <20260802173150.F31FB1F000E9@smtp.kernel.org>
+	 <20260802-leds-trigger-hw-changed-v4-9-f97e2ca976fe@rong.moe>
+	 <20260802173152.4F94A1F00A3D@smtp.kernel.org>
+	 <20260811191338.GC1072730@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 12 Aug 2026 20:42:27 +0800
+Date: Wed, 12 Aug 2026 20:43:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -61,73 +62,129 @@ MIME-Version: 1.0
 User-Agent: Evolution 3.56.2-10+b1 
 X-ZohoMailClient: External
 
-Hi all,
+Hi Lee,
 
-On Sun, 2026-08-02 at 17:31 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
+On Tue, 2026-08-11 at 20:13 +0100, Lee Jones wrote:
+> On Sun, 02 Aug 2026, sashiko-bot@kernel.org wrote:
 >=20
-> Pre-existing issues:
-> - [High] Non-atomic update of `led_cdev->flags` causes a data race that c=
-an drop the `LED_UNREGISTERING` flag, undermining the use-after-free fix.
-> --
+> > Thank you for your contribution! Sashiko AI review found 1 potential is=
+sue(s) to consider:
+> > - [Medium] The `led_trigger_notify_hw_control_changed()` API performs s=
+leepable operations without an internal deferral mechanism, creating a trap=
+ for driver authors who might call it directly from hardware interrupt hand=
+lers.
 >=20
-> --- Patch [8]: [PATCH v4 08/12] leds: trigger: Do not attach trigger to a=
- removing LED ---
-> commit dd467951eb46d9ac1296845c072ca12344efe3da
-> Author: Rong Zhang <i@rong.moe>
+> Please review, explain or fix the Sashiko review(s).
 >=20
-> leds: trigger: Do not attach trigger to a removing LED
+> If this is a set, this request includes the other patches too.
+
+For PATCH 4 & 5, what Sashiko found were pre-existing bugs on probe,
+i.e., non-idempotent trigger registration. Since both cros_ec and turris-
+omnia are very platform-specific and the relevant platforms never have
+more than one such device, the bug is never triggered in reality. Thus,
+fixing them is far beyond the scope of the series.
+
+For PATCH 8, I've replied there.
+
+For PATCH 9 (this), please see below.
+
 >=20
-> This commit attempts to fix a race condition where a trigger could attach
-> to an LED during removal. It sets the LED_UNREGISTERING flag earlier in
-> led_classdev_unregister() and checks it before attaching a trigger.
->=20
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 2460fcf0c4690..4158337896bc7 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -631,6 +631,8 @@ void led_classdev_unregister(struct led_classdev *l=
-ed_cdev)
-> >  	if (IS_ERR_OR_NULL(led_cdev->dev))
-> >  		return;
-> > =20
-> > +	led_cdev->flags |=3D LED_UNREGISTERING;
->=20
-> [Severity: High]
-> This is a pre-existing issue, but does relying on a non-atomic update to=
-=20
-> flags here fail to prevent the race condition?
->=20
-> Because led_cdev->flags is updated non-atomically via a read-modify-write
-> operation, concurrent modifications to flags can overwrite and drop the
-> LED_UNREGISTERING bit.
->=20
-> For example, if a user-space thread writes to the LED's trigger sysfs
-> attribute to remove a trigger concurrently, __led_trigger_set() modifies
-> the flags locklessly:
->=20
-> drivers/leds/led-triggers.c:__led_trigger_set() {
->     ...
->     led_cdev->flags &=3D ~LED_INIT_DEFAULT_TRIGGER;
->     ...
-> }
->=20
-> If this overwrites the LED_UNREGISTERING flag, the new early-exit check
-> introduced in this patch:
->=20
-> drivers/leds/led-triggers.c:__led_trigger_set() {
->     if ((led_cdev->flags & LED_UNREGISTERING) && trig)
->         return -ENODEV;
-> ...
->=20
-> will falsely pass. This still allows a trigger to attach to the dying LED=
+> > --
+> >=20
+> > --- Patch [9]: [PATCH v4 09/12] leds: trigger: Add led_trigger_notify_h=
+w_control_changed() interface ---
+> > commit 21d51858b3771f2be6da6b9704657f9342549cfc
+> > Author: Rong Zhang <i@rong.moe>
+> >=20
+> > leds: trigger: Add led_trigger_notify_hw_control_changed() interface
+> >=20
+> > This commit introduces a new interface, led_trigger_notify_hw_control_c=
+hanged(),
+> > allowing LED drivers to notify the LED core about autonomous hardware
+> > control transitions. The core will then transition the trigger between
+> > "none" and the device's private trigger.
+> >=20
+> > > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.=
+c
+> > > index 64bc95d0bfeb7..2db9fcd1350b8 100644
+> > > --- a/drivers/leds/led-triggers.c
+> > > +++ b/drivers/leds/led-triggers.c
+> > [ ... ]
+> > > @@ -471,6 +492,63 @@ int devm_led_trigger_register(struct device *dev=
 ,
-> potentially resulting in a use-after-free.
->=20
-> [ ... ]
+> > [ ... ]
+> > > +void led_trigger_notify_hw_control_changed(struct led_classdev *led_=
+cdev, bool activate)
+> > > +{
+> > > +	struct led_trigger *trig;
+> > > +
+> > > +	/* Restricted to private triggers. */
+> > > +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
+> > > +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
+> > > +		return;
+> > > +
+> > > +	scoped_guard(rwsem_read, &triggers_list_lock) {
+> >=20
+> > [Severity: Medium]
+> > Will driver authors likely call this API directly from hardware interru=
+pt
+> > handlers when an autonomous hardware control transition occurs?
+> >=20
+> > This function acquires a sleepable rw_semaphore (triggers_list_lock) an=
+d
+> > can subsequently call __led_trigger_set() which uses synchronize_rcu().
+> > Calling this from an atomic context like a hardirq handler would trigge=
+r a
+> > 'sleeping in atomic context' bug or a deadlock.
+> >=20
+> > Since there is no internal workqueue deferral mechanism (unlike
+> > led_trigger_event()) and no might_sleep() annotation, could this become=
+ a
+> > trap for driver authors?
 
-I will wrap the RMW with trigger_lock in v5.
+For the very first users of the interface, i.e., ideapad-laptop and
+(supposedly) thinkpad_acpi, it's not an issue as ACPI notifier handlers
+are executed in work contexts.
+
+To implement an internal workqueue deferral mechanism for atomic
+contexts, we will have to introduce:
+- a work_struct
+- an atomic_t storing the last value of the `activate' argument
+- extra synchronization on unregistration
+
+It makes things more unnecessarily tedious just to take care of (yet)
+non-existent atomic callers.
+
+In fact, 9 out of 11 callers of the similar interface for hardware
+brightness change, i.e., led_classdev_notify_brightness_hw_changed(), are
+platform/x86 drivers and call it from sleepable contexts.
+
+Therefore, I personally prefer adding a might_sleep() annotation, and we
+could reconsider when an atomic caller emerges. If you prefer the other
+way, I am also glad to implement it.
 
 Thanks,
 Rong
+
+> >=20
+> > > +		list_for_each_entry(trig, &trigger_list, next_trig) {
+> > > +			if (trig->trigger_type =3D=3D led_cdev->trigger_type &&
+> > > +			    !strcmp(trig->name, led_cdev->hw_control_trigger)) {
+> > > +				guard(rwsem_write)(&led_cdev->trigger_lock);
+> > > +
+> > > +				led_trigger_do_hw_control_transition(led_cdev, activate, trig);
+> > > +				return;
+> > > +			}
+> > > +		}
+> > > +	}
+> > > +
+> > > +	dev_err(led_cdev->dev,
+> > > +		"%s() is called, but the private trigger (%s) is not properly regi=
+stered\n",
+> > > +		__func__, led_cdev->hw_control_trigger);
+> > > +}
+> >=20
+> > --=20
+> > Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260802-leds-t=
+rigger-hw-changed-v4-0-f97e2ca976fe@rong.moe?part=3D9
+> >=20
