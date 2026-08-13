@@ -1,107 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C80A3B42E1;
-	Thu, 13 Aug 2026 09:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3025A35A3BF;
+	Thu, 13 Aug 2026 09:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786613123; cv=none; b=goW3+zNaiv0Ev+Tbpmjv21A0NyY6Gro5O/unJxXnmT3prXKQCbvL2cA8d22Wpgi1DnDsuB0HdINzCe1HH6mDNkeUvsNMPx2BizlYdEtKUI8eyKplxQoOc86c0LHVVhnQaHbfgpXKKGo/zSSp2HGDUXd1dmABo+Xhh+Jf0ik5EVM=
+	t=1786614151; cv=none; b=KVW6yz9tUD1wq2MnLWToFGm8zOTqNvItJLwSNe9XgyPbdbCOEIbQT68Y96RiweuoCowM9UQnZUb7vRpUdfoTKMuL+7bZ7kySMeH1p22UI8XzqKnDcVxg1LP4on8zQQRPtS3ZcTVhB1KRMcGS8k8q1it84545cgBWNCNlmg74bvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786613123; c=relaxed/simple;
-	bh=TeagSVJLtXkPA0vCulcev49Bg4PDr2H/cBGccm98e1s=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=kLRkLwvKWeK+2oCYLdXHpsHWVYRZVQ6NbcQiKmkFl3wzYD3Z4TkuLkiibEmT4IZysswklF08V8FcYHEP/V+y1ZjB12u2qP2cTCKflCXGbRkmpKC8DHK/QdWKHWQ1Oa4rlDc0oPikeY6cogDlGI8P5152yjiqhDadg7WBSvX8PTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqabAdOK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786614151; c=relaxed/simple;
+	bh=Q64nye9tKvCSxklrMxOUXgaHxhujm/rs91sHzrnk6Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=romy3uhoqc4EMNs0mv1dUEJrWnWKYXwy19/vUGwarqf4xA+ML9Y6XOH6kuQo/KV5YlomIrhzeaR3f548qIJn5jMMnVpStbAujWrY7FdzepHUiJQWznGD+IkSpW8HQSy+pLtfWKa5WMovzs70hIMyCdhbX4oeVVBDCv3snIiuD6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX7ebVpz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqabAdOK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0228D1F00A3A;
-	Thu, 13 Aug 2026 09:25:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX7ebVpz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A221F000E9;
+	Thu, 13 Aug 2026 09:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786613122;
-	bh=5m+zRvM06Y6YpthYQIijyM3wG1Soo7V9LgkDOhpGfxo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DqabAdOK4QLo4GYuRerdDAGWNXKKPHvk7mIVz27ZnQ752qEtOdM3H+0RLEJKIWZWe
-	 rZ1r/MqucP3ALepgqcnUAfQCWXPbgWq02f05PGtvgfle+Y2pRNYAbDLEu5tQOjhwH1
-	 fT7xGCrtweyg1YGcaoiqqioNwLd2KR01yVu/VrW4RYmO46jzX1fxV0v+Gy56TbPTvi
-	 8AGZ5ko2cVeTAcA3BFnb+Oo0GkbPu1vfMVwLndyafRYgub2bCZVN3EYguV4/NdJo+v
-	 BG16ZULxaFrRZsTeo8bcmT5qjOTLRSN69OUSx2LsAsuN25c8R/Ni4KAprSYA8fDjWO
-	 K31xAt6kEuJyA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH V4] leds: rgb: leds-group-multicolor: Implement
- default-intensity
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Stefan Wahren" <wahrenst@gmx.net>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260813091428.9072-1-wahrenst@gmx.net>
-References: <20260813091428.9072-1-wahrenst@gmx.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 13 Aug 2026 09:25:21 +0000
-Message-Id: <20260813092522.0228D1F00A3A@smtp.kernel.org>
+	s=k20260515; t=1786614150;
+	bh=wGzl9P3ZZvwgNJ4nMBz7ik5uR0eH93+YbNY/M3r14bQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=OX7ebVpzSdJUcCOwP7NVFZCItKsSEvnwyDYQHdSksOhQdLQOxNDwEnvoSq0suMEXZ
+	 CGAT/wMIlE8hlrv63mXCnk/iNEkE7eWHXIqOs20OLbd7zNiR2kZfGNcu+2AbI2cYET
+	 Sc0r7TmaNmyqWrVwQONsQF622tIzw+/eA16UUlGUr8TA0tOviccT9WDsAF8AZNBGu2
+	 MJ3uKbk3QinROWx50Aodof6NflKKtUcUj+piRU3s+GXH78dzcIlBDzUa37/NibykCq
+	 oXb7yDeKHxyEuqAO5YTZbI7L8ZgFfMrpjSrj5WLUoaNg+nNvDVg2AyFM9l2iLq7r0+
+	 pHIykhOpMYdng==
+Date: Thu, 13 Aug 2026 10:42:24 +0100
+From: Daniel Thompson <danielt@kernel.org>
+To: Wim de With <wf@dewith.io>
+Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: backlight: Add Orient Chip OCP8178
+Message-ID: <an2RgGwu2YaglM7H@aspen.lan>
+References: <20260812-ocp8178-backlight-v2-0-4ad18b48bef8@dewith.io>
+ <20260812-ocp8178-backlight-v2-1-4ad18b48bef8@dewith.io>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260812-ocp8178-backlight-v2-1-4ad18b48bef8@dewith.io>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] The `default-intensity` property read from individual monochroma=
-tic LED nodes is applied to the multicolor group without rescaling, causing=
- incorrect brightness calculations.
---
+On Wed, Aug 12, 2026 at 09:21:46PM +0200, Wim de With wrote:
+> Add device tree bindings for the Orient Chip OCP8178 LED backlight
+> driver.
+>
+> Signed-off-by: Wim de With <wf@dewith.io>
+> ---
+>  .../bindings/leds/backlight/ocs,ocp8178.yaml       | 47 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  5 +++
+>  2 files changed, 52 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml b/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+> new file mode 100644
+> index 0000000000000..57c44d3383b88
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/backlight/ocs,ocp8178.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Orient Chip OCP8178 backlight
+> +
+> +maintainers:
+> +  - Wim de With <wf@dewith.io>
+> +
+> +description:
+> +  The Orient Chip OCP8178 is a white LED backlight driver controlled by a single
+> +  GPIO line with a vendor-specific onewire protocol.
+> +
+> +allOf:
+> +  - $ref: common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: ocs,ocp8178
+> +
+> +  enable-gpios:
+> +    description: GPIO to use to enable/disable and dim the backlight.
+> +    maxItems: 1
 
---- Patch [1]: [PATCH V4] leds: rgb: leds-group-multicolor: Implement defau=
-lt-intensity ---
-commit 13399f1aaceaf09afa7e252e35000d7d61ab1925
-Author: Stefan Wahren <wahrenst@gmx.net>
+Is this really an "enable" GPIO? The enable-gpio(s) for most backlights
+is the HWEN pin rather than something used for protocol. Maybe
+onewire-gpios or control-gpios?
 
-leds: rgb: leds-group-multicolor: Implement default-intensity
 
-This commit introduces support for the default-intensity property during
-boot for LED multicolor groups. If the property is missing, the code falls
-back to the previous behavior of configuring the sub-LED intensity to its
-maximum.
-
-> diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/=
-leds-group-multicolor.c
-> --- a/drivers/leds/rgb/leds-group-multicolor.c
-> +++ b/drivers/leds/rgb/leds-group-multicolor.c
-> @@ -108,8 +108,10 @@ static int leds_gmc_probe(struct platform_device *pd=
-ev)
-> =20
->  		subled[i].color_index =3D led_cdev->color;
-> =20
-> -		/* Configure the LED intensity to its maximum */
-> -		subled[i].intensity =3D max_brightness;
-> +		ret =3D device_property_read_u32(led_cdev->dev, "default-intensity",
-> +					       &subled[i].intensity);
-> +		if (ret || subled[i].intensity > max_brightness)
-> +			subled[i].intensity =3D max_brightness;
-
-[Severity: Medium]
-Does this logic properly scale the intensity when the individual LEDs in the
-group have different maximum brightness values?
-
-If a multicolor group consists of LEDs with vastly different maximum bright=
-ness
-capabilities (like a GPIO LED maxing at 1 and a PWM LED maxing at 255), the
-overall group max_brightness will evaluate to 255.
-
-When reading the default-intensity from the device tree, the value is typic=
-ally
-specified on the scale of the individual sub-LED's max brightness. If this
-value is assigned directly to subled[i].intensity without being scaled up to
-the group's max_brightness, the sub-LED might be initialized with only a ti=
-ny
-fraction of its intended intensity, often resulting in the LED being comple=
-tely
-unlit instead of at the requested intensity.
-
->  	}
-> =20
->  	/* Initialise the multicolor's LED class device */
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260813091428.9072=
--1-wahrenst@gmx.net?part=3D1
+Daniel.
