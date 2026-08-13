@@ -1,109 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from meve.dewith.io (meve.dewith.io [157.90.20.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE1E3B8412;
-	Thu, 13 Aug 2026 09:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE7F442379;
+	Thu, 13 Aug 2026 10:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.20.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786614816; cv=none; b=CDA8jneSGql8Zd/htqtv0yOWqJAYCAmkueoCtciTqqGKctOV8DLs3R/wtxOA/4XK6oi/mgvxb9c7zLqzTK0nH35Bt3AIK2h3sJkdTDmv+Q69R6mjAyTlqy/pRrSkzO3l/7xiKim5MCZDFSR17anQpXBQuA8nWJayG3L9UI75GEg=
+	t=1786615409; cv=none; b=BUQ1fWvmzmAfHanZCrTez68efoL6Yg7XfjAKq3IcFHjd2KYmBDWLkKP+jrdp/+23KLiQwuLwq0xVTZ2s86h5Ax+8+bLJ8L7ObBuHpo+gtw899sDfDmpVnFb0co1sz95BdtDNYVXcFBnY4H7hW3N1Th/Xxub2aw3v8DqzKzUPRQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786614816; c=relaxed/simple;
-	bh=/OTNhh05kPBBLKFjqB5BbbQrxvsPtgpU6hd4Jcs6UCc=;
+	s=arc-20240116; t=1786615409; c=relaxed/simple;
+	bh=dKbvqlet+y0vK6nezR6ggg2j1UZKrYZHBJB7tv1pDMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+NlrOtLIW1cOTh+kS1qXoGFwuckXJHgZGiNQMrdwH5yZDbadR4u9lVkKfZle3ZzFPD8rz9pz10t/JyjJNWjKE7AjdnufcBAs6+C3q73d83tAxcT8v9FMy3cTZ30rviyzGY6/l/7urqXVY7CeaAY1iNWmd7x4nZBT6vX4/w9Rvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IHkt5NAX; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=JwZiLDrtJ2RIWDFl5Gqf9lNrr3XkvCOHnRpJdk/ndtTBnhgu+zGmdt1oOAZvaWLpZnFZCabSDc6GimCNo9TmNtvwwfiH2nFGs1J3vJMPryWw8GkW73vqZLzg7DvNHLUEmO9L8YoDfjcNC+JJGzrGvSGvigulwO1s3oVVao7Xb3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io; spf=pass smtp.mailfrom=dewith.io; dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b=L6w4TkoS; arc=none smtp.client-ip=157.90.20.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dewith.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHkt5NAX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F188F1F00A3D;
-	Thu, 13 Aug 2026 09:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786614814;
-	bh=fatAP2tKSo+FPkloTSGYPkH4ZOT18ygTPlW9hozx2oQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IHkt5NAXG0sVXnCkEYfv7TxtHIt5suaqQuSYmUOrvuINRps4Ph8LuK7yZiTJHBom+
-	 sWbqstrcUN01lsXd2CiMCAKyRGfHo2IviLlDSkdD4vV8chDGZ5DhLDFgOLgmNAtThL
-	 uu4878GNPdQaeC/qaIWTGBSgGEtNKJVEcrdvjEhyNbiZalTKK6nZeZyzrxUts95vqg
-	 g0HszbZWw5h37qYco4QSL4ttlVHU6CRWmfG3hbK9PSSPvvTd42JRgASO7G+wdDANRZ
-	 VU6cQJglJKOzij6KmLnvEeAzlU3wGhVsM7ChbJSXaRzB4VlKu9GFxv3aBvRCenozSq
-	 9VhKhJMpqUb+A==
-Date: Thu, 13 Aug 2026 10:53:30 +0100
-From: Lee Jones <lee@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Stefan Wahren <wahrenst@gmx.net>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH V4] leds: rgb: leds-group-multicolor: Implement
- default-intensity
-Message-ID: <20260813095330.GZ1072730@google.com>
-References: <20260813091428.9072-1-wahrenst@gmx.net>
- <20260813092522.0228D1F00A3A@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b="L6w4TkoS"
+Received: from localhost (70-26-208-87.ftth.glasoperator.nl [87.208.26.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by meve.dewith.io (Postfix) with ESMTPSA id A460023E65;
+	Thu, 13 Aug 2026 10:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dewith.io; s=default;
+	t=1786615405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLaN4f3N6hbPhZzEo8AH8L3A2vrPXXcp/6EZkbNc4Lw=;
+	b=L6w4TkoSNd7hnu6Nuxv73dllFQL9cOLiLvb4RBoGYI+2+AI/X0lbrjsrf6kXHSgQPUKFbh
+	X0dyYBsyKB4r7A/119THkHcIEGu0jhvfwJdT77oJJjJe5q36V9hIqmdFhj2nBo7xxAZxLw
+	Va7x/VjX0w9DD/wWHI2F2BbP2jaCEl0=
+Date: Thu, 13 Aug 2026 11:59:44 +0200
+From: Wim de With <wf@dewith.io>
+To: Daniel Thompson <danielt@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: backlight: Add Orient Chip OCP8178
+Message-ID: <an2VkN3446Ndxn9c@dewith.io>
+References: <20260812-ocp8178-backlight-v2-0-4ad18b48bef8@dewith.io>
+ <20260812-ocp8178-backlight-v2-1-4ad18b48bef8@dewith.io>
+ <an2RgGwu2YaglM7H@aspen.lan>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260813092522.0228D1F00A3A@smtp.kernel.org>
+In-Reply-To: <an2RgGwu2YaglM7H@aspen.lan>
 
-On Thu, 13 Aug 2026, sashiko-bot@kernel.org wrote:
+On Thu, Aug 13, 2026 at 10:42:24AM +0100, Daniel Thompson wrote:
+> On Wed, Aug 12, 2026 at 09:21:46PM +0200, Wim de With wrote:
+> > +  enable-gpios:
+> > +    description: GPIO to use to enable/disable and dim the backlight.
+> > +    maxItems: 1
+> 
+> Is this really an "enable" GPIO? The enable-gpio(s) for most backlights
+> is the HWEN pin rather than something used for protocol. Maybe
+> onewire-gpios or control-gpios?
 
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Medium] The `default-intensity` property read from individual monochromatic LED nodes is applied to the multicolor group without rescaling, causing incorrect brightness calculations.
+I agree, and there is prior art in the kernel for ctrl-gpios, so I'll go
+with that.
 
-Please review, explain or fix the Sashiko review(s).
-
-If this is a set, this request includes the other patches too.
-
-> --
-> 
-> --- Patch [1]: [PATCH V4] leds: rgb: leds-group-multicolor: Implement default-intensity ---
-> commit 13399f1aaceaf09afa7e252e35000d7d61ab1925
-> Author: Stefan Wahren <wahrenst@gmx.net>
-> 
-> leds: rgb: leds-group-multicolor: Implement default-intensity
-> 
-> This commit introduces support for the default-intensity property during
-> boot for LED multicolor groups. If the property is missing, the code falls
-> back to the previous behavior of configuring the sub-LED intensity to its
-> maximum.
-> 
-> > diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
-> > --- a/drivers/leds/rgb/leds-group-multicolor.c
-> > +++ b/drivers/leds/rgb/leds-group-multicolor.c
-> > @@ -108,8 +108,10 @@ static int leds_gmc_probe(struct platform_device *pdev)
-> >  
-> >  		subled[i].color_index = led_cdev->color;
-> >  
-> > -		/* Configure the LED intensity to its maximum */
-> > -		subled[i].intensity = max_brightness;
-> > +		ret = device_property_read_u32(led_cdev->dev, "default-intensity",
-> > +					       &subled[i].intensity);
-> > +		if (ret || subled[i].intensity > max_brightness)
-> > +			subled[i].intensity = max_brightness;
-> 
-> [Severity: Medium]
-> Does this logic properly scale the intensity when the individual LEDs in the
-> group have different maximum brightness values?
-> 
-> If a multicolor group consists of LEDs with vastly different maximum brightness
-> capabilities (like a GPIO LED maxing at 1 and a PWM LED maxing at 255), the
-> overall group max_brightness will evaluate to 255.
-> 
-> When reading the default-intensity from the device tree, the value is typically
-> specified on the scale of the individual sub-LED's max brightness. If this
-> value is assigned directly to subled[i].intensity without being scaled up to
-> the group's max_brightness, the sub-LED might be initialized with only a tiny
-> fraction of its intended intensity, often resulting in the LED being completely
-> unlit instead of at the requested intensity.
-> 
-> >  	}
-> >  
-> >  	/* Initialise the multicolor's LED class device */
-> 
-> -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/20260813091428.9072-1-wahrenst@gmx.net?part=1
-
--- 
-Lee Jones
+Regards,
+Wim
