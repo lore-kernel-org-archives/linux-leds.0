@@ -1,76 +1,130 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232A633A029
-	for <linux-leds@vger.kernel.org>; Thu, 13 Aug 2026 15:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B214542BC38
+	for <linux-leds@vger.kernel.org>; Thu, 13 Aug 2026 20:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786635989; cv=none; b=LmaFSAczCAHZay1qXJVda0F9xmo+YpIXHVXojTcAOgm+dkPQ6K/mcdgcxQagO/eyu2Acmu/ZyyFtVb6m4WuBPncLIFUfaquOjSt+pFn2vbv2RVIQvZYZEHDWKxO+US3Si550n+pEufAUC2xcmy6XE7VJm37Yg7Sp/RhgHpgPelY=
+	t=1786653884; cv=none; b=bc89R+cBD+OZPpouAcUoGrAlfxKUtgT21ccGp0FYpE5fPb3Rt30D9JHGgjKHiZBHS43URrbVW47NVeV3lWdrT85WjojEaOZKvPi7Rltpt88RWc6lAn/l8kW/OnSYVBIorVubiaEG9neGXLfXRgbto+8MMu3MWWYs7mAbMBAs4xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786635989; c=relaxed/simple;
-	bh=7fuOQlxqnyazLPRaz5KyfLEM5IqOE9pNwDkbtWOAHlU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wy7q2IaxDZLdixoxQvp32alavH+kj/UJFcNw+sO9bGNAc9RMUfL5xC8PF1LC5jV6CyQcOgVusPC0kQnSP0KDHS8Sh3tDBo8MEawNOwv9it/UdrvYDCzvm13abqQUTV8w3yQvxSrmyqc6e5o3HcsY/H3bpieuoLE4RAKh1HJSL7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hI7WNsaG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1786653884; c=relaxed/simple;
+	bh=Ks+OEH9vS0E0Gmb1owdfeJDBHWiZR0kwcy1sf3iQj5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GOJBoR+sqYk+XEem8U8j08P2IwZ30X7kL1cZFLYErps2ke8xKn0mIFw+c70uSXvQIYM7lSetsW9WJjjYpMi4rEIFAR+HUiygGrM2fYMVxQ/kn0NBhuY0RdlzT5ktGlMJJ3p18YD3GE+OcinwvBzMufNlEr0bsMLNJ/Gr3wMkvH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=P07mYIKq; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hI7WNsaG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1786635984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rWep3q0kXPXu0YRgkQPOVzdYzizOATZDTvCeLKiwHLg=;
-	b=hI7WNsaGCjJ69qBmaQvv+VNuSBPtJl8k9C+EKXoOMgVErT++tHzLTky0adsM9SMd5ydm4C
-	RCxuVVNjfP0TEMylywnVAgGiwIT8gOeOWqN88uOIIyD4hpdOvdIsmjaznNJ+Eh4EdazaMb
-	txHL1lvOKUNmvrZb5NodcWsFq7Iyfwg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-489-lkwrDrRJMluvAouRF6DRWw-1; Thu,
- 13 Aug 2026 11:46:21 -0400
-X-MC-Unique: lkwrDrRJMluvAouRF6DRWw-1
-X-Mimecast-MFC-AGG-ID: lkwrDrRJMluvAouRF6DRWw_1786635979
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8A19195605E;
-	Thu, 13 Aug 2026 15:46:19 +0000 (UTC)
-Received: from firien.redhat.com (unknown [10.22.81.86])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79AD2180049F;
-	Thu, 13 Aug 2026 15:46:18 +0000 (UTC)
-From: Steve Dunnagan <sdunnaga@redhat.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] leds: gpio: Clear error pointers for skipped LEDs
-Date: Thu, 13 Aug 2026 11:45:59 -0400
-Message-ID: <20260813154559.2407-1-sdunnaga@redhat.com>
-In-Reply-To: <20260724180412.43150-1-sdunnaga@redhat.com>
-References: <20260710150841.19669-1-sdunnaga@redhat.com> <20260724180412.43150-1-sdunnaga@redhat.com>
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="P07mYIKq"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=tdCGDPvlMZz660YdIMU4re8nHrkLh2ruA/zi3XeAtl8=; t=1786653882; x=1787863482; 
+	b=P07mYIKqq+aarpb9m1NknVJfTMZKt0IRSyQpSYNFsWQKO3M6dhUcB5VwfDCN1bHLjVCU4r8aYBi
+	h65sf/JSMySxJ/NDj1yQqSNZ4zvDnrDz0QpPgnpQjYe1EB0NbLwYLQZgAqaRkVlbJI/aHJJjluAYT
+	OtLl6UTbsHVKF+xOq8YyctuIR6RZPGbjjl+GPho0eauBB/g9i7M8oQrtgxzzmy2k8cvbwDnAurQQn
+	spIGwANWrbgp17R7SA45CwGFqd7vwg5StBkfWQZD9KZtBDwdpKbMXdyjeqG4jqT/qcDnB0KeyLsYr
+	K5/VFlZylTlF7SHMmOh1v5twUilpNsnQknOw==;
+Date: Thu, 13 Aug 2026 22:44:30 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Lee Jones <lee@kernel.org>
+Cc: sashiko-bot@kernel.org, sashiko-reviews@lists.linux.dev,
+ linux-leds@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: Re: [PATCH v3] leds: is31fl319x: modernize registration
+Message-ID: <20260813224430.467cb79b@kemnade.info>
+In-Reply-To: <20260812132941.GU1072730@google.com>
+References: <20260804-led-modern-v3-1-297720eec19f@kemnade.info>
+	<20260804135515.5DBFC1F000E9@smtp.kernel.org>
+	<20260804164101.43753f1b@kemnade.info>
+	<20260806104525.GC10716@google.com>
+	<20260806135550.2d57682c@kemnade.info>
+	<20260811185127.GW2869284@google.com>
+	<20260812084320.21a7341a@kemnade.info>
+	<20260812132941.GU1072730@google.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Lee, Pavel,
+On Wed, 12 Aug 2026 14:29:41 +0100
+Lee Jones <lee@kernel.org> wrote:
 
-Just checking whether anything else is needed for this v2.
+> On Wed, 12 Aug 2026, Andreas Kemnade wrote:
+> 
+> > On Tue, 11 Aug 2026 19:51:27 +0100
+> > Lee Jones <lee@kernel.org> wrote:
+> >   
+> > > On Thu, 06 Aug 2026, Andreas Kemnade wrote:
+> > >   
+> > > > On Thu, 6 Aug 2026 11:45:25 +0100
+> > > > Lee Jones <lee@kernel.org> wrote:
+> > > >     
+> > > > > On Tue, 04 Aug 2026, Andreas Kemnade wrote:
+> > > > >     
+> > > > > > On Tue, 04 Aug 2026 13:55:14 +0000
+> > > > > > sashiko-bot@kernel.org wrote:
+> > > > > >       
+> > > > > > > > leds: is31fl319x: modernize registration        
+> > > > > > > 
+> > > > > > > [Severity: Low]
+> > > > > > > This isn't a bug, but should the description after the subsystem prefix be
+> > > > > > > capitalized? The LED subsystem guidelines recommend formatting commit messages
+> > > > > > > as "leds: <Driver>: <Capitalized description>".      
+> > > > > > 
+> > > > > > 
+> > > > > > ~/linux$ grep -R 'leds: <Driver>: <Capitalized description>"' Documentation/
+> > > > > > ~/linux$ ls Documentation/leds/
+> > > > > > index.rst                  leds-lp5521.rst      leds-sc27xx.rst
+> > > > > > leds-blinkm.rst            leds-lp5523.rst      leds-st1202.rst
+> > > > > > leds-cht-wcove.rst         leds-lp5562.rst      ledtrig-oneshot.rst
+> > > > > > leds-class-flash.rst       leds-lp55xx.rst      ledtrig-transient.rst
+> > > > > > leds-class-multicolor.rst  leds-lp5812.rst      ledtrig-usbport.rst
+> > > > > > leds-class.rst             leds-mlxcpld.rst     uleds.rst
+> > > > > > leds-el15203000.rst        leds-mt6370-rgb.rst  well-known-leds.txt
+> > > > > > leds-lm3556.rst            leds-qcom-lpg.rst
+> > > > > > leds-lp3944.rst            leds-s2m-rgb.rst
+> > > > > > 
+> > > > > > nothing look like special guidelines for the system. I do not want to
+> > > > > > see such comments without a reference.
+> > > > > > Also MAINTAINERS does not show any additional policy for the LED subsystem.      
+> > > > > 
+> > > > > `git log --oneline -- <subsystem>` is your friend.
+> > > > >     
+> > > > That is looking at common practice, not guidelines, which is of course
+> > > > often a good idea.
+> > > > 
+> > > > So Sahiko is hallucinating about non-existant guidelines which
+> > > > cannot be referenced of course. Well, at least it gives quite an amount of
+> > > > useful hintse.    
+> > > 
+> > > It's not hallucinating, I put it there. =:-)
+> > > 
+> > > https://github.com/sashiko-dev/sashiko/blob/main/third_party/prompts/kernel/subsystem/leds.md
+> > > 
+> > > Specifically:
+> > > 
+> > > https://github.com/sashiko-dev/sashiko/blob/main/third_party/prompts/kernel/subsystem/leds.md?plain=1#L8
+> > >   
+> > So, that is another repository of another project. That is not an
+> > intuitive place to look at. So I would expect to see at least some pointer
+> > in that direction in the first place.  
+> 
+> It's not common for maintainers to document all of their idiosyncrasies
+> and preferences.  You've asked if the review comment is legitimate and
+> I've told you that it is.
+> 
+It is not common to document everything. That is correct. 
+I think you got me a bit wrong here.
 
-Linus Walleij replied with:
+I have not questioned the legitimacy of the review comment, I am questioning
+the style of this Sashiko review which is basically: "there is documentation
+but I do not tell you where it is, even if it is in unusual place (I consider
+anything not in the Documentation folder of the kernel git as unusal)."
 
-  Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-Thanks,
-Steve
-
+Regards,
+Andreas
