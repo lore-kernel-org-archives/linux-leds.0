@@ -1,72 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D7E15C14F;
-	Sat, 15 Aug 2026 01:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9375F17745;
+	Sat, 15 Aug 2026 23:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786759059; cv=none; b=iJbQEAl83fDBOLlaZNkujEMa7IQLKRhL5ft6aLox5NfQMyjBhsQIZXDCi4fGK64ykirguXnJVPL7rrCJl2LuuF7HWvwz7+168RXHeF/GoS6WM2un1xonVWKVsBvhgcbRleQvS5myihwTvWb9yXCQMfSvl95Wk8kxk/YLHuEX+Wk=
+	t=1786835511; cv=none; b=LBiYBQBHFSOoi7dyCPt1hDuUqmNq3CDJjr33W/+5Nqis8hiWFI3PP/AEg8Vb0BNMAyhJDzppxGjPLZmxiWvK4PdEaGmmUNCoJmlTuubYw8LrFxhzQXFPFb8knUxNh6ZxNPM5wnwRgbK3ouYGVEgju3NCzmo5MK2bTqCiXfA4uPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786759059; c=relaxed/simple;
-	bh=2k21oP3uc3CpSpDf6M9NnnLHW6BVjcb1UHkbnQKiIUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hBFPZiq3oCAPlYnRMpYB0b5Ch3VdxX0bTSPZrH4E0r5scOPAPer/E6oom0bs12Bw8Jcjv1Kd1Cj9vTPfJBun8TcmjkdvT0PLK7B3AaZfUXabgYEIXEw7FGUtcZY87hhydzHOXXHMv8aI4K2MY8EtURASG0VjEk2+cyhNB30wdpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzZFlhvF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786835511; c=relaxed/simple;
+	bh=+VBWhvR52A/9SfH0/O/VKZ+PqX3IdJQ0KswGlv8/Hrs=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=KzpalaRZWFlh8l5hoSUvYztlJxPXLn5kkkMzTy7fEPI0+CFLel5RYeBS/8cG/NZGF+w1G26h7GrhG3ck3T7jxJyGoFNUtkUtyWQzkgQIXXONzyUQpERHaMWk2F/uaiZI0WieMl9JcIPazpAAPfsrnwVVCVm2d4sFFWOv0CuAtk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpnQqZoG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzZFlhvF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36CD61F000E9;
-	Sat, 15 Aug 2026 01:57:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpnQqZoG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF6A1F000E9;
+	Sat, 15 Aug 2026 23:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786759058;
-	bh=9zVksnQyuPy07Sp7sNksTJnIRmmkQHtYXS8UklOtV60=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=lzZFlhvFFzT7JNr11cvMu4yCeFnhSny1TroFsX2oiTWNjfDTiOEZTqJqGWdEGU9rl
-	 bby36qoqoQ7Dw1aAMu2RPox6lSE6bOg/yzO+JvRmbGCoafKNJ0Fj0SXVsjJQ1pW2eF
-	 m+nubQelGmT9gTU8c4s7PXn4h/8J9HBYXoEa19sEbQ4tmPqm+TkVJAVkGC5gihMOLY
-	 VpNX9kFcIFqTWesxMGNL/WOKYDO8/Inbh1NhPtTa210nFttRUEfbP4joyQT4vCQFFM
-	 wBDXl5J0nQsvaYB/47BTntXz7YNNTk/l4XwRL6pVNnbapp3t8tN3Oy3UGaUvTV9lKO
-	 GuH0WGA90Z54g==
-Date: Sat, 15 Aug 2026 02:57:17 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, Daniel Thompson
- <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Pavel Machek
- <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Helge Deller <deller@gmx.de>, Johan Hovold
- <johan@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- mfd@lists.linux.dev, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v6 08/14] mfd: lm3533: Convert to use OF bindings
-Message-ID: <20260815025717.05a1bbfd@jic23-huawei>
-In-Reply-To: <20260811191132.GA1072730@google.com>
-References: <20260731113632.158440-1-clamor95@gmail.com>
-	<20260731113632.158440-9-clamor95@gmail.com>
-	<20260811191132.GA1072730@google.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	s=k20260515; t=1786835510;
+	bh=+VBWhvR52A/9SfH0/O/VKZ+PqX3IdJQ0KswGlv8/Hrs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=lpnQqZoGs4m2BeoB5UjC1r19ctbpbxWvJXkq1+pyQ2eCV03XhJxw9zrTJl9S8e9jl
+	 SKth0kZ5Q3+e+fqrk4cvZ/kgxdpPn/x/ZUq87woM1BjFq9fvPctT1HoIbDCRb5QFWX
+	 Dlr46UzIoOp1SzBpeTbkFjNKX08g+/KPgBuvwR8B9CdCSBcuLZSt8y5L+4KdPxT0Rw
+	 kLAIhTrt5D9pqnTCJ4WnmsA5z/20i9iDglkuOwkSnhtiZJAHRuF+uL3DPMze0s4Eat
+	 aGNP8zNvKuCIWJ3dRTb+tSd3HgztR4p6L8rJmrLnyRXltyCVNl/lLD0XGoHe8+ZL1u
+	 rOfbm3r1Ekbpg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH net-next v5 6/7] ptp: ocp: Add R4006 I2C peripheral
+ topology
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Ahmad Byagowi" <ahmadexp@gmail.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, robh@kernel.org, lee@kernel.org
+In-Reply-To: <c6f7d14b58411e4513d5b89472459369edc8de4f.1786747084.git.ahmadexp@gmail.com>
+References: <cover.1786746757.git.ahmadexp@gmail.com>
+ <c6f7d14b58411e4513d5b89472459369edc8de4f.1786747084.git.ahmadexp@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 15 Aug 2026 23:11:49 +0000
+Message-Id: <20260815231149.DFF6A1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 11 Aug 2026 20:11:32 +0100
-Lee Jones <lee@kernel.org> wrote:
+> R4006 boards place sensors and an IS32FL3207 LED controller behind
+> a four-channel PCA9546 mux.
+>=20
+> Describe the LM75B, SHT3x, and ICP10100 sensors and the five RGB LED
+> groups. The BNO08x at address 0x4a is omitted because it has no upstream
+> driver; the LM75B using the same address is on a different mux channel.
+>=20
+> Read the board ID independently of the serial EEPROM and select this
+> profile from the R4006 prefix. Production IDs may append a board revision,
+> while unknown board IDs remain untouched.
+>=20
+> Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
 
-> Jonathan,
-> 
-> IIO ack please, mate.
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-Oops. Not sure why I failed to notice the IIO parts in these other patches.
-
-Acked-by: Jonathan Cameron <jonathan.cameron@oss.qualcomm.com> #for-iio
-
-Thanks for the poke!
-
-Jonathan
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1786746757.gi=
+t.ahmadexp@gmail.com?part=3D6
 
