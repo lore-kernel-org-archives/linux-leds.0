@@ -1,66 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from meve.dewith.io (meve.dewith.io [157.90.20.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752BB38D3FC;
-	Sat, 15 Aug 2026 23:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7FF3DDAF0;
+	Sun, 16 Aug 2026 10:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.20.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786835516; cv=none; b=NfZsuXONAfvxIS6wKNcDRn8HN5he9/2so9ESAyG4lZY4cvnFEJI4nek4SkQJufYCTRts8L2LshPdTlszMv1pgxcFKjtW39RU4drr1VWcEQfmBHJcdj4b/vH1TcMuxsslRZGnz9rgedA9Tpv2AnLZKdVOONhV96HVchy4NAFMRxQ=
+	t=1786877840; cv=none; b=Xb1KG5q3862RaZlRUWVPlC4n7X5nKT+eZxUNSTGOoA/0IiMWeY5PuBFl+Tz5keG85mwInEbUW8tUD12wN/4Dits1/NCxJdZJWC8zetj+2ZYTb5f7KtdpODGLradwgsOO0+VzK2BAExXrbfTb5niPs7Re13ZjohsDygSthhByIXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786835516; c=relaxed/simple;
-	bh=HsoL4gM9LiABz6+LERBwb3PkmDsnbjW2IQZh4ValomE=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=aSJpgPxwg+9lZE8taoqeoWNPmUaiUi/e/2ipDEl+UOgbsNS4974hTrgUSeP0mx+t06WLgLc18PZ6wfoF9UAOAXlaMEcLYoHjbdc5appA9aSINFuayq49n0ISS1XgsQLk0gARmncuKwC45/84javpAG1fGnV5oSn2/6mWJsNPj+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIkC4NHq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786877840; c=relaxed/simple;
+	bh=OCzYSfK0mMEIKk7NRcpDDssbQm0znClclNGmBAoOQ+0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ZVTR/KrAjig5/zjRZKUgNeuox49OCNdWduteZtCbUrn5BzMnHC98FgJ12MmPmeVPegEeln0OJss9gdo8zy4UPejt72EZHOH/w3A2QqNPs7fIugWhDmzVSQym3bs38QSjH1FtxF2zHchBKtJ98Vaz3t+fJOHWOL1PuDkBPP9nvTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io; spf=pass smtp.mailfrom=dewith.io; dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b=RAjD3M27; arc=none smtp.client-ip=157.90.20.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dewith.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dewith.io
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIkC4NHq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0809F1F000E9;
-	Sat, 15 Aug 2026 23:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786835515;
-	bh=HsoL4gM9LiABz6+LERBwb3PkmDsnbjW2IQZh4ValomE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gIkC4NHqP7LI1+VV3ZfHAQBDF3Yl/tLtUgAaK58Q2vem2ZairU81eTUpPcZUqLVhz
-	 sAZVKxh4gSbJ+MLXC5qk6cXWwuD5HXjblqpirgw/g71WhWSrLbx9QA+bjogC7yfro6
-	 jP7Dw1a7AyEZ8XmZhHjoP6qPlwcKpp0xxsWbsqezLWNksGBx69LKbaaJRFVMsSbKXB
-	 TgO5Mfw66nUT2bvxuHPX+qhvsSXern/bc3XmJuVfxZLn6WpJ52bh+UojP1zUSAOXmg
-	 VWY3zmyM64qE+2fNkvOKQzlYCx8Dv+/NuSGzW5kn4l5AiQa2gDINv+CjzyFWr8jCNg
-	 MXhhA7c9GLrfg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net-next v5 7/7] ptp: ocp: Add Time Card V9 I2C
- peripheral topology
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Ahmad Byagowi" <ahmadexp@gmail.com>
-Cc: lee@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <1b0ad989c6290a400bd642f9fb2d26d965bc02c8.1786747084.git.ahmadexp@gmail.com>
-References: <cover.1786746757.git.ahmadexp@gmail.com>
- <1b0ad989c6290a400bd642f9fb2d26d965bc02c8.1786747084.git.ahmadexp@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 15 Aug 2026 23:11:54 +0000
-Message-Id: <20260815231155.0809F1F000E9@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=dewith.io header.i=@dewith.io header.b="RAjD3M27"
+Received: from localhost (70-26-208-87.ftth.glasoperator.nl [87.208.26.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by meve.dewith.io (Postfix) with ESMTPSA id 750D01FC51;
+	Sun, 16 Aug 2026 10:57:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dewith.io; s=default;
+	t=1786877829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q9BkWOqbRPbwZZ0c97zc9geVYk3/KI/cL1rJzpM75Ow=;
+	b=RAjD3M27ilzzPmNQ4ciaobOEiyYwYadP4Qowga+NRPzH/mmKFAFaVHD+HiH/39f0h58g7n
+	KjijL8+slRQ+EcVCta66y2vLV6lW1nqliRJQCNbVgzFkuMmIRbcEjRnc0kOjCR1XX6hGNY
+	HOtMv47anmunYSymwKDYVT+AbOrkSeA=
+From: Wim de With <wf@dewith.io>
+Date: Sun, 16 Aug 2026 12:57:03 +0200
+Subject: [PATCH v3 1/2] dt-bindings: backlight: Add Orient Chip OCP8178
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260816-ocp8178-backlight-v3-1-caf95c453c50@dewith.io>
+References: <20260816-ocp8178-backlight-v3-0-caf95c453c50@dewith.io>
+In-Reply-To: <20260816-ocp8178-backlight-v3-0-caf95c453c50@dewith.io>
+To: Wim de With <wf@dewith.io>, Lee Jones <lee@kernel.org>, 
+ Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org
+X-Mailer: b4 0.16.0
 
-> Time Card V9 boards use the same mux infrastructure with a BME280,
-> a BNO055, and an IS32FL3207 at a different address.
->=20
-> Describe six RGB groups. The first two expose the GNSS1 and GNSS2
-> status LEDs on outputs 0 through 5; the remaining four expose the SMA
-> indicator LEDs on outputs 6 through 17.
->=20
-> Select the profile only when the fixed-width board ID exactly matches
-> TIMECARD-V9 with zero or erased-byte padding. Older revisions share the
-> detectable I2C devices but not the V9 LED wiring.
->=20
-> Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
+Add device tree bindings for the Orient Chip OCP8178 LED backlight
+driver.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Signed-off-by: Wim de With <wf@dewith.io>
+---
+ .../bindings/leds/backlight/ocs,ocp8178.yaml       | 47 ++++++++++++++++++++++
+ MAINTAINERS                                        |  5 +++
+ 2 files changed, 52 insertions(+)
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1786746757.gi=
-t.ahmadexp@gmail.com?part=3D7
+diff --git a/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml b/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+new file mode 100644
+index 0000000000000..1cd95aac0d168
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/backlight/ocs,ocp8178.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Orient Chip OCP8178 backlight
++
++maintainers:
++  - Wim de With <wf@dewith.io>
++
++description:
++  The Orient Chip OCP8178 is a white LED backlight driver controlled by a single
++  GPIO line with a vendor-specific onewire protocol.
++
++allOf:
++  - $ref: common.yaml#
++
++properties:
++  compatible:
++    const: ocs,ocp8178
++
++  ctrl-gpios:
++    description: GPIO to use to enable/disable and dim the backlight.
++    maxItems: 1
++
++  default-brightness:
++    maximum: 31
++
++  max-brightness:
++    maximum: 31
++
++required:
++  - compatible
++  - ctrl-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    backlight {
++        compatible = "ocs,ocp8178";
++        ctrl-gpios = <&gpio2 5 GPIO_ACTIVE_HIGH>;
++        default-brightness = <13>;
++        max-brightness = <31>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfee5d47b214d..3ca99d9c32ef1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19678,6 +19678,11 @@ F:	drivers/mfd/ocelot*
+ F:	drivers/net/dsa/ocelot/ocelot_ext.c
+ F:	include/linux/mfd/ocelot.h
+ 
++OCP8178 BACKLIGHT DRIVER
++M:	Wim de With <wf@dewith.io>
++S:	Maintained
++F:	Documentation/devicetree/bindings/leds/backlight/ocs,ocp8178.yaml
++
+ OCXL (Open Coherent Accelerator Processor Interface OpenCAPI) DRIVER
+ M:	Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+ R:	Andrew Donnellan <andrew+kernel@donnellan.id.au>
+
+-- 
+2.55.0
 
