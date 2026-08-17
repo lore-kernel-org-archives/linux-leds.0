@@ -1,312 +1,182 @@
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2810A46A5F2
-	for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 17:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786987119; cv=none; b=L2tKkd6GRIWwOtfMikIfS/JsgdaOohd/o+IWtx4bf3fd04RFb0hFB566nnFEIdvjmPcyl7PZupDRNw0rl2BO/iw1DtXWbLsz91uSs9a1eK/uioaFcHThtrr6pd+yM/38KVB0Fn3Gsm05LOtv5FjcE4IFG7oMAkib807G/cwje1Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786987119; c=relaxed/simple;
-	bh=eJJ9baQrarZE446pveTkUylKkW8EMz2sob99PAzFJGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nXLPqwe6gc8d0kpYAilGKZPbjq1LkjszUgpsXRTdzmf7w/bhCgSKvESyCNuZy/YUeqB0TaRzV7Ja34KH9sfwixHyLv7ahcG8d5xyuACQ8dP3/2cpz5h+UazTJRJN+iO1UX1M3ZkG1c5FxedjMR9vxs2OY0VhUsbsjrHa8jB6A60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=HONfpzuy; arc=none smtp.client-ip=185.136.64.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8723F9287
+	for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 18:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.167.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786989981; cv=pass; b=AcDJcr+h+2FAJsu+4uqXKnnL2WnusTe2J+C4BFxMG01JaXUCFC3M1RaZ5b8uoyek+xEwoE4+y1+ZMTZRMsUak6vcQwAW0J2mx8ZNuJKpipY3+wlCdzTwc5hfVpGXtaBzih9mR34B4zOBMxnbgWO79JPrwimiywYo4Z1lavgVfEo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786989981; c=relaxed/simple;
+	bh=hY2SxOvT9o/Xp4zyoVoyVI3wZEfRvmTSP3mGP0ibUFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uzWit/xmQhUMyLUuNSFuHkjZXMjebnQuKKtUB1IjCY8H9aQpa5mPBajYnS2R/u8h9MiuP0SXfH5W4t3SfYZIfoGNS+ExdwxanUIMYSXKaWQgRI+GFLootFW1+hwa2e4nSn2doYtS78/zTR0afislQfiAtiwPYnlW+YB49OliOXQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJD5nkwb; arc=pass smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="HONfpzuy"
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20260817170820de4713840c000207fb
-        for <linux-leds@vger.kernel.org>;
-        Mon, 17 Aug 2026 19:08:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=WZtFRdjtUq4dQ6GfrNDN0rLs1QYiDRrW26BnNAqYuKY=;
- b=HONfpzuyeX/3OelD72snOljwUw1dKrE2bMjNryEEnhQC75Zrf0GCiB+zqx+Ff+ydxZaFfL
- T+mcEqjR69jfs3332EJAnpvnTAYOejCL0QUmU+1TkxrbJOSq5+dkIAHz6R7Tb1y5Bwmk/EC1
- D9Vo9eYG8DXeuHYoHkemfQkchfQ+ghJ78DOEH54nM9qx3O3CXwWq0PrcI0M7W4T70HIPmAgs
- /IrlsZlbzNVunvc+f+D2mYa1Pp18xAltbsx/GOQTMr2Rt3gIrutIRjN9ZQ8+q5bTTqCgDXAN
- /ji1axz5z/HpDnPGewv4ZkW8MLaf76MRX4MMYppfCVeVrCJnRiDc1S/g==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Andrew Davis <afd@ti.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Helge Deller <deller@gmx.de>,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH 1/2] backlight: led_bl: Add devm_led_backlight_register() helper
-Date: Mon, 17 Aug 2026 19:08:14 +0200
-Message-ID: <20260817170817.1933046-2-alexander.sverdlin@siemens.com>
-In-Reply-To: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
-References: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJD5nkwb"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5b15c6fb864so2675812e87.1
+        for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 11:06:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786989978; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VGyzL7ZVXqxm4PeABWoy9/Z3QiETUT3ygN3Dzu9l9jWfH8o7TMrKxcM81uIvhZHEif
+         TbR6T/co7wakn3i7WWd/ttQb2Qrn7ybDbDBsXAAXtUwNdK/mof4r7hMWTP9uPCjKkJmf
+         fYHDypPSo/7X5lYZJKRZszPaNe2M6uO8AgWrYvk5HFN/X4P1H+mVmSDnhgE9cmkuqaYO
+         QnX3/hX++nrBvCDcAV+rafdds4Hr/Se0ebmQsxhcUed52G4h7SPn5GwL9AxHpup6kNTy
+         E457DSDEYD9sp5ZfTCtQwmh3nBroqgykKb7xR8OjxcfH6uaYRdlNSBQtnZej71b4LLpk
+         YHsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=c7o8fQxkzDHp1SWA8zZhLGLxaxvN0qtBR/ePXDA3zRk=;
+        fh=ERbH/Ga1l0RIBDfBZUdyTEySOxw2lEjZ/hdncqTKbBo=;
+        b=EQseSEzmjfruAuQQ6o2UpAmd8ysCrfNqIieWeO5nFCBOno2x/Cyg5JPkxQk27gfY2E
+         mVL/UFuJhSsNmVth6dUgz46p6Qpyj7EFplXeLNg1ccebB4ZyGxAG3sx6W70tStT1x/mu
+         F3liBWCB1jnQ6Bcq3VhkVxF8LqcPq5QiztHNmoRN2LNoF0QQv9SwdRZGgVA9se0DGkuB
+         +4A4sjUbk2t4LBPavhO02rg5rvz83aUH7hnHN4VjEKoYqmi+tS+jJMR3y1JVBUUbnEQx
+         yaHXwPTeAqI7SJcralsOq2/zv+Nj88aTvLtwo1bWVQqgUgtXD8qOXnlKvX29xPCRPxE0
+         CLmA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786989978; x=1787594778; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=c7o8fQxkzDHp1SWA8zZhLGLxaxvN0qtBR/ePXDA3zRk=;
+        b=cJD5nkwb+thIWOIDJwA4hC6GwnESECMsljaAWKJ2CbhJD4sbmTHoofqb8pm7mhrxJZ
+         S4is27pBmQe2JdRlYSmz6rYSmmHKqVJGI8fI57Lz4txacKEyeA39PbGSH9wk/1mvQ1HH
+         EF9MG9+QljHr9wZzArfi+kOhjsp/dd/ndLwKnByxb47/0ns4tyBgpyb8DQMS4+CGdwK2
+         qM3UgoRUhpTczsTyXyTqlBsZSNewt1qgcpMQ4Ge/CNtZqAxGpnA4Y1sno0+lSoG7/dSF
+         x1nvy7vskwUR8Bp6f63VROsFInB/ps8V3ttNK1BFXrWGY5pxyzlPF4a0OpNZE0zoHK9/
+         XsBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786989978; x=1787594778;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=c7o8fQxkzDHp1SWA8zZhLGLxaxvN0qtBR/ePXDA3zRk=;
+        b=HFItBgVbziQHzOoYk0j3U8DbJg7AmZu7pSPwcM5UZOK09lHeFkzrR63cWYz8PIYz7/
+         UNMEwR+83k+VFgY2yEllSfB38AviBl9+H1KNw/seJ8ev7qYNkdEVLfpFeEVkqVUjX6gg
+         AOGzy+o41aKft/3s8W8O/Xfszm8NuTAnudDrmPcOvnDKRsYixQxruk7TeNfbuUD0cHPh
+         iAn/8YaBC8FDyWbhMOkUTF/HRZU+BDpD1MSMQVDqdDPAkcI8zpIGsLNAINRKWqz2Vdev
+         gklyoAbUmzjl6r2V95xPgK87Hy9QvXYKEkTUBC1LDHkKOwWmb60vmtP1JDIBlCmpHgIW
+         viNQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpW8+nWT9I7tQRBw/CenWOL2+4oZvS6RXn38SLgbf22sVVvR92mCqAz5trYQLUiam8r5RlTdSEE68Ab@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMH6GeAvPS8E1h2n7oEhW3cqOi1Z7V6gq6SHNxkGODW/vqwgSM
+	oZCzKlmdaG/mtlxkLZE1rvRSDYtecjL/GqD61Hg1e8y3gkOYFdZ/SUPrlZUAGFr12+fxCfEUqY8
+	c/+5+S6DngGiNUyufyeWzCqK3eLNaywA=
+X-Gm-Gg: AR+sD13N6mW+B6jGTU/8W+g5NRPSd2L59Y/E3ljwCv58uib0DGBphnd0SY7Wn9UBAIJ
+	asqzmPXFqVDeXMW/mOVm0gpZzk+jIm7KCWSe6JHsIP1KrdqZHCGfjc5FfICGAba8vV+GXkGbK+i
+	GML27ka3o09joKdCwfgp+AJjXOBj3d93F/yRAvP0mW+AqQS7tW7NXW9iPXbjaAtTp5Kbsf9JvDt
+	wlskQXCfh7OGYpcZ0cmTBhCEyWKi18ms9YDcgZRkQtdmmk4u6GdJqW9onuaqfAcSykAO6v2ykAc
+	lW7TnF8b061swsXgujCyIbUnFMzp/pAStL8rkX3wOurXjHlny89FL/qulkYhldha8bHqR4ZETud
+	FGj+WmIv/Agy4Mo+q2NrlS7/xmg==
+X-Received: by 2002:a05:6512:39d2:b0:5b2:e890:e6b4 with SMTP id
+ 2adb3069b0e04-5b4591418c8mr4225069e87.36.1786989977421; Mon, 17 Aug 2026
+ 11:06:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
+References: <cover.1786746757.git.ahmadexp@gmail.com> <d5df0bb5c312478279f0d2fd5ec6305e41add5ae.1786747084.git.ahmadexp@gmail.com>
+ <20260817-invaluable-hog-of-current-b0d0bd@quoll>
+In-Reply-To: <20260817-invaluable-hog-of-current-b0d0bd@quoll>
+From: Ahmad Byagowi <ahmadexp@gmail.com>
+Date: Mon, 17 Aug 2026 11:06:05 -0700
+X-Gm-Features: AcwNN1UfcBdidSzggHJjTL7Ud4WaUs0LCKzrRYabM4qhMdfH15u5P0J5gt3C7sw
+Message-ID: <CAOQiBWNKJc8BPgmQg3nRBgzXRaQUphfRXJ6JXT5e=z-y15TupQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 1/7] dt-bindings: leds: Add IS32FL3207 controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: netdev@vger.kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@lysator.liu.se>, 
+	Nam Tran <trannamatk@gmail.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Resending as plain text because the mailing lists rejected the
+previous HTML copy.
 
-The led-backlight driver could so far only be instantiated from a
-device-tree node with the "led-backlight" compatible. This makes it
-impossible for a self-contained LED provider (e.g. a hot-pluggable I2C
-LED controller) to expose a backlight interface tied to its own
-lifetime.
+You are right, I should have explained this explicitly. I dropped your
+Reviewed-by because v5 materially changed the binding: it adds the
+dash-suffixed multicolor-group form, makes reg optional for that form
+so groups can begin at outputs 16 or 17, and documents the
+RISET/current-limit relationship.
 
-Factor the actual backlight registration out of the probe path into a
-shared led_bl_register() helper and export devm_led_backlight_register(),
-which registers a backlight class device driven by a single LED, without
-device tree and bound to the caller's device lifetime. The backlight
-device and the LED sysfs handover are now devres-managed, so the probe
-path shrinks and the explicit .remove callback is no longer needed.
+I did not intend to ask you to repeat the review without explaining
+why. I will record this explicitly in the next revision and will not
+carry the tag unless you renew it. Sorry for the omission.
 
-The exported helper is a no-op when the led-backlight support is not
-reachable (IS_REACHABLE(CONFIG_BACKLIGHT_LED)), so callers do not need
-any Kconfig plumbing and are not force-selected to build it.
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
- MAINTAINERS                      |   1 +
- drivers/video/backlight/led_bl.c | 130 ++++++++++++++++++++-----------
- include/linux/led_bl.h           |  20 +++++
- 3 files changed, 107 insertions(+), 44 deletions(-)
- create mode 100644 include/linux/led_bl.h
+On Sun, Aug 16, 2026 at 11:42=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
+>
+> On Fri, Aug 14, 2026 at 04:10:49PM -0700, Ahmad Byagowi wrote:
+> > The IS32FL3207 is an 18-channel constant-current LED controller with
+> > per-output PWM and current scaling.
+> >
+> > Describe I2C addressing, power and shutdown controls, RISET, and
+> > individual or multicolor output groupings. Require board current limits
+> > for each output and document their relationship to the RISET-derived fu=
+ll
+> > scale.
+> >
+> > Allow dash-suffixed multicolor group names when a group begins at chann=
+el
+> > 16 or 17, which cannot be represented by the common schema unit-address
+> > form.
+> >
+> > Signed-off-by: Ahmad Byagowi <ahmadexp@gmail.com>
+> > ---
+> >  .../bindings/leds/issi,is32fl3207.yaml        | 281 ++++++++++++++++++
+>
+> I do not see any explanation why you dropped review.
+>
+> We have enough of other patches to review, so if you ask us to do the
+> same work twice, it's only fair if we just skip your patches.
+>
+> <form letter>
+> This is a friendly reminder during the review process.
+>
+> It looks like you received a tag and forgot to add it.
+>
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions of patchset, under or above your Signed-off-by tag, unless
+> patch changed significantly (e.g. new properties added to the DT
+> bindings). Tag is "received", when provided in a message replied to you
+> on the mailing list. Tools like b4 can help here. However, there's no
+> need to repost patches *only* to add the tags. The upstream maintainer
+> will do that for tags received on the version they apply.
+>
+> Please read:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/s=
+ubmitting-patches.rst#L577
+>
+> If a tag was not added on purpose, please state in the patch changelog
+> or cover letter why and what changed.
+> </form letter>
+>
+> Best regards,
+> Krzysztof
+>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8014b9f8253ed..d525a7c4043aa 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4508,6 +4508,7 @@ F:	Documentation/ABI/testing/sysfs-class-backlight
- F:	Documentation/devicetree/bindings/leds/backlight
- F:	drivers/video/backlight/
- F:	include/linux/backlight.h
-+F:	include/linux/led_bl.h
- F:	include/linux/pwm_backlight.h
- 
- BARCO P50 GPIO DRIVER
-diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
-index f7ab9b3607313..f87a48f74186a 100644
---- a/drivers/video/backlight/led_bl.c
-+++ b/drivers/video/backlight/led_bl.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/backlight.h>
-+#include <linux/led_bl.h>
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -173,29 +174,25 @@ static int led_bl_parse_levels(struct device *dev,
- 	return 0;
- }
- 
--static int led_bl_probe(struct platform_device *pdev)
-+static void led_bl_disable(void *data)
- {
--	struct backlight_properties props;
--	struct led_bl_data *priv;
--	int ret, i;
--
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
--	platform_set_drvdata(pdev, priv);
-+	struct led_bl_data *priv = data;
-+	int i;
- 
--	priv->dev = &pdev->dev;
-+	led_bl_power_off(priv);
-+	for (i = 0; i < priv->nb_leds; i++) {
-+		mutex_lock(&priv->leds[i]->led_access);
-+		led_sysfs_enable(priv->leds[i]);
-+		mutex_unlock(&priv->leds[i]->led_access);
-+	}
-+}
- 
--	ret = led_bl_get_leds(&pdev->dev, priv);
--	if (ret)
--		return ret;
-+static int led_bl_register(struct device *dev, struct led_bl_data *priv)
-+{
-+	struct backlight_properties props;
-+	int ret, i;
- 
--	ret = led_bl_parse_levels(&pdev->dev, priv);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to parse DT data\n");
--		return ret;
--	}
-+	priv->dev = dev;
- 
- 	memset(&props, 0, sizeof(struct backlight_properties));
- 	props.type = BACKLIGHT_RAW;
-@@ -203,24 +200,28 @@ static int led_bl_probe(struct platform_device *pdev)
- 	props.brightness = priv->default_brightness;
- 	props.power = (priv->default_brightness > 0) ? BACKLIGHT_POWER_OFF :
- 		      BACKLIGHT_POWER_ON;
--	priv->bl_dev = backlight_device_register(dev_name(&pdev->dev),
--			&pdev->dev, priv, &led_bl_ops, &props);
--	if (IS_ERR(priv->bl_dev)) {
--		dev_err(&pdev->dev, "Failed to register backlight\n");
--		return PTR_ERR(priv->bl_dev);
--	}
-+	priv->bl_dev = devm_backlight_device_register(dev, dev_name(dev), dev,
-+						      priv, &led_bl_ops, &props);
-+	if (IS_ERR(priv->bl_dev))
-+		return dev_err_probe(dev, PTR_ERR(priv->bl_dev),
-+				     "Failed to register backlight\n");
- 
- 	for (i = 0; i < priv->nb_leds; i++) {
-+		struct device *supplier = priv->leds[i]->dev->parent;
- 		struct device_link *link;
- 
--		link = device_link_add(&pdev->dev, priv->leds[i]->dev->parent,
--				       DL_FLAG_AUTOREMOVE_CONSUMER);
--		if (!link) {
--			dev_err(&pdev->dev, "Failed to add devlink (consumer %s, supplier %s)\n",
--				dev_name(&pdev->dev), dev_name(priv->leds[i]->dev->parent));
--			backlight_device_unregister(priv->bl_dev);
--			return -EINVAL;
--		}
-+		/*
-+		 * BL and the LED are the same device if instantiated via
-+		 * devm_led_backlight_register()
-+		 */
-+		if (supplier == dev)
-+			continue;
-+
-+		link = device_link_add(dev, supplier, DL_FLAG_AUTOREMOVE_CONSUMER);
-+		if (!link)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "Failed to add devlink (consumer %s, supplier %s)\n",
-+					     dev_name(dev), dev_name(supplier));
- 	}
- 
- 	for (i = 0; i < priv->nb_leds; i++) {
-@@ -229,26 +230,68 @@ static int led_bl_probe(struct platform_device *pdev)
- 		mutex_unlock(&priv->leds[i]->led_access);
- 	}
- 
-+	ret = devm_add_action_or_reset(dev, led_bl_disable, priv);
-+	if (ret)
-+		return ret;
-+
- 	backlight_update_status(priv->bl_dev);
- 
- 	return 0;
- }
- 
--static void led_bl_remove(struct platform_device *pdev)
-+static int led_bl_probe(struct platform_device *pdev)
- {
--	struct led_bl_data *priv = platform_get_drvdata(pdev);
--	struct backlight_device *bl = priv->bl_dev;
--	int i;
-+	struct led_bl_data *priv;
-+	int ret;
- 
--	backlight_device_unregister(bl);
-+	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
- 
--	led_bl_power_off(priv);
--	for (i = 0; i < priv->nb_leds; i++) {
--		mutex_lock(&priv->leds[i]->led_access);
--		led_sysfs_enable(priv->leds[i]);
--		mutex_unlock(&priv->leds[i]->led_access);
-+	ret = led_bl_get_leds(&pdev->dev, priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = led_bl_parse_levels(&pdev->dev, priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to parse DT data\n");
-+		return ret;
- 	}
-+
-+	return led_bl_register(&pdev->dev, priv);
-+}
-+
-+/**
-+ * devm_led_backlight_register - expose a LED as a backlight device
-+ * @dev: LED provider device, also the parent and lifecycle owner
-+ * @led: LED class device to drive the backlight
-+ *
-+ * Registers a backlight class device driven by @led, without device tree and
-+ * tied to the lifetime of @dev. This lets self-contained (e.g. hot-pluggable
-+ * I2C) LED drivers offer a backlight interface without static platform
-+ * plumbing. It is a no-op when the led-backlight support is not built in.
-+ *
-+ * Return: 0 on success, negative errno otherwise.
-+ */
-+int devm_led_backlight_register(struct device *dev, struct led_classdev *led)
-+{
-+	struct led_bl_data *priv;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->leds = devm_kmalloc(dev, sizeof(*priv->leds), GFP_KERNEL);
-+	if (!priv->leds)
-+		return -ENOMEM;
-+	priv->leds[0] = led;
-+	priv->nb_leds = 1;
-+	priv->max_brightness = led->max_brightness;
-+	priv->default_brightness = led->brightness;
-+
-+	return led_bl_register(dev, priv);
- }
-+EXPORT_SYMBOL_GPL(devm_led_backlight_register);
- 
- static const struct of_device_id led_bl_of_match[] = {
- 	{ .compatible = "led-backlight" },
-@@ -263,7 +306,6 @@ static struct platform_driver led_bl_driver = {
- 		.of_match_table	= led_bl_of_match,
- 	},
- 	.probe		= led_bl_probe,
--	.remove		= led_bl_remove,
- };
- 
- module_platform_driver(led_bl_driver);
-diff --git a/include/linux/led_bl.h b/include/linux/led_bl.h
-new file mode 100644
-index 0000000000000..e38e4d62bf653
---- /dev/null
-+++ b/include/linux/led_bl.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_LED_BL_H
-+#define _LINUX_LED_BL_H
-+
-+#include <linux/kconfig.h>
-+
-+struct device;
-+struct led_classdev;
-+
-+#if IS_REACHABLE(CONFIG_BACKLIGHT_LED)
-+int devm_led_backlight_register(struct device *dev, struct led_classdev *led);
-+#else
-+static inline int devm_led_backlight_register(struct device *dev,
-+					      struct led_classdev *led)
-+{
-+	return 0;
-+}
-+#endif
-+
-+#endif /* _LINUX_LED_BL_H */
--- 
-2.55.0
 
+--=20
+73
+With best wishes / Mit herzlichsten Gr=C3=BC=C3=9Fen
+Ahmad Byagowi, Ph.D., Dr. Techn., P.Eng.
+Phone: +1 (650) 924 6653
+
+ Please consider the environment before printing this e-mail.
