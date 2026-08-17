@@ -1,175 +1,312 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2B9448CF7
-	for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 17:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2810A46A5F2
+	for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 17:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786987090; cv=none; b=l89BkStrSLCs0O+0d9/a+yHuM/ogyaoJJyLT9IrX8d6IKbphWPTJAm6xgqW1qEJriQUv4rvn+O9GDxNPXbTsQDI8XcV3huu1APzIf91Z+rUAVddlBaXu5hl34OQiW3LgUcDdUsOcxrxbq2KiO2dNe3meLNzw+THPvtd8Y0WZZKk=
+	t=1786987119; cv=none; b=L2tKkd6GRIWwOtfMikIfS/JsgdaOohd/o+IWtx4bf3fd04RFb0hFB566nnFEIdvjmPcyl7PZupDRNw0rl2BO/iw1DtXWbLsz91uSs9a1eK/uioaFcHThtrr6pd+yM/38KVB0Fn3Gsm05LOtv5FjcE4IFG7oMAkib807G/cwje1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786987090; c=relaxed/simple;
-	bh=kpjTI7Gr0Fb+69WPxGUA6fFitgqCbaLwiFh4hq8aZ+g=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=K9m8nhrGGhuTbbeFHHrz8XBd0+L/igVpjN+mHzghkOddlX6Muahz4P1Zbo8uqboSs3hPiua0h+rg42rk9Hfw3GFn3mmoaGo7+aehHFAX39FFIKIKKQN7RGz3yXQVnE3pVHNW8eH+gekcQYP8RhYe95xOnDOalbL/BQZSfajFPBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OnEzj/40; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786987119; c=relaxed/simple;
+	bh=eJJ9baQrarZE446pveTkUylKkW8EMz2sob99PAzFJGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nXLPqwe6gc8d0kpYAilGKZPbjq1LkjszUgpsXRTdzmf7w/bhCgSKvESyCNuZy/YUeqB0TaRzV7Ja34KH9sfwixHyLv7ahcG8d5xyuACQ8dP3/2cpz5h+UazTJRJN+iO1UX1M3ZkG1c5FxedjMR9vxs2OY0VhUsbsjrHa8jB6A60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=HONfpzuy; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OnEzj/40"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0241F000E9;
-	Mon, 17 Aug 2026 17:18:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786987089;
-	bh=hRm2ZuPRE4rami4zWoUZyjYkK7rJIN1lymSrdbntFNE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OnEzj/40vUJ/qMswWRLU2vDG9sazF4SAETpLb5mBLWIr79kzZvwdbX4xfruvWRA8z
-	 EN1leLmH7ae7E27Zgyk726aI22dsV7bljUrySph5ZnpzwRcQzQ5f4cgy0imft7h5eT
-	 7/vQM9wBqp/ha7pvtFS42OJISl4zBkLD/Uc3n30pl9eIfzJoirEdCBNLMkWwPg4C7P
-	 j0meYOzZHP3YKIaI+rTWYHbfpGchax0aFbn7/kJ5vooXOIMfM7V2Xaw6Tu3galtobh
-	 oEi7QysCgOFNBcV+ydiQGhOFLCyYCKoC8nwJje5eiMW+yMYKA5fhUOTbWcn7zkbU8z
-	 XQRU7/V3jM0pQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] backlight: led_bl: Add
- devm_led_backlight_register() helper
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org
-In-Reply-To: <20260817170817.1933046-2-alexander.sverdlin@siemens.com>
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="HONfpzuy"
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20260817170820de4713840c000207fb
+        for <linux-leds@vger.kernel.org>;
+        Mon, 17 Aug 2026 19:08:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=WZtFRdjtUq4dQ6GfrNDN0rLs1QYiDRrW26BnNAqYuKY=;
+ b=HONfpzuyeX/3OelD72snOljwUw1dKrE2bMjNryEEnhQC75Zrf0GCiB+zqx+Ff+ydxZaFfL
+ T+mcEqjR69jfs3332EJAnpvnTAYOejCL0QUmU+1TkxrbJOSq5+dkIAHz6R7Tb1y5Bwmk/EC1
+ D9Vo9eYG8DXeuHYoHkemfQkchfQ+ghJ78DOEH54nM9qx3O3CXwWq0PrcI0M7W4T70HIPmAgs
+ /IrlsZlbzNVunvc+f+D2mYa1Pp18xAltbsx/GOQTMr2Rt3gIrutIRjN9ZQ8+q5bTTqCgDXAN
+ /ji1axz5z/HpDnPGewv4ZkW8MLaf76MRX4MMYppfCVeVrCJnRiDc1S/g==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Andrew Davis <afd@ti.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Helge Deller <deller@gmx.de>,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH 1/2] backlight: led_bl: Add devm_led_backlight_register() helper
+Date: Mon, 17 Aug 2026 19:08:14 +0200
+Message-ID: <20260817170817.1933046-2-alexander.sverdlin@siemens.com>
+In-Reply-To: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
 References: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
- <20260817170817.1933046-2-alexander.sverdlin@siemens.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 17 Aug 2026 17:18:08 +0000
-Message-Id: <20260817171809.1F0241F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-New issues:
-- [High] The devres registration order for the backlight device and the LED=
- disable action is reversed, creating a TOCTOU race condition on device rem=
-oval that allows the hardware to be improperly turned back on.
-- [Medium] Hardcoding `dev_name(dev)` as the backlight device name prevents=
- a single device from registering multiple LED-backed backlights.
+The led-backlight driver could so far only be instantiated from a
+device-tree node with the "led-backlight" compatible. This makes it
+impossible for a self-contained LED provider (e.g. a hot-pluggable I2C
+LED controller) to expose a backlight interface tied to its own
+lifetime.
 
-Pre-existing issues:
-- [High] Dereferencing a potentially NULL `supplier` pointer inside `dev_na=
-me()` during an error path causes a kernel panic.
---
+Factor the actual backlight registration out of the probe path into a
+shared led_bl_register() helper and export devm_led_backlight_register(),
+which registers a backlight class device driven by a single LED, without
+device tree and bound to the caller's device lifetime. The backlight
+device and the LED sysfs handover are now devres-managed, so the probe
+path shrinks and the explicit .remove callback is no longer needed.
 
---- Patch [1]: [PATCH 1/2] backlight: led_bl: Add devm_led_backlight_regist=
-er() helper ---
-commit 9866a4a9924f34ae7a659947d01fcc9dc9744ec2
-Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+The exported helper is a no-op when the led-backlight support is not
+reachable (IS_REACHABLE(CONFIG_BACKLIGHT_LED)), so callers do not need
+any Kconfig plumbing and are not force-selected to build it.
 
-backlight: led_bl: Add devm_led_backlight_register() helper
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ MAINTAINERS                      |   1 +
+ drivers/video/backlight/led_bl.c | 130 ++++++++++++++++++++-----------
+ include/linux/led_bl.h           |  20 +++++
+ 3 files changed, 107 insertions(+), 44 deletions(-)
+ create mode 100644 include/linux/led_bl.h
 
-This commit factors out the backlight registration into a led_bl_register()
-helper and adds devm_led_backlight_register(). This allows self-contained
-LED providers to expose a backlight interface. It also switches to
-devres-managed functions to handle teardown, removing the explicit .remove
-callback.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8014b9f8253ed..d525a7c4043aa 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4508,6 +4508,7 @@ F:	Documentation/ABI/testing/sysfs-class-backlight
+ F:	Documentation/devicetree/bindings/leds/backlight
+ F:	drivers/video/backlight/
+ F:	include/linux/backlight.h
++F:	include/linux/led_bl.h
+ F:	include/linux/pwm_backlight.h
+ 
+ BARCO P50 GPIO DRIVER
+diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/led_bl.c
+index f7ab9b3607313..f87a48f74186a 100644
+--- a/drivers/video/backlight/led_bl.c
++++ b/drivers/video/backlight/led_bl.c
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include <linux/backlight.h>
++#include <linux/led_bl.h>
+ #include <linux/leds.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -173,29 +174,25 @@ static int led_bl_parse_levels(struct device *dev,
+ 	return 0;
+ }
+ 
+-static int led_bl_probe(struct platform_device *pdev)
++static void led_bl_disable(void *data)
+ {
+-	struct backlight_properties props;
+-	struct led_bl_data *priv;
+-	int ret, i;
+-
+-	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(pdev, priv);
++	struct led_bl_data *priv = data;
++	int i;
+ 
+-	priv->dev = &pdev->dev;
++	led_bl_power_off(priv);
++	for (i = 0; i < priv->nb_leds; i++) {
++		mutex_lock(&priv->leds[i]->led_access);
++		led_sysfs_enable(priv->leds[i]);
++		mutex_unlock(&priv->leds[i]->led_access);
++	}
++}
+ 
+-	ret = led_bl_get_leds(&pdev->dev, priv);
+-	if (ret)
+-		return ret;
++static int led_bl_register(struct device *dev, struct led_bl_data *priv)
++{
++	struct backlight_properties props;
++	int ret, i;
+ 
+-	ret = led_bl_parse_levels(&pdev->dev, priv);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Failed to parse DT data\n");
+-		return ret;
+-	}
++	priv->dev = dev;
+ 
+ 	memset(&props, 0, sizeof(struct backlight_properties));
+ 	props.type = BACKLIGHT_RAW;
+@@ -203,24 +200,28 @@ static int led_bl_probe(struct platform_device *pdev)
+ 	props.brightness = priv->default_brightness;
+ 	props.power = (priv->default_brightness > 0) ? BACKLIGHT_POWER_OFF :
+ 		      BACKLIGHT_POWER_ON;
+-	priv->bl_dev = backlight_device_register(dev_name(&pdev->dev),
+-			&pdev->dev, priv, &led_bl_ops, &props);
+-	if (IS_ERR(priv->bl_dev)) {
+-		dev_err(&pdev->dev, "Failed to register backlight\n");
+-		return PTR_ERR(priv->bl_dev);
+-	}
++	priv->bl_dev = devm_backlight_device_register(dev, dev_name(dev), dev,
++						      priv, &led_bl_ops, &props);
++	if (IS_ERR(priv->bl_dev))
++		return dev_err_probe(dev, PTR_ERR(priv->bl_dev),
++				     "Failed to register backlight\n");
+ 
+ 	for (i = 0; i < priv->nb_leds; i++) {
++		struct device *supplier = priv->leds[i]->dev->parent;
+ 		struct device_link *link;
+ 
+-		link = device_link_add(&pdev->dev, priv->leds[i]->dev->parent,
+-				       DL_FLAG_AUTOREMOVE_CONSUMER);
+-		if (!link) {
+-			dev_err(&pdev->dev, "Failed to add devlink (consumer %s, supplier %s)\n",
+-				dev_name(&pdev->dev), dev_name(priv->leds[i]->dev->parent));
+-			backlight_device_unregister(priv->bl_dev);
+-			return -EINVAL;
+-		}
++		/*
++		 * BL and the LED are the same device if instantiated via
++		 * devm_led_backlight_register()
++		 */
++		if (supplier == dev)
++			continue;
++
++		link = device_link_add(dev, supplier, DL_FLAG_AUTOREMOVE_CONSUMER);
++		if (!link)
++			return dev_err_probe(dev, -EINVAL,
++					     "Failed to add devlink (consumer %s, supplier %s)\n",
++					     dev_name(dev), dev_name(supplier));
+ 	}
+ 
+ 	for (i = 0; i < priv->nb_leds; i++) {
+@@ -229,26 +230,68 @@ static int led_bl_probe(struct platform_device *pdev)
+ 		mutex_unlock(&priv->leds[i]->led_access);
+ 	}
+ 
++	ret = devm_add_action_or_reset(dev, led_bl_disable, priv);
++	if (ret)
++		return ret;
++
+ 	backlight_update_status(priv->bl_dev);
+ 
+ 	return 0;
+ }
+ 
+-static void led_bl_remove(struct platform_device *pdev)
++static int led_bl_probe(struct platform_device *pdev)
+ {
+-	struct led_bl_data *priv = platform_get_drvdata(pdev);
+-	struct backlight_device *bl = priv->bl_dev;
+-	int i;
++	struct led_bl_data *priv;
++	int ret;
+ 
+-	backlight_device_unregister(bl);
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
+ 
+-	led_bl_power_off(priv);
+-	for (i = 0; i < priv->nb_leds; i++) {
+-		mutex_lock(&priv->leds[i]->led_access);
+-		led_sysfs_enable(priv->leds[i]);
+-		mutex_unlock(&priv->leds[i]->led_access);
++	ret = led_bl_get_leds(&pdev->dev, priv);
++	if (ret)
++		return ret;
++
++	ret = led_bl_parse_levels(&pdev->dev, priv);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to parse DT data\n");
++		return ret;
+ 	}
++
++	return led_bl_register(&pdev->dev, priv);
++}
++
++/**
++ * devm_led_backlight_register - expose a LED as a backlight device
++ * @dev: LED provider device, also the parent and lifecycle owner
++ * @led: LED class device to drive the backlight
++ *
++ * Registers a backlight class device driven by @led, without device tree and
++ * tied to the lifetime of @dev. This lets self-contained (e.g. hot-pluggable
++ * I2C) LED drivers offer a backlight interface without static platform
++ * plumbing. It is a no-op when the led-backlight support is not built in.
++ *
++ * Return: 0 on success, negative errno otherwise.
++ */
++int devm_led_backlight_register(struct device *dev, struct led_classdev *led)
++{
++	struct led_bl_data *priv;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->leds = devm_kmalloc(dev, sizeof(*priv->leds), GFP_KERNEL);
++	if (!priv->leds)
++		return -ENOMEM;
++	priv->leds[0] = led;
++	priv->nb_leds = 1;
++	priv->max_brightness = led->max_brightness;
++	priv->default_brightness = led->brightness;
++
++	return led_bl_register(dev, priv);
+ }
++EXPORT_SYMBOL_GPL(devm_led_backlight_register);
+ 
+ static const struct of_device_id led_bl_of_match[] = {
+ 	{ .compatible = "led-backlight" },
+@@ -263,7 +306,6 @@ static struct platform_driver led_bl_driver = {
+ 		.of_match_table	= led_bl_of_match,
+ 	},
+ 	.probe		= led_bl_probe,
+-	.remove		= led_bl_remove,
+ };
+ 
+ module_platform_driver(led_bl_driver);
+diff --git a/include/linux/led_bl.h b/include/linux/led_bl.h
+new file mode 100644
+index 0000000000000..e38e4d62bf653
+--- /dev/null
++++ b/include/linux/led_bl.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_LED_BL_H
++#define _LINUX_LED_BL_H
++
++#include <linux/kconfig.h>
++
++struct device;
++struct led_classdev;
++
++#if IS_REACHABLE(CONFIG_BACKLIGHT_LED)
++int devm_led_backlight_register(struct device *dev, struct led_classdev *led);
++#else
++static inline int devm_led_backlight_register(struct device *dev,
++					      struct led_classdev *led)
++{
++	return 0;
++}
++#endif
++
++#endif /* _LINUX_LED_BL_H */
+-- 
+2.55.0
 
-> diff --git a/drivers/video/backlight/led_bl.c b/drivers/video/backlight/l=
-ed_bl.c
-> index f7ab9b3607313..f87a48f74186a 100644
-> --- a/drivers/video/backlight/led_bl.c
-> +++ b/drivers/video/backlight/led_bl.c
-
-[ ... ]
-
-> @@ -203,24 +200,28 @@ static int led_bl_probe(struct platform_device *pde=
-v)
->  	props.brightness =3D priv->default_brightness;
->  	props.power =3D (priv->default_brightness > 0) ? BACKLIGHT_POWER_OFF :
->  		      BACKLIGHT_POWER_ON;
-> -	priv->bl_dev =3D backlight_device_register(dev_name(&pdev->dev),
-> -			&pdev->dev, priv, &led_bl_ops, &props);
-> -	if (IS_ERR(priv->bl_dev)) {
-> -		dev_err(&pdev->dev, "Failed to register backlight\n");
-> -		return PTR_ERR(priv->bl_dev);
-> -	}
-> +	priv->bl_dev =3D devm_backlight_device_register(dev, dev_name(dev), dev,
-> +						      priv, &led_bl_ops, &props);
-
-[Severity: Medium]
-Since dev_name(dev) is used for the backlight device name, will this prevent
-a single device from registering multiple LED-backed backlights?
-
-If a single controller driver calls devm_led_backlight_register() more than
-once for different LEDs, it seems the second call will fail due to a sysfs
-naming collision (-EEXIST) because the name is hardcoded to the parent
-device's name.
-
-> +	if (IS_ERR(priv->bl_dev))
-> +		return dev_err_probe(dev, PTR_ERR(priv->bl_dev),
-> +				     "Failed to register backlight\n");
-> =20
->  	for (i =3D 0; i < priv->nb_leds; i++) {
-> +		struct device *supplier =3D priv->leds[i]->dev->parent;
->  		struct device_link *link;
-> =20
-> -		link =3D device_link_add(&pdev->dev, priv->leds[i]->dev->parent,
-> -				       DL_FLAG_AUTOREMOVE_CONSUMER);
-> -		if (!link) {
-> -			dev_err(&pdev->dev, "Failed to add devlink (consumer %s, supplier %s)=
-\n",
-> -				dev_name(&pdev->dev), dev_name(priv->leds[i]->dev->parent));
-> -			backlight_device_unregister(priv->bl_dev);
-> -			return -EINVAL;
-> -		}
-> +		/*
-> +		 * BL and the LED are the same device if instantiated via
-> +		 * devm_led_backlight_register()
-> +		 */
-> +		if (supplier =3D=3D dev)
-> +			continue;
-> +
-> +		link =3D device_link_add(dev, supplier, DL_FLAG_AUTOREMOVE_CONSUMER);
-> +		if (!link)
-> +			return dev_err_probe(dev, -EINVAL,
-> +					     "Failed to add devlink (consumer %s, supplier %s)\n",
-> +					     dev_name(dev), dev_name(supplier));
-
-[Severity: High]
-This is a pre-existing issue, but could this dev_name(supplier) call trigge=
-r a
-NULL pointer dereference?
-
-If an LED classdev without a parent device (where parent =3D NULL) is passed
-to devm_led_backlight_register(), supplier becomes NULL.
-
-Since device_link_add() unconditionally returns NULL when the supplier is
-NULL, the error path will execute and dev_name(supplier) will panic by
-dereferencing NULL.
-
->  	}
-> =20
->  	for (i =3D 0; i < priv->nb_leds; i++) {
-> @@ -229,26 +230,68 @@ static int led_bl_probe(struct platform_device *pde=
-v)
->  		mutex_unlock(&priv->leds[i]->led_access);
->  	}
-> =20
-> +	ret =3D devm_add_action_or_reset(dev, led_bl_disable, priv);
-> +	if (ret)
-> +		return ret;
-
-[Severity: High]
-Does registering the led_bl_disable action here create a race condition
-during device removal?
-
-Because devres actions execute in LIFO order (reverse of registration),
-led_bl_disable() will run before the backlight device is unregistered.
-
-This means led_bl_disable() turns off the LED, but the backlight sysfs nodes
-are still active. Could userspace write to the backlight's sysfs brightness
-attribute during this window, turning the LED back on just before the driver
-is removed, thus leaving the hardware powered on?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260817170817.1933=
-046-1-alexander.sverdlin@siemens.com?part=3D1
