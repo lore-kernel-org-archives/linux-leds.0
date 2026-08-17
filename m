@@ -1,110 +1,66 @@
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABF8463B6A
-	for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 17:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9A84657C6
+	for <linux-leds@vger.kernel.org>; Mon, 17 Aug 2026 17:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786986513; cv=none; b=GFRUdGg2CfEZjmGAhEelr05avC/720psT37wR/KRaNsTeNv0BE4DVSQtSu9Icr8xw6nk5v1OlKf0HapO6ucMqiCCZlI2eiFnMbJ+/gTPe4wUBSxyC3A1OrV+aCGwLNgKzmCiTrNF8bV7LYhD1h9wCt42O0aGuSP1RtbxJg4pyhE=
+	t=1786986939; cv=none; b=QJDHbgpDtIPM7MXsmsLQVd4YIPu7AHdR++dTiADh1ceK0cfVOYtgB00SHEV3/yS7ZrK6mrG9qhJqXI2Qpd2T1fHarO9Y86/+NWSnPhkMdWNrtRAAwmAAzfM9xrmvmJ5Jnk2CN7qkQyHOVoPkxRhxnNYD8hgIhNFU7+8ljWv0PJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786986513; c=relaxed/simple;
-	bh=KLscMg3CmM2lealKMtn1xYVw2gFfYdwy2mgKPWEsoa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mQaVkHG7R+e6WWcJCwX+vTwKVmSPRoyaOL9KEG//Ak5cb4qR9OCHrGNSyZ5Ps7wTHkOR/5QlFUAF3218UOfKqMx05Ts7nHRpysFMknaa+IdF11Uha9/BScwJKc4BVJsM+SsMTA0t7EsNYex0PtBuYqLqVv5AmsO+/3eQeh+ggrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=PCAMKr3G; arc=none smtp.client-ip=185.136.65.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+	s=arc-20240116; t=1786986939; c=relaxed/simple;
+	bh=vqpl9F2i8d57XZXPuTpGkt/yJ+MUgRhR3pJM+vtCdo8=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=kErJwm5pWsTCozDWZrC3CivEAx68iOVNPhF/lztC/Q0oqBXyVRMRaM3/TGwbiLE9KfUlvltkDAHt1qL10349uG5iv6cb97A6ZQOHKukh4lM0cT+cZ16HlmwFRRmVMdD5pgMpxr3UqjVgB/N+jLxvJjiLgn982ePPMyubw9RUtEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwMoC0+K; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="PCAMKr3G"
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202608171708192aa0c39c1900020737
-        for <linux-leds@vger.kernel.org>;
-        Mon, 17 Aug 2026 19:08:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=m9poIef59bV+6SuT8en2A4joXQB6tWZFKbgAakg0YTg=;
- b=PCAMKr3GT+2XxPCAwpOAP8oX5TYSEJ7gNNWQFrcwbdxmPBAc651N0kyhorHq4Vcwmo5ZZk
- iv3KJINCDigN5a5WUwm+AzPrcKCB4kzVBX9kKPysHKMh06tkRxfZCjnO5ZmXWuvqyr+q7KTW
- XPYslf9L1Z+71a7ILEHLOLQr4dxJScOcTWfjEGmLxiWpg3Og4x278WZ9+QZuxegLRUU7dvxA
- OLxqC5JHMHLQVWHAxJtBFREcL5HbB05k9Q1n9fGxgneU8aWa58WfCktgqosJvzUe9wZOnR9X
- JU+ndXbeOZSyFfwU6RMKx1eSU0F6OZUEGx6SEayOiKrheNMV00TrxVMQ==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Andrew Davis <afd@ti.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Helge Deller <deller@gmx.de>,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH 0/2] leds: lp8864: Expose a backlight via led_bl helper
-Date: Mon, 17 Aug 2026 19:08:13 +0200
-Message-ID: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwMoC0+K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF111F000E9;
+	Mon, 17 Aug 2026 17:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786986938;
+	bh=vqpl9F2i8d57XZXPuTpGkt/yJ+MUgRhR3pJM+vtCdo8=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=MwMoC0+Kglq9E9f+00Xg4gxv5nPnA177Xmw8/KzEXMiTtOgzJJ+n0hsD2N+EakHsU
+	 UrdIgnmkYl2HkcqFUI5LpbwMlGEWC3BaYEPmRoiJLE8y2n1KmVmY7HTGSm3Aksfl8t
+	 RQ76ks4TTzgugYTSnQ6/JYvBupRl9XuDWVV45mDKcz3/zypb1WjNnCLIs8mHcDvrfO
+	 OPR3RPeIgitG9mZWLK8iqzAZCi+1I9vkfjzLE/0dfDnF0PW8jrTrw7CEouCHwdrkFP
+	 CQ+TPjb2NadFymas/iUddtrhTDXXdXqCFXbwaQXJuIBspkVQV8RZ1YvIVZLNhxUlsO
+	 14aFNSAxRVKOg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/2] leds: lp8864: Register a backlight device
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+Cc: linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org, lee@kernel.org
+In-Reply-To: <20260817170817.1933046-3-alexander.sverdlin@siemens.com>
+References: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
+ <20260817170817.1933046-3-alexander.sverdlin@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 17 Aug 2026 17:15:37 +0000
+Message-Id: <20260817171538.0FF111F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+>=20
+> The LP8864/LP8866 is a display-cluster LED backlight driver. Expose a
+> standard backlight class interface in addition to the LED class device,
+> so it can be used by display/panel stacks that expect a backlight.
+>=20
+> Use the new devm_led_backlight_register() helper, which spawns a
+> led-backlight device driven by our LED and tied to the I2C device
+> lifetime. This keeps the driver a plain LED driver, requires no
+> device-tree changes and remains backwards compatible with existing DTs.
+> It is a no-op when the led-backlight support is not enabled.
+>=20
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-This series lets the TI LP8864/LP8866 LED driver expose a standard
-backlight class device in addition to its LED class device, so it can
-be consumed by display/panel stacks that expect a backlight.
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-This is a replacement for the earlier series "Convert LP8864 LED driver
-to backlight class" [1], which took a much more invasive route: it moved
-the driver from drivers/leds/ to drivers/video/backlight/ and added
-backlight class registration on top.
-
-Feedback on that approach was that a working LED driver should not be
-relocated and re-typed just to gain a backlight interface.
-
-The new approach keeps the LP8864 a plain LED driver and instead teaches
-the existing generic led-backlight code to register a backlight on behalf
-of a self-contained LED provider:
-
- * Patch 1 factors the backlight registration out of led_bl's probe path
-   into a shared helper and exports devm_led_backlight_register(). This
-   registers a backlight class device driven by a single LED, without a
-   device-tree node, bound to the caller's device lifetime. The registration
-   is now fully devres-managed, so the explicit .remove callback goes away.
-   The exported symbol is a no-op when led-backlight support is not
-   reachable (IS_REACHABLE(CONFIG_BACKLIGHT_LED)), so callers need no
-   Kconfig plumbing and are not force-selected to build led_bl.
-
- * Patch 2 calls that helper from the LP8864 driver, spawning a backlight
-   tied to the I2C device lifetime.
-
-Compared to [1] this means:
-
- * The driver stays in drivers/leds/ and remains an ordinary LED driver.
- * The generic led_bl helper becomes reusable by other self-contained LED
-   providers.
-
-The motivating use case is unchanged: an LP8864 on a hot-pluggable segment
-of an I2C bus. The generic led-backlight platform driver cannot react to a
-dynamically (dis)appearing I2C device; letting the I2C driver register the
-backlight directly makes it a self-contained, hot-plug-safe driver.
-
-[1] https://lore.kernel.org/all/20260615120353.3409035-1-alexander.sverdlin@siemens.com/
-
-Alexander Sverdlin (2):
-  backlight: led_bl: Add devm_led_backlight_register() helper
-  leds: lp8864: Register a backlight device
-
- drivers/leds/leds-lp8864.c       |   5 +-
- drivers/video/backlight/led_bl.c | 130 ++++++++++++++++++++-----------
- include/linux/led_bl.h           |  20 +++++
- 3 files changed, 109 insertions(+), 46 deletions(-)
- create mode 100644 include/linux/led_bl.h
-
--- 
-2.55.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260817170817.1933=
+046-1-alexander.sverdlin@siemens.com?part=3D2
 
