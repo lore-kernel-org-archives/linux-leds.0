@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C7247F783;
-	Tue, 18 Aug 2026 16:57:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94559480338;
+	Tue, 18 Aug 2026 16:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787072242; cv=none; b=C9o/ed2FcG+8mqo5OuT8pUss/cJDFQZRk8Q+yfIRV4+Uy3sQekAHkt0A41gDb2dCmaUeNB9jRtbsTXtsgCVeyfAeY1/fRrj3A76G+QJG0WUfqLVdqb0hAK0eU1Njw7rmFUZXjhxUbktpAJMQoAOXAaMfqjJsWVKSZgjzUZewpdg=
+	t=1787072245; cv=none; b=YVzNTk+5WhNyPii89pkTZ/+q0WkC64+RsB2UKxw0NyBTZ5vh2/eCA1LxkkcPG3BawvJMRsjvez4p7e9cdVeGg3YpL43YW8jP+d+8eF8tp/j9KnZgl2QsKTEayGzovVEe6ncUOVsEHRxHE+2fIkQh1prVpQhslcHICHUxx5OJvzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787072242; c=relaxed/simple;
-	bh=svZyUctIoOIg1QcrZ/s96xW9GPjTdiqwHf4SUw42ly8=;
+	s=arc-20240116; t=1787072245; c=relaxed/simple;
+	bh=n/XY/pSuSZA2jwpn34eWYC3VcvdQOulHrfURKOIPhMk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S/RXmhPJ17gAZFyGzRCFaQL3/8WIHiWM7p/7ZFD01HKlJ6SVdLOezVPjIghlg3yjLnSCS9016EyIahxhwzzD8Xz1WE1v70akfSDkrg/gPm398CJ5aLuH0o/mXbTfBZzyzbFsgoIhyGBQMHuh4IwHWyiIVLMqN3TYxPnHa8DnktI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDKK1pzk; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=l2HE/0AxxU6jIJgxK5L95I2me05lLSEt9NebvEmE7V6mi+RMlTcmDa/KwFPLD5cczIYjWl7aS2MgHngUR2JpzOA6904red1t2W8kNQBRThQvJStIzgkFzP7e4ozXAFhD6ec3GDkvLgQjImlqPNShqcnns2dumLiVY9o24hO16Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F9KRxPZY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDKK1pzk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7616B1F00A3D;
-	Tue, 18 Aug 2026 16:57:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9KRxPZY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A547D1F000E9;
+	Tue, 18 Aug 2026 16:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787072237;
-	bh=omnQHGT9zzXPdJCCD8VhV9crlI+LaUc1U4BjvWKsfwE=;
+	s=k20260515; t=1787072239;
+	bh=L7hnjwjuJuK6d2Eb9sgUjOmCfGOCk6qL0hIsvFYx8RI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=iDKK1pzk3ftEILQe5NNe6MT86nk5HIWg31Fg3CzeUnYE1d+wm0KZbhNWtW08xBMhp
-	 FVsa2ydd9pg3jP1lvRe6QjTvYILArJ3IHGIGnZSz8XBKrivIa/24+WX6jT0eOT/lbe
-	 RICGK5QjgN+DN465beRfvjRNb9IoYbSNcNE0gZ/IwatOsUm8Yft+p3EQVIEsI+BD1P
-	 s9jaXvuDUX8X47bW3hxteWxUiCpPDDbmiKwkWw6d3nAOb9bTHVY6kxfFgtgBvo+nKg
-	 g8Q9m+4THx8bpmvybVngsuVxM3UMqVfnZBdHIDaZe9Kdl9QLdJ5s2cLlGMe81xKlZ0
-	 rjp+YODDrh3PQ==
+	b=F9KRxPZYaBAE53aTuj1hnV4BOx7BD/BSRc4NgR/JoEU9YTMmMM/ZHdJpXbQLK8SRV
+	 l4Xs0MduQKVVl6Y14VIam2l/IQu1T9STve2yssSlHPiqNXxKnZodntJRcNY9Fln549
+	 S5QzgAbOICRk6z6osu3/zPM4Jn9HqRnum7KQLj7yAyKc9rAusVm4+28oSzbkyVOhnW
+	 EHSjzMGeN6jNH5xWqPKCJxpxEMbnULyrAyg9DpuMw2OjQhfHUJnE+hYotyr1VNrjxN
+	 M1BwFkhWGvmaoE3JTldv61OCYRxNdeJQt+6eUMoHCbPdWvlXO1Gac/Lhai8hbIGkUx
+	 PALp+iWVNT25A==
 From: Jakub Kicinski <kuba@kernel.org>
 To: ahmadexp@gmail.com
 Cc: Jakub Kicinski <kuba@kernel.org>,
@@ -51,12 +51,12 @@ Cc: Jakub Kicinski <kuba@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v5 3/7] i2c: mux: Propagate software nodes to channel adapters
-Date: Tue, 18 Aug 2026 09:57:15 -0700
-Message-ID: <20260818165715.4008405-1-kuba@kernel.org>
+Subject: Re: [PATCH net-next v5 4/7] ptp: ocp: Track EEPROM fields independently
+Date: Tue, 18 Aug 2026 09:57:17 -0700
+Message-ID: <20260818165717.4008441-1-kuba@kernel.org>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <a758b93f394ecfd4dfa65517782530d4a8c45e39.1786747084.git.ahmadexp@gmail.com>
-References: <a758b93f394ecfd4dfa65517782530d4a8c45e39.1786747084.git.ahmadexp@gmail.com>
+In-Reply-To: <3186cc1f1c51b548439fda558e9e4052a481b787.1786747084.git.ahmadexp@gmail.com>
+References: <3186cc1f1c51b548439fda558e9e4052a481b787.1786747084.git.ahmadexp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -68,140 +68,236 @@ Content-Transfer-Encoding: 8bit
 This is an AI-generated review of your patch. The human sending this
 email has considered the AI review valid, or at least plausible.
 ---
-i2c: mux: Propagate software nodes to channel adapters
+ptp: ocp: Track EEPROM fields independently
 
-This attaches the matching software-node child of the mux device to each
-i2c-mux channel adapter, tracks whether the mux owns that attachment for
-cleanup, and extends the I2C firmware-node adapter lookup so it also
-matches a device's secondary fwnode.
+This replaces the single has_eeprom_data flag with per-field has_board_id
+and has_serial flags, serializes EEPROM discovery under a new eeprom_lock
+mutex, and makes ptp_ocp_read_eeprom() take a field mask and return an
+error.  devlink now publishes whichever field is available and
+serialnum_show() propagates read errors.
 
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 3ec04787a7373..f39575ee02444 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -1876,12 +1876,22 @@ int devm_i2c_add_adapter(struct device *dev, struct i2c_adapter *adapter)
+No Link: tags in the commit header.
+
+The commit message describes fixing a user-visible defect:
+
+  "Requiring both reads to succeed before publishing either field makes a
+  missing serial EEPROM block board profile selection and hides an otherwise
+  valid board ID."
+
+[Severity: Low]
+Should this carry a Fixes: tag?  The condition described is reachable on
+shipping hardware: fb_eeprom_map places board_id on the untagged '24c02'
+client and serial on the "mac" tagged '24mac402' client, so one of the two
+can be absent while the other works, and the old code gated both
+ptp_ocp_devlink_info_get() and serialnum_show() on has_eeprom_data.  The
+all-or-nothing reader, the two-entry map with the "mac" tag and the devlink
+publication all came in with commit 0cfcdd1ebcfe ("ptp: ocp: add nvmem
+interface for accessing eeprom"), which would be the Fixes: target.
+
+If this is instead meant as preparatory work and not stable material (the
+patch does change sysfs error semantics), could the changelog say so
+explicitly?
+
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index 3d26ec1f7b9ec..31a4c9dfe391c 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+
+[ ... ]
+
+> @@ -1969,21 +1977,50 @@ ptp_ocp_nvmem_device_put(struct nvmem_device **nvmemp)
+>  	*nvmemp = NULL;
 >  }
->  EXPORT_SYMBOL_GPL(devm_i2c_add_adapter);
 >  
-> -static int i2c_dev_or_parent_fwnode_match(struct device *dev, const void *data)
-> +static bool i2c_device_match_fwnode(struct device *dev, const void *data)
+> -static void
+> -ptp_ocp_read_eeprom(struct ptp_ocp *bp)
+> +static int
+> +ptp_ocp_read_eeprom(struct ptp_ocp *bp, unsigned int fields)
 >  {
-> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
+>  	const struct ptp_ocp_eeprom_map *map;
+>  	struct nvmem_device *nvmem;
+> +	u8 data[OCP_BOARD_ID_LEN];
+> +	const char *field_name = "data";
+>  	const void *tag;
+> -	int ret;
+> -
+> -	if (!bp->i2c_ctrl)
+> -		return;
+> +	unsigned int field;
+> +	int ret = 0;
+>  
+>  	tag = NULL;
+>  	nvmem = NULL;
+> +	mutex_lock(&bp->eeprom_lock);
+> +	fields &= OCP_EEPROM_ALL;
+> +	if (bp->has_board_id)
+> +		fields &= ~OCP_EEPROM_BOARD_ID;
+> +	if (bp->has_serial)
+> +		fields &= ~OCP_EEPROM_SERIAL;
+> +	if (!fields)
+> +		goto out;
+> +	if (!bp->i2c_ctrl || !bp->eeprom_map) {
+> +		ret = -ENODEV;
+> +		goto out;
+> +	}
+>  
+>  	for (map = bp->eeprom_map; map->len; map++) {
+> +		if (map->bp_offset == offsetof(struct ptp_ocp, board_id)) {
+> +			field = OCP_EEPROM_BOARD_ID;
+> +			field_name = "board ID";
+> +			if (bp->has_board_id)
+> +				continue;
+> +		} else if (map->bp_offset == offsetof(struct ptp_ocp, serial)) {
+> +			field = OCP_EEPROM_SERIAL;
+> +			field_name = "serial number";
+> +			if (bp->has_serial)
+> +				continue;
+> +		} else {
+> +			continue;
+> +		}
 > +
->  	if (device_match_fwnode(dev, data))
-> +		return true;
+> +		if (!(fields & field))
+> +			continue;
 > +
-> +	return !IS_ERR_OR_NULL(fwnode) && fwnode->secondary == data;
-> +}
+>  		if (map->tag != tag) {
+>  			tag = map->tag;
+>  			ptp_ocp_nvmem_device_put(&nvmem);
+> @@ -1992,24 +2029,34 @@ ptp_ocp_read_eeprom(struct ptp_ocp *bp)
+>  			nvmem = ptp_ocp_nvmem_device_get(bp, tag);
+>  			if (IS_ERR(nvmem)) {
+>  				ret = PTR_ERR(nvmem);
+> -				goto fail;
+> +				goto out;
+>  			}
+>  		}
+> -		ret = nvmem_device_read(nvmem, map->off, map->len,
+> -					BP_MAP_ENTRY_ADDR(bp, map));
+> -		if (ret != map->len)
+> -			goto fail;
+> +		ret = nvmem_device_read(nvmem, map->off, map->len, data);
+> +		if (ret < 0)
+> +			goto out;
 
 [Severity: Medium]
-Is the new fwnode->secondary dereference safe here?  The old code only used
-device_match_fwnode(), which compares pointers and never dereferences the
-fwnode.
+Are the two fields really independent in both directions here?  Both failure
+paths inside the loop, the ptp_ocp_nvmem_device_get() failure and this
+nvmem_device_read() failure, leave the map walk entirely rather than
+recording a failure for that one field and moving on to the next requested
+entry.
 
-i2c_dev_or_parent_fwnode_match() runs as a bus_find_device() match callback
-from i2c_find_adapter_by_fwnode()/i2c_get_adapter_by_fwnode(), so it is
-invoked for every device on i2c_bus_type, including clients, with no
-device_lock held and nothing pinning dev->fwnode.
+fb_eeprom_map lists the board ID first, and it lives on a different I2C
+client than the serial number:
 
-Meanwhile i2c_unregister_device() detaches and frees the software node
-while the client is still in the bus klist:
+drivers/ptp/ptp_ocp.c:
+	static struct ptp_ocp_eeprom_map fb_eeprom_map[] = {
+		{ EEPROM_ENTRY(0x43, board_id) },
+		{ EEPROM_ENTRY(0x00, serial), .tag = "mac" },
+		{ }
+	};
 
-drivers/i2c/i2c-core-base.c:i2c_unregister_device() {
-	...
-	device_remove_software_node(&client->dev);
-	device_unregister(&client->dev);
-}
+So if the '24c02' board-ID EEPROM is missing or unreadable while the
+'24mac402' MAC EEPROM is fine, ptp_ocp_devlink_info_get() calls
+ptp_ocp_read_eeprom(bp, OCP_EEPROM_ALL), the walk bails on the first entry
+and the serial entry is never attempted.  has_serial stays false, so
+devlink_info_serial_number_put() is skipped on every subsequent request.
 
-For a client created with info->swnode and no primary fwnode,
-dev->fwnode == &swnode->fwnode, and device_remove_software_node() drops the
-last reference:
+Isn't that the mirror image of the case the changelog says it removes, "Let
+devlink report whichever fields are available"?  Would a per-field error
+that continues to the next map entry be closer to the intent?
 
-drivers/base/swnode.c:device_remove_software_node() {
-	...
-	set_secondary_fwnode(dev, NULL);
-	swnode_put(swnode);
-}
+The serialnum sysfs path escapes this only because it asks for
+OCP_EEPROM_SERIAL and skips the board-ID entry.
 
-Can a lookup then observe fwnode = dev_fwnode(dev) before the free and read
-fwnode->secondary after it?  The writers are unsynchronized too:
-
-drivers/base/core.c:set_secondary_fwnode() {
-	if (fwnode_is_primary(dev->fwnode))
-		dev->fwnode->secondary = fwnode;
-	else
-		dev->fwnode = fwnode;
-}
-
-There is no lock common to the reader and the writer and no WRITE_ONCE, so
-this also looks like a plain data race that could make the lookup return an
-adapter whose software node has already been detached.
-
-Also, does the extra dereference help in that case at all?  A software node
-installed in the primary slot always has secondary == ERR_PTR(-ENODEV), so
-it can never match through fwnode->secondary; only the window seems new.
-
-> @@ -1891,8 +1901,9 @@ static int i2c_dev_or_parent_fwnode_match(struct device *dev, const void *data)
-
-[ ... ]
-
-> diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
-> index 681a201c239ba..3bca123907b3d 100644
-> --- a/drivers/i2c/i2c-mux.c
-> +++ b/drivers/i2c/i2c-mux.c
-
-[ ... ]
-
-> @@ -364,6 +417,8 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
->  
->  		priv->adap.dev.of_node = child;
->  		of_node_put(mux_node);
-> +	} else {
-> +		channel_node = i2c_mux_get_channel_swnode(muxc, chan_id);
+> +
+> +		memcpy(BP_MAP_ENTRY_ADDR(bp, map), data, map->len);
+> +		if (field == OCP_EEPROM_BOARD_ID) {
+> +			/* Publish the field before marking it ready. */
+> +			smp_store_release(&bp->has_board_id, true);
+> +		} else {
+> +			/* Publish the field before marking it ready. */
+> +			smp_store_release(&bp->has_serial, true);
+> +		}
 >  	}
 >  
->  	/*
-
-[ ... ]
-
-> @@ -408,6 +473,8 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
->  	return 0;
+> -	bp->has_eeprom_data = true;
+> +	ret = 0;
 >  
->  err_free_priv:
-> +	if (priv->swnode)
-> +		device_remove_software_node(&priv->adap.dev);
->  	kfree(priv);
->  	return ret;
+>  out:
+> +	if (ret && ret != -EPROBE_DEFER && !bp->eeprom_error_reported) {
+> +		dev_err(&bp->pdev->dev, "failed to read EEPROM %s: %pe\n",
+> +			field_name, ERR_PTR(ret));
+> +		bp->eeprom_error_reported = true;
+> +	}
+>  	ptp_ocp_nvmem_device_put(&nvmem);
+> -	return;
+> -
+> -fail:
+> -	dev_err(&bp->pdev->dev, "could not read eeprom: %d\n", ret);
+> -	goto out;
+> +	mutex_unlock(&bp->eeprom_lock);
+> +	return ret;
 >  }
 
+[ ... ]
+
+> @@ -2166,24 +2214,24 @@ ptp_ocp_devlink_info_get(struct devlink *devlink, struct devlink_info_req *req,
+>  	if (err)
+>  		return err;
+>  
+> -	if (!bp->has_eeprom_data) {
+> -		ptp_ocp_read_eeprom(bp);
+> -		if (!bp->has_eeprom_data)
+> -			return 0;
+> -	}
+> +	ptp_ocp_read_eeprom(bp, OCP_EEPROM_ALL);
+
+[ ... ]
+
+> @@ -3757,9 +3805,17 @@ static ssize_t
+>  serialnum_show(struct device *dev, struct device_attribute *attr, char *buf)
+>  {
+>  	struct ptp_ocp *bp = dev_get_drvdata(dev);
+> +	int ret;
+>  
+> -	if (!bp->has_eeprom_data)
+> -		ptp_ocp_read_eeprom(bp);
+> +	/* Pairs with field publication in ptp_ocp_read_eeprom(). */
+> +	if (!smp_load_acquire(&bp->has_serial)) {
+> +		ret = ptp_ocp_read_eeprom(bp, OCP_EEPROM_SERIAL);
+> +		if (ret)
+> +			return ret;
+
 [Severity: Medium]
-This isn't a bug introduced by this patch, but since err_free_priv is being
-extended here, should it also drop the DT channel node reference?
+Can this hand -EPROBE_DEFER to userspace?  ptp_ocp_read_eeprom() gets the
+nvmem device through ptp_ocp_nvmem_device_get() -> nvmem_device_find() ->
+__nvmem_device_get(), and when bus_find_device() finds no matching nvmem
+device that returns -EPROBE_DEFER:
 
-In the DT branch of i2c_mux_add_adapter(), priv->adap.dev.of_node holds a
-reference obtained either from the for_each_child_of_node() early break, or
-from of_node_get(dev_node)/of_node_get(mux_node).  When
-i2c_add_adapter()/i2c_add_numbered_adapter() fails, control reaches
-err_free_priv, which only does kfree(priv).
+drivers/nvmem/core.c:__nvmem_device_get() {
+	...
+	if (!nvmem)
+		return ERR_PTR(-EPROBE_DEFER);
+	...
+}
 
-That the mux owns that reference is visible in the success-path teardown,
-which saves np = adap->dev.of_node and puts it after i2c_del_adapter():
+ptp_ocp_read_eeprom() stores that with "ret = PTR_ERR(nvmem); goto out;" and
+returns it unchanged; the "ret != -EPROBE_DEFER" test at the out: label only
+suppresses the dev_err(), not the return value.  serialnum_show() then
+returns it directly, so reading
+/sys/class/timecard/ocpN/serialnum with the serial EEPROM's nvmem device not
+registered (no 24mac402, at24 not bound yet) gives read(2) errno 517.
 
-> @@ -429,7 +496,13 @@ void i2c_mux_del_adapters(struct i2c_mux_core *muxc)
->  		sysfs_remove_link(&priv->adap.dev.kobj, "mux_device");
-> +		/*
-> +		 * Keep the software node through child removal. The adapter
-> +		 * device is cleared on deletion, so release the software-node
-> +		 * attachment reference via the saved handle afterwards.
-> +		 */
->  		i2c_del_adapter(adap);
-> +		fwnode_handle_put(priv->swnode);
->  		of_node_put(np);
->  		kfree(priv);
->  	}
+That is exactly the "serial EEPROM absent" case this patch targets, and the
+attribute is world readable.  Would translating internal codes to something
+like -ENODEV, -EAGAIN or the -ENODATA already used below be preferable
+before crossing the syscall boundary?
 
-Neither i2c_register_adapter()'s error labels nor the driver core drops a
-device's of_node reference when device_add() fails, so does the failure path
-leak that struct device_node reference?  Would adding
-of_node_put(priv->adap.dev.of_node) at err_free_priv be appropriate while
-this label is being touched?
+> +		/* Pairs with field publication in ptp_ocp_read_eeprom(). */
+> +		if (!smp_load_acquire(&bp->has_serial))
+> +			return -ENODATA;
+> +	}
+>  
+>  	return sysfs_emit(buf, "%pM\n", bp->serial);
+>  }
+
+[ ... ]
