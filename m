@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7397247D957;
-	Tue, 18 Aug 2026 16:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C7247F783;
+	Tue, 18 Aug 2026 16:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787072242; cv=none; b=pLMGqF1QtGPl+SLtg580ZAc665TcpccMfUxOep7G67nryS9Git+ZSUwBRQqwyWXDPX1526fU5KcaqNXvkdNkmq6/T6VAhKmbiPwVYfJ/soiCNWs2t8DxuXo2U4w5OdeZV1TWzMJ4Cg74OUEJ1nlj7s+1VEYT6GbOogsImzxbQNc=
+	t=1787072242; cv=none; b=C9o/ed2FcG+8mqo5OuT8pUss/cJDFQZRk8Q+yfIRV4+Uy3sQekAHkt0A41gDb2dCmaUeNB9jRtbsTXtsgCVeyfAeY1/fRrj3A76G+QJG0WUfqLVdqb0hAK0eU1Njw7rmFUZXjhxUbktpAJMQoAOXAaMfqjJsWVKSZgjzUZewpdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787072242; c=relaxed/simple;
-	bh=RU2UXDqUl3i0/vS71dXUFDphOB1mhaEC3l2I3oRiD80=;
+	bh=svZyUctIoOIg1QcrZ/s96xW9GPjTdiqwHf4SUw42ly8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nJjODbTGn8wD3PMzNT7xxz3V4N/cPlOAdbs+VLu10CqTRWmjSeuoy8FPe6khIS6G+g+kpcNcJfzlWIY0wEH7OCiS8oPaJdLDt2WMNKnfsBB30YOta58FOSe//c15/ZAnp3qSIaFnhZqgbVq9+06oT38eQXzOGBQohBmq8SJ446A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0UsKVzo; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=S/RXmhPJ17gAZFyGzRCFaQL3/8WIHiWM7p/7ZFD01HKlJ6SVdLOezVPjIghlg3yjLnSCS9016EyIahxhwzzD8Xz1WE1v70akfSDkrg/gPm398CJ5aLuH0o/mXbTfBZzyzbFsgoIhyGBQMHuh4IwHWyiIVLMqN3TYxPnHa8DnktI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDKK1pzk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0UsKVzo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416DD1F00A3A;
-	Tue, 18 Aug 2026 16:57:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDKK1pzk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7616B1F00A3D;
+	Tue, 18 Aug 2026 16:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787072235;
-	bh=lQsNXBGziU74498qXO7nW3L1pK+YW9GnS3YxKL1owCA=;
+	s=k20260515; t=1787072237;
+	bh=omnQHGT9zzXPdJCCD8VhV9crlI+LaUc1U4BjvWKsfwE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=D0UsKVzoog4pJ3s/ZACOhM7l8BJPH2pRGz08aqSljWEP3VrqisE+Vry8ZbIST2dip
-	 TuTREO3P36nnJ5Z0NTbETXDqWdwys0Swz4NUw9MlU7FnBk/kUZ+eXRm39kScaMhBcy
-	 bePLvWpxs39wLYit3gUg9UYLWSB/UjTXv73aMDMVrcisllslw4NlUiY8MCqgqpPE+E
-	 yqcAMcMhgQ13VV8M1c2MtSB54fD9mNgzuHD3NxkToyekwj3uDANlVrRSYIb3x1sK5B
-	 yqnisJIh91gUKUN+4GdL+MgWpSqiG6PLvZPrnaAS1lgh9l1j1kr1n6kUPWHEFrxwxH
-	 kg1mlMSJhocXw==
+	b=iDKK1pzk3ftEILQe5NNe6MT86nk5HIWg31Fg3CzeUnYE1d+wm0KZbhNWtW08xBMhp
+	 FVsa2ydd9pg3jP1lvRe6QjTvYILArJ3IHGIGnZSz8XBKrivIa/24+WX6jT0eOT/lbe
+	 RICGK5QjgN+DN465beRfvjRNb9IoYbSNcNE0gZ/IwatOsUm8Yft+p3EQVIEsI+BD1P
+	 s9jaXvuDUX8X47bW3hxteWxUiCpPDDbmiKwkWw6d3nAOb9bTHVY6kxfFgtgBvo+nKg
+	 g8Q9m+4THx8bpmvybVngsuVxM3UMqVfnZBdHIDaZe9Kdl9QLdJ5s2cLlGMe81xKlZ0
+	 rjp+YODDrh3PQ==
 From: Jakub Kicinski <kuba@kernel.org>
 To: ahmadexp@gmail.com
 Cc: Jakub Kicinski <kuba@kernel.org>,
@@ -51,12 +51,12 @@ Cc: Jakub Kicinski <kuba@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v5 2/7] leds: is32fl3207: Add controller driver
-Date: Tue, 18 Aug 2026 09:57:13 -0700
-Message-ID: <20260818165713.4008370-1-kuba@kernel.org>
+Subject: Re: [PATCH net-next v5 3/7] i2c: mux: Propagate software nodes to channel adapters
+Date: Tue, 18 Aug 2026 09:57:15 -0700
+Message-ID: <20260818165715.4008405-1-kuba@kernel.org>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <200b35cd5847c318f4330dd162147b648c402601.1786747084.git.ahmadexp@gmail.com>
-References: <200b35cd5847c318f4330dd162147b648c402601.1786747084.git.ahmadexp@gmail.com>
+In-Reply-To: <a758b93f394ecfd4dfa65517782530d4a8c45e39.1786747084.git.ahmadexp@gmail.com>
+References: <a758b93f394ecfd4dfa65517782530d4a8c45e39.1786747084.git.ahmadexp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -68,84 +68,140 @@ Content-Transfer-Encoding: 8bit
 This is an AI-generated review of your patch. The human sending this
 email has considered the AI review valid, or at least plausible.
 ---
-leds: is32fl3207: Add controller driver
+i2c: mux: Propagate software nodes to channel adapters
 
-This adds an I2C driver for the Lumissil IS32FL3207 18-channel LED
-controller, exposing single and multicolor LEDs via the LED class.
-Per-output current limits are programmed into the scaling registers based
-on the RISET value and each LED's led-max-microamp property.
+This attaches the matching software-node child of the mux device to each
+i2c-mux channel adapter, tracks whether the mux owns that attachment for
+cleanup, and extends the I2C firmware-node adapter lookup so it also
+matches a device's secondary fwnode.
 
-> diff --git a/drivers/leds/rgb/leds-is32fl3207.c b/drivers/leds/rgb/leds-is32fl3207.c
-> new file mode 100644
-> index 0000000000000..6a46f97ba50a5
-> --- /dev/null
-> +++ b/drivers/leds/rgb/leds-is32fl3207.c
-> @@ -0,0 +1,736 @@
+> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> index 3ec04787a7373..f39575ee02444 100644
+> --- a/drivers/i2c/i2c-core-base.c
+> +++ b/drivers/i2c/i2c-core-base.c
+> @@ -1876,12 +1876,22 @@ int devm_i2c_add_adapter(struct device *dev, struct i2c_adapter *adapter)
+>  }
+>  EXPORT_SYMBOL_GPL(devm_i2c_add_adapter);
+>  
+> -static int i2c_dev_or_parent_fwnode_match(struct device *dev, const void *data)
+> +static bool i2c_device_match_fwnode(struct device *dev, const void *data)
+>  {
+> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> +
+>  	if (device_match_fwnode(dev, data))
+> +		return true;
+> +
+> +	return !IS_ERR_OR_NULL(fwnode) && fwnode->secondary == data;
+> +}
+
+[Severity: Medium]
+Is the new fwnode->secondary dereference safe here?  The old code only used
+device_match_fwnode(), which compares pointers and never dereferences the
+fwnode.
+
+i2c_dev_or_parent_fwnode_match() runs as a bus_find_device() match callback
+from i2c_find_adapter_by_fwnode()/i2c_get_adapter_by_fwnode(), so it is
+invoked for every device on i2c_bus_type, including clients, with no
+device_lock held and nothing pinning dev->fwnode.
+
+Meanwhile i2c_unregister_device() detaches and frees the software node
+while the client is still in the bus klist:
+
+drivers/i2c/i2c-core-base.c:i2c_unregister_device() {
+	...
+	device_remove_software_node(&client->dev);
+	device_unregister(&client->dev);
+}
+
+For a client created with info->swnode and no primary fwnode,
+dev->fwnode == &swnode->fwnode, and device_remove_software_node() drops the
+last reference:
+
+drivers/base/swnode.c:device_remove_software_node() {
+	...
+	set_secondary_fwnode(dev, NULL);
+	swnode_put(swnode);
+}
+
+Can a lookup then observe fwnode = dev_fwnode(dev) before the free and read
+fwnode->secondary after it?  The writers are unsynchronized too:
+
+drivers/base/core.c:set_secondary_fwnode() {
+	if (fwnode_is_primary(dev->fwnode))
+		dev->fwnode->secondary = fwnode;
+	else
+		dev->fwnode = fwnode;
+}
+
+There is no lock common to the reader and the writer and no WRITE_ONCE, so
+this also looks like a plain data race that could make the lookup return an
+adapter whose software node has already been detached.
+
+Also, does the extra dereference help in that case at all?  A software node
+installed in the primary slot always has secondary == ERR_PTR(-ENODEV), so
+it can never match through fwnode->secondary; only the window seems new.
+
+> @@ -1891,8 +1901,9 @@ static int i2c_dev_or_parent_fwnode_match(struct device *dev, const void *data)
 
 [ ... ]
 
-> +static int is32fl3207_configure_channel(struct is32fl3207 *chip,
-> +					struct fwnode_handle *fwnode,
-> +					unsigned int *channel)
-> +{
+> diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
+> index 681a201c239ba..3bca123907b3d 100644
+> --- a/drivers/i2c/i2c-mux.c
+> +++ b/drivers/i2c/i2c-mux.c
 
 [ ... ]
 
-> +	ret = fwnode_property_read_u32(fwnode, "led-max-microamp",
-> +				       &max_microamp);
-> +	if (ret)
-> +		return dev_err_probe(chip->dev, ret,
-> +				     "failed to read current limit for channel %u\n",
-> +				     reg);
-> +
-> +	if (!max_microamp || max_microamp > chip->output_max_microamp)
-> +		return dev_err_probe(chip->dev, -EINVAL,
-> +				     "invalid current limit %u uA for channel %u\n",
-> +				     max_microamp, reg);
-> +
-> +	/* GCC is fixed at 0xff, so use each output's scaling register. */
-> +	scaling = div_u64((u64)max_microamp * 256 * 256,
-> +			  (u64)chip->output_max_microamp *
-> +			  IS32FL3207_GLOBAL_CURRENT_MAX);
-> +	if (!scaling)
-> +		return dev_err_probe(chip->dev, -EINVAL,
-> +				     "current limit %u uA is below channel %u resolution\n",
-> +				     max_microamp, reg);
+> @@ -364,6 +417,8 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
+>  
+>  		priv->adap.dev.of_node = child;
+>  		of_node_put(mux_node);
+> +	} else {
+> +		channel_node = i2c_mux_get_channel_swnode(muxc, chan_id);
+>  	}
+>  
+>  	/*
+
+[ ... ]
+
+> @@ -408,6 +473,8 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
+>  	return 0;
+>  
+>  err_free_priv:
+> +	if (priv->swnode)
+> +		device_remove_software_node(&priv->adap.dev);
+>  	kfree(priv);
+>  	return ret;
+>  }
 
 [Severity: Medium]
-Can this reject device trees that are valid according to the binding?
+This isn't a bug introduced by this patch, but since err_free_priv is being
+extended here, should it also drop the DT channel node reference?
 
-Documentation/devicetree/bindings/leds/issi,is32fl3207.yaml declares
-led-max-microamp with minimum: 1, both for the top-level led@ nodes and for
-the multi-led component nodes:
+In the DT branch of i2c_mux_add_adapter(), priv->adap.dev.of_node holds a
+reference obtained either from the for_each_child_of_node() early break, or
+from of_node_get(dev_node)/of_node_get(mux_node).  When
+i2c_add_adapter()/i2c_add_numbered_adapter() fails, control reaches
+err_free_priv, which only does kfree(priv).
 
-      led-max-microamp:
-        minimum: 1
-        maximum: 38250
-        description: |
-          Board-safe peak current for this output. The value must not exceed
-          the full-scale current derived from issi,riset-ohms.
+That the mux owns that reference is visible in the success-path teardown,
+which saves np = adap->dev.of_node and puts it after i2c_del_adapter():
 
-In is32fl3207_configure_channel() the scaling quotient truncates to zero for
-small currents, and the !scaling case aborts probe with -EINVAL via
-is32fl3207_probe() -> is32fl3207_register_led() ->
-is32fl3207_register_single()/is32fl3207_register_multicolor() ->
-is32fl3207_configure_channel().
+> @@ -429,7 +496,13 @@ void i2c_mux_del_adapters(struct i2c_mux_core *muxc)
+>  		sysfs_remove_link(&priv->adap.dev.kobj, "mux_device");
+> +		/*
+> +		 * Keep the software node through child removal. The adapter
+> +		 * device is cleared on deletion, so release the software-node
+> +		 * attachment reference via the saved handle afterwards.
+> +		 */
+>  		i2c_del_adapter(adap);
+> +		fwnode_handle_put(priv->swnode);
+>  		of_node_put(np);
+>  		kfree(priv);
+>  	}
 
-With the smallest RISET the binding permits, 2000 ohms,
-output_max_microamp is 76500000 / 2000 = 38250, so scaling stays zero for
-any led-max-microamp below 149 uA (38250 * 255 / 65536 = 148.8). With the
-RISET used in the binding example, 4700 ohms, output_max_microamp is 16276
-and the cut-off is 64 uA.
-
-So a device tree that passes dt_binding_check with, say,
-led-max-microamp = <50> fails to bind, and the actual lower bound is
-board-dependent and not documented anywhere.
-
-Should the binding describe the RISET-dependent lower bound, or should the
-driver clamp sub-resolution values to a scaling of 1 instead of failing
-probe?
-
-Cross-instance finding from sashiko-gemini (abacfa25c43c61e8a044d405172e276c795bb984d2cf45e93b49076c16419dfc):
-[Severity: Medium]
-`is32fl3207_clear_retained_scaling` fails to latch the zeroed scaling registers, leading to a brief LED flash during hardware initialization.
+Neither i2c_register_adapter()'s error labels nor the driver core drops a
+device's of_node reference when device_add() fails, so does the failure path
+leak that struct device_node reference?  Would adding
+of_node_put(priv->adap.dev.of_node) at err_free_priv be appropriate while
+this label is being touched?
