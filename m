@@ -1,320 +1,185 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D453E1228
-	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2026 07:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48BB3F4DCF
+	for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2026 09:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787125310; cv=pass; b=hs7vyfvs1rFXBZkfWrNTQyuPjoqgZQv8xJai7fnWtvc98llSf5K6xkk+7igdVa5EhaGUWnoXef01pgRKaMZFPctTx8jlJEiqv/LzLBaVFgFT36eF77Rr+CfuIm+kkxgHfRHf1My6wFeTeEb/gNBt5ysZrku+7TK3k+tlevb3gy4=
+	t=1787130775; cv=pass; b=tcNeqBb6F7f1qaM2elJMxmF65LyTJ6r6pLYpPWQjqU4fc7basXQMG+Yd1zNbA+x8PZ4RnSMz2KeK5vwsNINpuy5JDH99JLK1qRvXbtPdfKwKV2TM/lMPR4oK9EtTktL/grxgNx/7oRnP2XpKUMwGYmCMUknzAL2RgknFxIyOtGg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787125310; c=relaxed/simple;
-	bh=i8g1kh5bGRn9T0dWTjOgak9HjdcyEv47iojLtZJK1TM=;
+	s=arc-20240116; t=1787130775; c=relaxed/simple;
+	bh=DCnsy73dKFmBz5cXqnv5Jnu6rHCJzPmOacFK6Spob4g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ssPnQviu1faBXeqmdEvE2RaK9lAVJrF+3tki0B+cA1GSZm3CcB3Bk57iENuvkJyubEffa2BPeABzprAkKSXXIPnV7thFBhTd722qkmb9FQHKE9XD/UgHx0DlomHhpb0p9lowVZIhYRE+7Hnf4ijKmK1IixO2HPgWf+Tn6GmUPOg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpJ+Wkqg; arc=pass smtp.client-ip=209.85.218.44
+	 To:Cc:Content-Type; b=gIpEthEQ6KmdDdHsp9VH9L7d9aZFQxxluc6Z3x2hPjCPpkPGVNDC2jhTzmFPe8Ms+ZyaHZ1iuVYXTsdzfF/gyPQoeUQD5ywzj0JNav9/pa4AdMwQbNALYljSwPxus7/ueaJaGa0cqi5pKX3v63VmQm0zXa3vcNDwJdp8o6uVyWI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LjxOquGL; arc=pass smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpJ+Wkqg"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c15c42a45adso274968766b.0
-        for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2026 00:41:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787125305; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LjxOquGL"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c1671ec8692so107644866b.0
+        for <linux-leds@vger.kernel.org>; Wed, 19 Aug 2026 02:12:51 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787130770; cv=none;
         d=google.com; s=arc-20260327;
-        b=pLB26beyCz8pqK3s5DUkCcxEMvtWRcjMz51KDf4LCNabsZb1RzFFaa8EjFxBgNlRJo
-         feH4RGx+P2OhZwEWbq7ANnEZczU6WZVKFkf+ERXSOqQTpfpmabN+c6UBy0EnIsaoR7K7
-         einaDTDtj9U+4W2xvcihT77/1VrRx0yoKAqz1UKJ7oHABJxZ9mdlIWmXhgCY6q1u5xw4
-         URORZPZauih11bGAnkZLUqMhkHTxeWFPrWNag2XsnayFTwTJXPvu2oRGhoiIYstDIGa1
-         fL11UmEREGhMZHzQnbQsOqJZdtA/ZYnZHvKp0inXjPrBU0MOoA07K2VbN19TjQbpDaSD
-         0lZQ==
+        b=gpETPOuvs6VspHC2iAJm5IFl2Q1M+3Ts8e/YVwlrCKEJ5GAqOSEYPhP5FDMQ0EbWUV
+         ubHuJVq8sd2Uic5AKVNErzVzv5bVnpFvKKdIwX+tkAlOP8WdQZ5UexFNMIOCNKubKCn9
+         GgIVXweCxYiLoVc4N2HFoxLl5gIuLdN7RetXUQgGyR/1C+ZQRP+ZUGDXAniP6UiZhXGj
+         IaGLZVgIxb7G703vIadDmTDb86EWhNjrlrRBscVrLRfEgm2YqaD2ycuhJPOclebllZuG
+         eJpQhgzzBsMZrrhpEblDO7X1lgnvmhx/NR1xGr21QPjWGx9DUtfpd6ahWgJGcg2sje31
+         f4cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=2XM8VjGIfz5XNFSi41BuHFpvUKE6C2ApVU9tTkW8ke8=;
-        fh=Ll3D4c5zTW8JQrumO3CM7RUY0BzpTgv0cGfpO4SF/vk=;
-        b=qbNz/42jx6Yofv4S/ZwNsVA2qofGRohbvxFPL9byvLWhz/SKARG8fRYjL+AV7hkUIG
-         vkGFGTGuTLJWJ41561oxtecTN8T7KtuDuDAA9Sw/UYKpm/01GOqH4pjz2MIlGdKJl6rI
-         YdM+aO+Gyh7ivKbXRBg1Av6Mc4I3pSXa+16C8mIo15nYFkb+zpyVs58ogOgNmhFlEveo
-         k0cTDm1z2krH6+J82zYG7KK4FR481go+knFkqLrfHGekV8WBG8ZENfZB6gMg9FcgMJIp
-         YOyKI4Jtp5yp9BtU+OUqNEPUFdytQfp6YKqJ/bEKfeMxIU3t3D/O+XqBHPwZiAy5ZVSn
-         1WlA==;
+        bh=xQVqiPHj9gddxJ2oxHXBLJll0uYkJ3jqiGdmF8ls390=;
+        fh=xJwg7owe3+PyjhIerYevW1sMbzoSx7qs/WX7hHYJUbA=;
+        b=OIgosSLO99+lN4vt20XLRqInjaxRRGUEgzrjzMy9dw19fTqrLyob7DOBb8udPRg99s
+         FCOQ7OXMWLLlboykhnDd3Cq8eY3U1tvOWJ9yv7AEx+MZNToVphvpakSLIhi7xd8hpZNA
+         jFnEKtwi7rRWx4AZcD8bWb2KV0XKUjQq1z0NLRooobcyrEgwn+Cbio93HfmKiVi7lIH/
+         i5dRmk6cPiXrFCy9e0AEQmFzK4mAcndjG+r+j8nIcQDl6TrEi4+U0zrMqZ+FV+jVpz1a
+         Y8cjQvdVJn8rcmYhM9snU32ntQDw5z8ISEiX5r6NGIktvIST97yKU5uaZkSKJgPDGky9
+         F0Bw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787125305; x=1787730105; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787130770; x=1787735570; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=2XM8VjGIfz5XNFSi41BuHFpvUKE6C2ApVU9tTkW8ke8=;
-        b=KpJ+WkqgIYnJD6I7LAaemSa2VxMM5QcGLwCqP9p4ETHZcSmc8B/CYU3rlmEph/n+Qz
-         MrlRbJXuYC7u5VmIANHBrT1MTGEaTZMkDJHi2Hc08jF1iozJ9EYdeCUVj4Cu9TSNT1SD
-         1C1MmLLxGoxyo+CAsGq7ZzFVq4l9Dz3BYQSqAwqhx0yn/+81hvpeSWhvkMs9v4ldU1GT
-         KrBMIFxkWfKaNvfnG55Azd1tmydnUWQUySPEZKMjnAyNj2waXMyCVfENItClkepIGzxh
-         h3lBnQZ7J45+AB58Q1o96lKNvg0x6FQEtV8IWAv0O2u0OWy4uxjGj+WFaGTngpqZtGhr
-         7G8w==
+        bh=xQVqiPHj9gddxJ2oxHXBLJll0uYkJ3jqiGdmF8ls390=;
+        b=LjxOquGL2ecAPBMN0uLeQ1Y6Nyt+22TRBCI6KJrDILezgOzpwOaQZMSHdwmzlTwuzh
+         lOTy9neusGIA3v08zPSEpPVhfQaC280TDqyUchmqUNCmR2fxaKMi1fxO83nn6dMqFlsl
+         inxU/9NLTvBmhbdAhBSC6b+F7mopvymlSZ/MBsek0WamxWpfFOILritxOOnAFrV/q+Yd
+         GQWUDAs2Goe/auLnAeXZjIx2M74bCbylfaZmc++77qxMpUpvYZer5zEQss2eCxa1nhRT
+         dhUcQt/BWFIT+YH620RIs1yiLDgFNHDQdc8gJfSuUPbDzPVLbfj0aGdsTkAe/yFa2jXA
+         LEIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787125305; x=1787730105;
+        d=1e100.net; s=20251104; t=1787130770; x=1787735570;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2XM8VjGIfz5XNFSi41BuHFpvUKE6C2ApVU9tTkW8ke8=;
-        b=DhYDntq+NVbLwu6BtZbasiry5t8D8Ee4jgYSnnN+cFjYfTewW1+/GkA3ZhVmodjY2q
-         DnAUWJZuZ+E5FDFep+OkUi1lfEPTrHc0Yhiu/t42yb8tspDozaznd/2Mihjd4OUKHBow
-         nD/2441GgzmneQFnlxZLHprsdkOGF6OHiBz9308awgeswnY5bN0ogHlQ3jS7j0SltNy1
-         8lClzse/YRcNyt1q14fi2Ot2PDfDXgPGuhPo94sXcHKSK+v0JtvKBaVMqsDU78k5fmtD
-         3+S6q8EFx16pb6KtjfHHW1Y77kOPsfEL4QFEcQy83zr9PFsyjeGmn6XO7qp2q9ur1nyY
-         5mSw==
-X-Forwarded-Encrypted: i=1; AHgh+RrJhegb6c24tP7jyRkNFz+eAtJLUygCXAnO0HqATdI524Ef2xtD/kt9/DmOJ6R4sgV8SSJuZlXUg8dz@vger.kernel.org
-X-Gm-Message-State: AOJu0YylgKOMW6+kQ/R9P5YrTIRAsIdZrhZgZ5UfDvd0ptsHXOzez01m
-	QqYRIeXbFNDMtALTbu//AQr9gIiwXhAF7UcvzC5A1aKw1fXlxB6sYwKYFSSLAnCR3xJvX9K5979
-	SCG5JReizmjTcM7RPCiiIyrqrD7MQKc4=
-X-Gm-Gg: AR+sD128cCfZVNS7Jl2mZGUjDk07rf/Z7/ygikb5p3eYbky7rN5L9kM5wbMQp8XcpL0
-	w4MfaE6YkRslodJuAgZDwxfrzpmwH8vVADR4clNeM19YpxiodCug4Tt29hReOQMFRbxQBYJFMMN
-	JdP0M+t3TJHwWum3+euH6QONoZnyVpXxc4qE78hJ+w6USJSLg4n3eMHtaIzlcsC4Vf0IsW/HOLs
-	gl8rfJHv6yyCG/n6f+Z7iQlOehXq/LJLB+NO2SG3RdxTWbnljmxj+E2BvK7QtVsZGoBUpDaJn4d
-	8hhimAt2pYhUxbhNVxOfoQ0xW2s2Qm3OXty8J8tdcSOelk0HQsjjkvIB5Q==
-X-Received: by 2002:a17:907:1ca1:b0:c21:7c98:d9ec with SMTP id
- a640c23a62f3a-c237e153a0cmr174800166b.5.1787125304729; Wed, 19 Aug 2026
- 00:41:44 -0700 (PDT)
+        bh=xQVqiPHj9gddxJ2oxHXBLJll0uYkJ3jqiGdmF8ls390=;
+        b=ayPCQu6e8+RU52QQeDOlw6yPOOx70kGUpkTB3OW3qRA7JE3qgaHJDNL3BVILRYihMJ
+         48Uka7ZbFYYTwMpVjGVSzjdtMS5cE7PMmahqBOZuwuLk0aE5/d3dBnfSHBTh5B8ofo2U
+         slMZU2pR5t8F7I8tyUSaFmEesWlGq0dWzPLzyn43qiBsMgO+dtKNO3FD/ThQMBe9Omu1
+         qd6mbTbL+Dt2ohN6fRqztLm2VETCFPkjAkmT+i9qyJz9Bslri0zhG7+jhuEOg/7mcvJA
+         HZ8i8GV5NxZWdTbXHdYvIB8v6UCfnawra61JSPORmchq6jrMla9/GpyoJ37lK2pqTQt+
+         4j/w==
+X-Forwarded-Encrypted: i=1; AHgh+RrcLhnbMEjP6HbJDiPs/h5Pzw8dfv2UIY5SL3/wB0uzhfMuEFL57JYBgTKIUKvaS4a+y2snAl9frSMm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1xMsyvqzGLRQrIh7xsHO6xbe2RdIdd2NRxV5tMe68KwwtPwBp
+	lGJ8NjMo1fp9GQyP/MCHH99ctJlwRVqy67DLkb/CEt00ygk8incMaB96PLnhHpEzeTj1TVLKsvM
+	FFcyHoTVXSFGwtt2byMC1vMWYn+3VUyY=
+X-Gm-Gg: AR+sD13LEy+dddCYr4JVgzQhN/JtbCJCX2RmmifKxzHFtO3QlrGI+WNA9slnV8nWAUg
+	VGq9cwilBOWM5BiuwscTytI3EA23zNuKe36uX3x8WT1VEosfNmIT1/PCqBrsMVDGopbyO+Vmw6E
+	dEIjGibXJzvJB6itdRW3m6CBaaXqZzYag2sNX4ZSI9popTTPlY41wXlP7inN9K5qyaJBp0bh5Jx
+	RdNwvX96zfGNYdAGTlVCWo9hhhirOFei0Hj2yCs2lxo9ZCP6aIO+vbHb2mHv38RpbZSQdR75cup
+	b9D9SFL8nmq5h95C/KiBv2kmmrKtYvUnSfOAPRGw78rNJbsEny9AH2OTWOxCykPp2BYVP5SDh4M
+	7y24=
+X-Received: by 2002:a17:907:c789:b0:c16:1227:e3d8 with SMTP id
+ a640c23a62f3a-c242e22e276mr205170066b.13.1787130769901; Wed, 19 Aug 2026
+ 02:12:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe>
-In-Reply-To: <20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe>
-From: Ike Panhc <ikepanhc@gmail.com>
-Date: Wed, 19 Aug 2026 15:41:33 +0800
-X-Gm-Features: AcwNN1XvW54R3BtlIAEO0ZYWyRgIsnsmisrbLic33f3L9pxDYLLAY4SdpzDzLc8
-Message-ID: <CADwxbCUVY7OP-BgBW-xd-AZCn_Msh8TPmiRX0__F2f-SHw2O-w@mail.gmail.com>
-Subject: Re: [PATCH v4 00/12] leds: Add support for hardware-initiated
- hardware control trigger transition
-To: Rong Zhang <i@rong.moe>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	=?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
-	Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
-	Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
-	Vishnu Sankar <vishnuocv@gmail.com>, Vishnu Sankar <vsankar@lenovo.com>, linux-leds@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	platform-driver-x86@vger.kernel.org
+References: <20260721095654.429346-1-clamor95@gmail.com>
+In-Reply-To: <20260721095654.429346-1-clamor95@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 19 Aug 2026 12:12:36 +0300
+X-Gm-Features: AcwNN1XqMUC5z69S8iGApPi6yHWon1mnJ-iyXKEJkZHOCPSd2FYry1N5od1LFfc
+Message-ID: <CAPVz0n3u0D=0swsO4n6LROFurO=as1w-ZRwaje08BN9dY=JhXQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] mfd: cpcap: convert documentation to schema and
+ add Mot board support
+To: Lee Jones <lee@kernel.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Svyatoslav Ryhel <clamor95@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 2, 2026 at 1:27=E2=80=AFAM Rong Zhang <i@rong.moe> wrote:
+=D0=B2=D1=82, 21 =D0=BB=D0=B8=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 12:57 Svya=
+toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> Some laptops can tune their keyboard backlight according to ambient
-> light sensors (auto mode). This capability is essentially a hardware
-> control trigger. Meanwhile, such laptops also offer a shrotcut for
-> cycling through brightness levels and auto mode. For example, on
-> ThinkBook, pressing Fn+Space ("shortcut") cycles keyboard backlight
-> levels in the following sequence:
+> The initial goal was only to add support for the CPCAP used in the Mot
+> Tegra20 board; however, since the documentation was already partially
+> converted, I decided to complete the conversion to schema too.
 >
->   1 =3D> 2 =3D> 0 =3D> auto =3D> 1 ...
+> The CPCAP regulator, leds, rtc, pwrbutton and core files were converted
+> from TXT to YAML while preserving the original structure. Mot board
+> compatibility was added to the regulator and core schema. Since these
+> were one-line patches, they were not separated into dedicated commits;
+> however, the commit message notes this for both cases.
 >
-> Recent ThinkPad models should have similar sequence too.
+> Finally, the CPCAP MFD was slightly refactored to improve support for
+> multiple subcell compositions.
 >
-> However, there are some issues preventing us from using a private
-> hardware control trigger:
->
-> 1. We want a mechanism to tell userspace which trigger is the hardware
->    control one, so that userspace can determine if auto mode is on/off,
->    as well as turing it on/off programmatically without obtaining the
->    trigger's name via other channels
-> 2. Writing brightness has the side effect of disabling hardware control,
->    but the hardware control trigger remains active, resulting in the
->    software and hardware being out of sync. Most LED drivers that
->    supports hardware control also suffer from the same issue
-> 3. Turing on/off auto mode via the shortcut cannot activate/deactivate
->    the corresponding hardware control trigger, making the software state
->    out of sync
-> 4. Even with #3 solved, deactivating the hardware control trigger has
->    the side effect of emitting LED_OFF, breaking the shortcut cycle,
->    especially "auto =3D> 1"
->
-> This series tries to demonstrate a path on solving these issues:
->
-> - Introduce an attribute "trigger_may_offload", so that userspace can
->   determine:
->   - if the LED device supports hardware control (supported =3D> visible)
->   - which trigger is the hardware control trigger selected by the LED
->     device
->   - if the trigger is selected ("<foo_trigger>")
->   - if the trigger is offloaded ("[foo_trigger]")
->     - A callback offloaded() is added so that LED triggers can report
->       their hardware control state
-> - Remove hardware control trigger when writing brightness
-> - Add led_trigger_notify_hw_control_changed() interface, so that LED
->   drivers can notify the LED core about hardware-initiated hardware
->   control transitions. The LED core will then determine if the
->   transition is allowed and switching between "none" (i.e., no trigger)
->   and the device's private trigger accordingly
->   - This capability is restricted to the device's private trigger. If
->     the current trigger is neither the private trigger nor "none", no
->     transition will be made
->   - This interface is gated behind Kconfig LEDS_TRIGGERS_HW_CHANGED and
->     LED device flag LED_TRIG_HW_CHANGED
-> - Tune the logic of trigger deactivation so that it won't emit LED_OFF
->   when the deactivation is triggered by hardware
->
-> The last three patches are included in the series to demonstrate how
-> these interfaces are supposed to be utilized, so that ideapad-laptop
-> can expose the auto mode of ThinkBook's keyboard backlight. They can be
-> submitted separately once the dust settles, if preferred.
->
-> The last patch in the series depends on commit 5029bff09e79
-> ("platform/x86: ideapad-laptop: Fix driver unregistration order") from
-> platform-drivers-x86/for-next.
->
-> [ Summary of other approaches ]
->
-> < custom attribute >
->
-> Pros:
-> - simplicity, KISS
-> - no need to touch the LED core
-> - extensible as long as it has a sensor-neutral name
->   - a sensor-related name could potentially lead to a mess if a future
->     device implements auto mode based on multiple different sensors
->
-> Cons:
-> - must have zero influence on brightness_set[_blocking] callbacks
->   in order not to break triggers
->   - potential interference with triggers and the brightness attribute,
->     can't solve #2
-> - weird semantic (an attribute other than "brightness" and "trigger"
->   changes the brightness)
->
-> < private hardware control trigger (this series) >
->
-> Pros:
-> - mutually exclusive with other triggers and the brightness attribute
->   (hence less chaos)
-> - semantic correctness
-> - acts as an aggregate switch to turn on/off auto mode even a future
->   device implements auto mode based on multiple different sensors
->   - extensibility (through trigger attributes)
->
-> Cons:
-> - complexity
->
-> [ Previous discussion threads ]
->
-> https://lore.kernel.org/r/08580ec5-1d7b-4612-8a3f-75bc2f40aad2@app.fastma=
-il.com
-> https://lore.kernel.org/r/1dbfcf656cdb4af0299f90d7426d2ec7e2b8ac9e.camel@=
-rong.moe
->
-> Signed-off-by: Rong Zhang <i@rong.moe>
 > ---
-> Changes in v4:
-> - Drop the RFC prefix
-> - Add a new patch in the series to address a concern from Sashiko
->   - [PATCH v4 08/12] leds: trigger: Do not attach trigger to a removing L=
-ED
->   - Without it, following patches will expose a race condition
->   - https://sashiko.dev/#/patchset/20260719-leds-trigger-hw-changed-v3-0-=
-5fb55722e36e@rong.moe
-> - Address other concerns from Sashiko
->   - Reject insane hardware brightness
->   - Do not notify the LED trigger core when the registration of the
->     private trigger has failed
-> - Enable LEDS_TRIGGERS_HW_CHANGED by default when
->   LEDS_BRIGHTNESS_HW_CHANGED is enabled
-> - Add missing #include (Thanks Ilpo J=C3=A4rvinen)
-> - Remove needless #include (ditto)
-> - Remove needless code alignment (ditto)
-> - Link to v3: https://patch.msgid.link/20260719-leds-trigger-hw-changed-v=
-3-0-5fb55722e36e@rong.moe
+> Changes in v2:
+> - fixed code style
+> - rtc conversion was picked, so patch dropped
+> - added audio ports description into mfd schema
+> - splitted schema conversion and compatible addition
+> - minor style improvements and typo fixes
 >
 > Changes in v3:
-> - Integrate https://lore.kernel.org/all/20260712-leds-hw-control-brightne=
-ss-set-v1-1-1de593b09d26@rong.moe/
->   into the series
->   - Adopt __led_trigger_is_hw_controlled() in the rest of the series
-> - Rearrange the series so that the code using the offloaded() callback is
->   introduced before the driver implementation (thanks Thomas Wei=C3=9Fsch=
-uh)
-> - Reword documentations and commit messages (ditto)
-> - Adopt guard() and lockdep (ditto)
-> - Address concerns from Sashiko
->   - Fix a race condition in ideapad_kbd_bl_led_cdev_brightness_set()
->   - Fix trigger re-registration of ideapad_kbd_bl_auto_trigger
->   - https://sashiko.dev/#/patchset/20260618-leds-trigger-hw-changed-v2-0-=
-c28c44053cf3%40rong.moe
-> - Make registration failures of ideapad_kbd_bl_auto_trigger non-fatal
-> - Link to v2: https://patch.msgid.link/20260618-leds-trigger-hw-changed-v=
-2-0-c28c44053cf3@rong.moe
+> - added regulator node names list into pattern
+> - filled spi_device_id with driver data
+> - ADC patches were picked, so changes dropped
 >
-> Changes in v2:
-> - Restrict the led_trigger_notify_hw_control_changed() interface to
->   private triggers only
->   - Drop PATCH v1 1/9 ("leds: Load trigger modules on-demand if used as
->     hw control trigger"), not relavant any more
-> - Gate the led_trigger_notify_hw_control_changed() interface behind
->   Kconfig LEDS_TRIGGERS_HW_CHANGED and LED device flag
->   LED_TRIG_HW_CHANGED
-> - Fix lock ordering inversion
-> - ideapad-laptop:
->   - Only call led_trigger_notify_hw_control_changed() when needed
->   - Serialize keyboard backlight notifications
-> - Reword commit messages and documentations
-> - Link to v1: https://patch.msgid.link/20260227190617.271388-1-i@rong.moe
+> Changes in v4:
+> - dropped regulator patches (applied)
 >
+> Changes in v5:
+> - switched to MFD_CELL_* macros
+> - switched to use determinator of model
+> - switched to spi_get_device_match_data
+>
+> Changes in v6:
+> - removed address-cells and size-cells from main node
+> - changed macros formatting and OF matches
+> - factored out common devices and made device addition staged
+> - dropped cpcap->variant check for 0
+> - EINVAL > ENODEV in variant checking switch
+>
+> Changes in v7:
+> - adjusted spi_device_id entries (name/driver_data)
 > ---
-> Rong Zhang (12):
->       leds: Move led_trigger_is_hw_controlled() to the right place
->       leds: class: Remove hardware control trigger when writing brightnes=
-s
->       leds: trigger: Add offloaded() callback and provide trigger_may_off=
-load attribute
->       leds: cros_ec: Implement offloaded() trigger callback
->       leds: turris-omnia: Implement offloaded() trigger callback and decl=
-are hw_control_trigger
->       leds: trigger: netdev: Implement offloaded() callback
->       leds: trigger: Enforce strict checks in led_trigger_is_hw_controlle=
-d()
->       leds: trigger: Do not attach trigger to a removing LED
->       leds: trigger: Add led_trigger_notify_hw_control_changed() interfac=
-e
->       platform/x86: ideapad-laptop: Decouple hardware & classdev brightne=
-ss for keyboard backlight
->       platform/x86: ideapad-laptop: Serialize keyboard backlight notifica=
-tions
->       platform/x86: ideapad-laptop: Fully support auto keyboard backlight
 >
->  Documentation/ABI/testing/sysfs-class-led          |  25 ++
->  .../ABI/testing/sysfs-class-led-trigger-netdev     |   3 +
->  Documentation/leds/leds-class.rst                  |  72 ++++++
->  drivers/leds/led-class.c                           |  39 ++-
->  drivers/leds/led-triggers.c                        | 150 +++++++++++-
->  drivers/leds/leds-cros_ec.c                        |   6 +
->  drivers/leds/leds-turris-omnia.c                   |   7 +
->  drivers/leds/leds.h                                |   2 +
->  drivers/leds/trigger/Kconfig                       |  10 +
->  drivers/leds/trigger/ledtrig-netdev.c              |   8 +
->  drivers/platform/x86/lenovo/Kconfig                |   1 +
->  drivers/platform/x86/lenovo/ideapad-laptop.c       | 270 +++++++++++++++=
-++----
->  include/linux/leds.h                               |  19 ++
->  13 files changed, 546 insertions(+), 66 deletions(-)
-> ---
-> base-commit: c7acedb2db001160b1ec41cdcc759dd664150666
-> change-id: 20260506-leds-trigger-hw-changed-96a62188cbdf
+> Svyatoslav Ryhel (6):
+>   dt-bindings: leds: leds-cpcap: convert to DT schema
+>   dt-bindings: input: cpcap-pwrbutton: convert to DT schema
+>   dt-bindings: mfd: motorola-cpcap: convert to DT schema
+>   dt-bindings: mfd: motorola-cpcap: document Mapphone and Mot CPCAP
+>   mfd: motorola-cpcap: diverge configuration per-board
+>   mfd: motorola-cpcap: add support for Mot CPCAP composition
 >
-> Thanks,
-> Rong
+>  .../bindings/input/cpcap-pwrbutton.txt        |  20 -
+>  .../input/motorola,cpcap-pwrbutton.yaml       |  32 ++
+>  .../devicetree/bindings/leds/leds-cpcap.txt   |  29 --
+>  .../bindings/leds/motorola,cpcap-leds.yaml    |  42 ++
+>  .../bindings/mfd/motorola,cpcap.yaml          | 408 ++++++++++++++++++
+>  .../bindings/mfd/motorola-cpcap.txt           |  78 ----
+>  drivers/mfd/motorola-cpcap.c                  | 143 +++---
+>  include/linux/mfd/motorola-cpcap.h            |   7 +
+>  8 files changed, 571 insertions(+), 188 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/cpcap-pwrbutt=
+on.txt
+>  create mode 100644 Documentation/devicetree/bindings/input/motorola,cpca=
+p-pwrbutton.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/leds/leds-cpcap.txt
+>  create mode 100644 Documentation/devicetree/bindings/leds/motorola,cpcap=
+-leds.yaml
+>  create mode 100644 Documentation/devicetree/bindings/mfd/motorola,cpcap.=
+yaml
+>  delete mode 100644 Documentation/devicetree/bindings/mfd/motorola-cpcap.=
+txt
+>
+> --
+> 2.53.0
 >
 
-Review and test on my ideapads. Though I don't have ambient light
-sensor on my machines,
-Everything looks good from my side.
-
-Acked-by: Ike Panhc <ikepanhc@gmail.com>
-
-Many thanks,
-Ike
+Hello Lee! May you please pick this patch set? I have included changes
+asked by Rob and Uwe. Thank you!
