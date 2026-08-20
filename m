@@ -1,48 +1,48 @@
-Received: from sender5-op-o12.zoho.com (sender5-op-o12.zoho.com [165.173.182.12])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8534772B1;
-	Thu, 20 Aug 2026 17:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872EC47ECD8;
+	Thu, 20 Aug 2026 17:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787246600; cv=pass; b=q5h2G43SwtRSIY/RDieyxD7yZZqpauizB03vnvuKugf5bOYfwUBXF3dIleDAHfjkFUW2IBd6Of2rJyxse8dkxZeQb/juVKdK0LA6s6SmObKRDAVlA+3CFXcr2O2/fpoplaRj79HtW21O6O4U4ugMdHMJjh1bbbr81IaFfgCCdEk=
+	t=1787246623; cv=pass; b=mkc4fdepYkDZve/bK8qmDegcWOsbKkjSj8TbYc4T0SlXCY/7DgZF85L1NOJ5PlvRtwL8XjldCBKrwhz7f42/mgRmCF8TfxgoQggjfSug2Blj88iDvgGgwsdr5wQQsFHp4lSPYDQ/TpGNxEBvRkU8PMp2ARzXul6ZrbGWsZXKfGc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787246600; c=relaxed/simple;
-	bh=SaWWnlEcjMSmVNE89w77tRufh8KH7nt9jB/+YdyQJb0=;
+	s=arc-20240116; t=1787246623; c=relaxed/simple;
+	bh=u9BiiEo4etf2TjYhfTm03yFwRu3s+3++fdf3hqalN7I=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ID8vevpSDNx26BPkA2IGMIJsAuTlc1fvNM5EDP7a2ug7EnRVc8INsJc+Z9+uMX4FLe8zF6KSXqPu7WO6qvr2iOvGuvow2B0TlHrSZ6vgY9R0PChT4z4X+kcp6lZ72wBhQqUHp0ybASkPKmBBDNwGQSCe/yS3jIMAfPzCxhgG/f0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=nJN6D5Wz; arc=pass smtp.client-ip=165.173.182.12
+	 In-Reply-To:To:Cc; b=IbNOmSGER6na31mw7iRdV6JDtscTyk/Qblmom0E5BbBpgY2uARgRzWM6TNrKWIEFJgy2KDdrWRCua4nJsbHW3aP8bPDtQJPaiJTtiStoBk3O5Tzt1mLiTXTroDNV+znuUmZ4NP1CTWyUGkrGo5W+l0n0/lvW8fuhvLuqhJ6F+t4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=R5DgCnnh; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="nJN6D5Wz"
-ARC-Seal: i=1; a=rsa-sha256; t=1787246559; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="R5DgCnnh"
+ARC-Seal: i=1; a=rsa-sha256; t=1787246571; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=a5zKAzsb7ZWs7ee0grh5s+XzjxjK00/MhtJ1+RBvbvlqWCJpFVJc1wHHIiQrG5Pq4brCPhuRex6UGwhisKZMhsnzI8eoWCdIet7IQj8NYmzgGvvS85Cxtja6f7H+TTvYHz0CMwgUKzQHiByou0/UFvF+sdfxjnZZ9/U2jM0zBDE=
+	b=aG6O6Ju2D6J/LOrGyjmh4cW2ULVL2aR/QQt2b3D8NE/jKmX85dBAYdrrJ2pJh5ltMh1Sv2XW7UM+GxNuAG4kydv7s9FPdaKQRfyvkGedJt+Nk+bBkWf7SOdvx+Msnf2q17HlI5dm+0DVqcgXsS5PlEUDEb+C4LnTB3AJRvB2bNU=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787246559; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=x20s9sYKP1QXIHnLIrRbRzQHZ2FpigJkXqMRZW3bVsU=; 
-	b=ePWtPVeRbjRWchHDb64MIWw6UxwTJIAHSjbe2tp45dsnLtHgzYNShxLt0ZNb/OWxuKOmVKIEg3UrgFVnrYMhxUOPpfu7SXYTUqyyQuPjcwaiTTEF/+gA965QFjqKYoAbsyd9cIAbaAqssIbEdiXIGgwGS168B4lpYlpO20MATiI=
+	t=1787246571; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8Sz+0k/4rEJ1lsWUJEhIjLO59E6AeWaOEfbTG55j9YQ=; 
+	b=RU/SNz5Pm0N4Lj7/j87B/WxoOomvRG1x9p4KR2R6XpHybMr70Y/9+R1tRb03Yyy5Zhc1X/S9cCjiV4FcYwU8owFwgXvKE5pFjHPIrRHjLNBhjbD3dHGYUEWEAV0dC/AYL8IdbjH3tKRxQLFlQhL6/aHCyoKTXiwjDoyW+LFQcq4=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246558;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246571;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=x20s9sYKP1QXIHnLIrRbRzQHZ2FpigJkXqMRZW3bVsU=;
-	b=nJN6D5WzmJ3w79iEIIVXL98gIcuwj7IDHBsNRlu3xqQKlMuv6jfe1PwsBO+zVCPB
-	E9Xl61Tnng0wQeHS1UNraSGvVhe5Kqb02bn4PMMTQvfRvYiWGDyd/MO0130zFlXsvVw
-	LAnkDFbbBuCUpG0j5c0b1/qoHxdOpUCBPjHLiTwec6ImomflPU59Sd2Zvt/eFPpvW/j
-	XI7ZTWHEb10V2/tatBcx378blZCadwq6G6IuRACZu9bLnOIvtcj3b2bDqV+gwaLqCoz
-	oL7cg2sWTp6EtcgqnkqAMT72oEo1WypmMbgMKhBBQvGPRNEDZGKZBX7/XiH5v/6lpC+
-	DF8ILVR+Uw==
-Received: by mx.zohomail.com with SMTPS id 1787246557480868.0501060387792;
-	Thu, 20 Aug 2026 10:22:37 -0700 (PDT)
+	bh=8Sz+0k/4rEJ1lsWUJEhIjLO59E6AeWaOEfbTG55j9YQ=;
+	b=R5DgCnnh9Srk75/FQkld2/y+zIcF0w4IgcgvkU5uRwr3WA/7MWdKmIfJ1um/ca0e
+	9NAwASNTyijuQPPAfTDH3u963Zlybq8TPoROLs85Sx8X+gMXqhoUYLrdDy6AQ7bVxpO
+	F+n3UEqGaYCXICWxK1/c7kGqETAlwvDZv3k3v2VZV4kpOw5eNn7BsEzovkk/roJCaIZ
+	rkt6GNtkSf6FWBn9H1jM6KYqPso9x0hJNlyv7ZiTIWgnDiQ7VQcPHR041dAfDjXRHgm
+	mxr6nkKcChwHud0nQJevkuujeuUF7ZrzKt/NxKtYc6X70PXh75OMsNTdDsF5B7TzOwU
+	dpFOiF/YwQ==
+Received: by mx.zohomail.com with SMTPS id 17872465692661002.2821247187621;
+	Thu, 20 Aug 2026 10:22:49 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
-Date: Fri, 21 Aug 2026 01:21:56 +0800
-Subject: [PATCH v5 01/12] leds: Move led_trigger_is_hw_controlled() to the
- right place
+Date: Fri, 21 Aug 2026 01:21:57 +0800
+Subject: [PATCH v5 02/12] leds: class: Remove hardware control trigger when
+ writing brightness
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260821-leds-trigger-hw-changed-v5-1-3e00d6c4a936@rong.moe>
+Message-Id: <20260821-leds-trigger-hw-changed-v5-2-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 In-Reply-To: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -73,111 +73,91 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
 X-Mailer: b4 0.17-dev-1f2f7
 X-ZohoMailClient: External
 
-Currently led_trigger_is_hw_controlled() is placed at led-class.c, which
-is not an right place as it falls into the triggers namespace and does
-triggers stuff.
+Since commit b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of
+hardware controlled LED"), the brightness attribute becomes write-only
+when the LED is controlled fully by the hardware. A write-only attribute
+is very confusing.
 
-Move it into led-triggers.c, and split it into locked and unlocked
-variant for convenience.
+Moreover, most LED drivers set hardware brightness innocently with the
+side effect of disabling hardware control, but the hardware control
+trigger remains active, resulting in the software and hardware being out
+of sync.
+
+Fix it by removing the hardware control trigger when writing the
+brightness attribute.
+
+This should also match the semantics of hardware control:
+
+    When the LED is in hw control, no software blink is possible and
+    doing so will effectively disable hw control.
 
 Fixes: b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of hardware controlled LED")
 Acked-by: Ike Panhc <ikepanhc@gmail.com>
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
 Changes in v3:
-- New patch in the series, the dependency of the following patches
+- New patch in the series, integrated from https://lore.kernel.org/all/20260712-leds-hw-control-brightness-set-v1-1-1de593b09d26@rong.moe/
+  - The following patches will improve __led_trigger_is_hw_controlled()
+    to include offloaded generic triggers and take the advantage of it
 ---
- drivers/leds/led-class.c    | 10 ----------
- drivers/leds/led-triggers.c | 19 +++++++++++++++++++
- include/linux/leds.h        |  8 ++++++++
- 3 files changed, 27 insertions(+), 10 deletions(-)
+ drivers/leds/led-class.c    | 3 +++
+ drivers/leds/led-triggers.c | 9 +++++++++
+ include/linux/leds.h        | 2 ++
+ 3 files changed, 14 insertions(+)
 
 diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index a51b0ed53886..1b8b688aaaaf 100644
+index 1b8b688aaaaf..ab61e41a00a3 100644
 --- a/drivers/leds/led-class.c
 +++ b/drivers/leds/led-class.c
-@@ -27,16 +27,6 @@ static LIST_HEAD(leds_lookup_list);
+@@ -64,6 +64,9 @@ static ssize_t brightness_store(struct device *dev,
  
- static struct workqueue_struct *leds_wq;
+ 	if (state == LED_OFF)
+ 		led_trigger_remove(led_cdev);
++	else
++		led_trigger_remove_hw_control(led_cdev);
++
+ 	led_set_brightness(led_cdev, state);
  
--static bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
--{
--#ifdef CONFIG_LEDS_TRIGGERS
--	guard(rwsem_read)(&led_cdev->trigger_lock);
--	return led_cdev->trigger && led_cdev->trigger->trigger_type;
--#else
--	return false;
--#endif
--}
--
- static ssize_t brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
+ 	ret = size;
 diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index b1223218bda1..bf2543538ed0 100644
+index bf2543538ed0..804a04b326c4 100644
 --- a/drivers/leds/led-triggers.c
 +++ b/drivers/leds/led-triggers.c
-@@ -7,9 +7,11 @@
-  * Author: Richard Purdie <rpurdie@openedhand.com>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
-+#include <linux/lockdep.h>
- #include <linux/spinlock.h>
- #include <linux/device.h>
- #include <linux/timer.h>
-@@ -33,6 +35,23 @@ trigger_relevant(struct led_classdev *led_cdev, struct led_trigger *trig)
- 	return !trig->trigger_type || trig->trigger_type == led_cdev->trigger_type;
+@@ -287,6 +287,15 @@ void led_trigger_remove(struct led_classdev *led_cdev)
  }
+ EXPORT_SYMBOL_GPL(led_trigger_remove);
  
-+static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
++void led_trigger_remove_hw_control(struct led_classdev *led_cdev)
 +{
-+	lockdep_assert_held(&led_cdev->trigger_lock);
++	guard(rwsem_write)(&led_cdev->trigger_lock);
 +
-+	if (!led_cdev->trigger)
-+		return false;
-+
-+	return led_cdev->trigger->trigger_type;
++	if (__led_trigger_is_hw_controlled(led_cdev))
++		led_trigger_set(led_cdev, NULL);
 +}
++EXPORT_SYMBOL_GPL(led_trigger_remove_hw_control);
 +
-+bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
-+{
-+	guard(rwsem_read)(&led_cdev->trigger_lock);
-+	return __led_trigger_is_hw_controlled(led_cdev);
-+}
-+EXPORT_SYMBOL_GPL(led_trigger_is_hw_controlled);
-+
- ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- 			  const struct bin_attribute *bin_attr, char *buf,
- 			  loff_t pos, size_t count)
+ static bool led_match_default_trigger(struct led_classdev *led_cdev,
+ 				      struct led_trigger *trig)
+ {
 diff --git a/include/linux/leds.h b/include/linux/leds.h
-index b16b803cc1ac..a630f5a79f6b 100644
+index a630f5a79f6b..d7d3dd905432 100644
 --- a/include/linux/leds.h
 +++ b/include/linux/leds.h
-@@ -534,6 +534,8 @@ void led_trigger_set_default(struct led_classdev *led_cdev);
+@@ -533,6 +533,7 @@ void led_trigger_blink_oneshot(struct led_trigger *trigger,
+ void led_trigger_set_default(struct led_classdev *led_cdev);
  int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trigger);
  void led_trigger_remove(struct led_classdev *led_cdev);
++void led_trigger_remove_hw_control(struct led_classdev *led_cdev);
  
-+bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev);
-+
- static inline void led_set_trigger_data(struct led_classdev *led_cdev,
- 					void *trigger_data)
- {
-@@ -584,6 +586,12 @@ static inline int led_trigger_set(struct led_classdev *led_cdev,
+ bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev);
+ 
+@@ -586,6 +587,7 @@ static inline int led_trigger_set(struct led_classdev *led_cdev,
  }
  
  static inline void led_trigger_remove(struct led_classdev *led_cdev) {}
-+
-+static inline bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
-+{
-+	return false;
-+}
-+
- static inline void led_set_trigger_data(struct led_classdev *led_cdev) {}
- static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
++static inline void led_trigger_remove_hw_control(struct led_classdev *led_cdev) {}
+ 
+ static inline bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
  {
 
 -- 
