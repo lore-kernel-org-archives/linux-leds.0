@@ -1,48 +1,48 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from sender5-op-o12.zoho.com (sender5-op-o12.zoho.com [165.173.182.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4EB4772B1;
-	Thu, 20 Aug 2026 17:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C9447DFA9;
+	Thu, 20 Aug 2026 17:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787246647; cv=pass; b=SCYOzIGw/cZ+007psVl7egx6NrGxg0imry2v/NJ1EzOCoem/ZhGGd8OxXx7oIkOwnSCBn59BpW2eqa99aL3siaRzw8mQdnmMyGwWGQHCLaUGMX585+Be2+qL+tC8Epx1KifgBFUWf5Rn8gsaOsF3MskuxcVmP1HxwVWVL+wY5AM=
+	t=1787246670; cv=pass; b=q296iXu6qkzJv483iCgor6fGswqEdJDypQxfITI4vmL2JMslvfqovWWWuqhGPXIO6P6ktS+lB3Z8ikLa/3MFZlifimNGVtojfwc6cYkx/xfiR9NxcdM3x8m6Z/JkAZV4gCziRPU4xp15GezeUx/fT7OafVOjPglDaEN6FjUlPRI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787246647; c=relaxed/simple;
-	bh=sGb6VSVsDpaOybiLlM0e0t6NTlwsXqDPsuiMFB31V+w=;
+	s=arc-20240116; t=1787246670; c=relaxed/simple;
+	bh=tQzq2e/OZO07GVyaZnP64MN4hroVZVa/p8NZJnL5htU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hi2AX3VVsuf4FpZNVp6OTZyMvwc9WJ5m94FBkVghwRHGrWCMBBWyJ8qRv1dJ92uqSnof12TJA9vJ/hkqhsyJWJHo6u2OyyDywbMoqoLqIfc/BMSAap8DpJSY+WpG60a/DgTFV0UJlH7Ys+bojMpcN96O2Ps38RiyFGoswbX9LpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=BETnaEIf; arc=pass smtp.client-ip=136.143.188.12
+	 In-Reply-To:To:Cc; b=hp1GDTDmWM5vIlDMdwB9wzzU1CKrbWV3iu4hztILCyJLkpEEQmIgeyAm12w7Zu++d5qfE/YuSybAXqxmZgTK3kzwwlRozmrHiPJh5+5hCTMRTZDwszfBDo5lNd9x0WAv7K/shXidhQ3NcHBFWu5dEo83+sJPorOFbIrKH/LckF4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=aLJC1use; arc=pass smtp.client-ip=165.173.182.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="BETnaEIf"
-ARC-Seal: i=1; a=rsa-sha256; t=1787246583; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="aLJC1use"
+ARC-Seal: i=1; a=rsa-sha256; t=1787246597; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Ls4dwrG5ua0UpTpGCKxf3FsDXlGEZMm1Ika541zyrechd/4CMyr+KifreFp1Os5idzz3gradI3tkS2Ppen3mYq2q/7Lovj2NVuEoMooC65EAIAnGIGmPg1m0O/3ziJh+7LZkrLcFJYJM5VF+xWO6YGgGDPcHo+qGDBIXAU9yKgw=
+	b=aiyJBlq2tphcGAWBCIWNt3rkKLzwpx/x9l11f5yuB7i0zmfhD8bN+XIhE6vYhRDpbq9niOccyozgIqYeq7GE1Bo28YkP3Mpe7VSbKaMZi0ZFSrpEVYJonLkQVdn+TTKpLznms1fq4S7lw3Qi3cbkObZK+WRrhVEgiMw2on3TJ7o=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787246583; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=TqMDrwYyKzdcF/ZvuzZIp1vZviiQBevit0ZMSYtrVeA=; 
-	b=elY58gze3kG623/ssCXFDGPXGRimoSOTZaycTpuQzw+OrLt68PAEG61sTSBaR5HdI8jUXePhPmXbuu/uOmgXGSjDJ7eWEby2eEExPOXEbPFOS5O+4y12DyhBLPNqgvQ3Wsfuh7mSLo/s6rQAvxiTFO22KqM3xDyXC18ZJkpSMtA=
+	t=1787246597; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=o/9KroW//cVN8v9Bs/iH3SM5mHRUq+jrbWZ3OD5IM3o=; 
+	b=IPqsgbLQduBE+MG45s4FgQ+4SJMYUaEySFo3NCAjT/KTWO/FjoD7c15bHZM3/R4peifWBvxBlYqzJ5tSlFR6EaI8c6G9+Z+cE8K21Pu4EGv+Uwu8NunnHWQ3aWqvwE+x9Q5QFKjaAd1VnZZnbIbOq0mVLOnaV8VO/SL2ZnOUC1c=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246583;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246597;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=TqMDrwYyKzdcF/ZvuzZIp1vZviiQBevit0ZMSYtrVeA=;
-	b=BETnaEIfxAsKiYq4nK6x/6hj1zpj+k/Wx+KsWFQS+l8+UPSCz2//M+qaUENo1/FV
-	Ot6GFa2Xo4CiMmOcUedZw/qPv47Dg6lGWxOhQWw2r7lV+NkeJ4IFjfg8MKjxCzpOg2w
-	ddrv5a+V5n7v5FLppGeol+H0bNOOddlp23H6MPx18/PhC5oxswq/8LHMAl+gFdkZl24
-	z/0C/lKjuPEgaqX6Dnx82DQuL4168koxspxZc4/xGYofGi40lhs+k4r9BwnE68JWrKg
-	uq+vom+7AzMLx4FVgBXPmTnNusGMKib6OT1UJwbqfhC0qcIBTFdyx6wiV+rY8Ac/lNW
-	hdKIopXAMw==
-Received: by mx.zohomail.com with SMTPS id 178724658140298.33224116920258;
-	Thu, 20 Aug 2026 10:23:01 -0700 (PDT)
+	bh=o/9KroW//cVN8v9Bs/iH3SM5mHRUq+jrbWZ3OD5IM3o=;
+	b=aLJC1useWgEP4wDogdkQfQzVFMgmhUjqG0JX0vmrO/M98pFJbjmGd9/CgjNHz2m6
+	HlIDhYTGFyM2w1DlQoRaH9Ex5trU9zLFXFd9JEFx9Qc7xQ309j9a3N+FXPMoWsQVtVp
+	YiNpl1BNitEUBBKKmHfWNVALQFEYZkJbEAgIVxJW7kbPPztgpW60gi6JdMD4z6qaUJp
+	lQQzzAgzg9Jg3jAKalbzsO//Jm75tby20jGMvHkYle+c0rDM82V2C5lv3+rM+ZQvvmb
+	6xEEHP601x9lbtaSpVB+RFesY/IoypJFN8KFJ3D83DZhUKsng0bGJQQE3eIZcDLNIfM
+	klfNx6gxNA==
+Received: by mx.zohomail.com with SMTPS id 1787246595282104.31132602934963;
+	Thu, 20 Aug 2026 10:23:15 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
-Date: Fri, 21 Aug 2026 01:21:58 +0800
-Subject: [PATCH v5 03/12] leds: trigger: Add offloaded() callback and
- provide trigger_may_offload attribute
+Date: Fri, 21 Aug 2026 01:21:59 +0800
+Subject: [PATCH v5 04/12] leds: cros_ec: Implement offloaded() trigger
+ callback
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260821-leds-trigger-hw-changed-v5-3-3e00d6c4a936@rong.moe>
+Message-Id: <20260821-leds-trigger-hw-changed-v5-4-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 In-Reply-To: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -73,235 +73,46 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
 X-Mailer: b4 0.17-dev-1f2f7
 X-ZohoMailClient: External
 
-There are multiple triggers implementing hardware control. However, the
-LED trigger core doesn't really know the hardware control (offloaded)
-state since the coordination is done directly between the trigger and
-the LED driver. It can only assume private triggers as offloaded and
-generic ones as not offloaded.
+"chromeos-auto" is a private hardware control trigger which always stays
+in hardware control. Implement offloaded() callback with its return
+value to be always true to reflect this.
 
-Add an offloaded() callback so that triggers can report their offloaded
-states to the LED trigger core. When unimplemented, it defaults to true
-for private triggers and false for generic ones to keep the current
-behavior unchanged.
-
-With that, provide a new attribute "trigger_may_offload", so that
-userspace can determine:
-
-- if the LED device supports hardware control (supported => visible)
-- which trigger is the hardware control trigger selected by the LED
-  device
-- if the trigger is selected ("<foo_trigger>")
-- if the trigger is offloaded ("[foo_trigger]")
-
-Note: the documentation describes the attribute as "returning a list"
-despite the LED core currently only supports one hardware control
-trigger per LED device. This is intentional to make the attribute
-extensible in the future without breaking userspace.
-
+Reviewed-by: Thomas Weißschuh <linux@weissschuh.net>
 Acked-by: Ike Panhc <ikepanhc@gmail.com>
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
-Changes in v3:
-- Rearrange the series so that the code using the offloaded() callback is
-  introduced before the driver implementation (thanks Thomas Weißschuh)
-- Reword documentation (ditto)
-- Adopt guard() and lockdep (ditto)
-- Adopt __led_trigger_is_hw_controlled() from newly-integrated PATCH 1
+I am aware of a pre-existing bug on probe, i.e., non-idempotent trigger
+registration. Since the driver is very platform-specific and the
+relevant platforms never have more than one such device, the bug is
+never triggered on real devices. Therefore, fixing it is far beyond the
+scope of the series.
 ---
- Documentation/ABI/testing/sysfs-class-led | 22 ++++++++++++++++++++++
- Documentation/leds/leds-class.rst         | 20 ++++++++++++++++++++
- drivers/leds/led-class.c                  | 22 ++++++++++++++++++++++
- drivers/leds/led-triggers.c               | 30 ++++++++++++++++++++++++++++++
- drivers/leds/leds.h                       |  2 ++
- include/linux/leds.h                      |  1 +
- 6 files changed, 97 insertions(+)
+ drivers/leds/leds-cros_ec.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index d4c918cc11a1..5afb307c935a 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -78,6 +78,28 @@ Description:
- 		(which would often be configured in the device tree for the
- 		hardware).
- 
-+What:		/sys/class/leds/<led>/trigger_may_offload
-+Date:		August 2026
-+KernelVersion:	7.3
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Names and states of triggers that may be offloaded to hardware.
-+		Such triggers are also called "hardware control trigger" in some
-+		context.
-+
-+		Only exists when the LED supports trigger offload.
-+
-+		Reading this file returns a list of triggers that are capable to
-+		be offloaded. The optional brackets around the trigger name
-+		indicate the state of the current trigger:
-+
-+		- `foo_trigger`: the trigger is not selected.
-+		- `<foo_trigger>`: the trigger is selected, but falls back to
-+		  software blink for some reason (e.g., incompatible trigger
-+		  parameters)
-+		- `[foo_trigger]`: the trigger is selected and offloaded to
-+		  hardware.
-+
- What:		/sys/class/leds/<led>/inverted
- Date:		January 2011
- KernelVersion:	2.6.38
-diff --git a/Documentation/leds/leds-class.rst b/Documentation/leds/leds-class.rst
-index 3913966cfdac..2d41a6db602c 100644
---- a/Documentation/leds/leds-class.rst
-+++ b/Documentation/leds/leds-class.rst
-@@ -242,6 +242,9 @@ ops and needs to declare specific support for the supported triggers.
- 
- With hw control we refer to the LED driven by hardware.
- 
-+A sysfs attribute `trigger_may_offload` is provided for userspace to
-+query supported triggers and their states.
-+
- LED driver must define the following value to support hw control:
- 
-     - hw_control_trigger:
-@@ -298,6 +301,15 @@ LED driver must implement the following API to support hw control:
-                 Returns a pointer to a struct device or NULL if nothing
-                 is currently attached.
- 
-+LED trigger should implement the following API to indicate hw control:
-+    - offloaded:
-+                return a boolean indicating if the trigger is currently
-+                offloaded to hardware.
-+
-+                If a trigger doesn't implement this callback, the default
-+                value will be true for private triggers and false for generic
-+                ones.
-+
- LED driver can activate additional modes by default to workaround the
- impossibility of supporting each different mode on the supported trigger.
- Examples are hardcoding the blink speed to a set interval, enable special
-@@ -311,6 +323,14 @@ the end use hw_control_set to activate hw control.
- A trigger can use hw_control_get to check if a LED is already in hw control
- and init their flags.
- 
-+Alternatively, a private trigger can be implemented along with the LED driver if
-+the LED's hardware control doesn't fit any generic trigger. To associate the
-+private trigger with the LED classdev, their `trigger_type` must be the same. To
-+declare that the private trigger provides hardware control for the associated
-+LED classdev, set the `hw_control_trigger` string to the trigger's name. Since
-+both the LED classdev and the private trigger are in the same LED driver, it's
-+not necessary for them to coordinate via `hw_control_*` callbacks.
-+
- When the LED is in hw control, no software blink is possible and doing so
- will effectively disable hw control.
- 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index ab61e41a00a3..2460fcf0c469 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -96,8 +96,30 @@ static const struct bin_attribute *const led_trigger_bin_attrs[] = {
- 	&bin_attr_trigger,
- 	NULL,
- };
-+
-+static DEVICE_ATTR_RO(trigger_may_offload);
-+static struct attribute *led_trigger_attrs[] = {
-+	&dev_attr_trigger_may_offload.attr,
-+	NULL
-+};
-+
-+static umode_t led_trigger_is_visible(struct kobject *kobj,
-+				      struct attribute *attr,
-+				      int idx)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+
-+	if (attr == &dev_attr_trigger_may_offload.attr)
-+		return led_cdev->hw_control_trigger ? attr->mode : 0;
-+
-+	return attr->mode;
-+}
-+
- static const struct attribute_group led_trigger_group = {
- 	.bin_attrs = led_trigger_bin_attrs,
-+	.attrs = led_trigger_attrs,
-+	.is_visible = led_trigger_is_visible,
- };
- #endif
- 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 804a04b326c4..de17a8bbb4d4 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -42,6 +42,10 @@ static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
- 	if (!led_cdev->trigger)
- 		return false;
- 
-+	if (led_cdev->trigger->offloaded)
-+		return led_cdev->trigger->offloaded(led_cdev);
-+
-+	/* Otherwise assume private triggers as always offloaded. */
- 	return led_cdev->trigger->trigger_type;
+diff --git a/drivers/leds/leds-cros_ec.c b/drivers/leds/leds-cros_ec.c
+index 1844d0cd5f52..6db83d015277 100644
+--- a/drivers/leds/leds-cros_ec.c
++++ b/drivers/leds/leds-cros_ec.c
+@@ -85,12 +85,18 @@ static int cros_ec_led_trigger_activate(struct led_classdev *led_cdev)
+ 	return cros_ec_led_send_cmd(priv->cros_ec, &arg);
  }
  
-@@ -341,6 +345,32 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_trigger_set_default);
- 
-+ssize_t trigger_may_offload_show(struct device *dev,
-+				 struct device_attribute *attr, char *buf)
++static bool cros_ec_led_trigger_offloaded(struct led_classdev *led_cdev)
 +{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct led_trigger *trig;
-+	bool hit, offloaded;
-+	int len;
-+
-+	guard(mutex)(&led_cdev->led_access);
-+	guard(rwsem_read)(&led_cdev->trigger_lock);
-+
-+	trig = led_cdev->trigger;
-+
-+	offloaded = __led_trigger_is_hw_controlled(led_cdev);
-+	hit = offloaded || (trig && !strcmp(led_cdev->hw_control_trigger, trig->name));
-+
-+	/* [offloaded] <active_but_not_offloaded> inactive */
-+	len = sysfs_emit(buf, "%s%s%s\n",
-+			 offloaded ? "[" : (hit ? "<" : ""),
-+			 led_cdev->hw_control_trigger,
-+			 offloaded ? "]" : (hit ? ">" : ""));
-+
-+	return len;
++	return true;
 +}
-+EXPORT_SYMBOL_GPL(trigger_may_offload_show);
 +
- /* LED Trigger Interface */
+ static struct led_hw_trigger_type cros_ec_led_trigger_type;
  
- int led_trigger_register(struct led_trigger *trig)
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index bee46651e068..b08a289397e4 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -27,6 +27,8 @@ ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
- ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
- 			const struct bin_attribute *bin_attr, char *buf,
- 			loff_t pos, size_t count);
-+ssize_t trigger_may_offload_show(struct device *dev,
-+				 struct device_attribute *attr, char *buf);
+ static struct led_trigger cros_ec_led_trigger = {
+ 	.name = "chromeos-auto",
+ 	.trigger_type = &cros_ec_led_trigger_type,
+ 	.activate = cros_ec_led_trigger_activate,
++	.offloaded = cros_ec_led_trigger_offloaded,
+ };
  
- extern struct rw_semaphore leds_list_lock;
- extern struct list_head leds_list;
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index d7d3dd905432..cc664da33e94 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -485,6 +485,7 @@ struct led_trigger {
- 	const char	 *name;
- 	int		(*activate)(struct led_classdev *led_cdev);
- 	void		(*deactivate)(struct led_classdev *led_cdev);
-+	bool		(*offloaded)(struct led_classdev *led_cdev);
- 
- 	/* Brightness set by led_trigger_event */
- 	enum led_brightness brightness;
+ static int cros_ec_led_brightness_set_blocking(struct led_classdev *led_cdev,
 
 -- 
 2.55.0
