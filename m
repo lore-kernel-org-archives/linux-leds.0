@@ -1,48 +1,48 @@
 Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06EB47B420;
-	Thu, 20 Aug 2026 17:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E18546D091;
+	Thu, 20 Aug 2026 17:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787246803; cv=pass; b=suzZGkAYpLbVyow4ZTa8mNipB27UgsXYag9P3sBBYksL7kmLuwHpjkwlyB/pwL9rXx6TVfu0z+Bpu6oX+txRl/9UQ09fGoRmJ4kKiql5qPTdY6aX9WeRK4pAYADWk2eoJYszjg9eCylgFs8WNLY8VLTtarR5GL/y3KgKe/sQGLI=
+	t=1787246824; cv=pass; b=mIU0E2ssSMzqeCMwNX+AXwtlg3t0cwNPoXkmbkb9V52f3OwXuDt7r5dzIfrVo4tmFfH9IhilwmaJRev+ieHSfAnthPcw9Ke/IAKP0LD0urdgYmR+O3d0B9oJrS3g/WNrkBO1DMoqvlTWeCl/MSOj9ndgkgtg05B+LquLlk98ync=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787246803; c=relaxed/simple;
-	bh=ktzf2ZH3k1wxARkKhoxyN/99UgGamJEZKjsSqbGw0AM=;
+	s=arc-20240116; t=1787246824; c=relaxed/simple;
+	bh=uY3aJ3V4+uRDTupkVozUZkTeHtIIg0wpkvwjj/3sMQk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ljcfVTj15PDlKUNHJ2jM7Kc4zl1raVprDUnXloXWcQjXIYkI3QkNDDtAwPfJUvb4KmgU4UsMGXH9RjJFvbsiVddn8qh8mVbvwAN2rJJF3N3HjHF4NWbpZVKXeDeRmRQoZs/jsyXMGL0jIczupN0M+nmgONTbh+Ueec2pEtXVJLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=kc/tyzQw; arc=pass smtp.client-ip=136.143.188.12
+	 In-Reply-To:To:Cc; b=q80H/uHjmDJBUyBRYZ3g3zKq9vsZw8PyvdU7D5LKSBZSRhGwuYJC38Adx0OaYvTz20g8lbTb6fg+SlKHWOKpV/TA5tCJz6smtFuYlQtSixX9W0HYD1FV+X40rmbAkwCQZoOhxtHaU6oWSv84ChZ1psa1DP+yM75Mex+038V/RQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=YYMUnnDo; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="kc/tyzQw"
-ARC-Seal: i=1; a=rsa-sha256; t=1787246671; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="YYMUnnDo"
+ARC-Seal: i=1; a=rsa-sha256; t=1787246681; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=eS4hh1eei9fwQN8sqDrOCB/tw/z9uOXIRluz2czmaPjgkjWpMLtVnhM+Oqj3MIdM+urZFqVcUljL+rsyj5/wFJ9iCWD5f6VPDAPfjxiuqtpPg0xCLxIe8aNaiR/YRoTkG7K7Nle1dRFG9zchgv6UnYXMwFFrKFADN7F009vSLW0=
+	b=eWu/AA63DVZBiEzPsZC49MjUOMH3CP0LPaMwPbWYEI1+85D0XuGL5iJYcqXFmdSq4eB4VXCeT4/cZgcpbGIszrJKT4kZJm1NnjUfMhDYzWKO+u15z97N2ky1MNnmjLOBJJvSo2Na0+ukvQm88FyNLHyKZPjX2Q4uYIh3EEqGo2E=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787246671; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=McKAgm5xQbW/yqY9fYzZE4mK9mmotvG2ZfMMzTpOWaY=; 
-	b=iLeq47MQiWEh8TRC06EnxDIFImDJh6zPxv0qgwoTTKHapLkTa/p6RHP3FczwTTSLuTbTsiq8YTcYKlkeA4kQkojYRAsihlQPQjOg+Eow3ljYC4DaU+W62f95RGk1GLBBE3JddWsN74ApxZYEHaq94tXMNOgu1fxsqgE5uMhC0MM=
+	t=1787246681; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=lGz2Bk0e2fbk9+jSApLZDtRQo06iFi5Z89c+Nobi7ag=; 
+	b=WpNRgwxIqgeixf2FucO0wxV3vmpfDzkGE/QB59lOc85rQ1TGmrlzzxDUQ0I171pncih24+dPjINoqcl0jv9VNVhSHWV4BrR2UViROj49Mv/z1oHoihWWZFwUXLC6Jc6TjVEFO4cazBLaOZfjxuO3Dv0tjh2cyZ0ZQCT7xmhRan0=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246671;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246681;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=McKAgm5xQbW/yqY9fYzZE4mK9mmotvG2ZfMMzTpOWaY=;
-	b=kc/tyzQwwEtW7xzmIGDbyIey65u3rcCFmk3ADQJ+B3JKrqGCoGG8Js7eHnatJKNU
-	VXPm+o/mVkl3iqWaJvRvtPtCblmh+/XdPgQhREE62oF2gP5XPrL2Pohpzcw1MZZr4zY
-	RUnGPUeiwmww76eNdoIE8DUMLx25Ooggk7JAjsPRYNBTSMFHeZsLAwD0BJWk+YkGhdU
-	gRvrVU1OepRVbu2lWzZ8X69+IvuMibM5e4aXeuNWwakiZATr0KmsJD+kN3n6GChBQmK
-	6bG2GYgIJkncXNJuYnGNR30K5wBD0cIuTZA70w/YHFUMaF7dWWtwGIh4W0aH2zree36
-	XtDgZqRq0Q==
-Received: by mx.zohomail.com with SMTPS id 1787246669127589.4961319337049;
-	Thu, 20 Aug 2026 10:24:29 -0700 (PDT)
+	bh=lGz2Bk0e2fbk9+jSApLZDtRQo06iFi5Z89c+Nobi7ag=;
+	b=YYMUnnDolYM6Q9fDvflMf81M70UGjhjtOvWl69AMoW8wsqCLZymu2FPjTg1Of7q0
+	4jR59k3E8cH9MjJZAtxq9bGUHQfyVlm+g8TCmigg1F14FBoZgBIlZZoqvn2U6iTWDH8
+	iepdasH0nQEYhASd2k1U8UeiTvkoNHw2J4KxO5pT+7AxU870em9otClYnH1IUnrUB0K
+	Dt8ApmyU5gKOqEuXv7cj1kEb4z7l9KUSJ6jv8aTsHIEEiNAJJ38EelzgAzDSeMLa7uN
+	z5Kzqr5afRGmTxMxtx96lTkaQIUwYt8QfCNAQEIL0HYnDhsLFedxHdsRJGwoR21Xxy/
+	tCOfCWTR5Q==
+Received: by mx.zohomail.com with SMTPS id 1787246680152165.46997538353605;
+	Thu, 20 Aug 2026 10:24:40 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
-Date: Fri, 21 Aug 2026 01:22:05 +0800
-Subject: [PATCH v5 10/12] platform/x86: ideapad-laptop: Decouple hardware &
- classdev brightness for keyboard backlight
+Date: Fri, 21 Aug 2026 01:22:06 +0800
+Subject: [PATCH v5 11/12] platform/x86: ideapad-laptop: Serialize keyboard
+ backlight notifications
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260821-leds-trigger-hw-changed-v5-10-3e00d6c4a936@rong.moe>
+Message-Id: <20260821-leds-trigger-hw-changed-v5-11-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 In-Reply-To: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -73,309 +73,64 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
 X-Mailer: b4 0.17-dev-1f2f7
 X-ZohoMailClient: External
 
-Some recent models come with an ambient light sensor (ALS). On these
-models, their EC will automatically set the keyboard backlight to an
-appropriate brightness when the effective "hardware brightness" is 3.
-"Hardware brightness" can't be perfectly mapped to an LED classdev
-brightness, but the EC does use this predefined brightness value to
-represent auto mode.
+ACPI notifications are delivered in dedicated work contexts and may
+arrive simultaneously. In the following change, much work will be done
+while handling the notification, which could lead to potential race
+conditions.
 
-Currently, the code processing keyboard backlight is coupled with LED
-classdev, making it hard to expose the auto brightness (ALS) mode to the
-userspace.
-
-As the first step toward the goal, decouple hardware brightness from LED
-classdev brightness, and update comments about corresponding backlight
-modes.
-
-Since upcoming changes will heavily rely on kbd_bl.last_hw_brightness,
-also convert it into an atomic_t to prevent potential race conditions.
-
-To minimalize the diff set in upcoming changes, a trivial refactor
-also converts the initialization path into another equivalent form.
+Introduce a new mutex to serialize keyboard backlight notifications to
+prevent potential race conditions.
 
 Acked-by: Ike Panhc <ikepanhc@gmail.com>
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
 Changes in v4:
-- Add missing #include (Thanks Ilpo Järvinen)
-- Address concerns from Sashiko
-  - Reject insane hardware brightness
-  - https://sashiko.dev/#/patchset/20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe?part=9
+- Remove needless #include (Thanks Ilpo Järvinen)
 ---
- drivers/platform/x86/lenovo/ideapad-laptop.c | 151 +++++++++++++++++++--------
- 1 file changed, 106 insertions(+), 45 deletions(-)
+ drivers/platform/x86/lenovo/ideapad-laptop.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
-index 8213524504ee..2fa2665f35d6 100644
+index 2fa2665f35d6..7f7b1e30c326 100644
 --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
 +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-@@ -9,14 +9,17 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
- #include <linux/acpi.h>
-+#include <linux/atomic.h>
- #include <linux/backlight.h>
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
- #include <linux/bug.h>
- #include <linux/cleanup.h>
-+#include <linux/compiler.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-+#include <linux/dev_printk.h>
- #include <linux/dmi.h>
- #include <linux/i8042.h>
- #include <linux/init.h>
-@@ -134,10 +137,31 @@ enum {
- };
- 
- /*
-- * These correspond to the number of supported states - 1
-- * Future keyboard types may need a new system, if there's a collision
-- * KBD_BL_TRISTATE_AUTO has no way to report or set the auto state
-- * so it effectively has 3 states, but needs to handle 4
-+ * The enumeration has two purposes:
-+ *   - as an internal identifier for all known types of keyboard backlight
-+ *   - as a mandatory parameter of the KBLC command
-+ *
-+ * For each type, the hardware brightness values are defined as follows:
-+ * +--------------------------+----------+-----+------+------+
-+ * |      Hardware brightness |        0 |   1 |    2 |    3 |
-+ * | Type                     |          |     |      |      |
-+ * +--------------------------+----------+-----+------+------+
-+ * | KBD_BL_STANDARD          |      off |  on |  N/A |  N/A |
-+ * +--------------------------+----------+-----+------+------+
-+ * | KBD_BL_TRISTATE          |      off | low | high |  N/A |
-+ * +--------------------------+----------+-----+------+------+
-+ * | KBD_BL_TRISTATE_AUTO     |      off | low | high | auto |
-+ * +--------------------------+----------+-----+------+------+
-+ *
-+ * We map LED classdev brightness for KBD_BL_TRISTATE_AUTO as follows:
-+ * +--------------------------+----------+-----+------+
-+ * |  LED classdev brightness |        0 |   1 |    2 |
-+ * | Operation                |          |     |      |
-+ * +--------------------------+----------+-----+------+
-+ * | Read                     | off/auto | low | high |
-+ * +--------------------------+----------+-----+------+
-+ * | Write                    |      off | low | high |
-+ * +--------------------------+----------+-----+------+
-  */
- enum {
- 	KBD_BL_STANDARD      = 1,
-@@ -145,6 +169,8 @@ enum {
- 	KBD_BL_TRISTATE_AUTO = 3,
- };
- 
-+#define KBD_BL_AUTO_MODE_HW_BRIGHTNESS	3
-+
- #define KBD_BL_QUERY_TYPE		0x1
- #define KBD_BL_TRISTATE_TYPE		0x5
- #define KBD_BL_TRISTATE_AUTO_TYPE	0x7
-@@ -203,7 +229,7 @@ struct ideapad_private {
- 		bool initialized;
+@@ -29,6 +29,7 @@
+ #include <linux/kernel.h>
+ #include <linux/leds.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/platform_device.h>
+ #include <linux/platform_profile.h>
+ #include <linux/power_supply.h>
+@@ -230,6 +231,8 @@ struct ideapad_private {
  		int type;
  		struct led_classdev led;
--		unsigned int last_brightness;
-+		atomic_t last_hw_brightness;
+ 		atomic_t last_hw_brightness;
++
++		struct mutex notif_mutex; /* protects notifications */
  	} kbd_bl;
  	struct {
  		bool initialized;
-@@ -1592,7 +1618,24 @@ static int ideapad_kbd_bl_check_tristate(int type)
- 	return (type == KBD_BL_TRISTATE) || (type == KBD_BL_TRISTATE_AUTO);
- }
- 
--static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
-+static int ideapad_kbd_bl_brightness_parse(struct ideapad_private *priv, int hw_brightness)
-+{
-+	/* Off, low or high */
-+	if (hw_brightness <= priv->kbd_bl.led.max_brightness)
-+		return hw_brightness;
-+
-+	/* Auto (controlled by EC according to ALS), report as off */
-+	if (priv->kbd_bl.type == KBD_BL_TRISTATE_AUTO &&
-+	    hw_brightness == KBD_BL_AUTO_MODE_HW_BRIGHTNESS)
-+		return 0;
-+
-+	/* Unknown value */
-+	dev_warn(&priv->platform_device->dev,
-+		 "Unknown keyboard backlight value: %d", hw_brightness);
-+	return -EINVAL;
-+}
-+
-+static int ideapad_kbd_bl_hw_brightness_get(struct ideapad_private *priv)
- {
- 	unsigned long value;
- 	int err;
-@@ -1606,21 +1649,7 @@ static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
- 		if (err)
- 			return err;
- 
--		/* Convert returned value to brightness level */
--		value = FIELD_GET(KBD_BL_GET_BRIGHTNESS, value);
--
--		/* Off, low or high */
--		if (value <= priv->kbd_bl.led.max_brightness)
--			return value;
--
--		/* Auto, report as off */
--		if (value == priv->kbd_bl.led.max_brightness + 1)
--			return 0;
--
--		/* Unknown value */
--		dev_warn(&priv->platform_device->dev,
--			 "Unknown keyboard backlight value: %lu", value);
--		return -EINVAL;
-+		return FIELD_GET(KBD_BL_GET_BRIGHTNESS, value);
- 	}
- 
- 	err = eval_hals(priv->adev->handle, &value);
-@@ -1630,6 +1659,16 @@ static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
- 	return !!test_bit(HALS_KBD_BL_STATE_BIT, &value);
- }
- 
-+static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
-+{
-+	int hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
-+
-+	if (hw_brightness < 0)
-+		return hw_brightness;
-+
-+	return ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
-+}
-+
- static enum led_brightness ideapad_kbd_bl_led_cdev_brightness_get(struct led_classdev *led_cdev)
- {
- 	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
-@@ -1637,32 +1676,37 @@ static enum led_brightness ideapad_kbd_bl_led_cdev_brightness_get(struct led_cla
- 	return ideapad_kbd_bl_brightness_get(priv);
- }
- 
--static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv, unsigned int brightness)
-+static int ideapad_kbd_bl_hw_brightness_set(struct ideapad_private *priv, int hw_brightness)
- {
--	int err;
- 	unsigned long value;
- 	int type = priv->kbd_bl.type;
-+	int err;
- 
- 	if (ideapad_kbd_bl_check_tristate(type)) {
--		if (brightness > priv->kbd_bl.led.max_brightness)
--			return -EINVAL;
--
--		value = FIELD_PREP(KBD_BL_SET_BRIGHTNESS, brightness) |
-+		value = FIELD_PREP(KBD_BL_SET_BRIGHTNESS, hw_brightness) |
- 			FIELD_PREP(KBD_BL_COMMAND_TYPE, type) |
- 			KBD_BL_COMMAND_SET;
- 		err = exec_kblc(priv->adev->handle, value);
- 	} else {
--		err = exec_sals(priv->adev->handle, brightness ? SALS_KBD_BL_ON : SALS_KBD_BL_OFF);
-+		value = hw_brightness ? SALS_KBD_BL_ON : SALS_KBD_BL_OFF;
-+		err = exec_sals(priv->adev->handle, value);
- 	}
--
- 	if (err)
- 		return err;
- 
--	priv->kbd_bl.last_brightness = brightness;
-+	atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
- 
- 	return 0;
- }
- 
-+static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv, int brightness)
-+{
-+	if (brightness > priv->kbd_bl.led.max_brightness)
-+		return -EINVAL;
-+
-+	return ideapad_kbd_bl_hw_brightness_set(priv, brightness);
-+}
-+
- static int ideapad_kbd_bl_led_cdev_brightness_set(struct led_classdev *led_cdev,
- 						  enum led_brightness brightness)
- {
-@@ -1673,26 +1717,29 @@ static int ideapad_kbd_bl_led_cdev_brightness_set(struct led_classdev *led_cdev,
- 
- static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
- {
--	int brightness;
-+	int hw_brightness, brightness, last_hw_brightness;
- 
+@@ -1722,6 +1725,8 @@ static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
  	if (!priv->kbd_bl.initialized)
  		return;
  
--	brightness = ideapad_kbd_bl_brightness_get(priv);
--	if (brightness < 0)
-+	hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
-+	if (hw_brightness < 0)
++	guard(mutex)(&priv->kbd_bl.notif_mutex);
++
+ 	hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
+ 	if (hw_brightness < 0)
  		return;
- 
--	if (brightness == priv->kbd_bl.last_brightness)
--		return;
-+	brightness = ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
-+	if (brightness < 0)
-+		return; /* Reject insane values early. */
- 
--	priv->kbd_bl.last_brightness = brightness;
-+	last_hw_brightness = atomic_xchg(&priv->kbd_bl.last_hw_brightness, hw_brightness);
-+	if (hw_brightness == last_hw_brightness)
-+		return;
- 
- 	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightness);
- }
- 
- static int ideapad_kbd_bl_init(struct ideapad_private *priv)
- {
--	int brightness, err;
-+	int hw_brightness, err;
- 
- 	if (!priv->features.kbd_bl)
- 		return -ENODEV;
-@@ -1700,21 +1747,35 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
+@@ -1747,6 +1752,10 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
  	if (WARN_ON(priv->kbd_bl.initialized))
  		return -EEXIST;
  
--	if (ideapad_kbd_bl_check_tristate(priv->kbd_bl.type))
--		priv->kbd_bl.led.max_brightness = 2;
--	else
--		priv->kbd_bl.led.max_brightness = 1;
-+	hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
-+	if (hw_brightness < 0)
-+		return hw_brightness;
- 
--	brightness = ideapad_kbd_bl_brightness_get(priv);
--	if (brightness < 0)
--		return brightness;
-+	atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
- 
--	priv->kbd_bl.last_brightness = brightness;
- 	priv->kbd_bl.led.name                    = "platform::" LED_FUNCTION_KBD_BACKLIGHT;
- 	priv->kbd_bl.led.brightness_get          = ideapad_kbd_bl_led_cdev_brightness_get;
- 	priv->kbd_bl.led.brightness_set_blocking = ideapad_kbd_bl_led_cdev_brightness_set;
- 	priv->kbd_bl.led.flags                   = LED_BRIGHT_HW_CHANGED | LED_RETAIN_AT_SHUTDOWN;
- 
-+	switch (priv->kbd_bl.type) {
-+	case KBD_BL_TRISTATE_AUTO:
-+	case KBD_BL_TRISTATE:
-+		priv->kbd_bl.led.max_brightness = 2;
-+		break;
-+	case KBD_BL_STANDARD:
-+		priv->kbd_bl.led.max_brightness = 1;
-+		break;
-+	default:
-+		/* This has already been validated by ideapad_check_features(). */
-+		unreachable();
-+	}
-+
-+	/* Reject insane values. */
-+	err = ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
-+	if (err < 0)
++	err = devm_mutex_init(&priv->platform_device->dev, &priv->kbd_bl.notif_mutex);
++	if (err)
 +		return err;
 +
- 	err = led_classdev_register(&priv->platform_device->dev, &priv->kbd_bl.led);
- 	if (err)
- 		return err;
+ 	hw_brightness = ideapad_kbd_bl_hw_brightness_get(priv);
+ 	if (hw_brightness < 0)
+ 		return hw_brightness;
 
 -- 
 2.55.0
