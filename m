@@ -1,48 +1,48 @@
 Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA2E47F2FF;
-	Thu, 20 Aug 2026 17:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7F247F2FF;
+	Thu, 20 Aug 2026 17:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787246735; cv=pass; b=SpNpE/W1EOwz/IL6foFwT4h8zs39R69X8/wxTKrqdd7zmEvElr3x4xslI8PdAhP6Eo5eE/TNolCVDceW9vamK0iyEimicWnAg/XMVtzojzuCyUEQ8zSCsP9hTANbW+KPq+Bef6gvZrKyYX/ZLKAE26RXqW0xT6SfS+oeSnUsyoQ=
+	t=1787246759; cv=pass; b=M6JxvR2WWAnbtfGETXDGQwF1J7i1ZPQuzz/bKRVv7alO3vzPNKQbeB+y60Xf9Qt0g4L8xa23zLH0rm6D3E2jMglzGaFuP+etW5D23acKqwwpDt3npVvDDrqhf9QQEEEwY3PjC9cYh6pWJwxXNosXqTjWyqbK3ZjJDioGZMZ5h1w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787246735; c=relaxed/simple;
-	bh=rP1FJCLNCgQ4/odsC5rOyOEqiN+aO/Z0ZBAZXBsiOTg=;
+	s=arc-20240116; t=1787246759; c=relaxed/simple;
+	bh=rhL0Xc0UlPWF/EW+fV8C+dr6SIxsSVYzBHCEzqP+MOM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mIN1B1dlTAOnlry0aDhdye7e+y9vxHbmOk7m16VYHVSokk3thTQ15fsQ7c95fVC00GHM55Dn/TZkn89AtYRp/C6/A57h1A1AYw4y1Z9xWqChUBxfCxdCoHMmG5VZh8KppjmT+X9y7QvWQZgCnWJTVAPJx6rCXLA5/Br4u5Rv1Gg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=Ap4uB9lu; arc=pass smtp.client-ip=136.143.188.12
+	 In-Reply-To:To:Cc; b=B5wE5K9HSLE9MEaI1crHP85yT5bENifkgPpIHJuz7DAZWjYVvMDs8Yge4usvO9dnRi/ZLaar22PqvhTMNRmYUs+g2sxkrz0ACE1oJ2xS7xGegNlAWPpiZRGWqZCk0fV8iOk7MAJYObLR/4Q6KazsyKAMF8I2bo+ceDWtzdUBvWo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=Pd6gIj2z; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="Ap4uB9lu"
-ARC-Seal: i=1; a=rsa-sha256; t=1787246639; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="Pd6gIj2z"
+ARC-Seal: i=1; a=rsa-sha256; t=1787246649; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=bJhRi/3h71IG734cbRiVqnIqyVsekWSdKURpF8UJKZxcDLZmcH9uCjJ6/YQRNgblk0pInz4VimNRm3KmHiT3qCla4uvJsfeqap3cZLgz8Lzl4p/GyU2TSfqxOZmv5t0RoftIzWw/moTkIIkG/UwU0uAGb+6T6MbMX2g9cnjleAs=
+	b=ZLnq9rcYELO9dKukZwPiCojv1OPefPHNC9VX7nvgMk5ghHotGxeu1hT0P4WYOHU5TtvgMkT6GhireGTzITIPYyULTsN8XyFEP4LnLpkmJt7ZprMXqY2gTZw64FX7ZYRY0CKUFJH2pWLNPA7n9Hly06EzBEbQYDflmmCSCihbxQg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787246639; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=2j5a5rGmXReIsQy66ZTp+dwI3KKvaZ3uYw/Bf/oap+A=; 
-	b=Wh+czJLJIk+KolEsbnXNcDKLxMu5oJQmaEDDJJYjQvW7b/nkaIZqpeJOidTNe761NLDCLKvoGx89ZXdTbdDG0+BKZEuciDQYEEnlzYzakRdlG3LczXSilFUmNs1sT5GejfiSRoncDcV0LyF+aNMsmEaTGeeSq1Fhaj7DnSeBPow=
+	t=1787246649; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7mwpPRVkUKlwD5B2Uq/1luJzXpKKluzvLSdg1lVZGTA=; 
+	b=cYQKI0tK2pxnaFc2xHajecmdZre8/vS03Gv5204/+TFmXaFxe2yDjNAX11JJaSnlTsHUvP8c9pXqdurJU7xEibDQ33dbnra1QOq4WOYKxtpnyC05R2CikDgfTz3GCtHVMi/9NYH4JD4X4jJQqyTaqiwiAC2ds4qrjFZBfXAmKMs=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246639;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246649;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=2j5a5rGmXReIsQy66ZTp+dwI3KKvaZ3uYw/Bf/oap+A=;
-	b=Ap4uB9lu0K6HsoM9wmQwAVtzd8sc8lLP0v2+tMr+QVo71izYpPhpXNrE/8K4Vtmf
-	U6N/g1LuI9YH7v1TVhqpkIbNZ2FNH+NdybDvOfUMhUciCc4MluFKHBhHJb2r+DhvxPH
-	1z6n3lzwQ0a7XUj+C7qJeOhqJVdPPU0rkZlw/uwoAnf6MzSXyYATZrZ+1rbpVeAqCqr
-	c7C6cQwHOFweCouLXU7sYJzy8BJq+qWpsNnLci6ogS9EhhXMaVDA6uVCM2yuWKHy1nC
-	wA6gFM/rBB3+cVRJdbnvkpm3hvXGb2XNEI3vPJTfgw0bAqLHLPAc1XKchAllcYh/hmI
-	LqK3rwE0+g==
-Received: by mx.zohomail.com with SMTPS id 1787246638281331.2756470626407;
-	Thu, 20 Aug 2026 10:23:58 -0700 (PDT)
+	bh=7mwpPRVkUKlwD5B2Uq/1luJzXpKKluzvLSdg1lVZGTA=;
+	b=Pd6gIj2z2Wo1mgRq/qZ5+86gvoj8h0pElGDLvScqVbagyjVNatlSKyfehcJyzr+i
+	kcwUZirp/d9TkV5NYP06EVkf1VqxP10YdYvlk2LiqofaqAh7BwTIElTpa7w3OKw72u/
+	a6IlMi2YVUEU8BTCYqSjAKA4ka9xl+f/9NRyHCN9HZSm/jXnO0jUX3gby+Jz8QQWAUW
+	Qwd9YilmSq7EIZpqoDtMgpOpb6UTSR8dkk6k84v/Zf8TAsjhgAs7Eimnn2BOZhw+hEg
+	nM/CGf/16aYa2Qqny/QkznOz3lyQJs637oAcNmAy4bidO8rCJvW+6PHuJ+BBfx3KSmJ
+	EhcFcjt8qQ==
+Received: by mx.zohomail.com with SMTPS id 1787246647058241.67174161350658;
+	Thu, 20 Aug 2026 10:24:07 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
-Date: Fri, 21 Aug 2026 01:22:02 +0800
-Subject: [PATCH v5 07/12] leds: trigger: Enforce strict checks in
- led_trigger_is_hw_controlled()
+Date: Fri, 21 Aug 2026 01:22:03 +0800
+Subject: [PATCH v5 08/12] leds: trigger: Do not attach trigger to a
+ removing LED
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260821-leds-trigger-hw-changed-v5-7-3e00d6c4a936@rong.moe>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260821-leds-trigger-hw-changed-v5-8-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 In-Reply-To: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -73,46 +73,74 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
 X-Mailer: b4 0.17-dev-1f2f7
 X-ZohoMailClient: External
 
-With all existing triggers adopting the new interface, strict checks
-could be enforced to make the semantics of hardware control triggers
-clearer.
+Currently the LED trigger core knows little about an LED's removal as
+the LED_UNREGISTERING flag is set too late. This could lead to a race
+condition where a trigger may be attached to a removing LED right after
+led_classdev_unregister() has removed the previous trigger.
 
-In detail, a hardware control trigger should:
-
-- Implement offloaded() callback to indicate hardware control
-- Associate with the LED classdev's hw_control_trigger string
+Set the flag at the very beginning of led_classdev_unregister(), and
+check the flag before attaching a trigger.
 
 Acked-by: Ike Panhc <ikepanhc@gmail.com>
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
-Changes in v3:
-- New patch in the series, splitted from PATCH 3 (thanks Thomas
-  Weißschuh)
----
- drivers/leds/led-triggers.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Changes in v5:
+- Address a concern from Sashiko:
+  - Non-atomic update of led_cdev->flags causes a data race that can
+    drop the LED_UNREGISTERING flag
+  - Fix it by synchronize the update with trigger_lock
+  - https://sashiko.dev/#/patchset/20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe?part=8
+- Update "Changes in v4" to include more details
 
+Changes in v4:
+- New patch in the series to address a concern from Sashiko
+  - Without it, the following patch may expose a race condition if a
+    future LED driver synchronizes led_classdev_unregister() and
+    led_trigger_notify_hw_control_changed() poorly. The ideapad-laptop
+    patches in the series doesn't expose the race condition though
+  - In theory, the race condition can also be triggered by a userspace
+    program writing to the "trigger" attribute right before
+    device_unregister() is called
+  - https://sashiko.dev/#/patchset/20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe?part=8
+---
+ drivers/leds/led-class.c    | 5 +++--
+ drivers/leds/led-triggers.c | 3 +++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 2460fcf0c469..771a6e6c659b 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -633,12 +633,13 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
+ 
+ #ifdef CONFIG_LEDS_TRIGGERS
+ 	down_write(&led_cdev->trigger_lock);
++	led_cdev->flags |= LED_UNREGISTERING;
+ 	if (led_cdev->trigger)
+ 		led_trigger_set(led_cdev, NULL);
+ 	up_write(&led_cdev->trigger_lock);
+-#endif
+-
++#else
+ 	led_cdev->flags |= LED_UNREGISTERING;
++#endif
+ 
+ 	/* Stop blinking */
+ 	led_stop_software_blink(led_cdev);
 diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index de17a8bbb4d4..cb49a02a8b3c 100644
+index cb49a02a8b3c..64bc95d0bfeb 100644
 --- a/drivers/leds/led-triggers.c
 +++ b/drivers/leds/led-triggers.c
-@@ -42,9 +42,16 @@ static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
- 	if (!led_cdev->trigger)
- 		return false;
+@@ -200,6 +200,9 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+ 	const char *name;
+ 	int ret;
  
-+	if (!led_cdev->hw_control_trigger ||
-+	    strcmp(led_cdev->hw_control_trigger, led_cdev->trigger->name))
-+		return false;
++	if ((led_cdev->flags & LED_UNREGISTERING) && trig)
++		return -ENODEV;
 +
- 	if (led_cdev->trigger->offloaded)
- 		return led_cdev->trigger->offloaded(led_cdev);
+ 	if (!led_cdev->trigger && !trig)
+ 		return 0;
  
-+	dev_warn_once(led_cdev->dev, "hw control trigger %s doesn't implement offloaded()\n",
-+		      led_cdev->trigger->name);
-+
- 	/* Otherwise assume private triggers as always offloaded. */
- 	return led_cdev->trigger->trigger_type;
- }
 
 -- 
 2.55.0
