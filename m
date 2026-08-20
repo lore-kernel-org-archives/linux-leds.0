@@ -1,48 +1,48 @@
 Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A3437E5E5;
-	Thu, 20 Aug 2026 17:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA2E47F2FF;
+	Thu, 20 Aug 2026 17:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787246714; cv=pass; b=TOq0nnyxbKKmnKgvMoinBdNSr4vZmEurYZI95BISFghBkSqvqI1cK3p0Taj+TIa+HJ5wjHk9mKKqIJ7Tj1QNzsW/28BhM8DSBcFEKrZkNIWwU4aJVAzRzlSslzTPPApapReR6ZbE0yZyvqBycoHoSTEthy4jO5n+VS7Mifw7RbU=
+	t=1787246735; cv=pass; b=SpNpE/W1EOwz/IL6foFwT4h8zs39R69X8/wxTKrqdd7zmEvElr3x4xslI8PdAhP6Eo5eE/TNolCVDceW9vamK0iyEimicWnAg/XMVtzojzuCyUEQ8zSCsP9hTANbW+KPq+Bef6gvZrKyYX/ZLKAE26RXqW0xT6SfS+oeSnUsyoQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787246714; c=relaxed/simple;
-	bh=MOBbx0QiVkZdAvkTF9XF4s4TjMxZz8H3vKkbvMRTa8c=;
+	s=arc-20240116; t=1787246735; c=relaxed/simple;
+	bh=rP1FJCLNCgQ4/odsC5rOyOEqiN+aO/Z0ZBAZXBsiOTg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sIaqdeZ6tihqLjMxfYpQXImXg/KXN9rBCv/2vBho2JDjX3rAHj4LKstlLj7C0B26tnoo4FZkLg1Yt0lVpaRWCNbAuQ5tW4MoRaDmAmZ158dAMSLJu58/mB8JWUjU+giBfYfTlZuMV2UzKY2B69BdwcKWUZM+RLlAQ/ENokDdjuY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=kyuL0jj/; arc=pass smtp.client-ip=136.143.188.12
+	 In-Reply-To:To:Cc; b=mIN1B1dlTAOnlry0aDhdye7e+y9vxHbmOk7m16VYHVSokk3thTQ15fsQ7c95fVC00GHM55Dn/TZkn89AtYRp/C6/A57h1A1AYw4y1Z9xWqChUBxfCxdCoHMmG5VZh8KppjmT+X9y7QvWQZgCnWJTVAPJx6rCXLA5/Br4u5Rv1Gg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=Ap4uB9lu; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="kyuL0jj/"
-ARC-Seal: i=1; a=rsa-sha256; t=1787246627; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="Ap4uB9lu"
+ARC-Seal: i=1; a=rsa-sha256; t=1787246639; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=ZzJxIakGojCv03s2bPLV60KF6KPYGR/R1ITcWew3tvZjSv2/HuwY7Hg7vdHDnlkkQ/VUiyUH1iWYCiFGvapOYbVh7jar149HpheCeoMEDhnQT7/AVPlWSOs9ZE4EQYWE6kKCFHhI/ZQzh99VHH1EenZ50bHM6wmS8rPrtTnyi8U=
+	b=bJhRi/3h71IG734cbRiVqnIqyVsekWSdKURpF8UJKZxcDLZmcH9uCjJ6/YQRNgblk0pInz4VimNRm3KmHiT3qCla4uvJsfeqap3cZLgz8Lzl4p/GyU2TSfqxOZmv5t0RoftIzWw/moTkIIkG/UwU0uAGb+6T6MbMX2g9cnjleAs=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787246627; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iEbNVyFeMEJBMzrjWZRDpC7u3EmfHE2+/wAuXPJgNyU=; 
-	b=b9vqKDTODI7p146OUrOH24dRIL/IWCH4SSEu06M8SNhiX/QDeYjyE8XRbC+aHED407G3A0TPqdHGQW6LE4JyWCFU+DyrnJbF22yoK4NOKjlZJB9zCQLpDjpXodTbwbVw120wPQYseKQKRn04y4ooHL/BrkTcRn9CjTWClijzpVM=
+	t=1787246639; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=2j5a5rGmXReIsQy66ZTp+dwI3KKvaZ3uYw/Bf/oap+A=; 
+	b=Wh+czJLJIk+KolEsbnXNcDKLxMu5oJQmaEDDJJYjQvW7b/nkaIZqpeJOidTNe761NLDCLKvoGx89ZXdTbdDG0+BKZEuciDQYEEnlzYzakRdlG3LczXSilFUmNs1sT5GejfiSRoncDcV0LyF+aNMsmEaTGeeSq1Fhaj7DnSeBPow=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246627;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787246639;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=iEbNVyFeMEJBMzrjWZRDpC7u3EmfHE2+/wAuXPJgNyU=;
-	b=kyuL0jj/hT8XAK8wQwBSMtGKn93SrnZniq26vP7ZyBaw8cViS/KqfBnHMushKDb9
-	szHpUgs3k/bXMwUsVoPYyvcFdetdKDQWV8lPeyjINVHhrUZi1w6P9P17RfPBEV/CMi5
-	MTwOeonfLr52uz/IjjU6jWlhy05MyQLtcWi0Z8h6gJS8tbbKGugOl9lodIR+8pEg/hQ
-	hYJ9D+ctMCWurfX8nUBL9L1lVSa78NILItlSFGYaTHN8iJSilJGelAtOuv/X33zEekR
-	z3CO7mSBr/8ohu9vK1AA0m+kveNhNNPz5CXLi2GZ5LNLRUNs6ZziMRMht5CRm6t2//G
-	lReEKljKQQ==
-Received: by mx.zohomail.com with SMTPS id 1787246624361647.0299940264075;
-	Thu, 20 Aug 2026 10:23:44 -0700 (PDT)
+	bh=2j5a5rGmXReIsQy66ZTp+dwI3KKvaZ3uYw/Bf/oap+A=;
+	b=Ap4uB9lu0K6HsoM9wmQwAVtzd8sc8lLP0v2+tMr+QVo71izYpPhpXNrE/8K4Vtmf
+	U6N/g1LuI9YH7v1TVhqpkIbNZ2FNH+NdybDvOfUMhUciCc4MluFKHBhHJb2r+DhvxPH
+	1z6n3lzwQ0a7XUj+C7qJeOhqJVdPPU0rkZlw/uwoAnf6MzSXyYATZrZ+1rbpVeAqCqr
+	c7C6cQwHOFweCouLXU7sYJzy8BJq+qWpsNnLci6ogS9EhhXMaVDA6uVCM2yuWKHy1nC
+	wA6gFM/rBB3+cVRJdbnvkpm3hvXGb2XNEI3vPJTfgw0bAqLHLPAc1XKchAllcYh/hmI
+	LqK3rwE0+g==
+Received: by mx.zohomail.com with SMTPS id 1787246638281331.2756470626407;
+	Thu, 20 Aug 2026 10:23:58 -0700 (PDT)
 From: Rong Zhang <i@rong.moe>
-Date: Fri, 21 Aug 2026 01:22:01 +0800
-Subject: [PATCH v5 06/12] leds: trigger: netdev: Implement offloaded()
- callback
+Date: Fri, 21 Aug 2026 01:22:02 +0800
+Subject: [PATCH v5 07/12] leds: trigger: Enforce strict checks in
+ led_trigger_is_hw_controlled()
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260821-leds-trigger-hw-changed-v5-6-3e00d6c4a936@rong.moe>
+Message-Id: <20260821-leds-trigger-hw-changed-v5-7-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 In-Reply-To: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -73,78 +73,46 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
 X-Mailer: b4 0.17-dev-1f2f7
 X-ZohoMailClient: External
 
-"netdev" can run in hardware control according to hardware capabilities
-and trigger options.
+With all existing triggers adopting the new interface, strict checks
+could be enforced to make the semantics of hardware control triggers
+clearer.
 
-Implement offloaded() callback to provide its hardware control state to
-the LED core, and document the relation between the custom "offloaded"
-attribute and the generic "trigger_may_offload" attribute.
+In detail, a hardware control trigger should:
+
+- Implement offloaded() callback to indicate hardware control
+- Associate with the LED classdev's hw_control_trigger string
 
 Acked-by: Ike Panhc <ikepanhc@gmail.com>
 Signed-off-by: Rong Zhang <i@rong.moe>
 ---
 Changes in v3:
-- Do not deprecate netdev's "offloaded" attribute (thanks Thomas
+- New patch in the series, splitted from PATCH 3 (thanks Thomas
   Weißschuh)
-- Document the relation between the custom "offloaded" attribute and the
-  generic "trigger_may_offload" attribute (ditto)
 ---
- Documentation/ABI/testing/sysfs-class-led                | 3 +++
- Documentation/ABI/testing/sysfs-class-led-trigger-netdev | 3 +++
- drivers/leds/trigger/ledtrig-netdev.c                    | 8 ++++++++
- 3 files changed, 14 insertions(+)
+ drivers/leds/led-triggers.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index 5afb307c935a..2a13c77aee22 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -100,6 +100,9 @@ Description:
- 		- `[foo_trigger]`: the trigger is selected and offloaded to
- 		  hardware.
+diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+index de17a8bbb4d4..cb49a02a8b3c 100644
+--- a/drivers/leds/led-triggers.c
++++ b/drivers/leds/led-triggers.c
+@@ -42,9 +42,16 @@ static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
+ 	if (!led_cdev->trigger)
+ 		return false;
  
-+		The "netdev" trigger also provides a custom attribute to
-+		indicate its state, see `/sys/class/leds/<led>/offloaded`.
++	if (!led_cdev->hw_control_trigger ||
++	    strcmp(led_cdev->hw_control_trigger, led_cdev->trigger->name))
++		return false;
 +
- What:		/sys/class/leds/<led>/inverted
- Date:		January 2011
- KernelVersion:	2.6.38
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-index ed46b37ab8a2..a5146ea1e3e6 100644
---- a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-@@ -75,6 +75,9 @@ Description:
- 		If 1, the LED blinking in requested mode is offloaded to
- 		hardware.
+ 	if (led_cdev->trigger->offloaded)
+ 		return led_cdev->trigger->offloaded(led_cdev);
  
-+		LED trigger core also provides a generic attribute for this
-+		purpose, see `/sys/class/leds/<led>/trigger_may_offload`.
++	dev_warn_once(led_cdev->dev, "hw control trigger %s doesn't implement offloaded()\n",
++		      led_cdev->trigger->name);
 +
- What:		/sys/class/leds/<led>/link_10
- Date:		Jun 2023
- KernelVersion:	6.5
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 64c078e997f2..a26109ca4b1c 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -754,10 +754,18 @@ static void netdev_trig_deactivate(struct led_classdev *led_cdev)
- 	kfree(trigger_data);
+ 	/* Otherwise assume private triggers as always offloaded. */
+ 	return led_cdev->trigger->trigger_type;
  }
- 
-+static bool netdev_trig_offloaded(struct led_classdev *led_cdev)
-+{
-+	struct led_netdev_data *trigger_data = led_get_trigger_data(led_cdev);
-+
-+	return trigger_data->hw_control;
-+}
-+
- static struct led_trigger netdev_led_trigger = {
- 	.name = "netdev",
- 	.activate = netdev_trig_activate,
- 	.deactivate = netdev_trig_deactivate,
-+	.offloaded = netdev_trig_offloaded,
- 	.groups = netdev_trig_groups,
- };
- 
 
 -- 
 2.55.0
