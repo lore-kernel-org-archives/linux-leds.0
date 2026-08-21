@@ -1,349 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6206E2D97BA;
-	Thu, 20 Aug 2026 18:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B6C346A0C
+	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 08:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787249192; cv=none; b=MPuasRfXj6t83kuprotfZicSyuRsi69XR6blIWMCJTMP+ePo6huRCb5AmId1rvVXTgcaw6QSOVZCRy+4diYG6C0ZnuUB7UoS5svnKC1RygEylyqwHvyyw8KtBrNq/fCcxp3IGAUociW5fYJPckntesY5ZfV2SC4LhBh5Kcvw5YY=
+	t=1787301430; cv=none; b=D2WjK2yQRgNTQ7a8javVPWFrA2W7iFDglEc0wD9N1yOdoQ6thSNB2QmRPi2SCvyjX6/0MDvGh33Ym2JPzTOE4HbIaFItW3TywkqIDMxxw/WK7+bls4nzgdLHRcamWWaRa1t1uHUL/Cn6xZOBzONTUT0KfI0I4wlpZ4tY2otdPwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787249192; c=relaxed/simple;
-	bh=mp2nxaNYgcAPwrKSMqx10ADDh4FzQA5kcSOTuMXVPOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV21VKumuURhnRSAa5duKXYtNg+4HXrM/yWk4J5dJeeNNNPUJbodT5HLxAQWkUNRDoOV4vbPw7SChf2o59KdKT7Rc5YidQAKMR5Kjl8wfX56R+NZFkmZ1iCibb6D8Cv/8KZTHDGFQfoVnLH4j9rle9B8YU52sk5CVPNrdwiKaaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cR0eqKgZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787301430; c=relaxed/simple;
+	bh=ElQyopbNeTRk9DUTNjRjy95RO0fOvUxQVxAfUHkwi3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W38wkPC22r6Wb0C10IxGBuz4eu38EVgqvZglP21nsj9unTYP7YGYJnwCpsBIfVCt1Zre31BslSz0iXZ6AqulmGQiJRERBxtoa/kKq+EZM9bQLoEOlvVerOE7i0E/NLovCMdd78Sqik26aa35+BkEC6tcS/GNZRnLkt6jTMmaYvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FC9YrWWA; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR0eqKgZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56E71F000E9;
-	Thu, 20 Aug 2026 18:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787249191;
-	bh=g3vRVJu0Y5qwbO8fAcjSyaOZ38MIWJUKPcDVp+zkbFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cR0eqKgZ/U1x20x4hCdmqVhJar1e2HCQ4TX7pCv1WR5/A0XGsjnRnoMSJcCRZq0e1
-	 ZlRIxXsiYnn35NK9pouC3O0jGabj6KP7m3zhwE6rnPcIg5qfl//7MF/Z4HRsUEo0in
-	 P+iBqkhPpQ/glwlSS7Uq5EQAiHW4tK9PKT65CsDaDtzCzq7IxTaB9nCaXVSjzYQxAg
-	 lxX6Gd+Z2iowq2j58HkMeMvhwnsOhwGkqmIIwvpTAZWrvQlBupfyZBI1W59ncjpm0Q
-	 B/tiV9Ecur4qjjHtknUrgfuWz1teRZ/zSEU88CCQblPKmmoDYcdJM+p9EmcwPlMyIq
-	 T97yBFvcEsBNA==
-Date: Thu, 20 Aug 2026 19:06:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Udaya Kiran Challa <challauday369@gmail.com>
-Cc: lee@kernel.org, pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, skhan@linuxfoundation.org,
-	me@brighamcampbell.com, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: leds: lacie,netxbig-leds: Convert to DT
- schema
-Message-ID: <20260820-seventh-essay-235f3711ad74@spud>
-References: <20260820150223.108374-1-challauday369@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FC9YrWWA"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-495437bb891so3780135e9.1
+        for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 01:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787301427; x=1787906227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=9nwI0xzDY4nr1DcZdMJckNTgD8lfdKNXZB8XDkogvB8=;
+        b=FC9YrWWAAsdxcpD+mqZpFOJNbz8hxirPpjnH/myIjjSrNUsAp8U/c2Ws4+AfBjHakR
+         UF1WxPCGmQwWLIocaCBCuv7BfJDPOpFxwnnvR2Yr7h8pzmNr678XvIrRGBIc9U4YWG+/
+         utmgrwFm+tB2NU+kwCvDL31XAO6w2NwuRo4vmWNHt7qeUiocplbl46pN6JmmTVRjIUyd
+         z4RNv/Dfe2V111qhizm5xNS5BFUQiqNI0V4saZAdMl7tk/t9nT6YoqwYKwZc5v9vnmW2
+         E+CuHkZ2+FnySzh+9MynDsv/WCVv4bOhroroPVXP/fIan82Mv9z+fMHlXkIsglARW9pM
+         HJiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787301427; x=1787906227;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9nwI0xzDY4nr1DcZdMJckNTgD8lfdKNXZB8XDkogvB8=;
+        b=nazX+mR41lGa9jVPIhc/0PljAJSY5CoC+33iypkQ/HdNpplixAqKJ5UjaXws2miUfA
+         /BDKAnhQSaKlFuw5VFxBQDSzjGFxvM33nhp1TigJhBZl3BQbzskTegPvgtCYXmz4xkxB
+         wF/gjv9r843VjbJu0tyr7VfifGrFr56tblRipEieNLUmnzuH7gteVeaSUatiHt4BWK9i
+         h8G0/4KDr+kLda7ysbKuhhGYQm1y7lIdSIADq+5lzH021Ln7ASW6qtaZiwRZhbyAjv7Z
+         AVebPsfS+i5e6nLjyKrFN9PRjjHVaahZIwNF2zR7IQpryuvUK8s8tHYJtKOvDKVeyo37
+         9eEA==
+X-Forwarded-Encrypted: i=1; AHgh+RpZ+zp+176jv0raCSKvP4mmrExRes+kS2teKGBt1SA4AsNTijIKKdNEJmpD5QmJs+Lgo+WohqwGETMg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMLiV+ouYbFrLFSu7fEKMoyK23yS/C2hA/JtA71EP+N8dhtDJG
+	KuV6LSGAH2sx/Yptk+bEsVOwfoH4sszaZkxZqKL9iVRzRlhV5jg60v9bW/6izeumYo4=
+X-Gm-Gg: AR+sD12xVMOydIYmCWblYAGNyKvW88ROhr908jqGxwVVeYqH99Ll2QJ4KPiOUi4ZVXW
+	ECrpjmM0HxhqgXSub3U/+bJnc0WL81yQ5r3YNBtI5zPFm4P7SkDe93OAzwAbazbqLvDEiHPgUd2
+	Aa8WDMdeETkTxWufISRVpfU7JW/5Afwr6L/fq1S4DRv/nkMarMgJmvU5iIc1Ri/9f7XwuBPl89H
+	BRDyat764PAuK+h36uyjCAed2RFyp/tAhLOrsq27GvzqapPjqS5oOPq+X2dMvPeVQCq0OPPyw4h
+	yraL474YxwzrdeWAcZi5du8B985ThZrZvHt+9ygdITp0ipLieFowr6LsDe2VirGa7HhCsfd0Uk5
+	OjbZcSaZvfltf105d0Sj8dePFZu/Hlb+1txjXXbcsnzREk8b0Hl5kq6PgGuHXQZTjYrw1q52GWa
+	4LJK/6cG8g4pWdlElo2tvLzoJd5XG8ArZZuKbXzS7eLqOozvHyxMo4mZ+cUTdRkHR0L2R+oCmgl
+	ccrlY9har/HbibcUqXuS19clhFq3hazFYM=
+X-Received: by 2002:a05:600c:4688:b0:499:5f80:83ac with SMTP id 5b1f17b1804b1-499b91ad940mr34277465e9.7.1787301427490;
+        Fri, 21 Aug 2026 01:37:07 -0700 (PDT)
+Received: from rillian-arch.home ([2a00:23a8:8f4:6a01:5ffc:da36:c891:cd3c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499b911724bsm18546705e9.15.2026.08.21.01.37.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 01:37:05 -0700 (PDT)
+From: Rillian Grant <rillian.grant@gmail.com>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	linux-leds@vger.kernel.org
+Cc: Rillian Grant <rillian.grant@gmail.com>
+Subject: [RFC PATCH 0/2] leds: flash: LM3643 dual LED flash driver
+Date: Fri, 21 Aug 2026 09:36:04 +0100
+Message-ID: <20260821083620.68324-1-rillian.grant@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GhDcvaf7RaFFYOuJ"
-Content-Disposition: inline
-In-Reply-To: <20260820150223.108374-1-challauday369@gmail.com>
+Content-Transfer-Encoding: 8bit
 
---GhDcvaf7RaFFYOuJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series adds a flash LED driver for the Texas Instruments
+LM3643. I wrote it to support the Windows Hello NIR illuminator on my
+ThinkPad X9-15 Gen 1, which appears to have a single LED connected to
+both current sources. All non-error code paths have been tested on my
+device.
 
-On Thu, Aug 20, 2026 at 08:32:23PM +0530, Udaya Kiran Challa wrote:
-> Convert lacie,netxbig-leds devicetree binding from legacy
-> text format to DT schema.
->=20
-> Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
-> ---
->  .../bindings/leds/lacie,netxbig-leds.yaml     | 134 ++++++++++++++++++
->  .../devicetree/bindings/leds/leds-netxbig.txt |  92 ------------
->  2 files changed, 134 insertions(+), 92 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/lacie,netxbig-=
-leds.yaml
->  delete mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.t=
-xt
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.ya=
-ml b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
-> new file mode 100644
-> index 000000000000..ffdd47458d24
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
-> @@ -0,0 +1,134 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/lacie,netxbig-leds.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LaCie/Seagate netxbig CPLD LEDs
-> +
-> +maintainers:
-> +  - Simon Guinot <simon.guinot@sequanux.org>
-> +
-> +description: |
-> +  Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Sea=
-gate
-> +  boards (Example: 2Big/5Big Network v2, 2Big NAS).
-> +
-> +properties:
-> +  compatible:
-> +    const: lacie,netxbig-leds
-> +
-> +  gpio-ext:
-> +    description: Phandle for the gpio-ext bus.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  timers:
-> +    description: |
-> +      Timer array. Each timer entry is represented by three integers:
-> +      Mode (gpio-ext bus), delay_on and delay_off.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +required:
-> +  - compatible
-> +  - gpio-ext
+This device is enumerated by ACPI (HID TXNW3643) as an I2C client with
+no _DSD. The driver, following the leds/flash convention, sees no LED
+child nodes and fails to probe. For testing I have been using an SSDT
+overlay.
 
-This should be after the block defining the child nodes.
+On Windows, Lenovo distributes an LM3643 driver authored by Intel. Its
+inf file matches on the HID alone and contains a default intensity for
+each LED, 100% for LED1 and 60% for LED2, which suggests the driver
+applies a static configuration to any enumerated LM3643.
 
-> +
-> +additionalProperties:
+I am sending this RFC to ask how best to supply this default static
+configuration. The options I can see are:
 
-This is not how the child nodes should be implmeneted, it should use
-pattenProperties instead.
+1. A DMI-matched table, similar to touchscreen_dmi.c, that attaches
+   LED child nodes on verified boards. I haven't found any existing
+   examples of this being done for LED child nodes.
+2. A generic fallback in the driver exposing both current sources as
+   independent LEDs. However this would apply to all matches without
+   a firmware description.
 
-> +  description: Each child node represents a single LED
-> +  type: object
-> +  $ref: common.yaml#
+I'd appreciate any guidance on the preferred approach.
 
-> +  unevaluatedProperties: false
+Rillian Grant (2):
+  dt-bindings: leds: Document TI LM3643 dual LED flash driver
+  leds: flash: Add support for the TI LM3643 dual LED flash driver
 
-This should IMO be additionalProperties: false, and the two option
-properties that are supported explicitly cited.
+ .../devicetree/bindings/leds/ti,lm3643.yaml   | 126 +++
+ MAINTAINERS                                   |   7 +
+ drivers/leds/flash/Kconfig                    |  12 +
+ drivers/leds/flash/Makefile                   |   1 +
+ drivers/leds/flash/leds-lm3643.c              | 775 ++++++++++++++++++
+ 5 files changed, 921 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/ti,lm3643.yaml
+ create mode 100644 drivers/leds/flash/leds-lm3643.c
 
-The rest of this looks fine I think.
 
-pw-bot: changes-requested
+base-commit: a4ff2be345d0abc943da8dd8da98151843b750dc
+-- 
+2.55.0
 
-Thanks,
-Conor.
-
-> +
-> +  properties:
-> +    mode-addr:
-> +      description: Mode register address on gpio-ext bus.
-> +      $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +    mode-val:
-> +      description: |
-> +        Mode to value mapping. Each entry is represented by two integers=
-: a mode and
-> +        the corresponding value on the gpio-ext bus.
-> +      $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +    bright-addr:
-> +      description: Brightness register address on gpio-ext bus.
-> +      $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +    max-brightness:
-> +      description: Maximum brightness value.
-> +      $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  required:
-> +    - mode-addr
-> +    - mode-val
-> +    - bright-addr
-> +    - max-brightness
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/leds/leds-netxbig.h>
-> +
-> +    netxbig-leds {
-> +        compatible =3D "lacie,netxbig-leds";
-> +
-> +        gpio-ext =3D <&netxbig_gpio_ext>;
-> +
-> +        timers =3D <NETXBIG_LED_TIMER1 500 500
-> +                  NETXBIG_LED_TIMER2 500 1000>;
-> +
-> +        blue-power {
-> +            label =3D "netxbig:blue:power";
-> +            mode-addr =3D <0>;
-> +            mode-val =3D <NETXBIG_LED_OFF 0
-> +                        NETXBIG_LED_ON 1
-> +                        NETXBIG_LED_TIMER1 3
-> +                        NETXBIG_LED_TIMER2 7>;
-> +            bright-addr =3D <1>;
-> +            max-brightness =3D <7>;
-> +        };
-> +        red-power {
-> +            label =3D "netxbig:red:power";
-> +            mode-addr =3D <0>;
-> +            mode-val =3D <NETXBIG_LED_OFF 0
-> +                        NETXBIG_LED_ON 2
-> +                        NETXBIG_LED_TIMER1 4>;
-> +            bright-addr =3D <1>;
-> +            max-brightness =3D <7>;
-> +        };
-> +        blue-sata0 {
-> +            label =3D "netxbig:blue:sata0";
-> +            mode-addr =3D <3>;
-> +            mode-val =3D <NETXBIG_LED_OFF 0
-> +                        NETXBIG_LED_ON 7
-> +                        NETXBIG_LED_SATA 1
-> +                        NETXBIG_LED_TIMER1 3>;
-> +            bright-addr =3D <2>;
-> +            max-brightness =3D <7>;
-> +        };
-> +        red-sata0 {
-> +            label =3D "netxbig:red:sata0";
-> +            mode-addr =3D <3>;
-> +            mode-val =3D <NETXBIG_LED_OFF 0
-> +                        NETXBIG_LED_ON 2
-> +                        NETXBIG_LED_TIMER1 4>;
-> +            bright-addr =3D <2>;
-> +            max-brightness =3D <7>;
-> +        };
-> +        blue-sata1 {
-> +            label =3D "netxbig:blue:sata1";
-> +            mode-addr =3D <4>;
-> +            mode-val =3D <NETXBIG_LED_OFF 0
-> +                        NETXBIG_LED_ON 7
-> +                        NETXBIG_LED_SATA 1
-> +                        NETXBIG_LED_TIMER1 3>;
-> +            bright-addr =3D <2>;
-> +            max-brightness =3D <7>;
-> +        };
-> +        red-sata1 {
-> +            label =3D "netxbig:red:sata1";
-> +            mode-addr =3D <4>;
-> +            mode-val =3D <NETXBIG_LED_OFF 0
-> +                        NETXBIG_LED_ON 2
-> +                        NETXBIG_LED_TIMER1 4>;
-> +            bright-addr =3D <2>;
-> +            max-brightness =3D <7>;
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/leds/leds-netxbig.txt b/Do=
-cumentation/devicetree/bindings/leds/leds-netxbig.txt
-> deleted file mode 100644
-> index 5ef92a26d768..000000000000
-> --- a/Documentation/devicetree/bindings/leds/leds-netxbig.txt
-> +++ /dev/null
-> @@ -1,92 +0,0 @@
-> -Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Seaga=
-te
-> -boards (Example: 2Big/5Big Network v2, 2Big NAS).
-> -
-> -Required properties:
-> -- compatible: "lacie,netxbig-leds".
-> -- gpio-ext: Phandle for the gpio-ext bus.
-> -
-> -Optional properties:
-> -- timers: Timer array. Each timer entry is represented by three integers:
-> -  Mode (gpio-ext bus), delay_on and delay_off.
-> -
-> -Each LED is represented as a sub-node of the netxbig-leds device.
-> -
-> -Required sub-node properties:
-> -- mode-addr: Mode register address on gpio-ext bus.
-> -- mode-val: Mode to value mapping. Each entry is represented by two inte=
-gers:
-> -  A mode and the corresponding value on the gpio-ext bus.
-> -- bright-addr: Brightness register address on gpio-ext bus.
-> -- max-brightness: Maximum brightness value.
-> -
-> -Optional sub-node properties:
-> -- label: Name for this LED. If omitted, the label is taken from the node=
- name.
-> -- linux,default-trigger: Trigger assigned to the LED.
-> -
-> -Example:
-> -
-> -netxbig-leds {
-> -	compatible =3D "lacie,netxbig-leds";
-> -
-> -	gpio-ext =3D &gpio_ext;
-> -
-> -	timers =3D <NETXBIG_LED_TIMER1 500 500
-> -		  NETXBIG_LED_TIMER2 500 1000>;
-> -
-> -	blue-power {
-> -		label =3D "netxbig:blue:power";
-> -		mode-addr =3D <0>;
-> -		mode-val =3D <NETXBIG_LED_OFF 0
-> -			    NETXBIG_LED_ON 1
-> -			    NETXBIG_LED_TIMER1 3
-> -			    NETXBIG_LED_TIMER2 7>;
-> -		bright-addr =3D <1>;
-> -		max-brightness =3D <7>;
-> -	};
-> -	red-power {
-> -		label =3D "netxbig:red:power";
-> -		mode-addr =3D <0>;
-> -		mode-val =3D <NETXBIG_LED_OFF 0
-> -			    NETXBIG_LED_ON 2
-> -			    NETXBIG_LED_TIMER1 4>;
-> -		bright-addr =3D <1>;
-> -		max-brightness =3D <7>;
-> -	};
-> -	blue-sata0 {
-> -		label =3D "netxbig:blue:sata0";
-> -		mode-addr =3D <3>;
-> -		mode-val =3D <NETXBIG_LED_OFF 0
-> -			    NETXBIG_LED_ON 7
-> -			    NETXBIG_LED_SATA 1
-> -			    NETXBIG_LED_TIMER1 3>;
-> -		bright-addr =3D <2>;
-> -		max-brightness =3D <7>;
-> -	};
-> -	red-sata0 {
-> -		label =3D "netxbig:red:sata0";
-> -		mode-addr =3D <3>;
-> -		mode-val =3D <NETXBIG_LED_OFF 0
-> -			    NETXBIG_LED_ON 2
-> -			    NETXBIG_LED_TIMER1 4>;
-> -		bright-addr =3D <2>;
-> -		max-brightness =3D <7>;
-> -	};
-> -	blue-sata1 {
-> -		label =3D "netxbig:blue:sata1";
-> -		mode-addr =3D <4>;
-> -		mode-val =3D <NETXBIG_LED_OFF 0
-> -			    NETXBIG_LED_ON 7
-> -			    NETXBIG_LED_SATA 1
-> -			    NETXBIG_LED_TIMER1 3>;
-> -		bright-addr =3D <2>;
-> -		max-brightness =3D <7>;
-> -	};
-> -	red-sata1 {
-> -		label =3D "netxbig:red:sata1";
-> -		mode-addr =3D <4>;
-> -		mode-val =3D <NETXBIG_LED_OFF 0
-> -			    NETXBIG_LED_ON 2
-> -			    NETXBIG_LED_TIMER1 4>;
-> -		bright-addr =3D <2>;
-> -		max-brightness =3D <7>;
-> -	};
-> -};
-> --=20
-> 2.34.1
->=20
-
---GhDcvaf7RaFFYOuJ
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaodCHwAKCRB4tDGHoIJi
-0jwAAQC7Gq3WPlLPBem8GgmKBUy2xFAg89L04idTPsNeoJmcGwD8CKvRp4/bJC9k
-8R7oQJ6NCU+dPsYvq8DglgZ/ILbUBQc=
-=reiD
------END PGP SIGNATURE-----
-
---GhDcvaf7RaFFYOuJ--
