@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A040B304BCB;
-	Fri, 21 Aug 2026 08:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DF73002DD
+	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 08:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787301868; cv=none; b=knMt3KWttdxLXEuHQMQIESb/K+UQPoZTsfOEGspVskMtqJnl+jGipyqO4xK33dd4GT4QgYqvAsAcbFexrKWbcpVxXBYL7gAfi6RLIDkhaBVSA9WFsD41+I/ACcHGKYIv55xjFfODfpjFh3V/waNzcPJY7ny/W8G/f+WvAY/5NVE=
+	t=1787301984; cv=none; b=OZF/tQYAqne6ab6XTymecMrdAn1g0tWgtsPV9bqvqflH27V3y7Se7n+4u28wEUoZGaUSJTchsqS8MCY51mpRfe8JbiPfK5b2Xg/fqeGkOV/qPX51Rb1Zrsb7K/ne4SHEkPx1hLMYd73DZwqKs2WwoH/SJNoiaaxJPpyPBY32W20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787301868; c=relaxed/simple;
-	bh=v/u03PuZUtbKwBX7Mdk5PB38KRAstrXBAZhLKoeA07k=;
+	s=arc-20240116; t=1787301984; c=relaxed/simple;
+	bh=vQV4h3WBX3XJ/uhQNwaTzWsk0X55i7SER3vCBi5FbKk=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ZP9PenZaffEQH9hWQl1uPH05+ff8WBPlpNyYC06vgo4kuP6d+1xhj0aWpo1bLbSsqBDAYMLGshg96dMczMf9UyLxDbGTR4gR+XnBUqhPV67CIKgIOSohqfOTUJUCjO8G8PvplP5BEbVnp0KWNAGi1spa5WdAS+GM6jy+tprORwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=edgY4h85; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=Yi18Fq/ujCQc40nOQ/GPmJ3IV+CFEV2wd45ynaN4YTKm2pU2nIWwNwwSyv7FyQzlRJUKWMkC+pHl4CIZQ+6YDkTlx+Z7I3Bv0G0X/WoWaKg/bQZ2dkcAQRrIawjI6/JUe0Lzav7wEdmKmoo+9qq6IAYXFZPoeufdDbv3AR3OirI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V5Q26j4v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="edgY4h85"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01001F000E9;
-	Fri, 21 Aug 2026 08:44:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5Q26j4v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77771F000E9;
+	Fri, 21 Aug 2026 08:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787301867;
-	bh=N6pzcVPSP+0shkqvDVeK+Ct3Rs/zYWcDc+g9tbS7GmQ=;
+	s=k20260515; t=1787301982;
+	bh=P5DmjEoHLAHTdBwEXvkE4VyIG6rjQbtkKLbBAyYhmEo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=edgY4h85ByFMb+VOFol530HJKjNWMcbJk+SBUyvhF+lWo0Niq5fUbZLQrThLgwmnV
-	 fNZ+YerMge4MMK6nKP4G0CksXkMRYMssXaVpdSowK86wp7Dy6rgyXPfgkgJddA4yQ9
-	 es9OIH8OmiexgY0NFCOTUcEudUggdPvDl/F1V2ZboRoim5ah4dqZQINoy69NV4iaqb
-	 NTECln4WHQ7IVVPD7ST/7Q5Q/KQx947cWMPiNkjqWk52mLj06ok4vFbxNqCrOQ4UbF
-	 NEHQm/rUSA+oQ0UBNxsEqu0VZTNzetCFq36WPee8sQwtBAAsBkcJmDJoZ62LX6OmcB
-	 p78FxpnlqywAw==
+	b=V5Q26j4vVo/9CnMG3ZHUAEUwjQI0rR1p9RuhPlO35zLETi33E/QshooPcpwQ1QiiN
+	 I//pj8qIPn3sljxu0ntgSSAPz1KbtuKsmTGHYbSkntV4YzSJWyMyyn+Wt8k6fVHuud
+	 oI6r6kYwOHxl5t1bDch1JeM8tWIJAQPCsLos2J9257rV8rTBSRIjsV8KF47ohpdt+B
+	 F0BL9jzwznvF1IVGpsQSxISA/qpE1IOpgQRmf0Zj3KuUz8Mzg6JK3fAXcDkb99Oy1D
+	 0xhUY2ZH4onpA4RRJb2cHBGVlmnSUMbP7aAqnRAIohAG/vTBq6a/X3x9QCPxemf2x+
+	 pW/PT3pn+QZxg==
 From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH 1/2] dt-bindings: leds: Document TI LM3643 dual LED
- flash driver
+Subject: Re: [RFC PATCH 2/2] leds: flash: Add support for the TI LM3643 dual
+ LED flash driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rillian Grant" <rillian.grant@gmail.com>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, lee@kernel.org, linux-leds@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260821083620.68324-2-rillian.grant@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260821083620.68324-3-rillian.grant@gmail.com>
 References: <20260821083620.68324-1-rillian.grant@gmail.com>
- <20260821083620.68324-2-rillian.grant@gmail.com>
+ <20260821083620.68324-3-rillian.grant@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 08:44:26 +0000
-Message-Id: <20260821084426.D01001F000E9@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 08:46:22 +0000
+Message-Id: <20260821084622.B77771F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,75 +47,73 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] The schema does not enforce `flash-max-microamp`, `flash-max-timeo=
-ut-us`, and `led-max-microamp` as required properties for the LED child nod=
-e.
+- [High] Turning off an LED fails to clear the chip mode bits, causing powe=
+r drain and breaking flash strobe teardown.
 --
 
---- Patch [1]: [RFC PATCH 1/2] dt-bindings: leds: Document TI LM3643 dual L=
-ED flash driver ---
-commit 0c56365dce9a84b7387d67d8621b8beeacea7aec
+--- Patch [2]: [RFC PATCH 2/2] leds: flash: Add support for the TI LM3643 d=
+ual LED flash driver ---
+commit bdf1945ab184ca005c2f401ecd5408571ece1de3
 Author: Rillian Grant <rillian.grant@gmail.com>
 
-dt-bindings: leds: Document TI LM3643 dual LED flash driver
+leds: flash: Add support for the TI LM3643 dual LED flash driver
+   =20
+The LM3643 is an I2C dual LED flash driver. Its two high-side current
+sources share a synchronous boost converter and each supports torch and
+flash modes with programmable current and flash timeout alongside fault
+reporting.
 
-This commit documents the devicetree bindings for the Texas Instruments LM3=
-643
-dual LED flash driver, which uses a synchronous boost converter to power up=
- to
-two current sources up to 1.5A.
-
-> diff --git a/Documentation/devicetree/bindings/leds/ti,lm3643.yaml b/Docu=
-mentation/devicetree/bindings/leds/ti,lm3643.yaml
+> diff --git a/drivers/leds/flash/leds-lm3643.c b/drivers/leds/flash/leds-l=
+m3643.c
 > new file mode 100644
-> index 0000000000000..18b08a79512f1
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/ti,lm3643.yaml
+> +++ b/drivers/leds/flash/leds-lm3643.c
 
 [ ... ]
 
-> +patternProperties:
-> +  "^led@[0-1]$":
-> +    type: object
-> +    $ref: common.yaml#
-> +    unevaluatedProperties: false
+> +static int lm3643_torch_set_brightness(struct led_classdev *led_cdev,
+> +				       enum led_brightness brightness)
+> +{
 
 [ ... ]
 
-> +      flash-max-timeout-us:
-> +        description: |
-> +          The chip supports timeouts from 10ms to 100ms in increments of=
- 10ms
-> +          and from 100ms to 400ms in increments of 50ms. The provided va=
-lue
-> +          will be rounded down to a supported value.
-> +
-> +        minimum: 10000
-> +        maximum: 400000
-> +
-> +    required:
-> +      - reg
-> +      - led-sources
+> +	if (brightness =3D=3D 0)
+> +		return regmap_update_bits(led->regmap, LM3643_REG_ENABLE,
+> +				chan->enable_bit, 0);
 
 [Severity: High]
-Should flash-max-microamp, flash-max-timeout-us, and led-max-microamp be
-included here as required properties for the LED child node?
+When brightness is 0, this only clears the channel's enable bit but leaves
+the LM3643_MODE_MASK bits intact. If no other LEDs are active, does this
+leave the chip in an active power state (Torch or Flash mode) instead of
+transitioning to LM3643_MODE_STANDBY, potentially causing continuous battery
+drain?
 
-Without these properties enforced by the schema, a device tree could omit t=
-hem
-and still pass validation. If omitted, will driver fallback to the controll=
-er's
-absolute maximums (1.5A and 400ms) risk physically damaging connected LEDs =
-that
-have lower electrical limits?
+[ ... ]
 
+> +static int lm3643_flash_strobe_set(struct led_classdev_flash *fled_cdev,=
+ bool state)
+> +{
+
+[ ... ]
+
+> +	if (!state) {
+> +		if (mode !=3D LM3643_MODE_FLASH || !(enable_reg & chan->enable_bit))
+> +			return 0;
 > +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
+> +		return regmap_update_bits(led->regmap, LM3643_REG_ENABLE,
+> +			LM3643_MODE_MASK, LM3643_MODE_STANDBY);
+> +	}
+
+[Severity: High]
+If the torch brightness was set to 0 during a flash, the channel's enable
+bit will have been cleared. During the subsequent teardown call to
+lm3643_flash_strobe_set() with state =3D false, does this early return trig=
+ger
+because the enable bit is no longer set?
+
+This would fail to restore the mode to LM3643_MODE_STANDBY, permanently
+stranding the driver's state machine in Flash mode.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260821083620.6832=
-4-1-rillian.grant@gmail.com?part=3D1
+4-1-rillian.grant@gmail.com?part=3D2
