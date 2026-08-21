@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A363D2F7EE1
-	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D75037F00E
+	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787333258; cv=none; b=Yz7scxihYVbK00D0Ltmc6RF94Rv01ZXWK7yJZUZqt6uCIQdkfJmZkdU+rlA0oSlNAmOG5n2VROXpfdVXlmN8Vj9vECRgY/PQ9dRF6cCDqgKzLEh7rPMuUkz9wt5fTC55IhU2QAfG4gr69ZWhAbnxviFZfh1l9a3ywcMk33sRdWc=
+	t=1787333259; cv=none; b=FKgrQrUTkfUSZGDPR+x2evlm2ccfyxWK2wQhv96dJw4foGYiq9tGBBKfkrfohv+po8bEmpsLphyE81Y3qrFd+0TEtDGdywhU9JNOvf10+S0t6zEBh6rYpyb+8D4hdDcTXgtIVKYeNjEhhoWMRkEuqR7Ud8KnXI37lnFZKcT42PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787333258; c=relaxed/simple;
-	bh=afgychTw/lyP1v8U6Rop3qvHanTFgINwlfQuj6fT7ME=;
+	s=arc-20240116; t=1787333259; c=relaxed/simple;
+	bh=2H8YN5PsPin4WgmkybeSciLFFRx38Ce1xOLhYaR1IMM=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=rdPzcGeeD9pgxk8CdPTOCDDfoGd+QSfq7JhEoa7vZgHQiBzLx5JuiW/iYYgbNbt0frZxUW/ds2E5y4prJdmV4XWOJ6vpJfuquu2Lr/oewGYKRcHj3/Z+yHB47gB8gUaPQWZqz/QMfqNZmRAX1VtoAlRrQH3Sg+djbNjMradXLIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZrU7c9Y; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=P02qvVjebNSI+Foy99/yOnRQPRQKQ33naC/GupKcflCBGbvcyfevt/bciVPyq6PpXVdks2SHFJaqmm73d3HDw99Ig3vUwlkf4cBBzpIN44iuGtTLiUqgTUyW1pw/xD7SjLkW5kfa5X5k7bM0h6emiP2HpjHYdgqBbIEDW1dr7MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuDdIAWN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZrU7c9Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287FC1F00A3A;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuDdIAWN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6021F00A3D;
 	Fri, 21 Aug 2026 17:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787333257;
-	bh=4ebegaV13dh/SCJmLv2QeWAXSCd5EiJwBfT78X+WgyA=;
+	s=k20260515; t=1787333258;
+	bh=7PLwaqEhXghIMGsYo7yc+KmCXznHx32AT+OTFtaessM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZZrU7c9Ysiy5pjVrJwC+z1wfuQEVA7kiFIGNXfeOosBW523YvrEiXZh/zYVbEdpNs
-	 MH7fBRBCmAEXQT+1qAp/QC2JzjSVCgRnZnpxzhnoN6114tMPMsRH3w2AZSip0/9gwj
-	 lsuSGFF2eLKAmUpyFmSZpTbFVC2M1pRx1x4YIwR+cb4Qzqa54LopwcsixSO/Ez6HSG
-	 htXfo68Go0q7ogkwmi8LvqyfVxB8sux05yPjp/7lM7xO5lLR8PT7eKVIYcAAcvjF1m
-	 2YMHovUeJGnDC3fjV25pXgPgIDudhKw8Cvj2gvfRAMNjTSZQDDNmkV+qSYtyr3T3FS
-	 LLP7DvPqD9aJw==
+	b=OuDdIAWNeZQDtmU4oq84EMnRVWaArY4TfJsb/9cRzmRU6AL3S+MHACsXKNAVJA6PA
+	 X3vthtCnsaFO7beNM0wquBP8O9jDHTJ19fknAZAfV7gtNxOiprLl7OHMKpV2S6G4NU
+	 uGiHuQthH3/nlkock1ckaTfXNjNxS+3N0rcx51FYFE/jc3kj+5X/X7Yrgpy7LvCVmY
+	 J6WtEAd+NTaSSmZkaPo8VKYQpBvuoCjT7L9i+175EuruWVwQ6mrPXXJFAcu1gHa7We
+	 M24g6RmhvZ4sOmV6YxylZIKIC+e814kYcFU+XRg9zFJza3pu48HNeFWPW68Iohn6DO
+	 b3jSw97oQDZLQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 05/12] leds: turris-omnia: Implement offloaded()
- trigger callback and declare hw_control_trigger
+Subject: Re: [PATCH v5 07/12] leds: trigger: Enforce strict checks in
+ led_trigger_is_hw_controlled()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260821-leds-trigger-hw-changed-v5-5-3e00d6c4a936@rong.moe>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260821-leds-trigger-hw-changed-v5-7-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
- <20260821-leds-trigger-hw-changed-v5-5-3e00d6c4a936@rong.moe>
+ <20260821-leds-trigger-hw-changed-v5-7-3e00d6c4a936@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 17:27:36 +0000
-Message-Id: <20260821172737.287FC1F00A3A@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 17:27:37 +0000
+Message-Id: <20260821172737.EF6021F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -49,64 +49,70 @@ Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] The statically allocated `omnia_hw_trigger` object is registered m=
-ultiple times via `devm_led_trigger_register()` on probe if multiple driver=
- instances are bound, causing lock and list corruption.
+- [High] Sysfs attributes are exposed to user-space before the `trigger_loc=
+k` rwsem is initialized, causing uninitialized lock access.
 --
 
---- Patch [5]: [PATCH v5 05/12] leds: turris-omnia: Implement offloaded() t=
-rigger callback and declare hw_control_trigger ---
-commit f8e07428579f0c7761609a5c572f8b597a213a09
+--- Patch [7]: [PATCH v5 07/12] leds: trigger: Enforce strict checks in led=
+_trigger_is_hw_controlled() ---
+commit ebab4e455acab29c44baf2a4a586beae42254bc5
 Author: Rong Zhang <i@rong.moe>
 
-leds: turris-omnia: Implement offloaded() trigger callback and declare hw_c=
-ontrol_trigger
+leds: trigger: Enforce strict checks in led_trigger_is_hw_controlled()
 
-"omnia-mcu" is a private hardware control trigger which always stays in
-hardware control mode. Implement offloaded() callback with its return
-value to be always true to reflect this.
+With all existing triggers adopting the new interface, strict checks
+could be enforced to make the semantics of hardware control triggers
+clearer.
 
-> diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turris-=
-omnia.c
-> index ed6a47bbb44f9..32d40d176d3f1 100644
-> --- a/drivers/leds/leds-turris-omnia.c
-> +++ b/drivers/leds/leds-turris-omnia.c
-> @@ -195,10 +195,16 @@ static void omnia_hwtrig_deactivate(struct led_clas=
-sdev *cdev)
->  			err);
->  }
+> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> index de17a8bbb4d48..cb49a02a8b3cf 100644
+> --- a/drivers/leds/led-triggers.c
+> +++ b/drivers/leds/led-triggers.c
+> @@ -42,9 +42,16 @@ static bool __led_trigger_is_hw_controlled(struct led_=
+classdev *led_cdev)
+>  	if (!led_cdev->trigger)
+>  		return false;
 > =20
-> +static bool omnia_hwtrig_offloaded(struct led_classdev *cdev)
-> +{
-> +	return true;
-> +}
-> +
->  static struct led_trigger omnia_hw_trigger =3D {
->  	.name		=3D "omnia-mcu",
->  	.activate	=3D omnia_hwtrig_activate,
->  	.deactivate	=3D omnia_hwtrig_deactivate,
-> +	.offloaded	=3D omnia_hwtrig_offloaded,
->  	.trigger_type	=3D &omnia_hw_trigger_type,
->  };
+> +	if (!led_cdev->hw_control_trigger ||
+> +	    strcmp(led_cdev->hw_control_trigger, led_cdev->trigger->name))
+> +		return false;
 
 [Severity: High]
-This isn't a bug introduced by this patch, but does using a statically
-allocated global trigger structure risk lock and list corruption?
+This is a pre-existing issue, but since this patch modifies the hardware
+control paths, is it possible to access an uninitialized rw_semaphore here?
 
-If multiple instances of the driver are bound (for example, via I2C
-`new_device` sysfs bindings), `omnia_leds_probe()` will call
-`devm_led_trigger_register()` multiple times using this shared
-`omnia_hw_trigger` object:
+In drivers/leds/led-class.c, the device and sysfs attributes are created
+and exposed to user-space before the trigger_lock rwsem is initialized:
 
-omnia_leds_probe()
-    devm_led_trigger_register(dev, &omnia_hw_trigger)
+led_classdev_register_ext() {
+        ...
+        led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
+                                                  led_cdev, led_cdev->group=
+s,
+                                                  "%s", final_name);
+        ...
+        init_rwsem(&led_cdev->trigger_lock);
+        ...
+}
 
-Inside the core `led_trigger_register()` function, `spin_lock_init()` and
-`INIT_LIST_HEAD()` are called unconditionally before checking if the trigger
-name already exists. As a result, the second probe call will silently
-re-initialize the active spinlock and reset the list head of the first
-instance's trigger, which could lead to a kernel panic.
+If user-space processes the uevent quickly enough and reads the brightness
+attribute, brightness_show() will call led_trigger_is_hw_controlled() before
+acquiring the led_access mutex:
+
+brightness_show() {
+        if (led_trigger_is_hw_controlled(led_cdev))
+                return -ENODATA;
+
+        mutex_lock(&led_cdev->led_access);
+        ...
+}
+
+Since led_trigger_is_hw_controlled() eventually accesses trigger_lock, will
+it attempt to acquire the uninitialized semaphore and cause a crash or
+lockdep warning?
+
+[ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260821-leds-trigg=
-er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D5
+er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D7
