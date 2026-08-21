@@ -1,70 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ED2381E94
-	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AB8493633
+	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787333261; cv=none; b=Q7ToJOKf6UXdEpW/JfsEOEFkY54C7DTXFBO+j6Xs1zqUSJt1NWLchfXMg3saJWqGyrBh9lUNtVayynXb5Er0YX8J11XJJy9SGRBeubZVx5ciLaUef/EbE/1d12vV97Q8tck8DhRDBmRjPTD4CMtTeUt8UFTS9PvIoGtryv3uFPY=
+	t=1787333261; cv=none; b=WrQKrMwbEpXCsARm9O5mL9/oLRpBEN/IJMjeagBxkGAYbqv0i/AYrl/6bs+KM0SjAHUkmh8CP5+/t22PCjIp7TPqsrnNR2aCAVUcHY1cN/xyQbjfQmhUHffg3CdWER1EeVnhPJ3DPLjCpC1b3pIEB8X1oRYKFQOmscXmXrD1bOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1787333261; c=relaxed/simple;
-	bh=AZzMPHVbnjJhtmZEWF8c37YXIXzcFtBbst12IO1uhJ0=;
+	bh=ZaJHj+aFNOV0KPwzu5ywSBqjOxRTQCjWMFsLgVBTAp8=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=aiF3GbB2YvflqEIgRtbEVPCs6Oi0ig+oPj/BYOv2m9nM2igJ4F97tTvELcbc3Fkhsvohi5mRruji8IdmNsppdbuhLXkOTRcvCEDe0OLOOpxuP1269VOOdZwIF+HcG5OXRRNYiiSVIDvtm5NDmKwYFp1Eku6YlZSTzk9R/yrWNMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A57lT5i2; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=EISRCLk3idE7fqGyLQeCyZ3imh3MJ6K/gJEQXojYIr+enKK5R557qO3tGRtOqVtwAKPSKgXDUZgb0SJdN3Gq1pecfN2Oek5PSgZkAayHCLhgVdFqM9ISrEeCfg7l8h1owaUf47ZBn7+RMPI6xgS+Lu+VDHYXESqJzqj+AREKeIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDzlLMXn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A57lT5i2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8307E1F000E9;
-	Fri, 21 Aug 2026 17:27:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDzlLMXn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 381AF1F00A3A;
+	Fri, 21 Aug 2026 17:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787333259;
-	bh=aaSnQsMfJFroGZBIQ16/HimjnIZmSZ2S2ZgrDTPmbCA=;
+	s=k20260515; t=1787333260;
+	bh=ZaJHj+aFNOV0KPwzu5ywSBqjOxRTQCjWMFsLgVBTAp8=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=A57lT5i2JiJVH1FPz+lz8l1iKriXyAvn58Yt7bpQMuVyTtmRX/4Mz7vYlH0LuSi9x
-	 88ACAes6SntrWWh8Q0ktcPvGdOTpS0FUk69yu4g5gyYJcQo15zkZV7zpKsAJTEnD1S
-	 QB/cMPvf+gZSb7tTXLTWG0xg3Xq5RS5qSSfDYmczTk90TUuWgUJ+G3z+MKiGAG9t59
-	 KuWjnoXvaKvulha9kBaoJ+qil30dyQG2K1HanWoQi93fvUZ+7w0So93LYn5ALk0knI
-	 3LR2LztXpQ27fl4n0tXwnY2k33uyX4iXcWZtawcJLZG7+RwsBYKGySYng3ZHUHSiDh
-	 xja3sIb76+iZw==
+	b=YDzlLMXnTjuwodQRmQQ9VUt0cbyy5H+R9wthr0xh74Mxp4nN85azoMP/qeJTAVKC1
+	 z07iuO3k3yZaBvDZ+zTipxYeKm2gAstL4EjHREmKn50ICz2Dj0sUE9eNOk1YXgxVut
+	 5/IEe34QLYrokYBom2Pzcox6l6VtCQBazWRrAqG+Uky9AwmFlUcctfH1CYRaLtA0H1
+	 H/UhG7b/+1xHJdpiIlvK0sJfweWzzjnmElaPj08UfUe5ZlkZBwdViRBaj63MIgwACA
+	 b6uNLTZIg4ywuVtb1nikLGpmCVNJINT1vD8ByDO+yF8sPGqJlLE7D7zwzMuYogAvAU
+	 BZKOVU15kl3JQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 02/12] leds: class: Remove hardware control trigger
- when writing brightness
+Subject: Re: [PATCH v5 09/12] leds: trigger: Add
+ led_trigger_notify_hw_control_changed() interface
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260821-leds-trigger-hw-changed-v5-2-3e00d6c4a936@rong.moe>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260821-leds-trigger-hw-changed-v5-9-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
- <20260821-leds-trigger-hw-changed-v5-2-3e00d6c4a936@rong.moe>
+ <20260821-leds-trigger-hw-changed-v5-9-3e00d6c4a936@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Fri, 21 Aug 2026 17:27:39 +0000
-Message-Id: <20260821172739.8307E1F000E9@smtp.kernel.org>
+Message-Id: <20260821172740.381AF1F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> Since commit b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of
-> hardware controlled LED"), the brightness attribute becomes write-only
-> when the LED is controlled fully by the hardware. A write-only attribute
-> is very confusing.
+> Some hardware can autonomously activate/deactivate hardware control.
+> After that, the LED hardware notifies the LED driver. Currently, there
+> is no mechanism for LED drivers to notify the LED core about such events
+> and initiate a trigger transition to reflect the hardware state.
 >=20
-> Moreover, most LED drivers set hardware brightness innocently with the
-> side effect of disabling hardware control, but the hardware control
-> trigger remains active, resulting in the software and hardware being out
-> of sync.
+> Add a new interface called led_trigger_notify_hw_control_changed(), so
+> that LED drivers can call it to notify the LED core about the
+> transition.
 >=20
-> Fix it by removing the hardware control trigger when writing the
-> brightness attribute.
+> The interface only allows two transitions:
 >=20
-> This should also match the semantics of hardware control:
+> 1. "none" =3D> private trigger
+> 2. private trigger =3D> "none"
 >=20
->     When the LED is in hw control, no software blink is possible and
->     doing so will effectively disable hw control.
+> If the current trigger is neither the private trigger nor "none", no
+> [ ... ]
+> By default, the config is enabled when LEDS_BRIGHTNESS_HW_CHANGED is
+> enabled.
 >=20
-> Fixes: b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of hardwa=
-re controlled LED")
 > Acked-by: Ike Panhc <ikepanhc@gmail.com>
 > Signed-off-by: Rong Zhang <i@rong.moe>
 
@@ -72,5 +71,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260821-leds-trigg=
-er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D2
+er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D9
 
