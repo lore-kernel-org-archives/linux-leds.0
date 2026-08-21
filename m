@@ -1,157 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4278C37F74C
-	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3E36B937
+	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787333262; cv=none; b=qSIzzZWKJ1HAlMPSG/wH9NBZTe788GQQ8MVMwvw3lDQMGpmaXfxN4KEX5qJBw9YcZ3usNNsAkaMVZOpj4Xe/zrpcs7k2yC41HoF5dUzpdpFrHMF5K/aRQMt76UnYm81JheTJaemq5G4bLvTn9JiumWZbEOb5RCwi44axczfQp/s=
+	t=1787333263; cv=none; b=Wl7jbN//+dVUGR3s2gz7z78R0h82Cml3X/pv23ToeXIDW9qsCqP2M0pa79xqyYUmxgs11rxnN1G4sXbW9If6uv7KTxO7ErX+ARSEjLNTCAxbv2Xq22FFBN1NsEUS4B/kFI92yY4l7fijJK0yZz3OE9hbodt+ZW7HERqqU08HVTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787333262; c=relaxed/simple;
-	bh=dWruPgdvnwedb+jI6p9/bZix1A3bzo/t1ZtIee/ZPbE=;
+	s=arc-20240116; t=1787333263; c=relaxed/simple;
+	bh=NMM8mGKDClzWUTaDuIISYGITeWS3T6IMRyFu1d7QMDg=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=nbKGMuRTfcWi+g+Drt9EB992Jf9OKL5YptKmheYKoQ3uCGEFgB0dSzsrs8J45wWC05EhUhMXZAgC0Vgxjm+XhSJLr3py9Ap8jbBDqEOgQ4JHtlZffskBBwTzHCgkppYMKbCXc78MBz1Yqgq1x7YeTmEtXmbOTEEQwzDO4EVD6sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tm3rTGhe; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=GMjOW1VOmqxhBmVdQPBqs40p0kVLcOQXqqPz4YaSyIm6F9ll+PvhZx4gzOSFnpAV0ZXRJV861Jgp26HYBjX7f5Ko5zZwbNOx+Lp6UGk9iH1WQ6uW3z4yfCR2O8YpvFC+pjjPMZGGv7xi38aTfE3r6xU+ewHiGL5zj3oul0AiiQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nD6aBiBP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tm3rTGhe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010471F00A3D;
-	Fri, 21 Aug 2026 17:27:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nD6aBiBP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD4931F000E9;
+	Fri, 21 Aug 2026 17:27:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787333261;
-	bh=iUC8IYCjCt676pap/1d5tfcD+uGx3JCFx06H9itg4lc=;
+	s=k20260515; t=1787333262;
+	bh=NMM8mGKDClzWUTaDuIISYGITeWS3T6IMRyFu1d7QMDg=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Tm3rTGheetG6cAcZoHz+lbWzedHjQoblOkqsm0oQ4NSIJBalxD0Y7E348gYyRz4e5
-	 zSgKxgKGrf35kL3SeYGUtKJ9iSiC/jcLuiwiXRYK0x5jF4TD5bc8atY4cR0q7pG94G
-	 e6Rh/W3a/OeAAcG+hGVm4K1LmEGrPQXsETXF9e5Arr+pV/FQ59Js61WEk3yivXAJbU
-	 85T1D82GD0M7ZqjYI80On33UTiC2R2hn1IF69h1+kMjaZBWD/Zx95KxeDcs4nge6lo
-	 +dwJCIzhVFDZt6SuPJyhj1ZXJvvzjXjGCYhJIdGOzDEQSBkHAQuTdKdAmJ954xt8WW
-	 R2dP5FlpVxklg==
+	b=nD6aBiBPyZd2WIwWglKtTx9E9VMfQjapn0p7dyZbntbDBa/4nnwIpKLOEkFru998l
+	 lugsAnlmYpYspL1q5S/K/4458zMmGHHwA2OACe/FWZnh1D2g4BTaANN8Yno87sKf5A
+	 33s5NLzBxYtmrdMAVRx0szU0hoNsC4zI9Y3E35HC3ypBy7WkpCu2Ojdib4OilhO14F
+	 ksLNS8drZP59FQGcgyQvcQAcMbti/m2DyruixWm7cWlsNV+QSvjeQmgDl154+TUNwQ
+	 wcK36VgFHM9QkOv3uFSBERahuevW4R3GZVlcA6Plw/a8OE6rQ8RY9xig5C/gb7cBuz
+	 PO++AjbHRvj5w==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 10/12] platform/x86: ideapad-laptop: Decouple
- hardware & classdev brightness for keyboard backlight
+Subject: Re: [PATCH v5 11/12] platform/x86: ideapad-laptop: Serialize
+ keyboard backlight notifications
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260821-leds-trigger-hw-changed-v5-10-3e00d6c4a936@rong.moe>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260821-leds-trigger-hw-changed-v5-11-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
- <20260821-leds-trigger-hw-changed-v5-10-3e00d6c4a936@rong.moe>
+ <20260821-leds-trigger-hw-changed-v5-11-3e00d6c4a936@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 17:27:40 +0000
-Message-Id: <20260821172741.010471F00A3D@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 17:27:41 +0000
+Message-Id: <20260821172741.AD4931F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
+> ACPI notifications are delivered in dedicated work contexts and may
+> arrive simultaneously. In the following change, much work will be done
+> while handling the notification, which could lead to potential race
+> conditions.
+>=20
+> Introduce a new mutex to serialize keyboard backlight notifications to
+> prevent potential race conditions.
+>=20
+> Acked-by: Ike Panhc <ikepanhc@gmail.com>
+> Signed-off-by: Rong Zhang <i@rong.moe>
 
-Pre-existing issues:
-- [High] The conversion of `last_hw_brightness` to an `atomic_t` fails to p=
-revent a TOCTOU (Time-Of-Check to Time-Of-Use) race condition between ACPI =
-notifications and sysfs brightness writes, violating core kernel locking ru=
-les.
---
-
---- Patch [10]: [PATCH v5 10/12] platform/x86: ideapad-laptop: Decouple har=
-dware & classdev brightness for keyboard backlight ---
-commit b73007a6498db545468f511c09a496e09dfcac31
-Author: Rong Zhang <i@rong.moe>
-
-platform/x86: ideapad-laptop: Decouple hardware & classdev brightness for k=
-eyboard backlight
-
-This commit decouples hardware brightness from LED classdev brightness for
-the keyboard backlight. It also converts last_hw_brightness into an atomic_t
-to help prevent potential race conditions.
-
-> diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platf=
-orm/x86/lenovo/ideapad-laptop.c
-> --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-[ ... ]
-> @@ -1637,32 +1676,37 @@ static enum led_brightness ideapad_kbd_bl_led_cde=
-v_brightness_get(struct led_cla
->  	return ideapad_kbd_bl_brightness_get(priv);
->  }
-> =20
-> -static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv, u=
-nsigned int brightness)
-> +static int ideapad_kbd_bl_hw_brightness_set(struct ideapad_private *priv=
-, int hw_brightness)
->  {
-[ ... ]
->  	if (err)
->  		return err;
-> =20
-> -	priv->kbd_bl.last_brightness =3D brightness;
-> +	atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
-> =20
->  	return 0;
->  }
-[ ... ]
-> @@ -1673,26 +1717,29 @@ static int ideapad_kbd_bl_led_cdev_brightness_set=
-(struct led_classdev *led_cdev,
-> =20
->  static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
->  {
-> -	int brightness;
-> +	int hw_brightness, brightness, last_hw_brightness;
-> =20
->  	if (!priv->kbd_bl.initialized)
->  		return;
-> =20
-> -	brightness =3D ideapad_kbd_bl_brightness_get(priv);
-> -	if (brightness < 0)
-> +	hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
-> +	if (hw_brightness < 0)
->  		return;
-> =20
-> -	if (brightness =3D=3D priv->kbd_bl.last_brightness)
-> -		return;
-> +	brightness =3D ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
-> +	if (brightness < 0)
-> +		return; /* Reject insane values early. */
-> =20
-> -	priv->kbd_bl.last_brightness =3D brightness;
-> +	last_hw_brightness =3D atomic_xchg(&priv->kbd_bl.last_hw_brightness, hw=
-_brightness);
-
-[Severity: High]
-This is a pre-existing issue, but does converting last_hw_brightness to an
-atomic_t fully prevent a time-of-check to time-of-use race condition here?
-
-Since the hardware read and the atomic_xchg() are separate steps, could
-the following sequence occur?
-
-CPU1 in ideapad_kbd_bl_notify():
-    hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
-
-CPU2 in ideapad_kbd_bl_hw_brightness_set() via concurrent sysfs write:
-    exec_kblc(priv->adev->handle, value);
-    atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
-
-CPU1 resumes in ideapad_kbd_bl_notify():
-    last_hw_brightness =3D atomic_xchg(&priv->kbd_bl.last_hw_brightness, hw=
-_brightness);
-
-In this scenario, wouldn't CPU1 overwrite the software cache with a stale
-hardware state, causing it to become permanently desynchronized from the
-actual hardware?
-
-Although follow-up patches in this series introduce a notif_mutex, does
-the sysfs write path ever acquire this mutex to serialize these updates
-properly?
-
-> +	if (hw_brightness =3D=3D last_hw_brightness)
-> +		return;
-> =20
->  	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightness=
-);
->  }
+Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260821-leds-trigg=
-er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D10
+er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D11
+
