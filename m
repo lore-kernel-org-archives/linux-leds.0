@@ -1,118 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D75037F00E
-	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052A32F7EE1
+	for <linux-leds@vger.kernel.org>; Fri, 21 Aug 2026 17:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787333259; cv=none; b=FKgrQrUTkfUSZGDPR+x2evlm2ccfyxWK2wQhv96dJw4foGYiq9tGBBKfkrfohv+po8bEmpsLphyE81Y3qrFd+0TEtDGdywhU9JNOvf10+S0t6zEBh6rYpyb+8D4hdDcTXgtIVKYeNjEhhoWMRkEuqR7Ud8KnXI37lnFZKcT42PE=
+	t=1787333260; cv=none; b=j3/dsrCi9IvkqLsRgR+b4HAPf+A0LMzyu0IRmKKxLRdUbVFiVH9LFTk2jEBmVUDlDnq5brv/YUthWvq8pjRpoELNA/FrmlmWoACoPFAvCxxVR97a5YG+KI3xozylyH4OnMln8S42NNyt6O3QKYi7x1jaqWOF5efKK7F+hpditSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787333259; c=relaxed/simple;
-	bh=2H8YN5PsPin4WgmkybeSciLFFRx38Ce1xOLhYaR1IMM=;
+	s=arc-20240116; t=1787333260; c=relaxed/simple;
+	bh=WsIMuRkKnOrssFSQK4exCQeHLRak3u+C+kfeegbpSCk=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=P02qvVjebNSI+Foy99/yOnRQPRQKQ33naC/GupKcflCBGbvcyfevt/bciVPyq6PpXVdks2SHFJaqmm73d3HDw99Ig3vUwlkf4cBBzpIN44iuGtTLiUqgTUyW1pw/xD7SjLkW5kfa5X5k7bM0h6emiP2HpjHYdgqBbIEDW1dr7MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuDdIAWN; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=I0iyWy03LC6Zm+Yvougp4QJY6ZkL2VZ6p6ev3T/nzy+dPK3Q68vnfrjzaPxVu5Np4xzscwAwhu70CKvne6Xp8PnM64Gp54GagTdQhgeCtDjTJIzwsRPHALXWxON8XlyXs5+4TcewkaXw6Y+RWkjq9M18PDPYPxgqgZYGNRHSqao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBvkfFLL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuDdIAWN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6021F00A3D;
-	Fri, 21 Aug 2026 17:27:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBvkfFLL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE6001F00A3E;
+	Fri, 21 Aug 2026 17:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1787333258;
-	bh=7PLwaqEhXghIMGsYo7yc+KmCXznHx32AT+OTFtaessM=;
+	bh=plVHZrGREaxQGSMzMY10lFaahC4vt18pfvtZ9uHt09c=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OuDdIAWNeZQDtmU4oq84EMnRVWaArY4TfJsb/9cRzmRU6AL3S+MHACsXKNAVJA6PA
-	 X3vthtCnsaFO7beNM0wquBP8O9jDHTJ19fknAZAfV7gtNxOiprLl7OHMKpV2S6G4NU
-	 uGiHuQthH3/nlkock1ckaTfXNjNxS+3N0rcx51FYFE/jc3kj+5X/X7Yrgpy7LvCVmY
-	 J6WtEAd+NTaSSmZkaPo8VKYQpBvuoCjT7L9i+175EuruWVwQ6mrPXXJFAcu1gHa7We
-	 M24g6RmhvZ4sOmV6YxylZIKIC+e814kYcFU+XRg9zFJza3pu48HNeFWPW68Iohn6DO
-	 b3jSw97oQDZLQ==
+	b=GBvkfFLLeBmIzJf6/7RiOyMRJi7Bsqd7zHDBFhz0lbzHnc3iQJpKU75T0ZChOwoMP
+	 wevLrLPhyYfb7ihs2CoHBPAgOvzLGCG7ZD2MTNzfSg+khXe03scIdYkTOudivq5N5y
+	 JRt7wCnFDvhafHYPqn4Ts/9OzQ2MjW23ps2YuXQGlXI4nhVvjleNnNgHFFrqy9LIJh
+	 HnKXZpOyaT0iKrqDhRLhmRhirHXbUi5/OrdjHXaJvFpAWQQ0MLy3XFNRjX1+pZ14AV
+	 huaFCub05hlSrmO/cgMztVmeSjrI6NIXcBUbBTJCr8FVZqufSXbXDD7dBGcPCKwnUY
+	 rpmkBcG152X5w==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 07/12] leds: trigger: Enforce strict checks in
- led_trigger_is_hw_controlled()
+Subject: Re: [PATCH v5 08/12] leds: trigger: Do not attach trigger to a
+ removing LED
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260821-leds-trigger-hw-changed-v5-7-3e00d6c4a936@rong.moe>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260821-leds-trigger-hw-changed-v5-8-3e00d6c4a936@rong.moe>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
- <20260821-leds-trigger-hw-changed-v5-7-3e00d6c4a936@rong.moe>
+ <20260821-leds-trigger-hw-changed-v5-8-3e00d6c4a936@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 21 Aug 2026 17:27:37 +0000
-Message-Id: <20260821172737.EF6021F00A3D@smtp.kernel.org>
+Date: Fri, 21 Aug 2026 17:27:38 +0000
+Message-Id: <20260821172738.AE6001F00A3E@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Sysfs attributes are exposed to user-space before the `trigger_loc=
-k` rwsem is initialized, causing uninitialized lock access.
+- [High] The patch attempts to fix a data race on `led_cdev->flags` by wrap=
+ping the `LED_UNREGISTERING` update in `trigger_lock`. However, this is an =
+incomplete fix because `flags` is an `int` modified via non-atomic bitwise =
+operations (`|=3D`, `&=3D ~`), and other modifiers (such as `led_classdev_s=
+uspend` and `led_sysfs_disable`) do not hold `trigger_lock`. A concurrent u=
+pdate from these paths will still cause a data race that can drop the `LED_=
+UNREGISTERING` flag, exposing the same Use-After-Free bug.
+- [High] `led_classdev_unregister()` flushes the brightness workqueue befor=
+e unregistering the sysfs device, creating a race condition where concurren=
+t sysfs writes can queue new work that executes after the LED is freed.
 --
 
---- Patch [7]: [PATCH v5 07/12] leds: trigger: Enforce strict checks in led=
-_trigger_is_hw_controlled() ---
-commit ebab4e455acab29c44baf2a4a586beae42254bc5
+--- Patch [8]: [PATCH v5 08/12] leds: trigger: Do not attach trigger to a r=
+emoving LED ---
+commit 9ab2868504159e735891fdf50fc3354c0c88c1c8
 Author: Rong Zhang <i@rong.moe>
 
-leds: trigger: Enforce strict checks in led_trigger_is_hw_controlled()
+leds: trigger: Do not attach trigger to a removing LED
 
-With all existing triggers adopting the new interface, strict checks
-could be enforced to make the semantics of hardware control triggers
-clearer.
+This patch attempts to fix a race condition where a trigger may be attached
+to a removing LED by setting the LED_UNREGISTERING flag under the
+trigger_lock in led_classdev_unregister().
 
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index de17a8bbb4d48..cb49a02a8b3cf 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-> @@ -42,9 +42,16 @@ static bool __led_trigger_is_hw_controlled(struct led_=
-classdev *led_cdev)
->  	if (!led_cdev->trigger)
->  		return false;
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 2460fcf0c4690..771a6e6c659be 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -633,12 +633,13 @@ void led_classdev_unregister(struct led_classdev *l=
+ed_cdev)
 > =20
-> +	if (!led_cdev->hw_control_trigger ||
-> +	    strcmp(led_cdev->hw_control_trigger, led_cdev->trigger->name))
-> +		return false;
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  	down_write(&led_cdev->trigger_lock);
+> +	led_cdev->flags |=3D LED_UNREGISTERING;
 
 [Severity: High]
-This is a pre-existing issue, but since this patch modifies the hardware
-control paths, is it possible to access an uninitialized rw_semaphore here?
+This is a pre-existing issue, but does this fully resolve the data race on
+the flags bitmask?
 
-In drivers/leds/led-class.c, the device and sysfs attributes are created
-and exposed to user-space before the trigger_lock rwsem is initialized:
+While this update is now protected by trigger_lock, other paths like PM
+suspend or V4L2 flash release modify led_cdev->flags using non-atomic
+bitwise operations without holding trigger_lock.
 
-led_classdev_register_ext() {
-        ...
-        led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0,
-                                                  led_cdev, led_cdev->group=
-s,
-                                                  "%s", final_name);
-        ...
-        init_rwsem(&led_cdev->trigger_lock);
-        ...
-}
+If a concurrent update occurs without the lock, could the non-atomic
+read-modify-write drop the LED_UNREGISTERING flag?
 
-If user-space processes the uevent quickly enough and reads the brightness
-attribute, brightness_show() will call led_trigger_is_hw_controlled() before
-acquiring the led_access mutex:
-
-brightness_show() {
-        if (led_trigger_is_hw_controlled(led_cdev))
-                return -ENODATA;
-
-        mutex_lock(&led_cdev->led_access);
-        ...
-}
-
-Since led_trigger_is_hw_controlled() eventually accesses trigger_lock, will
-it attempt to acquire the uninitialized semaphore and cause a crash or
-lockdep warning?
+If the flag is lost, a subsequent sysfs trigger write might see it unset
+and attach a trigger to the unregistering LED, leading to a use-after-free
+when the trigger later fires.
 
 [ ... ]
 
+>  	/* Stop blinking */
+>  	led_stop_software_blink(led_cdev);
+>=20
+> 	if (!(led_cdev->flags & LED_RETAIN_AT_SHUTDOWN))
+> 		led_set_brightness(led_cdev, LED_OFF);
+>=20
+> 	flush_work(&led_cdev->set_brightness_work);
+
+[Severity: High]
+This is also a pre-existing issue, but is there a race condition between
+flushing the workqueue and unregistering the device?
+
+In led_classdev_unregister(), flush_work() is called before
+device_unregister() removes the device from sysfs.
+
+Could a user-space thread writing to the sysfs brightness attribute in the
+window between these two calls queue new work?
+
+sysfs brightness_store() -> led_set_brightness_nopm() -> queue_work()
+
+Since device_unregister() hasn't been called yet, the sysfs write can
+succeed, leaving pending work that will execute after the device memory is
+freed.
+
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260821-leds-trigg=
-er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D7
+er-hw-changed-v5-0-3e00d6c4a936@rong.moe?part=3D8
