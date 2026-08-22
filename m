@@ -1,57 +1,57 @@
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB37493634
-	for <linux-leds@vger.kernel.org>; Sat, 22 Aug 2026 19:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C1C2C1586
+	for <linux-leds@vger.kernel.org>; Sat, 22 Aug 2026 20:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787427931; cv=pass; b=t6nXVh9QBb0CCEMhBms5wT4IB1RqShM00wnFZvQGJF+FsRTc7/1KYRFlbEBVDDN07oy0lWXXqpY0PruIboCPdqUgQ97clCDcyQc3AX11w4TYShRA6rMHNex0790g6NxlcwvbrOVY47MEcJvAr+IEcx2ueY+hYwCHGDdUAsqxorw=
+	t=1787430651; cv=pass; b=ezIA2oXvA3Dru8frTtWdEuXH+xEQjQrlAZAaG3siqayfa/SJ4Yl8s/A0DfQgoBoOeCSL1ZrQJIByODIektbG8T5eC86gI82rjgbWT4rZshqX2YIxiptKaemtCx4Fx5sMEYZ+KPUvmmLiKOzIpK4GwU3kqB26uT6D16LByKlDOSY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787427931; c=relaxed/simple;
-	bh=CuU0sXsDfzpzkzh7qmJCBA4t3GHYTo++kHPlEwrZ2+I=;
+	s=arc-20240116; t=1787430651; c=relaxed/simple;
+	bh=RiOYqWQvQFsFsXmt0GDV2rKtNNV6N95t1SlbJQ3NUlk=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=WorzU4q93vDE15fyD50Mk1HflbIBqe3gX0hafEOa0oietmo+1m5nbt1suP6BYBZ71tc2HVNMEesGkW7s9zXvlc85XAOREyCWoPZKMYPE9x4IALvwUmuynK12542GwFqC2NcWB166f2RseRJRT6hzqq0cMOqZCl8//fzkf8dw41E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=SBGyLijM; arc=pass smtp.client-ip=136.143.188.15
+	 Date:MIME-Version; b=KKVMf1SRyaY6LWa1xhv4C29XV8OUiDH1FeYpSQOAuIwrU6WD1aWCqEBTYHTcFxwxpVsbYrJ7Zd7Br2rroYnzOVvTHFqwQYD38mRJ/kQz+Tc7ZBRxXNax1CDyj++rxU6Poy5DqD0PQdpq2Q14T1HXAPdt2g1+OYNO2gKRyEF99UI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=BeI05LOp; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="SBGyLijM"
-ARC-Seal: i=1; a=rsa-sha256; t=1787427923; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="BeI05LOp"
+ARC-Seal: i=1; a=rsa-sha256; t=1787430642; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=NFSxzf/hjuGMsIbBOunZCu9kY27Q23pt6+W9IjPW++a35CXB9KixElkFPUMlooN8fHybefqftWvUcqhURybnTJCnxwVM78oAhB/Uy9l0C+zTP6XF7qZKa8zOUpRjlxoTGeTyF+IjwNpVjAMxIFW7f5z+KWumyjqreIH/9+puF2E=
+	b=kpQWKCMQMia0BvcUkwpx/tpv1bhDzQiiGkASivVU+ugzYmfnmT+Qm1qU+GUbv0JimdNJZYZLHSBH79Ayozdy1HEUU6blx4MlnjDBKvO14ZggfsZXJYdzdPfOZgD9RHnveFfEac27sQzoqZgaBcj1zSuWTnUj2v07BhX0ZFdgL/g=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787427923; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xz2MyET6VAU7XnG5wwqqXrSIvoWqD+59VB3JuJXAXVU=; 
-	b=AUk5GfKBcGi0ZDALlvsqJOHifNKhBZWSC296xKb5dg1xszK9Iq7wmHAXef/PASisMSwIn21SDwXNZHsnRRaJfGrDf9FW6xwds+owienYG19X1q4IuOmWst/SXCkWhX8Qrj+IxggGAFJoGGtnQU259r9RJbC6Sl5bqlCMfx5GtBk=
+	t=1787430642; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7zKGIXidZl+c58m7klxlfFNuSDqERNV+YNYWDeH5K4w=; 
+	b=mWeHC48Lq1kwzIzRcgt7VG9kMg/RlRvF9cFMy2OsufVqGSwdp8jLbZ4oEhaPbJrL3gcTfnIli/MaWAI3O3C1T/Dx2SoqgRIgseQzFBKrcHPu+/G9n74WM12LkpKpEBiuegSljcKg0XQTggN5Stgc7z1nLWAngbG3RjQ2N8D8MGk=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787427923;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787430642;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=xz2MyET6VAU7XnG5wwqqXrSIvoWqD+59VB3JuJXAXVU=;
-	b=SBGyLijMZaELKYbcvg+20dFX68GCkYMMtX/mBtGAJRbnqpIQ0lR0+OFNvlfubdHW
-	3k9azsji7A4Kfz+2R8aGtizfdJ4N3ZeHWMVAzAImw4ONVfUJ3anTO+fP6wyChbpJFBd
-	n/QssX0WcLJuWZnwNR57M/japCTsWfqrH6SzOm5ITi4D+ZcBTd70rjHXGxee1/dZL16
-	WR5OLMDSRBTlG/QMuEyfpihM+VOtL0mZOzyZg39UU6H2iFLDEuDHH53GtdCt9kQ5u7a
-	gmNIqBxZ88BZDpoQWTYSO1NBepmIEduOwfCo/MwE1q2h+WMY7HLc51DgmXapztCTJnM
-	8H6b2cWUOA==
-Received: by mx.zohomail.com with SMTPS id 1787427920779104.5225546862805;
-	Sat, 22 Aug 2026 12:45:20 -0700 (PDT)
-Message-ID: <a384b0b2a5318d3a73a0ac7ea07a5091effd6197.camel@rong.moe>
-Subject: Re: [PATCH v5 08/12] leds: trigger: Do not attach trigger to a
- removing LED
+	bh=7zKGIXidZl+c58m7klxlfFNuSDqERNV+YNYWDeH5K4w=;
+	b=BeI05LOpZ01F+osXgPFO1LprvfUHGCu7AwsL0DjsNXJ1Hk/RmF1E+jK7DIRVGS9I
+	nH3s2eza0qS1APrIIZ4/ycwXWbOZj64tJFfE/v+Jyq574Z2u7FIF2pOVI/iwGM2g6yr
+	TURHc6NzpRg+046Mj/Fz66UODH9DnGgiyWPDUEPKue+VxrhMQ3OOi92z9fidn2BgNtm
+	fXac3CcLYQJDfdUdN8LB4/56antfYnyEMy0sY0/Xli4l9Eh2tbbLHqnpghfdy3hAkyT
+	qjuu9leeff8pGRO3ASeRzI26FgBGkLFQSoTUMADuTjobhS0yO60OnsKC5czYN2Ta7h7
+	fnIg5dNj/Q==
+Received: by mx.zohomail.com with SMTPS id 1787430639228857.6143595846065;
+	Sat, 22 Aug 2026 13:30:39 -0700 (PDT)
+Message-ID: <e2b081dfd8f96511a73b86ab3ec75e5cd759b79b.camel@rong.moe>
+Subject: Re: [PATCH v5 12/12] platform/x86: ideapad-laptop: Fully support
+ auto keyboard backlight
 From: Rong Zhang <i@rong.moe>
 To: sashiko-reviews@lists.linux.dev
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260821172738.AE6001F00A3E@smtp.kernel.org>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260821172742.F3FB31F00A3A@smtp.kernel.org>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
-	 <20260821-leds-trigger-hw-changed-v5-8-3e00d6c4a936@rong.moe>
-	 <20260821172738.AE6001F00A3E@smtp.kernel.org>
+	 <20260821-leds-trigger-hw-changed-v5-12-3e00d6c4a936@rong.moe>
+	 <20260821172742.F3FB31F00A3A@smtp.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 23 Aug 2026 03:40:15 +0800
+Date: Sun, 23 Aug 2026 04:25:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -64,93 +64,96 @@ X-ZohoMailClient: External
 Hi all,
 
 On Fri, 2026-08-21 at 17:27 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 2 potential issu=
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
 e(s) to consider:
->=20
-> Pre-existing issues:
-> - [High] The patch attempts to fix a data race on `led_cdev->flags` by wr=
-apping the `LED_UNREGISTERING` update in `trigger_lock`. However, this is a=
-n incomplete fix because `flags` is an `int` modified via non-atomic bitwis=
-e operations (`|=3D`, `&=3D ~`), and other modifiers (such as `led_classdev=
-_suspend` and `led_sysfs_disable`) do not hold `trigger_lock`. A concurrent=
- update from these paths will still cause a data race that can drop the `LE=
-D_UNREGISTERING` flag, exposing the same Use-After-Free bug.
-> - [High] `led_classdev_unregister()` flushes the brightness workqueue bef=
-ore unregistering the sysfs device, creating a race condition where concurr=
-ent sysfs writes can queue new work that executes after the LED is freed.
-
-Fixing them would need a huge series and is far beyond the scope of the
-series.
-
-Thank,
-Rong
-
+> - [Medium] Hardware brightness state falls out of sync with `last_hw_brig=
+htness` due to a TOCTOU race between ACPI notify and sysfs write.
 > --
 >=20
-> --- Patch [8]: [PATCH v5 08/12] leds: trigger: Do not attach trigger to a=
- removing LED ---
-> commit 9ab2868504159e735891fdf50fc3354c0c88c1c8
+> --- Patch [12]: [PATCH v5 12/12] platform/x86: ideapad-laptop: Fully supp=
+ort auto keyboard backlight ---
+> commit 775eb668f48ee8e4ee7f513342cb65f613086809
 > Author: Rong Zhang <i@rong.moe>
 >=20
-> leds: trigger: Do not attach trigger to a removing LED
+> platform/x86: ideapad-laptop: Fully support auto keyboard backlight
 >=20
-> This patch attempts to fix a race condition where a trigger may be attach=
-ed
-> to a removing LED by setting the LED_UNREGISTERING flag under the
-> trigger_lock in led_classdev_unregister().
+> This commit adds support for the auto brightness mode of the keyboard
+> backlight on IdeaPad laptops. It introduces a private hardware control
+> trigger to handle the auto mode and blocks brightness changes on exit
+> to retain state across boots.
 >=20
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 2460fcf0c4690..771a6e6c659be 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -633,12 +633,13 @@ void led_classdev_unregister(struct led_classdev =
-*led_cdev)
-> > =20
-> >  #ifdef CONFIG_LEDS_TRIGGERS
-> >  	down_write(&led_cdev->trigger_lock);
-> > +	led_cdev->flags |=3D LED_UNREGISTERING;
->=20
-> [Severity: High]
-> This is a pre-existing issue, but does this fully resolve the data race o=
-n
-> the flags bitmask?
->=20
-> While this update is now protected by trigger_lock, other paths like PM
-> suspend or V4L2 flash release modify led_cdev->flags using non-atomic
-> bitwise operations without holding trigger_lock.
->=20
-> If a concurrent update occurs without the lock, could the non-atomic
-> read-modify-write drop the LED_UNREGISTERING flag?
->=20
-> If the flag is lost, a subsequent sysfs trigger write might see it unset
-> and attach a trigger to the unregistering LED, leading to a use-after-fre=
-e
-> when the trigger later fires.
+> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
+tform/x86/lenovo/ideapad-laptop.c
+> > index 7f7b1e30c3263..5442cbfe3969b 100644
+> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
 >=20
 > [ ... ]
 >=20
-> >  	/* Stop blinking */
-> >  	led_stop_software_blink(led_cdev);
-> >=20
-> > 	if (!(led_cdev->flags & LED_RETAIN_AT_SHUTDOWN))
-> > 		led_set_brightness(led_cdev, LED_OFF);
-> >=20
-> > 	flush_work(&led_cdev->set_brightness_work);
+> > @@ -1739,6 +1790,8 @@ static void ideapad_kbd_bl_notify(struct ideapad_=
+private *priv)
+> >  	if (hw_brightness =3D=3D last_hw_brightness)
+> >  		return;
+> > =20
+> > +	ideapad_kbd_bl_notify_hw_control(priv, hw_brightness, last_hw_brightn=
+ess);
+> > +
 >=20
-> [Severity: High]
-> This is also a pre-existing issue, but is there a race condition between
-> flushing the workqueue and unregistering the device?
+> [Severity: Medium]
+> Can a race condition here cause the hardware brightness state to permanen=
+tly
+> fall out of sync with the internal tracker?
 >=20
-> In led_classdev_unregister(), flush_work() is called before
-> device_unregister() removes the device from sysfs.
+> Looking at ideapad_kbd_bl_notify(), it reads the current hardware brightn=
+ess
+> and then updates the tracker using atomic_xchg():
 >=20
-> Could a user-space thread writing to the sysfs brightness attribute in th=
-e
-> window between these two calls queue new work?
+> ideapad_kbd_bl_notify() {
+>     ...
+>     hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
+>     ...
+>     last_hw_brightness =3D atomic_xchg(&priv->kbd_bl.last_hw_brightness, =
+hw_brightness);
+> }
 >=20
-> sysfs brightness_store() -> led_set_brightness_nopm() -> queue_work()
+> If a concurrent sysfs write triggers ideapad_kbd_bl_hw_brightness_set()
+> in the middle of this process, could we see this sequence:
 >=20
-> Since device_unregister() hasn't been called yet, the sysfs write can
-> succeed, leaving pending work that will execute after the device memory i=
-s
-> freed.
+> Thread 1 (ideapad_kbd_bl_notify):
+>     Reads hw_brightness (e.g., 1)
+>=20
+> Thread 2 (sysfs write):
+>     Calls ideapad_kbd_bl_hw_brightness_set()
+>     Sets actual hardware brightness to 3 (auto mode)
+>     Calls atomic_set(&priv->kbd_bl.last_hw_brightness, 3)
+>=20
+> Thread 1 (ideapad_kbd_bl_notify resumes):
+>     Calls atomic_xchg(&priv->kbd_bl.last_hw_brightness, 1)
+>=20
+> Wouldn't Thread 1 blindly overwrite the correct atomic state (3) with the
+> stale read state (1)?=20
+>=20
+> This seems like it would permanently desync the last_hw_brightness tracke=
+r
+> from the actual hardware, breaking ideapad_kbd_bl_auto_trigger_offloaded(=
+)
+> which would now falsely report that the trigger is not offloaded.
+
+Well, the concern is valid, Thread 1 could disable the private trigger
+after Thread 2 activating it, but the hardware state is still auto due to
+__led_trigger_set being called with hw_triggered =3D=3D true.
+
+led_trigger_notify_hw_control_changed() calls
+ideapad_kbd_bl_hw_brightness_set(), that's why the latter is not
+protected by the newly introduced notif_mutex.
+
+Maybe we would need to introduce a workqueue deferral mechanism to
+resolve that, as Sashiko suggested in the reply to v4...
+
+Thanks,
+Rong
+
+>=20
+> >  	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightne=
+ss);
+> >  }
