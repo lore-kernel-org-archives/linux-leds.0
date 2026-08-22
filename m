@@ -1,57 +1,57 @@
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C1C2C1586
-	for <linux-leds@vger.kernel.org>; Sat, 22 Aug 2026 20:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C12537DE84
+	for <linux-leds@vger.kernel.org>; Sat, 22 Aug 2026 20:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787430651; cv=pass; b=ezIA2oXvA3Dru8frTtWdEuXH+xEQjQrlAZAaG3siqayfa/SJ4Yl8s/A0DfQgoBoOeCSL1ZrQJIByODIektbG8T5eC86gI82rjgbWT4rZshqX2YIxiptKaemtCx4Fx5sMEYZ+KPUvmmLiKOzIpK4GwU3kqB26uT6D16LByKlDOSY=
+	t=1787430718; cv=pass; b=Yah+Ihevocdvbud6RFkDpOGyof+TVxZR5qP8yiF7rK4tY50eAoLIVqnCgUJR8G26OC0GYl+coq/RIdTchz4VTzWieQay02Ci2sz21wsyWcEMwrOvH5fUQfnPGjv58rDS7DUEe3wcpVkV7c90sxP6pxIMhXy7r444gFOO7lqHlKs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787430651; c=relaxed/simple;
-	bh=RiOYqWQvQFsFsXmt0GDV2rKtNNV6N95t1SlbJQ3NUlk=;
+	s=arc-20240116; t=1787430718; c=relaxed/simple;
+	bh=Gd5wPNxKM3Xn7HAteOv/M+uLlkzSW832aI+Bs3TOIXg=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=KKVMf1SRyaY6LWa1xhv4C29XV8OUiDH1FeYpSQOAuIwrU6WD1aWCqEBTYHTcFxwxpVsbYrJ7Zd7Br2rroYnzOVvTHFqwQYD38mRJ/kQz+Tc7ZBRxXNax1CDyj++rxU6Poy5DqD0PQdpq2Q14T1HXAPdt2g1+OYNO2gKRyEF99UI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=BeI05LOp; arc=pass smtp.client-ip=136.143.188.15
+	 Date:MIME-Version; b=CQrfdhT9DSn+8SVj9PsJ+rQYEYz+ZuTuhTh13Cynac09x8Y+M2rR4Bv8ibkF3fvULI+CQdMNZwTgYc9UHAwVzY2BGTcXA21ZCCFDiwFSk2Bkt8SRu7nxp7qeLoh/PMo7vBxHSiHyRRUFtHEjcbaGmmXzbdv+5cgh4yJRnqvo3to=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=GYYNzmk5; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="BeI05LOp"
-ARC-Seal: i=1; a=rsa-sha256; t=1787430642; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="GYYNzmk5"
+ARC-Seal: i=1; a=rsa-sha256; t=1787430712; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=kpQWKCMQMia0BvcUkwpx/tpv1bhDzQiiGkASivVU+ugzYmfnmT+Qm1qU+GUbv0JimdNJZYZLHSBH79Ayozdy1HEUU6blx4MlnjDBKvO14ZggfsZXJYdzdPfOZgD9RHnveFfEac27sQzoqZgaBcj1zSuWTnUj2v07BhX0ZFdgL/g=
+	b=FNHBvD5qis5b7M9+3Yej8L0YaL9QWU0ZvXNQ6nf7uEz1/CkMdXuxF9P0L26Owi26kZ2+ZsYQXoYX8iEA03LhbU+XpCJO1sATl+0p6DTRynZ3JLVAuewn6jeJQMqJhxqK9hkfsvuKhVFsnH1I1jacmwS22LFvMZ1+S9AYNQxZA1E=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787430642; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7zKGIXidZl+c58m7klxlfFNuSDqERNV+YNYWDeH5K4w=; 
-	b=mWeHC48Lq1kwzIzRcgt7VG9kMg/RlRvF9cFMy2OsufVqGSwdp8jLbZ4oEhaPbJrL3gcTfnIli/MaWAI3O3C1T/Dx2SoqgRIgseQzFBKrcHPu+/G9n74WM12LkpKpEBiuegSljcKg0XQTggN5Stgc7z1nLWAngbG3RjQ2N8D8MGk=
+	t=1787430712; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8MprMeXo4N7sgrkHBT5SYGyTPC3NdBhXHg7U8DzoUL0=; 
+	b=i97MixhVUM266+s0m0QO0TDxXWoaqN1spiy1TC/OtkZ/VbhEal3GQxkm6PLqPeKnVOEM4j4Pfod6T0peooED9zPIiul/HX+6hfgXgPeZPqrOkdVu3iySLd4SHJKsyB170SnCNo1Om4aU0TxsYlGl8sN2p84lsBH6vbKo+uqn3Lw=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787430642;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787430712;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=7zKGIXidZl+c58m7klxlfFNuSDqERNV+YNYWDeH5K4w=;
-	b=BeI05LOpZ01F+osXgPFO1LprvfUHGCu7AwsL0DjsNXJ1Hk/RmF1E+jK7DIRVGS9I
-	nH3s2eza0qS1APrIIZ4/ycwXWbOZj64tJFfE/v+Jyq574Z2u7FIF2pOVI/iwGM2g6yr
-	TURHc6NzpRg+046Mj/Fz66UODH9DnGgiyWPDUEPKue+VxrhMQ3OOi92z9fidn2BgNtm
-	fXac3CcLYQJDfdUdN8LB4/56antfYnyEMy0sY0/Xli4l9Eh2tbbLHqnpghfdy3hAkyT
-	qjuu9leeff8pGRO3ASeRzI26FgBGkLFQSoTUMADuTjobhS0yO60OnsKC5czYN2Ta7h7
-	fnIg5dNj/Q==
-Received: by mx.zohomail.com with SMTPS id 1787430639228857.6143595846065;
-	Sat, 22 Aug 2026 13:30:39 -0700 (PDT)
-Message-ID: <e2b081dfd8f96511a73b86ab3ec75e5cd759b79b.camel@rong.moe>
-Subject: Re: [PATCH v5 12/12] platform/x86: ideapad-laptop: Fully support
- auto keyboard backlight
+	bh=8MprMeXo4N7sgrkHBT5SYGyTPC3NdBhXHg7U8DzoUL0=;
+	b=GYYNzmk5+AGQ0Ha3wZCrQJ2VFfr046PACi/j+25rovgfTUstzGmGob3ueCEjLc5i
+	vdkP8GWv6O41J8mIv/A2x36/mtWNVNEBk2IBeG8ndlA8x6vdbFqvV1D7NLECbxox//E
+	VuRBkcgocne2sMwUInq8aaANhW/wdbp49Plxbs6q0hNOaVr/lZVYkhVtG0H9bpOJ5X0
+	O7D1vObj0amaESUIvjgBdvnQKa9eiQNsKfwDyzrEMHudY9ND4GXfpcVMBaIYSn4EFhA
+	8i1irw0FnAX5zYLAGe8ZaHHR+aS+LWmMfVsKc6GJcj7k+KAuL6vno2hF/Z+FE2Kb1aO
+	80H12Ondbg==
+Received: by mx.zohomail.com with SMTPS id 1787430708831565.9469100220783;
+	Sat, 22 Aug 2026 13:31:48 -0700 (PDT)
+Message-ID: <434de30b4a6975a245263c72af6f1c94b994ba7e.camel@rong.moe>
+Subject: Re: [PATCH v5 10/12] platform/x86: ideapad-laptop: Decouple
+ hardware & classdev brightness for keyboard backlight
 From: Rong Zhang <i@rong.moe>
 To: sashiko-reviews@lists.linux.dev
 Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260821172742.F3FB31F00A3A@smtp.kernel.org>
+In-Reply-To: <20260821172741.010471F00A3D@smtp.kernel.org>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
-	 <20260821-leds-trigger-hw-changed-v5-12-3e00d6c4a936@rong.moe>
-	 <20260821172742.F3FB31F00A3A@smtp.kernel.org>
+		 <20260821-leds-trigger-hw-changed-v5-10-3e00d6c4a936@rong.moe>
+		 <20260821172741.010471F00A3D@smtp.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 23 Aug 2026 04:25:31 +0800
+Date: Sun, 23 Aug 2026 04:26:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -66,94 +66,117 @@ Hi all,
 On Fri, 2026-08-21 at 17:27 +0000, sashiko-bot@kernel.org wrote:
 > Thank you for your contribution! Sashiko AI review found 1 potential issu=
 e(s) to consider:
-> - [Medium] Hardware brightness state falls out of sync with `last_hw_brig=
-htness` due to a TOCTOU race between ACPI notify and sysfs write.
-> --
 >=20
-> --- Patch [12]: [PATCH v5 12/12] platform/x86: ideapad-laptop: Fully supp=
-ort auto keyboard backlight ---
-> commit 775eb668f48ee8e4ee7f513342cb65f613086809
-> Author: Rong Zhang <i@rong.moe>
->=20
-> platform/x86: ideapad-laptop: Fully support auto keyboard backlight
->=20
-> This commit adds support for the auto brightness mode of the keyboard
-> backlight on IdeaPad laptops. It introduces a private hardware control
-> trigger to handle the auto mode and blocks brightness changes on exit
-> to retain state across boots.
->=20
-> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
-tform/x86/lenovo/ideapad-laptop.c
-> > index 7f7b1e30c3263..5442cbfe3969b 100644
-> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
->=20
-> [ ... ]
->=20
-> > @@ -1739,6 +1790,8 @@ static void ideapad_kbd_bl_notify(struct ideapad_=
-private *priv)
-> >  	if (hw_brightness =3D=3D last_hw_brightness)
-> >  		return;
-> > =20
-> > +	ideapad_kbd_bl_notify_hw_control(priv, hw_brightness, last_hw_brightn=
-ess);
-> > +
->=20
-> [Severity: Medium]
-> Can a race condition here cause the hardware brightness state to permanen=
-tly
-> fall out of sync with the internal tracker?
->=20
-> Looking at ideapad_kbd_bl_notify(), it reads the current hardware brightn=
-ess
-> and then updates the tracker using atomic_xchg():
->=20
-> ideapad_kbd_bl_notify() {
->     ...
->     hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
->     ...
->     last_hw_brightness =3D atomic_xchg(&priv->kbd_bl.last_hw_brightness, =
-hw_brightness);
-> }
->=20
-> If a concurrent sysfs write triggers ideapad_kbd_bl_hw_brightness_set()
-> in the middle of this process, could we see this sequence:
->=20
-> Thread 1 (ideapad_kbd_bl_notify):
->     Reads hw_brightness (e.g., 1)
->=20
-> Thread 2 (sysfs write):
->     Calls ideapad_kbd_bl_hw_brightness_set()
->     Sets actual hardware brightness to 3 (auto mode)
->     Calls atomic_set(&priv->kbd_bl.last_hw_brightness, 3)
->=20
-> Thread 1 (ideapad_kbd_bl_notify resumes):
->     Calls atomic_xchg(&priv->kbd_bl.last_hw_brightness, 1)
->=20
-> Wouldn't Thread 1 blindly overwrite the correct atomic state (3) with the
-> stale read state (1)?=20
->=20
-> This seems like it would permanently desync the last_hw_brightness tracke=
-r
-> from the actual hardware, breaking ideapad_kbd_bl_auto_trigger_offloaded(=
-)
-> which would now falsely report that the trigger is not offloaded.
+> Pre-existing issues:
+> - [High] The conversion of `last_hw_brightness` to an `atomic_t` fails to=
+ prevent a TOCTOU (Time-Of-Check to Time-Of-Use) race condition between ACP=
+I notifications and sysfs brightness writes, violating core kernel locking =
+rules.
 
-Well, the concern is valid, Thread 1 could disable the private trigger
-after Thread 2 activating it, but the hardware state is still auto due to
-__led_trigger_set being called with hw_triggered =3D=3D true.
-
-led_trigger_notify_hw_control_changed() calls
-ideapad_kbd_bl_hw_brightness_set(), that's why the latter is not
-protected by the newly introduced notif_mutex.
-
-Maybe we would need to introduce a workqueue deferral mechanism to
-resolve that, as Sashiko suggested in the reply to v4...
+Please see my reply to Sashiko's review to PATCH 12.
 
 Thanks,
 Rong
 
+> --
 >=20
+> --- Patch [10]: [PATCH v5 10/12] platform/x86: ideapad-laptop: Decouple h=
+ardware & classdev brightness for keyboard backlight ---
+> commit b73007a6498db545468f511c09a496e09dfcac31
+> Author: Rong Zhang <i@rong.moe>
+>=20
+> platform/x86: ideapad-laptop: Decouple hardware & classdev brightness for=
+ keyboard backlight
+>=20
+> This commit decouples hardware brightness from LED classdev brightness fo=
+r
+> the keyboard backlight. It also converts last_hw_brightness into an atomi=
+c_t
+> to help prevent potential race conditions.
+>=20
+> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
+tform/x86/lenovo/ideapad-laptop.c
+> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+> [ ... ]
+> > @@ -1637,32 +1676,37 @@ static enum led_brightness ideapad_kbd_bl_led_c=
+dev_brightness_get(struct led_cla
+> >  	return ideapad_kbd_bl_brightness_get(priv);
+> >  }
+> > =20
+> > -static int ideapad_kbd_bl_brightness_set(struct ideapad_private *priv,=
+ unsigned int brightness)
+> > +static int ideapad_kbd_bl_hw_brightness_set(struct ideapad_private *pr=
+iv, int hw_brightness)
+> >  {
+> [ ... ]
+> >  	if (err)
+> >  		return err;
+> > =20
+> > -	priv->kbd_bl.last_brightness =3D brightness;
+> > +	atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
+> > =20
+> >  	return 0;
+> >  }
+> [ ... ]
+> > @@ -1673,26 +1717,29 @@ static int ideapad_kbd_bl_led_cdev_brightness_s=
+et(struct led_classdev *led_cdev,
+> > =20
+> >  static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
+> >  {
+> > -	int brightness;
+> > +	int hw_brightness, brightness, last_hw_brightness;
+> > =20
+> >  	if (!priv->kbd_bl.initialized)
+> >  		return;
+> > =20
+> > -	brightness =3D ideapad_kbd_bl_brightness_get(priv);
+> > -	if (brightness < 0)
+> > +	hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
+> > +	if (hw_brightness < 0)
+> >  		return;
+> > =20
+> > -	if (brightness =3D=3D priv->kbd_bl.last_brightness)
+> > -		return;
+> > +	brightness =3D ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
+> > +	if (brightness < 0)
+> > +		return; /* Reject insane values early. */
+> > =20
+> > -	priv->kbd_bl.last_brightness =3D brightness;
+> > +	last_hw_brightness =3D atomic_xchg(&priv->kbd_bl.last_hw_brightness, =
+hw_brightness);
+>=20
+> [Severity: High]
+> This is a pre-existing issue, but does converting last_hw_brightness to a=
+n
+> atomic_t fully prevent a time-of-check to time-of-use race condition here=
+?
+>=20
+> Since the hardware read and the atomic_xchg() are separate steps, could
+> the following sequence occur?
+>=20
+> CPU1 in ideapad_kbd_bl_notify():
+>     hw_brightness =3D ideapad_kbd_bl_hw_brightness_get(priv);
+>=20
+> CPU2 in ideapad_kbd_bl_hw_brightness_set() via concurrent sysfs write:
+>     exec_kblc(priv->adev->handle, value);
+>     atomic_set(&priv->kbd_bl.last_hw_brightness, hw_brightness);
+>=20
+> CPU1 resumes in ideapad_kbd_bl_notify():
+>     last_hw_brightness =3D atomic_xchg(&priv->kbd_bl.last_hw_brightness, =
+hw_brightness);
+>=20
+> In this scenario, wouldn't CPU1 overwrite the software cache with a stale
+> hardware state, causing it to become permanently desynchronized from the
+> actual hardware?
+>=20
+> Although follow-up patches in this series introduce a notif_mutex, does
+> the sysfs write path ever acquire this mutex to serialize these updates
+> properly?
+>=20
+> > +	if (hw_brightness =3D=3D last_hw_brightness)
+> > +		return;
+> > =20
 > >  	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightne=
 ss);
 > >  }
