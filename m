@@ -1,57 +1,57 @@
-Received: from sender6-op-o15.zoho.com (sender6-op-o15.zoho.com [165.173.180.15])
+Received: from sender5-op-o15.zoho.com (sender5-op-o15.zoho.com [165.173.182.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4043594A
-	for <linux-leds@vger.kernel.org>; Sat, 22 Aug 2026 19:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB25732B10A
+	for <linux-leds@vger.kernel.org>; Sat, 22 Aug 2026 19:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787425355; cv=pass; b=pRvNt5ZzgIMY6iYf/Dm2mWyfdaT3/tewLEhNuTCKYVVoi2ECB3aVaC2KhJKnnrAvmaRPCqyoBNwEM43pZKklmBu1K7zkx8CDEe84gHNTqrw6JH8yTbNc8b+fi0dJ6Mxt3ZOi1voXYREwTccOR6tdHe5wWJ493tCcFZnTMzIxqVs=
+	t=1787425648; cv=pass; b=W3Zanq/muIKjb8m2Hx5kBJvjMQf6Mt1ofUV67YhLhv/4D1Gvzg2M/MPGlL5wq2DwDDURKZ7+HSe226Y0U6HGLzeUulis6JRy1hRExyyM4qQt7gSIqDMWQhWvE82v12u19kiKMfrgN53ZPLACZBO7Is/ujKqvEUNLj4fZnSBJIFo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787425355; c=relaxed/simple;
-	bh=Jiu6/g6jl6jBwGuV5DI4t3FXuwZ//Vycr829RgQco5Q=;
+	s=arc-20240116; t=1787425648; c=relaxed/simple;
+	bh=T8f9ahig3YJiXFm64xno1uOVQk2peveJ9Akk1X+gYjw=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=EylERdTiBgW8MpEX3r2vjRsQ2oK9wUPl+9FzwwwzNYbEtccKypU19159VlzWiwpttojFC8fhoFl2CwIEug2QUvaDVLRUZYVSsbQiEI9wjIq/EXJkYqeiy3M001m/TrsidU0JHz3xuJcmw+/TabB/heO56cRlYsnReyLh6b4rDZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=mlzQTaQa; arc=pass smtp.client-ip=165.173.180.15
+	 Date:MIME-Version; b=H4rs5K+v0/Q6n9DwENILMSxvghvTCYYoY837qN9Vt/OC9PS5JC2Mv5NK7rskfda2dW+UX4XD4TYWGOBQ9dAaJ0xw7T2m/gHwobnve6t3nLvXyM7nkEquyKdkT12SyYP8gvtDn93/F//wfh1fvxiaHoMTZHHtjUfrlqT8WVxPpHg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=h/RisHQj; arc=pass smtp.client-ip=165.173.182.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="mlzQTaQa"
-ARC-Seal: i=1; a=rsa-sha256; t=1787425348; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="h/RisHQj"
+ARC-Seal: i=1; a=rsa-sha256; t=1787425640; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=NTdc1B/ypodl3/19JIY7n+yxXvt8rUxRfItlHrjj6uPdye/84SIwS3Ef3KWDMYezbFNxiBAzGw7GY01ootz5jNb0FWmq9PmENI+yIg2M408vfkW5foNMqbykRaeLtv/6sB2/971BlM+oDyyqYx0duhywwMK1Xu/1ovKj8unOSRo=
+	b=DFVeOYZ/5YhP60C6xwUNLVEBtQ1Ms1L1G1inHq6K80hxXFNy3XH95wm0RlOVTLE11ODRnz6fJ7s/5egOz1g4Dv7VurF5rMaj6FrKx9tp6X/TFvyWWTY99bFmKPfQn/bgiNfsGjHAqGxLFSGwwSSUfsYPMFHBqqj7kGx+5On5ahs=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1787425348; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=HD5wrNL7bc3FrPJ0tcQOYitpLY1NnSxexAE7kiEi+X0=; 
-	b=jBnIlMYfzVKmThQ2YIC5KBo+PXZJ136/zI1hK0NhLkVwbgqZv/dxtCw0L2QqX9ELqs8XhlMbXVaPlDmtOOk2uJkGmzkonqpLrInWgzUPwFUFfAUKeYHWWp9NZmIvrtfbKPf6A4zUBKKfUnKUhXD9AiMGVVWsbVwitTEyJo2O0sg=
+	t=1787425640; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=HbOEOPwKr4YmRneAcPQLCw0SOlfXL1ZPkag9RPgrWGM=; 
+	b=N+QDxOIlVTOZzyNkAUG9z8+YWgBSxH6kgGYP1Bd8RycwYmcmisQLJPva7tC2P/1COWSjGDBJ4/bAz0LdeTnn7xFYzKwukumbPvStcOoRPGZLfElUo7g8ckIMI7wmyC8Ah7WeqykvguHenE9LWAYJan63AOhn4SpZ7Q37lhbXYqU=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787425348;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1787425640;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=HD5wrNL7bc3FrPJ0tcQOYitpLY1NnSxexAE7kiEi+X0=;
-	b=mlzQTaQa/oCZckI/eC35pY7a3KkAoMlHugL7TQIVzHVfjNpoCe3q1QhZEtjkdPqx
-	N6eFKB3A9s0K6+hqIWiD+BUqN6qDHoblQdsYUa4kFaZGP2r9OQSennLXRMYzPk/ECAX
-	FRPztFo9bp2xo2j/CBw5RQYdlOSAIAFtvH0JxhWMl8iU2fU96VLHLlJkca/c+3exzO3
-	Uy7WFpC0MdPD9N7xZg5t/0JIMiGPRS0yCjK6AB6YpZu0VxhhhdBvALP5xVqL7dJgYJC
-	RI1kjHAKE562oD6W6y7fegWHsIoEXf5JQ1WCWq/eZr9nGNS7M/hDOhe6PR1HXR5sLru
-	pm738wYEBQ==
-Received: by mx.zohomail.com with SMTPS id 1787425345858700.6152371031092;
-	Sat, 22 Aug 2026 12:02:25 -0700 (PDT)
-Message-ID: <aa4551dce295a458fd7f7070385d33c70e52ba59.camel@rong.moe>
-Subject: Re: [PATCH v5 05/12] leds: turris-omnia: Implement offloaded()
- trigger callback and declare hw_control_trigger
+	bh=HbOEOPwKr4YmRneAcPQLCw0SOlfXL1ZPkag9RPgrWGM=;
+	b=h/RisHQjaJCDqP+7rafld6dO5xoh89b91F/Y1bAZFB0JI0oHD3wb6kSXvpo3agcl
+	RXt1fyWqjsK4OadYR9ASYhyqTqUhXxOj+1YRm9JpFInENufnHSXI1LNnvrvF9M5RDRj
+	vMonlV0eT+cq0uAGXxm4Cwp9ZOxWGWrhMTMy2aizhJDQEchchUHVbJLsEutzSvBxlyZ
+	zhXskUbhdftcXbT2WmicHqSAhIqz9mDeeSlpnDqeohN8imCllUEcxJfkKcZtLiZ6Tf8
+	h2yuK+zCwOQGxqSelrnnmIUx/GMbuGLowxzjSnosFsNtuMkL7uXKKeybmAVvDtKe1Im
+	HZoaVN+4Uw==
+Received: by mx.zohomail.com with SMTPS id 1787425637545219.63814745236243;
+	Sat, 22 Aug 2026 12:07:17 -0700 (PDT)
+Message-ID: <cccaa0c34692d376b0bcb15dd7ae5a87cb872fbe.camel@rong.moe>
+Subject: Re: [PATCH v5 06/12] leds: trigger: netdev: Implement offloaded()
+ callback
 From: Rong Zhang <i@rong.moe>
 To: sashiko-reviews@lists.linux.dev
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260821172737.287FC1F00A3A@smtp.kernel.org>
+In-Reply-To: <20260821172734.2E4041F000E9@smtp.kernel.org>
 References: <20260821-leds-trigger-hw-changed-v5-0-3e00d6c4a936@rong.moe>
-		 <20260821-leds-trigger-hw-changed-v5-5-3e00d6c4a936@rong.moe>
-		 <20260821172737.287FC1F00A3A@smtp.kernel.org>
+	 <20260821-leds-trigger-hw-changed-v5-6-3e00d6c4a936@rong.moe>
+	 <20260821172734.2E4041F000E9@smtp.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 23 Aug 2026 02:56:59 +0800
+Date: Sun, 23 Aug 2026 03:01:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -64,74 +64,109 @@ X-ZohoMailClient: External
 Hi all,
 
 On Fri, 2026-08-21 at 17:27 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+> Thank you for your contribution! Sashiko AI review found 2 potential issu=
 e(s) to consider:
 >=20
+> New issues:
+> - [Medium] Unprotected lockless read of shared state in `netdev_trig_offl=
+oaded()`
+
+This just mimics how the existing "offloaded" attribute does. See
+offloaded_show().
+
+This is just an informational hint. It doesn't need to be accurate, so
+it's not a bug.
+
+>=20
 > Pre-existing issues:
-> - [High] The statically allocated `omnia_hw_trigger` object is registered=
- multiple times via `devm_led_trigger_register()` on probe if multiple driv=
-er instances are bound, causing lock and list corruption.
+> - [High] Resource leak of `net_device` in `netdev_trig_activate()` error =
+path
 
-The driver is very platform-specific and the relevant platforms never
-have more than one such device.
-
-Therefore, fixing it is far beyond the scope of the series.
+Fixing it is far beyond the scope of the series.
 
 Thanks,
 Rong
 
 > --
 >=20
-> --- Patch [5]: [PATCH v5 05/12] leds: turris-omnia: Implement offloaded()=
- trigger callback and declare hw_control_trigger ---
-> commit f8e07428579f0c7761609a5c572f8b597a213a09
+> --- Patch [6]: [PATCH v5 06/12] leds: trigger: netdev: Implement offloade=
+d() callback ---
+> commit d8144f7505ed647e0e3c94f8c01b2ef2b0814005
 > Author: Rong Zhang <i@rong.moe>
 >=20
-> leds: turris-omnia: Implement offloaded() trigger callback and declare hw=
-_control_trigger
+> leds: trigger: netdev: Implement offloaded() callback
 >=20
-> "omnia-mcu" is a private hardware control trigger which always stays in
-> hardware control mode. Implement offloaded() callback with its return
-> value to be always true to reflect this.
+> This commit implements the offloaded callback for the netdev trigger,
+> providing its hardware control state to the LED core. It also updates the
+> sysfs ABI documentation to clarify the relationship between the custom an=
+d
+> generic offload attributes.
 >=20
-> > diff --git a/drivers/leds/leds-turris-omnia.c b/drivers/leds/leds-turri=
-s-omnia.c
-> > index ed6a47bbb44f9..32d40d176d3f1 100644
-> > --- a/drivers/leds/leds-turris-omnia.c
-> > +++ b/drivers/leds/leds-turris-omnia.c
-> > @@ -195,10 +195,16 @@ static void omnia_hwtrig_deactivate(struct led_cl=
-assdev *cdev)
-> >  			err);
+> > diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigg=
+er/ledtrig-netdev.c
+> > index 64c078e997f28..a26109ca4b1c9 100644
+> > --- a/drivers/leds/trigger/ledtrig-netdev.c
+> > +++ b/drivers/leds/trigger/ledtrig-netdev.c
+>=20
+> [ ... ]
+>=20
+> > @@ -754,10 +754,18 @@ static void netdev_trig_deactivate(struct led_cla=
+ssdev *led_cdev)
+> >  	kfree(trigger_data);
 > >  }
 > > =20
-> > +static bool omnia_hwtrig_offloaded(struct led_classdev *cdev)
+> > +static bool netdev_trig_offloaded(struct led_classdev *led_cdev)
 > > +{
-> > +	return true;
+> > +	struct led_netdev_data *trigger_data =3D led_get_trigger_data(led_cde=
+v);
+> > +
+> > +	return trigger_data->hw_control;
+>=20
+> [Severity: Medium]
+> Is it possible for hw_control to be read while it is being updated?
+>=20
+> When userspace reads the trigger_may_offload sysfs attribute, it calls
+> netdev_trig_offloaded() holding only the led_cdev->trigger_lock, which is=
+ a
+> read lock.
+>=20
+> Concurrently, a network event can invoke netdev_trig_notify() which
+> acquires trigger_data->lock and mutates trigger_data->hw_control.
+>=20
+> Does this code need to hold trigger_data->lock or use the READ_ONCE() mac=
+ro
+> to prevent a data race when reading trigger_data->hw_control here?
+>=20
 > > +}
 > > +
-> >  static struct led_trigger omnia_hw_trigger =3D {
-> >  	.name		=3D "omnia-mcu",
-> >  	.activate	=3D omnia_hwtrig_activate,
-> >  	.deactivate	=3D omnia_hwtrig_deactivate,
-> > +	.offloaded	=3D omnia_hwtrig_offloaded,
-> >  	.trigger_type	=3D &omnia_hw_trigger_type,
+> >  static struct led_trigger netdev_led_trigger =3D {
+> >  	.name =3D "netdev",
+> >  	.activate =3D netdev_trig_activate,
+> >  	.deactivate =3D netdev_trig_deactivate,
+> > +	.offloaded =3D netdev_trig_offloaded,
+> >  	.groups =3D netdev_trig_groups,
 > >  };
 >=20
 > [Severity: High]
-> This isn't a bug introduced by this patch, but does using a statically
-> allocated global trigger structure risk lock and list corruption?
+> This is a pre-existing issue, but does netdev_trig_activate() leak a
+> net_device reference in its error path?
 >=20
-> If multiple instances of the driver are bound (for example, via I2C
-> `new_device` sysfs bindings), `omnia_leds_probe()` will call
-> `devm_led_trigger_register()` multiple times using this shared
-> `omnia_hw_trigger` object:
+> If hardware control is supported, set_device_name() is called, which
+> acquires a net device reference via dev_get_by_name() and saves it to
+> trigger_data->net_dev.
 >=20
-> omnia_leds_probe()
->     devm_led_trigger_register(dev, &omnia_hw_trigger)
+> If the subsequent call to register_netdevice_notifier() fails, the error
+> path executes:
 >=20
-> Inside the core `led_trigger_register()` function, `spin_lock_init()` and
-> `INIT_LIST_HEAD()` are called unconditionally before checking if the trig=
-ger
-> name already exists. As a result, the second probe call will silently
-> re-initialize the active spinlock and reset the list head of the first
-> instance's trigger, which could lead to a kernel panic.
+> drivers/leds/trigger/ledtrig-netdev.c:netdev_trig_activate() {
+>     ...
+> 	rc =3D register_netdevice_notifier(&trigger_data->notifier);
+> 	if (rc)
+> 		kfree(trigger_data);
+>=20
+> 	return rc;
+> }
+>=20
+> Since trigger_data is freed without calling dev_put(trigger_data->net_dev=
+),
+> does this leave a permanent reference count leak on the net_device?
