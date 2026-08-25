@@ -1,356 +1,149 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCEA2E7393;
-	Tue, 25 Aug 2026 07:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C493E0C59
+	for <linux-leds@vger.kernel.org>; Tue, 25 Aug 2026 09:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787641871; cv=none; b=rzW4D/I5M9On4q4Z3AE4I3cmg9CQiDE2oxEHv0GhfXkqMr9H4ep67/q4v6N4+60DOGii9C7v5KliegJ+FugCaqNQ5cvhAojw+fKYzv+4UMbVY/VgQZiqSod9C5ifTEb2CnlABMIKUGG8a0o7tha1cu/7/gs2mN/yEc2qHD2/ET4=
+	t=1787649327; cv=none; b=CCh1tK7PVmiWqHSdUwzYb7AO8YwMc0KtDuzMoH5DXks/w9FxVarv83gTy0RRvW82D1PdW8XkBv6BYldW06nuq03yBujPFDK5NAH/KWleWrugNK8f+7JMOcGI7vFFam6BvuyPwX2VQBsxU4OKBBtZvJjwmRFElfc8pn8etSw80lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787641871; c=relaxed/simple;
-	bh=40Q84totC0YRm0OaSVzjWAo4Qer+DfYfroUxQvcrbbY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FDCc8aU+gfjTK481F8I5MVXcODgIEfufZHX1hd3zWByKh2O03wnHB0cPs9BZ8QdzuVMrYncEyUlRdvvDye+T4vycal4I+Kh6n50m1SYVAMihbkiD3YWDoa+Y81Yl/3Fikcye/5TmGucEaO/nZ1bBXuLpenR2SRG5RWgZ4mmzcrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oNCpEPvt; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1787649327; c=relaxed/simple;
+	bh=KQG7I15zl1cZ8xoz0nJUhoyELZuli5z85AXKE7Cy0D4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLGy4+ehSimKPNE6DXzwhsHb2K2YEPHF7VSEGLfiMWgOk7AJbg+XXIad3vbB570mrJVYfM4blU6o1UfeNFT/3duZuf/OAXRCXtaINfFmX+Yj4LJNdK/gciElAzexR6mU1nsxamPAS6VaLIgcISRXI7q+ccTw1wkThARbANnQyLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b=R5ZLpaM7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oNCpEPvt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:To:From:Subject:
-	Content-Type; bh=8A7YyiQmPq+G7Wr/FwgUWzqCdpWfm8ivhmZlwPrpoSU=;
-	b=oNCpEPvtk2zCxPBKMGFNWjmRK3P6CsJzzjk4C7to/H9f4+qZGR8yLpjmWTUIyY
-	fNl3IDNpuhk2VkilEyH1GsGrPWizVPD0Nb3NTwuWtMKCPzzcRhnReu+LXbml8dXX
-	eOc/Li1hDM4RTGx/2l/tcxuizP0zPOJdMXjkd8xjwVe28=
-Received: from [IPV6:2409:8a44::a5e0:d395:288d:d9b7] (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wC34ub8P41qfyLKRA--.43859S2;
-	Tue, 25 Aug 2026 15:10:53 +0800 (CST)
-Message-ID: <32a07f5e-eede-4c8a-acab-3f6c9bbab0d4@163.com>
-Date: Tue, 25 Aug 2026 15:10:52 +0800
+	dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b="R5ZLpaM7"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4998590d392so18762555e9.0
+        for <linux-leds@vger.kernel.org>; Tue, 25 Aug 2026 02:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20251104.gappssmtp.com; s=20251104; t=1787649324; x=1788254124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=KQG7I15zl1cZ8xoz0nJUhoyELZuli5z85AXKE7Cy0D4=;
+        b=R5ZLpaM70CU5oOvUDOWx3aSdVWl4WCG+c7HRNIiEwUnuZRPGb5Gi8n6St7HQtbUvjZ
+         wPaLuGtd/LikNUsxHKAVYOuiC5CxGqU+moyqk71GO5z49bKCmNtBfxRYuJdUVevU0sKA
+         6QJSTBexzISdRCs2gnMc4nDIGzA9DJzMvMdY8d22NK6tpAwxGK3xwIDNOSixcPfzO127
+         xJuzAZAT289aXZwjFqNNKpkgSrhMFs58k/RYw/FzHRa9PvqrY1E8Sy8ZDIZyHyFatwjY
+         H2HfoJ5VSv28PopiMb/+SRfxGugWW/vcCF4E7DLHLYbmk1UPMQ46LooWA9HczPKOnxHR
+         EgCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787649324; x=1788254124;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=KQG7I15zl1cZ8xoz0nJUhoyELZuli5z85AXKE7Cy0D4=;
+        b=NjYjg8YX56bN0GOCQF8pf3csrG2f9AMoUIYNzMvD828rQWE7fMX126EsodKggfByeQ
+         erQmR7II5xzfvIOaCVf4YqTts2q05iCXSmjE8gg5ff3E7v1vbaympSsGE2bEh8JfX1Ku
+         Z/ty1RR549JsFSp2JFuw3J09jRpoAsiu+ah7TyjuKOBLV02G4h3D5kvyoqIxGaFfHoo8
+         BP8ZK6RvLB3WD7fCs6X9HX0BHxKc+YI/AOmqdUSt6T12SieelAsPz2+TeiQwVNU3+96Y
+         kqJff8GT4wqgOLxjhRbuoev+jWoVymMkTErEDsqSaO5iFVpsZf0X/2KgqGnlHaBt+r7X
+         C8CA==
+X-Forwarded-Encrypted: i=1; AHgh+Rp8NKG3QGLJZVHcSxMJ5D/9yDC8SMXiktCoKgsjUNXyUUnmVZBhp0VnUjjm8IgKw3sw/sQbO2K061nG@vger.kernel.org
+X-Gm-Message-State: AFuF++nm7HMQ3NfuXZxnGNS8FM9LrcEFnTEfU0d7WfOaqaN2+MqotYgN
+	xvBBg+1fEZ+wXdvop6c92pKCD0SENUjn5/ulEpBkpozZi9KZAV486wn1Va7C4b4iQXQ=
+X-Gm-Gg: AR+sD118WrA4f092OY7K66cKR2NMbFRXlQcj+ugqTU9dRwcKxumLFgDoM/WPugZeMnk
+	J40R8Hu1xUVS69ZkeEOKdeGpPpGUqUOq+CvTbBMzDdCRROkNbhq9/uEBRR8YUpYaky/R+OyzSnl
+	2NMctYpVnWuKD/YcfKKqj1UI6JgEoYaVQq60AtECY8kzNaAAnJGa/P5GcqmibfdREaa4v0QZ+jn
+	UJ5K/en0EIhw3t+DSevkAtbuEYU8u1/Tajjak7YxlaUuTSFV9tzGih1d07QQ7s91+RUSkLHEjbV
+	bR/51yzTLWsTEwuDm9CGJfwi6ZNQ2+7XhcWm8T9Zp4lrlQjxvrnFSs9G3+mhi4ix7E1bW5YJmUV
+	toMHD6QHl1iphG31GDYIN3oRNq/2y8I9YOI9qZfeIYZ582lEEDwzagHIgf8RhUW8wZsFMR4gARV
+	KKSHnFUU3uei9lx41E1e11ZOnu4fB/PibJpsN44yw3cG822BWu7lNVWD/CKOVOdg+qgGS9H/5BX
+	QrXe5UVRYNWMztIlrQGH4Sicnhu5lZxdZyysT2LzNo70slwX66VbdGXThrKGWvTfg9TmrxLsN4W
+	ZjA2n4j56eTJheJ2AE1Bw4aCkjxhd8RbjjbtRna/IMYWEQ==
+X-Received: by 2002:a05:600c:c493:b0:499:7aa7:eaa7 with SMTP id 5b1f17b1804b1-499b845c184mr414028865e9.15.1787649324060;
+        Tue, 25 Aug 2026 02:15:24 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499d65c326esm20415775e9.10.2026.08.25.02.15.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Aug 2026 02:15:22 -0700 (PDT)
+Date: Tue, 25 Aug 2026 10:15:19 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Andrew Davis <afd@ti.com>
+Cc: "A. Sverdlin" <alexander.sverdlin@siemens.com>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH 2/2] leds: lp8864: Register a backlight device
+Message-ID: <ao1dJ1Ce6qcp9USk@aspen.lan>
+References: <20260817170817.1933046-1-alexander.sverdlin@siemens.com>
+ <20260817170817.1933046-3-alexander.sverdlin@siemens.com>
+ <aowP3K7sgXKnsonS@aspen.lan>
+ <fcdc4b46-dab7-40fe-9b1e-c5c2e2ef8dd7@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: lee@kernel.org, pavel@kernel.org
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-From: MYYDAQ <xmmntnbklsa917813@163.com>
-Subject: [PATCH] leds: set max_brightness to 1 for on/off-only drivers
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC34ub8P41qfyLKRA--.43859S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3uFyfWF1kWw1xAw1kWF1kGrg_yoWkAw18pF
-	Wvy3yfCw13t397Xw4vya1kXFy3Wa4xJry7KFWxCa90vr15Zr9Fqry8Xa45AFy5XrW7Cr12
-	9F47AryUWFWjyr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UaXd8UUUUU=
-X-CM-SenderInfo: h0pp03xqenz2jdzrlmirt6il2tof0z/xtbC7R0NlGqNP-0qAgAA3k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fcdc4b46-dab7-40fe-9b1e-c5c2e2ef8dd7@ti.com>
 
-The following drivers implement their brightness_set() callback as a
-pure on/off switch: any nonzero brightness value turns the LED on, and
-there is no way to request intermediate levels.  They still keep the
-default max_brightness of LED_FULL (255), so user space writing e.g.
-"100" or "200" to the brightness sysfs attribute produces exactly the
-same hardware state, which is misleading and violates the first item of
-the drivers/leds/TODO list ("On/off LEDs should have max_brightness of
-1").
+On Mon, Aug 24, 2026 at 10:39:19AM -0500, Andrew Davis wrote:
+> On 8/24/26 4:33 AM, Daniel Thompson wrote:
+> > On Mon, Aug 17, 2026 at 07:08:15PM +0200, A. Sverdlin wrote:
+> > > From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> > >
+> > > The LP8864/LP8866 is a display-cluster LED backlight driver. Expose a
+> > > standard backlight class interface in addition to the LED class device,
+> > > so it can be used by display/panel stacks that expect a backlight.
+> > >
+> > > Use the new devm_led_backlight_register() helper, which spawns a
+> > > led-backlight device driven by our LED and tied to the I2C device
+> > > lifetime. This keeps the driver a plain LED driver, requires no
+> > > device-tree changes and remains backwards compatible with existing DTs.
+> > > It is a no-op when the led-backlight support is not enabled.
+> >
+> > ... but when led-backlight support is enabled it will prohibit the use
+> > of the LED sysfs interface.
+> >
+>
+> The commit message states "in addition to" so both are registered still.
+> The issue would be in the [1/2] patch if it disables the LED sysfs interface
+> as this might be unexpected behavior to not keep both interfaces active.
 
-Address this by setting max_brightness to 1 for all on/off-only LED
-drivers in drivers/leds, and by using LED_ON instead of LED_FULL for
-their initial brightness values and brightness_get() results:
+Yes, led_bl disables the sysfs interface of any LED supplier(s). Note
+that this is not changed by anything in the patch series ([1/2]
+rearranges the code slghtlt but this has always been the case).
 
-   ariel, bcm6328, bcm6358, cobalt-qube, cobalt-raq, hp6xx,
-   ipaq-micro, locomo, menf21bmc, net48xx, ot200, rb532, ss4200,
-   syscon, wrap
 
-Signed-off-by: MYYDAQ <xmmntnbklsa917813@163.com>
----
-  drivers/leds/leds-ariel.c       | 1 +
-  drivers/leds/leds-bcm6328.c     | 3 ++-
-  drivers/leds/leds-bcm6358.c     | 3 ++-
-  drivers/leds/leds-cobalt-qube.c | 3 ++-
-  drivers/leds/leds-cobalt-raq.c  | 2 ++
-  drivers/leds/leds-hp6xx.c       | 2 ++
-  drivers/leds/leds-ipaq-micro.c  | 1 +
-  drivers/leds/leds-locomo.c      | 2 ++
-  drivers/leds/leds-menf21bmc.c   | 1 +
-  drivers/leds/leds-net48xx.c     | 1 +
-  drivers/leds/leds-ot200.c       | 1 +
-  drivers/leds/leds-rb532.c       | 3 ++-
-  drivers/leds/leds-ss4200.c      | 6 ++++--
-  drivers/leds/leds-syscon.c      | 1 +
-  drivers/leds/leds-wrap.c        | 3 +++
-  15 files changed, 27 insertions(+), 6 deletions(-)
+> > Having zero DT changes is a nice property but it seems rather fragile to
+> > change the ABI the userspace must use to manipulate the LED based on
+> > CONFIG_LED_BL.
+> >
+>
+> If this was done in DT then it would also change the API userspace must
+> use in a non-flexible way (DT is also considered a fixed ABI for a board).
 
-diff --git a/drivers/leds/leds-ariel.c b/drivers/leds/leds-ariel.c
-index dd319c7..9f1a11d 100644
---- a/drivers/leds/leds-ariel.c
-+++ b/drivers/leds/leds-ariel.c
-@@ -111,6 +111,7 @@ static int ariel_led_probe(struct platform_device *pdev)
-          leds[i].led_cdev.brightness_get = ariel_led_get;
-          leds[i].led_cdev.brightness_set = ariel_led_set;
-          leds[i].led_cdev.blink_set = ariel_blink_set;
-+        leds[i].led_cdev.max_brightness = 1;
+Agreed, although it does allow an existing board not to change userspace
+ABI based on a Kconfig option.
 
-          ret = devm_led_classdev_register(dev, &leds[i].led_cdev);
-          if (ret)
-diff --git a/drivers/leds/leds-bcm6328.c b/drivers/leds/leds-bcm6328.c
-index 592bbf4..0ccffc6 100644
---- a/drivers/leds/leds-bcm6328.c
-+++ b/drivers/leds/leds-bcm6328.c
-@@ -366,7 +366,7 @@ static int bcm6328_led(struct device *dev, struct 
-device_node *nc, u32 reg,
-          val &= BCM6328_LED_MODE_MASK;
-          if ((led->active_low && val == BCM6328_LED_MODE_OFF) ||
-              (!led->active_low && val == BCM6328_LED_MODE_ON))
--            led->cdev.brightness = LED_FULL;
-+            led->cdev.brightness = LED_ON;
-          else
-              led->cdev.brightness = LED_OFF;
-          break;
-@@ -378,6 +378,7 @@ static int bcm6328_led(struct device *dev, struct 
-device_node *nc, u32 reg,
 
-      led->cdev.brightness_set = bcm6328_led_set;
-      led->cdev.blink_set = bcm6328_blink_set;
-+    led->cdev.max_brightness = 1;
+> > Is there no way to explictly configure which ABI should be used?
+> >
+>
+> I wonder if there is a good way to have the actual use of one API cause
+> the other to be disabled at runtime? So the first one used disables the
+> other, but that does sound like a race.
+>
+> Maybe a mod config to disable the LED-BL path and keep the simple LED
+> sysfs interface would be enough. Or maybe a sysfw entry so it could
+> be set per-device if needed.
 
-      rc = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-      if (rc < 0)
-diff --git a/drivers/leds/leds-bcm6358.c b/drivers/leds/leds-bcm6358.c
-index 51fcff2..291a587 100644
---- a/drivers/leds/leds-bcm6358.c
-+++ b/drivers/leds/leds-bcm6358.c
-@@ -122,7 +122,7 @@ static int bcm6358_led(struct device *dev, struct 
-device_node *nc, u32 reg,
-          val = bcm6358_led_read(led->mem + BCM6358_REG_MODE);
-          val &= BIT(led->pin);
-          if ((led->active_low && !val) || (!led->active_low && val))
--            led->cdev.brightness = LED_FULL;
-+            led->cdev.brightness = LED_ON;
-          else
-              led->cdev.brightness = LED_OFF;
-          break;
-@@ -133,6 +133,7 @@ static int bcm6358_led(struct device *dev, struct 
-device_node *nc, u32 reg,
-      bcm6358_led_set(&led->cdev, led->cdev.brightness);
+Mod config isn't "nice" although it might be a good enough solution for
+what is probably a fairly niche issue if nothing better comes up.
 
-      led->cdev.brightness_set = bcm6358_led_set;
-+    led->cdev.max_brightness = 1;
+I'd also note that a mod config would also allow the driver to error out
+when CONFIG_LED_BL is not set (with a hint on the logs to either enable
+LED_BL or set the config option) rather then the current "secret" ABI
+change.
 
-      rc = devm_led_classdev_register_ext(dev, &led->cdev, &init_data);
-      if (rc < 0)
-diff --git a/drivers/leds/leds-cobalt-qube.c 
-b/drivers/leds/leds-cobalt-qube.c
-index ef22e1e..204d69e 100644
---- a/drivers/leds/leds-cobalt-qube.c
-+++ b/drivers/leds/leds-cobalt-qube.c
-@@ -29,7 +29,8 @@ static void qube_front_led_set(struct led_classdev 
-*led_cdev,
 
-  static struct led_classdev qube_front_led = {
-      .name            = "qube::front",
--    .brightness        = LED_FULL,
-+    .brightness        = LED_ON,
-+    .max_brightness        = 1,
-      .brightness_set        = qube_front_led_set,
-      .default_trigger    = "default-on",
-  };
-diff --git a/drivers/leds/leds-cobalt-raq.c b/drivers/leds/leds-cobalt-raq.c
-index 045c239..4d1735d 100644
---- a/drivers/leds/leds-cobalt-raq.c
-+++ b/drivers/leds/leds-cobalt-raq.c
-@@ -39,6 +39,7 @@ static void raq_web_led_set(struct led_classdev *led_cdev,
-  static struct led_classdev raq_web_led = {
-      .name        = "raq::web",
-      .brightness_set    = raq_web_led_set,
-+    .max_brightness    = 1,
-  };
-
-  static void raq_power_off_led_set(struct led_classdev *led_cdev,
-@@ -60,6 +61,7 @@ static void raq_power_off_led_set(struct led_classdev 
-*led_cdev,
-  static struct led_classdev raq_power_off_led = {
-      .name            = "raq::power-off",
-      .brightness_set        = raq_power_off_led_set,
-+    .max_brightness        = 1,
-      .default_trigger    = "power-off",
-  };
-
-diff --git a/drivers/leds/leds-hp6xx.c b/drivers/leds/leds-hp6xx.c
-index 54af9e6..03a2638 100644
---- a/drivers/leds/leds-hp6xx.c
-+++ b/drivers/leds/leds-hp6xx.c
-@@ -42,6 +42,7 @@ static struct led_classdev hp6xx_red_led = {
-      .name            = "hp6xx:red",
-      .default_trigger    = "hp6xx-charge",
-      .brightness_set        = hp6xxled_red_set,
-+    .max_brightness        = 1,
-      .flags            = LED_CORE_SUSPENDRESUME,
-  };
-
-@@ -49,6 +50,7 @@ static struct led_classdev hp6xx_green_led = {
-      .name            = "hp6xx:green",
-      .default_trigger    = "disk-activity",
-      .brightness_set        = hp6xxled_green_set,
-+    .max_brightness        = 1,
-      .flags            = LED_CORE_SUSPENDRESUME,
-  };
-
-diff --git a/drivers/leds/leds-ipaq-micro.c b/drivers/leds/leds-ipaq-micro.c
-index 504a95b..aae3e13 100644
---- a/drivers/leds/leds-ipaq-micro.c
-+++ b/drivers/leds/leds-ipaq-micro.c
-@@ -102,6 +102,7 @@ static struct led_classdev micro_led = {
-      .name            = "led-ipaq-micro",
-      .brightness_set_blocking = micro_leds_brightness_set,
-      .blink_set        = micro_leds_blink_set,
-+    .max_brightness        = 1,
-      .flags            = LED_CORE_SUSPENDRESUME,
-  };
-
-diff --git a/drivers/leds/leds-locomo.c b/drivers/leds/leds-locomo.c
-index 9aa3fcc..8dc162f 100644
---- a/drivers/leds/leds-locomo.c
-+++ b/drivers/leds/leds-locomo.c
-@@ -43,12 +43,14 @@ static struct led_classdev locomo_led0 = {
-      .name            = "locomo:amber:charge",
-      .default_trigger    = "main-battery-charging",
-      .brightness_set        = locomoled_brightness_set0,
-+    .max_brightness        = 1,
-  };
-
-  static struct led_classdev locomo_led1 = {
-      .name            = "locomo:green:mail",
-      .default_trigger    = "nand-disk",
-      .brightness_set        = locomoled_brightness_set1,
-+    .max_brightness        = 1,
-  };
-
-  static int locomoled_probe(struct locomo_dev *ldev)
-diff --git a/drivers/leds/leds-menf21bmc.c b/drivers/leds/leds-menf21bmc.c
-index 6b1b471..8d7b234 100644
---- a/drivers/leds/leds-menf21bmc.c
-+++ b/drivers/leds/leds-menf21bmc.c
-@@ -82,6 +82,7 @@ static int menf21bmc_led_probe(struct platform_device 
-*pdev)
-      for (i = 0; i < ARRAY_SIZE(leds); i++) {
-          leds[i].cdev.name = leds[i].name;
-          leds[i].cdev.brightness_set = menf21bmc_led_set;
-+        leds[i].cdev.max_brightness = 1;
-          leds[i].i2c_client = i2c_client;
-          ret = devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
-          if (ret < 0) {
-diff --git a/drivers/leds/leds-net48xx.c b/drivers/leds/leds-net48xx.c
-index a93468c..1dd9dc5 100644
---- a/drivers/leds/leds-net48xx.c
-+++ b/drivers/leds/leds-net48xx.c
-@@ -31,6 +31,7 @@ static void net48xx_error_led_set(struct led_classdev 
-*led_cdev,
-  static struct led_classdev net48xx_error_led = {
-      .name        = "net48xx::error",
-      .brightness_set    = net48xx_error_led_set,
-+    .max_brightness    = 1,
-      .flags        = LED_CORE_SUSPENDRESUME,
-  };
-
-diff --git a/drivers/leds/leds-ot200.c b/drivers/leds/leds-ot200.c
-index 12af112..17b72e3 100644
---- a/drivers/leds/leds-ot200.c
-+++ b/drivers/leds/leds-ot200.c
-@@ -123,6 +123,7 @@ static int ot200_led_probe(struct platform_device *pdev)
-
-          leds[i].cdev.name = leds[i].name;
-          leds[i].cdev.brightness_set = ot200_led_brightness_set;
-+        leds[i].cdev.max_brightness = 1;
-
-          ret = devm_led_classdev_register(&pdev->dev, &leds[i].cdev);
-          if (ret < 0)
-diff --git a/drivers/leds/leds-rb532.c b/drivers/leds/leds-rb532.c
-index 782e1c1..aba17f5 100644
---- a/drivers/leds/leds-rb532.c
-+++ b/drivers/leds/leds-rb532.c
-@@ -27,12 +27,13 @@ static void rb532_led_set(struct led_classdev *cdev,
-
-  static enum led_brightness rb532_led_get(struct led_classdev *cdev)
-  {
--    return (get_latch_u5() & LO_ULED) ? LED_FULL : LED_OFF;
-+    return (get_latch_u5() & LO_ULED) ? LED_ON : LED_OFF;
-  }
-
-  static struct led_classdev rb532_uled = {
-      .name = "uled",
-      .brightness_set = rb532_led_set,
-+    .max_brightness = 1,
-      .brightness_get = rb532_led_get,
-      .default_trigger = "nand-disk",
-  };
-diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-index f24ca75..726b608 100644
---- a/drivers/leds/leds-ss4200.c
-+++ b/drivers/leds/leds-ss4200.c
-@@ -214,7 +214,8 @@ static u32 nasgpio_led_get_attr(struct led_classdev 
-*led_cdev, u32 port)
-  /*
-   * There is actual brightness control in the hardware,
-   * but it is via smbus commands and not implemented
-- * in this driver.
-+ * in this driver, so the LED is treated as on/off and
-+ * max_brightness is set to 1.
-   */
-  static void nasgpio_led_set_brightness(struct led_classdev *led_cdev,
-                         enum led_brightness brightness)
-@@ -487,9 +488,10 @@ static int register_nasgpio_led(int led_nr)
-      led->name = nas_led->name;
-      led->brightness = LED_OFF;
-      if (nasgpio_led_get_attr(led, GP_LVL))
--        led->brightness = LED_FULL;
-+        led->brightness = LED_ON;
-      led->brightness_set = nasgpio_led_set_brightness;
-      led->blink_set = nasgpio_led_set_blink;
-+    led->max_brightness = 1;
-      led->groups = nasgpio_led_groups;
-
-      return led_classdev_register(&nas_gpio_pci_dev->dev, led);
-diff --git a/drivers/leds/leds-syscon.c b/drivers/leds/leds-syscon.c
-index d633ad5..acee7db 100644
---- a/drivers/leds/leds-syscon.c
-+++ b/drivers/leds/leds-syscon.c
-@@ -110,6 +110,7 @@ static int syscon_led_probe(struct platform_device 
-*pdev)
-          sled->state = false;
-      }
-      sled->cdev.brightness_set = syscon_led_set;
-+    sled->cdev.max_brightness = 1;
-
-      ret = devm_led_classdev_register_ext(dev, &sled->cdev, &init_data);
-      if (ret < 0)
-diff --git a/drivers/leds/leds-wrap.c b/drivers/leds/leds-wrap.c
-index 794697e..348c06b 100644
---- a/drivers/leds/leds-wrap.c
-+++ b/drivers/leds/leds-wrap.c
-@@ -53,6 +53,7 @@ static void wrap_extra_led_set(struct led_classdev 
-*led_cdev,
-  static struct led_classdev wrap_power_led = {
-      .name            = "wrap::power",
-      .brightness_set        = wrap_power_led_set,
-+    .max_brightness        = 1,
-      .default_trigger    = "default-on",
-      .flags            = LED_CORE_SUSPENDRESUME,
-  };
-@@ -60,12 +61,14 @@ static struct led_classdev wrap_power_led = {
-  static struct led_classdev wrap_error_led = {
-      .name        = "wrap::error",
-      .brightness_set    = wrap_error_led_set,
-+    .max_brightness    = 1,
-      .flags            = LED_CORE_SUSPENDRESUME,
-  };
-
-  static struct led_classdev wrap_extra_led = {
-      .name           = "wrap::extra",
-      .brightness_set = wrap_extra_led_set,
-+    .max_brightness = 1,
-      .flags            = LED_CORE_SUSPENDRESUME,
-  };
-
+Daniel.
