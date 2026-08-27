@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55C337B3FE;
-	Thu, 27 Aug 2026 16:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E574503EC;
+	Thu, 27 Aug 2026 17:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787849804; cv=none; b=Ro9pF583WNZhqBQJK8muT+w3CV5XVVz8RoFnucIWH0s89nlnvoJ7OJjAXp7EDBnARpgBorS3QGRg0MWtxvQEal1flZHdX+Z3buuh5TSycf9Gk5UA3NPFmBPyEqLTAnHji3br1oQZ9SST2s/6mLPs5svW+V6b+TbE6hXzICPmdoc=
+	t=1787850189; cv=none; b=fmHvN8NNRSlbkJTYlyC//fTMDEgK6NrM/c4/xGv2JWuewoRYqxTEFwf/Ry1VO0xRn2z0HBZ+PRP6WNgKPell6fPRJqoXdwfwmrRh3vmRNtZxudiaf+lIlmN+JeP8E2/3vvdwpSD2I/dW9Y6sd96GxOKfnheeWxvrqgPI4irayz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787849804; c=relaxed/simple;
-	bh=vzBZhdaIgl31+yOBeaR3Ppwf1WX/+Vm/3QwrSZCJW1w=;
+	s=arc-20240116; t=1787850189; c=relaxed/simple;
+	bh=YfVyNI9c9azuVieacpxUOb6yNvbNo1dV0E31hl56n/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jC9FpktThH2Cx813p7b2267G9U16U0Y5p3pZ/4KyY+aCIb4CmiFRCGIv4h8pZNC5t9P3uH/R/tSVp5UJRuTu+6dzwb2W4fDSU8a8DgWDgQtIvxOvGpgf/oy0UQyAszf5bl3rAEoHqMev4qYIR/S6lnGSJ9dC4kt16BocBuaeoTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZsPpygA; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFeZ86Ck56TSE9mitkXJq+SOElL0jGDEt2st6tsNfICdFMTJAm+D6an9mwnIAREfFwm5xUlqMR2l3vyi2Vsic3hKJ8tZ7y0ADrM2041SPzivWt7HiN1amLZnopil08rfDeKUUED+zY482pIdQOWONY8PgyjRccHid/IWLCziTEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sxz6S1N4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZsPpygA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ADC81F000E9;
-	Thu, 27 Aug 2026 16:56:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sxz6S1N4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F1BF1F000E9;
+	Thu, 27 Aug 2026 17:03:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787849802;
-	bh=Z3MUP6Bwv+cqPINMRPGl0CTTrm0ni+uUUE/06XCeKXo=;
+	s=k20260515; t=1787850185;
+	bh=zKmwoEwzdTZwEdpvUj5AMclNii4LDqHyo+svB88BdpA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CZsPpygAdsQrJ7wjPofRHT90cZfGcXchVOs/uitKLQa594tzi/x2vLXmrlI4Jjz8z
-	 YBBpogntFb+Z+L6via882L5FIB1Kl1ZjXBnPm5XVGPCkavSimOMEMuKFb+hqzWmML4
-	 2zCy6bIV0Y/Y1gLlE03yCC6xZMD1PIXnIS8iUqIgxNzATbB1Ly1qspQJ6WzLc7Y8qE
-	 cxsGacuk1UECz3o+rMySGerUs6/SPVs+/yx+z/R7Qqqv27vl7jQEc5LXbvO6MEWNEs
-	 9i+UGUw2CJIM1AkzqAlL9CEmlp7XjphmnUwzBHk03VjF+adEXHgEUx5WCPnChZ1sdn
-	 EuFIv9zLUYLqA==
-Date: Thu, 27 Aug 2026 17:56:38 +0100
+	b=Sxz6S1N4JOc3d5vGHNPprv4A/0VWeWwYco1y4dh8YodMwPyZ3y/ESJnqHFUzuXpbt
+	 Yrzr7SAbkhn/0+UQ8xLpU8LwNCYXMoUZujn7TNotc/x8kG/5VxVx8109QXZckfm1LP
+	 39qf7EgYMi43CJEJEo1tMaJDQ07LClFNW6Wtswk0lDnyhgTaMT8rGlnHfHHYjUEFi1
+	 QzlmdZFksZMp3wjDzibT6WrfNqkBHXVD//NoBX+jJqdjz4q1iN6JBhVtD4WFTHKNas
+	 jELAX1y1JKOT8Y9gxVW/FbZjffKEBeRtOOE9eNt1x5B0Be4KEN4PyWfurgCiGit4g3
+	 D+sr4VM60qr3g==
+Date: Thu, 27 Aug 2026 18:03:01 +0100
 From: Lee Jones <lee@kernel.org>
 To: Stefan Wahren <wahrenst@gmx.net>
 Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org,
@@ -34,7 +34,7 @@ Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org,
 	Jonas Rebmann <jre@pengutronix.de>
 Subject: Re: [PATCH V4] leds: rgb: leds-group-multicolor: Implement
  default-intensity
-Message-ID: <20260827165638.GH2943942@google.com>
+Message-ID: <20260827170301.GI2943942@google.com>
 References: <20260813091428.9072-1-wahrenst@gmx.net>
  <20260813092522.0228D1F00A3A@smtp.kernel.org>
  <20260813095330.GZ1072730@google.com>
@@ -69,10 +69,28 @@ On Thu, 13 Aug 2026, Stefan Wahren wrote:
 > 
 > Does mixing PWM and GPIO LED in a RGB multicolor group make sense at all?
 
-Couldn't honestly tell you without digging in myself.
+I asked my little helper for you:
 
-I did just provide some concerns from Gemini though.  PGTAL.
+<gemini>
 
+While mixing a GPIO LED (essentially binary) and a PWM LED in a single
+multicolor group is technically possible, it is indeed highly unusual and
+unlikely to produce a desirable colour-mixing effect in practice.
+
+Regarding the Sashiko review, there is a valid point hidden in the noise.
+The multicolor framework uses 'subled[i].intensity' as a relative ratio
+against the overall group's 'max_brightness'. If a sub-LED's native
+intensity scale differs from the group's scale, assigning the raw value
+from the 'default-intensity' property directly without scaling it could
+lead to unexpected dimness or brightness. Should we look into whether we
+need to normalise this value against 'max_brightness' to maintain
+consistency?
+
+</gemini>
+
+Hope it helps.
+
+> > 
 > > > --
 > > > 
 > > > --- Patch [1]: [PATCH V4] leds: rgb: leds-group-multicolor: Implement default-intensity ---
@@ -94,6 +112,13 @@ I did just provide some concerns from Gemini though.  PGTAL.
 > > > > -		/* Configure the LED intensity to its maximum */
 > > > > -		subled[i].intensity = max_brightness;
 > > > > +		ret = device_property_read_u32(led_cdev->dev, "default-intensity",
+> 
+> Should we verify if 'led_cdev->dev' is the correct device to query here?
+> Normally, 'led_cdev->dev' is the class device and might not have the fwnode
+> associated directly in the same way as the underlying platform or fwnode
+> device. Would using 'led_cdev->dev->parent' or querying the fwnode directly
+> be safer?
+> 
 > > > > +					       &subled[i].intensity);
 > > > > +		if (ret || subled[i].intensity > max_brightness)
 > > > > +			subled[i].intensity = max_brightness;
