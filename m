@@ -1,40 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8A48A2D8;
-	Thu, 27 Aug 2026 16:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EAB38BF62;
+	Thu, 27 Aug 2026 16:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787847612; cv=none; b=fLOQYPDIB09UXESODwhpeP7Ce9L+/QVfQ0y9G9Pmkr2xRuKiaSR7Vz67Y6u2ugdrFuAJCjB6CG31kr69BSFEjbtrp5aSekxn+5O0EvRfmSHc2K9ZgrRFNAg9UFtp4VDgxiP62sLmYX4jYxjMLf2hWajTjAGtCPMFPib8Nwq52xI=
+	t=1787849731; cv=none; b=j7IOyTipSeWboB3p38EcxiDNZzdFo5aWWMvDpgIVYafnl37mc51PvuG07vQjWmbQ8gqrPMxNa2Zw6UV3QZVJDcsuKFL5lg2Xi1WKzom0jilcmNgJNHPviN0sVH4CduxMSCTLlY40J+U/hFLOLYY/JeYMAB4AD+KtLdge0CStiZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787847612; c=relaxed/simple;
-	bh=VREEbUU6rIEJKSoz1SGDLsSinXydjrOiEtkmXl2ipRE=;
+	s=arc-20240116; t=1787849731; c=relaxed/simple;
+	bh=sWvbfe0faEMkG9UmLj6jsM++XJvszYcmtzVM0Y6s1m8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IakSWT9dabyt9Dk4m7zoySF5dAT+KEgrBDWf6CtAedsNQ3sIAowroGMjs7oyihqOrNnFTm2ZhOQyJ80vmBVH12JMPaOGgA8gzfuUyO1GpzYvoNF2Y2occfXV7u2SLTuxicxqQ8VH4qePXvSxxtd8LB1lKfXLBY/vjlIq2z1Ezvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g08ciLEl; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFchI9zL2yHG8+lW1bVXZiNe1cvblOYisIAQI54bnwM0CQgkLGnBsXTNDQbyqlIfh3ruMSNhwaw7TqEkXZGZrrJNTkp44hfx9wXJNIe5ucuKP2TyW9qe0PrGvlt9PATD3igAgvfxExLdsccGjqaNkcxVVPMlyF+czlNE3rZslNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S41PkZi6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g08ciLEl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE3E1F000E9;
-	Thu, 27 Aug 2026 16:20:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S41PkZi6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562611F000E9;
+	Thu, 27 Aug 2026 16:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787847611;
-	bh=WsVpXONnhu89MZANZI4ZRb4/d+CNbdaoFF0WHudlW+E=;
+	s=k20260515; t=1787849730;
+	bh=4Wi6KK4ZkyQrCkSyS1rWL6XigxS3LuABb8+3XjFD0S4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=g08ciLEl1l58+xUVBSvD7R4HcfNyEMy48ooHI4+Hv/TlpDdHPNJLUmaaetdb4rWuo
-	 BSIa91pCXEpot1NyQ6Nv5LIBxX3l9OmKuO1Di4R0+mmvWKGz2N7rtjaI8YpFslQbJk
-	 OWWI5ZlhM3EKldO03JyaK3pYh1tUmiQdeI80k8r/IwAtLgzyFeVquqEx3R0MflW5G7
-	 FFut7GRGRCPHbyzfpG7+Me0WQK40e2sG0Sthfi9gZcxSoOHWUZ4zqtqZnIkTWu3ENE
-	 pTyIu0f1HiE/0nQcAAhVDKOMypJ8wT+wInQri1jUIKCI4h9sVzBnn97UZgY/AzKUK2
-	 eM1zRTNCJBcAg==
-Date: Thu, 27 Aug 2026 17:20:08 +0100
+	b=S41PkZi648Se7z824nWEyoiRov+muspswIBFssXVKayIDP5CnEKdVu4D2VO5ZQJkM
+	 AeDIO8RdeMraqKrmd+c/m8Y0XR+WyTgPWyHYrTLtthSb3+3EIlMe2CdPy17SP9OdCb
+	 vyPxvW5yOdpqzvEsf2hRczeQxZHKF7q2cPvXLmao7AOstXNvWIAh/r5eHkl5mwTU0F
+	 mDh+cfuNuKQeCT54FsdgwwNYa7G5sqVAaEMTmtxoiBLC7CAPmU0o/GP+OdT8O3c8EE
+	 p2Ncaa0ulHE+meoGN4jPgAGe5YGasrziQjPWa5IouOxGmushNAaYd8esRskXALg6Sb
+	 moveHz18q0G5A==
+Date: Thu, 27 Aug 2026 17:55:25 +0100
 From: Lee Jones <lee@kernel.org>
-To: kr494167@gmail.com
-Cc: pavel@kernel.org, s.trumtrar@pengutronix.de, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] leds: lp5860: Fix LED teardown ordering using
- devm_add_action_or_reset()
-Message-ID: <20260827162008.GF2943942@google.com>
-References: <20260812135001.48949-1-kr494167@gmail.com>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+	Jonas Rebmann <jre@pengutronix.de>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4] leds: rgb: leds-group-multicolor: Implement
+ default-intensity
+Message-ID: <20260827165525.GG2943942@google.com>
+References: <20260813091428.9072-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -43,53 +47,72 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260812135001.48949-1-kr494167@gmail.com>
+In-Reply-To: <20260813091428.9072-1-wahrenst@gmx.net>
 
-On Wed, 12 Aug 2026, kr494167@gmail.com wrote:
+On Thu, 13 Aug 2026, Stefan Wahren wrote:
 
-> From: Surendra Singh Chouhan <kr494167@gmail.com>
+> Currently it's not possible to specify the initial color of a LED
+> multicolor group during boot. So implement the default-intensity property
+> similar to the leds-pwm-multicolor driver. In case the property is
+> missing, the old behavior is kept.
 > 
-> The driver previously disabled the chip in its remove callback before
-> devres unregistered the LEDs. LED unregistration turns the LEDs off
-> through the driver brightness callback, which accessed disabled hardware.
-> 
-> Fix this by registering a devm action via devm_add_action_or_reset()
-> immediately after enabling the chip in lp5860_device_init(). Due to devm
-> LIFO (Last-In, First-Out) teardown ordering, devm will automatically
-> unregister all multicolor LEDs before the devm action disables the chip.
-> 
-> In addition, use scoped_guard(mutex, &lp->lock) to restrict the initial
-> mode setting lock scope, avoiding holding the mutex across
-> lp5860_init_dt(), which would cause a self-deadlock when registering
-> subleds.
-> 
-> Finally, convert mutex_init() to devm_mutex_init() and declare the local
-> variable ret in lp5860_probe(), allowing lp5860_device_remove() and
-> lp5860_remove() to be removed completely.
-> 
-> Fixes: f0a66563aa2d ("leds: Add support for TI LP5860 LED driver chip")
-> Signed-off-by: Surendra Singh Chouhan <kr494167@gmail.com>
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> Reviewed-by: Jonas Rebmann <jre@pengutronix.de>
 > ---
-> v3:
->  - Use scoped_guard(mutex, &lp->lock) in lp5860_device_init() so the lock is released before calling lp5860_init_dt(), preventing a self-deadlock during subled registration.
->  - Declare missing local variable 'ret' in lp5860_probe().
->  - Capitalize patch title per LED subsystem guidelines.
 > 
-> v2:
->  - Use full name "Surendra Singh Chouhan" in From header and Signed-off-by.
->  - Convert chip disable sequence to devm_add_action_or_reset() as suggested by Lee Jones.
->  - Use devm_mutex_init() for lock initialization.
+> Changes in V4:
+> - use device_property_read_u32 instead of fwnode_property_read_u32
+> - simplify if statement as suggested by Lee
+> - drop obvious comment
 > 
->  drivers/leds/rgb/leds-lp5860-core.c | 42 +++++++++++++----------------
->  drivers/leds/rgb/leds-lp5860-spi.c  | 15 +++--------
->  drivers/leds/rgb/leds-lp5860.h      |  1 -
->  3 files changed, 22 insertions(+), 36 deletions(-)
+> Changes in V3:
+> - drop unnecessary patch for leds-group-multicolor.yaml
+> - add Jonas' RB
+> 
+> Changes in V2:
+> - adapt to approach (incl. error behavior) by Jonas Rebmann [2]
+> - address comments by Lee which still apply
+> 
+>  drivers/leds/rgb/leds-group-multicolor.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+> index 548c7dd63ba1..f278d2a2bf5c 100644
+> --- a/drivers/leds/rgb/leds-group-multicolor.c
+> +++ b/drivers/leds/rgb/leds-group-multicolor.c
+> @@ -109,8 +109,10 @@ static int leds_gmc_probe(struct platform_device *pdev)
+>  
+>  		subled[i].color_index = led_cdev->color;
+>  
+> -		/* Configure the LED intensity to its maximum */
+> -		subled[i].intensity = max_brightness;
+> +		ret = device_property_read_u32(led_cdev->dev, "default-intensity",
+> +					       &subled[i].intensity);
 
-This no longer applies.
+<gemini>
 
-Please rebase onto -next or my LEDs tree and resubmit with my:
+Should we avoid clobbering the function-wide 'ret' variable with an ignored
+error from 'device_property_read_u32()'? It might be safer to use a local
+variable inside the loop to prevent any future bugs if 'ret' is assumed to
+be zero later in the function.
 
-Acked-by: Lee Jones <lee@kernel.org>
+Also, should we use a local 'u32' variable to read the property instead of
+passing the address of 'subled[i].intensity' directly? Since 'intensity' is
+defined as 'unsigned int', using a temporary 'u32' variable would be
+type-safe and avoid potential compiler warnings. If we do this, we should
+declare the 'u32' variable at the start of the block and assign it with
+the function call on a separate line.
+
+</gemini>
+
+> +		if (ret || subled[i].intensity > max_brightness)
+> +			subled[i].intensity = max_brightness;
+>  	}
+>  
+>  	/* Initialise the multicolor's LED class device */
+> -- 
+> 2.43.0
+> 
 
 -- 
 Lee Jones
