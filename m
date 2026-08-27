@@ -1,205 +1,112 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outbound.st.icloud.com (st-2003f-snip4-11.eps.apple.com [57.103.77.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BD13803F7
-	for <linux-leds@vger.kernel.org>; Thu, 27 Aug 2026 17:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787851075; cv=pass; b=o41fefv5vkipkb8Iu67TCZ6m8Yp7CqoHTyAyfvUjeBY1ePXaziWC0scAfgY31cr38/eaC+xXeewUnNeYpU00nzXYx1Y1n67sV2rxMvT8NDjeThJTx55fDHKH7kTigdHBUEwJ0huvxh9Er7N8XZqtlkgfaN0fRD/YL+GNRCZb2Vk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787851075; c=relaxed/simple;
-	bh=nx6pzOW5pT8Lijs8fAgCGx8cLsTrEkgcyr1BexTuz+w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UEj7SynJyIQSgSvO7jj7WWw1JzinxRAbiczmpvbjJkPimYxkvv8pYs5xqHUGe5W3QiPiZuaCw8M4x1tXRlAsVG2ljGNvVEKJD61P/IX7XBVhdeOOQeqWVEDuvtWwi/CH8p4p4W/8mf4LkfrBWr5Nz3wuyRNnc8yduHp07MW9i0I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnaunlPV; arc=pass smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363024D2ECB
+	for <linux-leds@vger.kernel.org>; Thu, 27 Aug 2026 18:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.77.211
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787856530; cv=none; b=B91VUI4zpEyTSKzSd/Hhz+e7H3EpeJRK9SckTQnooyeNrIQFvdvLMeQccaPW29ES1gwudciefuHQ+JOUnCZa9UhDqg8jiHBUr2YM6vCEMLLEh7LWAlsXsLgndlzIG8Gmor3Yf0QcWb7vIsKZZZ3E/SZkoXQJ0wezppJEwqlcUkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787856530; c=relaxed/simple;
+	bh=M7rSi+2KbeMwEjD1ZQGlZAFijZT6ByDYgo6kfq/6+rE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cDXemKmEMiLNQhbWYSbIQNjBXFg3DqrnXiefMFklNAaGE6ibsMyP+1EKp0Bwh8nOtbXEfzc2maf/jjetEJaWDiO4P9+vVyXKfV1V03yI/4O7rpuJAa3rSAfXcwto6ZoVcM0PpkaXByc9RXg2Un92t5qDTywFHe6qFq2Y1dj3E/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=m+D9neR5; arc=none smtp.client-ip=57.103.77.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnaunlPV"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cc891373e0so880935ad.2
-        for <linux-leds@vger.kernel.org>; Thu, 27 Aug 2026 10:17:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787851073; cv=none;
-        d=google.com; s=arc-20260327;
-        b=oGlF0gdNCrBTRQfQvv91Y9fRBlKHIdNOwH75hKJtVPGg6l/89AVyJxCdUyyS1h0Ix8
-         QbR+jc2wgB2rwHfOpTeR4k+ZNqiNFGuxpR/ziiUFQQzOQitRRl5PMgToQQKeYmnUVB5q
-         A1/uAkkMgFR4U+LhWL3D1C2FkuS2CgySMJJnryvRpSU32JNoq3g7XRFwVSGArBubQZsB
-         wCKy9+VsBoD1a7SjGeW1oLl/fhMyieAotoLdVjLMtBTUoTMasqI39af1npcSYH56EIAX
-         UAWex9fMSmwLMP82vrTxTveDuFjmhxwxNo0MwugpcM6u8ccNTxgWlk+ENyBlPocZHn29
-         8r6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=M8SDq5h0rGl3va3b86tmLr/VrLxThW4gkkY/ckQ/2dA=;
-        fh=8le7FRJsQX+FEnTE2w8UnPnb4EYoyq0bHaWwYHNP+Vg=;
-        b=a978dfcpuPVukm8LxpLjcAw73Cnk37zo/adwoiXFgcQuCYaD5l5vdbVcbMFcnJjLSU
-         NpESTbti053VTA+Vz1nTUewYM+KSWXkzjgygqXZd5f0Sb00ST9nfMrh5vuVkMK9MhqQt
-         vMRW9gN52LKNoD2T4hvwNqNWcVLzJdkKd71Fnjpua6yHklpOCsx28LaBYB+WDlNdkQnc
-         VTGj6RPJIvq6VIfX7uFOvpgZSefGSSPk4YRRbIuHoMO2Z6FnksWiwDEmVi47xTuO0/ba
-         9Kk/4evTCVBReK2YZjWeYqq3pKLWrfnrKTQrbeB7rCyW/+oZbLT6UoXV0J815SmxXGOn
-         mssA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787851073; x=1788455873; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=M8SDq5h0rGl3va3b86tmLr/VrLxThW4gkkY/ckQ/2dA=;
-        b=PnaunlPVlR9vSA3adN2cXs0v4MY+HMHLDn2/pIypwBIYua3I/ulnZEUMKMQAQPf883
-         SpxK+yLnrph0EMCsHuAkUI0LlNxLEy0avxjVucLz+4g9OcZBIairx1PNko8FHw+jmjzZ
-         +vE3/vlrwTJCE9xd3Citp+EmaVINBvk6nd0onnvEoRukFcrSe2V75fGL+VJxWK07Y162
-         dezI13xM5r9LoXwqGPQq51/1p82bm9LjSCpHHnaqkC/JuyxWrZbJYl9041Pn6ISiLWhG
-         r/19omgJZHjuu6gI3Qi4h5qTcXk+0UWOl/ws+7jd2/h2N43zn3LtP13TtBOBuZiTO64K
-         N1UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787851073; x=1788455873;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=M8SDq5h0rGl3va3b86tmLr/VrLxThW4gkkY/ckQ/2dA=;
-        b=KFq8OCFjWtYVC8IGvFcSQJIyTAoVMxnRT9//olcqAsbKtuPlzxgUP+9vDRy0sQuEou
-         M/l1/GOvCuOs1OUqWrs5Y0IEKfDSFJ9rvt/ljsCe6pEhjq98T1Z+rUdnwAlnDNwaAPH2
-         1VssDxera8wJ7Tfu1sBlXiTvVpm/3OmnJfDKYw/QUvVNCJxZVXfqIcyc4CIftmgbG+iE
-         beW1bzkFEuHmp9sW9mTC9JXArqR6UZuBWb0BD5KzehubwwQtPM8ZO6QmiwzjSeMtshXz
-         eU+fk4Q/WSRrSE7nygABYooJD6pkNZZ0ESBOq++sMlIl3qGLsG8Ee1mlQiOQ4gzmOLFp
-         u9cg==
-X-Forwarded-Encrypted: i=1; AHgh+RonXzkYtJhxpQdJGY1eHJmXDJ6kxW+yv525EXLfiNAgbZWCb+i/ffKyNJYi3+/ZD7S25mhypg0VZ1ep@vger.kernel.org
-X-Gm-Message-State: AFuF++mgPufV8qnKN+GUwZtAU4qHONqXKPAGxCLD9qyNkS55XuzG6Dz8
-	/X25cm3qYtT+yIiBZBy5EVQVqxOcPPaDjFhMRHPY8gl2JU8wGK8mJDpeEbY+BIDLfnoVRf+uDzH
-	GXEWVqZS2aNe8HEIm7gQpfynTXXeDzs8=
-X-Gm-Gg: AR+sD13zkQjjJ34tyeWYtHQwLPOuok89bvnv8t34Qam9HCXXGXe2ZguwMpF+B+hM1MM
-	wilT1FSmdwvo39QXfImil1wD1qgj1BcDnS5vZ6ON5LNORAFlrR0vWmZmD8/ve7Uh3E4/IFB+4W5
-	QlBlH+w0VH/zu2PCcMvIq9ZXCew+XfXg6LkVKV24vgn+aEakTo46MleqD51a50gcB5Ki2pkR/uG
-	zHUafZhCU6XnR6I0ySvD3th4hyUI91CoVysk0L9iMaQUTfIEp51RMikZ1b7Lqk5w4DXdadljgW5
-	uhE0MppTp1XUKJJXEV2UD+nJtk5G6JR3s5iHpd7itZzfLRlMNaLbYFSfdfg7qz5JUQttSDpuK7F
-	NHg==
-X-Received: by 2002:a17:90b:1c0a:b0:396:54ba:8932 with SMTP id
- 98e67ed59e1d1-396d104e722mr868167a91.16.1787851073075; Thu, 27 Aug 2026
- 10:17:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="m+D9neR5"
+Received: from outbound.st.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-east-1a-60-percent-2 (Postfix) with ESMTPS id 10FC4180025D;
+	Thu, 27 Aug 2026 18:48:46 +0000 (UTC)
+X-ICL-RepId: 01a0448d-9e8a-76ce-9936-1ee754d4d7db
+X-ICL-Out-Info: HUtFAUMEWwJACUgBTUQeDx5WFlZNRAJCTQhKCkMGWgdeCEEGQwZcEhVdRVAAWgpIClY4Wg5bBEcUFxtcABcNVk1QG18CQg8cE1YVEx9UVgtQUR1fAgoERwRbF0YDU0VBBBcRUAFYHlZeWhdeTUcfQE1iSQFaGVscQBdKbk1TDw8ZWhRcGFNFUR9UWF4EU1YOQglKBV0PWQVBAUwEXAJFA0MPQAdeGlofE1QVUhdNBHIZWhRcGFNFUR9URhMZThtXTVAbXwJCDw==
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; t=1787856528; x=1790448528; bh=AY1PvJv/NiI5ZWOLCs+J8c9RaT1aAiXk5qxhEqF9e+M=; h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme; b=m+D9neR59AOUM6hF1L53lF45eDag/tfJ1SA2oVlXDowQnb9gx8t3VftELtgQBlSFRCj7oCkFlO7wT4MlNaZ0Um1AZrXsg2GUwRdiKzOn/p8JeuGgKZzj3RAvirOT3YGWT5OukuK1dapsBR+Aa2mDdqnGsDo1BD8Eo8eEFJnnsOjxsqRumd3nu8HsNxi4etwTxPit/Ck4IFoEnhAEILJoTV7rSkxHV1clXo6C5qH4nU1fzCxMwEK59uCjtbD9lAj+8LXfi8aEAaOthLJWSNtUnCLziShoL/LskWPCi3xc0chf7/YDXklRhjdVfMmD/pGbx0dgMLvFb37ZnBCd0ZJ99w==
+Received: from komputa (unknown [17.156.216.30])
+	by p00-icloudmta-asmtp-us-east-1a-60-percent-2 (Postfix) with ESMTPSA id 23F291800093;
+	Thu, 27 Aug 2026 18:48:46 +0000 (UTC)
+From: Cristian Mazzotta <cmmazzo@icloud.com>
+To: wse@tuxedocomputers.com
+Cc: tgu@tuxedocomputers.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	hansg@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	Cristian Mazzotta <cmmazzo@icloud.com>
+Subject: Re: [PATCH v4] HID: generic: add LampArray support via hid-lamparray helper
+Date: Thu, 27 Aug 2026 13:47:15 -0500
+Message-ID: <20260827184715.136843-1-cmmazzo@icloud.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <8c05e11f-6e63-420a-996b-5d1986743ce7@tuxedocomputers.com>
+References: <8c05e11f-6e63-420a-996b-5d1986743ce7@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260721095654.429346-1-clamor95@gmail.com> <CAPVz0n3u0D=0swsO4n6LROFurO=as1w-ZRwaje08BN9dY=JhXQ@mail.gmail.com>
- <20260827141457.GA2943942@google.com>
-In-Reply-To: <20260827141457.GA2943942@google.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 27 Aug 2026 20:17:41 +0300
-X-Gm-Features: AcwNN1WUBCKfKNTF0yfYVgSgr_Ph4Fu9hbLSdLwMiZnrAraJvVZlotiakM6hXUQ
-Message-ID: <CAPVz0n03znVtUaO9qo9zoC71NQsiVJK4sMLcyi_TWCUL8V1O9A@mail.gmail.com>
-Subject: Re: [PATCH v7 0/6] mfd: cpcap: convert documentation to schema and
- add Mot board support
-To: Rob Herring <robh@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: yWMg1Pmc4_Ug2znEY9ELlduVnyo7qWyC
+X-Proofpoint-ORIG-GUID: yWMg1Pmc4_Ug2znEY9ELlduVnyo7qWyC
+X-Authority-Info-Out: v=2.4 cv=Ver6/Vp9 c=1 sm=1 tr=0 ts=6a90868f
+ cx=c_apl:c_pps:t_out a=oyWFxbOnq+dmhQrAPgaJYA==:117
+ a=oyWFxbOnq+dmhQrAPgaJYA==:17 a=Sv0fKeRqtYgA:10 a=x7bEGLp0ZPQA:10
+ a=zMoZyIPnO1cA:10 a=VkNPw1HP01LnGYTKEx00:22 a=lmYTH-fKyJQKsRdkMMYA:9
+ a=Uh4tPsEYL5Xn7yYgV4Nn:22 a=mGzgV76dRlD25_95D0kX:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI3MDE1OSBTYWx0ZWRfX4aec7UA1+Z1Z
+ DeccKSVgjtkP6MMQAX7ZZz7k+Cl5T+zZACQohnW2Q8k3mAZOrOPxJfcUdF8OwGTRs4lAkefy/cY
+ 50SUWZ8ALt/XLd+ahXa6bnN56SGgHBsWfT74+hWtjnrNPrPwxY9doy9x73WgkibY93+I4/qwBiN
+ obIBA6tnDeMW3FCtDscU6biDMx5OYZqPy6Jow++ZJhBek+wZjSgFe8jdG1Ub9O/qn4sLL+Y4UvR
+ 90gkO8aI9GEybI5nSXPQNjohllbmfIHJ95NKfRGyb92MU4PEy4wNYM6mUJTrl9mTozA/g4BsNfv
+ 0PL+WnTfMbHJ5R9FK/ba9qgwl49I3i5C3Og+XGKJiyYaAxE3TLd+5THTMesUYI=
+X-JNJ: AAAAAAABu9ZYQKFVD+WanbIY7zMsEGnU54RFrvK/eUY83NbeYJNRC9zJmZJeQ6Yt/BP6GMRX95sp2gKOygY7VKtj4yjKAf3sWlspajBEdKg2OHJdtVnARWBs9xbCzxL6Z/nlG8OLB6ZDGrWTEyuN429BpsDkbMdlsk3aBRPS5cFoTq9zrf5m9DCTbxTGjf83IdoQNuR58Vc4x9A8K3YIM6xg2N4+goUTVizCcLsYRialHuoMmVZhfRSh3tPu/przBYiYvMFKfQrMfQfSilUaARCew9JLoRUz1GwAWK89xD2ysEYbgawaM0EzjVt2MVegCsO+9VW+oHprYLQ/aqBeJFHOCs47QQd1xVaHWc9OeWabYYTZCAPuqoPQ76oDrIHiGxg+snkmzNnk40YTxrXmojxalmGykWSgqhQzgveMLuZOtPxM7ToViF6d/zWSq73mNtpTotXNF7rINk34SCZqUdn0H/6zvFjjUGpIK1Cih5uYmnMR7socTf/bapgQy14Dp6iXb1/A8H3b7O+hQrH5bjmbixrv63e5ZX4l8yLdY1ldNW/RZV/WC4+iKPh2rv4dHBlxnklRBsTblGrjaFDAicVuDqliTJP7oOKoZU2lXQDTlWLYY4j6wBlDb3FIth43sYDkLQykuTyczKB18sHjhNtcWpAq4LJv2aGCm3PItq0Jp0gsgByF3RIdrJd5HwXKMMpJ4wxgLYvRcKIuzXTqZyKrdTVsqv0P73p0PdT9Dw4YIvPq0CFd0KncURkAbkdE3b1UOUE0tALV+Djq6q5a4mLel3pQetUAj1RGg+9SC4h0B6OqDMX2NycTlRiQ0ST2VMXiac0UX52icZkmp75GR1tfmiqpAAgdN5wu3/bzeSRr301RuvflkfH/OmwGMvTqnumhE/fxqog7z0JRSIXYnhuV0m7EnJntRt6gsV9/NrD/nmnMHUggyGNVtiFi/GVKKqq1+KDJNMjHYWQ1CfzEsQbQUzfAJ+9
+ rHgQ5L5tfZgsexlo2lLjS257/m+bnznhKXfLb4r/EmdQSUEh+YBXJ8qlOo0H0msJrVWjbl3HyBtLdhYyz0+Ev/YNsO0bwwD+4biT2ZgrjBu2uItnw8nvhRjEkKgaqzBwq8XB53ckcAHe5EzbZFFfNXd5gubLCTaK/z0i0UC1Bw52QASUlTrPcT5R2gM7QciDA55N/CYrora9UErWG22wE6tgSvOLnWahp/YRko38hSQDZ56mfpnQ/LbHzi2mWzs88R6ZoimtaZy1YwN0JOKRCaXtieONHw4JLIHpJ
 
-=D1=87=D1=82, 27 =D1=81=D0=B5=D1=80=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 17:1=
-5 Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, 19 Aug 2026, Svyatoslav Ryhel wrote:
->
-> > =D0=B2=D1=82, 21 =D0=BB=D0=B8=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 12:57 =
-Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > The initial goal was only to add support for the CPCAP used in the Mo=
-t
-> > > Tegra20 board; however, since the documentation was already partially
-> > > converted, I decided to complete the conversion to schema too.
-> > >
-> > > The CPCAP regulator, leds, rtc, pwrbutton and core files were convert=
-ed
-> > > from TXT to YAML while preserving the original structure. Mot board
-> > > compatibility was added to the regulator and core schema. Since these
-> > > were one-line patches, they were not separated into dedicated commits=
-;
-> > > however, the commit message notes this for both cases.
-> > >
-> > > Finally, the CPCAP MFD was slightly refactored to improve support for
-> > > multiple subcell compositions.
-> > >
-> > > ---
-> > > Changes in v2:
-> > > - fixed code style
-> > > - rtc conversion was picked, so patch dropped
-> > > - added audio ports description into mfd schema
-> > > - splitted schema conversion and compatible addition
-> > > - minor style improvements and typo fixes
-> > >
-> > > Changes in v3:
-> > > - added regulator node names list into pattern
-> > > - filled spi_device_id with driver data
-> > > - ADC patches were picked, so changes dropped
-> > >
-> > > Changes in v4:
-> > > - dropped regulator patches (applied)
-> > >
-> > > Changes in v5:
-> > > - switched to MFD_CELL_* macros
-> > > - switched to use determinator of model
-> > > - switched to spi_get_device_match_data
-> > >
-> > > Changes in v6:
-> > > - removed address-cells and size-cells from main node
-> > > - changed macros formatting and OF matches
-> > > - factored out common devices and made device addition staged
-> > > - dropped cpcap->variant check for 0
-> > > - EINVAL > ENODEV in variant checking switch
-> > >
-> > > Changes in v7:
-> > > - adjusted spi_device_id entries (name/driver_data)
-> > > ---
-> > >
-> > > Svyatoslav Ryhel (6):
-> > >   dt-bindings: leds: leds-cpcap: convert to DT schema
-> > >   dt-bindings: input: cpcap-pwrbutton: convert to DT schema
-> > >   dt-bindings: mfd: motorola-cpcap: convert to DT schema
-> > >   dt-bindings: mfd: motorola-cpcap: document Mapphone and Mot CPCAP
-> > >   mfd: motorola-cpcap: diverge configuration per-board
-> > >   mfd: motorola-cpcap: add support for Mot CPCAP composition
-> > >
-> > >  .../bindings/input/cpcap-pwrbutton.txt        |  20 -
-> > >  .../input/motorola,cpcap-pwrbutton.yaml       |  32 ++
-> > >  .../devicetree/bindings/leds/leds-cpcap.txt   |  29 --
-> > >  .../bindings/leds/motorola,cpcap-leds.yaml    |  42 ++
-> > >  .../bindings/mfd/motorola,cpcap.yaml          | 408 ++++++++++++++++=
-++
-> > >  .../bindings/mfd/motorola-cpcap.txt           |  78 ----
-> > >  drivers/mfd/motorola-cpcap.c                  | 143 +++---
-> > >  include/linux/mfd/motorola-cpcap.h            |   7 +
-> > >  8 files changed, 571 insertions(+), 188 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/input/cpcap-pwr=
-button.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/input/motorola,=
-cpcap-pwrbutton.yaml
-> > >  delete mode 100644 Documentation/devicetree/bindings/leds/leds-cpcap=
-.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/leds/motorola,c=
-pcap-leds.yaml
-> > >  create mode 100644 Documentation/devicetree/bindings/mfd/motorola,cp=
-cap.yaml
-> > >  delete mode 100644 Documentation/devicetree/bindings/mfd/motorola-cp=
-cap.txt
-> > >
-> > > --
-> > > 2.53.0
-> > >
-> >
-> > Hello Lee! May you please pick this patch set? I have included changes
-> > asked by Rob and Uwe. Thank you!
->
-> Nope! =3D:-)
->
-> There are still a bunch of unanswered Sashiko reviews and one from Rob's =
-bot.
->
-> --
-> Lee Jones
+Am 25.03.26 um 11:35 schrieb Werner Sembach:
+> as Tim went on to other endeavors, I'm taking over this patch. I have
+> yet to test it myself, but i was already in the feedback loop while he
+> was writing it, so I'm not unfamiliar with the code.
 
-Hello Rob! May you clarify if those are relevant?
+Hi Werner,
+
+I recently got a new laptop (Acer Predator PT14-52T) with absolutely zero
+support for any RGB outside of Windows 11; while studying the behavior of
+the Windows driver, I found out about LampArray devices and so I ended up
+landing here.
+
+This laptop has 2 LampArray devices: a USB attached keyboard (05AF:767A)
+and an I2C ENE controller (0CF2:5130) for 3 zones in total. The original
+motivation was power draw during s2idle; the lights would stay on and
+constantly draw power. I measured 12.35W drop to 2.84W when I
+blanked the lights and measured with a simple usb power meter, so I've
+been working off of Tim's code for the past little bit.
+
+Getting full support required touching most of the driver:
+
+ - Multi-zone support with individual zone states instead of a single
+   monolithic zone taking every device.
+ - lamparray_read_lamp_count() used hid_hw_request(), which is
+   asynchronous, so the value was read before the transfer completed.
+   Switched to hid_hw_raw_request()
+ - lamparray_parse_update_report() would bind to the last HID_LAIP_LAMP_COUNT
+   (usage 0x0003) parsed rather than the first, so LampCount ended up
+   being on the wrong field. This has been fixed by binding the first match.
+ - Added suspend and resume hooks, including an autonomous mode refresh
+   on S4 that my laptop needed
+ - use_leds_uapi=0 now leaves the LED class devs registered, but ignores
+   all writes rather than unregistering them.
+ - Also added ABI documentation since it was missing previously
+
+About half of the driver changed, so I don't think it would be easily
+reviewable as a delta from v4.
+
+Would you prefer that I post it as a v5 with Tim's patch as a base, or
+should I just send you the changes that you can add to your own version?
+I don't want to duplicate work if you already have a v5 in progress.
+
+I have hardware in front of me so I can test whatever is useful.
+
+Thank you,
+Cristian Mazzotta
