@@ -1,148 +1,205 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E574503EC;
-	Thu, 27 Aug 2026 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787850189; cv=none; b=fmHvN8NNRSlbkJTYlyC//fTMDEgK6NrM/c4/xGv2JWuewoRYqxTEFwf/Ry1VO0xRn2z0HBZ+PRP6WNgKPell6fPRJqoXdwfwmrRh3vmRNtZxudiaf+lIlmN+JeP8E2/3vvdwpSD2I/dW9Y6sd96GxOKfnheeWxvrqgPI4irayz8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787850189; c=relaxed/simple;
-	bh=YfVyNI9c9azuVieacpxUOb6yNvbNo1dV0E31hl56n/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFeZ86Ck56TSE9mitkXJq+SOElL0jGDEt2st6tsNfICdFMTJAm+D6an9mwnIAREfFwm5xUlqMR2l3vyi2Vsic3hKJ8tZ7y0ADrM2041SPzivWt7HiN1amLZnopil08rfDeKUUED+zY482pIdQOWONY8PgyjRccHid/IWLCziTEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sxz6S1N4; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BD13803F7
+	for <linux-leds@vger.kernel.org>; Thu, 27 Aug 2026 17:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787851075; cv=pass; b=o41fefv5vkipkb8Iu67TCZ6m8Yp7CqoHTyAyfvUjeBY1ePXaziWC0scAfgY31cr38/eaC+xXeewUnNeYpU00nzXYx1Y1n67sV2rxMvT8NDjeThJTx55fDHKH7kTigdHBUEwJ0huvxh9Er7N8XZqtlkgfaN0fRD/YL+GNRCZb2Vk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787851075; c=relaxed/simple;
+	bh=nx6pzOW5pT8Lijs8fAgCGx8cLsTrEkgcyr1BexTuz+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UEj7SynJyIQSgSvO7jj7WWw1JzinxRAbiczmpvbjJkPimYxkvv8pYs5xqHUGe5W3QiPiZuaCw8M4x1tXRlAsVG2ljGNvVEKJD61P/IX7XBVhdeOOQeqWVEDuvtWwi/CH8p4p4W/8mf4LkfrBWr5Nz3wuyRNnc8yduHp07MW9i0I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnaunlPV; arc=pass smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sxz6S1N4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F1BF1F000E9;
-	Thu, 27 Aug 2026 17:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787850185;
-	bh=zKmwoEwzdTZwEdpvUj5AMclNii4LDqHyo+svB88BdpA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Sxz6S1N4JOc3d5vGHNPprv4A/0VWeWwYco1y4dh8YodMwPyZ3y/ESJnqHFUzuXpbt
-	 Yrzr7SAbkhn/0+UQ8xLpU8LwNCYXMoUZujn7TNotc/x8kG/5VxVx8109QXZckfm1LP
-	 39qf7EgYMi43CJEJEo1tMaJDQ07LClFNW6Wtswk0lDnyhgTaMT8rGlnHfHHYjUEFi1
-	 QzlmdZFksZMp3wjDzibT6WrfNqkBHXVD//NoBX+jJqdjz4q1iN6JBhVtD4WFTHKNas
-	 jELAX1y1JKOT8Y9gxVW/FbZjffKEBeRtOOE9eNt1x5B0Be4KEN4PyWfurgCiGit4g3
-	 D+sr4VM60qr3g==
-Date: Thu, 27 Aug 2026 18:03:01 +0100
-From: Lee Jones <lee@kernel.org>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	Jonas Rebmann <jre@pengutronix.de>
-Subject: Re: [PATCH V4] leds: rgb: leds-group-multicolor: Implement
- default-intensity
-Message-ID: <20260827170301.GI2943942@google.com>
-References: <20260813091428.9072-1-wahrenst@gmx.net>
- <20260813092522.0228D1F00A3A@smtp.kernel.org>
- <20260813095330.GZ1072730@google.com>
- <aaeb87f7-5a04-4592-ab59-b4114b005aab@gmx.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnaunlPV"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cc891373e0so880935ad.2
+        for <linux-leds@vger.kernel.org>; Thu, 27 Aug 2026 10:17:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787851073; cv=none;
+        d=google.com; s=arc-20260327;
+        b=oGlF0gdNCrBTRQfQvv91Y9fRBlKHIdNOwH75hKJtVPGg6l/89AVyJxCdUyyS1h0Ix8
+         QbR+jc2wgB2rwHfOpTeR4k+ZNqiNFGuxpR/ziiUFQQzOQitRRl5PMgToQQKeYmnUVB5q
+         A1/uAkkMgFR4U+LhWL3D1C2FkuS2CgySMJJnryvRpSU32JNoq3g7XRFwVSGArBubQZsB
+         wCKy9+VsBoD1a7SjGeW1oLl/fhMyieAotoLdVjLMtBTUoTMasqI39af1npcSYH56EIAX
+         UAWex9fMSmwLMP82vrTxTveDuFjmhxwxNo0MwugpcM6u8ccNTxgWlk+ENyBlPocZHn29
+         8r6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=M8SDq5h0rGl3va3b86tmLr/VrLxThW4gkkY/ckQ/2dA=;
+        fh=8le7FRJsQX+FEnTE2w8UnPnb4EYoyq0bHaWwYHNP+Vg=;
+        b=a978dfcpuPVukm8LxpLjcAw73Cnk37zo/adwoiXFgcQuCYaD5l5vdbVcbMFcnJjLSU
+         NpESTbti053VTA+Vz1nTUewYM+KSWXkzjgygqXZd5f0Sb00ST9nfMrh5vuVkMK9MhqQt
+         vMRW9gN52LKNoD2T4hvwNqNWcVLzJdkKd71Fnjpua6yHklpOCsx28LaBYB+WDlNdkQnc
+         VTGj6RPJIvq6VIfX7uFOvpgZSefGSSPk4YRRbIuHoMO2Z6FnksWiwDEmVi47xTuO0/ba
+         9Kk/4evTCVBReK2YZjWeYqq3pKLWrfnrKTQrbeB7rCyW/+oZbLT6UoXV0J815SmxXGOn
+         mssA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787851073; x=1788455873; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=M8SDq5h0rGl3va3b86tmLr/VrLxThW4gkkY/ckQ/2dA=;
+        b=PnaunlPVlR9vSA3adN2cXs0v4MY+HMHLDn2/pIypwBIYua3I/ulnZEUMKMQAQPf883
+         SpxK+yLnrph0EMCsHuAkUI0LlNxLEy0avxjVucLz+4g9OcZBIairx1PNko8FHw+jmjzZ
+         +vE3/vlrwTJCE9xd3Citp+EmaVINBvk6nd0onnvEoRukFcrSe2V75fGL+VJxWK07Y162
+         dezI13xM5r9LoXwqGPQq51/1p82bm9LjSCpHHnaqkC/JuyxWrZbJYl9041Pn6ISiLWhG
+         r/19omgJZHjuu6gI3Qi4h5qTcXk+0UWOl/ws+7jd2/h2N43zn3LtP13TtBOBuZiTO64K
+         N1UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787851073; x=1788455873;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=M8SDq5h0rGl3va3b86tmLr/VrLxThW4gkkY/ckQ/2dA=;
+        b=KFq8OCFjWtYVC8IGvFcSQJIyTAoVMxnRT9//olcqAsbKtuPlzxgUP+9vDRy0sQuEou
+         M/l1/GOvCuOs1OUqWrs5Y0IEKfDSFJ9rvt/ljsCe6pEhjq98T1Z+rUdnwAlnDNwaAPH2
+         1VssDxera8wJ7Tfu1sBlXiTvVpm/3OmnJfDKYw/QUvVNCJxZVXfqIcyc4CIftmgbG+iE
+         beW1bzkFEuHmp9sW9mTC9JXArqR6UZuBWb0BD5KzehubwwQtPM8ZO6QmiwzjSeMtshXz
+         eU+fk4Q/WSRrSE7nygABYooJD6pkNZZ0ESBOq++sMlIl3qGLsG8Ee1mlQiOQ4gzmOLFp
+         u9cg==
+X-Forwarded-Encrypted: i=1; AHgh+RonXzkYtJhxpQdJGY1eHJmXDJ6kxW+yv525EXLfiNAgbZWCb+i/ffKyNJYi3+/ZD7S25mhypg0VZ1ep@vger.kernel.org
+X-Gm-Message-State: AFuF++mgPufV8qnKN+GUwZtAU4qHONqXKPAGxCLD9qyNkS55XuzG6Dz8
+	/X25cm3qYtT+yIiBZBy5EVQVqxOcPPaDjFhMRHPY8gl2JU8wGK8mJDpeEbY+BIDLfnoVRf+uDzH
+	GXEWVqZS2aNe8HEIm7gQpfynTXXeDzs8=
+X-Gm-Gg: AR+sD13zkQjjJ34tyeWYtHQwLPOuok89bvnv8t34Qam9HCXXGXe2ZguwMpF+B+hM1MM
+	wilT1FSmdwvo39QXfImil1wD1qgj1BcDnS5vZ6ON5LNORAFlrR0vWmZmD8/ve7Uh3E4/IFB+4W5
+	QlBlH+w0VH/zu2PCcMvIq9ZXCew+XfXg6LkVKV24vgn+aEakTo46MleqD51a50gcB5Ki2pkR/uG
+	zHUafZhCU6XnR6I0ySvD3th4hyUI91CoVysk0L9iMaQUTfIEp51RMikZ1b7Lqk5w4DXdadljgW5
+	uhE0MppTp1XUKJJXEV2UD+nJtk5G6JR3s5iHpd7itZzfLRlMNaLbYFSfdfg7qz5JUQttSDpuK7F
+	NHg==
+X-Received: by 2002:a17:90b:1c0a:b0:396:54ba:8932 with SMTP id
+ 98e67ed59e1d1-396d104e722mr868167a91.16.1787851073075; Thu, 27 Aug 2026
+ 10:17:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aaeb87f7-5a04-4592-ab59-b4114b005aab@gmx.net>
+References: <20260721095654.429346-1-clamor95@gmail.com> <CAPVz0n3u0D=0swsO4n6LROFurO=as1w-ZRwaje08BN9dY=JhXQ@mail.gmail.com>
+ <20260827141457.GA2943942@google.com>
+In-Reply-To: <20260827141457.GA2943942@google.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 27 Aug 2026 20:17:41 +0300
+X-Gm-Features: AcwNN1WUBCKfKNTF0yfYVgSgr_Ph4Fu9hbLSdLwMiZnrAraJvVZlotiakM6hXUQ
+Message-ID: <CAPVz0n03znVtUaO9qo9zoC71NQsiVJK4sMLcyi_TWCUL8V1O9A@mail.gmail.com>
+Subject: Re: [PATCH v7 0/6] mfd: cpcap: convert documentation to schema and
+ add Mot board support
+To: Rob Herring <robh@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Aug 2026, Stefan Wahren wrote:
-
-> Hi,
-> 
-> Am 13.08.26 um 11:53 schrieb Lee Jones:
-> > On Thu, 13 Aug 2026, sashiko-bot@kernel.org wrote:
-> > 
-> > > Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> > > - [Medium] The `default-intensity` property read from individual monochromatic LED nodes is applied to the multicolor group without rescaling, causing incorrect brightness calculations.
-> > Please review, explain or fix the Sashiko review(s).
-> > 
-> > If this is a set, this request includes the other patches too.
-> Sorry, I don't get the problem with "incorrect brightness calculation", I
-> tought the intensity setting is independent from the brightness. Btw the
-> intensity is applied to the monochromatic LED not to the group itself.
-> hallucination?
-> 
-> Does mixing PWM and GPIO LED in a RGB multicolor group make sense at all?
-
-I asked my little helper for you:
-
-<gemini>
-
-While mixing a GPIO LED (essentially binary) and a PWM LED in a single
-multicolor group is technically possible, it is indeed highly unusual and
-unlikely to produce a desirable colour-mixing effect in practice.
-
-Regarding the Sashiko review, there is a valid point hidden in the noise.
-The multicolor framework uses 'subled[i].intensity' as a relative ratio
-against the overall group's 'max_brightness'. If a sub-LED's native
-intensity scale differs from the group's scale, assigning the raw value
-from the 'default-intensity' property directly without scaling it could
-lead to unexpected dimness or brightness. Should we look into whether we
-need to normalise this value against 'max_brightness' to maintain
-consistency?
-
-</gemini>
-
-Hope it helps.
-
-> > 
+=D1=87=D1=82, 27 =D1=81=D0=B5=D1=80=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 17:1=
+5 Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, 19 Aug 2026, Svyatoslav Ryhel wrote:
+>
+> > =D0=B2=D1=82, 21 =D0=BB=D0=B8=D0=BF. 2026=E2=80=AF=D1=80. =D0=BE 12:57 =
+Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> > >
+> > > The initial goal was only to add support for the CPCAP used in the Mo=
+t
+> > > Tegra20 board; however, since the documentation was already partially
+> > > converted, I decided to complete the conversion to schema too.
+> > >
+> > > The CPCAP regulator, leds, rtc, pwrbutton and core files were convert=
+ed
+> > > from TXT to YAML while preserving the original structure. Mot board
+> > > compatibility was added to the regulator and core schema. Since these
+> > > were one-line patches, they were not separated into dedicated commits=
+;
+> > > however, the commit message notes this for both cases.
+> > >
+> > > Finally, the CPCAP MFD was slightly refactored to improve support for
+> > > multiple subcell compositions.
+> > >
+> > > ---
+> > > Changes in v2:
+> > > - fixed code style
+> > > - rtc conversion was picked, so patch dropped
+> > > - added audio ports description into mfd schema
+> > > - splitted schema conversion and compatible addition
+> > > - minor style improvements and typo fixes
+> > >
+> > > Changes in v3:
+> > > - added regulator node names list into pattern
+> > > - filled spi_device_id with driver data
+> > > - ADC patches were picked, so changes dropped
+> > >
+> > > Changes in v4:
+> > > - dropped regulator patches (applied)
+> > >
+> > > Changes in v5:
+> > > - switched to MFD_CELL_* macros
+> > > - switched to use determinator of model
+> > > - switched to spi_get_device_match_data
+> > >
+> > > Changes in v6:
+> > > - removed address-cells and size-cells from main node
+> > > - changed macros formatting and OF matches
+> > > - factored out common devices and made device addition staged
+> > > - dropped cpcap->variant check for 0
+> > > - EINVAL > ENODEV in variant checking switch
+> > >
+> > > Changes in v7:
+> > > - adjusted spi_device_id entries (name/driver_data)
+> > > ---
+> > >
+> > > Svyatoslav Ryhel (6):
+> > >   dt-bindings: leds: leds-cpcap: convert to DT schema
+> > >   dt-bindings: input: cpcap-pwrbutton: convert to DT schema
+> > >   dt-bindings: mfd: motorola-cpcap: convert to DT schema
+> > >   dt-bindings: mfd: motorola-cpcap: document Mapphone and Mot CPCAP
+> > >   mfd: motorola-cpcap: diverge configuration per-board
+> > >   mfd: motorola-cpcap: add support for Mot CPCAP composition
+> > >
+> > >  .../bindings/input/cpcap-pwrbutton.txt        |  20 -
+> > >  .../input/motorola,cpcap-pwrbutton.yaml       |  32 ++
+> > >  .../devicetree/bindings/leds/leds-cpcap.txt   |  29 --
+> > >  .../bindings/leds/motorola,cpcap-leds.yaml    |  42 ++
+> > >  .../bindings/mfd/motorola,cpcap.yaml          | 408 ++++++++++++++++=
+++
+> > >  .../bindings/mfd/motorola-cpcap.txt           |  78 ----
+> > >  drivers/mfd/motorola-cpcap.c                  | 143 +++---
+> > >  include/linux/mfd/motorola-cpcap.h            |   7 +
+> > >  8 files changed, 571 insertions(+), 188 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/input/cpcap-pwr=
+button.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/input/motorola,=
+cpcap-pwrbutton.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/leds/leds-cpcap=
+.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/leds/motorola,c=
+pcap-leds.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/motorola,cp=
+cap.yaml
+> > >  delete mode 100644 Documentation/devicetree/bindings/mfd/motorola-cp=
+cap.txt
+> > >
 > > > --
-> > > 
-> > > --- Patch [1]: [PATCH V4] leds: rgb: leds-group-multicolor: Implement default-intensity ---
-> > > commit 13399f1aaceaf09afa7e252e35000d7d61ab1925
-> > > Author: Stefan Wahren <wahrenst@gmx.net>
-> > > 
-> > > leds: rgb: leds-group-multicolor: Implement default-intensity
-> > > 
-> > > This commit introduces support for the default-intensity property during
-> > > boot for LED multicolor groups. If the property is missing, the code falls
-> > > back to the previous behavior of configuring the sub-LED intensity to its
-> > > maximum.
-> > > 
-> > > > diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
-> > > > --- a/drivers/leds/rgb/leds-group-multicolor.c
-> > > > +++ b/drivers/leds/rgb/leds-group-multicolor.c
-> > > > @@ -108,8 +108,10 @@ static int leds_gmc_probe(struct platform_device *pdev)
-> > > >   		subled[i].color_index = led_cdev->color;
-> > > > -		/* Configure the LED intensity to its maximum */
-> > > > -		subled[i].intensity = max_brightness;
-> > > > +		ret = device_property_read_u32(led_cdev->dev, "default-intensity",
-> 
-> Should we verify if 'led_cdev->dev' is the correct device to query here?
-> Normally, 'led_cdev->dev' is the class device and might not have the fwnode
-> associated directly in the same way as the underlying platform or fwnode
-> device. Would using 'led_cdev->dev->parent' or querying the fwnode directly
-> be safer?
-> 
-> > > > +					       &subled[i].intensity);
-> > > > +		if (ret || subled[i].intensity > max_brightness)
-> > > > +			subled[i].intensity = max_brightness;
-> > > [Severity: Medium]
-> > > Does this logic properly scale the intensity when the individual LEDs in the
-> > > group have different maximum brightness values?
-> > > 
-> > > If a multicolor group consists of LEDs with vastly different maximum brightness
-> > > capabilities (like a GPIO LED maxing at 1 and a PWM LED maxing at 255), the
-> > > overall group max_brightness will evaluate to 255.
-> > > 
-> > > When reading the default-intensity from the device tree, the value is typically
-> > > specified on the scale of the individual sub-LED's max brightness. If this
-> > > value is assigned directly to subled[i].intensity without being scaled up to
-> > > the group's max_brightness, the sub-LED might be initialized with only a tiny
-> > > fraction of its intended intensity, often resulting in the LED being completely
-> > > unlit instead of at the requested intensity.
-> > > 
-> > > >   	}
-> > > >   	/* Initialise the multicolor's LED class device */
-> > > -- 
-> > > Sashiko AI review · https://sashiko.dev/#/patchset/20260813091428.9072-1-wahrenst@gmx.net?part=1
-> 
-> 
+> > > 2.53.0
+> > >
+> >
+> > Hello Lee! May you please pick this patch set? I have included changes
+> > asked by Rob and Uwe. Thank you!
+>
+> Nope! =3D:-)
+>
+> There are still a bunch of unanswered Sashiko reviews and one from Rob's =
+bot.
+>
+> --
+> Lee Jones
 
--- 
-Lee Jones
+Hello Rob! May you clarify if those are relevant?
