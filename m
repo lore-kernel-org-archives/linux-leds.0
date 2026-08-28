@@ -1,100 +1,130 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B028B3E0C68
-	for <linux-leds@vger.kernel.org>; Fri, 28 Aug 2026 08:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A3F3E49DD;
+	Fri, 28 Aug 2026 08:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787906776; cv=none; b=G57O526/2jued2pvppJkmrze0D16pxj8LUsrQCTAw0KPfApiuDBFSH+Kzk/R4HI/KhP1BXKAc6TscKGm/00ruUlFDQomofgpR76nOHovIUtj6gcKgCHmrXBmk3J3qVyx+NkQawx/sqd2v61Re4IMJsfuRwfaQTZ6CY21PaYyxyI=
+	t=1787907398; cv=none; b=dKa+eNUh3PpF5FhVLYawGha2ejG10NgHO1Jd1pY3iOu3e411hpj+Yw/LEzF8tcG7+4iyOhhUbmZLuvayUmlCOehR4QPFKf4Q7PmVeab/JeCaYeiwlrLSqL+/TXK9xCnKNFfTrIkOD33k5pKO6hYao5NONJzlFpd9y59Eh/+jHEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787906776; c=relaxed/simple;
-	bh=+3+CM583FG4ZzIsftx+jCX3nthFoFjWph9HX/ia5tXI=;
-	h=Message-ID:MIME-Version:From:To:Cc:Date:Subject:Content-Type; b=TeerxbGrR8tJtMjpeLpVpc/UNfJ2eEs/WFdDLvcfPRFEVu28zwVwVgmmpVpPyZouDcvWZH4263TkAyV6AApkXBCMblf/VA/IqwNdigdVCK21g0DjBAlm4x7Qhs4bAmNAhZFJPCXX2Wr+h5rSFAtn1boVIU30pTz4krh0HXorKHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CHGxXMtH; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787907398; c=relaxed/simple;
+	bh=PjAh0OOEXz+/Mxg8rl+11VqMeGNufoZrz2NBiBy739A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u31z6L3TKxdPDp2iFEGa6oVrnV4lVEUSP3HssgRL/uz/CetfVm73rMMAIc9qcry2XUcUWAkPCv9tehtueUXv/dRrJF36dLG5BiucA8OrNXpcySqQBo3cT3BTVO6DSThQQp6/t4+4dUm5wZhDblH2nZYbU2Se1LKHFbmTre742ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iw5Wdb+r; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CHGxXMtH"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-cc1c73645a1so613035a12.1
-        for <linux-leds@vger.kernel.org>; Fri, 28 Aug 2026 01:46:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787906774; x=1788511574; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:subject:date:cc:to:from
-         :mime-version:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Z+6qKW8jbCp6CLDtdCf0xBEJmto3LmtgiUcciH8T//Y=;
-        b=CHGxXMtHmUd4qxdHK7PZekMNyaikzEMQ/n2TOMuXsmDu8H8Mjsxq7mN+jKDiqqJTtD
-         DWiejpsjGV5VsZRf7ROEzPeKKEiSn6v76PBUNDFojjxfCTDmQVo2ysSAn88LcJBfrWbL
-         OFiCMV8pM/14Wnpp+mut4b6G8a5a4UmejrsjwQ00yGmMjunVUy3wbes/G1boQqJINsls
-         FcnSL8+rrfVKkrTTE6bpN4alcKEdBQjfSGLcDYiUO8pul3hX8chxepEg2/HrDZaqYFoG
-         Dj8oaS/cvRuPmw0z0os0JTsDPzHkjAYlDR8YNHRiVXMlBmFyP7mUFLZnJ7HcV3vKdD89
-         NKog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787906774; x=1788511574;
-        h=content-transfer-encoding:content-type:subject:date:cc:to:from
-         :mime-version:message-id:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Z+6qKW8jbCp6CLDtdCf0xBEJmto3LmtgiUcciH8T//Y=;
-        b=TT7fyKAB0+H/ArKrnDvP2L9ASlp18d44vATn7uEPVNsg0RzU2+TJMy4D7c5ZaZnAWC
-         014VXF6xgH0g/KJYS4MPoETfrDwc9kqxnzoQ0PH1SNGqw30j8183yATbQs7Wz9v5nJ7S
-         DNTBXiFWHyC52Yq/riAcXoDIsTWsaLMESUja1nHYXu1qYacNG73SbuS5tmhtIDN6OsSY
-         Shl4TCDhG2cZrjDOJexQsihnf/eN/RlRDqhkyGt674gQzpyZpx+FWnN+ldrvxu4c2uIk
-         JIQgJU7w61YY1jdSeAapYMP2i2jOJ4RDYI+Fy2eWE742PHrujqJY1bD0MSq8K0LAYqzn
-         4asA==
-X-Gm-Message-State: AFuF++neMgKslfZScVwT5SNdw7YsN44GYldTEA7AexPAVR2Q5czVJ3R3
-	whsfQK5u9YgrFMsH10jQ52QVDv9dzDRP2I2iR4CIvr9PBz2wyOdtZFt/
-X-Gm-Gg: AR+sD11YPa2uo69ogHoSia8OlOIId52yZajiy2ohOOG7N0xj+wZuEkPJxIgx3P2oYMJ
-	zJIJUArz4mpIH+YoSneu4j3lo9WrJJbhT12bUcwjT4sTJLV1fJqDIcKgjbO7G0U2j6vZTNP3a6v
-	E/3Dcf7wyA/v7DCtUcxikz9kBlb2PtQ2IoZvFfLjp9Mv3eyjHpyP/bxDTZxYfBPFkJCq6DKgDfS
-	hRIpnn+KHpZ8kBm82XgA4cZkSinu2fM6HknNFpH6xGGEVe2DVdHes4vaZ2xzl/OaTxM1w3PBknN
-	BVTazwap3nMsk0lg83cAvrMlMuDFbUHevvlDBlGtGNwOXQU+pPWQYtF5PU+Xwjn1Ggg8LcKLFhG
-	dbZSYMZ4yK1gK+eWyKTtpq2Ap8axk0sigtvJ9LFjCH56pEEWI/cRYd3LXWbGFsf6l4bWkWLH3RL
-	cp1OMDMpBjx76o/M/uAMPIsGGlLziM7MhWjVXGW8TkOzFLICUQGq+hax+zukWbzv+gCPmpwqzwr
-	skUbAUhrBcCKJFIaiR1oroI8S0Coyyj/Kd7mauJRcIq31xcByQAc73LzA==
-X-Received: by 2002:a05:6a21:6e88:b0:3c3:a31b:3949 with SMTP id adf61e73a8af0-3d2686a3247mr12224666637.11.1787906773923;
-        Fri, 28 Aug 2026 01:46:13 -0700 (PDT)
-Received: from manush ([2406:7400:94:7a79:ddde:713d:7785:c4a3])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3286f7be440sm4241099eec.7.2026.08.28.01.46.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Aug 2026 01:46:13 -0700 (PDT)
-Message-ID: <6a914ad5.1e1ac41d.2a3f62.4979@mx.google.com>
-X-Mailer: git-send-email 2.46.2.windows.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iw5Wdb+r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C42C81F00A3A;
+	Fri, 28 Aug 2026 08:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787907397;
+	bh=lhPTHk+wjbHJC0T8LOMbqzlZfWpmbS57KG20Licsqdo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Iw5Wdb+rEAxNXix54UZD/wS+inkMrjwfE+yLaduMpOwftLp5hVOcbfbrczjZMJlUn
+	 +WNc48FYUbTU2xMXCQfZJ2NGB+X+dqVDb1mFSsejhYrAlnDhR6E5il2UJg51B+duIX
+	 qWeiUm++QP0AfbCtyvJ9bXRZLZf/ILnlljvkhUMtIui6Op7Kv6PfcSnRTT2uITz1z2
+	 7e6CDwoRe7enhbIpusexQgTeE7wX9MeA+8ugRu0HT68jPkcqEV44cydAOE46QwRj63
+	 bfjduvEmPaxqPBwDbev4sgcZgNsbAzKRct/tLQVOoxcJ8ETyPuJwtW0QxVtCzSMvk4
+	 PU2iZFillpqDg==
+Message-ID: <6882b7d4-e0e6-4c83-8298-bc48abef5e76@kernel.org>
+Date: Fri, 28 Aug 2026 10:56:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Manush Prajwal" <manushprajwal555@gmail.com>
-To: cw00.choi@samsung.com, krzk@kernel.org, lee@kernel.org, pavel@kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] leds: max77705: fix fwnode reference leak in
+ max77705_add_led()
+To: Manush Prajwal <manushprajwal555@gmail.com>, cw00.choi@samsung.com,
+ lee@kernel.org, pavel@kernel.org
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
  dsankouski@gmail.com, sakari.ailus@linux.intel.com
-Date: 28 Aug 2026 14:16:12 +0530
-Subject: [PATCH] leds: max77705: fix fwnode reference leak in
- max77705_add_led()
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <6a914ad5.1e1ac41d.2a3f62.4979@mx.google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <6a914ad5.1e1ac41d.2a3f62.4979@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In the RGB LED path of max77705_add_led(), the=0D=0Afwnode_for_ea=
-ch_child_node() loop over the subled child nodes=0D=0Areturns dir=
-ectly on a max77705_parse_subled() failure without=0D=0Areleasing=
- the reference held on the current child, since=0D=0Afwnode_for_e=
-ach_child_node() is not a scoped/cleanup-based=0D=0Aiterator and =
-expects the caller to drop the reference itself on=0D=0Aany early=
- exit from the loop body.=0D=0A=0D=0ACall fwnode_handle_put() on =
-the child fwnode before returning to=0D=0Afix the leak.=0D=0A=0D=0A=
-Fixes: 3b6eaa3db567 ("leds: Use fwnode_for_each_child_node() inst=
-ead")=0D=0ASigned-off-by: Manush Prajwal <manushprajwal555@gmail.=
-com>=0D=0A---=0D=0A drivers/leds/leds-max77705.c | 4 +++-=0D=0A 1=
- file changed, 3 insertions(+), 1 deletion(-)=0D=0A=0D=0Adiff --g=
-it a/drivers/leds/leds-max77705.c b/drivers/leds/leds-max77705.c=0D=0A=
-index 1e2054c..a5030c3 100644=0D=0A--- a/drivers/leds/leds-max777=
-05.c=0D=0A+++ b/drivers/leds/leds-max77705.c=0D=0A@@ -193,8 +193,=
-10 @@ static int max77705_add_led(struct device *dev, struct regm=
-ap *regmap, struct fw=0D=0A=0D=0A 		fwnode_for_each_child_node(np=
-, child) {=0D=0A 			ret =3D max77705_parse_subled(dev, child, &in=
-fo[i]);=0D=0A-			if (ret < 0)=0D=0A+			if (ret < 0) {=0D=0A+				f=
-wnode_handle_put(child);=0D=0A 				return ret;=0D=0A+			}=0D=0A=0D=0A=
- 			info[i].intensity =3D 0;=0D=0A 			i++;=0D=0A--=0D=0A2.46.2.wi=
-ndows.1
+On 28/08/2026 10:46, Manush Prajwal wrote:
+> In the RGB LED path of max77705_add_led(), the
+> fwnode_for_each_child_node() loop over the subled child nodes
+> returns directly on a max77705_parse_subled() failure without
+> releasing the reference held on the current child, since
+> fwnode_for_each_child_node() is not a scoped/cleanup-based
+> iterator and expects the caller to drop the reference itself on
+> any early exit from the loop body.
+> 
+> Call fwnode_handle_put() on the child fwnode before returning to
+> fix the leak.
+> 
+> Fixes: 3b6eaa3db567 ("leds: Use fwnode_for_each_child_node() instead")
+> Signed-off-by: Manush Prajwal <manushprajwal555@gmail.com>
+> ---
+>  drivers/leds/leds-max77705.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-max77705.c b/drivers/leds/leds-max77705.c
+> index 1e2054c..a5030c3 100644
+> --- a/drivers/leds/leds-max77705.c
+> +++ b/drivers/leds/leds-max77705.c
+> @@ -193,8 +193,10 @@ static int max77705_add_led(struct device *dev, struct regmap *regmap, struct fw
+> 
+>  		fwnode_for_each_child_node(np, child) {
 
+Would fwnode_for_each_child_node_scoped() work here?
+
+>  			ret = max77705_parse_subled(dev, child, &info[i]);
+> -			if (ret < 0)
+> +			if (ret < 0) {
+> +				fwnode_handle_put(child);
+>  				return ret;
+> +			}
+> 
+Best regards,
+Krzysztof
