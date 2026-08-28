@@ -1,268 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEB93F12C2
-	for <linux-leds@vger.kernel.org>; Fri, 28 Aug 2026 08:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE039A4D8
+	for <linux-leds@vger.kernel.org>; Fri, 28 Aug 2026 09:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787907559; cv=none; b=S1BKzDhNkuDTKI6KITJtSGMm3hSl29yyTGtg7NXsYNyMB+JexnXQ+JOt6qT3n/BPrIzsl/wxjKXRX2SNIBrN2WJlWRrNYmTuHFKZnw6vQdHsknm+nBitO+agbFG3mbieU03XgqA5JdJw6L8a5NlBkOeNVc0bBUt95ITTnR1z5qI=
+	t=1787907617; cv=none; b=GEtHy5VnetI2hFER9A7BkcRhfFX9G8m9xwxMsy9oKL8Y9porAA6/6qECV88v6wECTrl1CC9yUcmpwpKuFPEdGoZQel1TD7s+e6QEIaH7pSwhn39zlWYxBw6SAN7jml7JlKQxCIxlO4WaVeNhS+KYsG51Lhk7eGwK0mPuE2Q1rJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787907559; c=relaxed/simple;
-	bh=OCKmQhHqPwtIVH8bB8hWe/XgUpfi6iWB8KZdLultpdc=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=WYvu6mDgYz1yX32x/jFoE7HnUSuBqQtDdn1BrzOzfhAHvjEfCUEu7A7iYGE+/IYFWpEVbCq0wyGm/i6yhc0AuwAngID+lYPETxRmhQ/NUiPTv6QwWQftD5xJkwC71PXYe5M/zMcdbCM0Me3ozUpe8OKCbWCxwnnddRFw1BTgCrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZPDwHxz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787907617; c=relaxed/simple;
+	bh=QzTyrp5ZtI9h+7JIfZbJaZg9Ky9cEZndB4nrChNEIME=;
+	h=Message-ID:MIME-Version:From:To:Cc:Date:Subject:Content-Type; b=s+D0ZNTj6a7UOh3b3XtlfIRFNlKDGYZ47Umzy5F1LONXQ3LDimkvGYHOZi7YmeNLpDfR5isIQbqyAQrHX3H0F0kgmB9D4BBRAyV+aa/NgdnQdJJwDcMdE84tlELEY/LQCbgdg/CD9E9hn6KHt55idhtKTVBnNMufZ2OIf4jpEJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6pYYPSR; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZPDwHxz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20B041F00A3A;
-	Fri, 28 Aug 2026 08:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787907557;
-	bh=twYPRLPlM0J8tPwczyhxYmcPIOrd5B1WQTJSQmK8+74=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=QZPDwHxzuI25DWE0gU6jWTAM9MCiylZZikndl4r1ymI9BBRiO3IKTglPzhkJgwUyZ
-	 o/twNBy+8lLrGUJI51G1vlOu0noL47d/Ed14tOVTDUpuTU71VHk12mbhb0tMaeYNYT
-	 +JDqv3TBKJNA4cE9iT3sZPY0WI1hW4EPKCcPWTtdUM9sKF8DINbhB3GAMbxcwI9zjA
-	 kTMnUG2FzFN9GcZ74qSVAV5IyhOVUYv7Mjg2EGKcMgqZ8d5v+oROqe5Gi9eS0IOIe4
-	 eJtUEkcmqwsGSTe6vKTSJ2T73sGyedNKxKbT9DFwtRu2F7gs7t/RFA0MzWZ10nZnvv
-	 h0n/qN5wD1dpw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: max77705: fix fwnode reference leak in
- max77705_add_led()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Manush Prajwal" <manushprajwal555@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <6a914ad5.1e1ac41d.2a3f62.4979@mx.google.com>
-References: <6a914ad5.1e1ac41d.2a3f62.4979@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 28 Aug 2026 08:59:16 +0000
-Message-Id: <20260828085917.20B041F00A3A@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6pYYPSR"
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cbedbaba5fdso615915a12.0
+        for <linux-leds@vger.kernel.org>; Fri, 28 Aug 2026 02:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787907616; x=1788512416; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:subject:date:cc:to:from
+         :mime-version:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=GBj03YUyO42gKTg2Nn2xcgaGG+u4Z9YmWa87lQqvR2k=;
+        b=d6pYYPSRQh+0vee8u3rX+6/Wf75KPcVD9VrKqQ1v/tUEWdQfA1Lv5GIf0yVfTE67kh
+         /6gQO0JYtYxoMvtmfZ/4qK37tNIQMNOVAtNnaeq6Ul+V/bwV0ychMDzs8lpJHK2HDKGM
+         xsKD0OuOrfO8BhhyJMUa2DTmbO0VJy1UmSq5Ad7zJP7+Qxv4cuWQ9Hic5e/2mJEsm7Qx
+         wzwYPbEz941qOvp6GxphSIk3w0JNV9d3BHF+hP8Ko8hOVFNG5UZRIQr8+XxmO54vziC5
+         Y4asjOYjZAIXTEOuJsHCsezUIyRPmluHnmzcS5YRfMAATaAqo/Vp17qiJ5ts2Avw5Tzp
+         w8lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787907616; x=1788512416;
+        h=content-transfer-encoding:content-type:subject:date:cc:to:from
+         :mime-version:message-id:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=GBj03YUyO42gKTg2Nn2xcgaGG+u4Z9YmWa87lQqvR2k=;
+        b=SuN5qhUrKZwZ9YtL9fnUojtwqiDJnXkSCP6Wa/NWagha69wOpsqSyBJjPl5J5ZBva6
+         Xgi6itMpjNFJkpkySgVp0BmqYkLobasKB5Rai5KkGnsKzhGwTFo98mah5BHkpGkA0jbW
+         BePZ17+KOShPRXO/vGDKrCF4mngKEkgsNlg4qDfY766SC2Lk24DTuSPnWq6vyUyQGQaj
+         4v6auEmHnhHCqdQdOluR49dY9ufVxt3xk2lZWtXauPlC/eCIa9pcIhUL26iyER5miQgG
+         pWWd4BtkdhQ32vg80eTU90iN3BnwV4g21W9S0lyEoDuqDy9pBR58Bt6wH9jcZx1GmVrF
+         PevA==
+X-Gm-Message-State: AFuF++kTQ6pJqrFenrC/eSY3/f49PXjSAHd9FJ+KWcBZL1Z7DDsx7vb+
+	wIKWRUTKug79MHHIUvZ2ucDJGAoSb04XZbX8OaFPf4TEOGIoZ6Frmm1z
+X-Gm-Gg: AR+sD12oHppHRSvbVqXkKPKX32Mp3GdWjmBNVfhjq62z2SCeay5T+rQsrhU5GAATba0
+	PN1DVPnYUXZOfQRguoTwntzyjmoQSfPcIzz4hAIbE8xdlih5LXR/R6dqdbq1tJgZhsvdO+YSNKM
+	bPZ36aLfV8/R8IEb78d3fBdMgegTrgoaao2vE2/A9c/8L6ksz3yVLRiN8yQ3GtmyhHkgIbJ9CQA
+	zvhZLnSi3yjKYnwHFYQN2r69Al9odIfxjY6zdEX/1plDS3hgIH/Cga76H/MvqLWjmvFBKa3AbtZ
+	ACCpbbvZfM7xXn3FoH8lRd4Y5b66GevXgZr6klhqmDnAfRBWpUsU8Ej0dB80woQwNNQof5r5/gm
+	oB+IgP+pjD8p/7oZfixzPgACz4yhUfYJrFRnohg2erDc2gp+7jf/l1LKQwFhBwFEAI93rxk4qXG
+	iBteBk9YzXhXTtWzG0MgdXN3Ncu2kLhoR5tF2G1hCBTjtB6kZCl1T5yILgLVWbqynLlN/L6/wHB
+	9o1xFooSFdVRun+IHxtBFa5XpUdqFKUbmQUdZK25XUayDSRZPdngBBW0g==
+X-Received: by 2002:a05:6a20:7faa:b0:3cc:3d08:da2b with SMTP id adf61e73a8af0-3d2684a3f6emr9285413637.15.1787907615195;
+        Fri, 28 Aug 2026 02:00:15 -0700 (PDT)
+Received: from manush ([2406:7400:94:7a79:ddde:713d:7785:c4a3])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-142e0e0e67dsm3987107c88.15.2026.08.28.02.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2026 02:00:14 -0700 (PDT)
+Message-ID: <6a914e1e.7d702ed2.1273e8.2a52@mx.google.com>
+X-Mailer: git-send-email 2.46.2.windows.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "Manush Prajwal" <manushprajwal555@gmail.com>
+To: cw00.choi@samsung.com, krzk@kernel.org, lee@kernel.org, pavel@kernel.org
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dsankouski@gmail.com, sakari.ailus@linux.intel.com
+Date: 28 Aug 2026 14:30:13 +0530
+Subject: [PATCH v2] leds: max77705: use fwnode_for_each_child_node_scoped()
+ in max77705_add_led()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 8 potential issue(=
-s) to consider:
+Rework the subled loop in max77705_add_led() around=0D=0Afwnode_f=
+or_each_child_node_scoped() instead of adding a manual=0D=0Afwnod=
+e_handle_put(child) before the early return on a=0D=0Amax77705_pa=
+rse_subled() failure, so the reference on the current=0D=0Achild =
+fwnode is released automatically on every exit path from the=0D=0A=
+loop. child is never used outside the loop, so the now-unused out=
+er=0D=0Achild declaration is dropped along with it.=0D=0A=0D=0ASu=
+ggested-by: Krzysztof Kozlowski <krzk@kernel.org>=0D=0AFixes: 3b6=
+eaa3db567 ("leds: Use fwnode_for_each_child_node() instead")=0D=0A=
+Signed-off-by: Manush Prajwal <manushprajwal555@gmail.com>=0D=0A-=
+--=0D=0Av2: Rework around fwnode_for_each_child_node_scoped() ins=
+tead of the=0D=0A    manual fwnode_handle_put(child) from v1, per=
+ Krzysztof=0D=0A    Kozlowski's review.=0D=0A---=0D=0A drivers/le=
+ds/leds-max77705.c | 3 +--=0D=0A 1 file changed, 1 insertion(+), =
+2 deletions(-)=0D=0A=0D=0Adiff --git a/drivers/leds/leds-max77705=
+.c b/drivers/leds/leds-max77705.c=0D=0Aindex 1e2054c..4fd803c 100=
+644=0D=0A--- a/drivers/leds/leds-max77705.c=0D=0A+++ b/drivers/le=
+ds/leds-max77705.c=0D=0A@@ -160,7 +160,6 @@ static int max77705_a=
+dd_led(struct device *dev, struct regmap *regmap, struct fw=0D=0A=
+ 	struct max77705_led *led;=0D=0A 	struct led_classdev *cdev;=0D=0A=
+ 	struct mc_subled *info;=0D=0A-	struct fwnode_handle *child;=0D=0A=
+ 	struct led_init_data init_data =3D {};=0D=0A=0D=0A 	led =3D dev=
+m_kzalloc(dev, sizeof(*led), GFP_KERNEL);=0D=0A@@ -191,7 +190,7 @=
+@ static int max77705_add_led(struct device *dev, struct regmap *=
+regmap, struct fw=0D=0A 		cdev->brightness_set_blocking =3D max77=
+705_led_brightness_set_multi;=0D=0A 		cdev->blink_set =3D max7770=
+5_rgb_blink;=0D=0A=0D=0A-		fwnode_for_each_child_node(np, child) =
+{=0D=0A+		fwnode_for_each_child_node_scoped(np, child) {=0D=0A 		=
+	ret =3D max77705_parse_subled(dev, child, &info[i]);=0D=0A 			if=
+ (ret < 0)=0D=0A 				return ret;=0D=0A--=0D=0A2.46.2.windows.1
 
-New issues:
-- [Low] The commit message subject violates the LED subsystem naming conven=
-tions regarding capitalization.
-
-Pre-existing issues:
-- [Critical] Passing the wrong `led_classdev` reference to `max77705_led_br=
-ightness_set_multi` causes an out-of-bounds pointer dereference.
-- [Critical] Shared `max77705_rgb_blink()` callback uses incorrect `contain=
-er_of` arithmetic for multicolor LEDs, causing out-of-bounds pointer derefe=
-rence.
-- [High] The driver passes a `struct fwnode_handle *` to the `%pOF` and `%p=
-OFn` format specifiers.
-- [High] Mixing OF-specific `of_get_available_child_count()` with generic `=
-fwnode_for_each_child_node()` causes a zero-allocation buffer overflow on n=
-on-Device Tree backends.
-- [High] The return value of `max77705_parse_subled()` is completely ignore=
-d in the non-RGB single-LED registration path.
-- [High] Valid hardware channel 0 is erroneously rejected by the `!reg` che=
-ck in `max77705_parse_subled()`.
-- [High] Uninitialized return value 'ret' in 'max77705_led_brightness_set()=
-'.
---
-
-commit fd8007d53291c3b9d58b3510fc44a4453a7cab3d
-Author: Manush Prajwal <manushprajwal555@gmail.com>
-
-leds: max77705: fix fwnode reference leak in max77705_add_led()
-
-In the RGB LED path of max77705_add_led(), the
-fwnode_for_each_child_node() loop over the subled child nodes
-returns directly on a max77705_parse_subled() failure without
-releasing the reference held on the current child.
-
-Fixes: 3b6eaa3db567 ("leds: Use fwnode_for_each_child_node() instead")
-
-> leds: max77705: fix fwnode reference leak in max77705_add_led()
-
-[Severity: Low]
-Is this commit message following the LED subsystem naming conventions? The
-LED subsystem guide mandates: "Always capitalize the description after the
-subsystem prefix". Should "fix" be capitalized?
-
-> diff --git a/drivers/leds/leds-max77705.c b/drivers/leds/leds-max77705.c
-> index 1e2054c1bf80b..a5030c329587b 100644
-> --- a/drivers/leds/leds-max77705.c
-> +++ b/drivers/leds/leds-max77705.c
-> @@ -193,8 +193,10 @@ static int max77705_add_led(struct device *dev, stru=
-ct regmap *regmap, struct fw
-> =20
->  		fwnode_for_each_child_node(np, child) {
-
-[Severity: High]
-This isn't a bug introduced by this patch, but mixing OF-specific
-of_get_available_child_count() with generic fwnode_for_each_child_node()
-causes a zero-allocation buffer overflow on non-Device Tree backends.
-
-If the driver is instantiated via a non-OF backend (like software nodes),
-to_of_node(np) returns NULL, causing of_get_available_child_count() to
-return 0:
-
-drivers/leds/leds-max77705.c:max77705_add_led() {
-    ...
-    int num_channels =3D of_get_available_child_count(to_of_node(np));
-    ...
-    info =3D devm_kcalloc(dev, num_channels, sizeof(*info), GFP_KERNEL);
-    ...
-
-devm_kcalloc() evaluates to ZERO_SIZE_PTR since num_channels is 0. Does
-this fwnode_for_each_child_node() loop then iterate available child nodes
-for non-OF backends anyway, resulting in writes to the ZERO_SIZE_PTR in
-the loop body?
-
->  			ret =3D max77705_parse_subled(dev, child, &info[i]);
-
-[Severity: High]
-This is a pre-existing issue, but does max77705_parse_subled() pass a
-struct fwnode_handle * to the %pOF format specifier?
-
-drivers/leds/leds-max77705.c:max77705_parse_subled() {
-    ...
-    return dev_err_probe(dev, -EINVAL, "invalid \"reg\" of %pOFn\n", np);
-    ...
-    return dev_err_probe(dev, ret,
-                         "failed to parse \"color\" of %pOF\n", np);
-
-Since %pOF strictly expects a struct device_node *, passing a struct
-fwnode_handle * causes the vsnprintf handler to read from invalid internal
-struct offsets, which triggers a kernel panic when formatting an invalid
-fwnode_handle as a device_node. This also occurs in max77705_add_led():
-
-drivers/leds/leds-max77705.c:max77705_add_led() {
-    ...
-    return dev_err_probe(dev, ret,
-                  "failed to parse \"color\" of %pOF\n", np);
-    ...
-
-
-[Severity: High]
-This is a pre-existing issue, but does max77705_parse_subled() erroneously
-reject valid hardware channel 0?
-
-drivers/leds/leds-max77705.c:max77705_parse_subled() {
-    ...
-    ret =3D fwnode_property_read_u32(np, "reg", &reg);
-    if (ret || !reg || reg >=3D MAX77705_LED_NUM_LEDS)
-        return dev_err_probe(dev, -EINVAL, "invalid \"reg\" of %pOFn\n", np=
-);
-    ...
-
-When parsing a subled node with reg =3D 0 (a perfectly valid hardware chann=
-el
-mapped to MAX77705_RGBLED_REG_LED0BRT), the condition evaluates to true
-because !reg is true for 0. Does this logic incorrectly return -EINVAL,
-making it impossible to configure the first hardware LED channel?
-
-> -			if (ret < 0)
-> +			if (ret < 0) {
-> +				fwnode_handle_put(child);
->  				return ret;
-> +			}
-> =20
->  			info[i].intensity =3D 0;
->  			i++;
-
-[Severity: High]
-This is a pre-existing issue, but is the return value of
-max77705_parse_subled() completely ignored in the non-RGB single-LED
-registration path?
-
-drivers/leds/leds-max77705.c:max77705_add_led() {
-    ...
-    } else {
-        ...
-        max77705_parse_subled(dev, np, info);
-
-        led->subled_info =3D info;
-    ...
-
-When processing a single-color LED, max77705_parse_subled() is called, which
-can return a negative error code. Does failing to check this return code
-allow the driver to ignore the error and proceed registering an LED with
-zero-initialized values?
-
-
-[Severity: Critical]
-This is a pre-existing issue, but does max77705_add_led() pass the wrong
-led_classdev reference to max77705_led_brightness_set_multi()?
-
-drivers/leds/leds-max77705.c:max77705_add_led() {
-    ...
-    ret =3D devm_led_classdev_multicolor_register_ext(dev, &led->mcdev, &in=
-it_data);
-    if (ret)
-        return ret;
-
-    ret =3D max77705_led_brightness_set_multi(&led->cdev, LED_OFF);
-    ...
-
-The driver manually calls max77705_led_brightness_set_multi() to set the
-initial state of an RGB LED unconditionally on probe. It incorrectly passes
-&led->cdev instead of the registered multicolor cdev &led->mcdev.led_cdev.
-
-drivers/leds/leds-max77705.c:max77705_led_brightness_set_multi() {
-    struct led_classdev_mc *mcdev =3D lcdev_to_mccdev(cdev);
-    struct max77705_led *led =3D container_of(mcdev, struct max77705_led, m=
-cdev);
-    ...
-
-The target function uses container_of() to subtract the offset of mcdev,
-yielding a pointer that points into incorrectly aligned or preceding memory.
-Does this memory corruption result in a consistent kernel panic during the
-probe phase?
-
-
-[Severity: Critical]
-This is a pre-existing issue, but does the max77705_rgb_blink() callback use
-incorrect container_of arithmetic for multicolor LEDs?
-
-drivers/leds/leds-max77705.c:max77705_add_led() {
-    ...
-        cdev->blink_set =3D max77705_rgb_blink;
-    ...
-
-When the LED subsystem triggers the blink_set callback for an RGB LED, it
-passes &led->mcdev.led_cdev.
-
-drivers/leds/leds-max77705.c:max77705_rgb_blink() {
-    struct max77705_led *led =3D container_of(cdev, struct max77705_led, cd=
-ev);
-    ...
-
-max77705_rgb_blink() assumes it receives the single-color &led->cdev and
-resolves the parent struct using container_of(cdev, struct max77705_led,
-cdev). This subtracts 0 instead of the offset of mcdev, producing a pointer
-that points inside the structure rather than at its beginning. Does this
-cause an out-of-bounds pointer dereference leading to memory corruption?
-
-
-[Severity: High]
-This isn't a bug introduced by this patch, but does
-max77705_led_brightness_set() return an uninitialized stack variable?
-
-drivers/leds/leds-max77705.c:max77705_led_brightness_set() {
-    int ret;
-
-    for (int i =3D 0; i < num_colors; i++) {
-        ...
-    }
-    return ret;
-}
-
-If a multi-color LED node is defined with no available child subleds,
-num_channels evaluates to 0. The loop never executes, and the function
-returns the uninitialized stack variable ret directly to callers. Can this
-cause the probe function to fail randomly or mask real errors?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6a914ad5.1e1ac41d.2=
-a3f62.4979@mx.google.com?part=3D1
