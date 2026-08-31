@@ -1,125 +1,144 @@
-Received: from outbound.st.icloud.com (st-2003c-snip4-11.eps.apple.com [57.103.77.161])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D249272E6D
-	for <linux-leds@vger.kernel.org>; Fri, 28 Aug 2026 14:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.77.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06714443A9D;
+	Mon, 31 Aug 2026 13:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787928355; cv=none; b=Hubd+NTFcVOvjUiIbZF+3D/iVDBPYMxFow0GL0LPNO6NBHi/ztaExj9Z2YNCmLx6rvx16Gv8BnxnzxMKfx/hsZhuc83dvmvBrIfs95N9aKKE550kPluhAil93fioUDRd87TmooRTfizlNXKTcDV60CbmaCegIYRX/PLZyi2y3Nk=
+	t=1788183548; cv=none; b=EUuryZus5hpbP+iT8fCdHOf5GCiXPbdN3JxhBY1ON7U14nfN9ISQDxazhTMH98mcK6SuBz3KpjZF03q9l4RpbZPtEBqthCoNYFdOVu5fpRNSPYGFc6yyMvYoWtyzVvni7PGGSBCJOu97o7bjVT6ZQbHiSbbP6z1/redPXJWUXrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787928355; c=relaxed/simple;
-	bh=HRPmZDbQ0/PWOKNBkjC3hPjC9s0q8XiO4uS6kMgC61k=;
+	s=arc-20240116; t=1788183548; c=relaxed/simple;
+	bh=5bNopTXtiJjeKjY0nv3y83UpqoOye0L99V/qq0x75bA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hdInT9AZcbMTQOWw4B8xo/RUtHMuMWVElzdObAZ/IECmMeQgPvH/OWWNHb5T5CLGozkIBWiVZKERD6zr45QP0Ydkd69ieSQQJvpMxTXIHd7aAXJTcU0EqLlxcaGvIMWOjWLrA8LxKnMwfqc/Mn9nzGQTHBWyuEva8GJJoYi2roQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=L57var8L; arc=none smtp.client-ip=57.103.77.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+	 MIME-Version:Content-Type; b=Isl+Lm4ix3ITFKbnmJyFHqm/t8arzNymMy3apwVRaZM1aoDqh3cqTMA73MJPqAxRrM5r71g7D3Lau4tPs2LjnPxA9qAr8kU/e1b4P1sZUoprxJRDPJCNAsXaIaQLskfEevOQ7E2E99udvhJHB9A5pjPGjvi5DBG6j8T8b6dsdTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9RDd9gQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="L57var8L"
-Received: from outbound.st.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-east-1a-100-percent-11 (Postfix) with ESMTPS id C343D180011F;
-	Fri, 28 Aug 2026 14:45:47 +0000 (UTC)
-X-ICL-RepId: 01a048d5-8446-7f2d-b264-97543f9077b0
-X-ICL-Out-Info: HUtFAUMEWwJACUgBTUQeDx5WFlZNRAJCTQBOHVUZWQdDF0kFWRcOVk1aFV4MTRFdMFAbXwJCDxwTVhUTC1NWWxNVF0YJGQhdHRkKUFAGWxIYXBRcUFgeRhJWDV0JGRhGXlAbXwJCDxwTVhUTHUMZDysISgRDB0UCXgslEwlTVlsTVRdGCRkIXR0ZFVoJClcAQAtOA1UFUwNEDU0CXRlaB0gMSwtABkZRHVQZSRdYK1sTVRdGCRkIXR0HWEcURw4PGVoUXBhT
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; t=1787928350; x=1790520350; bh=I8Hd62+LwibdPMA7yFOvXK13B+92WTJ+gOALwn0u1mw=; h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme; b=L57var8LzK0XO40alS/9CvFvJjoLHNxX8dJu3OJo8xaqGxuIw1XZTpVAjPUpSBkoA6RQDyMHv8/czcI4dMPqBfrkYD++OB4k274PeH8ihJYtMBLJx57bmDnQd4Xh5c3v/bIsuJSn4vCOphxReZEjD6seaTvryQz+Wbbp8UEZS1LrhL29fBbVe6q0VNTHLqAh+CSHBFIUSZFoCwOkZNxxgpR/hE1eC2cU1JWMUax0U+r68OUV6z3o9bdmayvE/D9EHtZWJQa/CLYbriznPk5xy7Wo5a0+VkupC5L4bYrXLIcwXC0iPaJlVbWvTunRZBf4mpeYdkaGizSj3Vo0xCqcgw==
-Received: from komputa (unknown [17.156.216.30])
-	by p00-icloudmta-asmtp-us-east-1a-100-percent-11 (Postfix) with ESMTPSA id C48AE180019D;
-	Fri, 28 Aug 2026 14:45:46 +0000 (UTC)
-From: Cristian Mazzotta <cmmazzo@icloud.com>
-To: wse@tuxedocomputers.com,
-	aer@tuxedocomputers.com
-Cc: bentiss@kernel.org,
-	cmmazzo@icloud.com,
-	hansg@kernel.org,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9RDd9gQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAF51F00ACA;
+	Mon, 31 Aug 2026 13:39:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788183545;
+	bh=R3KCqClXRWaxwR65BU2A412AAAdvKTWiIEGL1q11zyA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=O9RDd9gQrFHi+X6mMEUkvfxKfPDdvlzj6tfkOaFjVpK65uCWmeq8QsUDm7/i0XJ0V
+	 YUO7GmDMf19JAqWzElWug8Ye2Yb3uWvQdapqDw1FFmg2BjSYLPsUoOcK/5aiHDg0ca
+	 lLwLJMF5lQaEvQDjpovB6uaxAlcHHYxdBml2isUPFDeQWRcj7uAFIkxWPXo7FDIVuA
+	 R6RV7cSINCAaxylqM9TapQm2hhrJ+3NDXRTuCtntUeHAMIv8622PH4r0kHJIZA9laC
+	 Z0eK3wIzHKmCfmoXIx9pWQ67YqGS+xYpU7FuxfJEwKkaaZLyNCJ2/w1/Gq1FZTVITD
+	 /OxawuC+KlITw==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Craig McQueen <craig@mcqueen.au>,
+	Lee Jones <lee@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	pavel@kernel.org,
 	linux-leds@vger.kernel.org,
-	tgu@tuxedocomputers.com
-Subject: Re: [PATCH v4] HID: generic: add LampArray support via hid-lamparray helper
-Date: Fri, 28 Aug 2026 09:45:10 -0500
-Message-ID: <20260828144510.158538-1-cmmazzo@icloud.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <d54951b4-8216-49eb-9c3e-ed49ab3d4355@tuxedocomputers.com>
-References: <d54951b4-8216-49eb-9c3e-ed49ab3d4355@tuxedocomputers.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18] leds: core: Fix race condition for software blink
+Date: Mon, 31 Aug 2026 09:23:09 -0400
+Message-ID: <20260831133314.4125787-161-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.48
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: mCmttGvAfdC_0FJIWACmmu8z70afe8fZ
-X-Proofpoint-ORIG-GUID: mCmttGvAfdC_0FJIWACmmu8z70afe8fZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI4MDEyOCBTYWx0ZWRfX3zlHd2dbMcoZ
- oUwmATg2+lcVDxXevmZLJOEUY5Rwl7Fi4/IBfXbezPsAwuXJoFQ+2c/s1AT0uu7vLg8aLVEWhb1
- /yWi+0sW8xl2OsCSS/eBPcfENAWG+FeSZXf9bTT/zArO9KrEHI5OpKNSCxh1GWdeYF+svVItsR0
- s8TzscL18g/xJ688xQyL4HIu/nYfi8i/BwZ3oN9VYSaTaYuD4vyxpB5e84j8sURJnDBrL1GVVb0
- aCnsWxuzt289uIuHzD+PlXGxqO9vGJQ7DWDpScAKUhtDT6w6kGQUv1lBBemODlvC3BjvibYn69Z
- dhuerBz7rf+NddWb6Pq4vnA9bda/ebTQEwIIDmq57jFzUqDYcvezw07BfB9vvQ=
-X-Authority-Info-Out: v=2.4 cv=Ffc6BZ+6 c=1 sm=1 tr=0 ts=6a919f1c
- cx=c_apl:c_pps:t_out a=oyWFxbOnq+dmhQrAPgaJYA==:117
- a=oyWFxbOnq+dmhQrAPgaJYA==:17 a=Sv0fKeRqtYgA:10 a=x7bEGLp0ZPQA:10
- a=zMoZyIPnO1cA:10 a=VkNPw1HP01LnGYTKEx00:22 a=hWxEdHQvl6Tn1xj9Vm8A:9
- a=Uh4tPsEYL5Xn7yYgV4Nn:22 a=mGzgV76dRlD25_95D0kX:22
-X-JNJ: AAAAAAAB8W/lkqfPeXR8/2C97afaZ62u4MmKzowRULh9C+tvXg/gE3nho0DBRw12H6ZCtHrnhY7wqhsSSQw3DmccdDGOvN6VuNySXrlQZ13h6wgKy2OyclEbTgO9aPqXTv+XQOVhMvDrEEv4iguTtWMgRLhk5SUIL1BfXzu2oeMUB3O1krJTI43IS7heRJSe8fJLPqxztGqszbKzZtFMRZhZbz3zMY+zuieflIcJi/F2uraFPHXxkYiiHJCQQyvA8J4mQf18NKxW4xXqorc8IzM4tFhBRJZr49FU+rlG582svg/85Na93/tIW1LvJb6dHjdShIwGRUhjos0rYKna9g2PqN8G6/50tYYaHQMGmyZvHiiBQ/zJcFUp2DsV8IKHPZeBt2wRnzfWju3rWxozNnuUyEjLsKFkS4iECXrdk7ksubk4cUmdfko3JWqlPuTarAJfplKqox0CL/PUWnT6eCvHxfrI4KtM5v+fwmLpYw49B/6vMOlKjPcNvFOX74TKB6Yt/xUSj9mUwPOftr54+2Poajw1uKIl9FLRARsROozQ9u7KRKlIklnSz+zOl8h2BGdAZtgD+csBsXcziI0glU72iQMRgAspnXMBZ/eGfVT1UT5LUDR1TwnVyboObIp3EqUV0r++cHmwT6dVVKsZvdUWiSA79Jzzzsmtx2c4fk/Rask+R0efySeF5maeyY7gUQOrYCC6TtyFTym62ju4D/qgjuDvtGj/spFCgkdrcS3rI4zmaQOXFwRxeujyfqr3Nhkz2f1kSh5twa7eKUE0aH5kwF71HyqX90emq3mWhbJhc4X7/173Ta6NUuHGTog9cl5jSV8l9huH+c+fnWED9gWB1O4k7IFAb91bdj6oEjIUYyDXIiCtDJglLbP23bT0pU/2GZaqI+bUSJetaS3QC6+UzYHeCFh7drGp2tG2jnv1R9V6A5LoDZQTHPiYsfdb6ZQFetItLSb4h2LQstPeid0unJGUEvd
- +PFx3PPGGHdSqCQFlpn3vvEqEdX7Pk1Vbd8fqfyJqnx4U554xHYym5B5DiYvDDRbhdWPDYmSgoJsDBcY+Ans/ZAor5cdNHmGFUeTskyqVUeHVsX2NGCux8KFLBGPviGgv695j0CIWPENmaCxRxF1kBRPuuUyNvV/FbFUo1qjTxdq4olXGMuoPQjty+RJsxVa9eJosZYQgsbEso2ckIaKJbd5FBjyf+fCRpugBdmhZYDzypN9TLsl7yWJCdPT3EoHzyBVl9vtlU+vgqVHwAZM89A==
 
-Am 27.08.26 um 22:13 schrieb Werner Sembach:
-> I think it's best for Aaron sending his version first and then you
-> reacting on that on the LKML and getting in touch.
+From: Craig McQueen <craig@mcqueen.au>
 
-Sounds good, I'll hold off and review Aaron's version when it lands.
+[ Upstream commit f92135f100669b508dd62b424ab20bcb33494c79 ]
 
-> Unregistering is important for userspace to know what happens
+led_set_brightness() function: Change handling of software blink to
+avoid race conditions when stopping blink and setting brightness.
 
-That's fair, I'll be sure to change that.
+Triggers may call led_set_brightness(LED_OFF),
+led_set_brightness(LED_FULL) in quick succession to disable blinking and
+turn the LED on. If the delayed work task has not yet disabled blinking
+by the time the second call occurs, then the brightness also needs to be
+changed in the delayed work task.
 
-As for multi-zone, my I2C controller has more than one
-LampArrayAttributesReport, and has 2 zones in effect, so the original
-would only grab one of them. I'm not sure if my device is spec compliant,
-but my implementation is agnostic to the zone count; I'll come back to it
-with Aaron's version. Quirks get an entry for each zone too.
+Signed-off-by: Craig McQueen <craig@mcqueen.au>
+Link: https://patch.msgid.link/20260423113638.2079302-1-craig@mcqueen.au
+Signed-off-by: Lee Jones <lee@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
 
-To clarify, each zone in my implementation gets its own dev class where
-/sys/class/leds/<hid-id>:rgb:lamparray-<zone_number>
-And use_leds_uapi is accessible from both
-/sys/class/leds/<hid-id>:rgb:lamparray-<zone_number>/device/use_leds_uapi
-and /sys/bus/hid/devices/<hid-id>/use_leds_uapi.
+LLM Generated explanations, may be completely bogus:
 
-For Aaron when he gets to see this, here are some things I noticed while
-testing on real hardware:
+The background searches finished and line up with the earlier analysis:
 
-1) lamparray_read_lamp_count() reads
-   lamp_count_field->value[lamp_count_index] immediately after
-   hid_hw_request(HID_REQ_GET_REPORT). As mentioned above, that call is
-   asynchronous, so the read races the transfer and returns stale values.
-   On my devices it consistently returned 0. hid_hw_raw_request() with a
-   heap buffer works.
-2) In lamparray_parse_update_report(), usage 0x0003 is not unique within
-   the Lighting page, and the switch has no guard, so lamp_count_field ends
-   up bound to whichever match the parser saw last rather than the actual
-   LampCount field. I added a simple guard so only the first one binds.
-   Whether the first match will always be correct is an open question
-   however.
-3) Both of my devices need the autonomous-mode disable re-asserted on S4
-   resume; without it they come back in firmware-driven mode and ignore
-   SET_REPORT.
-4) I don't believe this would be consistent with all LampArray devices,
-   but mine in particular would ignore any change to the lighting that
-   was within 4 values of its current state, so consecutive updates that
-   are too similar silently do nothing.
-5) My hardware did not support reading back the current state of the lamps
-   at all, so GET_REPORT and in effect, lamparray_hw_get_state(), can't
-   work here. Plenty of LED drivers return the cached value when getting
-   the state, which might be the safer default.
+- **Commit lookup:** `f92135f100669` (`leds: core: Fix race condition
+  for software blink`) is in mainline via the `leds-next-7.2` merge, but
+  it is **not** in the current `6.18.44` checkout — so it is a valid
+  backport candidate for this tree.
+- **Related history:** The prerequisite fixes are already here
+  (`fa15d8c69238b`, `2c70953b6f535`, ordered LED workqueue from
+  `32360bf6a5d40`).
 
-Also let me know if you want me to send my HID descriptors from
-hid-recorder or similar.
+That supports the **YES** verdict: the bug exists in v6.18.44, the fix
+is small and upstream, and the needed infrastructure is already present.
 
-In the meantime, I will definitely go look at OpenRGB's implementation.
-I may also work on a driver that will fix s2idle residency on my laptop;
-it's part of what brought me here and this is just step one.
+ drivers/leds/led-core.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
-Thanks a lot,
-Cristian Mazzotta
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index 59473f286b31f..eeb36e50c285c 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -304,24 +304,31 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
+ 
+ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
+ {
+-	/*
+-	 * If software blink is active, delay brightness setting
+-	 * until the next timer tick.
+-	 */
+-	if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
++	if (brightness) {
+ 		/*
+-		 * If we need to disable soft blinking delegate this to the
+-		 * work queue task to avoid problems in case we are called
+-		 * from hard irq context.
++		 * If software blink disable is pending, also queue brightness setting.
++		 * If software blink is active, delay brightness setting
++		 * until the next timer tick.
+ 		 */
+-		if (!brightness) {
+-			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
++		if (test_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags) ||
++		    test_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
++			led_cdev->delayed_set_value = brightness;
++			set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
+ 			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+-		} else {
+-			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
+-				&led_cdev->work_flags);
++			return;
++		} else if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
+ 			led_cdev->new_blink_brightness = brightness;
++			set_bit(LED_BLINK_BRIGHTNESS_CHANGE, &led_cdev->work_flags);
++			return;
+ 		}
++	} else if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
++		/*
++		 * If we need to disable soft blinking delegate this to the
++		 * work queue task to avoid problems in case we are called
++		 * from hard irq context.
++		 */
++		set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
++		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+ 		return;
+ 	}
+ 
+-- 
+2.53.0
+
