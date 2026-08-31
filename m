@@ -1,194 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED543905EF
-	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 14:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132A733987E
+	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 14:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788187836; cv=none; b=bJkJuX/9bVPBd+57J7DiUOtbekPKFAYWASHWIKRqax0cZX28d0h94JJL+PBZFZR78Sec301wC7dj7fCkLPWSeFXnqou8rx9QuY23Gb+Mer54gx94JfCs9pUi48xBRprsz2Eomb/jnM/0lIlWLHqwieSBQm23IouApaDF/ZogtSQ=
+	t=1788188301; cv=none; b=aAHXwhv6QVLnAsSv7SaBXunoyb7nypLOFfqtaiDDg539IqoSq0/eljgV3ZeEI2/sjzwkQ1ZWfMNfMb/WAWjsom/pm+IYWZNhAhkpXv1EJryWaapQ5JPj6l6LQ2FUF5tHoBHpoKg5AGL7RWD/B9N/p9DmyrGYmkglTPoevat6hiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788187836; c=relaxed/simple;
-	bh=wZIjQ5yQBSgk0FXFr9dGnjmmVvqPczXigNJMHMGHw5A=;
+	s=arc-20240116; t=1788188301; c=relaxed/simple;
+	bh=v35SYT1NJlyvW7AALIKdiUntTB6Wk95qfYsfPhLCjDM=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=K/Opmo4DTXn5JiV35xlNfZXGmYtMexzUSbW4aGMggQeAKwIRcMTRF3SvRQUbfAz3l/zQN6NKp4dGjny2U5V23T2z6sveGyf1fOM0SdGklX/Sy7ildUuMInXCYnxYEtNI73i6wjQ+kgRAKMM0zcR2wipNNCqJZoSQveV5vmgclE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9WcMVjA; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=EMTOvsUL8Dxp1GWSz/XJyGtBu0oNxWUIqxlQM1QB4OhKyNIczopz+fvkwfSA1EJyeO2XadyreD6KMte1IW/oON8mESe33UDDA1SURb8Ut1ZIT4HOQfXtRqqmZDlFL0b4YXjgUlujpwBxfBWM1wFuZOOx+P8VQ3o3fbANEE+fKDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3+bKUUR; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9WcMVjA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11CA1F000E9;
-	Mon, 31 Aug 2026 14:50:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3+bKUUR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6481F000E9;
+	Mon, 31 Aug 2026 14:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788187835;
-	bh=AeTSBS9mBmkQ40Uu0hAxohDLIXO9Fvqwm/kMEEcr3nE=;
+	s=k20260515; t=1788188299;
+	bh=3DQbaGhz9/Mo2Em5/R0B6HAcWYztszPxlpw7OKmwn3Y=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=C9WcMVjAVI72+r6ZeEg5jfmceVoBEi2HCPjjM+gRDkqUBaPabVFpgOm58FProa08q
-	 waVDi0wEgB3LV09F57a8TTqsgiikdAb0+jDLGAmyWL6IUl5iA4s23vkjiFDGM3Mmh2
-	 ikMQEHGE2FANaRqkIPih/QEhUUzChqR+iYxP0inyfvRscacOrYELJRlXkYdE0edj1p
-	 BdyNp4lPaqxTwfRf34cvRQL1NmlR9beBC/iz75MOa0+zk3ixWUp5QDTyql6CHZJRYv
-	 YI3mY9I073UsmnVaJeg9YVPJw/2P/5ing7JAtbvqAWo/p0JDzN146ZQxBRFckLT7Ub
-	 KXiR7Bnx1/pdQ==
+	b=j3+bKUUR0+fQNYml4gtr3Swf4ykQbKF2Zk3EAoHTkAs3ie5pn/64ByyesCwKO1Wo2
+	 ycoaPfOHSdkrXUvVqi4PWQ07SIIdVWTgc8VHPVudjamRH87vE5qqpJePrkAtRjdP6C
+	 aKObC+jKoNag0E8HteuMJVsP9lcrgoanBw8bjzIea67v2Z73+iK/iYxIT5admKQnDT
+	 THkPjtr3nbE6B7WVec3hwXxN2d+oiUsxLvM7hkmVgXo0PRmdnTpzX3eJBRupnZ86Lk
+	 Kn4L+wFKFvzKCewbkCs04dxv3NfMY/Pdnsf0N+g4KlHipu71V31YtFEHkYe3HD3vQD
+	 4PIKhcrZtGDdA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH AUTOSEL 6.18] leds: core: Fix race condition for
- software blink
+Subject: Re: [PATCH AUTOSEL 6.18-5.10] leds: pca9532: Don't stop blinking
+ for non-zero brightness
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sasha Levin" <sashal@kernel.org>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260831133314.4125787-161-sashal@kernel.org>
+In-Reply-To: <20260831133314.4125787-192-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
- <20260831133314.4125787-161-sashal@kernel.org>
+ <20260831133314.4125787-192-sashal@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 31 Aug 2026 14:50:34 +0000
-Message-Id: <20260831145034.B11CA1F000E9@smtp.kernel.org>
+Date: Mon, 31 Aug 2026 14:58:18 +0000
+Message-Id: <20260831145819.6F6481F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
-New issues:
-- [High] Missing `smp_mb__before_atomic()` before `set_bit()` allows the CP=
-U or compiler to reorder the memory write, leading to lost brightness updat=
-es.
-- [High] The newly added early-return path bypasses max_brightness clamping=
- and state updates, exposing hardware drivers to arbitrary values and causi=
-ng software state inconsistency.
-
 Pre-existing issues:
-- [Critical] A race condition during LED device unregistration can lead to =
-a Use-After-Free of the `led_classdev` structure because background tasks a=
-re flushed before the sysfs interface is removed.
-- [High] Incomplete fix for software blink race condition leaves a TOCTOU w=
-indow where brightness changes are permanently lost during `led_stop_softwa=
-re_blink()`.
+- [High] Race condition in N2100_BEEP input device teardown leading to use-=
+after-free
 --
 
-commit 27c103cf78e9f98bb6d9bdb9ae011c1befedc295
-Author: Craig McQueen <craig@mcqueen.au>
+commit 7c75890ff5fc7d7cfe4c161d927be50be43a1827
+Author: Tobias Deiminger <tobias.deiminger@linutronix.de>
 
-leds: core: Fix race condition for software blink
+leds: pca9532: Don't stop blinking for non-zero brightness
 
-led_set_brightness() function: Change handling of software blink to
-avoid race conditions when stopping blink and setting brightness.
+This patch prevents the pca9532 driver from incorrectly stopping hardware
+blinking when a non-zero brightness value is set. It adds a guard to return=
+=20
+early if the LED state is PCA9532_PWM1, aligning the behavior with the=20
+LED subsystem documentation.
 
-Triggers may call led_set_brightness(LED_OFF),
-led_set_brightness(LED_FULL) in quick succession to disable blinking and
-turn the LED on. If the delayed work task has not yet disabled blinking
-by the time the second call occurs, then the brightness also needs to be
-changed in the delayed work task.
+Link: https://patch.msgid.link/20260331202848.658676-1-tobias.deiminger@lin=
+utronix.de
 
-Link: https://patch.msgid.link/20260423113638.2079302-1-craig@mcqueen.au
-
-> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-> index 59473f286b31f..eeb36e50c285c 100644
-> --- a/drivers/leds/led-core.c
-> +++ b/drivers/leds/led-core.c
-> @@ -304,24 +304,31 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
-> =20
->  void led_set_brightness(struct led_classdev *led_cdev, unsigned int brig=
-htness)
->  {
-> -	/*
-> -	 * If software blink is active, delay brightness setting
-> -	 * until the next timer tick.
-> -	 */
-> -	if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
-> +	if (brightness) {
->  		/*
-> -		 * If we need to disable soft blinking delegate this to the
-> -		 * work queue task to avoid problems in case we are called
-> -		 * from hard irq context.
-> +		 * If software blink disable is pending, also queue brightness setting.
-> +		 * If software blink is active, delay brightness setting
-> +		 * until the next timer tick.
->  		 */
-> -		if (!brightness) {
-> -			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
-> +		if (test_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags) ||
-> +		    test_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
-> +			led_cdev->delayed_set_value =3D brightness;
-> +			set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
-
-[Severity: High]
-Is it possible for the CPU or compiler to reorder this non-atomic write
-and the atomic set_bit() operation?
-
-If a worker thread executes test_and_clear_bit(LED_SET_BRIGHTNESS) after
-the bit is set but before the data store to delayed_set_value is committed,
-could it read a stale delayed_set_value? A subsequent execution of the
-worker triggered by the queue_work() would then see the bit cleared and do
-nothing, permanently discarding the brightness update.
-
-Would it be better to add an smp_mb__before_atomic() before setting the bit?
-
-[Severity: High]
-Does this newly added early return path bypass the clamping of the brightne=
-ss
-value?
-
-By directly storing the unvalidated brightness into delayed_set_value and
-returning, this seems to bypass the min(value, led_cdev->max_brightness) ch=
-eck
-normally performed in led_set_brightness_nosleep().
-
-If the background worker passes this unvalidated delayed_set_value directly
-into the hardware driver's brightness_set callback, could this expose backe=
-nd
-hardware drivers to out-of-bounds values up to ULONG_MAX?
-
->  			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
-> -		} else {
-> -			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
-> -				&led_cdev->work_flags);
-> +			return;
-> +		} else if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
->  			led_cdev->new_blink_brightness =3D brightness;
-> +			set_bit(LED_BLINK_BRIGHTNESS_CHANGE, &led_cdev->work_flags);
-
-[Severity: High]
-Would this also require an smp_mb__before_atomic() before setting the bit
-for the same reordering reasons?
-
-[Severity: High]
-This is a pre-existing issue, but does this incomplete fix leave a TOCTOU
-window where brightness changes can be permanently lost?
-
-In set_brightness_delayed(), if test_and_clear_bit() clears LED_BLINK_DISAB=
-LE
-before led_stop_software_blink() completes and clears LED_BLINK_SW, could
-a concurrent led_set_brightness(LED_FULL) see LED_BLINK_DISABLE as cleared
-but LED_BLINK_SW as still set?
-
-If so, it would fall into this branch, recording the new brightness into
-new_blink_brightness and setting LED_BLINK_BRIGHTNESS_CHANGE. But since the
-timer is actively being deleted by the worker, it will never fire again,
-permanently losing the brightness request.
-
-> +			return;
->  		}
+> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+> index 0344189bb991c..dae7c67605084 100644
+> --- a/drivers/leds/leds-pca9532.c
+> +++ b/drivers/leds/leds-pca9532.c
 
 [ ... ]
 
-[Severity: Critical]
-This is a pre-existing issue, but is there a use-after-free race condition
-during LED device unregistration?
+[Severity: High]
+This isn't a bug introduced by this patch, but while looking at this driver,
+I noticed a potential use-after-free race during teardown of the N2100_BEEP
+input device.
 
-Looking at led_classdev_unregister() in drivers/leds/led-class.c, it appears
-flush_work(&led_cdev->set_brightness_work) is called before
-device_unregister(led_cdev->dev).
+In pca9532_destroy_devices(), the worker is canceled but the managed input
+device remains active until devres unwinds:
 
-Because device_unregister() is what removes the sysfs attributes, the
-brightness sysfs interface remains fully active during and after flush_work=
-().
-Could a concurrent sysfs write execute led_set_brightness() and queue the
-worker again on the global leds_wq?
+    case PCA9532_TYPE_N2100_BEEP:
+        if (data->idev !=3D NULL) {
+            cancel_work_sync(&data->work);
+            data->idev =3D NULL;
+        }
+        break;
 
-When device_unregister() completes and led_cdev is freed, the previously
-queued work would execute and access the freed memory. Should this use
-cancel_work_sync() after the sysfs node has been fully removed?
+If an input event (e.g., SND_BELL) arrives through the evdev node in this
+narrow window before devres unwinds, pca9532_event() will blindly queue
+up the work again:
+
+    schedule_work(&data->work);
+
+Once devres unwinding completes, the data structure is freed, but the
+newly queued work remains active. When pca9532_input_work() executes, it
+could access the freed data:
+
+    static void pca9532_input_work(struct work_struct *work)
+    {
+        ...
+        mutex_lock(&data->update_lock);
+
+Could this result in a use-after-free crash if a user space process writes
+to the input event node during driver removal? Should the input device be
+explicitly unregistered before canceling the work?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
-787-161-sashal@kernel.org?part=3D1
+787-192-sashal@kernel.org?part=3D1
