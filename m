@@ -1,122 +1,194 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90967445AE2;
-	Mon, 31 Aug 2026 14:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED543905EF
+	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788185700; cv=none; b=lDx+0chP/WWo5CFttm8kdrQ5pyHnBU4qcY76JAE/LBH1UbLXpvcg9QfyOsdDhAurj2eyBDR1Ew1J2OnlpQe2emBcwX9vURwbDMXJf8Ci4b2/dltVM/KRdzE1qUWWWJyvxKIAY3q5DMWcUTCpn1LxHTjfnZlJJeR8Ng3SEw7KPjs=
+	t=1788187836; cv=none; b=bJkJuX/9bVPBd+57J7DiUOtbekPKFAYWASHWIKRqax0cZX28d0h94JJL+PBZFZR78Sec301wC7dj7fCkLPWSeFXnqou8rx9QuY23Gb+Mer54gx94JfCs9pUi48xBRprsz2Eomb/jnM/0lIlWLHqwieSBQm23IouApaDF/ZogtSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788185700; c=relaxed/simple;
-	bh=T65Cosm0xAQNaZd/jGKGtk+wV8zqpDgkRMfk4lbgvhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDxBET8Ix5APqrWcLlca9Y6xKfgoa3/uk7F78tG00j7N3eqQWjN29Sn1f5zuA+a3lugX2wng+h8IXeYu8jawzTOy/i5CNp/80bVqNssPo6NFK0ESj2GHgnhd93GScWG4+CoJbXMkXMDqFfKxcJX/8kXKhXg8YR43aI1DOVGSoXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPBwpqJx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788187836; c=relaxed/simple;
+	bh=wZIjQ5yQBSgk0FXFr9dGnjmmVvqPczXigNJMHMGHw5A=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=K/Opmo4DTXn5JiV35xlNfZXGmYtMexzUSbW4aGMggQeAKwIRcMTRF3SvRQUbfAz3l/zQN6NKp4dGjny2U5V23T2z6sveGyf1fOM0SdGklX/Sy7ildUuMInXCYnxYEtNI73i6wjQ+kgRAKMM0zcR2wipNNCqJZoSQveV5vmgclE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C9WcMVjA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPBwpqJx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23C0B1F000E9;
-	Mon, 31 Aug 2026 14:14:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9WcMVjA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11CA1F000E9;
+	Mon, 31 Aug 2026 14:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788185698;
-	bh=XvyAV+Jb/2dt37zdLyqko1ZPyJk/KNJ1Oynd8XnZyKo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iPBwpqJx2ey6XpaUMYW+/qtC127dk1vXo3WeOR6/W+Z8SHiQDiKC9/aFOrLKqXIWY
-	 DCIa1vAMocleEDrUMtnBmXC9gDxCDynvHBmYJsefbcZdkH97sUCcBojLRisHv0DjiZ
-	 PUCFj+mM7CNcDyvy6TcE3pl1AEulG9/nNbfaVmH5JxIOypVVAZWaQ4Kiy20E+H2mYo
-	 GiiyJidQ/TmnxaeTXLFA2pEd0Hsqzh9gBoeyKx8P+Mh/smlWUbWV39l4lGfjDUEB26
-	 jhF3HJW3lq5e5F63n4rdmu8ER/FMDNdNXwLJW9Ex++5/WQ4pdEyCwlqPcnb9b4G5Ek
-	 KId2OPY9+iCaQ==
-Date: Mon, 31 Aug 2026 09:14:57 -0500
-From: Rob Herring <robh@kernel.org>
-To: Udaya Kiran Challa <challauday369@gmail.com>
-Cc: lee@kernel.org, pavel@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, skhan@linuxfoundation.org,
-	me@brighamcampbell.com, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: leds: lacie,netxbig-leds: Convert to DT
- schema
-Message-ID: <20260831141457.GA811514-robh@kernel.org>
-References: <20260821123723.198286-1-challauday369@gmail.com>
+	s=k20260515; t=1788187835;
+	bh=AeTSBS9mBmkQ40Uu0hAxohDLIXO9Fvqwm/kMEEcr3nE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=C9WcMVjAVI72+r6ZeEg5jfmceVoBEi2HCPjjM+gRDkqUBaPabVFpgOm58FProa08q
+	 waVDi0wEgB3LV09F57a8TTqsgiikdAb0+jDLGAmyWL6IUl5iA4s23vkjiFDGM3Mmh2
+	 ikMQEHGE2FANaRqkIPih/QEhUUzChqR+iYxP0inyfvRscacOrYELJRlXkYdE0edj1p
+	 BdyNp4lPaqxTwfRf34cvRQL1NmlR9beBC/iz75MOa0+zk3ixWUp5QDTyql6CHZJRYv
+	 YI3mY9I073UsmnVaJeg9YVPJw/2P/5ing7JAtbvqAWo/p0JDzN146ZQxBRFckLT7Ub
+	 KXiR7Bnx1/pdQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH AUTOSEL 6.18] leds: core: Fix race condition for
+ software blink
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Sasha Levin" <sashal@kernel.org>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260831133314.4125787-161-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
+ <20260831133314.4125787-161-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 31 Aug 2026 14:50:34 +0000
+Message-Id: <20260831145034.B11CA1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260821123723.198286-1-challauday369@gmail.com>
 
-On Fri, Aug 21, 2026 at 06:07:23PM +0530, Udaya Kiran Challa wrote:
-> Convert lacie,netxbig-leds devicetree binding from legacy
-> text format to DT schema.
-> 
-> Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
-> ---
-> Changelog:
-> 
-> Changes since v1:
-> - Use pattenProperties for LED child nodes instead of additionalProperties
-> - Explicitly list the two optional properties supported by the binding
-> - Place the top-level required block after child-node definition
-> 
-> Link to v1:https://lore.kernel.org/all/20260820150223.108374-1-challauday369@gmail.com/
-> ---
->  .../bindings/leds/lacie,netxbig-leds.yaml     | 144 ++++++++++++++++++
->  .../devicetree/bindings/leds/leds-netxbig.txt |  92 -----------
->  2 files changed, 144 insertions(+), 92 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
->  delete mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
-> new file mode 100644
-> index 000000000000..02759ecb32d0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
-> @@ -0,0 +1,144 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/lacie,netxbig-leds.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LaCie/Seagate netxbig CPLD LEDs
-> +
-> +maintainers:
-> +  - Simon Guinot <simon.guinot@sequanux.org>
-> +
-> +description: |
-> +  Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Seagate
-> +  boards (Example: 2Big/5Big Network v2, 2Big NAS).
-> +
-> +properties:
-> +  compatible:
-> +    const: lacie,netxbig-leds
-> +
-> +  gpio-ext:
-> +    description: Phandle for the gpio-ext bus.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  timers:
-> +    description: |
-> +      Timer array. Each timer entry is represented by three integers:
-> +      Mode (gpio-ext bus), delay_on and delay_off.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +
-> +patternProperties:
-> +  "^(?!gpio-ext$|pinctrl-[0-9]+$)[a-z][a-z0-9]*(-[a-z0-9]+)+$":
-> +    type: object
-> +    additionalProperties: false
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
 
-You need a $ref to led common.yaml.
+New issues:
+- [High] Missing `smp_mb__before_atomic()` before `set_bit()` allows the CP=
+U or compiler to reorder the memory write, leading to lost brightness updat=
+es.
+- [High] The newly added early-return path bypasses max_brightness clamping=
+ and state updates, exposing hardware drivers to arbitrary values and causi=
+ng software state inconsistency.
 
-> +
-> +    properties:
-> +      label:
-> +        description: |
-> +          Name for this LED. If omitted, the label is taken from the node name.
-> +        $ref: /schemas/types.yaml#/definitions/string
+Pre-existing issues:
+- [Critical] A race condition during LED device unregistration can lead to =
+a Use-After-Free of the `led_classdev` structure because background tasks a=
+re flushed before the sysfs interface is removed.
+- [High] Incomplete fix for software blink race condition leaves a TOCTOU w=
+indow where brightness changes are permanently lost during `led_stop_softwa=
+re_blink()`.
+--
 
-And drop the type on all the common properties.
+commit 27c103cf78e9f98bb6d9bdb9ae011c1befedc295
+Author: Craig McQueen <craig@mcqueen.au>
 
-Rob
+leds: core: Fix race condition for software blink
+
+led_set_brightness() function: Change handling of software blink to
+avoid race conditions when stopping blink and setting brightness.
+
+Triggers may call led_set_brightness(LED_OFF),
+led_set_brightness(LED_FULL) in quick succession to disable blinking and
+turn the LED on. If the delayed work task has not yet disabled blinking
+by the time the second call occurs, then the brightness also needs to be
+changed in the delayed work task.
+
+Link: https://patch.msgid.link/20260423113638.2079302-1-craig@mcqueen.au
+
+> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> index 59473f286b31f..eeb36e50c285c 100644
+> --- a/drivers/leds/led-core.c
+> +++ b/drivers/leds/led-core.c
+> @@ -304,24 +304,31 @@ EXPORT_SYMBOL_GPL(led_stop_software_blink);
+> =20
+>  void led_set_brightness(struct led_classdev *led_cdev, unsigned int brig=
+htness)
+>  {
+> -	/*
+> -	 * If software blink is active, delay brightness setting
+> -	 * until the next timer tick.
+> -	 */
+> -	if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
+> +	if (brightness) {
+>  		/*
+> -		 * If we need to disable soft blinking delegate this to the
+> -		 * work queue task to avoid problems in case we are called
+> -		 * from hard irq context.
+> +		 * If software blink disable is pending, also queue brightness setting.
+> +		 * If software blink is active, delay brightness setting
+> +		 * until the next timer tick.
+>  		 */
+> -		if (!brightness) {
+> -			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
+> +		if (test_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags) ||
+> +		    test_bit(LED_BLINK_DISABLE, &led_cdev->work_flags)) {
+> +			led_cdev->delayed_set_value =3D brightness;
+> +			set_bit(LED_SET_BRIGHTNESS, &led_cdev->work_flags);
+
+[Severity: High]
+Is it possible for the CPU or compiler to reorder this non-atomic write
+and the atomic set_bit() operation?
+
+If a worker thread executes test_and_clear_bit(LED_SET_BRIGHTNESS) after
+the bit is set but before the data store to delayed_set_value is committed,
+could it read a stale delayed_set_value? A subsequent execution of the
+worker triggered by the queue_work() would then see the bit cleared and do
+nothing, permanently discarding the brightness update.
+
+Would it be better to add an smp_mb__before_atomic() before setting the bit?
+
+[Severity: High]
+Does this newly added early return path bypass the clamping of the brightne=
+ss
+value?
+
+By directly storing the unvalidated brightness into delayed_set_value and
+returning, this seems to bypass the min(value, led_cdev->max_brightness) ch=
+eck
+normally performed in led_set_brightness_nosleep().
+
+If the background worker passes this unvalidated delayed_set_value directly
+into the hardware driver's brightness_set callback, could this expose backe=
+nd
+hardware drivers to out-of-bounds values up to ULONG_MAX?
+
+>  			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+> -		} else {
+> -			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
+> -				&led_cdev->work_flags);
+> +			return;
+> +		} else if (test_bit(LED_BLINK_SW, &led_cdev->work_flags)) {
+>  			led_cdev->new_blink_brightness =3D brightness;
+> +			set_bit(LED_BLINK_BRIGHTNESS_CHANGE, &led_cdev->work_flags);
+
+[Severity: High]
+Would this also require an smp_mb__before_atomic() before setting the bit
+for the same reordering reasons?
+
+[Severity: High]
+This is a pre-existing issue, but does this incomplete fix leave a TOCTOU
+window where brightness changes can be permanently lost?
+
+In set_brightness_delayed(), if test_and_clear_bit() clears LED_BLINK_DISAB=
+LE
+before led_stop_software_blink() completes and clears LED_BLINK_SW, could
+a concurrent led_set_brightness(LED_FULL) see LED_BLINK_DISABLE as cleared
+but LED_BLINK_SW as still set?
+
+If so, it would fall into this branch, recording the new brightness into
+new_blink_brightness and setting LED_BLINK_BRIGHTNESS_CHANGE. But since the
+timer is actively being deleted by the worker, it will never fire again,
+permanently losing the brightness request.
+
+> +			return;
+>  		}
+
+[ ... ]
+
+[Severity: Critical]
+This is a pre-existing issue, but is there a use-after-free race condition
+during LED device unregistration?
+
+Looking at led_classdev_unregister() in drivers/leds/led-class.c, it appears
+flush_work(&led_cdev->set_brightness_work) is called before
+device_unregister(led_cdev->dev).
+
+Because device_unregister() is what removes the sysfs attributes, the
+brightness sysfs interface remains fully active during and after flush_work=
+().
+Could a concurrent sysfs write execute led_set_brightness() and queue the
+worker again on the global leds_wq?
+
+When device_unregister() completes and led_cdev is freed, the previously
+queued work would execute and access the freed memory. Should this use
+cancel_work_sync() after the sysfs node has been fully removed?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
+787-161-sashal@kernel.org?part=3D1
