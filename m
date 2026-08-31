@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452B049CF27;
-	Mon, 31 Aug 2026 13:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0151D525A6F;
+	Mon, 31 Aug 2026 13:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183603; cv=none; b=G9jVQdxCwFjS02iP6zvE663xztQpqUZwSLAb2jTPZe2gtM23rKnpGgiYf09pYavEARPp+ZHwtAFhmiVU4YWC9liLiCOoMRnDzogwclK7tJAAqARu7y+hc9mYIGjJTmm8tGIiBkGlgzL6u7ll8U9Aq4PGYbzxfC4NK1xOC4rLKR8=
+	t=1788183863; cv=none; b=SAo5xH9ot+9Pvfv/jRgaICRY64ObhAUl1xpB+try7s/rCjC+GeSonhA3XK6x/LTV2kLxBfNdMAJH5r3WVh7fDXKUj1/XyMWsNRoVYVjsm1ot5nS0b4liWFFd9fzqeTulA878rXAqWSZRxE82Cdw783mUuDpe0kW4kZZVRpBLEWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183603; c=relaxed/simple;
-	bh=HdTqYmRFCqXz2BrcvU61DWP7azzaV565riu46iVoBlI=;
+	s=arc-20240116; t=1788183863; c=relaxed/simple;
+	bh=ngM2hmLXNNb2yM0KxAfiYZN18ij7FLX5uaebl+80Efg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QuT/96BndceJCdEH+HP0e14Q0e2HdMbk2FwztEOU1njUlAcVrabTbd6UX7eF0pSd98b4Km1uISUVm+WPdwAQ0yFwvRVKKlH/oiG/oqEr6El59MEqCwR7kw+ElhFE+OQclZvp1PXWdbBUpcz5dw+h8Q4arkAo0axbBAFmukRjR7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIWtnluB; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=ZXENkGTOOPkf0DHhfaOduShUqAr9gCLqXfYDkjen0HARZwY3JwmIQpdY3pSNn6nHRb8lHsSkI1w2bK9mEEdeXbPMAsRLzliQhL6lm18KhOqjmCELqFVSMEvBtYRec2FcWNhD8v8HFPOs+y3HuhIEDbaPFu7dWQhGNoa4kilz9J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLEsDjHg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIWtnluB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 146F41F00A3E;
-	Mon, 31 Aug 2026 13:39:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLEsDjHg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46E11F00A3D;
+	Mon, 31 Aug 2026 13:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183601;
-	bh=NtVfbbes/ko7nNCbIZFxZeNaoWBzUa4mLaruX3hFLmY=;
+	s=k20260515; t=1788183859;
+	bh=PCZJYIcnf3ceMTCmR4evOhuHbJFuQAFeLPT8UgL3h3Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=gIWtnluBVQiykWMQo2b6i16IImj3gG6crovtHbdCf6lySc2CI252J3Kj+9Wk6QS7B
-	 oVC+7dTL99mi9pmbSTTTP7d3KhXMukhIOnjOhkTi9ALfbjQZvidGcSBhmmQzDi6P9s
-	 03eCGIn4WjXNt5t/ERxnKup/KydVZEWAg++N3L7ZBnpvOD6xXEgtGZXNeQ2gVvf0A1
-	 m+XGVATsMXi8uEcZA8yJKTrhOWWJUUuDjt6/g4mfsfYnB4yY4uVXjiikg0hzptI1wa
-	 dfcF2jndqaC3TqYRmQelr/WV83DPwQlWOTE8FcHKqJjdBCn+VboaWWWLnq3gl/htwh
-	 5/l1oTVZxQByQ==
+	b=oLEsDjHgQJKnpr3j+/9S7VLlj+czzBXfkS4nUeMyEYsWteGsMezgdk1HTT25qzVE/
+	 OKR1kUlzC8wzoFj+1qkSIhbNfVFBzInSHvZ3M0Q5NSlGfhUKWbuLIznwULSR90PIEA
+	 pCzsSmJSA2DsvnlVryEF4MFYWhZI5qKNlkda2kQoUZTkSU6ki73leeJG7t6AUEucDz
+	 +lfl7cP9jU12CoAqJilGWa9hFoUTs+NyNLNcFYet+BkeP941iYBW4nzoCzXYrBOKw3
+	 A/Q6hl5ltRbfKLMaJJUsqvZva1BjjJ7G3cngYWaKUXoT8BUjiFBizc5xdQieluErEC
+	 mY3unFYhu2gXw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Tobias Deiminger <tobias.deiminger@linutronix.de>,
+Cc: Piotr Kubik <piotr@kubik.pl>,
 	Lee Jones <lee@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	riku.voipio@iki.fi,
 	pavel@kernel.org,
 	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] leds: pca9532: Don't stop blinking for non-zero brightness
-Date: Mon, 31 Aug 2026 09:23:40 -0400
-Message-ID: <20260831133314.4125787-192-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.12] leds: trigger: gpio: Use GPIOD_FLAGS_BIT_NONEXCLUSIVE
+Date: Mon, 31 Aug 2026 09:26:15 -0400
+Message-ID: <20260831133314.4125787-347-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -54,398 +53,397 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Tobias Deiminger <tobias.deiminger@linutronix.de>
+From: Piotr Kubik <piotr@kubik.pl>
 
-[ Upstream commit 0261683a4d31783d680e74b3ae5f22f6a62128cc ]
+[ Upstream commit 26e15f2558f66b6747ef981df8054d0d92d01b60 ]
 
-pca9532 unexpectedly stopped blinking when changing brightness to a
-non-zero value. To reproduce:
+When a GPIO is shared between the LED trigger driver and another driver,
+the LED trigger driver needs to request the GPIO with
+GPIOD_FLAGS_BIT_NONEXCLUSIVE to allow both drivers to monitor the same
+GPIO pin.
 
- echo timer > /sys/class/leds/led-1/trigger   # blinks
- echo 255 > /sys/class/leds/led-1/brightness  # blinking stops, light on
- cat /sys/class/leds/led-1/trigger            # still claims [timer]
+Without this flag, if another driver has already claimed the GPIO,
+the LED trigger driver's gpiod_get_optional() call fails silently,
+and the LED trigger doesn't work.
 
-According to Documentation/leds/leds-class.rst, only brightness = 0
-shall be a stop condition:
+This is needed for scenarios like:
+- SFP module presence/status LED triggered by SFP Mod_ABS/Rx_LOS
 
-> You can change the brightness value of a LED independently of the
-> timer trigger. However, if you set the brightness value to LED_OFF it
-> will also disable the timer trigger.
+Both GPIOs are also monitored by the SFP driver for module state
+management, so they need to be shared.
 
-Therefore add a guard to continue blinking when brightness != LED_OFF,
-similar to how pca955x does it since 575f10dc64a2 ("leds: pca955x: Add
-HW blink support").
-
-Signed-off-by: Tobias Deiminger <tobias.deiminger@linutronix.de>
-Link: https://patch.msgid.link/20260331202848.658676-1-tobias.deiminger@linutronix.de
+Signed-off-by: Piotr Kubik <piotr@kubik.pl>
+Link: https://patch.msgid.link/20260408115106.379834-1-piotr@kubik.pl
 Signed-off-by: Lee Jones <lee@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-# Stable Backport Analysis: `leds: pca9532: Don't stop blinking for non-
-zero brightness`
+## Phase 1: Commit Message Forensics
 
-**Local tree:** `v6.18.44` (`6.18.44`, Makefile `VERSION=6`,
-`PATCHLEVEL=18`, `SUBLEVEL=44`)
-
----
-
-## PHASE 1: COMMIT MESSAGE FORENSICS
-
-### Step 1.1: Subject line
-**Record:** `[leds: pca9532]` `[fix/guard]` — When brightness is set to
-a non-zero value while hardware blinking is active, do not stop
-blinking.
+### Step 1.1: Subject Line
+**Record:** `[leds: trigger: gpio]` `[Use]` — Add
+`GPIOD_FLAGS_BIT_NONEXCLUSIVE` when requesting the GPIO used by the gpio
+LED trigger.
 
 ### Step 1.2: Tags
 **Record:**
-- **Signed-off-by:** Tobias Deiminger `<tobias.deiminger@linutronix.de>`
-  (author)
-- **Link:** https://patch.msgid.link/20260331202848.658676-1-
-  tobias.deiminger@linutronix.de
-- **Signed-off-by:** Lee Jones `<lee@kernel.org>` (subsystem maintainer,
-  applied)
-- No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, `Acked-
-  by:`, or `Cc: stable@vger.kernel.org`
-- Lore thread identifies mainline commit as
-  `770edd8e8e5bed961af2ca6ab397052046d1d774` (not present in this
-  checkout)
+- **Link:**
+  https://patch.msgid.link/20260408115106.379834-1-piotr@kubik.pl
+- **Signed-off-by:** Piotr Kubik \<piotr@kubik.pl\>
+- **Signed-off-by:** Lee Jones \<lee@kernel.org\> (LED subsystem
+  maintainer)
+- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Acked-by:, or Cc:
+  stable tags
+- Notable: maintainer (Lee Jones) Signed-off-by is a quality signal
 
-### Step 1.3: Body analysis
+### Step 1.3: Body Analysis
 **Record:**
-- **Bug:** After enabling the `timer` trigger (hardware blink via PWM1),
-  writing a non-zero value to `brightness` stops blinking while sysfs
-  still reports `[timer]`.
-- **Symptom:** LED stays solid on; trigger sysfs entry is inconsistent
-  with actual behavior.
-- **Reproduction:** Documented sysfs sequence (`timer` trigger → `echo
-  255 > brightness` → `cat trigger`).
-- **Root cause (author):** `pca9532_set_brightness()` overwrites
-  `PCA9532_PWM1` state for any non-zero brightness.
-- **Reference:** LED class docs say only `LED_OFF` should stop a timer
-  trigger; `pca955x` already guards this way since `575f10dc64a2`.
+- **Bug:** When a GPIO is shared between the gpio LED trigger and
+  another driver (e.g. SFP `Mod_ABS` / `Rx_LOS`), the LED trigger
+  requests the GPIO exclusively; if another driver already claimed it,
+  acquisition fails and the trigger does not work.
+- **Symptom:** Status LEDs driven by the gpio trigger do not function on
+  shared-GPIO hardware.
+- **Use case:** SFP module presence/status LEDs on network appliances
+  where the SFP driver also monitors the same GPIO lines.
+- **Root cause:** Missing `GPIOD_FLAGS_BIT_NONEXCLUSIVE` on
+  `gpiod_get_optional()`.
 
-### Step 1.4: Hidden bug fix?
-**Record:** No — this is an explicit functional bug fix, not disguised
-cleanup.
+### Step 1.4: Hidden Bug Fix?
+**Record:** Yes. Although not labeled "fix", this is a functional bug
+fix: shared-GPIO hardware enablement, not a refactor or optimization.
 
 ---
 
-## PHASE 2: DIFF ANALYSIS
+## Phase 2: Diff Analysis
 
 ### Step 2.1: Inventory
 **Record:**
-- **Files:** `drivers/leds/leds-pca9532.c` only (+4/-2 lines net)
-- **Function:** `pca9532_set_brightness()`
-- **Scope:** Single-file, surgical driver fix
+- **File:** `drivers/leds/trigger/ledtrig-gpio.c` (+2 / -1 lines)
+- **Function:** `gpio_trig_activate()`
+- **Scope:** Single-file, surgical one-line functional change
 
-### Step 2.2: Code flow change
+### Step 2.2: Code Flow Change
 **Record:**
-- **Before:** Any non-zero brightness overwrites `led->state`
-  (`PCA9532_ON` or `PCA9532_PWM0`), including when already in
-  `PCA9532_PWM1` (HW blink).
-- **After:** If `value == LED_OFF` → turn off as before. Else if
-  `led->state == PCA9532_PWM1` → return 0 immediately (preserve HW
-  blink). Otherwise unchanged logic for `LED_FULL` / PWM dimming.
-- **Path affected:** Sysfs `brightness` writes while hardware blinking
-  is active.
+- **Before:** `gpiod_get_optional(dev, "trigger-sources", GPIOD_IN)` —
+  exclusive GPIO request.
+- **After:** Same call with `GPIOD_IN | GPIOD_FLAGS_BIT_NONEXCLUSIVE` —
+  allows sharing with an already-claimed GPIO.
+- **Path:** LED trigger activation during default-trigger setup or
+  manual trigger selection.
 
-### Step 2.3: Bug mechanism
+### Step 2.3: Bug Mechanism
 **Record:**
-- **Category:** Logic / correctness fix (API contract violation)
-- **Mechanism:** HW blink sets `led->state = PCA9532_PWM1` in
-  `pca9532_update_hw_blink()`. Subsequent `brightness_set_blocking`
-  calls clobber that state via `pca9532_setled()`, stopping hardware
-  blink while the LED core still believes the timer trigger is active.
+- **Category:** Logic / hardware-workaround (shared GPIO access).
+- **Mechanism:** Without `NONEXCLUSIVE`, `gpiod_request()` returns
+  `-EBUSY` when another consumer already holds the line.
+  `gpiod_get_optional()` propagates `ERR_PTR(-EBUSY)`.
+  `gpio_trig_activate()` returns that error.
+  `led_match_default_trigger()` ignores the `led_trigger_set()` return
+  value, so activation failure is silent and the LED never gets the gpio
+  trigger.
 
-### Step 2.4: Fix quality
+Verified in gpiolib:
+
+```4672:4674:drivers/gpio/gpiolib.c
+        if (ret) {
+                if (!(ret == -EBUSY && flags &
+GPIOD_FLAGS_BIT_NONEXCLUSIVE))
+                        return ERR_PTR(ret);
+```
+
+And in LED core:
+
+```271:278:drivers/leds/led-triggers.c
+static bool led_match_default_trigger(struct led_classdev *led_cdev,
+                                      struct led_trigger *trig)
+{
+        if (!strcmp(led_cdev->default_trigger, trig->name) &&
+            trigger_relevant(led_cdev, trig)) {
+                led_cdev->flags |= LED_INIT_DEFAULT_TRIGGER;
+                led_trigger_set(led_cdev, trig);
+                return true;
+```
+
+### Step 2.4: Fix Quality
 **Record:**
-- Fix is minimal and mirrors the established `pca955x` pattern
-  (`test_bit(active_blink)` → early `goto out` for non-zero brightness).
-- **Regression risk:** Low. `PCA9532_PWM1` for HW blink is only set via
-  `pca9532_update_hw_blink()`, which requires `hw_blink == true`. The
-  N2100 beeper path uses PWM1 but does not register a `led_classdev`
-  brightness callback, so the guard does not affect beeper input
-  handling.
-- `LED_OFF` still correctly stops the LED.
+- Obviously correct: matches the established pattern used across many
+  drivers in this tree (regulators, extcon, PHY drivers, etc.).
+- Minimal change, no API changes.
+- Low regression risk: only affects the shared-GPIO case; exclusive
+  GPIOs behave as before.
+- The flag is marked deprecated in `consumer.h`, but remains the
+  supported workaround throughout this tree.
 
 ---
 
-## PHASE 3: GIT HISTORY INVESTIGATION
+## Phase 3: Git History Investigation
 
 ### Step 3.1: Blame
-**Record:** `pca9532_set_brightness()` core logic dates to 2008
-(`e14fa82439d33c`). The bug was latent until HW blink landed in
-`48ca7f302cfcf` (2024-06-17, "leds: pca9532: Use PWM1 for hardware
-blinking"), which added `pca9532_update_hw_blink()` setting
-`PCA9532_PWM1` without updating `pca9532_set_brightness()`.
+**Record:**
+- Buggy line introduced by `9bbd6b7209cf1` (Andy Shevchenko, Nov 3
+  2023): switched to `gpiod_get_optional()` without `NONEXCLUSIVE`.
+- Underlying trigger-sources design from `4a11dbf04f31c` (Linus Walleij,
+  Sep 26 2023).
+- Both commits are present in this 6.18.44 tree.
 
-### Step 3.2: Fixes: tag
-**Record:** N/A — no `Fixes:` tag. Logical introducer is
-`48ca7f302cfcf`, which is an ancestor of this tree.
+### Step 3.2: Fixes: Tag
+**Record:** N/A — no Fixes: tag in commit message.
 
-### Step 3.3: Related file history
-**Record:** Recent `leds-pca9532.c` commits in this tree include HW
-blink work (`48ca7f302cfcf`, `f51bc3cedfc45`), default frequency change,
-and error-message cleanup (`2aad93b6de0d8`, which carried `Cc: stable`).
-This fix is standalone (v2 of a single-patch series).
+### Step 3.3: Related File History
+**Record:** Recent `ledtrig-gpio.c` history is cleanups only (sysfs,
+kstrtox, DEVICE_ATTR_RW). No related fix already present. Standalone
+patch, not part of a series.
 
-### Step 3.4: Author context
-**Record:** Tobias Deiminger has no other commits in `drivers/leds/` in
-this tree. Lee Jones (LED maintainer) applied the patch.
+### Step 3.4: Author Context
+**Record:** Piotr Kubik has other networking-related work in this tree
+(e.g. PSE driver). This gpio-trigger fix is a focused hardware-
+enablement change, not a large series.
 
 ### Step 3.5: Dependencies
 **Record:**
-- Requires HW blink support (`48ca7f302cfcf`) — **present** in this
-  tree.
-- References `pca955x` pattern from `575f10dc64a2` — **present** in this
-  tree.
-- No series dependencies; applies standalone.
+- Requires `GPIOD_FLAGS_BIT_NONEXCLUSIVE` (present since
+  `ec757001c818c`, 2018).
+- Requires trigger-sources gpio trigger (`4a11dbf04f31c`, 2023) —
+  present in this tree.
+- No other commits required. Applies standalone.
 
 ---
 
-## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+## Phase 4: Mailing List and External Research
 
-### Step 4.1: Original discussion
-**Record:**
-- **URL:** https://lore.kernel.org/linux-
-  leds/20260331202848.658676-1-tobias.deiminger@linutronix.de/
-- **Series:** v2 (v1 at https://lore.kernel.org/r/20260321102121.1563365
-  -1-tobias.deiminger@linutronix.de); v2 only changes comment style and
-  brace placement.
-- **Review:** Lee Jones replied "Applied, thanks!" — no NAKs or
-  objections found.
-- **Stable nomination:** None in thread.
+### Step 4.1: Original Discussion
+**Record:** `b4 dig -c <commit>` could not run — commit is not in this
+checkout. Lore/patch.msgid.link fetch blocked by Anubis bot protection.
+Could not retrieve thread discussion.
 
 ### Step 4.2: Reviewers
-**Record:** CC'd: `lee@kernel.org`, `pavel@kernel.org`,
-`eajames@linux.ibm.com`, `riku.voipio@iki.fi`, `linux-
-leds@vger.kernel.org`. Lee Jones (maintainer) applied.
+**Record:** UNVERIFIED — could not run `b4 dig -w` without commit hash.
+Lee Jones Signed-off-by indicates maintainer acceptance.
 
-### Step 4.3: Bug report
-**Record:** Author-provided sysfs reproduction in patch and commit
-message. No external bugzilla/syzbot report.
+### Step 4.3: Bug Report
+**Record:** No external bug report or syzbot link. Use case described in
+commit message (SFP Mod_ABS/Rx_LOS LEDs).
 
-### Step 4.4: Related patches
-**Record:** Standalone 1/1 patch. Related context: `575f10dc64a2`
-(pca955x HW blink guard) and `48ca7f302cfcf` (pca9532 HW blink
-introduction).
+### Step 4.4: Related Patches
+**Record:** No multi-patch series indicated. SFP driver
+(`drivers/net/phy/sfp.c`) claims GPIOs via `devm_gpiod_get_optional()`
+without `NONEXCLUSIVE` at lines 3149–3150 — consistent with SFP-probes-
+first, LED-joins-shared scenario described in the commit.
 
-### Step 4.5: Stable list
-**Record:** No stable-list discussion found for this specific fix.
+### Step 4.5: Stable List History
+**Record:** UNVERIFIED — could not search lore stable list due to fetch
+restrictions.
 
 ---
 
-## PHASE 5: CODE SEMANTIC ANALYSIS
+## Phase 5: Code Semantic Analysis
 
-### Step 5.1: Key functions
-**Record:** `pca9532_set_brightness()` (modified); context:
-`pca9532_update_hw_blink()`, `pca9532_set_blink()`, `pca9532_setled()`.
+### Step 5.1: Key Functions
+**Record:** `gpio_trig_activate()` modified.
 
 ### Step 5.2: Callers
-**Record:** `pca9532_set_brightness` is registered as
-`brightness_set_blocking` for `PCA9532_TYPE_LED` devices (probe path
-~line 426). Called from LED core via `__led_set_brightness_blocking()`
-on sysfs `brightness` writes — userspace-accessible.
+**Record:** `gpio_trig_activate` is the `.activate` callback for
+`gpio_led_trigger`, invoked from `led_trigger_set()` in
+`drivers/leds/led-triggers.c` during:
+- Default trigger setup at LED registration (`led_trigger_set_default()`
+  → `led_match_default_trigger()`)
+- Late trigger module load (`led_trigger_register()`)
+- Manual trigger changes via sysfs
 
 ### Step 5.3: Callees
-**Record:** On guarded path: none (early return). Normal path:
-`pca9532_calcpwm()`, `pca9532_setpwm()`, `pca9532_setled()` (I2C
-register writes under mutex).
+**Record:** `gpiod_get_optional()`, `gpiod_set_consumer_name()`,
+`request_threaded_irq()` (already uses `IRQF_SHARED`),
+`gpio_trig_irq()`.
 
 ### Step 5.4: Reachability
+**Record:** Triggered during device probe/LED registration for any
+platform using `linux,default-trigger = "gpio"` with `trigger-sources`
+referencing a GPIO also claimed by another driver. Requires
+`CONFIG_LEDS_TRIGGER_GPIO`. SFP network appliances are the documented
+case.
+
+### Step 5.5: Similar Patterns
+**Record:** `GPIOD_FLAGS_BIT_NONEXCLUSIVE` is used in 30+ locations in
+this tree for the same shared-GPIO pattern (regulators, extcon, micrel
+PHY, etc.). LED gpio trigger was an omission.
+
+---
+
+## Phase 6: Cross-Reference Against Local Tree (6.18.44)
+
+### Step 6.1: Buggy Code Present?
+**Record:** YES. Current tree at `drivers/leds/trigger/ledtrig-
+gpio.c:89`:
+
+```89:89:drivers/leds/trigger/ledtrig-gpio.c
+        gpio_data->gpiod = gpiod_get_optional(dev, "trigger-sources",
+GPIOD_IN);
+```
+
+Fix is not yet applied. Bug has existed since Nov 2023 in this tree.
+
+### Step 6.2: Backport Complications
+**Record:** Clean apply expected — single-line change, no surrounding
+churn. No conflicts anticipated.
+
+### Step 6.3: Related Fixes Already Present?
+**Record:** No — `git log --grep` found no matching fix in this tree.
+
+---
+
+## Phase 7: Subsystem Context
+
+### Step 7.1: Subsystem
+**Record:** `drivers/leds/trigger/` — LED triggers. **Criticality:
+PERIPHERAL** (status LEDs), but on network appliances SFP status LEDs
+are operationally important.
+
+### Step 7.2: Activity
+**Record:** Moderate recent activity (cleanups in 2024–2025). trigger-
+sources gpio trigger is mature in this tree.
+
+---
+
+## Phase 8: Impact and Risk Assessment
+
+### Step 8.1: Who Is Affected
+**Record:** Config-specific — systems with `CONFIG_LEDS_TRIGGER_GPIO`
+and device trees wiring gpio LED triggers to GPIO lines shared with
+another driver (documented: SFP Mod_ABS/Rx_LOS). Not universal, but real
+on network appliance hardware.
+
+### Step 8.2: Trigger Conditions
 **Record:**
-1. User writes `timer` to `trigger` → `led_blink_set()` →
-   `pca9532_set_blink()` → HW blink configures PWM1
-2. User writes non-zero `brightness` → `pca9532_set_brightness()` —
-   **buggy without fix**
-- Reachable from unprivileged userspace (sysfs, subject to permissions).
-  Common on embedded status-LED setups.
+- Another driver (e.g. SFP) claims the GPIO before LED gpio trigger
+  activates.
+- Common probe order on SFP platforms (SFP probes first).
+- Not a security issue; unprivileged users cannot trigger this directly.
 
-### Step 5.5: Similar patterns
-**Record:** `pca955x_led_set()` in `leds-pca955x.c` lines 316–323
-explicitly preserves blinking for non-zero brightness when
-`active_blink` is set — same design intent.
+### Step 8.3: Failure Mode Severity
+**Record:** Status LEDs silently non-functional. **Severity: LOW to
+MEDIUM** — no crash, corruption, or deadlock, but broken hardware
+indication on affected platforms.
 
----
-
-## PHASE 6: CROSS-REFERENCING AGAINST LOCAL TREE
-
-### Step 6.1: Buggy code present?
-**Record:** **Yes.** Current `pca9532_set_brightness()` at lines 185–198
-lacks the `PCA9532_PWM1` guard. HW blink support from `48ca7f302cfcf` is
-in this tree. Bug introduced ~2024-06 with that commit.
-
-### Step 6.2: Backport complications
-**Record:** Expected **clean apply** — the surrounding function matches
-the diff context exactly. No conflicting recent changes to this
-function.
-
-### Step 6.3: Related fixes already present?
-**Record:** **No** — grep finds no "Non-zero brightness shall not stop"
-comment or equivalent guard. The fix commit (`770edd8e8e5b`) is not in
-this tree.
-
----
-
-## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
-
-### Step 7.1: Subsystem criticality
-**Record:** `drivers/leds/` — **PERIPHERAL** driver (PCA9532 I2C LED
-controller). Important for embedded/industrial boards (e.g. historical
-Thecus NAS platforms), not core kernel.
-
-### Step 7.2: Subsystem activity
-**Record:** LED subsystem actively maintained in 6.18.y; recent stable-
-relevant fixes include buffer overread, error-path leaks, and probe-
-order fixes.
-
----
-
-## PHASE 8: IMPACT AND RISK ASSESSMENT
-
-### Step 8.1: Who is affected
-**Record:** Users of `pca9532` with `hw_blink == true` (default for
-normal LED configs; disabled only for N2100 beeper variant). Driver-
-specific, config/board-specific.
-
-### Step 8.2: Trigger conditions
-**Record:** Enable `timer` trigger (HW blink succeeds), then write any
-non-zero brightness. **Common** for scripts/users adjusting LED
-intensity while blinking. Unprivileged users can trigger via sysfs (with
-normal permissions).
-
-### Step 8.3: Failure mode severity
-**Record:** Incorrect LED behavior + inconsistent sysfs state (trigger
-shows active, hardware not blinking). **Severity: MEDIUM** — no crash,
-corruption, or deadlock; real functional regression against documented
-LED class behavior.
-
-### Step 8.4: Risk-benefit
+### Step 8.4: Risk-Benefit
 **Record:**
-- **Benefit:** Restores documented sysfs semantics; fixes regression
-  introduced by HW blink backport already in this tree.
-- **Risk:** Very low (4-line guard, proven sibling-driver pattern).
-- **Ratio:** Favorable — low-risk regression fix for functionality
-  already shipped in 6.18.y.
+- **Benefit:** Restores intended SFP/status LED behavior on shared-GPIO
+  platforms; one-line fix following established kernel pattern.
+- **Risk:** Very low — minimal, well-understood change.
+- **Ratio:** Moderate benefit, very low risk. Fits hardware-
+  quirk/workaround exception category.
 
 ---
 
-## PHASE 9: FINAL SYNTHESIS
+## Phase 9: Final Synthesis
 
-### Step 9.1: Evidence summary
+### Step 9.1: Evidence Summary
 
 **FOR backport:**
-- Real, reproducible bug with clear sysfs steps
-- Regression from `48ca7f302cfcf`, already in this tree
-- Violates `Documentation/leds/leds-class.rst` contract
-- Tiny, obviously correct fix matching `pca955x`
-- Maintainer (Lee Jones) applied without objection
-- Clean apply expected
+- Real, verified bug with understood mechanism (EBUSY on shared GPIO →
+  silent activation failure).
+- Small, obviously correct, maintainer-reviewed fix.
+- Buggy code and all prerequisites exist in 6.18.44.
+- Established `GPIOD_FLAGS_BIT_NONEXCLUSIVE` pattern used widely in this
+  tree.
+- Hardware workaround for network appliance SFP LED use case.
 
 **AGAINST backport:**
-- Not a crash, security, corruption, or deadlock issue
-- Affects only `pca9532` + HW blink configurations
-- No explicit `Cc: stable` or user bug reports beyond author
+- Not a crash, security, corruption, or deadlock issue.
+- Affects a narrow configuration (shared GPIO + gpio LED trigger).
+- `GPIOD_FLAGS_BIT_NONEXCLUSIVE` is deprecated (though still the
+  required workaround).
+- No in-tree DTS found yet wiring SFP GPIOs to gpio LED triggers (use
+  case may be out-of-tree/future DTS).
 
-**Unresolved:** None material to the decision.
+**UNRESOLVED:**
+- Full mailing list review thread (fetch blocked).
+- Whether any in-tree DTS currently triggers this exact SFP+gpio-trigger
+  configuration.
 
-### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — logic matches pca955x; sysfs
-   repro documented; maintainer applied.
-2. Fixes a real bug affecting users? **PASS** — sysfs/API behavior bug
-   on real hardware.
-3. Important issue? **PASS (moderate)** — regression in shipped HW-blink
-   feature; inconsistent sysfs state; not crash-level but user-visible
-   and documented-API violation.
-4. Small and contained? **PASS** — ~4 lines, one function, one file.
-5. No new features or APIs? **PASS** — behavior correction only.
-6. Can apply to local tree? **PASS** — prerequisite commits present;
-   clean apply expected.
+### Step 9.2: Stable Rules Checklist
+1. Obviously correct and tested? **PASS** — mechanism verified in code;
+   maintainer SOB; pattern proven across tree.
+2. Fixes a real bug affecting users? **PASS** — shared-GPIO LED trigger
+   silently fails.
+3. Important issue? **PASS (borderline)** — not crash/security, but real
+   hardware functionality loss on network appliances; fits hardware-
+   workaround exception.
+4. Small and contained? **PASS** — 1-line functional change.
+5. No new features or APIs? **PASS** — fixes existing trigger behavior.
+6. Can apply to local tree? **PASS** — prerequisites present, clean
+   apply expected.
 
-### Step 9.3: Exception categories
-**Record:** None (not device ID, quirk, DT, build, or docs-only).
-Standard driver correctness fix.
+### Step 9.3: Exception Category
+**Record:** Hardware quirk/workaround — shared GPIO access between LED
+trigger and another driver (SFP).
 
-### Step 9.4: Problem and decision rationale
-
-This commit fixes a regression introduced when hardware blinking was
-added to `pca9532` in this tree (`48ca7f302cfcf`). Without the guard,
-any non-zero `brightness` write silently tears down `PCA9532_PWM1`
-hardware blink while the LED core still reports the `timer` trigger as
-active — breaking the documented rule that non-zero brightness changes
-should not disable the timer trigger.
-
-For 6.18.y users who received HW blink support, this completes that
-feature correctly. The fix is minimal, follows an in-tree precedent
-(`pca955x`), and carries negligible regression risk. While not a crash
-fix, it is a clear regression fix for behavior already present in this
-stable tree.
+### Step 9.4: Decision Rationale
+For the **6.18.44** tree checked out here: the bug exists, the fix is
+minimal and follows a well-established kernel pattern, and it restores
+broken status-LED functionality on real shared-GPIO hardware (SFP
+network appliances). Severity is below crash/corruption tier, but stable
+trees routinely accept such hardware-enablement GPIO sharing fixes.
+Benefit outweighs the very low regression risk.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed subject, tags, body from user-provided commit
-  message; fetched lore v2 mbox via curl
-- **[Phase 2]** Read current `pca9532_set_brightness()` at lines
-  179–199; analyzed provided diff
-- **[Phase 3]** `git describe HEAD` → v6.18.44; `git blame -L 179,199` →
-  core logic from 2008, bug latent until 2024; `git log --oneline -20 --
-  drivers/leds/leds-pca9532.c` → `48ca7f302cfcf` present; `git merge-
-  base --is-ancestor` → both `48ca7f302cfcf` and `575f10dc64a2` in tree;
-  `git show 48ca7f302cfcf` confirmed HW blink addition
-- **[Phase 4]** curl lore mbox: v2 patch, Lee Jones "Applied, thanks!",
-  commit id `770edd8e8e5b`; `b4 dig -c` failed (commit not in tree); no
-  stable-list hits
-- **[Phase 5]** Traced `brightness_set_blocking` registration (~line
-  426); read `pca955x_led_set()` guard at lines 316–323; read
-  `led_blink_setup()` in `led-core.c` (HW blink bypasses SW timer when
-  `blink_set` succeeds)
-- **[Phase 6]** Confirmed buggy code present (no PCA9532_PWM1 guard);
-  grep found no existing fix; `git show 770edd8e8e5b` → bad object (not
-  in tree)
-- **[Phase 7]** `git log --oneline -20 -- drivers/leds/` for subsystem
-  activity
-- **[Phase 8]** Read `Documentation/leds/leds-class.rst` lines 23–25;
-  confirmed `hw_blink` default true except N2100 beeper (~line 440)
-- **[Phase 9]** Synthesized against stable rules for 6.18.44 only
+- [Phase 1] Parsed subject, tags, body; identified hardware-sharing bug
+- [Phase 2] Read diff and `ledtrig-gpio.c`; verified EBUSY → silent
+  failure path via `gpiolib.c:4672-4674` and `led-triggers.c:271-278`
+- [Phase 3] `git blame`: buggy line from `9bbd6b7209cf1` (Nov 2023);
+  trigger-sources from `4a11dbf04f31c` (Sep 2023)
+- [Phase 3] `git log --oneline -20 -- drivers/leds/trigger/ledtrig-
+  gpio.c`: no duplicate fix
+- [Phase 3] `git show ec757001c818c`: NONEXCLUSIVE support since 2018
+- [Phase 4] `b4 dig`: failed — commit not in tree
+- [Phase 4] WebFetch lore/patch.msgid.link: blocked by Anubis
+- [Phase 5] Traced `gpio_trig_activate` → `led_trigger_set` →
+  `led_match_default_trigger` call chain
+- [Phase 5] `grep GPIOD_FLAGS_BIT_NONEXCLUSIVE`: 30+ existing uses in
+  tree
+- [Phase 5] Read `sfp.c:3149-3150`: SFP claims GPIOs without
+  NONEXCLUSIVE
+- [Phase 6] `git describe HEAD`: v6.18.44-1-g2736c32da98b9
+- [Phase 6] Confirmed buggy code at `ledtrig-gpio.c:89` without fix
+- [Phase 6] `grep trigger-sources *.dts*`: USB router use cases present;
+  no in-tree SFP+gpio-trigger DTS found
+- [Phase 8] Confirmed `gpiod_not_found()` only maps `-ENOENT` to NULL,
+  not `-EBUSY` (`gpiolib.h:221`)
 
-**YES**The background search finished: the fix (`leds: pca9532: Don't
-stop blinking for non-zero brightness`) is **not** in this `6.18.44`
-tree yet. The buggy code is still there — `pca9532_set_brightness()` can
-overwrite `PCA9532_PWM1` when sysfs brightness is set to a non-zero
-value while hardware blinking is active.
+**YES**The background search finished. It turned up related work
+(Puzzle-M801 board DTS with SFP+, Broadcom PHY/SFP LED handling), but
+nothing that changes the backport call.
 
-**Verdict for this tree: YES** — small regression fix for HW blink
-support already in 6.18.y; low risk and matches the `pca955x` pattern.
+**Verdict for this 6.18.44 tree: YES**
 
- drivers/leds/leds-pca9532.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+The gpio LED trigger fails silently when another driver (e.g. SFP for
+Mod_ABS/Rx_LOS) already owns the GPIO. Adding
+`GPIOD_FLAGS_BIT_NONEXCLUSIVE` is a one-line fix that matches an
+established pattern elsewhere in the tree, and the buggy code is still
+present at `ledtrig-gpio.c:89`.
 
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index 0344189bb991c..dae7c67605084 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -182,11 +182,13 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
- 	int err = 0;
- 	struct pca9532_led *led = ldev_to_led(led_cdev);
- 
--	if (value == LED_OFF)
-+	if (value == LED_OFF) {
- 		led->state = PCA9532_OFF;
--	else if (value == LED_FULL)
-+	} else if (led->state == PCA9532_PWM1) {
-+		return 0; /* Non-zero brightness shall not stop HW blinking */
-+	} else if (value == LED_FULL) {
- 		led->state = PCA9532_ON;
--	else {
-+	} else {
- 		led->state = PCA9532_PWM0; /* Thecus: hardcode one pwm */
- 		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0, 0, value);
- 		if (err)
+ drivers/leds/trigger/ledtrig-gpio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/ledtrig-gpio.c
+index 7f6a2352b0acd..3199275fd250b 100644
+--- a/drivers/leds/trigger/ledtrig-gpio.c
++++ b/drivers/leds/trigger/ledtrig-gpio.c
+@@ -86,7 +86,8 @@ static int gpio_trig_activate(struct led_classdev *led)
+ 	 * The generic property "trigger-sources" is followed,
+ 	 * and we hope that this is a GPIO.
+ 	 */
+-	gpio_data->gpiod = gpiod_get_optional(dev, "trigger-sources", GPIOD_IN);
++	gpio_data->gpiod = gpiod_get_optional(dev, "trigger-sources",
++					      GPIOD_IN | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	if (IS_ERR(gpio_data->gpiod)) {
+ 		ret = PTR_ERR(gpio_data->gpiod);
+ 		kfree(gpio_data);
 -- 
 2.53.0
 
