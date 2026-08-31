@@ -1,113 +1,162 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132A733987E
-	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 14:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4984B1B33
+	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 15:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788188301; cv=none; b=aAHXwhv6QVLnAsSv7SaBXunoyb7nypLOFfqtaiDDg539IqoSq0/eljgV3ZeEI2/sjzwkQ1ZWfMNfMb/WAWjsom/pm+IYWZNhAhkpXv1EJryWaapQ5JPj6l6LQ2FUF5tHoBHpoKg5AGL7RWD/B9N/p9DmyrGYmkglTPoevat6hiw=
+	t=1788191378; cv=none; b=X4DPZzPJ81DyDdTkJxc/rTE1IJP7HimVTlwUKuXg1QwsS4SKYoe/NhOwd10o5XKCsmWlz4fgBpk6neFABbkBAAMHoaN4v+w4y6Whfq+/MAZ2gFh+oMDCb8csWWds1lfTL3NQTkMTIyogCJTHTCWMFD1rkMJeomlylN6oEWex2pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788188301; c=relaxed/simple;
-	bh=v35SYT1NJlyvW7AALIKdiUntTB6Wk95qfYsfPhLCjDM=;
+	s=arc-20240116; t=1788191378; c=relaxed/simple;
+	bh=0Jrs73i/6gIfLGJmuXhyR43Tfy/f8pQsdvo1zO/DY8A=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=EMTOvsUL8Dxp1GWSz/XJyGtBu0oNxWUIqxlQM1QB4OhKyNIczopz+fvkwfSA1EJyeO2XadyreD6KMte1IW/oON8mESe33UDDA1SURb8Ut1ZIT4HOQfXtRqqmZDlFL0b4YXjgUlujpwBxfBWM1wFuZOOx+P8VQ3o3fbANEE+fKDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3+bKUUR; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=IG7D6r8Io1NRDqDFlApOJeGi8QBVZlMvz7gNfcUqtbUnfL2ZEF8CoMkxUGx4DzxDDpHvKZERQX1LEDkypRVokCGFliZIrcE8kriPilmk6JPlVVyiTe4nGHJypHj1730CVc6FfUcd0/J+Xpb+BmUFx9l+qAsj8rTm3qL2J8vWQXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iovlhsO9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3+bKUUR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6481F000E9;
-	Mon, 31 Aug 2026 14:58:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iovlhsO9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFF21F000E9;
+	Mon, 31 Aug 2026 15:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788188299;
-	bh=3DQbaGhz9/Mo2Em5/R0B6HAcWYztszPxlpw7OKmwn3Y=;
+	s=k20260515; t=1788191376;
+	bh=ZIrHn5ydh4PFOjORr55aS3D6Bc5ebL/oZtSLSK8ial8=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=j3+bKUUR0+fQNYml4gtr3Swf4ykQbKF2Zk3EAoHTkAs3ie5pn/64ByyesCwKO1Wo2
-	 ycoaPfOHSdkrXUvVqi4PWQ07SIIdVWTgc8VHPVudjamRH87vE5qqpJePrkAtRjdP6C
-	 aKObC+jKoNag0E8HteuMJVsP9lcrgoanBw8bjzIea67v2Z73+iK/iYxIT5admKQnDT
-	 THkPjtr3nbE6B7WVec3hwXxN2d+oiUsxLvM7hkmVgXo0PRmdnTpzX3eJBRupnZ86Lk
-	 Kn4L+wFKFvzKCewbkCs04dxv3NfMY/Pdnsf0N+g4KlHipu71V31YtFEHkYe3HD3vQD
-	 4PIKhcrZtGDdA==
+	b=iovlhsO93oztgyfU7DLfLFkzF5OR17dE5iZRGKN42BkMR7y97yk3Tfh0IK2ZDLaBC
+	 4HQKdj2hiT+DIU8gduZJ143mm5sepnmLb9khuA0gYS0p3EKZ9uyDxUruRf3jnBxd8f
+	 YFFELPy39d8zre9iCt5EgOLxPmJZ+UMPRM9pS7FiZyomYnr2cqNjql2qIGJIRKrKk1
+	 WXtw9rOlOIXCDnf8Iqa0SWp9kMbctG9Xi52fxsfGLtdkW4UTol3IYQWcXYegRNGdnu
+	 oyTtmcJh1GPI5a3JMyWreZWy2IUVQqCF31+6NFkcz36TeNiQ7gi6t4tjYxWX1/NxW+
+	 khG59x8xe6x6A==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH AUTOSEL 6.18-5.10] leds: pca9532: Don't stop blinking
- for non-zero brightness
+Subject: Re: [PATCH AUTOSEL 6.18-6.12] leds: trigger: gpio: Use
+ GPIOD_FLAGS_BIT_NONEXCLUSIVE
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sasha Levin" <sashal@kernel.org>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260831133314.4125787-192-sashal@kernel.org>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260831133314.4125787-347-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
- <20260831133314.4125787-192-sashal@kernel.org>
+ <20260831133314.4125787-347-sashal@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 31 Aug 2026 14:58:18 +0000
-Message-Id: <20260831145819.6F6481F000E9@smtp.kernel.org>
+Date: Mon, 31 Aug 2026 15:49:35 +0000
+Message-Id: <20260831154936.4EFF21F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-
-Pre-existing issues:
-- [High] Race condition in N2100_BEEP input device teardown leading to use-=
-after-free
+- [High] Using GPIOD_FLAGS_BIT_NONEXCLUSIVE causes premature hardware un-co=
+nfiguration and refcount underflow when the shared GPIO is released, breaki=
+ng the primary owner.
+- [High] The patch fails to achieve its stated goal (supporting SFP shared =
+GPIOs) because the SFP driver does not share IRQs, causing activation to al=
+ways fail with -EBUSY.
+- [Medium] The LED trigger driver blindly overwrites the shared GPIO's cons=
+umer name, erasing the primary driver's label.
 --
 
-commit 7c75890ff5fc7d7cfe4c161d927be50be43a1827
-Author: Tobias Deiminger <tobias.deiminger@linutronix.de>
+commit 02d3bd93d29878c57dc994ff5d3e680adeef7f2e
+Author: Piotr Kubik <piotr@kubik.pl>
+Subject: leds: trigger: gpio: Use GPIOD_FLAGS_BIT_NONEXCLUSIVE
 
-leds: pca9532: Don't stop blinking for non-zero brightness
+This commit adds the GPIOD_FLAGS_BIT_NONEXCLUSIVE flag when requesting
+the GPIO in the LED trigger driver. This is intended to allow the trigger
+to share a GPIO with another driver, such as an SFP module.
 
-This patch prevents the pca9532 driver from incorrectly stopping hardware
-blinking when a non-zero brightness value is set. It adds a guard to return=
-=20
-early if the LED state is PCA9532_PWM1, aligning the behavior with the=20
-LED subsystem documentation.
+Link: https://patch.msgid.link/20260408115106.379834-1-piotr@kubik.pl
 
-Link: https://patch.msgid.link/20260331202848.658676-1-tobias.deiminger@lin=
-utronix.de
-
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index 0344189bb991c..dae7c67605084 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-
-[ ... ]
+> diff --git a/drivers/leds/trigger/ledtrig-gpio.c b/drivers/leds/trigger/l=
+edtrig-gpio.c
+> index 7f6a2352b0acd..3199275fd250b 100644
+> --- a/drivers/leds/trigger/ledtrig-gpio.c
+> +++ b/drivers/leds/trigger/ledtrig-gpio.c
+> @@ -86,7 +86,8 @@ static int gpio_trig_activate(struct led_classdev *led)
+>  	 * The generic property "trigger-sources" is followed,
+>  	 * and we hope that this is a GPIO.
+>  	 */
+> -	gpio_data->gpiod =3D gpiod_get_optional(dev, "trigger-sources", GPIOD_I=
+N);
+> +	gpio_data->gpiod =3D gpiod_get_optional(dev, "trigger-sources",
+> +					      GPIOD_IN | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
 
 [Severity: High]
-This isn't a bug introduced by this patch, but while looking at this driver,
-I noticed a potential use-after-free race during teardown of the N2100_BEEP
-input device.
+Does acquiring this GPIO non-exclusively expose the hardware state to being
+inadvertently destroyed?
 
-In pca9532_destroy_devices(), the worker is canceled but the managed input
-device remains active until devres unwinds:
+Because gpiolib does not implement reference counting for non-exclusive
+consumers, any call to gpiod_put() will execute gpiod_free_commit():
 
-    case PCA9532_TYPE_N2100_BEEP:
-        if (data->idev !=3D NULL) {
-            cancel_work_sync(&data->work);
-            data->idev =3D NULL;
-        }
-        break;
+drivers/gpio/gpiolib.c:gpiod_free_commit() {
+    ...
+    clear_bit(GPIOD_FLAG_REQUESTED, &flags);
+    ...
+}
 
-If an input event (e.g., SND_BELL) arrives through the evdev node in this
-narrow window before devres unwinds, pca9532_event() will blindly queue
-up the work again:
+This unconditionally frees the GPIO hardware state. Since gpio_trig_activat=
+e()
+calls gpiod_put() on its error path and during deactivation, won't this tear
+down the primary owner's (e.g., the SFP driver's) hardware state?
 
-    schedule_work(&data->work);
 
-Once devres unwinding completes, the data structure is freed, but the
-newly queued work remains active. When pca9532_input_work() executes, it
-could access the freed data:
+[Severity: High]
+Will this IRQ sharing strategy actually work with the SFP driver?
 
-    static void pca9532_input_work(struct work_struct *work)
-    {
-        ...
-        mutex_lock(&data->update_lock);
+In gpio_trig_activate(), the LED trigger requests the IRQ with IRQF_SHARED:
 
-Could this result in a use-after-free crash if a user space process writes
-to the input event node during driver removal? Should the input device be
-explicitly unregistered before canceling the work?
+    ret =3D request_threaded_irq(gpiod_to_irq(gpio_data->gpiod), NULL,
+                    gpio_trig_irq,
+                    IRQF_ONESHOT | IRQF_SHARED | IRQF_TRIGGER_RISING
+                    | IRQF_TRIGGER_FALLING, "ledtrig-gpio", led);
+
+However, the primary SFP driver requests the same IRQ exclusively:
+
+drivers/net/phy/sfp.c:sfp_probe() {
+    ...
+    err =3D devm_request_threaded_irq(sfp->dev, sfp->gpio_irq[i],
+                                    NULL, sfp_irq,
+                                    IRQF_ONESHOT |
+                                    IRQF_TRIGGER_RISING |
+                                    IRQF_TRIGGER_FALLING,
+                                    sfp_irq_name, sfp);
+    ...
+}
+
+Since the kernel's IRQ core strictly requires all consumers to use IRQF_SHA=
+RED
+for sharing to succeed, won't request_threaded_irq() always return -EBUSY?=
+=20
+
+If this always fails, it will trigger the error path that calls gpiod_put(),
+which leads to the destructive GPIO teardown mentioned above.
+
+
+[Severity: Medium]
+Could this overwrite the original owner's consumer label?
+
+Right after acquiring the GPIO, the trigger driver forcibly sets the
+consumer name:
+
+    gpiod_set_consumer_name(gpio_data->gpiod, "led-trigger");
+
+The underlying gpiolib implementation completely overwrites and frees the
+old label:
+
+drivers/gpio/gpiolib.c:desc_set_label() {
+    ...
+    old =3D rcu_replace_pointer(desc->label, new, 1);
+    if (old)
+        call_srcu(&desc->gdev->desc_srcu, &old->rh, desc_free_label);
+    ...
+}
+
+Won't this erase the primary driver's label and corrupt the consumer
+tracking for debugging interfaces like debugfs and sysfs? Furthermore, if t=
+he
+LED trigger fails or deactivates, won't desc_set_label() clear the label
+entirely to NULL, permanently masking the primary driver's ownership?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
-787-192-sashal@kernel.org?part=3D1
+787-347-sashal@kernel.org?part=3D1
