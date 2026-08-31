@@ -1,186 +1,144 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E2D468C29
-	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 17:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28934052BF
+	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 17:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788196395; cv=none; b=Hx1Tya/kwlqreJWSwEKHIePGv/IbFm5H/fpDhFHiyLq3TtkLZ54DiaXEg4a9J3eacX81f8UbEI5/jiWnRlb3e/FEC5YhKkLmyu4cOWb4jlk8R6EJ6Vh9pVsV/HKWzlKVABgvvwie9YQ4abL2UJl8Rn0pcdoTPMn4+Hl5PNR5g7U=
+	t=1788196437; cv=none; b=Kyt88OFe/An8FOYfY7QMDRH9px+sBPlnOWKhn3GDLlwgUdCqMPPKOSNR9XIhYYCJuadqiWa+4+GZhxEX9lRnwGn4vBejfwHCSj2pqCcOwOT9PKmds9eyYjLHoE/o28j9WCMZqzlIE6GnNdVfHD8Wfx2S0vG5IAjkfKVyYQ3N8R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788196395; c=relaxed/simple;
-	bh=QhLdPMZ4xRSHIWkpOKskVTyX2LM1Kjp5KyG5FcolAsQ=;
+	s=arc-20240116; t=1788196437; c=relaxed/simple;
+	bh=kxQM+Zhz7sQVVKC2PFuPaXSHEN7QoQleELyyynIPPwc=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=WSpNWoWEFbZUcJyHvGfG14fd5jaDcCOo/Ji5v2bDk0vor98gc3Oh0RwLOfESFYEGfPhFa/qrsyd6jAUX5G7tpSNUK6HFibbum3cIec19EqY9gSeDBYKuxcUXI7JI1gZsvkZ+wCoiBTmE6ZbHHO69m3kC13E2wSC5BCvX+oBY+fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+ujNWke; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=V8gJZmyzVmUHiWQxG8HSZzNdAvhI7ijcYzWmfOp62/hZRwjs79Z98rE07RZ2gogKGICSDM4uhl7IFj1r/OrMZRsgSdL3uGu7+9afW2IEbAS0ysyjzvgk7svNA53BoINObV2HQ1Bmb3Y2pZEdqE89NZpXa0WLEjqx3vQHyWDfRwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIDU/mmT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+ujNWke"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8ACB1F000E9;
-	Mon, 31 Aug 2026 17:13:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIDU/mmT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352181F000E9;
+	Mon, 31 Aug 2026 17:13:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788196393;
-	bh=1YTAJIA2V8ifFvelLsHmTV6Pzx5/hnxLb5shwr/Kf1M=;
+	s=k20260515; t=1788196435;
+	bh=6eDO34Sfm5wIHx/GS2G7ktiYBAZIvsE42PsyU/EKOhA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=g+ujNWkeoLDZN+ssJ2eOePu6nXY6UqB6+jQ9Q37KJzfpi41IP1TnBR5h+cT8ro3NN
-	 XWgvqQrg9rFyHd0lmpsLKGyxJy+ZyxyS0wOuiOx+OaJu4C3c2lL54YS4MFeZQETXEE
-	 LH4vnn01GTci2F7FuPdW5VneKRB6xurvEcaaTlysQ0aoHjp9Q9WOc0Rd+OKRcDeBU7
-	 Pg7DDpTtWTF8DE3uPSMo5N/JtHc5wM/S5I3LMVCcnbKYzM4w9lSGqgygizwjwJ3cdd
-	 Lt6MC4VasFi7o4r8KD41qIISOFQ4iog8urYAb1Ad9w0WJOnkz68CMOwFgT0lb0QIhw
-	 9X0EJgU0TYwZQ==
+	b=AIDU/mmTrM/6EmvALqCh39a+24p7Wxqy7pGstvi7hH/4uC9UvbYbUhyV/uANjAzSX
+	 6igtAzGUY3xTGCilj+Q5vqRmXcED8ejHiUAPGmDy4byKjxlKc2FVzSnEcQ0YmDjeG9
+	 qPTxLYpVx2KBiNMLiaIeKfWnfuoam8jBEoxUaK+9qXOYud+a8+3udhmb+wep4rry/R
+	 Q8l9gSib6BSXV8LilI02BYL1QCxtHq2mDriuMYeEanLNmQh75L/DM3Nhy3JJLtVbYn
+	 KKDeHTdeqCvQagkojMf0005/eVrdUt0DYN8Sf1D8XpEVCfqnFglf/leqpYpAQHIpJZ
+	 288+YsoJqJBSw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH AUTOSEL 6.18] leds: tps6131x: Increase overvoltage
- protection threshold to 6V
+Subject: Re: [PATCH AUTOSEL 6.18-5.10] leds: uleds: Return -EFAULT on
+ copy_to_user() failure
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Sasha Levin" <sashal@kernel.org>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260831133314.4125787-567-sashal@kernel.org>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260831133314.4125787-563-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
- <20260831133314.4125787-567-sashal@kernel.org>
+ <20260831133314.4125787-563-sashal@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 31 Aug 2026 17:13:13 +0000
-Message-Id: <20260831171313.A8ACB1F000E9@smtp.kernel.org>
+Date: Mon, 31 Aug 2026 17:13:54 +0000
+Message-Id: <20260831171355.352181F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Missing cleanup and inverted teardown order for `torch_refresh_wor=
-k` causes use-after-free.
-- [High] The flash strobe is immediately cancelled when turned on due to a =
-missing return statement.
-- [High] `led_cdev->max_brightness` is set to milliamperes instead of steps=
-, breaking the standard sysfs brightness scaling interface.
+- [High] Missing null-termination check on user-supplied LED name allows ou=
+t-of-bounds read and information leak.
 --
 
-commit d25747de0af565ce7fa5d6951483e0ef6ee5bb6d
-Author: Matthias Fend <matthias.fend@emfend.at>
+commit a8b47a018dff3b5b2d397104d41c5a68d837fbea
+Author: Yousef Alhouseen <alhouseenyousef@gmail.com>
 
-leds: tps6131x: Increase overvoltage protection threshold to 6V
+leds: uleds: Return -EFAULT on copy_to_user() failure
 
-This commit increases the overvoltage protection threshold in the tps6131x
-driver to 6V. It adjusts the register initialization value to prevent spuri=
-ous
-overvoltage detection on valid 5V hardware setups.
+uleds_read() copies the current brightness value to userspace but ignores
+copy_to_user() failures. It then clears the pending update and reports a
+successful full read even when no data was copied. Return -EFAULT when
+the copy fails and leave the update pending so a later read can retry.
 
-Link: https://patch.msgid.link/20260527-leds-tps6131x-ovp-v1-1-1ac70d03c9eb=
-@emfend.at
+Link: https://patch.msgid.link/20260521181205.15130-1-alhouseenyousef@gmail=
+.com
 
-> diff --git a/drivers/leds/flash/leds-tps6131x.c b/drivers/leds/flash/leds=
--tps6131x.c
-> index 6f4d4fd553610..ad96455b3b02a 100644
-> --- a/drivers/leds/flash/leds-tps6131x.c
-> +++ b/drivers/leds/flash/leds-tps6131x.c
-> @@ -277,7 +277,7 @@ static int tps6131x_init_chip(struct tps6131x *tps613=
-1x)
->  	if (ret)
->  		return ret;
+> diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
+> index 374a841f18c37..ce2ae79d5de04 100644
+> --- a/drivers/leds/uleds.c
+> +++ b/drivers/leds/uleds.c
+> @@ -147,10 +147,13 @@ static ssize_t uleds_read(struct file *file, char _=
+_user *buffer, size_t count,
+>  		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
+>  			retval =3D -EAGAIN;
+>  		} else if (udev->new_data) {
+> -			retval =3D copy_to_user(buffer, &udev->brightness,
+> -					      sizeof(udev->brightness));
+> -			udev->new_data =3D false;
+> -			retval =3D sizeof(udev->brightness);
+> +			if (copy_to_user(buffer, &udev->brightness,
+> +					 sizeof(udev->brightness))) {
+> +				retval =3D -EFAULT;
+> +			} else {
+> +				udev->new_data =3D false;
+> +				retval =3D sizeof(udev->brightness);
+> +			}
+>  		}
 > =20
-> -	val =3D TPS6131X_REG_6_ENTS;
-> +	val =3D TPS6131X_REG_6_ENTS | (TPS6131X_OV_4950MV << TPS6131X_REG_6_OV_=
-SHIFT);
-> =20
->  	ret =3D regmap_write(tps6131x->regmap, TPS6131X_REG_6, val);
->  	if (ret)
+>  		mutex_unlock(&udev->mutex);
 
-[ ... ]
+While reviewing this patch, I noticed a pre-existing issue in uleds_write()
+within the same file:
 
-> static void tps6131x_remove(struct i2c_client *client)
-> {
-> 	struct tps6131x *tps6131x =3D i2c_get_clientdata(client);
->=20
-> 	v4l2_flash_release(tps6131x->v4l2_flash);
->=20
-> 	cancel_delayed_work_sync(&tps6131x->torch_refresh_work);
-> }
-
-[Severity: High]
-This isn't a bug introduced by this patch, but doesn't this teardown order
-leave a use-after-free vulnerability in tps6131x_remove()?
-
-Because devm_led_classdev_flash_register_ext() uses devres, the LED device
-remains registered when tps6131x_remove() returns. If a user writes to the
-LED brightness sysfs attribute during this window, tps6131x_brightness_set()
-can reschedule torch_refresh_work.=20
-
-The subsequent devres teardown will free the tps6131x struct while the dela=
-yed
-work timer is still active.
-
-Additionally, in tps6131x_probe():
-
-> 	ret =3D tps6131x_v4l2_setup(tps6131x);
-> 	if (ret)
-> 		return dev_err_probe(&client->dev, ret, "Failed to setup v4l2 flash\n");
-
-[Severity: High]
-This is a pre-existing issue, but is the timer leaked in this error path?
-
-If tps6131x_v4l2_setup() fails, the probe exits without canceling the delay=
-ed
-work. Since the LED class device was already registered and could have been
-accessed, the timer might still be active.
-
-[ ... ]
-
-> static int tps6131x_strobe_set(struct led_classdev_flash *fled_cdev, bool=
- state)
+> static ssize_t uleds_write(struct file *file, const char __user *buffer,
+> 			   size_t count, loff_t *ppos)
 > {
 [ ... ]
-> 	if (state) {
-> 		ret =3D regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_3, TPS61=
-31X_REG_3_SFT,
-> 					      TPS6131X_REG_3_SFT, NULL, false, true);
-> 		if (ret)
-> 			return ret;
+> 	if (copy_from_user(&udev->user_dev, buffer,
+> 			   sizeof(struct uleds_user_dev))) {
+> 		ret =3D -EFAULT;
+> 		goto out;
 > 	}
 >=20
-> 	ret =3D regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_3, TPS613=
-1X_REG_3_SFT, 0, NULL,
-> 				      false, true);
+> 	name =3D udev->user_dev.name;
+> 	if (!name[0] || !strcmp(name, ".") || !strcmp(name, "..") ||
+> 	    strchr(name, '/')) {
 
 [Severity: High]
-This is a pre-existing issue, but will this immediately terminate the flash
-pulse?
+This is a pre-existing issue, but does this code lack a null-termination
+check on the user-supplied LED name?
 
-If state is true, the driver writes a 1 to TPS6131X_REG_3_SFT, but without
-a return statement inside the if-block, execution falls through and writes a
-0 to TPS6131X_REG_3_SFT. This appears to break the hardware strobe
-functionality by immediately turning it off.
+If a user writes a payload to /dev/uleds without a null byte in the 64-byte
+name array, won't unbounded string functions like strchr() read past the
+array boundary?
 
-[ ... ]
-
-> static int tps6131x_led_class_setup(struct tps6131x *tps6131x)
-> {
-[ ... ]
-> 	led_cdev->brightness_set_blocking =3D tps6131x_brightness_set;
-> 	led_cdev->max_brightness =3D tps6131x->max_torch_current_ma;
+> 		ret =3D -EINVAL;
+> 		goto out;
+> 	}
+>=20
+> 	if (udev->user_dev.max_brightness <=3D 0) {
+> 		ret =3D -EINVAL;
+> 		goto out;
+> 	}
+> 	udev->led_cdev.max_brightness =3D udev->user_dev.max_brightness;
+>=20
+> 	ret =3D devm_led_classdev_register(uleds_misc.this_device,
+> 					 &udev->led_cdev);
 
 [Severity: High]
-This isn't a bug introduced by this patch, but is max_brightness incorrectly
-configured with milliamperes rather than step counts?
+This is a pre-existing issue, but is it possible for
+devm_led_classdev_register() to consume the non-null-terminated string to
+create the sysfs directory?
 
-In tps6131x_brightness_set(), the brightness parameter is interpreted direc=
-tly
-as the number of steps:
-
-> static int tps6131x_brightness_set(struct led_classdev *cdev, enum led_br=
-ightness brightness)
-> {
-[ ... ]
-> 	steps_remaining =3D (brightness * tps6131x->step_torch_current_ma) / TPS=
-6131X_TORCH_STEP_I_MA;
-
-If max_brightness is exposed as milliamperes (e.g., 175), writing values up
-to 175 via sysfs will be processed as 175 steps and clamped to the hardware
-maximum. This saturates the computation and locks the output to 100% bright=
-ness
-for almost the entire exposed sysfs range.
+If the array is not null-terminated, could this cause an out-of-bounds read
+that exposes adjacent kernel heap memory to userspace via the resulting sys=
+fs
+directory name, or potentially cause a kernel oops if the read crosses into
+an unmapped page?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
-787-567-sashal@kernel.org?part=3D1
+787-563-sashal@kernel.org?part=3D1
