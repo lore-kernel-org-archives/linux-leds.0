@@ -1,144 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28934052BF
-	for <linux-leds@vger.kernel.org>; Mon, 31 Aug 2026 17:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8C33D3D11
+	for <linux-leds@vger.kernel.org>; Tue,  1 Sep 2026 14:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788196437; cv=none; b=Kyt88OFe/An8FOYfY7QMDRH9px+sBPlnOWKhn3GDLlwgUdCqMPPKOSNR9XIhYYCJuadqiWa+4+GZhxEX9lRnwGn4vBejfwHCSj2pqCcOwOT9PKmds9eyYjLHoE/o28j9WCMZqzlIE6GnNdVfHD8Wfx2S0vG5IAjkfKVyYQ3N8R8=
+	t=1788273572; cv=none; b=FJv4tzP6ytgsidjkqO1uqTVXKh5LWyTYlBpELhGEMnUdvB01UmN+kRjv/GWU6SG0slNZKlEPEqry1pwc8Z3NmKp69Zw8oYux/+h4RVlDRfZYwhC5UrAMxK8y2SFoUJW5a0mUeGcTemM/aXGqbIbKU6BVhb4X4zgEIv3jHsrTd6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788196437; c=relaxed/simple;
-	bh=kxQM+Zhz7sQVVKC2PFuPaXSHEN7QoQleELyyynIPPwc=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=V8gJZmyzVmUHiWQxG8HSZzNdAvhI7ijcYzWmfOp62/hZRwjs79Z98rE07RZ2gogKGICSDM4uhl7IFj1r/OrMZRsgSdL3uGu7+9afW2IEbAS0ysyjzvgk7svNA53BoINObV2HQ1Bmb3Y2pZEdqE89NZpXa0WLEjqx3vQHyWDfRwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIDU/mmT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788273572; c=relaxed/simple;
+	bh=PpjuOycMnvKcsr6i4JwrDRk3fLhhuojReIjxUw1zJuY=;
+	h=Subject:Date:Message-ID:From:To:Cc:Content-Type:MIME-Version; b=hmpzxpYR3sUM+QttyvieQoG1t2BLbqjF8LHPB0BgNc9fiFbu7nQT/EdtrsK4pzHC7G+EjTd6paAyHcyxNdZ5odBxzS907Z50d4YsUFAdGZ/180e5Qa3tVmrgpIH2+FOlE+7CR3xMkKl9uF0l2itJJOpco+zQlCv8cOzNdx5bE+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9o/nJgs; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIDU/mmT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352181F000E9;
-	Mon, 31 Aug 2026 17:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788196435;
-	bh=6eDO34Sfm5wIHx/GS2G7ktiYBAZIvsE42PsyU/EKOhA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=AIDU/mmTrM/6EmvALqCh39a+24p7Wxqy7pGstvi7hH/4uC9UvbYbUhyV/uANjAzSX
-	 6igtAzGUY3xTGCilj+Q5vqRmXcED8ejHiUAPGmDy4byKjxlKc2FVzSnEcQ0YmDjeG9
-	 qPTxLYpVx2KBiNMLiaIeKfWnfuoam8jBEoxUaK+9qXOYud+a8+3udhmb+wep4rry/R
-	 Q8l9gSib6BSXV8LilI02BYL1QCxtHq2mDriuMYeEanLNmQh75L/DM3Nhy3JJLtVbYn
-	 KKDeHTdeqCvQagkojMf0005/eVrdUt0DYN8Sf1D8XpEVCfqnFglf/leqpYpAQHIpJZ
-	 288+YsoJqJBSw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH AUTOSEL 6.18-5.10] leds: uleds: Return -EFAULT on
- copy_to_user() failure
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Sasha Levin" <sashal@kernel.org>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260831133314.4125787-563-sashal@kernel.org>
-References: <20260831133314.4125787-1-sashal@kernel.org>
- <20260831133314.4125787-563-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9o/nJgs"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-cbedf433a99so1249695a12.2
+        for <linux-leds@vger.kernel.org>; Tue, 01 Sep 2026 07:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788273571; x=1788878371; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:content-type:cc:to:from
+         :message-id:date:subject:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Sq8WERtPgYhkPbAu1lD9X5RHbMKk+hk5c82yqST5k6M=;
+        b=E9o/nJgsD3nmRXeyyKjwqPAgLLTLQvaEZKQSEcBx4xjzI/Mwd7nEWobbpTs8j45r9J
+         6GwHWhhDUDUHihgxEqSj6nMJ+bJYg2LD+tQ0hbTctzn0PxsppQ/pwuWH6g9GZwzGgibN
+         KFMxR5u4egf5ogmzCauuFrd+Hy102S7swgDWoBclVbmcc6W2SMYpk76LiKbJUZnPpqfc
+         VDTrG5mVKcNhz5Lm1wB4kamup/9xLpnY3e+8cCP0+AWVLPPJi7AJRoWI8fURef8cAZm9
+         LUr81ZC1mm9BtOURc5bVZDUhXhelAeJPA7EiVpNdfwMvmpnnZBakk3Li4hO5ExoN2u9J
+         azzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788273571; x=1788878371;
+        h=mime-version:content-transfer-encoding:content-type:cc:to:from
+         :message-id:date:subject:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Sq8WERtPgYhkPbAu1lD9X5RHbMKk+hk5c82yqST5k6M=;
+        b=O4ZuTwk4skjF5Sc0rBkoj9zSEuJ6zXtmpsMS2wO3m2GPs7V2JGnfftJx5GDVGITzBe
+         3ZcWfoHB6qIWjKCjHRrlqpPb92/NJE/7/A4ShrlAlKLfVk67GzNbe45Em/oIPv3x9x6D
+         qWA+QsyHx0ZXqtqpc5mdx0YuAtlQ3n/t2wI2mcGGhasuXtJ0m8bgKFH3dDlrPLsuoYhg
+         XiWblH0bfhflOgZKn4XRYawFqOJ5GGdSsrrYtIZ/eqO/BMdpZ+pZaF8fbY2fZ12jGPAm
+         WpCja01PIPQHw0IFX9jA8KqJRwP57i29wgMH2cCXC2R+/gaYpnzBw2hpP5LWyscnWnmO
+         HENQ==
+X-Gm-Message-State: AFuF++kY+sR3C2uRpZRi4Dm1+cAWRteFJkmQApWuhJUKAC42BCyrlC6W
+	T99MUso2eXq9RN9tx0zmvTM+dL5v9pdqpPDb4yLg6E96ycw9NbaX/oiPlKO8Dmeq
+X-Gm-Gg: AYBFou21S6tIGaQHuqfQkSxfs+gGK2DrvSJj1VMszTCAHTyp8fjnjOXVjcYBWUFHbnO
+	8VUvM+1VsTXjcL0/TgenLpoOzTKFLKHSY/UobhBWNdDntiXklQ8+uV3EeoIqD+TAryDsJFXaywE
+	IkHzlolluftrZRarn70TC8b1VLD19p4WUTA7hhO84u8s7ZUnI+57WaWtrZpt8bioVVR21tmSiLd
+	xKaHxgqkkK/+mAknoXLiY2uEhLGnLSFlTlzJQAKgheXP1/viuMMHP0bW/pkwMAuv/g2/fr8lIjH
+	t3mz7e/ACSq+4ll60PErN70brhEd1Xovn38MdedXuglUn3k7iM7P5G5GL/bxRgG54rdNlBG8LbF
+	SdsIJpKEzn0MgdlOeI3JCnZbGuhJ8C9V3LCutKdRhmuQm3k/tI5bfEuH9IgarzguvLumk0C9Qm1
+	3Rc4c8PuLynT5+OwkMq3YwFXqPMqnOpuPe2CIggt/1RtksEgOq3ZrasL6wRd/+YUvc8oqVVKuSu
+	fNa
+X-Received: by 2002:a17:90b:6c7:b0:396:6344:3b63 with SMTP id 98e67ed59e1d1-396d0e25905mr53255820a91.2.1788273570553;
+        Tue, 01 Sep 2026 07:39:30 -0700 (PDT)
+Received: from [192.168.71.146] ([240e:b8f:91e2:d400:ec2a:b15e:fef8:70a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39ae0dfcd65sm59248a91.3.2026.09.01.07.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Sep 2026 07:39:29 -0700 (PDT)
+Subject:
+ [PATCH RFC 0/1] leds: add ASUS Aura SCSI driver for ROG NVMe enclosures
+Date: Tue, 01 Sep 2026 22:26:46 +0800
+Message-ID: <202609012200.RFC0.lhw@gmail.com>
+From: Liang Haowen <nbg2974@gmail.com>
+To: linux-leds@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Martin K. Petersen <mkp@kernel.org>, linux-scsi@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Denis Benato <denis.benato@linux.dev>, Armin Wolf <W_Armin@gmx.de>,
+ Hans de Goede <hansg@kernel.org>,
+ Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 31 Aug 2026 17:13:54 +0000
-Message-Id: <20260831171355.352181F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
 
-Pre-existing issues:
-- [High] Missing null-termination check on user-supplied LED name allows ou=
-t-of-bounds read and information leak.
---
 
-commit a8b47a018dff3b5b2d397104d41c5a68d837fbea
-Author: Yousef Alhouseen <alhouseenyousef@gmail.com>
+Hello,
 
-leds: uleds: Return -EFAULT on copy_to_user() failure
+this is the v1 I promised in the "Placement of ASUS Aura and
+platform/x86 ASUS files relocation" thread: the LED side of ASUS Aura
+RGB on ROG external NVMe enclosures, posted for review in drivers/leds
+as Armin suggested, and in line with the shared ASUS Aura interface
+Denis has been coordinating.
 
-uleds_read() copies the current brightness value to userspace but ignores
-copy_to_user() failures. It then clears the pending update and reports a
-successful full read even when no data was copied. Return -EFAULT when
-the copy fails and leave the update pending so a later read can retry.
+The hardware: ROG external NVMe enclosures (ROG STRIX Arion, USB
+0b05:1932) are plain USB mass-storage devices. They expose two mass
+storage interfaces (BOT and UAS) and no HID interface; the Aura LEDs
+hang off an ENE controller reached through vendor SCSI commands on the
+same LUN as the disk. The Arion has 4 independently addressable LEDs,
+verified on hardware.
 
-Link: https://patch.msgid.link/20260521181205.15130-1-alhouseenyousef@gmail=
-.com
+The interface: the driver registers a scsi_device_handler, matches by
+INQUIRY strings (vendor "ROG", model "ESD-S1C"), does not claim the
+sdev (sd keeps owning the disk), and exposes each LED as a multicolor
+LED class device, /sys/class/leds/asus-arion:led0 through led3.
 
-> diff --git a/drivers/leds/uleds.c b/drivers/leds/uleds.c
-> index 374a841f18c37..ce2ae79d5de04 100644
-> --- a/drivers/leds/uleds.c
-> +++ b/drivers/leds/uleds.c
-> @@ -147,10 +147,13 @@ static ssize_t uleds_read(struct file *file, char _=
-_user *buffer, size_t count,
->  		} else if (!udev->new_data && (file->f_flags & O_NONBLOCK)) {
->  			retval =3D -EAGAIN;
->  		} else if (udev->new_data) {
-> -			retval =3D copy_to_user(buffer, &udev->brightness,
-> -					      sizeof(udev->brightness));
-> -			udev->new_data =3D false;
-> -			retval =3D sizeof(udev->brightness);
-> +			if (copy_to_user(buffer, &udev->brightness,
-> +					 sizeof(udev->brightness))) {
-> +				retval =3D -EFAULT;
-> +			} else {
-> +				udev->new_data =3D false;
-> +				retval =3D sizeof(udev->brightness);
-> +			}
->  		}
-> =20
->  		mutex_unlock(&udev->mutex);
+Protocol summary: a 16-byte vendor CDB (opcode 0xec, 'A' 'S'
+signature, register index, argument count in cdb[13]). MODE 0x8021
+(Static) must be written first in every sequence or the device ignores
+the whole sequence; colours are written to 0x8160 + 3 * led and
+0x8100 + 3 * led (3 bytes each, order R, B, G; both tables are written
+because firmware revisions pull from one or the other); APPLY 0x80a0
+takes 0x01 to apply and 0xaa to save, and only the save makes a change
+stick.
 
-While reviewing this patch, I noticed a pre-existing issue in uleds_write()
-within the same file:
+A transport gotcha that seems worth wider visibility: the CDB cannot
+go through scsi_execute_cmd(), because it derives the command length
+from scsi_command_size(opcode), which maps vendor opcode 0xec to
+10 bytes. The ENE protocol is a 16-byte CDB with the data length in
+cdb[13], so scsi_execute_cmd() drops that byte and the device silently
+ignores the write (GOOD status, no error). The driver builds the block
+request by hand and forces cmd_len =3D 16, which is what SG_IO does from
+userspace. Any kernel driver sending a vendor CDB whose real length
+does not match scsi_command_size(opcode) is going to hit the same
+thing.
 
-> static ssize_t uleds_write(struct file *file, const char __user *buffer,
-> 			   size_t count, loff_t *ppos)
-> {
-[ ... ]
-> 	if (copy_from_user(&udev->user_dev, buffer,
-> 			   sizeof(struct uleds_user_dev))) {
-> 		ret =3D -EFAULT;
-> 		goto out;
-> 	}
->=20
-> 	name =3D udev->user_dev.name;
-> 	if (!name[0] || !strcmp(name, ".") || !strcmp(name, "..") ||
-> 	    strchr(name, '/')) {
+Placement: per Armin's suggestion in the thread, the LED side belongs
+in drivers/leds, since the enclosure is not a platform device and the
+user-facing interface is the multicolor LED sysfs. What is posted here
+is the driver as verified on hardware, still monolithic. The agreed
+shape going forward, with Denis, is a SCSI transport helper in
+drivers/scsi feeding an Aura LED driver in drivers/leds behind a
+shared ASUS Aura interface; the Kconfig, Makefile and MAINTAINERS
+wiring lands with that split. So the main questions for this round are
+the LED interface, the protocol handling and the placement.
 
-[Severity: High]
-This is a pre-existing issue, but does this code lack a null-termination
-check on the user-supplied LED name?
+Known caveats, stated up front:
 
-If a user writes a payload to /dev/uleds without a null byte in the 64-byte
-name array, won't unbounded string functions like strchr() read past the
-array boundary?
+- the handler attaches manually until a notifier lands
+  (echo asus_aura > /sys/block/sdX/device/dh_state);
+- SAVE (0xaa) is issued on every colour change, which writes the
+  enclosure flash each time; wear has not been characterized yet;
+- the LEDs are registered with a NULL parent device, because
+  parenting them to the sdev creates a reference cycle that blocks
+  the sdev's final release on unplug and leaks the LED nodes and the
+  module refcount.
 
-> 		ret =3D -EINVAL;
-> 		goto out;
-> 	}
->=20
-> 	if (udev->user_dev.max_brightness <=3D 0) {
-> 		ret =3D -EINVAL;
-> 		goto out;
-> 	}
-> 	udev->led_cdev.max_brightness =3D udev->user_dev.max_brightness;
->=20
-> 	ret =3D devm_led_classdev_register(uleds_misc.this_device,
-> 					 &udev->led_cdev);
+Comments on the interface shape and on folding this into the shared
+Aura work are very welcome.
 
-[Severity: High]
-This is a pre-existing issue, but is it possible for
-devm_led_classdev_register() to consume the non-null-terminated string to
-create the sysfs directory?
+Signed-off-by: Liang Haowen <nbg2974@gmail.com>
 
-If the array is not null-terminated, could this cause an out-of-bounds read
-that exposes adjacent kernel heap memory to userspace via the resulting sys=
-fs
-directory name, or potentially cause a kernel oops if the read crosses into
-an unmapped page?
+Liang Haowen (1):
+  leds: add ASUS Aura SCSI driver for ROG NVMe enclosures
+
+ drivers/leds/leds-asus-aura-scsi.c | 302 +++++++++++++++++++++++++++++++++++=
+++
+ 1 file changed, 302 insertions(+)
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260831133314.4125=
-787-563-sashal@kernel.org?part=3D1
+2.55.0
+
