@@ -1,237 +1,354 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1AF3033E6;
-	Tue,  1 Sep 2026 14:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BC7472085
+	for <linux-leds@vger.kernel.org>; Tue,  1 Sep 2026 17:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788274327; cv=none; b=NCRot0JsPoaa2TRHOhGNzcbKEDNE2hyFhedk7Dcux4rH7wVFKs5eNOykqCLyX9F2LCct8SMhcDzltx8JS5DycAAkvsYpoYJJ7MPskEEQtZMja/TCk+koANRZd0Nd+QpsL2N3MYHw51g6H7efpIpoc4fcZByryHWJuBteftHan8I=
+	t=1788282282; cv=none; b=PtHDOIheTbiMfscMy8E/L3Md5sVXxKerPQRECCnDpYqj/U6cewWpnLtnuOq69qdRWu0dsN7zrHbXy4r3Kdon5JDH1YhHcqGmRYbWtW5XqsX5TZQ22vdMZ4ccwEeqiE7ERUHnU2mnn5oPbHdVyu/i5ckqGXp4bKpLQGAPUpwCCtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788274327; c=relaxed/simple;
-	bh=++Nkrtb9G83eAfRK8r7pLE/otME2J543yovmcn3FXhY=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Z7PMs4yp8sOSabXzkSY1LFT/qJS6SLjF39RxOQhpjmQZ24Dvp9SMEmzczrKLpRRCupersx0rwSgBZz8kPTspTDehllFVIEev+Fae3TDMADqQaUTwtqj4EUaERJnACQGjXBf1HEG+4Qwfy/HM8iX0OmZP4XSAaKNkDdIiHYxWsY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhooG6FN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788282282; c=relaxed/simple;
+	bh=1X/qnV8vzg9tJPFlS6BMkOFMp3DyOY/TrtNCEvo4TAE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n/+QavepJVKMAK+e3FCVIXO0wunYI8GCaWBwA/F+477/Mf4QLnQ5IY9nmTywTZxi6QBXkpepkaih9UWYfpMX0g7xgsuyyb021wenIdAnttwL1ZQpNWFUb/fo0qeRxDrfpqQAxFVNMKnG6FwEFMw6yO2lXKsigLnphmY8rvVfrWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=o7oUPXAF; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhooG6FN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF551F000E9;
-	Tue,  1 Sep 2026 14:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788274324;
-	bh=79HIs6HXLCzBzznIG5wPwyDIsUn5245KJUHkybTJ+Eg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LhooG6FNbLTF12ldUNi/FmxNnNjVmVZKY5pHeV1x0az67zaCeRoQ+yzpJ88kC4LS/
-	 YLyWjyohExohbhVHckA9vxyL5l2wTtzWj17JTFQcAgOLJOio97SJ581Nj8ncqCMPux
-	 cnZL1VAty7NRWMeQf5CADOnBsqVNsonV1KoIJFMrcH9KvRQVufanneUXpkX9hnwxi3
-	 g9zuec0qEiAEt/MrxlNfPuhXIXkkxqHwyOiv/3AsQR2IDJ0+2ixuSWAE0bNvoOnXqV
-	 lv+651xKg/rYS3pgvgXe9RM2DgjXC0gqk4IVTv6H7oCXp9kshyBjtydWh6/4I1U9Xx
-	 ulciQa9DzdGgg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC 1/1] leds: add ASUS Aura SCSI driver for ROG NVMe
- enclosures
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Liang Haowen" <nbg2974@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org
-In-Reply-To: <202609012200.RFC1.lhw@gmail.com>
-References: <202609012200.RFC0.lhw@gmail.com>
- <202609012200.RFC1.lhw@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 01 Sep 2026 14:52:03 +0000
-Message-Id: <20260901145204.2BF551F000E9@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o7oUPXAF"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2d944747d41so227265ad.0
+        for <linux-leds@vger.kernel.org>; Tue, 01 Sep 2026 10:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788282280; x=1788887080; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=uWnlK88LsKs7/tUdroGlxm7SknJObd+rEmQrujEmjq0=;
+        b=o7oUPXAFV8WedSg5bR9Tp4xVp4I+77ykHBqL+q8Kw0oL8/S7QEC+J29Hi8fEsMN7GY
+         EmSJTQ0qFiY9kTcV+Ju4JE6IYjPj393C4AiDfgOtHFZOdRPhi2t2nh0a+3vZNSsfT5bz
+         0LBThDSydiITC0Ltkk73MlYO5QzOpQraSYrDlWTBDDx3zvcf6bDbIEmNM6dhXlHnXXIb
+         ZLhXtvCKuk/ykCQCgx3tDN9DsJ1fmA9KWtFGXPSmxy0EHvhIXvHaAJMwgXcLfn9WSoxF
+         HCMHOMznTt/TUB0qTQK+pAWV5bUW4kUmnQRnEuXLimUe2BKxwY+YqzDjo/99Zz04e2xf
+         pLtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788282280; x=1788887080;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=uWnlK88LsKs7/tUdroGlxm7SknJObd+rEmQrujEmjq0=;
+        b=il2nOYUm+g05Lkr7J4+sXTEkZZGbKGHWFhrSHalEeOaXmH9KRGzRwy7WZtm4jg9jv2
+         NSe7IfI52eEGViEdSu0IBiAVjf1hpP+zutlkDV/iPDL2zuC996kmh6ypzPAbfMF/qDkL
+         AiXLU+ijxVp+6JA/L7F3CD7c1Gy4I3h0CnZM8jlOT9fsAceu258Suf2l0lA+taU1W6aV
+         ABbIST9d4OPNS46GbIP8BsvC0afmpUMYbLQP6n5ed90JJbRQ1+3fASGUbI2ykvsLiiPN
+         Z2Lnd/7ZJa8ms7qyyBiedNl/aEBKQVEntcyFh6JGbjQFB8h09b5l0N9v9efIeAoY4xlF
+         d6pg==
+X-Forwarded-Encrypted: i=1; AKwUvBx0QNeC6e0fq+rEnr9jalQJ/+XK64EUkk2q6S1h0CJMC+JcCImgZ/6VlHnZfpV2xkMBAaOzB7cBb1XJ@vger.kernel.org
+X-Gm-Message-State: AFuF++mwsqetVRgcq2s6YECiU4o0Uz/GkAPA/mDK3xFCbG2XRyJrEQJP
+	bwZZDlyc0QHxlB5RKE1F2cPirUrAqoQyGJToittBFX8YXli144VnWqHH
+X-Gm-Gg: AYBFou3tvUzdbdT4Anaq3kd01Xenaoke5nNnQIpNh1/uRFHNn0BrgBFiDZZR7hJDsiz
+	IV30iZ7koTCGdCKJnPH3K0d9Dar21TuncSmvN7kkIG0nKsRy4KDEjNlN0FaxewqRF8zuNQTAOQV
+	2856mJUkWAKW3iTVLAKNpbBaZi4lZNU21/TQ5pbdlOB4gXWWy6RSxIfWoRmgetO55NKL1zsKhUn
+	H+kn5/IVHQqkzXHyKZnY2t4FHiZeu8r5Zm5ZQESuHLYfxJB29yePg7vMgmHxVHsumfZ9UNzPvI3
+	0z3tOPTWgPt2Vr9PnGTMKenOVIM849KxIHjST6jeiRbuZV9H8TdRBMSSnEizSE3Sjyg0XhhnAL5
+	wS3rZdvUu83+SOXP0Iz4w5QUeU/TCdnJba2EVqeGAPN8nGqhOmYa9yUQ6wx+AFOidPYrl8qpogh
+	BpQuCusqMOb5jdFXoHsTfdKBopX3ZoW2098SEpJORntaWsfI6heTcTZlPjDaeEXOc1eHcG2nzE8
+	GepduA=
+X-Received: by 2002:a17:902:e54e:b0:2d9:2ff6:2497 with SMTP id d9443c01a7336-2d92ff6258fmr185049165ad.13.1788282279845;
+        Tue, 01 Sep 2026 10:04:39 -0700 (PDT)
+Received: from inhnjlux1020.ls.ege.ds ([2406:b400:53:5146:59ac:3f4b:833e:8027])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-32b26fd7edbsm29492199eec.5.2026.09.01.10.04.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Sep 2026 10:04:38 -0700 (PDT)
+From: Udaya Kiran Challa <challauday369@gmail.com>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: skhan@linuxfoundation.org,
+	me@brighamcampbell.com,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Udaya Kiran Challa <challauday369@gmail.com>
+Subject: [PATCH v3] dt-bindings: leds: lacie,netxbig-leds: Convert to DT schema
+Date: Tue,  1 Sep 2026 22:33:58 +0530
+Message-Id: <20260901170358.176103-1-challauday369@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 7 potential issue(=
-s) to consider:
-- [High] Incorrect teardown order in device detach and error paths leads to=
- Use-After-Free via the workqueue.
-- [High] Bypassing `scsi_alloc_request` leaves critical `scsi_cmnd` fields =
-uninitialized.
-- [High] Missing serialization for the multi-step ENE hardware command sequ=
-ence allows concurrent workers to interleave and corrupt hardware state.
-- [Low] Undefined macro `kzalloc_obj` is used for memory allocation.
-- [Low] `blk_rq_map_kern` is called with insufficient arguments.
-- [Low] The driver prints a success log message on probe/attach.
-- [Low] The commit message violates the LED subsystem capitalization and pr=
-efix rules.
---
+Convert lacie,netxbig-leds devicetree binding from legacy
+text format to DT schema.
 
-commit 241d70bc8fb77ca0865693a679d9c3bdc51ad240
-Author: Liang Haowen <nbg2974@gmail.com>
+Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
+---
+Changelog:
+Changes since v2:
+- Add reference to led common.yaml
+- Drop type for all common properties
 
-leds: add ASUS Aura SCSI driver for ROG NVMe enclosures
+Link to v2:https://lore.kernel.org/all/20260821123723.198286-1-challauday369@gmail.com/
 
-This commit adds a SCSI driver for ASUS ROG external NVMe enclosures to
-support Aura LEDs. The driver exposes each LED as a multicolor LED class
-device and communicates with the ENE controller using vendor SCSI commands.
+Changes since v1:
+- Use pattenProperties for LED child nodes instead of additionalProperties
+- Explicitly list the two optional properties supported by the binding
+- Place the top-level required block after child-node definition
 
-> leds: add ASUS Aura SCSI driver for ROG NVMe enclosures
+Link to v1:https://lore.kernel.org/all/20260820150223.108374-1-challauday369@gmail.com/
+---
+ .../bindings/leds/lacie,netxbig-leds.yaml     | 139 ++++++++++++++++++
+ .../devicetree/bindings/leds/leds-netxbig.txt |  92 ------------
+ 2 files changed, 139 insertions(+), 92 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
 
-[Severity: Low]
-Does this commit message subject follow the LED subsystem guidelines?
-The guidelines specify that the description after the subsystem prefix shou=
-ld
-be capitalized and include the driver name, such as:
-leds: asus-aura-scsi: Add ASUS Aura SCSI driver for ROG NVMe enclosures
+diff --git a/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
+new file mode 100644
+index 000000000000..5cb2eaf74d1a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
+@@ -0,0 +1,139 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/lacie,netxbig-leds.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: LaCie/Seagate netxbig CPLD LEDs
++
++maintainers:
++  - Simon Guinot <simon.guinot@sequanux.org>
++
++description: |
++  Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Seagate
++  boards (Example: 2Big/5Big Network v2, 2Big NAS).
++
++properties:
++  compatible:
++    const: lacie,netxbig-leds
++
++  gpio-ext:
++    description: Phandle for the gpio-ext bus.
++    $ref: /schemas/types.yaml#/definitions/phandle
++
++  timers:
++    description: |
++      Timer array. Each timer entry is represented by three integers:
++      Mode (gpio-ext bus), delay_on and delay_off.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++
++patternProperties:
++  "^(?!gpio-ext$|pinctrl-[0-9]+$)[a-z][a-z0-9]*(-[a-z0-9]+)+$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      label: true
++      linux,default-trigger: true
++
++      mode-addr:
++        description: Mode register address on gpio-ext bus.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++      mode-val:
++        description: |
++          Mode to value mapping. Each entry is represented by two integers:
++          a mode and the corresponding value on the gpio-ext bus.
++        $ref: /schemas/types.yaml#/definitions/uint32-array
++
++      bright-addr:
++        description: Brightness register address on gpio-ext bus.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++      max-brightness:
++        description: Maximum brightness value.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++    required:
++      - mode-addr
++      - mode-val
++      - bright-addr
++      - max-brightness
++
++required:
++  - compatible
++  - gpio-ext
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/leds-netxbig.h>
++
++    netxbig-leds {
++        compatible = "lacie,netxbig-leds";
++
++        gpio-ext = <&netxbig_gpio_ext>;
++
++        timers = <NETXBIG_LED_TIMER1 500 500
++                  NETXBIG_LED_TIMER2 500 1000>;
++
++        blue-power {
++            label = "netxbig:blue:power";
++            mode-addr = <0>;
++            mode-val = <NETXBIG_LED_OFF 0
++                        NETXBIG_LED_ON 1
++                        NETXBIG_LED_TIMER1 3
++                        NETXBIG_LED_TIMER2 7>;
++            bright-addr = <1>;
++            max-brightness = <7>;
++        };
++        red-power {
++            label = "netxbig:red:power";
++            mode-addr = <0>;
++            mode-val = <NETXBIG_LED_OFF 0
++                        NETXBIG_LED_ON 2
++                        NETXBIG_LED_TIMER1 4>;
++            bright-addr = <1>;
++            max-brightness = <7>;
++        };
++        blue-sata0 {
++            label = "netxbig:blue:sata0";
++            mode-addr = <3>;
++            mode-val = <NETXBIG_LED_OFF 0
++                        NETXBIG_LED_ON 7
++                        NETXBIG_LED_SATA 1
++                        NETXBIG_LED_TIMER1 3>;
++            bright-addr = <2>;
++            max-brightness = <7>;
++        };
++        red-sata0 {
++            label = "netxbig:red:sata0";
++            mode-addr = <3>;
++            mode-val = <NETXBIG_LED_OFF 0
++                        NETXBIG_LED_ON 2
++                        NETXBIG_LED_TIMER1 4>;
++            bright-addr = <2>;
++            max-brightness = <7>;
++        };
++        blue-sata1 {
++            label = "netxbig:blue:sata1";
++            mode-addr = <4>;
++            mode-val = <NETXBIG_LED_OFF 0
++                        NETXBIG_LED_ON 7
++                        NETXBIG_LED_SATA 1
++                        NETXBIG_LED_TIMER1 3>;
++            bright-addr = <2>;
++            max-brightness = <7>;
++        };
++        red-sata1 {
++            label = "netxbig:red:sata1";
++            mode-addr = <4>;
++            mode-val = <NETXBIG_LED_OFF 0
++                        NETXBIG_LED_ON 2
++                        NETXBIG_LED_TIMER1 4>;
++            bright-addr = <2>;
++            max-brightness = <7>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/leds/leds-netxbig.txt b/Documentation/devicetree/bindings/leds/leds-netxbig.txt
+deleted file mode 100644
+index 5ef92a26d768..000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-netxbig.txt
++++ /dev/null
+@@ -1,92 +0,0 @@
+-Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Seagate
+-boards (Example: 2Big/5Big Network v2, 2Big NAS).
+-
+-Required properties:
+-- compatible: "lacie,netxbig-leds".
+-- gpio-ext: Phandle for the gpio-ext bus.
+-
+-Optional properties:
+-- timers: Timer array. Each timer entry is represented by three integers:
+-  Mode (gpio-ext bus), delay_on and delay_off.
+-
+-Each LED is represented as a sub-node of the netxbig-leds device.
+-
+-Required sub-node properties:
+-- mode-addr: Mode register address on gpio-ext bus.
+-- mode-val: Mode to value mapping. Each entry is represented by two integers:
+-  A mode and the corresponding value on the gpio-ext bus.
+-- bright-addr: Brightness register address on gpio-ext bus.
+-- max-brightness: Maximum brightness value.
+-
+-Optional sub-node properties:
+-- label: Name for this LED. If omitted, the label is taken from the node name.
+-- linux,default-trigger: Trigger assigned to the LED.
+-
+-Example:
+-
+-netxbig-leds {
+-	compatible = "lacie,netxbig-leds";
+-
+-	gpio-ext = &gpio_ext;
+-
+-	timers = <NETXBIG_LED_TIMER1 500 500
+-		  NETXBIG_LED_TIMER2 500 1000>;
+-
+-	blue-power {
+-		label = "netxbig:blue:power";
+-		mode-addr = <0>;
+-		mode-val = <NETXBIG_LED_OFF 0
+-			    NETXBIG_LED_ON 1
+-			    NETXBIG_LED_TIMER1 3
+-			    NETXBIG_LED_TIMER2 7>;
+-		bright-addr = <1>;
+-		max-brightness = <7>;
+-	};
+-	red-power {
+-		label = "netxbig:red:power";
+-		mode-addr = <0>;
+-		mode-val = <NETXBIG_LED_OFF 0
+-			    NETXBIG_LED_ON 2
+-			    NETXBIG_LED_TIMER1 4>;
+-		bright-addr = <1>;
+-		max-brightness = <7>;
+-	};
+-	blue-sata0 {
+-		label = "netxbig:blue:sata0";
+-		mode-addr = <3>;
+-		mode-val = <NETXBIG_LED_OFF 0
+-			    NETXBIG_LED_ON 7
+-			    NETXBIG_LED_SATA 1
+-			    NETXBIG_LED_TIMER1 3>;
+-		bright-addr = <2>;
+-		max-brightness = <7>;
+-	};
+-	red-sata0 {
+-		label = "netxbig:red:sata0";
+-		mode-addr = <3>;
+-		mode-val = <NETXBIG_LED_OFF 0
+-			    NETXBIG_LED_ON 2
+-			    NETXBIG_LED_TIMER1 4>;
+-		bright-addr = <2>;
+-		max-brightness = <7>;
+-	};
+-	blue-sata1 {
+-		label = "netxbig:blue:sata1";
+-		mode-addr = <4>;
+-		mode-val = <NETXBIG_LED_OFF 0
+-			    NETXBIG_LED_ON 7
+-			    NETXBIG_LED_SATA 1
+-			    NETXBIG_LED_TIMER1 3>;
+-		bright-addr = <2>;
+-		max-brightness = <7>;
+-	};
+-	red-sata1 {
+-		label = "netxbig:red:sata1";
+-		mode-addr = <4>;
+-		mode-val = <NETXBIG_LED_OFF 0
+-			    NETXBIG_LED_ON 2
+-			    NETXBIG_LED_TIMER1 4>;
+-		bright-addr = <2>;
+-		max-brightness = <7>;
+-	};
+-};
+-- 
+2.34.1
 
-> diff --git a/drivers/leds/leds-asus-aura-scsi.c b/drivers/leds/leds-asus-=
-aura-scsi.c
-> new file mode 100644
-> index 0000000000000..c913501ba96a2
-> --- /dev/null
-> +++ b/drivers/leds/leds-asus-aura-scsi.c
-[ ... ]
-> +static int ene_write(struct scsi_device *sdev, u16 reg,
-> +		     const void *data, u8 arg_count)
-> +{
-> +	struct request *rq;
-> +	struct scsi_cmnd *scmd;
-> +	u8 cdb[ENE_CDB_LEN];
-> +	int ret;
-> +
-> +	ene_build_cdb(cdb, reg, arg_count);
-> +
-> +	rq =3D blk_mq_alloc_request(sdev->request_queue, REQ_OP_DRV_OUT, 0);
-> +	if (IS_ERR(rq))
-> +		return PTR_ERR(rq);
-
-[Severity: High]
-Does bypassing scsi_alloc_request() here leave critical scsi_cmnd fields
-uninitialized? Using blk_mq_alloc_request() directly skips
-scsi_initialize_rq(), which means PDU fields like jiffies_at_alloc, rcu,
-and retries remain uninitialized. When blk_execute_rq() runs, this might
-trigger false timeouts or undefined behavior in the SCSI midlayer.
-
-> +
-> +	scmd =3D blk_mq_rq_to_pdu(rq);
-> +	scmd->cmd_len =3D ENE_CDB_LEN;
-> +	memcpy(scmd->cmnd, cdb, ENE_CDB_LEN);
-> +
-> +	if (arg_count) {
-> +		ret =3D blk_rq_map_kern(rq,
-> +				      (void *)data, arg_count, GFP_KERNEL);
-
-[Severity: Low]
-Can this blk_rq_map_kern() call compile? It seems to be missing the required
-first parameter for the request queue (struct request_queue *q), passing
-only 4 arguments instead of the mandatory 5.
-
-> +		if (ret)
-> +			goto out;
-> +	}
-[ ... ]
-> +static void asus_aura_led_work(struct work_struct *work)
-> +{
-> +	struct asus_aura_led *led =3D
-> +		container_of(work, struct asus_aura_led, work);
-> +	struct scsi_device *sdev =3D led->zone->sdev;
-> +	u8 apply =3D ENE_APPLY;
-> +	u8 save =3D ENE_SAVE;
-> +	u8 mode =3D ENE_MODE_STATIC;
-> +	int ret;
-> +
-> +	if (!scsi_device_online(sdev))
-> +		return;
-> +
-> +	/* Mode first: without it the device ignores the whole sequence. */
-> +	ret =3D ene_write(sdev, ENE_REG_MODE, &mode, 1);
-> +	if (ret)
-> +		goto err;
-> +
-> +	ret =3D ene_write(sdev, ENE_REG_COLORS + led->index * ENE_RGB_LEN,
-> +			led->rgb, ENE_RGB_LEN);
-
-[Severity: High]
-Could concurrent sysfs writes to different LEDs on the same device corrupt
-the hardware state here? Because there are 4 LEDs on the same device,
-multiple workers could interleave their ene_write() block requests to the
-same endpoint without a shared mutex, potentially breaking the strict
-multi-step sequence required by the ENE controller.
-
-> +	if (ret)
-> +		goto err;
-[ ... ]
-> +static int asus_aura_attach(struct scsi_device *sdev)
-> +{
-> +	struct asus_aura_zone *zone;
-> +	int i, ret;
-> +
-> +	if (strncmp(sdev->vendor, ARION_INQ_VENDOR, strlen(ARION_INQ_VENDOR)) ||
-> +	    strncmp(sdev->model, ARION_INQ_MODEL, strlen(ARION_INQ_MODEL)))
-> +		return SCSI_DH_DEV_UNSUPP;
-> +
-> +	zone =3D kzalloc_obj(*zone, GFP_KERNEL);
-
-[Severity: Low]
-Is kzalloc_obj() a valid macro in the kernel API? It appears this will cause
-a build failure, and should likely be standard kzalloc(sizeof(*zone),
-GFP_KERNEL) instead.
-
-> +	if (!zone)
-> +		return SCSI_DH_NOMEM;
-> +	zone->sdev =3D sdev;
-> +
-> +	for (i =3D 0; i < ARION_NUM_LEDS; i++) {
-> +		ret =3D asus_aura_register_led(zone, i);
-> +		if (ret)
-> +			goto err_free;
-> +	}
-> +
-> +	sdev->handler_data =3D zone;
-> +	sdev_printk(KERN_INFO, sdev,
-> +		    "asus_aura: %d per-LED multicolor LEDs registered\n",
-> +		    ARION_NUM_LEDS);
-
-[Severity: Low]
-Is it okay to print this success log message on probe? The LED subsystem
-guidelines specify that drivers should avoid logging success messages, and
-only log errors or warnings.
-
-> +	return SCSI_DH_OK;
-> +
-> +err_free:
-> +	while (i--) {
-> +		cancel_work_sync(&zone->leds[i].work);
-> +		led_classdev_multicolor_unregister(&zone->leds[i].mc_cdev);
-
-[Severity: High]
-Could this teardown order introduce a use-after-free risk? Unregistering the
-LED sets its brightness to 0, which invokes asus_aura_set() and queues a
-new work item onto the system workqueue. Since cancel_work_sync() has
-already been called, a dangling work item might remain when kfree(zone)
-is executed shortly after.
-
-> +		kfree(zone->leds[i].mc_cdev.led_cdev.name);
-> +	}
-> +	kfree(zone);
-> +	return SCSI_DH_NOMEM;
-> +}
-> +
-> +static void asus_aura_detach(struct scsi_device *sdev)
-> +{
-> +	struct asus_aura_zone *zone =3D sdev->handler_data;
-> +	int i;
-> +
-> +	if (!zone)
-> +		return;
-> +	for (i =3D 0; i < ARION_NUM_LEDS; i++) {
-> +		cancel_work_sync(&zone->leds[i].work);
-> +		led_classdev_multicolor_unregister(&zone->leds[i].mc_cdev);
-
-[Severity: High]
-Similar to the error path in asus_aura_attach(), does unregistering the LED
-after cancel_work_sync() leave a dangling work item? The unregister call
-might queue new work via asus_aura_set(), leading to a use-after-free when
-the memory is subsequently freed.
-
-> +		kfree(zone->leds[i].mc_cdev.led_cdev.name);
-> +	}
-> +	kfree(zone);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/202609012200.RFC1.l=
-hw@gmail.com?part=3D1
