@@ -1,209 +1,119 @@
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456A52D1911
-	for <linux-leds@vger.kernel.org>; Tue,  1 Sep 2026 23:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECB8433E75;
+	Wed,  2 Sep 2026 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788303652; cv=none; b=XcGH/yj+PbkLbBrbSyFBzxRqcEtrmnWO7Ht0LMHs7nwxhO1fnrFRm2eT1bPYZGiZy8ECh+WZQ/zsKbCXrSU3T70c3+xVO1wGtP77NHLrsH4B41o03b66lzzoGaIKT+2t2F7eMdDaikwFuRpa9be9BXM4f/xgPS4kVGDDj9PcxK4=
+	t=1788351784; cv=none; b=k+o2MYEHjqMBLipkOTaAFqcjaExiHF0Lane4JxpvBua6nuUhKbhAjBV6tIEEtYeS+or4hRheCzsdNk9DfeezsL+8t+tFOvUwcPBjzFNHaPkPnJWoWk72F+wYxVY4Sq/So6x08hLU3i6npQJVaiFs7vXA/XOcQnyIiGdhD6x+0WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788303652; c=relaxed/simple;
-	bh=upC9D2XVPdpvneF/ucxlVs4pd/Ku9T9AErXz2nCBWP4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EqOXwQpqMLfR2yIKoaVBSzEds5ouQyAmeJPkYluSiIeSkPSczFs+gxnocS1agX1qYMlDUmbQB1nXLYRb588JZpeHyFZjzpvZnKhrs+wvTKa5kGb393nLfLKlK9gLUs/rELIaEUlztgqFb7BKo46B2a5ECE9xcvpeS4OL/bYcHXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=QyVtjJN4; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1788351784; c=relaxed/simple;
+	bh=AESHr0IkfGVe/nYHKOQP0CK1IQsbtql8FlBvNdGujUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nhYJKcMy5RKzgnzEoJ/jO4HFX1R3lu8NT0Bt2zstkAaawm1yFJ4o6bHewj1qDMi3c45joDy0wkhBqeKGCdEAO1lSkdnNaQA3VQyAHMVv4V8QFKTrahg3eZOMmKRQZ8ryj+J3ioXVKk6IR+qXKT2hTg1BB3Ikjkrv03lLkrwsbM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KdQUdWzQ; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="QyVtjJN4"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id BEB58240029
-	for <linux-leds@vger.kernel.org>; Wed,  2 Sep 2026 01:00:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
-	s=1984.8680eb; t=1788303640;
-	bh=n533z9YPNBc7/1apeLWGiTfcDorGQ40Y0X08///3rFs=;
-	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
-	 MIME-Version:OpenPGP:From;
-	b=QyVtjJN4NHDrbGErU7jvT4r1pc8Ij6fFb6AlgtH5ARKXlmBZqMCDUTaGL/cvVzodN
-	 KCcAApGyE7J1cVw9UX7gZ2uo7+XU5luIlyuf8/ksUl0OtLplEMc95KpBGYIoB0J2fn
-	 3rgkPfV9bWPCWGf1Ww2mwqYfTeZqr1Y01OMxR0lgdmCa/6PzC9YZ/qqiVAgxUjF/b9
-	 yylvn4EJ5s4E3oGYK15yz9+7ZIP1v/QlhHlGvEFBWqenI6z+5lgWbRvT8EQU5DsWWo
-	 Nt2Y5qGgZKPwLWGn+hhe0WAshsl9IwTyD+FkBPnuQYNRZbpmIoTuJzD9wfffAQi/Qy
-	 zYfFHpCcmYV5w==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4hZLtc0tDNz6tsb;
-	Wed,  2 Sep 2026 01:00:40 +0200 (CEST)
-Message-ID: <1e8279e68f2b990e6183f5906ab0924739af28b3.camel@posteo.de>
-Subject: Re: [PATCH RFC 0/4] leds: extend disk trigger
-From: Markus Probst <markus.probst@posteo.de>
-To: Ian Pilcher <arequipeno@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org
-Date: Tue, 01 Sep 2026 23:00:40 +0000
-In-Reply-To: <03a91568-d1a0-4779-a465-2788f4765a42@gmail.com>
-References: <20260123-ledtrig_disk_-v1-0-07004756467b@posteo.de>
-	 <aXctPaaXFYemV20T@ryzen> <03a91568-d1a0-4779-a465-2788f4765a42@gmail.com>
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
- keydata=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
- jfGillcaQOqFZ3WwVqyzG1BUfTow==
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-vX2SMDVTwD0R68gdcS7x"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KdQUdWzQ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=YZOJZMYVElt8qJZC0gYvS3Szs6oti4jhDQBoAAgKW94=; b=KdQUdWzQNGU9wbFij+iXKNCoQz
+	yf/EXf8J8Gp/O8oeVLqHyT8HUgsHjE1BHKIUGMMgl7CM5febu1qHx4yaghL4JV57H3uXv/1gha2dx
+	zduDuxsAoEqK52WoPpxptlkbo80+Qtwc6JOjCghg7n+iucYD3UyOKRFont0IOWmI/l0Gw8KyXdra+
+	YmLMVZtJMmHbZgjT7fk2GASVeRaoHlWlWOMO1Rd8FyRAqIJF53SNhcsd69RKa71aOJ7KlTv8DgNkg
+	p9Ig3XelHRQNwcpEUrO3vKnHeMgz4cFFcgoUVmSiX8F/7e9DJvjJG09tToUivkbPQU7H6f4GGmrqZ
+	/hESG9Ig==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1x1jzY-0006yB-1B;
+	Wed, 02 Sep 2026 14:23:00 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1x1jzX-0004kO-2r;
+	Wed, 02 Sep 2026 14:22:59 +0200
+From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Isai Gaspar <isaiezequiel.gaspar@nxp.com>,
+	linux@ew.tq-group.com,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nora Schiffer <nora.schiffer@ew.tq-group.com>
+Subject: [PATCH 4/7] leds: pca995x: make output gain configurable
+Date: Wed,  2 Sep 2026 14:22:12 +0200
+Message-ID: <0c7e5cd44bb73d8680d30e1ae912b1cfcdab332f.1788350618.git.nora.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
+References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28111/Wed Sep  2 08:24:01 2026)
 
+The output gain linearly configures the LED current in 255 levels; the
+absolute current depends on both the gain value and the R_ext resistor
+connected to the LED driver. Make the gain configurable in the Device
+Tree instead of hardcoding it to 128, allowing to adjust the current
+for different hardware designs.
 
---=-vX2SMDVTwD0R68gdcS7x
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+---
+ drivers/leds/leds-pca995x.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Mon, 2026-01-26 at 10:19 -0600, Ian Pilcher wrote:
-> On 1/26/26 3:00 AM, Niklas Cassel wrote:
-> > But I'm not a fan of making the driver more complex.
-> > If we want something more complex than what is already there, then it
-> > is probably much better handled in user space, considering the amount
-> > of possible configuration options.
-> >=20
-> > Basically the same argument as used in:
-> > https://lore.kernel.org/linux-nvme/20220227234258.24619-1-ematsumiya@su=
-se.de/T/#u
->=20
-> Niklas -
->=20
-> Can you provide some links on how this might be done in userspace?
->=20
-> I've been maintaining my out-of-tree block device trigger for years, to
-> make the LEDs on my NAS work.
->=20
->   https://github.com/ipilcher/ledtrig-blkdev/blob/v6.9%2B/drivers/leds/tr=
-igger/ledtrig-blkdev.c
->=20
-> I'd love to be able to replace it with something in-tree.
+diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
+index 8eb9847b9709f..b069b93d39a54 100644
+--- a/drivers/leds/leds-pca995x.c
++++ b/drivers/leds/leds-pca995x.c
+@@ -126,6 +126,7 @@ static int pca995x_probe(struct i2c_client *client)
+ 	struct pca995x_chip *chip;
+ 	struct pca995x_led *led;
+ 	int i, j, reg, ret;
++	u32 iref;
+ 
+ 	chipdef = device_get_match_data(&client->dev);
+ 
+@@ -153,6 +154,11 @@ static int pca995x_probe(struct i2c_client *client)
+ 
+ 	i2c_set_clientdata(client, chip);
+ 
++	if (device_property_read_u32(dev, "output-gain", &iref))
++		iref = PCA995X_IREFALL_HALF_CFG;
++	else if (iref > PCA995X_IREFALL_FULL_CFG)
++		return dev_err_probe(dev, -EINVAL, "invalid output-gain\n");
++
+ 	device_for_each_child_node_scoped(dev, child) {
+ 		ret = fwnode_property_read_u32(child, "reg", &reg);
+ 		if (ret)
+@@ -195,7 +201,7 @@ static int pca995x_probe(struct i2c_client *client)
+ 		return ret;
+ 
+ 	/* IREF Output current value for all LEDn outputs */
+-	return regmap_write(chip->regmap, chipdef->irefall, PCA995X_IREFALL_HALF_CFG);
++	return regmap_write(chip->regmap, chipdef->irefall, iref);
+ }
+ 
+ static const struct i2c_device_id pca995x_id[] = {
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
-(I left the mailing lists except dt in Cc, so others with the same
-feature requirement can find this mail on the LKML).
-
-Hi Ian,
-
-In the case you are interested, I ended up writing a userspace daemon:
-https://codeberg.org/0xIO32/statusd .
-Also published as rust crate at https://crates.io/crates/statusd .
-
-It has a bit more functionality, but for simple disk blinking a example
-config would be:
-
-```
-disks:
-    # Any path that is a symlink to a block device works.
-    # Any component in the path can be a regex, so any special regex
-characters must be escaped.
-  - path: '/dev/disk/by-path/pci-0000:02:00\.0-nvme-1'
-    present:
-      - led: disk1
-        priority: 10
-        mode: static
-        brightness: 255
-    io:
-      poll_interval: 100ms
-      # min_active_time: 300ms
-      activity:
-        - led: disk1
-          priority: 20
-          mode: blink
-          delay_on: 90
-          delay_off: 90
-      # read: [] (events in here trigger only with read activity)
-      # write: [] (events in here trigger only with write activity)
-
-leds:
-  disk1:
-    name: multicolor:disk-1
-    default:
-      priority: 0
-      mode: static
-      brightness: 0
-```
-Config path: /etc/statusd.yaml
-
-In this config, the led brightness is 255 if the disk is present, 0
-otherwise. If there is read or write activity, it will blink with a
-delay of 90 ms (brightness is unset, so it gets inherited from the
-lower priority, resulting in 255).
-Disk and Led Hotplugging is fine, but `ledtrig-timer` should be loaded
-ahead of time or it might cause an error loop (statusd.service takes
-care of that).
-
-After the goals in the README are completed, I will try to get it
-packaged into the debian repositories.
-
-Thanks
-- Markus Probst
-
---=-vX2SMDVTwD0R68gdcS7x
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmqXWRUbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPSBG4QAKTBhRa25zZPtY89PoF0
-eEjIXUouD/QxR/7GfmK1f9DvyJgl5GhUp0qgoohnT7Fa3drERe2xCaKnSA9WZHaN
-bbeTr5CFJVUjXvMT/vMhTHtO10RYDJ3AVhJJ8APufFuVTmnWp1TnFsoSeipA6pJI
-n0mst+13SxC1snq4/HAWBmtScYkY+FLYEjxhR8JtU73lCsTg4gqW/V3vgrGfJXRd
-tnONjXbTDanOSmbKA9/5KN8rTAsi0NBnulN7YbnasL/Ai4Pur4wfkCaPLSkGuP7A
-CHMb/O19/qR/xqq0gNAfubvkR8JDXt31OE1X1ZWv0TwPTiFVR8yImCu4KBi4WRox
-RVKi39nawngseeE5XisFqLsVfEsASA36dbj5ob11VYlf3zupg2Jvxq68Xn6zpARY
-CyWBPWWPco4noOgZqnrqHwD+7tEl3e/dvKbb8JfizBJVXJwuFy+rZV7DX/o+SsZY
-iNJf2r5g1wkQCnueZ4DINrq9gRCXvydJRmOf90qCCTrboS8rXZr2OZmX5UN/Brjj
-CqrwuzPOcWYFB5GMRBIfR1L8TuXpKrWbwf4QgfOAhdri/gIWgsplThrhVKeYfB5P
-peO4ppZNnsnUl8qqeSxBfXw5fwii/p0t+PBDfUVm3UWUo4ytflp9EA8gLR4SInyd
-jo8bVIBg+gKII/Y0Rx+qKFZe
-=Rspn
------END PGP SIGNATURE-----
-
---=-vX2SMDVTwD0R68gdcS7x--
