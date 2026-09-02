@@ -1,57 +1,59 @@
-Received: from sender6-op-o15.zoho.com (sender6-op-o15.zoho.com [165.173.180.15])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A83F390615
-	for <linux-leds@vger.kernel.org>; Wed,  2 Sep 2026 19:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ECB38E8D3;
+	Wed,  2 Sep 2026 19:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788375675; cv=pass; b=cjZQwDrN9fVpEtQ4cwt6/eflve1c78fmu1iXeDUEf9kus5Q0O3IcxiHzPdPxfP7suMTSEY4UzS32K4NUiPwqdcjY0tt0flEQjpWhlW+A0ijol4o1IxrEQJQznu/OM8pp6IEMSDgq/+9IW5+xQOQGXfUT8rotl3cGdSRg2hj+XLc=
+	t=1788376862; cv=pass; b=f1DiDYe2mtFG7jIiwlE6Ie51UJbpTfVBqeA4cPZPgk8Co8Wk7CF9yfYVD07YHD9KtwcLrrIIj+JFX5EoYWs2Kr11Io6c6YH3MEsOIzsUxBi6TddHv/EmbuSsqJzkvq2uyBQ1tpuOe3F62gwUQQgHyEYRAHbgSKTp6Pftt7s5Vy0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788375675; c=relaxed/simple;
-	bh=AZeXCAXSxyA+r1whZeXSB0tEx+2h7yVQTltpmLt+cgU=;
+	s=arc-20240116; t=1788376862; c=relaxed/simple;
+	bh=WB/y+I+OGXd5+lSeYRYNlG7bWuPUAsWONedA8rBrFw8=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=pK1XmU/sKb13XbJYMOktpyS6E5W2OVOUKEq5g/tiKdjDsHeOXSqUtwRomA0IpnywvKPt1VfinWW4Fq0IgYSfcwLpwds3B5MFmjg62SAc2tqXdtob9EBWYOsB+J/VfUA/am6mN9ZMTbKO5vNUOy3JBeGuonh+/POVPKVcYSnvZCY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=jCACT9Ra; arc=pass smtp.client-ip=165.173.180.15
+	 Date:MIME-Version; b=RA5p4z5ifzFvUzhgD+4lR6y2exxlXRL84nt7qFgObfQJoR62jaaVYoTfzroVQGx+/6FBp2g1nvYyS9hflXFNDPGw196yW/7S5Ja/zl80hhWVH5aDv5agCk1RcDHq9vf3mWSyheREHAEgz4tHwD9DRFoCqGSILDjU2fcPntWSafk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=EVoDmiKm; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="jCACT9Ra"
-ARC-Seal: i=1; a=rsa-sha256; t=1788375669; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="EVoDmiKm"
+ARC-Seal: i=1; a=rsa-sha256; t=1788376851; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Boh6a1yphSqrIPCCi8E7ZvmCOLEzzZoSaJF+2Uf+eoku0eiXq2LjbxdaCpVqPHp8EToaNFKKJ+aTHsskmAZsfoLjqSbBTu05FQ2LpP9aJIgpC1lCcUK/L8oDvkxQG34fVUgBZJo+PChLZqPuGGAMNfBg44MoZyG1PdgKcY0NOwg=
+	b=AQ8WNBMN0VojsfPf8Z0tshaqVIXpwQiC43Y2Oz56G7sElqmKFfZL1JVVP1XndFHvRhG9VvqvdbVPtH0ze1SkV8qVwKC8KzRs3FVATEyIymwG9TVCeGWwz/USCd3dQp1WHzSL4BXQ8cHBf8Vm6o4IMF6p3LBSA7H12WPO4/iA1e0=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1788375669; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=T3LrZ5YU9HVJNF/itFRT31JE/x7CGcQ2B9zuc++xBLg=; 
-	b=PwBLgfsrS+jCGMJWY8ijh1d9jWnch/vXjMTdHOkGv9cO9sANlrvRMULhCps+hGILU86MO4dfcLrHGdbi7sK8Z/gbhO8TayRb8ul1b715UyyAQvoR1GgsqC8jcalGVElVRB/p7KEIw3bF0vNZ+/1rzvpnoxcc470j9iR0PTZwFns=
+	t=1788376851; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=szIh6WcIgwAVe3/omV91b4EK5M/Q077a47SuW6IWMks=; 
+	b=oL0C4+En6Sjy0c27SZWf6EDPWR9FD+KqW7e9BJ6I4ffXuoTXuKVvlsTYFdpmjFZmsA2lMalk9OVohbwyZeXo31yPjdBuMoprvp081OaAWwIvvlQXUxf65V2r0POC3dNkLRxpztVXP6RZ1MEftBFYkf44GXwdVn1KPnNtpHZwIEw=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788375669;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788376851;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=T3LrZ5YU9HVJNF/itFRT31JE/x7CGcQ2B9zuc++xBLg=;
-	b=jCACT9RaA7TiZl9p73KtD+Ez1RdWOihrfXPBkdNCVIItwGRRzpwhX4MXPsb8U1y/
-	rYra/g1fdV6GmROqTS5/aK6C4pCXd4hf8fyyJthby1DC+KIumvYduy0V8OWwQREZuRy
-	iwqDt+WQ8MD5SwlShVo8OmC20pe1n/X4e6lDLS66nm67NVoyUZRNKtcAYHChxJ4bX91
-	kvBNDfwbIseYM+/k4xkyeXK5QeDrFXwtk+5xspSYFbiyEd2DpP5CP8oplUx7Jy2+bMO
-	a20Qo2SLod2oQodyOus34xxw5sJUvF+aoDB33yLI0MV8YfYKAUnPrGHLNBhUNLv8Kyk
-	qLNEE6qfWQ==
-Received: by mx.zohomail.com with SMTPS id 1788375667697804.0882437888594;
-	Wed, 2 Sep 2026 12:01:07 -0700 (PDT)
-Message-ID: <0b2f92a242002f22dfabfda546dc14e8df4f1162.camel@rong.moe>
-Subject: Re: [PATCH v6 09/12] leds: trigger: Add
- led_trigger_notify_hw_control_changed() interface
+	bh=szIh6WcIgwAVe3/omV91b4EK5M/Q077a47SuW6IWMks=;
+	b=EVoDmiKmE4t3vKi3uNgVPmPXqru1GS5lO4vrJc7q2nH4y/nQu4YIu85biiuuBE4U
+	JqjmDKyB7mpdmUCJROFtZWJZRj3suoctq9UQN/JxhwxSdgmCU0zhIUaLxYOv3sw/mdc
+	ePZgbB27e/LwDxyUPVc53nVeXGViJh1AOZhsExIavS8vCfbHh5qNrRSylnxWgLGI9FV
+	E+BkuTlzEdUiztopqrnu7TUQxgnH8i/h1V/hFe/dSKHtow+YOFK75g3JDXEiwzAj51p
+	F1E3NtMxCfSe4flXKSRNCbSVKQDQrYM/Ik4wlPaVjR5EcrtS2DYoXDYinAzaHVmIzzS
+	/gbwoZcMNA==
+Received: by mx.zohomail.com with SMTPS id 1788376848137140.70314822538194;
+	Wed, 2 Sep 2026 12:20:48 -0700 (PDT)
+Message-ID: <8fd61cb314df880cd70d4fdd30642ed58af38c2b.camel@rong.moe>
+Subject: Re: [PATCH v6 11/12] platform/x86: ideapad-laptop: Decouple
+ hardware & classdev brightness for keyboard backlight
 From: Rong Zhang <i@rong.moe>
-To: sashiko-reviews@lists.linux.dev
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260902181556.9BB481F00A3A@smtp.kernel.org>
+To: lee@kernel.org, sashiko-reviews@lists.linux.dev
+Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	linux-leds@vger.kernel.org, platform-driver-x86
+	 <platform-driver-x86@vger.kernel.org>
+In-Reply-To: <20260902181558.5FAD11F000E9@smtp.kernel.org>
 References: <20260902-leds-trigger-hw-changed-v6-0-55693cd78877@rong.moe>
-	 <20260902-leds-trigger-hw-changed-v6-9-55693cd78877@rong.moe>
-	 <20260902181556.9BB481F00A3A@smtp.kernel.org>
+	 <20260902-leds-trigger-hw-changed-v6-11-55693cd78877@rong.moe>
+	 <20260902181558.5FAD11F000E9@smtp.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 03 Sep 2026 02:56:04 +0800
+Date: Thu, 03 Sep 2026 03:15:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -64,91 +66,111 @@ X-ZohoMailClient: External
 Hi Lee,
 
 On Wed, 2026-09-02 at 18:15 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+> Thank you for your contribution! Sashiko AI review found 2 potential issu=
 e(s) to consider:
-> - [High] Uninitialized work_struct leads to NULL pointer dereference
+>=20
+> New issues:
+> - [Low] Incorrect format string `%d` used for `unsigned int hw_brightness=
+` in `dev_warn`.
 
-I believe this is an LLM hallucination. See below.
+Well, let me fix it in the next revision.
 
-> --
 >=20
-> commit b9b9203cb3b45eb3bbf3490673a89b53a7df12ae
-> Author: Rong Zhang <i@rong.moe>
->=20
-> leds: trigger: Add led_trigger_notify_hw_control_changed() interface
->=20
-> This commit introduces a new interface to notify the LED core about
-> hardware-initiated trigger transitions. It adds a workqueue deferral
-> mechanism to safely handle these transitions.
->=20
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 7e571bd1de5b3..3b438d8da5e0c 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
->=20
-> [ ... ]
->=20
-> > @@ -611,6 +611,9 @@ int led_classdev_register_ext(struct device *parent=
-,
-> >  	led_trigger_set_default(led_cdev);
-> >  #endif
-> > =20
-> > +	if (led_cdev->flags & LED_TRIG_HW_CHANGED)
-> > +		led_trigger_init_hw_changed(led_cdev);
-> > +
->=20
-> [Severity: High]
-> Is it safe to initialize the work_struct after activating the default
-> trigger?
->=20
-> By the time led_trigger_init_hw_changed() is called,
-> led_trigger_set_default() has already run and the device is active. If a
-> hardware interrupt or userspace action fires in this small window, it cou=
-ld
-> invoke the notification before the work_struct is fully initialized.
->=20
-> >  	mutex_unlock(&led_cdev->led_access);
->=20
-> [ ... ]
->=20
-> > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> > index cb49a02a8b3cf..a9d992a886161 100644
-> > --- a/drivers/leds/led-triggers.c
-> > +++ b/drivers/leds/led-triggers.c
->=20
-> [ ... ]
->=20
-> > +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cd=
-ev, bool activate)
-> > +{
-> > +	/* Restricted to private triggers. */
-> > +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
-> > +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
-> > +		return;
-> > +
-> > +	WRITE_ONCE(led_cdev->triggers_hw_changed, activate);
-> > +
-> > +	schedule_work(&led_cdev->triggers_hw_changed_work);
->=20
-> [Severity: High]
-> If this notification is triggered during the registration window mentione=
-d
-> above, will this schedule an uninitialized work_struct?
+> Pre-existing issues:
+> - [High] The driver uses the unmanaged `led_classdev_register` API instea=
+d of the managed `devm_led_classdev_register` API.
 
-The LED driver apparently cannot call anything on the LED device during
-the registration. If the driver lost its sanity and did so, it would
-break tons of things, not limited to the "concern" here.
+This is yet another LLM hallucination. The driver needs to manage LED
+unregistration itself to coordinate with ACPI notification handling.
 
-Therefore, this is not a valid concern and should be considered as an LLM
-hallucination.
+Sashiko's concerns on other patches in the series are either pre-existing
+issues that are out of the scope of the series, or LLM hallucinations.
+
+Lee, I believe the series is ready for your review. Could you kindly
+shine some light on the series? If you decide to apply PATCH v6 1-9 to
+the LED tree, I will send a v7 solely for pdx86. Otherwise I will refresh
+the whole series according to your insights.
 
 Thanks,
 Rong
 
+> --
 >=20
-> Scheduling a zero-initialized work_struct means the function pointer is N=
-ULL,
-> which will cause a kernel panic when the worker thread attempts to execut=
-e it.
+> commit 227fca9f070999fc85599521adcec4975c6e441e
+> Author: Rong Zhang <i@rong.moe>
 >=20
+> platform/x86: ideapad-laptop: Decouple hardware & classdev brightness for=
+ keyboard backlight
+>=20
+> This commit decouples hardware brightness from LED classdev brightness to
+> better support models with an ambient light sensor (ALS). It also introdu=
+ces
+> a refactor of the initialization path to prepare for exposing the auto
+> brightness mode.
+>=20
+> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
+tform/x86/lenovo/ideapad-laptop.c
+> > index 684421ba53cbc..712999b6900df 100644
+> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
+> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+>=20
+> [ ... ]
+>=20
+> > @@ -1594,7 +1619,24 @@ static int ideapad_kbd_bl_check_tristate(int typ=
+e)
+> >  	return (type =3D=3D KBD_BL_TRISTATE) || (type =3D=3D KBD_BL_TRISTATE_=
+AUTO);
+> >  }
+> > =20
+> > -static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
+> > +static int ideapad_kbd_bl_brightness_parse(struct ideapad_private *pri=
+v, unsigned int hw_brightness)
+> > +{
+> > +	/* Off, low or high */
+> > +	if (hw_brightness <=3D priv->kbd_bl.led.max_brightness)
+> > +		return hw_brightness;
+> > +
+> > +	/* Auto (controlled by EC according to ALS), report as off */
+> > +	if (priv->kbd_bl.type =3D=3D KBD_BL_TRISTATE_AUTO &&
+> > +	    hw_brightness =3D=3D KBD_BL_AUTO_MODE_HW_BRIGHTNESS)
+> > +		return 0;
+> > +
+> > +	/* Unknown value */
+> > +	dev_warn(&priv->platform_device->dev,
+> > +		 "Unknown keyboard backlight value: %d", hw_brightness);
+>=20
+> [Severity: Low]
+> Does this dev_warn() use the correct format string for its argument?
+> The hw_brightness variable is passed as an unsigned int, but the format
+> string uses %d which expects a signed int.
+>=20
+> > +	return -EINVAL;
 > > +}
+>=20
+> [ ... ]
+>=20
+> > @@ -1710,21 +1758,35 @@ static int ideapad_kbd_bl_init(struct ideapad_p=
+rivate *priv)
+> >  	if (err)
+> >  		return err;
+>=20
+> [ ... ]
+>=20
+> > +	/* Reject insane values. */
+> > +	err =3D ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
+> > +	if (err < 0)
+> > +		return err;
+> > +
+> >  	err =3D led_classdev_register(&priv->platform_device->dev, &priv->kbd=
+_bl.led);
+>=20
+> [Severity: High]
+> This isn't a bug introduced by this patch, but should this use the manage=
+d
+> devm_led_classdev_register() API instead?
+>=20
+> The LED subsystem guidelines mandate using managed registration APIs to
+> prevent resource leaks and use-after-free hazards during driver removal.
+>=20
+> >  	if (err)
+> >  		return err;
