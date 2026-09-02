@@ -1,129 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18A649C4D5;
-	Wed,  2 Sep 2026 12:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7E949B21F;
+	Wed,  2 Sep 2026 13:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788353036; cv=none; b=tnhMF9yEYBVEoiaTn/oDEVBu1Vl9hXzikVtK+vfBa3clNoBl2do2uhVV6Zv4XrXW70Xf+TKRKz/SZ4YuZCcMpr7cIa4o/pPraLoMjtDWN9nq3F2qSsYsyE8Pb4AYCiTZdyEtO0PWwgjJ3nh/SK5cR6hZtf+8uyDHsaN00OH+HBo=
+	t=1788354616; cv=none; b=fnqpyVVrXbk+cJQyW7kSoQUhwKI4fgfAk5I3jOcOnbf/wLjhfkp9faWD4vEbGxhpTX72urVJ4l+3LWdxhiI3O04awXPkv5yi5asTBnkqfxEx8r1kGkwONK7qLqw5Yh7Lhvl+BtZpLYpNY5uoCFssxpwWAFUqGj2x5Kc6v3qSCiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788353036; c=relaxed/simple;
-	bh=ohplCGQNf3Soc/5a1Jw4+PkywueX3S28yHWZjsUkHPI=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=TiGfqdJx/yAJIyx3IFwPSPugD9qKh5d4exV9KTy7Gt083rE48jOLjl9PdIwu/rMfYYT2lSk8C7wI6Z4XXMxJHyc8ormlQz6O1OT7ygu2nXzBN4t94BbMaLg4cCoPQKTv9PjYJ5iMtRHU5qU1Vd7LZAlpgNEeA1wJzHhkDJaUUwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPUAmGHT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788354616; c=relaxed/simple;
+	bh=VZ1aSpCeMrLXLXlIbesAwGCaSlwKwM4rCt2ADcuLNRQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=I7CppAC6jD3LgOhlBHwRTUZLPuptG+TVn1RNPYI3APMNdqCDJSfLPzRFL1b/p/unqy6uCkOWKt9pLcLkQlxgF+pE3PUPsXRoc83naQNpDU8AFGpYOz6tDxsl4PlEThbgg+MxS1LddGbGrywK/sBa6ItPMQxv/h7qqmr3QsGfYqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=aKn2FLx1; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPUAmGHT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F33FB1F00A3A;
-	Wed,  2 Sep 2026 12:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788353034;
-	bh=xqoR3OegmE92tcSUI06tPZM7Vii3gRlmtM6fh/Y623A=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=oPUAmGHT09/pO1yjrwyl1rqfKSypfniXwtdNvETwki9mh+OBaVFFmppWELqxGHqej
-	 J3eWANYoVeLMoTXSfPfENn+Tu5OwPom1rmzU+J1t37E87QShxqVSm4qXj0HpOOvA35
-	 Y+ugoY9GV2WANe9lX/cRwFCIVQfIcYVFH0fIPS+k9TsfVhnMjvYIwfwIo7gxINQKx9
-	 3YYqMkyHsl1kqR704Bbs8kV300z0TEweQ5GgZRxkNlgGHbJuo+ylsofSHndGaexXke
-	 lmKD/mYNg9bwy5w2tyePTdZEPDD/2eiVKqALYS2Oh2FtUIGxM1lUWw6gFnI0PGcPc4
-	 4eCIsj6mgTN7A==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 7/7] leds: pca995x: add support for group brightness
- control
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Nora Schiffer" <nora.schiffer@ew.tq-group.com>
-Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <225583885966f45079a7dafdbc2b1c419a25fa4b.1788350618.git.nora.schiffer@ew.tq-group.com>
-References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
- <225583885966f45079a7dafdbc2b1c419a25fa4b.1788350618.git.nora.schiffer@ew.tq-group.com>
-Content-Type: text/plain; charset=utf-8
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="aKn2FLx1"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:To:From:Subject:Message-ID:Sender:
+	Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=if5dOSFSoo1f+35186xMX0xtar1esgVkjO+bmUhfl9o=; b=aKn2FLx1R0vvrK5nIHU9MhbO5S
+	9znWoRlRDncy3v/8uQ9QzXqfnQa4eqs5A+j1zGGs0MLgENiek9eFq2ldDADdGV90BWwUMx+cHBY3N
+	/B8ugc+D8PaZ5ZM8WtTa+7bNBTYQIpupv1SmgPdZ476m2/r0NBAxv7hFfHC0rabgBHMBUIv2U8Jvj
+	ksvoaVcPl4hT6c9UW1W+x9b5lizX6mUMwogMyJ9SB3qS5TiZxGNSNkbhrS+Fd4iUPAVzXb7SR/naD
+	n0zurOAK4oLByzsiIoa43tWx0c1TzFLSOe/qK4xEDsxA1THJ9uyck39pBYoxEg4vS/EsC6DSmNWbZ
+	/8JsA0pQ==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1x1kjD-000IRb-06;
+	Wed, 02 Sep 2026 15:10:11 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1x1kjC-000JEN-2B;
+	Wed, 02 Sep 2026 15:10:10 +0200
+Message-ID: <630889485b7be21875c858c705e1c9d828973c67.camel@ew.tq-group.com>
+Subject: Re: [PATCH 2/7] dt-bindings: leds: pca995x: describe output-gain
+ property
+From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+To: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org, 
+ conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ lee@kernel.org
+Date: Wed, 02 Sep 2026 15:10:09 +0200
+In-Reply-To: <20260902123105.11B171F000E9@smtp.kernel.org>
+References: 
+	<6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
+	 <7f61e7e8781292450f920c49ef8853b802d76ecc.1788350618.git.nora.schiffer@ew.tq-group.com>
+	 <20260902123105.11B171F000E9@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Sep 2026 12:43:53 +0000
-Message-Id: <20260902124353.F33FB1F00A3A@smtp.kernel.org>
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28111/Wed Sep  2 08:24:01 2026)
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [Medium] Missing explicit initialization of GRPPWM and MODE2 registers ma=
-kes LED brightness dependent on undefined hardware states.
-- [Low] The commit message description is not capitalized, violating LED su=
-bsystem naming conventions.
-- [Low] has_errors_store uses strcmp() instead of sysfs_streq() to parse sy=
-sfs input, rejecting valid inputs without a newline.
---
+On Wed, 2026-09-02 at 12:31 +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 3 potential issu=
+e(s) to consider:
+> - [Low] The custom, device-specific property `output-gain` lacks a mandat=
+ory vendor prefix.
 
-commit 2816a66784d3fbb95bdf9b79d38d26cc4f4d0d96
-Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+Probably makes sense to add the vendor prefix, will do in v2.
 
-leds: pca995x: add support for group brightness control
+> - [Low] The `output-gain` property incorrectly exposes a raw hardware reg=
+ister value directly to the Device Tree instead of describing physical unit=
+s.
 
-This commit introduces group brightness control for PCA995x LEDs. It sets
-the LEDs to group PWM mode, enabling global group PWM settings to modulate
-individual brightness. It also adds a sysfs attribute for group brightness
-and removes the non-group PWM setting.
+According to the datasheet, the LED current is calculated as follows:
 
-> leds: pca995x: add support for group brightness control
+    Iled =3D output_gain * 900mV / Rext / 4
 
-[Severity: Low]
-This isn't a bug, but does the commit message subject line violate the LED
-subsystem naming conventions?  Should the description after the subsystem
-prefix be capitalized, such as "leds: pca995x: Add support for group
-brightness control"?
+If we want to fully describe the output gain using physical units, somethin=
+g
+like output-current-microamps and external-resistor-ohms would work. There
+wouldn't be a meaningful default for these properties to describe in the bi=
+nding
+docs however, which is possible for "output-gain" (as the driver just sets =
+that
+to 127.)
 
-> diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> index 62f2764661b9d..d65c33edc83ab 100644
-> --- a/drivers/leds/leds-pca995x.c
-> +++ b/drivers/leds/leds-pca995x.c
+Best,
+Nora
 
-[ ... ]
 
-> @@ -110,11 +115,10 @@ static int pca995x_brightness_set(struct led_classd=
-ev *led_cdev,
-> =20
->  	/*
->  	 * Change LDRx configuration to individual brightness via PWM.
-> -	 * LED will stop blinking if it's doing so.
->  	 */
->  	return regmap_update_bits(chip->regmap, ledout_addr,
->  				  PCA995X_LDRX_MASK << shift,
-> -				  PCA995X_LED_PWM_MODE << shift);
-> +				  PCA995X_LED_PWM_MODE_GRP << shift);
->  }
-
-[Severity: Medium]
-Does this change make the LED brightness depend on undefined hardware state=
-s?
-
-Without explicit initialization of the GRPPWM and MODE2 registers during
-pca995x_probe(), a system without a reset GPIO might leave the PCA995x in an
-unexpected state during a warm reboot.
-
-If the driver loads and configures the LEDs into PCA995X_LED_PWM_MODE_GRP
-while the registers aren't at their default values (GRPPWM=3D255 and
-MODE2=3Ddimming), will this cause incorrect behavior such as LEDs blinking =
-or
-remaining off instead of turning on dimly?
-
-[ ... ]
-
-> @@ -186,10 +190,41 @@ static ssize_t has_errors_store(struct device *dev,=
- struct device_attribute *att
->  	return ret ?: count;
->  }
-
-[Severity: Low]
-Is the parsing logic in has_errors_store() overly strict?
-
-It currently uses strcmp(buf, "clear\n"), which rejects valid userspace
-commands like 'echo -n clear' because they lack a trailing newline.  Would =
-it
-be better to use sysfs_streq() instead to handle inputs both with and witho=
-ut
-a newline?
+> - [Low] The commit message description is not capitalized, violating LED =
+subsystem naming conventions.
+> --
+>=20
+> commit 09d8712f125575e995a97c0a819c386e17eb766a
+> Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+>=20
+> dt-bindings: leds: pca995x: describe output-gain property
+>=20
+> This commit adds the output-gain property to the pca995x device tree bind=
+ing,
+> allowing configuration of the output current to adjust for different hard=
+ware
+> designs.
+>=20
+> > dt-bindings: leds: pca995x: describe output-gain property
+>=20
+> [Severity: Low]
+> This isn't a bug, but the subsystem guidelines for LED bindings specify
+> that the description after the prefix should be capitalized. Should
+> this be changed to "Describe output-gain property"?
+>=20
+> > diff --git a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml b/=
+Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+> > --- a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+> > +++ b/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+> [ ... ]
+> > @@ -36,6 +36,14 @@ properties:
+> >    "#size-cells":
+> >      const: 0
+> > =20
+> > +  output-gain:
+>=20
+> [Severity: Low]
+> Because this is a custom, device-specific property, does it require a
+> mandatory vendor prefix (such as nxp,output-gain)? Exposing it without a
+> prefix could pollute the global device tree namespace and potentially con=
+flict
+> with future standard properties or other bindings.
+>=20
+> > +    description:
+> > +      Set the output gain controlling the LED current as described in =
+the
+> > +      PCA995x datasheets.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    default: 128
+> > +    maximum: 255
+>=20
+> [Severity: Low]
+> Do these constraints expose a raw 8-bit hardware register value directly
+> to the device tree? Usually, device tree properties describe hardware neu=
+trally
+> using standard physical units (such as microamps) rather than tying the v=
+alue
+> to the internal register layout of the chip. Could this be abstracted to =
+use
+> standard physical units instead?
+>=20
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6d3600f99c77c31166f=
-0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=3D7
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
