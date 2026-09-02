@@ -1,122 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373F3DDDDD
-	for <linux-leds@vger.kernel.org>; Wed,  2 Sep 2026 18:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365A837EFE2
+	for <linux-leds@vger.kernel.org>; Wed,  2 Sep 2026 18:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788372959; cv=none; b=pCsLN1yzToKOcq4qJyDrgs2QnYwBr6dm1yIgPJI/tnHUAk88tpF6RwFW9CNupgIzCKBqW2cDkQudMJAjR31nTQGjdUst7BYBgGf+aLbkIRotrex1SgV2DyknQWWQFKnP6cSmH5TCUZb/anjKfS+mVfq1ltVymNa5GY10iTuT9xM=
+	t=1788372960; cv=none; b=WGOC3YjbIr6onVqane9/YQQLBVrYIw3D0uVF9A997a3Ar8wdoMmrMjNRRbqyRBM2819I1PnLAsurs9Tj57MwygEKmy1xLEmeX4nYC+JlDufvRRWulRxyJAlJWXz8mYVuYl3l4zhLMCbLfHX+JIMAGdqeoiYxLKT9+9pkrdI9UpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788372959; c=relaxed/simple;
-	bh=OB+ut24CZFllGKfJbo6SmTXZsCAkXp0dMc3bawZRmsw=;
+	s=arc-20240116; t=1788372960; c=relaxed/simple;
+	bh=UDonXa6L5h9LD0yxQOb/Bz3vNB6ZVeOB+0TU0ywEBBI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=SZa/pNdR3h2nmtp/qxdYBgDHS0AmppROvpTYNxIq3hKRda1+wGdIHivX6hupNXyTY4zJtLJJwC0dHro1er9z9LrwoFVwlSCTqkNOBiRQMFCEK46GEya4sUUhjMTxUP8vRW0R7Ur3VAFhKCm2xG8tLX+poRUoAkyPNEnRDsG1Re8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=guJB4UkZ; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=mYzj+z8G/ui6mkiRRiL7rLci5pmE9PXlr6xLz8v1WOtMNEshByLXa9SkNF85KhvUWRvJrb5l2RTEVwm6rGdFwXh6Rr4pO84Eq5YHDlGi7ZPING+jIYj/CbIa9byPyEwvFVNIBGMsmT51a6snWOSHbgLbjmh9RwY+r0E7pQW/uUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYwhegPd; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="guJB4UkZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB481F00A3A;
-	Wed,  2 Sep 2026 18:15:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYwhegPd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 865071F00A3D;
+	Wed,  2 Sep 2026 18:15:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788372956;
-	bh=kQNjL1kulDXSRmqG4R8bVeW7nIZ1zyHnRR9eQC30WV0=;
+	s=k20260515; t=1788372957;
+	bh=UDonXa6L5h9LD0yxQOb/Bz3vNB6ZVeOB+0TU0ywEBBI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=guJB4UkZLi1+L+Kc2CtgvH0JJZURSqzxk9F7HNQYnS+BCYG7WB72gMYw2t/87biDs
-	 eMQp0Pcyz1DbJiG3yoFEBa5G4LNZVfnlxtpwPxKBv4xq8CkVRuxNE2KSF5V8jj1mWr
-	 gom1ozDfjQ8BTEFij1lT71t31oIaT7X+4JwT1cDbevCFvmAAxrf76kL0sM0HWJahyz
-	 ONyF/2kBvrWW7nctrFiTgFRjAwzK0l0YtExFLxH6tG+AtLLqKwB2NfUzKOyuBBiJil
-	 9hj3vCv5SrsOchFXrAuctMFYHJX/srVOAUvHpCbeEy3V7tyLEvcsGmzSHR0oSUL97h
-	 eGMVVPl1Oyqog==
+	b=VYwhegPdspYNk7ICq//8zJ7POHoOqwNjpgjkpTsTbRZm923CNJdYp1pISKwYFLVab
+	 ZJcnpRzahjTwhP3vIX1aRKxJaq//OPWihfSnIQmy5GyPLjeWBa17F/IlIb7dR+ESLv
+	 aEai1KLbhns5r8osmM+Mywg3+/czONZScoIwUStYRyCl/f+P0p8maGx7df19fsCOrg
+	 G+Zac4ofSY1+E3EfILUdAkzysgAAmsXUY9liM3u4xNIagCmmQhXlP7vorQVvMIjuHS
+	 azlJ4QYyqpPGWRu41sNUF1MH4XeCAMbOQOwbC0X0mmHmvbB33NvxmDU0KYXCkHCZaW
+	 +ikAQw8WuliNg==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 09/12] leds: trigger: Add
- led_trigger_notify_hw_control_changed() interface
+Subject: Re: [PATCH v6 10/12] platform/x86: ideapad-laptop: Serialize
+ keyboard backlight tracking
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
 Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260902-leds-trigger-hw-changed-v6-9-55693cd78877@rong.moe>
+In-Reply-To: <20260902-leds-trigger-hw-changed-v6-10-55693cd78877@rong.moe>
 References: <20260902-leds-trigger-hw-changed-v6-0-55693cd78877@rong.moe>
- <20260902-leds-trigger-hw-changed-v6-9-55693cd78877@rong.moe>
+ <20260902-leds-trigger-hw-changed-v6-10-55693cd78877@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Wed, 02 Sep 2026 18:15:56 +0000
-Message-Id: <20260902181556.9BB481F00A3A@smtp.kernel.org>
+Message-Id: <20260902181557.865071F00A3D@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [High] Uninitialized work_struct leads to NULL pointer dereference
---
+> ACPI notifications are delivered in dedicated work contexts and may
+> arrive simultaneously. In the following change, much work will be done
+> while handling the notification, which could lead to potential race
+> conditions.
+>=20
+> Introduce a new mutex to serialize keyboard backlight tracking to
+> prevent potential race conditions.
+>=20
+> Acked-by: Ike Panhc <ikepanhc@gmail.com>
+> Signed-off-by: Rong Zhang <i@rong.moe>
 
-commit b9b9203cb3b45eb3bbf3490673a89b53a7df12ae
-Author: Rong Zhang <i@rong.moe>
-
-leds: trigger: Add led_trigger_notify_hw_control_changed() interface
-
-This commit introduces a new interface to notify the LED core about
-hardware-initiated trigger transitions. It adds a workqueue deferral
-mechanism to safely handle these transitions.
-
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 7e571bd1de5b3..3b438d8da5e0c 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-
-[ ... ]
-
-> @@ -611,6 +611,9 @@ int led_classdev_register_ext(struct device *parent,
->  	led_trigger_set_default(led_cdev);
->  #endif
-> =20
-> +	if (led_cdev->flags & LED_TRIG_HW_CHANGED)
-> +		led_trigger_init_hw_changed(led_cdev);
-> +
-
-[Severity: High]
-Is it safe to initialize the work_struct after activating the default
-trigger?
-
-By the time led_trigger_init_hw_changed() is called,
-led_trigger_set_default() has already run and the device is active. If a
-hardware interrupt or userspace action fires in this small window, it could
-invoke the notification before the work_struct is fully initialized.
-
->  	mutex_unlock(&led_cdev->led_access);
-
-[ ... ]
-
-> diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index cb49a02a8b3cf..a9d992a886161 100644
-> --- a/drivers/leds/led-triggers.c
-> +++ b/drivers/leds/led-triggers.c
-
-[ ... ]
-
-> +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev=
-, bool activate)
-> +{
-> +	/* Restricted to private triggers. */
-> +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
-> +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
-> +		return;
-> +
-> +	WRITE_ONCE(led_cdev->triggers_hw_changed, activate);
-> +
-> +	schedule_work(&led_cdev->triggers_hw_changed_work);
-
-[Severity: High]
-If this notification is triggered during the registration window mentioned
-above, will this schedule an uninitialized work_struct?
-
-Scheduling a zero-initialized work_struct means the function pointer is NUL=
-L,
-which will cause a kernel panic when the worker thread attempts to execute =
-it.
-
-> +}
+Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260902-leds-trigg=
-er-hw-changed-v6-0-55693cd78877@rong.moe?part=3D9
+er-hw-changed-v6-0-55693cd78877@rong.moe?part=3D10
+
