@@ -1,100 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9F344A3E7;
-	Wed,  2 Sep 2026 12:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B905C489866;
+	Wed,  2 Sep 2026 12:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788352524; cv=none; b=HBN43RqQ1CEjAu+Bf3K9OX6YsmNSPW6/XommdaMtSbAuNR1k2o77WIU9JsomH2CVTgGcyXzK3lnM2lmJFWDcR9QziL4dbiMEBpAQ+dQymwDz7iUVVuTKrDk6BeJkE5rts4SD2GcWfjkicgHIQfco47CP8L5OydKv55JQpu7nhzM=
+	t=1788352685; cv=none; b=MZM7dpf0spmQS0DEgsTvtFWVxQOlU5EzhCJwa6+7rKByGraBREIq4tDdwzpUrPyLa0NmxINExoo2vs79EqzDk53p/COatqniDcP92nwElkfUM+P4zHaxh1W4ceNpvP1fySEt22io21LcC7DuiZ7X+pTgykaCR3x55nZ5I9mpFbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788352524; c=relaxed/simple;
-	bh=O/q6suFLUvgfrhpwgZQFD5lA59N1IyrUGoMcSE0S3Lw=;
+	s=arc-20240116; t=1788352685; c=relaxed/simple;
+	bh=RiSKSJIjEyx6lqaWOIi9H8QqmbvFesfp6493+2rRlSo=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=KZxc6puJY6L5wUEur+QF9mJTm/RpE1KNr/Kzr0O8gJxtRhZb5C6Uxz0klhYRrPouglzzOEeHqThE86zSSiWpmuWAxJz+1XNTnuCn1JvsA6jOMDcG+KjFO+FRQCORzv8cNh0d8NhZwiYEyOki3cePrx4M6P8lAtE+muTN0WYXXFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQEnmmCK; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=MCays6sYb8Id10vJ4dC8w+M1DrSTqz5tpdyhavopbDjxm2nfWK7h7BMtF8qrsv/2AGZts/lr0poIKaMRvlP3fZj10m515AyM4Dhr7HvtjAd5Nh9fQVrJPJXoPiStPGR9dtuFezpnQoQQv/Mb6GpSo34buSWJFe1PKFB97oQzHuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrkhHzL6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQEnmmCK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 982691F000E9;
-	Wed,  2 Sep 2026 12:35:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrkhHzL6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC6841F00A3A;
+	Wed,  2 Sep 2026 12:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788352523;
-	bh=IAhN23I2NjJTnEj6PJYjhUMsGZWZJiy5XGE3H+/osss=;
+	s=k20260515; t=1788352680;
+	bh=X/mpNmMLwy/VfVy1aA/48xgLkKpcWMnzNYONpoqleso=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=GQEnmmCKu5H/19IN2VEp1pp5jzYL/As8J+BOC9RCqMrN6h4CqZKsxvJYFK/mvOGWc
-	 MOr9jZY8GzdeRF93RQCAw1qZ3sgFTvTtyicCdTXHU/FqL3p2TYLgN+3l0+CsD3ubxX
-	 TtPgOIoCuZD+Qtdxqz2Uigb8WHT8tznCDfbrZIhpfuFRdzNdeDKMOberbnkHuAFyVC
-	 B6CurfpMoHbw9yoXfQ/dnJaEO4lURY0joo1qjH5IrqmmJmRD2HyBGoSJAJRRY78pNl
-	 3ICu9lk0LUSYQ2USWnswABC2MQmOPDJCgtI9s/zFSB9M+R6Xcz/I2kvAgpa1tIQ37R
-	 sJ8PvcrIynznQ==
+	b=PrkhHzL6O9AqEwmUFWsLCAQ5PhXbzcSnxzxlxFIOzlnw7aW6t/3cnjwBKJBlgNsX2
+	 tLEZCD55DGRCJGpFtvMQqhmxIIxq1NEkcK7o5n5vA50mUK6vBEpfF0NTA9nVIWOi7i
+	 ne4Tj+8gefU/TO4dYA1I7nC7qze5kwSV+y0GeZsIWR4H86F9qLlnSPMTEi3RKunVPg
+	 Wcp8VxvtdZHVA85074sjI94DY1FJ6/Jac2n2xz6VHIzVi3CqXr5TWsyHCbxJVwWbRC
+	 h/bIRHGwpIh8J2dOH82huVjLKGaqYdSJkr93m1eQ+kfpvB7LJNXSvlBJrtzPiKeuK6
+	 9rXU3LjeBtb1A==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 4/7] leds: pca995x: make output gain configurable
+Subject: Re: [PATCH 1/7] dt-bindings: leds: pca995x: describe reset-gpios
+ property
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Nora Schiffer" <nora.schiffer@ew.tq-group.com>
-Cc: conor+dt@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <0c7e5cd44bb73d8680d30e1ae912b1cfcdab332f.1788350618.git.nora.schiffer@ew.tq-group.com>
+Cc: linux-leds@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, lee@kernel.org
+In-Reply-To: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
 References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
- <0c7e5cd44bb73d8680d30e1ae912b1cfcdab332f.1788350618.git.nora.schiffer@ew.tq-group.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Sep 2026 12:35:22 +0000
-Message-Id: <20260902123522.982691F000E9@smtp.kernel.org>
+Date: Wed, 02 Sep 2026 12:37:59 +0000
+Message-Id: <20260902123759.DC6841F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
-- [Medium] The patch introduces an un-prefixed, hardware-specific Device Tr=
-ee property `output-gain` that exposes a raw register value instead of usin=
-g a standard physical property or a vendor prefix.
-- [Medium] Mismatch between the driver fallback logic and the commit messag=
-e regarding the default `output-gain` value.
-- [Medium] The commit message description is not capitalized, violating the=
- LED subsystem commit message formatting rules.
+
+New issues:
+- [Low] The commit message description is not capitalized, violating the LE=
+D subsystem guidelines.
+
+Pre-existing issues:
+- [High] This problem wasn't introduced by this patch, but the driver valid=
+ates the child `reg` property against `PCA995X_MAX_OUTPUTS` (24) instead of=
+ the chip-specific `num_leds`. This allows 16-channel variants to configure=
+ out-of-bounds LEDs.
 --
 
-commit 68a1c0b2bd97402769422bdcabf4d7451b72efcb
+commit ead1262f70ad0044c0eca7c693a6d898fbcc4d44
 Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 
-leds: pca995x: make output gain configurable
+dt-bindings: leds: pca995x: describe reset-gpios property
 
-This commit makes the output gain of the pca995x LED driver configurable
-via the Device Tree. It allows reading a value to adjust the LED current
-for different hardware designs instead of using a hardcoded value.
+This commit adds the reset-gpios property to the PCA995x device tree bindin=
+g.
+It allows the reset pin of the PCA995x to be described in the Device Tree.
 
-> leds: pca995x: make output gain configurable
+> dt-bindings: leds: pca995x: describe reset-gpios property
 
-[Severity: Medium]
-This isn't a bug, but the commit message subject does not follow the LED
-subsystem's capitalization rules. Should the description after the prefix
-be capitalized, for example "leds: pca995x: Make output gain configurable"?
+[Severity: Low]
+This isn't a bug, but does this commit message subject violate the LED
+subsystem capitalization rules? The description after the subsystem prefix
+should be capitalized.
 
-> diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> index 8eb9847b9709f..b069b93d39a54 100644
-> --- a/drivers/leds/leds-pca995x.c
-> +++ b/drivers/leds/leds-pca995x.c
-[ ... ]
-> @@ -153,6 +154,11 @@ static int pca995x_probe(struct i2c_client *client)
-> =20
->  	i2c_set_clientdata(client, chip);
-> =20
-> +	if (device_property_read_u32(dev, "output-gain", &iref))
+This is a pre-existing issue, but the driver validates the child reg
+property against PCA995X_MAX_OUTPUTS (24) instead of the chip-specific
+num_leds:
 
-[Severity: Medium]
-Does introducing the un-prefixed "output-gain" property pollute the global
-Device Tree namespace? Should this use a standard physical property or a
-vendor prefix instead, to avoid long-term ABI maintenance debt?
+drivers/leds/leds-pca995x.c:pca995x_probe() {
+    ...
+	device_for_each_child_node_scoped(dev, child) {
+		ret =3D fwnode_property_read_u32(child, "reg", &reg);
+		if (ret)
+			return ret;
 
-> +		iref =3D PCA995X_IREFALL_HALF_CFG;
+		if (reg < 0 || reg >=3D PCA995X_MAX_OUTPUTS || led_fwnodes[reg])
+			return -EINVAL;
+    ...
+}
 
-[Severity: Medium]
-The commit message explicitly claims the default output gain value was
-hardcoded to 128. However, PCA995X_IREFALL_HALF_CFG is used here as the
-fallback, which evaluates to 127. Is this mismatch between the commit
-message and the implemented logic intended?
+[Severity: High]
+Does this allow 16-channel variants to configure out-of-bounds LEDs?
+
+Changing the brightness of out-of-bounds LED channels (16-23) on 16-channel
+variants (e.g. PCA9955B) calculates a pwmout_addr that overlaps with the
+IREF registers (output current control) for channels 0-7.
+
+Could this cause silent hardware state corruption and potential physical
+damage to LEDs?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6d3600f99c77c31166f=
-0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=3D4
+0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=3D1
