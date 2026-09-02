@@ -1,176 +1,295 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ECB38E8D3;
-	Wed,  2 Sep 2026 19:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788376862; cv=pass; b=f1DiDYe2mtFG7jIiwlE6Ie51UJbpTfVBqeA4cPZPgk8Co8Wk7CF9yfYVD07YHD9KtwcLrrIIj+JFX5EoYWs2Kr11Io6c6YH3MEsOIzsUxBi6TddHv/EmbuSsqJzkvq2uyBQ1tpuOe3F62gwUQQgHyEYRAHbgSKTp6Pftt7s5Vy0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788376862; c=relaxed/simple;
-	bh=WB/y+I+OGXd5+lSeYRYNlG7bWuPUAsWONedA8rBrFw8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=RA5p4z5ifzFvUzhgD+4lR6y2exxlXRL84nt7qFgObfQJoR62jaaVYoTfzroVQGx+/6FBp2g1nvYyS9hflXFNDPGw196yW/7S5Ja/zl80hhWVH5aDv5agCk1RcDHq9vf3mWSyheREHAEgz4tHwD9DRFoCqGSILDjU2fcPntWSafk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=EVoDmiKm; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D0C46D2C3
+	for <linux-leds@vger.kernel.org>; Wed,  2 Sep 2026 23:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788390124; cv=none; b=pCuLMV5LBDC+zfIinq63KFV+1sHxSeNQtSN05DQlHx3K6KS3TyKA1++V+g4BapC5JENGmz0xFHwBs2WyJU+h0U6mHRdbGuMJedO3+AmIM++3fbPKC3+sWTGdsxBJKPFMNNxlS0V7NN3STe/SjQwI4WpbRVuTPSrk58gcUwzfW0k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788390124; c=relaxed/simple;
+	bh=nc2dY/Fz8fnYk1jCgiVliPMUCfhD5G60Nz9Ipye79EA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=R90FyDgqfTNfVdsMgG11pIGATqz2uX5Lq2S12AxlWV6VmwS0obKUs1aEvT4OTpTzGTmAAdZSRrDzrywsKCqibxf2TR0BWgx/Eb7qohlzM8v7Z5IBrnUPi89c9hKBz9mQqmX4fOGsq9TzfLvr/NVKHFQ5tP+FD4ApLSfTRjkx4X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=RV3vYDnz; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="EVoDmiKm"
-ARC-Seal: i=1; a=rsa-sha256; t=1788376851; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AQ8WNBMN0VojsfPf8Z0tshaqVIXpwQiC43Y2Oz56G7sElqmKFfZL1JVVP1XndFHvRhG9VvqvdbVPtH0ze1SkV8qVwKC8KzRs3FVATEyIymwG9TVCeGWwz/USCd3dQp1WHzSL4BXQ8cHBf8Vm6o4IMF6p3LBSA7H12WPO4/iA1e0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1788376851; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=szIh6WcIgwAVe3/omV91b4EK5M/Q077a47SuW6IWMks=; 
-	b=oL0C4+En6Sjy0c27SZWf6EDPWR9FD+KqW7e9BJ6I4ffXuoTXuKVvlsTYFdpmjFZmsA2lMalk9OVohbwyZeXo31yPjdBuMoprvp081OaAWwIvvlQXUxf65V2r0POC3dNkLRxpztVXP6RZ1MEftBFYkf44GXwdVn1KPnNtpHZwIEw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788376851;
-	s=zmail2048; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=szIh6WcIgwAVe3/omV91b4EK5M/Q077a47SuW6IWMks=;
-	b=EVoDmiKmE4t3vKi3uNgVPmPXqru1GS5lO4vrJc7q2nH4y/nQu4YIu85biiuuBE4U
-	JqjmDKyB7mpdmUCJROFtZWJZRj3suoctq9UQN/JxhwxSdgmCU0zhIUaLxYOv3sw/mdc
-	ePZgbB27e/LwDxyUPVc53nVeXGViJh1AOZhsExIavS8vCfbHh5qNrRSylnxWgLGI9FV
-	E+BkuTlzEdUiztopqrnu7TUQxgnH8i/h1V/hFe/dSKHtow+YOFK75g3JDXEiwzAj51p
-	F1E3NtMxCfSe4flXKSRNCbSVKQDQrYM/Ik4wlPaVjR5EcrtS2DYoXDYinAzaHVmIzzS
-	/gbwoZcMNA==
-Received: by mx.zohomail.com with SMTPS id 1788376848137140.70314822538194;
-	Wed, 2 Sep 2026 12:20:48 -0700 (PDT)
-Message-ID: <8fd61cb314df880cd70d4fdd30642ed58af38c2b.camel@rong.moe>
-Subject: Re: [PATCH v6 11/12] platform/x86: ideapad-laptop: Decouple
- hardware & classdev brightness for keyboard backlight
-From: Rong Zhang <i@rong.moe>
-To: lee@kernel.org, sashiko-reviews@lists.linux.dev
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	linux-leds@vger.kernel.org, platform-driver-x86
-	 <platform-driver-x86@vger.kernel.org>
-In-Reply-To: <20260902181558.5FAD11F000E9@smtp.kernel.org>
-References: <20260902-leds-trigger-hw-changed-v6-0-55693cd78877@rong.moe>
-	 <20260902-leds-trigger-hw-changed-v6-11-55693cd78877@rong.moe>
-	 <20260902181558.5FAD11F000E9@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 03 Sep 2026 03:15:44 +0800
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="RV3vYDnz"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 08AF6240029
+	for <linux-leds@vger.kernel.org>; Thu,  3 Sep 2026 01:01:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1788390110;
+	bh=dliiXrxPdZaqEWSPrjnqzj5G7PTnfa8DoW08sOCl2Wg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:Autocrypt:OpenPGP:From;
+	b=RV3vYDnzkv9BmE0OHYPBdiV1Yow+MFbVw4hQYYJiSMY8mKbpbgPuGavQsNU15iS90
+	 6F2t+bUds+25VbmfDk9dcOz2OPUhLl1VuCZ886bw6H5QTu3ZsFs7XFC0wgIJn9dcKj
+	 bKLGP+8mMTCDJUH7MKqkUGVS1cOgIK7O5GciHzNVePBEAdqkTlwf30KrscT3MngiHf
+	 U+ny9RUsDWtZC1Xecp5F1SkU9CgChpOG9R0hlCG76QUEs641BXanKkgtKi943yZZJW
+	 a92y5LWeRacmR1nP2FVamsIDOk7pYJq7zKatzRW3facnbNlLPiPf4ZRI8y7V8RqeBi
+	 AuvNg4Ngm+xiQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hZysQ5DH9z6v14;
+	Thu,  3 Sep 2026 01:01:46 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+Date: Wed, 02 Sep 2026 23:01:48 +0000
+Subject: [PATCH v24 2/4] rust: leds: add Mode trait
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2-10+b1 
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260903-rust_leds-v24-2-8d9e4c04db69@posteo.de>
+References: <20260903-rust_leds-v24-0-8d9e4c04db69@posteo.de>
+In-Reply-To: <20260903-rust_leds-v24-0-8d9e4c04db69@posteo.de>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ Ira Weiny <iweiny@kernel.org>, Boqun Feng <boqun@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Markus Probst <markus.probst@posteo.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5626;
+ i=markus.probst@posteo.de; h=from:subject:message-id;
+ bh=nc2dY/Fz8fnYk1jCgiVliPMUCfhD5G60Nz9Ipye79EA=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBqmKrUUIyzFnksKSeq2H+vbI8EEfFrk+x/t4DAf
+ 9wuePY1qYqJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCapiq1BsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9Kx+Q//ZCsdlEmf751hQpQoe3p9yL9laymOpCi
+ og+VoY/K9iYbf0jTZcYmGcquPWLV/Mffu9bon8KP0PbSmvXD3VSnf2OMAsY7P/SQC/Ds+UXEx/y
+ Z3ElpyzmPLpqhiVICu23pPWMD9GUmgDsBE8hj6Sp4hw8NbXDCk8JEpGbmfEzErcVfOBylJFAynH
+ VvUcKe726jpf/DVl1FIsWrhxMk5BkaBLbwiZRiZXCJThUHaCx9HyzZ30w3TyjlAlvjiNloOc+hv
+ V4qzSQPwXFBAgtvnPKo2MOUlnKlmQKCh9wQAya4JI2jHKyeyNyB81G8Ab7v8IspT/ngx5V37CWr
+ 0goo5e1GAU3a/Hg0dVaFQqvi/lKgNCFkEwZCfs4dazAwp6br9VCbz5VKiExrHpMToIrz0q5HU+3
+ EEMioMKvOCnKO9CMCvq//YfwBkOKKmwNnk8Ff/fLsBtW+lzg5UMIKwSBOL2/tb8efPiKT5ueLzg
+ /rESf1plWc/EEtzrtYX0iWI5AJ41TfYw7e3MP2Ok0sqQj6hWPjR5f4XT7sKqN1YxhWh48Rtn0PU
+ N1ZTPDRLogwWrQiapxZCUMv9A3mSmCSOAkgh7mkK3XP7X9EhcuGJwObep6uh8s850Zjp3xogpzJ
+ p0X0fqwaYDlBdr/xRgyoreBpSKqoOrnGXTUZe9fnLJhgCbM0/IP4=
+X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
+ fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-Hi Lee,
+Add the `led::Mode` trait to allow for other types of led class devices
+in `led::LedOps`.
 
-On Wed, 2026-09-02 at 18:15 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 2 potential issu=
-e(s) to consider:
->=20
-> New issues:
-> - [Low] Incorrect format string `%d` used for `unsigned int hw_brightness=
-` in `dev_warn`.
+Signed-off-by: Markus Probst <markus.probst@posteo.de>
+---
+ rust/kernel/led.rs        | 27 +++++++++++++++++++++++----
+ rust/kernel/led/normal.rs | 22 +++++++++++++++-------
+ 2 files changed, 38 insertions(+), 11 deletions(-)
 
-Well, let me fix it in the next revision.
+diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
+index 596975e103b8..5d7e6d08ad2a 100644
+--- a/rust/kernel/led.rs
++++ b/rust/kernel/led.rs
+@@ -32,7 +32,10 @@
+ 
+ mod normal;
+ 
+-pub use normal::Device;
++pub use normal::{
++    Device,
++    Normal, //
++};
+ 
+ /// The name of the led is determined by the driver.
+ pub enum Named {}
+@@ -161,6 +164,7 @@ pub fn name(self, name: &'init CStr) -> Self {
+ /// #[vtable]
+ /// impl led::LedOps for MyLedOps {
+ ///     type Bus = platform::Device<device::Bound>;
++///     type Mode = led::Normal;
+ ///     const BLOCKING: bool = false;
+ ///     const MAX_BRIGHTNESS: u32 = 255;
+ ///
+@@ -182,6 +186,11 @@ pub trait LedOps: Send + Sync + Sized {
+     #[allow(private_bounds)]
+     type Bus: AsBusDevice<Bound>;
+ 
++    /// The led mode to use.
++    ///
++    /// See [`Mode`].
++    type Mode: Mode;
++
+     /// If set true, [`LedOps::brightness_set`] and [`LedOps::blink_set`] must perform the
+     /// operation immediately. If set false, they must not sleep.
+     const BLOCKING: bool;
+@@ -194,7 +203,7 @@ pub trait LedOps: Send + Sync + Sized {
+     fn brightness_set<'bound>(
+         &self,
+         dev: &'bound Self::Bus,
+-        classdev: &Device<'bound, Self>,
++        classdev: &<Self::Mode as Mode>::Device<'bound, Self>,
+         brightness: u32,
+     ) -> Result<()>;
+ 
+@@ -202,7 +211,7 @@ fn brightness_set<'bound>(
+     fn brightness_get<'bound>(
+         &self,
+         dev: &'bound Self::Bus,
+-        classdev: &Device<'bound, Self>,
++        classdev: &<Self::Mode as Mode>::Device<'bound, Self>,
+     ) -> Result<u32> {
+         let _ = (dev, classdev);
+         build_error!(VTABLE_DEFAULT_ERROR)
+@@ -219,7 +228,7 @@ fn brightness_get<'bound>(
+     fn blink_set<'bound>(
+         &self,
+         dev: &'bound Self::Bus,
+-        classdev: &Device<'bound, Self>,
++        classdev: &<Self::Mode as Mode>::Device<'bound, Self>,
+         delay_on: &mut usize,
+         delay_off: &mut usize,
+     ) -> Result<()> {
+@@ -283,6 +292,16 @@ fn try_from(value: u32) -> core::result::Result<Self, Self::Error> {
+     }
+ }
+ 
++/// The led mode.
++///
++/// Each led mode has its own led class device type with different capabilities.
++///
++/// See [`Normal`].
++pub trait Mode: private::Sealed {
++    /// The class device for the led mode.
++    type Device<'bound, T: LedOps<Mode = Self> + 'bound>;
++}
++
+ mod private {
+     pub trait Sealed {}
+ }
+diff --git a/rust/kernel/led/normal.rs b/rust/kernel/led/normal.rs
+index 816db7c57689..25190486a62d 100644
+--- a/rust/kernel/led/normal.rs
++++ b/rust/kernel/led/normal.rs
+@@ -6,11 +6,19 @@
+ 
+ use super::*;
+ 
++/// The led mode for the `struct led_classdev`. Leds with this mode can only have a fixed color.
++pub enum Normal {}
++
++impl Mode for Normal {
++    type Device<'bound, T: LedOps<Mode = Self> + 'bound> = Device<'bound, T>;
++}
++impl private::Sealed for Normal {}
++
+ /// The led class device representation.
+ ///
+ /// This structure represents the Rust abstraction for a led class device.
+ #[pin_data(PinnedDrop)]
+-pub struct Device<'bound, T: LedOps + 'bound> {
++pub struct Device<'bound, T: LedOps<Mode = Normal> + 'bound> {
+     #[pin]
+     ops: T,
+     #[pin]
+@@ -20,7 +28,7 @@ pub struct Device<'bound, T: LedOps + 'bound> {
+ 
+ impl<'init, S: DeviceBuilderState> DeviceBuilder<'init, S> {
+     /// Registers a new [`Device`].
+-    pub fn build<'bound: 'init, T: LedOps + 'bound>(
++    pub fn build<'bound: 'init, T: LedOps<Mode = Normal> + 'bound>(
+         self,
+         parent: &'bound T::Bus,
+         ops: impl PinInit<T, Error> + 'init,
+@@ -87,7 +95,7 @@ pub fn build<'bound: 'init, T: LedOps + 'bound>(
+     }
+ }
+ 
+-impl<'bound, T: LedOps + 'bound> Device<'bound, T> {
++impl<'bound, T: LedOps<Mode = Normal> + 'bound> Device<'bound, T> {
+     /// # Safety
+     /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
+     /// `led::Device`.
+@@ -107,17 +115,17 @@ fn parent(&self) -> &'bound device::Device<Bound> {
+ }
+ 
+ // SAFETY: A `led::Device` can be unregistered from any thread.
+-unsafe impl<'bound, T: LedOps + 'bound + Send> Send for Device<'bound, T> {}
++unsafe impl<'bound, T: LedOps<Mode = Normal> + 'bound + Send> Send for Device<'bound, T> {}
+ 
+ // SAFETY: `led::Device` can be shared among threads because all methods of `led::Device`
+ // are thread safe.
+-unsafe impl<'bound, T: LedOps + 'bound + Sync> Sync for Device<'bound, T> {}
++unsafe impl<'bound, T: LedOps<Mode = Normal> + 'bound + Sync> Sync for Device<'bound, T> {}
+ 
+ struct Adapter<T: LedOps> {
+     _p: PhantomData<T>,
+ }
+ 
+-impl<T: LedOps> Adapter<T> {
++impl<T: LedOps<Mode = Normal>> Adapter<T> {
+     /// # Safety
+     /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
+     /// `led::Device`.
+@@ -210,7 +218,7 @@ impl<T: LedOps> Adapter<T> {
+ }
+ 
+ #[pinned_drop]
+-impl<'bound, T: LedOps + 'bound> PinnedDrop for Device<'bound, T> {
++impl<'bound, T: LedOps<Mode = Normal> + 'bound> PinnedDrop for Device<'bound, T> {
+     fn drop(self: Pin<&mut Self>) {
+         let raw = self.classdev.get();
+         // SAFETY: The existence of `self` guarantees that `self.classdev.get()` is a pointer to a
 
->=20
-> Pre-existing issues:
-> - [High] The driver uses the unmanaged `led_classdev_register` API instea=
-d of the managed `devm_led_classdev_register` API.
+-- 
+2.54.0
 
-This is yet another LLM hallucination. The driver needs to manage LED
-unregistration itself to coordinate with ACPI notification handling.
-
-Sashiko's concerns on other patches in the series are either pre-existing
-issues that are out of the scope of the series, or LLM hallucinations.
-
-Lee, I believe the series is ready for your review. Could you kindly
-shine some light on the series? If you decide to apply PATCH v6 1-9 to
-the LED tree, I will send a v7 solely for pdx86. Otherwise I will refresh
-the whole series according to your insights.
-
-Thanks,
-Rong
-
-> --
->=20
-> commit 227fca9f070999fc85599521adcec4975c6e441e
-> Author: Rong Zhang <i@rong.moe>
->=20
-> platform/x86: ideapad-laptop: Decouple hardware & classdev brightness for=
- keyboard backlight
->=20
-> This commit decouples hardware brightness from LED classdev brightness to
-> better support models with an ambient light sensor (ALS). It also introdu=
-ces
-> a refactor of the initialization path to prepare for exposing the auto
-> brightness mode.
->=20
-> > diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/pla=
-tform/x86/lenovo/ideapad-laptop.c
-> > index 684421ba53cbc..712999b6900df 100644
-> > --- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-> > +++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
->=20
-> [ ... ]
->=20
-> > @@ -1594,7 +1619,24 @@ static int ideapad_kbd_bl_check_tristate(int typ=
-e)
-> >  	return (type =3D=3D KBD_BL_TRISTATE) || (type =3D=3D KBD_BL_TRISTATE_=
-AUTO);
-> >  }
-> > =20
-> > -static int ideapad_kbd_bl_brightness_get(struct ideapad_private *priv)
-> > +static int ideapad_kbd_bl_brightness_parse(struct ideapad_private *pri=
-v, unsigned int hw_brightness)
-> > +{
-> > +	/* Off, low or high */
-> > +	if (hw_brightness <=3D priv->kbd_bl.led.max_brightness)
-> > +		return hw_brightness;
-> > +
-> > +	/* Auto (controlled by EC according to ALS), report as off */
-> > +	if (priv->kbd_bl.type =3D=3D KBD_BL_TRISTATE_AUTO &&
-> > +	    hw_brightness =3D=3D KBD_BL_AUTO_MODE_HW_BRIGHTNESS)
-> > +		return 0;
-> > +
-> > +	/* Unknown value */
-> > +	dev_warn(&priv->platform_device->dev,
-> > +		 "Unknown keyboard backlight value: %d", hw_brightness);
->=20
-> [Severity: Low]
-> Does this dev_warn() use the correct format string for its argument?
-> The hw_brightness variable is passed as an unsigned int, but the format
-> string uses %d which expects a signed int.
->=20
-> > +	return -EINVAL;
-> > +}
->=20
-> [ ... ]
->=20
-> > @@ -1710,21 +1758,35 @@ static int ideapad_kbd_bl_init(struct ideapad_p=
-rivate *priv)
-> >  	if (err)
-> >  		return err;
->=20
-> [ ... ]
->=20
-> > +	/* Reject insane values. */
-> > +	err =3D ideapad_kbd_bl_brightness_parse(priv, hw_brightness);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> >  	err =3D led_classdev_register(&priv->platform_device->dev, &priv->kbd=
-_bl.led);
->=20
-> [Severity: High]
-> This isn't a bug introduced by this patch, but should this use the manage=
-d
-> devm_led_classdev_register() API instead?
->=20
-> The LED subsystem guidelines mandate using managed registration APIs to
-> prevent resource leaks and use-after-free hazards during driver removal.
->=20
-> >  	if (err)
-> >  		return err;
