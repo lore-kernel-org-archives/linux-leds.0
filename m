@@ -1,128 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805A64968EE;
-	Wed,  2 Sep 2026 12:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18A649C4D5;
+	Wed,  2 Sep 2026 12:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788352919; cv=none; b=n6NbX6RNCCuULUjYRGpd/lTbQrdHjfXlnTTkC+YCnh1FzR68Kc3iMgH796pZ2YKHqI4AqzYhL6D7/1hGv3if8TgGBudbOE4VmyUEn0MTpwKYfvUsGPAhgEBurq2WjUoApQ9Os9GqJzi7WX2QzlBii3CEw4bl8oxKlD9quDdgxhw=
+	t=1788353036; cv=none; b=tnhMF9yEYBVEoiaTn/oDEVBu1Vl9hXzikVtK+vfBa3clNoBl2do2uhVV6Zv4XrXW70Xf+TKRKz/SZ4YuZCcMpr7cIa4o/pPraLoMjtDWN9nq3F2qSsYsyE8Pb4AYCiTZdyEtO0PWwgjJ3nh/SK5cR6hZtf+8uyDHsaN00OH+HBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788352919; c=relaxed/simple;
-	bh=nS9ZYL2qizNhRzB6xacnIz27/m1IJDvBFRqgsQqvvlI=;
+	s=arc-20240116; t=1788353036; c=relaxed/simple;
+	bh=ohplCGQNf3Soc/5a1Jw4+PkywueX3S28yHWZjsUkHPI=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=e/aLjCDBlqibbnQ64PV6i5DU3FGD68wXB2iWGQMfd1xTw7x34ZJOMxbeijBVli+QMv+MAJ6hCym/L5mWSbheCTgHRIXjYyHqE/0a3K2R/xF3ilKpQQy+MG9g682KLt6RIDzkYDJIvvmy/K5z9PWw/mydNi/bI/4lHc9JGhwgZpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6K7OUDR; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=TiGfqdJx/yAJIyx3IFwPSPugD9qKh5d4exV9KTy7Gt083rE48jOLjl9PdIwu/rMfYYT2lSk8C7wI6Z4XXMxJHyc8ormlQz6O1OT7ygu2nXzBN4t94BbMaLg4cCoPQKTv9PjYJ5iMtRHU5qU1Vd7LZAlpgNEeA1wJzHhkDJaUUwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPUAmGHT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6K7OUDR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F441F00A3A;
-	Wed,  2 Sep 2026 12:41:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPUAmGHT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F33FB1F00A3A;
+	Wed,  2 Sep 2026 12:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788352918;
-	bh=7SoWBbEYJPjADPueQ9vz2kU8in6fVF+bd8fRgSgRgns=;
+	s=k20260515; t=1788353034;
+	bh=xqoR3OegmE92tcSUI06tPZM7Vii3gRlmtM6fh/Y623A=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=J6K7OUDRSREsabqvGI0iVkpbJNtOiLpolV0XsND8uttLztnpjkVE7/b7iim+3pyTQ
-	 0wR4E0usfhsYNRVZ71WDTEOdT78cTIguRxMp8fPUuejg2DfdXW1Qc2+f17bxYRFz7z
-	 K79y9iHQkWMmwMIqJY6rjpVqoQcyI/eZCAZF0Fl2TjxnJpSnWf7X3Rpts5boVBqfml
-	 Bg/lf8doRwUHE90gLCXlfmCysORBLzvEVmdwBhZxe5z/aZ+hbJ4H9KkS07kkp3BZd5
-	 GKhXsee+Jg5rWsFTayWZyCyzgwXywlR6uClbGrukLtOwMfiuJv0/g4mzIWxypi7hkm
-	 qOV/7qPA/8iJA==
+	b=oPUAmGHT09/pO1yjrwyl1rqfKSypfniXwtdNvETwki9mh+OBaVFFmppWELqxGHqej
+	 J3eWANYoVeLMoTXSfPfENn+Tu5OwPom1rmzU+J1t37E87QShxqVSm4qXj0HpOOvA35
+	 Y+ugoY9GV2WANe9lX/cRwFCIVQfIcYVFH0fIPS+k9TsfVhnMjvYIwfwIo7gxINQKx9
+	 3YYqMkyHsl1kqR704Bbs8kV300z0TEweQ5GgZRxkNlgGHbJuo+ylsofSHndGaexXke
+	 lmKD/mYNg9bwy5w2tyePTdZEPDD/2eiVKqALYS2Oh2FtUIGxM1lUWw6gFnI0PGcPc4
+	 4eCIsj6mgTN7A==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/7] leds: pca995x: add support for reset GPIO
+Subject: Re: [PATCH 7/7] leds: pca995x: add support for group brightness
+ control
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Nora Schiffer" <nora.schiffer@ew.tq-group.com>
-Cc: robh@kernel.org, lee@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <1d5436e3a143d72c04c2bfd1d7fee2674e0af8e5.1788350618.git.nora.schiffer@ew.tq-group.com>
+Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <225583885966f45079a7dafdbc2b1c419a25fa4b.1788350618.git.nora.schiffer@ew.tq-group.com>
 References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
- <1d5436e3a143d72c04c2bfd1d7fee2674e0af8e5.1788350618.git.nora.schiffer@ew.tq-group.com>
+ <225583885966f45079a7dafdbc2b1c419a25fa4b.1788350618.git.nora.schiffer@ew.tq-group.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Sep 2026 12:41:57 +0000
-Message-Id: <20260902124158.19F441F00A3A@smtp.kernel.org>
+Date: Wed, 02 Sep 2026 12:43:53 +0000
+Message-Id: <20260902124353.F33FB1F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Low] The commit message description violates the LED subsystem capitaliz=
-ation convention.
-- [Low] Using usleep_range() for a microsecond delay under 10us.
-- [Low] Use of the legacy <linux/gpio.h> header instead of <linux/gpio/cons=
-umer.h>.
-- [Low] Missing #include <linux/delay.h> for usleep_range().
+- [Medium] Missing explicit initialization of GRPPWM and MODE2 registers ma=
+kes LED brightness dependent on undefined hardware states.
+- [Low] The commit message description is not capitalized, violating LED su=
+bsystem naming conventions.
+- [Low] has_errors_store uses strcmp() instead of sysfs_streq() to parse sy=
+sfs input, rejecting valid inputs without a newline.
 --
 
-commit 73fa0526608a4d478003bcf92f25fa0aa33eae7c
+commit 2816a66784d3fbb95bdf9b79d38d26cc4f4d0d96
 Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 
-leds: pca995x: add support for reset GPIO
+leds: pca995x: add support for group brightness control
 
-This commit adds support for resetting the PCA995x LED driver during
-probe by utilizing a reset GPIO pin if provided in the Device Tree.
+This commit introduces group brightness control for PCA995x LEDs. It sets
+the LEDs to group PWM mode, enabling global group PWM settings to modulate
+individual brightness. It also adds a sysfs attribute for group brightness
+and removes the non-group PWM setting.
 
-> leds: pca995x: add support for reset GPIO
+> leds: pca995x: add support for group brightness control
 
 [Severity: Low]
-This isn't a bug, but does this violate the LED subsystem commit message
-capitalization convention? The guidelines require capitalizing the
-description after the subsystem prefix, so "add" would ideally be "Add".
+This isn't a bug, but does the commit message subject line violate the LED
+subsystem naming conventions?  Should the description after the subsystem
+prefix be capitalized, such as "leds: pca995x: Add support for group
+brightness control"?
 
 > diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> index fee6216cd1bd0..8eb9847b9709f 100644
+> index 62f2764661b9d..d65c33edc83ab 100644
 > --- a/drivers/leds/leds-pca995x.c
 > +++ b/drivers/leds/leds-pca995x.c
-> @@ -8,6 +8,7 @@
->   * Copyright 2023 Marek Vasut
->   */
-> =20
-> +#include <linux/gpio.h>
-
-[Severity: Low]
-Does this code use the legacy <linux/gpio.h> header instead of
-<linux/gpio/consumer.h>?=20
-
-The kernel typically forbids including <linux/gpio.h> in consumer drivers.
-Since this driver only uses descriptor-based APIs like
-devm_gpiod_get_optional() and gpiod_set_value_cansleep(), relying on
-<linux/gpio.h> can cause implicit declaration build errors if
-CONFIG_GPIOLIB is disabled.
 
 [ ... ]
 
-> @@ -130,6 +132,16 @@ static int pca995x_probe(struct i2c_client *client)
->  	if (!dev_fwnode(dev))
->  		return -ENODEV;
+> @@ -110,11 +115,10 @@ static int pca995x_brightness_set(struct led_classd=
+ev *led_cdev,
 > =20
-> +	reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(reset_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-> +				     "failed to request reset GPIO\n");
-> +	if (reset_gpio) {
-> +		usleep_range(3, 4);
+>  	/*
+>  	 * Change LDRx configuration to individual brightness via PWM.
+> -	 * LED will stop blinking if it's doing so.
+>  	 */
+>  	return regmap_update_bits(chip->regmap, ledout_addr,
+>  				  PCA995X_LDRX_MASK << shift,
+> -				  PCA995X_LED_PWM_MODE << shift);
+> +				  PCA995X_LED_PWM_MODE_GRP << shift);
+>  }
+
+[Severity: Medium]
+Does this change make the LED brightness depend on undefined hardware state=
+s?
+
+Without explicit initialization of the GRPPWM and MODE2 registers during
+pca995x_probe(), a system without a reset GPIO might leave the PCA995x in an
+unexpected state during a warm reboot.
+
+If the driver loads and configures the LEDs into PCA995X_LED_PWM_MODE_GRP
+while the registers aren't at their default values (GRPPWM=3D255 and
+MODE2=3Ddimming), will this cause incorrect behavior such as LEDs blinking =
+or
+remaining off instead of turning on dimly?
+
+[ ... ]
+
+> @@ -186,10 +190,41 @@ static ssize_t has_errors_store(struct device *dev,=
+ struct device_attribute *att
+>  	return ret ?: count;
+>  }
 
 [Severity: Low]
-Is usleep_range() appropriate for a microsecond delay under 10us here?
+Is the parsing logic in has_errors_store() overly strict?
 
-According to the kernel timers-howto, usleep_range() is designed for
-delays greater than 10us due to timer setup and context switching overhead.
-For delays as short as 3-4us, udelay() is generally recommended to avoid
-unnecessary performance inefficiency.
-
-[Severity: Low]
-Is there a missing #include <linux/delay.h> for this usleep_range() call?
-
-Relying on implicit includes from other headers (like <linux/i2c.h>) is
-fragile and could cause build breakages on certain architectures or
-configurations.
-
-> +		gpiod_set_value_cansleep(reset_gpio, 0);
-> +		usleep_range(1500, 1600);
-> +	}
-> +
->  	chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+It currently uses strcmp(buf, "clear\n"), which rejects valid userspace
+commands like 'echo -n clear' because they lack a trailing newline.  Would =
+it
+be better to use sysfs_streq() instead to handle inputs both with and witho=
+ut
+a newline?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6d3600f99c77c31166f=
-0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=3D3
+0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=3D7
