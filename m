@@ -1,135 +1,112 @@
-Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1126463B91;
-	Wed,  2 Sep 2026 12:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFDB4156C2;
+	Wed,  2 Sep 2026 12:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788351785; cv=none; b=KUC9npddVwaMNYKlFLc418UjNUYx4Hue11eUVUNyBBDJc22bpzbNnlzPlB0HiyWxXNTKTTIW3CnJ6Ixvdd2xloEOH8jt0MDL0s721J0ZuO1b6iklVEydxjZx/LJvBAeGNVxa8+k3y8+VBKo+mD+BBVz/ld9aiooS3clgpTpyRLo=
+	t=1788352266; cv=none; b=QUHh7a6+rQBJ/KVCSft3F/DGWWIV+n6QevVrdfCq6d/HFvI6hrOVpF9liQJrZnfjKTf4rA4m+1NlL5pJBTtpXqgET7LTm25XQv95BSFnS3eOfykoHYf/VQd706wSxTdA9FbxI7CAKIvLExwZMaNUVsxSLiV3I5Z7K74oO8JrfeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788351785; c=relaxed/simple;
-	bh=o0vyR4EMYl6ptpRcjDV6nwGhQSmPY8iV6NWV2pjmvOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PEeeEu7TK3a5KvWmsJFpePh2h0nVOq/TwEK7gUkM6Po59UTyntgpNaIz3stf+bdsKa2hVNZEIWGziMMmkTME93LmIxZD1RWUUT/WttZRDQK9chqTPSzEP9cOw4V79QOljJtdeSKyQIvL9mSEESKRHxS1C8+sApz2LJYjn5YwJkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=CliBbK4B; arc=none smtp.client-ip=188.40.3.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1788352266; c=relaxed/simple;
+	bh=C7oHn4XivxySXy0y+yr4wWMQoZ5AQOtuheiFlAgGvEg=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=MRSaICmYhXgk5sjdsLeaYR+VzM2bZO86UGThIKceL3bfAvoxoE5kRhjVBauQYCno509iVn2oArUbUYL0fn8lWhO1RPQe0VSGmbSX9p9RHyaYnIrZ7lkBxHvdFQ1z6MkiBc8JZuS1WOUhiogFtAUW9kIsez3PhQMVWZPmbx3F41w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS0RsluM; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="CliBbK4B"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=PxmlhppqENsFWWSaJJzHUOeWkCgXDRKQuMRpcMlNAxY=; b=CliBbK4BJVzILAt9tEyWIJy/5C
-	cqMO0q3Ldm6KZs022jT9jL83bfb0LCWNFjy6u3Cd7HcAUElxTWm6ytcnQJjIxq5DHKjEf2gPkJn+b
-	/pH9yJBo7sXKgKrbdLjMYunZVUjLIJExNvtYBTf0VVMcTOuBQw6fjGkevJKl5uuAqoGp2FhYHo6SX
-	R3OfTtMpIA8vdbRIznY2TK9K72ufdpTmHvr1AAbTa8cE9Qt494CmdqIMUuG+i5hmgf35SAskUdZyT
-	U1TgxvkyKPrVJQXFLRNAaIcqvOuy38b5HIgeHspGyqWzOGyABlOYv4r3qj8nrMQfYSRO4LV4ZtVRu
-	4ZQWfHWA==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x1jzZ-0006yt-05;
-	Wed, 02 Sep 2026 14:23:01 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x1jzY-0004kO-1p;
-	Wed, 02 Sep 2026 14:23:00 +0200
-From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Isai Gaspar <isaiezequiel.gaspar@nxp.com>,
-	linux@ew.tq-group.com,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nora Schiffer <nora.schiffer@ew.tq-group.com>
-Subject: [PATCH 6/7] leds: pca995x: do not use full on LED mode
-Date: Wed,  2 Sep 2026 14:22:14 +0200
-Message-ID: <bc5241a0728aa81050d987c26a4c02bdb05d6d20.1788350618.git.nora.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS0RsluM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11B171F000E9;
+	Wed,  2 Sep 2026 12:31:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788352265;
+	bh=GEQKhOVzBV3dKXQ8n+gpBDXvJoW60Dmhe+PlGVvNK1Y=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cS0RsluMcDpNVxBHCUJhHQrCt+InzKmO6a1mawxMsHAT+KNRgHpVqn1ICX/GQI7W0
+	 cMOSniIvbPFjVgrnImJLjlkfR1xh/MknJfpiqXktum3KMibi6h2ZwQnaeYYdMC5P9d
+	 ExQr+QCR/d9BKzHxidhRtRlbkYitv7B0M7NzuRa+iD7/yRpP3heymJqNmE/BpP45rw
+	 MwvIki+abq2hYcrWrpohxXYCUyw1ZRHyFd11wkRLbj8hawM7GfdgLKBfffkFAM4254
+	 Ms/cH70yz7P4ZyGts7aQGOgUOJbk+yhUJiT+1sN0i6vWkImrwLINN5XZ4sk9cMwhW1
+	 ghvov9Ku1Xwbg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: leds: pca995x: describe output-gain
+ property
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Nora Schiffer" <nora.schiffer@ew.tq-group.com>
+Cc: linux-leds@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, lee@kernel.org
+In-Reply-To: <7f61e7e8781292450f920c49ef8853b802d76ecc.1788350618.git.nora.schiffer@ew.tq-group.com>
 References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
+ <7f61e7e8781292450f920c49ef8853b802d76ecc.1788350618.git.nora.schiffer@ew.tq-group.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 02 Sep 2026 12:31:04 +0000
+Message-Id: <20260902123105.11B171F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: Clear (ClamAV 1.4.3/28111/Wed Sep  2 08:24:01 2026)
 
-LEDs in full on mode are unaffected by group dimming. Avoid using it,
-so group dimming is applied consistently.
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [Low] The custom, device-specific property `output-gain` lacks a mandator=
+y vendor prefix.
+- [Low] The `output-gain` property incorrectly exposes a raw hardware regis=
+ter value directly to the Device Tree instead of describing physical units.
+- [Low] The commit message description is not capitalized, violating LED su=
+bsystem naming conventions.
+--
 
-This slightly changes the brightness at maximum (from 100% to 255/256
-duty cycle), which should be imperceptible; arguably it is also more
-consistent with the other brightness levels, as it will now scale
-linearly from 0/256 to 255/256 over the whole range.
+commit 09d8712f125575e995a97c0a819c386e17eb766a
+Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 
-Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
----
- drivers/leds/leds-pca995x.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+dt-bindings: leds: pca995x: describe output-gain property
 
-diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-index 2232b74528a53..62f2764661b9d 100644
---- a/drivers/leds/leds-pca995x.c
-+++ b/drivers/leds/leds-pca995x.c
-@@ -98,28 +98,23 @@ static int pca995x_brightness_set(struct led_classdev *led_cdev,
- 	ledout_addr = PCA995X_LEDOUT0 + (led->led_no / PCA995X_OUTPUTS_PER_REG);
- 	shift = PCA995X_LDRX_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG);
- 
--	switch (brightness) {
--	case LED_FULL:
--		return regmap_update_bits(chip->regmap, ledout_addr,
--					  PCA995X_LDRX_MASK << shift,
--					  PCA995X_LED_ON << shift);
--	case LED_OFF:
-+	if (brightness == LED_OFF) {
- 		return regmap_update_bits(chip->regmap, ledout_addr,
- 					  PCA995X_LDRX_MASK << shift, 0);
--	default:
--		/* Adjust brightness as per user input by changing individual PWM */
--		ret = regmap_write(chip->regmap, pwmout_addr, brightness);
--		if (ret)
--			return ret;
--
--		/*
--		 * Change LDRx configuration to individual brightness via PWM.
--		 * LED will stop blinking if it's doing so.
--		 */
--		return regmap_update_bits(chip->regmap, ledout_addr,
--					  PCA995X_LDRX_MASK << shift,
--					  PCA995X_LED_PWM_MODE << shift);
- 	}
-+
-+	/* Adjust brightness as per user input by changing individual PWM */
-+	ret = regmap_write(chip->regmap, pwmout_addr, brightness);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Change LDRx configuration to individual brightness via PWM.
-+	 * LED will stop blinking if it's doing so.
-+	 */
-+	return regmap_update_bits(chip->regmap, ledout_addr,
-+				  PCA995X_LDRX_MASK << shift,
-+				  PCA995X_LED_PWM_MODE << shift);
- }
- 
- static ssize_t status_show(struct device *dev, struct device_attribute *attr, char *buf)
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+This commit adds the output-gain property to the pca995x device tree bindin=
+g,
+allowing configuration of the output current to adjust for different hardwa=
+re
+designs.
 
+> dt-bindings: leds: pca995x: describe output-gain property
+
+[Severity: Low]
+This isn't a bug, but the subsystem guidelines for LED bindings specify
+that the description after the prefix should be capitalized. Should
+this be changed to "Describe output-gain property"?
+
+> diff --git a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml b/Do=
+cumentation/devicetree/bindings/leds/nxp,pca995x.yaml
+> --- a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+> +++ b/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+[ ... ]
+> @@ -36,6 +36,14 @@ properties:
+>    "#size-cells":
+>      const: 0
+> =20
+> +  output-gain:
+
+[Severity: Low]
+Because this is a custom, device-specific property, does it require a
+mandatory vendor prefix (such as nxp,output-gain)? Exposing it without a
+prefix could pollute the global device tree namespace and potentially confl=
+ict
+with future standard properties or other bindings.
+
+> +    description:
+> +      Set the output gain controlling the LED current as described in the
+> +      PCA995x datasheets.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 128
+> +    maximum: 255
+
+[Severity: Low]
+Do these constraints expose a raw 8-bit hardware register value directly
+to the device tree? Usually, device tree properties describe hardware neutr=
+ally
+using standard physical units (such as microamps) rather than tying the val=
+ue
+to the internal register layout of the chip. Could this be abstracted to use
+standard physical units instead?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6d3600f99c77c31166f=
+0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=3D2
