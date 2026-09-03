@@ -1,94 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949040B11D;
-	Wed,  2 Sep 2026 23:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CADB3B0AC6;
+	Thu,  3 Sep 2026 06:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788393364; cv=none; b=Jg56A9v7emNq+aoGu3K0CcKaT1cy9vXNqSq59p8QvVGGnc4l0vMxZ8u85Mn+oHTJDBcA4JjIkQuDKZysOjG5Djc5FFw12carTK0vgEMZ2CX+/pdn0ZKIJQoVQasrXSXPJx7cRVHpEdez/+EwVTbXiXlhNXgCxJLLE+CA8YIxoXg=
+	t=1788417790; cv=none; b=U6gnhneklEiJwNGpWYxXvqKUb4obZCGL+KqAX9ZkTd3eo6TUIEvtGyCJN3z1LstAcyHnCZYGH+oG5pPWYJiNxfxB3YusdVyhXov/m6VJV+QXfgqAQkzbFuNnThF4orA7IrPTiQOImaDcotCoOoq+nnOf3VV/V3BOPNhDXjokF/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788393364; c=relaxed/simple;
-	bh=NOk7kI8JQtFrJpqIJcLbMhNq6OxRG2pE6FVIUW+XZ60=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=C6J7wbmCwDTEn3rEbCua8jMKkjrNoAbktGGLSIu02c363GLNfVbWz5mtV4s3QVKpJ1429c1O9jn+EvV/gju4gRRvqfOCUGxnJK5vo/EexptQpGH4aHsyoTah8+q+JLIXNQjRpfDYYpmI++Dx5lbFTN3CB0kPpUba+pqRts3UZxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMplzgvI; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788417790; c=relaxed/simple;
+	bh=zLDDEDOoPOZyiwGuhTcSuwpOsFNXAy79JRkPpolVxd4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YBvInU/5JbwZvUDszNnTQRw0OacWXnqHmxS+kHDY3sXFafgkjWTdLfy899zae+VcSChphAep70OwK6eI24/Asc9UVKhYvwXkEUA1JCJhSoxJhhVvEEPByiJmOt2qG6bFi5ziOIpxDV5sTgkJd98pqygN5JoevuaicRe9oGCXREs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Ex2T0fKj; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMplzgvI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8112F1F000E9;
-	Wed,  2 Sep 2026 23:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788393362;
-	bh=KQ8itQNAoSXw+j8zxN/J6ovo3IIZujHCMg6JjIhFGfs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=AMplzgvIVaiUAenE3Vgc6ji2TZkEc+5BAJdyLtn6RI8Zld4xwUd17jn6/guaveG+U
-	 334BU/q/a648Y3v7QCtivvSO8R/HMLWFilBYtiTzC4OhX94BuTVhNTZpLv/YPxGq3o
-	 nmlIIGCeUmEa9pQy47E6wXEFqsV2q4xFsng1U9xnMN/b0pBwfc25eG0fSU3vEGwQU+
-	 tMECrJCQFcKiMtlXo4fDuStA2ctlSPrF/6pCek+csQzzlycQsDaDAzrz3WobQSLrHZ
-	 46u6t1Y0ktL5S/as/uAysZICOtaYqG5BdR9zn/LbqBPSdvMMiEjdPkflVGNTzOQpjS
-	 xJrnyAPXSJzbg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v11 2/2] leds: ltc3208: Add driver for LTC3208
- Multidisplay LED Driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jan Carlo Roleda" <jancarlo.roleda@analog.com>
-Cc: conor+dt@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260903-upstream-ltc3208-v11-2-28f5f0fd364e@analog.com>
-References: <20260903-upstream-ltc3208-v11-0-28f5f0fd364e@analog.com>
- <20260903-upstream-ltc3208-v11-2-28f5f0fd364e@analog.com>
-Content-Type: text/plain; charset=utf-8
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Ex2T0fKj"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=h6xXnBIM//A962BwFEXD/J8go0ydGTpBGTmxqMZMF1c=; b=Ex2T0fKjQrVj6KSE7L3b3jqFAV
+	0jPQMx0XBp2mbfRSefriKvdT2pz9g4qEy15bcxB4eL6GUW4bn602jKAAUV/UFmv+MMEuMiggA8oaG
+	l+F7RKrTUMGtl+Ozq8ro5TIl4qadhy4XLGwFPTLy9ctjqzTorpngTPG8LrCd//nzUOhLh8+F1Xw+9
+	WS0gHzvICoCajQvauNZd6n9boeGdl9Oq5tWbFQc0b64TbVuesWS8CZcjZb3pUiLa0pIU/aiW3F0iZ
+	mPzf9CeLfiEKrqnS2QhcOjxhqygrue7vQ+DxkmeRnNMoXBO2EnM68tgS6a/LFAIXVImLbuesEmf3b
+	vVg6fi3w==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1x219x-000Jzu-0F;
+	Thu, 03 Sep 2026 08:42:53 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1x219w-0003Og-2C;
+	Thu, 03 Sep 2026 08:42:52 +0200
+Message-ID: <62bb7c8527dea0e8af4e23e59dddb49c56d12853.camel@ew.tq-group.com>
+Subject: Re: [PATCH 1/7] dt-bindings: leds: pca995x: describe reset-gpios
+ property
+From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>, sashiko-reviews@lists.linux.dev
+Cc: linux-leds@vger.kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org,  robh@kernel.org
+Date: Thu, 03 Sep 2026 08:42:51 +0200
+In-Reply-To: <20260902161653.GB2133376@google.com>
+References: 
+	<6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
+	 <20260902123759.DC6841F00A3A@smtp.kernel.org>
+	 <20260902161653.GB2133376@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Sep 2026 23:56:02 +0000
-Message-Id: <20260902235602.8112F1F000E9@smtp.kernel.org>
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28111/Wed Sep  2 08:24:01 2026)
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] Incorrect assignment of num_reg_defaults using a register address m=
-acro instead of ARRAY_SIZE.
---
+On Wed, 2026-09-02 at 17:16 +0100, Lee Jones wrote:
+> On Wed, 02 Sep 2026, sashiko-bot@kernel.org wrote:
+>=20
+> > Thank you for your contribution! Sashiko AI review found 2 potential is=
+sue(s) to consider:
+> >=20
+> > New issues:
+> > - [Low] The commit message description is not capitalized, violating th=
+e LED subsystem guidelines.
+>=20
+> Please review, explain or fix the Sashiko review(s).
 
-commit 13fa42bec99e4f9ce4669e4a6a7c6f12807ee3a4
-Author: Jan Carlo Roleda <jancarlo.roleda@analog.com>
+Hi Lee,
 
-leds: ltc3208: Add driver for LTC3208 Multidisplay LED Driver
+please see my reply to the Sashiko review on PATCH 2/7, as that one require=
+s a
+decision how we want to model the output-gain in the Device Tree. All other
+Sashiko review comments look correct and will be addressed in v2.
 
-This commit introduces a new kernel driver for the Analog Devices LTC3208
-Multi-display LED driver. It configures the device via I2C and supports up
-to 7 distinct LED channels with configurable current levels.
+Best,
+Nora
 
-> diff --git a/drivers/leds/leds-ltc3208.c b/drivers/leds/leds-ltc3208.c
-> new file mode 100644
-> --- /dev/null
-> +++ b/drivers/leds/leds-ltc3208.c
 
-[ ... ]
-
-> +static const struct regmap_config ltc3208_regmap_cfg =3D {
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +	.max_register =3D LTC3208_REG_G_OPT,
-> +	.cache_type =3D REGCACHE_FLAT_S,
-> +	.reg_defaults =3D ltc3208_reg_defaults,
-> +	.num_reg_defaults =3D LTC3208_REG_G_OPT,
-
-[Severity: Low]
-Does this code intentionally use a register address macro for the array len=
-gth
-instead of ARRAY_SIZE(ltc3208_reg_defaults)?
-
-Because LTC3208_REG_G_OPT happens to evaluate to 7, it coincidentally match=
-es
-the exact number of elements in the ltc3208_reg_defaults array. However,
-using a register address macro to specify an array length creates a brittle
-semantic dependency. If elements are removed from the array, or if a regist=
-er
-with a different address is added in the future, this will result in an
-incorrect size being passed to the regmap core.
+>=20
+> If this is a set, this request includes the other patches too.
+>=20
+> > Pre-existing issues:
+> > - [High] This problem wasn't introduced by this patch, but the driver v=
+alidates the child `reg` property against `PCA995X_MAX_OUTPUTS` (24) instea=
+d of the chip-specific `num_leds`. This allows 16-channel variants to confi=
+gure out-of-bounds LEDs.
+> > --
+> >=20
+> > commit ead1262f70ad0044c0eca7c693a6d898fbcc4d44
+> > Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+> >=20
+> > dt-bindings: leds: pca995x: describe reset-gpios property
+> >=20
+> > This commit adds the reset-gpios property to the PCA995x device tree bi=
+nding.
+> > It allows the reset pin of the PCA995x to be described in the Device Tr=
+ee.
+> >=20
+> > > dt-bindings: leds: pca995x: describe reset-gpios property
+> >=20
+> > [Severity: Low]
+> > This isn't a bug, but does this commit message subject violate the LED
+> > subsystem capitalization rules? The description after the subsystem pre=
+fix
+> > should be capitalized.
+> >=20
+> > This is a pre-existing issue, but the driver validates the child reg
+> > property against PCA995X_MAX_OUTPUTS (24) instead of the chip-specific
+> > num_leds:
+> >=20
+> > drivers/leds/leds-pca995x.c:pca995x_probe() {
+> >     ...
+> > 	device_for_each_child_node_scoped(dev, child) {
+> > 		ret =3D fwnode_property_read_u32(child, "reg", &reg);
+> > 		if (ret)
+> > 			return ret;
+> >=20
+> > 		if (reg < 0 || reg >=3D PCA995X_MAX_OUTPUTS || led_fwnodes[reg])
+> > 			return -EINVAL;
+> >     ...
+> > }
+> >=20
+> > [Severity: High]
+> > Does this allow 16-channel variants to configure out-of-bounds LEDs?
+> >=20
+> > Changing the brightness of out-of-bounds LED channels (16-23) on 16-cha=
+nnel
+> > variants (e.g. PCA9955B) calculates a pwmout_addr that overlaps with th=
+e
+> > IREF registers (output current control) for channels 0-7.
+> >=20
+> > Could this cause silent hardware state corruption and potential physica=
+l
+> > damage to LEDs?
+> >=20
+> > --=20
+> > Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/6d3600f99c77c31=
+166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com?part=
+=3D1
+>=20
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260903-upstream-l=
-tc3208-v11-0-28f5f0fd364e@analog.com?part=3D2
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
