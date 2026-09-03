@@ -1,266 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0770349DB86;
-	Thu,  3 Sep 2026 12:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D82F4AA566;
+	Thu,  3 Sep 2026 13:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788438250; cv=none; b=SWXydAg1K9KKsmBP4jpVYi/UVs1peoruwrWATc4Nt3Y2A3WpDdOTGrvtm2s3IM+nSNiGME4ceXUdrSXPQb76B7g7/WYCr6DaPudi2O7TOW4/CkforqAqqmJVuc1qvZ8bEbzeDte5vYU/ZASbwY+y0jvW6JqmZ5yCD7ClrBzD9pc=
+	t=1788440981; cv=none; b=KWe5ha57aSbZIy8FI+Foo6RW7Qkg5HS5OAV4YoMGFF+SfWwGc8d/eJvBoA8iCvZTrTHJrAS6pi4rzSrW0+uMoTL+djjtw+bgeoYamJdVEzRFT8ptPP5vCorDPJ6WGGraFZ4KU/qlkr0uPvOqaETqyNRliSF8rc8XgeU9H8BrO2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788438250; c=relaxed/simple;
-	bh=plPVReR3aOcsS069d0n0qceKY0+r0wK1piw5KRtY9XY=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=bJ8QEVYyMlGkgcqAt41tjMNd0C1pNWTPv2mBpckU13CQmxbGV9flv9doaL7VOxL2votnXJSSowkop8nF68cQ4FfpEU8tu7cB1BLoboYoVK6218fYQqsYQGHx31ZANDLes3HGE80Xnf5E/UCOQSNOSlUU5cHp1CM1vtQ9eUU1WEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DENo3zOk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788440981; c=relaxed/simple;
+	bh=kAzcWLIzftjj+SeWxJIzZXzVOsm/ZJynNgb7w/QL3us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQCWUL/+hiEmVmWGH6SOkh8rI2aDPpc7UVJEhwvlH/P5Dty1+7s728jcwTzdlcfEWMKUBMxuIupD0ko+2xCUWPwrXdk+OPmOkJdn6Ew1NqyneBC1IgwUtKuYB21KcJLjN3d9xGFH4mHY77EiGQ1G9ZHBaKq1I3at3AgxD+3RDbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHShkFti; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DENo3zOk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA6B1F00A3A;
-	Thu,  3 Sep 2026 12:24:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHShkFti"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 469351F00A3A;
+	Thu,  3 Sep 2026 13:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788438248;
-	bh=q5POko0sUiRncaFp/YIrOSduHhs26KPKvFV67rmjG1g=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DENo3zOkgnoNEI86XQEmdCrrcL8jnzG8VosPcR6TnlEZWNczYQHj0GG2UDf90rsLs
-	 fmj+Y3nWYNi8flCRzkvNN3ISW0r9m+YIlsNx8YNjqk7uhtfqdfpoWLDAWkOwTHNf2K
-	 /0fBmAMTbaQvt9g0z1kYtNWCb91gA9g5axkEbjrCUSPveUNIszC986gdrzgy8KZgA0
-	 /ck0gvIPBxwfafCDceCiOp5EN/jrLKbpCiBWMsjQxzmcHjxIbO6jxHbZPMhIdRC6aP
-	 out3Vq5zNqQpSjrV2vFi34mWBAvASrgNF1buW3mpfwISA3thJUucDlDWz3fpevsBdx
-	 4VAnJuTZhMguQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v2 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED
- driver for ROG NVMe enclosures
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Liang Haowen" <nbg2974@gmail.com>
-Cc: linux-scsi@vger.kernel.org, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <202609032000.RFCv2-1.lhw@gmail.com>
-References: <202609012200.RFC0.lhw@gmail.com>
- <202609012200.RFC1.lhw@gmail.com> <202609032000.RFCv2-1.lhw@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 03 Sep 2026 12:24:07 +0000
-Message-Id: <20260903122408.3CA6B1F00A3A@smtp.kernel.org>
+	s=k20260515; t=1788440966;
+	bh=l2JKlIYo5o71cBsDXRR7VNRfkfhQ9nOLIyCR1viShQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PHShkFtizo/0fdwAdKMS96eU+6CGM8sQLMMKPgCT5CMP4mHx5NDUGY2WCOEKZKuZM
+	 LDB3MTVEgX/3IWmi2FIUwltMrGlSDJmTLGVUgcpvwBbYQA6IimrUgfonLYX2sqwexx
+	 O7fBPf6Lgw+ZOFr5bCw3zS7Wqg0qRJpD6v+jZr0Z1okOHodh+6nJ+D8WGve3qiYRdK
+	 c8n2XWeDN4xaiWz/k64UC+Z0gcZrTILwHDiuEBNB/DXelCILrI50HRW25D0h2aSguO
+	 7//l6TirdI6ddOdcluxQhRsqW2a51/43ZxoYOzYwsFbiHRASWc2s5MGdHSTvqepaKz
+	 OTVoVTYVkvjuA==
+Date: Thu, 3 Sep 2026 15:09:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org, lee@kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: leds: pca995x: describe output-gain
+ property
+Message-ID: <20260903-sophisticated-magic-fennec-7c8aeb@quoll>
+References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
+ <7f61e7e8781292450f920c49ef8853b802d76ecc.1788350618.git.nora.schiffer@ew.tq-group.com>
+ <20260902123105.11B171F000E9@smtp.kernel.org>
+ <630889485b7be21875c858c705e1c9d828973c67.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <630889485b7be21875c858c705e1c9d828973c67.camel@ew.tq-group.com>
 
-Thank you for your contribution! Sashiko AI review found 5 potential issue(=
-s) to consider:
-- [High] The workqueue function unconditionally writes to flash even when n=
-o LEDs are dirty.
-- [Medium] Hardcoded LED class device names will cause a sysfs collision if=
- multiple enclosures are connected.
-- [Medium] Missing memory barriers and locking for led->rgb cause data race=
-s and lost color updates.
-- [Low] Missing 'struct request_queue *' argument in blk_rq_map_kern() call.
-- [Low] Use of non-existent kzalloc_obj macro prevents compilation.
---
+On Wed, Sep 02, 2026 at 03:10:09PM +0200, Nora Schiffer wrote:
+> On Wed, 2026-09-02 at 12:31 +0000, sashiko-bot@kernel.org wrote:
+> > Thank you for your contribution! Sashiko AI review found 3 potential issue(s) to consider:
+> > - [Low] The custom, device-specific property `output-gain` lacks a mandatory vendor prefix.
+> 
+> Probably makes sense to add the vendor prefix, will do in v2.
+> 
+> > - [Low] The `output-gain` property incorrectly exposes a raw hardware register value directly to the Device Tree instead of describing physical units.
+> 
+> According to the datasheet, the LED current is calculated as follows:
+> 
+>     Iled = output_gain * 900mV / Rext / 4
+> 
+> If we want to fully describe the output gain using physical units, something
+> like output-current-microamps and external-resistor-ohms would work. There
+> wouldn't be a meaningful default for these properties to describe in the binding
+> docs however, which is possible for "output-gain" (as the driver just sets that
+> to 127.)
 
-commit 12eb38bf536e935469d4f61d68a4b96acd78d4b1
-Author: Liang Haowen <nbg2974@gmail.com>
+Output current is already there, no? led-max-microamp? So basically you
+would be re-describing it... although I understand that for your case
+you need two properties (also the resistor) to calculate the value to program.
 
-leds: asus-aura-scsi: Add ASUS Aura RGB LED driver for ROG NVMe enclosures
+Best regards,
+Krzysztof
 
-This commit adds a new out-of-tree driver for ASUS ROG external NVMe
-enclosures. It registers a SCSI device handler matched by INQUIRY and
-exposes the 4 addressable Aura RGB LEDs as multicolor LED class devices.
-A single per-zone work item handles the ENE protocol sequences and
-serializes updates.
-
-> diff --git a/drivers/leds/leds-asus-aura-scsi.c b/drivers/leds/leds-asus-=
-aura-scsi.c
-> new file mode 100644
-> index 0000000000000..4dd559a5d8ec1
-> --- /dev/null
-> +++ b/drivers/leds/leds-asus-aura-scsi.c
-[ ... ]
-> +static int ene_write(struct scsi_device *sdev, u16 reg,
-> +		     const void *data, u8 arg_count)
-> +{
-> +	struct request *rq;
-> +	struct scsi_cmnd *scmd;
-> +	u8 cdb[ENE_CDB_LEN];
-> +	int ret;
-> +
-> +	ene_build_cdb(cdb, reg, arg_count);
-> +
-> +	rq =3D scsi_alloc_request(sdev->request_queue, REQ_OP_DRV_OUT, 0);
-> +	if (IS_ERR(rq))
-> +		return PTR_ERR(rq);
-> +
-> +	if (arg_count) {
-> +		ret =3D blk_rq_map_kern(rq, (void *)data, arg_count, GFP_NOIO);
-
-[Severity: Low]
-Does this missing argument in ene_write() in
-drivers/leds/leds-asus-aura-scsi.c cause a build failure? The
-blk_rq_map_kern() function takes 5 arguments (requiring a
-struct request_queue *q as the first parameter), but only 4 are provided
-here.
-
-> +		if (ret)
-> +			goto out;
-> +	}
-[ ... ]
-> +static void asus_aura_zone_work(struct work_struct *work)
-> +{
-> +	struct asus_aura_zone *zone =3D
-> +		container_of(work, struct asus_aura_zone, work);
-> +	struct scsi_device *sdev =3D zone->sdev;
-> +	u8 apply =3D ENE_APPLY;
-> +	u8 save =3D ENE_SAVE;
-> +	u8 mode =3D ENE_MODE_STATIC;
-> +	int i, ret;
-> +
-> +	if (!scsi_device_online(sdev))
-> +		return;
-> +
-> +	/* Mode first: without it the device ignores the whole sequence. */
-> +	ret =3D ene_write(sdev, ENE_REG_MODE, &mode, 1);
-> +	if (ret)
-> +		goto err;
-> +
-> +	for (i =3D 0; i < ARION_NUM_LEDS; i++) {
-> +		struct asus_aura_led *led =3D &zone->leds[i];
-> +
-> +		if (!test_and_clear_bit(i, &zone->dirty))
-> +			continue;
-> +
-> +		ret =3D ene_write(sdev, ENE_REG_COLORS + i * ENE_RGB_LEN,
-> +				led->rgb, ENE_RGB_LEN);
-> +		if (ret)
-> +			goto err;
-> +
-> +		/*
-> +		 * Cover the DIRECT colour set too; some firmware revisions
-> +		 * pull from 0x8100 instead of 0x8160.
-> +		 */
-> +		ret =3D ene_write(sdev, ENE_REG_COLORS_DIRECT + i * ENE_RGB_LEN,
-> +				led->rgb, ENE_RGB_LEN);
-> +		if (ret)
-> +			goto err;
-> +	}
-> +
-> +	ret =3D ene_write(sdev, ENE_REG_APPLY, &apply, 1);
-> +	if (ret)
-> +		goto err;
-> +
-> +	/*
-> +	 * The change only takes effect after SAVE (0xaa). NOTE: saving on
-> +	 * every brightness change writes flash each time; revisit for wear
-> +	 * once confirmed.
-> +	 */
-> +	ret =3D ene_write(sdev, ENE_REG_APPLY, &save, 1);
-
-[Severity: High]
-Does asus_aura_zone_work() in drivers/leds/leds-asus-aura-scsi.c
-unconditionally write to the device flash even when no LEDs are dirty?
-
-If schedule_work() is called while asus_aura_zone_work() is already
-executing, the work item gets re-queued. If the first execution already
-processed the newly set LED bit, the second execution will observe a fully
-cleared zone->dirty bitmap, but still send the MODE, APPLY, and SAVE
-commands to the hardware.
-
-Since SAVE writes to the device flash, these spurious empty runs could cause
-unnecessary device flash wear.
-
-> +	if (ret)
-> +		goto err;
-> +
-> +	return;
-> +err:
-> +	dev_err(&sdev->sdev_gendev,
-> +		"asus_aura: colour update failed: %d\n", ret);
-> +}
-> +
-> +/* Non-blocking LED callback (LED core fast path). Cache colour, defer S=
-CSI. */
-> +static void asus_aura_set(struct led_classdev *cdev,
-> +			  enum led_brightness brightness)
-> +{
-> +	struct led_classdev_mc *mc =3D lcdev_to_mccdev(cdev);
-> +	struct asus_aura_led *led =3D
-> +		container_of(mc, struct asus_aura_led, mc_cdev);
-> +
-> +	led_mc_calc_color_components(mc, brightness);
-> +	/* ENE colour register byte order is R, B, G. */
-> +	led->rgb[0] =3D led->subled[0].brightness;
-> +	led->rgb[1] =3D led->subled[2].brightness;
-> +	led->rgb[2] =3D led->subled[1].brightness;
-> +
-> +	set_bit(led->index, &led->zone->dirty);
-> +	schedule_work(&led->zone->work);
-
-[Severity: Medium]
-Can this cause data races and lost color updates?
-
-In asus_aura_set() in drivers/leds/leds-asus-aura-scsi.c, led->rgb is updat=
-ed
-before marking the LED as dirty via set_bit(). Because set_bit() lacks a fu=
-ll
-memory barrier, the CPU or compiler can reorder the led->rgb writes to occur
-after the dirty bit is set.
-
-A concurrently executing asus_aura_zone_work() on another CPU could observe
-the dirty bit via test_and_clear_bit(), read stale led->rgb values, and
-clear the bit, causing the new color to be permanently lost.
-
-> +}
-> +
-> +static int asus_aura_register_led(struct asus_aura_zone *zone, int index)
-> +{
-> +	struct asus_aura_led *led =3D &zone->leds[index];
-> +	struct led_classdev *cdev =3D &led->mc_cdev.led_cdev;
-> +	int ret;
-> +
-> +	led->zone =3D zone;
-> +	led->index =3D index;
-> +
-> +	led->subled[0].color_index =3D LED_COLOR_ID_RED;
-> +	led->subled[1].color_index =3D LED_COLOR_ID_GREEN;
-> +	led->subled[2].color_index =3D LED_COLOR_ID_BLUE;
-> +	led->mc_cdev.num_colors =3D 3;
-> +	led->mc_cdev.subled_info =3D led->subled;
-> +
-> +	cdev->name =3D kasprintf(GFP_KERNEL, "asus-arion:led%d", index);
-
-[Severity: Medium]
-Will this hardcoded name in asus_aura_register_led() in
-drivers/leds/leds-asus-aura-scsi.c cause a sysfs collision if multiple
-enclosures are connected?
-
-If a user connects two ASUS ROG external NVMe enclosures, the second enclos=
-ure
-will attempt to register identical sysfs names (e.g.,
-/sys/class/leds/asus-arion:led0), resulting in an -EEXIST error and
-preventing the use of multiple devices simultaneously.
-
-> +	if (!cdev->name)
-> +		return -ENOMEM;
-[ ... ]
-> +static int asus_aura_attach(struct scsi_device *sdev)
-> +{
-> +	struct asus_aura_zone *zone;
-> +	int i, ret;
-> +
-> +	if (strncmp(sdev->vendor, ARION_INQ_VENDOR, strlen(ARION_INQ_VENDOR)) ||
-> +	    strncmp(sdev->model, ARION_INQ_MODEL, strlen(ARION_INQ_MODEL)))
-> +		return SCSI_DH_DEV_UNSUPP;
-> +
-> +	zone =3D kzalloc_obj(*zone, GFP_KERNEL);
-
-[Severity: Low]
-Does this prevent the driver from compiling?
-
-In asus_aura_attach() in drivers/leds/leds-asus-aura-scsi.c, the macro
-kzalloc_obj does not exist in the Linux kernel headers, leading to an
-implicit declaration or undefined reference error.
-
-> +	if (!zone)
-> +		return SCSI_DH_NOMEM;
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/202609032000.RFCv2-=
-1.lhw@gmail.com?part=3D1
