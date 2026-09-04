@@ -1,144 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0931A4418EC
-	for <linux-leds@vger.kernel.org>; Fri,  4 Sep 2026 12:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E195B483BC2
+	for <linux-leds@vger.kernel.org>; Fri,  4 Sep 2026 12:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788525295; cv=none; b=ZE3bp95WLCFCP/O+5ryyrF+u2Z4JenB3ZkokzNhQr534q4M+KpQBUqO77CS0sSYdf3z8k7HC0s3SII/romvZi2LN15WJIGOGnHZuQAyZlT7lNQFOrADzMe03mmImaBxBVLymSlt/QnnIG4B7EJDs1Kmcf9kK+xmIqFc8iICM/sM=
+	t=1788526682; cv=none; b=YHauwkbVIjlQkNVqXPpUvqNNsV354oPE2GezJ90RwWaRE2cb/+t9A077GJX9S0t1BtDNftJyX4qnLWstizbHsDfK9GW7in5Mo/LUnzOlYN8TRq+ghb/roSB40c6snpe1y113zohQdK2wr5E2TTsqzB8QkDcf8AmUuKlgqjBrBa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788525295; c=relaxed/simple;
-	bh=OkKHBCTPV/8d3wnFlD3oMLKdSOwnU5/WsULg3IfE4K8=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=WFlihZ4nh1Vg/P9ula/bhK9bznbvedXN1OCc2cOJ2EPj6gFFhF4UqUKp4vguY5x40Hki5HDhMIkybLpW7c/WPqsAZ1Drqy3Qo8ZSupGRpsnYB4JP6nIMQs6nA2OaglOa4KHlXBsCfte8uQcyskd/pq9X9t/afbFu/tMa1RMK28Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJXZWwiw; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788526682; c=relaxed/simple;
+	bh=/u7yvYvbT44iz4P3NSPmATvikZpCTdXLDwh+z6TVtbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZyHAHWeiZe4YvP+IG1+xnClb4CHAtqRmB86vbbpYohannieB+3tcKOciWrmjB7WknxIA7eLVKiZPP6vd5NISz/3h7lMCU28EzCRrGKX5iJRVnPs4UWrFNhhyJwUi0gLYzCRg+Tn3+Z2Xh+wQQEgd3mJEFEnZ5W6Ee4aMgz2Q6dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=p86rS7zq; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJXZWwiw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C52F1F00A3D;
-	Fri,  4 Sep 2026 12:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788525293;
-	bh=0wbhIu2MnlNnnhM8Fbrj35DNRtLSL7ZGnD8zNw2xwiU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=OJXZWwiwNsuC4cDAatpicQXk+BH6wCe3S/OL07Ak4kiRvNs6T5HOQqP/VIYcQT4p2
-	 hFNGJvD93byfQCIB074HlORpesjZoU/HfPJTojmW0YyxbiWPqBCIDmSxn9YkPMCMDa
-	 dUcj2LNqqbBpzOmkW8fyvfkZGeh5Aer83x4EpUI2IJ+tSx7ohgM7UM4JAZ6h077YRl
-	 y7cgQfC5lmChb+NjlFgImoIYiRDs0F1ytNRh7LQhOyFipqyrXdn5BBNOjSek6XMPDv
-	 LRGVdwHl0x4s5lPU2cINbqgyZHD4m140BYM8ri88WXon8/4u/NrtKzc6zk43lTF5rP
-	 bHyTk4gTtjd9Q==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: fix typo "retrive" in comment
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Hemanth Selam" <hemanth.selam@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260904122738.33145-1-hemanth.selam@gmail.com>
-References: <20260904122738.33145-1-hemanth.selam@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 04 Sep 2026 12:34:52 +0000
-Message-Id: <20260904123453.6C52F1F00A3D@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p86rS7zq"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3966791a6eeso1070248a91.3
+        for <linux-leds@vger.kernel.org>; Fri, 04 Sep 2026 05:58:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788526680; x=1789131480; darn=vger.kernel.org;
+        h=mime-version:content-transfer-encoding:content-type:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=a8cAPX0qoNPrh55TaKC4p5HikxGn38nOetRwDMVXORs=;
+        b=p86rS7zqLzrv9BiVCxVoSnJGYC/TJIshaInxtGY7lICrD40aOG4C5JVdCMrxWZ9vXN
+         QE+jG7RvA4wqNjnDVIdJ4r5020JQNR+QZJ35K5WUWKaNHd4CZ4d5YzaSMfPT2Tsxww/x
+         6pp+C+BgYRd/1qjNJh0UQQYzNrMFRtuO+s53AF1WUM5Rqs7kEfums9bJpbHvyp4Jd3DQ
+         Xn7WGl99Qn8qkWsvoLsXgkHr+J8NEnqCIs99IsIBwgHADZcko+Z9tpk6JNU+gkBiGx5F
+         4KWqQQLsUmFMaRDck2DI9fqInOqEiDCMNbEOoy9kpQuGMHLTGYLx2SioWHuaUALIu0Z1
+         ZU/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788526680; x=1789131480;
+        h=mime-version:content-transfer-encoding:content-type:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=a8cAPX0qoNPrh55TaKC4p5HikxGn38nOetRwDMVXORs=;
+        b=N9wKzRnmyUt6opxUN8lUh/eCMLvvp7+GgsELqGPvJKoAH54QDEUGwg7A37qbyOPmGm
+         MRjnzDTjx1LmwAf2ahqi/Z5mghoYAGAWq9hfoCVkaJBjcuoNgpbGixkxQb2dYgws8StG
+         i9wFim/760qow+S3icfS6ykEOYnbyZfTcGoWhfJ9NzpPaF4dFkm4Svwui8SSSyB1O/CL
+         aSou7V4M7Hn/ZrGitBIeRc30H8Qg1X6kk4FztqhrCMLsqAWkGWj6wwuxsT8wHR7j7ABA
+         TQAZ79cmlsHCQm9PPdjTBdkqdVskbGd3btxk9fvGrJWUu+f1Fcs5HTPndNolkvPXI0FJ
+         TeEA==
+X-Gm-Message-State: AFuF++mi2Sd6TJLkSNDNBXKaAxRMJ1NLLPyV0VH54U382BVhYGQgQGZy
+	EUafo3jW3O/3oYZJqI7QUWrIqbQmFjNcncL8IM8W3Vf8CCRuKls2TruP
+X-Gm-Gg: AYBFou2u/T0QqEw2a6RacktHUDVEQww5gOHBaIKZQbF/NwnElahJ0hUcNMcnjrXBTWK
+	8U2k1StWKexzw0OUaAklMgqgrOg/wUuCdD2CNJ8dVPU4eUf+5EXGrLTqLI8hR8erYMpOmqm5bRA
+	zSvq4AhvdWVDxJalJNI2k9E/FHUlktNKR7DYmyxrzW+R33dMnxJKyPhxrQXLwzeA7zETgfoWkqf
+	U5s9eHeePmg31tQHowu7RbWuf2m81kNHEwHrnlBljpDBlak0jYba/OQgfv4GnfLwPzwfMD3kLMg
+	YFUxCMTR8uu6tngV/bO6BfQz9QMTSjMDirZEWBb3eUurAnAXxuZHoRbapO/FOZmPwCgpIkr0qQT
+	PyUU7udmLSg8PqM2BWs/I5uw+NCsTSs1N97tpfg86CWnhid1lneYPFapyfBx6G8vyc3wKNGF2hw
+	+aNsKheIgIkoptmuYTULS2KmeribBPuUOQ8J7SpOAXWXOPHUPavB15j8y37Z3djb8HvA==
+X-Received: by 2002:a17:90b:5866:b0:398:e73e:5a13 with SMTP id 98e67ed59e1d1-39b2613272amr8567041a91.9.1788526680063;
+        Fri, 04 Sep 2026 05:58:00 -0700 (PDT)
+Received: from [192.168.71.146] ([240e:b8f:91e2:d400:ec2a:b15e:fef8:70a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b08c39451sm10720102a91.7.2026.09.04.05.57.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 05:57:59 -0700 (PDT)
+From: Liang Haowen <nbg2974@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org,
+ sashiko-reviews@lists.linux.dev
+Subject: Re: [PATCH RFC v2 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED
+ driver for ROG NVMe enclosures
+Date: Fri, 04 Sep 2026 20:45:00 +0800
+Message-ID: <202609042045.ReplyLee.lhw@gmail.com>
+In-Reply-To: <20260903161357.GX2133376@google.com>
+References: <202609012200.RFC0.lhw@gmail.com>
+ <202609012200.RFC1.lhw@gmail.com> <202609032000.RFCv2-0.lhw@gmail.com>
+ <202609032000.RFCv2-1.lhw@gmail.com>
+ <20260901145204.2BF551F000E9@smtp.kernel.org>
+ <20260903161357.GX2133376@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
+On Thu, 3 Sep 2026, Lee Jones wrote:
+> Please review, explain or fix the Sashiko review(s).
 
-New issues:
-- [Low] The commit message fails to follow the LED subsystem guidelines for=
- prefix format and capitalization.
+Fixed, fixed, fixed, false positive, false positive:
 
-Pre-existing issues:
-- [High] If pci_register_driver() does not bind a device (e.g., due to node=
-tect=3D1 on a system without the hardware), nas_gpio_pci_dev remains NULL, =
-causing an invalid pointer dereference during LED registration.
-- [High] The driver registers LEDs globally during module init rather than =
-in probe, and fails to unregister them upon device removal, violating subsy=
-stem rules and leading to use-after-release bugs.
---
+- [High] empty work run writing flash: real. The work now snapshots
+  the dirty mask up front and returns before issuing any SCSI command
+  when nothing is pending.
 
-commit 933a15295df77c1222bb18879d12d9d6414867f1
-Author: Hemanth Selam <hemanth.selam@gmail.com>
+- [Medium] name collision between enclosures: real. With the static
+  name the LED core would register a second enclosure's LEDs under
+  renamed nodes (led0_1) rather than fail, which is still the wrong
+  device identity. Names now include the sdev's H:C:T:L, which is
+  unique per enclosure.
 
-leds: fix typo "retrive" in comment
+- [Medium] colour write vs dirty bit ordering: real on weakly ordered
+  architectures. A per-zone spinlock now covers the colour cache and
+  the mask on both sides.
 
-Correct "retrive" to "retrieve", reported by scripts/checkpatch.pl using
-the misspelling list in scripts/spelling.txt. Only touches comments, no
-code changes.
+- [Low] blk_rq_map_kern() argument count: false positive. The current
+  signature is (rq, buf, len, gfp); drivers/scsi/scsi_lib.c calls it
+  exactly this way from scsi_execute_cmd().
 
-> leds: fix typo "retrive" in comment
+- [Low] kzalloc_obj(): false positive. It is in include/linux/slab.h
+  since v7.0.
 
-[Severity: Low]
-Does this commit message violate the LED subsystem conventions? According to
-the subsystem guidelines, the prefix format should be
-leds: <Driver>: <Capitalized description>, but this subject omits the driver
-name and does not capitalize the description.
+v3 with the three fixes follows. One question in its cover letter:
+whether deferring the Kconfig/Makefile/MAINTAINERS wiring to the
+agreed SCSI split is acceptable for the RFC stage.
 
-
-> diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-> index fcaa34706b6ca..1b08a40961ba4 100644
-> --- a/drivers/leds/leds-ss4200.c
-> +++ b/drivers/leds/leds-ss4200.c
-> @@ -339,7 +339,7 @@ static void ich7_lpc_cleanup(struct device *dev)
-> =20
->  /*
->   * The OS has determined that the LPC of the Intel ICH7 Southbridge is p=
-resent
-> - * so we can retrive the required operational information and prepare th=
-e GPIO.
-> + * so we can retrieve the required operational information and prepare t=
-he GPIO.
->   */
->  static struct pci_dev *nas_gpio_pci_dev;
->  static int ich7_lpc_probe(struct pci_dev *dev,
-
-[Severity: High]
-This is a pre-existing issue, but if pci_register_driver() does not bind a
-device (for example, due to nodetect=3D1 on a system without the hardware),
-ich7_lpc_probe() is never called and nas_gpio_pci_dev remains NULL.
-
-Can this cause an invalid pointer dereference during LED registration?
-
-drivers/leds/leds-ss4200.c:nas_gpio_init() {
-    ...
-	ret =3D pci_register_driver(&nas_gpio_pci_driver);
-	if (ret)
-		return ret;
-	for (i =3D 0; i < ARRAY_SIZE(nasgpio_leds); i++) {
-		ret =3D register_nasgpio_led(i);
-    ...
-}
-
-drivers/leds/leds-ss4200.c:register_nasgpio_led() {
-    ...
-	return led_classdev_register(&nas_gpio_pci_dev->dev, led);
-}
-
-Passing &nas_gpio_pci_dev->dev yields an offset pointer from NULL, which wi=
-ll
-be dereferenced by the driver core.
-
-
-[Severity: High]
-This is a pre-existing issue, but the driver registers LEDs globally during
-module initialization, decoupled from the PCI device lifecycle.
-
-Can this lead to a use-after-release issue?
-
-When the PCI device is unbound via sysfs, ich7_lpc_remove() is called:
-
-drivers/leds/leds-ss4200.c:ich7_lpc_remove() {
-	ich7_lpc_cleanup(&dev->dev);
-	pci_disable_device(dev);
-}
-
-This releases the I/O region and disables the PCI device, but fails to
-unregister the globally registered LEDs. A privileged user could interact w=
-ith
-dangling LED sysfs nodes that access the released I/O ports.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260904122738.3314=
-5-1-hemanth.selam@gmail.com?part=3D1
