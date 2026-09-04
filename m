@@ -1,276 +1,139 @@
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021140.outbound.protection.outlook.com [52.101.95.140])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD3E2D47FF;
-	Fri,  4 Sep 2026 13:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788526991; cv=fail; b=T2SGyxCyEP4Awm19q1iiJglxp6Ol1Oyfrgp30hph4UdQTm68UOV0257swxNqhn5ZVZX+AVieh56GrXaebTvhnQzpNq1w/6RSfk3JC6TBJrcKXd1ZMaCbGPGEW5TC14ikl/tvGBWNYn3Eq5CdzYcMqAxcgDAS8JKljKHH4pGDvaE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788526991; c=relaxed/simple;
-	bh=m7szfGkZMPVCeB9+LxyBhhw60+H2PawbDiHVcC5fP1E=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=EwPE29RlaKtl6k0PX67m8NGszP1RPABsiwpOUdJuGsnwPCi3vDjUu6i8USHzMOOnyW1x99JyacBG7TEhi1BSZVwK9+Vls0DDaHGKa9oc0ISv6/qx+gbK987vGIfL7zHGWJiPoLtH9mmtVK2F5rFbwQUoMVNf9kbAZdvGCEnhUpk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=EMyLYFYb; arc=fail smtp.client-ip=52.101.95.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337D5481A97;
+	Fri,  4 Sep 2026 13:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788527707; cv=none; b=LeNAdJAdH834mEd5FJcl2eTfWs07lCxGUHwfYsS5FIv34cFkd+/jSdQRcsbluR64IPZheAe2XcQHOyVFVUpWo3CxkrysNjlqzLg0TZwQu4MP93mBmUl85tdFA6C/6iGLK1JiI/R+EwTkg9Ipq5mwfhVgIDJPkZEZ5npqjFYuWwQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788527707; c=relaxed/simple;
+	bh=lzxhKLC6ov9kd9mG94WYpO8RUYZs6WSRd+qZc5IuoSs=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=C9PFaUrRTHDXUQSuelDA52qHYG1kr09IzqPPj5TS1GEtZtE3LWvs8wraBASOrOM/rBuGiEfZySBvFqmRmQyftAA2kYxgC1pDHOag/xSD3BLr8Q/8OrGPTsGa5i8MeQdXPtv8G4/C7vTBR5zRRoNUQtT8wpsWvJ9eYxuYMHBXLjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol2Izn6B; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="EMyLYFYb"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l3Jp2glvt99LLHDWgHRYB4JRS3izlPbNIbQxRKEGW/CeqGXgmkQD7hfYqeGghQ99W1Czca6OxmlegPfXE3mD0aESArUnAWrHSHzAkiafCobfHsmGtucITT1FifZBs5t51GjWNbK2m5uQRjI67cGul+FIo8ZJls8zsj4LLfwcMRbudQTf5ko0VVqkqMe2zwD35hwXvncSrJgvxgu7vN01LoEci6FtWe3YoywPzO1cteBLcHNKOMu3qSHZ1GkNMcNWHb0pluE9yRv106xTb0LjxxT9LUzxmgCQY1ZPXSPSSrXVd3hdk4dxcz2YrDLnroV/JH0LkLLFFN9vvr0k2vDIsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q93GhrDNpJue+te+T86YsYK8q50hQRYy/UJhTykFejU=;
- b=l8rDceM63cyYFrhk/l+qhPb2W0OG+bmkBohIxBrXQ2mNToZjIaxmRvR4v6kfq6b9MjgwogmLxlFz9/MwzQCh7KiRuRT1sZb2D7JqivSVgomCr2KTivuD95XOfLboxjoO3YtnLk3PN65lh9Hr+70ROA8mY4PpA6WHqemf61emeAJAKN/3za4Iec8o7l6TtaMNzlNs27oJ86X7j0HfGhzq6bMxxoLVOkdtXXVJ+qyZr38orY2x7e5vE8ZKvU/Hx23hgu4i1IdJ24B12GxDGnMSv8ZnhtRMlQvd8QUc52SYozCDMP7FKw0+bDhHH0fR8oZeSn3WVgDwBx7dFcqsL1223w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Q93GhrDNpJue+te+T86YsYK8q50hQRYy/UJhTykFejU=;
- b=EMyLYFYbpuSumsuvUwA9VJ4NEsnKh+JgLv/zmuuh5kc5zpiqES18Rl2qshAH4lYT/ARdZQ7lAraPfJLoOL/xyvLFBrjO75Cx9BwZGnlqu8P/YyFWQHIfJu2FZAQQsYG7YI/4ZST92LRxHlD+b9FIHpAOUz+tJK3/JV5clChZKRQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:4ab::19)
- by CWLP265MB6449.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1e3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 13:03:05 +0000
-Received: from LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1]) by LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- ([fe80::f60b:1537:68d7:4fc1%4]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
- 13:03:05 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol2Izn6B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 355C41F00A3E;
+	Fri,  4 Sep 2026 13:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788527703;
+	bh=HnJSorNu3nYDhGdZpXoVI1JnfTa98po6oGxyFlA3wJc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ol2Izn6BXgkXrMGAGVU4P6XIE5BP4QiSrqqYz9fFxrxC9v/cR0JdH9wzAYOeXq7DW
+	 M+t2aZDJ0qJR/bS8Bo2L0fMH8N39et3Ru31Qeizu/5kQw7rZNOQq5iJJz+M/O/f8iL
+	 P07Wsd63Pc1v4+xOY26VPJy0D2rwNTxSSCF7tQCglz5mz6lv9bmXORR0iRDCH62N+p
+	 bOQ9HFm14SFU9qf1fpUoSjuF4A0o/v8rJRTjX40a3ydKKLvasx4cp6hw7lVEUhS2Pc
+	 mnLANSTH+wMY4mliQaYBWDKC/PW1cYnKv6JgerGBImVZFdRetzuyqZRY5y6KHHdGIf
+	 f+Sq3B8ghyHVg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC v3 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED
+ driver for ROG NVMe enclosures
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Liang Haowen" <nbg2974@gmail.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org
+In-Reply-To: <202609042030.RFCv3-1.lhw@gmail.com>
+References: <202609012200.RFC0.lhw@gmail.com>
+ <202609012200.RFC1.lhw@gmail.com> <202609032000.RFCv2-0.lhw@gmail.com>
+ <202609032000.RFCv2-1.lhw@gmail.com> <20260903161357.GX2133376@google.com>
+ <202609042000.RFCv3-0.lhw@gmail.com> <202609042030.RFCv3-1.lhw@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 04 Sep 2026 14:03:04 +0100
-Message-Id: <DL6JWHOEG91Y.1BKBUP653Z5D@garyguo.net>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-leds@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v24 1/4] rust: leds: add basic led classdev abstractions
-From: "Gary Guo" <gary@garyguo.net>
-To: "Markus Probst" <markus.probst@posteo.de>, "Lee Jones" <lee@kernel.org>,
- "Pavel Machek" <pavel@kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Dave Ertman" <david.m.ertman@intel.com>,
- "Leon Romanovsky" <leon@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
- Krummrich" <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Boqun
- Feng" <boqun@kernel.org>, "Daniel Almeida" <daniel.almeida@collabora.com>,
- "Tamir Duberstein" <tamird@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- "Ira Weiny" <iweiny@kernel.org>
-X-Mailer: aerc 0.22.0
-References: <20260903-rust_leds-v24-0-8d9e4c04db69@posteo.de>
- <20260903-rust_leds-v24-1-8d9e4c04db69@posteo.de>
-In-Reply-To: <20260903-rust_leds-v24-1-8d9e4c04db69@posteo.de>
-X-ClientProxiedBy: LO4P123CA0675.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:351::19) To LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:4ab::19)
+Date: Fri, 04 Sep 2026 13:15:02 +0000
+Message-Id: <20260904131503.355C41F00A3E@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LOAP265MB8560:EE_|CWLP265MB6449:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0dd4f1f1-0bdb-4e65-b5f7-08df0a84dbc8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|7416014|10070799003|4143699003|921020|10067099003|18002099003|22082099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	o7exBDUrAgc9ycfA//YkXtiVjDGV08TCta0lcDhxiNtvqJ/iONnJnvAYYwuH2aad9dHoCZQ4rCK0LDAcLuUoMZxtH5FNJ0/lWaSCxktdhFVMtgkNmLo+putXUaeqUJxU5T1Bp9feYQBMugC6lfDy+QH1UnTKYKalQw+m2ZFO4YdeKVnlbwgVUCv/iTtVn8WKKEtyt/FDNuvgAaTVwg7lodAn7QWdt+FQFifjT/BG+CLLDfaXZQFrxWSt/bmBrASzF7qS60bQlfi4osbjPrJmfyVjfQM4duQwFHRg6H+2/dtHpMNkd0YgpMOYb7c7A6u71FdG0m52MS6sUWjc53uWJSxPgcNn3IPCxg90XGySBcLyiFVD1draKXe+OFAz7hh3wTeAFrI4kRJPSaD+nm/w7e+Y3q+3SOz0+NNtt+pJYi9KR60vQo/5YdNZewHCqWXL6H8COfHqMaB0d4i02Eoj5yJNYgzyOo8oXtFTf2S/OTgJbHX5winxtI9clmG2xlhcU64XfqgHCHk9VAxQfrqROOfezTete+etP+6N5e3n6XWmk4R3KtK/fKsLl0/gu2JDYiPE/MEdL+9QNyRArRPiJEd/kcCIbXTvLNbl2vaPR180xy6cEL3lLFDU+rSLqoy4R90WjKJ3XnswdpFz9ucuq9Bd2VXySwWobC6ndcYSnNgCbN/UuUQm+KrGMshC548D86STVKLdbqStZ43cSkIkSw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(7416014)(10070799003)(4143699003)(921020)(10067099003)(18002099003)(22082099003)(56012099006);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGlORnRKdGRscWJaT0FLcWRoNlVKbTcvUitSUCtIczVkaVJhdEtqUnVLYm1G?=
- =?utf-8?B?TXVpcTdSeHlwTysvdFpGcmltbkxDcmRKUjFoNHMrMDF1N3hkZk80MzZBRnBq?=
- =?utf-8?B?TmdraVRkdk5TNzlRMDBTSFpkcGpFVEhtRHM2dXZLbVZiZG4wdFJ4My9wYnBm?=
- =?utf-8?B?dTU4SDlSYjZhVjdzWVJxZ3BVRVp1dEpoLzZPRXNHSHlUUFk3R2NXVFp5VjI4?=
- =?utf-8?B?ZUZtbFV1U3V6dERyamJ5aUppTmpTN1hxYmhESjJCT3RrYmREdGJDbmRhT0E3?=
- =?utf-8?B?RzNRbUFPQlJRTEtNVnR4Rlg1dFlzTWtpZTN0U2dTeXFUblNFMENUbTNYaHJt?=
- =?utf-8?B?RHVUYVpHTEtSQmRVZ1lpVVNqWmt1cEdXam5DbjhvYSsyRVBCaTJlNTUrUVVm?=
- =?utf-8?B?ZmRmRUFscWpYYzFGK2N4ZmZsWnYxcVhQSW5PWHlJSFNKanFUU0RaWUpGcWdI?=
- =?utf-8?B?enBtelo5cTZzNE9GdVJLd3lURFpzMEtTSHlUaGsyelJTUXdqYjRjelpyaFRq?=
- =?utf-8?B?Ri9OT0V6eUcyakdZT2ptaEpaTUVud2NXQ2duREloRkl1UDJpaTVhamV0UHdv?=
- =?utf-8?B?dThZUENvNTcxNm5rcFZVbjJsdXFiclN5UW45bmZobDB0MlEyTU5QQlVQVjlI?=
- =?utf-8?B?RGxIYTFROTlZYzhiR2UwUjczeGd5bzhhV2MrUFZ3bG1vSlRQRUhKeUJBa0E3?=
- =?utf-8?B?ajFaUVcxTmg1WVJqL3J1YTR1Nm9SU1huUHZPODh3ZUNxRTRxUjhNL1hoamd0?=
- =?utf-8?B?SFNzbGlDMFpma2ZKcG1EOURMdTBFQ0lCUlE3RUpTL2NiYWNZNWdvS1duYlU1?=
- =?utf-8?B?K0h5Z2U4aXpsSFRwOFJOS1crMDJCNStwcWxJcWFRSEtNeVllbHYyVTBzdk8w?=
- =?utf-8?B?bGFDTGRDK2laTjhBVE1oUjZhbFJOZEw0c29CWmNzTWFDemY5ZHRkeVZtMVE4?=
- =?utf-8?B?bDNFaDAzUitXcVdKZTJDeWZqSjYxZlZxaU9yVkg3ZjNUMFZGRHNoUk42Sms3?=
- =?utf-8?B?dGtZMmJjc3k5YmJMdk15aCtUUnRrSkdCK0JBSjNhV0FpLzloelRTTDhJMkZN?=
- =?utf-8?B?RExVNCt2REszd05UQk9vRGFhOGdxVkJsZDg0MjdNeDhhS0IrN0FKV29pZU0w?=
- =?utf-8?B?QmE2U21NaXMxcFN3NFoyZ2FZNFhIY0pUQkM0YmpiTGU3VjIxYVVxNjV1V0ND?=
- =?utf-8?B?M1NOZGNkbXVOd2FKRzBFYy9abUFQa1NMTVJNZjdMVk5aMVIxOTJHVDlWaUF1?=
- =?utf-8?B?SlNhc09DbXJIaEVzdTFBSHpZazAzblNJd1V3OXRnbHhReVhVeGxOKzNHRmhi?=
- =?utf-8?B?TGhtb1RVOHFpamVQa1AwM1JzV1M3dFhKN0xibkhHcW13U210a0JqSVVQZTFY?=
- =?utf-8?B?Qk5VNkk0aVNqamJBMUdxeW1kVUo3ODZPS1U5eW5ZQ0ZaTkd0Zk1TNDMrZDRl?=
- =?utf-8?B?RXhxL0tsTmlJMnhvK1o3ejJ6ZlppellRWCtxYitMVVEyQkF5K3poT0YwaDcz?=
- =?utf-8?B?Umk1VjNQRmRsN3NORU51VWNMVURxUmRLVEZuemJyTStRalNWTk5Qb0g5N3Rw?=
- =?utf-8?B?bkpHZ2MwcG0zT282SnNJRmpTZk9JdkoxRm9mWG12MTZERG02aWRkT0lteWJP?=
- =?utf-8?B?TnpBRjM2NXdsSXlLL0lGUCttNURkUWdxemgvbkxMVXRURnpLOUk1bTBLNTQ3?=
- =?utf-8?B?NkgwRFNHM1lpRzVTeVR3YXpTSzFtN3VTdS9VdUhSNFRXSFlSTjBGamZUZVF1?=
- =?utf-8?B?M09hSEhpeHVkaTR2bUNWV1lhajk5Q3RvaWFIU3ZKVFZndXRKQ1dndU15YVhW?=
- =?utf-8?B?eU1ldzUzcWR1UWlVaUhHc3dIOE9ZVzZoUXpmUnFha2drZVV2c0NkMzJFeEVK?=
- =?utf-8?B?b2tIdzVISEw1eVRpaTRQQThuOC9Wc3hlcElMT0FYaWdwRVlXQTM1SDJ4Qi9S?=
- =?utf-8?B?cWNTNi9DdXB1UTE0bHpKWGh5OW5ZNnV2NGExcDRPYmRrejFyNWhYbmhSL3Ns?=
- =?utf-8?B?aEQ2Y3hSVTZLaGtIM1FiZDZHcHUyUG9ZdDgxUTlkTU5kelNDNXhjeXZJQ0h5?=
- =?utf-8?B?SUJjQWcxYUU3cjRUNHBCUW1xVEY4dmgxMUZxQXRCTnVnSVE0SmxqZDlmTFg1?=
- =?utf-8?B?SHZaQ3E2SVRJQzFoNDViOVZtU09Cck5RSTd2TUdSVzdJa1RNWG9CSlliNVJo?=
- =?utf-8?B?TlNYV3czWklEZXplU2prbGhlMlBwMmRGbVZHU3dCSDdidHFjWXlQNmx3THBz?=
- =?utf-8?B?UHdaWktjam5ycWpnaTJ5S2dnZzc3TzNYMlRXTGpUdGpDb1VRYlBHVFVvc3Ev?=
- =?utf-8?B?MTQ1d09sQW5ReVQranUwSVprcWNhTlUzd1N1UGg0V2FYZk5UMFlLZz09?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd4f1f1-0bdb-4e65-b5f7-08df0a84dbc8
-X-MS-Exchange-CrossTenant-AuthSource: LOAP265MB8560.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 13:03:05.0493
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GQWVxaLEJE1whfSfoAisweGVZo/b7v5wfPEHvMDjZbcLC3EykMy0jqw6bxITo0jQp0me9uZt+WtTgNYb1viw+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB6449
 
-On Thu Sep 3, 2026 at 12:01 AM BST, Markus Probst wrote:
-> Implement the core abstractions needed for led class devices, including:
->
-> * `led::LedOps` - the trait for handling leds, including
->   `brightness_set`, `brightness_get` and `blink_set`
->
-> * `led::DeviceBuilder` - the builder for the led class device
->
-> * `led::Device` - a safe wrapper around `led_classdev`
->
-> Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> ---
->  rust/kernel/led.rs        | 288 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  rust/kernel/led/normal.rs | 230 ++++++++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs        |   1 +
->  3 files changed, 519 insertions(+)
->
-> [snip]
->
-> +/// Trait defining the operations for a LED driver.
-> +///
-> +/// # Examples
-> +/// ```
-> +/// use kernel::{
-> +///      device,
-> +///      devres::Devres,
-> +///      led,
-> +///      macros::vtable,
-> +///      platform,
-> +///      prelude::*, //
-> +///  };
-> +///
-> +/// struct MyLedOps;
-> +///
-> +///
-> +/// #[vtable]
-> +/// impl led::LedOps for MyLedOps {
-> +///     type Bus =3D platform::Device<device::Bound>;
-> +///     const BLOCKING: bool =3D false;
-> +///     const MAX_BRIGHTNESS: u32 =3D 255;
-> +///
-> +///     fn brightness_set<'bound>(
-> +///         &self,
-> +///         _dev: &'bound platform::Device<device::Bound>,
-> +///         _classdev: &led::Device<'bound, Self>,
-> +///         _brightness: u32
-> +///     ) -> Result<()> {
-> +///         // Set the brightness for the led here
-> +///         Ok(())
-> +///     }
-> +/// }
-> +/// ```
-> +/// Led drivers must implement this trait in order to register and handl=
-e a [`Device`].
-> +#[vtable]
-> +pub trait LedOps: Send + Sync + Sized {
-> +    /// The bus device required by the implementation.
-> +    #[allow(private_bounds)]
-> +    type Bus: AsBusDevice<Bound>;
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [Medium] LED class device name violates UAPI naming standards and breaks =
+userspace parsing.
+- [Low] Compilation failure due to undefined macro `kzalloc_obj`.
+- [Low] Compilation failure due to missing argument in `blk_rq_map_kern()` =
+call.
+--
 
-Does LED class device has no private data that driver can use? This can be
-either a private pointer or extra allocation living at the end of the class=
-dev
-struct.
+commit c4b336ab5a8222a99fc342c60592e26cbc2f680e
+Author: Liang Haowen <nbg2974@gmail.com>
 
-It's usually a antipattern to get the bus device directly, especially that =
-in
-Rust we do not allow anything other than callbacks to access data on bus
-devices.
+leds: asus-aura-scsi: Add ASUS Aura RGB LED driver for ROG NVMe enclosures
 
-Instead, the class device registration should provide a data initializer, a=
-nd
-the callbacks would receive a pointer to the data instead. In cases that a
-device resource has to be referenced, it should be kept inside the private =
-data
-by the driver themselves.
+This commit introduces a driver for ASUS ROG external NVMe enclosures. It
+exposes the Aura LEDs connected to an ENE controller via vendor SCSI
+commands, implementing multicolor LED class devices for each LED.
 
-Best,
-Gary
-
+> diff --git a/drivers/leds/leds-asus-aura-scsi.c b/drivers/leds/leds-asus-=
+aura-scsi.c
+> new file mode 100644
+> index 0000000000000..3ff33615a7934
+> --- /dev/null
+> +++ b/drivers/leds/leds-asus-aura-scsi.c
+[ ... ]
+> +static int ene_write(struct scsi_device *sdev, u16 reg,
+> +		     const void *data, u8 arg_count)
+> +{
+> +	struct request *rq;
+> +	struct scsi_cmnd *scmd;
+> +	u8 cdb[ENE_CDB_LEN];
+> +	int ret;
 > +
-> +    /// If set true, [`LedOps::brightness_set`] and [`LedOps::blink_set`=
-] must perform the
-> +    /// operation immediately. If set false, they must not sleep.
-> +    const BLOCKING: bool;
-> +    /// The max brightness level.
-> +    const MAX_BRIGHTNESS: u32;
+> +	ene_build_cdb(cdb, reg, arg_count);
 > +
-> +    /// Sets the brightness level.
-> +    ///
-> +    /// See also [`LedOps::BLOCKING`].
-> +    fn brightness_set<'bound>(
-> +        &self,
-> +        dev: &'bound Self::Bus,
-> +        classdev: &Device<'bound, Self>,
-> +        brightness: u32,
-> +    ) -> Result<()>;
+> +	rq =3D scsi_alloc_request(sdev->request_queue, REQ_OP_DRV_OUT, 0);
+> +	if (IS_ERR(rq))
+> +		return PTR_ERR(rq);
 > +
-> +    /// Gets the current brightness level.
-> +    fn brightness_get<'bound>(
-> +        &self,
-> +        dev: &'bound Self::Bus,
-> +        classdev: &Device<'bound, Self>,
-> +    ) -> Result<u32> {
-> +        let _ =3D (dev, classdev);
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
-> +
-> +    /// Activates hardware accelerated blinking.
-> +    ///
-> +    /// delays are in milliseconds. If both are zero, a sensible default=
- should be chosen.
-> +    /// The caller should adjust the timings in that case and if it can'=
-t match the values
-> +    /// specified exactly. Setting the brightness to 0 will disable the =
-hardware accelerated
-> +    /// blinking.
-> +    ///
-> +    /// See also [`LedOps::BLOCKING`].
-> +    fn blink_set<'bound>(
-> +        &self,
-> +        dev: &'bound Self::Bus,
-> +        classdev: &Device<'bound, Self>,
-> +        delay_on: &mut usize,
-> +        delay_off: &mut usize,
-> +    ) -> Result<()> {
-> +        let _ =3D (dev, classdev, delay_on, delay_off);
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
-> +}
+> +	if (arg_count) {
+> +		ret =3D blk_rq_map_kern(rq, (void *)data, arg_count, GFP_NOIO);
 
+[Severity: Low]
+Will this compile successfully? Looking at blk_rq_map_kern() in
+block/blk-map.c, the function expects 5 arguments with the request queue as
+the first parameter, but this call only provides 4. Should this pass
+sdev->request_queue as the first argument?
+
+[ ... ]
+> +static int asus_aura_register_led(struct asus_aura_zone *zone, int index)
+> +{
+[ ... ]
+> +	/*
+> +	 * Include the sdev's H:C:T:L: every enclosure gets its own SCSI
+> +	 * host, so the names stay unique when more than one is connected.
+> +	 * With a static name the LED core would register the second
+> +	 * enclosure's LEDs under renamed nodes (asus-arion:led0_1), which
+> +	 * is the wrong device identity. The names are per-attachment, like
+> +	 * sd X letters, and userspace is expected to enumerate.
+> +	 */
+> +	cdev->name =3D kasprintf(GFP_KERNEL, "asus-arion-%s:led%d",
+> +			       dev_name(&zone->sdev->sdev_gendev), index);
+
+[Severity: Medium]
+Does this format string comply with the standard LED class device naming
+conventions? Since the SCSI dev_name() format typically introduces multiple
+colons (like 0:0:0:0), and standard LED userspace tools expect the naming
+scheme devicename:color:function, will the extra colons break userspace
+parsing or udev rules?
+
+[ ... ]
+> +static int asus_aura_attach(struct scsi_device *sdev)
+> +{
+> +	struct asus_aura_zone *zone;
+> +	int i, ret;
+> +
+> +	if (strncmp(sdev->vendor, ARION_INQ_VENDOR, strlen(ARION_INQ_VENDOR)) ||
+> +	    strncmp(sdev->model, ARION_INQ_MODEL, strlen(ARION_INQ_MODEL)))
+> +		return SCSI_DH_DEV_UNSUPP;
+> +
+> +	zone =3D kzalloc_obj(*zone, GFP_KERNEL);
+
+[Severity: Low]
+Will this cause a build failure? It appears kzalloc_obj is not a defined
+kernel allocation macro. Should this be using kzalloc() with sizeof(*zone)
+instead?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/202609042030.RFCv3-=
+1.lhw@gmail.com?part=3D1
