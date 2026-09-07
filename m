@@ -1,101 +1,147 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB243346E58
-	for <linux-leds@vger.kernel.org>; Mon,  7 Sep 2026 04:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ED0356766
+	for <linux-leds@vger.kernel.org>; Mon,  7 Sep 2026 05:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788756883; cv=none; b=qiGR5Q9bTC76/Z5OrhIpqzD/bJAQ3jCRl3dqA2IA2EJFhJ0cK7u62wCMIDEKDSYm1QJWeThkE2uxCLFoV72pr0pZ/UtOP09+rAPprp7FMHEfaTLEYQ1xRVqnaRit3kh0gJa+ceXLwoRIB9vcABfDKXr7BhuDCzXJJJit+s5PBmM=
+	t=1788757345; cv=none; b=CTc/d8uildMTEsPH9CfQqY3ktAJ+f3cRVHVmJCTcu3dZhF8ucusxtAdk0dJk4tCcQHBbg7NH3J4Fc/6kCucD5PWczepQ5l9CmGzzmq2ZhL0FSR+B2XYsCyTVmslJMORTEVUzCWRUibr5OawXihg+cIx2SuH8Bx/q70lqFGOGCgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788756883; c=relaxed/simple;
-	bh=nGLX54WD8ZYhwyYfjF+NbAYQqy/IWOhlM+QLKa4hUz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PG2xWlV4+b3krtzT3PV0+kB3/87EWoi3oaEsXuD3/JN5GskrBAciEDM1dAxsvx/JQXnqAOSGk5jMApjMH4wVtA1vWrsM2BlWSSWlFGKNG+ud+ZxBnz1jyKkWGQLLtykextZqMUQwoRlVz9j9ZHoZ1QVFc0mnXJbDAkeENm1aNsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2/54wA6; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788757345; c=relaxed/simple;
+	bh=YL2KSPt44o9QqyAJ5LZsgWLJGbzd+7ixpZZ62Cx5VSk=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=mxi+CX4Ao1nIAKiPhqbk8cz0Gz334ylHbE5UJKVJTiaz6cEHijtV59C8UBfVBU4moQwTi1uMZX4BHHLa1XRJg2fqLvRq4KkcUgyulWz+fTvIr4xnTO1+TOgXqSrWolsTLrLffPJ4+oxfXwvVYWojvuriobjnWMK4wpmsHa20POs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS6T/q/M; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2/54wA6"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cc1d57602e8so2759079a12.3
-        for <linux-leds@vger.kernel.org>; Sun, 06 Sep 2026 21:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788756881; x=1789361681; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+H6PCme+LwtltvMdPx7okQil/u953epHJoMAFnFvfvA=;
-        b=I2/54wA6oB7qqEfNBCtUqeyMVqnmjFj+Jmg8oYx5HS3FZyhse00ea6VnfUdImwi7U1
-         7F0vo2NPMsGgN/ZAbIAxmh3mw0SZehnW94lr9j8oDvtHz8nIz5E3dUNk1d6Wk/VIl9pM
-         WsSWDHqdFDK/9UJmQ+DyjTNhkjkeL8XBokZJ02Z7VIyFGdPpSCQX31uW7LJGIyZ//RHF
-         KhWEw+xbWtlC2gUP/VvT8nz3XQy38STV2Ikldxf/254e9T395gqWNGzHYAq8JUD6fBcO
-         XdR0FlG+VPwwVgrBg9iQA1n/aSv+j4T4bY1kBSSKuReHt/jqleMh2VjE2RFyCgYhqBaZ
-         XbNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788756881; x=1789361681;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+H6PCme+LwtltvMdPx7okQil/u953epHJoMAFnFvfvA=;
-        b=tIVo1EjWa67wD9MUzDOliovXVTD6k9j7JP5FLbqQyGdnHA0Lo8iVf5HhOsf6kFdlpn
-         AM+cTIdHcr1vk9MGs6Rc5RAlWQH3PYluamJYDT0nYB8Fru1H+oU+uKO6gcRI872JOKwj
-         sSqs1FfLd7pLRSSEwDJT3ruWrxoX71hPt/MnuHLNVcStIP8L+7zZbmE7Jsh2pEmDJEQV
-         K06xYnKuemEaya5xEVfTGzbNZTFQVTBw1+/pxvKvq6+g6s7h0DGd8AyjuGQJt+uUp2bD
-         fwMtGQaxsKfoupJqN1DVbUWtPO9KZsJrpi1QktQ3YGbIcOiAZE/OAvgbr80DTH9fJC5c
-         r2uQ==
-X-Gm-Message-State: AFuF++lPRybh8S5MCMd/UczX2ZjWfBtClqAhhUxp9e1m1jrzwOaKD8SQ
-	IfP71WZlg0ENjUNnvjjrWNoI5+zRbTxx4LjHCzZ47CYAtCzhuQ9ciZh4
-X-Gm-Gg: AYBFou1u6O/v05+Cq4lXWi5+s5E92//gBGE3iPyo/iVHr3mAT7LQ6lAPKHUNYoq9Z9/
-	YLFJTadR1Si3VYXk8EWh3IPbsnG6JKTPPT9If3g0MtWWaSGMa7wzpXWfMsq80nxgOKv1CBb4jOt
-	inUXKKdvu759V3CXeYs9ZDWOGeGbJ8aSeCMEWD0HiGnjuEVH5NI1ge4HI07eQmt8JdeC+XBkx1A
-	THHnUw2A03xguKqIALYrh9/fVtQ8Ycftq89qPwkoTjUvrqGKMCRMZVcfjKrSUcpqyV4+iWvs9e0
-	2QFrcTovPJ2N/SS8M/FWhhFSUxzZeLclwROuKZkp+9wFXPM+brPe1w5TsHigd/d26rX5HEhKNF2
-	PRs37P9wRH7n2ugqlHmoTdkOzSCow3zQVZLkq4tNYx3pOwLZDTB/tFIOu6j+S+alLZUwn3WO7BO
-	mSdXjDZsMx5uAIu04ltbHwKaorkcIAlPIyXNhd4b0d+z9KnEt2/9PtbKIlJTQnvY07s6/3FbaBN
-	CDpPuvcjm4IvQ==
-X-Received: by 2002:a17:90b:2681:b0:38f:5801:dc0e with SMTP id 98e67ed59e1d1-39b261d52a4mr31580282a91.15.1788756881269;
-        Sun, 06 Sep 2026 21:54:41 -0700 (PDT)
-Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-143243f780csm21933483c88.13.2026.09.06.21.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 06 Sep 2026 21:54:40 -0700 (PDT)
-From: Hemanth Selam <hemanth.selam@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] leds: ss4200: Fix typo "retrive" in comment
-Date: Mon,  7 Sep 2026 10:24:36 +0530
-Message-ID: <20260907045436.18039-1-hemanth.selam@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS6T/q/M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 595B61F00A3A;
+	Mon,  7 Sep 2026 05:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788757343;
+	bh=menesgl/3BlR9rmabMCHYX8wghUV/SujSZfjvgCaGSw=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=cS6T/q/MN5wm028VFp7qSbozTYb2XAxowZ4l18+uWz0jKE7wHPDIbyzEXTe3PYRwe
+	 4gLx84zHWYlQkDqPV0SIisNUKoh7lLXuV+eL12bHZpJRhh+VSpAvYxMxNIohc9myjs
+	 w0IElxZj+g0f9Aq5En42fnTs3ExtGSr/0wp9LLEV9lo+RA6+9xb634qKKgnimF+vQY
+	 HqVe2cZG9sbUEV/AgMxUKz+Yje5vZx/3QmfFlqxO526hzpNNnqvRssFtpNRaBhAtI5
+	 jauNCoCwCEKGKUMcXlKDjqOWYEcxXE7Gw2+HPK2IUpvgfBL3Xt3Zh2x3Jz6cb8ijzH
+	 PEOMd8K+hWrlQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] leds: ss4200: Fix typo "retrive" in comment
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Hemanth Selam" <hemanth.selam@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260907045436.18039-1-hemanth.selam@gmail.com>
+References: <20260907045436.18039-1-hemanth.selam@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 07 Sep 2026 05:02:22 +0000
+Message-Id: <20260907050223.595B61F00A3A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Correct "retrive" to "retrieve", reported by scripts/checkpatch.pl using
-the misspelling list in scripts/spelling.txt.  Only touches a comment, no
-code changes.
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
 
-Since v1 the subject carries the driver name and a capitalised
-description, to match the LED subsystem convention.
+Pre-existing issues:
+- [High] Dereference of uninitialized `nas_gpio_pci_dev` pointer when the d=
+river loads but the PCI device is not probed.
+- [High] LED class devices are not unregistered when the PCI device is remo=
+ved, leading to I/O corruption and dangling sysfs entries.
+- [High] The global `nas_gpio_pci_dev` pointer is left dangling if `ich7_lp=
+c_probe` fails.
+--
 
-Assisted-by: Cursor:claude-opus-5
-Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
----
- drivers/leds/leds-ss4200.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+commit ec2db960d9ab8126ad72c0997e1828fad4669f6b
+Author: Hemanth Selam <hemanth.selam@gmail.com>
 
-diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
-index f24ca75c7cb1..c782339b1330 100644
---- a/drivers/leds/leds-ss4200.c
-+++ b/drivers/leds/leds-ss4200.c
-@@ -339,7 +339,7 @@ static void ich7_lpc_cleanup(struct device *dev)
- 
- /*
-  * The OS has determined that the LPC of the Intel ICH7 Southbridge is present
-- * so we can retrive the required operational information and prepare the GPIO.
-+ * so we can retrieve the required operational information and prepare the GPIO.
-  */
- static struct pci_dev *nas_gpio_pci_dev;
- static int ich7_lpc_probe(struct pci_dev *dev,
+leds: ss4200: Fix typo "retrive" in comment
+
+This commit fixes a typo in a comment from "retrive" to "retrieve" as
+reported by checkpatch.pl.
+
+> diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
+> index fcaa34706b6ca..1b08a40961ba4 100644
+> --- a/drivers/leds/leds-ss4200.c
+> +++ b/drivers/leds/leds-ss4200.c
+> @@ -339,7 +339,7 @@ static void ich7_lpc_cleanup(struct device *dev)
+> =20
+>  /*
+>   * The OS has determined that the LPC of the Intel ICH7 Southbridge is p=
+resent
+> - * so we can retrive the required operational information and prepare th=
+e GPIO.
+> + * so we can retrieve the required operational information and prepare t=
+he GPIO.
+>   */
+>  static struct pci_dev *nas_gpio_pci_dev;
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does this code leave the
+nas_gpio_pci_dev pointer dangling if probe fails?
+
+In ich7_lpc_probe():
+
+	nas_gpio_pci_dev =3D dev;
+	status =3D pci_read_config_dword(dev, PMBASE, &g_pm_io_base);
+	if (status)
+		goto out;
+
+    ...
+
+out:
+	if (status) {
+		ich7_lpc_cleanup(&dev->dev);
+		pci_disable_device(dev);
+	}
+	return status;
+
+If initialization fails (e.g. request_region() failure), it jumps to the out
+label and returns an error without clearing nas_gpio_pci_dev.
+
+[Severity: High]
+This is a pre-existing issue, but can this dereference an uninitialized or
+invalid pointer on module load?
+
+In nas_gpio_init():
+
+	ret =3D pci_register_driver(&nas_gpio_pci_driver);
+	if (ret)
+		return ret;
+	for (i =3D 0; i < ARRAY_SIZE(nasgpio_leds); i++) {
+		ret =3D register_nasgpio_led(i);
+
+And register_nasgpio_led() unconditionally uses the global pointer:
+
+	return led_classdev_register(&nas_gpio_pci_dev->dev, led);
+
+Since pci_register_driver() returns 0 on successful registration with the P=
+CI
+core regardless of whether a device was found or successfully probed,
+nas_gpio_pci_dev could be NULL (if no hardware bound) or an invalid pointer
+(if probe failed), leading to a kernel panic upon dereference.
+
+[Severity: High]
+This is a pre-existing issue, but does ich7_lpc_remove() fail to unregister
+the active LEDs?
+
+static void ich7_lpc_remove(struct pci_dev *dev)
+{
+	ich7_lpc_cleanup(&dev->dev);
+	pci_disable_device(dev);
+}
+
+When the PCI device is removed via sysfs unbind, this function releases the
+I/O resources but leaves the LEDs registered. If a user subsequently access=
+es
+the LED sysfs entries, it will trigger I/O port accesses to the released
+region, potentially corrupting state if another driver has claimed it.
+
+>  static int ich7_lpc_probe(struct pci_dev *dev,
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260907045436.1803=
+9-1-hemanth.selam@gmail.com?part=3D1
