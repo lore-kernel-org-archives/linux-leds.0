@@ -1,40 +1,39 @@
-Received: from mta0.migadu.com (out-124.mta0.migadu.com [91.218.175.124])
+Received: from mta0.migadu.com (out-131.mta0.migadu.com [91.218.175.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8C33859FD
-	for <linux-leds@vger.kernel.org>; Mon,  7 Sep 2026 23:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2A336EAB0
+	for <linux-leds@vger.kernel.org>; Mon,  7 Sep 2026 23:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788824909; cv=none; b=SyMSntCNsPN1eTunuiCHAsawbd1rBdtgV2hDB8izb2OuPJ7DKjY/8Jnmc6VBIrMxJxbOfslTy8/X7chxCMr4HTlbJsOx+vH3zYsu29IGcWps+IKl4jxucDgTd3Y09dHu0/kl6T+1u5qMP9sfe2iiqi+nY0sunn4+YSmj3k/JCpk=
+	t=1788824911; cv=none; b=kUAKCiKmMuTM6ygN2eAt1bon4YZkjeR/NTmhqQSaluBF/dhAx0gsEXPRA14lKDTmxV6e7TpJnqEL8FNiOpfDv+qxjCW9wfsTAIEsaAza2+ByUg3GjJL5itqfiTHJO7vrEjhQhQfJ2UVvCGmQgQA4atmmHCogMNOF6bsGoj0VTdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788824909; c=relaxed/simple;
-	bh=vW7rPPQqumnFHjXcWTkfgFPNXjjOAjMWusBJNRgLTqc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rSqVbTGbVBYthvT15pwD3m0vTd7CuYUFPPBZcr85dyCtSD1MASFf2nGyhW5n5hZWyAhg52C6qr6j+ot6KuSmj8YEdmoQgY9EknMtdKbkqbWNWdygFxo5lv54QVQ8ORzK3sY7HJHpaY26sMzg8/dkjphcnQXe5ZAYbOwLmmAgw1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=cAS0W4JD; arc=none smtp.client-ip=91.218.175.124
+	s=arc-20240116; t=1788824911; c=relaxed/simple;
+	bh=BZR7Oz9W1eIfU2eZigdvpJy6tDjWelmGhahhWjGhe8w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=FghqkLtMU2uMV4XqG8qUGvRfngccFyAsdSNb8L4ER2wPIt4ru5fLZ2NsyWY/XFvf8E4f+J3LE14VWxjbl9yYhHLfPkBl7waM7eoqz1tQyy/A86OdmcWcU0O5Y80Rae9Uc2mE8nkGOVAGsRAW4+NAbfzkHCC700FGTZtzuVR352U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=i7V0RKvg; arc=none smtp.client-ip=91.218.175.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="cAS0W4JD"
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="i7V0RKvg"
 X-Envelope-To: linux-leds@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=vW7rPPQqumnFHjXcWTkfgFPNXjjOAjMWusBJNRgLTqc=;
+DKIM-Signature: a=rsa-sha256; bh=BZR7Oz9W1eIfU2eZigdvpJy6tDjWelmGhahhWjGhe8w=;
  c=simple/simple; d=postmarketos.org;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1788824904; v=1; x=1789429704;
- b=cAS0W4JDLeR5rhn6x6ZCV9dyfE+shh5Er/Xdm5W8WLfLbau+IgcHZiTUj1aD7HEZQmZWCNjs
- hLvuz2cXMRLLtJTwhnq2SGKOYMwbBRVsbQm4JSIqOkc0qP7HirpOAkuRJt8nf5hYFpdX+nRsurQ
- tW9guXjgw2bL5yf2PnsTK7MQmlzCLHSx6S/kt4tv6x6jLnkK7JByixW0z1sqtx89UVu68sUWhiF
- BRrXcOHzNifpfWJyxAAT1LYnHpGGZzuXQZi0zrhAEBjNq0bfWMm2daS1ngI5AXnJZXDUjDTt6Gv
- 3ZC8Zzh2xYti8UZmUhfYwvUMyFajZAxUL5Ca0vAMjJ9YA==
+ t=1788824907; v=1; x=1789429707;
+ b=i7V0RKvgr++NrtX2KKyTTvWLSQNmpCYBal/je/RNh50DIA+tQHDn2NDTOI0GWxgz5V6Xl7Ev
+ turXgneO8pPL5iMCACG52V6XXELT5Cm9buLnwWbYaBkzIpp6TuzL6uSSzNCwyr0nd46L+C1EkNB
+ ZYcL8CvgK4Tdl4VA5F9v8DdaKWQRezjrgdCoOVeQ7fQhzrF5U4FJWZ2L56BsNovNQfV4TSNFlzO
+ Wc0H+BBTMjq+d/bHpJKtPGZDEHMs7GrpiV7XgW7UUtjvi56GU7uvUL/61+K5NNJWniuB7i7mIRH
+ WbsjDuJ64AdbP40VJBFwXpoBja9Yy7CCD50T4VIZanmgg==
 X-Envelope-To: linux-leds@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 00e855a07b206fdc;
-	Mon, 07 Sep 2026 23:48:14 +0000
-X-Mizu-Trace-ID: 00e855a07b206fdc
+Received: by smtp.migadu.com with ESMTPS id 59d2ceb2228182b3;
+	Mon, 07 Sep 2026 23:48:27 +0000
+X-Mizu-Trace-ID: 59d2ceb2228182b3
 X-Migadu-Flow: FLOW_OUT
 From: Paul Sajna <sajattack@postmarketos.org>
-Subject: [PATCH RFC 0/3] leds: aw2013: Rename aw2013 to aw20xx and add
- AW2027 support
-Date: Mon, 07 Sep 2026 16:47:50 -0700
-Message-Id: <20260907-aw2013-aw20xx-rename-v1-0-c9a7df12a701@postmarketos.org>
+Date: Mon, 07 Sep 2026 16:47:52 -0700
+Subject: [PATCH RFC 2/3] leds: aw2013: Rename to aw20xx
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -43,10 +42,9 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDSwNz3cRyIwNDYzBVUaFblJqXmJuqm5JmZGycbGppZJhspgTUWlCUmpZ
- ZATY2WinIzVkptrYWAHYE5aRrAAAA
-X-Change-ID: 20260907-aw2013-aw20xx-rename-df233c5921c6
+Message-Id: <20260907-aw2013-aw20xx-rename-v1-2-c9a7df12a701@postmarketos.org>
+References: <20260907-aw2013-aw20xx-rename-v1-0-c9a7df12a701@postmarketos.org>
+In-Reply-To: <20260907-aw2013-aw20xx-rename-v1-0-c9a7df12a701@postmarketos.org>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>, 
@@ -56,57 +54,76 @@ Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  ~postmarketos/upstreaming@lists.sr.ht, 
  Paul Sajna <sajattack@postmarketos.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788824891; l=1972;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788824891; l=2400;
  i=sajattack@postmarketos.org; s=20250422; h=from:subject:message-id;
- bh=vW7rPPQqumnFHjXcWTkfgFPNXjjOAjMWusBJNRgLTqc=;
- b=G4LWjebJjLJT8yNX+hq8FWoRthMiEwakQH80OFpUkQIRTzc5Y8U/iv4M6MVA4tQYf8Nzw0n2C
- xLqV1hJwSbuAoHCrNqWDPd+KXF/S4MzsmKXvcxXHmqxrVjzo6zJCkD5
+ bh=BZR7Oz9W1eIfU2eZigdvpJy6tDjWelmGhahhWjGhe8w=;
+ b=YCn/b1PL/SM7Hvf05urDQSAE+bLtriO/3OJXSBt2mRMkD63q2PAs+TGM+oZVZ9h712j7mqibM
+ 09dBbgMEIB9DqAPDCu7rm7wwPlpBKan+mqUDVvmgHYqYCZEpY1FR5wf
 X-Developer-Key: i=sajattack@postmarketos.org; a=ed25519;
  pk=TwacvEOiRJ2P2oAdEqIDrtQTL18QS4FfcHfP/zNsxkQ=
 
-Requesting feedback on this approach of adding additional chip support
-to leds-aw2013. 
+I had to split this into a separate commit for git to properly detect
+this as a rename rather than remove/add. Next commit will add another
+chip to justify the rename.
 
-It comes with some downsides, such as the rename
-introducing Kconfig option and module-name incompatibilities. 
-
-Additionally, there may be easy confusion between the pre-existing 
-aw200xx and the proposed aw20xx, differing only by plus-or-minus 
-a zero.
-
-However, given this approach in aw200xx, I think aw20xx can follow
-suit in a similar fashion. The 20xx series chips are all similar 
-3-channel LED drivers, see the driver commit for a comparison link.
-
-Lastly, I noticed this driver does not have an entry in the MAINTAINERS
-file. Let me know if that needs updating and how please.
-
-My working tree is also available on GitHub if you prefer that interface for
-any reason: https://github.com/sajattack/sdm660-linux/commits/b4/aw2013-aw20xx-rename/
-
-This RFC resulted out of discussions pertaining to
-sdm660-mainline/linux, a close-to-mainline fork for Qualcomm Snapdragon 660
-devices, specifically for the BlackBerry KEY2 Keyboard Backlight,
-in the following GitHub PR: https://github.com/sdm660-mainline/linux/pull/218
+Includes update of Makefile, Kconfig, Kconfig help, and raw leds-aw2013.c
+rename.
 
 Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 ---
-Paul Sajna (3):
-      dt-bindings: leds: aw2013: Add aw2027 compatible and rename to aw20xx
-      leds: aw2013: Rename to aw20xx
-      leds: aw2013: Add AW2027 support and rename to aw20xx
+ drivers/leds/Kconfig                          | 14 +++++++++-----
+ drivers/leds/Makefile                         |  2 +-
+ drivers/leds/{leds-aw2013.c => leds-aw20xx.c} |  0
+ 3 files changed, 10 insertions(+), 6 deletions(-)
 
- .../leds/{leds-aw2013.yaml => leds-aw20xx.yaml}    |  10 +-
- drivers/leds/Kconfig                               |  14 +-
- drivers/leds/Makefile                              |   2 +-
- drivers/leds/leds-aw2013.c                         | 441 -----------------
- drivers/leds/leds-aw20xx.c                         | 525 +++++++++++++++++++++
- 5 files changed, 541 insertions(+), 451 deletions(-)
----
-base-commit: 944a035ecca915ae947905dcfb03f2b9dc6d032c
-change-id: 20260907-aw2013-aw20xx-rename-df233c5921c6
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index d0d3182236be..7548c320e55c 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -137,16 +137,20 @@ config LEDS_AW200XX
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called leds-aw200xx.
+ 
+-config LEDS_AW2013
+-	tristate "LED support for Awinic AW2013"
++config LEDS_AW20XX
++	tristate "LED support for Awinic AW2013/AW2027"
+ 	depends on LEDS_CLASS && I2C && OF
+ 	select REGMAP_I2C
+ 	help
+-	  This option enables support for the AW2013 3-channel
+-	  LED driver.
++	  This option enables support for the Awinic AW20XX 3-channel
++	  LED controllers. Devices have a set of individually controlled
++	  LEDs and support individual dimming and blinking patterns via
++	  an I2C interface. Supported devices:
++	  - AW2013
++	  - AW2027
+ 
+ 	  To compile this driver as a module, choose M here: the module
+-	  will be called leds-aw2013.
++	  will be called leds-aw20xx.
+ 
+ config LEDS_BCM6328
+ 	tristate "LED Support for Broadcom BCM6328"
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index a68244bd50fb..b20a744065a5 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -17,7 +17,7 @@ obj-$(CONFIG_LEDS_APU)			+= leds-apu.o
+ obj-$(CONFIG_LEDS_ARIEL)		+= leds-ariel.o
+ obj-$(CONFIG_LEDS_OSRAM_AMS_AS3668)	+= leds-as3668.o
+ obj-$(CONFIG_LEDS_AW200XX)		+= leds-aw200xx.o
+-obj-$(CONFIG_LEDS_AW2013)		+= leds-aw2013.o
++obj-$(CONFIG_LEDS_AW20XX)		+= leds-aw20xx.o
+ obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
+ obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
+ obj-$(CONFIG_LEDS_BD2606MVV)		+= leds-bd2606mvv.o
+diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw20xx.c
+similarity index 100%
+rename from drivers/leds/leds-aw2013.c
+rename to drivers/leds/leds-aw20xx.c
 
-Best regards,
 -- 
-Paul Sajna <sajattack@postmarketos.org>
+2.55.0
 
