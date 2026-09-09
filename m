@@ -1,130 +1,98 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D83B37206F
-	for <linux-leds@vger.kernel.org>; Wed,  9 Sep 2026 17:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBBE3D7D74;
+	Wed,  9 Sep 2026 20:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788974823; cv=none; b=mnKgxJD1rw26KNeANDYFN90uEqCl+VUSMfe6bjC+gqYLKpAwiHTP8Pe9bdUIo5Z6aIMKj8Gb65hzneSQ3/+vZxiejNTEPPLqJNFRP7J1tFru9H+WsgMEMfL1OwnViqwNcdLfnAb4CFx9tIXBaEfjP4SE3KJvyrdbFz7qgbj47eY=
+	t=1788984924; cv=none; b=N9b4w/Z1AVkeIqBNooz2i88uxmQPeP7lcB4nmUBCL+UZBapFJDA5bPKqraHHuiBahB9LTCepyN53PMd0ErEMG0UuISEVJGOZoVQn/UdVjpN4i68CjaCGE08wXFvZD4A4NrrOoVD+7qXKA3hL7fy9pyEPDJHdi46UPY79rHk/M7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788974823; c=relaxed/simple;
-	bh=SUxP5gT1ZaOy4mmgP6chw0Cr8VRY83cgnbGtN/GeIrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Juba0PEXZLUnv5bkxUONe2kx0MkAELpdJM4IJ6oA4Ev5GeJdzMl39vhC5tJ7Qktne4uw8wdBnNE+rZObQrIfWrZFZW+kMl9M27PAV8HW66VIDTA4EGjuCpuEssc4D2Wb+anS8tHuazrpTkfGsKMWUSd+azwpmLFh2ynnACbgodo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jI6Ly9NO; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788984924; c=relaxed/simple;
+	bh=0hvl0HCSFd3/GfPkXEFK1cciA7BdARAoKCy8TzIA3FM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=EeSTsQFdaT1N8HP8a4m0jFdoqcgpaWNRGhcSA0wzXOucNl+p3Mw2w1uMiS/iLmZPqQR0K89+tI9QWJzqItu/gjzovkDxrrxxFnnRoZyrELJe15P5ueVb1a/0gREe6d2L5K4ktAnZHdNRbhe5IjExjBonwisfYH4hHqGyQ5YXLiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UW3/tvYx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jI6Ly9NO"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-86265451beeso3290145b3a.0
-        for <linux-leds@vger.kernel.org>; Wed, 09 Sep 2026 10:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788974821; x=1789579621; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=BxkJmMQiuFGLIVhYvP7iekSRoJyyqxrT2LFSLJP0a4Q=;
-        b=jI6Ly9NOhS1CJVDcDoKjwgjST/iQVlVpolh/hifxBJGV2nz6t+8GlFWLZ4bzANtEHt
-         /Gubm7aHSBwsXnEHDwS28/J38FGObVki5RAT4+MKtWxDxCzdeulLhOlDre6S80gl/1TC
-         7EygHVvY8rB9EzbY4vuEGBvLIXgnThM7ofFVrmOOyUnxK3+Cw8/lUB1Qrw2zcQyD28sq
-         aOwfF4Jak4nLrwlBRcrBmxMV3zq77fRSSDlQwIxXNAn/g3MvLudGjEbIzxRGELLjSs75
-         zSMaaTiP34sWBjEuq0+gSjLhjHao2DyO1AI08J/NXT1fTMGf7TSzj1Dp3m+TJmQDgi3k
-         TF6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788974821; x=1789579621;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=BxkJmMQiuFGLIVhYvP7iekSRoJyyqxrT2LFSLJP0a4Q=;
-        b=Mqmr/UK2DhL5EJzlJgKQD+AVz7ATpvjy3p+XYKUf/vRWVsxCPLtxSRIOGwxAemLSDr
-         py8z6XznGXZoB1iqSoY1Ejo0Dbge4ldz6ytR8t68RHBGjE8GBQLeUe3++EqE6kna2eFb
-         CiaBqORsM/dLYCkDoBc7yO9rao8EbWRMNtWZBPvjQl8BVrmLmNrp/XKiwRs1pYyx2EHY
-         S5eGJDL+SSz9XzhKAajBIrxVwDCUo7Xy4D6mOnNISW7dTg1SOFUcf3lJ+sbu/I9vjdfy
-         MBSAIlo+0IAcYhyGQtLfDWCE5v2ObYDTxkZhoiZ3cgALuNGoc9DpNsJpD3Pr8awmlndk
-         5veg==
-X-Forwarded-Encrypted: i=1; AKwUvBzLPPCQmwyTXH7rbAXV2KFTCDRAIPZbTi0H6QPhbYxFXGt12V2mmF+tgmvQjA6KLj1jxiQTD8dfyGj4@vger.kernel.org
-X-Gm-Message-State: AFuF++nwATZbTHLKHsN0TgOapwxkW119rMA2e7aPzwgkSZUKx68Yl0vM
-	qSM92Y2SZCFtmMAx3Nkf2E74sj6L9rEMB8YK9cbsYU7szaZSTjhDw3uy
-X-Gm-Gg: AYBFou3kjMp/B7mErdFZ2QDEiV5ranIk8HSnEhxquqpDSKO9i6/iSEI+QxUEbJkzZdA
-	cs9xaQE9qJAAoYeg7N2HfL+G2+MAaCC5jfD8HcTyrW/xAY+f7NViNpfVPgTNe+k0sjAUNFHSy7X
-	MVsYJKS3NOOnrDOUFkX9GELGqI8NRajraAYA8l+EQwCbuY75qkUh9aRTOYEQc8KHNIf0sCrHenN
-	kClNPHcGrIGB5vj1IycLLpJZ5ELZOkgAbxAz+UO7IsA5t7Q0cKZ+M+LrY0ygcTHo1BilLFapzGx
-	bmMSXB2KRAuANoHhD6HIXeVEmM5sXG9N55UwpXZ6pi0AiTMV8SSis6iFcDOcocDGt1FugI1nuT/
-	V3e5sgdM7uX+yzV+khn8Carsmp+yAwEs2EHgMjVx8PKlF4+TaPuAycCCsW5WRrwVerF5uoD8yjs
-	YCvdmy/aSBRsq5F6zsqxEB8FhIyvAxhMw2Cnk4/xwQW1mXtOAHCeq3pmw37F4joe39Mcu8O9jgw
-	cxOtB4HtZB2JCiNVpVPP/rddEUOWciKg1KVT0gya+l9fLwyfMLR
-X-Received: by 2002:a05:6a21:9d84:b0:3d3:af85:eb98 with SMTP id adf61e73a8af0-3da3a16a579mr57975715637.26.1788974820346;
-        Wed, 09 Sep 2026 10:27:00 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:2d43:5153:5c50:643e])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339a534df1sm52422943eec.7.2026.09.09.10.26.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 10:26:59 -0700 (PDT)
-Date: Wed, 9 Sep 2026 10:26:55 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
-	Support Opensource <support.opensource@diasemi.com>, Sebastian Reichel <sre@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org, 
-	linux-doc@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 00/14] mfd: unused driver purge
-Message-ID: <aqGWjAuGXq_JHvxk@google.com>
-References: <20260909132153.1596191-1-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UW3/tvYx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FE8F1F00898;
+	Wed,  9 Sep 2026 20:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788984917;
+	bh=O/wi1u9pSbKRwNUJ2MezstBNsMqAVCnFe5LWKSVEEP4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject;
+	b=UW3/tvYxD3+mziLN9l9XpKkeAuZ7poSHb8irs6OeSlC/GEowNwk4vyRGn8qTNz8D1
+	 n6m7bFKRFIxF4H/4Y36y3u1Y29yGwamMWznyfdfO36VYkaT6nHTTciRRJsgALmVgaO
+	 khyyOw6xCjIgaaDD7WKjepEMSMgSOE5d/I6UVW9Sjfe39RAUE6lzjOxYOJtARJ4cGO
+	 wMw7x0DIZbDCxr4aZx8txlBzGleKGd6ZhFWZ59ho6YqJZYYSGzSwNSN7KfC/olj7BB
+	 vYPaQBnPpmlSmOVP5KMGk9VU/CXuLvlFdk6/3enZwQqSVlg0Yc8UX/nttOMkwo58eX
+	 OpdHPw5vZ9t7Q==
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailfauth.ams.internal (Postfix) with ESMTP id 998E51980052;
+	Wed,  9 Sep 2026 16:15:14 -0400 (EDT)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Wed, 09 Sep 2026 16:15:14 -0400
+X-ME-Sender: <xms:UL6hauRnCHCTOcdhzfyQLoNyv4nPcLE0vacYOrVxHQ37AJHeeldz0Q>
+    <xme:UL6haunnqZo6ampX9O-A6TVEd3VNfLUOhkjC_KZZlRRWBLXC4yfwLhEF7HGhfsCZp
+    WLBTYpvuHARkAJW3Bbj1IoeovdxoCTVj78w9xwc_aG8RszeIw4Zl2Hx>
+X-ME-Proxy-Cause: dmFkZTGbpvMjpO2V3Neh9RZY0iihlQM+LxkijBni6OqXlpP05vUUEQtKy398h5AzAnKL1c
+    3OKEcJNwmE2/KZmUWOIzMsYkwRNmpQU8iNi3MunEoH4uQFrmf+QWZWgvBjoMoMw+4vGi+D
+    kp32vYDcxBTSIRUPmZdwo+pntTH8YZ4hJn3nBKriPxqW2pwZwGkA3sJzj4sAqrQVrWtpYq
+    V1TKs6gubR9pk4Oai7tEKLYmQ5g2UZ2NSMYuEJ1TXwwR1WeBgFQQuTQxhQGSI50kF/+c/H
+    yM2YqpyCzE6xuNtx+kAOcfH4lmMulcJqeLKs1KTnEGSGii4SH5lCR05A+rAl654QLmyhLa
+    MMqO0zpeUXJM895vQfIjEr9ni6KhQ0bKe0wO+xiEAECBY9G4wDYMOhUIhX1ihjQsMwPySS
+    S/e0yITgHn47ZC7Qdgp4lxPucM0MHnaq7XQN9dokHBv5bLpHTszyWGGaRGqCURIkrOElKQ
+    /EhpCcpwLtIMboD893hk++lxznnG/lTJICup7OVdZihNrabsEOkIa+AqySewJb0L7oov6f
+    661md0DNIQMWtZQzgzrmeuTqh8j0+rkCj8em8I+H65uX8B5elltHR8OPk/N4m+1xkUUjvn
+    6cm45HOtZQHBnH9CgNQojGe8btkeS5i/VWygargHhBmqg0ugnQFPYR8t7Apw
+X-ME-Proxy: <xmx:Ur6harSwYKQ6Nm00ifGNnw2Q4X31qAk-9sh6YAArwW8fTK_WK3PDEQ>
+    <xmx:Ur6hapG-XoeGVf-bBs9TBChcYCuh1ZqVLFw6c_SWcfCsc3FQ1vZyTg>
+    <xmx:Ur6haicML-hbxdjfSNHxpxQua0ylDo2gJEpxRnioBde0Ed7CNJhrag>
+    <xmx:Ur6haoL1K3DlgTE46F8UBCiLdQTO7gkmLfDVZeyB5ID2zguY7CAheQ>
+    <xmx:Ur6haprwAxTPDvBfQTjr3xiwMxu5Ov0XCaZJy9WFz1Z1ZH5Ws6auBUtn>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 4BE3732A007E; Wed,  9 Sep 2026 16:15:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260909132153.1596191-1-arnd@kernel.org>
+X-ThreadId: A5lluAkCP0jB
+Date: Wed, 09 Sep 2026 22:14:51 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-watchdog@vger.kernel.org, linux-rtc@vger.kernel.org,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ linux-leds@vger.kernel.org, "Rob Herring" <robh@kernel.org>,
+ mfd@lists.linux.dev, media-ci@linuxtv.org,
+ "Conor Dooley" <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, "Lee Jones" <lee@kernel.org>
+Message-Id: <752ff0a3-8569-4f14-b466-11dc96b87e46@app.fastmail.com>
+In-Reply-To: <20260909133955.BD5FC1F00A3A@smtp.kernel.org>
+References: <20260909132153.1596191-1-arnd@kernel.org>
+ <20260909132153.1596191-8-arnd@kernel.org>
+ <20260909133955.BD5FC1F00A3A@smtp.kernel.org>
+Subject: Re: [PATCH 07/14] mfd: remove unused lp8788 driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 09, 2026 at 03:21:37PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> As part of my cleanup of old platforms, I had a look at all drivers that
-> may have become unused because the last platform_data or DT definition
-> was removed, or because of unmet Kconfig dependencies.
-> 
-> These are all the mfd drivers I found. The first ten in the list
-> actually turned out to have been unusable long before my series, and
-> I have added explanations on how I determined this in each patch. The
-> last four patches are still in use in linux-7.3 but become unused after
-> my series [1] that I hope to get merged for 7.4.
-> 
-> Somewhat unorthodox, I took a shortcut here and remove both the mfd drivers
-> and the corresponding subsystem drivers (gpio, hwmon, iio, input, led,
-> media, power, regulator, rtc, video, watchdog, asoc) in a combined patch,
-> to simplify the interdependencies: removing just the mfd driver would
-> leave unselectable or broken drivers in other subsystems.  I also have
-> additional patches for each of the other subsystems, currently a total
-> of 300 patches, many of which still need better testing or proper
-> changelog texts.
-> 
-> Please let me know if you all think this approach is ok, or if I should
-> explode this further and turn these 14 patches into 70 individual ones
-> by splitting them per subsystem.
+On Wed, Sep 9, 2026, at 15:39, sashiko-bot@kernel.org wrote:
+> [Severity: Low]
+> This patch removes the CONFIG_RTC_DRV_LP8788 symbol here, and also deletes
+> the drivers/rtc/rtc-lp8788.c source file. Should the corresponding build 
+> rule in drivers/rtc/Makefile also be removed?
+>
+> Currently, drivers/rtc/Makefile still contains this entry:
+> obj-$(CONFIG_RTC_DRV_LP8788) += rtc-lp8788.o
+>
+> Since the Kconfig symbol is no longer defined, it evaluates to an empty
+> string, leaving a dead configuration line in the build system.
 
-Sounds good to me, especially if Lee makes an immutable branch from this
-pull so we can all pull it in...
+Fixed now, the line accidentally ended up being removed in the 
+wrong patch after a botched rebase.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com> # for input
-
-Thanks.
-
--- 
-Dmitry
+      Arnd
