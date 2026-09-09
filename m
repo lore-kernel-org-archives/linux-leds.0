@@ -1,133 +1,179 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264FC5908DD;
-	Tue,  8 Sep 2026 18:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64A63CF213;
+	Wed,  9 Sep 2026 07:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788890625; cv=none; b=t3Z/TeCTJQsj3SwzHWLk2ak92EIQZD3tvhDVd1hlyyERGhRVn2Eeb2DjlRUIszMrxStIr/7/iOeXR/p3iUGnKUN6YHeyLk+uk3+DXkPwQ1rnWhQ36HuMJuCrhD2OP62LbC5jDdp7J5brTBDT6OHHTZ35qegJdmDPmkY1GKmi1x8=
+	t=1788937618; cv=none; b=kpKX+mxIq3q+l/XAzwB6WZjE3Dl0AiV5fiU4DUi31zG8cJhU+P6QBp7YnBLLdxeECW5Z/Kx7osHKDRfIXMsCnPhRCRT6vnNm4G5vNAuwGLigSHhs48vLQfb27/1NgYUu2sJzQM6M+nrC88SJDHHXoo6Ek3DoCSFLKQH1dHQscco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788890625; c=relaxed/simple;
-	bh=g8gaWVtpR0N2D+c50/zh69oZ3JLwsmCAyGVWni76RhA=;
+	s=arc-20240116; t=1788937618; c=relaxed/simple;
+	bh=3PQ8SaiJX8EFZMmmevORSA+SS1ZbeIwl3qMoj3+SWFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z6qSBnR5152SEvstzU1eQxdI4elKODiVyaBteL6cV7tGPKlrSiPGrA1y8mTQHU51O7juLoDEPob9jxW6dJ9epJ9/T3ljIK/eWE4tccV7/BzFgkFY20/Z8XK8BzI63Te6Yl9l93MjMSdr7O8ERrxsB9DvjSrM0ci+TdicLHFYCbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9PBGEno; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGbZaXo7MyOAs6Npq//1zMTnOaxMVkRnxwdSsFG4W4Y1K+BiJSdW7GLcm6xekHlEAQ8MdvxFgURNTdtJ3siGgsjPjAyUl/aR7ljpN9HSomXbmbwOPPMloN7xIF6zma6pXq20+Q+TortCTVR9Z3i4skXo+Lla3z5AAU3YfF3Di9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9aAcCjZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9PBGEno"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8761D1F00A3A;
-	Tue,  8 Sep 2026 18:03:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9aAcCjZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098381F00A3A;
+	Wed,  9 Sep 2026 07:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788890624;
-	bh=iKTjKW+fOiZeD1KxQV7HvuEp3nfVuLzMeXDXviM50ho=;
+	s=k20260515; t=1788937617;
+	bh=u4NkRglqy3b34NHGDOaJvbAMf5KMklgzL1oPwYJHodw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=G9PBGEnox/B03RmcJTj6GOEOJ2qkVvUWF6CPbvaoFkOQD331PQK04+RDNJo0fE5FF
-	 c8MKgTTz+UkvhA8PmZp9qDmKwHz/rqHV10ijX7hSOb6ftmOl2BSxtlkbEr9AuazGoZ
-	 QpTBwffg5VcgqgjDtFqIfoAG8cneHxb+H86oGbiuB8iG5MXAdPS00ASSmDE4fQSnZZ
-	 vX8F66RjHA8Z0eH4yX3Aw0afG76YgGuJ7DuvTELDCIcpk3NEs6tjGqC3PWAQwSz2fT
-	 y8eo6bPtm5EuHJkpSkSFdJxCdbCZ24MpbqEu3jm2b8j0kRJ4I3gC0f4rw25K2J7IXj
-	 lm5V3NxKOQwhw==
-Date: Tue, 8 Sep 2026 19:03:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nikita Travkin <nikitos.tr@gmail.com>,
-	Alexey Min <alexeymin@minlexx.ru>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH RFC 1/3] dt-bindings: leds: aw2013: Add aw2027 compatible
- and rename to aw20xx
-Message-ID: <20260908-sample-onshore-a2cf8af658b4@spud>
-References: <20260907-aw2013-aw20xx-rename-v1-0-c9a7df12a701@postmarketos.org>
- <20260907-aw2013-aw20xx-rename-v1-1-c9a7df12a701@postmarketos.org>
+	b=j9aAcCjZgwgoQiCi2fvHTWv9wArVczORNOr96zKuGa7T+d/j0+dN7IIIlilIXfOKg
+	 LwVh6NEzMvL+ZymU98w014h+i5xOZtEizD+mcJJ3xfIbtQcKeHIpvR1gJi4tLPO8zY
+	 REg3c7XbkQT2OJKj9TvIJR2OYsAXitib7u0LuSj2M6XOd8vIt/DyLXddHgY5kA1Vn6
+	 JZNFSi1gDLX223kP6pB+iOZbehopBjMPqX/P96uAv9atZcbqKP8Mly1aUlCNlKdyaN
+	 0KkNcE3EA/r7iAPskDnWm4+AXwDBxn5rGOKScUXy9S+DcC+Z9IU8zc1tufysv1N5nJ
+	 y6mkwhlFUCJGA==
+Date: Wed, 9 Sep 2026 09:06:53 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Udaya Kiran Challa <challauday369@gmail.com>
+Cc: lee@kernel.org, pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, skhan@linuxfoundation.org, me@brighamcampbell.com, 
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: leds: lacie,netxbig-leds: Convert to DT
+ schema
+Message-ID: <20260909-arcane-yellow-beluga-5ce6f7@quoll>
+References: <20260901170358.176103-1-challauday369@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xN1OfmFunrnmuw20"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260907-aw2013-aw20xx-rename-v1-1-c9a7df12a701@postmarketos.org>
+In-Reply-To: <20260901170358.176103-1-challauday369@gmail.com>
 
---xN1OfmFunrnmuw20
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 07, 2026 at 04:47:51PM -0700, Paul Sajna wrote:
-> Document the awinic,aw2027, which is very similar to aw2013.
-> Rename the driver to support all of the 20xx series.
->=20
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+On Tue, Sep 01, 2026 at 10:33:58PM +0530, Udaya Kiran Challa wrote:
+> Convert lacie,netxbig-leds devicetree binding from legacy
+> text format to DT schema.
+> 
+> Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
 > ---
->  .../bindings/leds/{leds-aw2013.yaml =3D> leds-aw20xx.yaml}       | 10 ++=
-++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml b/Do=
-cumentation/devicetree/bindings/leds/leds-aw20xx.yaml
-> similarity index 91%
-> rename from Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-> rename to Documentation/devicetree/bindings/leds/leds-aw20xx.yaml
-> index 26238446f2bd..f20b5344e3e1 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-> +++ b/Documentation/devicetree/bindings/leds/leds-aw20xx.yaml
+> Changelog:
+> Changes since v2:
+> - Add reference to led common.yaml
+> - Drop type for all common properties
+> 
+> Link to v2:https://lore.kernel.org/all/20260821123723.198286-1-challauday369@gmail.com/
+> 
+> Changes since v1:
+> - Use pattenProperties for LED child nodes instead of additionalProperties
+> - Explicitly list the two optional properties supported by the binding
+> - Place the top-level required block after child-node definition
+> 
+> Link to v1:https://lore.kernel.org/all/20260820150223.108374-1-challauday369@gmail.com/
+> ---
+>  .../bindings/leds/lacie,netxbig-leds.yaml     | 139 ++++++++++++++++++
+>  .../devicetree/bindings/leds/leds-netxbig.txt |  92 ------------
+>  2 files changed, 139 insertions(+), 92 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/leds/leds-netxbig.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
+> new file mode 100644
+> index 000000000000..5cb2eaf74d1a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/lacie,netxbig-leds.yaml
+> @@ -0,0 +1,139 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/leds/lacie,netxbig-leds.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LaCie/Seagate netxbig CPLD LEDs
+> +
+> +maintainers:
+> +  - Simon Guinot <simon.guinot@sequanux.org>
+> +
+> +description: |
+> +  Binding for the CPLD LEDs (GPIO extension bus) found on some LaCie/Seagate
+> +  boards (Example: 2Big/5Big Network v2, 2Big NAS).
+> +
+> +properties:
+> +  compatible:
+> +    const: lacie,netxbig-leds
+> +
+> +  gpio-ext:
+> +    description: Phandle for the gpio-ext bus.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  timers:
+> +    description: |
+> +      Timer array. Each timer entry is represented by three integers:
+> +      Mode (gpio-ext bus), delay_on and delay_off.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +patternProperties:
+> +  "^(?!gpio-ext$|pinctrl-[0-9]+$)[a-z][a-z0-9]*(-[a-z0-9]+)+$":
 
-Please retain a filename matching a compatible. IOW, leave this alone.
-pw-bot: changes-requested
+This is an odd pattern. Why is pinctrl an LED? or gpio-ext?
 
-The rest of this is fine, but please note in your commit message what
-makes this device different to the existing one.
+Actually entire pattern is very odd - it has $ in the middle, but then
+followed with other REQUIRED stuff. I am surprised it works, but
+regardless it is absolutely not readable. Looks like a begative pattern,
+but why would you have negative pattern for known properties?
 
-Thanks,
-Conor.
 
-> @@ -1,21 +1,23 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/leds/leds-aw2013.yaml#
-> +$id: http://devicetree.org/schemas/leds/leds-aw20xx.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> =20
-> -title: AWINIC AW2013 3-channel LED Driver
-> +title: AWINIC AW20XX 3-channel LED Driver
-> =20
->  maintainers:
->    - Nikita Travkin <nikitos.tr@gmail.com>
-> =20
->  description: |
-> -  The AW2013 is a 3-channel LED driver with I2C interface. It can control
-> +  The AW20XX is a 3-channel LED driver with I2C interface. It can control
->    LED brightness with PWM output.
-> =20
->  properties:
->    compatible:
-> -    const: awinic,aw2013
-> +    enum:
-> +      - awinic,aw2013
-> +      - awinic,aw2027
-> =20
->    reg:
->      maxItems: 1
->=20
-> --=20
-> 2.55.0
->=20
 
---xN1OfmFunrnmuw20
-Content-Type: application/pgp-signature; name=signature.asc
 
------BEGIN PGP SIGNATURE-----
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      label: true
+> +      linux,default-trigger: true
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqBN+wAKCRB4tDGHoIJi
-0mihAQDYRW3Dc+tmgQeM9ZVjwjmMEmIKNmrerr12ozj7zbw/VwEA1Bn5tdnnzeDt
-Nry9qwkRP7pEKTIM3vQgS8iE5Gnb6g0=
-=tgWJ
------END PGP SIGNATURE-----
+Drop both, common.yaml provides these.
 
---xN1OfmFunrnmuw20--
+> +
+> +      mode-addr:
+> +        description: Mode register address on gpio-ext bus.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +      mode-val:
+> +        description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +          Mode to value mapping. Each entry is represented by two integers:
+> +          a mode and the corresponding value on the gpio-ext bus.
+> +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> +
+> +      bright-addr:
+> +        description: Brightness register address on gpio-ext bus.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +      max-brightness:
+> +        description: Maximum brightness value.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +    required:
+> +      - mode-addr
+> +      - mode-val
+> +      - bright-addr
+> +      - max-brightness
+> +
+> +required:
+> +  - compatible
+> +  - gpio-ext
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/leds/leds-netxbig.h>
+> +
+> +    netxbig-leds {
+
+Just "leds"
+
+> +        compatible = "lacie,netxbig-leds";
+
+Best regards,
+Krzysztof
+
