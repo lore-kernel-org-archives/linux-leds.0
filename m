@@ -1,174 +1,152 @@
-Received: from mail-qv2-f12.google.com (mail-qv2-f12.google.com [74.125.230.140])
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39395A0AB9
-	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E195A9841
+	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789069408; cv=none; b=GiF/OTDPBXZ/Eti+yt6SHVI+66F/QGXBGTsc8Tq6TokxYBeksvVCT6qj3kgX9KngC5T2zldZXtd/j/lLXJx1a9yVFpEmYsP3HfGSprikcmGzwBpZb/inE1a1t0EA77yaFBnkQ6U13PqxqIRV8wWG0Lw2akm6PjPoEWSobSBgKz8=
+	t=1789069533; cv=none; b=D2KbYX6//Tk5LWPerxBo27qkt2h327wNO0fNPdzQ9/lvVGh3klrCFIVZVzEYI5BqmIIoZw/Wvuk7k8Fp7LzdnxshB5bgUZnkWnsYxLLVQto3xapnUNdyeQTemEwHVvk1pJbbW58ADP1mh8NUikPIcWgXQnTcRwRxRCWlajO84Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789069408; c=relaxed/simple;
-	bh=7PnO3Pq1c+iSovghwuQMRdjVQl88oMavnosLpWP8g9w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TzXp53fwx2Fd1Yonyhd/WWVn+uI7iNx/7xnG5UDjAc5Z9Z24BQuvgMMBnajdcZdm6LoQBRfnJJgtxbSeBaYAfOtt75wOMXhZxvromZ7ho6aqsfwBV77MATdsnX3KmAOepy9we7SwE3eTe7i/xxwd7oRXd1WVItb/FVt+BGaj7AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jtr45QhC; arc=none smtp.client-ip=74.125.230.140
+	s=arc-20240116; t=1789069533; c=relaxed/simple;
+	bh=QhX+SC0aYPRnajzGgZCAyqZcT5ZumThFwIdRLkM4lt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RENCVe8+NiBPYqTP/U6xPFJKNwm4mp6ODLUxgiGSbkwtACg8PWO1czKFTcqX0Up3t1ulgWWCP2u/E9jdMtC3qeyWyEFjoFdiL96BaFp1z3CfQZaNoRC4ouE0zMb5Jdx2yVaeni3ypVEQ8sPyYcQPIz/KzdS4+LOxkohGCubpXYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQ0uh9fu; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jtr45QhC"
-Received: by mail-qv2-f12.google.com with SMTP id 6a1803df08f44-90cdfc9b6e3so982956d6.1
-        for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 12:43:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQ0uh9fu"
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-910707254efso1329816d6.3
+        for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 12:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789069404; x=1789674204; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=snj9tC0bDqpe3dx1Fv5pWoog9eBWG9c9NpwY8U2j6YY=;
-        b=Jtr45QhC2NWE32p5AI44mxyAK0/CxmK8vBXBA6xZ5l/JnDxOAVhmll48rdJGoHVwhP
-         lsNIyzPp+e12G5ptU0KWp0r8EGded49ljaKSoM7oqz3kylXgvTMgllJ3B/zad5NX69zn
-         Dl98EjKf9bZAuGRYn6PdbuuMZ+IfFrmIzSvFCGkVRGjD7kouhp+wUtW5c14H4zCFHkKf
-         t9sdrycm5p3IL/aooSzPNgXRnp+BUA9i4D/mX4mou7amM6xWuAWvrG9Y+qVhGkpQ57P6
-         LGgq9RRh4EpjVKzIxY5VOYwjBRecQCwFf2Ox6NpGo6Fffnpquem1st02JBQ6qMW08GDR
-         +gdg==
+        d=gmail.com; s=20251104; t=1789069530; x=1789674330; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=A/3ZGdaWGihAcbh8PThygY3ZNQwZqvA2jilmZZCQz4o=;
+        b=eQ0uh9fuf2gq46Jh/5Ao8dtwSXCVkVWM/yBJdwzLyvp2bTmGEEvIjYh3Pn5Qh40nYl
+         hZ9jHtsgpNA0gZyYeQMUGfdWINb88JnIpTanKK6hNdXKcIdlv46qtNrLU5J+xD4t0vCz
+         MqlDPXr49SttkxfiDsUsQ8uFLfWuliDO5PUfgLDN6TjlKgkK2TWTnVZZXHdQgG2g34ud
+         KAI6m/TKMgXrlcNKkZqWFzJK02IqDE39VqENuAM48stJED54wVgZ5M9pvZJ84MDNGhQf
+         rLsKbbtFOebezTcmITgtXF4RG6npZcQKZcpg85wfhpnXY5mmwfjf7nUtrvPTKE6rhaYO
+         LPwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789069404; x=1789674204;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=snj9tC0bDqpe3dx1Fv5pWoog9eBWG9c9NpwY8U2j6YY=;
-        b=XXn9DPBjf7zuD9Cpv4E53uDh8CwKYrlMQlhoebc5VG4pKgBEqBVvJ6x826pe49bk8Z
-         OmW+BOy+6V3UFNkm/p7YCjMu0+xto4DoKD7WGcSBB84B9cr3pKoVJNdYMwKILQT6/fUu
-         7DGumW/i3TMLmlGHmUP113f0wPraljkTvvLb1XvTkIacD75eWSDIFKhCQlmjEseUu4Kl
-         gW36RIAjduh8sttx6adoeCQBwvkGBA2VNb/HdtO2hGyJwocmeTa98Ae/xe0PVRHLZefd
-         2CtFkffeI8IEEEIsXbQ2L0y/36oONEMioXJgMbx8/q7w2bATHtS6QL2iH+01jdh5/f8f
-         Pf5A==
-X-Forwarded-Encrypted: i=1; AKwUvBylMQ6On59mlqeJVLLDrtcZYUV5QdXslhv+ms9yi6+H2AILepmDV4cc/PSvo3xSTtu0/7WKELoMUTou@vger.kernel.org
-X-Gm-Message-State: AFuF++lgJEGLT3HGRzscQaDE6Rr+GZcEQULFZkAcSYrp+xIzJCoUn2ws
-	PYuW3m30NzalSStEuvq2Ms/5iLOqcylTvk4GABr4+r4LZiF56qvq2NQs
-X-Gm-Gg: AYBFou36Ay2q2GiOmhd911bng+5EEM+ysn16JwHjzmt4pQq1ACB84K3C3MDmrHRT1QS
-	7mP1s4a6BcX2M9vJ3/OWU2wxmvuZubJYIljF21r87ZNz+8Mh54D98a+pcz6PY2wyjdfEtCh6QhK
-	8Oz5ZJYg9vB2HgYCAQlq8nzhdYiGehMKFeqb6YptX1hNaY1zOa9IU/1VlyQhU2sVOMFzy5g900V
-	ne0u0vUGMC2TZz1bbbndGz0grH4e/1kzIsto+XJyC1bQVK48PI9t9BbmIzOt6bCucUt11e7YT1Z
-	/PHH9MIBSyYo3QItPP+BFb/ALCWeNndC20wOnZ/e4TuBBQOLtp3IgQ554DN+6yTAehII2Td3NVl
-	i2NTs6LGMN7EHHEm14NV21mwECyeb3/CdsLFGu9vuHRpgljcvxDPtEqhIHfOfvdAS2w1hV2Msc/
-	TzipexjFHRCuIzwjlSDnKFnMplZQMFGpmGD47g76u8vhsH4gjA+Fh//OrZdYCRXhU/jNAQTWw5b
-	fNaNFYPenTDUJAK3YWfv+5YlB2AL93vqKa2ee5ZrQ==
-X-Received: by 2002:a05:6214:2463:b0:910:40d0:27e5 with SMTP id 6a1803df08f44-9121211d247mr4478526d6.31.1789069403991;
-        Thu, 10 Sep 2026 12:43:23 -0700 (PDT)
-Received: from [127.0.1.1] (static-68-235-46-14.cust.tzulo.com. [68.235.46.14])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f4d389esm3441266d6.42.2026.09.10.12.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2026 12:43:23 -0700 (PDT)
-From: Miles Krause <mileskrause5200@gmail.com>
-Date: Thu, 10 Sep 2026 15:43:20 -0400
-Subject: [PATCH] leds: lp8860: fix device_node leak in lp8860_probe()
+        d=1e100.net; s=20251104; t=1789069530; x=1789674330;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=A/3ZGdaWGihAcbh8PThygY3ZNQwZqvA2jilmZZCQz4o=;
+        b=GVs/Mz/GdG09JJmlq+Z080II8LaTOsCSHIJZSXKbpBmMOzbkVIcMjS1nQGCOP8kWkT
+         JKX/ebjasbX/PJNakcqRFZx/0GgLPj/FpiFLqILpZKViSveFLv+M68/36E1QZ7diXMMP
+         r6GyB4oQR99hYZIcmsdT1FJn8oqV9te2GHNmAAZBoaRLiErSIvN9ZZ29xJyUjc++oQ24
+         QTneiLRMVLC6/8je9zttEDO1ro04pNbQIKiYrQsWYTkN7r87aqEu8BR0n4RNTqS3rV94
+         v4/G9VwxdLiqhKoLgGk9JnZAKFW+VVcohCQWoSwL4LjW6cUIJtZOksJKnILSeB9nSP1F
+         8M7Q==
+X-Gm-Message-State: AFuF++nDLAOCMtBKkCzQIiBPdqTAR+9KWw4IRXWuzRiH0fQLJDITZ7Z2
+	F1Cgueb7wVIRJV4kP+eAlrBxEkvisbngg7dQ5wuAFE2hYcgSUDEJSyLaDrMO
+X-Gm-Gg: AYBFou0qJnWsJfl0fWnvZgZNaZ7W9q8Qa+KRm+gej2c4uNxL25VZOTvJMMVCGpj1d2O
+	louhrYQMLAwDut90UDrbjoFLnLasqNjBxE5EkIoYe0eTQwWoemDjOopnO24A9jksGMMs6tWbWYa
+	EiqpCO1tSm/Q/Ig9+H6k9Sfx5rdWzbedkPlvOHgraC+jtK/1lnhzpwnHz9QPVvfOrTpnD1cpflS
+	lBhoPhovbSi1kZ2VS81U6fmf9qNsbQ89I5Rby0lLq0lXzrvqkoj3tbPJxbwge0x5mPhQTo+F5ir
+	0J6+rTJQIXKVDIiI7I/gltm2reU8NwvTg2JqreCpldZ/BBTRzYh1UMJuhCrG/eNLYjIKA8WsSFH
+	Ki86fauFHCi1Kq2cd+lYPuAeJzRNPTKqh8Q50okYWxgHaMv+MzujDYZWlaxXXvSKJYDsSgf30g1
+	S4DxfN9cd7UyDgGNCYZjv0D0Kop3zULKzsG5azlPsfpzCFdPuHaSVTZ7PWYHDB5x8SCNoWB9Q6Y
+	o3e/Swq3SIsGlJdyQzvCSdoiZFucEr4CiXsDmoisty8ktzeJ5Qx1PeWFpMScfawwsB/z4MpFY+T
+	lY2u2LtPnwsSFc/CQxSMmuXKCXWYNS/9VQ==
+X-Received: by 2002:a05:6214:3218:b0:910:42f7:a111 with SMTP id 6a1803df08f44-9121208900emr5796326d6.15.1789069530089;
+        Thu, 10 Sep 2026 12:45:30 -0700 (PDT)
+Received: from localhost.localdomain ([104.39.73.78])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f4d89f9sm3530526d6.47.2026.09.10.12.45.28
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 10 Sep 2026 12:45:29 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: lee@kernel.org,
+	pavel@kernel.org
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Myeonghun Pak <mhun512@gmail.com>,
+	Ijae Kim <ae878000@gmail.com>
+Subject: [PATCH] leds: ktd2692: Pass context to regulator cleanup
+Date: Thu, 10 Sep 2026 15:45:25 -0400
+Message-ID: <20260910194525.99654-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260910-leds-lp8860-of-node-leak-v1-1-d333cff4345b@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MywqEMAwAf0VyNpB2JT5+RTy421SD0koLIoj/b
- tnjDMzckCWpZBiqG5KcmjWGAqau4LfOYRFUVxgsWabeEO7iMu5H1zFh9Biik+LmDfnztdyS92w
- aKPmRxOv1X4/T87yu57ToagAAAA==
-X-Change-ID: 20260910-leds-lp8860-of-node-leak-63b2670ff614
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Miles Krause <mileskrause5200@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789069402; l=3259;
- i=mileskrause5200@gmail.com; s=20260906; h=from:subject:message-id;
- bh=7PnO3Pq1c+iSovghwuQMRdjVQl88oMavnosLpWP8g9w=;
- b=qpHo2twLLZEDq8BSL5+VQk6SylAgp9sfM63GEBU9yv/QLSu4oeI9G4nZYA+O/bNGBbJ8JmL69
- 2KG96/OQJ5CAKc6Uxd446JCXFJMYyJ1NKoJFNeqEJR1pBG9tIq7ogxF
-X-Developer-Key: i=mileskrause5200@gmail.com; a=ed25519;
- pk=zcIfq4TGtPwMRJUW6WsbE2zLHvOMwk6ZyT/CGd6XzyI=
+Content-Transfer-Encoding: 8bit
 
-lp8860_probe() looks up the driver's single LED child node with
-of_get_next_available_child() and hands it to the LED core as
-init_data.fwnode, but never drops the reference that lookup returned:
+regulator_disable_action() retrieves the driver context from device
+driver data.  However, ktd2692_parse_dt() registers the action before
+ktd2692_probe() stores the context with platform_set_drvdata().
 
-	child_node = of_get_next_available_child(np, NULL);
-	if (!child_node)
-		return -EINVAL;
-	...
-	init_data.fwnode = of_fwnode_handle(child_node);
+If devm_add_action_or_reset() cannot allocate the action, it invokes the
+callback immediately.  A later probe failure also invokes it during
+managed-resource unwinding.  Both paths dereference a NULL context.
 
-of_get_next_available_child() returns the node with its refcount
-incremented, and the LED core does not take a reference of its own:
-led_classdev_register_ext() only reads properties out of
-init_data.fwnode and then stores the bare pointer with
-device_set_node().  The reference therefore stays owned by the driver
-for as long as it holds the node.
+Pass the already allocated context directly to the action and retain the
+device pointer in it for error reporting.  The context is allocated before
+the action is registered, so reverse-order devres unwinding keeps it alive
+through the callback.
 
-Nothing in lp8860_probe() ever releases it, so it is leaked on every
-error return taken after the lookup - the enable GPIO, the vled
-regulator, devm_mutex_init(), the regmap allocation, the optional
-EEPROM programming and the LED class registration - and on a fully
-successful probe alike.  A device that binds and unbinds repeatedly
-leaks one device_node reference per bind.
+This issue was identified during our ongoing static-analysis research while
+reviewing kernel code.
 
-Sibling drivers already get this right: leds-lm3692x.c, from the same
-TI LED family, calls fwnode_handle_put(init_data.fwnode) once after
-devm_led_classdev_register_ext() to cover both outcomes, while
-leds-ktd2692.c and leds-aat1290.c take the node with __free(device_node).
-
-Use __free(device_node) here too.  Unlike a single of_node_put() at the
-end of probe it also covers the intermediate error returns, and it keeps
-the node alive for the whole function, which the LED core still needs
-when it reads the child's properties during registration.
-
-Fixes: 99ca0ea57309 ("leds: lp8860: Use generic support for composing LED names")
-Signed-off-by: Miles Krause <mileskrause5200@gmail.com>
+Fixes: ee78b9360e14 ("leds: ktd2692: Fix an error handling path")
+Cc: stable@vger.kernel.org
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 ---
-Found by auditing drivers that take a device_node/fwnode reference during
-probe and hand it to a subsystem registration helper without releasing it.
+ drivers/leds/flash/leds-ktd2692.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Compile-tested only (x86_64, CONFIG_LEDS_LP8860=m, W=1 clean); I have no
-LP8860 hardware.
----
- drivers/leds/leds-lp8860.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-index 69f064781f69..f6e4227de903 100644
---- a/drivers/leds/leds-lp8860.c
-+++ b/drivers/leds/leds-lp8860.c
-@@ -7,6 +7,7 @@
-  * Author: Dan Murphy <dmurphy@ti.com>
-  */
+diff --git a/drivers/leds/flash/leds-ktd2692.c b/drivers/leds/flash/leds-ktd2692.c
+index 22fbfccd4873549baf390127d2f7e9aeb9c45465..43d4d55503ab50c6e31b8e83eed430cc33e014e3 100644
+--- a/drivers/leds/flash/leds-ktd2692.c
++++ b/drivers/leds/flash/leds-ktd2692.c
+@@ -69,6 +69,8 @@ static const struct expresswire_timing ktd2692_timing = {
+ };
  
-+#include <linux/cleanup.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/leds.h>
-@@ -274,7 +275,6 @@ static int lp8860_probe(struct i2c_client *client)
+ struct ktd2692_context {
++	struct device *dev;
++
+ 	/* Common ExpressWire properties (ctrl GPIO and timing) */
+ 	struct expresswire_common_props props;
+ 
+@@ -196,13 +198,12 @@ static void ktd2692_setup(struct ktd2692_context *led)
+ 
+ static void regulator_disable_action(void *_data)
+ {
+-	struct device *dev = _data;
+-	struct ktd2692_context *led = dev_get_drvdata(dev);
++	struct ktd2692_context *led = _data;
  	int ret;
- 	struct lp8860_led *led;
- 	struct device_node *np = dev_of_node(&client->dev);
--	struct device_node *child_node;
- 	struct led_init_data init_data = {};
- 	struct gpio_desc *enable_gpio;
  
-@@ -282,7 +282,8 @@ static int lp8860_probe(struct i2c_client *client)
+ 	ret = regulator_disable(led->regulator);
+ 	if (ret)
+-		dev_err(dev, "Failed to disable supply: %d\n", ret);
++		dev_err(led->dev, "Failed to disable supply: %d\n", ret);
+ }
+ 
+ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
+@@ -233,7 +234,7 @@ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
+ 			dev_err(dev, "Failed to enable supply: %d\n", ret);
+ 		} else {
+ 			ret = devm_add_action_or_reset(dev,
+-						regulator_disable_action, dev);
++						regulator_disable_action, led);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -290,6 +291,7 @@ static int ktd2692_probe(struct platform_device *pdev)
  	if (!led)
  		return -ENOMEM;
  
--	child_node = of_get_next_available_child(np, NULL);
-+	struct device_node *child_node __free(device_node) =
-+		of_get_next_available_child(np, NULL);
- 	if (!child_node)
- 		return -EINVAL;
- 
-
----
-base-commit: 50d05c7c76c96b90462f24debacca971d2e86713
-change-id: 20260910-leds-lp8860-of-node-leak-63b2670ff614
-
-Best regards,
++	led->dev = &pdev->dev;
+ 	fled_cdev = &led->fled_cdev;
+ 	led_cdev = &fled_cdev->led_cdev;
+ 	led->props.timing = ktd2692_timing;
 -- 
-Miles Krause <mileskrause5200@gmail.com>
-
+2.50.1
