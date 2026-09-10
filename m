@@ -1,100 +1,161 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB6C49BD6C
-	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EC24DA546
+	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789069963; cv=none; b=Qa5kTwex7HSpbGvdavhCFYnVyLoZmvdbJeaZ5H9RwtYclN2RaBKELoaDKw4EGF8a0u8w7tjAeaxp++we3qw9/cdIZY28sSPywWT+yTMNtBJ5WqNtui+quzqyDIprdvaWAA87iXpPJfzXlxa9i1e6ooO4VwVz9FlzKPWXsGBkvn8=
+	t=1789070174; cv=none; b=QIZbrt6Y7cg04bCnd5obLt2okZ9wGJTGCEemi6/iq1J7ziDvrSIn4kGJr+wdLKTVMpvjzBNhLFHknfnZ2rG1NF2arTDGzecLDxvUbSqyS6RM6sAG34YYxbwyo/I6RDCwk/fg1aS1LCwu2RrYQfMTLWGe5Sr+FzR3+WkarIaPgyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789069963; c=relaxed/simple;
-	bh=XOQkucBW0mYR3Ihv7VHBp9O1LprfoS7tYNiXjkFghu0=;
+	s=arc-20240116; t=1789070174; c=relaxed/simple;
+	bh=wdC7y2X0qaTfKnM8bgFIa2jxpOS382CkzwXHS8Z0pn4=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=dvPCbM3hq2xjUgO9ps+icgLM/WH3KcK9oNEouCorPex+IMpLna9R9kjHIsdpUODxe1RaxUK/0C0jy6mq7Jp2gvgOi7Ta1U7r3DGgtKFCg4pkZFlN5D0z8J25zyDquH4g7M+YgK8k38PVeR3vj3Iw0en1nJ/wDhai0vFKRBu04bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbtChzSQ; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=gxVHEzLjnjgAI9aAPIL3MM+uYaKdP+GBlpWwZqCDnmqJG3dCdvll+0pJvEZeWCiMe6+ULIiwhZZT10pqEfSvVXdcwSJEs5U5lqax/njkpd8EDh6DqMK+j9+tQk9btEuPFQt7Fzme/SZzZsiRP8B+9ySpuk8eV4OZL/zlUNuzvio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KY0OrFLa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbtChzSQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E48B1F000FF;
-	Thu, 10 Sep 2026 19:52:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KY0OrFLa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02C511F000FF;
+	Thu, 10 Sep 2026 19:56:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789069960;
-	bh=TROqhmv89l46AvDG+MexkJ6toJOG8fE5orjTUuvcHtk=;
+	s=k20260515; t=1789070173;
+	bh=TZ2r3qi1ExYnPrV3zHvBvtQgqkO223wlT399bME+VoI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gbtChzSQ6U3qoFUjXIAFDoslFZtnmB4GtxTky0h3DkhSqwR43LCTNyOdycK8xaF1a
-	 lKhspJ/zpBSFrBszxz2trPHR1wGMCIXRiELHPUVVVeCHUXfBsdozZ2WrG0h82TxR6/
-	 GxRkTBcdYJQMuBvlsT+iwLO1y7Ox/zeB64B+ycc+PxjIHSYD4l5tEH4wC7L3LP26li
-	 wimriThjufSF6BR7OBtDECu0c1XI4Eh/dg7aOPCqgIzdJBWOWoaIgY4ANKRjf3sR7U
-	 AVygR8F6fjFcm7dQNTvRVNWaKFoKqc9tC8N83q2VYd/pZeo8COQAY15K8cvb74g58C
-	 NwTbr2ej7qTwQ==
+	b=KY0OrFLa2o5nX/6gtMddNhb9MfHqee5mgsL4W8Q6ON+k3elS24J7bO7OWzxmB1ZUd
+	 YoRoqvCjqev4GY17tdQ1l5KRNon/pK7dHWvB8GYWd53l93WkvUKnG1hEvM81P6rCk+
+	 ueQx1DhcUmGYXa5CMM8vxduT6XMPi4Jv19xWUk0hes56RrkvI1Sgv3hcAFOaz0bj+Y
+	 UAhNxJ/ffbGkBjB8c4eyLDLztkp2CmJW3Goxu+VfS/E1bcw0HbK/cHRkr7+cDnaDxF
+	 2b3ERuR/FB3ArpaTaUfEfqA83MTQ3AaPU/CTZbuf2Ep7xvp7Dd58rEuLNvSRKoNJj2
+	 uhQQ/q4UJLjYw==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: lp8860: fix device_node leak in lp8860_probe()
+Subject: Re: [PATCH] leds: ktd2692: Pass context to regulator cleanup
 Reply-To: sashiko-reviews@lists.linux.dev
-To: "Miles Krause" <mileskrause5200@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260910-leds-lp8860-of-node-leak-v1-1-d333cff4345b@gmail.com>
-References: <20260910-leds-lp8860-of-node-leak-v1-1-d333cff4345b@gmail.com>
+To: "Myeonghun Pak" <mhun512@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260910194525.99654-1-mhun512@gmail.com>
+References: <20260910194525.99654-1-mhun512@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Sep 2026 19:52:39 +0000
-Message-Id: <20260910195240.0E48B1F000FF@smtp.kernel.org>
+Date: Thu, 10 Sep 2026 19:56:12 +0000
+Message-Id: <20260910195613.02C511F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] The enable_gpio is initialized to logical low and never asserted, =
-leaving the device permanently disabled.
+- [High] Silent suppression of -EPROBE_DEFER from devm_regulator_get() and =
+missing return on regulator_enable() failure.
+- [High] Race condition exposing the LED device to userspace before hardwar=
+e setup is complete.
+- [High] Kernel panic due to division by zero if `flash-max-timeout-us` is =
+configured too small.
 --
 
-commit fc2187284635f3278f3bb6af71e6925402976134
-Author: Miles Krause <mileskrause5200@gmail.com>
+commit 6025dd2c27de45e105ee950ad7b4f5c0824e9c17
+Author: Myeonghun Pak <mhun512@gmail.com>
 
-leds: lp8860: fix device_node leak in lp8860_probe()
+leds: ktd2692: Pass context to regulator cleanup
 
-This commit fixes a device_node leak in lp8860_probe() by using the
-__free(device_node) cleanup helper. It drops the manual management of
-the reference returned by of_get_next_available_child().
+This commit fixes a NULL pointer dereference in the regulator disable actio=
+n.
+It passes the allocated driver context directly to devm_add_action_or_reset=
+()
+instead of relying on platform_get_drvdata() which is uninitialized at that
+point.
 
-> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
-> index 69f064781f699..f6e4227de903a 100644
-> --- a/drivers/leds/leds-lp8860.c
-> +++ b/drivers/leds/leds-lp8860.c
+> diff --git a/drivers/leds/flash/leds-ktd2692.c b/drivers/leds/flash/leds-=
+ktd2692.c
+> index 22fbfccd48735..43d4d55503ab5 100644
+> --- a/drivers/leds/flash/leds-ktd2692.c
+> +++ b/drivers/leds/flash/leds-ktd2692.c
 [ ... ]
-> @@ -282,7 +282,8 @@ static int lp8860_probe(struct i2c_client *client)
+> @@ -233,7 +234,7 @@ static int ktd2692_parse_dt(struct ktd2692_context *l=
+ed, struct device *dev,
+>  			dev_err(dev, "Failed to enable supply: %d\n", ret);
+>  		} else {
+>  			ret =3D devm_add_action_or_reset(dev,
+> -						regulator_disable_action, dev);
+> +						regulator_disable_action, led);
+>  			if (ret)
+>  				return ret;
+>  		}
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does ktd2692_parse_dt()
+silently suppress probe deferral and missing regulator errors?
+
+If devm_regulator_get() returns -EPROBE_DEFER, the error is swallowed:
+
+	led->regulator =3D devm_regulator_get(dev, "vin");
+	if (IS_ERR(led->regulator))
+		led->regulator =3D NULL;
+
+Additionally, if regulator_enable() fails, it prints an error but continues
+probing without power instead of returning the error code:
+
+	if (led->regulator) {
+		ret =3D regulator_enable(led->regulator);
+		if (ret) {
+			dev_err(dev, "Failed to enable supply: %d\n", ret);
+		} else {
+
+Should the driver properly propagate -EPROBE_DEFER and return the failure
+from regulator_enable()?
+
+[ ... ]
+> @@ -290,6 +291,7 @@ static int ktd2692_probe(struct platform_device *pdev)
 >  	if (!led)
 >  		return -ENOMEM;
 > =20
-> -	child_node =3D of_get_next_available_child(np, NULL);
-> +	struct device_node *child_node __free(device_node) =3D
-> +		of_get_next_available_child(np, NULL);
->  	if (!child_node)
->  		return -EINVAL;
-> =20
+> +	led->dev =3D &pdev->dev;
+>  	fled_cdev =3D &led->fled_cdev;
+>  	led_cdev =3D &fled_cdev->led_cdev;
+>  	led->props.timing =3D ktd2692_timing;
 
 [Severity: High]
-This isn't a bug introduced by this patch, but this is a pre-existing=20
-issue in lp8860_probe(). Immediately following this lookup:
+This is a pre-existing issue, but does ktd2692_probe() expose the LED device
+to userspace before hardware setup is complete?
 
-drivers/leds/leds-lp8860.c:lp8860_probe() {
-    ...
-    enable_gpio =3D devm_gpiod_get_optional(&client->dev, "enable", GPIOD_O=
-UT_LOW);
-    ...
-}
+led_classdev_flash_register() exposes the device to userspace sysfs.
+ktd2692_setup() is called afterward:
 
-Does initializing the enable GPIO to logical low (GPIOD_OUT_LOW) leave the=
-=20
-device permanently disabled? The driver never seems to assert the GPIO to=20
-high to enable the chip.=20
+	ret =3D led_classdev_flash_register(&pdev->dev, fled_cdev);
+	if (ret) {
+		dev_err(&pdev->dev, "can't register LED %s\n", led_cdev->name);
+		mutex_destroy(&led->lock);
+		return ret;
+	}
 
-Other sibling drivers appear to correctly initialize their enable GPIO with
-GPIOD_OUT_HIGH.
+	ktd2692_setup(led);
+
+If userspace writes to sysfs (e.g., brightness) in the race window, it could
+trigger ktd2692_led_brightness_set() before or during ktd2692_setup().
+
+Could this lead to concurrent access to uninitialized hardware?
+
+[Severity: High]
+This is a pre-existing issue, but can the driver trigger a kernel panic due
+to a division by zero if flash-max-timeout-us is configured too small?
+
+If flash-max-timeout-us in the Device Tree is less than 7, setting->step
+evaluates to 0 in ktd2692_init_flash_timeout():
+
+	setting->step =3D cfg->flash_max_timeout
+			/ (KTD2692_FLASH_MODE_TIMEOUT_LEVELS - 1);
+
+Later, when userspace triggers a flash strobe via sysfs,
+ktd2692_led_flash_strobe_set() executes GET_TIMEOUT_OFFSET, which divides by
+step (which is 0):
+
+	flash_tm_reg =3D GET_TIMEOUT_OFFSET(timeout->val, timeout->step);
+
+Could this cause a division by zero? Should the driver validate the minimum
+value of flash-max-timeout-us during initialization?
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260910-leds-lp886=
-0-of-node-leak-v1-1-d333cff4345b@gmail.com?part=3D1
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260910194525.9965=
+4-1-mhun512@gmail.com?part=3D1
