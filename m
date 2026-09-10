@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C2C4A6899;
-	Thu, 10 Sep 2026 15:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10A948EC99;
+	Thu, 10 Sep 2026 15:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789052753; cv=none; b=dL3o+ygVr4si7s/ejR1j3Upp1WtIAmIelcLwvqcZj82/1JnvycjJ0tbUxDu+HG/OrFtpY/PhwBf43b1WX0WZxIvz3WIo6R1j3raFdLaLgPSVzj//kMajvQsybqhd6r+O7iOmNhyu+9YA0UmnM+58XIFbwVGSNnTldrxwSYAzoY0=
+	t=1789055117; cv=none; b=U8epOb9QZtyD2kkwimsOJ/8XushX7+MCLwQDsOUrLkmvF+E8PD0/U+lcDQ0tJz2SaYfnfmZGLmWFGs4FcXuxR1RjWj+oCqmRcRjU73w3Z5fI1L6SduHwuj57wMbMIdIzPChBIEDoD9Bgz5izbhppvZxFXro0gh02xJ8gArtimvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789052753; c=relaxed/simple;
-	bh=Etl5JzVJqML9PmVs917q+ZC+bbgxKo3NsM+f9uGvFK4=;
+	s=arc-20240116; t=1789055117; c=relaxed/simple;
+	bh=AbgPeNtUPv7OQIB35BNW6UH/pTTIBTW8j/eglEJ5AnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FlLvMwHUZCqm0GF20iLLUl+9dor2qC8E24NaG3/7IzDwW+OnA57J/K9ecH/pOSK7BZgFZ/t7854uWgd+ogAOYPdVlrDoD2PsIVS+HaupYLBqAlpd1v2KgiyeprcntUxozNu1oCm4WLEHtG/+SpLKA2AsA8mDO8BU/ElrxptuRz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AClqOoG8; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHiLfAbWzH9OFDwRJzYJDlxT2fvCmBzm0ncgfiM7OW60PDEqycyNd63oBWEZT3pnrBKRfIG/RFvpkKe9xbhMCWE7qRVrVvTSiqwk8m14KBjT6yUiBODhl4QEAafiNpX48HmFy/oyBVJLE3wI6Acd4iAB8gVPvzZDbYuxla20LAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtpahXqC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AClqOoG8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00E541F00893;
-	Thu, 10 Sep 2026 15:05:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtpahXqC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3C341F000FF;
+	Thu, 10 Sep 2026 15:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789052743;
-	bh=2qSXLjhAjygcr+iubfm3t6D+tdBAD9pO+lEAOs4Tgrw=;
+	s=k20260515; t=1789055115;
+	bh=B7E2u8qHzB1StvosXk8V2JIB/UZpJyVXellXMeSa9yA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AClqOoG8fAdd+WfzrsI/BVzr5vLb7kNVYRigDBFAzV18qOToEIlxubozh0+9DY7IR
-	 3v1hDPcfcfi/rCkmuUy2hqqssTWP3Pkss9oR9rAdmADcf+OzRlbE40BSxPNR926s3E
-	 fDLPRm9CJGDrQGsKMHdwL/q6h9RJIPGXAc0jnT+J0JMFBaEspFW92JtS5NQiaNov9V
-	 UT5AfZd7Edlgsg/cFuDz1EE7ajLmEyEBNceBDW9KHEZUNn6q/X7JskX6Va4Nnvo22J
-	 4QLhlC3klw9Qy4NS8KdiZWNn+h9GdpFJQCqXNngyck3wnegzKTvm4pPgu43J2uVV02
-	 IY03/t/R7ixCw==
-Date: Thu, 10 Sep 2026 16:05:35 +0100
+	b=MtpahXqCXtVjQJn/r6TG9GjhfOTeTWWz1P1cogmqd43En8QQUiVARQj3jIoihTdKE
+	 ekquC7nxg82uULrPpf/6P0NRzGGKayIPQlsbdyhDnSGcbNvj9D2lyQFTGMa3HXwEhO
+	 g2+PPMYzxLda3hIRNZBOcVfPxF106tqa9+dLepCC9fAeFfKgZkczxI5KpiRhhA4ckt
+	 +GJuLK1w9oQP/Jyh0ToypQuTYjc1jmQp2IB7FUR7sVxD0xLY5Ytj71K3b2Wa/ZaIPW
+	 3Jq5mAgDYRR2iberLLgfpymY+f98oG0S6sYccMW/27z5yP0kNThFrKXXWZJiuEFCyY
+	 bAki/YEM5wpKg==
+Date: Thu, 10 Sep 2026 16:45:06 +0100
 From: Lee Jones <lee@kernel.org>
 To: Rong Zhang <i@rong.moe>
 Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
@@ -46,11 +46,11 @@ Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
 	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
 	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v6 04/12] leds: trigger: Add offloaded() callback and
- provide trigger_may_offload attribute
-Message-ID: <20260910150535.GG1051768@google.com>
+Subject: Re: [PATCH v6 09/12] leds: trigger: Add
+ led_trigger_notify_hw_control_changed() interface
+Message-ID: <20260910154506.GH1051768@google.com>
 References: <20260902-leds-trigger-hw-changed-v6-0-55693cd78877@rong.moe>
- <20260902-leds-trigger-hw-changed-v6-4-55693cd78877@rong.moe>
+ <20260902-leds-trigger-hw-changed-v6-9-55693cd78877@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -60,258 +60,409 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260902-leds-trigger-hw-changed-v6-4-55693cd78877@rong.moe>
+In-Reply-To: <20260902-leds-trigger-hw-changed-v6-9-55693cd78877@rong.moe>
 
 On Wed, 02 Sep 2026, Rong Zhang wrote:
 
-> There are multiple triggers implementing hardware control. However, the
-> LED trigger core doesn't really know the hardware control (offloaded)
-> state since the coordination is done directly between the trigger and
-> the LED driver. It can only assume private triggers as offloaded and
-> generic ones as not offloaded.
+> Some hardware can autonomously activate/deactivate hardware control.
+> After that, the LED hardware notifies the LED driver. Currently, there
+> is no mechanism for LED drivers to notify the LED core about such events
+> and initiate a trigger transition to reflect the hardware state.
 > 
-> Add an offloaded() callback so that triggers can report their offloaded
-> states to the LED trigger core. When unimplemented, it defaults to true
-> for private triggers and false for generic ones to keep the current
-> behavior unchanged.
+> Add a new interface called led_trigger_notify_hw_control_changed(), so
+> that LED drivers can call it to notify the LED core about the
+> transition.
 > 
-> With that, provide a new attribute "trigger_may_offload", so that
-> userspace can determine:
+> The interface only allows two transitions:
 > 
-> - if the LED device supports hardware control (supported => visible)
-> - which trigger is the hardware control trigger selected by the LED
->   device
-> - if the trigger is selected ("<foo_trigger>")
-> - if the trigger is offloaded ("[foo_trigger]")
+> 1. "none" => private trigger
+> 2. private trigger => "none"
 > 
-> Note: the documentation describes the attribute as "returning a list"
-> despite the LED core currently only supports one hardware control
-> trigger per LED device. This is intentional to make the attribute
-> extensible in the future without breaking userspace.
+> If the current trigger is neither the private trigger nor "none", no
+> transition will be made. This protects the currently selected software
+> trigger.
+> 
+> Note that LED_OFF won't be emitted during the #2 transition, as some
+> hardware may have selected a new brightness level during its hardware
+> state transition (e.g., laptop keyboards with a shortcut cycling through
+> different backlight brightnesses and auto mode).
+> 
+> The interface is designed as a void function as any failure should be
+> non-fatal and the result of transition should not have any impact on the
+> LED drivers' event handling procedures.
+> 
+> To use the interface, the config LEDS_TRIGGERS_HW_CHANGED must be
+> enabled, and the LED driver must set the LED_TRIG_HW_CHANGED flag for
+> the classdev.
+> 
+> By default, the config is enabled when LEDS_BRIGHTNESS_HW_CHANGED is
+> enabled.
 > 
 > Acked-by: Ike Panhc <ikepanhc@gmail.com>
 > Signed-off-by: Rong Zhang <i@rong.moe>
 > ---
 > Changes in v6:
-> - Update Date: and KernelVersion: for the document of
->   /sys/class/leds/<led>/trigger_may_offload
+> - Implement workqueue deferal mechanism
+>   - https://msgid.link/e2b081dfd8f96511a73b86ab3ec75e5cd759b79b.camel@rong.moe
+> 
+> Changes in v5:
+> - Address a concern from Sashiko:
+>   - led_trigger_notify_hw_control_changed() might sleep, but without any
+>     internal deferral mechanism or annotation
+>   - Annotate the method with might_sleep(), since the very first users
+>     of the interface, i.e., ideapad-laptop and (supposedly)
+>     thinkpad_acpi, will call the interface from work contexts. It does
+>     not deserve the overhead of internal deferral mechanism
+>   - https://sashiko.dev/#/patchset/20260802-leds-trigger-hw-changed-v4-0-f97e2ca976fe@rong.moe?part=9
+> 
+> Changes in v4:
+> - Enable LEDS_TRIGGERS_HW_CHANGED by default when
+>   LEDS_BRIGHTNESS_HW_CHANGED is enabled
 > 
 > Changes in v3:
-> - Rearrange the series so that the code using the offloaded() callback is
->   introduced before the driver implementation (thanks Thomas Weißschuh)
-> - Reword documentation (ditto)
-> - Adopt guard() and lockdep (ditto)
-> - Adopt __led_trigger_is_hw_controlled() from newly-integrated PATCH 1
+> - Adopt guard() (Thanks Thomas Weißschuh)
+> - Reword documentations
 > ---
->  Documentation/ABI/testing/sysfs-class-led | 22 ++++++++++++++++++++++
->  Documentation/leds/leds-class.rst         | 20 ++++++++++++++++++++
->  drivers/leds/led-class.c                  | 22 ++++++++++++++++++++++
->  drivers/leds/led-triggers.c               | 30 ++++++++++++++++++++++++++++++
->  drivers/leds/leds.h                       |  2 ++
->  include/linux/leds.h                      |  1 +
->  6 files changed, 97 insertions(+)
+>  Documentation/leds/leds-class.rst |  52 ++++++++++++++++++
+>  drivers/leds/led-class.c          |   6 +++
+>  drivers/leds/led-triggers.c       | 108 +++++++++++++++++++++++++++++++++++++-
+>  drivers/leds/leds.h               |   8 +++
+>  drivers/leds/trigger/Kconfig      |  10 ++++
+>  include/linux/leds.h              |  13 +++++
+>  6 files changed, 195 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-> index d4c918cc11a1..e3605fc55fa8 100644
-> --- a/Documentation/ABI/testing/sysfs-class-led
-> +++ b/Documentation/ABI/testing/sysfs-class-led
-> @@ -78,6 +78,28 @@ Description:
->  		(which would often be configured in the device tree for the
->  		hardware).
->  
-> +What:		/sys/class/leds/<led>/trigger_may_offload
-
-*_to_hw?
-
-> +Date:		September 2026
-> +KernelVersion:	7.4
-> +Contact:	linux-leds@vger.kernel.org
-> +Description:
-> +		Names and states of triggers that may be offloaded to hardware.
-> +		Such triggers are also called "hardware control trigger" in some
-> +		context.
-> +
-> +		Only exists when the LED supports trigger offload.
-> +
-> +		Reading this file returns a list of triggers that are capable to
-> +		be offloaded. The optional brackets around the trigger name
-> +		indicate the state of the current trigger:
-> +
-> +		- `foo_trigger`: the trigger is not selected.
-> +		- `<foo_trigger>`: the trigger is selected, but falls back to
-> +		  software blink for some reason (e.g., incompatible trigger
-> +		  parameters)
-> +		- `[foo_trigger]`: the trigger is selected and offloaded to
-> +		  hardware.
-> +
->  What:		/sys/class/leds/<led>/inverted
->  Date:		January 2011
->  KernelVersion:	2.6.38
 > diff --git a/Documentation/leds/leds-class.rst b/Documentation/leds/leds-class.rst
-> index 3913966cfdac..2d41a6db602c 100644
+> index 2d41a6db602c..adbc57b9f49c 100644
 > --- a/Documentation/leds/leds-class.rst
 > +++ b/Documentation/leds/leds-class.rst
-> @@ -242,6 +242,9 @@ ops and needs to declare specific support for the supported triggers.
->  
->  With hw control we refer to the LED driven by hardware.
->  
-> +A sysfs attribute `trigger_may_offload` is provided for userspace to
-> +query supported triggers and their states.
-> +
->  LED driver must define the following value to support hw control:
->  
->      - hw_control_trigger:
-> @@ -298,6 +301,15 @@ LED driver must implement the following API to support hw control:
->                  Returns a pointer to a struct device or NULL if nothing
->                  is currently attached.
->  
-> +LED trigger should implement the following API to indicate hw control:
-> +    - offloaded:
-
-hw_offloaded?
-
-> +                return a boolean indicating if the trigger is currently
-> +                offloaded to hardware.
-> +
-> +                If a trigger doesn't implement this callback, the default
-> +                value will be true for private triggers and false for generic
-> +                ones.
-> +
->  LED driver can activate additional modes by default to workaround the
->  impossibility of supporting each different mode on the supported trigger.
->  Examples are hardcoding the blink speed to a set interval, enable special
-> @@ -311,6 +323,14 @@ the end use hw_control_set to activate hw control.
->  A trigger can use hw_control_get to check if a LED is already in hw control
->  and init their flags.
->  
-> +Alternatively, a private trigger can be implemented along with the LED driver if
-> +the LED's hardware control doesn't fit any generic trigger. To associate the
-> +private trigger with the LED classdev, their `trigger_type` must be the same. To
-> +declare that the private trigger provides hardware control for the associated
-> +LED classdev, set the `hw_control_trigger` string to the trigger's name. Since
-> +both the LED classdev and the private trigger are in the same LED driver, it's
-> +not necessary for them to coordinate via `hw_control_*` callbacks.
-> +
+> @@ -334,6 +334,58 @@ not necessary for them to coordinate via `hw_control_*` callbacks.
 >  When the LED is in hw control, no software blink is possible and doing so
 >  will effectively disable hw control.
 >  
+> +Hardware-initiated trigger transition
+> +=====================================
+> +
+> +Some hardware can autonomously activate/deactivate hardware control. After that,
+> +the LED hardware notifies the LED driver.
+> +
+> +If the driver can detect such transitions and thus wants to notify the LED core
+> +to update the current trigger then the `LED_TRIG_HW_CHANGED` flag must be set in
+> +flags before registering. To update the current trigger accordingly, call
+> +`led_trigger_notify_hw_control_changed` on the LED classdev.
+> +
+> +This capability is restricted to the LED device's private trigger. The private
+> +trigger must have been properly registered (see above) and named after
+> +`hw_control_trigger`.
+> +
+> +Only two transitions are defined:
+> +
+> +- "none" => private trigger:
+> +        This happens when the hardware autonomously activates hardware control
+> +        and when "none" (i.e., no trigger) is currently active. If the private
+> +        trigger is already active when the method is called, this is essentially
+> +        a no-op.
+> +
+> +        The activation sequence for the private trigger will be executed as
+> +        normal.
+> +
+> +        The LED driver and its private trigger must be able to handle the
+> +        activation sequence even if the hardware is currently in hardware
+> +        control.
+> +
+> +        If error occurs in the activation sequence, the LED Trigger core reverts
+> +        the effective trigger to "none".
+> +
+> +- private trigger => "none"
+> +        This happens when the hardware autonomously deactivates hardware control
+> +        and when the private trigger is currently active. If "none" (i.e., no
+> +        trigger) is active when the method is called, this is essentially a
+> +        no-op.
+> +
+> +        The deactivation sequence for the private trigger will be executed as
+> +        normal, except that the current LED brightness is retained. The reason
+> +        for keeping the brightness unchanged is that some hardware may choose a
+> +        specific brightness instead of simply turning off the LED after
+> +        autonomously deactivating hardware control.
+> +
+> +        The LED driver and its private trigger must be able to handle the
+> +        deactivation sequence even if the hardware is not currently in hardware
+> +        control.
+> +
+> +If the current trigger is neither the private trigger nor "none", no transition
+> +will be made.
+> +
+>  Known Issues
+>  ============
+>  
 > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 39cc2f3ea63f..7e571bd1de5b 100644
+> index 7e571bd1de5b..3b438d8da5e0 100644
 > --- a/drivers/leds/led-class.c
 > +++ b/drivers/leds/led-class.c
-> @@ -96,8 +96,30 @@ static const struct bin_attribute *const led_trigger_bin_attrs[] = {
->  	&bin_attr_trigger,
->  	NULL,
->  };
-> +
-> +static DEVICE_ATTR_RO(trigger_may_offload);
-> +static struct attribute *led_trigger_attrs[] = {
-> +	&dev_attr_trigger_may_offload.attr,
-> +	NULL
-> +};
-> +
-> +static umode_t led_trigger_is_visible(struct kobject *kobj,
-
-Why doesn't all of this live in the triggers file as well?
-
-> +				      struct attribute *attr,
-> +				      int idx)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +
-> +	if (attr == &dev_attr_trigger_may_offload.attr)
-> +		return led_cdev->hw_control_trigger ? attr->mode : 0;
-> +
-> +	return attr->mode;
-> +}
-> +
->  static const struct attribute_group led_trigger_group = {
->  	.bin_attrs = led_trigger_bin_attrs,
-> +	.attrs = led_trigger_attrs,
-> +	.is_visible = led_trigger_is_visible,
->  };
+> @@ -611,6 +611,9 @@ int led_classdev_register_ext(struct device *parent,
+>  	led_trigger_set_default(led_cdev);
 >  #endif
 >  
+> +	if (led_cdev->flags & LED_TRIG_HW_CHANGED)
+> +		led_trigger_init_hw_changed(led_cdev);
+> +
+>  	mutex_unlock(&led_cdev->led_access);
+>  
+>  	dev_dbg(parent, "Registered led device: %s\n",
+> @@ -631,6 +634,9 @@ void led_classdev_unregister(struct led_classdev *led_cdev)
+>  	if (IS_ERR_OR_NULL(led_cdev->dev))
+>  		return;
+>  
+> +	if (led_cdev->flags & LED_TRIG_HW_CHANGED)
+> +		led_trigger_destroy_hw_changed(led_cdev);
+> +
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  	down_write(&led_cdev->trigger_lock);
+>  	if (led_cdev->trigger)
 > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> index 804a04b326c4..de17a8bbb4d4 100644
+> index cb49a02a8b3c..a9d992a88616 100644
 > --- a/drivers/leds/led-triggers.c
 > +++ b/drivers/leds/led-triggers.c
-> @@ -42,6 +42,10 @@ static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
->  	if (!led_cdev->trigger)
->  		return false;
+> @@ -7,7 +7,9 @@
+>   * Author: Richard Purdie <rpurdie@openedhand.com>
+>   */
 >  
-> +	if (led_cdev->trigger->offloaded)
-> +		return led_cdev->trigger->offloaded(led_cdev);
+> +#include <linux/bug.h>
+>  #include <linux/cleanup.h>
+> +#include <linux/compiler.h>
+>  #include <linux/export.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+> @@ -193,7 +195,8 @@ ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
+>  EXPORT_SYMBOL_GPL(led_trigger_read);
+>  
+>  /* Caller must ensure led_cdev->trigger_lock held */
+> -int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
+> +static int __led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig,
+> +			     bool hw_triggered)
+>  {
+>  	char *event = NULL;
+>  	char *envp[2];
+> @@ -224,7 +227,21>  		led_cdev->trigger_data = NULL;
+>  		led_cdev->activated = false;
+>  		led_cdev->flags &= ~LED_INIT_DEFAULT_TRIGGER;
+> -		led_set_brightness(led_cdev, LED_OFF);
 > +
-> +	/* Otherwise assume private triggers as always offloaded. */
+> +		/*
+> +		 * Hardware may have selected a new brightness level during its
+> +		 * hardware control transition, so only reset brightness if we
+> +		 * are switching to another trigger or if the switching is not
+> +		 * hardware triggered.
+> +		 *
+> +		 * Note that this does not apply to the error path, as running
+> +		 * into the error path implies a none => private trigger
+> +		 * transition. This hints that the LED driver and its private
+> +		 * trigger must have some fundamental bugs, so don't bother
 
-s/as/are/
+"don't bother" sounds abrasive.  Please reword.
 
->  	return led_cdev->trigger->trigger_type;
->  }
+> +		 * leaving the LED in an undefined state.
+> +		 */
+> +		if (trig || !hw_triggered)
+> +			led_set_brightness(led_cdev, LED_OFF);
+>  	}
+>  	if (trig) {
+>  		spin_lock(&trig->leddev_list_lock);
+> @@ -288,6 +305,11 @@ int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
 >  
-> @@ -341,6 +345,32 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
+>  	return ret;
 >  }
->  EXPORT_SYMBOL_GPL(led_trigger_set_default);
->  
-> +ssize_t trigger_may_offload_show(struct device *dev,
-> +				 struct device_attribute *attr, char *buf)
+> +
+> +int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger *trig)
 > +{
-> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-> +	struct led_trigger *trig;
-> +	bool hit, offloaded;
-> +	int len;
-> +
-> +	guard(mutex)(&led_cdev->led_access);
-> +	guard(rwsem_read)(&led_cdev->trigger_lock);
-> +
-> +	trig = led_cdev->trigger;
-> +
-> +	offloaded = __led_trigger_is_hw_controlled(led_cdev);
-> +	hit = offloaded || (trig && !strcmp(led_cdev->hw_control_trigger, trig->name));
-> +
-> +	/* [offloaded] <active_but_not_offloaded> inactive */
-
-Why do they have to live in different 'containers'?
-
-> +	len = sysfs_emit(buf, "%s%s%s\n",
-> +			 offloaded ? "[" : (hit ? "<" : ""),
-> +			 led_cdev->hw_control_trigger,
-> +			 offloaded ? "]" : (hit ? ">" : ""));
-> +
-> +	return len;
+> +	return __led_trigger_set(led_cdev, trig, false);
 > +}
-> +EXPORT_SYMBOL_GPL(trigger_may_offload_show);
-> +
->  /* LED Trigger Interface */
+>  EXPORT_SYMBOL_GPL(led_trigger_set);
 >  
->  int led_trigger_register(struct led_trigger *trig)
+>  void led_trigger_remove(struct led_classdev *led_cdev)
+> @@ -468,6 +490,88 @@ int devm_led_trigger_register(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(devm_led_trigger_register);
+>  
+> +#ifdef CONFIG_LEDS_TRIGGERS_HW_CHANGED
+> +
+> +static void led_trigger_do_hw_control_transition(struct led_classdev *led_cdev, bool activate,
+> +						 struct led_trigger *hc_trig)
+> +{
+> +	int err = 0;
+
+'ret' is used in this file.
+
+> +
+> +	if (!led_cdev->trigger) {
+> +		/* "none" => private trigger. */
+> +		if (activate)
+> +			err = __led_trigger_set(led_cdev, hc_trig, true);
+> +	} else if (led_cdev->trigger == hc_trig) {
+> +		/* private trigger => "none". */
+> +		if (!activate)
+> +			err = __led_trigger_set(led_cdev, NULL, true);
+> +	} else {
+> +		/* Other trigger is active. */
+> +		dev_dbg(led_cdev->dev,
+> +			"Ignoring hw control transition (%s %s) while %s is active",
+> +			activate ? "activate" : "deactivate", hc_trig->name,
+> +			led_cdev->trigger->name);
+> +
+> +		return;
+> +	}
+> +
+> +	if (err)
+> +		dev_warn(led_cdev->dev, "Failed to %s %s in hw control transition: %d",
+> +			 activate ? "activate" : "deactivate", hc_trig->name, err);
+
+How helpful are these debug messages now development is complete, really?
+
+> +}
+> +
+> +static void led_trigger_hw_control_changed_worker(struct work_struct *work)
+> +{
+> +	struct led_classdev *led_cdev =
+> +		container_of(work, struct led_classdev, triggers_hw_changed_work);
+> +	bool activate = READ_ONCE(led_cdev->triggers_hw_changed);
+> +
+> +	scoped_guard(rwsem_read, &triggers_list_lock) {
+> +		struct led_trigger *trig;
+> +
+> +		list_for_each_entry(trig, &trigger_list, next_trig) {
+> +			if (trig->trigger_type == led_cdev->trigger_type &&
+> +			    !strcmp(trig->name, led_cdev->hw_control_trigger)) {
+> +				guard(rwsem_write)(&led_cdev->trigger_lock);
+> +
+> +				led_trigger_do_hw_control_transition(led_cdev, activate, trig);
+> +				return;
+> +			}
+> +		}
+> +	}
+> +
+> +	dev_err(led_cdev->dev,
+> +		"%s() is called, but the private trigger (%s) is not properly registered\n",
+> +		__func__, led_cdev->hw_control_trigger);
+
+Please make all user-facing messages user-friendly.
+
+No internal function names please.
+
+Also, since this is effectively an issue, it should be dev_warn().
+
+> +}
+> +
+> +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev, bool activate)
+> +{
+> +	/* Restricted to private triggers. */
+> +	if (WARN_ON(!(led_cdev->flags & LED_TRIG_HW_CHANGED) ||
+> +		    !led_cdev->hw_control_trigger || !led_cdev->trigger_type))
+> +		return;
+> +
+> +	WRITE_ONCE(led_cdev->triggers_hw_changed, activate);
+> +
+> +	schedule_work(&led_cdev->triggers_hw_changed_work);
+> +}
+> +EXPORT_SYMBOL_GPL(led_trigger_notify_hw_control_changed);
+> +
+> +void led_trigger_init_hw_changed(struct led_classdev *led_cdev)
+> +{
+> +	INIT_WORK(&led_cdev->triggers_hw_changed_work, led_trigger_hw_control_changed_worker);
+> +}
+> +EXPORT_SYMBOL_GPL(led_trigger_init_hw_changed);
+
+Where is this exported to?
+
+> +
+> +void led_trigger_destroy_hw_changed(struct led_classdev *led_cdev)
+> +{
+> +	disable_work_sync(&led_cdev->triggers_hw_changed_work);
+> +}
+> +EXPORT_SYMBOL_GPL(led_trigger_destroy_hw_changed);
+
+This to?
+
+> +
+> +#endif /* CONFIG_LEDS_TRIGGERS_HW_CHANGED */
+> +
+>  /* Simple LED Trigger Interface */
+>  
+>  void led_trigger_event(struct led_trigger *trig,
 > diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index bee46651e068..b08a289397e4 100644
+> index b08a289397e4..bdac2336012e 100644
 > --- a/drivers/leds/leds.h
 > +++ b/drivers/leds/leds.h
-> @@ -27,6 +27,8 @@ ssize_t led_trigger_read(struct file *filp, struct kobject *kobj,
->  ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
->  			const struct bin_attribute *bin_attr, char *buf,
->  			loff_t pos, size_t count);
-> +ssize_t trigger_may_offload_show(struct device *dev,
-> +				 struct device_attribute *attr, char *buf);
->  
+> @@ -33,4 +33,12 @@ ssize_t trigger_may_offload_show(struct device *dev,
 >  extern struct rw_semaphore leds_list_lock;
 >  extern struct list_head leds_list;
+>  
+> +#ifdef CONFIG_LEDS_TRIGGERS_HW_CHANGED
+> +void led_trigger_init_hw_changed(struct led_classdev *led_cdev);
+> +void led_trigger_destroy_hw_changed(struct led_classdev *led_cdev);
+> +#else /* !CONFIG_LEDS_TRIGGERS_HW_CHANGED */
+> +static inline void led_trigger_init_hw_changed(struct led_classdev *led_cdev) { }
+> +static inline void led_trigger_destroy_hw_changed(struct led_classdev *led_cdev) { }
+> +#endif /* CONFIG_LEDS_TRIGGERS_HW_CHANGED */
+> +
+>  #endif	/* __LEDS_H_INCLUDED */
+> diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+> index c11282a74b5a..a11d04ce4ab2 100644
+> --- a/drivers/leds/trigger/Kconfig
+> +++ b/drivers/leds/trigger/Kconfig
+> @@ -9,6 +9,16 @@ menuconfig LEDS_TRIGGERS
+>  
+>  if LEDS_TRIGGERS
+>  
+> +config LEDS_TRIGGERS_HW_CHANGED
+> +	bool "LED hardware-initiated trigger transition support"
+> +	default LEDS_BRIGHTNESS_HW_CHANGED
+> +	help
+> +	  This option enables support for hardware initiated hardware control
+> +	  transitions, where the LED hardware autonomously switches between
+> +	  "none" (i.e., no trigger) and its private trigger.
+> +
+> +	  See Documentation/leds/leds-class.rst for details.
+> +
+>  config LEDS_TRIGGER_TIMER
+>  	tristate "LED Timer Trigger"
+>  	help
 > diff --git a/include/linux/leds.h b/include/linux/leds.h
-> index d778709f5b1b..bee2b4309a09 100644
+> index bee2b4309a09..93b3fd7e5636 100644
 > --- a/include/linux/leds.h
 > +++ b/include/linux/leds.h
-> @@ -485,6 +485,7 @@ struct led_trigger {
->  	const char	 *name;
->  	int		(*activate)(struct led_classdev *led_cdev);
->  	void		(*deactivate)(struct led_classdev *led_cdev);
-> +	bool		(*offloaded)(struct led_classdev *led_cdev);
+> @@ -109,6 +109,7 @@ struct led_classdev {
+>  #define LED_INIT_DEFAULT_TRIGGER BIT(23)
+>  #define LED_REJECT_NAME_CONFLICT BIT(24)
+>  #define LED_MULTI_COLOR		BIT(25)
+> +#define LED_TRIG_HW_CHANGED	BIT(26)
 >  
->  	/* Brightness set by led_trigger_event */
->  	enum led_brightness brightness;
+>  	/* set_brightness_work / blink_timer flags, atomic, private. */
+>  	unsigned long		work_flags;
+> @@ -239,6 +240,11 @@ struct led_classdev {
+>  	struct kernfs_node	*brightness_hw_changed_kn;
+>  #endif
+>  
+> +#ifdef CONFIG_LEDS_TRIGGERS_HW_CHANGED
+> +	bool			triggers_hw_changed;
+> +	struct work_struct	triggers_hw_changed_work;
+> +#endif
+> +
+>  	/* Ensures consistent access to the LED class device */
+>  	struct mutex		led_access;
+>  };
+> @@ -609,6 +615,13 @@ led_trigger_get_brightness(const struct led_trigger *trigger)
+>  
+>  #endif /* CONFIG_LEDS_TRIGGERS */
+>  
+> +#ifdef CONFIG_LEDS_TRIGGERS_HW_CHANGED
+> +void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev, bool activate);
+> +#else
+> +static inline void led_trigger_notify_hw_control_changed(struct led_classdev *led_cdev,
+> +							 bool activate) {}
+> +#endif
+> +
+>  /* Trigger specific enum */
+>  enum led_trigger_netdev_modes {
+>  	TRIGGER_NETDEV_LINK = 0,
 > 
 > -- 
 > 2.55.0
