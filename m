@@ -1,152 +1,100 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E195A9841
-	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB6C49BD6C
+	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789069533; cv=none; b=D2KbYX6//Tk5LWPerxBo27qkt2h327wNO0fNPdzQ9/lvVGh3klrCFIVZVzEYI5BqmIIoZw/Wvuk7k8Fp7LzdnxshB5bgUZnkWnsYxLLVQto3xapnUNdyeQTemEwHVvk1pJbbW58ADP1mh8NUikPIcWgXQnTcRwRxRCWlajO84Eo=
+	t=1789069963; cv=none; b=Qa5kTwex7HSpbGvdavhCFYnVyLoZmvdbJeaZ5H9RwtYclN2RaBKELoaDKw4EGF8a0u8w7tjAeaxp++we3qw9/cdIZY28sSPywWT+yTMNtBJ5WqNtui+quzqyDIprdvaWAA87iXpPJfzXlxa9i1e6ooO4VwVz9FlzKPWXsGBkvn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789069533; c=relaxed/simple;
-	bh=QhX+SC0aYPRnajzGgZCAyqZcT5ZumThFwIdRLkM4lt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RENCVe8+NiBPYqTP/U6xPFJKNwm4mp6ODLUxgiGSbkwtACg8PWO1czKFTcqX0Up3t1ulgWWCP2u/E9jdMtC3qeyWyEFjoFdiL96BaFp1z3CfQZaNoRC4ouE0zMb5Jdx2yVaeni3ypVEQ8sPyYcQPIz/KzdS4+LOxkohGCubpXYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQ0uh9fu; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789069963; c=relaxed/simple;
+	bh=XOQkucBW0mYR3Ihv7VHBp9O1LprfoS7tYNiXjkFghu0=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=dvPCbM3hq2xjUgO9ps+icgLM/WH3KcK9oNEouCorPex+IMpLna9R9kjHIsdpUODxe1RaxUK/0C0jy6mq7Jp2gvgOi7Ta1U7r3DGgtKFCg4pkZFlN5D0z8J25zyDquH4g7M+YgK8k38PVeR3vj3Iw0en1nJ/wDhai0vFKRBu04bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbtChzSQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQ0uh9fu"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-910707254efso1329816d6.3
-        for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 12:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789069530; x=1789674330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=A/3ZGdaWGihAcbh8PThygY3ZNQwZqvA2jilmZZCQz4o=;
-        b=eQ0uh9fuf2gq46Jh/5Ao8dtwSXCVkVWM/yBJdwzLyvp2bTmGEEvIjYh3Pn5Qh40nYl
-         hZ9jHtsgpNA0gZyYeQMUGfdWINb88JnIpTanKK6hNdXKcIdlv46qtNrLU5J+xD4t0vCz
-         MqlDPXr49SttkxfiDsUsQ8uFLfWuliDO5PUfgLDN6TjlKgkK2TWTnVZZXHdQgG2g34ud
-         KAI6m/TKMgXrlcNKkZqWFzJK02IqDE39VqENuAM48stJED54wVgZ5M9pvZJ84MDNGhQf
-         rLsKbbtFOebezTcmITgtXF4RG6npZcQKZcpg85wfhpnXY5mmwfjf7nUtrvPTKE6rhaYO
-         LPwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789069530; x=1789674330;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=A/3ZGdaWGihAcbh8PThygY3ZNQwZqvA2jilmZZCQz4o=;
-        b=GVs/Mz/GdG09JJmlq+Z080II8LaTOsCSHIJZSXKbpBmMOzbkVIcMjS1nQGCOP8kWkT
-         JKX/ebjasbX/PJNakcqRFZx/0GgLPj/FpiFLqILpZKViSveFLv+M68/36E1QZ7diXMMP
-         r6GyB4oQR99hYZIcmsdT1FJn8oqV9te2GHNmAAZBoaRLiErSIvN9ZZ29xJyUjc++oQ24
-         QTneiLRMVLC6/8je9zttEDO1ro04pNbQIKiYrQsWYTkN7r87aqEu8BR0n4RNTqS3rV94
-         v4/G9VwxdLiqhKoLgGk9JnZAKFW+VVcohCQWoSwL4LjW6cUIJtZOksJKnILSeB9nSP1F
-         8M7Q==
-X-Gm-Message-State: AFuF++nDLAOCMtBKkCzQIiBPdqTAR+9KWw4IRXWuzRiH0fQLJDITZ7Z2
-	F1Cgueb7wVIRJV4kP+eAlrBxEkvisbngg7dQ5wuAFE2hYcgSUDEJSyLaDrMO
-X-Gm-Gg: AYBFou0qJnWsJfl0fWnvZgZNaZ7W9q8Qa+KRm+gej2c4uNxL25VZOTvJMMVCGpj1d2O
-	louhrYQMLAwDut90UDrbjoFLnLasqNjBxE5EkIoYe0eTQwWoemDjOopnO24A9jksGMMs6tWbWYa
-	EiqpCO1tSm/Q/Ig9+H6k9Sfx5rdWzbedkPlvOHgraC+jtK/1lnhzpwnHz9QPVvfOrTpnD1cpflS
-	lBhoPhovbSi1kZ2VS81U6fmf9qNsbQ89I5Rby0lLq0lXzrvqkoj3tbPJxbwge0x5mPhQTo+F5ir
-	0J6+rTJQIXKVDIiI7I/gltm2reU8NwvTg2JqreCpldZ/BBTRzYh1UMJuhCrG/eNLYjIKA8WsSFH
-	Ki86fauFHCi1Kq2cd+lYPuAeJzRNPTKqh8Q50okYWxgHaMv+MzujDYZWlaxXXvSKJYDsSgf30g1
-	S4DxfN9cd7UyDgGNCYZjv0D0Kop3zULKzsG5azlPsfpzCFdPuHaSVTZ7PWYHDB5x8SCNoWB9Q6Y
-	o3e/Swq3SIsGlJdyQzvCSdoiZFucEr4CiXsDmoisty8ktzeJ5Qx1PeWFpMScfawwsB/z4MpFY+T
-	lY2u2LtPnwsSFc/CQxSMmuXKCXWYNS/9VQ==
-X-Received: by 2002:a05:6214:3218:b0:910:42f7:a111 with SMTP id 6a1803df08f44-9121208900emr5796326d6.15.1789069530089;
-        Thu, 10 Sep 2026 12:45:30 -0700 (PDT)
-Received: from localhost.localdomain ([104.39.73.78])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f4d89f9sm3530526d6.47.2026.09.10.12.45.28
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 10 Sep 2026 12:45:29 -0700 (PDT)
-From: Myeonghun Pak <mhun512@gmail.com>
-To: lee@kernel.org,
-	pavel@kernel.org
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Myeonghun Pak <mhun512@gmail.com>,
-	Ijae Kim <ae878000@gmail.com>
-Subject: [PATCH] leds: ktd2692: Pass context to regulator cleanup
-Date: Thu, 10 Sep 2026 15:45:25 -0400
-Message-ID: <20260910194525.99654-1-mhun512@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbtChzSQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E48B1F000FF;
+	Thu, 10 Sep 2026 19:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789069960;
+	bh=TROqhmv89l46AvDG+MexkJ6toJOG8fE5orjTUuvcHtk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=gbtChzSQ6U3qoFUjXIAFDoslFZtnmB4GtxTky0h3DkhSqwR43LCTNyOdycK8xaF1a
+	 lKhspJ/zpBSFrBszxz2trPHR1wGMCIXRiELHPUVVVeCHUXfBsdozZ2WrG0h82TxR6/
+	 GxRkTBcdYJQMuBvlsT+iwLO1y7Ox/zeB64B+ycc+PxjIHSYD4l5tEH4wC7L3LP26li
+	 wimriThjufSF6BR7OBtDECu0c1XI4Eh/dg7aOPCqgIzdJBWOWoaIgY4ANKRjf3sR7U
+	 AVygR8F6fjFcm7dQNTvRVNWaKFoKqc9tC8N83q2VYd/pZeo8COQAY15K8cvb74g58C
+	 NwTbr2ej7qTwQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] leds: lp8860: fix device_node leak in lp8860_probe()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Miles Krause" <mileskrause5200@gmail.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260910-leds-lp8860-of-node-leak-v1-1-d333cff4345b@gmail.com>
+References: <20260910-leds-lp8860-of-node-leak-v1-1-d333cff4345b@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 10 Sep 2026 19:52:39 +0000
+Message-Id: <20260910195240.0E48B1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-regulator_disable_action() retrieves the driver context from device
-driver data.  However, ktd2692_parse_dt() registers the action before
-ktd2692_probe() stores the context with platform_set_drvdata().
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
 
-If devm_add_action_or_reset() cannot allocate the action, it invokes the
-callback immediately.  A later probe failure also invokes it during
-managed-resource unwinding.  Both paths dereference a NULL context.
+Pre-existing issues:
+- [High] The enable_gpio is initialized to logical low and never asserted, =
+leaving the device permanently disabled.
+--
 
-Pass the already allocated context directly to the action and retain the
-device pointer in it for error reporting.  The context is allocated before
-the action is registered, so reverse-order devres unwinding keeps it alive
-through the callback.
+commit fc2187284635f3278f3bb6af71e6925402976134
+Author: Miles Krause <mileskrause5200@gmail.com>
 
-This issue was identified during our ongoing static-analysis research while
-reviewing kernel code.
+leds: lp8860: fix device_node leak in lp8860_probe()
 
-Fixes: ee78b9360e14 ("leds: ktd2692: Fix an error handling path")
-Cc: stable@vger.kernel.org
-Co-developed-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Ijae Kim <ae878000@gmail.com>
-Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
----
- drivers/leds/flash/leds-ktd2692.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This commit fixes a device_node leak in lp8860_probe() by using the
+__free(device_node) cleanup helper. It drops the manual management of
+the reference returned by of_get_next_available_child().
 
-diff --git a/drivers/leds/flash/leds-ktd2692.c b/drivers/leds/flash/leds-ktd2692.c
-index 22fbfccd4873549baf390127d2f7e9aeb9c45465..43d4d55503ab50c6e31b8e83eed430cc33e014e3 100644
---- a/drivers/leds/flash/leds-ktd2692.c
-+++ b/drivers/leds/flash/leds-ktd2692.c
-@@ -69,6 +69,8 @@ static const struct expresswire_timing ktd2692_timing = {
- };
- 
- struct ktd2692_context {
-+	struct device *dev;
-+
- 	/* Common ExpressWire properties (ctrl GPIO and timing) */
- 	struct expresswire_common_props props;
- 
-@@ -196,13 +198,12 @@ static void ktd2692_setup(struct ktd2692_context *led)
- 
- static void regulator_disable_action(void *_data)
- {
--	struct device *dev = _data;
--	struct ktd2692_context *led = dev_get_drvdata(dev);
-+	struct ktd2692_context *led = _data;
- 	int ret;
- 
- 	ret = regulator_disable(led->regulator);
- 	if (ret)
--		dev_err(dev, "Failed to disable supply: %d\n", ret);
-+		dev_err(led->dev, "Failed to disable supply: %d\n", ret);
- }
- 
- static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
-@@ -233,7 +234,7 @@ static int ktd2692_parse_dt(struct ktd2692_context *led, struct device *dev,
- 			dev_err(dev, "Failed to enable supply: %d\n", ret);
- 		} else {
- 			ret = devm_add_action_or_reset(dev,
--						regulator_disable_action, dev);
-+						regulator_disable_action, led);
- 			if (ret)
- 				return ret;
- 		}
-@@ -290,6 +291,7 @@ static int ktd2692_probe(struct platform_device *pdev)
- 	if (!led)
- 		return -ENOMEM;
- 
-+	led->dev = &pdev->dev;
- 	fled_cdev = &led->fled_cdev;
- 	led_cdev = &fled_cdev->led_cdev;
- 	led->props.timing = ktd2692_timing;
--- 
-2.50.1
+> diff --git a/drivers/leds/leds-lp8860.c b/drivers/leds/leds-lp8860.c
+> index 69f064781f699..f6e4227de903a 100644
+> --- a/drivers/leds/leds-lp8860.c
+> +++ b/drivers/leds/leds-lp8860.c
+[ ... ]
+> @@ -282,7 +282,8 @@ static int lp8860_probe(struct i2c_client *client)
+>  	if (!led)
+>  		return -ENOMEM;
+> =20
+> -	child_node =3D of_get_next_available_child(np, NULL);
+> +	struct device_node *child_node __free(device_node) =3D
+> +		of_get_next_available_child(np, NULL);
+>  	if (!child_node)
+>  		return -EINVAL;
+> =20
+
+[Severity: High]
+This isn't a bug introduced by this patch, but this is a pre-existing=20
+issue in lp8860_probe(). Immediately following this lookup:
+
+drivers/leds/leds-lp8860.c:lp8860_probe() {
+    ...
+    enable_gpio =3D devm_gpiod_get_optional(&client->dev, "enable", GPIOD_O=
+UT_LOW);
+    ...
+}
+
+Does initializing the enable GPIO to logical low (GPIOD_OUT_LOW) leave the=
+=20
+device permanently disabled? The driver never seems to assert the GPIO to=20
+high to enable the chip.=20
+
+Other sibling drivers appear to correctly initialize their enable GPIO with
+GPIOD_OUT_HIGH.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260910-leds-lp886=
+0-of-node-leak-v1-1-d333cff4345b@gmail.com?part=3D1
