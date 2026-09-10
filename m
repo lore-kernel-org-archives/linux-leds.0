@@ -1,161 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EC24DA546
-	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 19:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBEC3CBE8B
+	for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 20:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789070174; cv=none; b=QIZbrt6Y7cg04bCnd5obLt2okZ9wGJTGCEemi6/iq1J7ziDvrSIn4kGJr+wdLKTVMpvjzBNhLFHknfnZ2rG1NF2arTDGzecLDxvUbSqyS6RM6sAG34YYxbwyo/I6RDCwk/fg1aS1LCwu2RrYQfMTLWGe5Sr+FzR3+WkarIaPgyA=
+	t=1789070679; cv=none; b=G0+wFXMqLeu1hShKq2NWUu/+07BLSA/QyOK9AxmCTJSkgGUFIWHlKGODtEZ3WK61b7iHwan67KT2uz97m+jH+1SLme+ecu0X6FUXVyp2o/y+zWjCnjkpnMJ7sCvgJ6PGnSLMvWZkCQBIaS7HNgpARRKoWtDnPjbfGRlnn6LVkyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789070174; c=relaxed/simple;
-	bh=wdC7y2X0qaTfKnM8bgFIa2jxpOS382CkzwXHS8Z0pn4=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=gxVHEzLjnjgAI9aAPIL3MM+uYaKdP+GBlpWwZqCDnmqJG3dCdvll+0pJvEZeWCiMe6+ULIiwhZZT10pqEfSvVXdcwSJEs5U5lqax/njkpd8EDh6DqMK+j9+tQk9btEuPFQt7Fzme/SZzZsiRP8B+9ySpuk8eV4OZL/zlUNuzvio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KY0OrFLa; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789070679; c=relaxed/simple;
+	bh=E/u4JbeHNzAyqPkp0nbuRzJRPv2PPFHaZAvR6l/kWps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhMoZqxp4fSsj12vGOLCfrZHwJgVnyZkHDZUD21PV2Ne44DUgEEBPuKn1Dj5A89KrFlKmbK79zZydpZw7BDfnhOoYLW8kkwzwOQY8DdUhNvJp26PcD6noLHPcDuqnfw/+XItnbZrti8iynJDj7W5wR8VQIgQO5TcDXk9c5iBwf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwF2gGz6; arc=none smtp.client-ip=74.125.228.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KY0OrFLa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02C511F000FF;
-	Thu, 10 Sep 2026 19:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789070173;
-	bh=TZ2r3qi1ExYnPrV3zHvBvtQgqkO223wlT399bME+VoI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KY0OrFLa2o5nX/6gtMddNhb9MfHqee5mgsL4W8Q6ON+k3elS24J7bO7OWzxmB1ZUd
-	 YoRoqvCjqev4GY17tdQ1l5KRNon/pK7dHWvB8GYWd53l93WkvUKnG1hEvM81P6rCk+
-	 ueQx1DhcUmGYXa5CMM8vxduT6XMPi4Jv19xWUk0hes56RrkvI1Sgv3hcAFOaz0bj+Y
-	 UAhNxJ/ffbGkBjB8c4eyLDLztkp2CmJW3Goxu+VfS/E1bcw0HbK/cHRkr7+cDnaDxF
-	 2b3ERuR/FB3ArpaTaUfEfqA83MTQ3AaPU/CTZbuf2Ep7xvp7Dd58rEuLNvSRKoNJj2
-	 uhQQ/q4UJLjYw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: ktd2692: Pass context to regulator cleanup
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Myeonghun Pak" <mhun512@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260910194525.99654-1-mhun512@gmail.com>
-References: <20260910194525.99654-1-mhun512@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Sep 2026 19:56:12 +0000
-Message-Id: <20260910195613.02C511F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwF2gGz6"
+Received: by mail-pz2-f12.google.com with SMTP id 41be03b00d2f7-cc1cebad4aeso221923a12.2
+        for <linux-leds@vger.kernel.org>; Thu, 10 Sep 2026 13:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789070677; x=1789675477; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=glhIiPms7olMgwg+mn5dw0hW61m6sgEWq22CFgDOSsk=;
+        b=BwF2gGz6vc3TgDUAjUhap/8LsAe6ipxAXeVIC6sjNwjF0L6Bvyy+KyoVCoSXugncY/
+         VOf9qZEX1L+9YIe9j4q8+kMpGhpTwZKOIi11vhG30Qt4NnhlBwId65QZMr8qjlMZW9Dh
+         quZpalr3AQw/4MFy83XkWV8K+evQQRwyofbQrG3dN2G5dOu7RmaOTapllvDIXfLIv4Do
+         4am42PtlLgBQ506u+tzWhJAewY0YKqkPzYGXbI0csh+0/vXphLRnioazmjKHOrqu0WHm
+         HofAVHC20lo7GIIiAXc3cdTgRgcrUmSbUc678CNH8H0u5a/9eUbtyNcO9Gd5WrDu8AO0
+         dADA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789070677; x=1789675477;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=glhIiPms7olMgwg+mn5dw0hW61m6sgEWq22CFgDOSsk=;
+        b=pGVQ9+iWtl4SaW1lsNmR+0zMvLwY7NTHBL6CroW/YLZNMF7Qxye+7qIeYrhck3ub2l
+         GhOiJUDnFNL0bZvgqpwvGiFHIQ/Uodz5K35uVi55u+KcV2XBlIQf4KeJ1gzDM2RrSU43
+         vrxlTXMuZRuHah0uMp1Q9WP8JWcWb9yaHx4frBnIL2nICW7yhE4M71sLI3OYvRWhEImK
+         q3kdS5fSaE/eVs885sOdDvBeeHADCRIDAil5/rqGPLsEoXjel8WpyD+iZ+qziDewmmrS
+         uovy+TQ1WgDphcCBEJbxSxPTHq7OR6yzF8JTgVrPDGdE0VsCZ4xoBQq3HgM0F+c2WDRs
+         GpIg==
+X-Forwarded-Encrypted: i=1; AKwUvBzT8g6AnDbjQkIbjj2YaqtSKBlh36pt3k5VOYdEdopgX0NYoRWXoU/cYwzJ2Up7eZh5us9FpXoes2LF@vger.kernel.org
+X-Gm-Message-State: AFuF++m7T/Ucen0bmI/ujARP8QLI8KQPRQFVeND11h9BuOqteCPfrTg5
+	Bz1t9wiUTSbbUSk7hFZvc74mYz2zbUv9rS0mu0nQtfeUut5m1dOmafkTBq4uoQ==
+X-Gm-Gg: AYBFou3S1rZBmWg+oxPxPkofF2EYarnK9jGsBTUlEVxUg2Q9M6UAjRHcXRjrt5Nxbze
+	+N2F1QD11D2UiY1mEuIO6klHVjPoWvD7JAQa0tmOk9YqAXFcgpJ+rCLq5g25yCj2GhralVE2j4t
+	x7p+/0QtQWv6QmnPWOz9qg34Hn94m9Jc+I4P3wf/WMMHQK1BVM6PzNruDZ5BmvwCg3ywFYDgIrr
+	8njs1MC86398l+a1X4Vv7x4Wgi7Nan1iCl2SQ330fqGr6iGJPsKxNjGdRxZ5Yyrf+XPTM3cGYo+
+	VCntSeqRO2S3VDTVMI50XhsZKODY+bW94m5Em+vQJSjS8OJo6NGvWyupHD2T1wAtX5lNYZbcaQp
+	tejEajAoeXKp4UDgBwKAVb4uJtFWfp1V1ytfO0wCWNvcAIiRyhy/JltECuSePvj9Syr18R7gcbs
+	Gpo38PMD6EQdb8FZSP0dBQzzR11rQyIqxoioGbhHOIo1a6gkpL6DQeVD6IySk21RC3BHwaJ/zPD
+	joNs0uYsZhopAo0Q+hoFCTBvz/peDfj3onEfZ7r2Nq85o1R8TzSatgdcMiQUz+E+w==
+X-Received: by 2002:a05:6a21:3292:b0:3d3:adad:f173 with SMTP id adf61e73a8af0-3daed3b7f4cmr782259637.21.1789070676939;
+        Thu, 10 Sep 2026 13:04:36 -0700 (PDT)
+Received: from [192.168.0.158] (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14365b5e1edsm929478c88.6.2026.09.10.13.04.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2026 13:04:36 -0700 (PDT)
+Message-ID: <76dc89d9-86ab-46f3-b26e-f01b550000f1@gmail.com>
+Date: Thu, 10 Sep 2026 13:04:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/15] HID: hid-oxp: validate input report lengths before
+ decoding
+To: Andrei Aldea <andrei1998@gmail.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ linux-leds@vger.kernel.org
+References: <20260910032115.28669-1-andrei1998@gmail.com>
+ <20260910032115.28669-3-andrei1998@gmail.com>
+Content-Language: en-US
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+In-Reply-To: <20260910032115.28669-3-andrei1998@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
 
-Pre-existing issues:
-- [High] Silent suppression of -EPROBE_DEFER from devm_regulator_get() and =
-missing return on regulator_enable() failure.
-- [High] Race condition exposing the LED device to userspace before hardwar=
-e setup is complete.
-- [High] Kernel panic due to division by zero if `flash-max-timeout-us` is =
-configured too small.
---
+On 9/9/26 20:21, Andrei Aldea wrote:
+> Check the short Gen2 status header before reading its command, and require
+> a complete RGB status report before reading either generation's fields.
+> Use the supplied input length for the debug dump as well, so a short
+> report cannot cause an out-of-bounds read while logging.
+>
+> Fixes: 84910c459d65 ("HID: hid-oxp: Add OneXPlayer configuration driver")
+> Assisted-by: LLM
+> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> Signed-off-by: Andrei Aldea <andrei1998@gmail.com>
+> ---
+>   drivers/hid/hid-oxp.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/hid/hid-oxp.c b/drivers/hid/hid-oxp.c
+> index 3f2be80..0c895bd 100644
+> --- a/drivers/hid/hid-oxp.c
+> +++ b/drivers/hid/hid-oxp.c
+> @@ -23,6 +23,7 @@
+>   #include "hid-ids.h"
+>   
+>   #define OXP_PACKET_SIZE 64
+> +#define OXP_STATUS_HEADER_SIZE 6
+>   
+>   #define GEN1_MESSAGE_ID	0xff
+>   #define GEN2_MESSAGE_ID	0x3f
+> @@ -318,6 +319,9 @@ static int oxp_hid_raw_event_gen_1(struct hid_device *hdev,
+>   	struct led_classdev_mc *led_mc = drvdata.led_mc;
+>   	struct oxp_gen_1_rgb_report *rgb_rep;
+>   
+> +	if (size < sizeof(*rgb_rep))
+> +		return 0;
+> +
+>   	if (data[1] != OXP_FID_GEN1_RGB_REPLY)
+>   		return 0;
+>   
+> @@ -391,6 +395,9 @@ static int oxp_hid_raw_event_gen_2(struct hid_device *hdev,
+>   	struct led_classdev_mc *led_mc = drvdata.led_mc;
+>   	struct oxp_gen_2_rgb_report *rgb_rep;
+>   
+> +	if (size < OXP_STATUS_HEADER_SIZE)
+> +		return 0;
+> +
+>   	if (data[0] != OXP_FID_GEN2_STATUS_EVENT)
+>   		return 0;
+>   
+> @@ -404,6 +411,8 @@ static int oxp_hid_raw_event_gen_2(struct hid_device *hdev,
+>   
+>   	if (data[3] != OXP_GET_PROPERTY)
+>   		return 0;
+> +	if (size < sizeof(*rgb_rep))
+> +		return 0;
+>   
+>   	rgb_rep = (struct oxp_gen_2_rgb_report *)data;
+>   	/* Ensure we save monocolor as the list value */
+> @@ -435,7 +444,7 @@ static int oxp_hid_raw_event(struct hid_device *hdev, struct hid_report *report,
+>   {
+>   	u16 up = get_usage_page(hdev);
+>   
+> -	dev_dbg(&hdev->dev, "raw event data: [%*ph]\n", OXP_PACKET_SIZE, data);
+> +	dev_dbg(&hdev->dev, "raw event data: [%*ph]\n", size, data);
+>   
+>   	switch (up) {
+>   	case GEN1_USAGE_PAGE:
 
-commit 6025dd2c27de45e105ee950ad7b4f5c0824e9c17
-Author: Myeonghun Pak <mhun512@gmail.com>
 
-leds: ktd2692: Pass context to regulator cleanup
+Tested-by: Derek J. Clark <derekjohn.clark@gmail.com>
+Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
 
-This commit fixes a NULL pointer dereference in the regulator disable actio=
-n.
-It passes the allocated driver context directly to devm_add_action_or_reset=
-()
-instead of relying on platform_get_drvdata() which is uninitialized at that
-point.
-
-> diff --git a/drivers/leds/flash/leds-ktd2692.c b/drivers/leds/flash/leds-=
-ktd2692.c
-> index 22fbfccd48735..43d4d55503ab5 100644
-> --- a/drivers/leds/flash/leds-ktd2692.c
-> +++ b/drivers/leds/flash/leds-ktd2692.c
-[ ... ]
-> @@ -233,7 +234,7 @@ static int ktd2692_parse_dt(struct ktd2692_context *l=
-ed, struct device *dev,
->  			dev_err(dev, "Failed to enable supply: %d\n", ret);
->  		} else {
->  			ret =3D devm_add_action_or_reset(dev,
-> -						regulator_disable_action, dev);
-> +						regulator_disable_action, led);
->  			if (ret)
->  				return ret;
->  		}
-
-[Severity: High]
-This isn't a bug introduced by this patch, but does ktd2692_parse_dt()
-silently suppress probe deferral and missing regulator errors?
-
-If devm_regulator_get() returns -EPROBE_DEFER, the error is swallowed:
-
-	led->regulator =3D devm_regulator_get(dev, "vin");
-	if (IS_ERR(led->regulator))
-		led->regulator =3D NULL;
-
-Additionally, if regulator_enable() fails, it prints an error but continues
-probing without power instead of returning the error code:
-
-	if (led->regulator) {
-		ret =3D regulator_enable(led->regulator);
-		if (ret) {
-			dev_err(dev, "Failed to enable supply: %d\n", ret);
-		} else {
-
-Should the driver properly propagate -EPROBE_DEFER and return the failure
-from regulator_enable()?
-
-[ ... ]
-> @@ -290,6 +291,7 @@ static int ktd2692_probe(struct platform_device *pdev)
->  	if (!led)
->  		return -ENOMEM;
-> =20
-> +	led->dev =3D &pdev->dev;
->  	fled_cdev =3D &led->fled_cdev;
->  	led_cdev =3D &fled_cdev->led_cdev;
->  	led->props.timing =3D ktd2692_timing;
-
-[Severity: High]
-This is a pre-existing issue, but does ktd2692_probe() expose the LED device
-to userspace before hardware setup is complete?
-
-led_classdev_flash_register() exposes the device to userspace sysfs.
-ktd2692_setup() is called afterward:
-
-	ret =3D led_classdev_flash_register(&pdev->dev, fled_cdev);
-	if (ret) {
-		dev_err(&pdev->dev, "can't register LED %s\n", led_cdev->name);
-		mutex_destroy(&led->lock);
-		return ret;
-	}
-
-	ktd2692_setup(led);
-
-If userspace writes to sysfs (e.g., brightness) in the race window, it could
-trigger ktd2692_led_brightness_set() before or during ktd2692_setup().
-
-Could this lead to concurrent access to uninitialized hardware?
-
-[Severity: High]
-This is a pre-existing issue, but can the driver trigger a kernel panic due
-to a division by zero if flash-max-timeout-us is configured too small?
-
-If flash-max-timeout-us in the Device Tree is less than 7, setting->step
-evaluates to 0 in ktd2692_init_flash_timeout():
-
-	setting->step =3D cfg->flash_max_timeout
-			/ (KTD2692_FLASH_MODE_TIMEOUT_LEVELS - 1);
-
-Later, when userspace triggers a flash strobe via sysfs,
-ktd2692_led_flash_strobe_set() executes GET_TIMEOUT_OFFSET, which divides by
-step (which is 0):
-
-	flash_tm_reg =3D GET_TIMEOUT_OFFSET(timeout->val, timeout->step);
-
-Could this cause a division by zero? Should the driver validate the minimum
-value of flash-max-timeout-us during initialization?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260910194525.9965=
-4-1-mhun512@gmail.com?part=3D1
