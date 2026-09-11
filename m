@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C8E3EC81A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876A846984B;
 	Fri, 11 Sep 2026 08:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789116675; cv=none; b=YHdonp8MjEfjWLpQQthCt5IL8rI8E+SxUhpGOzgDD7DUwMuAdiVikvBXR/eWqc4m7R7BarKyAphhDFHmtmpQ1POGOZIAMeqVi9F1hj3iT6AHQoa0E0fr4yTKNo7j2hcD9k0ANHtTJRF9f1jvey4Pwaz5I11iTOmP1UDkw0x5owk=
+	t=1789116675; cv=none; b=kS6sEv8tcH+PD0Ltku8Lf2wnzLd94BEOp1hx4ZKZP898D+oH98Q3KSxJdHLuGYbQ4K1Ej/sb0PpdYJRuwvs/zyKOqwBj+1W6wDJLIijEoecNMQ5bmLXaRoDMpJsIMfA06btiKGFc4MZ9n55FAw/CHODmsP2TF1gZLBrHDly5NxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789116675; c=relaxed/simple;
-	bh=6Om9mmFoyilZ7jFsN4qGp2OOoGqOwvUDJXp2zNRLp+k=;
+	bh=DY3nAZEw7IwIcK7ATvLcXz2X/NgGx+ZUSaAnsbH9oD0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CrdjMdR+UAJ6YV/yBss6quQQfC8Aw5lz1oZlayVWxlRi+5c5RIC3+ubsUd0AbOhe7+WhMbJ/DRy3a9RtntVnthhYT4KX0mQ9znKu3Wo3+ZyWUdM6HyuLo+UMy8qJOlu10bF53onpw/wJtv9sBeiZZqK2M6AcXHoJp0igJDsNJeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jgx9aTYx; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=G9m8csvKl79A+E0FL8BHmd+PFG/uTCf8nzpQjlX3hHmkr0lENYDsxX/pfXbs9Ef02l4CtnIE2eY2hH1Lki1/kmPz8zjmRVXxOkCVAak9jbOH9iHsnkmo68S6vXUQ+WUQE8OqibbYNrEyA1zIaa8NzTnSn09x0RTOIkAg2cjSTf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIOQPc9o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jgx9aTYx"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CC14AC2BCB8;
-	Fri, 11 Sep 2026 08:51:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIOQPc9o"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44BECC2BCF4;
+	Fri, 11 Sep 2026 08:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1789116674;
-	bh=6Om9mmFoyilZ7jFsN4qGp2OOoGqOwvUDJXp2zNRLp+k=;
+	s=k20201202; t=1789116675;
+	bh=DY3nAZEw7IwIcK7ATvLcXz2X/NgGx+ZUSaAnsbH9oD0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Jgx9aTYxluCSss6dcTipeMEk/+ocQA1Zq0771VYQvCRm73K9nAs0Ps/PJIbYnqYPA
-	 mglS23depKXOCYFG+3BF01q9dsvXh3Pa9Px9qDDnhsLjrLddm4bWiM7CxR5dcCNAha
-	 R8W9ADEtAtAw5iUBIaCSQT9C8SGklEbElTi/AihGD2cBqyGwbvs0lS3k/M/ZPI7fa6
-	 e2F5jxt3KHRnOwsDLg5u7OSOZf5zk4W+OguddhjAJUh34vvr61G52W/4njH9xuhMd7
-	 rEj8Zj5AnjN7u3szNHU8AvBQP7WZmsdQozby4Qhj3rjUYIBuHdhuK5wA0nO83sN0qQ
-	 JFrPY1GixpzkA==
+	b=vIOQPc9oHsAb5NAMCqQSY2ZC9ZWES3F1I+WL1UMX6w0fWakBt6wCJ8/BpvamaPKBA
+	 GztFcpozC1ZOMwR/pHj4OXDiXjuaPoY/SPUe1BVCqlaY00PsilXrVmt4qqRjLG2to+
+	 F2MNSekiB/ZaIfTcsueZR+hqhaQq65rIM8N+ExzP0mV1zg7kibl4/pTDICNwOcy1rp
+	 ABb7U8WTkS+dcJoj68T5nK/LNcfOzCTSrE3U700Vp4WwzPo660EKT3JaMWOZ+iJoSE
+	 KjknH85+1JDXx+v532KClu9oP+OQpplH3a+lvwqypOUY6QaI1QRaTlQQNtPgx8RvK2
+	 3HNXYLpAtT9rQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50F5C88E56;
-	Fri, 11 Sep 2026 08:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9C3C88E53;
+	Fri, 11 Sep 2026 08:51:15 +0000 (UTC)
 From: =?utf-8?q?Y=C4=B0=C4=9E=C4=B0TCAN_KAVAKLI_via_B4_Relay?= <devnull+kavakliyigitcan.gmail.com@kernel.org>
-Date: Fri, 11 Sep 2026 11:51:02 +0300
-Subject: [PATCH RFC 05/10] dt-bindings: input: touchscreen: add Novatek
- NT36672A SPI touchscreen
+Date: Fri, 11 Sep 2026 11:51:07 +0300
+Subject: [PATCH RFC 10/10] arm64: dts: qcom: sm6125-xiaomi-ginkgo: enable
+ display, backlight and touchscreen
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260911-ginkgo-submission-final-v1-5-0e68e63a18d4@gmail.com>
+Message-Id: <20260911-ginkgo-submission-final-v1-10-0e68e63a18d4@gmail.com>
 References: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
 In-Reply-To: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
 To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
@@ -69,11 +69,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
  =?utf-8?q?Y=C4=B0=C4=9E=C4=B0TCAN_KAVAKLI?= <kavakliyigitcan@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789116671; l=2624;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789116671; l=3582;
  i=kavakliyigitcan@gmail.com; s=20260911; h=from:subject:message-id;
- bh=sMolpDLxRIIdnSgm3TbA2Rk80AV3J5bHq36firTsw6w=;
- b=IdFFml977ayIZ6L6YdvcMn4Ol1XAEqjQLb7pnMby8TGCu+zLBKLhmg7UlQUs5xSnl1+k1kmsw
- r7mj8P4/nAhDtshh4wuZCFJWI/hbuWGi9O8ZA3vRaQCfKB7kgS2ehfe
+ bh=x7HUi8j9WM0O66VRg2zaqPmBSUKqKlYUrg3o+6fVUMA=;
+ b=0p7Sw0WODkPHyr6uYaCxqJhHD15HpgWvncYsEcFoTIdse3nMrsA429rybhBMBFN9lnbCG75i0
+ EoyAv2U5cNvCyIAm66vhUwtwyvhJf5el9hJ1LDQvAl6pw6l7r3yALhq
 X-Developer-Key: i=kavakliyigitcan@gmail.com; a=ed25519;
  pk=W2GaxVotULs2vAjRMMLheaDtMMYs4037zO1LVVfFtPI=
 X-Endpoint-Received: by B4 Relay for kavakliyigitcan@gmail.com/20260911
@@ -83,90 +83,149 @@ Reply-To: kavakliyigitcan@gmail.com
 
 From: YİĞİTCAN KAVAKLI <kavakliyigitcan@gmail.com>
 
-Add devicetree binding documentation for the Novatek NT36672A SPI
-touchscreen controller.
+Enable the display subsystem (MDSS/MDP/DSI0), Kinetic KTD3136 backlight,
+and Novatek NT36672A SPI touchscreen on the Xiaomi Redmi Note 8 (ginkgo).
 
-The binding supports standard SPI peripheral properties, interrupt
-configuration, the optional 'panel' phandle for DRM panel follower
-synchronization, and an optional 'firmware-name' property.
+Hardware nodes added:
+- Fixed LCDB regulators (lcdb_lab and lcdb_ibb at +/- 5.5V)
+- MDSS and DSI0 with Tianma 1080x2340 FHD+ video panel
+- I2C1 backlight node at 0x36 with PMI632 GPIO 6 hardware enable
+- SPI2 touchscreen node at CS0 with GPIO 88 interrupt and panel follower
+  reference
+- Touchscreen active pinctrl definition on GPIO 88
 
 Signed-off-by: YİĞİTCAN KAVAKLI <kavakliyigitcan@gmail.com>
 ---
- .../input/touchscreen/novatek,nt36672a-spi.yaml    | 66 ++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ .../boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi | 100 +++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/novatek,nt36672a-spi.yaml b/Documentation/devicetree/bindings/input/touchscreen/novatek,nt36672a-spi.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..0d89d60f2a93d26e2f7903371ecc6eb9ed683b33
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/novatek,nt36672a-spi.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/touchscreen/novatek,nt36672a-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
+index 59042a5937535c4acda064fa0f865f4f5a52d01b..f4b9e2092a814e56cdc23218025cb4166dec110a 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
+@@ -26,11 +26,30 @@ / {
+ 	chassis-type = "handset";
+ 
+ 	qcom,msm-id = <QCOM_ID_SM6125 0x10000>;
++	qcom,board-id = <34 0>, <34 1>, <34 2>, <34 3>, <34 4>, <0 0>;
+ 
+ 	aliases {
+ 		serial0 = &uart4;
+ 	};
+ 
++	lcdb_lab: regulator-lcdb-lab {
++		compatible = "regulator-fixed";
++		regulator-name = "lcdb_lab";
++		regulator-min-microvolt = <5500000>;
++		regulator-max-microvolt = <5500000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 +
-+title: Novatek NT36672A SPI Touchscreen Controller
++	lcdb_ibb: regulator-lcdb-ibb {
++		compatible = "regulator-fixed";
++		regulator-name = "lcdb_ibb";
++		regulator-min-microvolt = <5500000>;
++		regulator-max-microvolt = <5500000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 +
-+maintainers:
-+  - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+ 	chosen {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -356,6 +375,13 @@ irled@1 {
+ 
+ &tlmm {
+ 	gpio-reserved-ranges = <0 4>, <30 4>;
 +
-+description:
-+  The Novatek NT36672A TDDI controller is connected over SPI for touchscreen
-+  interaction, with host-downloaded firmware into controller SRAM. It integrates
-+  with the display panel lifecycle using the DRM panel follower API.
++	ts_int_active: ts-int-active-state {
++		pins = "gpio88";
++		function = "gpio";
++		drive-strength = <8>;
++		bias-pull-up;
++	};
+ };
+ 
+ &uart4 {
+@@ -369,3 +395,77 @@ &usb3 {
+ &usb_dwc3_hs {
+ 	remote-endpoint = <&pmi632_hs_in>;
+ };
 +
-+allOf:
-+  - $ref: touchscreen.yaml#
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++&mdss {
++	status = "okay";
++};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - novatek,nt36672a-spi
-+      - novatek,nt36672a-ts
++&mdss_mdp {
++	status = "okay";
++};
 +
-+  reg:
-+    maxItems: 1
++&mdss_dsi0_phy {
++	vdds-supply = <&vreg_l7a>;
++	status = "okay";
++};
 +
-+  interrupts:
-+    maxItems: 1
++&mdss_dsi0 {
++	vdda-supply = <&vreg_l18a>;
++	status = "okay";
 +
-+  spi-max-frequency: true
++	panel: panel@0 {
++		compatible = "tianma,fhd-video-ginkgo", "novatek,nt36672a";
++		reg = <0>;
 +
-+  panel:
-+    description: phandle of the display panel that this touchscreen follows.
-+    $ref: /schemas/types.yaml#/definitions/phandle
++		reset-gpios = <&tlmm 90 GPIO_ACTIVE_LOW>;
++		vddio-supply = <&vreg_l9a>;
++		vddpos-supply = <&lcdb_lab>;
++		vddneg-supply = <&lcdb_ibb>;
++		backlight = <&backlight>;
 +
-+  firmware-name:
-+    description: Name of the firmware file to load into controller SRAM.
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&mdss_dsi0_out>;
++			};
++		};
++	};
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
++&mdss_dsi0_out {
++	remote-endpoint = <&panel_in>;
++	data-lanes = <0 1 2 3>;
++};
 +
-+unevaluatedProperties: false
++&qupv3_id_0 {
++	status = "okay";
++};
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++&i2c1 {
++	clock-frequency = <400000>;
++	status = "okay";
 +
-+        touchscreen@0 {
-+            compatible = "novatek,nt36672a-spi";
-+            reg = <0>;
-+            spi-max-frequency = <4000000>;
-+            interrupts = <88 IRQ_TYPE_EDGE_RISING>;
-+            panel = <&panel>;
-+            touchscreen-size-x = <1080>;
-+            touchscreen-size-y = <2340>;
-+        };
-+    };
-+...
++	backlight: backlight@36 {
++		compatible = "kinetic,ktd3136";
++		reg = <0x36>;
++		enable-gpios = <&pmi632_gpios 6 GPIO_ACTIVE_HIGH>;
++		default-brightness = <2047>;
++		max-brightness = <2047>;
++	};
++};
++
++&spi2 {
++	status = "okay";
++
++	touchscreen@0 {
++		compatible = "novatek,nt36672a-spi", "novatek,nt36672a-ts";
++		reg = <0>;
++		spi-max-frequency = <4000000>;
++		interrupt-parent = <&tlmm>;
++		interrupts = <88 IRQ_TYPE_EDGE_RISING>;
++		pinctrl-0 = <&ts_int_active>;
++		pinctrl-names = "default";
++		panel = <&panel>;
++		touchscreen-size-x = <1080>;
++		touchscreen-size-y = <2340>;
++	};
++};
 
 -- 
 2.47.3
