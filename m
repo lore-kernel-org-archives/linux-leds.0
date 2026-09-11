@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EE746983E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793CC469840;
 	Fri, 11 Sep 2026 08:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789116675; cv=none; b=EuK/NnEXb0LYRw+v/CD/6asovc6dXoK6Zv7VKR0Ta1kdYzOWZUj4TQP8Lb+r9btZjsUkcgpYDNrjSlYVHeIFMR4Lf5jjOnUJKXDlrEAqg4xR+plno/7GFnKd6qRBxJW7RWJMvSOo7wZi73m4R4Up7AWSlApe6bXrStlXquOnA3Q=
+	t=1789116675; cv=none; b=kVQr2G8c5yjEQZYYil8fJHVt6Ufp/gz0c2aQVpqWbLcK0Z7GmPpYLhbGjMgTxs6wLCrEnOd3DcfT/AGTBiSqi3d4Ud7ID8ChsauF5EU/rzmfuRYsunaqRnVETNqtjoYR2G8qBvzfLcZh+9E1YRtlz9cwiRtrmcE/5Pdzd0G77ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789116675; c=relaxed/simple;
-	bh=Ir2kLA2MThBgdITjF1uXNT5vEPUPjCB6BDKYUWJlkVw=;
+	bh=nixE8SAm20BFIZXUBdRt8IAH4PCwEjaKn6o0+LlZU6Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mmELsGvLSUbuZXJK0uy8ZSycTNuq8X4SoufD6IdpM67VnB69R5I2iZR8Zm1C+G6ftgw92rv/JHfEHG0nzIHIsJBFhARtEjMwDsYjBSZcHiixOpFL0dZNUWxR4l7/Jw54Gwltd8nFeONpsXJ+H5XGbA6kcKiHC5+pozli4NxokKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYSSY0U3; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=uxElQKF53sDHL2pyOuVHzypE4hKi5UR4rxc+oT4m7qnat2IWLhq4mllPorVOrJpLBxkkn2Pu38d0eQOAf4mxikC5wjtZTUR6VG0IWgVZ5xLousW4Rs0Bs2XqzotDdS7F6pjYQaua4Fs1kpWCOwIQbkYUxjKzcmDZP/zdbsnjhbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCnz6dzv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYSSY0U3"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 05C54C32786;
-	Fri, 11 Sep 2026 08:51:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCnz6dzv"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E1B1FC32781;
+	Fri, 11 Sep 2026 08:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1789116675;
-	bh=Ir2kLA2MThBgdITjF1uXNT5vEPUPjCB6BDKYUWJlkVw=;
+	bh=nixE8SAm20BFIZXUBdRt8IAH4PCwEjaKn6o0+LlZU6Y=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RYSSY0U3ZTgE0EmFs+R/EejwrlYRI+/TrMNhbNEX4oXfFnrGdk9pbOm4Je+CbXGef
-	 kWfdnuvbUiyLH/ntBecjS+nC4mRYGaVu+cZ15jcX+x99Mzs4IrvSeHYFdZyExXvSBw
-	 C4SP5mvaXwH+WI87t9FWeCD/0EDboQxyTJfW0rr5UADaTpeWVPu+AQ4qgvkOK8kAuh
-	 KAgqHzRl+ZgRJJIxc0RkR9upmWVjHtLIu8hpdMC9lH14aX5kb3begGcV2LVxb+Wia1
-	 jseVCk+3S3+K9rdH+7XVG6xwDjCdnYhQ+agpg/JKcxCz8ejk1gYa7QgGmlxOheWrP9
-	 vUu9WzQpEinwA==
+	b=JCnz6dzvZLwiWYlM0KAmYSf3/92PrYVrC9kfQK4hiZ/gcZECl1M0KFsoQxLuCYA4Y
+	 ZwRuQu3pQwguv9r57qnuYMG8OSfLWibtDyWZqfEBV9CSpm0K0v1+Q7xrJzKvI2lBYM
+	 n/bUDBj7kaILM9gZa+hAmCyOrGRzUv/1ea6Hl448nniHMBdFOe3n0DmSqhvG2GxLaV
+	 oFKl7N7n/dMQQxVrOW01RCHMwb5Nk7zLcBNaSb9mk073cCsfk1FjmEkw0G19QjQsZk
+	 wq8LBXStwyJ2v8EtZJ/9g14qV95buBwN3FJX+mr1KNX8vu4KE/rf6kDPEmWOmuey3i
+	 9liNZxMxxxoKw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16AAC88E50;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD68CC88E53;
 	Fri, 11 Sep 2026 08:51:14 +0000 (UTC)
 From: =?utf-8?q?Y=C4=B0=C4=9E=C4=B0TCAN_KAVAKLI_via_B4_Relay?= <devnull+kavakliyigitcan.gmail.com@kernel.org>
-Date: Fri, 11 Sep 2026 11:51:04 +0300
-Subject: [PATCH RFC 07/10] drm/msm/dpu: describe SM6125 programmable-fetch
- delayed-start quirk
+Date: Fri, 11 Sep 2026 11:51:03 +0300
+Subject: [PATCH RFC 06/10] Input: novatek-nt36672a-spi: add driver for
+ Novatek NT36672A SPI touchscreen
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260911-ginkgo-submission-final-v1-7-0e68e63a18d4@gmail.com>
+Message-Id: <20260911-ginkgo-submission-final-v1-6-0e68e63a18d4@gmail.com>
 References: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
 In-Reply-To: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
 To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
@@ -69,11 +69,11 @@ Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
  =?utf-8?q?Y=C4=B0=C4=9E=C4=B0TCAN_KAVAKLI?= <kavakliyigitcan@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789116671; l=4060;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789116671; l=21301;
  i=kavakliyigitcan@gmail.com; s=20260911; h=from:subject:message-id;
- bh=dCreEw0ry0ghroTxWJf7tgoAXBd+986oDcr+3tTl2VM=;
- b=KYl/lRrMDLhvHmU1okl6IBNSYl8H3UZgdc2FxvgWCppoBUwtEFIZVK5FOVUPt7/MCw61kGQkv
- KJLS3g1uVXIC9D2IU3cjGrSuCaC0umPhHpUeGM0zuoT1TWfIB4deo3w
+ bh=UsiEkFcG49BvTGqyEfBBR6S9hp/Vw6c5ff2sdQyKnQw=;
+ b=FLNtEieZqmXxICuJoYLSwaGgUVSqFBMQOGDPSZU/ajpojLTIH0Aasyg+u/NspyxOwflFe4emD
+ 1yNlFGgrI3RBwZ2fT2WLBxmp2nJFSpphGFIZGuiZzLRwGv3R77l+hOI
 X-Developer-Key: i=kavakliyigitcan@gmail.com; a=ed25519;
  pk=W2GaxVotULs2vAjRMMLheaDtMMYs4037zO1LVVfFtPI=
 X-Endpoint-Received: by B4 Relay for kavakliyigitcan@gmail.com/20260911
@@ -83,90 +83,744 @@ Reply-To: kavakliyigitcan@gmail.com
 
 From: YİĞİTCAN KAVAKLI <kavakliyigitcan@gmail.com>
 
-On Qualcomm SM6125 (Snapdragon 665 / Trinket DPU 5.4.0), calculating the
-programmable prefetch start counter strictly as:
+Add support for the Novatek NT36672A TDDI touchscreen controller over SPI.
 
-    (vert_total - vfp_fetch_lines) * horiz_total + 1
+The NT36672A is connected over SPI (QUPv3 SE2) on SM6125 and requires
+dynamic host-download firmware loaded into controller volatile SRAM.
+A dedicated SPI driver is introduced (Option B) to avoid breaking or
+complicating the existing I2C-only driver (novatek-nvt-ts.c).
 
-causes the fetch trigger to evaluate on the active-video to vertical
-front porch line boundary. In hardware, this triggers an internal line
-buffer FIFO conflict within the INTF timing generator, resulting in
-immediate DSI FIFO overflow and timeout errors (status=5) and complete
-loss of pixel output.
-
-Qualcomm downstream display drivers mitigate this erratum via
-delay_prg_fetch_start = true, delaying the fetch start by one scanline
-(+ horiz_total) into vertical front porch line 1.
-
-Introduce 'has_prg_fetch_delay' in struct dpu_caps, enable it for SM6125
-in its catalog entry, and throttle fetch start in programmable_fetch_config()
-when the capability is set.
+Features:
+- Dynamic firmware host-download into SRAM via request_firmware()
+- Multi-partition binary parsing with hardware CRC verification
+- Threaded interrupt handler supporting Linux MT Protocol Type B
+  (up to 10 fingers)
+- Standard touchscreen_properties coordinate reporting
+- DRM panel follower integration via devm_drm_panel_add_follower()
+  to follow panel sleep/wake transitions cleanly
+- Pure interrupt-driven architecture with zero polling loops
 
 Signed-off-by: YİĞİTCAN KAVAKLI <kavakliyigitcan@gmail.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h |  1 +
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   | 11 +++++++++++
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h         |  2 ++
- 3 files changed, 14 insertions(+)
+ drivers/input/touchscreen/Kconfig                |  11 +
+ drivers/input/touchscreen/Makefile               |   1 +
+ drivers/input/touchscreen/novatek-nt36672a-spi.c | 674 +++++++++++++++++++++++
+ 3 files changed, 686 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-index 64be51e301591b7f17918475a957623c6fea23d4..ec0315284e0663f57a41a1fdf515d948c3d40d68 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h
-@@ -13,6 +13,7 @@ static const struct dpu_caps sm6125_dpu_caps = {
- 	.max_mixer_blendstages = 0x6,
- 	.has_dim_layer = true,
- 	.has_idle_pc = true,
-+	.has_prg_fetch_delay = true,
- 	.max_linewidth = 2160,
- 	.pixel_ram_size = DEFAULT_PIXEL_RAM_SIZE,
- 	.max_hdeci_exp = MAX_HORZ_DECIMATION,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-index ba810f26ea3099106aac1783f7f6bf5e014e41a0..15445eaf9f3baf4661e22bee133cc2059a3cd2b1 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-@@ -237,10 +237,21 @@ static void programmable_fetch_config(struct dpu_encoder_phys *phys_enc,
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index 9b9ae8ac3f7fd3b9e948083fcd05afabdcd69bca..fb9a34d3f983084af75e85aad2d9740d066e85fb 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -701,6 +701,17 @@ config TOUCHSCREEN_NOVATEK_NVT_TS
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called novatek-nvt-ts.
  
- 	vfp_fetch_lines = programmable_fetch_get_num_lines(phys_enc, timing);
- 	if (vfp_fetch_lines) {
-+		const struct dpu_mdss_cfg *catalog = phys_enc->dpu_kms->catalog;
++config TOUCHSCREEN_NOVATEK_NT36672A_SPI
++	tristate "Novatek NT36672A SPI touchscreen support"
++	depends on SPI_MASTER
++	select FW_LOADER
++	help
++	  Say Y here if you have a Novatek NT36672A touchscreen
++	  connected over SPI.
 +
- 		vert_total = get_vertical_total(timing);
- 		horiz_total = get_horizontal_total(timing);
- 		vfp_fetch_start_vsync_counter =
- 		    (vert_total - vfp_fetch_lines) * horiz_total + 1;
++	  To compile this driver as a module, choose M here: the
++	  module will be called novatek-nt36672a-spi.
 +
-+		/*
-+		 * SM6125 (DPU 5.4 / Trinket) quirk matching downstream
-+		 * delay_prg_fetch_start = true. Throttle fetch start
-+		 * to the second line after active video (VFP line 1).
-+		 */
-+		if (catalog && catalog->caps && catalog->caps->has_prg_fetch_delay)
-+			vfp_fetch_start_vsync_counter += horiz_total;
+ config TOUCHSCREEN_IMAGIS
+ 	tristate "Imagis touchscreen support"
+ 	depends on I2C
+diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
+index bfd9de83389d8833dbe7cc2641cb24493cdf3807..aca74a0afd141356c7b5d3d3393a882e0530be17 100644
+--- a/drivers/input/touchscreen/Makefile
++++ b/drivers/input/touchscreen/Makefile
+@@ -69,6 +69,7 @@ obj-$(CONFIG_TOUCHSCREEN_MMS114)	+= mms114.o
+ obj-$(CONFIG_TOUCHSCREEN_MSG2638)	+= msg2638.o
+ obj-$(CONFIG_TOUCHSCREEN_MTOUCH)	+= mtouch.o
+ obj-$(CONFIG_TOUCHSCREEN_NOVATEK_NVT_TS)	+= novatek-nvt-ts.o
++obj-$(CONFIG_TOUCHSCREEN_NOVATEK_NT36672A_SPI)	+= novatek-nt36672a-spi.o
+ obj-$(CONFIG_TOUCHSCREEN_HP600)		+= hp680_ts_input.o
+ obj-$(CONFIG_TOUCHSCREEN_HP7XX)		+= jornada720_ts.o
+ obj-$(CONFIG_TOUCHSCREEN_IPAQ_MICRO)	+= ipaq-micro-ts.o
+diff --git a/drivers/input/touchscreen/novatek-nt36672a-spi.c b/drivers/input/touchscreen/novatek-nt36672a-spi.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..03d2042b0bb30d3420379497fd822153bc90171e
+--- /dev/null
++++ b/drivers/input/touchscreen/novatek-nt36672a-spi.c
+@@ -0,0 +1,674 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Novatek NT36672A SPI Touchscreen Driver
++ *
++ * Copyright (c) 2026
++ *
++ * Hardware:
++ *   Novatek NT36672A TDDI controller connected over SPI.
++ *   Firmware is loaded dynamically into controller SRAM via request_firmware().
++ *   Panel lifecycle synchronization uses the DRM panel follower API.
++ */
 +
- 		f.enable = 1;
- 		f.fetch_start = vfp_fetch_start_vsync_counter;
- 	}
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index f45faf87333e89bbd463504ae3219609ef6209bd..db3cbf9fa04a13baf3ac40390757ed24120ccccd 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -273,6 +273,7 @@ struct dpu_rotation_cfg {
-  * @has_dim_layer      dim layer feature status
-  * @has_idle_pc        indicate if idle power collapse feature is supported
-  * @has_3d_merge       indicate if 3D merge is supported
-+ * @has_prg_fetch_delay indicate if programmable fetch start requires a 1-line delay
-  * @max_linewidth      max linewidth for sspp
-  * @pixel_ram_size     size of latency hiding and de-tiling buffer in bytes
-  * @max_hdeci_exp      max horizontal decimation supported (max is 2^value)
-@@ -285,6 +286,7 @@ struct dpu_caps {
- 	bool has_dim_layer;
- 	bool has_idle_pc;
- 	bool has_3d_merge;
-+	bool has_prg_fetch_delay;
- 	/* SSPP limits */
- 	u32 max_linewidth;
- 	u32 pixel_ram_size;
++#include <linux/delay.h>
++#include <linux/firmware.h>
++#include <linux/init.h>
++#include <linux/input.h>
++#include <linux/input/mt.h>
++#include <linux/input/touchscreen.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/pm.h>
++#include <linux/slab.h>
++#include <linux/spi/spi.h>
++#include <linux/workqueue.h>
++
++#include <drm/drm_panel.h>
++
++#define NVT_MAX_TOUCHES			10
++#define NVT_POINT_DATA_LEN		65
++#define NVT_TRANSFER_LEN		1024
++#define NVT_DEFAULT_FW_NAME		"novatek/nt36672a_tianma.bin"
++
++/* NT36672A Memory Map & Registers */
++#define EVENT_BUF_ADDR			0x21c00
++#define EVENT_MAP_HOST_CMD		0x50
++#define EVENT_MAP_RESET_COMPLETE	0x60
++#define EVENT_MAP_FWINFO		0x78
++
++#define BOOT_RDY_ADDR			0x3f10d
++#define BLD_CRC_EN_ADDR			0x3f30e
++#define ILM_DES_ADDR			0x3f128
++#define ILM_LENGTH_ADDR			0x3f118
++#define G_ILM_CHECKSUM_ADDR		0x3f100
++#define DLM_DES_ADDR			0x3f12c
++#define DLM_LENGTH_ADDR			0x3f130
++#define G_DLM_CHECKSUM_ADDR		0x3f104
++#define SPI_RD_FAST_ADDR		0x03f310
++
++struct nvt_ts_bin_map {
++	u32 bin_addr;
++	u32 sram_addr;
++	u32 size;
++	u32 crc;
++};
++
++struct novatek_ts_data {
++	struct spi_device *spi;
++	struct input_dev *input_dev;
++	struct touchscreen_properties prop;
++	/* Protects SPI bus access, firmware loading and controller state */
++	struct mutex lock;
++	struct drm_panel_follower panel_follower;
++	struct workqueue_struct *fw_wq;
++	struct delayed_work fw_reload_work;
++	const char *fw_name;
++
++	u16 abs_x_max;
++	u16 abs_y_max;
++	u8 fw_ver;
++	u8 fw_reset_state;
++	bool fw_running;
++	bool slot_active[NVT_MAX_TOUCHES];
++};
++
++static inline u32 byte_to_word(const u8 *b)
++{
++	return b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24);
++}
++
++static int nvt_spi_write(struct spi_device *spi, const u8 *buf, size_t len)
++{
++	struct spi_transfer t = {0};
++	struct spi_message m;
++	u8 *xbuf;
++	int ret;
++
++	xbuf = kmemdup(buf, len, GFP_KERNEL);
++	if (!xbuf)
++		return -ENOMEM;
++
++	xbuf[0] |= 0x80; /* SPI_WRITE_MASK */
++
++	t.tx_buf = xbuf;
++	t.len = len;
++
++	spi_message_init(&m);
++	spi_message_add_tail(&t, &m);
++	ret = spi_sync(spi, &m);
++	kfree(xbuf);
++
++	return ret;
++}
++
++static int nvt_spi_read(struct spi_device *spi, u8 *buf, size_t len)
++{
++	struct spi_transfer t = {0};
++	struct spi_message m;
++	u8 *xbuf, *rbuf;
++	int ret;
++
++	xbuf = kzalloc(len + 1, GFP_KERNEL);
++	rbuf = kzalloc(len + 1, GFP_KERNEL);
++	if (!xbuf || !rbuf) {
++		kfree(xbuf);
++		kfree(rbuf);
++		return -ENOMEM;
++	}
++
++	xbuf[0] = buf[0] & 0x7f; /* SPI_READ_MASK */
++
++	t.tx_buf = xbuf;
++	t.rx_buf = rbuf;
++	t.len = len + 1; /* 1 dummy byte */
++
++	spi_message_init(&m);
++	spi_message_add_tail(&t, &m);
++	ret = spi_sync(spi, &m);
++	if (!ret)
++		memcpy(buf + 1, rbuf + 2, len - 1);
++
++	kfree(xbuf);
++	kfree(rbuf);
++
++	return ret;
++}
++
++static int nvt_set_page(struct spi_device *spi, u32 addr)
++{
++	u8 buf[3];
++
++	buf[0] = 0xff; /* page command */
++	buf[1] = (addr >> 15) & 0xff;
++	buf[2] = (addr >> 7) & 0xff;
++
++	return nvt_spi_write(spi, buf, sizeof(buf));
++}
++
++static int nvt_write_addr(struct spi_device *spi, u32 addr, u8 data)
++{
++	u8 buf[2];
++	int ret;
++
++	ret = nvt_set_page(spi, addr);
++	if (ret)
++		return ret;
++
++	buf[0] = addr & 0x7f;
++	buf[1] = data;
++
++	return nvt_spi_write(spi, buf, sizeof(buf));
++}
++
++static void nvt_bootloader_reset(struct spi_device *spi)
++{
++	/*
++	 * Configure SPI Fast Read to 0x00 so bootloader SRAM writes succeed.
++	 * Do NOT write 0x69 to SWRST_N8_ADDR because NT36672A is a TDDI chip:
++	 * writing 0x69 resets the entire IC (display timing generator, DCS registers, PWM)
++	 * and causes the physical LCD to go completely black.
++	 * The controller is already reset into ROM bootloader mode by hardware panel reset.
++	 */
++	nvt_write_addr(spi, SPI_RD_FAST_ADDR, 0x00);
++}
++
++static void nvt_set_bld_crc_bank(struct spi_device *spi, u32 des_addr, u32 sram_addr,
++				 u32 len_addr, u32 size, u32 g_chk_addr, u32 crc)
++{
++	u8 buf[5];
++
++	/* Destination address */
++	nvt_set_page(spi, des_addr);
++	buf[0] = des_addr & 0x7f;
++	buf[1] = sram_addr & 0xff;
++	buf[2] = (sram_addr >> 8) & 0xff;
++	buf[3] = (sram_addr >> 16) & 0xff;
++	nvt_spi_write(spi, buf, 4);
++
++	/* Length (for NT36672A hw_crc=1, 3 bytes) */
++	buf[0] = len_addr & 0x7f;
++	buf[1] = size & 0xff;
++	buf[2] = (size >> 8) & 0xff;
++	nvt_spi_write(spi, buf, 3);
++
++	/* Golden Checksum (4 bytes) */
++	buf[0] = g_chk_addr & 0x7f;
++	buf[1] = crc & 0xff;
++	buf[2] = (crc >> 8) & 0xff;
++	buf[3] = (crc >> 16) & 0xff;
++	buf[4] = (crc >> 24) & 0xff;
++	nvt_spi_write(spi, buf, 5);
++}
++
++static int nvt_write_sram(struct spi_device *spi, const u8 *fwdata,
++			  u32 sram_addr, u32 size, u32 bin_addr)
++{
++	u32 count, i, len;
++	int ret = 0;
++	u8 *fwbuf;
++
++	fwbuf = kmalloc(NVT_TRANSFER_LEN + 2, GFP_KERNEL);
++	if (!fwbuf)
++		return -ENOMEM;
++
++	count = (size + NVT_TRANSFER_LEN - 1) / NVT_TRANSFER_LEN;
++
++	for (i = 0; i < count; i++) {
++		len = (size < NVT_TRANSFER_LEN) ? size : NVT_TRANSFER_LEN;
++
++		ret = nvt_set_page(spi, sram_addr);
++		if (ret)
++			goto out;
++
++		fwbuf[0] = sram_addr & 0x7f;
++		memcpy(fwbuf + 1, &fwdata[bin_addr], len);
++		ret = nvt_spi_write(spi, fwbuf, len + 1);
++		if (ret)
++			goto out;
++
++		sram_addr += NVT_TRANSFER_LEN;
++		bin_addr += NVT_TRANSFER_LEN;
++		size -= len;
++	}
++
++out:
++	kfree(fwbuf);
++	return ret;
++}
++
++static int nvt_parse_and_download(struct novatek_ts_data *ts, const u8 *fwdata, size_t fwsize)
++{
++	struct spi_device *spi = ts->spi;
++	struct nvt_ts_bin_map bin_map[16];
++	u8 info_sec_num = 0;
++	u8 ovly_sec_num = 0;
++	u32 partition, list;
++	u32 header_end, pos;
++	u8 buf[18];
++	int ret, retry;
++
++	if (fwsize < 0x40)
++		return -EINVAL;
++
++	header_end = byte_to_word(&fwdata[0]);
++	pos = 0x30;
++	while (pos < header_end && info_sec_num < 14) {
++		info_sec_num++;
++		pos += 0x10;
++	}
++
++	ovly_sec_num = (fwdata[0x28] & 0x10) ? (fwdata[0x28] & 0x0f) : 0;
++	partition = 2 + ovly_sec_num + info_sec_num;
++	if (partition > 16)
++		partition = 16;
++
++	for (list = 0; list < partition; list++) {
++		if (list < 2) {
++			bin_map[list].bin_addr = byte_to_word(&fwdata[0 + list * 12]);
++			bin_map[list].sram_addr = byte_to_word(&fwdata[4 + list * 12]);
++			bin_map[list].size = byte_to_word(&fwdata[8 + list * 12]);
++			bin_map[list].crc = byte_to_word(&fwdata[0x18 + list * 4]);
++		} else {
++			pos = 0x30 + (0x10 * (list - 2));
++			bin_map[list].sram_addr = byte_to_word(&fwdata[pos]);
++			bin_map[list].size = byte_to_word(&fwdata[pos + 4]);
++			bin_map[list].bin_addr = byte_to_word(&fwdata[pos + 8]);
++			bin_map[list].crc = byte_to_word(&fwdata[pos + 12]);
++		}
++	}
++
++	nvt_bootloader_reset(spi);
++
++	for (list = 0; list < partition; list++) {
++		u32 size = bin_map[list].size;
++
++		if (!size)
++			continue;
++		size += 1;
++
++		ret = nvt_write_sram(spi, fwdata, bin_map[list].sram_addr, size,
++				     bin_map[list].bin_addr);
++		if (ret) {
++			dev_err(&spi->dev, "SRAM write partition %u failed: %d\n", list, ret);
++			return ret;
++		}
++	}
++
++	nvt_set_bld_crc_bank(spi, ILM_DES_ADDR, bin_map[0].sram_addr,
++			     ILM_LENGTH_ADDR, bin_map[0].size,
++			     G_ILM_CHECKSUM_ADDR, bin_map[0].crc);
++	nvt_set_bld_crc_bank(spi, DLM_DES_ADDR, bin_map[1].sram_addr,
++			     DLM_LENGTH_ADDR, bin_map[1].size,
++			     G_DLM_CHECKSUM_ADDR, bin_map[1].crc);
++
++	/* Enable BLD CRC (bit 7 of 0x3F30E) */
++	nvt_set_page(spi, BLD_CRC_EN_ADDR);
++	buf[0] = BLD_CRC_EN_ADDR & 0x7f;
++	buf[1] = 0xff;
++	nvt_spi_read(spi, buf, 2);
++	buf[0] = BLD_CRC_EN_ADDR & 0x7f;
++	buf[1] = buf[1] | 0x80;
++	nvt_spi_write(spi, buf, 2);
++
++	/* Clear reset status and enable firmware CRC */
++	nvt_set_page(spi, EVENT_BUF_ADDR);
++	buf[0] = EVENT_MAP_RESET_COMPLETE & 0x7f;
++	buf[1] = 0x00;
++	nvt_spi_write(spi, buf, 2);
++
++	buf[0] = EVENT_MAP_HOST_CMD & 0x7f;
++	buf[1] = 0xae;
++	nvt_spi_write(spi, buf, 2);
++
++	/* Boot Ready */
++	nvt_write_addr(spi, BOOT_RDY_ADDR, 1);
++	msleep(10);
++
++	/* Verify Firmware Reset State (>= 0xA0) */
++	ts->fw_running = false;
++	nvt_set_page(spi, EVENT_BUF_ADDR | EVENT_MAP_RESET_COMPLETE);
++	for (retry = 0; retry < 20; retry++) {
++		buf[0] = EVENT_MAP_RESET_COMPLETE;
++		buf[1] = 0x00;
++		ret = nvt_spi_read(spi, buf, 6);
++		if (ret == 0 && buf[1] >= 0xa0 && buf[1] <= 0xaf) {
++			ts->fw_reset_state = buf[1];
++			ts->fw_running = true;
++			break;
++		}
++		msleep(10);
++	}
++
++	/* Wait for baseline calibration */
++	for (retry = 0; retry < 50; retry++) {
++		buf[0] = EVENT_MAP_RESET_COMPLETE;
++		buf[1] = 0x00;
++		ret = nvt_spi_read(spi, buf, 6);
++		if (ret == 0 && buf[1] >= 0xa1 && buf[1] <= 0xaf) {
++			ts->fw_reset_state = buf[1];
++			break;
++		}
++		msleep(10);
++	}
++
++	if (!ts->fw_running) {
++		dev_err(&spi->dev, "firmware boot timeout: state=0x%02x\n", buf[1]);
++		return -EIO;
++	}
++
++	/* Read FW Information */
++	nvt_set_page(spi, EVENT_BUF_ADDR | EVENT_MAP_FWINFO);
++	buf[0] = EVENT_MAP_FWINFO;
++	ret = nvt_spi_read(spi, buf, 17);
++	if (ret == 0) {
++		ts->fw_ver = buf[1];
++		ts->abs_x_max = (u16)((buf[5] << 8) | buf[6]);
++		ts->abs_y_max = (u16)((buf[7] << 8) | buf[8]);
++	}
++
++	if (!ts->abs_x_max || ts->abs_x_max > 4096)
++		ts->abs_x_max = 1080;
++	if (!ts->abs_y_max || ts->abs_y_max > 4096)
++		ts->abs_y_max = 2340;
++
++	nvt_set_page(spi, EVENT_BUF_ADDR);
++
++	return 0;
++}
++
++static int novatek_ts_load_firmware(struct novatek_ts_data *ts)
++{
++	const struct firmware *fw;
++	int ret;
++
++	ret = request_firmware(&fw, ts->fw_name, &ts->spi->dev);
++	if (ret) {
++		dev_err(&ts->spi->dev, "failed to request firmware '%s': %d\n",
++			ts->fw_name, ret);
++		return ret;
++	}
++
++	ret = nvt_parse_and_download(ts, fw->data, fw->size);
++	release_firmware(fw);
++
++	return ret;
++}
++
++static void novatek_ts_fw_work(struct work_struct *work)
++{
++	struct delayed_work *dwork = to_delayed_work(work);
++	struct novatek_ts_data *ts = container_of(dwork, struct novatek_ts_data, fw_reload_work);
++	u8 rst_chk[6] = {EVENT_MAP_RESET_COMPLETE, 0};
++	int ret;
++
++	mutex_lock(&ts->lock);
++
++	nvt_set_page(ts->spi, EVENT_BUF_ADDR);
++	ret = nvt_spi_read(ts->spi, rst_chk, 2);
++	if (ret == 0 && rst_chk[1] >= 0xa0 && rst_chk[1] <= 0xaf) {
++		/* Controller is already running valid firmware */
++		mutex_unlock(&ts->lock);
++		return;
++	}
++
++	ret = novatek_ts_load_firmware(ts);
++	if (ret)
++		dev_err(&ts->spi->dev, "firmware load failed: %d\n", ret);
++
++	nvt_set_page(ts->spi, EVENT_BUF_ADDR);
++	mutex_unlock(&ts->lock);
++}
++
++static int novatek_ts_panel_prepared(struct drm_panel_follower *follower)
++{
++	struct novatek_ts_data *ts = container_of(follower, struct novatek_ts_data, panel_follower);
++
++	if (ts->fw_wq) {
++		cancel_delayed_work_sync(&ts->fw_reload_work);
++		queue_delayed_work(ts->fw_wq, &ts->fw_reload_work, msecs_to_jiffies(1500));
++	}
++	return 0;
++}
++
++static int novatek_ts_panel_unpreparing(struct drm_panel_follower *follower)
++{
++	struct novatek_ts_data *ts = container_of(follower, struct novatek_ts_data, panel_follower);
++
++	if (ts->fw_wq)
++		cancel_delayed_work_sync(&ts->fw_reload_work);
++	return 0;
++}
++
++static const struct drm_panel_follower_funcs novatek_ts_panel_follower_funcs = {
++	.panel_prepared = novatek_ts_panel_prepared,
++	.panel_unpreparing = novatek_ts_panel_unpreparing,
++};
++
++static irqreturn_t novatek_ts_threaded_irq(int irq, void *dev_id)
++{
++	struct novatek_ts_data *ts = dev_id;
++	u8 point_data[NVT_POINT_DATA_LEN + 2] = {0};
++	bool slot_pressed[NVT_MAX_TOUCHES] = {false};
++	int finger_cnt = 0;
++	int ret, i;
++
++	mutex_lock(&ts->lock);
++
++	nvt_set_page(ts->spi, EVENT_BUF_ADDR);
++
++	point_data[0] = 0x00;
++	ret = nvt_spi_read(ts->spi, point_data, NVT_POINT_DATA_LEN + 1);
++	if (ret < 0) {
++		dev_err_ratelimited(&ts->spi->dev, "failed to read touch points: %d\n", ret);
++		mutex_unlock(&ts->lock);
++		return IRQ_HANDLED;
++	}
++
++	for (i = 0; i < NVT_MAX_TOUCHES; i++) {
++		int pos = 1 + 6 * i;
++		u8 raw0 = point_data[pos];
++		u8 input_id = raw0 >> 3;
++		u8 status = raw0 & 0x07;
++
++		if (input_id < 1 || input_id > NVT_MAX_TOUCHES)
++			continue;
++
++		if (status == 0x01 || status == 0x02) { /* 1: down, 2: move */
++			u32 x = ((u32)point_data[pos + 1] << 4) | ((u32)point_data[pos + 3] >> 4);
++			u32 y = ((u32)point_data[pos + 2] << 4) | ((u32)point_data[pos + 3] & 0x0f);
++			u32 w = point_data[pos + 4] ? point_data[pos + 4] : 1;
++			u32 p = point_data[pos + 5] ? point_data[pos + 5] : 1;
++
++			if (x <= ts->abs_x_max && y <= ts->abs_y_max) {
++				int slot = input_id - 1;
++
++				slot_pressed[slot] = true;
++				finger_cnt++;
++
++				input_mt_slot(ts->input_dev, slot);
++				input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, true);
++				input_report_abs(ts->input_dev, ABS_MT_POSITION_X, x);
++				input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, y);
++				input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, w);
++				input_report_abs(ts->input_dev, ABS_MT_PRESSURE, p);
++			}
++		}
++	}
++
++	for (i = 0; i < NVT_MAX_TOUCHES; i++) {
++		if (!slot_pressed[i] && ts->slot_active[i]) {
++			input_mt_slot(ts->input_dev, i);
++			input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, false);
++			ts->slot_active[i] = false;
++		} else if (slot_pressed[i]) {
++			ts->slot_active[i] = true;
++		}
++	}
++
++	input_report_key(ts->input_dev, BTN_TOUCH, finger_cnt > 0);
++	input_mt_sync_frame(ts->input_dev);
++	input_sync(ts->input_dev);
++
++	mutex_unlock(&ts->lock);
++
++	return IRQ_HANDLED;
++}
++
++static int novatek_ts_init_input(struct novatek_ts_data *ts)
++{
++	struct spi_device *spi = ts->spi;
++	struct input_dev *input;
++	int ret;
++
++	input = devm_input_allocate_device(&spi->dev);
++	if (!input)
++		return -ENOMEM;
++
++	input->name = "Novatek NT36672A Touchscreen";
++	input->id.bustype = BUS_SPI;
++	input->dev.parent = &spi->dev;
++
++	__set_bit(EV_SYN, input->evbit);
++	__set_bit(EV_KEY, input->evbit);
++	__set_bit(EV_ABS, input->evbit);
++	__set_bit(INPUT_PROP_DIRECT, input->propbit);
++
++	input_set_capability(input, EV_KEY, BTN_TOUCH);
++	input_set_abs_params(input, ABS_MT_POSITION_X, 0, ts->abs_x_max, 0, 0);
++	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, ts->abs_y_max, 0, 0);
++	input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
++	input_set_abs_params(input, ABS_MT_PRESSURE, 0, 255, 0, 0);
++
++	ret = input_mt_init_slots(input, NVT_MAX_TOUCHES,
++				  INPUT_MT_DIRECT | INPUT_MT_DROP_UNUSED);
++	if (ret)
++		return ret;
++
++	ret = input_register_device(input);
++	if (ret)
++		return ret;
++
++	ts->input_dev = input;
++
++	return 0;
++}
++
++static int novatek_ts_probe(struct spi_device *spi)
++{
++	struct device *dev = &spi->dev;
++	struct novatek_ts_data *ts;
++	int ret;
++
++	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
++	if (!ts)
++		return -ENOMEM;
++
++	ts->spi = spi;
++	mutex_init(&ts->lock);
++
++	ts->fw_wq = create_singlethread_workqueue("novatek_ts_fw");
++	if (!ts->fw_wq)
++		return -ENOMEM;
++
++	INIT_DELAYED_WORK(&ts->fw_reload_work, novatek_ts_fw_work);
++
++	ret = device_property_read_string(dev, "firmware-name", &ts->fw_name);
++	if (ret)
++		ts->fw_name = NVT_DEFAULT_FW_NAME;
++
++	spi->mode = SPI_MODE_0;
++	spi->bits_per_word = 8;
++	if (!spi->max_speed_hz)
++		spi->max_speed_hz = 4000000;
++
++	ret = spi_setup(spi);
++	if (ret)
++		goto err_destroy_wq;
++
++	spi_set_drvdata(spi, ts);
++
++	ts->abs_x_max = 1080;
++	ts->abs_y_max = 2340;
++
++	ret = novatek_ts_load_firmware(ts);
++	if (ret) {
++		dev_err(dev, "failed to download firmware during probe: %d\n", ret);
++		goto err_destroy_wq;
++	}
++
++	dev_info(dev, "Novatek NT36672A initialized (fw_ver=0x%02x, reset_state=0x%02x)\n",
++		 ts->fw_ver, ts->fw_reset_state);
++
++	ret = novatek_ts_init_input(ts);
++	if (ret)
++		goto err_destroy_wq;
++
++	if (spi->irq <= 0) {
++		ret = dev_err_probe(dev, -EINVAL, "no IRQ specified\n");
++		goto err_destroy_wq;
++	}
++
++	ret = devm_request_threaded_irq(dev, spi->irq, NULL,
++					novatek_ts_threaded_irq,
++					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
++					"novatek-nt36672a-ts", ts);
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to request threaded IRQ\n");
++		goto err_destroy_wq;
++	}
++
++	if (drm_is_panel_follower(dev)) {
++		ts->panel_follower.funcs = &novatek_ts_panel_follower_funcs;
++		ret = devm_drm_panel_add_follower(dev, &ts->panel_follower);
++		if (ret) {
++			dev_err_probe(dev, ret, "failed to add panel follower\n");
++			goto err_destroy_wq;
++		}
++	}
++
++	return 0;
++
++err_destroy_wq:
++	cancel_delayed_work_sync(&ts->fw_reload_work);
++	destroy_workqueue(ts->fw_wq);
++	return ret;
++}
++
++static void novatek_ts_remove(struct spi_device *spi)
++{
++	struct novatek_ts_data *ts = spi_get_drvdata(spi);
++
++	cancel_delayed_work_sync(&ts->fw_reload_work);
++	destroy_workqueue(ts->fw_wq);
++}
++
++static const struct of_device_id novatek_ts_of_match[] = {
++	{ .compatible = "novatek,nt36672a-spi" },
++	{ .compatible = "novatek,nt36672a-ts" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, novatek_ts_of_match);
++
++static const struct spi_device_id novatek_ts_spi_id[] = {
++	{ "nt36672a-ts" },
++	{ }
++};
++MODULE_DEVICE_TABLE(spi, novatek_ts_spi_id);
++
++static struct spi_driver novatek_ts_driver = {
++	.driver = {
++		.name = "novatek-nt36672a-spi",
++		.of_match_table = novatek_ts_of_match,
++	},
++	.id_table = novatek_ts_spi_id,
++	.probe = novatek_ts_probe,
++	.remove = novatek_ts_remove,
++};
++module_spi_driver(novatek_ts_driver);
++
++MODULE_AUTHOR("Antigravity Pair Programmer");
++MODULE_DESCRIPTION("Novatek NT36672A SPI Touchscreen Driver");
++MODULE_LICENSE("GPL");
 
 -- 
 2.47.3
