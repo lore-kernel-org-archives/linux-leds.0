@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DCE3D565D
-	for <linux-leds@vger.kernel.org>; Sat, 12 Sep 2026 22:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA085340281
+	for <linux-leds@vger.kernel.org>; Sat, 12 Sep 2026 22:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789253520; cv=none; b=T8dSLZ/+XMDzpMwgDrUlCAIMfeQqWi29ueMU8AO/Pm9BX5IKbvH8S6vOEZF5YIGfJlyhubVRJZm3igEtuVyoOQ6DV6gwsBTbmWPkkwk3X3gsK/Wxnl8Hj+PDYii3hexYDWsCnu1Jy65lM66QnVQpAjrXdFOkdhYhdeSYCqkETPI=
+	t=1789253555; cv=none; b=O7IIoO9gxxXzqFd9lqGAHjrjxORaU8w+jh5mWvrAsCbiNYvfIpe7NYjNxEzLFh1GRR1E7eIjFIanXhsxG+kVSeNil91t4L9v4vWpeFr//SWlU/IbxvHAi8ZQSBUCV5TPZoTGx/z/bC3Y6KFcHWX8gbDnjqz+BsGhg4wdaCl0OQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789253520; c=relaxed/simple;
-	bh=OYa17tgE3gdhvj3LPx7fQFBBkMH6HJpYd3e2o85e8cw=;
+	s=arc-20240116; t=1789253555; c=relaxed/simple;
+	bh=r4mOz+KY72YvWc0VveC+yv/UbTMgJ01ZWuXsAksrTJ4=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=pXnfMP39xATUQSurjWqSoyAWcgpLTshpvu76kzKJ95Xl/imkug7Cri2W9scFouRfIlmfyMG3f721GrlTcQwEuLyBpeRTy1TY1CDZB4srOYM4wzVB5mbh3G/Bz6eRGs9VHjHNVsyxlgGI36xdtgjE4vVqKv7vieFSvullevuMr90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYJyABWY; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=U5fvsIxgjCW+ISKU5yacFmMdwUp8/3t7MD7vBC5zW5gNDp0Od2AQCQgGbXx0euL2EmvbS4pNA4/KE0+DfzUHj1Xl7On/hwzJDufWi1Yhaj2F0PZzhnk9SX803wx6C4rq9AqjvLx7E1npeT5o/vAXhlY9f+0u3lWvzypnMuqHtH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNGXXrjl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYJyABWY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD7EB1F000FF;
-	Sat, 12 Sep 2026 22:51:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNGXXrjl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7995D1F000FF;
+	Sat, 12 Sep 2026 22:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789253519;
-	bh=V8wTEtK1DzyhTtMt9SshNKJ6eIby0WDXnvPvXHSQnEk=;
+	s=k20260515; t=1789253554;
+	bh=/FdbjGBj/FgUJWBbHfP0g563FPo+ovfvrTX9Gvw0Axk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SYJyABWYCeZinULxh++9EYNVTrPTeKWrGH5Tk3LuDOSB1kcyfKqwsiKvStWsq88Ml
-	 iaHmxnKtmUqEZIum4bOtPcX1OBf5qgcSnGVbkt8QhgCn/f2v3B96F2iFAlwF9U/Tuf
-	 XDJbJKNrafSYPjnJ95pJcLyPYTGx9ui1lccnLZBuHILVofYGIZIMvHKlvyq5TCMPPI
-	 J6Sr7u24jHIEtNTmMEBriFAu7IyionosvTN27bdpxGnpKnFu2flYz5F6elQyQd7N6k
-	 si5axXhMQdAZJfM0PwxaJsjY/dV/VeJxkRwYtNp93FFpukrNHwAhhVkK4zHlDxkIXq
-	 6Dp9WkRvw2DBQ==
+	b=ZNGXXrjlOessi+poNRuhZzl4TC2Cg7+cY9BJDXiLWf2ymYo1x+b3xKwUVmbxL/Ycb
+	 cd6RtroPhXf62egHAaMyEcfpcTCfEVpbsjoaCZJZ8SFb51K87dG81pNDi6OAbC168E
+	 fVHxmvPKCmxt8hVREdQpD1sQc2bbnPsHGABxRwSN2/fQbknUfB7h/Aq+K7OfR7Swl9
+	 4/X46dr7GbLZcb2ISEl0ufHgRuux6dW6rTVAuo/stjJUjrQVcR18X7p0SB3TKExHdy
+	 JpdZ5hq8AYP/V/7wB70V9bLDTMSKLS7NVMh/KfF9IE7BFNpuWoOkeMh65Tx2OWO02S
+	 ktMUYbfIJVhXg==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 06/11] leds: st1202: Scale pattern brightness to the
- 12-bit PWM range
+Subject: Re: [PATCH v1 05/11] leds: st1202: Clear unused pattern slots in
+ pattern_set()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Manuel Fombuena" <fombuena@outlook.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <GV1PR08MB8497EBB43F4FFDECC7C8854CC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <GV1PR08MB84973A1571DF402225FB78AFC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 References: <GV1PR08MB8497422B7A44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
- <GV1PR08MB8497EBB43F4FFDECC7C8854CC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+ <GV1PR08MB84973A1571DF402225FB78AFC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 12 Sep 2026 22:51:58 +0000
-Message-Id: <20260912225158.CD7EB1F000FF@smtp.kernel.org>
+Date: Sat, 12 Sep 2026 22:52:34 +0000
+Message-Id: <20260912225234.7995D1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -48,103 +48,120 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
 
-New issues:
-- [Medium] Race condition when starting the hardware pattern sequencer: the=
- base current (ILED_REG0) is written after the sequence is enabled.
-
 Pre-existing issues:
-- [High] The hardware pattern durations and execution sequencer are globall=
-y shared, but the driver allows per-LED independent configurations, causing=
- destructive interference.
+- [High] Activating a blink on one channel forcibly turns off all other act=
+ive LED channels during the blink cycle.
+- [High] Clearing or blinking a pattern on one LED abruptly terminates or c=
+orrupts hardware patterns running on all other LEDs due to shared sequencer=
+ registers.
 --
 
-commit eaa2a40ee6c9df54ecd9aef2a8ff245af05bc058
+commit f903bd8ba806fde42df12463784beaf198812cd9
 Author: Manuel Fombuena <fombuena@outlook.com>
 
-leds: st1202: Scale pattern brightness to the 12-bit PWM range
+leds: st1202: Clear unused pattern slots in pattern_set()
 
-The LED1202 PWM registers are 12 bits wide, but st1202_led_pattern_set()
-writes the 8-bit brightness value carried by struct led_pattern into
-them unscaled. A pattern step asking for full brightness therefore
-drives the channel at 255 out of 4095, about 6% duty cycle, so a pattern
-is dimmer than the same brightness set directly.
+This commit clears the PWM registers for unused slots in a pattern sequence,
+setting them to LED_OFF. It fixes an issue where the channel's PWM for those
+slots was left at ST1202_PATTERN_PWM_FULL, causing it to sit at full bright=
+ness
+for the rest of the sequence. It leaves the shared duration registers alone=
+ to
+avoid truncating longer patterns on other channels.
 
-> diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> index 9985b4b609891..5558ac9612a15 100644
-> --- a/drivers/leds/leds-st1202.c
-> +++ b/drivers/leds/leds-st1202.c
-[ ... ]
-> @@ -254,7 +267,8 @@ static int st1202_led_pattern_set(struct led_classdev=
- *ldev,
-> =20
->  	for (int pattern =3D 0; pattern < len; pattern++) {
->  		ret =3D st1202_pwm_pattern_write(chip, led->led_num, pattern,
-> -						patterns[pattern].brightness);
-> +					st1202_brightness_to_pwm(patterns[pattern].brightness,
-> +								max_brightness));
->  		if (ret !=3D 0)
->  			return ret;
+>     Zero this channel's PWM for the unused slots so it stays dark for the
+>     remainder of the timeline, as st1202_blink_set() already does for the
+>     channels it is not driving.
 
 [Severity: High]
-This is a pre-existing issue, but does this cause destructive interference
-across independent LED channels?
+This isn't a bug introduced by this patch, but does st1202_blink_set()
+corrupt the PWM state of independent channels?
 
-The ST1202 chip has a single global sequencer and a shared set of pattern
-duration registers (ST1202_PATTERN_DUR). The driver exposes multiple
-independent LED channels to userspace.
+When activating a blink on one channel, it forcibly turns off all other
+active LED channels during the blink cycle by explicitly zeroing out PWM
+slots 0 and 1 for all other active channels:
 
-When a hardware pattern or blink is configured on one LED via
-st1202_led_pattern_set() or st1202_blink_set(), the driver unconditionally
-overwrites the global duration registers:
+drivers/leds/leds-st1202.c:st1202_blink_set() {
+...
+	/* Zero out PWM for all other active channels to prevent them from blinkin=
+g */
+	for (int chan =3D 0; chan < ST1202_MAX_LEDS; chan++) {
+		if (!chip->leds[chan].is_active || chan =3D=3D led->led_num)
+			continue;
 
-drivers/leds/leds-st1202.c:st1202_duration_pattern_write() {
-    ...
-    return st1202_write_reg(chip, (ST1202_PATTERN_DUR + pattern),
-                            st1202_milliseconds_to_prescaler(value));
+		ret =3D st1202_pwm_pattern_write(chip, chan, 0, LED_OFF);
+		if (ret)
+			return ret;
+
+		ret =3D st1202_pwm_pattern_write(chip, chan, 1, LED_OFF);
+...
 }
 
-Similarly, st1202_led_pattern_clear() clears the PATS bit in
-ST1202_CONFIG_REG, which stops the global sequencer:
+Because the ST1202 chip shares a single hardware sequencer, zeroing these
+slots causes steady-state channels (which rely on full PWM across all slots)
+to output zero and go completely dark while the sequencer loops.
+
+>     The duration registers are deliberately left alone. All twelve channe=
+ls
+>     share them, so clearing them would truncate a longer pattern still
+>     running elsewhere on the same device. A channel whose pattern is shor=
+ter
+>     than the active timeline therefore keeps the longer period; that foll=
+ows
+>     from having a single hardware sequencer and is not something this can
+>     correct.
+
+[Severity: High]
+This is a pre-existing issue, but does clearing a pattern on one LED abrupt=
+ly
+terminate or corrupt hardware patterns running on all other LEDs?
+
+Calling st1202_led_pattern_clear() on one channel unconditionally clears the
+sequencer enable bits (PATS and PATSR) in the chip-wide ST1202_CONFIG_REG,
+and zeroes out the globally shared pattern duration registers
+(ST1202_PATTERN_DUR):
 
 drivers/leds/leds-st1202.c:st1202_led_pattern_clear() {
-    ...
-    ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHA=
-SE_SHIFT);
-    ...
+...
+	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHASE_=
+SHIFT);
+	if (ret !=3D 0)
+		return ret;
+
+	for (int pattern =3D 0; pattern < ST1202_MAX_PATTERNS; pattern++) {
+		ret =3D st1202_pwm_pattern_write(chip, led->led_num, pattern,
+						ST1202_PATTERN_PWM_FULL);
+		if (ret !=3D 0)
+			return ret;
+
+		ret =3D st1202_write_reg(chip, ST1202_PATTERN_DUR + pattern, 0);
+...
 }
 
-Will starting or stopping a pattern on one LED corrupt or freeze the running
-pattern on all other LEDs, leading to severely incorrect functional behavior
-for multi-channel usage?
+Because the sequencer is a single shared hardware resource, per-channel
+operations shouldn't unconditionally halt it or wipe its timeline if other
+channels are actively using it. Hardware patterns on independent channels
+might instantly fail or skip steps.
 
-[Severity: Medium]
-Is there a race condition when starting the hardware pattern sequencer?
-
-In st1202_led_pattern_set(), the analog current scalar (max_brightness) for
-the sequence is written after the sequence is enabled:
-
-drivers/leds/leds-st1202.c:st1202_led_pattern_set() {
-    ...
-    ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG,
-                           ST1202_CONFIG_REG_PATSR | ST1202_CONFIG_REG_PATS=
- |
-                           ST1202_CONFIG_REG_PHASE_SHIFT);
-    if (ret !=3D 0)
-        return ret;
-
-    ret =3D st1202_write_reg(chip, ST1202_ILED_REG0 + led->led_num, max_bri=
-ghtness);
-    ...
-}
-
-Because I2C transactions are relatively slow and the hardware sequencer runs
-independently, will the initial steps of the new pattern execute using the
-stale ILED_REG0 value (which may be 0 from a prior pattern_clear)?
-
-Does this lead to a noticeable visual glitch where the first cycle of the
-pattern is truncated or plays at an incorrect brightness? Should the base
-current be fully programmed before initiating the hardware sequencer?
+> diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
+> index 90f69ac167147..9985b4b609891 100644
+> --- a/drivers/leds/leds-st1202.c
+> +++ b/drivers/leds/leds-st1202.c
+> @@ -263,6 +263,12 @@ static int st1202_led_pattern_set(struct led_classde=
+v *ldev,
+>  			return ret;
+>  	}
+> =20
+> +	for (int pattern =3D len; pattern < ST1202_MAX_PATTERNS; pattern++) {
+> +		ret =3D st1202_pwm_pattern_write(chip, led->led_num, pattern, LED_OFF);
+> +		if (ret !=3D 0)
+> +			return ret;
+> +	}
+> +
+>  	ret =3D st1202_write_reg(chip, ST1202_PATTERN_REP, repeat);
+>  	if (ret !=3D 0)
+>  		return ret;
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/GV1PR08MB8497422B7A=
-44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D6
+44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D5
