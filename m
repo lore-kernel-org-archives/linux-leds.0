@@ -1,160 +1,240 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazolkn19013078.outbound.protection.outlook.com [52.103.35.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630F39061C;
-	Sat, 12 Sep 2026 22:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789251664; cv=none; b=HRLRBqlPqXYQKn/0NcNlQkpYv84aS2xuk409J784xaqmGKsfTVoAxex7+hamY3Z1mezMhEopbiTCz+kmLaBvWMBQ0RMRNyHkjQEg6uh7idme378XZ855juxaC3xPyFKWc/wIHFB3L2W9QGlub2SzXSbdCAPNJHVmg2Hx6wxZuX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789251664; c=relaxed/simple;
-	bh=jJN5bbmJG6+W8ZaAl9RR52OiGtP0jEKBmRMAckxoXiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aJe6HCLeEcaYPMYTJDo6bj52O4C4tN9/S/pJQ+nuxskJRaZYMGv/KJlET++t6zOUyeerAhGe7S1q8c9iuQ3BMZPp4tgAzfaoYtqM/d2uJ+98i0Myg33FwevRkgp9GRgF1P/rzFIYzEFpyw8oWzz9UatbWIXSpAj7k4XKeWMNeXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHhPvzDn; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34743C0A0F;
+	Sat, 12 Sep 2026 22:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.35.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789252080; cv=fail; b=cLVtCoMaXSJh2p6sBQFchQ3q1iodLhaU9ZrPyZIGcpzcC+wdCtikEb5hR9uoxkTw53ugeWqV4IfRrIIKqCNbXARGHS722SBCe+DBwZI1Lh05BJ4jVUjympBdhEf24g3XMEcLtuHMJTUETWk2rH7NvMQhrbxmpBn6q63/PYpLsao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789252080; c=relaxed/simple;
+	bh=k8Ivl43S90om8AtVYAr9kflOKH/DmStKA7131rGtO9s=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MrluhHjiMXXLwCmeaqAqcnuG0s58a6dpzKHIBWPlJS6eZbURBbsvcqIaAUs0qrjmF8qit/d+aWHmia9eJiOtpJ1efaorXgFf9PYGd/S++dhC7ZrkB/wYElv/2VzNhW9zmIwRjp0fDYVHfaCNCiyGizQXPaQRtwQrF8yupq5Uau8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ZCOZJcCN; arc=fail smtp.client-ip=52.103.35.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHhPvzDn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434821F000FF;
-	Sat, 12 Sep 2026 22:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789251662;
-	bh=A9T5TqugoZpwriYm80tITfJ7eL5e79XFR+RGRlWT3Yo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=BHhPvzDnmzwpQttZFmPMZf/UutFNeY/Degy6vahXXbV7Z6hNGc9MkvFE+rdhQJ6MU
-	 VAw3b4RYQvofx2lNTbeX4zkZRnpelNzwDei0UTSd3ZGNIs/4odMQ67B9LiiARuySxb
-	 U6BER7d7wfXohAn2tXbzGwa2wiTRgp4c4+hrPC/Fg2mvopBtYwKpfuJcqo2gQktz/i
-	 UBA340zyHxS9IBLWpHZ7ZP/iBROp/81WLbTAUh34hL3mGOOjez8TZZyGHIC4Q8vD6X
-	 SvDJPAFOvk+SgEr6vR+aGc41krBbPQbYbAOql8ew7alD2jpnrmyuGLi/805cAMk+g3
-	 S6DFuxrkx8D2Q==
-Date: Sat, 12 Sep 2026 23:20:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Arnd Bergmann"
- <arnd@kernel.org>, "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Bartosz Golaszewski" <brgl@kernel.org>, "Mark Brown" <broonie@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Daniel Thompson"
- <danielt@kernel.org>, "Helge Deller" <deller@gmx.de>,
- devicetree@vger.kernel.org, "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- dri-devel@lists.freedesktop.org, "Jingoo Han" <jingoohan1@gmail.com>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Linus Walleij" <linusw@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-fbdev@vger.kernel.org, "open list:GPIO SUBSYSTEM"
- <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-watchdog@vger.kernel.org, "Guenter Roeck" <linux@roeck-us.net>,
- linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev, "Mauro Carvalho
- Chehab" <mchehab@kernel.org>, mfd@lists.linux.dev, "Michael Hennerich"
- <michael.hennerich@analog.com>, patches@opensource.cirrus.com, "Pavel
- Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>, "Sebastian
- Reichel" <sre@kernel.org>, "Support Opensource"
- <support.opensource@diasemi.com>
-Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
-Message-ID: <20260912232047.19c4cb10@jic23-hlaptop>
-In-Reply-To: <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
-References: <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
-	<11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ZCOZJcCN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wLpk3AQTCdAgRSyVjKUbfVyNdk/kByWZO+u3ZA0iqQnwUuqRnsKVebQJR4Wt6Ln3ytzb/J2r+KbAVsvyqAyw4TicOcS67D8+AlM/m375smZyUDD3tuSj8bGY4HCMUVtyftLkUvOpObRWqh+xF/9qWIDF354bU475fqHh1PGktsiLXqnS5MOkCrT491TptnHsI2rSB4rU5MUly9Cyll3z1GU4Um4tqqFMY38O0HNtuINTF1SLGTX84nVklu+ATc7ehWEK55xYQBVTLNA7+AR7p1c1pbnzWGwj7K4kw2RXHDNixZ5G3gUvKtztA1cdgc1ADp9l7ib3EF0tz2MaI4OIdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ghu0Ql4s1zcAQncBXoWOOSNVer+ZoiRtGsCv0BHAzmY=;
+ b=CieNeQdgwDy2MWxL0GUAZMXu5D1XVJIJiH8uQ9mET/iOifZEsPpfbY+WP3XXCKUy6OacFdh2AX0Is14C9pNsEuD7TxOcKa1gVuPMESx5ujbzB/bjMBHKy7e2R/h9QQxUNc7DL7M24avy07b7y5UH04oSwaFUTGj+sewxatmMDkqDIGJU+EOW1eLAXipbek4FL2PnMRG0prCdXK5oVi/8xLOmqhLGx7W/ZDhJjJMUI/h9DCjBl015HIkzFrGS5/gA7ROdK0ej+fUvrgsKYrNO3aRTjBvU+8SpxlGmIU03KABhXy+Oyn8oM70EWcfxPLeJ0XZE3QHee46fo0VS94eHDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ghu0Ql4s1zcAQncBXoWOOSNVer+ZoiRtGsCv0BHAzmY=;
+ b=ZCOZJcCNXn5rXRziZuCO4KOUMZiLePaWzIHVtnR12BNJHBJUop2ONGw/wfg1yfB2I4FTR4n87lu2GEAVArV7OEHaUhABxUowNnoHjtN5NsphuUHGlV0tLV3k7SP88j8zALaSZEDV3WBMcy4VFaSVg7T9626YVGK3kyq2QuRCkikMEoZhw+IEHXeR8D5E1nE6gWb0BzEbqZ/wqLDGurHiNySPeYHzvAE4T9M/pDiAujTA2ReCekuRQMLE2XhjXvpKxGJWRM6mNz0oW9IpjBG1xlnwHFKAk0lmc1cOif+I0gkoMkycY03uzja2Y99uxhhfW8MDowTopbkchQvCbHdvQg==
+Received: from GV1PR08MB8497.eurprd08.prod.outlook.com (2603:10a6:150:81::22)
+ by PAWPR08MB11560.eurprd08.prod.outlook.com (2603:10a6:102:50f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.7; Sat, 12 Sep
+ 2026 22:27:54 +0000
+Received: from GV1PR08MB8497.eurprd08.prod.outlook.com
+ ([fe80::705b:d4a3:1c1f:b9a2]) by GV1PR08MB8497.eurprd08.prod.outlook.com
+ ([fe80::705b:d4a3:1c1f:b9a2%5]) with mapi id 15.21.0428.004; Sat, 12 Sep 2026
+ 22:27:54 +0000
+From: Manuel Fombuena <fombuena@outlook.com>
+To: lee@kernel.org,
+	pavel@kernel.org,
+	vicentiu.galanopulo@remote-tech.co.uk,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 00/11] leds: st1202: Naming cleanups and pre-existing fixes
+Date: Sat, 12 Sep 2026 23:27:41 +0100
+Message-ID:
+ <GV1PR08MB8497422B7A44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+X-Mailer: git-send-email 2.55.0
+Reply-To: fombuena@outlook.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PR3P250CA0002.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:102:57::7) To GV1PR08MB8497.eurprd08.prod.outlook.com
+ (2603:10a6:150:81::22)
+X-Microsoft-Original-Message-ID:
+ <20260912222741.3044463-1-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR08MB8497:EE_|PAWPR08MB11560:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3d45baa-d512-4ead-01fd-08df111d16c0
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5062599005|5072599009|37011999003|19110799012|15080799012|8060799015|23021999003|24021099003|51005399006|41001999006|25010399006|4302099013|3412199025|440099028|1602099012|40105399003|2607281247196008|10035399007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h9Oi5parxMQhuptXGKwEfhqDgXr1NM5gb8EEhMrORfokE1IjRfLtT1Zubj6M?=
+ =?us-ascii?Q?h720E3AOswNMS/xWwvw7v5ixjamGbRiJ+VFy9YaTHdyc7bjvStF+BFa1OulI?=
+ =?us-ascii?Q?CzT47sxdFcIqmbGFV3G7da5koQYLebNIzXacwcKlP4sQtjoSgfqqILjUbtGQ?=
+ =?us-ascii?Q?WEMzulF1GbRns6c26YMCy4Y3gk4UTU2s5Zs50FNcyBXYjPYlUy5fnhyeQUPc?=
+ =?us-ascii?Q?bJl75qaXuIgIY9s5oCgr2+NUM+q+YAhNtbYc9ehtQg3yFJYPzFQsESKJjpVF?=
+ =?us-ascii?Q?pfbqX0MGcHIPkBBUtpvcP50rQIQo+75tsekDEX9tGALGwfw6OmZQLTRsC8u2?=
+ =?us-ascii?Q?natAQWiFiHgBf0imkd+vWiYMVJEVJNW4YxR8mJ6uC/l9RCsWg6j1R1AqECRO?=
+ =?us-ascii?Q?W5a8a+wM62ji2WeSo6JBfQFS5ZRwhEGj7z+QVZ88UmzI3e3DPqsnM3TN/luf?=
+ =?us-ascii?Q?DzQXg5gxbsUAovObWi7OFPYWQCFvM93hWw442vFfA1Od2Q5My4p0Rrv3umLd?=
+ =?us-ascii?Q?oI9LxnIeJC2quRgf2RGFeWvYeMc3uKl/wNiX78E8+Cnb9iS3ADQqDABIJ+mj?=
+ =?us-ascii?Q?ltcIvJJSNT2XTeXMFTu8doN9z3OwbZt6qB/WYQkAqjfUE69ljvb4IUwx0gza?=
+ =?us-ascii?Q?mygMqIZo0RkWXg4K6gjyUEmBK2GPRVsjN92usTa/ogGSveo6iJgRY7BNCbkm?=
+ =?us-ascii?Q?MQJud/ruX8ivtry53suFxmndH0636UwjMPw3IfoFyMaCM8LDB2+Q7MYPGyWi?=
+ =?us-ascii?Q?zVMisiYaH35BZFy5xCjamhR3NsCsDIkBGONn+JBf8tAT+eYIitdvX3Y+U8jU?=
+ =?us-ascii?Q?MbJQmY7YnFq0USaLA3EeJQ7EpFaxtLYwxYFpinScbDtLSWaBL3LAHdL96Zin?=
+ =?us-ascii?Q?m3kMP9PDz+5qqfg3tNp/GrjBuUJX0Lx+HDAdXfPI6b0ernk44jGLfebLQEjk?=
+ =?us-ascii?Q?AnkMR4gG1MLQctC9PcqqHR9/c41o2ibar0ACPmI0p+pvVn7q1SkYeCAMMDVS?=
+ =?us-ascii?Q?uAVBfenR1Gp+MtY0blMMLcw0ujQcwc0kq1+brZr3vT/jZRvUgAYr/m3xZ2II?=
+ =?us-ascii?Q?hnwvMtIjRfEKKw4ihcWYf+jOn5LNxEJLvcA8NkNpgaXwhoVwGKzFhEW2pjXd?=
+ =?us-ascii?Q?g0vHlykL3IQ7?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?J5T5RjveRgttVmXhN1wYl1u6bwTv++TP3saE0gBrB3s7FV7Y53l04RjKyTYY?=
+ =?us-ascii?Q?7rFb4S8xWwfvYt4r/GxY/Jauzwi35/SqRaYpk324Kzd2RVRXX9+ttICxapQF?=
+ =?us-ascii?Q?FbjSSdZitMRrWKH+YCuzSj3CnsIAnmuCsazpFi4A2rDmL+LjuUf4rWSIxcy4?=
+ =?us-ascii?Q?r3m9nYoL3llaJdRK8qsl51rNQfK/NE04gXxgZbEA23izIBFmmt74ajPEFV++?=
+ =?us-ascii?Q?1Bsq/3BPaUktcJlax7P3AYycxfP1njFEoMgQ1Oc3An5z0YixW/eGmZSShLEs?=
+ =?us-ascii?Q?iCvEOT9YH6648iSgsnUpvjcU5RY0ggskhHSMRGo9uBl6Pjc+SItdLqIfaC9K?=
+ =?us-ascii?Q?/XfXFRugsZ+tJGtu94ltIbpcdi0rr9aFQ4K/hHBaE6f0ZvqBzzrSy93rvICo?=
+ =?us-ascii?Q?ZOMvzJ1bCjvInK+zpjtXTOLaF0802S8Qk9kVRrRWRwRpw4CbsxT8ktNv6UKW?=
+ =?us-ascii?Q?1izbcl/o8+XO2/hFTeQsfEZ9648wASoFTry55D4nDK5pbRO68K0KUv/1oPbP?=
+ =?us-ascii?Q?Jaq6YtMUIvojOn37su3hkmiL1ohmHmlhC6HWndemLMMapOFt3EguHxJ/gT/d?=
+ =?us-ascii?Q?wcdkjP7BxbIQdpxm14axt/kWMVfcf//xsqc8R1FxCAsm5HAPyVoe1jp0kKM9?=
+ =?us-ascii?Q?9r4xupZghd/mc4mc7CuK+FA8H1Z0Tob32OPmu60zJmt1QFwZr1lQirpb+Y+T?=
+ =?us-ascii?Q?5lIjByjEfrH8JsuVB1SZP1GcheaxfqfLcsWYtgu/gUvlxtOOTlqMIRUjUHTo?=
+ =?us-ascii?Q?LdaQyJQ20+7UxBZ4JYwnZliOclC67JWstRWWhVrQeBvBD1U2cQqjsejy0s/I?=
+ =?us-ascii?Q?UX/NcOZvxnaPEFli3nNxr67D+Z+535kEIJgtiyOfOH3XbPajG6ultwZyVdfc?=
+ =?us-ascii?Q?7ip6oQqf5O2v340osVZFUUgQEgDA11xHbkcjTZqytt8aHd6Pok8sIXriTCmS?=
+ =?us-ascii?Q?KMrC/Ey7m3HEGkc1MaqgINNJqAGp1Of5BcZi9JiXWBHIFO0q2sT1Z5NukTr5?=
+ =?us-ascii?Q?GZumyLVrisfAG+e85gAvd32gDh+OQmBeel/6OCqT0Madfz9E8ZB3A+1Izsvc?=
+ =?us-ascii?Q?YRjZyBroMt/Q1OoH/DiaaTJNI7k2JFfY3Vf5wfeqcmslOjx34AdFvpo39JqK?=
+ =?us-ascii?Q?+JRRDlfraeXHB1LzTZDT4Rl+x4w1/ZqDNdpa9iGgdpXcut2RmkncoTP5mS0w?=
+ =?us-ascii?Q?BGbSr+IJGgHrN9WDL/UxK06JYvz8TbVCCM4ZFkclMW3udGoXw6SqOXK+cdc0?=
+ =?us-ascii?Q?pGQj6mIwD9xfxPMCZYZ75ADxd8k6A5asA7Ch1Jth8+xlzoX0omW7OQ6nKrkc?=
+ =?us-ascii?Q?jRlmND+rPqlBCqteK4l1QAfkxJ0aqbasbtLBYlIekrXO1r6cC1zEGS/r8dUB?=
+ =?us-ascii?Q?UgepeGLaKbNb/Yu75ADzbiMJRwT2bAUQjRQskZQvsZT43S8jrvnRkifteFBb?=
+ =?us-ascii?Q?T/PAn68a7CTfhP41nLP1/7PvZbvCbwy4?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3d45baa-d512-4ead-01fd-08df111d16c0
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR08MB8497.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2026 22:27:54.8057
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB11560
 
-On Thu, 10 Sep 2026 20:14:15 +0200
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+This series collects the issues identified during review of the two
+previous ST1202 submissions, the pattern engine fix series and the
+hardware-accelerated blink support:
 
-> On Thu, Sep 10, 2026, at 18:40, Svyatoslav Ryhel wrote:
-> > __ 
-> > Hello Arnd! May you please spare AAT2870 from being removed? I have a 
-> > device which uses aat2870 (LG Optimus 2X P990 Tegra 2, not upstreamed 
-> > yet, but in process as well) and atm I am working on converting this 
-> > driver to use OF. Thank you!  
-> 
-> Sure, I have removed this patch from my series now.
-> 
-> > P. S. If you are planning to remove more old drivers, please CC me in 
-> > since I may be interested in some additional driver upgrades for 
-> > devices I own.  
-> 
-> Please have a look at
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=board-remove-7.3
-> 
-> I tried to be careful about figuring out exactly which drivers are
-> unused, but I'm sure there are still a few false positive and false
-> negative ones in there. I've added the current list of driver files below,
-> let me know if you see something that shouldn't be there.
-Hi Arnd
+https://lore.kernel.org/all/GV1PR08MB8497C0B898789BB73ACE6EE3C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com/
+https://lore.kernel.org/all/GV1PR08MB84974C7ACD911E66864C5008C5DA2@GV1PR08MB8497.eurprd08.prod.outlook.com/
 
-For I2C and SPI at least, there doesn't need to be explicit
-device tree support as long as they have defaults when platform
-data isn't there. Those two buses will happily bind based on
-a dt-compatible and their i2c_device_id or spi_device_id tables
-for example.
+Both left behind pre-existing problems that were out of scope at the
+time and deferred to a follow-up. They are grouped here because they
+share that origin, rather than being sent as a string of two and three
+patch series.
 
-So unless they fail to probe (some might?) we don't have
-a clear signal on whether they are in use via DT or not.
+Patches 1 to 4 are naming and readability only, with no functional
+change; two of them address comments from the blink support review.
+Patches 5 to 11 are fixes and carry Fixes tags.
 
-For vast majority of IIO drivers we don't have an upstream
-DTS as there is no clear motivation for anyone to upstream
-the dts for a random industrial control board or similar.
+Patch 5 is worth a note. The eight pattern duration registers are
+chip-wide while the PWM registers are per-channel, so a channel can
+inherit a sequencer timeline another channel programmed and then sit at
+full brightness for the slots it never set up. It clears the channel's
+own PWM for those slots rather than the shared durations, which would
+have truncated a longer pattern still running elsewhere on the device.
 
-> drivers/iio/adc/ad7266.c
-No to dropping this.
+Patches 6 and 7 belong together. Pattern brightness values were written
+into the 12-bit PWM registers unscaled, so a step asking for full
+brightness produced about 6% duty cycle; and the analog current register
+was never programmed at all, so a channel whose current had been left at
+zero stayed dark however bright the pattern. Together they make a
+pattern step of N produce the same output as writing N to brightness,
+which is what the documented hw_pattern range implies. Patch 7 takes the
+current up in pattern_set() and releases it in pattern_clear(), so a
+rejected hw_pattern write cannot leave a channel latched on, and a board
+declaring a lower ceiling through max-brightness keeps it.
 
-Has fallbacks and should bind just fine  No one ever
-bothered adding an of_device_id table because it isn't
-needed. Fine to rip out the platform data support as nothing is
-using that.
+Patch 9 is the one worth the most attention. st1202_brightness_set()
+takes a mutex and performs I2C transfers while installed as the
+non-blocking brightness_set callback, so it can sleep in atomic context.
+brightness_set_blocking is installed as well, but the core only falls
+back to it when brightness_set is absent, and that callback ignored the
+requested brightness in any case. Neither can be fixed without the other.
 
-This is a production part that is likely being used in new designs.
+Patches 10 and 11 do for st1202_blink_set() what patches 5 and 7 do for
+the pattern path.
 
-> drivers/iio/adc/ad7791.c
-No to dropping this one.
+blink_set() programs only the two slots its on and off cycle needs, and
+leaves the other six at full scale. Those six are normally invisible
+because their duration registers are zero. Durations are shared across
+the chip, though, so another channel can set them again, and the
+blinking channel then lights during steps it never programmed. This was
+reproduced on hardware by blinking one channel and giving a second one a
+four step pattern.
 
-I'm fine with ripping out the platform data but this again
-has defaults and may well be in use via DT. Antoniu from
-Analog was doing some cleanup on this recently so I'd guess
-they probably still at least somewhat care and some of the
-supported parts are still in production (e.g. the AD7788)
+blink_set() also drives the current register to full scale, ignoring a
+lower ceiling from the max-brightness property. Patch 11 makes it use
+the same value the brightness and pattern paths already use.
 
-> drivers/iio/adc/ad7793.c
-Maybe. Analog devices ack needed.
+Two points raised in earlier reviews are deliberately left alone:
 
-Production part but this one indeed fails to probe.  Analog
-folk, do you want to fix this one up?
+  - brightness_set() programming every PWM slot to full scale, and so
+    overriding a running pattern, is intended. It is what makes the
+    brightness visible while the global sequencer runs, per
+    commit 7cbe470366bd ("leds: st1202: Fix brightness having no effect
+    while pattern mode is active"). Stopping the sequencer instead would
+    halt the patterns of every other channel.
 
-> drivers/iio/adc/ad7887.c
-No to dropping this.
+  - Only the pattern timing is shared; the per-channel PWM envelopes are
+    independent, and running patterns on several channels at once is
+    what the hardware is designed for. A channel whose pattern is
+    shorter than the active timeline therefore keeps the longer period.
+    Correcting that needs the driver to track sequencer usage across
+    channels, which is outside the scope of this series.
 
-Production part - should work fine with defaults in driver.
-Could like the others drop the platform data handling.
+Tested on LED1202 hardware over I2C, on a Linksys MX4200v2 router
+running OpenWrt: brightness values reaching the current register, the
+atomic-context path via the heartbeat trigger, hw_pattern on two
+channels of one device with different pattern lengths, a pattern
+programmed on a channel whose current had been left at zero, timer
+trigger delay quantisation, and driver unbind/rebind cycles for the
+firmware node reference counting. dmesg clean throughout.
 
-> drivers/iio/adc/lp8788_adc.c
-Probably
+Patch 6 was additionally checked at the register level with i2cget. Left
+unscaled, a pattern step asking for full brightness programs 0x0FF of a
+12-bit register, 6.25% duty cycle; with the patch it programs 0x0FFF.
+The datasheet (DS12875 rev 2, Table 7) confirms the PWM register pair is
+a plain little endian 12-bit value, low byte followed by the high
+nibble. Its helper scales against max_brightness, clamps both ends of a
+signed input, and guards the division, although the LED core never
+registers a zero max_brightness.
 
-Sub driver of an MFD.  I'm fine with that going if we know
-the mfd is no longer in use.
+Manuel Fombuena (11):
+  leds: st1202: Correct the name of the prescaler conversion helper
+  leds: st1202: Spell out the phase-shift configuration bit
+  leds: st1202: Name pattern index variables consistently
+  leds: st1202: Use u8 consistently for 8-bit values
+  leds: st1202: Clear unused pattern slots in pattern_set()
+  leds: st1202: Scale pattern brightness to the 12-bit PWM range
+  leds: st1202: Program the channel current for hardware patterns
+  leds: st1202: Take a reference on the LED firmware node
+  leds: st1202: Do not set brightness from atomic context
+  leds: st1202: Clear unused pattern slots in blink_set()
+  leds: st1202: Honour max_brightness when blinking
 
-> drivers/iio/adc/lpc18xx_adc.c
-> drivers/iio/dac/lpc18xx_dac.c
-Probably
+ Documentation/leds/leds-st1202.rst |   3 +
+ drivers/leds/leds-st1202.c         | 145 +++++++++++++++++++----------
+ 2 files changed, 101 insertions(+), 47 deletions(-)
 
-Likewise these two.
-
-> drivers/iio/frequency/ad9523.c
-Maybe. Analog Devices ack needed.
-
-Fails to probe without platform data and marked not recomended
-for new designs. If we get an Ack from Analog devices folk
-I'm fine with this one going away.
-
-Jonathan
+-- 
+2.55.0
 
