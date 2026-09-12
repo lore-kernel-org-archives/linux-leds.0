@@ -1,130 +1,117 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A9C26299
-	for <linux-leds@vger.kernel.org>; Sat, 12 Sep 2026 22:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD9E3E008F
+	for <linux-leds@vger.kernel.org>; Sat, 12 Sep 2026 22:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789253432; cv=none; b=gRJeA7NssY0p7PsiH6fNrVegEk9ojTgO/pFP0CywJL0Fv1qnZ1tcXS4q8B7plnqvL7bHua80RVftqBRfnBDC3S0ObAwoJjYr4eKkVEQ7BRwXA6sYFMIUU6sS6obE61oujFP1bs7bZPVlsLjipp0YyjKqb7rTI8L1asbrU2zkpBY=
+	t=1789253468; cv=none; b=gOEYib7ZKApUnAfrYilup9/KgY1HYcRaUZGYt8GgKXjSPK3PR7hiqfOZQJ+pWibbBVgJHsZom5s6WLuLjF6xtR9MWwvvegPoeqj8L0/JdslC6SVCG2EN3zNlzJKLHQxf1XTlHrJag1FCeyrfXtIm19y9YMnrjHv2ypItTXoe/sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789253432; c=relaxed/simple;
-	bh=0owkl/RMNJe1r+197NQRQjEMrUhH3/dVOyL/B2ouDJc=;
+	s=arc-20240116; t=1789253468; c=relaxed/simple;
+	bh=CBjzrLUNQf8OVXairHHPdJYTMw7XM2JYyd8LnipkeVs=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=WRDqyuF9pLRsImuUDLBn6IjYzHtZMXB29tiE3CEzdnh0jg3/YWKoFMiIW31NuQZsdlkoyGKEouahuNpcRapiMxufWUXC1jp9r92ZI2/Gw5lUqMssK6tH8Xsj18qWasyfUnEl78R8wOtb/ok13mKf43MGWccwU86rDhQTDinqopU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtZmaWoA; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=rj9vuncXOrt1KLK0Na71Niwhza5qJWyRfvZngJaTGnLQdp+NufaNPFiQZur/KSAdk6purUkNZlpdWG4k2+pdvJT3EquhnaFSW2uXd3jVIIMha9WJyPexi7cI2QZuLV0l/Iw+agy5ngG9s+RlLrZ5kPLh3r8JkW5/kwlDc1EeZRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q8SlUJ9U; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtZmaWoA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BBD1F000FF;
-	Sat, 12 Sep 2026 22:50:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q8SlUJ9U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509BD1F00893;
+	Sat, 12 Sep 2026 22:51:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789253431;
-	bh=Wf2YyS5Gc1T6QSI4pvJ7CsiaByU7ECnU0TgrHqQxNeo=;
+	s=k20260515; t=1789253467;
+	bh=mZAmm6Qt01vlycrpkrngHieF5iF+CfdzU113ffkk09U=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=dtZmaWoAEz3LNKjlfgdneCZqlWSgM4QbGOgxPVHAXTikVbTPmRL9oTlhMdN7teeXx
-	 XhVAxiaYenLyrNcQdS6MqinpSWMlLm6KeTRzlDauBQmntxB+Q8N5oQA299sB0f9oBp
-	 1ToEHhb/BSfSZw3FxEmPH/KaY0tdczNbmslkqtAuTO0HdjclKgTHiCzBF6OKA4GqaV
-	 JLP/d/CP++HVncfTUQBBybq3jkwTIX411146R8t2d+K6/zeJeFmzWnnrn8igw7mnzq
-	 MfSm0w3T14ymzv3+HRPij48+KqiCiS/mjo/awPs88LeF2dxJLgzX0sJs4ZJUnmOGbF
-	 ACbmwo4p+7KRA==
+	b=Q8SlUJ9UnAFnT/y7ZOxScEwGCF4pu79Fe/VHcW0aWaKbby1D4SXkLlegU8982O4qW
+	 CV3XgpJ3xFvW/qXAjDvJ2YS2koHr1u3WOvDWbbN/e+L2l3bVANOY81T2Jbb59Wj2Uk
+	 irKqMFix3Ma2WbhKo9j7o86j+m4WH6L39H8Y/MZGnFJhZ0Wto540sawkVRv+1gAMfV
+	 RH4DV2gWA2ff4uVJqC8aM+tVPw1DxGhTiAD5iWIfq+0l4zP2vbgvHLZUWHf1Kk0Hty
+	 BUhOcOV5AKTyzrJ9J8lpy+LELx1vPQVlUtdBi6QGSZ6iCM8jFEJYgbDOpPo1Zg7IUY
+	 exyjdUq2yCaKA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 02/11] leds: st1202: Spell out the phase-shift
- configuration bit
+Subject: Re: [PATCH v1 01/11] leds: st1202: Correct the name of the
+ prescaler conversion helper
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Manuel Fombuena" <fombuena@outlook.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <GV1PR08MB8497C0EF1F3979EEC073AAAEC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+In-Reply-To: <GV1PR08MB84975AC922A0F9308A5A45F1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 References: <GV1PR08MB8497422B7A44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
- <GV1PR08MB8497C0EF1F3979EEC073AAAEC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+ <GV1PR08MB84975AC922A0F9308A5A45F1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 12 Sep 2026 22:50:30 +0000
-Message-Id: <20260912225030.E2BBD1F000FF@smtp.kernel.org>
+Date: Sat, 12 Sep 2026 22:51:06 +0000
+Message-Id: <20260912225107.509BD1F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] Blinking an LED destructively zeroes out the PWM values for all ot=
-her channels, permanently breaking steady-ON LEDs.
-- [High] Hardware state clobbering: per-LED pattern operations corrupt glob=
-al sequencer configuration and step durations.
+- [High] st1202_blink_set clobbers the state of all other active LEDs on th=
+e same chip, unintentionally turning them off.
 --
 
-commit 2c776e6568e7de2682a8142a57768cace68e6086
+commit 39a1d0b65cb7b4a9e52158952579297ea332318e
 Author: Manuel Fombuena <fombuena@outlook.com>
 
-leds: st1202: Spell out the phase-shift configuration bit
-
-This commit renames ST1202_CONFIG_REG_SHFT to ST1202_CONFIG_REG_PHASE_SHIFT
-to improve readability and properly document the phase-shift delay feature.
-It also adjusts line wrapping in the register writes to adhere to column
-limits without introducing functional changes.
+leds: st1202: Correct the name of the prescaler conversion helper
+   =20
+This commit renames the prescaler conversion helper to correct typos and
+accurately reflect the conversion direction from milliseconds to prescaler.
+It makes no functional changes.
 
 > diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> index 5a2202fb4c223..d8a04e96fb46c 100644
+> index ead1441558497..5a2202fb4c223 100644
 > --- a/drivers/leds/leds-st1202.c
 > +++ b/drivers/leds/leds-st1202.c
-[ ... ]
-> @@ -210,7 +211,7 @@ static int st1202_led_pattern_clear(struct led_classd=
-ev *ldev)
+> @@ -85,7 +85,7 @@ static int st1202_write_reg(struct st1202_chip *chip, i=
+nt reg, uint8_t val)
+>  	return ret;
+>  }
 > =20
->  	guard(mutex)(&chip->lock);
-> =20
-> -	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHF=
-T);
-> +	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHA=
-SE_SHIFT);
-
-[Severity: High]
-This is a pre-existing issue, but by writing only the phase-shift bit to the
-global ST1202_CONFIG_REG, doesn't this unconditionally clear the PATS and
-PATSR bits?=20
-
-Since the ST1202 chip appears to use a single global sequencer, clearing
-these bits would instantly halt the sequencer for all other active LEDs on
-the chip. Additionally, when setting patterns in st1202_led_pattern_set(),
-the shared global ST1202_PATTERN_DUR step durations are unconditionally
-overwritten.=20
-
-Does the driver need a way to coordinate or reject conflicting requests for
-the global sequencer instead of silently clobbering the state of other LEDs?
+> -static uint8_t st1202_prescalar_to_miliseconds(unsigned int value)
+> +static uint8_t st1202_milliseconds_to_prescaler(unsigned int value)
+>  {
+>  	return value / ST1202_MILLIS_PATTERN_DUR_MIN;
+>  }
 
 [ ... ]
-> @@ -299,7 +301,7 @@ static int st1202_blink_set(struct led_classdev *led_=
-cdev,
-> =20
->  	guard(mutex)(&chip->lock);
-> =20
-> -	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHF=
-T);
-> +	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHA=
-SE_SHIFT);
 
 [Severity: High]
-This isn't a bug introduced by this patch, but does st1202_blink_set()
-inadvertently break steady-ON LEDs?=20
+This isn't a bug introduced by this patch, but it was not addressed by the
+follow-up patches in the series.
 
-When a given LED starts blinking, the function iterates over all other acti=
+Does st1202_blink_set() unintentionally clobber the state of all other acti=
 ve
-channels and unconditionally zero-fills their PWM slots to prevent them from
-blinking:
+LEDs on the same chip?
 
-st1202_pwm_pattern_write(chip, chan, 0, LED_OFF);
-st1202_pwm_pattern_write(chip, chan, 1, LED_OFF);
+drivers/leds/leds-st1202.c:st1202_blink_set() {
+    ...
+	/* Zero out PWM for all other active channels to prevent them from blinkin=
+g */
+	for (int chan =3D 0; chan < ST1202_MAX_LEDS; chan++) {
+		if (!chip->leds[chan].is_active || chan =3D=3D led->led_num)
+			continue;
 
-If those other channels were previously configured to be steady ON, this ze=
-ro
-fill causes them to turn completely off during patterns 0 and 1. When the
-blinking LED is later disabled, the original full PWM slots for the other
-channels are never restored, which seems to leave them permanently disabled.
+		ret =3D st1202_pwm_pattern_write(chip, chan, 0, LED_OFF);
+    ...
+}
 
-[ ... ]
+If a user writes a constant brightness to LED A via sysfs attributes, and
+then sets a timer trigger on LED B to make it blink, won't this loop
+explicitly destroy the PWM state of LED A (such as the ST1202_PATTERN_PWM_F=
+ULL
+written by st1202_led_set to maintain constant brightness)?
+
+Since unprivileged user-space can trigger this by writing to independent
+sysfs devices, they could unintentionally turn off other active channels on
+the chip.
+
+Is there a way to isolate the blinking configuration to a single LED without
+wiping out the PWM values for the rest?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/GV1PR08MB8497422B7A=
-44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D2
+44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D1
