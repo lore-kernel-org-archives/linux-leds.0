@@ -1,108 +1,130 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5D5353EF7
-	for <linux-leds@vger.kernel.org>; Sat, 12 Sep 2026 22:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A9C26299
+	for <linux-leds@vger.kernel.org>; Sat, 12 Sep 2026 22:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789253376; cv=none; b=QDpNqOvP7fymBtB0T3oxru5bh6u+O+cZbKQ1XqH2oUygq0TW6KmziL228TY1GT3ZvYO/jZJBV6X531Vl5DTDLIld6/1pNDHwPzH073BFUfbMB6Ob6j/HPsACV2gIB16fUjWzBzrZ2XC87SyYw1zAxDBChuOEhDNtqf855ehxsxg=
+	t=1789253432; cv=none; b=gRJeA7NssY0p7PsiH6fNrVegEk9ojTgO/pFP0CywJL0Fv1qnZ1tcXS4q8B7plnqvL7bHua80RVftqBRfnBDC3S0ObAwoJjYr4eKkVEQ7BRwXA6sYFMIUU6sS6obE61oujFP1bs7bZPVlsLjipp0YyjKqb7rTI8L1asbrU2zkpBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789253376; c=relaxed/simple;
-	bh=C/Bl4bDx9jPuHJkzMxE1bMXjBnX8y0i5YO2SoNm8U/o=;
+	s=arc-20240116; t=1789253432; c=relaxed/simple;
+	bh=0owkl/RMNJe1r+197NQRQjEMrUhH3/dVOyL/B2ouDJc=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=TGWiDr55T5dNC7S+DlXg+xMh4BRll800jZX8z+sv8Pz0CUj7uOcabGVLbR3q7OKN5yPVhUaQQ5Uz2Y21/cBcN551x9VZWD1QBTw8Ts4tZiTFdnawkDCN2/hfOiMAtF7tQ7T0DgIBwR1yDPnsuLp9OKFTGVWdEYIOgpTM39tZQPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tc4c0/Tm; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=WRDqyuF9pLRsImuUDLBn6IjYzHtZMXB29tiE3CEzdnh0jg3/YWKoFMiIW31NuQZsdlkoyGKEouahuNpcRapiMxufWUXC1jp9r92ZI2/Gw5lUqMssK6tH8Xsj18qWasyfUnEl78R8wOtb/ok13mKf43MGWccwU86rDhQTDinqopU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtZmaWoA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tc4c0/Tm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C2EA1F000FF;
-	Sat, 12 Sep 2026 22:49:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtZmaWoA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BBD1F000FF;
+	Sat, 12 Sep 2026 22:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789253375;
-	bh=H9dlRyB02Fedq3b2mbSDbo0v+C6Ylz01CO8/P3i8PNQ=;
+	s=k20260515; t=1789253431;
+	bh=Wf2YyS5Gc1T6QSI4pvJ7CsiaByU7ECnU0TgrHqQxNeo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Tc4c0/TmBiAxS0c+3s53xFsXlNbKkVHQaMqSR7OcsgxxgnU4unXkGy2N9SO3AkNU8
-	 cvl2T8v806G7O5XZDQLH1ofaFqWQkjNZKz0MwIesgoYVnmT2nW3qeEor5V48ioMByp
-	 bnUt2ivFClP9t9XESSdwORfdQdO1lfZLsVXAGCJR6jiPCY/uoxeQ/d6JhnmZ45uk4s
-	 rTR8uGgmKHAUQJ0Xup2IEzjDgFberUdwkqLTSIqMu311E0oU2Tdu9ZEng/z2a3Leum
-	 RCQDMsvm4cyy8yzDQ2VTEk2+NrdTu1f/PCfsL2zu/p1OPuN2uqxEO30GgLdEK97US+
-	 PwlZxBMPWCxPw==
+	b=dtZmaWoAEz3LNKjlfgdneCZqlWSgM4QbGOgxPVHAXTikVbTPmRL9oTlhMdN7teeXx
+	 XhVAxiaYenLyrNcQdS6MqinpSWMlLm6KeTRzlDauBQmntxB+Q8N5oQA299sB0f9oBp
+	 1ToEHhb/BSfSZw3FxEmPH/KaY0tdczNbmslkqtAuTO0HdjclKgTHiCzBF6OKA4GqaV
+	 JLP/d/CP++HVncfTUQBBybq3jkwTIX411146R8t2d+K6/zeJeFmzWnnrn8igw7mnzq
+	 MfSm0w3T14ymzv3+HRPij48+KqiCiS/mjo/awPs88LeF2dxJLgzX0sJs4ZJUnmOGbF
+	 ACbmwo4p+7KRA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 07/11] leds: st1202: Program the channel current for
- hardware patterns
+Subject: Re: [PATCH v1 02/11] leds: st1202: Spell out the phase-shift
+ configuration bit
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Manuel Fombuena" <fombuena@outlook.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <GV1PR08MB8497746317561206D7C20DAEC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <GV1PR08MB8497C0EF1F3979EEC073AAAEC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 References: <GV1PR08MB8497422B7A44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
- <GV1PR08MB8497746317561206D7C20DAEC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+ <GV1PR08MB8497C0EF1F3979EEC073AAAEC5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 12 Sep 2026 22:49:34 +0000
-Message-Id: <20260912224935.3C2EA1F000FF@smtp.kernel.org>
+Date: Sat, 12 Sep 2026 22:50:30 +0000
+Message-Id: <20260912225030.E2BBD1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
 s) to consider:
 
 Pre-existing issues:
-- [High] `st1202_led_pattern_clear` and `st1202_led_pattern_set` manage the=
- global sequencer state and shared duration registers on a per-channel basi=
-s, corrupting other active patterns.
+- [High] Blinking an LED destructively zeroes out the PWM values for all ot=
+her channels, permanently breaking steady-ON LEDs.
+- [High] Hardware state clobbering: per-LED pattern operations corrupt glob=
+al sequencer configuration and step durations.
 --
 
-commit e1c407fc5be28a96fa9e3c96385b607f0ca18728
+commit 2c776e6568e7de2682a8142a57768cace68e6086
 Author: Manuel Fombuena <fombuena@outlook.com>
 
-leds: st1202: Program the channel current for hardware patterns
+leds: st1202: Spell out the phase-shift configuration bit
 
-This commit modifies the hardware pattern setup to properly program the
-analog current register (ILED) so that programmed patterns are visible. It
-also ensures the current is released when a pattern is cleared to avoid
-latching the LED on.
+This commit renames ST1202_CONFIG_REG_SHFT to ST1202_CONFIG_REG_PHASE_SHIFT
+to improve readability and properly document the phase-shift delay feature.
+It also adjusts line wrapping in the register writes to adhere to column
+limits without introducing functional changes.
 
 > diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> index 5558ac9612a15..5042fe88fbff7 100644
+> index 5a2202fb4c223..d8a04e96fb46c 100644
 > --- a/drivers/leds/leds-st1202.c
 > +++ b/drivers/leds/leds-st1202.c
-> @@ -221,6 +221,10 @@ static int st1202_led_pattern_clear(struct led_class=
-dev *ldev)
+[ ... ]
+> @@ -210,7 +211,7 @@ static int st1202_led_pattern_clear(struct led_classd=
+ev *ldev)
 > =20
 >  	guard(mutex)(&chip->lock);
 > =20
-> +	ret =3D st1202_write_reg(chip, ST1202_ILED_REG0 + led->led_num, LED_OFF=
-);
-> +	if (ret !=3D 0)
-> +		return ret;
-> +
->  	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHA=
+> -	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHF=
+T);
+> +	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHA=
 SE_SHIFT);
->  	if (ret !=3D 0)
->  		return ret;
 
 [Severity: High]
-This is a pre-existing issue, but does writing ST1202_CONFIG_REG_PHASE_SHIFT
-here abruptly halt the shared global sequencer for all channels?
+This is a pre-existing issue, but by writing only the phase-shift bit to the
+global ST1202_CONFIG_REG, doesn't this unconditionally clear the PATS and
+PATSR bits?=20
 
-Since st1202_led_pattern_clear() and st1202_led_pattern_set() are executed =
-on
-a per-channel basis via led_cdev.pattern_clear, clearing the PATS and PATSR
-bits in the shared ST1202_CONFIG_REG appears to corrupt the state machine a=
-nd
-stop any hardware patterns currently executing on other LEDs on the same ch=
-ip.
+Since the ST1202 chip appears to use a single global sequencer, clearing
+these bits would instantly halt the sequencer for all other active LEDs on
+the chip. Additionally, when setting patterns in st1202_led_pattern_set(),
+the shared global ST1202_PATTERN_DUR step durations are unconditionally
+overwritten.=20
 
-Additionally, further down in st1202_led_pattern_clear(), there is a loop
-that writes 0 to ST1202_PATTERN_DUR + pattern. Can this zero out the chip-w=
-ide
-global duration registers and destroy the pattern sequence timings for all
-other active channels?
+Does the driver need a way to coordinate or reject conflicting requests for
+the global sequencer instead of silently clobbering the state of other LEDs?
+
+[ ... ]
+> @@ -299,7 +301,7 @@ static int st1202_blink_set(struct led_classdev *led_=
+cdev,
+> =20
+>  	guard(mutex)(&chip->lock);
+> =20
+> -	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHF=
+T);
+> +	ret =3D st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHA=
+SE_SHIFT);
+
+[Severity: High]
+This isn't a bug introduced by this patch, but does st1202_blink_set()
+inadvertently break steady-ON LEDs?=20
+
+When a given LED starts blinking, the function iterates over all other acti=
+ve
+channels and unconditionally zero-fills their PWM slots to prevent them from
+blinking:
+
+st1202_pwm_pattern_write(chip, chan, 0, LED_OFF);
+st1202_pwm_pattern_write(chip, chan, 1, LED_OFF);
+
+If those other channels were previously configured to be steady ON, this ze=
+ro
+fill causes them to turn completely off during patterns 0 and 1. When the
+blinking LED is later disabled, the original full PWM slots for the other
+channels are never restored, which seems to leave them permanently disabled.
 
 [ ... ]
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/GV1PR08MB8497422B7A=
-44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D7
+44424C4968AEC1C5BD2@GV1PR08MB8497.eurprd08.prod.outlook.com?part=3D2
