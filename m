@@ -1,169 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43748376BE4;
-	Sun, 13 Sep 2026 02:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3125D35F192;
+	Sun, 13 Sep 2026 02:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789267089; cv=none; b=FM2KGHab8biu3T/S1KNmpi+gc2Is/GqIDzcrK+wr1ASXzlxOudJznpWSDa7YrcJZVBXQEO5MKXpofFlbl5C0N52zIN9k7738fRSngS1fXy7lqg7kbG8WPn63QBCSpJShXU4r9/MIROfpaBSPhXUYkp19KKNxdiZ4YkuKxAlGRsU=
+	t=1789267512; cv=none; b=WvLq2/0NwuUqRla58luwA/xZsT9S7L5MK7oHxsdA+U/a/o7DKSYxWXnniffZpYGTL6Y8lIpbV8QsmIWUSVUM3pHqIUyOM3o+KK+5rDtPFaqyuxPlVBqWq/JDeeVhi7Cwl6gjem1F8y1aJTT9480NzrdyOQ//lm9/hhfPETpTM1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789267089; c=relaxed/simple;
-	bh=zmjDkalhHp+DZoMH9Wa+lSORBlcR37Dk9d3rt5R2DF8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DUyMRxMzjwxupAIMDkPtiR0fU4BrMY9h/t64IaLNCupgcZLgWg1OplbhaLjpdi+gMnJS5CK2G0Rbyp+OVpVYVmUvyavJibMIi1GTKOCdZlq0Njd7rW0HvG6LsTPPiMg/suwQhZXivVuy9l4y12brRiAgQFm1N9yaxnu0Q3r1Usg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s2d/nqPl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1789267512; c=relaxed/simple;
+	bh=vf/LynADfSBjaHhi2H4uw7GoweYkIcGUYqMcUdMGZKo=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=owFfQS6pAlaA/30/GV6Yfy6GDB0p2s/IeyeeP7RdaYObHNi13xTWeQlJsgMmgpAX4KWuan7zqqQGajyRBQj3r4CIG+4IFnp0tG2JuGPRdH/SjKoTQfKTQSXtuL6bsUxIIIhALkwFQWVEfVGz8dKoVPOrwKdBhvXtdaLtZzAuFHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Te/3yJtL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2d/nqPl"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A4658C2BCF4;
-	Sun, 13 Sep 2026 02:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1789267088;
-	bh=zmjDkalhHp+DZoMH9Wa+lSORBlcR37Dk9d3rt5R2DF8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=s2d/nqPlXk4vrfKpNgo70rae+uayyXcnBloNApk7n/YcmJe3G6F6FPN3Bq8R90dju
-	 ym8+AlI2JR0zN997O7vF5mh1DCG+iqn1sAa89wFLt7YwcVry3MECYPq0CLd6tPA1Nm
-	 yRklCZGkeHH6HABPJQZPTzgsZJuv3xivncNbHjKkx4KSFKp9fcYnhX+sPnWuJytw6g
-	 tmYa48JlQkmfxT7YMnc8mwU13cqiGZjPPjNlX2XDHgeXT1lO6YlG0LcAVGv9iJrdXG
-	 3XL2pQzlmXvr0cInrW2muqtLzycjwZMtpMpQpAgXpMSlA5TtQZzFVLPE35hSf1a2w7
-	 DF1UrxVeJrnmg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87793C88E65;
-	Sun, 13 Sep 2026 02:38:08 +0000 (UTC)
-From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Date: Sat, 12 Sep 2026 19:38:10 -0700
-Subject: [PATCH v7 3/3] ARM: dts: qcom: msm8960: expressatt: Add camera
- flash
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Te/3yJtL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 485A11F000FF;
+	Sun, 13 Sep 2026 02:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789267510;
+	bh=DXH6TZKoAojuDtDUnZ9GM1csOg1RlctdkZheDilHJuU=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Te/3yJtLwiECm8A4o6CkyjOhZFUo7JPTNJqvyoGcTwy5sBJpNTFRJiRTO8tSMZBlE
+	 6Ej+XJPGHZX5r7dncPVuouHs7nyNHvLgFEvvFtOWQSvPIqvU5zgR52ZWmwzzJ6gO2X
+	 34Dfvgg/C0d8d01rOTicWIrH/NQOOP1DNQ3j3BwUh7EkH/vSgndqRRPKMS/4Rbrd30
+	 uMx+mSf/8ipLkRtrqn+rr1ZAqI3yx9T+GrmxFfJak8Crg303PCoooVJKQ3Z28PsOF6
+	 HJyfjwgzROT28VZaX/0wccqhigSAhtY4QQhkxDbr0Psppf2s8XrTFG0rKK1XZrmcWz
+	 RjpEPt1vGyf3A==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v7 1/3] dt-bindings: leds: rt8515: Support single-GPIO
+ flash ICs with vin supply
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Rudraksha Gupta" <guptarud@gmail.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org
+In-Reply-To: <20260912-expressatt_camera_flash-v7-1-e1fd2edc8d84@gmail.com>
+References: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
+ <20260912-expressatt_camera_flash-v7-1-e1fd2edc8d84@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 13 Sep 2026 02:45:09 +0000
+Message-Id: <20260913024510.485A11F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260912-expressatt_camera_flash-v7-3-e1fd2edc8d84@gmail.com>
-References: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
-In-Reply-To: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- phone-devel@vger.kernel.org, Rudraksha Gupta <guptarud@gmail.com>, 
- David Heidelberg <david@ixit.cz>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789267087; l=2821;
- i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=+XXskm3P7Bxm9qp2AXPxEkCdFfEV4HAGzaJ1hbiZwr0=;
- b=106LwAaIjdtn/azCBcKQZ93VhbbPAjBtNjvMY43Ki+Pg4aYO6uveCYGx2cnojBLTQk8Ju5gC/
- /4uWaSA1WDfCpCIntO0JIya2cuyFpw+ze6rEA/RRfFBnDQkhgZXpHXQ
-X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
- pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
-X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
- auth_id=211
-X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
-Reply-To: guptarud@gmail.com
 
-From: Rudraksha Gupta <guptarud@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] The `oneOf` constraint incorrectly makes `ent-gpios` and `vin-su=
+pply` mutually exclusive and strictly requires exactly one to be present, c=
+ontradicting the claim that `vin-supply` is optional and artificially restr=
+icting valid hardware configurations.
+--
 
-Add camera flash support for the Samsung Galaxy Express (expressatt).
+commit 72463777ee1c18e7913b350d5d2ad857810ece89
+Author: Rudraksha Gupta <guptarud@gmail.com>
+Subject: dt-bindings: leds: rt8515: Support single-GPIO flash ICs with vin =
+supply
 
-Downstream references:
-Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/drivers/leds/Makefile#L51
-Link: https://github.com/LineageOS/android_kernel_samsung_d2/blob/stable/cm-12.0-YNG4N/arch/arm/mach-msm/board-apexq-camera.c#L591
+This commit adds support for single-channel variants of the RT8515 flash
+ICs. It makes ent-gpios optional and introduces a vin-supply property,
+adding a oneOf constraint to manage their presence.
 
-Assisted-by: Claude:claude-opus-4.6
-Reviewed-by: David Heidelberg <david@ixit.cz>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
----
- .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+> diff --git a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml b=
+/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+> index 0356371a6b014..ab3c5139132cc 100644
+> --- a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+> +++ b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
-index 5a3d88e31cf5..b7218ee1349f 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8960-samsung-expressatt.dts
-@@ -1,11 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
- #include <dt-bindings/reset/qcom,gcc-msm8960.h>
- 
- #include "qcom-msm8960.dtsi"
- #include "pm8921.dtsi"
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
-+#include <dt-bindings/pinctrl/qcom,pmic-mpp.h>
- #include <dt-bindings/input/gpio-keys.h>
- 
- / {
-@@ -61,6 +63,32 @@ touchkey_enable: touchkey-enable {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_flash: regulator-flash {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VREG_FLASH_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pm8921_mpps 4 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		pinctrl-0 = <&flash_led_unlock>;
-+		pinctrl-names = "default";
-+	};
-+
-+	led-controller {
-+		compatible = "richtek,rt8515";
-+		enf-gpios = <&tlmm 3 GPIO_ACTIVE_HIGH>;
-+		vin-supply = <&vreg_flash>;
-+		richtek,rfs-ohms = <16000>;
-+		pinctrl-0 = <&cam_flash_en>;
-+		pinctrl-names = "default";
-+
-+		led {
-+			function = LED_FUNCTION_FLASH;
-+			color = <LED_COLOR_ID_WHITE>;
-+			flash-max-timeout-us = <250000>;
-+		};
-+	};
-+
- 	i2c-gpio-touchkey {
- 		compatible = "i2c-gpio";
- 		#address-cells = <1>;
-@@ -171,6 +199,13 @@ touchscreen@4a {
- };
- 
- &tlmm {
-+	cam_flash_en: cam-flash-en-state {
-+		pins = "gpio3";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-pull-down;
-+	};
-+
- 	spi1_default: spi1-default-state {
- 		mosi-pins {
- 			pins = "gpio6";
-@@ -571,3 +606,12 @@ magnetometer@2e {
- 		/* TODO: Figure out Mount Matrix */
- 	};
- };
-+
-+&pm8921_mpps {
-+	flash_led_unlock: flash-led-unlock-state {
-+		pins = "mpp4";
-+		function = "digital";
-+		output-low;
-+		power-source = <PM8921_MPP_S4>;
-+	};
-+};
+[ ... ]
 
--- 
-2.55.0
+> @@ -81,10 +90,15 @@ properties:
+> =20
+>  required:
+>    - compatible
+> -  - ent-gpios
+>    - enf-gpios
+>    - led
+> =20
+> +oneOf:
+> +  - required:
+> +      - ent-gpios
+> +  - required:
+> +      - vin-supply
+> +
 
+[Severity: Medium]
+Does this oneOf constraint incorrectly restrict valid hardware configuratio=
+ns?
 
+The oneOf constraint strictly requires exactly one of its subschemas to mat=
+ch.
+If a single-channel IC (which naturally lacks ent-gpios) does not use the
+explicitly optional vin-supply regulator, zero subschemas will match, causi=
+ng
+schema validation to fail.
+
+Conversely, if a standard dual-channel IC (which requires ent-gpios) is also
+powered by a vin-supply regulator, two subschemas will match. This will also
+fail validation due to the strict exclusivity of oneOf.
+
+Should this be modeled differently to allow vin-supply to be truly optional
+while safely permitting single-channel configurations?
+
+>  additionalProperties: false
+> =20
+>  examples:
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260912-expressatt=
+_camera_flash-v7-0-e1fd2edc8d84@gmail.com?part=3D1
