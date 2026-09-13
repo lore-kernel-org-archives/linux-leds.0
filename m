@@ -1,246 +1,222 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0293347FC8;
-	Sun, 13 Sep 2026 02:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919FF381E92;
+	Sun, 13 Sep 2026 08:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789267831; cv=none; b=Z0ZBvClGteQ3TrD4zvrK41ynhyolAUDB/qZZPMnIwdaguw4xzIxuBsD474RrC+84hrQx4ngpMn5j2g4uQPG29a1oTqSne+oWYkrXSq77HXDTRF+wbUy6NxISyXQV37swKdg7KZM9KKF0BAONmK+2IXo5Shmhygq/ECzMKqQrhBI=
+	t=1789288443; cv=none; b=oWR60WUWAMvRCRSYlm56i48yaj+Q5RxThtk1WFeNlQYBNOZQ4bmMj29fiDqgA7UD+IFdm0r9Oo0sft4SbLBv67S521fyw+FUgj/c7S85AQK4HxHznRN/R6/NmDuZp3dCpGGhtYbDgmV9gF1wu6NerUt0XXv+LDwozkHu6PoAgAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789267831; c=relaxed/simple;
-	bh=aiJYGs+FMH5OX2hy/Awvd2CVN5Lo6RJ5O2JYJzhTpF0=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=QyOoxoFJacxddUt9Oevj2LpB+9yT36Ydqden0cFDtgH8stYc4k4LmByTaVNnWPZvYNt8dtZDYJX7m2bHBxs38pgbmvnMV2VWLOSyx+KpfrpWhEE61XPq9wuZcZtVI3CBPmlODJVBW3wZH0aYVfMyyknHUhCdJFrz76+IbZbLdVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gju1W8I0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789288443; c=relaxed/simple;
+	bh=l21u1VfuTUk80ee1/KqRN/TTYww9xGQuE4vEMp/bBy0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=amxxgufPOZT09XmoTHFO+Oy04bCak6y5OKiCcpfEI/2/ApcFMmsVDcFBVGj5dQzHbyueDBZ4VEz92MpXa28mc7JIpaBPVWhbLz3EiMZ9MfwJSLi5P21s7s7IsV5PahHXUricLe1B8be/e9R1ayy32BYyt6/+wBJG14+lvsuONac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hP4uSJGU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nvm4EGrz; arc=none smtp.client-ip=202.12.124.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gju1W8I0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B121F000FF;
-	Sun, 13 Sep 2026 02:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789267829;
-	bh=x4tXlspaB6dbevCYfLGiva4ONe6D7VD0ImAfngX/g0Q=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=gju1W8I0QAselA4+Cnj8LlmI2aikwx5+I3LyPqjLNjB+z+q9gMSTeCE1lqRKghaGp
-	 yh/zjrg2/Z8hR1YopC+x/YNGGg7SqBDBR7usTD7+fiHYQ4RQXW7WtEC3lm6PNeZikc
-	 rM3SvjnwOOTIJHJt9+zoJzbFr5TBxYw1w9Bq14ieJorqxnL3MNQB87XHbMHyRMXQux
-	 ERqM7T+0Nhhc7ShiYL7z+tSMsYUhyt58kufSDfuFgvMFCofDA5Bf3YALgnSqlXD2qQ
-	 2b49AQ+D8HeHnECZ06QFl7yWyu5RTIxDj0Du8bHjcDbbf29V1BNk80kk0eIPce/cmu
-	 gvwpLGJYfQXbQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 2/3] leds: flash: rt8515: Support single-GPIO flash
- ICs with vin supply
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Rudraksha Gupta" <guptarud@gmail.com>
-Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-leds@vger.kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20260912-expressatt_camera_flash-v7-2-e1fd2edc8d84@gmail.com>
-References: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
- <20260912-expressatt_camera_flash-v7-2-e1fd2edc8d84@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 13 Sep 2026 02:50:28 +0000
-Message-Id: <20260913025029.34B121F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hP4uSJGU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nvm4EGrz"
+Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
+	by mailflow.stl.internal (Postfix) with ESMTP id 3F049130010C;
+	Sun, 13 Sep 2026 04:33:55 -0400 (EDT)
+Received: from ams-imap-03 ([10.64.2.23])
+  by ams-compute-02.internal (MEProxy); Sun, 13 Sep 2026 04:33:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1789288434;
+	 x=1789295634; bh=FK/hgn5ztNrzJ8FzxNsGVH8sTakZzoGmnSB/QJ0ZjK4=; b=
+	hP4uSJGU4LPNyh7tNOFYiOwyUhoJjvn+rtx/gV1jNxsXli24Yj4H9OHWbSCUCOYp
+	1LmeKkR/FDUTxfeVUcR3PW6hzHXaeKbqkwhguEsHXcWXM+EqRDq6Mutivw7D6AP7
+	zxcO7/7iOjRUeRDtvmwTdGVJi91XV93oTtX2lrN8t5oAK8MveTvPjOJLHdwKGLDv
+	WDY18MwDH078GeQblDSx50OkW8RYXHIL1Py1DTJXQ6l5yXDv8UpvOCwggfr73muh
+	tjWCnmei/4Ederp7aq+6q9XhHyjG3orbvr7iO3P4pOWy80p3tGPWWzvPjFz6Xoj/
+	l/E+uRa80heywM28ZQPbng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789288434; x=
+	1789295634; bh=FK/hgn5ztNrzJ8FzxNsGVH8sTakZzoGmnSB/QJ0ZjK4=; b=n
+	vm4EGrz4F6jR5JXE4wigJ8Ry7JX5M0AcC921ZlsuVqc/YpoeL8SAT+tKWa33nB0T
+	ZjwnZB7JaKQBbZtda19Ii6izZqboxNE1agBJILSQAvcaL8wIdNQhGx6H6fTk7CiJ
+	9DNwc7XlhvV+mMoGxebUGze3s1kX5uyoEPunC4jlIgaJyiyTX4Sbb7UtBOpcgTkm
+	GA9daUeYKwy5LcIt5VDo8mzbeUuePrI+JBZLjzF/J2KeYkeu+nmvT4YELvXjrCdX
+	MgxF8P55rsqI0lTOj9w6JBgCin8AMz9HlCAbF/Hl/i9h5rN/siDdaojxzhTnkeU0
+	a5HBpRoQJPWwTY7SPsEjQ==
+X-ME-Sender: <xms:6V-mapGAWvvTCYmPsF0gHXxbEy2q1VIUbPN28RqMGUUZtzTOrnEvuA>
+    <xme:6V-mapLXRXStV_91mp4cNlBE7UDv4i1YnLRZiVf3ZoCTB1V3wH1kzPlEqS463DWcH
+    jBKPFdmoJWdTPPrTaq2cSmCN-or1svTLHlOTE8BeqZQDBbr6-RKxf_M>
+X-ME-Proxy-Cause: dmFkZTFlVhM1xA9XUYL3SefhQrC0hRhFkTaBBJIQ3su2kNz4MfZ3F028vj/UpSaZ9vtqdo
+    wovmypaSI/+/Azrkn02Yb8tOmVCj78ufH0HthXhTBRf6WeFoUXig393+d5/MfEq2pSRnyw
+    LvkfDeXAZA0b/j/z/1yiQhabfROQmtQB7KcVHYhL5U/1ONNfzRfrULV/TAUFjNOKXvZqHU
+    1d3D75czeqAluQHI4FwbSCqywRuOSl2dbfCEwiQwzFVuJIGYTmYp+6BhJS/cWlHc13mRMu
+    JCF4bc/fUM2PhFgmF6DfLis1vMU0ddqwu1kq89fIC1RtR0wlPT1taz0+6qP2fokAV623EC
+    7WvNLhWl3kVw2NxV4IcXin9Y98/yDUmwATW+ikygGBZJ6YYQmvcBkxJjwY6s1s0lBnkurW
+    dgFHyjPldyFsZBx8c3uSdH5l15d1REZen5gyrGPU1HE169zMMgo3KEmBEUmtacwkM75/YY
+    grwFCl6KM0Bz9faJrynux+UReF8cohlyDGeVV9rTC5y20vL4mU3p+bx1hfEaXHZ84F3XO2
+    v2UOS2mSdQ64QMhfWRfWITFHODS475vwD85qi+Wj3j/4MpFov5LCO3ZCpCX0NoG23iGgHA
+    cDtOhMrnZ/x93jpFr/xtrmhKYEtASmslgyDXrwp3akV21xiDzYSAeZt4Xing
+X-ME-Proxy: <xmx:7l-marCsxWSQh7GyHEJQeExs04vUHwGvSpX6l3ZVDsiTwMGzIFCPpg>
+    <xmx:7l-mamy6bQq8k5lrbzz61NVzb-U8lzuLCWChRPmqZFuL-W1-V1RBnA>
+    <xmx:7l-mapO3Ea7pdRgQSbEG743m78cgcMsUglEvHhQP6eVdBbbYwVXaDw>
+    <xmx:7l-matdXxH-1ltZbtCG0gBd_mR1zKSCO473ThhfLCbYY-V19IRKADw>
+    <xmx:8l-maj_96L_YD-vKCf9QRDIxzcji6jyg1fRDZfFt7ZuAErCOtrULUMr4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id DB07132A007E; Sun, 13 Sep 2026 04:33:44 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-ThreadId: AK-jVwBtQCQR
+Date: Sun, 13 Sep 2026 10:33:04 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jonathan Cameron" <jic23@kernel.org>
+Cc: "Svyatoslav Ryhel" <clamor95@gmail.com>,
+ "Arnd Bergmann" <arnd@kernel.org>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Bartosz Golaszewski" <brgl@kernel.org>,
+ "Mark Brown" <broonie@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Daniel Thompson" <danielt@kernel.org>, "Helge Deller" <deller@gmx.de>,
+ devicetree@vger.kernel.org,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ dri-devel@lists.freedesktop.org, "Jingoo Han" <jingoohan1@gmail.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Linus Walleij" <linusw@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-fbdev@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ "Guenter Roeck" <linux@roeck-us.net>, linuxppc-dev@lists.ozlabs.org,
+ llvm@lists.linux.dev, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+ mfd@lists.linux.dev, "Michael Hennerich" <michael.hennerich@analog.com>,
+ patches@opensource.cirrus.com, "Pavel Machek" <pavel@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Sebastian Reichel" <sre@kernel.org>,
+ "Support Opensource" <support.opensource@diasemi.com>
+Message-Id: <e53ae695-99ed-4f14-855b-b922a938438c@app.fastmail.com>
+In-Reply-To: <20260912232047.19c4cb10@jic23-hlaptop>
+References: 
+ <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
+ <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+ <20260912232047.19c4cb10@jic23-hlaptop>
+Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
+On Sun, Sep 13, 2026, at 00:20, Jonathan Cameron wrote:
+> On Thu, 10 Sep 2026 20:14:15 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
+>> 
+>> I tried to be careful about figuring out exactly which drivers are
+>> unused, but I'm sure there are still a few false positive and false
+>> negative ones in there. I've added the current list of driver files below,
+>> let me know if you see something that shouldn't be there.
+> Hi Arnd
+>
+> For I2C and SPI at least, there doesn't need to be explicit
+> device tree support as long as they have defaults when platform
+> data isn't there. Those two buses will happily bind based on
+> a dt-compatible and their i2c_device_id or spi_device_id tables
+> for example.
+>
+> So unless they fail to probe (some might?) we don't have
+> a clear signal on whether they are in use via DT or not.
+>
+> For vast majority of IIO drivers we don't have an upstream
+> DTS as there is no clear motivation for anyone to upstream
+> the dts for a random industrial control board or similar.
 
-New issues:
-- [High] Regulator is not enabled when requesting maximum torch brightness,=
- preventing the LED from turning on.
-- [High] Replacing mod_timer with schedule_delayed_work silently drops upda=
-tes to the strobe timeout and causes premature LED power down.
-- [Medium] Unbalanced regulator disable due to reliance on the global/physi=
-cal regulator state instead of the driver's consumer enable count.
+Right, that was my general rule, if I had tried to remove
+all drivers that could plausibly probe with an external dtb
+but have no internal users, that would have easily doubled
+the 300 patches I already did.
 
-Pre-existing issues:
-- [Critical] Premature destruction of mutex and cancellation of workqueue d=
-uring device removal while the LED class device is still registered, leadin=
-g to a Use-After-Free.
---
+>> drivers/iio/adc/ad7266.c
+> No to dropping this.
+>
+>
+>> drivers/iio/adc/ad7791.c
+> No to dropping this one.
+>
+>> drivers/iio/adc/ad7793.c
+> Maybe. Analog devices ack needed.
+>
+> Production part but this one indeed fails to probe.  Analog
+> folk, do you want to fix this one up?
+>
+>> drivers/iio/adc/ad7887.c
+> No to dropping this.
+>
+> Production part - should work fine with defaults in driver.
+> Could like the others drop the platform data handling.
 
-commit 6a964f82a818f57f5a1a31366f614609bc9c5008
-Author: Rudraksha Gupta <guptarud@gmail.com>
+This was one patch that I wasn't sure about myself (all four
+drivers together) since it looks like even when they do probe
+from dtb, the feature set would be limited without a DT
+binding, and they have been in the tree for a rather long time
+without users.
 
-leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
+I've dropped the patch now. I looked at dropping the platform_data
+handling, but I think that only makes sense if we get a
+proper DT binding first.
 
-This commit extends the RT8515 driver to support flash ICs that use
-only a single GPIO for both flash and torch modes, alongside an
-optional vin regulator that gates power to the flash IC.
+>> drivers/iio/adc/lp8788_adc.c
+> Probably
+>
+> Sub driver of an MFD.  I'm fine with that going if we know
+> the mfd is no longer in use.
 
-> diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-r=
-t8515.c
-> index 00904cc90ed6e..541f61e13f018 100644
-> --- a/drivers/leds/flash/leds-rt8515.c
-> +++ b/drivers/leds/flash/leds-rt8515.c
-[ ... ]
-> @@ -62,27 +66,50 @@ static struct rt8515 *to_rt8515(struct led_classdev_f=
-lash *fled)
->  	return container_of(fled, struct rt8515, fled);
->  }
-> =20
-> -static void rt8515_gpio_led_off(struct rt8515 *rt)
-> +static int rt8515_gpio_led_off(struct rt8515 *rt)
->  {
-> -	gpiod_set_value(rt->enable_flash, 0);
-> -	gpiod_set_value(rt->enable_torch, 0);
-> +	gpiod_set_value(rt->enable_flash, RT8515_OFF);
-> +	gpiod_set_value(rt->enable_torch, RT8515_OFF);
-> +
-> +	if (!rt->reg)
-> +		return 0;
-> +
-> +	return regulator_is_enabled(rt->reg) > 0 ? regulator_disable(rt->reg) :=
- 0;
+Ok, I posted that one as
+https://lore.kernel.org/all/20260909132153.1596191-8-arnd@kernel.org/
 
-[Severity: Medium]
-Since regulator_is_enabled() returns the global physical state rather than
-the per-consumer enable count, could this lead to an unbalanced disable if
-the regulator is marked always-on or shared with another consumer?
+and so far, everyone agreed on removing it.
 
-Because rt8515_gpio_led_off() is reachable from user-controllable sysfs
-attributes via rt8515_led_brightness_set(), repeated calls when the driver
-has not enabled the regulator might cause the regulator core to throw a
-warning and return -EIO. Should the driver maintain its own boolean state
-to track whether it has enabled the regulator?
+>> drivers/iio/adc/lpc18xx_adc.c
+>> drivers/iio/dac/lpc18xx_dac.c
+> Probably
+>
+> Likewise these two.
 
->  }
-[ ... ]
-> @@ -91,23 +118,37 @@ static int rt8515_led_brightness_set(struct led_clas=
-sdev *led,
->  {
->  	struct led_classdev_flash *fled =3D lcdev_to_flcdev(led);
->  	struct rt8515 *rt =3D to_rt8515(fled);
-> +	int ret =3D 0;
-> =20
->  	mutex_lock(&rt->lock);
-> =20
->  	if (brightness =3D=3D LED_OFF) {
-> -		/* Off */
-> -		rt8515_gpio_led_off(rt);
-> +		ret =3D rt8515_gpio_led_off(rt);
-> +		if (ret)
-> +			goto out;
->  	} else if (brightness < RT8515_TORCH_MAX) {
-> -		/* Step it up to movie mode brightness using the flash pin */
-> -		rt8515_gpio_brightness_commit(rt->enable_torch, brightness);
-> +		/*
-> +		 * Step it up to movie mode brightness.
-> +		 * If there is no separate torch pin, use the flash pin
-> +		 * for torch as well.
-> +		 */
-> +		ret =3D rt8515_gpio_brightness_commit(rt,
-> +				rt->enable_torch ?: rt->enable_flash, brightness);
-> +		if (ret)
-> +			goto out;
->  	} else {
-> -		/* Max torch brightness requested */
-> -		gpiod_set_value(rt->enable_torch, 1);
-> +		/*
-> +		 * Max torch brightness requested.
-> +		 * If there is no separate torch pin, use the flash pin
-> +		 * for torch as well.
-> +		 */
-> +		gpiod_set_value(rt->enable_torch ?: rt->enable_flash, RT8515_ON);
+Right, this one of course should follow the removal of
+CONFIG_ARCH_LPC18XX in arch/arm/
 
-[Severity: High]
-If a transition is made from LED_OFF directly to max torch brightness, the
-optional vin regulator remains disabled because
-rt8515_gpio_brightness_commit() is completely bypassed here. Does this mean
-the max torch state might silently fail to power the IC?
+>> drivers/iio/frequency/ad9523.c
+> Maybe. Analog Devices ack needed.
+>
+> Fails to probe without platform data and marked not recomended
+> for new designs. If we get an Ack from Analog devices folk
+> I'm fine with this one going away.
 
->  	}
-> =20
-> +out:
->  	mutex_unlock(&rt->lock);
-> =20
-> -	return 0;
-> +	return ret;
->  }
-> =20
->  static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
-> @@ -116,27 +157,35 @@ static int rt8515_led_flash_strobe_set(struct led_c=
-lassdev_flash *fled,
-[ ... ]
-> -	if (state) {
-> -		/* Enable LED flash mode and set brightness */
-> -		rt8515_gpio_brightness_commit(rt->enable_flash, brightness);
-> -		/* Set timeout */
-> -		mod_timer(&rt->powerdown_timer,
-> -			  jiffies + usecs_to_jiffies(timeout->val));
-> -	} else {
-> -		timer_delete_sync(&rt->powerdown_timer);
-> -		/* Turn the LED off */
-> -		rt8515_gpio_led_off(rt);
-> -	}
-> +	/* Enable LED flash mode and set brightness */
-> +	ret =3D rt8515_gpio_brightness_commit(rt, rt->enable_flash, brightness);
-> +	if (ret)
-> +		goto out;
-> +
-> +	/* Set timeout */
-> +	schedule_delayed_work(&rt->powerdown_work, usecs_to_jiffies(timeout->va=
-l));
+This matches what I wrote in 
+https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?id=20c1515b0caec2769c0916d087326f640bfb8aab
 
-[Severity: High]
-Does schedule_delayed_work() correctly handle consecutive flash strobe
-commands? Unlike mod_timer(), schedule_delayed_work() silently ignores
-updates if the work is already pending. This could cause consecutive V4L2
-flash strobes to fail to extend the timeout, shutting down the flash
-prematurely.
+I'll keep the patch in the series and we'll see what the
+maintainers think when I post it.
 
-Additionally, if the delayed work is actively executing and blocked waiting
-on rt->lock, its pending bit is cleared. In that scenario, could
-schedule_delayed_work() queue a duplicate instance of the work that
-immediately shuts down the LED as soon as the lock is released? Would using
-mod_delayed_work() resolve these state management issues?
+Thanks a lot for taking a look!
 
-> =20
->  	fled->led_cdev.brightness =3D LED_OFF;
->  	/* After this the torch LED will be disabled */
-> =20
-> +out:
->  	mutex_unlock(&rt->lock);
-> =20
-> -	return 0;
-> +	return ret;
->  }
-[ ... ]
-> @@ -327,12 +389,17 @@ static int rt8515_probe(struct platform_device *pde=
-v)
-[ ... ]
->  	platform_set_drvdata(pdev, rt);
-> =20
->  	ret =3D devm_led_classdev_flash_register_ext(dev, fled, &init_data);
+I wonder if some of the older Analog drivers were only ever used
+on Blackfin. My series still removes a few more drivers outside
+of iio list that had platform_data in arch/blackfin/ until we
+removed that in 2018. These all fail to probe without
+platform_data, which means they also wouldn't work with the
+downstream adsp-sc5xx/sc8xx port or any other upstream Arm
+platform:
 
-[Severity: Critical]
-This is a pre-existing issue, but registering the LED class device via the
-devm API schedules its sysfs interfaces to be unregistered after
-rt8515_remove() returns.
+a4bdf847e0e1 backlight: remove unused adp8860/8870 drivers
+c71829e110e9 Input: touchscreen: remove unused ad7877 driver
+b4d4ca64500b Input: misc: remove unused ad714x driver
+978426a3fe1a usb: remove unused sl811 driver
+0860c9f297c3 mfd: remove unused adp5520 driver
 
-[ ... ]
-> @@ -371,7 +438,7 @@ static void rt8515_remove(struct platform_device *pde=
-v)
->  	struct rt8515 *rt =3D platform_get_drvdata(pdev);
-> =20
->  	rt8515_v4l2_flash_release(rt);
-> -	timer_delete_sync(&rt->powerdown_timer);
-> +	cancel_delayed_work_sync(&rt->powerdown_work);
->  	mutex_destroy(&rt->lock);
-
-Because devres destroys the sysfs interfaces after this function returns,
-could a concurrent user-space write to sysfs (like triggering a flash
-strobe) occur during this window? This would cause the sysfs handler to
-attempt to lock the destroyed mutex and queue work on the freed device
-structure, leading to a use-after-free. Should devm_add_action_or_reset()
-be used here instead to ensure the work and mutex are only destroyed after
-the devm-managed LED registration is cleanly torn down?
-
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260912-expressatt=
-_camera_flash-v7-0-e1fd2edc8d84@gmail.com?part=3D2
+       Arnd
