@@ -1,133 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AFE47F3B3
-	for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 14:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB896470E81;
+	Mon, 14 Sep 2026 14:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789395679; cv=none; b=r8SIJA3qyTIhXSxOfJRXxydHOfP7JY7dojTePMswWgGdWs4/a4FTabdhKueQQZv4CVNforrKgZu37n86SXttfxs5Mb6MDneEE3XsQRc3uP+SD+i3LlBiG04S4sh/venH/oun7CvTVPMF5jNB/G08m+iN0kjLZTYIwl0BwLTL774=
+	t=1789395754; cv=none; b=s86JLgByQikNR1xrEYfWouJeDv9fwXA7EtsC//TzGB1GP4F768NjbC5MrWOSlpGac2iUzPll6ZJ0mPUAWvrMeVY1Oh0q0QjHF1LqwTvwgOFGLWcLvFs5pcxT4wWWCNpWieV8HbOh8btrB9qzEWaFQ5JF+KZTtNG9Tp/tc7oMHDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789395679; c=relaxed/simple;
-	bh=3ahXMHS/W4vuRGfBZ1TEwcIiQtfT0mySJONI9OMsDis=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=aTTgPGR5VqEkou7+VArQU9CZGtsQqCN9is9K3jlLabOXPlipcMI4bflkaI1nVidDj0YAjfA9TYt0n2/afjzVEm4Vjo3nxobVWfhQ2elTe+Od98Cez0VWl5llb+OS+u2vCAbbLCd5vkhTox4dK7Y+8AGandXVzlWnROJF8GHlYJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8hmgGFi; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789395754; c=relaxed/simple;
+	bh=7mLGBc44MXANdUCMmf+7tBVX6b0El+Z5XFLsIPge0rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U41B5c+qGfLhGXT2cDp+lWdrirbe1lQ/GGEBBMk3EZbJ1hfwuJK/x7sZKbx8gayUqGScmHi8DSb/kYflM8Eo1R490KBjTyoCgBOcIb8bLuZZSvWFj7Eyhe+tL8Baaq+kGCwTEiaQE07i0AMhClVSisXyxrEaLTBsgbzBVEYxOCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vZyFBVOT; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8hmgGFi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DAC51F000FF;
-	Mon, 14 Sep 2026 14:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789395676;
-	bh=3EQvsMYFg9PdA5VYjBnthqoeMbRDfka6RuQ3TdkPwWg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=A8hmgGFiu6ofUswH09sGn2iAnear0AZmJlD1eBFo9rDb6U0PeMK6rv6YtnxF+hUzq
-	 FZ47hcyNCATAYum7o58x5xJiSPSuLEvrEcx3Ff7Rlorx7efFJB6AbjzNM3muNjsgGF
-	 0Nozxz87ftfqtHVPfcfs52dFdEul7Xb99yXBL69UbBnNrdmlFplwZlWZ+f8/lrCVIQ
-	 TkboKl9wYy2pziqlP5pD8rzBZAvk0QYG+/FhBFhbK+YYTpynFAshK6PyGcBHvhswvI
-	 rAakR5NGbdLvTSvbjMJd6OkgzsXAp1g5f4sigkorlsVsa6GdUP43r9QjgfuYIKU/P6
-	 h4FguCJmwuFXw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/3] leds: trigger: netdev: serialize mode/interval
- stores with trigger lock
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260914132356.807004-4-alexander.sverdlin@siemens.com>
-References: <20260914132356.807004-1-alexander.sverdlin@siemens.com>
- <20260914132356.807004-4-alexander.sverdlin@siemens.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 14 Sep 2026 14:21:15 +0000
-Message-Id: <20260914142116.6DAC51F000FF@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vZyFBVOT"
+Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CDBBF512;
+	Mon, 14 Sep 2026 16:20:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1789395650;
+	bh=7mLGBc44MXANdUCMmf+7tBVX6b0El+Z5XFLsIPge0rs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vZyFBVOT3FUD3tkVGGsBnE/9gKRIOCpsgp7rN8vd6XX2JM0UDtoKbkDSno2b0OS7R
+	 DqKfS9JJFivg2wx7CAKgMO4pOUq6k5JeISeiESGI/DZIcQzOM+62UG9Tc+tI4TsK94
+	 +kLrSAuUvEsd8c67LYQoa2w312FZcbCWTdlqH93M=
+Date: Mon, 14 Sep 2026 17:22:28 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guangshuo Li <lgs201920130244@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>, Armin Wolf <W_Armin@gmx.de>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Abdel Alkuor <alkuor@gmail.com>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] leds: ncp5623: release multi-led fwnode on remove
+Message-ID: <20260914142228.GE2522202@killaraus.ideasonboard.com>
+References: <20260914140742.1743052-1-lgs201920130244@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260914140742.1743052-1-lgs201920130244@gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
+On Mon, Sep 14, 2026 at 10:07:42PM +0800, Guangshuo Li wrote:
+> ncp5623_probe() obtains a reference to the multi-led firmware node with
+> device_get_named_child_node(). This reference must remain valid after
+> probe because led_classdev_register_ext() associates the node with the
+> LED class device using device_set_node(), which does not acquire an
+> additional reference.
+> 
+> The probe error paths correctly release mc_node, while the successful
+> path intentionally keeps the reference alive for the lifetime of the
+> registered LED device. However, ncp5623_remove() unregisters the LED
+> class device without subsequently dropping that reference, leaking the
+> firmware node on driver unbind.
+> 
+> Save the firmware node pointer before unregistering the LED device and
+> drop its reference afterwards, when the LED device can no longer use
+> it.
+> 
+> This issue was found by manual code inspection.
+> 
+> Fixes: 7b7e50f8f5e0 ("leds: Add NCP5623 multi-led driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+> ---
+>  drivers/leds/rgb/leds-ncp5623.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/leds/rgb/leds-ncp5623.c b/drivers/leds/rgb/leds-ncp5623.c
+> index f2528f06507d..f96f15b7e9a1 100644
+> --- a/drivers/leds/rgb/leds-ncp5623.c
+> +++ b/drivers/leds/rgb/leds-ncp5623.c
+> @@ -227,6 +227,8 @@ static int ncp5623_probe(struct i2c_client *client)
+>  static void ncp5623_remove(struct i2c_client *client)
+>  {
+>  	struct ncp5623 *ncp = i2c_get_clientdata(client);
+> +	struct fwnode_handle *mc_node =
+> +		dev_fwnode(ncp->mc_dev.led_cdev.dev);
+>  
+>  	mutex_lock(&ncp->lock);
+>  	ncp->delay = 0;
+> @@ -234,6 +236,7 @@ static void ncp5623_remove(struct i2c_client *client)
+>  
+>  	ncp5623_write(client, NCP5623_DIMMING_TIME_REG, 0);
+>  	led_classdev_multicolor_unregister(&ncp->mc_dev);
+> +	fwnode_handle_put(mc_node);
 
-Pre-existing issues:
-- [Critical] Unprotected cancel_delayed_work_sync() allows concurrent execu=
-tion and UAF of net_device in the worker thread.
---
+If the explanation in the commit message is true, it would indicate a
+bad API defect with led_classdev_multicolor_register_ext() and
+led_classdev_multicolor_unregister(). This patch would be a hack to work
+around the problem at best, and isn't the right solution.
 
-commit d9c1377958eda5198cea4d7f716e117467e638fb
-Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-Subject: leds: trigger: netdev: serialize mode/interval stores with trigger=
- lock
+>  	mutex_destroy(&ncp->lock);
+>  }
+>  
 
-This patch updates netdev_led_attr_store() and interval_store() to hold
-the trigger_data->lock. It prevents concurrent writes from dropping updates,
-reading partially-updated device states, and causing data corruption on
-shared fields.
+-- 
+Regards,
 
-> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger=
-/ledtrig-netdev.c
-> index 89b48c522c227..6556f6d28547f 100644
-> --- a/drivers/leds/trigger/ledtrig-netdev.c
-> +++ b/drivers/leds/trigger/ledtrig-netdev.c
-> @@ -421,6 +421,16 @@ static ssize_t netdev_led_attr_store(struct device *=
-dev, const char *buf,
->  		return -EINVAL;
->  	}
-> =20
-> +	/*
-> +	 * Serialize the read-modify-write of ->mode and the dependent
-> +	 * ->hw_control update and set_baseline_state() against concurrent
-> +	 * attribute stores and netdev_trig_notify().  netdev_trig_work() must
-> +	 * never take this lock, otherwise the cancel_delayed_work_sync() below
-> +	 * would deadlock.
-> +	 */
-> +	guard(mutex)(&trigger_data->lock);
-> +
-> +	mode =3D trigger_data->mode;
-
-[Severity: Critical]
-This is a pre-existing issue, but since this patch discusses lock interacti=
-ons
-with cancel_delayed_work_sync(), does the unprotected call to
-cancel_delayed_work_sync() in set_device_name() allow a concurrent thread
-to re-arm the work before the old device reference is put?
-
-A sysfs write to device_name triggers set_device_name(), which calls
-cancel_delayed_work_sync() locklessly:
-
-drivers/leds/trigger/ledtrig-netdev.c:set_device_name() {
-    ...
-    cancel_delayed_work_sync(&trigger_data->work);
-    ...
-    mutex_lock(&trigger_data->lock);
-
-    dev_put(trigger_data->net_dev);
-    ...
-}
-
-Concurrently, a sysfs write to a mode attribute (e.g., here in
-netdev_led_attr_store()) acquires trigger_data->lock and calls
-set_baseline_state(), re-arming the workqueue. The delayed work runs
-netdev_trig_work() locklessly, accessing trigger_data->net_dev:
-
-drivers/leds/trigger/ledtrig-netdev.c:netdev_trig_work() {
-    ...
-    dev_stats =3D dev_get_stats(trigger_data->net_dev, &temp);
-    ...
-}
-
-Meanwhile, set_device_name() acquires the lock, assigns a new device, and
-calls dev_put() on the old device. Since netdev_trig_work() doesn't hold its
-own reference or any locks, this dev_put() can drop the last reference and =
-free
-the net_device while the work thread is actively calling dev_get_stats() on=
- it.
-
-A similar race exists in netdev_trig_notify() on the NETDEV_UNREGISTER even=
-t.
-
-Can this sequence lead to a Use-After-Free (UAF) of the net_device structur=
-e?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260914132356.8070=
-04-1-alexander.sverdlin@siemens.com?part=3D3
+Laurent Pinchart
