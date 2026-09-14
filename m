@@ -1,120 +1,125 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B1347ACC6
-	for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 13:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863DE46D542
+	for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 14:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789394256; cv=none; b=XFo4yAWRlvnLqNWV5Si0MC5UCl77FJT5a6opwNPh5m3YwfxUV3x7UcpcTlHdCybIrdtHWmFqyV+EHRPZyJ3IQ8HkW/uuIbDTpSw6G8pWkqR8K4iF53iOn7yHXc35G8/XSBw/BVKn0E2kRLdP48i9ftUkwNXXoY4Ky55qxByfy/s=
+	t=1789394453; cv=none; b=J+UPo1TDGI6PQfW7iSNMwavT2+cYH0jsGRkXmaPInCQVYZ/i11YclVFlx0QMr55fdSo09O8dDbidmbVj28l5PdHF3FUAsdXHxvH+EIsYp5++bZcnmfkS+myoRZHOswqCb33epkR8pLQHdDOnV1PfrlTbjK4zbtHrXvFTQw3OLs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789394256; c=relaxed/simple;
-	bh=4C8oUlW/K8pKlkOLxMwWsCa9VAC3cTK/vHmn35fjaPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nrdjMOwrjEBGbuxZdbk1Hoh7Ga23I6mZUCFxoSAs+PEU8B6Vft94g0+ssiW3kNSvbFDCOZywBOq+l6Y4Mio+zElBz9+kvNWz7dqFZeAvGjOl7wnlerq2vSn4dDjYxr7oWBl8fRbkkFoNFlNomm7D3uLr0WU4186wgoQLJ2MHQBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2utLZvu; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789394453; c=relaxed/simple;
+	bh=rBNIq4AOU7UqSyxcKktkgszWO60ApjgyvN9LW+sPa/w=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=EUyeGBvZNduio2Af5u6roDkZeWAuhFVmFDCGVO5vPdXPfOxBaIl4WQx38+wNM+CF6oObVqPtMUHkLaDXlggUoBuZS5hZa4/nwuHDU7szcXZx0jiEzDuc5fLjZ2BQ2B5Jb258P6UEWdkkzETOz4qNUQKb7tqg45j30wTCw6ISk5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loPi18N2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2utLZvu"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2caced6038eso31392795ad.0
-        for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 06:57:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789394253; x=1789999053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qaak+sKiArxa7mKTlQvl1SbE11tdZGIRrd8OTw4JELM=;
-        b=c2utLZvuS2Yyt/JHyr6bc9kW4ekQE2B3ViaOdP9gR100gAoCMVwd5152py2B+EKSjn
-         lBYF29FRcg0kDNeQ+yCkmRMHF4N0HWfKxxAtH3TkM/w6dbuMmTFy9oS6c5qRzxQ+POMi
-         ooBmxomaXFopx2xMv9v8lzvPTpPiRw8e/AGe2pNV2B/QFuymR+EbasQaF2NV2AddS4du
-         SvPepfxWQjqgEBi/oL5myebi/d62aOcP96D6BC2xwsQXiLFYRR4+kC/pw0hvJbitOjoD
-         pxGkLg7svnrUFJsTd6k+4MkKDdAh5LggEBR3TcTulFSg0PVWhTosbpgDwKz5SiZ2yrCu
-         zfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789394253; x=1789999053;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=qaak+sKiArxa7mKTlQvl1SbE11tdZGIRrd8OTw4JELM=;
-        b=WI68xh46i0Jzx4GPQTYUPHbDUkT7VRbvxauHcuBOIrJFwq+NgxWdcCJN8Q9oGyEat/
-         vv6yjA9h9+7YmydqyJljQkFluGhkqzQxLKYiF8MY+b4zxrkzVb+rhTlMTLgWq+bKR92D
-         e6odrpU9kKbUdjmVBROFAPRyt0adlAYDL70v2IPPsba8HIJ0rrZLb1gk0Ob1h85oVxN0
-         1RRJbX/6Bn0giAn7ZNl0Xf4C1XGsW5oe8eZBgiIZzuq5MdFUboOi+DRDOidqwHeXCsAM
-         1CreXLVq+4uLFznbRbTc6s5emKQ3s9es2STnJwQrTeNHuw5AHfS7j4HYtxvaOxmekZP8
-         B1jQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxk5Zboh8efha9S6p8bWLfcXSy348E2chbU99CsKHCz0tqj1Zf8Us/yjXsMruxilMPjXiOpNsCaFr81@vger.kernel.org
-X-Gm-Message-State: AFuF++kO/iG97k/vjEa61qa6MPdU7rCXuxSH/Ipwh7omDgpV/BHvhBRx
-	x5CPYXli9sFvwLj8LmN5O/t3kq5RYCe9tLvvakV3JlA35yDoN06gY345
-X-Gm-Gg: AYBFou2IyQ9n6DRg7Qn+C6KLJalK3lkhJ1/gdj8jOo2Py+3C9gtlxZcYPBkuI3PnbQ2
-	O5IDqxQNsw674A+Vk1zs2Tt6rtk2nhsjMqMeIWJuc4yk71fOh5F4/6wY6IqgcZA6lsdglV5b6ph
-	2szKIO/Jpnaihd3H+yCo6ZncvDx8x5kGYaaEtb6ys/xky9Trfes/T2S0E/aMH5/V/aZDqs873ZU
-	ZgasyqqiT/jIhmKzV7E0rbF9x3LnVSOl0i8/w+cKhmxIOLcO2BlWjzn6O24KlLUUptVd0iNmePu
-	0vwtg23C2hZHFHYBNHUP2leAhfmfiPE3Tvdifp6+mkWLQjdYT+UJtRx37hoIRXy5y5MeJeKxB/e
-	opLWube66IDost1Kly0gzysPD+XV+mrgysIRozlFKDXVqMdXaQVNc7CrHQrt1Y+JcGPy3hDf98F
-	lRChtJTetfVcgwkLK+xGvKuefAVWGOkzKoIFwNjqGoccZWzM2IG3OAgg==
-X-Received: by 2002:a17:902:8d8e:b0:2dd:6a63:4476 with SMTP id d9443c01a7336-2dd6a6344c1mr28308675ad.10.1789394253055;
-        Mon, 14 Sep 2026 06:57:33 -0700 (PDT)
-Received: from lgs.. ([2001:250:5800:1002::de93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2dd2cff297esm49156425ad.73.2026.09.14.06.57.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2026 06:57:32 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Luca Weiss <luca@lucaweiss.eu>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH] leds: flash: sgm3140: fix child node reference leak
-Date: Mon, 14 Sep 2026 21:57:23 +0800
-Message-ID: <20260914135723.1741327-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loPi18N2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F4C1F000FF;
+	Mon, 14 Sep 2026 14:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789394446;
+	bh=tE9icCBy9wiBSsyNOzAO13q86fgwl8K6tn2WLBRwH5o=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=loPi18N2QIiZ9ZKny87kbqbUsTaGw6J2E0nI9WdXvbdfgc81JAvIbK2adBQ3VoTDY
+	 V2FwLBD4kOMZ1BiP50gA59ZESM7EBY/Mz657sIKC4oAVLFrHue646kglOCcr0mFWF+
+	 yujI/bWMN8RSN6dGtCtoPVy9+zIp27dCmaLDxEsrNR6fKAgZIA84CKYkCFFNF6Qtai
+	 my5nKrYShYVyhD9E6jPq9R/UJdN+D9MOU8bC/D0iHA8FQoi5RbWIq7YSSHIIE9hc80
+	 HQjqNVma8Deut4CNtRUomPy/lIbGUnh/kLFwK1ZT1U3q1YBpetyn/7wDgQnbM5enaR
+	 Fq5djJrU8utlw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/3] leds: trigger: netdev: fix sysfs_update_group() vs
+ led_trigger_set() races
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260914132356.807004-3-alexander.sverdlin@siemens.com>
+References: <20260914132356.807004-1-alexander.sverdlin@siemens.com>
+ <20260914132356.807004-3-alexander.sverdlin@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 14 Sep 2026 14:00:45 +0000
+Message-Id: <20260914140045.B8F4C1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-sgm3140_probe() obtains a reference to the LED child node with
-device_get_next_child_node(). The probe error path correctly drops this
-reference with fwnode_handle_put(), but the successful probe path
-returns without releasing it.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
 
-v4l2_flash_init() takes its own reference to the supplied fwnode and
-v4l2_flash_release() drops that reference during device removal.
-Therefore, the reference acquired by sgm3140_probe() is only needed
-during probe and can be released once initialization has completed.
+Pre-existing issues:
+- [High] Memory leak of `net_device` reference on error paths in `netdev_tr=
+ig_activate()`.
+--
 
-Drop the child node reference before returning successfully from probe.
+commit 8000797f0bcd86f582cb708cea2c7a3ec07a48c4
+Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-This issue was found by manual code inspection.
+leds: trigger: netdev: fix sysfs_update_group() vs led_trigger_set() races
 
-Fixes: cef8ec8cbd21 ("leds: add sgm3140 driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- drivers/leds/flash/leds-sgm3140.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The netdev LED trigger is reworked to own the link_speed attribute group
+lifecycle instead of letting the LED core manage it. This is achieved by
+creating and removing the group in the activate and deactivate callbacks,
+fixing sysfs race conditions during concurrent link-up events.
 
-diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sgm3140.c
-index dc6840357370..51e31fdb78e5 100644
---- a/drivers/leds/flash/leds-sgm3140.c
-+++ b/drivers/leds/flash/leds-sgm3140.c
-@@ -273,7 +273,9 @@ static int sgm3140_probe(struct platform_device *pdev)
- 		goto err;
- 	}
- 
--	return ret;
-+	fwnode_handle_put(child_node);
-+
-+	return 0;
- 
- err:
- 	fwnode_handle_put(child_node);
--- 
-2.43.0
+> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger=
+/ledtrig-netdev.c
+> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> +++ b/drivers/leds/trigger/ledtrig-netdev.c
 
+[ ... ]
+
+> @@ -784,10 +795,29 @@ static int netdev_trig_activate(struct led_classdev=
+ *led_cdev)
+> =20
+>  	led_set_trigger_data(led_cdev, trigger_data);
+> =20
+> +	/*
+> +	 * Own the link_speed attribute group here instead of listing it in
+> +	 * netdev_led_trigger.groups, so its later sysfs_update_group() refresh=
+es
+> +	 * cannot race with the LED core's device_add_groups() /
+> +	 * device_remove_groups().  Create it before registering the notifier so
+> +	 * that a NETDEV_CHANGE cannot refresh a not-yet-created group.
+> +	 */
+> +	rc =3D sysfs_create_group(&led_cdev->dev->kobj,
+> +				&netdev_trig_link_speed_attrs_group);
+> +	if (rc)
+> +		goto err_free;
+> +
+>  	rc =3D register_netdevice_notifier(&trigger_data->notifier);
+>  	if (rc)
+> -		kfree(trigger_data);
+> +		goto err_remove_group;
+> =20
+> +	return 0;
+> +
+> +err_remove_group:
+> +	sysfs_remove_group(&led_cdev->dev->kobj,
+> +			   &netdev_trig_link_speed_attrs_group);
+> +err_free:
+> +	kfree(trigger_data);
+>  	return rc;
+>  }
+
+[Severity: High]
+This is a pre-existing issue, but this patch adds a new, realistically
+reachable failure point (sysfs_create_group) that triggers it.
+
+Earlier in netdev_trig_activate(), if hw control is supported, the driver
+calls set_device_name() which can acquire a network device reference via
+dev_get_by_name() and store it in trigger_data->net_dev.
+
+If sysfs_create_group() or register_netdevice_notifier() subsequently fail,
+the code jumps to the err_free label. It frees trigger_data but misses
+calling dev_put(trigger_data->net_dev) to release the acquired reference.
+
+Could this missing dev_put() leak the reference and cause subsequent calls =
+to
+unregister_netdevice() to hang indefinitely while waiting for the network
+device to become free?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260914132356.8070=
+04-1-alexander.sverdlin@siemens.com?part=3D2
