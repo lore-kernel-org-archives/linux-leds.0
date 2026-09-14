@@ -1,96 +1,133 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A421247ACDC;
-	Mon, 14 Sep 2026 14:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AFE47F3B3
+	for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 14:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789395449; cv=none; b=pYfduXaPuKpSvFuVuJd/hEwZK/lfCU/+q4+ab0hakwjLU45Du89wrIzcaEbSCCFdyurgA2yihuhXl6pWHGCO+xutTz+FuL+mG5NVP8ZWfoXDIuGfZAvy/iDn43XxgYRuMtIVhVZfZmdFxDau0YlUgJUYh7fm5n0iz3ux8ZTnNFA=
+	t=1789395679; cv=none; b=r8SIJA3qyTIhXSxOfJRXxydHOfP7JY7dojTePMswWgGdWs4/a4FTabdhKueQQZv4CVNforrKgZu37n86SXttfxs5Mb6MDneEE3XsQRc3uP+SD+i3LlBiG04S4sh/venH/oun7CvTVPMF5jNB/G08m+iN0kjLZTYIwl0BwLTL774=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789395449; c=relaxed/simple;
-	bh=gUo/IdWaPu9nQusKu1+E8rmx9Fxho7Ts4vI0ss/2V1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOvLWEU77nafYGpSqukde6Ao5Lb1gzKx4et+u8kjZB3cqRv6fhNI0d87AMfQI0gQwa/WjNf3DORsCNwS1/PMo7uI/ImGpICr9/A6Wf/nwYuJGMBft8K8laY932Mx2O85y3JfYi3soTf2vbzSTuIlJmxmjznkX19XPZHzf7+eCJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gizC4To7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1789395679; c=relaxed/simple;
+	bh=3ahXMHS/W4vuRGfBZ1TEwcIiQtfT0mySJONI9OMsDis=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=aTTgPGR5VqEkou7+VArQU9CZGtsQqCN9is9K3jlLabOXPlipcMI4bflkaI1nVidDj0YAjfA9TYt0n2/afjzVEm4Vjo3nxobVWfhQ2elTe+Od98Cez0VWl5llb+OS+u2vCAbbLCd5vkhTox4dK7Y+8AGandXVzlWnROJF8GHlYJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8hmgGFi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gizC4To7"
-Received: from killaraus.ideasonboard.com (2001-14ba-70f3-e800--a06.rev.dnainternet.fi [IPv6:2001:14ba:70f3:e800::a06])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5BCD1512;
-	Mon, 14 Sep 2026 16:15:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1789395344;
-	bh=gUo/IdWaPu9nQusKu1+E8rmx9Fxho7Ts4vI0ss/2V1Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gizC4To7RSNTRkB9DJvVFkw4/o91eJ94+S+KSgM3cUefrJAl7fSrXm3EgMnOwgXLJ
-	 tdKqiJxJn5AD7J97wSjDYap73rnxyaQu5BJRXm/UrEa/XXGIp1PzqlIrX2h2c+OEKt
-	 w1UYXSZUPBFsqrib7ILDwza1Llx2HIoNTO2vINzc=
-Date: Mon, 14 Sep 2026 17:17:22 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guangshuo Li <lgs201920130244@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jonathan Cameron <jic23@kernel.org>, Luca Weiss <luca@lucaweiss.eu>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] leds: flash: sgm3140: fix child node reference leak
-Message-ID: <20260914141722.GD2522202@killaraus.ideasonboard.com>
-References: <20260914135723.1741327-1-lgs201920130244@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8hmgGFi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DAC51F000FF;
+	Mon, 14 Sep 2026 14:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789395676;
+	bh=3EQvsMYFg9PdA5VYjBnthqoeMbRDfka6RuQ3TdkPwWg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=A8hmgGFiu6ofUswH09sGn2iAnear0AZmJlD1eBFo9rDb6U0PeMK6rv6YtnxF+hUzq
+	 FZ47hcyNCATAYum7o58x5xJiSPSuLEvrEcx3Ff7Rlorx7efFJB6AbjzNM3muNjsgGF
+	 0Nozxz87ftfqtHVPfcfs52dFdEul7Xb99yXBL69UbBnNrdmlFplwZlWZ+f8/lrCVIQ
+	 TkboKl9wYy2pziqlP5pD8rzBZAvk0QYG+/FhBFhbK+YYTpynFAshK6PyGcBHvhswvI
+	 rAakR5NGbdLvTSvbjMJd6OkgzsXAp1g5f4sigkorlsVsa6GdUP43r9QjgfuYIKU/P6
+	 h4FguCJmwuFXw==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 3/3] leds: trigger: netdev: serialize mode/interval
+ stores with trigger lock
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20260914132356.807004-4-alexander.sverdlin@siemens.com>
+References: <20260914132356.807004-1-alexander.sverdlin@siemens.com>
+ <20260914132356.807004-4-alexander.sverdlin@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 14 Sep 2026 14:21:15 +0000
+Message-Id: <20260914142116.6DAC51F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260914135723.1741327-1-lgs201920130244@gmail.com>
 
-On Mon, Sep 14, 2026 at 09:57:23PM +0800, Guangshuo Li wrote:
-> sgm3140_probe() obtains a reference to the LED child node with
-> device_get_next_child_node(). The probe error path correctly drops this
-> reference with fwnode_handle_put(), but the successful probe path
-> returns without releasing it.
-> 
-> v4l2_flash_init() takes its own reference to the supplied fwnode and
-> v4l2_flash_release() drops that reference during device removal.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
 
-How about devm_led_classdev_flash_register_ext() ?
+Pre-existing issues:
+- [Critical] Unprotected cancel_delayed_work_sync() allows concurrent execu=
+tion and UAF of net_device in the worker thread.
+--
 
-> Therefore, the reference acquired by sgm3140_probe() is only needed
-> during probe and can be released once initialization has completed.
-> 
-> Drop the child node reference before returning successfully from probe.
-> 
-> This issue was found by manual code inspection.
+commit d9c1377958eda5198cea4d7f716e117467e638fb
+Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Subject: leds: trigger: netdev: serialize mode/interval stores with trigger=
+ lock
 
-I wonder what prompted you to manual inspect that code.
+This patch updates netdev_led_attr_store() and interval_store() to hold
+the trigger_data->lock. It prevents concurrent writes from dropping updates,
+reading partially-updated device states, and causing data corruption on
+shared fields.
 
-> Fixes: cef8ec8cbd21 ("leds: add sgm3140 driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
-> ---
->  drivers/leds/flash/leds-sgm3140.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sgm3140.c
-> index dc6840357370..51e31fdb78e5 100644
-> --- a/drivers/leds/flash/leds-sgm3140.c
-> +++ b/drivers/leds/flash/leds-sgm3140.c
-> @@ -273,7 +273,9 @@ static int sgm3140_probe(struct platform_device *pdev)
->  		goto err;
+> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger=
+/ledtrig-netdev.c
+> index 89b48c522c227..6556f6d28547f 100644
+> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> @@ -421,6 +421,16 @@ static ssize_t netdev_led_attr_store(struct device *=
+dev, const char *buf,
+>  		return -EINVAL;
 >  	}
->  
-> -	return ret;
-> +	fwnode_handle_put(child_node);
+> =20
+> +	/*
+> +	 * Serialize the read-modify-write of ->mode and the dependent
+> +	 * ->hw_control update and set_baseline_state() against concurrent
+> +	 * attribute stores and netdev_trig_notify().  netdev_trig_work() must
+> +	 * never take this lock, otherwise the cancel_delayed_work_sync() below
+> +	 * would deadlock.
+> +	 */
+> +	guard(mutex)(&trigger_data->lock);
 > +
-> +	return 0;
->  
->  err:
->  	fwnode_handle_put(child_node);
+> +	mode =3D trigger_data->mode;
 
--- 
-Regards,
+[Severity: Critical]
+This is a pre-existing issue, but since this patch discusses lock interacti=
+ons
+with cancel_delayed_work_sync(), does the unprotected call to
+cancel_delayed_work_sync() in set_device_name() allow a concurrent thread
+to re-arm the work before the old device reference is put?
 
-Laurent Pinchart
+A sysfs write to device_name triggers set_device_name(), which calls
+cancel_delayed_work_sync() locklessly:
+
+drivers/leds/trigger/ledtrig-netdev.c:set_device_name() {
+    ...
+    cancel_delayed_work_sync(&trigger_data->work);
+    ...
+    mutex_lock(&trigger_data->lock);
+
+    dev_put(trigger_data->net_dev);
+    ...
+}
+
+Concurrently, a sysfs write to a mode attribute (e.g., here in
+netdev_led_attr_store()) acquires trigger_data->lock and calls
+set_baseline_state(), re-arming the workqueue. The delayed work runs
+netdev_trig_work() locklessly, accessing trigger_data->net_dev:
+
+drivers/leds/trigger/ledtrig-netdev.c:netdev_trig_work() {
+    ...
+    dev_stats =3D dev_get_stats(trigger_data->net_dev, &temp);
+    ...
+}
+
+Meanwhile, set_device_name() acquires the lock, assigns a new device, and
+calls dev_put() on the old device. Since netdev_trig_work() doesn't hold its
+own reference or any locks, this dev_put() can drop the last reference and =
+free
+the net_device while the work thread is actively calling dev_get_stats() on=
+ it.
+
+A similar race exists in netdev_trig_notify() on the NETDEV_UNREGISTER even=
+t.
+
+Can this sequence lead to a Use-After-Free (UAF) of the net_device structur=
+e?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260914132356.8070=
+04-1-alexander.sverdlin@siemens.com?part=3D3
