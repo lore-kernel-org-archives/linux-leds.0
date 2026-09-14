@@ -1,179 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAB47F3BC
-	for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 14:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03ED455176;
+	Mon, 14 Sep 2026 16:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789396042; cv=none; b=UWQEvdZfn51bUUuxhwKXjFmhi2HEZ3J9xZ2fMYeEx+P4Mk8OYPEWBqZo9NieIHCAjJR43i1n/+zi3mkfEbuvy9vlAW49CkYac8mIU1fnqc9B5au9f7ziwQBKPjfyZ7pb8tI79RxVEMsAYXD2J2ImIA1ZTGXGtgvEjJyS2aH9alE=
+	t=1789405180; cv=none; b=LQJpyYwT4VnphNvDYjGwCLpROtfMlxpD9svoTajRfjD1eQjs3x17KWHl/dI6vTJOKuqq/farq6MRbKeOHSqUvxOVaMSQCMK2XnhI7vnlmZ3RlFXsockDhiBWH00Gp1cioC6cticx5pNZkmvV3mI+RqVJqVV2uUE4KLYBzY8T0aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789396042; c=relaxed/simple;
-	bh=Omck4OvE51FLsO3qPONSPRKFS+6p5iR3M8HHX8gkLIs=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=RirvvCyNmyuri9Z5+bUeEWY/5st5PHdy+7phapeQMjaeJV2X2leHuVxn2kZycbq0vgIWYLc5DQII8y8El1XLYfW22sZ6Np4l/hH4xCqmN3rcIU5eLdT02G7VqoLojG1YjbTC0Bt6TfoK/elvzjRgZJMJKCedf+9MVECSNOytNkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMjWl7hZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789405180; c=relaxed/simple;
+	bh=pD00SK2GMg03vQvO70zaKA4+okhutEYwZ32abpO1nOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0Hz4ZCc+kf8qCfNMaLPkLRnNqiAAJUX4PS/d/rJkIt7Ukp7bknlTmF4Qen6LgRjrEHtl3qIfhnjJdfsL7N1bjoGIrZa5gl2H3ePd1RunID3NYjUzsubz+Enthk8gKB8YPqNV+GD5YawvCZDlX/fx1qiK6yeU6KWOu7bAlfOpBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IoiLcyVR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMjWl7hZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBD51F00893;
-	Mon, 14 Sep 2026 14:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789396038;
-	bh=BlI1Kx8YoP3CkyCM6o1FCl/agjfcSpIW6SQ6wmg0sCo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=fMjWl7hZa/V9glAXvAbqD76FxKYSjeF4at9MCdxh1VH82DtLvBAr8paYkeQ77hTEN
-	 xSHVMXp/ufbkO8nMJpkXUugAGsbC9HGIdVXCoaLozjoEBuc/ounvxUkSsPVQDxWtka
-	 +4igfXn6I5MRF66re7HAQI68kziDgnTAp9cbJGTRGHcc2p3VX/TVCsUbvUl0MZMbMG
-	 kK8EJQ805fXCud2ElD61xwCqtyvrhmKd3VE5Yqi/V/PMn3+pHZ3Lsde6a3iYA7hlE+
-	 7A+05Qofy6lzLC2LSYAM8w7omc65HUOTY0kgy4oHKvuUMFSQCYJuemzcjGNdaG3OLY
-	 0Dmu4h7b6zjMw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: ncp5623: release multi-led fwnode on remove
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Guangshuo Li" <lgs201920130244@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260914140742.1743052-1-lgs201920130244@gmail.com>
-References: <20260914140742.1743052-1-lgs201920130244@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 14 Sep 2026 14:27:18 +0000
-Message-Id: <20260914142718.9EBD51F00893@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IoiLcyVR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=8Y5FMgccEF6eGoXb7O49mgpl8XdIlZMq+raOLqUUEiw=; b=Io
+	iLcyVRc7c93HQ4qEPYW3+P5zwSQYpewVY40jQx6W+rxTekKyheWNXGy9W3M/kL6kTt2TA58W/bjn1
+	CfTFm8Yf33rs6JkIrZdn2Pq8uqOLVnxBPCYoUczF0WDVAgqm5orx4mNQB5oMl5cDJTVkWe/3rZCdn
+	/zT1dQBO3aFVf0Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1x6A1m-0057GX-K3; Mon, 14 Sep 2026 18:59:34 +0200
+Date: Mon, 14 Sep 2026 18:59:34 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+Cc: linux-leds@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	"Mike Marciniszyn (Meta)" <mike.marciniszyn@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Kees Cook <kees@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] leds: trigger: netdev: hold lock across
+ sysfs_update_group() in device_name_store()
+Message-ID: <794eb1c2-1fdb-4fd7-b4f2-649c66524218@lunn.ch>
+References: <20260914132356.807004-1-alexander.sverdlin@siemens.com>
+ <20260914132356.807004-2-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260914132356.807004-2-alexander.sverdlin@siemens.com>
 
-Thank you for your contribution! Sashiko AI review found 4 potential issue(=
-s) to consider:
+On Mon, Sep 14, 2026 at 03:23:50PM +0200, A. Sverdlin wrote:
+> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> 
+> device_name_store() calls sysfs_update_group() without holding
+> trigger_data->lock. The is_visible callback reads
+> trigger_data->supported_link_modes, and the sysfs group modification
+> itself is not atomic. This races against netdev_trig_notify() in two
+> ways:
+> 
+> 1) Concurrent sysfs_update_group() on the same group:
+> 
+>     CPU 0 (device_name_store)            CPU 1 (linkwatch workqueue)
+>     -------------------------            ---------------------------
+>     set_device_name():
+>       rtnl_lock()
+>       mutex_lock(trigger_data->lock)
+>       [sets supported_link_modes]
+>       mutex_unlock(trigger_data->lock)
+>       rtnl_unlock()
+> 
+>     sysfs_update_group():
+>       remove("link_10")
+>                                          netdev_trig_notify():
+>                                            mutex_lock(trigger_data->lock)
+>                                            sysfs_update_group():
+>                                              remove("link_10") [nop]
+>                                              add("link_10") ← CREATED
+>                                            mutex_unlock(trigger_data->lock)
+>       add("link_10") <- EEXIST!
+> 
+> 2) The netdev_trig_link_speed_visible() reads supported_link_modes without
+>    the lock, racing against get_device_state() called from
+>    netdev_trig_notify() which modifies supported_link_modes (a multi-word
+>    bitmap) under trigger_data->lock. This can cause
+>    netdev_trig_link_speed_visible() to observe a partially-updated bitmap.
+> 
+> Fix by holding trigger_data->lock around the sysfs_update_group() call
+> in device_name_store(), matching the locking context used by
+> netdev_trig_notify().
+> 
+> Fixes: 06cdca014eca ("leds: trigger: netdev: Display only supported link speed attribute")
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> ---
+>  drivers/leds/trigger/ledtrig-netdev.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+> index 5b4e92c14dbb4..354d3b640fa53 100644
+> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> @@ -336,8 +336,14 @@ static ssize_t device_name_store(struct device *dev,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Refresh link_speed visibility */
+> +	/*
+> +	 * Refresh link_speed visibility, serialized against netdev_trig_notify()
+> +	 * which may concurrently call sysfs_update_group() on the same group
+> +	 * while reading supported_link_modes via netdev_trig_link_speed_visible().
+> +	 */
+> +	mutex_lock(&trigger_data->lock);
+>  	sysfs_update_group(&dev->kobj, &netdev_trig_link_speed_attrs_group);
+> +	mutex_unlock(&trigger_data->lock);
 
-New issues:
-- [Low] Commit message description is not capitalized.
+If you look at all the other places where the lock it taken and
+released, there are no comments about why the lock is used. I think
+your verbose commit message is sufficient.
 
-Pre-existing issues:
-- [Critical] Missing bounds check when populating the subled_info array all=
-ows a heap buffer overflow if child nodes are added dynamically.
-- [High] The driver calls mutex_destroy() during shutdown while the LED dev=
-ice remains fully registered, leading to access of a destroyed lock upon co=
-ncurrent sysfs or trigger activity.
-- [High] State modifications in ncp5623_remove() meant to prepare for LED t=
-eardown are performed locklessly or with premature unlock, leaving a race w=
-indow that can cause unregistration to fail.
---
 
-commit 800df95225d3c84b4eef4ec24709d401a0efa76c
-Author: Guangshuo Li <lgs201920130244@gmail.com>
+    Andrew
 
-leds: ncp5623: release multi-led fwnode on remove
-
-This commit addresses a firmware node leak in the ncp5623 driver during rem=
-oval.
-It saves the multi-led firmware node pointer before unregistering the LED d=
-evice
-and puts the reference afterwards, ensuring it is properly released.
-
-> leds: ncp5623: release multi-led fwnode on remove
-
-[Severity: Low]
-This isn't a bug, but does the commit message violate the subsystem guideli=
-ne
-for capitalization? The word "release" is lowercase, but the description af=
-ter
-the subsystem prefix should be capitalized.
-
-> diff --git a/drivers/leds/rgb/leds-ncp5623.c b/drivers/leds/rgb/leds-ncp5=
-623.c
-> index f2528f06507dd..f96f15b7e9a1b 100644
-> --- a/drivers/leds/rgb/leds-ncp5623.c
-> +++ b/drivers/leds/rgb/leds-ncp5623.c
-> @@ -227,6 +227,8 @@ static int ncp5623_probe(struct i2c_client *client)
->  static void ncp5623_remove(struct i2c_client *client)
->  {
->  	struct ncp5623 *ncp =3D i2c_get_clientdata(client);
-> +	struct fwnode_handle *mc_node =3D
-> +		dev_fwnode(ncp->mc_dev.led_cdev.dev);
-> =20
->  	mutex_lock(&ncp->lock);
->  	ncp->delay =3D 0;
->  	mutex_unlock(&ncp->lock);
-> =20
->  	ncp5623_write(client, NCP5623_DIMMING_TIME_REG, 0);
-
-[Severity: High]
-This is a pre-existing issue, but does this unlock open a race window that =
-can
-cause unregistration to fail?
-
-In ncp5623_remove(), the lock is temporarily acquired to set ncp->delay =3D=
- 0,
-but it is released before the unprotected I2C write. If a concurrent sysfs
-write to the "pattern" trigger occurs during this window, it will call
-ncp5623_pattern_set(), acquire the lock, start a new pattern, and set
-ncp->delay to a future time.
-
-When led_classdev_multicolor_unregister() subsequently attempts to turn off=
- the
-LED, would ncp5623_brightness_set() return -EBUSY due to the non-zero delay
-and abort the turn-off sequence?
-
-drivers/leds/rgb/leds-ncp5623.c:ncp5623_brightness_set() {
-    ...
-	if (ncp->delay && time_is_after_jiffies(ncp->delay))
-		return -EBUSY;
-    ...
-}
-
->  	led_classdev_multicolor_unregister(&ncp->mc_dev);
-> +	fwnode_handle_put(mc_node);
->  	mutex_destroy(&ncp->lock);
->  }
-
-[Severity: Critical]
-This is a pre-existing issue, but can this code overflow subled_info[]?
-
-drivers/leds/rgb/leds-ncp5623.c:ncp5623_probe() {
-    ...
-	num_subleds =3D fwnode_get_child_node_count(mc_node);
-
-	subled_info =3D devm_kcalloc(dev, num_subleds, sizeof(*subled_info), GFP_K=
-ERNEL);
-    ...
-	fwnode_for_each_child_node(mc_node, led_node) {
-        ...
-		subled_info[ncp->mc_dev.num_colors++].color_index =3D color_index;
-	}
-    ...
-}
-
-The array is allocated with a fixed capacity based on the initial count.
-If a child node is added concurrently (e.g., via a DT overlay) during the
-iteration, could the loop execute more times than the allocated capacity
-and write sequentially out of bounds on the heap?
-
-[Severity: High]
-This is a pre-existing issue, but can this sequence lead to accessing a
-destroyed mutex?
-
-drivers/leds/rgb/leds-ncp5623.c:ncp5623_shutdown() {
-    ...
-	if (!(ncp->mc_dev.led_cdev.flags & LED_RETAIN_AT_SHUTDOWN))
-		ncp5623_write(client, NCP5623_SHUTDOWN_REG, 0);
-
-	mutex_destroy(&ncp->lock);
-}
-
-The mutex is destroyed during shutdown while the LED device remains fully
-registered. If a kernel timer from the active "pattern" trigger fires or
-a pending sysfs access continues, functions like ncp5623_brightness_set()
-will attempt to access the destroyed mutex:
-
-drivers/leds/rgb/leds-ncp5623.c:ncp5623_brightness_set() {
-    ...
-	guard(mutex)(&ncp->lock);
-    ...
-}
-
-Would this cause a kernel panic if CONFIG_DEBUG_MUTEXES is enabled?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260914140742.1743=
-052-1-lgs201920130244@gmail.com?part=3D1
+---
+pw-bot: cr
