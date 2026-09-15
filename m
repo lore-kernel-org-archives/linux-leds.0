@@ -1,65 +1,65 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazolkn19013079.outbound.protection.outlook.com [52.103.35.79])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazolkn19011032.outbound.protection.outlook.com [52.103.33.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98E339EF27;
-	Tue, 15 Sep 2026 12:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.35.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277804825D7;
+	Tue, 15 Sep 2026 12:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.33.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789476191; cv=fail; b=LHm4dzVpWeC+pf7GfLA0KGdwWYUZmIh9VyZGtnAUxtvCKpTA94U2MrudkN9dWzNMcjfKaptcRaBPUhl4F/I8q9hi4bh7vDXDDhNS7zlH21VQqZLWrP+MRsarBlXQTDcfkZiWHhYewyLtSG2QBCujqkaaLe6e34Ca5E90mSdl94Y=
+	t=1789476216; cv=fail; b=nURLgToFgXbewM5MaOV/+9dDMcjh4LEBI7nShttVQhQ/TpwlINuhgufgxdcdByDrcEjIYsdfpy76VYQVYS3SfXbAZBLsBnASN0MzfZeY8E1hvwJO1LMplZd4gRigTLDTe2c+4ik7TI4tglxqE+3vmSetx2aQgJZEys1kwgiGHio=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789476191; c=relaxed/simple;
-	bh=QcxsksoMjeg3NJWPk10wfRFoN4TAJoTA6kF5lOL4apw=;
+	s=arc-20240116; t=1789476216; c=relaxed/simple;
+	bh=SIMA+G0UQqh5NFvAySQUjHqZzf2XW6JXXeyYW/G1klY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GezbqcQc6RNUxokaQDqQYswhm4+pLwVO6bGYF9iGWKvWvli+Dn6gro1R/9irzn5r7uukSU34fUpjWxeOTaF4XptIS/tcOfHf1GPjs4W75wac8sf8fpzwU4U6Qq3imL4EY8d8EnxEUeLQzoKU/C15f9vUMh9uPmzHy1b5o7ftq+M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gz6M0WAk; arc=fail smtp.client-ip=52.103.35.79
+	 Content-Type:MIME-Version; b=bee202DSbTj6/Kcqs/4QCBS1jX+/skdCI4n6sGdPOxNjXXAzlkX4kbZPA/2arQp44wCTaKJaenHAnwdZoxPjdFu6i7llUxqYXUGAsmA6Nb2XRj4vjggTy2z8WRMQJHuvpULriNfU1B3YPrZK4SHxpVZ79IW3mMCY0sujj8miuLg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=N8Lf1VzD; arc=fail smtp.client-ip=52.103.33.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gz6M0WAk"
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="N8Lf1VzD"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Md5xnDdh4sOQJUm1Y5ewRVZK6fYJKDhf9EEv3iI9YddZQEoRkzJ37/kv8++sqnaynGB1Os88rwmMxUFDZKmOPDNCqDlbzPe4PMp85/LGsu67X+cwtT5DXTjow7dKQQ2BszIuuhFcqSLWcfmxBGs4r7jvxfnLUF4UCNUvdqOgEwX997MSgFNaTK6I8MGPv92rN5xRM4ZRuqBrqidhP7dZ/OUFYYaGzKFqkyMCOx+DUXoii7Po8/VLRKzlsR0K7iWyLsu/bUB88azuvMfdSZspMSUw9M4KCPIVJnGByxB7BpwsIrX12fHbq225QXbQNZXBYqfI5Izz0PJsPdTCqovkKQ==
+ b=HdZbmPAUi3Tn7zC2/V5s/wrtLnpqIeEAS+WA1eEGjWyg1VkHPE6dVHQ2svouh6sq0kVruW6tvCxSAgAOz9dJnUb4lHc83bKxGRa6qGB0q7QZczk4yEJdKL8wUajW6LKZLkLqrEaB9qwP1EdpM+sujQX6zAC9P4iibBqzsxESMTD+V6z4Z+PoxL07iz9PjkNzfuy8AaqwMq7xXdmQpv2w8VauuX6aLQjCCHch8cDp72ok2ymWqHeTNSG9u/MLPCZ7GMry2bEVlh+SsNOBi4EK3WoAzZs2hZnvorRCxEMufUw2SphyNQfeFreHlpCXvMarb9v2uch9rWOMqaJlDil5Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zzXFXYlEnY14+sALfJFArf1cbVBixY4nEONDy6wsckM=;
- b=slQVrtgsqUbmQJARHuKqspGzgzj1JTNEBaHqGpIDJ5ZDQ50aU00wuONPI6CxsdZkVTEXM6GGgA+hWsbT/RevRY7G1lrqYfn87QGfAYtiIotAXrgE1gO2Vw2doHZFpvEmoQamvDL22AwI9FiAgSei0Fu2FCPj0xbecIljPVnU4S8b80Y90ExPsGjfIS9+L2u/d9AJzBrlSYe/0/9Va7gDp1+fwnHBVZ0GEia9kz14MkPWv1vlukUDSBqPeTfBSKzebD1Z4SDOMcCsRFlSq1QkUYu4Vvx8tlv87+3AH8OSe73sjFGj6jxpIC4sVymcS8Q378023HppwjUXao6hKBxozA==
+ bh=wNAU0lYSHB6LE3hpe+5XPKEGInnA+AAXw40pCT7eXLU=;
+ b=BZmLrM/ltoNXzDwj+e9/VfjuO/Vr+IvRwe9BEIQwmElUZ6bQ+p/csHdCwmtpxraqmQ7xEsdL8yXCuCPfDKtgrCIasm0PeAuRbJC4POJK0bEOvNGlxFShpAXAd1VgXHRIvCWvGqmGsm0QLuwvtr+hx+smoHObVT2WKFNMADP+dnsCnihn0Y7zxtqqRuNHyXHtzbAHJCOQnCxPUmgyL6zMvML+FHUO2x3MtbW+B5VGGepHLgtAi+ikhyQpXSI358W5OB7oYkrFgpVHfh90E7VT3THUxhCcRxiUCqQ88ihOHl0M1eqe9Pu/MjKwosjRwg/K1akWdeBhCZj5MMCugsFSBg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zzXFXYlEnY14+sALfJFArf1cbVBixY4nEONDy6wsckM=;
- b=gz6M0WAkSE0Db1hJbwx7RsKcFCSPX9uSAzByyR6XlpSFEpatzZD0rZVDD6ucTXNI8rMySI5jCmf0BXxhdatMczNISxGSZdd0JQqQ+xfQAeSVmg4udXaA2gcze5TodPEjzss5e0g/HPLGjf18to5ISH6jARFah0ngQWK87f15Ss7YyZHQsT1fqK5fMQoVZvQUcJiKVbgu6337yut+mMUkRWTzy8ZmteHcpcGgjfEOkK3Wzrpr5ovBErlbPdERoFhXW/HbFJl17fDN33q6ewAqMgGzUFcPUpoxpXwvmSVAyvrnYBBhj4zbN0GWqiBFpWom4U0PZF/PIteeJwM16/rd1w==
+ bh=wNAU0lYSHB6LE3hpe+5XPKEGInnA+AAXw40pCT7eXLU=;
+ b=N8Lf1VzDU1e7eMhi+HQ0mQiDyeqHHh8F9N5MHSlxEIsgVsYJ9CZo52gt2KLManbJwfuwjSwjDgnfVRN2teom0La3pbHsHbFwZimwDjzcaa12YR+dphVcSpvr/OQOdtU0n3mkAyHPnfJzE/e2mI3ScRJBOTzNFWsJHsFWr22ANfATVfQO+jWNK+A6sNXx7VijNBl4CyNan8axj45g7OdldU0X3zR6wcsA1bmsY3RPF4UnatrxY8EkLiNOT2xP+H03nmcdN4YNws5SLcbnApK5ro549ro4vy9KSxbIfjDzMk5S/oDgL9HO8sQQNs9Cji/RnMX3sYwUbMYtqc26FjQqTw==
 Received: from GV1PR08MB8497.eurprd08.prod.outlook.com (2603:10a6:150:81::22)
  by GVXPR08MB10666.eurprd08.prod.outlook.com (2603:10a6:150:14d::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Tue, 15 Sep
- 2026 12:43:05 +0000
+ 2026 12:43:30 +0000
 Received: from GV1PR08MB8497.eurprd08.prod.outlook.com
  ([fe80::705b:d4a3:1c1f:b9a2]) by GV1PR08MB8497.eurprd08.prod.outlook.com
  ([fe80::705b:d4a3:1c1f:b9a2%5]) with mapi id 15.21.0428.004; Tue, 15 Sep 2026
- 12:43:05 +0000
+ 12:43:30 +0000
 From: Manuel Fombuena <fombuena@outlook.com>
 To: lee@kernel.org,
 	pavel@kernel.org,
 	vicentiu.galanopulo@remote-tech.co.uk,
 	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/13] leds: st1202: Spell out the phase-shift configuration bit
-Date: Tue, 15 Sep 2026 13:42:52 +0100
+Subject: [PATCH v2 03/13] leds: st1202: Name pattern index variables consistently
+Date: Tue, 15 Sep 2026 13:43:17 +0100
 Message-ID:
- <GV1PR08MB849716E21E082D3B93B5B683C5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+ <GV1PR08MB8497AD614B8686BBDA654674C5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <GV1PR08MB8497668D389D43F680D2CE3CC5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 References: <GV1PR08MB8497668D389D43F680D2CE3CC5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
 Reply-To: fombuena@outlook.com
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0564.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:33b::17) To GV1PR08MB8497.eurprd08.prod.outlook.com
+X-ClientProxiedBy: LO4P265CA0287.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::15) To GV1PR08MB8497.eurprd08.prod.outlook.com
  (2603:10a6:150:81::22)
 X-Microsoft-Original-Message-ID:
- <20260915124252.3369069-1-fombuena@outlook.com>
+ <20260915124317.3371431-1-fombuena@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -69,60 +69,60 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: GV1PR08MB8497:EE_|GVXPR08MB10666:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7ed1889-ba65-4dd9-0b8c-08df1326e2f2
+X-MS-Office365-Filtering-Correlation-Id: 97d89bc1-6a29-403d-f316-08df1326f1b4
 X-Microsoft-Antispam:
 	BCL:0;ARA:14566002|5072599009|15080799012|23021999003|37011999003|8060799015|19110799012|24021099003|41001999006|25010399006|51005399006|440099028|3412199025|2607281247196008|40105399003;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gcnpGup3cH5z1rGGXogP3E0/4w3Ez/RDrkvgYsqWUU8IWQKZgqL1gr5x4QOf?=
- =?us-ascii?Q?bzs4Oq/kayf7QZKOmcSIahTyaA+Rjzsec8ix9y1KTWKjJHXR8vueAT15At3p?=
- =?us-ascii?Q?+cKTsRRmXggEoajMHqNSuXIVB7s7WMlEm7Rr26V3Pp/XHz9qOzliExpfXLw+?=
- =?us-ascii?Q?cxKbd/wM2rk7pQbQFz3jadhwxbtP8TIVukWQtp0DfshYarZjnQNeemkLk2Yd?=
- =?us-ascii?Q?nOGWawjeEyWFnRQ5wm/8FEFIVRFHExcKdx1EDQOsWwMzxldQ63JUKJYDTLed?=
- =?us-ascii?Q?khTZZBCq022HoNnzHtHmlQutXW7n9oO1CRITAAzaKqm114dXyUU7MmDhnyDM?=
- =?us-ascii?Q?XiamM/DD0bJOID5K/ysXqL/TT0krOQNOBpc9umiqmHLLgkCcB39bD4sWnS/b?=
- =?us-ascii?Q?GGE+8hcL8uh2+1E2V4Q5PjKCExKfECNohmHWyjCPRPv0xphXwwV08PeW5I+7?=
- =?us-ascii?Q?8L3weJwaBbKBE6BLH94USuvnyzuvIiJo5xjDR8PY7m3RhfjfkTZ7DwZX1fbm?=
- =?us-ascii?Q?eJJ/vIya5sfJQRwJpbjlyjZdC5BE++8NmFGGpFqxMXyZVAsJlxb2elr1hXmU?=
- =?us-ascii?Q?oIQpjE4/6OfwL6uWjapN5wUk/gdRA8m+bkLVsVZG9Pi6oKbWGRYKFkqi02Q1?=
- =?us-ascii?Q?nCXqZOeSH2A3jRsMIidhyDk+bOm1iD0+/XanIg4y53VTifaF+9UCagpUOhaJ?=
- =?us-ascii?Q?s7ut2i9/diwQm57cyFGnB/bLkUN3qoaa0xwLE7gLZApg8jTa3c6V4lRtM4eu?=
- =?us-ascii?Q?KKgBUeMcNNdM2p9P/6k5uuMa57w4Id/Hbnw61GWD5acOikg1Yd0QL4/ZDFrl?=
- =?us-ascii?Q?drND8XNIiyANhgVDCk7R3S4yhMFo4h7HIjV2w38rQZlmOoAG7pL+AHqyX9yr?=
- =?us-ascii?Q?V0FR5Bj0NwZlixrMFq4Yr/w+6Y+ZokC0KNA/AKENoebTk8ffsoVYf0bimuIi?=
- =?us-ascii?Q?dq95RB4DHGOSC6htvmuOJ0IOTGI7MwzbxCtiMOCly5xtP88+ry71Qlxqaz+0?=
- =?us-ascii?Q?ilRz?=
+	=?us-ascii?Q?vMlMAuRHRQ8zFrV73JcHPMqalrarlkqrcfh9dEBbsgJsMVd0g6K6wJ9Eqn94?=
+ =?us-ascii?Q?ZMkJ2XogHidu4RGNIrh0jio5jl1SIN26bdgiyqxq9LUeMjCWb26J6cjBetU5?=
+ =?us-ascii?Q?olNZkd+IebHVmGzIUcBvBPWnX8IJJX3CN8qHbFDbzt/Xi7YQijKOBSz36nGA?=
+ =?us-ascii?Q?XNxUNaIWPIyeGR6td7PWSAD/WNZx91rOa6M3KfvfhXXXKFMpcGytpYeSP6F8?=
+ =?us-ascii?Q?mZlhGg3h3oiEkX/ofU22ujeH1O0H8T5aJcSYFDwRiQwlx3LbKOHcW0RJmbyK?=
+ =?us-ascii?Q?Wvf0HkATZgsE0oaC6dxzZdcFOOdObKfrkHjWavy8E9nhrcNTrChnS4ehuh0d?=
+ =?us-ascii?Q?/Byzgtx/L5I7BzCxOp5nTORrvuFSLr5sct0SbM4YyXQzGuW0mHKdeuaV7COs?=
+ =?us-ascii?Q?1qZuXHHlRGw0TM4Olg2WXSgRkdBrcntLbenO+TszfNYso97+nAmm/JWut0ID?=
+ =?us-ascii?Q?6gsDC6KKwA1pxPJZZe0mtzAAn0Yb75RCoEe8BJMHKe0Bpx7D2Ic/+gl3mbXC?=
+ =?us-ascii?Q?eFAA16fkAaixdi1bIv2Pn+U4eOEuJC62VjbbYteM4NZkYU3jTVBfI/U3x6xe?=
+ =?us-ascii?Q?CX99Y4u+JHIQw+9wpu1ww8BJS81ot9nZ8utvtHayDl2CwvdH2676qhiN0EDZ?=
+ =?us-ascii?Q?Hfv8V0RNYRNuayscmb9QA9qNmFrs1KdRWN3LzzD/Rzx6oXDw9oyWlDsySK5p?=
+ =?us-ascii?Q?27DX1u95U9Ir4hwveTr8+d/RcbUCqQ/5KnMHneA5+RJPLsLQGI9OFA7j8YHK?=
+ =?us-ascii?Q?etUrS+fRdi7FD6Ope9fP0VxwEFH1H075j1YvePvQK7GRjyWRiTinPvMIdTSR?=
+ =?us-ascii?Q?Nx7WDzxb7b2cMqWvtZk4dQCbm2rpjlC/N/DGN/1NdxD1qu9iOmvRjpRulYVn?=
+ =?us-ascii?Q?kqI9lB922Gao9wYIpAeX8ygMVBbS+MqIws5KGoh1Di0DEJq1umu200GS9QGu?=
+ =?us-ascii?Q?fgrdUNtZ55VypD/gSvNSgKTfy9mKrMsC2L5SoslHpNfloTgQfF1AE2qTplk9?=
+ =?us-ascii?Q?68SR?=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5AH45nY7QTo0/Xx5CG/u2q7B0bBl6Xs/kDBBzn2WFWB4mV14ukwez1J65eDm?=
- =?us-ascii?Q?leG3gy92sYDDEPR7hnTfH65H64dgOv1GBWeOaabroYRA0ywLW0gSapj/Kgdb?=
- =?us-ascii?Q?5w7+kN4/VODBGvScSI8zp23DOp2ZVt7A/PZDgKR1a7sMS2JiGxv9S4jJc9wg?=
- =?us-ascii?Q?gcKWjdYJVyy/tqyeWgWVBlJgpVGph77Vd3P9KjX1HN6dmxg3CvM6bgLvXckY?=
- =?us-ascii?Q?7p4U1ogoPWH4bL/dZ+ku7ZixB3RucXW1QVk27Za27lM60FJB6LL7oJ8bXh5S?=
- =?us-ascii?Q?3b/zZzj/wtiOcyZ2vtpOg/1llkhXo+03k2Ox/zJzCHBxWzv/yse3h+uFLGHb?=
- =?us-ascii?Q?i7jKBFbGD9Af3k3ktRd45hxrwy1Hj6zLYve7mZwhjbVqlcfj8TCjP3QsSIOL?=
- =?us-ascii?Q?V+F1FRJKpSiN8Rm8y6+lBqT9pK3oMIRbyzLMMDiDQ9zLEOiOaLWmf8HmRpp0?=
- =?us-ascii?Q?soBKsvogo5NRxJe9nqfa9R+r/5HYbUuwDcNlcSRRG0TvZmakFsDcO2f4/xsQ?=
- =?us-ascii?Q?Kq24Gy56EPTLrEmUnXcFaosmsUfVUw8tpx7CeNAOvU+BDu2lC9eaotAoIiEj?=
- =?us-ascii?Q?e0nd2BEZDcIrRJmf/6mUL6T+v+yRa5Vj01cPEwLP2B4GBIASUaY8wHKeeuJ5?=
- =?us-ascii?Q?fmcR25jglj20GY9TRNM6yKGGUzR+BpIfiXPe6bKc/pLoY3C3ibPq3QtJK9rl?=
- =?us-ascii?Q?YuaV5SI0l2SBTgXOJr3z8vvSxsM7GoqXobHl0A0YAICKHTLzaNb3DG9X/Tmi?=
- =?us-ascii?Q?/3goLuNnc/pFlKo+OnOZsPRT3Gw/HWJTjg5rsHI7MfHXsdv1EshOgp/qKYt6?=
- =?us-ascii?Q?rnxnRt2H6T20uWkHgl2c8aA7QSTmkyKkelpy6+G9yyhIJ6MX5+ZJipVoQggi?=
- =?us-ascii?Q?Ag4vrCTPbhOGY91eW2l3r7clu/49UYM3PgTufR9zVh9rH4N1pGFExFIN5vCu?=
- =?us-ascii?Q?SqjTLPphxNAtKIdJc1jynZ0gFXrNYGK7+VMVnj62ZwHh9/gQ3valNJzV/xZC?=
- =?us-ascii?Q?F2jrVL7UnQSNKdCkn2T9z7AFezEd4b2JJZzNPHxlavYJupC1vdfoYxnSwyfR?=
- =?us-ascii?Q?tXkD9uffhvSYG1gkNpMKXPffUzGZReQV0FHcWMzYN/DRwmLkts96TpmdAvIJ?=
- =?us-ascii?Q?Z4KTPOqUO5pCGqPnOcSzissHraE0YJ05MzaAfHzSUoR/P8GaK2wtOZEb5O0B?=
- =?us-ascii?Q?9C778KBhb915+DE+0TfffvKhZAK34JcAxp4DgtuyMsqQ8cfaGCKzp9oUFYwW?=
- =?us-ascii?Q?unX2bpQbzIDTWqhdZV7tmdwbLvwEz3XtgWNF8Fj3zlRoqFDpg2IBQX8iSGyM?=
- =?us-ascii?Q?XoCw8T4N+cLogDaQn1bhEaH+/gQ7vTMSSk4QuYyM/7n9fyVHsZSiLidzRJee?=
- =?us-ascii?Q?qccLtroYpaAG8NC1BArQilCJKpZksXFrptmNDNMgtfcmWgZG2xd5pd204iz9?=
- =?us-ascii?Q?L6W3kPo2iL8+5+LmpZU9N1jBxNWgdV6F?=
+	=?us-ascii?Q?UzJ4HIxph0I5S5FVdDznxScksUiynOej8ExKZzu49XHz/UdLdOmxbn8wqKiw?=
+ =?us-ascii?Q?TASXs6/dr9+rXzn+A2EDUUy7MHsDypoz4Dn2kCb3JuW+Ot/3L5Z6GB62Ia5u?=
+ =?us-ascii?Q?pUG5cguONf7WwyZ6QfwZUWlWCkjgaF45wvG5x+h09zXmTQ/CSX5K2aaWNLfd?=
+ =?us-ascii?Q?xBfpzt68DgvnuOJP0egU/AQHuYZvE8LRRppA/zrOzXN4BBFc30/QvAjvd+/a?=
+ =?us-ascii?Q?xxPUVDaJo0VF/x9JTmbhLmfr9ktkuFOgOyHi5MaXwrqz/8VD1UzVwKkz//vo?=
+ =?us-ascii?Q?GcoVWAH66NwtEqPhzDQS+9yo2+k32J2Out5SJIvgqzv8azQafe94wVTp3qtW?=
+ =?us-ascii?Q?GIyrDFTvH5unXvzce3jaFPGO+Ub+sUV9dIgM1r5HY9PiA7E37O5UHkh4Tg6X?=
+ =?us-ascii?Q?WAC7eU471ZBYfOWYTxC/Cd+W6vZORc8NCqHhtOlr/PII7E5a/fZVGEeoqAJH?=
+ =?us-ascii?Q?6pR1ae/kiCNQb8T/ZYnVmsXHurhIRXStoIssorOvIRFdTUwa+AQUnJqoJv1l?=
+ =?us-ascii?Q?zieQS0oIx+V7i185pZyGvp4e0BQeLnwloG/T9TLMfMnaMX330ErDlkGJ9+qV?=
+ =?us-ascii?Q?j1rAFAd3zCiW7gqc1xGbD5coDiogwz73/r2nFumtxhqQcRPjyNLjZABeUAwf?=
+ =?us-ascii?Q?3i08cF26NbKdK5ggpKHHEcDrAg3NWiWIPj2NyYH7TMplqE2FcoB6wvumr2qf?=
+ =?us-ascii?Q?EiIPOF23qDZK5NZk7QQZv3HaLb7ChTnZ5QeAXtWSNlMXj1eOki7yZ1OtRjj6?=
+ =?us-ascii?Q?mL79ZO+IjZ5t2Q2YFyyZMhDbKwMFdeW6VBsxrpzcRxdXhSwn/WdKwYppFqas?=
+ =?us-ascii?Q?V2gOzZV+b5gnPgWqYz1+QU8r3ykBCPyH3bjqnojSN2IpCJ63rluo+pWNMqAr?=
+ =?us-ascii?Q?93aA+YBXBsASbq+RSNczKbmxzoHfhdyoBHi+STlIqwykjFrHftejzTcqEfEG?=
+ =?us-ascii?Q?18mA9uH8FPx1tVFf5nVwtembtxh8bKly7+GV+4W2IyFk7KWCjYWcAjRff2JI?=
+ =?us-ascii?Q?eYG+ODZmZFjDI2Xjsjl7eGc+94pSOYd9gVTqgicPLWq771vLprPboJFpDNx9?=
+ =?us-ascii?Q?N7XANLwJ3ePUt3mMuSew041Ow+FHwd/WuX4Rm71FAwC2/1VqQXt+VpsHefaQ?=
+ =?us-ascii?Q?x2yxqIXRnJtvY5grS4iK9AJtrA/kNsAfXLBWsjqJNRZEXh5I8+6YuaMenbdY?=
+ =?us-ascii?Q?bTUQPke87MMF5sBlQE4qrYIXzHZWeEl2Nn3PdSb/PTVXJ3CH1pVW7p0wlV0L?=
+ =?us-ascii?Q?j/jAxdoN2Q6TyOEVcnp0Ae/4i91EecaN8d7Vz/3BSYU/GmlUxAxQqAK8q+Pi?=
+ =?us-ascii?Q?ns2649Sct6VElCP9FQ7oWBsXY+qNyKVP+LetdUyxqUmOsV8wT+/J/ItRsLXB?=
+ =?us-ascii?Q?HBpkhw/WLONCJK7becam2+Lx/+2bVYv5tLMD2prkSAlVuLoK1DjB081gZ8f3?=
+ =?us-ascii?Q?uA6KT9UrpMze7hnP+2ZcZqliXrMjHN41?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7ed1889-ba65-4dd9-0b8c-08df1326e2f2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97d89bc1-6a29-403d-f316-08df1326f1b4
 X-MS-Exchange-CrossTenant-AuthSource: GV1PR08MB8497.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2026 12:43:05.1014
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2026 12:43:29.9009
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -130,99 +130,97 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR08MB10666
 
-ST1202_CONFIG_REG_SHFT is abbreviated to the point of being unreadable
-and, unlike the neighbouring PATS and PATSR bits, carries no comment
-explaining what it controls.
+The driver already names pattern indices "pattern" in the signatures of
+st1202_pwm_pattern_write() and st1202_duration_pattern_write(), and
+st1202_blink_set() follows the same convention. The remaining loops
+abbreviate it to "patt", which matches nothing else in the file.
 
-Rename it to ST1202_CONFIG_REG_PHASE_SHIFT and document it in the same
-style as the other configuration bits, retaining the datasheet name in
-the comment so it remains searchable.
+Rename those loop variables to "pattern". In st1202_led_pattern_set()
+that name is taken by the array of pattern steps, so rename the
+parameter to "patterns", which also reflects better that it is an array.
 
-The longer name no longer fits the existing layout in
-st1202_led_pattern_set(), where the continuation line was already 106
-columns wide. Re-wrap that register write to match the layout
-st1202_blink_set() uses for the same operation and drop the redundant
-parentheses around the bit mask.
+Two st1202_pwm_pattern_write() calls exceed 100 columns with the longer
+name and are wrapped accordingly.
 
 No functional change.
 
 Signed-off-by: Manuel Fombuena <fombuena@outlook.com>
 Assisted-by: LLM
 ---
- drivers/leds/leds-st1202.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/leds/leds-st1202.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-index 5a2202fb4c22..d8a04e96fb46 100644
+index d8a04e96fb46..ddb8c6027706 100644
 --- a/drivers/leds/leds-st1202.c
 +++ b/drivers/leds/leds-st1202.c
-@@ -24,7 +24,8 @@
- #define ST1202_CONFIG_REG_PATS             BIT(7)
- /* PATSR: Pattern sequence runs (self-clear when sequence is finished) */
- #define ST1202_CONFIG_REG_PATSR            BIT(6)
--#define ST1202_CONFIG_REG_SHFT             BIT(3)
-+/* SHFT: Phase-shift delay enable */
-+#define ST1202_CONFIG_REG_PHASE_SHIFT      BIT(3)
- #define ST1202_DEV_ENABLE                  0x01
- #define ST1202_DEV_ENABLE_ON               BIT(0)
- #define ST1202_DEV_ENABLE_RESET            BIT(7)
-@@ -210,7 +211,7 @@ static int st1202_led_pattern_clear(struct led_classdev *ldev)
+@@ -177,8 +177,8 @@ static void st1202_brightness_set(struct led_classdev *led_cdev,
  
  	guard(mutex)(&chip->lock);
  
--	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHFT);
-+	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHASE_SHIFT);
+-	for (int patt = 0; patt < ST1202_MAX_PATTERNS; patt++)
+-		st1202_pwm_pattern_write(chip, led->led_num, patt, ST1202_PATTERN_PWM_FULL);
++	for (int pattern = 0; pattern < ST1202_MAX_PATTERNS; pattern++)
++		st1202_pwm_pattern_write(chip, led->led_num, pattern, ST1202_PATTERN_PWM_FULL);
+ 	st1202_write_reg(chip, ST1202_ILED_REG0 + led->led_num, value);
+ 	__st1202_channel_set(chip, led->led_num, !!value);
+ }
+@@ -215,12 +215,13 @@ static int st1202_led_pattern_clear(struct led_classdev *ldev)
  	if (ret != 0)
  		return ret;
  
-@@ -246,7 +247,7 @@ static int st1202_led_pattern_set(struct led_classdev *ldev,
+-	for (int patt = 0; patt < ST1202_MAX_PATTERNS; patt++) {
+-		ret = st1202_pwm_pattern_write(chip, led->led_num, patt, ST1202_PATTERN_PWM_FULL);
++	for (int pattern = 0; pattern < ST1202_MAX_PATTERNS; pattern++) {
++		ret = st1202_pwm_pattern_write(chip, led->led_num, pattern,
++						ST1202_PATTERN_PWM_FULL);
+ 		if (ret != 0)
+ 			return ret;
  
- 	guard(mutex)(&chip->lock);
+-		ret = st1202_write_reg(chip, ST1202_PATTERN_DUR + patt, 0);
++		ret = st1202_write_reg(chip, ST1202_PATTERN_DUR + pattern, 0);
+ 		if (ret != 0)
+ 			return ret;
+ 	}
+@@ -229,7 +230,7 @@ static int st1202_led_pattern_clear(struct led_classdev *ldev)
+ }
  
--	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHFT);
-+	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHASE_SHIFT);
+ static int st1202_led_pattern_set(struct led_classdev *ldev,
+-				struct led_pattern *pattern,
++				struct led_pattern *patterns,
+ 				u32 len, int repeat)
+ {
+ 	struct st1202_led *led = cdev_to_st1202_led(ldev);
+@@ -239,9 +240,9 @@ static int st1202_led_pattern_set(struct led_classdev *ldev,
+ 	if (len > ST1202_MAX_PATTERNS)
+ 		return -EINVAL;
+ 
+-	for (int patt = 0; patt < len; patt++) {
+-		if (pattern[patt].delta_t < ST1202_MILLIS_PATTERN_DUR_MIN ||
+-				pattern[patt].delta_t > ST1202_MILLIS_PATTERN_DUR_MAX)
++	for (int pattern = 0; pattern < len; pattern++) {
++		if (patterns[pattern].delta_t < ST1202_MILLIS_PATTERN_DUR_MIN ||
++				patterns[pattern].delta_t > ST1202_MILLIS_PATTERN_DUR_MAX)
+ 			return -EINVAL;
+ 	}
+ 
+@@ -251,12 +252,13 @@ static int st1202_led_pattern_set(struct led_classdev *ldev,
  	if (ret != 0)
  		return ret;
  
-@@ -268,8 +269,9 @@ static int st1202_led_pattern_set(struct led_classdev *ldev,
- 	if (ret != 0)
- 		return ret;
+-	for (int patt = 0; patt < len; patt++) {
+-		ret = st1202_pwm_pattern_write(chip, led->led_num, patt, pattern[patt].brightness);
++	for (int pattern = 0; pattern < len; pattern++) {
++		ret = st1202_pwm_pattern_write(chip, led->led_num, pattern,
++						patterns[pattern].brightness);
+ 		if (ret != 0)
+ 			return ret;
  
--	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, (ST1202_CONFIG_REG_PATSR |
--							ST1202_CONFIG_REG_PATS | ST1202_CONFIG_REG_SHFT));
-+	ret = st1202_write_reg(chip, ST1202_CONFIG_REG,
-+				ST1202_CONFIG_REG_PATSR | ST1202_CONFIG_REG_PATS |
-+				ST1202_CONFIG_REG_PHASE_SHIFT);
- 	if (ret != 0)
- 		return ret;
- 
-@@ -299,7 +301,7 @@ static int st1202_blink_set(struct led_classdev *led_cdev,
- 
- 	guard(mutex)(&chip->lock);
- 
--	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHFT);
-+	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHASE_SHIFT);
- 	if (ret)
- 		return ret;
- 
-@@ -353,7 +355,7 @@ static int st1202_blink_set(struct led_classdev *led_cdev,
- 
- 	ret = st1202_write_reg(chip, ST1202_CONFIG_REG,
- 				ST1202_CONFIG_REG_PATSR | ST1202_CONFIG_REG_PATS |
--				ST1202_CONFIG_REG_SHFT);
-+				ST1202_CONFIG_REG_PHASE_SHIFT);
- 	if (ret)
- 		return ret;
- 
-@@ -419,7 +421,7 @@ static int st1202_setup(struct st1202_chip *chip)
- 		return ret;
- 
- 	/* Enable phase-shift delay feature */
--	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_SHFT);
-+	ret = st1202_write_reg(chip, ST1202_CONFIG_REG, ST1202_CONFIG_REG_PHASE_SHIFT);
- 	if (ret < 0)
- 		return ret;
- 
+-		ret = st1202_duration_pattern_write(chip, patt, pattern[patt].delta_t);
++		ret = st1202_duration_pattern_write(chip, pattern, patterns[pattern].delta_t);
+ 		if (ret != 0)
+ 			return ret;
+ 	}
 -- 
 2.55.0
 
