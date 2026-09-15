@@ -1,243 +1,185 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E51D414418;
-	Tue, 15 Sep 2026 11:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAE048B37B;
+	Tue, 15 Sep 2026 11:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789470445; cv=none; b=bq6YLIiIriNIA/lSDY+N3ho2cfvhDZZBOgmKtel/tKoBK5mBs2xEwDOG7rmlSFghIh3UV4jwbVemYrlhPyGSWFb6MEZEgvjesvdUW8CODDCQHPg7pPfuUXcBXrJK7se9oDrfFqrIJLGCjVpKiTfP5/Kp1JbO0noP0igRRg7sAzI=
+	t=1789470912; cv=none; b=LdmM/FTqjydOEy8LAb2t7tUcvqbScZgk3lNVujgky+YydUtUhSCEf4MLoYJtKPKoZa8oO7ctI60ssGqAlqvPULhycmxZG2F8D+vXEKbzIhRYh7+2+t7ko279A6zn6mesAYGt68x/mecHFHZB3e44/1lXveqkT2JT6O0dajYKyu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789470445; c=relaxed/simple;
-	bh=eBp4h+7cPYV3PyJ8Rj8aNlGD2veZAlr4aNSUXmJE1Uk=;
+	s=arc-20240116; t=1789470912; c=relaxed/simple;
+	bh=4T9ypKWkNGgDbG9u69g33Ob+gh5ZDGK3t0oJaNBwCEs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnZS83E5G0WEVe17zGTY3yi2Ajhk+lxsGyobCk74AfrLLzmsGplz3C5pbMwqu3Ftnjn+miEbmR0ja0ETmayd5rxjB2dv7JSoEyjZr1L0LpiEoCQst56loJFEXSx+mbNnwOA4cGgD/1oMAtV56uzQi0Xlslc+aFp+OeyAeF6TCkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUyWPS9O; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGhQjj28ZoijPxCpIYiuda9wqcVo1epJTbRmjetEqLBTxN9w+rlRYEjm8s2uobBDNI9n1r+2PkWmEfxk/SJmxNVW9khFysuICm2MqMYX8qyRBcAp31irTw8yMfzmaeu8DBth+7xIMESGvF/jyvUWY2/SYtbUfUQGRVPoo6Bs0sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzGRg4aD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUyWPS9O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755921F000FF;
-	Tue, 15 Sep 2026 11:07:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzGRg4aD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA241F000FF;
+	Tue, 15 Sep 2026 11:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789470443;
-	bh=Ouzbh7dZPn9Yw6vd2rYWvCSztsBHlYK0YoEuzqInt+U=;
+	s=k20260515; t=1789470909;
+	bh=wCLfBUuxNPv3XS803Z/uR8KINkcBiOGeEsWT7V4HKKQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VUyWPS9OT0207Wl27AbILw3brqIkjAerQk/08dT4Yq6n2LflVDZF7YcFNuS1GVaaX
-	 jLIzv8UrmdNmFYZhP+fpOJ63EuuvrS3LJvCaiRzE2+iOUZV58tg1aIOeRA58Gb7dmQ
-	 RfAE5WuFW3aoStjNdpcOsK+2GH1vFclfHAOhrhCE0Sl8KkNDtGNBHq5BxgkyesfM7/
-	 JCDiYqr355d1dHUnVvmMikcgv5aRWNMpHNIFNdUXre7b2ISH0NlbPdhwc3KSzVV0f6
-	 HVfolcxEwqqi9Qo0bub3FUfwuBFjiY/fjT4STZIYJbz+ffzHMJQKzYdU03V6kXA1g/
-	 dJbBVn5xnjSZQ==
-Date: Tue, 15 Sep 2026 12:07:19 +0100
+	b=GzGRg4aDit1AfIZVZqP9pZdOMdaGOtiiCK8LoKNNO759gim0NOnkHWBbn9hMc6QKW
+	 oAnHKsKwmRuGxop23SHjHn9J8wdKWgjFIASggu7gj9LtFaxJH/FP8oTrfhjJx1zYQK
+	 AzQTUsvrMmMQ3rEuiccjwOzPOHoYxbGS6eP4uqcbipL0J4GK7ntxemvkV54fmDWIU6
+	 /YtG4+NSfuXfFDZ+Xz0q422NautoOVY249AOViQBKk3tFG98eL+PaTj93IxlVxNEZJ
+	 QkyziJ1/mY9bK3nhL2jjMsIHAAM5pAVK9oxvJVZfE2liJmvbIfc7IsFUzHtrZWFD7t
+	 dOgYujgvE+LjA==
+Date: Tue, 15 Sep 2026 12:15:05 +0100
 From: Lee Jones <lee@kernel.org>
 To: sashiko-reviews@lists.linux.dev
-Cc: Rudraksha Gupta <guptarud@gmail.com>, devicetree@vger.kernel.org,
-	robh@kernel.org, linux-leds@vger.kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v7 2/3] leds: flash: rt8515: Support single-GPIO flash
- ICs with vin supply
-Message-ID: <20260915110719.GB11487@google.com>
-References: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
- <20260912-expressatt_camera_flash-v7-2-e1fd2edc8d84@gmail.com>
- <20260913025029.34B121F000FF@smtp.kernel.org>
+Cc: =?utf-8?B?WcSwxJ7EsFRDQU4=?= KAVAKLI <kavakliyigitcan@gmail.com>,
+	linux-leds@vger.kernel.org, dmitry.torokhov@gmail.com,
+	conor+dt@kernel.org, dri-devel@lists.freedesktop.org,
+	linux-input@vger.kernel.org, robh@kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 02/10] backlight: add Kinetic KTD3136 driver
+Message-ID: <20260915111505.GE11487@google.com>
+References: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
+ <20260911-ginkgo-submission-final-v1-2-0e68e63a18d4@gmail.com>
+ <20260911085919.24FB01F00893@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260913025029.34B121F000FF@smtp.kernel.org>
+In-Reply-To: <20260911085919.24FB01F00893@smtp.kernel.org>
 
-On Sun, 13 Sep 2026, sashiko-bot@kernel.org wrote:
+On Fri, 11 Sep 2026, sashiko-bot@kernel.org wrote:
 
-> Thank you for your contribution! Sashiko AI review found 4 potential issue(s) to consider:
-> 
-> New issues:
-> - [High] Regulator is not enabled when requesting maximum torch brightness, preventing the LED from turning on.
-> - [High] Replacing mod_timer with schedule_delayed_work silently drops updates to the strobe timeout and causes premature LED power down.
-> - [Medium] Unbalanced regulator disable due to reliance on the global/physical regulator state instead of the driver's consumer enable count.
+> Thank you for your contribution! Sashiko AI review found 5 potential issue(s) to consider:
+> - [High] The 'vin' regulator is enabled during probe but never disabled on error paths or during module removal.
+> - [High] Missing `i2c_set_clientdata()` in probe causes `ktd3136_remove()` to silently skip hardware power-off.
+> - [Medium] Missing lock acquisition in `ktd3136_remove` causes a data race with concurrent backlight sysfs updates.
+> - [Medium] State mismatch leaves backlight physically ON when initial brightness is 0.
+> - [Low] Unnecessary and unused `select REGMAP_I2C` in Kconfig.
 
 Please review, explain or fix the Sashiko review(s).
 
 If this is a set, this request includes the other patches too.
 
-> Pre-existing issues:
-> - [Critical] Premature destruction of mutex and cancellation of workqueue during device removal while the LED class device is still registered, leading to a Use-After-Free.
 > --
 > 
-> commit 6a964f82a818f57f5a1a31366f614609bc9c5008
-> Author: Rudraksha Gupta <guptarud@gmail.com>
+> commit 15d6d172969378ae4661195e2320fcd1b4ed08c1
+> Author: YİĞİTCAN KAVAKLI <kavakliyigitcan@gmail.com>
 > 
-> leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
+> backlight: add Kinetic KTD3136 driver
 > 
-> This commit extends the RT8515 driver to support flash ICs that use
-> only a single GPIO for both flash and torch modes, alongside an
-> optional vin regulator that gates power to the flash IC.
+> This commit implements a generic Linux backlight driver for the Kinetic
+> Technologies KTD3136 36V, 6-channel LED driver. It uses the standard
+> backlight class interface over I2C.
 > 
-> > diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-rt8515.c
-> > index 00904cc90ed6e..541f61e13f018 100644
-> > --- a/drivers/leds/flash/leds-rt8515.c
-> > +++ b/drivers/leds/flash/leds-rt8515.c
+> > diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+> > index dbf4ca23a9b6d..010e2ae3fa8cb 100644
+> > --- a/drivers/video/backlight/Kconfig
+> > +++ b/drivers/video/backlight/Kconfig
 > [ ... ]
-> > @@ -62,27 +66,50 @@ static struct rt8515 *to_rt8515(struct led_classdev_flash *fled)
-> >  	return container_of(fled, struct rt8515, fled);
-> >  }
-> >  
-> > -static void rt8515_gpio_led_off(struct rt8515 *rt)
-> > +static int rt8515_gpio_led_off(struct rt8515 *rt)
-> >  {
-> > -	gpiod_set_value(rt->enable_flash, 0);
-> > -	gpiod_set_value(rt->enable_torch, 0);
-> > +	gpiod_set_value(rt->enable_flash, RT8515_OFF);
-> > +	gpiod_set_value(rt->enable_torch, RT8515_OFF);
+> > +config BACKLIGHT_KTD3136
+> > +	tristate "Backlight Driver for Kinetic KTD3136"
+> > +	depends on I2C
+> > +	select REGMAP_I2C
+> 
+> [Severity: Low]
+> Does this driver actually use the regmap API? Looking at the code, it appears
+> to exclusively use raw I2C SMBus operations (e.g., i2c_smbus_read_byte_data).
+> Could this select REGMAP_I2C be safely removed to avoid forcing an unnecessary
+> dependency?
+> 
+> > +	help
+> > +	  Say Y to enable the backlight driver for the Kinetic Technologies
+> [ ... ]
+> > diff --git a/drivers/video/backlight/ktd3136-backlight.c b/drivers/video/backlight/ktd3136-backlight.c
+> > new file mode 100644
+> > index 0000000000000..a8ebe3b23c99f
+> > --- /dev/null
+> > +++ b/drivers/video/backlight/ktd3136-backlight.c
+> [ ... ]
+> > +static int ktd3136_probe(struct i2c_client *client)
+> > +{
+> > +	struct device *dev = &client->dev;
+> > +	struct backlight_properties props;
+> > +	struct ktd3136_data *chip;
+> > +	int ret, val;
+> > +	u32 def_brightness = KTD3136_DEFAULT_BRIGHTNESS;
+> > +	u32 max_brightness = KTD3136_DEFAULT_MAX_BRIGHTNESS;
 > > +
-> > +	if (!rt->reg)
-> > +		return 0;
+> > +	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> > +	if (!chip)
+> > +		return -ENOMEM;
 > > +
-> > +	return regulator_is_enabled(rt->reg) > 0 ? regulator_disable(rt->reg) : 0;
+> > +	chip->client = client;
+> > +	mutex_init(&chip->lock);
+> 
+> [Severity: High]
+> Is a call to i2c_set_clientdata(client, chip) missing here? Later in
+> ktd3136_remove(), the code calls i2c_get_clientdata(client), which will
+> return NULL if it wasn't set, silently bypassing the hardware power-off.
+> 
+> > +
+> > +	chip->vin = devm_regulator_get_optional(dev, "vin");
+> > +	if (IS_ERR(chip->vin)) {
+> > +		ret = PTR_ERR(chip->vin);
+> > +		if (ret != -ENODEV)
+> > +			return dev_err_probe(dev, ret, "Failed to get vin regulator\n");
+> > +		chip->vin = NULL;
+> > +	}
+> > +
+> > +	if (chip->vin) {
+> > +		ret = regulator_enable(chip->vin);
+> > +		if (ret)
+> > +			return dev_err_probe(dev, ret, "Failed to enable vin regulator\n");
+> > +	}
+> > +
+> > +	chip->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
+> > +	if (IS_ERR(chip->enable_gpio))
+> > +		return dev_err_probe(dev, PTR_ERR(chip->enable_gpio),
+> > +				     "Failed to get enable GPIO\n");
+> 
+> [Severity: High]
+> If devm_gpiod_get_optional() fails here, the function returns immediately.
+> Does this leave the vin regulator enabled since there is no devm action or
+> manual regulator_disable(chip->vin) on this error path?
 > 
 > [Severity: Medium]
-> Since regulator_is_enabled() returns the global physical state rather than
-> the per-consumer enable count, could this lead to an unbalanced disable if
-> the regulator is marked always-on or shared with another consumer?
+> The enable GPIO is asserted HIGH here (powering the hardware), but
+> chip->is_enabled remains false. If the default brightness evaluates to 0,
+> backlight_update_status() calls ktd3136_power_off(). Because chip->is_enabled
+> is false, ktd3136_power_off() returns early without de-asserting the GPIO.
+> Could this state mismatch leave the backlight physically ON when the initial
+> brightness is 0?
 > 
-> Because rt8515_gpio_led_off() is reachable from user-controllable sysfs
-> attributes via rt8515_led_brightness_set(), repeated calls when the driver
-> has not enabled the regulator might cause the regulator core to throw a
-> warning and return -EIO. Should the driver maintain its own boolean state
-> to track whether it has enabled the regulator?
-> 
-> >  }
-> [ ... ]
-> > @@ -91,23 +118,37 @@ static int rt8515_led_brightness_set(struct led_classdev *led,
-> >  {
-> >  	struct led_classdev_flash *fled = lcdev_to_flcdev(led);
-> >  	struct rt8515 *rt = to_rt8515(fled);
-> > +	int ret = 0;
-> >  
-> >  	mutex_lock(&rt->lock);
-> >  
-> >  	if (brightness == LED_OFF) {
-> > -		/* Off */
-> > -		rt8515_gpio_led_off(rt);
-> > +		ret = rt8515_gpio_led_off(rt);
-> > +		if (ret)
-> > +			goto out;
-> >  	} else if (brightness < RT8515_TORCH_MAX) {
-> > -		/* Step it up to movie mode brightness using the flash pin */
-> > -		rt8515_gpio_brightness_commit(rt->enable_torch, brightness);
-> > +		/*
-> > +		 * Step it up to movie mode brightness.
-> > +		 * If there is no separate torch pin, use the flash pin
-> > +		 * for torch as well.
-> > +		 */
-> > +		ret = rt8515_gpio_brightness_commit(rt,
-> > +				rt->enable_torch ?: rt->enable_flash, brightness);
-> > +		if (ret)
-> > +			goto out;
-> >  	} else {
-> > -		/* Max torch brightness requested */
-> > -		gpiod_set_value(rt->enable_torch, 1);
-> > +		/*
-> > +		 * Max torch brightness requested.
-> > +		 * If there is no separate torch pin, use the flash pin
-> > +		 * for torch as well.
-> > +		 */
-> > +		gpiod_set_value(rt->enable_torch ?: rt->enable_flash, RT8515_ON);
-> 
-> [Severity: High]
-> If a transition is made from LED_OFF directly to max torch brightness, the
-> optional vin regulator remains disabled because
-> rt8515_gpio_brightness_commit() is completely bypassed here. Does this mean
-> the max torch state might silently fail to power the IC?
-> 
-> >  	}
-> >  
-> > +out:
-> >  	mutex_unlock(&rt->lock);
-> >  
-> > -	return 0;
-> > +	return ret;
-> >  }
-> >  
-> >  static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
-> > @@ -116,27 +157,35 @@ static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
-> [ ... ]
-> > -	if (state) {
-> > -		/* Enable LED flash mode and set brightness */
-> > -		rt8515_gpio_brightness_commit(rt->enable_flash, brightness);
-> > -		/* Set timeout */
-> > -		mod_timer(&rt->powerdown_timer,
-> > -			  jiffies + usecs_to_jiffies(timeout->val));
-> > -	} else {
-> > -		timer_delete_sync(&rt->powerdown_timer);
-> > -		/* Turn the LED off */
-> > -		rt8515_gpio_led_off(rt);
-> > -	}
-> > +	/* Enable LED flash mode and set brightness */
-> > +	ret = rt8515_gpio_brightness_commit(rt, rt->enable_flash, brightness);
-> > +	if (ret)
-> > +		goto out;
 > > +
-> > +	/* Set timeout */
-> > +	schedule_delayed_work(&rt->powerdown_work, usecs_to_jiffies(timeout->val));
+> > +	if (chip->enable_gpio)
+> > +		usleep_range(2000, 3000);
+> [ ... ]
+> > +static void ktd3136_remove(struct i2c_client *client)
+> > +{
+> > +	struct ktd3136_data *chip = i2c_get_clientdata(client);
+> > +
+> > +	if (chip)
+> > +		ktd3136_power_off(chip);
+> 
+> [Severity: Medium]
+> Does ktd3136_power_off(chip) need to be protected by mutex_lock(&chip->lock)
+> here? Since the backlight device is registered with
+> devm_backlight_device_register, its sysfs interface might still be active
+> during .remove(). Could this cause a data race with concurrent sysfs writes
+> to the brightness attribute?
 > 
 > [Severity: High]
-> Does schedule_delayed_work() correctly handle consecutive flash strobe
-> commands? Unlike mod_timer(), schedule_delayed_work() silently ignores
-> updates if the work is already pending. This could cause consecutive V4L2
-> flash strobes to fail to extend the timeout, shutting down the flash
-> prematurely.
+> Does the vin regulator need to be disabled here? It was enabled during probe
+> but there doesn't seem to be a corresponding regulator_disable() call when the
+> driver is unbound.
 > 
-> Additionally, if the delayed work is actively executing and blocked waiting
-> on rt->lock, its pending bit is cleared. In that scenario, could
-> schedule_delayed_work() queue a duplicate instance of the work that
-> immediately shuts down the LED as soon as the lock is released? Would using
-> mod_delayed_work() resolve these state management issues?
-> 
-> >  
-> >  	fled->led_cdev.brightness = LED_OFF;
-> >  	/* After this the torch LED will be disabled */
-> >  
-> > +out:
-> >  	mutex_unlock(&rt->lock);
-> >  
-> > -	return 0;
-> > +	return ret;
-> >  }
-> [ ... ]
-> > @@ -327,12 +389,17 @@ static int rt8515_probe(struct platform_device *pdev)
-> [ ... ]
-> >  	platform_set_drvdata(pdev, rt);
-> >  
-> >  	ret = devm_led_classdev_flash_register_ext(dev, fled, &init_data);
-> 
-> [Severity: Critical]
-> This is a pre-existing issue, but registering the LED class device via the
-> devm API schedules its sysfs interfaces to be unregistered after
-> rt8515_remove() returns.
-> 
-> [ ... ]
-> > @@ -371,7 +438,7 @@ static void rt8515_remove(struct platform_device *pdev)
-> >  	struct rt8515 *rt = platform_get_drvdata(pdev);
-> >  
-> >  	rt8515_v4l2_flash_release(rt);
-> > -	timer_delete_sync(&rt->powerdown_timer);
-> > +	cancel_delayed_work_sync(&rt->powerdown_work);
-> >  	mutex_destroy(&rt->lock);
-> 
-> Because devres destroys the sysfs interfaces after this function returns,
-> could a concurrent user-space write to sysfs (like triggering a flash
-> strobe) occur during this window? This would cause the sysfs handler to
-> attempt to lock the destroyed mutex and queue work on the freed device
-> structure, leading to a use-after-free. Should devm_add_action_or_reset()
-> be used here instead to ensure the work and mutex are only destroyed after
-> the devm-managed LED registration is cleanly torn down?
-> 
-> >  }
+> > +}
 > 
 > -- 
-> Sashiko AI review � https://sashiko.dev/#/patchset/20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com?part=2
+> Sashiko AI review · https://sashiko.dev/#/patchset/20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com?part=2
 
 -- 
 Lee Jones
