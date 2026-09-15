@@ -1,158 +1,154 @@
-Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com [74.125.227.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B264A263A;
-	Tue, 15 Sep 2026 15:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3AD44C65B
+	for <linux-leds@vger.kernel.org>; Tue, 15 Sep 2026 19:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789485562; cv=none; b=H69sa8gKY7RV5M1a4/w2HIVkH671ty0uru6sDBNY1NoInQ7avooOXKEua7/cWVkTVUJo4r7rBdwhpIcbBp+3P9p0TZRkq19m3MtSRFg+UQupr90bmIQ2vmQzqFbHs2/cOf1ieKAll44NPuS0DtWHHMUPwNsEWk0m1QjSYt81gu8=
+	t=1789501792; cv=none; b=VGAyv20L2HpLtVmBDdTcRiixCjlBa9cKQ4jl8D63allOUyiOZeZ6JODFOk04NYzIgGQiWUAt88Tw5wLsK112Byvu0xddyuwxAJfJlUzftOlyXi1+DVdJBpsBZz9SfaHxqUOv+3xvGBhcWBdxFsAD3zXmYoalS2XloQdquPVc/xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789485562; c=relaxed/simple;
-	bh=g5HqM7yPLjirh+s3nqf4vMs32yicp0M2q0rb2DGhU0E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SkRHtf6aVYOc9h1C7dPWh0JBQzaVC+NE88I8/oshBkIA5yX4Utx+xHAQIh82sXCKD/uJv7a62+2ChlnYhHV5kXNjpNIN0Gom1zW1y605U9v6p+QG7OgXZ/MnEsabSAieSWdv+3lTJp+JMCCa66AIUpQsXWgoMm9sts+ManEsCzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=NAZwoyib; arc=none smtp.client-ip=188.40.3.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1789501792; c=relaxed/simple;
+	bh=Ox+hNbTd7f3+G4o+Sw8Uzx0THm/NdMARd2zaTFBMXU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W5wLNInD5Xx5ltRaG+7NZi/LQJr2MFbobU5OHtFQhdWvbYuPXvpW6Y5a4c9wWvsWb6UsVesoAGpzL/0hOtNf7340Win9yVOT+yppZEQi7QxVzmQa/GtvNHavZPqo7PeaQ9O/rqXFrafQjmiJYwmHxRn7CF27VevpUNbO++QZO7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s0TUYJeq; arc=none smtp.client-ip=74.125.227.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="NAZwoyib"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=byMjB5chuhzE/XcjSn+EC4LzxGFkdqkyfUk/oRh+C88=; b=NAZwoyib02g6Xe87lVB6rK/+BY
-	fncpVtWxq8JnwUXuIzpmR2KRqjUZDueWR/ZlCRVgFRtdsyp8nXK++OczllH42rd3wIw3K8Ajp7Vo6
-	4ZrKyIlzfHM59kA9n1LVODiFdhUexNk5F0Wr5eLDzv2X4uQLAB8C1MK6ApWPkdy7jv5hNZSEGGll0
-	iv7L9NiOcr9ypdROKFsdaSIjoSZeGCB8mrETdHjCKTWtuAtRjVSsuLxyk4vQDeg1WU3gLLFhHT88U
-	M0mGO2mtsiFG6usmaaAFOj2AI+x/BYpmuaByFGZgNyF2tBrtxlNWfxj5Cq9b12f1hn+8Cxp2ZEUms
-	Xs7CLAcQ==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x6USY-000JBD-2W;
-	Tue, 15 Sep 2026 16:48:34 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x6USY-000FHM-0M;
-	Tue, 15 Sep 2026 16:48:34 +0200
-Message-ID: <b83958e0b2b1b506b90fd368434dc2e52719a3c1.camel@ew.tq-group.com>
-Subject: Re: [PATCH v2 8/8] leds: pca995x: Add support for group brightness
- control
-From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
-To: sashiko-reviews@lists.linux.dev
-Cc: devicetree@vger.kernel.org, robh@kernel.org, linux-leds@vger.kernel.org,
-  lee@kernel.org, conor+dt@kernel.org, linux@ew.tq-group.com
-Date: Tue, 15 Sep 2026 16:48:33 +0200
-In-Reply-To: <20260915143246.CF3C01F000FF@smtp.kernel.org>
-References: 
-	<bd687915af26ccdbfc8cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com>
-	 <bb9d86b8891d58eab135038dfde70ae024f244c1.1789477502.git.nora.schiffer@ew.tq-group.com>
-	 <20260915143246.CF3C01F000FF@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1.1 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s0TUYJeq"
+Received: by mail-pj2-f42.google.com with SMTP id 98e67ed59e1d1-39b5b07ec78so109366a91.3
+        for <linux-leds@vger.kernel.org>; Tue, 15 Sep 2026 12:49:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789501790; x=1790106590; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8A5+VLIUxly1brCbgDAu6UdvaY0/rGFhneDDaN+WcFg=;
+        b=s0TUYJeqCqxXG9B2wBtLX5teQlFVqBteh46IKtD255/zdKrhQ+Ad2+YuQMA0N5nxir
+         ecdbqJ33HTPMRVzXydNQUZK1H2W9UFr9bX6R65oJkZH+Zeh/RZMb6s6yJG6AeBI7QkWt
+         zzx4/ZtUB4auFsIwEkk83q2vhfVqW16PJcAiTPtEZio+ddg7tOjTTIoMcDxRsoKE13Yo
+         jB12NsttsL5wYhIFrwMbPuXLfMyweIWOK48uYVYREo4MoaaVK9rx6MDkKRZkyHX8BsVg
+         qhymf0Sp4pmpq4XR/cDdGmcCSTOcwjnh9XnhFh78MWHMnYckA7oaMea1WWAVH4e2WeB3
+         cTDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789501790; x=1790106590;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=8A5+VLIUxly1brCbgDAu6UdvaY0/rGFhneDDaN+WcFg=;
+        b=Qc/oeHidQEe6ecPsoA2PgYFPFI2x4wTjWmHBfnuolBJppvgnqMXG6aTRCrjklIF60f
+         TOIChmbdqIZfpLexx8LJIuf+HSMqHrzIELZUmLr1AhE3jaaI/FuoPPfGjPsNkxCV+7Z0
+         8CRpAde2goC1K7hxVkLDGp0PGB4/XQLq9UfOFZ7j19Htjv2h4rU3w/1wQbacf1XFzKQC
+         TK6EUnOZ5t7d/YbyMum8giGJvVSlRGAP/v86OR+1Ae0T4ZfjnOVcAiW/ii27FaDrWiqA
+         GuaLYyM/45qe1pJai+hHOYFaA80f0N2V+l/3gQgGJL416/5Yv+bPS4miZ+y+LsFhMB/s
+         QhLQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzYYAx1bGLkIzErj8eOW8COt1/AgIEcbFLmG12wlTG517iLMa815tamA4njJ/kCcNlddSwpdkJD4Su0@vger.kernel.org
+X-Gm-Message-State: AFuF++kGiBKddDCwxVqVHHqFAZ6Li5tu+z4iiEp2msKYP3os/6n0aaLM
+	BXSqJZkDSbE0CbqyDsCdzfmdbIGNubBbFemmhM3rs795FLGPFoDtWEbp
+X-Gm-Gg: AYBFou0kMomve2vemZZmDdUSlXhjK9XoA4uLeRqvCAd+lf6zUBMANXLuZurPEhliVsl
+	EJM37AXxkThptNbGcEzYECk6c0JkVt5ObmffcSysdghEd/KcxKDVuFoXEoDluuRE3b9lxSMDIgQ
+	PKILU9iXPcwy8/Bo+6pBKYSpRgmdX+SwwXMsJ5TtT3FywyqvYSFuO/91uvLHAqDYntd7U1YXMj2
+	WtIs7jWY9zBS9gXdqc+y9dn4MNmY6QOsGfK0ZIwsv0cWz0IOIaplsXW/Xi1eEnTF4WmW+lZOYzZ
+	5t1hsbTHKSJAFKRoOcUa1yHp5IdR4Gba2OK5mj/kCAdA64W3TwdCMD9qcqf4cp3K+e9KnM/hLQD
+	VXR3LH/psTGGoKT2N7NjsLHpNHSFNmZygSX6e/GL085v19DTkrKk5iAKwaczlavzmtF0YsOk3gS
+	SzIT0/hybkJf2yUVKMTOtkZmjV5ZPIheIXSKfttJ2wttgIQZ0B2hIqB0K6+u3sYT08V0ltxngsf
+	FEMDAL0kKJwuxlA9UH8bKZGAp6MoW5A9LLeHPm8EpJGBkNsixo/LAc=
+X-Received: by 2002:a17:90b:1f84:b0:39e:1b0c:4773 with SMTP id 98e67ed59e1d1-39e1b0c5c9dmr789092a91.0.1789501790027;
+        Tue, 15 Sep 2026 12:49:50 -0700 (PDT)
+Received: from [192.168.68.67] (104-12-136-65.lightspeed.irvnca.sbcglobal.net. [104.12.136.65])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-14395d4cbc9sm821075c88.11.2026.09.15.12.49.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2026 12:49:49 -0700 (PDT)
+Message-ID: <583fd625-b57f-44be-96c8-94d981c29c79@gmail.com>
+Date: Tue, 15 Sep 2026 12:49:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Virus-Scanned: Clear (ClamAV 1.4.3/28124/Tue Sep 15 08:27:28 2026)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/3] dt-bindings: leds: rt8515: Support single-GPIO
+ flash ICs with vin supply
+To: sashiko-reviews@lists.linux.dev
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org
+References: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
+ <20260912-expressatt_camera_flash-v7-1-e1fd2edc8d84@gmail.com>
+ <20260913024510.485A11F000FF@smtp.kernel.org>
+Content-Language: en-US
+From: Rudraksha Gupta <guptarud@gmail.com>
+In-Reply-To: <20260913024510.485A11F000FF@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2026-09-15 at 14:32 +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential issu=
-e(s) to consider:
-> - [Medium] sysfs: race condition between LED registration and parent attr=
-ibutes creation
+
+On 9/12/26 19:45, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [Medium] The `oneOf` constraint incorrectly makes `ent-gpios` and `vin-supply` mutually exclusive and strictly requires exactly one to be present, contradicting the claim that `vin-supply` is optional and artificially restricting valid hardware configurations.
 > --
->=20
-> commit 519bef49574c49d4cda0dcf149ce7b8d6e09657e
-> Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
->=20
-> leds: pca995x: Add support for group brightness control
->=20
-> When LEDs are set to PWM mode with group control enabled, their
-> brightness can control using a global "group PWM" setting, modulating
-> the individual LEDs' brightness with a second PWM running at a different
-> frequency. This patch introduces sysfs attributes to expose group
-> brightness control and clear error flags.
->=20
-> > diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> > index 963e453ce117d..33da3cd9cbbbf 100644
-> > --- a/drivers/leds/leds-pca995x.c
-> > +++ b/drivers/leds/leds-pca995x.c
+make ARCH=arm CHECK_DTBS=y DT_SCHEMA_FILES=richtek,rt8515.yaml \
+       qcom/qcom-msm8960-samsung-expressatt.dtb \
+       st/ste-ux500-samsung-codina.dtb \
+       st/ste-ux500-samsung-codina-tmo.dtb \
+       st/ste-ux500-samsung-gavini.dtb \
+       st/ste-ux500-samsung-golden.dtb \
+       st/ste-ux500-samsung-janice.dtb \
+       st/ste-ux500-samsung-kyle.dtb \
+       st/ste-ux500-samsung-skomer.dtb
+
+all 8 in-tree users of this binding. 0 warnings.
+
+existing hw passes. Probably not useful to account for hw not in the tree
+
+
+
+>
+> commit 72463777ee1c18e7913b350d5d2ad857810ece89
+> Author: Rudraksha Gupta <guptarud@gmail.com>
+> Subject: dt-bindings: leds: rt8515: Support single-GPIO flash ICs with vin supply
+>
+> This commit adds support for single-channel variants of the RT8515 flash
+> ICs. It makes ent-gpios optional and introduces a vin-supply property,
+> adding a oneOf constraint to manage their presence.
+>
+>> diff --git a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+>> index 0356371a6b014..ab3c5139132cc 100644
+>> --- a/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
+>> +++ b/Documentation/devicetree/bindings/leds/richtek,rt8515.yaml
 > [ ... ]
-> > @@ -190,10 +194,41 @@ static ssize_t has_errors_store(struct device *de=
-v, struct device_attribute *att
-> >  	return ret ?: count;
-> >  }
-> > =20
-> > +static ssize_t group_brightness_show(struct device *dev, struct device=
-_attribute *attr, char *buf)
-> > +{
-> [ ... ]
-> > +static ssize_t group_brightness_store(struct device *dev, struct devic=
-e_attribute *attr,
-> > +				       const char *buf, size_t count)
-> > +{
-> [ ... ]
-> >  static DEVICE_ATTR_RW(has_errors);
-> > +static DEVICE_ATTR_RW(group_brightness);
-> > =20
-> >  static struct attribute *pca995x_attrs[] =3D {
-> >  	&dev_attr_has_errors.attr,
-> > +	&dev_attr_group_brightness.attr,
-> >  	NULL,
-> >  };
->=20
+>
+>> @@ -81,10 +90,15 @@ properties:
+>>   
+>>   required:
+>>     - compatible
+>> -  - ent-gpios
+>>     - enf-gpios
+>>     - led
+>>   
+>> +oneOf:
+>> +  - required:
+>> +      - ent-gpios
+>> +  - required:
+>> +      - vin-supply
+>> +
 > [Severity: Medium]
-> Does this attribute registration order create a race condition with users=
-pace?
->=20
-> Looking at pca995x_probe(), devm_led_classdev_register_ext() is called to
-> register the LEDs, which emits KOBJ_ADD uevents. Later in the function,
-> sysfs_create_groups() is called to create these parent attributes.
->=20
-> Because the attributes are created after the uevent is emitted, udev rule=
-s
-> triggered by the LED addition might fail to read the new group_brightness
-> attribute because it is not yet created.
->=20
-> Similarly on device removal, sysfs_remove_groups() is called in
-> pca995x_remove() before the managed devres cleanup unregisters the child
-> LED devices. This causes the attributes to disappear while the LEDs are
-> still registered and potentially active.
->=20
-> Could we avoid this race during teardown and initialization by using
-> devm_device_add_groups() before registering the LED class devices?
->=20
-
-Ignoring the fact that devm_device_add_groups() does not exist (and as far =
-as I
-can tell, there is no other generic devm interface for sysfs attributes), u=
-sing
-device_add_groups() instead of sysfs_create_groups() seems nice. There is a=
-lso a
-pre-existing race-condition between LED device registration and initializat=
-ion
-of hardware registers, which I'll fix in v3.
-
-I can also move the creation of the parent device's sysfs attributes, so th=
-e
-attributes are already available when the LED devices are registered.
-
-Best,
-Nora
-
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+> Does this oneOf constraint incorrectly restrict valid hardware configurations?
+>
+> The oneOf constraint strictly requires exactly one of its subschemas to match.
+> If a single-channel IC (which naturally lacks ent-gpios) does not use the
+> explicitly optional vin-supply regulator, zero subschemas will match, causing
+> schema validation to fail.
+>
+> Conversely, if a standard dual-channel IC (which requires ent-gpios) is also
+> powered by a vin-supply regulator, two subschemas will match. This will also
+> fail validation due to the strict exclusivity of oneOf.
+>
+> Should this be modeled differently to allow vin-supply to be truly optional
+> while safely permitting single-channel configurations?
+>
+>>   additionalProperties: false
+>>   
+>>   examples:
