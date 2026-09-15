@@ -1,44 +1,43 @@
 Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BDC46F481;
-	Tue, 15 Sep 2026 13:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8E745D91C;
+	Tue, 15 Sep 2026 13:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789479928; cv=none; b=pwDswG5GKMgcQKmoGrNnQ7vPwH2jy28sMHMUIB8bi1LHmPxHrqT3+p1Xk+75FtfccMp6iRhOuCfhltdFSvkwScZ1Dx2rctGmY6uc4AlKw9CyBSrnhA4XTyYOzzSId9WVrnrWmYGYgfo2CJWaUIDCBO/nRIS3XhtMnwVZ6jdB2mg=
+	t=1789479928; cv=none; b=j3tvJ+Ikzujbw6AkVX5kfiL9sct0sUwmMiJPfP/Ydqt71GQA1Y5WKQ42tNu3uUmxAeVqN72rUlcx25Q13vofYMrFwu7Q2bt5LwTWAFcXMQC8mJHSuHUw3BhzaRrjbMsU5jEpkUnNKfHrtXAo4ip4F6+V5PjDo8stGAhSo9L0XZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789479928; c=relaxed/simple;
-	bh=kGv1/ML+i9iJQ736DOf5VDzTAeG82e8j/9d0X1H5qPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iHmtJT+1gGQ4RHmIYcTXI/8tdi6u0FdoLWQiyW4aljkIfC8M9chQhvQbyPMlHxm9ysfp6mtHTo33pE5azY8DVW8AE7CDOsz1D/FopgFt0phX0dVYirgTmElxokNYlKVDZi/961vqdPsqNzlMsRv9OBJTBmNsySBA5bHX2UC81kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=CIs21g66; arc=none smtp.client-ip=188.40.3.216
+	bh=4IitQqI7ba4jtAfNF2zkFM3ozkicT6ADviuknYTAOv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ORie6DvnT5Oa1WKQcYXnGb2K1OlmKwidTkb36K3NUDX80DUI889BhNQjHi/IsxcI2RyaF0sDzXk8E+504BtEBgkaRSo8NF6eoimrDOFeYw1fFqictMmNlCvJff2zf22wg6iWYfTT5QSSFhoL0OMOQ0sDBbZ+5KGgfwqGOM12tBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=e0+IC8UT; arc=none smtp.client-ip=188.40.3.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="CIs21g66"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="e0+IC8UT"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Zer2yRUar9EakDrw6r8hGxxftGpTkKfPRHqpMEPkxdc=; b=CIs21g66UZbNP2oceLwHCHyfnf
-	bPmydInf4yE05R8hBG47rju7g5OcksLfD+RfUzljPWPbRFXi0DrKTiUMNvCAMsnTvvAhQJhLxuKXR
-	rsfCsW+myKreDUFhP9tM3ZTbzLukx4m8Cz5+CrFWcYHJFRoEObdI8tBd2/b3saFc9d73d1qZ9vDMM
-	ASAdpA/wRwiQ4U7RRHYkSUAG1UJBYaoQnWiC4P4/y/oxEMfw5wxuG196nltfgzZmCeDm2YCDA7Ina
-	nYBDsXxeHo1k5YU/08/MaZbpU26sZoFHYy6NBIfwcnHWRg8L9AJ/yIFEue8R0Va2ockIxkueWHQ2C
-	8Tgv24GA==;
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=7ybuTRr6DcCsseLWtT9YymOa+tKJfjSwPPrvPjf2DuM=; b=e0+IC8UT+UFCtwmSAxQ5BYnAcr
+	f7QVjLa8StEaXCSguhJlUMZl4o6VAnEsotScgMJecFFpQ37fkhBBxQVfsgqhZyDp5W5v05bTVAQED
+	0TsYmD1B+a9aK28LLwUMrYlihtucmDwxveobjZAq84EX5jXn2vcwu0a5pYLBTQOsrdRjfkYCSV0nr
+	ZFP2K8VHN/47VH3hUz1PxYA+i3aTiA/rA/c5ZIXnEnqDAr69aU87qGP/8jKVQ4krdJVLbzGhgnAVr
+	y10twlpmRTWWFeN0meqv1Rm4+6Kx6Mcuq+mF68RM/byIDp0M9dws7RapuZVfuWvblW9QdLKkVHlxa
+	zSfPHJOQ==;
 Received: from sslproxy04.your-server.de ([78.46.152.42])
 	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x6TTI-0003gl-1n;
+	id 1x6TTI-0003gd-0u;
 	Tue, 15 Sep 2026 15:45:16 +0200
 Received: from localhost ([127.0.0.1])
 	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x6TTH-000FKf-2h;
-	Tue, 15 Sep 2026 15:45:16 +0200
+	id 1x6TTH-000FKf-1c;
+	Tue, 15 Sep 2026 15:45:15 +0200
 From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>
@@ -50,13 +49,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-leds@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Nora Schiffer <nora.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 2/8] dt-bindings: leds: pca995x: Describe nxp,output-gain property
-Date: Tue, 15 Sep 2026 15:43:50 +0200
-Message-ID: <0eb2e22d54062bf4d6e50e18a27063529510b9ce.1789477502.git.nora.schiffer@ew.tq-group.com>
+	Nora Schiffer <nora.schiffer@ew.tq-group.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v2 1/8] dt-bindings: leds: pca995x: Describe reset-gpios property
+Date: Tue, 15 Sep 2026 15:43:49 +0200
+Message-ID: <bd687915af26ccdbfc8cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <bd687915af26ccdbfc8cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com>
-References: <bd687915af26ccdbfc8cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -67,44 +65,50 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28124/Tue Sep 15 08:27:28 2026)
 
-Allow configuring the output current to adjust for different hardware
-designs.
+The PCA9952/PCA9955B/PCA9956B have a reset pin. Allow describing it in
+the Device Tree.
 
-The output gain relates the output current with an external resistor
-connected to the LED driver. It does not directly correspond to a
-meaningful physical unit of measurement, so we refer to the datasheet
-for information on its calculation.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 ---
 
 v2:
-- Add nxp, vendor prefix
-- Fix default value to match existing driver code
-- Describe retionale for using register value directly in commit message
+- Use full hardware model names in commit description
+- Add Reviewed-by tag
 
- Documentation/devicetree/bindings/leds/nxp,pca995x.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/leds/nxp,pca995x.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml b/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
-index 201f32f1b8139..372ecd18043e0 100644
+index ab8c90cbadb5c..201f32f1b8139 100644
 --- a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
 +++ b/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
-@@ -39,6 +39,14 @@ properties:
-   reset-gpios:
-     maxItems: 1
+@@ -36,6 +36,9 @@ properties:
+   "#size-cells":
+     const: 0
  
-+  nxp,output-gain:
-+    description:
-+      Set the output gain controlling the LED current as described in the
-+      PCA995x datasheets.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    default: 127
-+    maximum: 255
++  reset-gpios:
++    maxItems: 1
 +
  patternProperties:
    "^led@[0-9a-f]+$":
      type: object
+@@ -54,6 +57,7 @@ additionalProperties: false
+ 
+ examples:
+   - |
++    #include <dt-bindings/gpio/gpio.h>
+     #include <dt-bindings/leds/common.h>
+ 
+     i2c {
+@@ -65,6 +69,7 @@ examples:
+             reg = <0x01>;
+             #address-cells = <1>;
+             #size-cells = <0>;
++            reset-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>;
+ 
+             led@0 {
+                 reg = <0x0>;
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
