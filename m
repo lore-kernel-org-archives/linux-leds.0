@@ -1,178 +1,111 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010020.outbound.protection.outlook.com [52.101.84.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk2-f12.google.com (mail-qk2-f12.google.com [74.125.230.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9096F33A9D1;
-	Mon, 14 Sep 2026 19:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789415196; cv=fail; b=JDBmr8Kl4+K44ZlRJ17W1n+GXSNzqbVZJsOdjSrI6gpxY2ww2d/CIFTVDyZf/uLrZ2egmBexXgaD85qLdu0ELaVtL48kD7Yje1LGQVKY865Qu7PSfbTMVUbWsEqbfGJw13To8V71mt3LGOaH9MRf/utLxZcfkSZw801LxejHWKA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789415196; c=relaxed/simple;
-	bh=q7lVS/a3XiWpVthCsRnQSid3WbuxTsBM/52JWv19nUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=khY0AHZjSlP7BWgEPaey9eL5778RtIeT7NOEQqprvbS1pWdWAyoz/tR0Ni1QzTgp0moP/d4J3v+xt1Iu6Op3PGBGDpk7KyfwXUvR7himYtlexTL+VXU/Vhg5f3mOOOUhUyd4xtqfeTA38GKI4HrmeF1R9mvYBs/Ma2bXeFQmtao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=GRVQsYGz; arc=fail smtp.client-ip=52.101.84.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E2928E0F
+	for <linux-leds@vger.kernel.org>; Tue, 15 Sep 2026 02:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.204
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789437970; cv=none; b=GLmchJ3aXZ/ifpHlbOfk5qjyql5xn2WFIil30fkRYYATtZj1Y1fydweyqMD0OlSNzkrA0k4GkUclqK6HQnVfmKquVH2nqMHv4wwgn95eREcuqVnY6w57Q9oWaYLvPNws4XI43TVr7QfHGiYbBH51l+0uTrLr94n+AvxKDwQowQ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789437970; c=relaxed/simple;
+	bh=IsSRvZpTd2ytDnUVH/h7zanvLZg8RPBZ5DIYyIFl5Uk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ptnyqyK0w3wfruOF0dQhwN8i1sDD1ueZAdQSIJpELixcPqvNmDczQSWDnSaZlzpv8NZOu0e8r8aeUUdiw3hPdqbx/jJjcPZAEIvY0FP5zpx/WsSRdAC0sIAfuL24YiJekLR3Am2MvBr/UGC9jfluqiLiQlEg3UiHTJi1UN0NiZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCA7DhpJ; arc=none smtp.client-ip=74.125.230.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="GRVQsYGz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W0Xl1I67pMObVCtLLXVQfj/5aUo+eyLapLwFeo7tXBMyzpIbba2HM4pCmBsRCgdscBr/126c0oallTjbbSm3XlEjMQuv4yrYnYox7RcwcBP1f+cd98Qrss5TAXPgFt6zaZNBs2oDaIXGTONO1Vr2Odz31Q6EBJQ62lfj+j+soeGtXp5elPSB600WPbFgLfOao7unmKH1LRWmZZnP4xf7c99Z1LdmB+/n8dRqQ0yNwJlIZBg5v6YHyU2AVxmMM88CLqQfPdEf7E5x1oh4sWybT9aYlG0JUGqbxmbrPL8DJyhwiYkyWpN38h3RJEyx6GB045LDJKUq0Ub2Aa9ZTthm5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kGYfC5kkANmd3BmUroED4yVyMWwdmcZ0ZBenZN7F0NY=;
- b=bbjENznF1dUT4B/czbvXEpQtgAXKuiXHRyLYPCm9rv28tDO631tPd1HTXBtyD25Q+eKqh+d5pvyZTe5eIZDRFTE/3J6NaaaZ78YF6jhkBcN5H1cEN8qxuk/NqnzsONEfSXrxXbOMNUlApWv5FeJtG0LQZi1aTErn7AUnDAXCoLTkEj4e99UJ1v1shdl+8iG94QyFbXaG0oaxLgcraMv8DYgbPB1UM0IVhJTRaBt59Kr0USuFnKY3lZ0qEx9Qu7ltifmLWE9yRU24PG97yfKm2Sf7D4IW3gtW0jofuMbUF7hWEDgYGKa9vawRC3AZzfcjnS04IXj1JD0fp4wsanL0QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kGYfC5kkANmd3BmUroED4yVyMWwdmcZ0ZBenZN7F0NY=;
- b=GRVQsYGzIfhXfDQBQGOT7XX+AgnTXROF0dXG29Yl6egKhMm4PTA9c4MYejkYKKWwaVmyE7GasWiGj6k3nTBnkK2qoqBpRF/Hf8wDrcxyL+moa7DI69lKCLgAN8F7JHJu5teu7tlCyKofLv0CgoQycvuy4SnndHVlMFohMu8V8g2fU5wCdaKAcEIYLtW9ftCZLZYV+UTNcAyBatXEbupMjccMmpOyxs/JaYINRe8V1reaWiLmtFKwsNtII1D7tymxU+0EYGQsTNLbiKxQagB8jwXMvJIPXok9YN7LTUgnvrrlMwqIbQOM4PquZiJXvWaVnqGnUF5O0E84MLsQEdXjQg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AM9PR04MB8732.eurprd04.prod.outlook.com (2603:10a6:20b:43f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Mon, 14 Sep
- 2026 19:46:30 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0406.007; Mon, 14 Sep 2026
- 19:46:30 +0000
-Date: Mon, 14 Sep 2026 15:46:22 -0400
-From: Frank Li <Frank.li@oss.nxp.com>
-To: haibo.chen@oss.nxp.com
-Cc: Riku Voipio <riku.voipio@iki.fi>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	Haibo Chen <haibo.chen@nxp.com>
-Subject: Re: [PATCH] leds: pca9532: check i2c_smbus_read_byte_data() return
- value
-Message-ID: <aqhPDjtGTvYUNZii@lizhi-Precision-Tower-5810>
-References: <20260727-led-fix-v1-1-d635c5037109@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260727-led-fix-v1-1-d635c5037109@nxp.com>
-X-ClientProxiedBy: PH7PR02CA0009.namprd02.prod.outlook.com
- (2603:10b6:510:33d::11) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCA7DhpJ"
+Received: by mail-qk2-f12.google.com with SMTP id d75a77b69052e-52fb76bcb1fso34400201cf.0
+        for <linux-leds@vger.kernel.org>; Mon, 14 Sep 2026 19:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789437968; x=1790042768; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ad5dKOxCgmzRzr/3vr0OMGOG7uBSvPVGD8Z4whsnBTA=;
+        b=WCA7DhpJ8TJeP9pmUDreN7hK6JZCADnfkhjgBPZ1ijFQXHog4DZyhPyc2+eVrQXmSg
+         JTGDE5PlvHpRwK3MG1n9Cm2/Y0b2Kh+w//ukPWR4zLbTxb8eEQt0mKwYc3hUdWnpqhp6
+         Y6PM0mfsjfptUlyhd98y4zIp1zGngPuwVy9oiJAEDOK1PNybUZAi3sW2eonQJTiOuo5f
+         QleQOK2Wk7Hv3l2NMkNxXtoLmlsI0/3Ouv/uKNrfEPR+2jCdy6mls9HneZZJp0j+m0uP
+         fHP6BLs9hPTQD2WI9tajwUF/BbSL66CJ+VX4dKbtl4xLQg27RZQCgZ+iwV7mDoJwCrpa
+         z1VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789437968; x=1790042768;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ad5dKOxCgmzRzr/3vr0OMGOG7uBSvPVGD8Z4whsnBTA=;
+        b=sjyqznZ2LMd2LL8yN6RJY32wLaQmL2KHK6t22RK4N/fTBhYsaiiSsR/DryQyxWyeku
+         pu+KNOavvhWQvIuPBoFHUKuOkUZrm/0H4b1v/F6+/mxEU3xSPUgHiKVLAndBdQ31C8SF
+         sU5sr/TNqCeMU5PVXQjmTo2Yldv2qQO0ZJfWuGKvK1W9EMQtBX0cHig7VBFShO7TpmSq
+         PwPijRPZr9VHWloz3fUL1GY1Zr3hQgbYpLbXZf8nm/m9OuSyjW8DbyfJaJ+0qVpQoFr0
+         6liKwEgl7mlWwupDSEJFbHBTOWh/A8I1adi61kU36y2Joc2gx2rdG7auqwexHuQSasbq
+         q4tQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzeqe0PZgYSROcRRWNf7pMzuhOF15f3/VZedHuVWTnV2QjikrWLeQDcuEbA1jrZETXoaoB8p/GOz2GG@vger.kernel.org
+X-Gm-Message-State: AFuF++m016Yr4sV2EujvwN302SLUrQ2HWfZjDZKoiuevKEflB5RPHLpF
+	y/6pFSIpMPY1NAecPsLxCwadnyaqYL/Ie7HVLCSZ2gs0qt5LFkpWhf0=
+X-Gm-Gg: AYBFou2rCv3z2mkjWxcaBNh00nFU1wk7FDivoKJKNxpR/S4UZa1LALhCoaIFY3I788p
+	5HxsAAD7RjcUv9DdVS5rTIPAozTYL1WZupMXS1PjlMz4Jqe8xxPU3ZV+QdK5KuTzbQFqAJfWeCi
+	+C1IBonEuYHZRuJz47D6Om8oBsQzTj5+u1AVY6hrAwU8SIXghu+I09MpXMuRTy1mMxCwc4qeFOG
+	PbBfaAx6RZDq+cZg+nFuoeXUtquif13sCbqunVjjhO/4n/3EPo/zofqqKaqzPeba7nN0URPEUEB
+	kNauybxDWRUtc2cCRis3Xb3yGp+CdM2Ynkv7e8ggDPNwC8J/BhkcNfUqnNL5RCSbgqy2xOizwaZ
+	MzKc4yARo48W/65XOIRmHtAgDgLg0l/4qpYdjQU+F6VOjsOOBgdmtnn/jXyn/gpUfMhr6LI4vO9
+	XO2henz+GWAT8ghYIiUfDCwdyTpcF3RbcP1hXwthNR+38AgIbnMymGn22FTstNTbk8goZ40735/
+	4iEHuoqXuDAIf3wOTK/QEeMCqaAwxzk2OgRbAKd19iNlX/57pVvwrd6uCJd68Ikd6EmMG3EaoDG
+	mSR4rq1aYofGF+iaKWH59rygYUuLO/WtOmFcevev7zgld+fYotT3f2PVsay/vzXxR6+lIw==
+X-Received: by 2002:ac8:7f81:0:b0:531:179e:ea4e with SMTP id d75a77b69052e-531179eee80mr50338711cf.31.1789437968264;
+        Mon, 14 Sep 2026 19:06:08 -0700 (PDT)
+Received: from 6e-wmo5420-02.ad.psu.edu.net (6e-wmo5420-02.ad.psu.edu. [104.39.213.233])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-9120f45cb06sm109618956d6.11.2026.09.14.19.06.06
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 14 Sep 2026 19:06:07 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Jan-Simon Moeller <jansimon.moeller@gmx.de>
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] leds: blinkm: Remove sysfs group on allocation failure
+Date: Mon, 14 Sep 2026 22:06:00 -0400
+Message-ID: <20260915020600.91955-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AM9PR04MB8732:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6e921f7-1d87-4e55-eae8-08df1298df31
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|376014|23010399003|1800799024|6133799003|10067099003|56012099006|11063799006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	v6/qL/scmwEugY4GyfSSSWlC7uPra4s7r8q11nZZi5/+epPeuusqNF9hj5BdOpqfoFKTgiqQhheW9E866BasdRrpRZrpSmLmqpSBWsazmXsFA3sIlUpdSso2oq+7EgX7f8jLnuGfcKVYYli0zNjpL2cE/ezUnreHoNiyhiCSwMuMba96NHtIugbK7HB7iYD3XYPRiS38Ysk1EjzBrs4aJTpKf/9sialAXqYjNrnLMdq3f0BWh0zZjeLYBOMyOI5juMqHIPrixs68OL4wNjXfvLnGK+3BIf1WfeHrI6DIiqIASJNBpuJLZkmcxUduGIVK9DV9dZ247dT81b5i3/jjc/8BVGy25bbqtPfsbJUdFlh4WtEzOUyTa9DZ9R/J7++A+ASk4tBmBC8kXFmmuX/h5UJvvXO4c15ay6v4eB1Ko0p9540UQs6uWMr5VQ6VrEvB3rSl/HNEm+KNC6z4EmP1xqLXckXPUibfVUI27qBzST+cypHqYPZtObbOqRYFD9RqO4lmCiRNB3K7AZKqJ6UTmO9EbpT+XxVqUyAUezZkX++msDiTSQCvH/Z1IgDYyKHkjhyQnp4w0hNhm/zzzUz7roCEL0tYpmy52+VBM7u0fV4ynGgfNQOgzxe2mh/HqxJcZLZUszpd79wZK+BYXtrvaHw6ROIyJx3MpMFZupUCoD0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(23010399003)(1800799024)(6133799003)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?K8UHTVFBqHeXFGF0a1ZAZFsrWBI8kcgs9mGTR52STJh7bShCseF+nL3l42kZ?=
- =?us-ascii?Q?WCPvN+oHF6kkXbb7R/KHyQ3CPu1UWXOpe+AbizDAgecFWDZWVHkHWW9uj4Vu?=
- =?us-ascii?Q?6Vs0lETk1Z0c0ViGSekw8g1aMDKOjtIkI7U6cf63L7q1b0DgcW3qModdF2Q3?=
- =?us-ascii?Q?5JukvlbjTNTTf/99Nn/PIZuZHvlm4tWaQHQMI3Mk2Or5ZkICyjlHJO/h5Xle?=
- =?us-ascii?Q?KWvK34YZnI3LU462qW7jUV4ZIq02ffQwlnq3r3yPevfiOsrvDVe+GNn+/jGQ?=
- =?us-ascii?Q?JWAjUWx+JMN/E0OSVZeZacaV84p2UQyhEug+Fl+Bnud5KlxBTS4uq1WAW4jS?=
- =?us-ascii?Q?hWZqA9kl4zua5RTHbNcobaxYc2hwlXcpBEbysyoxzoxokvJ7xI9DoG92aYy4?=
- =?us-ascii?Q?S8497CU12dBQOj/cFsckcYfM9slgOq/jW1ct/3riSEm+zsKn1S73jDvbN6Zc?=
- =?us-ascii?Q?ycOMbNRm95YT3wW+/NzD1iPwQRDGl3W8EO5S1TMMFHa0epomFfUwjIQP6pOD?=
- =?us-ascii?Q?/9RaEiJkMON7kKnsCkIiWr2KsaHDchdNe/6ijC0oO4NDd5IdAOIyHSgiHkQR?=
- =?us-ascii?Q?YvMwWle/pfrgQuKRXF6tztFkiEPN6Zioio+BiHTFxHWx4lt+ZorUrJR6CCRI?=
- =?us-ascii?Q?I+Mu9uK1GBcOtLbArgVQq2sckfA3gbFbu4rD7kJp7EhdmLjhlo+wFlVeDKsX?=
- =?us-ascii?Q?EM1S0gxvTO0wjMmFKuyC8P29xJaJPczaUagVwkrzL+NpMGXxDbTTdPK8mPUD?=
- =?us-ascii?Q?xwB8SgWJ3PrBFboRBqORdAFZMzs87VMKGkB6PMGwWGEIDKEMrCGt9ZR3g7Ek?=
- =?us-ascii?Q?PZNs9JuKAZ8PFKUGc4/hHKpF9WRRfzWoRxAsnQJchKV+oqGycN1oqgcrUt4J?=
- =?us-ascii?Q?23iRjI04WdHePzfq+XZcjxAAg8/QWboNaBhMDn7TWqH7ABnwip2KG8GxYcJu?=
- =?us-ascii?Q?WnlouP1SRCjWyx4zlPO6gzrlhXyPkMhSSXOnYlerEyIEuNAj7Q/EWuIIlfgn?=
- =?us-ascii?Q?xm7Z2pYTCC/cHAVjxa4yKNczmmBI3ioeIL9oYebdGPB1ytvBeA5PGQdjTctr?=
- =?us-ascii?Q?xJ4XJt1n/tn2uYK+BrFi1CI6qxRFB+fD/KR0PWXme3vMa3L+6yaZfNvAglYs?=
- =?us-ascii?Q?a2fsDPpG06LEEPpfuf5H3JiSeyUu6mHu5UpsFDpj4wlNlcaCk7tY4syfIReH?=
- =?us-ascii?Q?lLEsg6gqr7vhGKdu5FcnW09Osry7IgINoycohLBHPgwKoCsaSo1Z2Jd5nWjl?=
- =?us-ascii?Q?3H3RKIo1dYcXGnm/LhuQDYR1b0SHhbFmIg9Fps2tq0WBY1Yu3KEEK0XrEaty?=
- =?us-ascii?Q?GesGBOmcAB/4bo8OR+B0nqLCMC6lrXp5A/4EztOm4sdHLPwMHY1jdm4s5s/M?=
- =?us-ascii?Q?iJ0AFxLnB3hOCxj12OpFHghyXJ8Yr1/xW/92iM4ih8N5SUkTRbBKy81O2xgW?=
- =?us-ascii?Q?eDYIFpKMjdzTcqOKTDQDzNIcG4PyGyylu7rfwydFTbub4BPPDByB/yeQfomU?=
- =?us-ascii?Q?2SbwqKEaPKI4l7VKar3PUH6xXdjenUrPdvHYGjWM9h5zXkCj9vCp+2B5PvY+?=
- =?us-ascii?Q?b8AxN3/3/gaCk4NKbFZ7iHQCuCPscIR9DLrHklBosonz6ElFUq8H9mFLiolQ?=
- =?us-ascii?Q?zcgt8HLAPY7h/5Ugeck473PUumP8sj4mGAXSRLwRqp1JlN9QXfkW98IsELFO?=
- =?us-ascii?Q?jedZ8koiL9ZMGWN+/KA6tY0DeVy3rtiS/F8lJxwizlOECkRisdt5aIVLgAac?=
- =?us-ascii?Q?CUAR8rKTygpZ/3xnRKXhE0/s4bJFEcVuF/8rGagoO/gv61GHH2tm?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6e921f7-1d87-4e55-eae8-08df1298df31
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2026 19:46:30.0494
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nzrie3IkjE9qCidLLFt4kaCXTNwqe+HaMKUxnQ32+2QkJP8DTxf6Hr6KqpRdEHna6WW26prmXxEAmTnQkZ0sAbOZQOVsmSKMyp32mLDxjWtCnSYmtdSxmk1yI0x8LN55
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8732
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 27, 2026 at 05:57:54PM +0800, haibo.chen@oss.nxp.com wrote:
-> From: Haibo Chen <haibo.chen@nxp.com>
->
-> Coverity report INTEGER_OVERFLOW (tainted_data_return ->
-> cast_underflow -> overflow) in pca9532_getled().
-> pca9532_getled() stored the return value of i2c_smbus_read_byte_data()
-> into a char and used it directly to compute the LED state without
-> checking for an error. i2c_smbus_read_byte_data() returns a negative
-> error code on failure. On an I2C read error the negative value was
-> assigned to an unsigned type, triggering an integer underflow/overflow,
-> and a meaningless LED state was returned to the caller.
->
-> Read the value into an int, check for the error, and fall back to
-> PCA9532_OFF while emitting a warning when the read fails.
->
-> Assisted-by: VeroCoder:vero-1 [cli]
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> ---
+register_multicolor() returns on allocation failure without removing the
+sysfs group created by blinkm_probe(). Remove it on this path, matching
+the helper's existing LED registration error cleanup.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+This issue was identified during our ongoing static-analysis research
+while reviewing kernel code.
 
->  drivers/leds/leds-pca9532.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index 2d37e00e459dee9f0313830f4852b01f40977311..e8ee17b8bd547a92372a8e74a6781b95ae831fe2 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-> @@ -298,12 +298,15 @@ static enum pca9532_state pca9532_getled(struct pca9532_led *led)
->  	struct i2c_client *client = led->client;
->  	struct pca9532_data *data = i2c_get_clientdata(client);
->  	u8 maxleds = data->chip_info->num_leds;
-> -	char reg;
-> -	enum pca9532_state ret;
-> +	int reg;
-> +	enum pca9532_state ret = PCA9532_OFF;
->
->  	mutex_lock(&data->update_lock);
->  	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
-> -	ret = (reg & LED_MASK(led->id)) >> LED_SHIFT(led->id);
-> +	if (reg >= 0)
-> +		ret = (reg & LED_MASK(led->id)) >> LED_SHIFT(led->id);
-> +	else
-> +		dev_warn(&client->dev, "failed to read LED register: %d\n", reg);
->  	mutex_unlock(&data->update_lock);
->  	return ret;
->  }
->
-> ---
-> base-commit: c5e32e86ca02b003f86e095d379b38148999293d
-> change-id: 20260727-led-fix-28f085e12feb
->
-> Best regards,
-> --
-> Haibo Chen <haibo.chen@nxp.com>
->
+Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+ drivers/leds/leds-blinkm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+--- a/drivers/leds/leds-blinkm.c
++++ b/drivers/leds/leds-blinkm.c
+@@ -691,8 +691,10 @@ static int register_multicolor(struct i2c_client *client, struct blinkm_data *da
+ 
+ 	mc_led_info = devm_kcalloc(&client->dev, NUM_LEDS, sizeof(*mc_led_info),
+ 					GFP_KERNEL);
+-	if (!mc_led_info)
++	if (!mc_led_info) {
++		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+ 		return -ENOMEM;
++	}
+ 
+ 	mc_led_info[RED].color_index = LED_COLOR_ID_RED;
+ 	mc_led_info[GREEN].color_index = LED_COLOR_ID_GREEN;
