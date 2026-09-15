@@ -1,145 +1,243 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C96A351C20;
-	Tue, 15 Sep 2026 10:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E51D414418;
+	Tue, 15 Sep 2026 11:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789468126; cv=none; b=f8Kk4h+WtOgFQBNRgPMALROInlP5DeQ5snz1TrjYVjCPZlJ9ZILAl7gWyo5k/BIOf9WCacft++UnI/nV8cfnK8PJPrNxfVxHZ8NnpInu+humv4q5eXIj+ZIzWedmHHGYlFwqCauowf6HAHkqTc9Xs54twKpojLd86T3s2sXaHZM=
+	t=1789470445; cv=none; b=bq6YLIiIriNIA/lSDY+N3ho2cfvhDZZBOgmKtel/tKoBK5mBs2xEwDOG7rmlSFghIh3UV4jwbVemYrlhPyGSWFb6MEZEgvjesvdUW8CODDCQHPg7pPfuUXcBXrJK7se9oDrfFqrIJLGCjVpKiTfP5/Kp1JbO0noP0igRRg7sAzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789468126; c=relaxed/simple;
-	bh=jYUuyaxap45YWktNnApW6hsSz3P+QMWv3MzYTLKhvn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPny5mjrwGHUTsc6aqD5Ue16vdb55/SHegUuchtYlAKCijzkD+oJXDDIsCEk7tBLVLi8WbAHVFlwmZJtBamFdAxY//r6wLeKopBDtZyEde9nV0tGGwRwVsxXTqQcqH/6My/JNgMlDEjz04DVb4BA6isivlieDu0EtiPK3ll8OdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofER0sHq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789470445; c=relaxed/simple;
+	bh=eBp4h+7cPYV3PyJ8Rj8aNlGD2veZAlr4aNSUXmJE1Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnZS83E5G0WEVe17zGTY3yi2Ajhk+lxsGyobCk74AfrLLzmsGplz3C5pbMwqu3Ftnjn+miEbmR0ja0ETmayd5rxjB2dv7JSoEyjZr1L0LpiEoCQst56loJFEXSx+mbNnwOA4cGgD/1oMAtV56uzQi0Xlslc+aFp+OeyAeF6TCkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUyWPS9O; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofER0sHq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C39DA1F000FF;
-	Tue, 15 Sep 2026 10:28:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUyWPS9O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 755921F000FF;
+	Tue, 15 Sep 2026 11:07:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789468124;
-	bh=syFNOvFuqCHRPJWBM4ggaf2cVtoimRROGoRy3ic9eLQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ofER0sHqmC2xw3BMJAvR6Ugm28Sbl7XPGrPe0LQKFkO+9yoIcJ2Fhm1wbuRFF3XjP
-	 22DjNGwf6XL3ymWKSS+lNphWBNLffK/0Vw4eXFBTnXVT2hluLouTiB5z5nI0UdCL7d
-	 uHJbkkAswv14AYZAlVmnMS44C8gedUp40oNXK2JdTQjjqmLoN4UQl0Vdkdi3BGgY+C
-	 tWptz8QQxBw/ciR/w7q8mYs6cWcgDGbbM2jm9ZV2UfJTkW3xFAAMnQP9vNiZ6FsEJ0
-	 7kjRaul0nkrCY4yltrlqbZ4F1AntBo6CMaA9u2Y0fUZU1bmPzzTsL4BbM+ac1dfud6
-	 cRGx9nW7HXg1w==
-Message-ID: <f3c9d7aa-f158-42e6-a1a5-b88c28daa941@kernel.org>
-Date: Tue, 15 Sep 2026 12:28:38 +0200
+	s=k20260515; t=1789470443;
+	bh=Ouzbh7dZPn9Yw6vd2rYWvCSztsBHlYK0YoEuzqInt+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VUyWPS9OT0207Wl27AbILw3brqIkjAerQk/08dT4Yq6n2LflVDZF7YcFNuS1GVaaX
+	 jLIzv8UrmdNmFYZhP+fpOJ63EuuvrS3LJvCaiRzE2+iOUZV58tg1aIOeRA58Gb7dmQ
+	 RfAE5WuFW3aoStjNdpcOsK+2GH1vFclfHAOhrhCE0Sl8KkNDtGNBHq5BxgkyesfM7/
+	 JCDiYqr355d1dHUnVvmMikcgv5aRWNMpHNIFNdUXre7b2ISH0NlbPdhwc3KSzVV0f6
+	 HVfolcxEwqqi9Qo0bub3FUfwuBFjiY/fjT4STZIYJbz+ffzHMJQKzYdU03V6kXA1g/
+	 dJbBVn5xnjSZQ==
+Date: Tue, 15 Sep 2026 12:07:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Rudraksha Gupta <guptarud@gmail.com>, devicetree@vger.kernel.org,
+	robh@kernel.org, linux-leds@vger.kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v7 2/3] leds: flash: rt8515: Support single-GPIO flash
+ ICs with vin supply
+Message-ID: <20260915110719.GB11487@google.com>
+References: <20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com>
+ <20260912-expressatt_camera_flash-v7-2-e1fd2edc8d84@gmail.com>
+ <20260913025029.34B121F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: leds: pca995x: describe output-gain
- property
-To: Nora Schiffer <nora.schiffer@ew.tq-group.com>, lee@kernel.org
-Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- linux@ew.tq-group.com
-References: <6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com>
- <7f61e7e8781292450f920c49ef8853b802d76ecc.1788350618.git.nora.schiffer@ew.tq-group.com>
- <20260902123105.11B171F000E9@smtp.kernel.org>
- <630889485b7be21875c858c705e1c9d828973c67.camel@ew.tq-group.com>
- <20260903-sophisticated-magic-fennec-7c8aeb@quoll>
- <31aace01ed19712b2984890adf61144a80cf7f42.camel@ew.tq-group.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <31aace01ed19712b2984890adf61144a80cf7f42.camel@ew.tq-group.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260913025029.34B121F000FF@smtp.kernel.org>
 
-On 14/09/2026 10:23, Nora Schiffer wrote:
-> On Thu, 2026-09-03 at 15:09 +0200, Krzysztof Kozlowski wrote:
->> On Wed, Sep 02, 2026 at 03:10:09PM +0200, Nora Schiffer wrote:
->>> On Wed, 2026-09-02 at 12:31 +0000, sashiko-bot@kernel.org wrote:
->>>> Thank you for your contribution! Sashiko AI review found 3 potential issue(s) to consider:
->>>> - [Low] The custom, device-specific property `output-gain` lacks a mandatory vendor prefix.
->>>
->>> Probably makes sense to add the vendor prefix, will do in v2.
->>>
->>>> - [Low] The `output-gain` property incorrectly exposes a raw hardware register value directly to the Device Tree instead of describing physical units.
->>>
->>> According to the datasheet, the LED current is calculated as follows:
->>>
->>>     Iled = output_gain * 900mV / Rext / 4
->>>
->>> If we want to fully describe the output gain using physical units, something
->>> like output-current-microamps and external-resistor-ohms would work. There
->>> wouldn't be a meaningful default for these properties to describe in the binding
->>> docs however, which is possible for "output-gain" (as the driver just sets that
->>> to 127.)
->>
->> Output current is already there, no? led-max-microamp? So basically you
->> would be re-describing it... although I understand that for your case
->> you need two properties (also the resistor) to calculate the value to program.
+On Sun, 13 Sep 2026, sashiko-bot@kernel.org wrote:
+
+> Thank you for your contribution! Sashiko AI review found 4 potential issue(s) to consider:
 > 
-> One other idea I had was to treat the output gain as a single value, but handle
-> the constant factor in the driver, so it defines just the Iled * Rext term with
-> unit microvolts. This could be used in the Device Tree as follows:
+> New issues:
+> - [High] Regulator is not enabled when requesting maximum torch brightness, preventing the LED from turning on.
+> - [High] Replacing mod_timer with schedule_delayed_work silently drops updates to the strobe timeout and causes premature LED power down.
+> - [Medium] Unbalanced regulator disable due to reliance on the global/physical regulator state instead of the driver's consumer enable count.
+
+Please review, explain or fix the Sashiko review(s).
+
+If this is a set, this request includes the other patches too.
+
+> Pre-existing issues:
+> - [Critical] Premature destruction of mutex and cancellation of workqueue during device removal while the LED class device is still registered, leading to a Use-After-Free.
+> --
 > 
->     /* Configure an output current of 15000uA for Rext = 3000Ohm */
->     nxp,output-gain-microvolts = <(15000 * 3000)>;
+> commit 6a964f82a818f57f5a1a31366f614609bc9c5008
+> Author: Rudraksha Gupta <guptarud@gmail.com>
 > 
-> Two notes regarding this approach:
+> leds: flash: rt8515: Support single-GPIO flash ICs with vin supply
 > 
-> - These "microvolts" do not correspond to any actual voltage, but the full
->   "microamps-ohms" seems very verbose.
-> - It is unclear to me whether using physical units actually makes this binding
->   more generic. I have not worked with other LED drivers, so I don't know how
->   common the concept of a gain that relates the current with an external
->   resistor is.
+> This commit extends the RT8515 driver to support flash ICs that use
+> only a single GPIO for both flash and torch modes, alongside an
+> optional vin regulator that gates power to the flash IC.
+> 
+> > diff --git a/drivers/leds/flash/leds-rt8515.c b/drivers/leds/flash/leds-rt8515.c
+> > index 00904cc90ed6e..541f61e13f018 100644
+> > --- a/drivers/leds/flash/leds-rt8515.c
+> > +++ b/drivers/leds/flash/leds-rt8515.c
+> [ ... ]
+> > @@ -62,27 +66,50 @@ static struct rt8515 *to_rt8515(struct led_classdev_flash *fled)
+> >  	return container_of(fled, struct rt8515, fled);
+> >  }
+> >  
+> > -static void rt8515_gpio_led_off(struct rt8515 *rt)
+> > +static int rt8515_gpio_led_off(struct rt8515 *rt)
+> >  {
+> > -	gpiod_set_value(rt->enable_flash, 0);
+> > -	gpiod_set_value(rt->enable_torch, 0);
+> > +	gpiod_set_value(rt->enable_flash, RT8515_OFF);
+> > +	gpiod_set_value(rt->enable_torch, RT8515_OFF);
+> > +
+> > +	if (!rt->reg)
+> > +		return 0;
+> > +
+> > +	return regulator_is_enabled(rt->reg) > 0 ? regulator_disable(rt->reg) : 0;
+> 
+> [Severity: Medium]
+> Since regulator_is_enabled() returns the global physical state rather than
+> the per-consumer enable count, could this lead to an unbalanced disable if
+> the regulator is marked always-on or shared with another consumer?
+> 
+> Because rt8515_gpio_led_off() is reachable from user-controllable sysfs
+> attributes via rt8515_led_brightness_set(), repeated calls when the driver
+> has not enabled the regulator might cause the regulator core to throw a
+> warning and return -EIO. Should the driver maintain its own boolean state
+> to track whether it has enabled the regulator?
+> 
+> >  }
+> [ ... ]
+> > @@ -91,23 +118,37 @@ static int rt8515_led_brightness_set(struct led_classdev *led,
+> >  {
+> >  	struct led_classdev_flash *fled = lcdev_to_flcdev(led);
+> >  	struct rt8515 *rt = to_rt8515(fled);
+> > +	int ret = 0;
+> >  
+> >  	mutex_lock(&rt->lock);
+> >  
+> >  	if (brightness == LED_OFF) {
+> > -		/* Off */
+> > -		rt8515_gpio_led_off(rt);
+> > +		ret = rt8515_gpio_led_off(rt);
+> > +		if (ret)
+> > +			goto out;
+> >  	} else if (brightness < RT8515_TORCH_MAX) {
+> > -		/* Step it up to movie mode brightness using the flash pin */
+> > -		rt8515_gpio_brightness_commit(rt->enable_torch, brightness);
+> > +		/*
+> > +		 * Step it up to movie mode brightness.
+> > +		 * If there is no separate torch pin, use the flash pin
+> > +		 * for torch as well.
+> > +		 */
+> > +		ret = rt8515_gpio_brightness_commit(rt,
+> > +				rt->enable_torch ?: rt->enable_flash, brightness);
+> > +		if (ret)
+> > +			goto out;
+> >  	} else {
+> > -		/* Max torch brightness requested */
+> > -		gpiod_set_value(rt->enable_torch, 1);
+> > +		/*
+> > +		 * Max torch brightness requested.
+> > +		 * If there is no separate torch pin, use the flash pin
+> > +		 * for torch as well.
+> > +		 */
+> > +		gpiod_set_value(rt->enable_torch ?: rt->enable_flash, RT8515_ON);
+> 
+> [Severity: High]
+> If a transition is made from LED_OFF directly to max torch brightness, the
+> optional vin regulator remains disabled because
+> rt8515_gpio_brightness_commit() is completely bypassed here. Does this mean
+> the max torch state might silently fail to power the IC?
+> 
+> >  	}
+> >  
+> > +out:
+> >  	mutex_unlock(&rt->lock);
+> >  
+> > -	return 0;
+> > +	return ret;
+> >  }
+> >  
+> >  static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
+> > @@ -116,27 +157,35 @@ static int rt8515_led_flash_strobe_set(struct led_classdev_flash *fled,
+> [ ... ]
+> > -	if (state) {
+> > -		/* Enable LED flash mode and set brightness */
+> > -		rt8515_gpio_brightness_commit(rt->enable_flash, brightness);
+> > -		/* Set timeout */
+> > -		mod_timer(&rt->powerdown_timer,
+> > -			  jiffies + usecs_to_jiffies(timeout->val));
+> > -	} else {
+> > -		timer_delete_sync(&rt->powerdown_timer);
+> > -		/* Turn the LED off */
+> > -		rt8515_gpio_led_off(rt);
+> > -	}
+> > +	/* Enable LED flash mode and set brightness */
+> > +	ret = rt8515_gpio_brightness_commit(rt, rt->enable_flash, brightness);
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	/* Set timeout */
+> > +	schedule_delayed_work(&rt->powerdown_work, usecs_to_jiffies(timeout->val));
+> 
+> [Severity: High]
+> Does schedule_delayed_work() correctly handle consecutive flash strobe
+> commands? Unlike mod_timer(), schedule_delayed_work() silently ignores
+> updates if the work is already pending. This could cause consecutive V4L2
+> flash strobes to fail to extend the timeout, shutting down the flash
+> prematurely.
+> 
+> Additionally, if the delayed work is actively executing and blocked waiting
+> on rt->lock, its pending bit is cleared. In that scenario, could
+> schedule_delayed_work() queue a duplicate instance of the work that
+> immediately shuts down the LED as soon as the lock is released? Would using
+> mod_delayed_work() resolve these state management issues?
+> 
+> >  
+> >  	fled->led_cdev.brightness = LED_OFF;
+> >  	/* After this the torch LED will be disabled */
+> >  
+> > +out:
+> >  	mutex_unlock(&rt->lock);
+> >  
+> > -	return 0;
+> > +	return ret;
+> >  }
+> [ ... ]
+> > @@ -327,12 +389,17 @@ static int rt8515_probe(struct platform_device *pdev)
+> [ ... ]
+> >  	platform_set_drvdata(pdev, rt);
+> >  
+> >  	ret = devm_led_classdev_flash_register_ext(dev, fled, &init_data);
+> 
+> [Severity: Critical]
+> This is a pre-existing issue, but registering the LED class device via the
+> devm API schedules its sysfs interfaces to be unregistered after
+> rt8515_remove() returns.
+> 
+> [ ... ]
+> > @@ -371,7 +438,7 @@ static void rt8515_remove(struct platform_device *pdev)
+> >  	struct rt8515 *rt = platform_get_drvdata(pdev);
+> >  
+> >  	rt8515_v4l2_flash_release(rt);
+> > -	timer_delete_sync(&rt->powerdown_timer);
+> > +	cancel_delayed_work_sync(&rt->powerdown_work);
+> >  	mutex_destroy(&rt->lock);
+> 
+> Because devres destroys the sysfs interfaces after this function returns,
+> could a concurrent user-space write to sysfs (like triggering a flash
+> strobe) occur during this window? This would cause the sysfs handler to
+> attempt to lock the destroyed mutex and queue work on the freed device
+> structure, leading to a use-after-free. Should devm_add_action_or_reset()
+> be used here instead to ensure the work and mutex are only destroyed after
+> the devm-managed LED registration is cleanly torn down?
+> 
+> >  }
+> 
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20260912-expressatt_camera_flash-v7-0-e1fd2edc8d84@gmail.com?part=2
 
-
-I think vendor,output-gain in register values is fine in such case.
-
-
-Best regards,
-Krzysztof
+-- 
+Lee Jones
