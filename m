@@ -1,60 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF013B0ADB;
-	Tue, 15 Sep 2026 14:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57A13B9DB3;
+	Tue, 15 Sep 2026 14:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789482199; cv=none; b=hD+6z9KvIbgKKjvouMzZmz41DpDzEVrrDrIY+0d3H0X10FExGM4Q/5mhkv6+ll7rkJEqsLFjx2uyFHJ7c8w5gU+w1Pt8V51Kkvhh5bhmYyLv1uvuVow14Z/o5FoJp5dU9VVRAFyJA5CQDs3OaOeoeriuiDPztPCDyiVuqGb4GN4=
+	t=1789482285; cv=none; b=A8LJz/P1WhpORil5PgjpADSrRoh8vcwr3MsYiQaIvvENzFl2IHJqwD0sgARlEgZwsck0ObIk/PjPMhzSnoLpRRcbC87gBIAO3oybzF3O9eTI9t6CUj5jB7uvaEC3SGh4gozDdnWfs+znhFfV/iMqn3f+Ld8if+x6WeAtiKhUnrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789482199; c=relaxed/simple;
-	bh=NXXkM67iLYyfCB79jq9QFobVJGfCWRQlwjJWbKqqp3Q=;
+	s=arc-20240116; t=1789482285; c=relaxed/simple;
+	bh=zcqkAnN3eHfWRmIJbb+hMEEVMXn2sWgFXFYprEC8D0g=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=OiN9urX7+Dfp/4R/bb8G952kexO6G3iGGvTnRc/b5hiaQdYApKqzXo4HP2LbXCljhpAhQ5WXlUPNl/2cWJhin8ihI5eHddn431Ew3muc9VMggvJ2zdRz21DYzrznXnfFgeQTIRT+NOYdZ/nff1a3ZKXHbisRtTB+tU5Q+JL0YLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxRvjiHS; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=M35lca8F/wGoZqdRV3hsAzilEGAR8ZX6T9F08nfRBMzPPsWN+yD1X3gy7se5Gj0K2or+4onp/y/rNWO02WY8DJs5f/kYr6+YztResVkRDtLGaWrLI3wHpSUcLp3B6GUynE2TtsNywaav5NDtQ7QGeKgNTXpf5Dh72YLbPjULjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNJ+44LG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxRvjiHS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430C61F000FF;
-	Tue, 15 Sep 2026 14:23:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNJ+44LG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08AFA1F00898;
+	Tue, 15 Sep 2026 14:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789482197;
-	bh=NXXkM67iLYyfCB79jq9QFobVJGfCWRQlwjJWbKqqp3Q=;
+	s=k20260515; t=1789482284;
+	bh=zcqkAnN3eHfWRmIJbb+hMEEVMXn2sWgFXFYprEC8D0g=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TxRvjiHSJDT6Ndv4fOqa4hgCVhZVsO4aP1aMHYtyXgU9ipaCJlKLn/SXdd4acyhPA
-	 MWjVPNeWgvZM8HmgpFL5AAaQhW18HElX8Zv+nq4qX4CvBNOaxI3MGI0wWRHqWCYNpW
-	 TWN8p009xOFB3oVQUaD3vEPnzCJeSwnDwooAxHU0Rmj+zyFSZOq1aOcSTvK/o1a7SG
-	 HH/krgRMcIbPCtQzMA/VICVjtKoc8WvRTNRygznQAEhO1pIf6FIEtIGzP7mtLXhTxu
-	 qKoIU/YV8ISHlGoIET4vjxBJywuVZVUWbiS9SSbgsv1HC7J+XjOZYY8SJRMoMr9fDB
-	 bAJynK2N2d6yg==
+	b=MNJ+44LGwSK44jOyFqJqqP/4KrPeChTd+vHkYhnG0TMAuFZoztWuWmCGgx8orKe71
+	 XHvXkGeXkkTVeHamAC2pQ6/xES8EZEbnkFuGdydkpgt7tTaNQSG1GyxggStfXPpSGE
+	 svAKxLUK7TaJ5WUQcEH7GWufV0cKLSDoa4e2xAuz2hFmohgiF6OHhtx0oTFDPUev9g
+	 zvqIihgQSRbIepHML8QUHe5VZgDpyFMaX2Q/hJD+BACvlloqgtkYyPZyD3sFSdx9cl
+	 EwRXyJlRW3qieb+ZynYIink6em6Z8zL8QgRkCEyMq2hvlgaKI0PgeMtsyrwofoIKHK
+	 3h8Rz4QUMQIOA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 6/8] leds: pca995x: Add sysfs files for error
- reporting
+Subject: Re: [PATCH v2 3/8] leds: pca995x: Fix maximum LED index for
+ 16-channel variants
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Nora Schiffer" <nora.schiffer@ew.tq-group.com>
-Cc: robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <5394b238da830a363bd66a3e0b212bdecc64ba25.1789477502.git.nora.schiffer@ew.tq-group.com>
+Cc: linux-leds@vger.kernel.org, conor+dt@kernel.org, lee@kernel.org, robh@kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <c8b776cd923443dd455f4229d640e08ea4709d93.1789477502.git.nora.schiffer@ew.tq-group.com>
 References: <bd687915af26ccdbfc8cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com>
- <5394b238da830a363bd66a3e0b212bdecc64ba25.1789477502.git.nora.schiffer@ew.tq-group.com>
+ <c8b776cd923443dd455f4229d640e08ea4709d93.1789477502.git.nora.schiffer@ew.tq-group.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 15 Sep 2026 14:23:16 +0000
-Message-Id: <20260915142317.430C61F000FF@smtp.kernel.org>
+Date: Tue, 15 Sep 2026 14:24:43 +0000
+Message-Id: <20260915142444.08AFA1F00898@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> The PCA995x has builtin failure detection. Provide sysfs files for
-> individual LED status (reporting "okay", "short-circuit" or
-> "open-circuit") as well as a global "has_errors" flag. has_errors is
-> sticky and must be cleared by writing "clear" to the sysfs file.
+> The pca995x_chipdef for the 16-channel variants PCA9952 and PCA9955B
+> correctly sets num_leds to 16, but the value was not actually used when
+> checking and iterating over the LEDs during probe.
 >=20
+> Fixes: 68d6520d2e76 ("leds: leds-pca995x: Add support for NXP PCA9956B")
+> Link: https://sashiko.dev/#/patchset/6d3600f99c77c31166f0b6a5ccfb7f518b53=
+c4c9.1788350618.git.nora.schiffer@ew.tq-group.com
 > Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 
 Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/bd687915af26ccdbfc8=
-cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com?part=3D6
+cc911eee0787fc8145ae1.1789477502.git.nora.schiffer@ew.tq-group.com?part=3D3
 
