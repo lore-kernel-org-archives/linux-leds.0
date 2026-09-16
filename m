@@ -1,96 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA2030216D;
-	Wed, 16 Sep 2026 14:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61D7377EC3
+	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 15:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789569514; cv=none; b=U6rYlEmK7QGuqcZnObiHjFHHg6FFK5qtud2DmbJ5AOYrgeVsAkxD8ifd4KniX9iwbts74oZZiZjvE/5Veuwm72mRcUjwj9Jj7MzvgnOwWJnhTGZ26Ox3L8bR6s/4RF1MBCAauj22kQx5shhM7STuZJEPK4zotvjCyXKXMTOlf6o=
+	t=1789570882; cv=none; b=SRUHrXRe2RTw0sOtughcbx3imiQ7H1idAbCTrG3qclASeqF6RyMYA9qkSSOs0vNwijELnnvKf+TCy8xZ/e93RB9D3DB+7ncjpqrmwNNvLY50mgNMVKI86SHi6BFv/QeNhc4uZ3GaUEzRFFiCtcqXyam4FiejykpjX0gBWorhrI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789569514; c=relaxed/simple;
-	bh=SAaUZGK6HhitAArliPZWW2TIL3VruYSE/HOsA3yJulY=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=iRj22O6m+umQoX+0/eY4KDcLejdySvj3SWPfiLrEpYrHE4goLaSl+WRG66kOw/cg2meLtD6qWeOQhd4qdT6vFu/lWISumf9WgGduWIJ+ageKb+im916ro0c6YLS7yBKHXus8vQ4JTuN/b9FRUmBi53YhfNKJDrpBaKkOWrZaXcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DU4pZ7QF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789570882; c=relaxed/simple;
+	bh=OkB26v5MFFbbv1UHW//IEW2llz/TnRf+dZkbfsE8mRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkWN6RgHDbJaLwSd6MmJXImpmpnPuu78j7ZmIxVP8BIa/BOwguxsnNFMRmwzSdeyPaSaHNU7q8WjCHQMThFRwi32+0zOE6iSUTucyOQv9G8vRE3NeP2675Ny56/cBO+z/lDJbW+Al3teUZBTpJEHiuVieocVEm5Q9MBYdfKGUWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PRIuFRzW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DU4pZ7QF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520721F000FF;
-	Wed, 16 Sep 2026 14:38:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PRIuFRzW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182CD1F000FF;
+	Wed, 16 Sep 2026 15:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789569512;
-	bh=hHGmgnVc0ESRq0FOyQJkvQvhus4V+/q6oG/3XX5xsqI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DU4pZ7QFIceNPE8ymlTRDEhIYit4SWw7o7A7k40xyb63v9YyBLqRzkSxTZXO8WKdq
-	 ZxCxMV0zjJqNBsf9D7vacD/WctAfHXWB/DiZGD2ppV4qWWc/lTewEgycadggFWcoLE
-	 +RyErzN2UTSQsnVYDY1p4ZCKh3dYD6Ird8cFqmyPvU2mrkPbmHC9iPxN7lAVM0XZX4
-	 JMIHGZX0O4BNIEu/oJKekDObKIo1/G36XZY2N47GZH8/7SV1J/mrWOt1DvULDemeag
-	 1uCwxZ3DNsu4brD35nPlfeCTe4QjLYttaZT4sS2nLWTuO8m4DkaVV9dC3w7jRirkI0
-	 XriHNUNn2uz/A==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RFC v6 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED
- driver for ROG NVMe enclosures
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Liang Haowen" <nbg2974@gmail.com>
-Cc: linux-scsi@vger.kernel.org, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <202609162200.RFCv6-1.lhw@gmail.com>
-References: <202609162200.RFCv6-0.lhw@gmail.com>
- <202609162200.RFCv6-1.lhw@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 16 Sep 2026 14:38:31 +0000
-Message-Id: <20260916143832.520721F000FF@smtp.kernel.org>
+	s=k20260515; t=1789570878;
+	bh=BLQSPeNe5XXlvkf9wDBNhcXYFqUa4Hr+xwylBEOg8Ug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PRIuFRzWm08SohqyMWQvIPt2rjxK1bPGyLO1ELi5fGnNdeJ3q+fzXzdJXwPX6KEdY
+	 WuLYHf5SyGAQnlZd9SIThOxT+/mtg6KU03K9IO1XCToYp5M8uH9160bHIaTZQ6Chnr
+	 yFRdZrF2WYQQ2cT33VjG+HBURJ+xXTLSvC+9za/7WTE9Hu017mH4//HLgAUSzcfggG
+	 f26ExumigNrSuXT7wTs1IZjrDRMgL0+OgBkjWNypx1qMGX5GyuxmZJ6BC5hPPUO4DG
+	 23RmAEqPGsO1sYYmshgvN5YLK1qUr9sMYemjKIqDtFvKQYdQqwyj77cc7cpqmykdZw
+	 Kiv4RgECx293w==
+Date: Wed, 16 Sep 2026 16:01:15 +0100
+From: Lee Jones <lee@kernel.org>
+To: Dmitry Antipov <dmantipov@yandex.ru>
+Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] leds: flash: Simplify flash_fault_show()
+Message-ID: <20260916150115.GE1605367@google.com>
+References: <20260904070806.19125-1-dmantipov@yandex.ru>
+ <20260904070806.19125-2-dmantipov@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260904070806.19125-2-dmantipov@yandex.ru>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] leds: build failure due to undefined kzalloc_obj()
---
+On Fri, 04 Sep 2026, Dmitry Antipov wrote:
 
-commit 8323106d834da191a6608c0c1f5330cc2b52094f
-Author: Liang Haowen <nbg2974@gmail.com>
-
-leds: asus-aura-scsi: Add ASUS Aura RGB LED driver for ROG NVMe enclosures
-
-This commit adds a new driver for ASUS Aura RGB LEDs on ROG external NVMe
-enclosures. It exposes the 4 independently addressable LEDs as multicolor L=
-ED
-class devices driven via vendor SCSI commands.
-
-> diff --git a/drivers/leds/leds-asus-aura-scsi.c b/drivers/leds/leds-asus-=
-aura-scsi.c
-> new file mode 100644
-> index 0000000000000..4e039bdbe76ac
-> --- /dev/null
-> +++ b/drivers/leds/leds-asus-aura-scsi.c
-[ ... ]
-> +static int asus_aura_attach(struct scsi_device *sdev)
-> +{
-> +	struct asus_aura_zone *zone;
+> Do not emit extra trailing space and prefer direct pointer
+> ops over strcat() and strlen() calls in flash_fault_show().
+> 
+> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+> ---
+> v2: capitalize commit title
+> ---
+>  drivers/leds/led-class-flash.c | 18 ++++++++----------
+>  1 file changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
+> index 3bb90823de1a..d09c71fcd2b3 100644
+> --- a/drivers/leds/led-class-flash.c
+> +++ b/drivers/leds/led-class-flash.c
+> @@ -189,24 +189,22 @@ static ssize_t flash_fault_show(struct device *dev,
+>  	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
+>  	u32 fault = 0, mask = 0x1;
+>  	char *pbuf = buf;
+> -	int i, ret, buf_len;
 > +	int i, ret;
-> +
-> +	if (strncmp(sdev->vendor, ARION_INQ_VENDOR, strlen(ARION_INQ_VENDOR)) ||
-> +	    strncmp(sdev->model, ARION_INQ_MODEL, strlen(ARION_INQ_MODEL)))
-> +		return SCSI_DH_DEV_UNSUPP;
-> +
-> +	zone =3D kzalloc_obj(*zone, GFP_KERNEL);
+>  
+>  	ret = led_get_flash_fault(fled_cdev, &fault);
+>  	if (ret < 0)
+>  		return -EINVAL;
+>  
+> -	*buf = '\0';
+> -
+>  	for (i = 0; i < LED_NUM_FLASH_FAULTS; ++i) {
+> -		if (fault & mask) {
+> -			buf_len = sprintf(pbuf, "%s ",
+> -					  led_flash_fault_names[i]);
+> -			pbuf += buf_len;
+> -		}
+> +		if (fault & mask)
+> +			pbuf += sprintf(pbuf, "%s%s",
+> +					(pbuf == buf ? "" : " "),
+> +					led_flash_fault_names[i]);
 
-[Severity: Low]
-Does this code fail to compile because kzalloc_obj() is undefined? In
-asus_aura_attach() in drivers/leds/leds-asus-aura-scsi.c, this line trigger=
-s a
-compilation error since kzalloc_obj() is not a valid Linux kernel memory
-allocation API. Should this be a call to kzalloc(sizeof(*zone), GFP_KERNEL)
-instead?
+Shouldn't this be sysfs_emit_at() now?
 
-> +	if (!zone)
-> +		return SCSI_DH_NOMEM;
-> +	zone->sdev =3D sdev;
-> +	spin_lock_init(&zone->lock);
+>  		mask <<= 1;
+>  	}
+> -
+> -	return strlen(strcat(buf, "\n"));
+> +	*pbuf++ = '\n';
+> +	*pbuf = '\0';
+> +	return pbuf - buf;
+>  }
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/202609162200.RFCv6-=
-1.lhw@gmail.com?part=3D1
+sysfs_emit_at() would also avoid some of this dancing around, I think.
+
+>  static DEVICE_ATTR_RO(flash_fault);
+>  
+> -- 
+> 2.55.0
+> 
+> 
+
+-- 
+Lee Jones
