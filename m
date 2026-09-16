@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2376259D62E
-	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642B956260A
+	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789577583; cv=none; b=aMm3+/fnh7SeNJVFHRBrGv+urnArgfNFlbdmz5GDxQY9MaW4hSKfbMi9woYajvY3DwWajov0DI+dNHfWbC2w6N/NrVCnpoixrh67J1TzclaCauanFZrzLHzkCz6aBwSjVtt5+l3X3GejOMT6pbn1tTupbe+/3dCJhHJIJ3LsCvM=
+	t=1789577615; cv=none; b=e57UqXPTTWKlp2SvNNHym/TUv6efFm9piRPrY3iuqy5+3CmrhMUI3WqNlgDLw4tNjSy25QWuexscaKtwzvYNI+fRJZhkGwCacLinexPobfttijW9HX7EdMj7owGel/CQHtCfISmn4GAmr3f3EW0dwpoaGPI2jvCeMQvfkLUzmtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789577583; c=relaxed/simple;
-	bh=iIGcosXdsqHKF2ZHJfMci5sHM1xFoCT4RjNBihYG63k=;
+	s=arc-20240116; t=1789577615; c=relaxed/simple;
+	bh=A8OUnScFkntcgVv0El+XRQhsZJJugzhrkrqucm1xVqI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yy3UZyv+TN3GNLRlmiPdKvxzef1+yjB+VD21KvJRo+WJSRgKw/hLfKQXZdSs21BUNMR/nx1+wiM4bNKam3joWHqIyYraHiWOU9T505l7gow05tc4SJXEUHsPlkCrohSVP6qAkXOjAcxAcy5wcdr6lrQsxZhsi+LhP23ZhuLQWnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAhjYlUJ; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=kwAGUtt873b5hRb6GiLbWVDkuFVASKTLhxK9cQ02hsD2WbP3amh4ofsMsxfLt519rz90r/SbwuSRXjbK/e5hnuKpyoh73RIcJnHLcPT9arm3Q/Vcue8/jzvmAXUEEhoE+10Rf6QzZb9e5FtHzWxpsfOq9GRjDwEB/vqollGizZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ//Aepn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAhjYlUJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74FB71F00A01
-	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:52:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ//Aepn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88DC1F008A6
+	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789577566;
-	bh=iIGcosXdsqHKF2ZHJfMci5sHM1xFoCT4RjNBihYG63k=;
+	s=k20260515; t=1789577606;
+	bh=A8OUnScFkntcgVv0El+XRQhsZJJugzhrkrqucm1xVqI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=KAhjYlUJz4B3vlKbDDlDmaEOmLi6tMe6vOLCW5EZoCs26rLbd8glXJaTpSZ5ZncRt
-	 G1EQC5qwpstgB2j2XaL86slCFiWMTfVHspK6M+fbSkz9IsAkX78GqJs2dpYzkU2az5
-	 pLiawOJCLQ408ODC/MdUIRjzmGWlpTCTWUmaGZ7quTrO+c5iLtuE4rqYPtVgHEdkO0
-	 Kc8fUuOuvuraydHFdXnnYj5vBz5OVYt8cGxLANsZDmJmv0dsmNq5PvmvLSGGl3QqPP
-	 P7KD/vfJErAG9yROB1uqphrZwuUor23SdPagQu0WaDDl3rLRb2sksX4etGG4xRFK33
-	 rCWMVsGN5e/Og==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5b5f21afe8cso2362058e87.1
-        for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 09:52:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxmPzzY50EyYvqa3nWxJREMuxwdExUQfArm3w5gV10/xLqtP4p29z4SVCvO/bZyiGJV41/DsuRjAn3h@vger.kernel.org
-X-Gm-Message-State: AFuF++nIPa3tUQOBveWlG5MCUvGHJzR72+BxQ66X0M933W2sm8mAGoIy
-	6R3zJBz8OGvspzRVLpEFv1gAHjwBOYq5diiNc0nBsTWRM9WL+l9LxVGC7Y3Opd+gkbrmdPA22RC
-	HPZKzngeDtypY4h0IS4u1Y8r6uolsQWU=
-X-Received: by 2002:ac2:5299:0:b0:5b8:9a95:e251 with SMTP id
- 2adb3069b0e04-5b8ba710651mr51799e87.25.1789577565097; Wed, 16 Sep 2026
- 09:52:45 -0700 (PDT)
+	b=JJ//Aepn20JwNBvgjPe2RGPw3W1TnzMJZL/1hbP4HXBkwn7oafbEKxyAkD242zIlA
+	 mxiFlxtkmChee+seVVxgSwqzTw2/2qQK0we0712tsN07f4SxhiZzdIQV4fEFge8P3/
+	 eXve/Ikiuca0hD0ksm1quV6jvVcfQKngvgIPch06kggcScyYBReWU1BZQ4w+BDChhO
+	 cGkgQlSSPeS1/dDsoagEKEc13m+IpOu4TIhAfls9D/+S+C/kUAOQgOb9jAwOjq10Cs
+	 9vCLGY4l6ToWfXsrjRRPyQjen+4pYHsH5KDYWCIGz6+YqUeRWbKAAdd7LHAkuCR8Qp
+	 yDeQXu92KeBiA==
+Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a5e548cd7dso2770091fa.3
+        for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 09:53:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzrujAjW3F6qQ1pPzCKIYMaIn2Lvr6CRx53Xh2QMQQHLLWJr5lJDPUMWHBdo+4v4NSCmuLXFu5Y+DDf@vger.kernel.org
+X-Gm-Message-State: AFuF++nMSkSwQYUkIfsNPXc7zhkAxHQ1XdRz/zgwdU76VhiER1Oiqz+M
+	ocnbtcr8qT0dNKUImFoFQkccro5cqaTl9nBwf6n2P78tGN/vcCdEkT6JQm5MitlrBpT4/O0FUja
+	pBRPY6oRDNnnUDtPMKSQqSJftw82TIpY=
+X-Received: by 2002:a05:6512:3e07:b0:5b6:95e:87ce with SMTP id
+ 2adb3069b0e04-5b8b660a94fmr1957280e87.2.1789577605581; Wed, 16 Sep 2026
+ 09:53:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260909132153.1596191-1-arnd@kernel.org> <20260909132153.1596191-14-arnd@kernel.org>
-In-Reply-To: <20260909132153.1596191-14-arnd@kernel.org>
+References: <20260909132153.1596191-1-arnd@kernel.org> <20260909132153.1596191-15-arnd@kernel.org>
+In-Reply-To: <20260909132153.1596191-15-arnd@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 18:52:32 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkz5WV2OBPRu+JJT3PeKhQruiF-Ydcgg7e4OGdM9qchQQ@mail.gmail.com>
-X-Gm-Features: AcwNN1Xmdqnt0f8Pu7UGQOVbB8vXW7jTvbrrYbhRnZP_VjfrieoeJn1KmD2hzRE
-Message-ID: <CAD++jLkz5WV2OBPRu+JJT3PeKhQruiF-Ydcgg7e4OGdM9qchQQ@mail.gmail.com>
-Subject: Re: [PATCH 13/14] mfd: remove unused menelaus driver
+Date: Wed, 16 Sep 2026 18:53:12 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk-e58uiZ5JfiKtW+4tKoVyCXrEz9n4W52PnmtKLqQrEA@mail.gmail.com>
+X-Gm-Features: AcwNN1UPBZKZl1X4uCVkQyjhp-cH_klICrLDEiep9UNQdzrrNpZtksTPMzubFl4
+Message-ID: <CAD++jLk-e58uiZ5JfiKtW+4tKoVyCXrEz9n4W52PnmtKLqQrEA@mail.gmail.com>
+Subject: Re: [PATCH 14/14] mfd: remove unused iPaq micro driver
 To: Arnd Bergmann <arnd@kernel.org>
 Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, 
@@ -78,12 +78,12 @@ e:
 
 > From: Arnd Bergmann <arnd@arndb.de>
 >
-> Menelaus was a companion chip for the omap24xx platform, which has
-> been remvoed from the kernel, so now the menelaus driver is unused
-> and can be removed.
+> The iPaq support has been removed from the kernel, this driver is
+> no longer used anywhere.
 >
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Also delete the header as Sashiko says, with that:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
