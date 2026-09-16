@@ -1,65 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495A4312834
-	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6097752ED29
+	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789575924; cv=none; b=fTCZBW4Z6SfN6GABHzD6ICwuD2Ekm8/IKfluk081l6NvJx1Urpc9iLwbMpE2cwfrVBTL5gef5iishrjIZyCSg4jgaktw/1yB00HDhgrOKETo3LgjlfQx35LdeG7gLVHa1ySJGbcOyvN1XWHOuyPBRVJrbbRCRosAfN1kr1WCt0I=
+	t=1789577403; cv=none; b=hoYN2koduynznOCQChxtX2vB37Mj9OFN/7PtGjxOpus7H6YqmQzSbV9cIF7auZGf443NG3vHyFpqmjUuB1AtwTkWwiImD4u6zcujtn3o0fFazNjyFWyhFgHWFWb9cjh4p0tSjamprjfYEQV/aRGjaMJ9JVomdkLeFIeBfUFaBP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789575924; c=relaxed/simple;
-	bh=bJsQXpuATrYcNSoqJ48gAdbcEhaOO44BXbRADNvMNLY=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=XqrBloGBF1fLniVvxgsj8ihQpxCUfmHVn/661Q219SV6ZTEEU68aJDc3Oo30O0XUO4fbcUlLHvV1iFb2UQ8JYoBWkSqQ8O2kg21xNc+JVt28yrhGze31JPoy6NkARsUWraAZWNtrvymcmOEu7lpr7y6kNDTI1yU4cSCrTjCCdtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXgTgwy3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789577403; c=relaxed/simple;
+	bh=Ggb+PcHRJDo/Cz5nvBOFJMC2dQF5gLYbmIeM6Iqn8Mw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TSrp0mXbU5suEabaR5waaSKXdfERFKihEmhqVQvbxWjjXWSt5XVkZyYw2b0HCnknLtx9vutl5B8nExqTGOUyCuaZ6hS41zO9t8onuh+cp293XVgnm0OtdC6rz/O1q2Q3dXjRRaBIt2IC9KUzT21lzf5YvSV0x56G139OSG/3Qis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HHEKiZSq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXgTgwy3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FBD31F000FF;
-	Wed, 16 Sep 2026 16:25:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHEKiZSq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82B71F008A3
+	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789575922;
-	bh=bJsQXpuATrYcNSoqJ48gAdbcEhaOO44BXbRADNvMNLY=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CXgTgwy308pnefQ9QdVUyrmIds7S6xhQ4WLzoJLEAVnxQfm1+CipBy4jmhQiqV9xU
-	 slceEVsymrL/FND7mrDkvdPihzu0hDaLfV2e0qy5A2o2YJXte36/i3Q8iPmb8ZfRSb
-	 Jx8rwrOR6kD/UszzHTGxuqZmjjKKG95Z21Wpa5xIFnvtNygCy9NFaT7khp+f4pztAT
-	 oUxhv49KAc00cJco8gR92QRtQZpPkzMoKVaIIhrfSGpU/1PkiLnEJ5FwLWQduXrPHn
-	 cS7VY1wQd2w/3kbr965fA7Zg1R4UMfDzfLwuHKwg8+QREYiPqR6nX8ZOF21KQlTknm
-	 ba7X3W20it4JA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 1/2] leds: flash: Prevent using uninitialized
- variable in flash_fault_show()
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Dmitry Antipov" <dmantipov@yandex.ru>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260916161607.90106-1-dmantipov@yandex.ru>
-References: <20260916161607.90106-1-dmantipov@yandex.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 16 Sep 2026 16:25:22 +0000
-Message-Id: <20260916162522.9FBD31F000FF@smtp.kernel.org>
+	s=k20260515; t=1789577391;
+	bh=Ggb+PcHRJDo/Cz5nvBOFJMC2dQF5gLYbmIeM6Iqn8Mw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=HHEKiZSqg7+GyH1kW7u2Hjh6n954PQBWjugWOQSucOvoJpAfVng+ngPvsQ9NcH4mi
+	 xtk7OuOd/JleKPjNisP2KjwOjHIlYAmHsKORnWbSLqnopk/P8kruswK9aha5jKrh2h
+	 T5+u99gibJ/LLILgQgGSpKR/8Olwo6hpZbKotqNrJYNTrMVnF8YOJ9y+Y6i4ALwW4H
+	 C6w1r6Db2dXNgKyLToIc40EzB8gYnT8NftrmIEs6OAPDomnrsefuQKe0nCSYGQfS55
+	 ndgO1nZRsZEjKDvPuli5DD2CV2kvHzdB3pu0VtMl2TRvS1qfTm7mjpI/uYPSwFuoyo
+	 g+RkIzLA2y8Fg==
+Received: by mail-lr2-f27.google.com with SMTP id 38308e7fff4ca-3a5b6840edcso10380081fa.1
+        for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 09:49:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxMU9onhRTyObLa6HJfoVSvCDJaUEpVVi5mfdSmJulUXCcSaz0WPMRYvZT0sH2zdMRhYRqDn4RFYTP5@vger.kernel.org
+X-Gm-Message-State: AFuF++mCLZkMMlnUnvjJUC1vdLQFybEsbvPbrWD4M3e3TzWXB55Eh6NF
+	4OjO2oMh6+oIo8Ti2P3DxQbk/q5I4GCym3oGch0ElNHJRJUWtvdc5m1dlankm87lNcQv6DmqRW/
+	hiGrwkdH3CoeR/MgriVJCAZ1HN9KdCD0=
+X-Received: by 2002:a05:6512:1595:b0:5b6:422:a61c with SMTP id
+ 2adb3069b0e04-5b8b666eb43mr1907989e87.28.1789577390371; Wed, 16 Sep 2026
+ 09:49:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260909132153.1596191-1-arnd@kernel.org> <20260909132153.1596191-3-arnd@kernel.org>
+In-Reply-To: <20260909132153.1596191-3-arnd@kernel.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 16 Sep 2026 18:49:37 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnHa+1e0N8V0znwzeTZSX1Y5YDAa=cVKSYjeFpZM0o_OQ@mail.gmail.com>
+X-Gm-Features: AcwNN1Whb6PQ06lQN_GxsWNtotsS8LqxjoSrqgaYpOWlLWlGsW2D5EFYiCtujyY
+Message-ID: <CAD++jLnHa+1e0N8V0znwzeTZSX1Y5YDAa=cVKSYjeFpZM0o_OQ@mail.gmail.com>
+Subject: Re: [PATCH 02/14] mfd: remove unused rdc321x southbridge support
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, 
+	Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Pavel Machek <pavel@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
+	Support Opensource <support.opensource@diasemi.com>, Sebastian Reichel <sre@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Helge Deller <deller@gmx.de>, 
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com, 
+	linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> In flash_fault_show(), address of uninitialized 'fault' variable is
-> passed to device-specific .fault_get callbacks. This is not a problem
-> if such a callback directly assigns the value like rt4505_fault_get(),
-> but results in an undefined behavior if callback just performs bitwise
-> ORs like as3645a_get_fault(). So just initialize 'fault' with zero.
->=20
-> Reported-by: sashiko-bot@kernel.org
-> Closes: https://sashiko.dev/#/patchset/20260904054437.461706-1-dmantipov@=
-yandex.ru?part=3D1
-> Fixes: 7aea8389a77ab ("leds: Add LED Flash class extension to the LED sub=
-system")
-> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+On Wed, Sep 9, 2026 at 3:22=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
+e:
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The rdc321x was a 486-class SoC developed by RDC. While RDC's later
+> products closely resemble the DM&P Vortex86 product line and are still
+> sold under both names, I checked the datasheets for those and found that
+> the GPIO and WDT blocks on them are incompatible with the rtc321x.
+>
+> Remove this driver, as there is no way to run Linux any more on the
+> older chips after i486 support has been removed.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260916161607.9010=
-6-1-dmantipov@yandex.ru?part=3D1
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
+Yours,
+Linus Walleij
