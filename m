@@ -1,104 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A444CB8A8;
-	Thu, 17 Sep 2026 11:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4BB4D9560
+	for <linux-leds@vger.kernel.org>; Thu, 17 Sep 2026 11:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789644525; cv=none; b=kukuZrypwY8iPS/A0RW4d86hqQWV64Gg0TjPOCjpIEWnX9NREXVPLozDuBMGpg/rgsgVYTFBnQxRk9iyuBjrLKKDa+kopj2h8ixu032u3GhcqaxuXwRHxf5dbSfEdO12s+gFX+op81L1JPyvsdGsRxr/dZVNR3ENZwqB/aIg8Lo=
+	t=1789645765; cv=none; b=o3yKZroUUjzOS3x0maouOqEOpVc7OGwdC9LRmKrsKe70DIVLdJ0RdEkAhUNpP1RN3xDfo5Pb6KBo707hDYzVA4i/KslsHxrFdOQ1YpxJ6ZPhHy8oeYTpIH5hXKw8nCQbgt4VDe6jayLp1IHz/1PJJZAEzFl7CmlU+ENmzMKOTzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789644525; c=relaxed/simple;
-	bh=5Ncpa8+NPx3xlMt918fJVdvAb8iYngnRZqFQiVXUJYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/LL6O+Qm2LQbhGZrEMP1AQ0B92ubxac8PL+BZf8TtETCVKpR2r6tGGhINLoacieUL6arWk/aDrzZou/T9CvJ+yTlGdh06T+vEYuoX55mlOAFTqOCI434vFgidTJOKWauwyq7rfPxKg78oUI8BOPtKNO35ih5ymoUIcs808ZxvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAb7tk41; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789645765; c=relaxed/simple;
+	bh=x+mSIjNwwPWCAJ+fSw8AqoOhMOv22uDk+npErG+nkUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=LbLxn5u2Zb9UvOuRPFbsrOOf/auX9xG0zqnobknEGT/hlAv6f2AydNR2sOwT9mdLNqWDqYKDhSP93GMsos+1Z5U6EURSBDIhtVjCWkNBugDpHfUOeaWtWG4NPT8TK3/N/afmPmpXYhYMuXUv0Mt1vfBPd7w6p449w5T4jcC4qbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9T1fHeq; arc=none smtp.client-ip=74.125.227.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAb7tk41"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9AD1F000FF;
-	Thu, 17 Sep 2026 11:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789644523;
-	bh=4C7PqXuoe7AK1vOOoG90qYxrgB0Vpzu901u3h29blQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=eAb7tk41jou1f5EjO/mghkgxzKuudOv9p4aKy1P0r85T2d/1Nob7lbhrughCpdv2X
-	 pv2EFz0AiZv5lw9B3UT3hgoibBXVbfJZL/hQgwTAcXQ+BB+7k2XHKic20fmcEvjF8l
-	 KCwaFMPDEM+UvvrGHsPr3gaYsN7qGPnYHLbJ4ZHuea4dOyEjV9C0iSjprrY4XNM66V
-	 xRhvAU9rTOb86/zmvUCArfrLnqMiCFgOaEf/DHObrZBKrH8ih33vuFwItFj772xHjN
-	 XRvMwsKP4Dv2l+dQfnMZ7yolurTCp/8KaoU+sT4TUBeMjGsVeVwkO6h71hAAjrXnKf
-	 qe4GOd9dAo/5w==
-Date: Thu, 17 Sep 2026 12:28:40 +0100
-From: Lee Jones <lee@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Liang Haowen <nbg2974@gmail.com>, linux-scsi@vger.kernel.org,
-	linux-leds@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9T1fHeq"
+Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-39dacf053eeso474999a91.2
+        for <linux-leds@vger.kernel.org>; Thu, 17 Sep 2026 04:49:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789645762; x=1790250562; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=x+mSIjNwwPWCAJ+fSw8AqoOhMOv22uDk+npErG+nkUo=;
+        b=G9T1fHeqBOUEsUwv3l1dPHfBiO8S8BBCxTVbu/ubqglD6ictKxG3kur9h/fUMNvHX5
+         NLfZtOJkwWauOPOIGZmpEpZ0xUT4LKyAqRHAzz6+FFsbdeBu3+wDGdUPAkTBQBCV9yOH
+         pWkVhffMFPjSRwt7zFX8J+0ZfdYqUAkiPN+P6LB5VxZD/NJ53AvVthbK0CKwsa7xMQOy
+         ED+RIKsJ7BGfcJf+uiHLBnEWODtFmuwVX6/t+KIjNr0p3JiTbViFNotX1TsvQz0eO9Gz
+         KSA8rEYn6gEaYCjyzViEcU7ba8sJIxfoa0pBVW5f+42qmLUWvmUYzydwllBdK+oEzJfq
+         GvBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789645762; x=1790250562;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=x+mSIjNwwPWCAJ+fSw8AqoOhMOv22uDk+npErG+nkUo=;
+        b=1uemk+YmCPEIVLAVWdciSfE+a0dVxRPQ5hE1xKbxEkwKzJgZHZS0+uPzBZqsX+XMHe
+         Uipmjb4d1cQzkt7emZbQ6uVh+dTQuL5x8dEUtVNir9qeDweyLTBmMP8auJRqY8Idk9YJ
+         pwKOJTm2/we7piciBw1pAZFaia6m9nTrH9llt8AF/pXBcRCApZntf0rVbawkIcoL/JA9
+         TUOPV5zlqUUQc13yyQGjGRQtQ9ajUwdID4e/ftLTuyzJS+MjOoPU5G5FgL6ISnoxYU51
+         8cx4MFUb5a8xmrcs4wkD408qIfeL6Igg1CQP20nO/DUtpx4RfpENffpZiNhvVWyK06Jp
+         DrYA==
+X-Gm-Message-State: AFuF++mTEc0eoi7Gz4i+YI7lAsnL/ojGPoI4bXFK2x0t77cD1T2KH9Pn
+	rtrjiiUJY0FpQ/+T6QSFCqmYWpdv2QKRTSZ41XxLKNiGXJDQsmgHcWEi
+X-Gm-Gg: AYBFou0orblohbx8Uw/l+wDrmdomipmDTj2EcnuHlOfOr4tQBiSypvwP+gwZCaW7zFx
+	T8rtdJQxy5L8K0Baqc9LeaJ6QEOT0m737I6IBnXrTe3SaDDPaZEzZFj9uiLUy1PrGefxxXBEEA+
+	azsLwdDX0rk+sREGoprsR19Q4GH10tiNS6LySNQAokzMQ67bbXTOMCjOEtKpwLoRfWqMFQ6A5SX
+	CTv1JFkiaaX9ckteWbG7YF91jCYGoxKyEJGaCEnwLQ4vGV6tLQ5mUJShhfXAkcE+dX91anp8ftu
+	bq8WO/fgFvDKBgP06+xdRm00XcXXMUOw9UzJhJuaDf0DgZtlAUFcm8zxHL9uI/HstHkOCox39vc
+	yrep8fkNKptn482e9jghNHWH2NIU027UDKLpywWZwwxL62Ia9p+q64VCpuM7NHO9kzuojmenx7D
+	MxwP0mwpyx7eKa/aovWG9DSuJfFEQcgJ/hj8FEKy4aIfGoiwJeOU/wc+qKZZnX0Jka9986mw==
+X-Received: by 2002:a17:90b:2249:b0:398:c3c9:d0ae with SMTP id 98e67ed59e1d1-39e1df7d64bmr13875098a91.0.1789645762177;
+        Thu, 17 Sep 2026 04:49:22 -0700 (PDT)
+Received: from [127.0.1.1] ([240e:b8f:977f:f400:ec2a:b15e:fef8:70a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e39b0399bsm1178502a91.2.2026.09.17.04.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2026 04:49:21 -0700 (PDT)
+From: Liang Haowen <nbg2974@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sashiko-reviews@lists.linux.dev
 Subject: Re: [PATCH RFC v6 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED
  driver for ROG NVMe enclosures
-Message-ID: <20260917112840.GJ1605367@google.com>
-References: <202609162200.RFCv6-0.lhw@gmail.com>
+Date: Thu, 17 Sep 2026 11:49:18 -0000
+Message-Id: <202609172115.ReplyLeeR6.lhw@gmail.com>
+In-Reply-To: <20260917112840.GJ1605367@google.com>
+References: <202609012200.RFC0.lhw@gmail.com>
+ <202609012200.RFC1.lhw@gmail.com>
+ <20260901145204.2BF551F000E9@smtp.kernel.org>
+ <202609032000.RFCv2-0.lhw@gmail.com> <202609032000.RFCv2-1.lhw@gmail.com>
+ <20260903122408.3CA6B1F00A3A@smtp.kernel.org>
+ <20260903161357.GX2133376@google.com> <202609042000.RFCv3-0.lhw@gmail.com>
+ <202609042030.RFCv3-1.lhw@gmail.com>
+ <20260904131503.355C41F00A3E@smtp.kernel.org>
+ <20260910093232.GO2133376@google.com> <202609152112.RFCv4-0.lhw@gmail.com>
+ <202609152112.RFCv4-1.lhw@gmail.com>
+ <20260915130050.E8CDB1F000FF@smtp.kernel.org>
+ <20260916104305.GM11487@google.com> <202609162015.RFCv5-0.lhw@gmail.com>
+ <202609162015.RFCv5-1.lhw@gmail.com>
+ <20260916122740.921E51F000FF@smtp.kernel.org>
+ <20260916130602.GS11487@google.com> <202609162200.RFCv6-0.lhw@gmail.com>
  <202609162200.RFCv6-1.lhw@gmail.com>
  <20260916143832.520721F000FF@smtp.kernel.org>
+ <20260917112840.GJ1605367@google.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260916143832.520721F000FF@smtp.kernel.org>
 
-On Wed, 16 Sep 2026, sashiko-bot@kernel.org wrote:
+This one is the same false positive as in every round so far:
+kzalloc_obj() has been in include/linux/slab.h since v7.0 (line 1152
+in the 7.2.4 tree this driver builds against), so the bot's reference
+tree simply predates it. Nothing to fix.
 
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [Low] leds: build failure due to undefined kzalloc_obj()
+I considered switching to plain kzalloc() to end the loop, but
+checkpatch on 7.2.4 flags that form with "Prefer kzalloc_obj over
+kzalloc with sizeof", so the two tools disagree and I would rather
+keep the checkpatch-clean one. Happy to switch if you prefer
+kzalloc().
 
-Please review, explain or fix the Sashiko review(s).
-
-If this is a set, this request includes the other patches too.
-
-> --
-> 
-> commit 8323106d834da191a6608c0c1f5330cc2b52094f
-> Author: Liang Haowen <nbg2974@gmail.com>
-> 
-> leds: asus-aura-scsi: Add ASUS Aura RGB LED driver for ROG NVMe enclosures
-> 
-> This commit adds a new driver for ASUS Aura RGB LEDs on ROG external NVMe
-> enclosures. It exposes the 4 independently addressable LEDs as multicolor LED
-> class devices driven via vendor SCSI commands.
-> 
-> > diff --git a/drivers/leds/leds-asus-aura-scsi.c b/drivers/leds/leds-asus-aura-scsi.c
-> > new file mode 100644
-> > index 0000000000000..4e039bdbe76ac
-> > --- /dev/null
-> > +++ b/drivers/leds/leds-asus-aura-scsi.c
-> [ ... ]
-> > +static int asus_aura_attach(struct scsi_device *sdev)
-> > +{
-> > +	struct asus_aura_zone *zone;
-> > +	int i, ret;
-> > +
-> > +	if (strncmp(sdev->vendor, ARION_INQ_VENDOR, strlen(ARION_INQ_VENDOR)) ||
-> > +	    strncmp(sdev->model, ARION_INQ_MODEL, strlen(ARION_INQ_MODEL)))
-> > +		return SCSI_DH_DEV_UNSUPP;
-> > +
-> > +	zone = kzalloc_obj(*zone, GFP_KERNEL);
-> 
-> [Severity: Low]
-> Does this code fail to compile because kzalloc_obj() is undefined? In
-> asus_aura_attach() in drivers/leds/leds-asus-aura-scsi.c, this line triggers a
-> compilation error since kzalloc_obj() is not a valid Linux kernel memory
-> allocation API. Should this be a call to kzalloc(sizeof(*zone), GFP_KERNEL)
-> instead?
-> 
-> > +	if (!zone)
-> > +		return SCSI_DH_NOMEM;
-> > +	zone->sdev = sdev;
-> > +	spin_lock_init(&zone->lock);
-> 
-> -- 
-> Sashiko AI review · https://sashiko.dev/#/patchset/202609162200.RFCv6-1.lhw@gmail.com?part=1
-
--- 
-Lee Jones
+Both questions from the v6 cover letter are still open, by the way:
+whether deferring the Kconfig/Makefile/MAINTAINERS wiring to the
+agreed SCSI transport split is acceptable for an RFC, and whether
+"led" should become a LED_FUNCTION_* value or the plain ordinal
+function is fine.
