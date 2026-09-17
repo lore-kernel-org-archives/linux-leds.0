@@ -1,95 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E215581228
-	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1683A440A07;
+	Thu, 17 Sep 2026 09:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789577813; cv=none; b=bwlI5m9vmLjmQH/YuKi5EsRl13ISe+BC1yC+8DZU29ffbHJHudBpEkeOtEyRtKblVKvIRwLlpwsCvyd3I90n55nRrmmlUSWcojEBPXh6ibN02EsPAwjhledUdLd7K2UsYpSpQioMpOyPaMvyIvgBC2m4xQZ4X77/OyIz1eMSYE8=
+	t=1789637823; cv=none; b=n+/KoIJ/aPfri8oSakXmApW6f2sl6mR6FiwEYK5mjcmdRMqzjt9rkLzM8lYtRVfNDbJ3B+xQPt/v0RcS8zKKuugcIHT28pPRlL3jk3sZQ2FInTtmxCF7SkEI/X+hkQp9/GZHZ8HVRqdAfaBhs0Wi8RcQwsf1HT5HUFEFtsBDRDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789577813; c=relaxed/simple;
-	bh=fuqbMSXmKaVksZQ0mp9Ucbs7t4/StAc7bwI5H6qAaCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TODcL23monXzb0HZTM87ph3CxkeJadU15fqnyjnGDVtSsC8ARgMR/QmkKBpf6t5s8wx+0wmXp5mlGqe5vpj6zJ365RXRsxsds5gCYmOh40NZYHDciB7ICeZuye7yScQQDWMuGqBrbm7fo/345zrp/1xyJ3NuAXfdfmo31205dQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cg/A8+VC; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cg/A8+VC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5AE1F0089D
-	for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 16:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789577791;
-	bh=fuqbMSXmKaVksZQ0mp9Ucbs7t4/StAc7bwI5H6qAaCU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Cg/A8+VC9E080TzyvTpxu0YnPUmsHYmEPc7xtw8lOlwVWQFVXT213KsByPqqSIU2I
-	 YKezTVvqkqyFj8RCV6X6z796z+cgGL3/V6KKfDg+c71b1lvwwgWiG1EI1uwu/m3Th0
-	 3PiWWmOGjEHneUgz6Si80Fbz7NLf7VJpVq/lxnf4hkRztmLGONXApvwq5Bj6ihxbnh
-	 2DEb0f9/ARGDI62c/9rCPp7kYe7gh6X3Np4O26+gdKgWFKq9/xbV2rRVt1oCMkC32O
-	 lt6rPATnGQ4rlLkFzK27Q7Nts5BzFzoK5WLviocUhwMjzceCEZEyQbrc9KdJxu4ARU
-	 QjSSuos16jzVg==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f15cfdso1222073e87.3
-        for <linux-leds@vger.kernel.org>; Wed, 16 Sep 2026 09:56:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw9FYS8paD9FRPjOohKYQR+ZligBljb144Zgkwb8P5RmfTEFsyfjEWebaF8TjM1Gj71peH0V81PehDs@vger.kernel.org
-X-Gm-Message-State: AFuF++nqzZ8ELMdVsoE/hVsOSOV7BviosfsFoqpypuDI2MGDt2UfFHG/
-	WmGVy/HAEDqoStf41cqjn88lPfXKyliaG75SnHTK7z/lTzknJSoJsbI335YmRPPxBDVIVxlfcqP
-	1A76XGTNSyzfdG7y8TugshBB6KHoOD2k=
-X-Received: by 2002:a05:6512:3a96:b0:5b6:1a7c:59dc with SMTP id
- 2adb3069b0e04-5b8b66504bdmr1056044e87.54.1789577790547; Wed, 16 Sep 2026
- 09:56:30 -0700 (PDT)
+	s=arc-20240116; t=1789637823; c=relaxed/simple;
+	bh=Ef2hvkf7vwnpshLd3Fy/dachfnpC6W2xudbHwBNL/5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kOdcFxlVf9jZ9+lhE0YDAWWbpsxTi1hNLGBE3j7BVUXhHe7IOLNY35OFvsxzDCfX/B3Lnx9tMGwhc6c+mLhq9Of6hRAphkR81LDW/9gtSimrpogxN7D21OlgA213TAsg4tAArcKs51hrjNDpnEUIXrKF1U7NntqOTb29l30IqQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-05 (Coremail) with SMTP id zQCowABnmEKptKtqGcd9CA--.40725S2;
+	Thu, 17 Sep 2026 17:36:41 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: lee@kernel.org
+Cc: linusw@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	pavel@kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] leds: netxbig: Fix platform device reference leak on successful probe
+Date: Thu, 17 Sep 2026 09:36:41 +0000
+Message-Id: <20260917093641.2144866-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260909132153.1596191-1-arnd@kernel.org> <20260909132153.1596191-12-arnd@kernel.org>
-In-Reply-To: <20260909132153.1596191-12-arnd@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 18:56:17 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=LM2agPEcCxjtQuCNx4q7zqutFA6oDb61kKEDAADR4Vw@mail.gmail.com>
-X-Gm-Features: AcwNN1Uahpnh6JEjJOB4HtYt7IIRQWlpnYcwXmBiixUkMQ8clPYYJyQ4xy80br8
-Message-ID: <CAD++jL=LM2agPEcCxjtQuCNx4q7zqutFA6oDb61kKEDAADR4Vw@mail.gmail.com>
-Subject: Re: [PATCH 11/14] mfd: remove unused wm8350 driver
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>, 
-	Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jonathan Cameron <jic23@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Pavel Machek <pavel@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
-	Support Opensource <support.opensource@diasemi.com>, Sebastian Reichel <sre@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Helge Deller <deller@gmx.de>, 
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com, 
-	linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABnmEKptKtqGcd9CA--.40725S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrurW5Cw1DXr4rGr45tr47Jwb_yoWDXwb_ur
+	yIg3s7XFW8XF40yw15Zr1YvryfCFsrXF48ursFvas5JrW3XrW3WrWq9r98Cr1DZa1xAFn8
+	CFnruF15Aw17WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
+	wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
+	vE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280
+	aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07
+	x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+	xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l42xK82IY6x8ErcxFaVAv8VW8GFyrJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26F4j6r4UJwCI42IY6I8E87Iv6xkF7I0E14v26rxl6s0DYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUdKsbUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgINA2qrq3Yp0AAAsv
 
-On Wed, Sep 9, 2026 at 3:23=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
+of_find_device_by_node() returns the GPIO extension device with an
+elevated reference count.  The error paths release it through the
+put_device label, but the success path returns directly, so the
+reference is leaked whenever the LED driver probes successfully.
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> This driver was used on the i.MX31 ADS reference board from Freescale
-> and the smdk6410 reference board from Samsung. Both used platform_data
-> based driver probing and are now gone from the kernel.
->
-> Since probing with devicetree has never been supported by wm8350,
-> it is clear that nothing can use the driver on an upstream kernel,
-> and it is unlikely that anyone is still interested in a devicetree
-> conversion, so remove it.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Let the success path fall through to the put_device label.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Fixes: 9af512e81964 ("leds: netxbig: Convert to use GPIO descriptors")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/leds/leds-netxbig.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index 99df46f2d9f5..d79fee1d9143 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -597,8 +597,7 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+ 	pdata->leds = leds;
+ 	pdata->num_leds = num_leds;
+ 
+-	return 0;
+-
++	ret = 0;
+ put_device:
+ 	put_device(gpio_ext_dev);
+ 	return ret;
+-- 
+2.34.1
+
