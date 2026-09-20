@@ -1,359 +1,76 @@
-Received: from sender5-op-o15.zoho.com (sender5-op-o15.zoho.com [165.173.182.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B64D471CED;
-	Sun, 20 Sep 2026 19:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789933539; cv=pass; b=KtCKF3WffnpDoofcxanH2uNgCPjEQieNdMcOWo7d475OKwxYHNz2/GZ4jC/X3iiOgZNyXO1MfKRDu12yEgGwnmJy7+oZpAlXrjlrLxRE2bfcREotWfUrIdkGnxKeymWuaxJHxM1EdfjCB9PGTaW63L0r9aAvbjMz9EbHN/An9Do=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789933539; c=relaxed/simple;
-	bh=5u8zaxPREYZxlq84Fkr7UzG0gA1V2a5MvJVVd04e+Bk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eN9nOTY9KiAF/uMrTT+mgvxlgS++OG19P111Shzc8I11SMwEXo8O0kPSeBM24SQYlMEm2/UvktJZyW/2HZBf4pF931cdOB2wNBhDCwFGkOgoEXWyDWzqxAJazLtUsz+ini/Ztz3bPcuC/ELW8ASVMJR0TsQP1cFSK9UTdtXnA0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=ONCh1drJ; arc=pass smtp.client-ip=165.173.182.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8F33C5DC5
+	for <linux-leds@vger.kernel.org>; Sun, 20 Sep 2026 19:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789934255; cv=none; b=P5UQDWfcjCYfQfIcQbvBRfwxkO1yrubLhQqC6tjmNGNzZu4bA02p+/yevHZ9wsCYveD1XxtIFPMbW324i3XXFfjXgutli5JwoXU7MUiXF7TQu535ntyZ+lUBZw7iiiGqK96j8noFqJt8p0xmnr1X1mBSJBfD+hTY+d00ag5Jjs0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789934255; c=relaxed/simple;
+	bh=fDcIbOiw43ZPka9B/GZLip0Cx6N8OvE8iKRpFBmmIXQ=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=us5Ws0zBEi/y01kc5qMjFEzfweJ1no+Ya9Cv0S2XkOtCQNURW9MJDxHLZIiTcOd97jzpJ8sTgSQH/DRYpsjR1GOz+KLkCpb5qLAugVFylOcapZ+2WRIm8lSX042MymEl7T0uGoF264aSg3nXm+7CzLEBuywQju3UUdQs/fWXWfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBQ+GjJy; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="ONCh1drJ"
-ARC-Seal: i=1; a=rsa-sha256; t=1789933289; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gmLC1VQOcAI+77m5QhnhhkpC2ur+szOw8SvrEH+GfegLZGuGTC2TM2MCh/+o+69+P3KUW9AlfX8veHZmnkq+0ApJSKrlphB8kmJzKEMLoLJdkKjkYgzEacA8qFbCefvC/w0fTKSM3PXuFN/KMpsT7oiIJtOKX1HxL9aJRZrdBac=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1789933289; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rsOlzcBi+bit3bNNiL4SBRxL2dg7cwN2NXcGIs1niS8=; 
-	b=kWNOoO9BTzYsCDVPYtPVzLqkTsjiU8Iar4NP4kOOKJTceBeeuTdB6EUa/dlFzoGjoqJ2NbGzJyHvHsPCGKklAXP3X+1Owe1puY3ITHwp3ISU86TlIFL6F759iE1m+0L2NxTXcw37+lGfT3XvbvKfB+r4lsBY+okwdA/kBq23Wwc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1789933289;
-	s=zmail2048; d=rong.moe; i=i@rong.moe;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=rsOlzcBi+bit3bNNiL4SBRxL2dg7cwN2NXcGIs1niS8=;
-	b=ONCh1drJZ9biPsCT1kXWz/GIxrghm0X7fTLc1ZgDyTRTA7Paab6c2pvLUO33wtt5
-	owaY2gK5IF0u53m3k0t8dp4gCsy3V8FZ3ThTYkpZXEmV9aajZajHOKhrxAMLoxBNEsG
-	F/891wz9jmS1nus0OW99V6Gy5S8/LplrSb7CTY/UbhMmvU4MkmWlTyc0A7bNIcVp9ut
-	MbpyfoJUsjRT2ZUVCDL8X6Q9pJJw7ssSrsph0SLnS6/i/43JrieK6Cg4ejPR4nS2Z2n
-	0ro7Gg28UcmkltrYSBN/DgCzjusFeJAWwtDBGFVxrYfDjXLZbA76jofAHwqtxX83oRC
-	LE23zY0PNw==
-Received: by smtp.zohomail.com with SMTPS id 1789933287945171.018860174824;
-	Sun, 20 Sep 2026 12:41:27 -0700 (PDT)
-From: Rong Zhang <i@rong.moe>
-Date: Mon, 21 Sep 2026 03:40:27 +0800
-Subject: [PATCH v7 13/13] platform/x86: ideapad-laptop: Fully support auto
- keyboard backlight
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBQ+GjJy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F29C1F000FF;
+	Sun, 20 Sep 2026 19:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789934253;
+	bh=w2J8VPJycTZbQEGDe0vqtJarr4r/XEcjZiBlo0i/Orc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=lBQ+GjJypBKoHoGxJv7PVsN7k4DSn8I641YzRAW2NnFldCIrn41MFZEHwjRbOUIP3
+	 dkbMoojUCJI6L+H+bWEq8iPokOikfGxVwmF8hsCNP71Q7jLDGw/ldizPYp0bxzzeu9
+	 8d4xOVnqlt7s2427Wwhc1rwGqFzajuJtgp1274kjEdwGpqHWtspVu8XvlZVga+51N4
+	 HcA4RGmoOPwvLBQJHLIuCwFOW9SEAtppTuUnnXmc1suvebdqAF55I5yAhAfTudzprm
+	 AcDRHbAG5Rxglt39sc/QD8orkzIsnUBpl6/Vj7HqE2+Knd28y5Rmnr+yAvRyaTe1yU
+	 Ws021qFmscbRQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v7 03/13] leds: class: Remove hardware control trigger
+ when writing brightness
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Rong Zhang" <i@rong.moe>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260921-leds-trigger-hw-changed-v7-3-fe3cdb6dec51@rong.moe>
+References: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe>
+ <20260921-leds-trigger-hw-changed-v7-3-fe3cdb6dec51@rong.moe>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 20 Sep 2026 19:57:32 +0000
+Message-Id: <20260920195733.4F29C1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260921-leds-trigger-hw-changed-v7-13-fe3cdb6dec51@rong.moe>
-References: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe>
-In-Reply-To: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
- Mark Pearson <mpearson-lenovo@squebb.ca>, 
- "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Hans de Goede <hansg@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Ike Panhc <ikepanhc@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
- Vishnu Sankar <vishnuocv@gmail.com>, Vishnu Sankar <vsankar@lenovo.com>, 
- linux-leds@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- chrome-platform@lists.linux.dev, platform-driver-x86@vger.kernel.org, 
- Rong Zhang <i@rong.moe>
-X-Mailer: b4 0.17-dev-1f2f7
-X-ZohoMailClient: External
 
-Currently, the auto brightness mode of keyboard backlight maps to
-brightness=0 in LED classdev. The only method to switch to such a mode
-is by pressing the manufacturer-defined shortcut (Fn+Space). However, 0
-is a multiplexed brightness value; writing 0 simply results in the
-backlight being turned off.
+> Since commit b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of
+> hardware controlled LED"), the brightness attribute becomes write-only
+> when the LED is controlled fully by the hardware. A write-only attribute
+> is very confusing.
+>=20
+> Moreover, most LED drivers set hardware brightness innocently with the
+> side effect of disabling hardware control, but the hardware control
+> trigger remains active, resulting in the software and hardware being out
+> of sync.
+>=20
+> Fix it by removing the hardware control trigger when writing the
+> brightness attribute.
+>=20
+> This should also match the semantics of hardware control:
+>=20
+>     When the LED is in hw control, no software blink is possible and
+>     doing so will effectively disable hw control.
+>=20
+> Fixes: b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of hardwa=
+re controlled LED")
+> Acked-by: Ike Panhc <ikepanhc@gmail.com>
+> Signed-off-by: Rong Zhang <i@rong.moe>
 
-With brightness processing code decoupled from LED classdev, we can now
-fully support the auto brightness mode. In this mode, the keyboard
-backlight is controlled by the EC according to the ambient light sensor
-(ALS).
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-To utilize this, a private hardware control trigger "ideapad-auto" is
-added, with the event handling procedure calling the
-led_trigger_notify_hw_control_changed() interface to activate/deactivate
-the private trigger according to the current LED trigger state. To align
-with LEDS_BRIGHTNESS_HW_CHANGED, the driver neither depends on
-LEDS_TRIGGERS_HW_CHANGED nor selects it.
-
-Meanwhile, block brightness changes on exit to prevent the side effect
-of LED device unregistration when the private trigger is active from
-resetting the brightness to zero, so that the state of auto mode can
-retain among boots.
-
-Acked-by: Ike Panhc <ikepanhc@gmail.com>
-Signed-off-by: Rong Zhang <i@rong.moe>
----
-Changes in v7:
-- Rename the offloaded() callback to hw_offloaded() (thanks Lee Jones)
-
-Changes in v6:
-- Simplify the auto mode state preservation logic by converting
-  `priv->kbd_bl.initialized' into a tristate integer
-
-Changes in v4:
-- Add missing #include (Thanks Ilpo Järvinen)
-- Remove needless code alignment (ditto)
-- Address concerns from Sashiko
-  - Do not notify the LED trigger core when the registration of the
-    private trigger has failed
-  - https://sashiko.dev/#/patchset/20260719-leds-trigger-hw-changed-v3-0-5fb55722e36e@rong.moe?part=11
-
-Changes in v3:
-- Address concerns from Sashiko
-  - Fix a race condition in ideapad_kbd_bl_led_cdev_brightness_set()
-  - Fix trigger re-registration of ideapad_kbd_bl_auto_trigger
-  - https://sashiko.dev/#/patchset/20260618-leds-trigger-hw-changed-v2-0-c28c44053cf3%40rong.moe
-- Make registration failures of ideapad_kbd_bl_auto_trigger non-fatal
----
- drivers/platform/x86/lenovo/Kconfig          |   1 +
- drivers/platform/x86/lenovo/ideapad-laptop.c | 119 ++++++++++++++++++++++++---
- 2 files changed, 109 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/platform/x86/lenovo/Kconfig b/drivers/platform/x86/lenovo/Kconfig
-index 516594993073..a97852b0b228 100644
---- a/drivers/platform/x86/lenovo/Kconfig
-+++ b/drivers/platform/x86/lenovo/Kconfig
-@@ -16,6 +16,7 @@ config IDEAPAD_LAPTOP
- 	select INPUT_SPARSEKMAP
- 	select NEW_LEDS
- 	select LEDS_CLASS
-+	select LEDS_TRIGGERS
- 	help
- 	  This is a driver for Lenovo IdeaPad netbooks contains drivers for
- 	  rfkill switch, hotkey, fan control and backlight control.
-diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platform/x86/lenovo/ideapad-laptop.c
-index b57c4f18d0ea..db03c0c9e497 100644
---- a/drivers/platform/x86/lenovo/ideapad-laptop.c
-+++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
-@@ -15,6 +15,7 @@
- #include <linux/bug.h>
- #include <linux/cleanup.h>
- #include <linux/compiler.h>
-+#include <linux/container_of.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/device.h>
-@@ -32,6 +33,7 @@
- #include <linux/platform_device.h>
- #include <linux/platform_profile.h>
- #include <linux/power_supply.h>
-+#include <linux/printk.h>
- #include <linux/rfkill.h>
- #include <linux/seq_file.h>
- #include <linux/string_choices.h>
-@@ -226,7 +228,10 @@ struct ideapad_private {
- 		bool ymc_ec_trigger       : 1;
- 	} features;
- 	struct {
--		bool initialized;
-+		int initialized; /*  0: initializion pending/ongoing/failed
-+				  * >0: initializion finished
-+				  * <0: unregisteration ongoing/finished
-+				  */
- 		int type;
- 		struct led_classdev led;
- 		unsigned int last_hw_brightness;
-@@ -1716,14 +1721,68 @@ static int ideapad_kbd_bl_led_cdev_brightness_set(struct led_classdev *led_cdev,
- {
- 	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
- 
-+	/*
-+	 * When unregistering: It must be the side effect of LED unregistration
-+	 * when our private trigger is active. We've set LED_RETAIN_AT_SHUTDOWN
-+	 * to retain led_cdev brightness level. To do the same for auto mode,
-+	 * gate changes and return early.
-+	 *
-+	 * It's needless to gate changes when initializing, as there may be a
-+	 * time margin between sysfs attribute creation and state change.
-+	 */
-+	if (unlikely(priv->kbd_bl.initialized < 0))
-+		return 0;
-+
- 	return ideapad_kbd_bl_brightness_set(priv, brightness);
- }
- 
-+static int ideapad_kbd_bl_auto_trigger_activate(struct led_classdev *led_cdev)
-+{
-+	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
-+
-+	return ideapad_kbd_bl_hw_brightness_set(priv, KBD_BL_AUTO_MODE_HW_BRIGHTNESS);
-+}
-+
-+static bool ideapad_kbd_bl_auto_trigger_hw_offloaded(struct led_classdev *led_cdev)
-+{
-+	struct ideapad_private *priv = container_of(led_cdev, struct ideapad_private, kbd_bl.led);
-+
-+	guard(mutex)(&priv->kbd_bl.mutex);
-+
-+	return priv->kbd_bl.last_hw_brightness == KBD_BL_AUTO_MODE_HW_BRIGHTNESS;
-+}
-+
-+static struct led_hw_trigger_type ideapad_kbd_bl_auto_trigger_type;
-+
-+static struct led_trigger ideapad_kbd_bl_auto_trigger = {
-+	.name = "ideapad-auto",
-+	.trigger_type = &ideapad_kbd_bl_auto_trigger_type,
-+	.activate = ideapad_kbd_bl_auto_trigger_activate,
-+	.hw_offloaded = ideapad_kbd_bl_auto_trigger_hw_offloaded,
-+};
-+
-+static bool ideapad_kbd_bl_auto_trigger_registered;
-+
-+static void ideapad_kbd_bl_notify_hw_control(struct ideapad_private *priv,
-+					     unsigned int hw_brightness)
-+{
-+	bool hw_control, last_hw_control;
-+
-+	if (!ideapad_kbd_bl_auto_trigger_registered || priv->kbd_bl.type != KBD_BL_TRISTATE_AUTO)
-+		return;
-+
-+	hw_control = hw_brightness == KBD_BL_AUTO_MODE_HW_BRIGHTNESS;
-+	last_hw_control = priv->kbd_bl.last_hw_brightness == KBD_BL_AUTO_MODE_HW_BRIGHTNESS;
-+
-+	if (hw_control != last_hw_control)
-+		led_trigger_notify_hw_control_changed(&priv->kbd_bl.led, hw_control);
-+}
-+
- static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
- {
- 	int hw_brightness, brightness;
- 
--	if (!priv->kbd_bl.initialized)
-+	if (unlikely(priv->kbd_bl.initialized <= 0))
- 		return;
- 
- 	guard(mutex)(&priv->kbd_bl.mutex);
-@@ -1739,6 +1798,8 @@ static void ideapad_kbd_bl_notify(struct ideapad_private *priv)
- 	if (priv->kbd_bl.last_hw_brightness == hw_brightness)
- 		return;
- 
-+	ideapad_kbd_bl_notify_hw_control(priv, hw_brightness);
-+
- 	priv->kbd_bl.last_hw_brightness = hw_brightness;
- 
- 	led_classdev_notify_brightness_hw_changed(&priv->kbd_bl.led, brightness);
-@@ -1751,9 +1812,11 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
- 	if (!priv->features.kbd_bl)
- 		return -ENODEV;
- 
--	if (WARN_ON(priv->kbd_bl.initialized))
-+	if (WARN_ON(priv->kbd_bl.initialized > 0))
- 		return -EEXIST;
- 
-+	priv->kbd_bl.initialized = 0;
-+
- 	err = devm_mutex_init(&priv->platform_device->dev, &priv->kbd_bl.mutex);
- 	if (err)
- 		return err;
-@@ -1771,6 +1834,24 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
- 
- 	switch (priv->kbd_bl.type) {
- 	case KBD_BL_TRISTATE_AUTO:
-+		priv->kbd_bl.led.max_brightness = 2;
-+
-+		if (!ideapad_kbd_bl_auto_trigger_registered) {
-+			dev_warn(&priv->platform_device->dev,
-+				 "Cannot provide LED trigger %s for keyboard backlight\n",
-+				 ideapad_kbd_bl_auto_trigger.name);
-+			break;
-+		}
-+
-+		priv->kbd_bl.led.flags |= LED_TRIG_HW_CHANGED;
-+		priv->kbd_bl.led.trigger_type = &ideapad_kbd_bl_auto_trigger_type;
-+		priv->kbd_bl.led.hw_control_trigger = ideapad_kbd_bl_auto_trigger.name;
-+
-+		/* Hardware remembers the last brightness level, including auto mode. */
-+		if (hw_brightness == KBD_BL_AUTO_MODE_HW_BRIGHTNESS)
-+			priv->kbd_bl.led.default_trigger = ideapad_kbd_bl_auto_trigger.name;
-+
-+		break;
- 	case KBD_BL_TRISTATE:
- 		priv->kbd_bl.led.max_brightness = 2;
- 		break;
-@@ -1791,17 +1872,17 @@ static int ideapad_kbd_bl_init(struct ideapad_private *priv)
- 	if (err)
- 		return err;
- 
--	priv->kbd_bl.initialized = true;
-+	priv->kbd_bl.initialized = 1;
- 
- 	return 0;
- }
- 
- static void ideapad_kbd_bl_exit(struct ideapad_private *priv)
- {
--	if (!priv->kbd_bl.initialized)
-+	if (priv->kbd_bl.initialized <= 0)
- 		return;
- 
--	priv->kbd_bl.initialized = false;
-+	priv->kbd_bl.initialized = -1;
- 
- 	led_classdev_unregister(&priv->kbd_bl.led);
- }
-@@ -2620,17 +2701,30 @@ static int __init ideapad_laptop_init(void)
- {
- 	int err;
- 
-+	err = led_trigger_register(&ideapad_kbd_bl_auto_trigger);
-+	if (err) {
-+		pr_warn("Failed to register LED trigger %s: %d\n",
-+			ideapad_kbd_bl_auto_trigger.name, err);
-+	} else {
-+		ideapad_kbd_bl_auto_trigger_registered = true;
-+	}
-+
- 	err = ideapad_wmi_driver_register();
- 	if (err)
--		return err;
-+		goto err_ledtrig;
- 
- 	err = platform_driver_register(&ideapad_acpi_driver);
--	if (err) {
--		ideapad_wmi_driver_unregister();
--		return err;
--	}
-+	if (err)
-+		goto err_wmi;
- 
- 	return 0;
-+
-+err_wmi:
-+	ideapad_wmi_driver_unregister();
-+err_ledtrig:
-+	if (ideapad_kbd_bl_auto_trigger_registered)
-+		led_trigger_unregister(&ideapad_kbd_bl_auto_trigger);
-+	return err;
- }
- module_init(ideapad_laptop_init)
- 
-@@ -2638,6 +2732,9 @@ static void __exit ideapad_laptop_exit(void)
- {
- 	platform_driver_unregister(&ideapad_acpi_driver);
- 	ideapad_wmi_driver_unregister();
-+
-+	if (ideapad_kbd_bl_auto_trigger_registered)
-+		led_trigger_unregister(&ideapad_kbd_bl_auto_trigger);
- }
- module_exit(ideapad_laptop_exit)
- 
-
--- 
-2.55.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260921-leds-trigg=
+er-hw-changed-v7-0-fe3cdb6dec51@rong.moe?part=3D3
 
