@@ -1,55 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BC2357CF3
-	for <linux-leds@vger.kernel.org>; Sun, 20 Sep 2026 19:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4788D23ABBE
+	for <linux-leds@vger.kernel.org>; Sun, 20 Sep 2026 19:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789934255; cv=none; b=Quchqth9kCUvIFl3ELZ2UKIuPXF20g659p1hQ4CYdX/oEcdOE+r3Bqg9IlJxzsCTOUqhrfhtxlh8WtxIur/Yyn/7ki2MyIPQALHTW2KcrcuPWgA8xp39+pu7aV/4UcE5nD7hrtpGOEe58rLuNYXrpodbgENHLgiXktzVkJlRH+c=
+	t=1789934256; cv=none; b=Ixa11XzRvk6zV0Gu5BHbK8rp4+SVKF5q/7pFIvfk5Z+n9B4THpZk8JnLQezy/4zitlgaP3MfZRhMU0XktfZYpnPdoWqJY3yZKHAg8iLutXDGQACHBJZaBYCB3OuYW9Ab1HCCiyoYtSeZaR/STJNzBUaVgVUZ5I4q4NAsjEcvVe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789934255; c=relaxed/simple;
-	bh=Idp8hARAt3RRZR5pgUSfd+HzlNY+oQAUH09Pk6bxQGc=;
+	s=arc-20240116; t=1789934256; c=relaxed/simple;
+	bh=8E12HbYrNBAfFicNgydcI8crjZOs94DWdWLKzkgIJ4Y=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=J8gtCBiYUOysFJf3/PEQdvS0sESncj267JR2CdJivHdaANkNBts5GF7Q1QBSSgV4I6O3p5LIjSGoGc2dqAFvjy7MV4TBpTtSxVOnfjexO9X+/xpq8ZfDHMVhMt2mYWF9A3k095zyicfKZAGenprhIi7F162xVSx64E0gVRow3C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHrubQeh; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=V5ol5C+/Ss0ahzdSLgw/fPsXZXDquqjGmgZ5OSH/vHk+tJsZDLL1YRMQ74bc5V4BmlTcQCU8cmBDAnvMWmNNGIMWj6NRdekT3zb59+oE37nhzFrplUy3IouQJgecUZqxBls6RpM01zhyb6VhP2FWSTXccfHx2ME94yN2iB/pBnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/dAziqX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHrubQeh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 053C51F00893;
-	Sun, 20 Sep 2026 19:57:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/dAziqX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B91541F00898;
+	Sun, 20 Sep 2026 19:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789934254;
-	bh=Idp8hARAt3RRZR5pgUSfd+HzlNY+oQAUH09Pk6bxQGc=;
+	s=k20260515; t=1789934255;
+	bh=8E12HbYrNBAfFicNgydcI8crjZOs94DWdWLKzkgIJ4Y=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=iHrubQehSqSeurSy4rIeGun+D5t5kiwsNSJjAVtnnQF+Vm4bTH1EHmG/MvF0B1b/D
-	 F7GEY72inmq2Ied088SKBxamc9wJwWeMNGgiPI8CphZx9CiXr0MuW3cVVA3qBtZ7mX
-	 wOhYAUZzRHj9T5fpMzftzKcD0rYXjvhD6hiiUAvvc7sHhfBUVBGPHHy1Gs4FH7ihVY
-	 PukCkzvzOmKaG27ucWsvNnPtFwWofm9TXz7SaWsHKriKO3m+xp+mOl2ugkvyZ+H8MU
-	 SEAKqFGzoc6cHWIwqXst1QHDhkscDOHKngW1c4gLbF3wa5DCMKrb5Q10bjvK/p0Dns
-	 6P6XSV0oGDxxw==
+	b=N/dAziqX7fFPhXpu5D7kJVkCkcD15NkN1ccTf5UMdIQ3sWfPKNU+Y4i9aM5d4M7Rs
+	 qNyg9+DVGy1gkykG7wAHkjBzEdcWTLb2xKv5b0CN7+QDn4jM2dPZttYtiHdPYvnbJU
+	 XdG03PIZkqvl7UjdoBbSVhAz70bUflPPXAxDBrTzh8KeN191Gnt46NXlCql0yMzph8
+	 tBt5jxaGlJ6PLpeDY4wUCtQkvk5Z3loZm6kPBK2ZjTeP9C+pZB+VJTu8QRlkGbZxlg
+	 xF8bAMYHI6jFRyronVzAh5mmnNDNsn5/ja2mSy1aCvPvC7nBvJgf6EcmuENRbR+JUX
+	 mQhevOQZqCB+g==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 06/13] leds: cros_ec: Implement hw_offloaded()
- trigger callback
+Subject: Re: [PATCH v7 08/13] leds: trigger: netdev: Implement
+ hw_offloaded() callback
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Rong Zhang" <i@rong.moe>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260921-leds-trigger-hw-changed-v7-6-fe3cdb6dec51@rong.moe>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20260921-leds-trigger-hw-changed-v7-8-fe3cdb6dec51@rong.moe>
 References: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe>
- <20260921-leds-trigger-hw-changed-v7-6-fe3cdb6dec51@rong.moe>
+ <20260921-leds-trigger-hw-changed-v7-8-fe3cdb6dec51@rong.moe>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 20 Sep 2026 19:57:33 +0000
-Message-Id: <20260920195734.053C51F00893@smtp.kernel.org>
+Date: Sun, 20 Sep 2026 19:57:34 +0000
+Message-Id: <20260920195734.B91541F00898@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> "chromeos-auto" is a private hardware control trigger which always stays
-> in hardware control. Implement hw_offloaded() callback with its return
-> value to be always true to reflect this.
+> "netdev" can run in hardware control according to hardware capabilities
+> and trigger options.
 >=20
-> Reviewed-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Implement hw_offloaded() callback to provide its hardware control state
+> to the LED core, and document the relation between the custom
+> "offloaded" attribute and the generic "trigger_may_offload_to_hw"
+> attribute.
+>=20
+> The callback mimics how the existing "offloaded" attribute does, i.e.,
+> locklessly reads hw_control, as it's just a hint and don't need to be
+> accurate.
+>=20
 > Acked-by: Ike Panhc <ikepanhc@gmail.com>
 > Signed-off-by: Rong Zhang <i@rong.moe>
 
@@ -57,5 +64,5 @@ Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260921-leds-trigg=
-er-hw-changed-v7-0-fe3cdb6dec51@rong.moe?part=3D6
+er-hw-changed-v7-0-fe3cdb6dec51@rong.moe?part=3D8
 
