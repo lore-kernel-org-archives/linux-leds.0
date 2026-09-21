@@ -1,79 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A0123ABBE
-	for <linux-leds@vger.kernel.org>; Sun, 20 Sep 2026 19:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789934263; cv=none; b=ajVZ4nLO61LFNouG0a2MXhSCuCsx9RGZIhkhhNu1w8TSaWemP5H0666b8jlywmLohCYjAutghjY4aXZ5A3Nh3wuOME0kBTOYBD+iz1BGgVj3g1vfXW1b5gUp5bu6Ej+9g3zuMU0TtjpfLbrtQ2fzl7CL9V9tg8lvkgpQxjiDUt0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789934263; c=relaxed/simple;
-	bh=1lnQPNAxnj1+s8dbE5uJzexCcPmTBDvqt0lgZiU6Lgw=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=tsCGyvTOnskgZ2dFArFZcInycFVDNgrvzjX5290RBIbtPS+Bxq0sS/EyeOZ6vu6VrlV5hMzQLgBBLAsuEaBRfw0PS2ymtcqBUeo3rElzRvETJtNgFjsVrQCKs+4IUHFTOhYhjGdnmUyvi3TgeYdYDdqvBCZCelAktPZDe1LaozI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAjfUfpE; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5C14078DA
+	for <linux-leds@vger.kernel.org>; Mon, 21 Sep 2026 07:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789975865; cv=pass; b=Vjxk8szhtOv9jBFseNvaAUbz61+ZH/fVLhN4nxSKC3HZQd32ylBC3PpEz7x6D9hsNO/cZaxQtbSrzPYgd8W2ur+PbWOjjfkEyIBwM3BkPzvA9EPbeMNvy1t4/2qVIenQARq3q2ALBJsmj29s59sYHs3laUvnWs+oN5e8hUFumQ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789975865; c=relaxed/simple;
+	bh=+kodcrZ7Rfq3RbtOm64zvOegmrBogr+8Wwr1ekULfyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oyYEyaQMZaEmdtX6PIACv8BwS4Iesv2Jsbmh0/j98K7YLT08nZZ/vvx1w9Rrl1W4EWooRvTvXQgEZ39NDtQnGYehjzCMq6R8vAifYlmU8iIRe5hIzvudva1WlX/tnXhDCP3MxxyXeGCWitR2Wmj1dCyg+YCf9HmMLDPeUR/wfYQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jD1gc/W/; arc=pass smtp.client-ip=74.125.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAjfUfpE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 104311F00893;
-	Sun, 20 Sep 2026 19:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789934262;
-	bh=1lnQPNAxnj1+s8dbE5uJzexCcPmTBDvqt0lgZiU6Lgw=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=eAjfUfpEc0LsM3WWpPLCQDLxkUsPRvXx8yDeOPlj7Fbo5ua59GhzBOGr1V1rXa2k/
-	 KyR9IGi2FYOfDDexBdCRD9zQRWdwqJHrR6zIGtab4Q4tfSBhaiN0hMHvDvvXkUnQzx
-	 Hi3zoWzNQIOhjbyaWhg8IO9qwoU4wK/GZo5rZbrkn/k7yKnbZAqX9igYJnuFUW7975
-	 Q+2xOEkac07Ppe9xLbo4tI59Qm6rrB/MHi/KLf87L3ERcdMJPTTeRjiB7cxNE7U5rz
-	 zdIAQZm97ANg/ZZbQGhvcbQ4rltgkdtK3gpyPAAGoft8F9eIY5xe0o7hJa35/qIrAg
-	 3ubGvpxTBRWlw==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 13/13] platform/x86: ideapad-laptop: Fully support
- auto keyboard backlight
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Rong Zhang" <i@rong.moe>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260921-leds-trigger-hw-changed-v7-13-fe3cdb6dec51@rong.moe>
-References: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe>
- <20260921-leds-trigger-hw-changed-v7-13-fe3cdb6dec51@rong.moe>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 20 Sep 2026 19:57:41 +0000
-Message-Id: <20260920195742.104311F00893@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jD1gc/W/"
+Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-868cfc5c244so1363174b3a.3
+        for <linux-leds@vger.kernel.org>; Mon, 21 Sep 2026 00:31:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789975862; cv=none;
+        d=google.com; s=arc-20260327;
+        b=d1QNybQm3IotiE5aZ0RLTs0VRY+eRMwn/EdeJSiQ3VhQSTOPRbcB4sqmqlU/GuGH/x
+         OgwDXt/4B2suufNNCgOkrfkv9/25Js2/+OikY6I9/7pJk0JJK11dggSLSCKZO3XBPBf+
+         1RkcoUnCR8xJpTYKbOJ+sf87KUW0xc/oVeLsSZ/x8n5e11LgEpKO8UQum9czNTHbMoB2
+         jiySlsiYw6T+beQ3z3e9CWscLpzP93+DALEnu7/zA9aYjvdUEsd/e0O7yG2Nx4IBvwSb
+         trhqA1RQY5Qgn6mcjgDeGp+A3mdnalCSVFTpt9ZiQp3yPNSwmShRrvllzXD9NjfUyWw6
+         beeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=q1BZ6sJCmqeFIahqjVQKO9ObElEe/vXNKUx/QqdQ6iE=;
+        fh=0EVLGQvGawrF0zsUIWUX4FIBpFfmvsrfouvJFvxiCSA=;
+        b=MWFLtbsQ/zPr8HC4GxPlHM8cEOUXzNrCUSVBRNzJ+XJfuIp+XWng1lwvgU1DNRd1+x
+         oUKxHhfTvzuX8pydJ5SqelMGt4xqm7PIMz+ZTSnFst836H+oY2AJVyoXhQJIRxSJpWCm
+         2s5Wl7NlEh7fJSklqiRnEAxyXQVXiPriIMcpsHWm/5zi06/fhtfqj9x00uW8WLeZqTZb
+         5Zpok/yUF2prEnlNPlUiHnxHhEa7pyN/5j6L/MUS0Xtqh8brhoUdrCwWTpI67s5B9Rpz
+         x3gduQwXGqHSXZPbFjajdrmWKTh8dzIfVZEf8KczEf+7pCNJu6dtpYWE3gu3or6BNnuV
+         Q7mw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789975862; x=1790580662; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=q1BZ6sJCmqeFIahqjVQKO9ObElEe/vXNKUx/QqdQ6iE=;
+        b=jD1gc/W/eQYVqx+yirVe2qcyxe+donWRgWllTIa+7VE9+YQJpmeal1Rk0LOgaDcry3
+         CuOI/JxJJI52Wsmu7eYoX1vkz5XJvFN+BfSEzY0Gn5YGMnZZ+WpXeMtv/PCNa3YpWlo8
+         s9hlAknJ3Qs1c0R42qcLm2LyzNL24XghGRMB1PXSn54MvoQOde6Cud7hsfyOlSGdMN9n
+         8FJXDNTZlmmR79EqWzI6FBGzPfCGDgiRg9UWmYQl9dgfe0NzixXKlHk5TC/12PLNK4zS
+         RbqumxQSe17kO1x8LDxXCTnnBqvxMkz+ipuP2SCD7m6l6cbkmTgd4ow7pTU+7NgWu8UD
+         wPvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789975862; x=1790580662;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=q1BZ6sJCmqeFIahqjVQKO9ObElEe/vXNKUx/QqdQ6iE=;
+        b=t02k9xbqJ7njPLkdBLAjnwor/6Gri5RldA511Htw0I0RAJVaODmGEGxieSgKzY8+yg
+         /27X4QeZVVAydjDjMZ2jXalLQ1ZdhwsFaD+0kSv2xsVAohhcPlNuaEElTG0i8lthmTbK
+         8JBFSqyRGE8GuP2RPOOfbPmPD/dAlWnEXfyj4ySs2wXEcYOw6OMEiNcFXDAS1FrOKV8+
+         9ByumVV5BOmCCRkZvOA5B24kEMX513ifbg7aebjH8cp6CZ8pn29RJks2n4gEpv0/Ugrn
+         xx2fUG8FDkkB8bTvx8kFzt28vQ6sq1ERIL/TdOrq6TkAS9KC6lDxV9JKPGoP0w9maZk7
+         oVcA==
+X-Forwarded-Encrypted: i=1; AKwUvBz2DtlIyCihclGbDDIUFd4tkjrSyGXmKroeL4nR9KWAHnC2rUyiBackWQK4IRm6z7HGxV2oNUdUr+hF@vger.kernel.org
+X-Gm-Message-State: AFuF++kB9KkI2812gZjVIWCoSMWb6iQ4XfM9JxKQQPnt+dU01lBca3kp
+	S/LHO43cd5lvZPRNQm4cscumnPZ6IkPGiEk/IeAlzohJcwcjYQojZv8tfYG9k0Z0tSu6T8EtTSJ
+	lNjCrz69avEg+zKzWFYz5+W9cQoYTVLFPs2Agw1A=
+X-Gm-Gg: AYBFou0STKEZeLDzAK6uYPNyzWvq9zqiVZmLJC30hGp/yyG++izKeUnNTOhWQNwp11k
+	Nux+j/TEZtirDeIdy+BsTst2bjTmRPultadcxTGszWyQsjghq8KkE+zSMXTkeFwFm5G7CijwzVL
+	JySu6egTZS6aYu4ItXlqsjw2l7oinTPc5wUBPxCLx6SKxvGqUY1RFBpXIzHA8dVT77LgDXI9YIX
+	EA7KLQw3QWR5W/kk8LZusOrV5UvGvPwhFPfrmnc01iSUHecnEebj9UYkMFkKPTQtcZ6pEmytsuH
+	6mBFX5L6+njlxIN1DCEWq1sLKZVSHcOiz49C6yDaqRE7BQ/9eKAJkPLWfiP/kNRfKmu2TjfzHdQ
+	yltKEAI7afTn7
+X-Received: by 2002:a05:6a21:6b05:b0:3da:c2f5:a2aa with SMTP id
+ adf61e73a8af0-3dd8c3323a9mr17128224637.18.1789975862197; Mon, 21 Sep 2026
+ 00:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260721095654.429346-1-clamor95@gmail.com> <20260721095654.429346-2-clamor95@gmail.com>
+ <178463529533.2776661.17291216407355479584.robh@kernel.org>
+ <20260909162654.GK2133376@google.com> <CAPVz0n2zLd2SPrHGb5vSX3AvRrofbA7Q54YFpmcPP6032MUw+Q@mail.gmail.com>
+In-Reply-To: <CAPVz0n2zLd2SPrHGb5vSX3AvRrofbA7Q54YFpmcPP6032MUw+Q@mail.gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Mon, 21 Sep 2026 10:30:50 +0300
+X-Gm-Features: AcwNN1Xwan51ardBlULGfF9_kTLOoiJJ0xUxr2pfFDkGmuB0AEVFXrA3aSj0HMQ
+Message-ID: <CAPVz0n2o0OYFWsoXrYXcoAPNz2L4sKi2=JvXPdQzfvha1mOm_A@mail.gmail.com>
+Subject: Re: [PATCH v7 1/6] dt-bindings: leds: leds-cpcap: convert to DT schema
+To: Lee Jones <lee@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Currently, the auto brightness mode of keyboard backlight maps to
-> brightness=3D0 in LED classdev. The only method to switch to such a mode
-> is by pressing the manufacturer-defined shortcut (Fn+Space). However, 0
-> is a multiplexed brightness value; writing 0 simply results in the
-> backlight being turned off.
->=20
-> With brightness processing code decoupled from LED classdev, we can now
-> fully support the auto brightness mode. In this mode, the keyboard
-> backlight is controlled by the EC according to the ambient light sensor
-> (ALS).
->=20
-> To utilize this, a private hardware control trigger "ideapad-auto" is
-> added, with the event handling procedure calling the
-> led_trigger_notify_hw_control_changed() interface to activate/deactivate
-> the private trigger according to the current LED trigger state. To align
-> with LEDS_BRIGHTNESS_HW_CHANGED, the driver neither depends on
-> LEDS_TRIGGERS_HW_CHANGED nor selects it.
->=20
-> Meanwhile, block brightness changes on exit to prevent the side effect
-> of LED device unregistration when the private trigger is active from
-> resetting the brightness to zero, so that the state of auto mode can
-> retain among boots.
->=20
-> Acked-by: Ike Panhc <ikepanhc@gmail.com>
-> Signed-off-by: Rong Zhang <i@rong.moe>
+=D1=81=D1=80, 9 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 19:50 Svyat=
+oslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> =D1=81=D1=80, 9 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 19:27 Lee=
+ Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Tue, 21 Jul 2026, Rob Herring (Arm) wrote:
+> >
+> > >
+> > > On Tue, 21 Jul 2026 12:56:48 +0300, Svyatoslav Ryhel wrote:
+> > > > Convert LEDs devicetree bindings for the Motorola CPCAP MFD from TX=
+T to
+> > > > YAML format. This patch does not change any functionality; the bind=
+ings
+> > > > remain the same.
+> > > >
+> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > ---
+> > > >  .../devicetree/bindings/leds/leds-cpcap.txt   | 29 -------------
+> > > >  .../bindings/leds/motorola,cpcap-leds.yaml    | 42 +++++++++++++++=
+++++
+> > > >  2 files changed, 42 insertions(+), 29 deletions(-)
+> > > >  delete mode 100644 Documentation/devicetree/bindings/leds/leds-cpc=
+ap.txt
+> > > >  create mode 100644 Documentation/devicetree/bindings/leds/motorola=
+,cpcap-leds.yaml
+> > > >
+> > >
+> > > My bot found errors running 'make dt_binding_check' on your patch:
+> > >
+> > > yamllint warnings/errors:
+> > >
+> > > dtschema/dtc warnings/errors:
+> > >
+> > >
+> > > doc reference errors (make refcheckdocs):
+> > > Warning: Documentation/devicetree/bindings/leds/motorola,cpcap-leds.y=
+aml references a file that doesn't exist: Documentation/devicetree/bindings=
+/mfd/motorola,cpcap.yaml
+> > > Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt ref=
+erences a file that doesn't exist: Documentation/devicetree/bindings/leds/l=
+eds-cpcap.txt
+> > > Documentation/devicetree/bindings/leds/motorola,cpcap-leds.yaml: Docu=
+mentation/devicetree/bindings/mfd/motorola,cpcap.yaml
+> > > Documentation/devicetree/bindings/mfd/motorola-cpcap.txt: Documentati=
+on/devicetree/bindings/leds/leds-cpcap.txt
+> > >
+> > > See https://patchwork.kernel.org/project/devicetree/patch/20260721095=
+654.429346-2-clamor95@gmail.com
+> > >
+> > > The base for the series is generally the latest rc1. A different depe=
+ndency
+> > > should be noted in *this* patch.
+> > >
+> > > If you already ran 'make dt_binding_check' and didn't see the above
+> > > error(s), then make sure 'yamllint' is installed and dt-schema is up =
+to
+> > > date:
+> > >
+> > > pip3 install dtschema --upgrade
+> > >
+> > > Please check and re-submit after running the above command yourself. =
+Note
+> > > that DT_SCHEMA_FILES can be set to your schema file to speed up check=
+ing
+> > > your schema. However, it must be unset to test all examples with your=
+ schema.
+> >
+> > This one.
+> >
+>
+> As you can see only complain is that reference in the leds yaml to
+> Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml does not
+> exist. All cpcap cell bindings were converted one by one as separate
+> commits, so this is natural since motorola,cpcap.yaml will be
+> converted last and patch doing this is included in the series. It does
+> not bring any regressions in yaml and dt schema checks.
+>
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Hello Lee!
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260921-leds-trigg=
-er-hw-changed-v7-0-fe3cdb6dec51@rong.moe?part=3D13
+Is this explanation sufficient? Rob left his Reviewed-by to all DT
+related patches of this series.
 
+> > --
+> > Lee Jones
