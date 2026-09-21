@@ -1,69 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EF846C859
-	for <linux-leds@vger.kernel.org>; Mon, 21 Sep 2026 09:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC6948F006
+	for <linux-leds@vger.kernel.org>; Mon, 21 Sep 2026 09:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789982964; cv=none; b=i7j2DYJhBVyDprEenGubY7+A92vF2UJm1GqW1lzluq0k/1f9+p2e/U0MPpdq2tNRqnQ6yRoqDjskqwCnyzENOrcZ5ZGcbldN9/HObyKjcigiqTjHaKGIrQ/QamST3z4pQyCBAjldx+unWFVqtP85RBs9pKy0poxyeNN9b4hkZ80=
+	t=1789983192; cv=none; b=Z0kfkTvg1LiExTiDF4yvik0HseMqW7y9SBJQ2pYtsSvyFjhvz9sHDpEZnowhBJa1fIhJpnixWhJ3YdZ5ShOORjhXEv+melSBG50yXVSS7iueId9U23LcEMjmghda9n5Q+qO8GgKNlL7CDKCEZ8TioGYa4eqII/HBP/eBb89mZIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789982964; c=relaxed/simple;
-	bh=wrp//4DuN/TjU6JeusomqkHaDOiiBC/IS87sp+99l1Y=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=VvtqajrC54xqk9iY1NdZrujOMnHcxULgbYyHXlhxAyyVyY4k0XqQBCmwsjwpnUEF4/ECu3bcAIKh1plyK9W0F1G9VrO1X8TOCFf3wUSD3uuXs4J6gt84pn49T/QxE6GQIQyJ5SDb9aYqP2OYfgIRBBXEgfVQnM/ZBIukVPxqUDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nqzsindl; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789983192; c=relaxed/simple;
+	bh=WPJHYnrQrYYS/+gXuwPOGWMsKbPW/NqlsGM3UKpVqPw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qRpypR7oq9QbfqqRW+mDbjU1mnINAwV/4lPeZ1KQJ7Dnu/Yd/JQXIgp7I1IbdrE99HGHF/F0AU+vv9T1/InoU/cXx2ZXfxoexbDZzHhb/Y1o8LQUn25RI/AalLCUJK3F3NpBKTVrmPjtu+25gG+K3cPG/XM3ufvDjT7jbn0gkyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=sY7PgeOC; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nqzsindl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3DD1F00893;
-	Mon, 21 Sep 2026 09:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789982962;
-	bh=wrp//4DuN/TjU6JeusomqkHaDOiiBC/IS87sp+99l1Y=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=NqzsindlmN4bHxuEHj1/ZsNrSvqHL+AB49tM6RAGrUrmn9a7S4Kpwcwf5A92x+Xl+
-	 +/33x2ElE4+aF+tYN9lFUmqBoZ8/4B0f/mPuRI0kSk1doGT6ZJFeiJuXiBcp8wtYKJ
-	 GoTOASFkmNDJdpxduoIPFbcP25yv4eBstVquAWgN1RvILYM94ku8adA71LM6GbNjBE
-	 3sIbE9Du89mF0fYUeW8BkqOh4Ptw3LcIMa1Zd1zJbRSe+3OG/fAr49MUWBLOdwt2qP
-	 L1ypjyoCUy1hVCSZ/l1PDf7HtGw7Xcw4oMG99jqrC+GNWg/3gpbXcr29ACnKZY8SdR
-	 GqrJSYggemEiQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] leds: flash: sgm3140: fix child node reference leak
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Guangshuo Li" <lgs201920130244@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260921092128.346375-1-lgs201920130244@gmail.com>
-References: <20260921092128.346375-1-lgs201920130244@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 21 Sep 2026 09:29:22 +0000
-Message-Id: <20260921092922.AB3DD1F00893@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="sY7PgeOC"
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202609210932592897b9bd17000207a4
+        for <linux-leds@vger.kernel.org>;
+        Mon, 21 Sep 2026 11:32:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=L2tNSuNj50Qwkw6ouG81VT0DerK7MEmUivw5GyG01+M=;
+ b=sY7PgeOCewMuZ6A416pnAewJFx+4t2xBzq2XBWMG+JTqHrBIBOnxued9E2s6mmAapDJTm5
+ sy0vPEjak8FJwog0sQN5RXKKwxAFLrj02bvo5HUzE84/0aYAiuoYmZmwdBv0byOd/lzN3Gss
+ heFcdeke7oigQ0p1Br+JS+PDapyO1gn/9qGNpe188ObKSza83N0TtIzwE8fdSL+AZvyUyjsU
+ i1sW9dKa/oqyhgioOE7TKiObXZNPuNszNktLwQuLtLdszzrxp4rtWFp5r9bLTFxAHBpuZ3Cf
+ LUEQs5LytUpNl9CJO8zyqs1UuOdsk+rCuSj18IwBPFVE+nqlfe5AV9sg==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-leds@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"Mike Marciniszyn (Meta)" <mike.marciniszyn@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/4] leds: trigger: netdev: Put netdev on activate error path
+Date: Mon, 21 Sep 2026 11:32:43 +0200
+Message-ID: <20260921093249.3481413-2-alexander.sverdlin@siemens.com>
+In-Reply-To: <20260921093249.3481413-1-alexander.sverdlin@siemens.com>
+References: <20260921093249.3481413-1-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] leds: uncapitalized commit message description
---
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-commit 2a50d0447cec030d24466a0bda14c4fe595d02f6
-Author: Guangshuo Li <lgs201920130244@gmail.com>
+When hw control is active, set_device_name() takes a reference on the
+netdev via dev_get_by_name(). The register_netdevice_notifier() failure
+path frees trigger_data without dropping it, leaking the netdev.
 
-leds: flash: sgm3140: fix child node reference leak
+Cc: stable@vger.kernel.org
+Closes: https://lore.kernel.org/all/20260914140045.B8F4C1F000FF@smtp.kernel.org/
+Fixes: 0316cc5629d1 ("leds: trigger: netdev: init mode if hw control already active")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+Changelog:
+v2:
+- new patch
 
-This commit fixes a child node reference leak in sgm3140_probe() by
-registering a devm action. This ensures the fwnode reference remains valid
-until after the LED class device is unregistered.
+ drivers/leds/trigger/ledtrig-netdev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> leds: flash: sgm3140: fix child node reference leak
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 5b4e92c14dbb4..c65df91c4f6dc 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -779,8 +779,10 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
+ 	led_set_trigger_data(led_cdev, trigger_data);
+ 
+ 	rc = register_netdevice_notifier(&trigger_data->notifier);
+-	if (rc)
++	if (rc) {
++		dev_put(trigger_data->net_dev);
+ 		kfree(trigger_data);
++	}
+ 
+ 	return rc;
+ }
+-- 
+2.55.0
 
-[Severity: Low]
-This isn't a bug, but the description after the subsystem prefix starts with
-a lowercase letter. Should this be capitalized as "Fix child node reference
-leak"?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260921092128.3463=
-75-1-lgs201920130244@gmail.com?part=3D1
