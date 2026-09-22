@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6535437CC;
-	Tue, 22 Sep 2026 13:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1285255C1CE
+	for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 13:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790083585; cv=none; b=qmvinxJgqyCV+Sdt3jB1iW4LqhG4Bfrbwhp0yw7VMt8iqJGRI/yU4CWW91vttVN8GGMYMfixE6lkDY0baJkFXUSa0TRcDXkgjrFWBMg55r8P+S8vZGgmwTbGEsaszoc7N/gHJF+YzSDtsxMyph6J/oaxdBND18r/02cQALLIuuY=
+	t=1790083680; cv=none; b=nQdcL13DNSHDkJ0q/CYdSMY985+pickHjZfhFID0VSd6+Mia4OUHAjGw9eRnYXSYYJRfnw0vRrcvtO0/jBDK1v212BMMlvAjZgV6oPK5zt3+w0esXDrGpK9ZIzE1eEFQLuPfPZ/1nNU6RCsL0tpKg3q7tz7YYbS23zb01GycsxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790083585; c=relaxed/simple;
-	bh=pNUWb3AoyiA6Hpq0DJBXqdJOudtoWpufkHJ8/D9QsE4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JT3hOs5c/7joSOrWbTBhpFC1vkwVyHuLRQ9TaQOl5l761Ap2AV1+mDBdZ/oNyRbQ+OGH8uf7RVTeBERvyVZ9MLCo0U//EO8/ja10atQn/m3J62FFagn5S38gqnJPBjruiWjs2nOAq7ALVYAtbwWZxEhubqDn5SqXVbwX582ml58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhJLro2b; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790083680; c=relaxed/simple;
+	bh=abqRcD4yHLB6wUls+Xzj9VU2DZlA9k/BEzYoKuTLqXQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HSijnqVAZOJo8HiWs7SXXDqlnev2/5UgcWD3nsXDQac2kcZYUvS9tVCmOBzvwj2YcRq7wdtYAPjTGa836UQeuk9RshubVGbUp5keKLrd96ZKJjCTAMgtjTEdCK20rbjV8hE8I/vygpvaeTI1h+NpG7VqSowkOyWm5PGDuQ5unF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LB91+g2w; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhJLro2b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2FE1F000FF;
-	Tue, 22 Sep 2026 13:26:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LB91+g2w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9383D1F000FF;
+	Tue, 22 Sep 2026 13:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790083583;
-	bh=Kb+YLhKYpCsApgDZcUDNTHImbtvYDH1ik4YXht0NJLI=;
-	h=From:To:In-Reply-To:References:Subject:Date;
-	b=jhJLro2b6mK69X2varWmampkeELkD4GSqLwmD3cU1nf50bCZM0jTZnFKmieUCf/om
-	 8aPMmt0jvI98m/4k8J9VzMWSohaLIkPDaE1ggZ6qeYvNisvsxaSsqgGNt6JJUpKpMP
-	 8hOYBy32n2c5MBjzT5Cx36sBl1y1lfEBaStgQMRiWAEV5EDB7OZJ9Ejsfbwgg6Dy3A
-	 7xHVyo7igQBObKNUYJSJkq4dqvwR5Xa1ERxqNU3hGG+/TjWb4ZI5t3TS5MEsseIlyK
-	 nTmdaATNO458bqHSO0QLzqjk/Iz/DX3q5w8i4GPhdYTz7A1Pq2R7EMiuiQLI30N4HT
-	 yBuxyGeQr4ppA==
+	s=k20260515; t=1790083678;
+	bh=EHCOqLQwOkhJI7wulnrSM9E+jr3VgT/47K2IS/n6O4o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=LB91+g2wMttinQwMttXm79D5tXwiIGJAqAPbm5DHfoKV/RTVqvBOfm0Ymhd62r1Ym
+	 6s0ENUgdO3gR0/ZCCw+bpyakmp0t1aBiPgMcb9/8dBn4Fp6id9IYutIZEKr26Jb8X7
+	 ttES9AcSOdGRSWW2cz0igbTSTPeuRk8h0xUKxA3JM4iB+nxKyVO/2b3lsBNnXAZ1Qc
+	 Z6qqjJA6/77g35K58hUCKpqERSoqL99pbRq5oZpsBIX7pzd49Zmc7o+UtSf7Tp8vSb
+	 1PXjHZKwNvX/QmvVf9SjCCQnu5uTG6FHxcFF3FyA71J7RaNZU+UcKv+A9fQD5/ll9L
+	 VVBwWiSH1YvXw==
 From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, pavel@kernel.org, vicentiu.galanopulo@remote-tech.co.uk, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Manuel Fombuena <fombuena@outlook.com>
-In-Reply-To: <GV1PR08MB8497668D389D43F680D2CE3CC5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
-References: <GV1PR08MB8497668D389D43F680D2CE3CC5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
-Subject: Re: [PATCH v2 00/13] leds: st1202: Naming cleanups and
- pre-existing fixes
-Message-Id: <179008358207.3393151.6105937183709213100.b4-ty@b4>
-Date: Tue, 22 Sep 2026 14:26:22 +0100
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Dmitry Antipov <dmantipov@yandex.ru>
+Cc: linux-leds@vger.kernel.org, sashiko-bot@kernel.org
+In-Reply-To: <20260916161607.90106-1-dmantipov@yandex.ru>
+References: <20260916161607.90106-1-dmantipov@yandex.ru>
+Subject: Re: [PATCH v3 1/2] leds: flash: Prevent using uninitialized
+ variable in flash_fault_show()
+Message-Id: <179008367732.3394614.5392953024944922822.b4-ty@b4>
+Date: Tue, 22 Sep 2026 14:27:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,44 +46,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.16-dev-ad80c
 
-On Tue, 15 Sep 2026 13:40:05 +0100, Manuel Fombuena wrote:
-> This series collects the issues identified during review of the two
-> previous ST1202 submissions, the pattern engine fix series and the
-> hardware-accelerated blink support:
+On Wed, 16 Sep 2026 19:16:06 +0300, Dmitry Antipov wrote:
+> In flash_fault_show(), address of uninitialized 'fault' variable is
+> passed to device-specific .fault_get callbacks. This is not a problem
+> if such a callback directly assigns the value like rt4505_fault_get(),
+> but results in an undefined behavior if callback just performs bitwise
+> ORs like as3645a_get_fault(). So just initialize 'fault' with zero.
 > 
-> https://lore.kernel.org/all/GV1PR08MB8497C0B898789BB73ACE6EE3C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com/
-> https://lore.kernel.org/all/GV1PR08MB84974C7ACD911E66864C5008C5DA2@GV1PR08MB8497.eurprd08.prod.outlook.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[01/13] leds: st1202: Correct the name of the prescaler conversion helper
-        commit: 226f32543668960673596288a50191052dba3352
-[02/13] leds: st1202: Spell out the phase-shift configuration bit
-        commit: 7520fc78c52ea55c2c83d0ecc11ab2355a753b7f
-[03/13] leds: st1202: Name pattern index variables consistently
-        commit: 0aed225f40613253617ad30a57492043a3448938
-[04/13] leds: st1202: Use u8 consistently for 8-bit values
-        commit: 38f98583bcac95a65774b73cbcc56280a71f5612
-[05/13] leds: st1202: Clear unused pattern slots in pattern_set()
-        commit: 119a7d375e5caedaf252198fa64e7df5d7269ab4
-[06/13] leds: st1202: Scale pattern brightness to the 12-bit PWM range
-        commit: 82f8b88d6ac2edf01651bbd84e03ede04b2ca80e
-[07/13] leds: st1202: Program the channel current for hardware patterns
-        commit: 878eec1475e77ad22059584bc617b6e671a536d9
-[08/13] leds: st1202: Take a reference on the LED firmware node
-        commit: 5882de94edf7a53812a76a882a95e1e86d7105d9
-[09/13] leds: st1202: Do not set brightness from atomic context
-        commit: 1ec35fa181981b4b9581b3dae967bac7ed82c89c
-[10/13] leds: st1202: Clear unused pattern slots in blink_set()
-        commit: 3268b9e91db16f240ffe07ff6caf963ba8191ce8
-[11/13] leds: st1202: Honour max_brightness when blinking
-        commit: 865d81a98602c828515fa6ac3c530efc4205f9f6
-[12/13] leds: st1202: Cap the channel current in st1202_led_set()
-        commit: ca81ea108502817e3841e98f0d3651398d9e1bd9
-[13/13] leds: st1202: Give the channel current ceiling a single helper
-        commit: e264a106d8fc45fd82891cb0c4f8bd9e2c48c152
+[1/2] leds: flash: Prevent using uninitialized variable in flash_fault_show()
+      commit: d229695f2162a41bfa614f175798fa56a5f1c969
+[2/2] leds: flash: Simplify flash_fault_show()
+      commit: b18158f705dcff53f76f37733dea5154f1b32444
 
 --
 Lee Jones [李琼斯]
