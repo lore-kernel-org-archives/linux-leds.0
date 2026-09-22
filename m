@@ -1,353 +1,339 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1B4DEC07
-	for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 09:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0413A4F3910;
+	Tue, 22 Sep 2026 10:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790070772; cv=none; b=eMvcfkX8qH3Ez6FwexCMO3GKdj9JyjjPExVlSIu3UnG5I60fTGE8gLXSJ/03euofbB22+zOBwi7/EWnestnzSCrUxQ1kLwe6SPxFfJs7NKW/hyLO+IdAx+I4lHx8+6eiT9aFpduc2hjzVdlelMLvt35crAaV3+p8wfo9HmT6jWM=
+	t=1790073153; cv=none; b=P//TrPA5Ia44AbdVzXkGCVxAsII1xc8mkecu+ZmrIZ+6N43ZRlKgd31M3ZrkWbDwdSHS5iI7TOZHBcRs+oQ8ILSUID5gRYq204CEMipttP1AjII6KVe/L03serE2danni9/+O7Ysg3/XSM4/pgpHZO578EhfmdAttbROoyl7fpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790070772; c=relaxed/simple;
-	bh=/hyB+hEw6RLudRjQ7dI1d4NFysBDKsw1sQJA+/qf+iA=;
+	s=arc-20240116; t=1790073153; c=relaxed/simple;
+	bh=3wihw53mvV9xSKP4qNXhX2ITmWd3i4U+AEJGswnXnyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHbj1dqvMepa6j3D3E9pUvTMvFtt/L/eJsRghgva/bwlJchYAk4kF9QPM5PpYTVZ75X/2AAK5aWuN9s8vsHwGf6kGbClzyQUb+mIJ1nQ+onW5DXJPg11inuEKX6ilcyD9JCoRBdBeAliYCmPwh2BsEjPOyXkN+gvXCVcBFjf8FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b=UbU7CoLf; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bnl+Cdp8LzsE3ViOBTDxaWZSCtNAqCnyZW6fDpYexbBAfNJnn1jP7SZVxDBkVmyk6W6gDF2iSHyxh08EQdyyptHnuQ6/3KmcvFSBa7ijLsghD64DPKPK9mbzp5optX21+Vt324YACDKXy/O97RlJPoaSZ0o7x6kN2xixBriUhpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4jBiKun; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b="UbU7CoLf"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49d097b4939so20915035e9.0
-        for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 02:52:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20251104.gappssmtp.com; s=20251104; t=1790070768; x=1790675568; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=QYbygSoXTPt7jaWPgoihIOPAkjKBdxHc4l1yrHc4AGQ=;
-        b=UbU7CoLfLA/KildSyTRxEZBDk5ouIV5wcTT9FwSAVXX8IztropXtW1B9tVhPOnvuDZ
-         vFXmRhh3nCtiSGXIfhRbM1IfCHFksGd16/TQWuamEwysvpbtDXAouWp3f3T+OQMWV8zv
-         69/gXuQV4zk/6RRYvJbtHDq99YWgX7WplJUvOnpz5o0Vxf2gHJnI146KvWlx3w/mG8p/
-         8lOCdfWMGH1kq2abyoeVe6OMV/AHqxEHBiVp8lyzWHj+9/tTK1tykmdHCa3vs5fVY1rm
-         VoVgspEI1ogbm6jhKX3gm1axLHQ3goZHo3FI4UuVNbvDOqbBUbZb6V28XFZMLChN5ohE
-         AAfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790070768; x=1790675568;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=QYbygSoXTPt7jaWPgoihIOPAkjKBdxHc4l1yrHc4AGQ=;
-        b=21r1RitqeDc2Pfz4TNzR6GBroy4n+HiK0hKp7tlYgPa0jlT8ZQyFA4shQhnWXAy7XI
-         O3ew0sak1UCQhp/Qy7U31OUxtVjJvkSWoAIph4SN4rr7LIM4O3XA2973aydw6zEoZz82
-         UD20lnQHHrPkuLXSkmoZdTXOwwWB6wyLzTDdrJVVBCbpF1HUIGboUoRb5W3+XVQKFXGc
-         xDlfD+uFI/I2X1zRiZz687/o3OD6e+JxV9kW+zhLKXnh4vwfSjybJF8ApG64aI/JCkr9
-         YOczoQF6YnOYXL5qd9jjfVi/QNuiBVykZWDm4Md3ImqrSjuW2+eZmYNuEANTczbtHDT9
-         8RZw==
-X-Forwarded-Encrypted: i=1; AKwUvByhuLopkMmzVNliYZtAkYnkQaK/EJ2riA6ndut+KqQ0BthmVfgTqcDwRGJ+5I5wKStBMQeKoNv67ALy@vger.kernel.org
-X-Gm-Message-State: AFuF++kr47jjaosv7gRSru1d3X8HJZDc3K5QbT0ZoOZQcILzLbJQrwaq
-	1WYYlwJqDzUvddVQL1YD8Kx2YT1bW3PTuNxLiM5V6n1FeN+yJOeykEL0FTZZ0qn/Jpk=
-X-Gm-Gg: AYBFou2xueLL6Yj4TD81u+68NFMjMD3gyRo6qxTj/GxWRKWCksTD4llKozt4bdyYeSx
-	eqf+g8hMxqAo/Zkg1cUz4N6zYpl+sBzSzcwlnDvuezqEtD2P0KiQ8Ytdxp5TY0MQn5y26FtYwZ/
-	TUK8gBJHcHAzDbblKNu5AA2a5WkPvf+tUumCmurZRQaZG1q/rqWN1ovK/QVmlAKEd6oZBFGrC/8
-	CM7pd/K01lHZYyhlLtlw8EzK9tprwfiU6bKSMdqBlKL8eZtT8xVNlV9LhRTwbTl0/vGDhS9GW4M
-	d0DylCe5tB+bo5Z11tBYP2rnKm75kc3FcMRDjiVgtTbpktbJFyGzAU6oVFk9dwtvjOijViYA/Xy
-	SqLcmgd+wMeTSnJNl0ChuoiopEV4KYThg51C7+rgniLlo3Xr9EmsNZfXYuCH/feBZj9xpuA9mUC
-	n+FU2hU/EYXtGi5Hb2g2kplBSUcstYfMDgeXJerWQaxAM9tmseJCZRwMKvsqOZxqgNEng5EkAYw
-	iu0Sbp91cOCQzO+2swYoxsdIrHFcHq3wxYHs4umLk3rTFPdHfDxiw1EWS/ahpG+V5TTDoZ5E0KM
-	Yygyz2QOOpn3W6k0A1Hy3Nf/M7LVEV4UHhSpSpYVLWZvMtHRZsHfeIq+gmE=
-X-Received: by 2002:a05:600c:46cf:b0:49c:de80:b833 with SMTP id 5b1f17b1804b1-49fc5687b6cmr202804085e9.2.1790070767607;
-        Tue, 22 Sep 2026 02:52:47 -0700 (PDT)
-Received: from aspen.lan (aztw-33-b2-v4wan-169864-cust3247.vm26.cable.virginm.net. [92.239.204.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fdaa9dbd6sm42235115e9.2.2026.09.22.02.52.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 02:52:46 -0700 (PDT)
-Date: Tue, 22 Sep 2026 10:52:44 +0100
-From: Daniel Thompson <daniel@riscstar.com>
-To: kavakliyigitcan@gmail.com
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH RFC 02/10] backlight: add Kinetic KTD3136 driver
-Message-ID: <arJP7AMM5DqNoc8e@aspen.lan>
-References: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
- <20260911-ginkgo-submission-final-v1-2-0e68e63a18d4@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4jBiKun"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41B8E1F000FF;
+	Tue, 22 Sep 2026 10:32:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790073151;
+	bh=TrJCmrObzSEJi7DC2sVoycOuekBqjj3yhMcHjE+0ZTM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=L4jBiKunYYt8Z4gcHfSrkzoh+lR/pgsTD71c8ZxJ2LJBT2tkwVH+UQ/7A4pG+i7ET
+	 diSp8/LBHJ5obnJ+5YRxIOd3A+fvVMKVfUakos/4FvWDf/YY9dNS9l5/vL5FwnNUel
+	 Qfugx6r8hVLqpSiokWwYr7MRGaWT+3RaULdfLOKNO1HwWI61mpNS99Hv9zq+Yav8cS
+	 kDot+rONGlutBmkU3OiDFIll87AjHI0jVXZGDf8CkuSn98xTiOp5uvpaOGVHZU5J7Z
+	 ZdYBbegRHMAWXrd9IC950iFOJ5JPYRbCrPn7w00eh/LQlL7ANejgCk29PJMdFRFwlV
+	 kuFI+7R2RaYSg==
+Date: Tue, 22 Sep 2026 11:32:24 +0100
+From: Lee Jones <lee@kernel.org>
+To: Rong Zhang <i@rong.moe>
+Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Ike Panhc <ikepanhc@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Vishnu Sankar <vishnuocv@gmail.com>,
+	Vishnu Sankar <vsankar@lenovo.com>, linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v6 04/12] leds: trigger: Add offloaded() callback and
+ provide trigger_may_offload attribute
+Message-ID: <20260922103224.GD2730113@google.com>
+References: <20260902-leds-trigger-hw-changed-v6-0-55693cd78877@rong.moe>
+ <20260902-leds-trigger-hw-changed-v6-4-55693cd78877@rong.moe>
+ <20260910150535.GG1051768@google.com>
+ <cdecf33094742331552a4b86d43673cdf1590bf2.camel@rong.moe>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260911-ginkgo-submission-final-v1-2-0e68e63a18d4@gmail.com>
+In-Reply-To: <cdecf33094742331552a4b86d43673cdf1590bf2.camel@rong.moe>
 
-On Fri, Sep 11, 2026 at 11:50:59AM +0300, YİĞİTCAN KAVAKLI via B4 Relay wrote:
->  obj-$(CONFIG_BACKLIGHT_LM3630A)		+= lm3630a_bl.o
-> diff --git a/drivers/video/backlight/ktd3136-backlight.c b/drivers/video/backlight/ktd3136-backlight.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a8ebe3b23c99f3ada9f45c60688f8b8c78d72def
-> --- /dev/null
-> +++ b/drivers/video/backlight/ktd3136-backlight.c
-> @@ -0,0 +1,262 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Kinetic Technologies KTD3136 3-Channel LED Backlight Driver
-> + *
-> + * Copyright (C) 2026
-> + */
-> +
-> +#include <linux/backlight.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/property.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +#define KTD3136_REG_DEV_ID		0x00
-> +#define KTD3136_REG_SW_RESET		0x01
-> +#define KTD3136_REG_MODE		0x02
-> +#define KTD3136_REG_CONTROL		0x03
-> +#define KTD3136_REG_RATIO_LSB		0x04
-> +#define KTD3136_REG_RATIO_MSB		0x05
-> +#define KTD3136_REG_PWM			0x06
-> +#define KTD3136_REG_STATUS		0x0A
-> +
-> +#define KTD3136_DEV_ID_VAL		0x18
-> +#define KTD3136_DEV_ID_VAL2		0x19
-> +
-> +#define KTD3136_MODE_ON			0xC9	/* Boost ON, 3 channels enabled */
-> +#define KTD3136_MODE_STANDBY		0x98	/* Standby mode */
-> +#define KTD3136_CONTROL_LINEAR		0x02	/* Linear dimming mapping */
-> +#define KTD3136_PWM_DEFAULT		0x1B	/* Default PWM/boost frequency */
-> +
-> +#define KTD3136_DEFAULT_MAX_BRIGHTNESS	2047	/* 11-bit resolution */
-> +#define KTD3136_DEFAULT_BRIGHTNESS	2047
-> +
-> +struct ktd3136_data {
-> +	struct i2c_client *client;
-> +	struct backlight_device *bd;
-> +	struct gpio_desc *enable_gpio;
-> +	struct regulator *vin;
-> +	/* Protects chip registers and state */
-> +	struct mutex lock;
-> +	bool is_enabled;
-> +};
-> +
-> +static int ktd3136_write(struct ktd3136_data *chip, u8 reg, u8 val)
-> +{
-> +	int ret;
-> +
-> +	ret = i2c_smbus_write_byte_data(chip->client, reg, val);
-> +	if (ret < 0)
-> +		dev_err(&chip->client->dev, "failed to write reg 0x%02x: %d\n", reg, ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ktd3136_read(struct ktd3136_data *chip, u8 reg)
-> +{
-> +	int ret;
-> +
-> +	ret = i2c_smbus_read_byte_data(chip->client, reg);
-> +	if (ret < 0)
-> +		dev_err(&chip->client->dev, "failed to read reg 0x%02x: %d\n", reg, ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ktd3136_power_on(struct ktd3136_data *chip)
-> +{
-> +	int ret;
-> +
-> +	if (chip->is_enabled)
-> +		return 0;
-> +
-> +	if (chip->enable_gpio) {
-> +		gpiod_set_value_cansleep(chip->enable_gpio, 1);
-> +		/* Allow oscillator and internal logic to stabilize */
-> +		usleep_range(2000, 3000);
-> +	}
-> +
-> +	ret = ktd3136_write(chip, KTD3136_REG_CONTROL, KTD3136_CONTROL_LINEAR);
-> +	if (ret < 0)
-> +		goto err_off;
-> +
-> +	ret = ktd3136_write(chip, KTD3136_REG_PWM, KTD3136_PWM_DEFAULT);
-> +	if (ret < 0)
-> +		goto err_off;
-> +
-> +	chip->is_enabled = true;
-> +	return 0;
-> +
-> +err_off:
-> +	if (chip->enable_gpio)
-> +		gpiod_set_value_cansleep(chip->enable_gpio, 0);
-> +	return ret;
-> +}
-> +
-> +static void ktd3136_power_off(struct ktd3136_data *chip)
-> +{
-> +	if (!chip->is_enabled)
-> +		return;
-> +
-> +	ktd3136_write(chip, KTD3136_REG_MODE, KTD3136_MODE_STANDBY);
-> +
-> +	if (chip->enable_gpio)
-> +		gpiod_set_value_cansleep(chip->enable_gpio, 0);
+On Fri, 11 Sep 2026, Rong Zhang wrote:
 
-Why does this powering off leave the regulator active?
+> Hi Lee,
+> 
+> Thanks for your review.
+> 
+> On Thu, 2026-09-10 at 16:05 +0100, Lee Jones wrote:
+> > On Wed, 02 Sep 2026, Rong Zhang wrote:
+> > 
+> > > There are multiple triggers implementing hardware control. However, the
+> > > LED trigger core doesn't really know the hardware control (offloaded)
+> > > state since the coordination is done directly between the trigger and
+> > > the LED driver. It can only assume private triggers as offloaded and
+> > > generic ones as not offloaded.
+> > > 
+> > > Add an offloaded() callback so that triggers can report their offloaded
+> > > states to the LED trigger core. When unimplemented, it defaults to true
+> > > for private triggers and false for generic ones to keep the current
+> > > behavior unchanged.
+> > > 
+> > > With that, provide a new attribute "trigger_may_offload", so that
+> > > userspace can determine:
+> > > 
+> > > - if the LED device supports hardware control (supported => visible)
+> > > - which trigger is the hardware control trigger selected by the LED
+> > >   device
+> > > - if the trigger is selected ("<foo_trigger>")
+> > > - if the trigger is offloaded ("[foo_trigger]")
+> > > 
+> > > Note: the documentation describes the attribute as "returning a list"
+> > > despite the LED core currently only supports one hardware control
+> > > trigger per LED device. This is intentional to make the attribute
+> > > extensible in the future without breaking userspace.
+> > > 
+> > > Acked-by: Ike Panhc <ikepanhc@gmail.com>
+> > > Signed-off-by: Rong Zhang <i@rong.moe>
+> > > ---
+> > > Changes in v6:
+> > > - Update Date: and KernelVersion: for the document of
+> > >   /sys/class/leds/<led>/trigger_may_offload
+> > > 
+> > > Changes in v3:
+> > > - Rearrange the series so that the code using the offloaded() callback is
+> > >   introduced before the driver implementation (thanks Thomas Wei�schuh)
+> > > - Reword documentation (ditto)
+> > > - Adopt guard() and lockdep (ditto)
+> > > - Adopt __led_trigger_is_hw_controlled() from newly-integrated PATCH 1
+> > > ---
+> > >  Documentation/ABI/testing/sysfs-class-led | 22 ++++++++++++++++++++++
+> > >  Documentation/leds/leds-class.rst         | 20 ++++++++++++++++++++
+> > >  drivers/leds/led-class.c                  | 22 ++++++++++++++++++++++
+> > >  drivers/leds/led-triggers.c               | 30 ++++++++++++++++++++++++++++++
+> > >  drivers/leds/leds.h                       |  2 ++
+> > >  include/linux/leds.h                      |  1 +
+> > >  6 files changed, 97 insertions(+)
+> > > 
+> > > diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+> > > index d4c918cc11a1..e3605fc55fa8 100644
+> > > --- a/Documentation/ABI/testing/sysfs-class-led
+> > > +++ b/Documentation/ABI/testing/sysfs-class-led
+> > > @@ -78,6 +78,28 @@ Description:
+> > >  		(which would often be configured in the device tree for the
+> > >  		hardware).
+> > >  
+> > > +What:		/sys/class/leds/<led>/trigger_may_offload
+> > 
+> > *_to_hw?
+> 
+> ACK.
+> 
+> > 
+> > > +Date:		September 2026
+> > > +KernelVersion:	7.4
+> > > +Contact:	linux-leds@vger.kernel.org
+> > > +Description:
+> > > +		Names and states of triggers that may be offloaded to hardware.
+> > > +		Such triggers are also called "hardware control trigger" in some
+> > > +		context.
+> > > +
+> > > +		Only exists when the LED supports trigger offload.
+> > > +
+> > > +		Reading this file returns a list of triggers that are capable to
+> > > +		be offloaded. The optional brackets around the trigger name
+> > > +		indicate the state of the current trigger:
+> > > +
+> > > +		- `foo_trigger`: the trigger is not selected.
+> > > +		- `<foo_trigger>`: the trigger is selected, but falls back to
+> > > +		  software blink for some reason (e.g., incompatible trigger
+> > > +		  parameters)
+> > > +		- `[foo_trigger]`: the trigger is selected and offloaded to
+> > > +		  hardware.
+> > > +
+> > >  What:		/sys/class/leds/<led>/inverted
+> > >  Date:		January 2011
+> > >  KernelVersion:	2.6.38
+> > > diff --git a/Documentation/leds/leds-class.rst b/Documentation/leds/leds-class.rst
+> > > index 3913966cfdac..2d41a6db602c 100644
+> > > --- a/Documentation/leds/leds-class.rst
+> > > +++ b/Documentation/leds/leds-class.rst
+> > > @@ -242,6 +242,9 @@ ops and needs to declare specific support for the supported triggers.
+> > >  
+> > >  With hw control we refer to the LED driven by hardware.
+> > >  
+> > > +A sysfs attribute `trigger_may_offload` is provided for userspace to
+> > > +query supported triggers and their states.
+> > > +
+> > >  LED driver must define the following value to support hw control:
+> > >  
+> > >      - hw_control_trigger:
+> > > @@ -298,6 +301,15 @@ LED driver must implement the following API to support hw control:
+> > >                  Returns a pointer to a struct device or NULL if nothing
+> > >                  is currently attached.
+> > >  
+> > > +LED trigger should implement the following API to indicate hw control:
+> > > +    - offloaded:
+> > 
+> > hw_offloaded?
+> 
+> ACK.
+> 
+> > 
+> > > +                return a boolean indicating if the trigger is currently
+> > > +                offloaded to hardware.
+> > > +
+> > > +                If a trigger doesn't implement this callback, the default
+> > > +                value will be true for private triggers and false for generic
+> > > +                ones.
+> > > +
+> > >  LED driver can activate additional modes by default to workaround the
+> > >  impossibility of supporting each different mode on the supported trigger.
+> > >  Examples are hardcoding the blink speed to a set interval, enable special
+> > > @@ -311,6 +323,14 @@ the end use hw_control_set to activate hw control.
+> > >  A trigger can use hw_control_get to check if a LED is already in hw control
+> > >  and init their flags.
+> > >  
+> > > +Alternatively, a private trigger can be implemented along with the LED driver if
+> > > +the LED's hardware control doesn't fit any generic trigger. To associate the
+> > > +private trigger with the LED classdev, their `trigger_type` must be the same. To
+> > > +declare that the private trigger provides hardware control for the associated
+> > > +LED classdev, set the `hw_control_trigger` string to the trigger's name. Since
+> > > +both the LED classdev and the private trigger are in the same LED driver, it's
+> > > +not necessary for them to coordinate via `hw_control_*` callbacks.
+> > > +
+> > >  When the LED is in hw control, no software blink is possible and doing so
+> > >  will effectively disable hw control.
+> > >  
+> > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> > > index 39cc2f3ea63f..7e571bd1de5b 100644
+> > > --- a/drivers/leds/led-class.c
+> > > +++ b/drivers/leds/led-class.c
+> > > @@ -96,8 +96,30 @@ static const struct bin_attribute *const led_trigger_bin_attrs[] = {
+> > >  	&bin_attr_trigger,
+> > >  	NULL,
+> > >  };
+> > > +
+> > > +static DEVICE_ATTR_RO(trigger_may_offload);
+> > > +static struct attribute *led_trigger_attrs[] = {
+> > > +	&dev_attr_trigger_may_offload.attr,
+> > > +	NULL
+> > > +};
+> > > +
+> > > +static umode_t led_trigger_is_visible(struct kobject *kobj,
+> > 
+> > Why doesn't all of this live in the triggers file as well?
+> 
+> The current revision only exports trigger_may_offload() to coordinate the
+> two files (led-class.c and led-trigger.c).
+> 
+> If we had to move led_trigger_is_visible() into led-triggers.c, the
+> trigger_may_offload and led_trigger_attrs must be moved as well. Due to
+> the movement, we would have to export led_trigger_attrs and
+> led_trigger_is_visible() to fill led_trigger_group.
+> 
+> in short, moving led_trigger_is_visible() requires exporting more
+> symbols.
+> 
+> To make things tidier, how about moving led_trigger_group and
+> led_trigger_bin_attrs into led-triggers.c as well? In this manner we only
+> need to export led_trigger_group, and the #ifdef block here is
+> eliminated. What do you think?
 
+Sounds sensible.
 
-> +
-> +	chip->is_enabled = false;
-> +}
-> +
-> +static int ktd3136_update_status(struct backlight_device *bd)
-> +{
-> +	struct ktd3136_data *chip = bl_get_data(bd);
-> +	int brightness = backlight_get_brightness(bd);
-> +	int ret = 0;
-> +	u8 lsb, msb;
-> +
-> +	mutex_lock(&chip->lock);
-> +
-> +	if (backlight_is_blank(bd) || brightness == 0) {
-> +		ktd3136_power_off(chip);
-> +		goto out;
-> +	}
-> +
-> +	ret = ktd3136_power_on(chip);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	lsb = brightness & 0x07;
-> +	msb = (brightness >> 3) & 0xFF;
-> +
-> +	ret = ktd3136_write(chip, KTD3136_REG_RATIO_LSB, lsb);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = ktd3136_write(chip, KTD3136_REG_RATIO_MSB, msb);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = ktd3136_write(chip, KTD3136_REG_MODE, KTD3136_MODE_ON);
-> +
-> +out:
-> +	mutex_unlock(&chip->lock);
-> +	return ret;
-> +}
-> +
-> +static const struct backlight_ops ktd3136_backlight_ops = {
-> +	.options = BL_CORE_SUSPENDRESUME,
-> +	.update_status = ktd3136_update_status,
-> +};
-> +
-> +static int ktd3136_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct backlight_properties props;
-> +	struct ktd3136_data *chip;
-> +	int ret, val;
-> +	u32 def_brightness = KTD3136_DEFAULT_BRIGHTNESS;
-> +	u32 max_brightness = KTD3136_DEFAULT_MAX_BRIGHTNESS;
-> +
-> +	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> +	if (!chip)
-> +		return -ENOMEM;
-> +
-> +	chip->client = client;
-> +	mutex_init(&chip->lock);
-> +
-> +	chip->vin = devm_regulator_get_optional(dev, "vin");
-> +	if (IS_ERR(chip->vin)) {
-> +		ret = PTR_ERR(chip->vin);
-> +		if (ret != -ENODEV)
-> +			return dev_err_probe(dev, ret, "Failed to get vin regulator\n");
-> +		chip->vin = NULL;
-> +	}
-> +
-> +	if (chip->vin) {
-> +		ret = regulator_enable(chip->vin);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "Failed to enable vin regulator\n");
-> +	}
+> > 
+> > > +				      struct attribute *attr,
+> > > +				      int idx)
+> > > +{
+> > > +	struct device *dev = kobj_to_dev(kobj);
+> > > +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> > > +
+> > > +	if (attr == &dev_attr_trigger_may_offload.attr)
+> > > +		return led_cdev->hw_control_trigger ? attr->mode : 0;
+> > > +
+> > > +	return attr->mode;
+> > > +}
+> > > +
+> > >  static const struct attribute_group led_trigger_group = {
+> > >  	.bin_attrs = led_trigger_bin_attrs,
+> > > +	.attrs = led_trigger_attrs,
+> > > +	.is_visible = led_trigger_is_visible,
+> > >  };
+> > >  #endif
+> > >  
+> > > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
+> > > index 804a04b326c4..de17a8bbb4d4 100644
+> > > --- a/drivers/leds/led-triggers.c
+> > > +++ b/drivers/leds/led-triggers.c
+> > > @@ -42,6 +42,10 @@ static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
+> > >  	if (!led_cdev->trigger)
+> > >  		return false;
+> > >  
+> > > +	if (led_cdev->trigger->offloaded)
+> > > +		return led_cdev->trigger->offloaded(led_cdev);
+> > > +
+> > > +	/* Otherwise assume private triggers as always offloaded. */
+> > 
+> > s/as/are/
+> 
+> ACK.
+> 
+> > 
+> > >  	return led_cdev->trigger->trigger_type;
+> > >  }
+> > >  
+> > > @@ -341,6 +345,32 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(led_trigger_set_default);
+> > >  
+> > > +ssize_t trigger_may_offload_show(struct device *dev,
+> > > +				 struct device_attribute *attr, char *buf)
+> > > +{
+> > > +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> > > +	struct led_trigger *trig;
+> > > +	bool hit, offloaded;
+> > > +	int len;
+> > > +
+> > > +	guard(mutex)(&led_cdev->led_access);
+> > > +	guard(rwsem_read)(&led_cdev->trigger_lock);
+> > > +
+> > > +	trig = led_cdev->trigger;
+> > > +
+> > > +	offloaded = __led_trigger_is_hw_controlled(led_cdev);
+> > > +	hit = offloaded || (trig && !strcmp(led_cdev->hw_control_trigger, trig->name));
+> > > +
+> > > +	/* [offloaded] <active_but_not_offloaded> inactive */
+> > 
+> > Why do they have to live in different 'containers'?
+> 
+> The comment might be somewhat misleading...
+> 
+> An LED device can never have an offloaded trigger and an active-but-not-
+> offloaded trigger at the same time. The comment just demonstrates how the
+> output might look like.
+> 
+> The output is multiplexed to help userspace determine two things in one
+> read:
+> 
+> - The name of the LED device's hardware control trigger
+> - The state of the said trigger
+> 
+> That being said, if the complexity is undesired, it's OK to convert the
+> attribute into a dumb one that only returns the plain name of the
+> hardware control trigger. In this manner we will need to provide an
+> additional attribute to expose the offloaded state. This can be achieved
+> by adopting the attribute "offloaded" from netdev into led-triggers.c.
+> What do you think?
 
-Why is the regulator managed here rather than in the power_on/off functions?
+My job is just to make you think about the problem.  I have no strong
+opinion one way or the other.  You are currently the expert of the code
+you are engineering.  What do YOU think?
 
-Also, you need to keep track of the regulator state. You must "put" the
-regulator before allowing devm to clean it up (handling the regulator
-state in power_on/off would solve this).
-
-
-> +
-> +	chip->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(chip->enable_gpio))
-> +		return dev_err_probe(dev, PTR_ERR(chip->enable_gpio),
-> +				     "Failed to get enable GPIO\n");
-> +
-> +	if (chip->enable_gpio)
-> +		usleep_range(2000, 3000);
-> +
-> +	val = ktd3136_read(chip, KTD3136_REG_DEV_ID);
-> +	if (val < 0)
-> +		return dev_err_probe(dev, val, "Failed to read device ID\n");
-> +
-> +	if (val != KTD3136_DEV_ID_VAL && val != KTD3136_DEV_ID_VAL2) {
-> +		dev_err(dev, "Unknown device ID: 0x%02x\n", val);
-> +		return -ENODEV;
-> +	}
-> +
-> +	dev_info(dev, "Kinetic KTD3136 detected (ID: 0x%02x)\n", val);
-
-Remove this. Happy noises are still noise!
-
-
-> +
-> +	device_property_read_u32(dev, "max-brightness", &max_brightness);
-> +	if (max_brightness > KTD3136_DEFAULT_MAX_BRIGHTNESS)
-> +		max_brightness = KTD3136_DEFAULT_MAX_BRIGHTNESS;
-> +
-> +	device_property_read_u32(dev, "default-brightness", &def_brightness);
-> +	if (def_brightness > max_brightness)
-> +		def_brightness = max_brightness;
-> +
-> +	memset(&props, 0, sizeof(props));
-> +	props.type = BACKLIGHT_RAW;
-> +	props.max_brightness = max_brightness;
-> +	props.brightness = def_brightness;
-
-The scale property needs to be set here.
-
-
-Daniel.
+-- 
+Lee Jones
