@@ -1,42 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF465448A9;
-	Tue, 22 Sep 2026 12:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6535437CC;
+	Tue, 22 Sep 2026 13:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790081339; cv=none; b=uWHsE/DP7NBqTp/nKQ6qvTfDllz0E2orWMg8xhGtBVh5i2jwZZPWpiQ48/4C1ZKcVVdmiR9qpaFirUzk/7k6aFW/1tTnX1/RkkMwCR9M0MGoIKjIThuANmk5+SlW/AblGQMEtAxz6PaUsgSCA9/U/p2Kcg5dcixWapJD9+/QuZI=
+	t=1790083585; cv=none; b=qmvinxJgqyCV+Sdt3jB1iW4LqhG4Bfrbwhp0yw7VMt8iqJGRI/yU4CWW91vttVN8GGMYMfixE6lkDY0baJkFXUSa0TRcDXkgjrFWBMg55r8P+S8vZGgmwTbGEsaszoc7N/gHJF+YzSDtsxMyph6J/oaxdBND18r/02cQALLIuuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790081339; c=relaxed/simple;
-	bh=Xs3QJe6AvSQ5xFSMnybhKuhHTPuy85RZzZK/vNwSMCk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ItuX5XAJHW7ZhEo+ZmjLYWlqc7HDOjSTSZg/vK7C/QFpzC/YPPIl+2MGtySa4KgFKmYTkHKbteaYLTyozUDIjAFFnEUMtsDsad+OAos3VuD7veoNqTtAT7dh3QXVttrFjTxN3mp7w3ITGH5idBWTPOPR7Rw+qgZX73X7TTLLi+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tg8LO1ZN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790083585; c=relaxed/simple;
+	bh=pNUWb3AoyiA6Hpq0DJBXqdJOudtoWpufkHJ8/D9QsE4=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JT3hOs5c/7joSOrWbTBhpFC1vkwVyHuLRQ9TaQOl5l761Ap2AV1+mDBdZ/oNyRbQ+OGH8uf7RVTeBERvyVZ9MLCo0U//EO8/ja10atQn/m3J62FFagn5S38gqnJPBjruiWjs2nOAq7ALVYAtbwWZxEhubqDn5SqXVbwX582ml58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhJLro2b; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tg8LO1ZN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA771F000FF;
-	Tue, 22 Sep 2026 12:48:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhJLro2b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2FE1F000FF;
+	Tue, 22 Sep 2026 13:26:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790081338;
-	bh=8HMXROPoH1MYGiWp6U4SQQZJHZlI8uIZzwm5UnKfRqc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Tg8LO1ZNrFa8PlBvoDA+AjPyHUyX7pDlWorWSoXl22KMliKzPTV1U/ymxSCf+9ZaD
-	 XcmorF2xgMUSqYp0uBRwSHbbWDQ9UNUheS9qHEWqNReHJO3cJCdk8pA1m+5J/foevz
-	 2kVsE6f2c2WhWGcH2Zi+Hfnh9LWE6iH9mfTwt9f2jgIwiZ/4x01HIKy7t3OnkwvYOM
-	 Aq7Es5tHjAiWlRPQmU7WSl7HlJAdtA5dfaQS3nTVycRnz+a2bxYWSe32FJv36MWXBi
-	 KgAK/aBU3lG8fptJxppKM3wwtUaulqv+kM/msIvtjpmKYb8bFcgaC1VykOLfm9hmTl
-	 GAdBtfaEmChqQ==
+	s=k20260515; t=1790083583;
+	bh=Kb+YLhKYpCsApgDZcUDNTHImbtvYDH1ik4YXht0NJLI=;
+	h=From:To:In-Reply-To:References:Subject:Date;
+	b=jhJLro2b6mK69X2varWmampkeELkD4GSqLwmD3cU1nf50bCZM0jTZnFKmieUCf/om
+	 8aPMmt0jvI98m/4k8J9VzMWSohaLIkPDaE1ggZ6qeYvNisvsxaSsqgGNt6JJUpKpMP
+	 8hOYBy32n2c5MBjzT5Cx36sBl1y1lfEBaStgQMRiWAEV5EDB7OZJ9Ejsfbwgg6Dy3A
+	 7xHVyo7igQBObKNUYJSJkq4dqvwR5Xa1ERxqNU3hGG+/TjWb4ZI5t3TS5MEsseIlyK
+	 nTmdaATNO458bqHSO0QLzqjk/Iz/DX3q5w8i4GPhdYTz7A1Pq2R7EMiuiQLI30N4HT
+	 yBuxyGeQr4ppA==
 From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Cong Nguyen <congnt264@gmail.com>
-Cc: Pavel Machek <pavel@kernel.org>, 
- =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260915034515.4147981-1-congnt264@gmail.com>
-References: <20260915034515.4147981-1-congnt264@gmail.com>
-Subject: Re: (subset) [PATCH] leds: lm3692x: fix regulator/gpio leak and
- wrong enabled state on last write failure
-Message-Id: <179008133700.3371251.10815954067400483074.b4-ty@b4>
-Date: Tue, 22 Sep 2026 13:48:57 +0100
+To: lee@kernel.org, pavel@kernel.org, vicentiu.galanopulo@remote-tech.co.uk, 
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Manuel Fombuena <fombuena@outlook.com>
+In-Reply-To: <GV1PR08MB8497668D389D43F680D2CE3CC5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+References: <GV1PR08MB8497668D389D43F680D2CE3CC5BA2@GV1PR08MB8497.eurprd08.prod.outlook.com>
+Subject: Re: [PATCH v2 00/13] leds: st1202: Naming cleanups and
+ pre-existing fixes
+Message-Id: <179008358207.3393151.6105937183709213100.b4-ty@b4>
+Date: Tue, 22 Sep 2026 14:26:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,22 +46,44 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.16-dev-ad80c
 
-On Tue, 15 Sep 2026 10:45:15 +0700, Cong Nguyen wrote:
-> Every write in lm3692x_leds_enable() checks its return and jumps to
-> out: on failure -- except the last one, which falls through and sets
-> led->enabled = true regardless of whether it actually succeeded. Leaks
-> the regulator on a failing probe, and short-circuits later
-> brightness_set() calls without retrying.
+On Tue, 15 Sep 2026 13:40:05 +0100, Manuel Fombuena wrote:
+> This series collects the issues identified during review of the two
+> previous ST1202 submissions, the pattern engine fix series and the
+> hardware-accelerated blink support:
 > 
-> Route it through out: like every other write here, and only set
-> enabled = true once it succeeds.
+> https://lore.kernel.org/all/GV1PR08MB8497C0B898789BB73ACE6EE3C5F52@GV1PR08MB8497.eurprd08.prod.outlook.com/
+> https://lore.kernel.org/all/GV1PR08MB84974C7ACD911E66864C5008C5DA2@GV1PR08MB8497.eurprd08.prod.outlook.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] leds: lm3692x: fix regulator/gpio leak and wrong enabled state on last write failure
-      commit: 145ca6bca2cc5fd8d9c7af216df58a9c75c0e84c
+[01/13] leds: st1202: Correct the name of the prescaler conversion helper
+        commit: 226f32543668960673596288a50191052dba3352
+[02/13] leds: st1202: Spell out the phase-shift configuration bit
+        commit: 7520fc78c52ea55c2c83d0ecc11ab2355a753b7f
+[03/13] leds: st1202: Name pattern index variables consistently
+        commit: 0aed225f40613253617ad30a57492043a3448938
+[04/13] leds: st1202: Use u8 consistently for 8-bit values
+        commit: 38f98583bcac95a65774b73cbcc56280a71f5612
+[05/13] leds: st1202: Clear unused pattern slots in pattern_set()
+        commit: 119a7d375e5caedaf252198fa64e7df5d7269ab4
+[06/13] leds: st1202: Scale pattern brightness to the 12-bit PWM range
+        commit: 82f8b88d6ac2edf01651bbd84e03ede04b2ca80e
+[07/13] leds: st1202: Program the channel current for hardware patterns
+        commit: 878eec1475e77ad22059584bc617b6e671a536d9
+[08/13] leds: st1202: Take a reference on the LED firmware node
+        commit: 5882de94edf7a53812a76a882a95e1e86d7105d9
+[09/13] leds: st1202: Do not set brightness from atomic context
+        commit: 1ec35fa181981b4b9581b3dae967bac7ed82c89c
+[10/13] leds: st1202: Clear unused pattern slots in blink_set()
+        commit: 3268b9e91db16f240ffe07ff6caf963ba8191ce8
+[11/13] leds: st1202: Honour max_brightness when blinking
+        commit: 865d81a98602c828515fa6ac3c530efc4205f9f6
+[12/13] leds: st1202: Cap the channel current in st1202_led_set()
+        commit: ca81ea108502817e3841e98f0d3651398d9e1bd9
+[13/13] leds: st1202: Give the channel current ceiling a single helper
+        commit: e264a106d8fc45fd82891cb0c4f8bd9e2c48c152
 
 --
 Lee Jones [李琼斯]
