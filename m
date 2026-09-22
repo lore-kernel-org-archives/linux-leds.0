@@ -1,192 +1,353 @@
-Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com [74.125.224.141])
+Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9E94F5DF0
-	for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 06:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.141
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790060244; cv=pass; b=J9s2799S9l2jnYPbLLLoSLYN6TclAZtGb6d2K/GYIX1h0JzjjbMH6uuv1qPWtaFmNccx/9OrJFtFTEV7Vb3iwe5MvbQkFgM4eIAh5Vp57o5kpanEL8p08yJwk8tTC+xfA7iwNR+I14c8oSf9KP/yw1es4pgqNHok5KdYZYqb0JI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790060244; c=relaxed/simple;
-	bh=gulGgmIcxQuucEmM7OxaEIEnWr9tYGmjARauLmlnFhI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9lfzbHLGpazrlIp6IiySgQbG6Kf5+RU4EID2GmFBZp3URR5BBNPIfRrzA0DQGFmEwgPQJ2bfjTNYYTI0KvTnj4/QGgGarSbcK9zNNLOXsECh/QLRNdRCQonwlOBLSZAiY7QuOypJZ1KQ088y81ZH2J8sz7854rs/j/QX0FfUaE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bu75orBv; arc=pass smtp.client-ip=74.125.224.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1B4DEC07
+	for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 09:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790070772; cv=none; b=eMvcfkX8qH3Ez6FwexCMO3GKdj9JyjjPExVlSIu3UnG5I60fTGE8gLXSJ/03euofbB22+zOBwi7/EWnestnzSCrUxQ1kLwe6SPxFfJs7NKW/hyLO+IdAx+I4lHx8+6eiT9aFpduc2hjzVdlelMLvt35crAaV3+p8wfo9HmT6jWM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790070772; c=relaxed/simple;
+	bh=/hyB+hEw6RLudRjQ7dI1d4NFysBDKsw1sQJA+/qf+iA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHbj1dqvMepa6j3D3E9pUvTMvFtt/L/eJsRghgva/bwlJchYAk4kF9QPM5PpYTVZ75X/2AAK5aWuN9s8vsHwGf6kGbClzyQUb+mIJ1nQ+onW5DXJPg11inuEKX6ilcyD9JCoRBdBeAliYCmPwh2BsEjPOyXkN+gvXCVcBFjf8FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b=UbU7CoLf; arc=none smtp.client-ip=74.125.225.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bu75orBv"
-Received: by mail-yx2-f13.google.com with SMTP id 956f58d0204a3-66e4aac929eso3313794d50.0
-        for <linux-leds@vger.kernel.org>; Mon, 21 Sep 2026 23:57:20 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790060238; cv=none;
-        d=google.com; s=arc-20260327;
-        b=EqaWCoO3Wc3D2jYcqbq0SNklGxmh9X3V+nLUgWibDFgKyk8HTLtqy6qy5bNENmvBw+
-         VNwMqUyUKy6jnXIM8kx9kWoq9WcWSmOWkSY/SNrRHvQur7ClonajxBtKGuREmgI0mVnK
-         uWipAa1IJxAqsLs2VwvahJzWSnQdx64VR5KgLr5oRvYgcZuaJHLfA8LHAofdHVd25Pgh
-         nN9dcPx3S8MdPOOvbEBeKfIROIueB9Po4yhMYqoA04xkxwqF9mUXYC1o8F2vQhF9WMzT
-         iJxHtbehkvxC2RuK0/tv8yQ4uvlr0fRQ8fOgi2oOJh2wI2uew7b6+FjLz+0GLMnQqDAR
-         C9xA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=U4KectJeHaQp5P1/3b8Vu0MT+3IcZMHOfvXwrVXtfrY=;
-        fh=XRMyVumdjSe3uHRzHKuf7xiRLab2KntozUH0BZ9YdnE=;
-        b=CkLW2qeNkapivWDizkfM3klYC2pepuw41STJ5LinjZi4L0ICu3YPAjH3mBaw1LJx6b
-         +0w7D37Ehm/H7YiPC32XnUEkWnuIOvihyfH472R9r3DGMjd6Wug5zyt7BtAx1zAJmFGP
-         qkK1AJ30iF59p+mzLzPxV4CfUqdqAzlwuMaTD076gr4ZoGUQ5HZEiTKXRPldh8EWc0Y2
-         Lbd1OhcqYqOlUqxrFRtLB4guVaWpOsdzsSwlUXu0fHv9ZWdMqJzEaLyT0CTJAgwzXE8i
-         /ZMVcIiTK1wd0Fw0nCC8CvWGtTmI/I65puqkWW4lB5ZkV/Ezk5i3qTtTTeM1LNXoq7br
-         X5qQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b="UbU7CoLf"
+Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49d097b4939so20915035e9.0
+        for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 02:52:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790060238; x=1790665038; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=U4KectJeHaQp5P1/3b8Vu0MT+3IcZMHOfvXwrVXtfrY=;
-        b=Bu75orBvitgScQyBYo1pcGk5u/AVi62vH7nW+tEDgqRNof7PYMjtQl013t51uu/ZGE
-         fodfN9QN2BhaKvShx0NhGBoYmcmerkrTXr+TzGYVELNs8EKwH6Fta/ZgdWUPfvJUZbMv
-         LxpyMNasRkKw4ZnXkq74Nd4f3IepA6pAtNK8+hkzvvP3fcfG7yPn4ljBmg5BBhWxZqdE
-         yhnl1aidJoMimUIzUuIQxyfCEdJlC40jGl8FSk2re7YkD2xgUqMtJtaCxeXalCJHOR6H
-         ixEr5s8G9HXc+cXzat4SwVmUDO8PdwtIfsCrMxjd3a2IKCrDmFN6Yq4XBGjnuZNY3dBJ
-         dzxg==
+        d=riscstar-com.20251104.gappssmtp.com; s=20251104; t=1790070768; x=1790675568; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QYbygSoXTPt7jaWPgoihIOPAkjKBdxHc4l1yrHc4AGQ=;
+        b=UbU7CoLfLA/KildSyTRxEZBDk5ouIV5wcTT9FwSAVXX8IztropXtW1B9tVhPOnvuDZ
+         vFXmRhh3nCtiSGXIfhRbM1IfCHFksGd16/TQWuamEwysvpbtDXAouWp3f3T+OQMWV8zv
+         69/gXuQV4zk/6RRYvJbtHDq99YWgX7WplJUvOnpz5o0Vxf2gHJnI146KvWlx3w/mG8p/
+         8lOCdfWMGH1kq2abyoeVe6OMV/AHqxEHBiVp8lyzWHj+9/tTK1tykmdHCa3vs5fVY1rm
+         VoVgspEI1ogbm6jhKX3gm1axLHQ3goZHo3FI4UuVNbvDOqbBUbZb6V28XFZMLChN5ohE
+         AAfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790060238; x=1790665038;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=U4KectJeHaQp5P1/3b8Vu0MT+3IcZMHOfvXwrVXtfrY=;
-        b=GISnf/88JpRLWo69ZKK4iTW0ReNa6o85RklmDYfky4n6zYxE7F/YUtMpJucJwIsSyN
-         nWNA8QQrSdvz0ECC/ZGzaoaJTjfWjPDWzmEu4sr7rscYs0oKibGTVIDnPx2/zaelVvbj
-         34zlgQpMIurecAvKzP0EaRIeKF0A3hOeXNnXxO9yBR8IBS/fa6qT+WiI+TwysFFLhf2/
-         NhFtyoBQbND+/W/bs6yQfEeOU11UtMaoTrsbL5tQXTL6u+zjWm4H/OB/DyYZkLn0+lUF
-         hxDE8h1uWZIahzKji7vnqe1q6EYxypjrlEj3RkO/pHIxxi6TivqRq+DJJ+uH696lltpp
-         jFzg==
-X-Forwarded-Encrypted: i=1; AKwUvBwmtxhaJhMxUY0T1nRwDd5EbIJ6U5dGlz++GALKBY8e1j1xkMZwJ86/Jnx5pAOnZvbualttqklfdNSD@vger.kernel.org
-X-Gm-Message-State: AFuF++kuDw1ubJOm4kRySa7YG3cKFSJW6a3+xhBXKJi/vyrCGfuxdZWY
-	r5ozEnradR25efyF/OU/nA0ECESfMKOn7tTeftiBW2RsZwtUrdL/0fWBKXAwyz5Dli/+cyIRkoN
-	m6TYg7u1h8DZ1MWQA2G3k1nKgcxiqwzH9D9DC/UGDrsdh
-X-Gm-Gg: AYBFou2YJtp+ZtYILABZScn2JbmeQOWsvxyUqoQyEj07rMPtSZsKsGeyov+rm3VEWj8
-	Xs6dXipZj2RhbvwyFftNsVKd5PFNkM8LfparzTTCLL/1elmeQ3xBwsWDhEGaosW6Jcm9neia4+D
-	MPNmKz4h/ZJ7dMlXj9eZPcPDARonsO9WD1gyznLj5VxloiPSVy6/KPtNLHIilE0yhHKBvfY2Aou
-	Pt3hFvIVbD4+v8mHTYbUnU3xQBG3tlK2feNH/cbKpzbcjZdMaSCQbFzXgRzjv1XE4DhCRy52ul2
-	6dkCrWcY+BmEvQB5OcGlkeCD2zXq+ALl7CQYb3S71CuqGOCIXvzee/LJEA==
-X-Received: by 2002:a05:690e:1505:b0:671:26c4:3ac6 with SMTP id
- 956f58d0204a3-6717fcb4a0bmr4394504d50.37.1790060238169; Mon, 21 Sep 2026
- 23:57:18 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790070768; x=1790675568;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=QYbygSoXTPt7jaWPgoihIOPAkjKBdxHc4l1yrHc4AGQ=;
+        b=21r1RitqeDc2Pfz4TNzR6GBroy4n+HiK0hKp7tlYgPa0jlT8ZQyFA4shQhnWXAy7XI
+         O3ew0sak1UCQhp/Qy7U31OUxtVjJvkSWoAIph4SN4rr7LIM4O3XA2973aydw6zEoZz82
+         UD20lnQHHrPkuLXSkmoZdTXOwwWB6wyLzTDdrJVVBCbpF1HUIGboUoRb5W3+XVQKFXGc
+         xDlfD+uFI/I2X1zRiZz687/o3OD6e+JxV9kW+zhLKXnh4vwfSjybJF8ApG64aI/JCkr9
+         YOczoQF6YnOYXL5qd9jjfVi/QNuiBVykZWDm4Md3ImqrSjuW2+eZmYNuEANTczbtHDT9
+         8RZw==
+X-Forwarded-Encrypted: i=1; AKwUvByhuLopkMmzVNliYZtAkYnkQaK/EJ2riA6ndut+KqQ0BthmVfgTqcDwRGJ+5I5wKStBMQeKoNv67ALy@vger.kernel.org
+X-Gm-Message-State: AFuF++kr47jjaosv7gRSru1d3X8HJZDc3K5QbT0ZoOZQcILzLbJQrwaq
+	1WYYlwJqDzUvddVQL1YD8Kx2YT1bW3PTuNxLiM5V6n1FeN+yJOeykEL0FTZZ0qn/Jpk=
+X-Gm-Gg: AYBFou2xueLL6Yj4TD81u+68NFMjMD3gyRo6qxTj/GxWRKWCksTD4llKozt4bdyYeSx
+	eqf+g8hMxqAo/Zkg1cUz4N6zYpl+sBzSzcwlnDvuezqEtD2P0KiQ8Ytdxp5TY0MQn5y26FtYwZ/
+	TUK8gBJHcHAzDbblKNu5AA2a5WkPvf+tUumCmurZRQaZG1q/rqWN1ovK/QVmlAKEd6oZBFGrC/8
+	CM7pd/K01lHZYyhlLtlw8EzK9tprwfiU6bKSMdqBlKL8eZtT8xVNlV9LhRTwbTl0/vGDhS9GW4M
+	d0DylCe5tB+bo5Z11tBYP2rnKm75kc3FcMRDjiVgtTbpktbJFyGzAU6oVFk9dwtvjOijViYA/Xy
+	SqLcmgd+wMeTSnJNl0ChuoiopEV4KYThg51C7+rgniLlo3Xr9EmsNZfXYuCH/feBZj9xpuA9mUC
+	n+FU2hU/EYXtGi5Hb2g2kplBSUcstYfMDgeXJerWQaxAM9tmseJCZRwMKvsqOZxqgNEng5EkAYw
+	iu0Sbp91cOCQzO+2swYoxsdIrHFcHq3wxYHs4umLk3rTFPdHfDxiw1EWS/ahpG+V5TTDoZ5E0KM
+	Yygyz2QOOpn3W6k0A1Hy3Nf/M7LVEV4UHhSpSpYVLWZvMtHRZsHfeIq+gmE=
+X-Received: by 2002:a05:600c:46cf:b0:49c:de80:b833 with SMTP id 5b1f17b1804b1-49fc5687b6cmr202804085e9.2.1790070767607;
+        Tue, 22 Sep 2026 02:52:47 -0700 (PDT)
+Received: from aspen.lan (aztw-33-b2-v4wan-169864-cust3247.vm26.cable.virginm.net. [92.239.204.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fdaa9dbd6sm42235115e9.2.2026.09.22.02.52.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 02:52:46 -0700 (PDT)
+Date: Tue, 22 Sep 2026 10:52:44 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: kavakliyigitcan@gmail.com
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH RFC 02/10] backlight: add Kinetic KTD3136 driver
+Message-ID: <arJP7AMM5DqNoc8e@aspen.lan>
+References: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
+ <20260911-ginkgo-submission-final-v1-2-0e68e63a18d4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921092128.346375-1-lgs201920130244@gmail.com> <20260921115423.GD1466037@killaraus.ideasonboard.com>
-In-Reply-To: <20260921115423.GD1466037@killaraus.ideasonboard.com>
-From: Guangshuo Li <lgs201920130244@gmail.com>
-Date: Tue, 22 Sep 2026 14:57:05 +0800
-X-Gm-Features: AcwNN1WVoOYZCsSEVw6iHCW5xpwHzTDhebwFRSBQ8UxzNV5HWEqjVLiq3FnnnXA
-Message-ID: <CANUHTR86sJ_W+0WHHWM1EA_5SASER5OBhZJR-=jmhQd9vuUyqA@mail.gmail.com>
-Subject: Re: [PATCH v2] leds: flash: sgm3140: fix child node reference leak
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Luca Weiss <luca@lucaweiss.eu>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260911-ginkgo-submission-final-v1-2-0e68e63a18d4@gmail.com>
 
-Hi Laurent,
+On Fri, Sep 11, 2026 at 11:50:59AM +0300, YİĞİTCAN KAVAKLI via B4 Relay wrote:
+>  obj-$(CONFIG_BACKLIGHT_LM3630A)		+= lm3630a_bl.o
+> diff --git a/drivers/video/backlight/ktd3136-backlight.c b/drivers/video/backlight/ktd3136-backlight.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a8ebe3b23c99f3ada9f45c60688f8b8c78d72def
+> --- /dev/null
+> +++ b/drivers/video/backlight/ktd3136-backlight.c
+> @@ -0,0 +1,262 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Kinetic Technologies KTD3136 3-Channel LED Backlight Driver
+> + *
+> + * Copyright (C) 2026
+> + */
+> +
+> +#include <linux/backlight.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/property.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#define KTD3136_REG_DEV_ID		0x00
+> +#define KTD3136_REG_SW_RESET		0x01
+> +#define KTD3136_REG_MODE		0x02
+> +#define KTD3136_REG_CONTROL		0x03
+> +#define KTD3136_REG_RATIO_LSB		0x04
+> +#define KTD3136_REG_RATIO_MSB		0x05
+> +#define KTD3136_REG_PWM			0x06
+> +#define KTD3136_REG_STATUS		0x0A
+> +
+> +#define KTD3136_DEV_ID_VAL		0x18
+> +#define KTD3136_DEV_ID_VAL2		0x19
+> +
+> +#define KTD3136_MODE_ON			0xC9	/* Boost ON, 3 channels enabled */
+> +#define KTD3136_MODE_STANDBY		0x98	/* Standby mode */
+> +#define KTD3136_CONTROL_LINEAR		0x02	/* Linear dimming mapping */
+> +#define KTD3136_PWM_DEFAULT		0x1B	/* Default PWM/boost frequency */
+> +
+> +#define KTD3136_DEFAULT_MAX_BRIGHTNESS	2047	/* 11-bit resolution */
+> +#define KTD3136_DEFAULT_BRIGHTNESS	2047
+> +
+> +struct ktd3136_data {
+> +	struct i2c_client *client;
+> +	struct backlight_device *bd;
+> +	struct gpio_desc *enable_gpio;
+> +	struct regulator *vin;
+> +	/* Protects chip registers and state */
+> +	struct mutex lock;
+> +	bool is_enabled;
+> +};
+> +
+> +static int ktd3136_write(struct ktd3136_data *chip, u8 reg, u8 val)
+> +{
+> +	int ret;
+> +
+> +	ret = i2c_smbus_write_byte_data(chip->client, reg, val);
+> +	if (ret < 0)
+> +		dev_err(&chip->client->dev, "failed to write reg 0x%02x: %d\n", reg, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ktd3136_read(struct ktd3136_data *chip, u8 reg)
+> +{
+> +	int ret;
+> +
+> +	ret = i2c_smbus_read_byte_data(chip->client, reg);
+> +	if (ret < 0)
+> +		dev_err(&chip->client->dev, "failed to read reg 0x%02x: %d\n", reg, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ktd3136_power_on(struct ktd3136_data *chip)
+> +{
+> +	int ret;
+> +
+> +	if (chip->is_enabled)
+> +		return 0;
+> +
+> +	if (chip->enable_gpio) {
+> +		gpiod_set_value_cansleep(chip->enable_gpio, 1);
+> +		/* Allow oscillator and internal logic to stabilize */
+> +		usleep_range(2000, 3000);
+> +	}
+> +
+> +	ret = ktd3136_write(chip, KTD3136_REG_CONTROL, KTD3136_CONTROL_LINEAR);
+> +	if (ret < 0)
+> +		goto err_off;
+> +
+> +	ret = ktd3136_write(chip, KTD3136_REG_PWM, KTD3136_PWM_DEFAULT);
+> +	if (ret < 0)
+> +		goto err_off;
+> +
+> +	chip->is_enabled = true;
+> +	return 0;
+> +
+> +err_off:
+> +	if (chip->enable_gpio)
+> +		gpiod_set_value_cansleep(chip->enable_gpio, 0);
+> +	return ret;
+> +}
+> +
+> +static void ktd3136_power_off(struct ktd3136_data *chip)
+> +{
+> +	if (!chip->is_enabled)
+> +		return;
+> +
+> +	ktd3136_write(chip, KTD3136_REG_MODE, KTD3136_MODE_STANDBY);
+> +
+> +	if (chip->enable_gpio)
+> +		gpiod_set_value_cansleep(chip->enable_gpio, 0);
 
-On Mon, 21 Sept 2026 at 19:54, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Why did you submit a v2 ignoring my latest comments on v1 ?
->
-> On Mon, Sep 21, 2026 at 05:21:28PM +0800, Guangshuo Li wrote:
-> > sgm3140_probe() obtains a reference to the LED child node with
-> > device_get_next_child_node(), but the reference is not released after a
-> > successful probe.
-> >
-> > The child node is also passed to devm_led_classdev_flash_register_ext().
-> > The LED class device stores the fwnode without taking a reference of its
-> > own, so the reference obtained by sgm3140_probe() must remain valid until
-> > the LED class device is unregistered.
-> >
-> > Manage the child node reference with a devm action registered before the
-> > LED class device. This ensures that the LED class device is unregistered
-> > before the child node reference is dropped, while also handling probe
-> > failure and device removal.
-> >
-> > Fixes: cef8ec8cbd21 ("leds: add sgm3140 driver")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
-> > ---
-> > v2:
-> >   - Keep the child node reference alive until the LED class device is
-> >     unregistered, as pointed out by Laurent Pinchart.
-> >   - Manage the reference with a devm action registered before the LED
-> >     class device registration.
-> >
-> >  drivers/leds/flash/leds-sgm3140.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sgm3140.c
-> > index dc6840357370..973676b1dbb1 100644
-> > --- a/drivers/leds/flash/leds-sgm3140.c
-> > +++ b/drivers/leds/flash/leds-sgm3140.c
-> > @@ -182,6 +182,11 @@ static void sgm3140_init_v4l2_flash_config(struct sgm3140 *priv,
-> >  }
-> >  #endif
-> >
-> > +static void sgm3140_fwnode_put(void *data)
-> > +{
-> > +     fwnode_handle_put(data);
-> > +}
-> > +
-> >  static int sgm3140_probe(struct platform_device *pdev)
-> >  {
-> >       struct sgm3140 *priv;
-> > @@ -220,6 +225,10 @@ static int sgm3140_probe(struct platform_device *pdev)
-> >                       "No fwnode child node found for connected LED.\n");
-> >               return -EINVAL;
-> >       }
-> > +     ret = devm_add_action_or_reset(&pdev->dev, sgm3140_fwnode_put,
-> > +                                    child_node);
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       ret = fwnode_property_read_u32(child_node, "flash-max-timeout-us",
-> >                                      &priv->max_timeout);
-> > @@ -276,7 +285,6 @@ static int sgm3140_probe(struct platform_device *pdev)
-> >       return ret;
-> >
-> >  err:
-> > -     fwnode_handle_put(child_node);
-> >       return ret;
-> >  }
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
+Why does this powering off leave the regulator active?
 
-You're right. I sent v2 too quickly and failed to take your latest
-comment on v1 into account. Sorry about that.
 
-What led me to this issue was the documentation for
-device_get_next_child_node(), which says the caller must call
-fwnode_handle_put() on the returned fwnode. I focused too narrowly on
-balancing that reference and missed the lifetime implications of passing
-it to the LED core.
+> +
+> +	chip->is_enabled = false;
+> +}
+> +
+> +static int ktd3136_update_status(struct backlight_device *bd)
+> +{
+> +	struct ktd3136_data *chip = bl_get_data(bd);
+> +	int brightness = backlight_get_brightness(bd);
+> +	int ret = 0;
+> +	u8 lsb, msb;
+> +
+> +	mutex_lock(&chip->lock);
+> +
+> +	if (backlight_is_blank(bd) || brightness == 0) {
+> +		ktd3136_power_off(chip);
+> +		goto out;
+> +	}
+> +
+> +	ret = ktd3136_power_on(chip);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	lsb = brightness & 0x07;
+> +	msb = (brightness >> 3) & 0xFF;
+> +
+> +	ret = ktd3136_write(chip, KTD3136_REG_RATIO_LSB, lsb);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	ret = ktd3136_write(chip, KTD3136_REG_RATIO_MSB, msb);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	ret = ktd3136_write(chip, KTD3136_REG_MODE, KTD3136_MODE_ON);
+> +
+> +out:
+> +	mutex_unlock(&chip->lock);
+> +	return ret;
+> +}
+> +
+> +static const struct backlight_ops ktd3136_backlight_ops = {
+> +	.options = BL_CORE_SUSPENDRESUME,
+> +	.update_status = ktd3136_update_status,
+> +};
+> +
+> +static int ktd3136_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev = &client->dev;
+> +	struct backlight_properties props;
+> +	struct ktd3136_data *chip;
+> +	int ret, val;
+> +	u32 def_brightness = KTD3136_DEFAULT_BRIGHTNESS;
+> +	u32 max_brightness = KTD3136_DEFAULT_MAX_BRIGHTNESS;
+> +
+> +	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+> +	if (!chip)
+> +		return -ENOMEM;
+> +
+> +	chip->client = client;
+> +	mutex_init(&chip->lock);
+> +
+> +	chip->vin = devm_regulator_get_optional(dev, "vin");
+> +	if (IS_ERR(chip->vin)) {
+> +		ret = PTR_ERR(chip->vin);
+> +		if (ret != -ENODEV)
+> +			return dev_err_probe(dev, ret, "Failed to get vin regulator\n");
+> +		chip->vin = NULL;
+> +	}
+> +
+> +	if (chip->vin) {
+> +		ret = regulator_enable(chip->vin);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Failed to enable vin regulator\n");
+> +	}
 
-Would it make more sense for the LED core to take its own reference to
-init_data->fwnode when associating it with the LED device, and keep that
-reference for the lifetime of the LED class device? The driver could then
-drop the temporary reference obtained from device_get_next_child_node()
-after registration.
+Why is the regulator managed here rather than in the power_on/off functions?
 
-Does that sound like the right ownership model?
+Also, you need to keep track of the regulator state. You must "put" the
+regulator before allowing devm to clean it up (handling the regulator
+state in power_on/off would solve this).
 
-Thanks,
-Guangshuo
+
+> +
+> +	chip->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(chip->enable_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(chip->enable_gpio),
+> +				     "Failed to get enable GPIO\n");
+> +
+> +	if (chip->enable_gpio)
+> +		usleep_range(2000, 3000);
+> +
+> +	val = ktd3136_read(chip, KTD3136_REG_DEV_ID);
+> +	if (val < 0)
+> +		return dev_err_probe(dev, val, "Failed to read device ID\n");
+> +
+> +	if (val != KTD3136_DEV_ID_VAL && val != KTD3136_DEV_ID_VAL2) {
+> +		dev_err(dev, "Unknown device ID: 0x%02x\n", val);
+> +		return -ENODEV;
+> +	}
+> +
+> +	dev_info(dev, "Kinetic KTD3136 detected (ID: 0x%02x)\n", val);
+
+Remove this. Happy noises are still noise!
+
+
+> +
+> +	device_property_read_u32(dev, "max-brightness", &max_brightness);
+> +	if (max_brightness > KTD3136_DEFAULT_MAX_BRIGHTNESS)
+> +		max_brightness = KTD3136_DEFAULT_MAX_BRIGHTNESS;
+> +
+> +	device_property_read_u32(dev, "default-brightness", &def_brightness);
+> +	if (def_brightness > max_brightness)
+> +		def_brightness = max_brightness;
+> +
+> +	memset(&props, 0, sizeof(props));
+> +	props.type = BACKLIGHT_RAW;
+> +	props.max_brightness = max_brightness;
+> +	props.brightness = def_brightness;
+
+The scale property needs to be set here.
+
+
+Daniel.
