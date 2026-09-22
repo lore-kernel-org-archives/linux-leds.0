@@ -1,43 +1,43 @@
 Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E54390609;
-	Tue, 22 Sep 2026 14:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB38377A8C;
+	Tue, 22 Sep 2026 14:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790088515; cv=none; b=PRXPRnL3WBCdFuTxyCmuH0iMaRbWiD9o2HChWPzSSwyyFclkFTE1j1Z7d913x5vUwfR3jlsRmXVUOasvPKhKtHs1MbGp/mi/p2XLvZArT2zTZpM0ueQbm03f5mJzte9rfxtbakMRejinz19VuEv25kVn3hwrSjHSdAFdcAY38Tc=
+	t=1790088516; cv=none; b=IygMJCM/voxayRJX2hBtQsKFLdJYQ7ndENHlYGVtHNVZ80ss+NPQoW40mPV5Mst7hr5MAqAB1CFkFvQl7TcNgap4Zpe9HR4iBPAPr2v9MUXFR5TsmYWribDEIdiB1vCarlEIe0H1T6PCMXs/8As/IgZCYUEr5+gPYJnIQgvvIsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790088515; c=relaxed/simple;
-	bh=H9ZTJz1mF5YSrJcLOXtHgxvectDIutM5qdUYktdCdCM=;
+	s=arc-20240116; t=1790088516; c=relaxed/simple;
+	bh=dJQ/OjPO0d9VUJKeS9tCzL5uaO+w57R42kmzt6s02us=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nyPPRQmRRzb88H0tNZlXFSvZVScqoT7iUFS2iWrTdDbEUQ83WPKGhaZ8XqpUS5TxlD8DLn1xjYimeTl55aT9ySvQxk0AGCJVHG0f5FFibZgIcWhW/iu5JM3E9sdzToYX/7wTZGvcVX4917NEytUAJBrvgYii/gjTsVhdea3ujwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=drPuXw7W; arc=none smtp.client-ip=188.40.3.216
+	 MIME-Version:Content-Type; b=VzP0f8IykBdt5oNiOfmVBJ8DZ6bs5M82+C7W5y3pr187+UIbEaeg9UGyUNkVmnkmPzaNR45kXEEXT84AGrABSPmiFqIbdTRx02GgAARz58f6htCZfTsv/nKnx2tyiOxv6ZHYNt9su4VjRHeOQHpWjR1qQ3YF4muA+R2VB5tvIWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=F5qaDQ4b; arc=none smtp.client-ip=188.40.3.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="drPuXw7W"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="F5qaDQ4b"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:Content-Type:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=bp/LIwK91vjxqQflXEqvF0xjrSazqceNniNex5W7jxA=; b=drPuXw7W98Dy1p790t8BmNy4vn
-	dh8W/4jNZf6I1H5dAtjo2E84KDKEDfFeYeblpUoUKZzVpUiUKyXlIG3prWElNpysQC/bMqGM9hoZs
-	JKngv7eZ9DUpaTqQu86otVVRWfc7aB0/icZe1nkc5Yizf3k3djoi/CwtMW4uFuJ/d9RZWbh5DCDv4
-	tJIJIY9znuafVLkC8n1VpXDNjnlnLDXUIMpmraGU856wRbe+dP+rnW7Mms0AR0vZr6GqyTJS7sD22
-	m6oq/6OXPncqh2quFsjYrDop75KYm4LCyywFB0ZPWeK1osc4MKod4V9m2loWkGUzgbgr91OBpU+88
-	FDS0aVPQ==;
+	bh=i7k5IvRMGds1MAPqGTDkTv6/b7coFgJ33EfhbQAkbc4=; b=F5qaDQ4b59mWLaE2LHg4Oi5Rxc
+	Xvgm/2qQnf8ElUH0qLM3g2xOnoPsJB7/3+yVpVJ093TNMfHy3xGCfU+4d7oxEV9iI7Ty8DPJPWWnk
+	64Hd3xVR4r5A8genID4Kpj0914fBDisdTPNjw2KvkbuGa1gqPm5rtzNzwBio3T1QAUpK9kIsU+Goe
+	U0UVTTrKJJJxyPdybvPEh31i85N/3uvZiWV/Is11O1RApmGN4MWim4quIm+o9WKLokI3n+YLlJbKU
+	bpAvQl2rFj9vuFAHhheJtVu3SxJjkhBESD/UK3kH9J3xBtro1l2QNtBzTesQu9Lmdxby4C8YE70Ds
+	TzmrFXOQ==;
 Received: from sslproxy02.your-server.de ([78.47.166.47])
 	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x91nG-000Mgf-0l;
+	id 1x91nF-000MgZ-3B;
 	Tue, 22 Sep 2026 16:48:26 +0200
 Received: from localhost ([127.0.0.1])
 	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1x91nF-000PP0-2G;
+	id 1x91nF-000PP0-0w;
 	Tue, 22 Sep 2026 16:48:25 +0200
 From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>,
@@ -53,10 +53,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-leds@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Nora Schiffer <nora.schiffer@ew.tq-group.com>
-Subject: [PATCH v3 03/10] leds: pca995x: Fix maximum LED index for 16-channel variants
-Date: Tue, 22 Sep 2026 16:47:50 +0200
-Message-ID: <cb0691ecb93a39e1e5d99af1fc5883d509085664.1790087890.git.nora.schiffer@ew.tq-group.com>
+	Nora Schiffer <nora.schiffer@ew.tq-group.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v3 02/10] dt-bindings: leds: pca995x: Describe nxp,output-gain property
+Date: Tue, 22 Sep 2026 16:47:49 +0200
+Message-ID: <86db544bcf3413474bc3fac73e94bdc09af03867.1790087890.git.nora.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1790087890.git.nora.schiffer@ew.tq-group.com>
 References: <cover.1790087890.git.nora.schiffer@ew.tq-group.com>
@@ -70,51 +71,41 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28131/Tue Sep 22 08:27:06 2026)
 
-The pca995x_chipdef for the 16-channel variants PCA9952 and PCA9955B
-correctly sets num_leds to 16, but the value was not actually used when
-checking and iterating over the LEDs during probe.
+Allow configuring the output current to adjust for different hardware
+designs.
 
-Fixes: 68d6520d2e76 ("leds: leds-pca995x: Add support for NXP PCA9956B")
-Link: https://sashiko.dev/#/patchset/6d3600f99c77c31166f0b6a5ccfb7f518b53c4c9.1788350618.git.nora.schiffer@ew.tq-group.com
+The output gain relates the output current with an external resistor
+connected to the LED driver. It does not directly correspond to a
+meaningful physical unit of measurement, so we refer to the datasheet
+for information on its calculation.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 ---
- drivers/leds/leds-pca995x.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/leds/nxp,pca995x.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-index fee6216cd1bd0..8b05b3f12cf38 100644
---- a/drivers/leds/leds-pca995x.c
-+++ b/drivers/leds/leds-pca995x.c
-@@ -146,7 +146,7 @@ static int pca995x_probe(struct i2c_client *client)
- 		if (ret)
- 			return ret;
+diff --git a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml b/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+index 201f32f1b8139..372ecd18043e0 100644
+--- a/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
++++ b/Documentation/devicetree/bindings/leds/nxp,pca995x.yaml
+@@ -39,6 +39,14 @@ properties:
+   reset-gpios:
+     maxItems: 1
  
--		if (reg < 0 || reg >= PCA995X_MAX_OUTPUTS || led_fwnodes[reg])
-+		if (reg < 0 || reg >= chipdef->num_leds || led_fwnodes[reg])
- 			return -EINVAL;
- 
- 		led = &chip->leds[reg];
-@@ -157,7 +157,7 @@ static int pca995x_probe(struct i2c_client *client)
- 		led->ldev.max_brightness = 255;
- 	}
- 
--	for (i = 0; i < PCA995X_MAX_OUTPUTS; i++) {
-+	for (i = 0; i < chipdef->num_leds; i++) {
- 		struct led_init_data init_data = {};
- 
- 		if (!led_fwnodes[i])
-@@ -169,7 +169,7 @@ static int pca995x_probe(struct i2c_client *client)
- 						     &chip->leds[i].ldev,
- 						     &init_data);
- 		if (ret < 0) {
--			for (j = i; j < PCA995X_MAX_OUTPUTS; j++)
-+			for (j = i; j < chipdef->num_leds; j++)
- 				fwnode_handle_put(led_fwnodes[j]);
- 			return dev_err_probe(dev, ret,
- 					     "Could not register LED %s\n",
++  nxp,output-gain:
++    description:
++      Set the output gain controlling the LED current as described in the
++      PCA995x datasheets.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    default: 127
++    maximum: 255
++
+ patternProperties:
+   "^led@[0-9a-f]+$":
+     type: object
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
 Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
 https://www.tq-group.com/
-
