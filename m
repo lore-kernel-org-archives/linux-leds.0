@@ -1,116 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE1649B5A7;
-	Wed, 23 Sep 2026 10:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E91494808
+	for <linux-leds@vger.kernel.org>; Wed, 23 Sep 2026 11:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790160379; cv=none; b=nhgW23bK1a4clbQ3wh7xceIOOxaTYMKrub03AMXhcLFiAGqYgxBWYi0Vg1AY6tHKFDKs6OCmxhJsPYjV3ae7uHifmietEpNtCt63ZrSnjyHM27b9rDhmX58wTxIpOqwQ5gpUgq467CGBsS89o9LMGR57+JQmsnOD1yJGZrOiOjY=
+	t=1790162395; cv=none; b=bCe9MhjbCSnRgAFOdxaaNFaVBQYeFkxAS+u/WeA2y2Jc4aJzhXntiJTvUTO/VVzwImakqdkISwSwZzs58u/ljg3aa15eK/IkN7eJya/IpE3LKDbod96j4U6G27Mu5dUGHNcimjcdu1thoeHyqZ8gJ5tR2hi/Sx8ZrHmfmRLqpV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790160379; c=relaxed/simple;
-	bh=zDpAXKywWj0CeIgSPsdqwqYzEKxLMJzvx/VQ6zhQi5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LcFepxDihJCww8jpI30VQVuSMRCZxtji1KsdkP1CtY4AknhPtZQrd9cf/Lqfmrij5KBjfOmukR/0chACt5px6yzyDUVJLZY+QYoA/3m+aM8VJmvmchuJ4k7RdiwiqJQrU3BlptKEbs63mbXHCm3WyCj8ln4FNNzwuggKyUXpoT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9wwoWf7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790162395; c=relaxed/simple;
+	bh=0L+s1VkLpLCjh6wDTFg0SJ6tYpQ9eOqBt93snrw7zDk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=XI8rWW92RAtaNMBFY3iCZlkglJFUfPnxYVDtoCnSrzsZ2Mc/KWj0gVeGH0HD5WxYkHc4BrPmaztPTguTTgV/PI9iTZ9sfdThv6VOo/crYYbJaVVZOcLB8Fcj31C75SkIs5RTntwGhTm7fwHutpS4evu+/XeWp85lxbhoRMTsxW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOEmWumH; arc=none smtp.client-ip=74.125.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9wwoWf7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC9A01F000FF;
-	Wed, 23 Sep 2026 10:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790160364;
-	bh=avQvkl7s471m9YzAiZ0aOxUkynPxRjA0cpoopenOUeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=g9wwoWf77TbsWX9wRO/ihI0CejOz4hXcaxSvPUFrGvt3SzGZM7ccxod1AuHJ3zvE7
-	 Xaa3xPMJ3KRa33s48tnWNdKZ+K1NgetlUh9qYEUlNhQqbCwjs6LABeef079KpnA6gC
-	 IwGP8FHwnYh3xbOIz72QiRLH+mrk9qloMvy5igKRJHIDG41tzeJR6BxOUeOkiFxL6P
-	 qLorL4EvkMDxVRS8F8dY2bVFY7Assrx8rr9QkTldrbtO/8/X7ePU5rMxAvr/eNM234
-	 PN8fF6kNvK7LjxpwQLBn7rB+l+u4On5nKjECcoM9fk6xtCwJRx/8BU37pHYnMqZnix
-	 hFUiN6SGOUKqw==
-Date: Wed, 23 Sep 2026 11:45:59 +0100
-From: Lee Jones <lee@kernel.org>
-To: Liang Haowen <nbg2974@gmail.com>
-Cc: linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
-	"Martin K . Petersen" <mkp@kernel.org>, linux-scsi@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Denis Benato <denis.benato@linux.dev>, Armin Wolf <W_Armin@gmx.de>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOEmWumH"
+Received: by mail-pz2-f41.google.com with SMTP id 41be03b00d2f7-cc50d1b048eso559859a12.1
+        for <linux-leds@vger.kernel.org>; Wed, 23 Sep 2026 04:19:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790162393; x=1790767193; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=0L+s1VkLpLCjh6wDTFg0SJ6tYpQ9eOqBt93snrw7zDk=;
+        b=JOEmWumHb/3ylSLiT7rgljHgFJm+5bUKE41tD3P/eSQu8iT7MYq0tnPKdXLwkN8ZVK
+         BWpQWdvSzf0I9/nyQ7gzYLnQmNEgyarE1Xb1BHr9DuFHos6NLp6egAndkj9IrXWUfpqe
+         wSwmpAldoNqzW9c/dYNUk0O0J4onafz82w2Jqx1Mpzt9tFK/SiLG4eO8dGip1bqTfaWn
+         Q+B/vwI43TwPc62lk9FlrBOlYCfi+WUpfq4eTztbq5AIkt3ZY0zr0mODaqBR3Gsp7AzT
+         gqxjvyWy2Gs9qxaXKMAwMR44V2jDoeqkCvucys0Zuky22D7/7A4c82mRLb98W4mW/2tS
+         28wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790162393; x=1790767193;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=0L+s1VkLpLCjh6wDTFg0SJ6tYpQ9eOqBt93snrw7zDk=;
+        b=aCAOoHmnUaKaPLA5ABBmrpH0t4gol3jbFrWQwHAnnifmMcsrKg8BentilYgOcd7fqf
+         yDywi/5BJCfU8SmgHVlo8LXXwNtm+JJGKszgzsrwDXcRKjRqk80u9mSCJ32IX2+Ch1HP
+         4DmHdLbCr78rkb27EutamDQG+je62+7QJvvcIYu1UeKIXwzx5cp3ckTWt+xLlSTuUgva
+         MydkWRheZ2uJXCry4AdJy97cXhl0J4zYElNLNPICqMdb/iFwfFHNzPDvFfE3NVjOxa62
+         kDy823hIYQaXH8kVks0Ayn0uOKb+Fy/M5HVIJgFKnYSs6TSoii/IykuqXg+xZrpCM5M/
+         XrLg==
+X-Gm-Message-State: AFuF++m0MQ2pUgxH4ozEVwY0ZRw9YBhD1PnrEPRmWls6Pzwua1oyw3/S
+	RUwTYI1Xcu4jHHXC5VFnYPkiW4aTaPx7rNG4zNWPBAfXWjGhRAU27qp3
+X-Gm-Gg: AYBFou3AjtWgPtOxN8bDkHYHQNhiovprVxLebBAbQro8zpfbZfr3tvq7SF/f77CB1cg
+	sMrfdvzEQAI4Qn3OKz+xId2HKPLVUFwxhFz00cbnNzHeqPxg3CybfPJ5R5p017tS5Wxwx2UXbpM
+	8ggyySQiMsv1o6xPLcqbNopIVy1KzH1a5OC5XPnpHIjd/MJjzZ6/MzCCisiHhQQsEsZ8bg2WgJH
+	aPv0r32Z4C04xvgIjRCohmqSHeG1VEB0ui8+A/ZfWwBoBEemsLj0mBi1/eMUAQzSbycDpx2IjlQ
+	HoE9Zn4tm6cVK2cp8ols7OaVloSfBMnlb1mt/C4GF6wXBnRZAJ0sjtGqs12wETnMhpOhsfOJxNB
+	tAQeO59FhTuCoc6hgUmzX2rQv3Gpknnk+z1E9gWEGoSsbHybVd9dLOqsoBWs78vqwVveZNQlhgy
+	RDI5iRwD66q+IRGUIlogipPV7ctoF5EyAIMlvD9RlznmcGNaFoTIW7naQPxxxAnDrs3gxxN2i/E
+	/1BXEoy
+X-Received: by 2002:a17:90b:3d8e:b0:39e:4c80:44bb with SMTP id 98e67ed59e1d1-3a07e520a8bmr1848980a91.30.1790162393208;
+        Wed, 23 Sep 2026 04:19:53 -0700 (PDT)
+Received: from [127.0.1.1] ([240e:b8f:977f:f400:ec2a:b15e:fef8:70a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a07ddae723sm4722646a91.5.2026.09.23.04.19.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2026 04:19:52 -0700 (PDT)
+From: Liang Haowen <nbg2974@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sashiko-reviews@lists.linux.dev
 Subject: Re: [RFC v7 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED driver
  for ROG NVMe enclosures
-Message-ID: <20260923104559.GF3864833@google.com>
-References: <20260923103015.2365773-1-nbg2974@gmail.com>
- <20260923103015.2365773-2-nbg2974@gmail.com>
+Date: Wed, 23 Sep 2026 11:19:47 -0000
+Message-Id: <202609232340.ApologyLee.lhw@gmail.com>
+In-Reply-To: <20260923104559.GF3864833@google.com>
+References: <202609012200.RFC0.lhw@gmail.com>
+ <202609012200.RFC1.lhw@gmail.com>
+ <20260901145204.2BF551F000E9@smtp.kernel.org>
+ <202609032000.RFCv2-0.lhw@gmail.com> <202609032000.RFCv2-1.lhw@gmail.com>
+ <20260903122408.3CA6B1F00A3A@smtp.kernel.org>
+ <20260903161357.GX2133376@google.com> <202609042000.RFCv3-0.lhw@gmail.com>
+ <202609042030.RFCv3-1.lhw@gmail.com>
+ <20260904131503.355C41F00A3E@smtp.kernel.org>
+ <20260910093232.GO2133376@google.com> <202609152112.RFCv4-0.lhw@gmail.com>
+ <202609152112.RFCv4-1.lhw@gmail.com>
+ <20260915130050.E8CDB1F000FF@smtp.kernel.org>
+ <20260916104305.GM11487@google.com> <202609162015.RFCv5-0.lhw@gmail.com>
+ <202609162015.RFCv5-1.lhw@gmail.com>
+ <20260916122740.921E51F000FF@smtp.kernel.org>
+ <20260916130602.GS11487@google.com> <202609162200.RFCv6-0.lhw@gmail.com>
+ <202609162200.RFCv6-1.lhw@gmail.com>
+ <20260916143832.520721F000FF@smtp.kernel.org>
+ <20260917112840.GJ1605367@google.com> <202609172115.ReplyLeeR6.lhw@gmail.com>
+ <20260923094539.GA3864833@google.com> <202609232015.ReplyLeeR7.lhw@gmail.com>
+ <20260923102812.2353292-1-nbg2974@gmail.com>
+ <20260923102812.2353292-2-nbg2974@gmail.com>
+ <20260923104559.GF3864833@google.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260923103015.2365773-2-nbg2974@gmail.com>
 
-On Wed, 23 Sep 2026, Liang Haowen wrote:
+You are right, and I owe you an apology.
 
-> ASUS ROG external NVMe enclosures (ROG STRIX Arion, USB 0b05:1932) are
-> plain USB mass-storage devices with no HID interface: the Aura LEDs
-> hang off an ENE controller driven by vendor SCSI commands on the same
-> LUN as the disk. The enclosure has 4 independently addressable LEDs,
-> verified on hardware.
-> 
-> Register a scsi_device_handler matched by INQUIRY (vendor "ROG",
-> model "ESD-S1C"); it does not claim the sdev (sd keeps owning the
-> disk) and exposes each LED as a multicolor LED class device,
-> /sys/class/leds/asus-arion-0-0-0-0::led-0 through led-3. The
-> H:C:T:L part of the sdev name keeps the names unique when more than
-> one enclosure is connected, with its colons flattened to dashes. The
-> color section stays empty, since multicolor LEDs enumerate their
-> palette via multi_intensity, and the four identical zones use the
-> function name with a "-N" ordinal, as the naming section in
-> Documentation/leds/leds-class.rst asks for.
-> 
-> Protocol: a 16-byte vendor CDB (opcode 0xec, 'A' 'S' signature,
-> register index, argument count in cdb[13]). MODE 0x8021 (Static) must
-> be written first in every sequence or the device ignores it; colours
-> go to 0x8160 + 3 * led and 0x8100 + 3 * led (3 bytes, order R, B, G;
-> both tables are written because firmware revisions pull from one or
-> the other); APPLY 0x80a0 takes 0x01 to apply and 0xaa to save.
-> 
-> The CDB cannot go through scsi_execute_cmd(): it sizes the command
-> via scsi_command_size(opcode), which maps vendor opcode 0xec to
-> 10 bytes, so cdb[13] is dropped and the device silently ignores the
-> write (GOOD status, no error). The request is built with
-> scsi_alloc_request() instead, which initializes the scsi_cmnd parts a
-> passthrough needs (command buffer, lengths, rcu head), with cmd_len
-> forced to 16, mirroring what SG_IO does from userspace.
-> 
-> brightness_set only caches the colour and marks the LED in a per-zone
-> dirty mask under a spinlock; led_mc_calc_color_components() runs under
-> that lock too, because it writes the shared subled_info array and
-> trigger events call led_set_brightness() without the led_access lock
-> that serializes sysfs stores. A single work item per zone then
-> snapshots the mask and colours and runs one ENE sequence for all
-> pending LEDs (MODE, colour slots, APPLY, SAVE). Funneling every
-> update through one work item keeps the sequences from interleaving
-> between concurrent LED updates and batches multi-LED updates into a
-> single APPLY/SAVE. A re-queued run with nothing pending returns
-> before touching the device, so it cannot wear the flash with a
-> pointless SAVE, and the lock keeps a colour write from being
-> reordered after its dirty bit on weakly ordered architectures.
-> 
-> This is the monolithic out-of-tree version as verified on hardware;
-> the Kconfig/Makefile/MAINTAINERS wiring lands with the agreed split
-> into a SCSI transport helper and a shared ASUS Aura LED interface.
-> 
-> Signed-off-by: Liang Haowen <nbg2974@gmail.com>
-> ---
->  drivers/leds/rgb/leds-asus-aura-scsi.c | 392 +++++++++++++++++++++++++
->  1 file changed, 392 insertions(+)
->  create mode 100644 drivers/leds/rgb/leds-asus-aura-scsi.c
+I submitted v7 within the hour of your review, having read only the
+three comments above the diff and none of the ones you interleaved
+in it. There is no excuse for that. I am very sorry for wasting
+your time.
 
-Many (if not all?) of my review comments from v6 still stand.
-
-I will not be reviewing this submission.
-
--- 
-Lee Jones
+I have now read the whole mail, all 33 comments, and I am reworking
+the driver against the full list. Where I think a comment rests on a
+misunderstanding, or where there is a real constraint on my side, I
+will answer it in the next submission instead of silently keeping
+the code as it is. The next version does not go out until every
+comment of yours and Ilpo's is either addressed or discussed.
