@@ -1,185 +1,237 @@
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7CC568556
-	for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 16:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B9A2E7393;
+	Wed, 23 Sep 2026 00:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790094571; cv=none; b=aX66xcYP6IF6iGvLO27zNvwcTyuZ39FlWslJYp7bYDDcwWXBdbW8cSZ7bNNf2EOCyylWFPx7+D/tprr5ixbzRH6yQICxUgn5oeQnM1lXig4xCCJDYP6VijWk9RpHu/m4OGRB5kM9V5xCYOy0oiFBfJteKjtxMVnw6ORX2JN07pE=
+	t=1790123621; cv=none; b=mPAdejqzvmS6qHcBXQd2n2jhaChOxWlsJ27z7z1B6ivKDAwK70WTTl3ZPl8OECKXF19WYMcIhbFuj89jlmzv76Ik/A8G/o3GVW7Z2WcgHs73QVPeHEy9JJxfQhx4nCjwGxIizVu4zQc3bcd4GL6oYqPcCR+UTSB59uHb7W/J1DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790094571; c=relaxed/simple;
-	bh=VB3WnbRvt2J9LKmcdb7uv8dSEpH5QKJ7IXLu9KgM7d8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tEbCizAA6vQ4vEwHkW8pwai/q4fIgRsFYTKQUn4csC9u2ePU+cynhxCeaBvwPl4KZ8rqCM1h6fHgcjbciagNzxDIIb+RwzNCXlD42R9TknGlT7Jms9NrF41324/58BS4R3SGKAbAjGw6zYVjNLg3dVfab3RSS52SUet9WCncPHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=cvSvI+SE; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1790123621; c=relaxed/simple;
+	bh=nFpLy8xbShidBlfebeX+NCmSK8MfAgTDKvUWcfhds74=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kWyrOhYcqu5IyIZXBjIPNGpg3YMaKnjRAfm+mGAKubwo1bLUu8pYr/z2b6Vgkf4yyZS+MlVaFusuEjELtFYBXKz4HxwqA4XnvtFDCXqhr7SVkLljR9Ng2vAm6wgzFpYt1z5np3qkWOJeTltbtMnUYfF/NdqAPWNdCwQvm5fFjG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=a2xTnBHM; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="cvSvI+SE"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id C9B14240103
-	for <linux-leds@vger.kernel.org>; Tue, 22 Sep 2026 18:29:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
-	s=1984.8680eb; t=1790094561;
-	bh=VB3WnbRvt2J9LKmcdb7uv8dSEpH5QKJ7IXLu9KgM7d8=;
-	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
-	 MIME-Version:OpenPGP:From;
-	b=cvSvI+SE1xWq0cMXMfLUtoI0wSf1mGoXpE5fgwj9mmB/2kTtcRsktOrS7zgntEygI
-	 ot/bmwlshR+guiXMZep1kfPnMUmXAP9skW+yXgrOFi8fTBgpdZ4mlsmVPSIUwkWhy1
-	 WhLf0RRoC1A39IDvhRYg54RnN5ndQDO3546qdTqyiBADv4YyNIM02iE0rJD22wpfpd
-	 ybWgUWtMupLLvUWuVvzH8cYbAzsOjg1FWNMHJGRarsKSam0yNHTjxWTBMe7A8ovWs1
-	 JFPLzE2plZUe0TPapxmajzoLKyFhvBj40sk31fFbCOjZ/8RfZm1uokZ8z1PszQ6Hep
-	 0wdZovSOmoKKA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4hq5CK5Y70z6txf;
-	Tue, 22 Sep 2026 18:29:17 +0200 (CEST)
-Message-ID: <0b51e27e1b2e16ac5bf5776c7c1704ca90857ec5.camel@posteo.de>
-Subject: To Lee, Pavel: Re: [PATCH v25 0/4] rust: leds: add led classdev
- abstractions
-From: Markus Probst <markus.probst@posteo.de>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman	
- <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, Miguel Ojeda
-	 <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo	
- <gary@garyguo.net>, =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron	
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross	 <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki"	 <rafael@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
- <kwilczynski@kernel.org>, Boqun Feng <boqun@kernel.org>, Daniel Almeida	
- <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
- Alexandre Courbot <acourbot@nvidia.com>, Onur =?ISO-8859-1?Q?=D6zkan?=
- <work@onurozkan.dev>, Ira Weiny	 <iweiny@kernel.org>,
- rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Tue, 22 Sep 2026 16:29:20 +0000
-In-Reply-To: <20260913-rust_leds-v25-0-1a10371d78c3@posteo.de>
-References: <20260913-rust_leds-v25-0-1a10371d78c3@posteo.de>
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
- keydata=mQINBGiDvXgBEADAXUceKafpl46S35UmDh2wRvvx+UfZbcTjeQOlSwKP7YVJ4JOZrVs93
- qReNLkOWguIqPBxR9blQ4nyYrqSCV+MMw/3ifyXIm6Pw2YRUDg+WTEOjTixRCoWDgUj1nOsvJ9tVA
- m76Ww+/pAnepVRafMID0rqEfD9oGv1YrfpeFJhyE2zUw3SyyNLIKWD6QeLRhKQRbSnsXhGLFBXCqt
- 9k5JARhgQof9zvztcCVlT5KVvuyfC4H+HzeGmu9201BVyihJwKdcKPq+n/aY5FUVxNTgtI9f8wIbm
- fAjaoT1pjXSp+dszakA98fhONM98pOq723o/1ZGMZukyXFfsDGtA3BB79HoopHKujLGWAGskzClwT
- jRQxBqxh/U/lL1pc+0xPWikTNCmtziCOvv0KA0arDOMQlyFvImzX6oGVgE4ksKQYbMZ3Ikw6L1Rv1
- J+FvN0aNwOKgL2ztBRYscUGcQvA0Zo1fGCAn/BLEJvQYShWKeKqjyncVGoXFsz2AcuFKe1pwETSsN
- 6OZncjy32e4ktgs07cWBfx0v62b8md36jau+B6RVnnodaA8++oXl3FRwiEW8XfXWIjy4umIv93tb8
- 8ekYsfOfWkTSewZYXGoqe4RtK80ulMHb/dh2FZQIFyRdN4HOmB4FYO5sEYFr9YjHLmDkrUgNodJCX
- CeMe4BO4iaxUQARAQABtCdNYXJrdXMgUHJvYnN0IDxtYXJrdXMucHJvYnN0QHBvc3Rlby5kZT6JAl
- QEEwEIAD4CGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQSCdBjE9KxY53IwxHM0dh/4561
- D0gUCaIZ9HQIZAQAKCRA0dh/4561D0pKmD/92zsCfbD+SrvBpNWtbit7J9wFBNr9qSFFm2n/65qen
- NNWKDrCzDsjRbALMHSO8nigMWzjofbVjj8Nf7SDcdapRjrMCnidS0DuW3pZBo6W0sZqV/fLx+AzgQ
- 7PAr6jtBbUoKW/GCGHLLtb6Hv+zjL17KGVO0DdQeoHEXMa48mJh8rS7VlUzVtpbxsWbb1wRZJTD88
- ALDOLTWGqMbCTFDKFfGcqBLdUT13vx706Q29wrDiogmQhLGYKc6fQzpHhCLNhHTl8ZVLuKVY3wTT+
- f9TzW1BDzFTAe3ZXsKhrzF+ud7vr6ff9p1Zl+Nujz94EDYHi/5Yrtp//+N/ZjDGDmqZOEA86/Gybu
- 6XE/v4S85ls0cAe37WTqsMCJjVRMP52r7Y1AuOONJDe3sIsDge++XFhwfGPbZwBnwd4gEVcdrKhnO
- ntuP9TvBMFWeTvtLqlWJUt7n8f/ELCcGoO5acai1iZ59GC81GLl2izObOLNjyv3G6hia/w50Mw9MU
- dAdZQ2MxM6k+x4L5XeysdcR/2AydVLtu2LGFOrKyEe0M9XmlE6OvziWXvVVwomvTN3LaNUmaINhr7
- pHTFwDiZCSWKnwnvD2+jA1trKq1xKUQY1uGW9XgSj98pKyixHWoeEpydr+alSTB43c3m0351/9rYT
- TTi4KSk73wtapPKtaoIR3rOFHLQXbWFya3VzLnByb2JzdEBwb3N0ZW8uZGWJAlEEEwEIADsWIQSCd
- BjE9KxY53IwxHM0dh/4561D0gUCaIO9eAIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgAAKCR
- A0dh/4561D0oHZEACEmk5Ng9+OXoVxJJ+c9slBI2lYxyBO84qkWjoJ/0GpwoHk1IpyL+i+kF1Bb7y
- Hx9Tiz8ENYX7xIPTZzS8hXs1ksuo76FQUyD6onA/69xZIrYZ0NSA5HUo62qzzMSZL7od5e12R6OPR
- lR0PIuc4ecOGCEq3BLRPfZSYrL54tiase8HubXsvb6EBQ8jPI8ZUlr96ZqFEwrQZF/3ihyV6LILLk
- geExgwlTzo5Wv3piOXPTITBuzuFhBJqEnT25q2j8OumGQ+ri8oVeAzx24g1kc11pwpR0sowfa5MvZ
- WrrBcaIL7uJfR/ig7FyGnTQ1nS3btf3p0v8A3fc4eUu/K2No3l2huJp3+LHhCmpmeykOhSB63Mj3s
- 3Q87LD0HE0HBkTEMwp+sD97ZRpO67H5shzJRanUaDTb/mREfzpJmRT1uuec0X2zItL7a6itgMJvYI
- KG29aJLX3fTzzVzFGPgzVZYEdhu4y53p0qEGrrC1JtKR6DRPE1hb/OdWOkjmJ75+PPLD9U5IuRd6y
- sHJWsEBR1F0wkMPkEofWsvMYJzWXx/rvTWO8N4D6HigTgBXAXNgbc3IHpHlkvKoBJptv6DRVRtIrz
- 0G0cfBY0Sm7he4N2IYDWWdGnPBZ3rlLSdj5EiBU2YWgIgtLrb8ZNJ3ZlhYluGnBJDGRqy2jC9s1jY
- 66sLA9rQZMHhJTzMyIDwweGlvMzJAcG9zdGVvLmV1PokCbQQTAQgAVxYhBIJ0GMT0rFjncjDEczR2
- H/jnrUPSBQJpa71VGxSAAAAAAAQADm1hbnUyLDIuNSsxLjExLDIsMgIbAwULCQgHAgIiAgYVCgkIC
- wIEFgIDAQIeBwIXgAAKCRA0dh/4561D0gKJD/9uOQKYlsDoQX65Gd0LiMT0C+5vXgr3VI0PHDOwcv
- 51fJ3A1vNyPZRFPGrz8+mDEXUQOF/INfnz5Tu1QHwf+iYcWcTGAN/FHgVR6ET6VBNU2hJaKhu+Ggo
- kjYyJTOvyX+3yNRUfSny0GjTjIPuPTErjqmHF+BtjXslpgwqnNMznf3lRIuUjRORupos6p3k1DndE
- 5vzUTmXSvMyXyOD2KhBl/kL76k0bHYyAQytZPag12pltrtFbA/r2phDGN2si8PooDT99bSTJjaM45
- MTAAHbHKJfvgfK41bNFD5mMtpWpL195XRtS0Nrxdg3PaYBxN5gtTG0RyZfpYRlkdEhm+jj/8RxuSG
- i/qdhRdbiI7K2IELWeQVHSNDi9JabR/UzlR4NSnhfAjRIVlRM+eFbUl8XwxwVrAkojF5IraH2qRvg
- VCmuFsHUW07FUlrDrzpjXsD73cKppoFGDCdDR0BHJepXbFLS9+AqkT+guRJlnCTg2p+TQtnbwPgKp
- Vj98JixovCl99zRYTsL2bRNU5+q8iET65VMJ1ydyNanvLd5vI/NqDkXhlXLsGmdaDTtu4R21PkToX
- dQNGrZ91M9nlIBKw8Y7c7xZ4098qX2b8JX/CxD+gC1r4C8vuA3GkhFLx+KlkON7LyiJPkrePp6Qky
- jfGillcaQOqFZ3WwVqyzG1BUfTow==
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-hrTAX/W6mLo7sKDNm8zH"
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="a2xTnBHM"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68MMX5II3809402;
+	Tue, 22 Sep 2026 20:33:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=ZkLMz
+	ckqtCXylOmmKeuyAXG+e2lFKRhw1bmoqckzwgQ=; b=a2xTnBHM79vSBljafLqsq
+	2hIwydeSVVRj72Xm9W2R61IIS2pUuXLrksatHi2BaoK8dAmN9IZHwxjR5MqSiIUq
+	IpMfuUY/CLowLywfVXRM57KCxNSCjFX/WgL8sWN/Iw6OoPNSFgrfGf4kgM0wFCDd
+	oDyRU69jGbg+b5+jJl7LzUxJ1iifvCeVUFeq+y5ZstVBqOv5K3t6pSzZQY0IX+P9
+	LG3wBXpnLm7kijXRqhcvlQTvqNvGFVL76bfZLOVsh/iRa8/sruMhJjNu1iTeEoQt
+	47tA+rDD1BUoHSiMK9bvlJLbg51b2miruvSQO0MZB9w2c3RE6ijWalLcZwFlN7cX
+	g==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4gusd2ujxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Sep 2026 20:33:37 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 68N0XaWx046010
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 22 Sep 2026 20:33:36 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Tue, 22 Sep
+ 2026 20:33:35 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Tue, 22 Sep 2026 20:33:35 -0400
+Received: from HYB-VFz9h4bIQxi.ad.analog.com (HYB-VFz9h4bIQxi.ad.analog.com [10.118.4.49])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 68N0XQkO005006;
+	Tue, 22 Sep 2026 20:33:29 -0400
+From: Jan Carlo Roleda <jancarlo.roleda@analog.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND v13 0/2] leds: Add LTC3208 Multidisplay LED driver
+Date: Wed, 23 Sep 2026 08:33:22 +0800
+Message-ID: <20260923003325.61722-1-jancarlo.roleda@analog.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260911-upstream-ltc3208-v12-0-9107f5f0a7b0@analog.com>
+References: <20260911-upstream-ltc3208-v12-0-9107f5f0a7b0@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIzMDAwMSBTYWx0ZWRfX46tsBmeB1w7y
+ tTctvp7KBmndVz6d+PXd55VvOUkvTP7qTQBdigBp2TdkvAo0QbuEy8fmZiT0ghu5v8HmuKFgHtP
+ X5t+sp4K5BDicU33ANQj7XBJdLR1fP43N12lcNy7Fx4Fnpe7SYtYvjiGcqExpvjLw04qFeWZwiD
+ ntdCOVx7kvInGubgOeE8xR79/awIHRXQZVg2sonBoFVVwkpEZX09jVmNwmND3QUzIO82djR16aK
+ xHSvLn63ngNotxO6+RKX0/oF770Wj7uzfy/UaMLrGeB3lJrLK1tLdpxyjzNER10rgJAO9jySoX3
+ jamqZgVwcWb9SFHhTIBiju3wCGFLdipMHSkhKVOANYkqhrs6XveXSFez5eZfL0TCY05ydSfUjYL
+ kCbDH4o6W9QjqFiHJWMZBc71W3LNknmf9NpacozYYlI1TbEw2Desfg3CCJ1Q+BGj45r85nrGbFp
+ nzr0gD7Nco7I1gZeUKw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIzMDAwMSBTYWx0ZWRfXyFwHHud+QGuS
+ F/Eab4KX4Okmn0zWrE63kZUys2L1vpnmfuK4PKKQZFk1/DcpAoVEi7bzapXjBkczZ572LJ8rths
+ fnkNZ8FB2FrkYpIeUGzBNmkQQ17BfJKNDFnKAPOPK7/V8iUTZ55b
+X-Proofpoint-ORIG-GUID: sMQnevTF5LxDrD_goJRzfJRngF1sHjLG
+X-Proofpoint-GUID: sMQnevTF5LxDrD_goJRzfJRngF1sHjLG
+X-Authority-Analysis: v=2.4 cv=adH0Dhot c=1 sm=1 tr=0 ts=6ab31e61 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=0sLvza09kfJOxVLZPwjg:22
+ a=Z0pTeXoby7EwIRygza74:22 a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8
+ a=IcWdq1wQ3oZ9IN_8gNwA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-22_03,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 suspectscore=0 phishscore=0 bulkscore=0
+ clxscore=1015 spamscore=0 malwarescore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609230001
+
+The LTC3208 is a multi-display LED driver, using a high-efficiency, low
+noise charge pump to provide power to 5 channels (MAIN, SUB, RGB, CAM,
+AUX). Current for each LED is controlled by the I2C serial interface.
+Four AUX current sources can be independently assigned via the I2C port
+to the CAM, SUB, MAIN, or AUX DAC controlled displays.
+
+RESEND v13: rebased onto leds/for-leds-next to resolve missing patches.
+Resending as requested.
+
+Changes in v13:
+- Mistakenly replaced max_register with LTC3208_NUM_REGS. Reverted to
+  LTC3208_REG_G_OPT
+- Link to v12: https://lore.kernel.org/r/20260911-upstream-ltc3208-v12-0-9107f5f0a7b0@analog.com
+
+Changes in v12:
+- Added LTC3208_NUM_REGS to explicitly define the register count in
+  regmap_cfg
+- Link to v11: https://lore.kernel.org/r/20260903-upstream-ltc3208-v11-0-28f5f0fd364e@analog.com
+
+Changes in v11:
+- Fixed inline comment formatting
+- Adjusted newline spacing of device_property_read_bool attributes
+- Link to v10: https://lore.kernel.org/r/20260817-upstream-ltc3208-v10-0-e1f9564b1e86@analog.com
+
+Changes in v10:
+- Appended "_CURRENT" to DAC register names
+- Removed additional newlines
+- Removed size specification for ltc3208_reg_defaults
+- Standardized dev_err_probe messages to start with upper-case and
+  removed full-stops
+- Updated dev_err_probe messages to be slightly more descriptive
+- Link to v9: https://lore.kernel.org/r/20260806-upstream-ltc3208-v9-0-c746e872c193@analog.com
+
+Changes in v9:
+- Add "#address-cells" and "#size_cells" requirement to devicetree bindings
+- Add regmap hardware synchronization to reset value (0) in device probe
+- Link to v8: https://lore.kernel.org/r/20260730-upstream-ltc3208-v8-0-6bdcc35e65d7@analog.com
+
+Changes in v8:
+- Adjusted register define comments and formatting
+- Adjusted aux channel string declaration formatting.
+- Removed I2C client from ltc3208_led.
+- Replaced struct ltc3208 with a bitmap to validate unique channel
+  registration in probe.
+- Replaced ltc3208 kzalloc with individual ltc3208_led kzalloc in probe.
+- Added spacing to each bracketed item.
+- Adjusted formatting of reg_field declaration.
+- Replaced reg_val with dev_options name in probe.
+- Adjusted error messages to be more descriptive.
+- Removed newlines from error messages.
+- Refactored AUX channel configuration to be more readable.
+- Removed id_table from i2c_driver initialization.
+- Link to v7: https://lore.kernel.org/r/20260708-upstream-ltc3208-v7-0-aed7f7bd461c@analog.com
+
+Changes in v7:
+- added reg_defaults to regmap_config
+- removed i2c_client and regmap from ltc3208 struct data
+- fixed typo comment in driver commit description
+- fixed string formatting of u32 chan data in probe
+- added explicit CPO set to 0 in probe
+- Link to v6: https://lore.kernel.org/r/20260623-upstream-ltc3208-v6-0-fc6bd9749166@analog.com
+
+Changes in v6:
+- Fixed code conventions (spaces in brackets, awkward line breaks)
+- Removed unused `i2c_set_clientdata` from probe function
+- Added guard for potential errors in AUX channel configurations
+- Added guards to prevent duplicate LED registrations to the same ID
+- Corrected `dev_err_probe` return values
+- Link to v5: https://lore.kernel.org/r/20260619-upstream-ltc3208-v5-0-075d18060606@analog.com
+
+Changes in v5:
+- Fixed MAINTAINERS commit ordering
+- removed i2c_client from ltc3208_dev
+- renamed ltc3208_dev struct to ltc3208
+- refactored brightness_set function to use regmap_field
+- updated leds attribute to use constant size array
+- updated regmap_config to use REGCACHE_FLAT_S cache type
+- added max_register to regmap_config
+- renamed variables in probe function
+- renamed map to regmap for regmap instances
+- moved AUX channel configuration inline to probe
+- Link to v4: https://lore.kernel.org/r/20260416-upstream-ltc3208-v4-0-3884ed3e49f5@analog.com
+
+Changes in v4:
+- Reordered commit order to match dependency order
+- Updated Kconfig to be more descriptive of device
+- Added led@0-7 with more complete example properties (function and
+  color)
+- Driver changes:
+-- Removed unnecessary include headers
+-- Formatted macros
+-- Created helper `write_current_level` functions for LED current
+  configuration, using `regmap_update_bits()`
+-- Adjusted awkward tabbing issues
+-- Updated variable names in probe to be more descriptive
+-- Updated inline comment capitalization
+-- Initialized `i` within the for loop in AUX configuration in probe
+-- Refactored `update_aux_dac` function to use array pointer
+-- Fixed error messages in probe
+- Link to v3: https://lore.kernel.org/r/20260406-upstream-ltc3208-v3-0-7f0b1d20ee7a@analog.com
+
+Changes in v3:
+- Edited device bindings descriptions
+-- removed full stop in title
+-- replaced quotes with double quotes for consistency
+-- removed <dt-bindings/gpio/gpio.h> from example
+-- removed led1-7 in example for brevity
+- squashed maintainers commit to driver commit
+- Link to v2: https://lore.kernel.org/r/20260326-upstream-ltc3208-v2-0-3dbc992b6098@analog.com
+
+Changes in v2:
+- Addressed DTSchema bot warnings and errors
+-- removed extra blank lines
+-- fixed $id to match current naming
+- Addressed Kernel test warnings
+-- fixed bounds for aux channel configurations
+- Link to v0: https://lore.kernel.org/r/20260318-upstream-ltc3208-v1-0-015f1f1e9065@analog.com
+
+Jan Carlo Roleda (2):
+  dt-bindings: leds: Document LTC3208 Multidisplay LED Driver
+  leds: ltc3208: Add driver for LTC3208 Multidisplay LED Driver
+
+ .../devicetree/bindings/leds/adi,ltc3208.yaml | 183 ++++++++++++++
+ MAINTAINERS                                   |   8 +
+ drivers/leds/Kconfig                          |  12 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-ltc3208.c                   | 234 ++++++++++++++++++
+ 5 files changed, 438 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/adi,ltc3208.yaml
+ create mode 100644 drivers/leds/leds-ltc3208.c
 
 
---=-hrTAX/W6mLo7sKDNm8zH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+base-commit: e264a106d8fc45fd82891cb0c4f8bd9e2c48c152
+change-id: 20260318-upstream-ltc3208-7cc8968bf69e
+-- 
+2.43.0
 
-@Lee, @Pavel:
-
-Hi,
-
-This message has already been posted once [1] and no reply has been
-sent. So I added your names to the subject line, so this message will
-hopefully make a difference.
-
---- The contents of the original message:
-
-Regarding the leds rust abstraction patch series.
-
-Lee already mentioned he will take Rust patches into his tree if
-"quality Rust-specific Reviewed-by" trailers are present [2].
-Will this also apply for any subsequent patches (e.g. bug fixes)?
-
-Secondly, there hasn't been a comment on me taking the maintainer role
-for the Rust abstraction yet. If thats fine with you, I kindly ask you
-to ACK the patch adding the MAINTAINERS file entry [3].
-
-I was told there have been cases in the past of maintainers leaving the
-kernel directly after code has been merged. To take away any fears that
-might exist, I can assure you I will take care of the Rust code.
-
-If there is a patch with breaking API changes on the C side, simply add
-me to Cc and I will fix the Rust side.
-
-The missing ACK on the patch adding the MAINTAINERS file entry [3] and
-the missing Reviewed-By Rust trailers should be the only blockers of
-this patch series.
-
-Thanks
-- Markus Probst
-
-[1]
-https://lore.kernel.org/rust-for-linux/6c57e08a5f4aa9096711d14d82ece19fb68c=
-893f.camel@posteo.de/
-
-[2]
-https://lore.kernel.org/linux-leds/20251110134058.GC1949330@google.com/
-
-[3]
-https://lore.kernel.org/linux-leds/20260903-rust_leds-v24-4-8d9e4c04db69@po=
-steo.de/
-
---=-hrTAX/W6mLo7sKDNm8zH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmqyrNQbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPSJa4P/3iq5hDp/fMSRneXBm4/
-Qt2omZIzS+m3e8Ds4MkTm+g8+38aL/JArAnGSdxrhiGqkzcP2QPr4B5pN+uhlnHU
-guCBb0ifat9OXljaBitpPOUIlgt/YAhLJIedLJtVAh8Roc0Byz2dDMc0E14ZfGNC
-7DKxSycz7qr7Rm6C0c2emM2wqlpS1i2ouYbALkgcCbF6BoqTcMxTP/8QcdksnrpI
-VUuDV6y1rZbPuxzEsacwf2UWWlqp6ZsqEDlbmT8V8QZbv/DVl9n+Uz24iXzU6Ks7
-N6vP5ZLAJniDBBRSj2jeIGIvCg+itBSjWtYarVE/iUxkrLtaRMUTtCUytYNNkTkp
-FMwXSn9XrMdSSprl8EUlddyvWZXJeiry3qCc3QaAEBugpjUAQJYXQRqS2Qfk+TC+
-5jzizYQ7F+KFZzTcHD1JzqoXujJfK4eZTxCmBk4sBgcrTX9iMekuaVqHPSUFIpNu
-cdmm0lbkEG92P4RFXyuD3ZbSIIgVYPDzgWYH1C9hFzf+mP6TtpkHGindygzGvhmg
-FVL73qxVTXoph2uaGEZdGAZbhQAnoZxCm5jjjWAfAgpDZRSLL8RPdnIvmSNICxcR
-N7uG28EeJ2Kn7qt5DGKuzLNcIU/1sOrhcqhADiLBb8qWU1vMCR6AEwRQzc59t1OO
-cZ7EcoHIvs8V7Fe9hCFLYZN+
-=JywU
------END PGP SIGNATURE-----
-
---=-hrTAX/W6mLo7sKDNm8zH--
