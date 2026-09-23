@@ -1,75 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84C72D23A6;
-	Wed, 23 Sep 2026 00:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B633CEBB9;
+	Wed, 23 Sep 2026 07:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790123934; cv=none; b=da57f+0NKm/QQxjgcSglgYlr90y3/2xiht7WI4hCQZgT7vFYXYsiL7CIpt/ez0hVwjRQ6C4mVwLmivXYZgeL/f0TCy9RlyNzeyaTckQpuaT3q7+2WfqxUpGUPBs8DX6+hnb59tY+SWTT4RzYGTWBq9+VKXsGuBfHng+FYb6ziJk=
+	t=1790149127; cv=none; b=GZDSyQRaYnVRmQxaC8dhYhh74+Ut/FhEOWOdWKY0/Lrjsfu5Rj7r92CsxhQd9x1Fd7gaTIdn7ybHakK4s4XsE5i5thEhxgF0wxrT8JoyEQvMA+/d93PA4aQ7JCvqCYCT3Yu2VMNcQ9sr6BuQrZMuPml1FDaQeUdhqelj3/y3FVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790123934; c=relaxed/simple;
-	bh=KuJHDYYUsvE9UmEwxBo5BQ4rm65WdvePdfCAr//Dhi8=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=tC6BLbP73hkYVcsTFyXYpWvwiSvS59bFbGYGkPJp9yozk5a9LP7yriaSXDtN5JVO+ORvkCLWyCuJsBLj9ZDNn/W+Q8OB/c8r9PNMwLTH/DQwClMDhyJm4oSA9aqq4Syw08m6RB7OJss101ElMSy8vJs7rqkNLU0cRUynGWxXspA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsyNXC7l; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790149127; c=relaxed/simple;
+	bh=aeKEa21Iv1JnzMhWoiWrgkB+/HCmOxnb1+KOKo5zeQg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c5mh1v5fAWJvnuCSMtQLBeszUvem43PN1EuVzQ8vRfYI/ByRx6h6Clz3FUIb6C3eum9AVFIjorJ5UATwZk0NX+59DjWJU3pVkMDoLghN7m2GQdbWoWgVdn0Q4ax/jKxXuVBW/HLEdn1dlD3NGJaRp5BT7Vs2TJ0bFcaVCV+5Cdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXt3JE3U; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsyNXC7l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288BF1F000FF;
-	Wed, 23 Sep 2026 00:38:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXt3JE3U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1EE41F000FF;
+	Wed, 23 Sep 2026 07:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790123933;
-	bh=KuJHDYYUsvE9UmEwxBo5BQ4rm65WdvePdfCAr//Dhi8=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=BsyNXC7lD0+LZyG4vICkudALI6qBfK8Ul6QSq2gLzKdfOA6S7S4XAGZhlljZfy8L1
-	 HZATXYRhTgFhifE5c9QJWStBSU7XRzjNpPk4DC7q0sgIbsmLdV62DfFjlEe76joKz6
-	 2zvl+2zl856O6xktz36z+oo67v0YyA4kpMTiR+zE5thA5gn6nzbLoxHjX+y4dJ2u5L
-	 l5EHYZ7CH/1vC9fPmLevjL1ZoCAd2SaqZOjAJzWMShyauHV4Bb0/3gKOMMAUl0r216
-	 hOSLpl+BYmF/Yh2fFIO8cQTEVogiG/LRI8CZBVJL61DytWLf/GBgiBxNopBkqWEQHw
-	 5BzQffjf52pTQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH RESEND v13 2/2] leds: ltc3208: Add driver for LTC3208
- Multidisplay LED Driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Jan Carlo Roleda" <jancarlo.roleda@analog.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org, robh@kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20260923003325.61722-3-jancarlo.roleda@analog.com>
-References: <20260911-upstream-ltc3208-v12-0-9107f5f0a7b0@analog.com>
- <20260923003325.61722-1-jancarlo.roleda@analog.com>
- <20260923003325.61722-3-jancarlo.roleda@analog.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 23 Sep 2026 00:38:52 +0000
-Message-Id: <20260923003853.288BF1F000FF@smtp.kernel.org>
+	s=k20260515; t=1790149125;
+	bh=Ca6KHXxuLELUG7BYqtOwJNcmxYZr9gn5Koogd1BC89Y=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=YXt3JE3UFgMfkGrc1uXTosYF/bgezhTxImF1EiWn6QN1JAOUHb2ZgAH+9ki4mR6Fi
+	 NcpWzpjCMby0w7WOBnPnHPkUTMp2c81RE6UblDtty/eFM7Yp2rYdofYP5QX7sn7033
+	 Fk4kA4psFI5iFlkhTIWVbkYjCJHazQRI4QAsBjFwg/D4S2nMgcEIPWsUF2ihtyaBbF
+	 AXdmGhL7nFwhmeSYSSuCGnpz6WgHRW7JO5B+COGm2pta8GjQt8hymaX79zvBb4LLjY
+	 F7UWWFrP65kbZ7eafSYmazN/4SMv6cpaXRY8N6RCKr3qTH6BX4H62wjS+pO1ib3qY6
+	 i1R6koveO+iRA==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jan Carlo Roleda <jancarlo.roleda@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260911-upstream-ltc3208-v13-0-fc9aa3758b55@analog.com>
+References: <20260911-upstream-ltc3208-v13-0-fc9aa3758b55@analog.com>
+Subject: Re: [PATCH v13 0/2] Add support for LTC3208 multi-display driver
+Message-Id: <179014912339.3812484.345851253549300659.b4-ty@b4>
+Date: Wed, 23 Sep 2026 08:38:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-> Kernel driver implementation for LTC3208 Multidisplay LED Driver.
->=20
-> The LTC3208 is a Multi-display LED driver, designed to control up to
-> 7 distinct LED channels (MAIN, SUB, AUX, CAMHI, CAMLO, RED, GREEN, BLUE),
-> each configurable with its own current level that is equally set to its
-> respective output current source pins for external LEDs.
->=20
-> It is programmed via the I2C serial interface.
-> MAIN and SUB support 8-bit current level resolution,
-> while AUX, CAMHI/LO, RED, GREEN, and BLUE support 4-bit levels.
->=20
-> The AUX LED channel can be configured to mirror the CAM, SUB, and MAIN
-> channel current levels, or as its own independent AUX channel.
->=20
-> The CAM LED channel is configured as 2 separate CAMHI and CAMLO register
-> sub-channels, which current is selected via the CAMHL pin, or set to
-> CAMHI register only via setting the S_CAMHILO bit high in register G (0x7=
-).
->=20
-> Signed-off-by: Jan Carlo Roleda <jancarlo.roleda@analog.com>
+On Fri, 11 Sep 2026 08:01:50 +0800, Jan Carlo Roleda wrote:
+> The LTC3208 is a multi-display LED driver, using a high-efficiency, low
+> noise charge pump to provide power to 5 channels (MAIN, SUB, RGB, CAM,
+> AUX). Current for each LED is controlled by the I2C serial interface.
+> Four AUX current sources can be independently assigned via the I2C port
+> to the CAM, SUB, MAIN, or AUX DAC controlled displays
+> 
+> 
+> [...]
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Applied, thanks!
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260923003325.6172=
-2-1-jancarlo.roleda@analog.com?part=3D2
+[1/2] dt-bindings: leds: Document LTC3208 Multidisplay LED Driver
+      commit: 6db5536b3bb71ab303fe7e9b95d77a09702c24a3
+[2/2] leds: ltc3208: Add driver for LTC3208 Multidisplay LED Driver
+      commit: 83858f2b93922e1a6ddb77ed76b18711950f8b0d
+
+--
+Lee Jones [李琼斯]
 
