@@ -1,120 +1,112 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com [74.125.228.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8EE47F3DF
-	for <linux-leds@vger.kernel.org>; Wed, 23 Sep 2026 10:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D61F486656
+	for <linux-leds@vger.kernel.org>; Wed, 23 Sep 2026 10:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790158710; cv=none; b=ivLfy4/lFO7jndY2VRHomGP5m72qZpE7xr98Ns7hfveKRz076Zi65aypPB7i9ET8XNnIPDAQuDjrRNr6aiPsHFqmDzwagaGwrQ3DsNRzudQ0A2Ze6XqoNr1aWES3xqwJqzBxSaH/npBCW7NawaXCm8q/UFb3i5z6HyParRjU73E=
+	t=1790159438; cv=none; b=iEq66p96ZvlgJ0zCL7qUT6pVGre4cGhPFP3SVz/CXok94wDp0WewD6e24x7NRm43FlgxVD/oKIRckHnjSQqG5XYgwahn4AkkDxDCWh0T2cXw7G8ZlhiwiYQCwb7PIpNV3jCNRyp7PbdWu25KTJDOUwpev2ffz0JWkk/9Q45dRyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790158710; c=relaxed/simple;
-	bh=Cw4qUCgB4oS+hGjTirBsh6bImAzBppTQD9nONJcjvhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ohnJ8wDAq0cswxl3ocGbAuEggP1j/gbKsHP32SBMswCz4X+g1WbjuzXS4uTfL9k78BvdWws8/K05hlpJzqOnyP2rTkuPQBfISzylDKW7pny/3Z/aetSUrsXr7bGBXpjlMu5eWUDxLL4L5NTvuouYYq6dv7IfBTOZdT74zAmoMMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5qJf8Jb; arc=none smtp.client-ip=74.125.227.140
+	s=arc-20240116; t=1790159438; c=relaxed/simple;
+	bh=4A2rVpCglcElPTI0FX/kZ2D+r2RLsiom+HOo0azm9N8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXi1gl5fxfzX116RJ7vYb28JoLmRVeISweDkZ2yzZehsgXnLC1KhLfnDO8zRFDLH3gPyG5oW4PCxA+ngyQtuUs4bpnXmoaXm6mKbNaa6mTfC910Fad/Owk5FkHySGQIUilLkKUdDWR6z2smU97Jj4a2PZU4mOzn6chba3YNfUQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BFfhvlb2; arc=none smtp.client-ip=74.125.228.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5qJf8Jb"
-Received: by mail-pj2-f12.google.com with SMTP id d9443c01a7336-2d8fb334e72so3243975ad.1
-        for <linux-leds@vger.kernel.org>; Wed, 23 Sep 2026 03:18:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFfhvlb2"
+Received: by mail-pz2-f42.google.com with SMTP id d2e1a72fcca58-86efece610cso399202b3a.0
+        for <linux-leds@vger.kernel.org>; Wed, 23 Sep 2026 03:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790158705; x=1790763505; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=UkEzU1TrVb7LM2qKIN2UAZBeduPofA0aR00sq50xecU=;
-        b=H5qJf8JbkJ/nhyNJNcLdTVmxNLPYoWTEqoJU4zyD4QX8sfFxheMAm9UcVHlEhblCkq
-         X9zaF52OfHfKAqwvMB6xOo9U+w3lupkAZt8FOxdy7uZ9MDgCSonjgMq04Ozx8rZcJbSg
-         A0AO01J+tjA1o5y/ngMyGo4JQt0e9hYfxh9vSWKdSbHJrfQ95UDpKwjrXu+46xiF3CHO
-         pCo9UrsHJU5gKVko0Q7+fkvHZUD+AANrxDh2W7HaoFzuzx4FSOqplBqLkh4fyKudx4kF
-         3KJiAcPkGd1r7PFpQWal/Sb4raJJU8QVvxOWW87JiC+F16KPY7FtdNAGEOJqbPVVzPHm
-         gB+g==
+        d=gmail.com; s=20251104; t=1790159422; x=1790764222; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=SJQcE+RNdWTQ/Zw3ZZ29eF8rBGAX/7jKIXho5Hbkepo=;
+        b=BFfhvlb2YkH3g09h5WLKDhAtqLoJ8CVC+uUPhVIx1QFLiUIfMAkqttQJc+ZteSS1QY
+         ggf79iexq7eT7FdAFJ8zJZQonnPRm09xH2dSgkwcEsu0HDz7v7a7Vtpth5wr83IusWhp
+         iBlc5rLC1cyneu8QUKYgx0vDSCkXCx4qrhgQ+tvLGjyHrJmtQLt/C+9PNQ6OS01XaKOD
+         /hJrwFdR59ESMo3ZUa72OqZ2XHZRLHVGAwN3v2VW/KnY+1UpHGepu7x18ywm09xwfF/h
+         OM117WKmsJMvSLq7SyVKQdiXq9Eyeb05KNVmIw4rWTuhN04OKbguUwz8G/UoaobFnVIq
+         CYQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790158705; x=1790763505;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UkEzU1TrVb7LM2qKIN2UAZBeduPofA0aR00sq50xecU=;
-        b=yGgZ8WN1PZw7PGf406EGCy8Ce9sI6VDk7MU46k/4xcEq/cXZrIWu1bLWXlfx46No3F
-         Ep+KNltMEqx50L1jJeS7KodohJbc/l1MmvmtN/OXCwqJiUraEomu5KYl6p14PTosx5hC
-         Nt1oodScOWErd54OHas0Jj8f3o5vJsvBbmktYfYsHj7MQxIe+H3vcrFSObx5AaMOk1dM
-         0i4oTPVWvY9CPAypVEFA9nx5YSlm7VuWDCT7GFxG/1Lb1w2NcEsv8RV+ohDTztoLhzj3
-         vz1233Fe8oNHtmrYiakcCnwNogKNrHO7q0rOboacmWLzLk+KMlmosq3sSXewDhsM1BK/
-         ByPQ==
-X-Gm-Message-State: AFuF++m+D+Tir1FcuqQG6HidhJFu0Rae8IlQ/lEd0gdGSS2mDqEV2R8E
-	OB/hgVvurLlaNde8uu93i2eL4LR+R/EAIp7JLpBf8+y88sY89uUc+eQC
-X-Gm-Gg: AYBFou0l018zcx41Idh5HZEqBP2K70eCkE4/7ZJGq/AkZ8/YRSYZDHcGaF1ANrFCJyd
-	uCkTsI2ZF+6rIJaFQe8F4Ve5aqrAkbnQrrPghdJJ1AdE2MoPYdicyF5D+4dBE52EDpf+jYn2P89
-	SeqYHgYTLk7yvPZz+F7vdVuINdYs4FZ61wb0ncWjjElLtpaRMTzrRKIU0LsDAihZYGeEuPC4eZM
-	0dd/2lGavBS14HE/dLu0Q5APgBpAEGUgGDYCMyhBzQNnscKrEQOJ6ltlCObtieKaMoWB5+IsbCN
-	EHGMfce9xF5Uz/J0v4VHs9JaJKBI20D43LzCtqFx53O5ujK8kAj5X8PR706+qkKSQY/ILfhS3lC
-	YaREod0bfxNfD01C0d5roKKEIAVWdsss/SxPlD/uNUg0GwW9A3FrPewYVECryCmw76Yg9OmxWnL
-	Ryl4nGbvvV+4mrS2Ky+LuypXDY38gTZT4aEjEjUDIyCMBQKSGcj1fWasZcEni+zoqWDKJQN8vL+
-	vzFF2yL+jk1BW6ubBI=
-X-Received: by 2002:a17:902:f686:b0:2df:69e3:7395 with SMTP id d9443c01a7336-2df69e374admr18597665ad.18.1790158704340;
-        Wed, 23 Sep 2026 03:18:24 -0700 (PDT)
-Received: from [127.0.1.1] ([240e:b8f:977f:f400:ec2a:b15e:fef8:70a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df6a5a9516sm8289255ad.29.2026.09.23.03.18.21
+        d=1e100.net; s=20260707; t=1790159422; x=1790764222;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=SJQcE+RNdWTQ/Zw3ZZ29eF8rBGAX/7jKIXho5Hbkepo=;
+        b=Cgs2k0Zz2oy6zDnaNptewFrM0IAqB6BR8OwaT4VdHofAtgCFPC7pwmDNDed9mRX5K9
+         F4xWkZLqDWXRRlFSbb7fzfUAkffW7L+gIZv2OV0o/OVLsncICTmpf6YArVqOg4vSJLCx
+         fowHDf0xgIBGbyelUoJ9GwIljFLFGXylKLq806fQ1F3h+Inn9znZN/UMoyEwEqndmMC5
+         UOQDExMIssUJMkEmPN5LfTd6/JmKvbW3aBF49oMScX4oNabkmqynhuqtyypLVa8Iiaxk
+         Bfuy1Au4vINJqgd4fw26tuZzxGMarahd/692EQVJW4Kq4T9VoyfogzQbCdmCwZNOjXBi
+         ygfg==
+X-Gm-Message-State: AFuF++nbcgGmOlO/8MwtdYtSMxKSga1NcmS1S0NLs3G63ovKvL3Be0Wn
+	BRjtXqy7DTi53XglOEYZ5b+g3FrF4q+SsM4u7maw6k1eNGwnoampnVu7G4wlrCVPse4=
+X-Gm-Gg: AYBFou32dsXOm/d/FPJBnZIQ5Ax6J/dyRyYqmRAe/zCnCnUwcQ4BGVJQ7bEOVRfqrpx
+	L9+f5d8TMWHPti2XKGA93rpkS65WM0wyucIqT48ay4pSSvURvZrh5Yt2Kdr7Qfa0EeDhQReN+Ur
+	pbGUsA0vG2kW6YaItZL56goljnWvrsIrob4gsAShqPGzQpyirzC22i0Kb+zOFsXVlf5LTkVuJ6g
+	2fAFej96x1vF1dG2z1RvI1GMmP7tZS6WrBKEAd66PDYSj9fW0TD7B62/ytnfbMzA7IdkysVZXAQ
+	uhxDrEPDYEgcMVbMayvE9JHaVjb9LFfjRTxWQgxE6upFipZBugI8WH1OfZUzqGByCpQuviX3op7
+	BH1ijSy6cgVoeKWVqY+iDiZz/GDi0KH/HzUBU8WMp17dk/fEAw/wzsq5VEWwa3vAU3LASqiHwMg
+	vgAtBut779Plw6MFNqKvaTI3jVD3hE2NAb5/9dwPLDqDjjPL59oNmEPoAjYB/BSzdgW94M5tjWe
+	F9IfTbqb5fmo9ih
+X-Received: by 2002:a05:6a00:1489:b0:86b:b308:b926 with SMTP id d2e1a72fcca58-87d1a2bf425mr2002629b3a.14.1790159421340;
+        Wed, 23 Sep 2026 03:30:21 -0700 (PDT)
+Received: from ROGZephyrusG16Air ([240e:b8f:977f:f400:ec2a:b15e:fef8:70a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87d1d5c1f21sm1048685b3a.32.2026.09.23.03.30.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2026 03:18:23 -0700 (PDT)
+        Wed, 23 Sep 2026 03:30:20 -0700 (PDT)
 From: Liang Haowen <nbg2974@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, sashiko-reviews@lists.linux.dev
-Subject: Re: [PATCH RFC v6 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED
- driver for ROG NVMe enclosures
-Date: Wed, 23 Sep 2026 10:18:18 -0000
-Message-Id: <202609232015.ReplyLeeR7.lhw@gmail.com>
-In-Reply-To: <20260923094539.GA3864833@google.com>
-References: <202609012200.RFC0.lhw@gmail.com>
- <202609012200.RFC1.lhw@gmail.com>
- <20260901145204.2BF551F000E9@smtp.kernel.org>
- <202609032000.RFCv2-0.lhw@gmail.com> <202609032000.RFCv2-1.lhw@gmail.com>
- <20260903122408.3CA6B1F00A3A@smtp.kernel.org>
- <20260903161357.GX2133376@google.com> <202609042000.RFCv3-0.lhw@gmail.com>
- <202609042030.RFCv3-1.lhw@gmail.com>
- <20260904131503.355C41F00A3E@smtp.kernel.org>
- <20260910093232.GO2133376@google.com> <202609152112.RFCv4-0.lhw@gmail.com>
- <202609152112.RFCv4-1.lhw@gmail.com>
- <20260915130050.E8CDB1F000FF@smtp.kernel.org>
- <20260916104305.GM11487@google.com> <202609162015.RFCv5-0.lhw@gmail.com>
- <202609162015.RFCv5-1.lhw@gmail.com>
- <20260916122740.921E51F000FF@smtp.kernel.org>
- <20260916130602.GS11487@google.com> <202609162200.RFCv6-0.lhw@gmail.com>
- <202609162200.RFCv6-1.lhw@gmail.com>
- <20260916143832.520721F000FF@smtp.kernel.org>
- <20260917112840.GJ1605367@google.com> <202609172115.ReplyLeeR6.lhw@gmail.com>
- <20260923094539.GA3864833@google.com>
+To: linux-leds@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	"Martin K . Petersen" <mkp@kernel.org>,
+	linux-scsi@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Denis Benato <denis.benato@linux.dev>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: [RFC v7 0/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED driver for ROG NVMe enclosures
+Date: Wed, 23 Sep 2026 18:30:14 +0800
+Message-ID: <20260923103015.2365773-1-nbg2974@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Answers inline; v7 follows as its own thread.
+Hello,
 
-> What patch format is this?  How did you submit it?
+v7, as its own thread, addressing Lee's review of v6.
 
-A hand-rolled Python SMTP script, which is as ill-advised as it
-sounds. v7 goes out with git send-email, so the format is the
-standard one from here on.
+Changes since v6:
 
-> If the SCSI DH the right approach here?
+- The driver moved to drivers/leds/rgb/, where the other multicolor
+  LED drivers live.
 
-It is unusual, and it was a pragmatic out-of-tree choice rather than
-a design statement. The enclosure exposes a single mass-storage
-interface that usb-storage owns, so a USB interface driver cannot
-claim it without taking the disk down with it, and hooking the SCSI
-bus from a module is not possible without the unexported
-scsi_bus_type. The device handler was the one hook that observes the
-sdev without claiming it, which keeps the enclosure a normal block
-device. For in-tree the plan is the split mentioned in the v6 cover
-letter: the SCSI attachment moves under drivers/scsi (notifier or an
-exported attach helper, whichever the SCSI side prefers) and the LED
-part stays in drivers/leds. Happy to rework the attachment in
-whichever form you and the SCSI folks prefer.
+- The series is submitted with git send-email this time, so the
+  patch format is the standard one.
 
-> Shouldn't this live in drivers/leds/rgb ?
+The SCSI device handler attachment is unchanged; why it is a device
+handler at all, and what the in-tree split should look like, is the
+open discussion in the v6 thread.
 
-Yes. v7 moves it to drivers/leds/rgb/leds-asus-aura-scsi.c. It still
-has no Kconfig wiring; it is the verified out-of-tree module posted
-for the API discussion, as the commit message notes.
+Everything else is unchanged from v6: the hardware description, the
+scsi_device_handler that does not claim the sdev, the multicolor LED
+interface, the protocol handling and the known caveats (manual
+attach until the split lands; SAVE on every update writes the
+enclosure flash, wear uncharacterized; NULL-parent LED registration
+to avoid the sdev reference cycle).
+
+Liang Haowen (1):
+  leds: asus-aura-scsi: Add ASUS Aura RGB LED driver for ROG NVMe
+    enclosures
+
+-- 
+2.55.0
+
