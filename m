@@ -1,47 +1,47 @@
-Received: from sender5-op-o12.zoho.com (sender5-op-o12.zoho.com [165.173.182.12])
+Received: from sender6-op-o12.zoho.com (sender6-op-o12.zoho.com [165.173.180.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FEC25A640;
-	Thu, 24 Sep 2026 11:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DD03D3485;
+	Thu, 24 Sep 2026 11:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.180.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790250652; cv=pass; b=mlsLyysFoSAhsZaV1hP+unC4AwcyDQszWZxZHtkYnuIDVS7vxWn7DOuyIzS9B+SbsFo7qHrmLKSHhhcecz4KXSMr+wJyzb1fD1uK97n23gmBTAmgEqwTh0X422pNGwahMYUZ0JTQBoSn2LV5sgJ1gItB4pBrcr/UiTQijQySW9M=
+	t=1790250660; cv=pass; b=Kpit87sSIBY7gw4bUN9u+CLJE/QSMr08uHK9oPBcLJkK+bCPiFtf51QeDjbKVrqSEasW3f7XqP/YkK+7n5AXbZJhMQnNGfowGDTX2BsBw1Ueu6vN9VO/EKyCoyhr3I10Wyy6SYxiX+1TWd7TLogD2dwJ/wVe5Uj8XH0nJecnRRc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790250652; c=relaxed/simple;
-	bh=OBE3DDnBkaOQaPj1fILQ9HIb+aNpVy/zxzaDOi92R9U=;
+	s=arc-20240116; t=1790250660; c=relaxed/simple;
+	bh=eBaHN3Y/BWFH+RYMTiSSRGuCI4fa0Na4sl/rx/lOdY8=;
 	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=aEhXdMV5mQWFjske7UNjSL9gV0RpmqNUrkijzaca81xd0rc9DzHcByoB2MDTJlxqhKDrBjbbVKc/PZTIPEjd1o39uQX2pLHHoF9zW7nTCU1kOCSCqOkWWXX98lk5hhs3mXPsECknLOJtkVTSXAiL9FPbVA92HYSlTXg14FvENjc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=fhfz8YHd; arc=pass smtp.client-ip=165.173.182.12
+	 Date:MIME-Version; b=JZT8yX7APl8SOVr/PDgokorMysOL46rrGZps5RILUpghiabpYfL7m0L1oZGwpIPm75Kv4tKLSIQ9o/Gee6+Bc25ngNpGoA4u/pBpJ/s3WONXl1FocP1cFB0dtyV0Nc7w81BzYk8L3ldI0g2bWBi8M/PgCpvSvyKTUHX9rrAjywM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=WudqXkQ9; arc=pass smtp.client-ip=165.173.180.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="fhfz8YHd"
-ARC-Seal: i=1; a=rsa-sha256; t=1790250626; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="WudqXkQ9"
+ARC-Seal: i=1; a=rsa-sha256; t=1790250640; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=eb4oTwY0qutESF5jWcst0rfzmgLxC3QTM8QspvQ/YqsshJfhxAe2eFTSE0+8EemRM8TKdg3Dh7S5YhI7A16MU5KuhCE+Jm6p7P7X7f+UFx16PpuHnn9ap/5DzaA7wblHBVcMfBmFtKw7z1q1EqqOsK8XAq8Rzww2QVgL5YivDpk=
+	b=MZi9eX2mkZ7Ir+vzqlkr3lBL5Ts7hiTYHYSILke34zTmx2D1NUQ4PMHr2r5GCGy4AZ4zCjuzg2eaKXUDTaRh6Po4baSJvQUoeXjBAmNzaSoxONVvGqDXmX8PyyUDG3t1Mp3blUSEwYTg+QN+JKDXBwLECF+sSXn1rXYi1/vF4QI=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1790250626; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=D4NQbooTCoLIhq89WPjVN+rIbiM7uvx91LrsRqYcNW4=; 
-	b=AQ1jxmCxVzzuIQxJ2n1AUq3unj2C2l4PEYAG9RHdLY71b12sKuiCIBP4MUpF++1UFj/YSASpkM8ae2fyIdVUSYLyWSQ4WX66c43Z1XNb2Vu8JbfJ/4/ifGP4Xu0hKJdt+CkTfs7ytoT3M3JySYKAyXBguIazBQGJdkn8zZFt4aw=
+	t=1790250640; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=szzgQ9yx9ieaZGMbPDCWaI5C0qscCyhncAmiXOLJGFY=; 
+	b=ikUv3BZ1z/3dZXfjQ85ZqEdB60OzBktdFa5qMiaphpxh01qjsOCDuQgbLGkVEbzisazS3xfhDvhxD6NkIdGFufV2yQmGHCIsosHBpBnmjDPITm528WzoIKAeGb7/lRVmGU2RxNabV/wfoRLd65v/WavuvfIt1uA2RBc3psJyLCY=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1790250626;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1790250640;
 	s=zmail2048; d=rong.moe; i=i@rong.moe;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=D4NQbooTCoLIhq89WPjVN+rIbiM7uvx91LrsRqYcNW4=;
-	b=fhfz8YHdHX/OEi4ojmi6NPAiQvda1vabHNL3OyzxDDaZj3TyslevY2vCWcIxzplI
-	bs59NiehTFQGdEQ9Hjw1N+If4A6kxawSnE/LHn2tdYw3Si4QkHguconWY1sM+3iUiWG
-	sSO6rP999I+zNEpqL+FJemy/0jXO9h5gJLF0h+hE1hpQCGSuouZacJHyy8wijYmMuaN
-	7WsNfu266PxngyX6ZD08udVqDMqoZnPOQjGtjudrP5npWwslHpgUOoToP7dZZzV8nn0
-	1FlEJN90nRj+HK1udqGqMnPEmH7yRa7tL6llSrpO4WnrvtUPYOC39NLrd1Wlb0YnTb/
-	KVLkO/tz6A==
-Received: by smtp.zohomail.com with SMTPS id 1790250624843672.5058092645202;
-	Thu, 24 Sep 2026 04:50:24 -0700 (PDT)
-Message-ID: <577cdb9848906b6b2efcfaff2d68f5ef9a769ae9.camel@rong.moe>
-Subject: Re: [PATCH v7 02/13] leds: trigger: Move
- led_trigger_is_hw_controlled() to the right place
+	bh=szzgQ9yx9ieaZGMbPDCWaI5C0qscCyhncAmiXOLJGFY=;
+	b=WudqXkQ99Bj2XjUhJrGbSvpYwLyKg546DsNAx51VDSDr53ku4Q/T2wtn7gMeaSF+
+	10CfPxFYJxQx30Hk5AyOkp29UgtNdLyNoHH6lH+DgkSPhezixkryp2QYJ/QNOkKobOU
+	U0HOUL95eGFTaFsKF1VSU55uCq+4WSTf88eG1lSl9uTNlfxHGFOT8XzVnuqfWtFKVEU
+	+b5onmeaG3t14SHk43zlQJtttiHBmWpj3ocmuP/fIoaMLYJLlkOvAPYXTlnwc2sOPhN
+	7HuTT6Xxik7KwHVPkdt/+c1/skg5t1AqKU52eqcLyYGTrxro/Lk22AGbQDEyLgJuhIw
+	FJzBchHbrw==
+Received: by smtp.zohomail.com with SMTPS id 179025063891131.335288653322777;
+	Thu, 24 Sep 2026 04:50:38 -0700 (PDT)
+Message-ID: <607266787ef89717b9c70fd86cc882761060dc00.camel@rong.moe>
+Subject: Re: [PATCH v7 08/13] leds: trigger: netdev: Implement
+ hw_offloaded() callback
 From: Rong Zhang <i@rong.moe>
 To: Lee Jones <lee@kernel.org>
 Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
@@ -56,13 +56,13 @@ Cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
  <vsankar@lenovo.com>, 	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
  linux-doc@vger.kernel.org, 	linux-kernel@vger.kernel.org,
  chrome-platform@lists.linux.dev, 	platform-driver-x86@vger.kernel.org
-In-Reply-To: <20260924083709.GA331088@google.com>
+In-Reply-To: <20260924085316.GB331088@google.com>
 References: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe>
-		 <20260921-leds-trigger-hw-changed-v7-2-fe3cdb6dec51@rong.moe>
-		 <20260924083709.GA331088@google.com>
+		 <20260921-leds-trigger-hw-changed-v7-8-fe3cdb6dec51@rong.moe>
+		 <20260924085316.GB331088@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 24 Sep 2026 19:45:55 +0800
+Date: Thu, 24 Sep 2026 19:47:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -76,107 +76,109 @@ Hi Lee,
 
 Thanks for your review.
 
-On Thu, 2026-09-24 at 09:37 +0100, Lee Jones wrote:
+On Thu, 2026-09-24 at 09:53 +0100, Lee Jones wrote:
 > --- checkpatch.pl: clean (0 issues) ---
 >=20
 > On Mon, 21 Sep 2026, Rong Zhang wrote:
 >=20
-> > Currently led_trigger_is_hw_controlled() is placed at led-class.c, whic=
-h
-> > is not an right place as it falls into the triggers namespace and does
-> > triggers stuff.
+> > "netdev" can run in hardware control according to hardware capabilities
+> > and trigger options.
 > >=20
-> > Move it into led-triggers.c, and split it into locked and unlocked
-> > variant for convenience.
+> > Implement hw_offloaded() callback to provide its hardware control state
+> > to the LED core, and document the relation between the custom
+> > "offloaded" attribute and the generic "trigger_may_offload_to_hw"
+> > attribute.
 > >=20
-> > Fixes: b819dc7d8fb2 ("leds: core: Report ENODATA for brightness of hard=
-ware controlled LED")
+> > The callback mimics how the existing "offloaded" attribute does, i.e.,
+> > locklessly reads hw_control, as it's just a hint and don't need to be
+> > accurate.
+> >=20
 > > Acked-by: Ike Panhc <ikepanhc@gmail.com>
 > > Signed-off-by: Rong Zhang <i@rong.moe>
 > > ---
-> > Changes in v3:
-> > - New patch in the series, the dependency of the following patches
-> > ---
-> >  drivers/leds/led-class.c    | 10 ----------
-> >  drivers/leds/led-triggers.c | 19 +++++++++++++++++++
-> >  include/linux/leds.h        |  8 ++++++++
-> >  3 files changed, 27 insertions(+), 10 deletions(-)
+> > Changes in v7:
+> > - Rename the offloaded() callback to hw_offloaded() (thanks Lee Jones)
+> > - Rename the trigger_may_offload attribute to
+> >   trigger_may_offload_to_hw (ditto)
 > >=20
-> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > index 4259533dafa1..7110bfbe3b83 100644
-> > --- a/drivers/leds/led-class.c
-> > +++ b/drivers/leds/led-class.c
-> > @@ -27,16 +27,6 @@ static LIST_HEAD(leds_lookup_list);
+> > Changes in v3:
+> > - Do not deprecate netdev's "offloaded" attribute (thanks Thomas
+> >   Wei=C3=9Fschuh)
+> > - Document the relation between the custom "offloaded" attribute and th=
+e
+> >   generic "trigger_may_offload" attribute (ditto)
+> > ---
+> >  Documentation/ABI/testing/sysfs-class-led                | 3 +++
+> >  Documentation/ABI/testing/sysfs-class-led-trigger-netdev | 3 +++
+> >  drivers/leds/trigger/ledtrig-netdev.c                    | 8 ++++++++
+> >  3 files changed, 14 insertions(+)
+> >=20
+> > diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/=
+ABI/testing/sysfs-class-led
+> > index 123e3a15b7d6..ea113fed10ef 100644
+> > --- a/Documentation/ABI/testing/sysfs-class-led
+> > +++ b/Documentation/ABI/testing/sysfs-class-led
+> > @@ -101,6 +101,9 @@ Description:
+> >  		- `[foo_trigger]`: the trigger is selected and offloaded to
+> >  		  hardware.
 > > =20
-> >  static struct workqueue_struct *leds_wq;
+> > +		The "netdev" trigger also provides a custom attribute to
+> > +		indicate its state, see `/sys/class/leds/<led>/offloaded`.
+> > +
+> >  What:		/sys/class/leds/<led>/inverted
+> >  Date:		January 2011
+> >  KernelVersion:	2.6.38
+> > diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev b=
+/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> > index ed46b37ab8a2..203ea58396ed 100644
+> > --- a/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> > +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-netdev
+> > @@ -75,6 +75,9 @@ Description:
+> >  		If 1, the LED blinking in requested mode is offloaded to
+> >  		hardware.
 > > =20
-> > -static bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev=
-)
-> > -{
-> > -#ifdef CONFIG_LEDS_TRIGGERS
-> > -	guard(rwsem_read)(&led_cdev->trigger_lock);
-> > -	return led_cdev->trigger && led_cdev->trigger->trigger_type;
-> > -#else
-> > -	return false;
-> > -#endif
-> > -}
-> > -
-> >  static ssize_t brightness_show(struct device *dev,
-> >  		struct device_attribute *attr, char *buf)
-> >  {
-> > diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-> > index b1223218bda1..bf2543538ed0 100644
-> > --- a/drivers/leds/led-triggers.c
-> > +++ b/drivers/leds/led-triggers.c
-> > @@ -7,9 +7,11 @@
-> >   * Author: Richard Purdie <rpurdie@openedhand.com>
-> >   */
-> > =20
-> > +#include <linux/cleanup.h>
-> >  #include <linux/export.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/list.h>
-> > +#include <linux/lockdep.h>
-> >  #include <linux/spinlock.h>
-> >  #include <linux/device.h>
-> >  #include <linux/timer.h>
-> > @@ -33,6 +35,23 @@ trigger_relevant(struct led_classdev *led_cdev, stru=
-ct led_trigger *trig)
-> >  	return !trig->trigger_type || trig->trigger_type =3D=3D led_cdev->tri=
-gger_type;
+> > +		LED trigger core also provides a generic attribute for this
+> > +		purpose, see `/sys/class/leds/<led>/trigger_may_offload_to_hw`.
+> > +
+> >  What:		/sys/class/leds/<led>/link_10
+> >  Date:		Jun 2023
+> >  KernelVersion:	6.5
+> > diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigg=
+er/ledtrig-netdev.c
+> > index 5b4e92c14dbb..60409f054e22 100644
+> > --- a/drivers/leds/trigger/ledtrig-netdev.c
+> > +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> > @@ -798,10 +798,18 @@ static void netdev_trig_deactivate(struct led_cla=
+ssdev *led_cdev)
+> >  	kfree(trigger_data);
 > >  }
 > > =20
-> > +static bool __led_trigger_is_hw_controlled(struct led_classdev *led_cd=
-ev)
+> > +static bool netdev_trig_hw_offloaded(struct led_classdev *led_cdev)
 > > +{
-> > +	lockdep_assert_held(&led_cdev->trigger_lock);
+> > +	struct led_netdev_data *trigger_data =3D led_get_trigger_data(led_cde=
+v);
 > > +
-> > +	if (!led_cdev->trigger)
-> > +		return false;
-> > +
-> > +	return led_cdev->trigger->trigger_type;
+> > +	return trigger_data->hw_control;
 >=20
-> How does this not cause a compiler warning?
+> How sure are we that trigger_data can NEVER be NULL?
 
-trigger_type is a pointer. Implicitly converting a pointer to boolean via
-a return statement is completely valid in C11.
+The hw_offloaded() callback is protected by led_cdev->trigger_lock, see
+__led_trigger_is_hw_controlled().
 
-   6.3.1.2 Boolean type
-   When any scalar value is converted to _Bool, the result is 0 if the valu=
-e
-   compares equal to 0; otherwise, the result is 1.
+trigger_data is set in the trigger's activate() callback, which is
+protected by led_cdev->trigger_lock.
 
-   6.8.6.4 The return statement
-   ...If the expression has a type different from the return type of the
-   function in which it appears, the value is converted as if by
-   assignment to an object having the return type of the function.
-  =20
->=20
-> This needs to be evaluated properly.
+trigger_data is cleared in led_trigger_set() when removing the current
+trigger, which is, again, protected by led_cdev->trigger_lock.
 
-If it's preferred to make the intention clearer, how about:
+When CONFIG_LEDS_TRIGGERS=3Dn, the code is not built.
 
-	return led_cdev->trigger->trigger_type !=3D NULL;
+If the trigger is currently inactive, the callback cannot be called.
+
+Therefore, it can never be NULL when we reach here.
+
+Note that the trigger's DEVICE_ATTR_RO(offloaded) makes the same
+assumption, too.
 
 Thanks,
 Rong
@@ -184,49 +186,14 @@ Rong
 >=20
 > > +}
 > > +
-> > +bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev)
-> > +{
-> > +	guard(rwsem_read)(&led_cdev->trigger_lock);
-> > +	return __led_trigger_is_hw_controlled(led_cdev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(led_trigger_is_hw_controlled);
-> > +
-> >  ssize_t led_trigger_write(struct file *filp, struct kobject *kobj,
-> >  			  const struct bin_attribute *bin_attr, char *buf,
-> >  			  loff_t pos, size_t count)
-> > diff --git a/include/linux/leds.h b/include/linux/leds.h
-> > index a515f075c29a..46ad2e03e1c6 100644
-> > --- a/include/linux/leds.h
-> > +++ b/include/linux/leds.h
-> > @@ -534,6 +534,8 @@ void led_trigger_set_default(struct led_classdev *l=
-ed_cdev);
-> >  int led_trigger_set(struct led_classdev *led_cdev, struct led_trigger =
-*trigger);
-> >  void led_trigger_remove(struct led_classdev *led_cdev);
+> >  static struct led_trigger netdev_led_trigger =3D {
+> >  	.name =3D "netdev",
+> >  	.activate =3D netdev_trig_activate,
+> >  	.deactivate =3D netdev_trig_deactivate,
+> > +	.hw_offloaded =3D netdev_trig_hw_offloaded,
+> >  	.groups =3D netdev_trig_groups,
+> >  };
 > > =20
-> > +bool led_trigger_is_hw_controlled(struct led_classdev *led_cdev);
-> > +
-> >  static inline void led_set_trigger_data(struct led_classdev *led_cdev,
-> >  					void *trigger_data)
-> >  {
-> > @@ -584,6 +586,12 @@ static inline int led_trigger_set(struct led_class=
-dev *led_cdev,
-> >  }
-> > =20
-> >  static inline void led_trigger_remove(struct led_classdev *led_cdev) {=
-}
-> > +
-> > +static inline bool led_trigger_is_hw_controlled(struct led_classdev *l=
-ed_cdev)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> >  static inline void led_set_trigger_data(struct led_classdev *led_cdev)=
- {}
-> >  static inline void *led_get_trigger_data(struct led_classdev *led_cdev=
-)
-> >  {
 > >=20
 > > --=20
 > > 2.55.0
