@@ -1,110 +1,92 @@
-Received: from mail-dy2-f12.google.com (mail-dy2-f12.google.com [74.125.229.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D6E411A12
-	for <linux-leds@vger.kernel.org>; Fri, 25 Sep 2026 05:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1431335C181;
+	Fri, 25 Sep 2026 06:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790315395; cv=none; b=QtNMXdXnqpuGfvV2Vw7vjw0CvGF5Gr0ldctB6OPpln2munZ1HvibIT3o43HiVvCylaZ4J/sDjbVPZExPfkWlWFktjIbcLf54ZrgQVh36ZVF7rERsdBZi5B/ewncD5MXXaXXrX98Ntgifqzc3/aWKn/2CbA1gfST1uhCeKSqBfg4=
+	t=1790316738; cv=none; b=qUCL6mZeWYhGTKGrQEgmyBAYov56t5iAupHmug6pRO8gQt65XYE8rCeTq0ypJm76RfYX1jT2Cxlc3V84Y280K0JUWfAb4xVbsWYKgUQ/+Z5RHsxp2TdeIV69MuwE337AU0MeNFlKQzlceNSkCMXL+qlAgvu4J7SrhPyczo+BIRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790315395; c=relaxed/simple;
-	bh=+akiLsV68L4eC22mChPv/VtHCrGxwZ881tWRoHR5eho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LmuUJpEcsxKYPBiR4/LG0eRTiDHzcPGSR/3RrprvfW9jV+Rx9bFz8nWTEi9mKAArXvP3A6gBYQpZeQJ76r2SJJv8gsCggZ+faiAvWxrho2lER2yrjgKg9GQZs3y55EpvjqeGbmlOzs/rglBiX8nMcZmrqnd9hj2h3Vt8qaCHSZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bEVJkCc1; arc=none smtp.client-ip=74.125.229.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790316738; c=relaxed/simple;
+	bh=P2P1AmfxEYO+zzlHQdbgxVmc0L7aQerHsV5uj3L90EU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Y/KWMA9qoqCp1dMQJzrZzxsmnWVxTDqXCV2H2euwSZvZMIyHgJiLlLXaHuFQEyhAtvN05ls8e4Sgr48NgBtOZhw7nahkBP7V4l2LVh41BEWLER4rllSdfKnnNQqbI4VrKHll2znDaDaKErWrfI6RgBq3VGVC13CJFouf5TtkBIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OKLZKZlh; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEVJkCc1"
-Received: by mail-dy2-f12.google.com with SMTP id 5a478bee46e88-328664b752eso301475eec.1
-        for <linux-leds@vger.kernel.org>; Thu, 24 Sep 2026 22:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790315393; x=1790920193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=2PQz/8SCZaX282p44/fzlA8vUHVzm4CAEJ5eH2DjFzc=;
-        b=bEVJkCc1ncuR4XJaMwoOon7w5H6hxnjN4lXlpFD0DJFIKZKc5V24hQWrqQfFnM3LHm
-         9Xvu49vCqceyMOB2pM0EwqFZoPryjpHv8PCD6r6w4y1vEJlxx5hgnkDHUY0g5i2uLrD8
-         vRYHHcgwnuqO7cTVGS5hAjgugsmFnPaSbo5gZ+0AYUDRl1IIGIXeTTWK4nC3XpJNrxvA
-         S+eCrwvSouyIElKqpiN+32jP8vXjVuI2Jr81SQcAVr0mzftMeqg/f0zrj2rZShKmz46H
-         dXbH/vLaEHoZ20dc6CLnNVZQ5PzBan/1FqnryK3cqjIMJ3C1sD54iGOJZtJpBX93dECo
-         wHyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790315393; x=1790920193;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=2PQz/8SCZaX282p44/fzlA8vUHVzm4CAEJ5eH2DjFzc=;
-        b=EKK4nnSA0yUflwfZWjfL6l9MIIsCxmiY4hYtJbGIzrDAzyh0/JjoDAbwFxJDGrCEl/
-         Zs/6HNTB1Mlzco+rvvKTv/dzVoV70shMknGTww0QHOSvv7httlmsgKU7xI2lKTfjRdi2
-         8Qj/Nn4rpamNNEYBvUgiEKEGYoGpNR+cfcessHhLJrmOe7QEtKHAVz+ISnb/Jw/ulDsK
-         7NE/nI1iMJfLr/ih8qA0EzbmaFA8k/L928j72MFvTjGZ6nEf93Tj534IKznIA1pHcID1
-         1YQihWUejJcstCfkhE2mvl3PK4MhSypKccT3UYzZZjan4KvW+ZjQncKGaK+xK7aAfBvB
-         m05Q==
-X-Gm-Message-State: AFuF++mlOVGCERzw9EKpikNpzEwJhAuitxwjqeG3zhnVC8Ci2dGPWOy2
-	BqUbWcJ7eR1wXQQtS9jWTp5TpL+9oGON6S7d0fg9CdK21hEAK4t7bwqXdkOc7tILekv/1A==
-X-Gm-Gg: AYBFou30/WZLnHMs+74aj7GBeeu/22/Cfq+P/wHg8Vdh+eKjD1OoescKLeZnQ/a/d7P
-	VTPADeOMwhIdXBYEqos/7vTU1Z/lGlYWWU47d2SZ85LFATh+KFBBbjz8/PcljlggFn/oBVe42Q2
-	glbLCk08a6Oe+Y0KkP1Epw2Hps+Z2dEWdXDctjJDNos4U/pgo9d73FOiJOtJRH40t8CoiEC9ITU
-	JkpvKCPFuxHApUC3ppYx1EjwaX0rrAvILtl79uAD7PdGq8JDpRvLcHnlUZR9V4M8ZC3eYKZgjZb
-	KrdwKZPAmavdBS7n/UZJGMTbf1P1MJ2wp3w5ZsJdcM7p7IWWXfHT4F60NXAYPX5UI0pFHP1RIYl
-	4QJfGeRHAchWWrJ7X34HLAWmkdtzscvP12nctJ0TpMmJdN5xGJwxowEYo20hRRlmVURRZL8iPqz
-	57dJ0ujWJV8Koz0aKvpZq9m+6djoijouPb1WPJYPJyAxodNRphioHrg0ryuwSZUXwvE7oxZ5/x9
-	MIFUhx0QXWuW9cuD8VuRdArBWHYkl+wEcK0Dg6h/Sqs6qeLwGyQg5PB10L4M600sULwi+IGzA/I
-	G5ILvzqYWYgpfj1FUES2O50Fjfvdnj78DWWeoqJ97Lq9lLJRs1NO+rCBSn4=
-X-Received: by 2002:a05:7022:6ba0:b0:13c:d318:5b91 with SMTP id a92af1059eb24-145ee808dcfmr1307339c88.13.1790315393307;
-        Thu, 24 Sep 2026 22:49:53 -0700 (PDT)
-Received: from spider.bream-herring.ts.net ([103.6.151.236])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-34145c166cfsm3406155eec.28.2026.09.24.22.49.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 22:49:52 -0700 (PDT)
-From: Matthias Goergens <matthias.goergens@gmail.com>
-To: lee@kernel.org,
-	pavel@kernel.org
-Cc: linux-leds@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: name the lee/leds for-leds-next branch
-Date: Fri, 25 Sep 2026 13:49:49 +0800
-Message-ID: <20260925054949.2964878-1-matthias.goergens@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OKLZKZlh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790316735; x=1821852735;
+  h=date:from:to:cc:subject:message-id;
+  bh=P2P1AmfxEYO+zzlHQdbgxVmc0L7aQerHsV5uj3L90EU=;
+  b=OKLZKZlhVuBOPe8r5f9cK6GaOfNMiUqg9PzqLpqqAMZ9c3cz88FaVq55
+   8/ESSnU4LTjRuqrO1j39cUUQ49NhhN72OvBKVXKMQmpW0QDWDvm5A2e5w
+   lN6Jl+DP+siyuLXIP3er56Cj1o5SyIdaQrY5QCdLmv723JJ4dTCFalWCN
+   QkxYRU+LJPso/yVNLQJd7Zw96t5xrM5eaBfJ5vlX3+4PeusfxrEzfjCqr
+   XixWEJH3Trvb/jXxTBWpZ+vvdlH/ONGHyUxkkapgaeM67kF/VG2HVw+p/
+   KGtaKbx4qOv5fF2K+2J3PeWhMN00x9yffC4HMC8uHZ8hDjdK2epXfdQ3X
+   A==;
+X-CSE-ConnectionGUID: HYAzf+qmRTmJ21S6YjIQEw==
+X-CSE-MsgGUID: 0IJHJoXRQVClPSNj2mAX/g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90057985"
+X-IronPort-AV: E=Sophos;i="6.27,121,1787036400"; 
+   d="scan'208";a="90057985"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2026 23:12:15 -0700
+X-CSE-ConnectionGUID: oaf+N8YjSEWjgyGuxxKOXA==
+X-CSE-MsgGUID: uDv87LGbRwm4AGoJ9UoICQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,121,1787036400"; 
+   d="scan'208";a="273796557"
+Received: from igk-lkp-server01.igk.intel.com (HELO a88263cc608e) ([10.211.93.152])
+  by orviesa007.jf.intel.com with ESMTP; 24 Sep 2026 23:12:13 -0700
+Received: from kbuild by a88263cc608e with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x9zAI-000000000c6-0kyr;
+	Fri, 25 Sep 2026 06:12:10 +0000
+Date: Fri, 25 Sep 2026 08:11:39 +0200
+From: kernel test robot <lkp@intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-leds@vger.kernel.org,
+ Lee Jones <lee@kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>,
+ linux-doc@vger.kernel.org
+Subject: [lee-leds:for-leds-next 30/40] htmldocs: Warning:
+ Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file
+ that doesn't exist: Documentation/devicetree/bindings/leds/leds-cpcap.txt
+Message-ID: <202609250840.ZZRuCtU9-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The T: entry for LED SUBSYSTEM names lee/leds without a branch.  The
-repository's HEAD points to branch master, which mainline already
-contains.  linux-next merges the for-leds-next branch of this repository
-(Next/Trees).  Name that branch in the entry.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+head:   05b4738b0078f7d6f154f68068a11c8a0635e9df
+commit: d4948551280b1d52c1896b7c80d5383b7d8ad7c5 [30/40] dt-bindings: leds: leds-cpcap: Convert to DT schema
+compiler: clang version 22.1.8 (https://github.com/llvm/llvm-project ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)
+docutils: docutils (Docutils 0.21.2, Python 3.13.5, on linux)
+reproduce: (https://download.01.org/0day-ci/archive/20260925/202609250840.ZZRuCtU9-lkp@intel.com/reproduce)
 
-Signed-off-by: Matthias Goergens <matthias.goergens@gmail.com>
----
-This is part of a cleanup of all T: entries whose repository HEAD is
-not where development happens: one patch per repository, sent in small
-batches.  The plan is at [1], and why it goes out in batches at [2].
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609250840.ZZRuCtU9-lkp@intel.com/
 
-[1] https://lore.kernel.org/all/20260924033200.3615554-1-matthias.goergens@gmail.com/
-[2] https://lore.kernel.org/all/20260924101844.2403008-1-matthias.goergens@gmail.com/
+All warnings (new ones prefixed by >>):
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   Documentation/translations/pt_BR/process/security-bugs.rst: :doc:`regular path submission </../../../process/submitting-patches>`
+>> Warning: Documentation/devicetree/bindings/leds/motorola,cpcap-leds.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
+   Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/regulator/cpcap-regulator.txt
+   Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/rtc/cpcap-rtc.txt
+>> Warning: Documentation/devicetree/bindings/mfd/motorola-cpcap.txt references a file that doesn't exist: Documentation/devicetree/bindings/leds/leds-cpcap.txt
+   Warning: Documentation/devicetree/bindings/regulator/motorola,cpcap-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/devicetree/bindings/rtc/motorola,cpcap-rtc.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/motorola,cpcap.yaml
+   Warning: Documentation/doc-guide/parse-headers.rst references a file that doesn't exist: Documentation/userspace-api/media/Makefile
+   Warning: Documentation/translations/it_IT/doc-guide/parse-headers.rst references a file that doesn't exist: Documentation/userspace-api/media/Makefile
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 140eafcbbd78..a9b51745e582 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14782,7 +14782,7 @@ M:	Lee Jones <lee@kernel.org>
- M:	Pavel Machek <pavel@kernel.org>
- L:	linux-leds@vger.kernel.org
- S:	Maintained
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
- F:	Documentation/devicetree/bindings/leds/
- F:	Documentation/leds/
- F:	drivers/leds/
-
-base-commit: 62f4c998b297cf233997a2b4cd6fc2d2df0319c9
--- 
-2.55.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
