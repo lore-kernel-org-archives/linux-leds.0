@@ -1,233 +1,146 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFB0303A37;
-	Fri, 25 Sep 2026 22:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92B554705A
+	for <linux-leds@vger.kernel.org>; Sat, 26 Sep 2026 00:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790376360; cv=none; b=Cr+uII/3Z/tkfFc+0dP/3ZRRT2JHzcXZY5TkCA/XNW2JO4stuxKK+VyZbBDC4+nK+RU3+ezAXQbbChLeg4FLw9jmJNbdtJqUuMOwb/UepzaAck/LaQJmRJPh8elP3oQCtsIlWRxkiQQCwnGuaBIceWh0vBzrCEhjcYGTM1loBjw=
+	t=1790381031; cv=none; b=cFcVLvSy5ddgyONgaFBiGUcecvBrQCPw6chg7IEELZOLIJCUtztuL+P6PcG220HAAyB+i5Bgjw4DUDRp6jbrW8BqP7CN+SYOokcnP0Hueu9rD6Zz8YuZvpUCk0IiHYy/6qGSDgttlBqW+pxaeCkCuwMcnFyovl7NwBHxR7fV8wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790376360; c=relaxed/simple;
-	bh=1LTLSmmDIm3zEHWlztd9u1KmLa10pIzF1K9lw/Xe3uo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=gT0pza95DKO4h50vZ2T+2AAN8PiAtMTwWmOcXbW1I5gmbQruvDeJTUvk9+xECBp/U5YpAFNW1bQH2yU6cG/3WjCkBAxajVJcjWWv0yn/HByxc0j4OitClxR6saaqlHxC6C8lLu+u5F/ElLTEUlvh1e25xbC7BaTEQQlzQ+EDvyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=NRt1HdD0; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=f49sx4Ub; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1790381031; c=relaxed/simple;
+	bh=Rj8gOrxPAANXRPclxxJTN1D/z6CeCGAZJqTfPg48H7U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=isu49H4+5vkse/yq0w5McY9OVrIjDQ4AgpwK+4oJG7wPuMYuqbcaYJcQl3X18tG3sNIpaTbwckaKfqOmqV7CNi3J2kUHfGctVUnpLc+V8/HoH5BvVgLQWRZl36h7UHqa9jKJEwyt846XXaH4gKmxMtXiEC9EKhGgjVIvfEn5Kv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbtkfNTR; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="NRt1HdD0";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="f49sx4Ub"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1790376346; bh=3fP4A8XqSiZproBMyI4rt5Z
-	MRgAfuAYNcNwBKsQAy3c=; b=NRt1HdD014G4QY7CdzYDHjQbkvWTm6mHN46uNbM7XSyQIwLqXo
-	J2SN5jP5e2++SSwC3foVKgx8Xidj2yxSgvGeZR8jeLG+Cqq7GMr2Chi/7GUWjP67vmXdrdkqwVB
-	M3vAl658btE21945iZuANxlZd/gw/dzAViHyqZ9Bz44DAa1iJr6LXQiZ8IWsJBcykdjYTUKs2Tr
-	pcnowi6Nruh71R6IP1WHpqMH32z+Mx5HFNU2AxoLSvyvyNQocirqum7/MZAw823V/itty8BBySc
-	nrpx1hXW36ipJ/HFCzAxWgyGc92TrbLIl3kPYUPzFpmEa19bYJUM5thE5BXLfqIUm+w==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1790376346; bh=3fP4A8XqSiZproBMyI4rt5Z
-	MRgAfuAYNcNwBKsQAy3c=; b=f49sx4UblQKoqfUpRSOpx7ezK1eYpLiC47p2aQg2M4FSBFLDEl
-	O3cmF693e3Db/DRdJz5iX96ZYRKZWRohtZBw==;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbtkfNTR"
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-914411dd7ecso4101686d6.1
+        for <linux-leds@vger.kernel.org>; Fri, 25 Sep 2026 17:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790381027; x=1790985827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6j+UGuPcmEGai5QWky3o58LdTchPnVyFUzxH6dW9qsI=;
+        b=QbtkfNTRrswBKGoD3Kzz/8h7huGxnRuB4a6iZyko6j6BAopcc+XcEt90mj+5FqSYlZ
+         muNIWqEazntQwaexBmktHoUvCYUSBSnSCC6b9jGtmdq6hITfGG+XfiSPYPMpW4QxQJTe
+         /3M/6kIMoYEFUdqPEYRnDglcrRnEyqo2ikiZ5g3UeuOvl/Z4bwlCu6Qt6wwfhWruWIpm
+         txBIvaS1m2LCSbVQeCBjX9K2uQ6yQ5djMcESdBQIbRxxte4LyEdbO+Qj/1HGaroYKSfd
+         4qDBW7IClhoK50su+sHfWDoowRkNTpo45NztB/6+VSPcCdwH3n/M2oqgovxWRTxqA1xv
+         uO2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790381027; x=1790985827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6j+UGuPcmEGai5QWky3o58LdTchPnVyFUzxH6dW9qsI=;
+        b=le1EMnjyDycoGUfuto4kI+cNhL+BEpd47obEdOuu5ncX8SrtNVAqaMAmCRV0eOEw1j
+         bz4YhDvQ0Xmb96hQu7aFTXRqjzs8fLm1+cXah31oL/PvggU0Q4FIoq63Ejmnrho+mSi7
+         xbszgxYcZ1YraVctots5umjDo4Bf154xYWKq0r6RHz4WCCb3ps5XTPdTasN3OHT5RY7T
+         jNiYbHPMpdZ+YPXGzNOR6PtE0mHXdv2XleOKpWh0zH4AurAftepvnGWYZAhTyjJoMilR
+         vxaLToG+HcmYBN1b8OdNzcKyX+kE2RRFgxgDSOqKkYcB85T4Qs+oMA7l9fjawAU8ycij
+         wPOg==
+X-Forwarded-Encrypted: i=1; AKwUvBzc+I8oHCloNmYCw3PlXEKHxIWA2cXNmWpshES6GNY2CLbD/ASw3ypxWBE6KpphQVnqMq4QBMcfGt6j@vger.kernel.org
+X-Gm-Message-State: AFuF++n411SjgDNLXOSb7Bqj6tvUKjjTyOoWty6FGdyH4id2vIXIc1nR
+	Blvxu3e1j4cp/77dtFF7SbdI0MMplpb+rLCuK/5Wt4vykvpcQGVSXaU=
+X-Gm-Gg: AYBFou2PX0i2f10vW4l3cvObzlWLDBluhcHO2mIj6lii7Q5yQ0EsaPZcpREOHUe50eg
+	obcWeHqe3HWTyUIZY1m3SGKSHeEH1L1sI4rEzrS5MkVtNAQhsUkyAx7BptSfUy6a35aA06co6fO
+	xUQ4WXPJcb03RMKQYVbRBD7V7IYhgt8V6UYRpDhGLgyl0A+tqkGSCims6VK8feMra1HXKAX+aUz
+	J/ATiSlCIwVq15yS5aWliw7LL3yK15hAtUz0aBBSDYCMksV8+2SPmJuz8aPHkHR2DEDE55WYOEb
+	Cf6YGr/Vf9rCvxjUo3JP2buXqKOXhFWgtS6i6pFCcjTimcwj5IgHRGrZq9jr373WaCDze2PoLtt
+	rj+thATYjgpSD44uUQorjZDduZ54HYQ6P1hfjN6Li5lgq2r55GsTfNN14Bvnds1vme7OMwgEmCg
+	wu3eHIlJwhUlnV4uAXD7ZmhbhFc7taeZJYpFMMPkZXxjEcIMxA9ANkUE1qupDtFwDydtxNQvlWc
+	yPa/9JSjhEEiAtUjYgznBDVuJKLTv+RR5/nu0ctRQKMouK1GmAEQXMm0huXj/Hm3T5yeF65DYAp
+	eNs1VO/c3UsLniTT+tC2Jv93X3iEntH2YHft
+X-Received: by 2002:a05:6214:ca9:b0:912:ec8:f82e with SMTP id 6a1803df08f44-9142f8cfdbbmr73559526d6.17.1790381027477;
+        Fri, 25 Sep 2026 17:03:47 -0700 (PDT)
+Received: from localhost.localdomain ([104.39.230.185])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91430dd1b90sm28177936d6.22.2026.09.25.17.03.45
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 25 Sep 2026 17:03:46 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Jan-Simon Moeller <jansimon.moeller@gmx.de>
+Cc: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Joseph Strauss <jstrauss@mailbox.org>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] leds: blinkm: Clean up sysfs group on LED registration failure
+Date: Fri, 25 Sep 2026 20:03:44 -0400
+Message-ID: <20260926000344.29899-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 26 Sep 2026 00:45:46 +0200
-From: =?UTF-8?Q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?=
- <barnabas.czeman@mainlining.org>
-To: =?UTF-8?Q?Y=C4=B0=C4=9E=C4=B0TCAN_KAVAKLI?= <kavakliyigitcan@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, Jingoo
- Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sumit Semwal
- <sumit.semwal@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@bitmath.org>, Rob Clark
- <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, Abhinav
- Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org
-Subject: Re: [PATCH RFC 10/10] arm64: dts: qcom: sm6125-xiaomi-ginkgo: enable
- display, backlight and touchscreen
-In-Reply-To: <20260911-ginkgo-submission-final-v1-10-0e68e63a18d4@gmail.com>
-References: <20260911-ginkgo-submission-final-v1-0-0e68e63a18d4@gmail.com>
- <20260911-ginkgo-submission-final-v1-10-0e68e63a18d4@gmail.com>
-Message-ID: <6374e0a9d6ab38436d8f38c3903e1f78@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2026-09-11 10:51, YİĞİTCAN KAVAKLI wrote:
-> Enable the display subsystem (MDSS/MDP/DSI0), Kinetic KTD3136 
-> backlight,
-> and Novatek NT36672A SPI touchscreen on the Xiaomi Redmi Note 8 
-> (ginkgo).
-> 
-> Hardware nodes added:
-> - Fixed LCDB regulators (lcdb_lab and lcdb_ibb at +/- 5.5V)
-> - MDSS and DSI0 with Tianma 1080x2340 FHD+ video panel
-> - I2C1 backlight node at 0x36 with PMI632 GPIO 6 hardware enable
-> - SPI2 touchscreen node at CS0 with GPIO 88 interrupt and panel 
-> follower
->   reference
-> - Touchscreen active pinctrl definition on GPIO 88
-> 
-> Signed-off-by: YİĞİTCAN KAVAKLI <kavakliyigitcan@gmail.com>
-> ---
->  .../boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi | 100 
-> +++++++++++++++++++++
->  1 file changed, 100 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi 
-> b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
-> index 
-> 59042a5937535c4acda064fa0f865f4f5a52d01b..f4b9e2092a814e56cdc23218025cb4166dec110a 
-> 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm6125-xiaomi-ginkgo-common.dtsi
-> @@ -26,11 +26,30 @@ / {
->  	chassis-type = "handset";
-> 
->  	qcom,msm-id = <QCOM_ID_SM6125 0x10000>;
-> +	qcom,board-id = <34 0>, <34 1>, <34 2>, <34 3>, <34 4>, <0 0>;
-> 
->  	aliases {
->  		serial0 = &uart4;
->  	};
-> 
-> +	lcdb_lab: regulator-lcdb-lab {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "lcdb_lab";
-> +		regulator-min-microvolt = <5500000>;
-> +		regulator-max-microvolt = <5500000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	lcdb_ibb: regulator-lcdb-ibb {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "lcdb_ibb";
-> +		regulator-min-microvolt = <5500000>;
-> +		regulator-max-microvolt = <5500000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
->  	chosen {
->  		#address-cells = <2>;
->  		#size-cells = <2>;
-> @@ -356,6 +375,13 @@ irled@1 {
-> 
->  &tlmm {
->  	gpio-reserved-ranges = <0 4>, <30 4>;
-> +
-> +	ts_int_active: ts-int-active-state {
-         touch_default: touch-default-state
-> +		pins = "gpio88";
-                 pins = "gpio87", "gpio88";
-> +		function = "gpio";
-> +		drive-strength = <8>;
-> +		bias-pull-up;
-> +	};
->  };
-> 
->  &uart4 {
-> @@ -369,3 +395,77 @@ &usb3 {
->  &usb_dwc3_hs {
->  	remote-endpoint = <&pmi632_hs_in>;
->  };
-> +
-> +&mdss {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_mdp {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0_phy {
-> +	vdds-supply = <&vreg_l7a>;
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0 {
-> +	vdda-supply = <&vreg_l18a>;
-> +	status = "okay";
-> +
-> +	panel: panel@0 {
-> +		compatible = "tianma,fhd-video-ginkgo", "novatek,nt36672a";
-This should be moved out from the common, you should split the 
-devicetree becasue
-ginkgo and willow have three display variants:
-- nt36672a tianma and shenchao with novatek touch controller
-- ft8719 huaxing with focaltech touch controller
-> +		reg = <0>;
-> +
-> +		reset-gpios = <&tlmm 90 GPIO_ACTIVE_LOW>;
-> +		vddio-supply = <&vreg_l9a>;
-> +		vddpos-supply = <&lcdb_lab>;
-> +		vddneg-supply = <&lcdb_ibb>;
-> +		backlight = <&backlight>;
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&mdss_dsi0_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss_dsi0_out {
-> +	remote-endpoint = <&panel_in>;
-> +	data-lanes = <0 1 2 3>;
-> +};
-> +
-> +&qupv3_id_0 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +	status = "okay";
-> +
-> +	backlight: backlight@36 {
-> +		compatible = "kinetic,ktd3136";
-> +		reg = <0x36>;
-> +		enable-gpios = <&pmi632_gpios 6 GPIO_ACTIVE_HIGH>;
-> +		default-brightness = <2047>;
-> +		max-brightness = <2047>;
-> +	};
-> +};
-> +
-> +&spi2 {
-> +	status = "okay";
-> +
-> +	touchscreen@0 {
-> +		compatible = "novatek,nt36672a-spi", "novatek,nt36672a-ts";
-> +		reg = <0>;
-> +		spi-max-frequency = <4000000>;
-> +		interrupt-parent = <&tlmm>;
-> +		interrupts = <88 IRQ_TYPE_EDGE_RISING>;
-You can use interrupts-extended here.
-> +		pinctrl-0 = <&ts_int_active>;
-> +		pinctrl-names = "default";
-> +		panel = <&panel>;
-> +		touchscreen-size-x = <1080>;
-> +		touchscreen-size-y = <2340>;
+blinkm_probe() creates the BlinkM sysfs group before registering the LED
+class devices. If multicolor sub-LED allocation fails, probe returns
+without removing the group. If multicolor LED registration fails, the
+helper removes the group but returns success, leaving the device bound
+without an LED class device.
 
-You should add a status = "disable"; here since this device have 
-multiple touch variants,
-novatek touch only should be enabled for novatek displays.
-> +	};
-> +};
+Keep LED class device rollback in the registration helpers, but remove
+the BlinkM sysfs group in blinkm_probe() when either registration mode
+fails. Propagate the multicolor registration error so probe can perform
+this cleanup and report the failure.
+
+Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+Changes in v2:
+- Move sysfs group cleanup to blinkm_probe() for both LED registration modes.
+- Propagate multicolor LED registration errors to blinkm_probe().
+
+ drivers/leds/leds-blinkm.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+--- a/drivers/leds/leds-blinkm.c
++++ b/drivers/leds/leds-blinkm.c
+@@ -671,7 +671,6 @@ failblue:
+ failgreen:
+ 	led_classdev_unregister(&leds[RED]->cdev.led_cdev);
+ failred:
+-	sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+ 
+ 	return err;
+ }
+@@ -714,9 +713,8 @@ static int register_multicolor(struct i2c_client *client, struct blinkm_data *da
+ 	if (err < 0) {
+ 		dev_err(&client->dev, "couldn't register LED %s\n",
+ 				mc_led->cdev.led_cdev.name);
+-		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+ 	}
+-	return 0;
++	return err;
+ }
+ 
+ static int blinkm_probe(struct i2c_client *client)
+@@ -749,13 +747,12 @@ static int blinkm_probe(struct i2c_client *client)
+ 	}
+ 
+-	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR)) {
++	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR))
+ 		err = register_separate_colors(client, data);
+-		if (err < 0)
+-			return err;
+-	} else {
++	else
+ 		err = register_multicolor(client, data);
+-		if (err < 0)
+-			return err;
++	if (err < 0) {
++		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
++		return err;
+ 	}
+ 
+ 	blinkm_init_hw(client);
