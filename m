@@ -1,70 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB659547040
-	for <linux-leds@vger.kernel.org>; Sat, 26 Sep 2026 00:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BC937FF67
+	for <linux-leds@vger.kernel.org>; Sat, 26 Sep 2026 17:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790381572; cv=none; b=Ou5iVnWZEkafOzwQt0nb1v+WjJXNvxTaUdT0xmJ12pvnmXiv4/0ASueZSP/q9CdCFmV8hGMXrlSBPCp+jkxVnwHqF3dukkdTQaHkZOPZ/eT7AOXE8b1cwBScBAbZy1NqNBkdeHZMJ2lcrFVUQbbl86rp/94oXMNt/1LsQlpMPuY=
+	t=1790443281; cv=none; b=c97+5h41GsRmO+isFiRJ5ZDH8uBp+VBT+nTf0BO/6sVNFcgynIs9UTEG43pTmuHxkzrNj5Ww7bblfpuaK2gxgcdrJTq6I7/gbxw4yQn+iv/lk+ss8psjswmAfbI8zwTz5fWBFdNG0x88F2k5go/eItyX/JD0dQ5iGjkhJxJs2U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790381572; c=relaxed/simple;
-	bh=SLDD6Twdr9QeydXbhSM2/Xz3ZOTTPYjKk7H7CmVaoBk=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=c/C6dec0hp6N476vFyBssEmgO0FFlTBd0LVvG+oc8wih9sXaRpywygaDqaq3hoUFKMVtjMkREP0qMfTXc/vwDFaQypD+qZSJ6q37swimke2FyK5R67dyuNEb6a0JWjoh4MqxPXRAdmTwwV/WJyqn1zSLcAXJrmCSdjLHcYxF8DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVm140Pq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790443281; c=relaxed/simple;
+	bh=r8HxKt0y8Dn/q6FFwqRAaZx4ISjhVY18Af8HDOWOtJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SQf2Wn1zMaGwryKe4H0h+oYHoHklzDhjYYJbLKPe7WCN76eBjFP3IN+IcYm8c/IUnT4slz9kTLY2b1V/9dvcM4JRh6e2XxZ8tH1tolQZ9Nghpk+aU2o2wa9Jn8zzMxUjGY+5OdXYo5FvLezQHQiJOJOorU4QTb8Y9tKpvUmxBRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9WTRFjP; arc=none smtp.client-ip=74.125.231.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVm140Pq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB201F000FF;
-	Sat, 26 Sep 2026 00:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790381571;
-	bh=SLDD6Twdr9QeydXbhSM2/Xz3ZOTTPYjKk7H7CmVaoBk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RVm140Pqw0FqB31LCFvsdGNAN+LJK7f9S8cm8p1b1LXmykEs5zTyn9nh6ZIk4RR3B
-	 DwqQLFJsqQiO1w2ZsDdJzcsGlo3Jl3oqs2DQ5S9kWR8nMfYmkaLX5OhubHcBO5et/S
-	 Gy0aM/zvKViA4cXwTBRZtWZ60E+A9B3mu6yCzgZSDqJe21i3czbBE2tWqcQAvONBAX
-	 zvY2UrMLQRxnGs2MYdq8XPj37hZyOShZgLCET36mYBwHDJ17/r04vCRRa1apVknek6
-	 O2Na2NwvsKe/7vhlLXgyaf5ByngGn9kuyrg28pyFJxv326k/j/H37cNsHPWYk41qQV
-	 y7xiloW9jRApg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] leds: blinkm: Clean up sysfs group on LED
- registration failure
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Myeonghun Pak" <mhun512@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20260926000344.29899-1-mhun512@gmail.com>
-References: <20260926000344.29899-1-mhun512@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 26 Sep 2026 00:12:50 +0000
-Message-Id: <20260926001251.5BB201F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9WTRFjP"
+Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-466ccab774cso1069511fac.1
+        for <linux-leds@vger.kernel.org>; Sat, 26 Sep 2026 10:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790443278; x=1791048078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=x02wxXy9eBaknTCUIBHusevlZwUPADcsIU5t7Qklh7U=;
+        b=m9WTRFjP3+x/y/m9E6UApbVquVH0q1qW7L3NUrbSpoftdo0lUuZiGJP20tedXsxO20
+         oiidejmH/1i8aFkLKLRJZLifwphmEqHXBSqI3qJPSHxhom/lmz3qosv9BVYxi/jF0nA0
+         9tsfWIL86kySyL37LSIKaoYS85gsVhtuG+EA8wLbNddMBe+FRGP+OdzS2WCL9KnJrjuV
+         gadl5yMH04mSas7tRJQg1ECuHpC5u0RH8hl6KLSWqx6y8Oe4ldnYKMFhvCfw3YU95vNp
+         neSO8NqQ1vLW1vQQ2TuYgG7q01zvgxJ6vmA73noTkWyZ8R1H0yMVmk8Cd70nXtLZ05VC
+         3rPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790443279; x=1791048079;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=x02wxXy9eBaknTCUIBHusevlZwUPADcsIU5t7Qklh7U=;
+        b=UrUKTdhj5xLaJngFfgFgKXs4/hJq5wfqAw6PaYrqbkI8bufTx+0J4jZlisFZyUZJ3W
+         V0ImX+g9+GFxRYteHBUJG/u1/JPFxsTanbnJCPkpc204dTxrkWcGN2YrUbQ0GLKB05LL
+         ZttEImj9rbxMbXN8Hlf2WilSpBGfHmh8Gty9mx9q3Aya454O0W3ZpN/pL1KletPfQvEX
+         T+tCwZRvDwTkxjoVau3/7MJyQhhIfTChu1INGeKddbuo84kPIXmWO/mK7x2kNfTUFkAF
+         UeG3ca658ld4l/JG3yz7i5SIO07SUo8pn2ALWImaMcaOsfgcQs7uuqdo+1Gf3lhuszXW
+         TpKQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy6DFOHKPBhZfDyZD9qVVpxyDPnEASBxsqL2Re0DIxdAvVSeFfdXgCFwwZ/GuyiCkd6InGM3W2Ylrea@vger.kernel.org
+X-Gm-Message-State: AFuF++lBmFYWzR6zfu8Ag2NXGkcGIdPjImUIHfCLaL8UQb5gdQzxjGyc
+	nna9acA0BBTAhwh0UFM2mpK4bNXzLRgPIfpEbpnXyUsPAFAzbXlRYGYbOGz4md34
+X-Gm-Gg: AYBFou3zK4aSV13cU4pAbwHy5MJW2EeqB8oPqj2ddK6QXSpn94UIHzxyU8a0cBO9KL8
+	on/2TaS4bQLECL2apmQK6VZ8/7JHblA7z9qgKFVgS2N6UL8vqtZXZLRd4dA0seTqHOGF/NDjHu4
+	3PPMQs6/BsrxdMn+k85/R1LI2CItqIb7B/B23+xEvTEX3PeAYjC0EuFmbao1MMWg+LJIgsjfnnz
+	R8NJh+G166z1f+CSvIgAobb7kOhAv3GWpAiWq9352TCS0JZgizAq/ydTFS/6gvAA7QQkWmwLYNO
+	96ahVXnHu87Aw+PxPpVDbwfweTNm7+74VuFQ8bmgwF06aFPtX1UGWg3IahbMrGeZCEGq76WhJ3Z
+	QDJf+L9ajcNXWk837PQxbiCpXP0AObvuvaAuBnXMnunWgXQLzqc96sxPNXdSMGYufJJvWZdvTaL
+	7qBh3kDOLS087SZDxMDo6bWhQUWHlDaJl8B0eIua47FRYlc91sdAJl23SmvOdSv44AWfOpCFmru
+	aFSrKEHXswf+1+b+fgzlpucRGwwlAYaJ84AEGx+Xa0yboK8dME=
+X-Received: by 2002:a05:6870:7886:b0:475:e066:771a with SMTP id 586e51a60fabf-491e95119a5mr7660296fac.33.1790443278638;
+        Sat, 26 Sep 2026 10:21:18 -0700 (PDT)
+Received: from archlinux.lan ([136.34.156.120])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-493356565b6sm5407325fac.9.2026.09.26.10.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Sep 2026 10:21:17 -0700 (PDT)
+From: Danish Khateeb <danishkhateeb03@gmail.com>
+To: lee@kernel.org,
+	pavel@kernel.org
+Cc: afd@ti.com,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danish Khateeb <danishkhateeb03@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] leds: tca6507: Fix use-after-free on unbind
+Date: Sat, 26 Sep 2026 12:21:15 -0500
+Message-ID: <20260926172115.543800-1-danishkhateeb03@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> blinkm_probe() creates the BlinkM sysfs group before registering the LED
-> class devices. If multicolor sub-LED allocation fails, probe returns
-> without removing the group. If multicolor LED registration fails, the
-> helper removes the group but returns success, leaving the device bound
-> without an LED class device.
->=20
-> Keep LED class device rollback in the registration helpers, but remove
-> the BlinkM sysfs group in blinkm_probe() when either registration mode
-> fails. Propagate the multicolor registration error so probe can perform
-> this cleanup and report the failure.
->=20
-> Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+Since the LEDs are registered with devm_led_classdev_register(), they
+are unregistered only after tca6507_remove() has cancelled the work.
+Unregistering an LED that is on turns it off, which queues the work
+again from led_assign(), and the work then runs after devres has freed
+the chip:
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+  BUG: KASAN: slab-use-after-free in assign_work+0x414/0x5b0
+  Read of size 8 at addr ffff888010d5c0c0 by task kworker/1:2/65
+  ...
+  Last potentially related work creation:
+   ...
+   queue_work_on+0xb6/0xc0
+   led_assign+0x223/0x340 [leds_tca6507]
+   led_classdev_unregister+0x26b/0x340
+   release_nodes+0xb3/0x140
+   devres_release_group+0x247/0x470
+   i2c_device_remove+0xbf/0x1b0
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260926000344.2989=
-9-1-mhun512@gmail.com?part=3D1
+Set up the work with devm_work_autocancel() before the LEDs are
+registered, so that devres cancels it after they are gone, and drop
+tca6507_remove().
+
+Fixes: 1b5c2fa7081c ("leds: tca6507: Use devm_led_classdev_register() to simplify remove path")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
+---
+
+Notes:
+    Tested in QEMU on a next-20260925 KASAN kernel, with the driver built as
+    a module and a test-only module that adds a fake I2C adapter and a
+    software node for a TCA6507 with two LEDs. With the LEDs on, unbinding
+    hits the report above (38 reports in 20 unbind/bind cycles), and so does
+    unloading the driver in 2 of 3 runs. With this patch there are no
+    reports in 20 cycles or 3 unloads, and the LEDs come back after each
+    rebind. A W=1 build with GPIOLIB is clean.
+
+ drivers/leds/leds-tca6507.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+index 9afe2722986c..503a465a07f4 100644
+--- a/drivers/leds/leds-tca6507.c
++++ b/drivers/leds/leds-tca6507.c
+@@ -79,6 +79,7 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/property.h>
+ #include <linux/workqueue.h>
++#include <linux/devm-helpers.h>
+ 
+ /* LED select registers determine the source that drives LED outputs */
+ #define TCA6507_LS_LED_OFF	0x0	/* Output HI-Z (off) */
+@@ -735,9 +736,15 @@ static int tca6507_probe(struct i2c_client *client)
+ 		return -ENOMEM;
+ 
+ 	tca->client = client;
+-	INIT_WORK(&tca->work, tca6507_work);
+ 	spin_lock_init(&tca->lock);
+-	i2c_set_clientdata(client, tca);
++
++	/*
++	 * Unregistering the LEDs turns them off, which queues the work again,
++	 * so it must be cancelled after them: set this up before registering.
++	 */
++	err = devm_work_autocancel(dev, &tca->work, tca6507_work);
++	if (err)
++		return err;
+ 
+ 	for (i = 0; i < NUM_LEDS; i++) {
+ 		struct tca6507_led *l = tca->leds + i;
+@@ -766,20 +773,12 @@ static int tca6507_probe(struct i2c_client *client)
+ 	return 0;
+ }
+ 
+-static void tca6507_remove(struct i2c_client *client)
+-{
+-	struct tca6507_chip *tca = i2c_get_clientdata(client);
+-
+-	cancel_work_sync(&tca->work);
+-}
+-
+ static struct i2c_driver tca6507_driver = {
+ 	.driver   = {
+ 		.name    = "leds-tca6507",
+ 		.of_match_table = of_match_ptr(of_tca6507_leds_match),
+ 	},
+ 	.probe    = tca6507_probe,
+-	.remove   = tca6507_remove,
+ 	.id_table = tca6507_id,
+ };
+ 
+
+base-commit: 05b4738b0078f7d6f154f68068a11c8a0635e9df
+-- 
+2.55.0
 
