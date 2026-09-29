@@ -1,47 +1,47 @@
 Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7A2496D31;
-	Tue, 29 Sep 2026 11:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E9A50B8CB;
+	Tue, 29 Sep 2026 11:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790679877; cv=none; b=sAvEsOMDxsc9rZi5EuOd6LWVz/J1a80KAMZIi/x1bvJiQko9jh1pTcp/3E3vu3s6hS9yxyagDayRZAwJCQi3aGDdujzMHMSYBZPU69o9P69I0E0TR6Y8sQgQS5qSh18gAhsC5n4Qy0I5XitIkxUaeIuAK0piY3I8AmcYbuQ5Oc8=
+	t=1790679975; cv=none; b=lykpF6Z3Iz+eBP60tr23GHP9fyrGS7HmdMdY2gg7f2Yz8+xn8APCKsPdMERXEmKhrwfErs+bNQLfK77gZfLdk7z2ggM/+FWyNiTzkyyt1r2FpT/Likb2wQlcmNlguXhD8gXX9Dij/bkX9C0+MIQQDWIewxAbFfKBUTyD0wQ6Qrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790679877; c=relaxed/simple;
-	bh=DryEJ4YZE8dqkNXYgFQlsbYfmRCBf0nX03WIUzsmp5c=;
+	s=arc-20240116; t=1790679975; c=relaxed/simple;
+	bh=+53xHOOxkU6voMCgJy22aOZ2f+nJ5+HlyXKUXPpB6eQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hl0aI0D9Yl2DVi5SZSiqQ51Y67/7pjxJKJg0CbBN3DW54Kea/qaGOzWzeg4OHTOV4QSynC7dkqbkkCtLE6wDE10l6nGPBx1j3STdYi/nBU0w0f+Fwx+6ifELEZUKvwQajOdRKZL1TIO1vgCxMJZHrww4jdbX3uyC9+Tgzxr+9mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=O24LSkMk; arc=none smtp.client-ip=188.40.3.216
+	 Content-Type:MIME-Version; b=m0msOSqL5v2C/Zesa/D0gjHevg4jPxfD5sVmTfnMd8IrawmqNUW3TGNQs31FdzdCQlOB0PQIYVaXhZHLGC0jlBV4wlsi6IYpz7qTdtUcFxgTZC20l4yHWQBm1hSY8yEKZ4egXet3y83Y0kXBlmV5yJfF71uqUyCcxCMlnIWOLe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=AY9FFkqI; arc=none smtp.client-ip=188.40.3.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="O24LSkMk"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="AY9FFkqI"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
 	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=VhWBcgkJPO+flDLKTdf49YOPGNHiW1yEFX3ELKRv7T0=; b=O24LSkMkI4OGSSU0WEi2IVWBrK
-	0jbM3L62RH60raIGP7Q2ncTZ5Wh3LoUPAnqbSw17VFlR1S2TErhvj9iTzpsOmDfDd2grMhJvbRqtJ
-	6Vyc9EJM/jVYMuo6VEPVICgZKdaAo06mDHxDn6J0TnA0MHxLcbg6k1+J2QxXCIa3TsBTAlS5whHnx
-	6Tb5VFIgLkgHz3SPk9zB1zwnS6/hsB3eqFpFQeqSU8J1Luvn1JQeJJdlgKrzpRW6K+L4itJ04CJR1
-	8Z4wdlotyzfufUKjLlugomdGYbcm+5YykArGvO7CaFgSVsPrEqvnHxNgO4qPzR+aa+IrV3qizhQno
-	OTPrEiQQ==;
+	bh=WLzG/lrH/KAV6ePyzFVqcNtFRURr2G/UzUJznxpsZno=; b=AY9FFkqIlcqs8CojrdUilP9yZu
+	kZI8dJpfEw8I2ffZcg8JrO4Ax+j4fjcFryttRMCDnf8dtOPQNW1GxpfEXgRpu9onDqVRmIf3biVzo
+	NC/k/LGqpKnqUPlVJHpv0xHV0KjvCpfESnxOMChmpR0mGsPnfISNZ+dEbe4r8wvlLEG1E5VJWBgpW
+	WIq1ZIpt43vg/4oeYHu/1v6+tnUIkdDooVlW2LbdDef/Byf1qe6li/futPytD8ai5DpTwZx/sQsA2
+	olsNv4UZ8FsvpgHszxtxmQxepIVN4Tukm457ObWrinrp8vMATxDxYPkmVNIKwAD631Q/tBpEOZrye
+	B9znfTiQ==;
 Received: from sslproxy01.your-server.de ([78.46.139.224])
 	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xBVdJ-0000d1-1V;
-	Tue, 29 Sep 2026 13:04:25 +0200
+	id 1xBVet-0001CM-1x;
+	Tue, 29 Sep 2026 13:06:03 +0200
 Received: from localhost ([127.0.0.1])
 	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xBVdJ-0009jG-15;
-	Tue, 29 Sep 2026 13:04:24 +0200
-Message-ID: <85d8a95f737971eef0d8525f568e40426546a4e9.camel@ew.tq-group.com>
-Subject: Re: [PATCH v3 08/10] leds: pca995x: Add sysfs files for error
- reporting
+	id 1xBVet-0000Ar-1Y;
+	Tue, 29 Sep 2026 13:06:03 +0200
+Message-ID: <c2988d6f77c6630f8e01096b93fae8b9c6f684f8.camel@ew.tq-group.com>
+Subject: Re: [PATCH v3 10/10] leds: pca995x: Add support for group
+ brightness control
 From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>
 Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -51,11 +51,11 @@ Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
  Carrasco <javier.carrasco.cruz@gmail.com>,  linux@ew.tq-group.com,
  linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-Date: Tue, 29 Sep 2026 13:04:23 +0200
-In-Reply-To: <179025018163.457255.7741092289370888752@kernel.org>
+Date: Tue, 29 Sep 2026 13:06:02 +0200
+In-Reply-To: <179025020617.457255.2187144572484405270@kernel.org>
 References: <cover.1790087890.git.nora.schiffer@ew.tq-group.com>
-	 <9c5bb10d247abc5acb752a4b884c2c3612abecdb.1790087890.git.nora.schiffer@ew.tq-group.com>
-	 <179025018163.457255.7741092289370888752@kernel.org>
+	 <391973ce0168438612861bfe8570b6890af0f44e.1790087890.git.nora.schiffer@ew.tq-group.com>
+	 <179025020617.457255.2187144572484405270@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
@@ -67,273 +67,174 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28138/Tue Sep 29 08:26:15 2026)
 
-On Tue, 2026-09-29 at 11:12 +0100, Lee Jones wrote:
+On Tue, 2026-09-29 at 11:13 +0100, Lee Jones wrote:
+> --- checkpatch.pl: clean (0 issues) ---
+>=20
 > On Tue, 22 Sep 2026, Nora Schiffer wrote:
 >=20
-> > The PCA995x has builtin failure detection. Provide sysfs files for
-> > individual LED status (reporting "okay", "short-circuit" or
-> > "open-circuit") as well as a global "has_errors" flag. has_errors is
-> > sticky and must be cleared by writing "clear" to the sysfs file.
+> > When LEDs are set to PWM mode with group control enabled, their
+> > brightness can control using a global "group PWM" setting, modulating
+> > the individual LEDs' brightness with a second PWM running at a differen=
+t
+> > frequency. This lowers the minimum duty cycle from 1/256 to 1/65536
+> > (averaged over the modulated signal). Group brightness control is
+> > particularly useful to adjust for different levels of ambient light.
+> >=20
+> > For simplicity, group PWM mode is always enabled, with the reset defaul=
+t
+> > of 255 as group brightness. This reduces the effective duty cycle by
+> > 1/256 at all individual brightness levels (the individual PWM signals
+> > are modulated with the 255/256 duty cycle group PWM), which should be
+> > imperceptible.
 > >=20
 > > Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 > > ---
-> >  drivers/leds/leds-pca995x.c | 112 +++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 111 insertions(+), 1 deletion(-)
+> >  drivers/leds/leds-pca995x.c | 46 ++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 43 insertions(+), 3 deletions(-)
 > >=20
 > > diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> > index 13cce0c3fdc19..57b5d2d6e035d 100644
+> > index 61d2581b976ce..d6438b576b186 100644
 > > --- a/drivers/leds/leds-pca995x.c
 > > +++ b/drivers/leds/leds-pca995x.c
-> > @@ -8,6 +8,7 @@
-> >   * Copyright 2023 Marek Vasut
-> >   */
-> >=20
-> > +#include <linux/bits.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/gpio/consumer.h>
-> >  #include <linux/i2c.h>
-> > @@ -24,6 +25,12 @@
-> >  /* Auto-increment disabled. Normal mode */
-> >  #define PCA995X_MODE1_CFG		0x00
-> >=20
-> > +#define PCA995X_MODE2_CLRERR		BIT(4)
-> > +#define PCA995X_MODE2_ERROR		BIT(6)
-> > +
-> > +/* Clear errors on probe, group brightness control, linear adjustment =
-*/
-> > +#define PCA995X_MODE2_CFG		PCA995X_MODE2_CLRERR
-> > +
-> >  /* LED select registers determine the source that drives LED outputs *=
-/
+> > @@ -35,6 +35,7 @@
 > >  #define PCA995X_LED_OFF			0x0
 > >  #define PCA995X_LED_ON			0x1
-> > @@ -37,30 +44,37 @@
-> >  #define PCA995X_IREFALL_FULL_CFG	0xFF
-> >  #define PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_FULL_CFG / 2)
+> >  #define PCA995X_LED_PWM_MODE		0x2
+> > +#define PCA995X_LED_PWM_MODE_GRP	0x3
+> >  #define PCA995X_LDRX_MASK		0x3
+> >  #define PCA995X_LDRX_BITS		2
 > >=20
-> > +#define PCA995X_EFLAG_BITS		2
-> > +#define PCA995X_EFLAG_MASK		GENMASK(1, 0)
-> > +
-> >  #define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
-> >=20
+> > @@ -52,6 +53,7 @@
 > >  struct pca995x_chipdef {
 > >  	unsigned int num_leds;
 > >  	u8 pwm_base;
+> > +	u8 grppwm;
 > >  	u8 irefall;
-> > +	u8 eflag_base;
+> >  	u8 eflag_base;
 > >  };
-> >=20
+> > @@ -59,6 +61,7 @@ struct pca995x_chipdef {
 > >  static const struct pca995x_chipdef pca9952_chipdef =3D {
 > >  	.num_leds	=3D 16,
 > >  	.pwm_base	=3D 0x0a,
+> > +	.grppwm		=3D 0x08,
 > >  	.irefall	=3D 0x43,
-> > +	.eflag_base	=3D 0x44,
+> >  	.eflag_base	=3D 0x44,
 > >  };
-> >=20
+> > @@ -66,6 +69,7 @@ static const struct pca995x_chipdef pca9952_chipdef =
+=3D {
 > >  static const struct pca995x_chipdef pca9955b_chipdef =3D {
 > >  	.num_leds	=3D 16,
 > >  	.pwm_base	=3D 0x08,
+> > +	.grppwm		=3D 0x06,
 > >  	.irefall	=3D 0x45,
-> > +	.eflag_base	=3D 0x46,
+> >  	.eflag_base	=3D 0x46,
 > >  };
-> >=20
+> > @@ -73,6 +77,7 @@ static const struct pca995x_chipdef pca9955b_chipdef =
+=3D {
 > >  static const struct pca995x_chipdef pca9956b_chipdef =3D {
 > >  	.num_leds	=3D 24,
 > >  	.pwm_base	=3D 0x0a,
+> > +	.grppwm		=3D 0x08,
 > >  	.irefall	=3D 0x40,
-> > +	.eflag_base	=3D 0x41,
+> >  	.eflag_base	=3D 0x41,
 > >  };
+> > @@ -114,11 +119,10 @@ static int pca995x_brightness_set(struct led_clas=
+sdev *led_cdev,
 > >=20
-> >  struct pca995x_led {
-> > @@ -112,6 +126,83 @@ static int pca995x_brightness_set(struct led_class=
-dev *led_cdev,
-> >  	}
+> >  	/*
+> >  	 * Change LDRx configuration to individual brightness via PWM.
+> > -	 * LED will stop blinking if it's doing so.
+> >  	 */
+> >  	return regmap_update_bits(chip->regmap, ledout_addr,
+> >  				  PCA995X_LDRX_MASK << shift,
+> > -				  PCA995X_LED_PWM_MODE << shift);
+> > +				  PCA995X_LED_PWM_MODE_GRP << shift);
+>=20
+> If we use group PWM mode to scale brightness, what happens when 'brightne=
+ss' is
+> 'LED_FULL'?  The 'switch' statement above sets 'PCA995X_LED_ON', which ty=
+pically
+> bypasses PWM entirely.  Won't this cause an LED set to 255 to ignore the =
+group
+> brightness and be fully on, while an LED at 254 is scaled down?
+
+Patch 9/10 removes the use of PCA995X_LED_ON to avoid this issue, using
+PCA995X_LED_PWM_MODE_GRP for all brightness values 1..255 instead.
+
+
+>=20
 > >  }
 > >=20
-> > +static ssize_t status_show(struct device *dev, struct device_attribute=
+> >  static ssize_t status_show(struct device *dev, struct device_attribute=
  *attr, char *buf)
-> > +{
-> > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > +	struct pca995x_led *led =3D ldev_to_led(led_cdev);
-> > +	struct pca995x_chip *chip =3D led->chip;
-> > +	const struct pca995x_chipdef *chipdef =3D chip->chipdef;
-> > +	const char *status =3D "unknown";
-> > +	unsigned int val;
-> > +	int shift, ret;
-> > +	u8 reg;
-> > +
-> > +	reg =3D chipdef->eflag_base + (led->led_no / PCA995X_OUTPUTS_PER_REG)=
-;
-> > +	shift =3D PCA995X_EFLAG_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG=
-);
-> > +
-> > +	ret =3D regmap_read(chip->regmap, reg, &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	switch ((val >> shift) & PCA995X_EFLAG_MASK) {
-> > +	case 0:
-> > +		status =3D "okay";
-> > +		break;
-> > +	case 1:
-> > +		status =3D "short-circuit";
-> > +		break;
-> > +	case 2:
-> > +		status =3D "open-circuit";
-> > +	}
-> > +
-> > +	return sysfs_emit(buf, "%s\n", status);
-> > +}
-> > +
-> > +static DEVICE_ATTR_RO(status);
-> > +
-> > +static struct attribute *pca995x_led_attrs[] =3D {
-> > +	&dev_attr_status.attr,
-> > +	NULL,
-> > +};
-> > +ATTRIBUTE_GROUPS(pca995x_led);
-> > +
-> > +static ssize_t has_errors_show(struct device *dev, struct device_attri=
-bute *attr, char *buf)
+> > @@ -190,10 +194,41 @@ static ssize_t has_errors_store(struct device *de=
+v, struct device_attribute *att
+> >  	return ret ?: count;
+> >  }
+> >=20
+> > +static ssize_t group_brightness_show(struct device *dev, struct device=
+_attribute *attr, char *buf)
 > > +{
 > > +	struct pca995x_chip *chip =3D i2c_get_clientdata(to_i2c_client(dev));
 >=20
-> Why not 'dev_get_drvdata(dev)' instead of bouncing through the i2c_client=
-?
+> 'dev_get_drvdata(dev)' again?
 >=20
 > > +	unsigned int val;
 > > +	int ret;
 > > +
-> > +	ret =3D regmap_read(chip->regmap, PCA995X_MODE2, &val);
+> > +	ret =3D regmap_read(chip->regmap, chip->chipdef->grppwm, &val);
 > > +	if (ret)
 > > +		return ret;
 > > +
-> > +
->=20
-> Stray blank line.
->=20
-> > +	return sysfs_emit(buf, "%d\n", !!(val & PCA995X_MODE2_ERROR));
+> > +	return sysfs_emit(buf, "%u\n", val);
 > > +}
 > > +
-> > +static ssize_t has_errors_store(struct device *dev, struct device_attr=
-ibute *attr,
-> > +				const char *buf, size_t count)
+> > +static ssize_t group_brightness_store(struct device *dev, struct devic=
+e_attribute *attr,
+> > +				       const char *buf, size_t count)
 > > +{
 > > +	struct pca995x_chip *chip =3D i2c_get_clientdata(to_i2c_client(dev));
->=20
-> As above.
->=20
+> > +	u8 val;
 > > +	int ret;
 > > +
-> > +	if (!sysfs_streq(buf, "clear"))
-> > +		return -EINVAL;
+> > +	ret =3D kstrtou8(buf, 0, &val);
+> > +	if (ret)
+> > +		return ret;
 > > +
-> > +	ret =3D regmap_update_bits(chip->regmap, PCA995X_MODE2,
-> > +				 PCA995X_MODE2_CLRERR, PCA995X_MODE2_CLRERR);
+> > +	ret =3D regmap_write(chip->regmap, chip->chipdef->grppwm, val);
 > > +
 > > +	return ret ?: count;
 > > +}
 > > +
-> > +static DEVICE_ATTR_RW(has_errors);
-> > +
-> > +static struct attribute *pca995x_attrs[] =3D {
-> > +	&dev_attr_has_errors.attr,
-> > +	NULL,
-> > +};
-> > +ATTRIBUTE_GROUPS(pca995x);
-> > +
-> >  static const struct regmap_config pca995x_regmap =3D {
-> >  	.reg_bits =3D 8,
-> >  	.val_bits =3D 8,
-> > @@ -176,6 +267,7 @@ static int pca995x_probe(struct i2c_client *client)
-> >  		led->led_no =3D reg;
-> >  		led->ldev.brightness_set_blocking =3D pca995x_brightness_set;
-> >  		led->ldev.max_brightness =3D 255;
-> > +		led->ldev.groups =3D pca995x_led_groups;
-> >  	}
+> >  static DEVICE_ATTR_RW(has_errors);
+> > +static DEVICE_ATTR_RW(group_brightness);
 > >=20
-> >  	/* Disable LED all-call address and set normal mode */
-> > @@ -183,11 +275,20 @@ static int pca995x_probe(struct i2c_client *clien=
+> >  static struct attribute *pca995x_attrs[] =3D {
+> >  	&dev_attr_has_errors.attr,
+> > +	&dev_attr_group_brightness.attr,
+> >  	NULL,
+> >  };
+> >  ATTRIBUTE_GROUPS(pca995x);
+> > @@ -270,11 +305,16 @@ static int pca995x_probe(struct i2c_client *clien=
 t)
 > >  	if (ret)
 > >  		goto err_put_nodes;
 > >=20
-> > +	/* Clear errors on probe */
-> > +	ret =3D regmap_write(chip->regmap, PCA995X_MODE2, PCA995X_MODE2_CFG);
+> > -	/* Clear errors on probe */
+> > +	/* Clear errors on probe, use GRPPWM register for group brightness co=
+ntrol */
+> >  	ret =3D regmap_write(chip->regmap, PCA995X_MODE2, PCA995X_MODE2_CFG);
+> >  	if (ret)
+> >  		goto err_put_nodes;
+> >=20
+> > +	/* Full group brightness */
+> > +	ret =3D regmap_write(chip->regmap, chipdef->grppwm, U8_MAX);
 > > +	if (ret)
 > > +		goto err_put_nodes;
 > > +
 > >  	/* IREF Output current value for all LEDn outputs */
 > >  	ret =3D regmap_write(chip->regmap, chipdef->irefall, iref);
 > >  	if (ret)
-> >  		goto err_put_nodes;
-> >=20
-> > +	ret =3D device_add_groups(dev, pca995x_groups);
->=20
-> Why not devm_* and remove the clean-up?
-
-Ahh, the AI had suggested this too, but it was referring to a non-exisitent=
- API.
-I didn't know the function was called devm_device_add_group() - found it no=
-w,
-will fix in the next revision.
-
-
->=20
-> > +	if (ret)
-> > +		goto err_put_nodes;
-> > +
-> >  	for (i =3D 0; i < chipdef->num_leds; i++) {
-> >  		struct led_init_data init_data =3D {};
-> >=20
-> > @@ -202,7 +303,7 @@ static int pca995x_probe(struct i2c_client *client)
-> >  		if (ret < 0) {
-> >  			dev_err_probe(dev, ret, "Could not register LED %s\n",
-> >  				      chip->leds[i].ldev.name);
-> > -			goto err_put_nodes;
-> > +			goto err_remove_groups;
-> >  		}
-> >=20
-> >  		led_fwnodes[i] =3D NULL;
-> > @@ -210,6 +311,9 @@ static int pca995x_probe(struct i2c_client *client)
-> >=20
-> >  	return 0;
-> >=20
-> > +err_remove_groups:
-> > +	device_remove_groups(dev, pca995x_groups);
-> > +
->=20
-> You can remove this if you move to devm_*.
->=20
-> >  err_put_nodes:
-> >  	for (i =3D 0; i < chipdef->num_leds; i++)
-> >  		fwnode_handle_put(led_fwnodes[i]);
-> > @@ -217,6 +321,11 @@ static int pca995x_probe(struct i2c_client *client=
-)
-> >  	return ret;
-> >  }
-> >=20
-> > +static void pca995x_remove(struct i2c_client *client)
-> > +{
-> > +	device_remove_groups(&client->dev, pca995x_groups);
-> > +}
-> > +
->=20
-> As above.
->=20
-> >  static const struct i2c_device_id pca995x_id[] =3D {
-> >  	{ .name =3D "pca9952", .driver_data =3D (kernel_ulong_t)&pca9952_chip=
-def },
-> >  	{ .name =3D "pca9955b", .driver_data =3D (kernel_ulong_t)&pca9955b_ch=
-ipdef },
-> > @@ -239,6 +348,7 @@ static struct i2c_driver pca995x_driver =3D {
-> >  		.of_match_table =3D pca995x_of_match,
-> >  	},
-> >  	.probe =3D pca995x_probe,
-> > +	.remove =3D pca995x_remove,
-> >  	.id_table =3D pca995x_id,
-> >  };
-> >  module_i2c_driver(pca995x_driver);
 > > --=20
 > > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
 Germany
