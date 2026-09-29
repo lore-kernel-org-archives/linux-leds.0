@@ -1,112 +1,312 @@
-Received: from mail-lf2-f12.google.com (mail-lf2-f12.google.com [74.125.229.204])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6531D4E50CD
-	for <linux-leds@vger.kernel.org>; Tue, 29 Sep 2026 09:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2247250B8B4;
+	Tue, 29 Sep 2026 10:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790674196; cv=none; b=aqp7CSN2X7ywCdE7t1YoIPy457iePLOvoww8JzOS7fZ+HloLUK0nw2WM8oxIy7zXmP8hR/f6x9QQ80W9aS82zty8aUnGCIqlrv8n1J6/O6HzpjP3KgROdsK12NTbMkfBDfWzUeLivc/OGjnBdTe4JuENn8bc9zcliy4dZBWpbug=
+	t=1790676744; cv=none; b=nQsTRJb2Tv075kX5JsQ8dSogusIjAn4u/SXafMYVDgN9N7yuNOzvjK0NXCatXuI/H0bRiLqgQFCkOhBCHrBsy6LpHxNaB6J6K1IyaxHPRiSpyKVIfj7G6rtURyJlcw6s96+OZcHkBBeLIjQiZMVjxYLIl8skLsjN75VtpNimIw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790674196; c=relaxed/simple;
-	bh=yR4c/96D5m2oYV+sIt1zs2VIhOzRkf7um58xAidzs6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aC9fFASJPrXmKOPqLigBPcSTpwm6NPTrKTJIp8f5142BvFImXp4pRcOM17vOGiLYMLgdHGQn8a4FtD2St8+fosKWNJSoEJMyKnOrWUWShU3tvaJ3vqC+QZmPOJYDUwZjDRivX6lO/6DWfAw3eD7Rb31g9L0Ht5Xkg6opxPAJQ2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rp9x3kaG; arc=none smtp.client-ip=74.125.229.204
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790676744; c=relaxed/simple;
+	bh=ioaMLeF6q2PatiRAthuS+ZRGJ7hPCF0//N/P4Q2M6Jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZxm/Z1sxdFm20mfgIQCiMPNv/hOWVDt+RXgLovC3vWwdNMWM5cLylPCEabwzGUFOoKi5Grjwih9Xn4Ba8nDNzxBvbTLtrHPCzbl9IoYOdd4Hr1ji16RPXVxmQBKTEsHQgvKDcjnU8sybUT7/Wlayg4p0N316X4v/YcdmLNWUL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzKh09EG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rp9x3kaG"
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5ba31af701aso329424e87.2
-        for <linux-leds@vger.kernel.org>; Tue, 29 Sep 2026 02:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790674192; x=1791278992; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=yR4c/96D5m2oYV+sIt1zs2VIhOzRkf7um58xAidzs6Q=;
-        b=Rp9x3kaGFPezog0Un7i8g0r2EtmziA+deW1YfGgSzPI9wzs8kNyF/PHzAnE3AuV9kp
-         /ZXl8MQvKZxSy+3BO4cG8o361j2islCRP+ljmHnBt0qaWVLHfe62hHdmnSSs5bIncxo4
-         R7jOBKQ18fgNu4+M+UnyBCPkuo8diEMsp2IgVoWldwtt5QsOesSE+D68aJSz2kPaiS1Y
-         aOseOpBUNqmVohomL9ILgAk4CqcoYw76HO2eL3jiQ0IruWZOa6LX6p2PyI4STZyKtsQY
-         StuJZ/eKUK5EC3jKRfqLQEZA07XcP41rwg7BtjV7SGiEyO23nKnkH9634E7jAZP5Wfva
-         bP4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790674192; x=1791278992;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=yR4c/96D5m2oYV+sIt1zs2VIhOzRkf7um58xAidzs6Q=;
-        b=BUuk5U4g9o+2IlTuA2XFNsFyDSD37UjIlfzw63rteOi5iTBN/YaCA5oISkSINDe6jo
-         /OGqxuJm+XHEZ1GSLg879BYnnHMpTmqhc4ck5Iyd2Kbh2XoTB7O8FglJhOOOgYcRz7sJ
-         KKCuA7ZCuhwekRQKHbmK44Tl/Ppe1FJ3OnOS9jGFIGuB69LBuOuNxNpxACrREXEhfzgw
-         4Hy2qEqcGIWLVxXVnn+RYxm+LF179nzb0SX6J7s1SZGH0lwQ+S7IDm2M0eDfZoCb5PUP
-         QwAqoJYkzlLs+NRp36ugyLq6fKMaM0nsJ6CEKCUIF1Tbw2fXBuUTMbq3ZdwUJpYz3YQN
-         13jg==
-X-Forwarded-Encrypted: i=1; AKwUvByk9BA+ecVTl6i8iXZf3w3AsawtKtBxQeR6GQScbgB4SHva7tgi2oAnAetaWfgaKEBVkC6ZrrkhUis+@vger.kernel.org
-X-Gm-Message-State: AFq9FYKsW5DixoT9PZ2AuQFb4HLu00D70315WkIpH5VJNRsg2zGWE4BN
-	4rxX3zmSW/+gQklmtELQbkIFssGyZ/a5JdmFlfss8cq1I/kF1heb5gd4
-X-Gm-Gg: AYBFou2uMSgfJ2aaJLoJ3GYj25Gg0mBQIB0q7QrpkBMmkx9mFglPz4RvmxqWYhzbrmh
-	09PaXDDM7sJieXjNmClnuuhj4i2U5qpmWJAg2paio/+Dv3jymylesuYZskV73B8i/OjVt+AgUKT
-	qKazGDzWEqHmG+6krfgeIuz8uQWWfD32i2H1VUpV5Lw8KRAIhsiJwQkQec99Rk9BUXdGIU64mz9
-	xDYT/P6rSUwePA05Ch8fq9TJxVOURSOZh3SyeiC8gHNFxnEoSMgxB4lrm4bmKwDFRVJBiVJiyW4
-	E0ITmNEFfqw75sZfi3rA9GpUVOkMKA2dp0l1j9+AsKCUif/GvENZHylh8YiswwtDjEgcK9oU5v0
-	c5viLwQTh095LOEePhLPmj/oHJBVFWrL/lkIcGObJ8CO9H/3EJZQGoZWx6C2xtevTep/7Tr2sbs
-	T/FewRbblxc1HSaibAWWNs7iPx8nnLDmXNmqVXXAw1/Wg93KlzPYkouaohogD6S023iqfDQsjBs
-	34lEdaBWHQ=
-X-Received: by 2002:a05:6512:686:b0:5b6:1a7c:59cf with SMTP id 2adb3069b0e04-5b8df0c6fb4mr5787163e87.41.1790674192165;
-        Tue, 29 Sep 2026 02:29:52 -0700 (PDT)
-Received: from quietus.tail91f8a6.ts.net ([169.40.47.10])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b9debb906esm1219348e87.51.2026.09.29.02.29.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 02:29:51 -0700 (PDT)
-From: Ruslan Koreev <koreev.r@gmail.com>
-To: rillian.grant@gmail.com
-Cc: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ruslan Koreev <koreev.r@gmail.com>
-Subject: Re: [PATCH v2 0/4] leds: flash: LM3643 dual LED flash driver
-Date: Tue, 29 Sep 2026 12:29:18 +0300
-Message-ID: <20260929092917.1782754-2-koreev.r@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260928094302.86966-1-rillian.grant@gmail.com>
-References: <20260928094302.86966-1-rillian.grant@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzKh09EG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E1A1F00893;
+	Tue, 29 Sep 2026 10:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790676729;
+	bh=/4CvABZnKbbe9C5npHYR1hapNjew8smn4EPxCxSMgKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SzKh09EGyFuPVUtJYdmPRecilz+i8QOrQ9ikbbB3EYuqEZIBiSZ+ymjB+2yA4d2wK
+	 XGnideKKeTdZhuZEflJlrfpuE7NKS3LfIUyKFmmNraW4KEHLtj8LtTXdIZ18osQ9C8
+	 otptqdSzvHWVefcBRN0C+XIzteNaMyKUHAOtabG0A2lRn9EQLGzvckBkrtqF2E1TbI
+	 bkE/Os+/jvgsW7XtK4DZr6SgR2pzmiPnO65iNdjUjjUGY4j/oqNcrP9dRvnu/J2jfD
+	 7LjMlO/IJ9rx8rAVCB5fNnfhQFc2YeXKTIz+tNCMCntqP4KeMzI+8E66QgWGEz/MUW
+	 DFYSoz4xgPlcA==
+Date: Tue, 29 Sep 2026 11:12:04 +0100
+From: Lee Jones <lee@kernel.org>
+To: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Isai Gaspar <isaiezequiel.gaspar@nxp.com>,
+	Marek Vasut <marex@denx.de>,
+	Pieterjan Camerlynck <pieterjanca@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux@ew.tq-group.com, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] leds: pca995x: Add sysfs files for error
+ reporting
+Message-ID: <179025018163.457255.7741092289370888752@kernel.org>
+References: <cover.1790087890.git.nora.schiffer@ew.tq-group.com>
+ <9c5bb10d247abc5acb752a4b884c2c3612abecdb.1790087890.git.nora.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9c5bb10d247abc5acb752a4b884c2c3612abecdb.1790087890.git.nora.schiffer@ew.tq-group.com>
+X-AI-Review-Draft: <9c5bb10d247abc5acb752a4b884c2c3612abecdb.1790087890.git.nora.schiffer@ew.tq-group.com>
 
-Hi Rillian,
+On Tue, 22 Sep 2026, Nora Schiffer wrote:
 
-On Mon, Sep 28, 2026 at 10:42:33AM +0100, Rillian Grant wrote:
-> This series adds a flash LED driver for the Texas Instruments
-> LM3643. I wrote it to support the Windows Hello NIR illuminator on my
-> ThinkPad X9-15 Gen 1, which has a single LED connected to both current
-> sources. The driver has also been tested by Ruslan Koreev on a ThinkPad
-> X1 Carbon Gen 14.
+> The PCA995x has builtin failure detection. Provide sysfs files for
+> individual LED status (reporting "okay", "short-circuit" or
+> "open-circuit") as well as a global "has_errors" flag. has_errors is
+> sticky and must be cleared by writing "clear" to the sysfs file.
+>
+> Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+> ---
+>  drivers/leds/leds-pca995x.c | 112 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 111 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
+> index 13cce0c3fdc19..57b5d2d6e035d 100644
+> --- a/drivers/leds/leds-pca995x.c
+> +++ b/drivers/leds/leds-pca995x.c
+> @@ -8,6 +8,7 @@
+>   * Copyright 2023 Marek Vasut
+>   */
+>
+> +#include <linux/bits.h>
+>  #include <linux/delay.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/i2c.h>
+> @@ -24,6 +25,12 @@
+>  /* Auto-increment disabled. Normal mode */
+>  #define PCA995X_MODE1_CFG		0x00
+>
+> +#define PCA995X_MODE2_CLRERR		BIT(4)
+> +#define PCA995X_MODE2_ERROR		BIT(6)
+> +
+> +/* Clear errors on probe, group brightness control, linear adjustment */
+> +#define PCA995X_MODE2_CFG		PCA995X_MODE2_CLRERR
+> +
+>  /* LED select registers determine the source that drives LED outputs */
+>  #define PCA995X_LED_OFF			0x0
+>  #define PCA995X_LED_ON			0x1
+> @@ -37,30 +44,37 @@
+>  #define PCA995X_IREFALL_FULL_CFG	0xFF
+>  #define PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_FULL_CFG / 2)
+>
+> +#define PCA995X_EFLAG_BITS		2
+> +#define PCA995X_EFLAG_MASK		GENMASK(1, 0)
+> +
+>  #define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
+>
+>  struct pca995x_chipdef {
+>  	unsigned int num_leds;
+>  	u8 pwm_base;
+>  	u8 irefall;
+> +	u8 eflag_base;
+>  };
+>
+>  static const struct pca995x_chipdef pca9952_chipdef = {
+>  	.num_leds	= 16,
+>  	.pwm_base	= 0x0a,
+>  	.irefall	= 0x43,
+> +	.eflag_base	= 0x44,
+>  };
+>
+>  static const struct pca995x_chipdef pca9955b_chipdef = {
+>  	.num_leds	= 16,
+>  	.pwm_base	= 0x08,
+>  	.irefall	= 0x45,
+> +	.eflag_base	= 0x46,
+>  };
+>
+>  static const struct pca995x_chipdef pca9956b_chipdef = {
+>  	.num_leds	= 24,
+>  	.pwm_base	= 0x0a,
+>  	.irefall	= 0x40,
+> +	.eflag_base	= 0x41,
+>  };
+>
+>  struct pca995x_led {
+> @@ -112,6 +126,83 @@ static int pca995x_brightness_set(struct led_classdev *led_cdev,
+>  	}
+>  }
+>
+> +static ssize_t status_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+> +	struct pca995x_led *led = ldev_to_led(led_cdev);
+> +	struct pca995x_chip *chip = led->chip;
+> +	const struct pca995x_chipdef *chipdef = chip->chipdef;
+> +	const char *status = "unknown";
+> +	unsigned int val;
+> +	int shift, ret;
+> +	u8 reg;
+> +
+> +	reg = chipdef->eflag_base + (led->led_no / PCA995X_OUTPUTS_PER_REG);
+> +	shift = PCA995X_EFLAG_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG);
+> +
+> +	ret = regmap_read(chip->regmap, reg, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch ((val >> shift) & PCA995X_EFLAG_MASK) {
+> +	case 0:
+> +		status = "okay";
+> +		break;
+> +	case 1:
+> +		status = "short-circuit";
+> +		break;
+> +	case 2:
+> +		status = "open-circuit";
+> +	}
+> +
+> +	return sysfs_emit(buf, "%s\n", status);
+> +}
+> +
+> +static DEVICE_ATTR_RO(status);
+> +
+> +static struct attribute *pca995x_led_attrs[] = {
+> +	&dev_attr_status.attr,
+> +	NULL,
+> +};
+> +ATTRIBUTE_GROUPS(pca995x_led);
+> +
+> +static ssize_t has_errors_show(struct device *dev, struct device_attribute *attr, char *buf)
+> +{
+> +	struct pca995x_chip *chip = i2c_get_clientdata(to_i2c_client(dev));
 
-Thanks for folding my patches in. I retested v2 on the X1 Carbon Gen 14
-(7.2.5): the DMI description is picked up, max_brightness is 71 and
-writes above it are clamped, max_flash_brightness is 600000, torch off
-puts the chip back in standby (ENABLE reads 0x00), and a flash strobe
-times out and reports flash-timeout-exceeded as expected.
+Why not 'dev_get_drvdata(dev)' instead of bouncing through the i2c_client?
 
-About the Sashiko comment on 2/4: led_classdev_register_ext() reads
-max-brightness from the fwnode before it creates the class device, so
-the window only exists when the firmware node has a max-brightness
-larger than what led-max-microamp allows. The DMI nodes don't set it.
-If you want to close it anyway, clamping the code in
-lm3643_torch_set_brightness() against the limit derived from
-led-max-microamp would make it independent of max_brightness.
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	ret = regmap_read(chip->regmap, PCA995X_MODE2, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +
 
-For 3/4, dev_dbg() is fine with me.
+Stray blank line.
 
-Ruslan
+> +	return sysfs_emit(buf, "%d\n", !!(val & PCA995X_MODE2_ERROR));
+> +}
+> +
+> +static ssize_t has_errors_store(struct device *dev, struct device_attribute *attr,
+> +				const char *buf, size_t count)
+> +{
+> +	struct pca995x_chip *chip = i2c_get_clientdata(to_i2c_client(dev));
+
+As above.
+
+> +	int ret;
+> +
+> +	if (!sysfs_streq(buf, "clear"))
+> +		return -EINVAL;
+> +
+> +	ret = regmap_update_bits(chip->regmap, PCA995X_MODE2,
+> +				 PCA995X_MODE2_CLRERR, PCA995X_MODE2_CLRERR);
+> +
+> +	return ret ?: count;
+> +}
+> +
+> +static DEVICE_ATTR_RW(has_errors);
+> +
+> +static struct attribute *pca995x_attrs[] = {
+> +	&dev_attr_has_errors.attr,
+> +	NULL,
+> +};
+> +ATTRIBUTE_GROUPS(pca995x);
+> +
+>  static const struct regmap_config pca995x_regmap = {
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> @@ -176,6 +267,7 @@ static int pca995x_probe(struct i2c_client *client)
+>  		led->led_no = reg;
+>  		led->ldev.brightness_set_blocking = pca995x_brightness_set;
+>  		led->ldev.max_brightness = 255;
+> +		led->ldev.groups = pca995x_led_groups;
+>  	}
+>
+>  	/* Disable LED all-call address and set normal mode */
+> @@ -183,11 +275,20 @@ static int pca995x_probe(struct i2c_client *client)
+>  	if (ret)
+>  		goto err_put_nodes;
+>
+> +	/* Clear errors on probe */
+> +	ret = regmap_write(chip->regmap, PCA995X_MODE2, PCA995X_MODE2_CFG);
+> +	if (ret)
+> +		goto err_put_nodes;
+> +
+>  	/* IREF Output current value for all LEDn outputs */
+>  	ret = regmap_write(chip->regmap, chipdef->irefall, iref);
+>  	if (ret)
+>  		goto err_put_nodes;
+>
+> +	ret = device_add_groups(dev, pca995x_groups);
+
+Why not devm_* and remove the clean-up?
+
+> +	if (ret)
+> +		goto err_put_nodes;
+> +
+>  	for (i = 0; i < chipdef->num_leds; i++) {
+>  		struct led_init_data init_data = {};
+>
+> @@ -202,7 +303,7 @@ static int pca995x_probe(struct i2c_client *client)
+>  		if (ret < 0) {
+>  			dev_err_probe(dev, ret, "Could not register LED %s\n",
+>  				      chip->leds[i].ldev.name);
+> -			goto err_put_nodes;
+> +			goto err_remove_groups;
+>  		}
+>
+>  		led_fwnodes[i] = NULL;
+> @@ -210,6 +311,9 @@ static int pca995x_probe(struct i2c_client *client)
+>
+>  	return 0;
+>
+> +err_remove_groups:
+> +	device_remove_groups(dev, pca995x_groups);
+> +
+
+You can remove this if you move to devm_*.
+
+>  err_put_nodes:
+>  	for (i = 0; i < chipdef->num_leds; i++)
+>  		fwnode_handle_put(led_fwnodes[i]);
+> @@ -217,6 +321,11 @@ static int pca995x_probe(struct i2c_client *client)
+>  	return ret;
+>  }
+>
+> +static void pca995x_remove(struct i2c_client *client)
+> +{
+> +	device_remove_groups(&client->dev, pca995x_groups);
+> +}
+> +
+
+As above.
+
+>  static const struct i2c_device_id pca995x_id[] = {
+>  	{ .name = "pca9952", .driver_data = (kernel_ulong_t)&pca9952_chipdef },
+>  	{ .name = "pca9955b", .driver_data = (kernel_ulong_t)&pca9955b_chipdef },
+> @@ -239,6 +348,7 @@ static struct i2c_driver pca995x_driver = {
+>  		.of_match_table = pca995x_of_match,
+>  	},
+>  	.probe = pca995x_probe,
+> +	.remove = pca995x_remove,
+>  	.id_table = pca995x_id,
+>  };
+>  module_i2c_driver(pca995x_driver);
+> -- 
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> https://www.tq-group.com/
+>
+>
+
+-- 
+Lee Jones
