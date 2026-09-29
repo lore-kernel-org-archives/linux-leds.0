@@ -1,76 +1,134 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5E438F658
-	for <linux-leds@vger.kernel.org>; Tue, 29 Sep 2026 12:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEF051DAE5
+	for <linux-leds@vger.kernel.org>; Tue, 29 Sep 2026 12:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790684349; cv=none; b=RP+jOPpqb+RLoOLoBZndYlpvY4+NF6VTAgIBAjH287/dc4ouNd7Ey663kNz+eHTu2aRAv0eaPfssa/iRB8gNdFk0XpXayvJbtEPhsX/9PY5lZk1HhnHROVn2DAGdQ7gpxpvkAK8BJPa6g/jDX7d8UCcOJSCIkzdb3Av41nZXtYk=
+	t=1790684376; cv=none; b=FFjX2Kjzvj8RpniEl4deAbuckLKdYRdhsoUNve4ApQNpjh3wQ70FODnWSw0slFX8i9cRbQ/zO3z8gv8WaQaHMy/44CS7cHb2hjgxFmWBLHlYUPyrFabTvmDtUDLWzlCpSE2cMTRtlGj+fzz1XO4mMfA4lyTqdMGlTCOD6AXnNik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790684349; c=relaxed/simple;
-	bh=0u4C2Wxg7a2d2J02ZH7OJvFM4gPmIPkQHwmX/r+mXWA=;
+	s=arc-20240116; t=1790684376; c=relaxed/simple;
+	bh=rCstsIYd6gSOY3dkZBUfy4BJBt6n/gQu4vX/6bcJoA4=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=Wn/gl5IUBvloufkNB8KicuN0glKQCuCoCLzivmGk07a0p7CncSqR0nvK6ELg/bJLSYjupVgM9iUTWisNnpIlq5E4MfP+t1vWcHvYQo8/rKQ1/US0HAH7MC33L60S8/2AvSBZDD25ZVKLOCC98QS38+BUkqHujm6IafCYctbKXpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFfaDQlg; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=G6OBiyaYBZSzj7fMfiZ3Zip8mVQM4lvtblFuybVFznwHZ/qC79c1rQfGrEfRd9e5m4zWw4MBErykOoMZWWBGRYgT6W/EV4XIsF/ZmaAX0M1NpJ21DwtxGnx5ZXa31y56TlzLfjlcmSppB2h/5GZNZTjvHsr0XW2nnW1mgK5Z/68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRm0oj1j; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFfaDQlg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36221F000FF;
-	Tue, 29 Sep 2026 12:19:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRm0oj1j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3661F000FF;
+	Tue, 29 Sep 2026 12:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790684344;
-	bh=RuNIL3fC87IOQ31YioJ1FVNl/ex+PMUpnQXiGIPjH0c=;
+	s=k20260515; t=1790684374;
+	bh=iPBr238Mk+xgk4cyxZvxcj6M+z/9ZYIjeOMt8Tx7kLk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=JFfaDQlgXlUDfCteb8LnT1HJqV660rO0bU3GXJAPH3yn018dyr0icmhMk2GH3Z2t9
-	 otGxUbjH74eWyItHxCsD4oAU5QRkoOUo/Lsv+9+HVbTVr+X+OdZQBWlYiUi0vvVoQG
-	 fKseiXiq3qUJQKAxavTWSl/Du8u4l70Be3dKvfpX0AoENJl18XRN+HwO/ywWGq8k4P
-	 Zxdm53AlYsSMbKWNS7OGQ7o2J5Nq22FtDRgjfzk4KOD9Q3TKznVmuZR4EWeU9pQuYl
-	 b+oPUnnfTpzrWJtBG0GPoVw3Q9OzOScD8bRgH6zzjad/FwSkZJksAYQxXDp8Dxk3CZ
-	 at4sQza3cMPGg==
+	b=WRm0oj1j95JoM6hs5E3vLV3R/YsBvAUgXSxzCZoAdMh7BZzkIFkPGpVM9FI9b6QWN
+	 5f0nghWI6rKkqYGZdoVmk303BDCtv8wW8AL8FkfJ5yBMqUWYSuXdziHOWEc/+paFvl
+	 BokvN0D00W9bPv4hm61Y2fMj5CBMBvy8/+F56n9mUqivY7YWYQFysBXSzznF2h5jWK
+	 BNnFZBeZ4JnjyTI4uK2PRfz8VYapQjZX+cOzxpt1o0zLoH0FJPMt/SLamSLATxAGkT
+	 /42lwBNOs5KU7s6KpeK5cfjZof9Tsh7QDBEjpajrsDxQaQXFoptCHCFw+Ipqm++j69
+	 ModhNl50pBkbQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 3/4] leds: trigger: netdev: Fix sysfs_update_group()
- races
+Subject: Re: [PATCH v3 4/4] leds: trigger: netdev: Serialize mode/interval
+ stores with trigger lock
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260929120902.2793138-4-alexander.sverdlin@siemens.com>
+In-Reply-To: <20260929120902.2793138-5-alexander.sverdlin@siemens.com>
 References: <20260929120902.2793138-1-alexander.sverdlin@siemens.com>
- <20260929120902.2793138-4-alexander.sverdlin@siemens.com>
+ <20260929120902.2793138-5-alexander.sverdlin@siemens.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 29 Sep 2026 12:19:03 +0000
-Message-Id: <20260929121903.C36221F000FF@smtp.kernel.org>
+Date: Tue, 29 Sep 2026 12:19:34 +0000
+Message-Id: <20260929121934.AF3661F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
->=20
-> The link_speed attribute group was listed in netdev_led_trigger.groups,
-> so the LED core creates and destroys it via device_add_groups() /
-> device_remove_groups() in led_trigger_set() (under trigger_lock), while
-> the trigger also refreshes it with sysfs_update_group() from
-> netdev_trig_notify() and device_name writes.  With no shared lock this was
-> observed as a sysfs splat when the trigger is re-armed during PHY link-up:
->=20
->   sysfs: cannot create duplicate filename '...green:lan/link_10'
->=20
->     CPU 0 (led_trigger_set)        CPU 1 (linkwatch workqueue)
->     -----------------------        ---------------------------
->     activate():
->       register_netdevice_notifier()
-> [ ... ]
-> store that takes that lock.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 06cdca014eca ("leds: trigger: netdev: Display only supported link =
-speed attribute")
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] leds: netdev: async work cancel allows zombie worker to overwrit=
+e hw offload
+--
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+commit d51dca8c4abbb112c1f8e31383d3f2334d50c585
+Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+
+leds: trigger: netdev: Serialize mode/interval stores with trigger lock
+
+This commit adds explicit mutex locking to serialize mode and interval stor=
+es.
+It replaces the synchronous delayed work cancellation with an asynchronous
+cancellation while holding the trigger lock.
+
+> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger=
+/ledtrig-netdev.c
+> index b27a453bbb859..7ad61c4be282e 100644
+> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+[ ... ]
+> @@ -424,6 +424,10 @@ static ssize_t netdev_led_attr_store(struct device *=
+dev, const char *buf,
+>  		return -EINVAL;
+>  	}
+> =20
+> +	/* async cancel: the worker takes this lock */
+> +	mutex_lock(&trigger_data->lock);
+> +
+> +	mode =3D trigger_data->mode;
+>  	assign_bit(bit, &mode, state);
+> =20
+>  	if (test_bit(TRIGGER_NETDEV_LINK, &mode) &&
+> @@ -436,20 +440,26 @@ static ssize_t netdev_led_attr_store(struct device =
+*dev, const char *buf,
+>  	     test_bit(TRIGGER_NETDEV_LINK_25000, &mode) ||
+>  	     test_bit(TRIGGER_NETDEV_LINK_40000, &mode) ||
+>  	     test_bit(TRIGGER_NETDEV_LINK_50000, &mode) ||
+> -	     test_bit(TRIGGER_NETDEV_LINK_100000, &mode)))
+> +	     test_bit(TRIGGER_NETDEV_LINK_100000, &mode))) {
+> +		mutex_unlock(&trigger_data->lock);
+>  		return -EINVAL;
+> +	}
+> =20
+> -	cancel_delayed_work_sync(&trigger_data->work);
+> +	cancel_delayed_work(&trigger_data->work);
+
+[Severity: Medium]
+If the worker netdev_trig_work() is concurrently executing and blocked on
+trigger_data->lock, will this asynchronous cancel fail to stop it?
+
+Once netdev_led_attr_store() finishes configuring hardware offload and
+releases the lock, could the worker unblock and continue to execute?
+
+If it does, the worker doesn't appear to check trigger_data->hw_control
+before falling back to software blinking and rescheduling itself:
+
+drivers/leds/trigger/ledtrig-netdev.c:netdev_trig_work() {
+	...
+	/* If we are not looking for RX/TX then return  */
+	if (!test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) &&
+	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) &&
+	    !test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) &&
+	    !test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode)) {
+		mutex_unlock(&trigger_data->lock);
+		return;
+	}
+	...
+	/* no check for hw_control */
+	...
+		led_blink_set_oneshot(trigger_data->led_cdev, ...);
+		trigger_data->last_activity =3D new_activity;
+	}
+
+	schedule_delayed_work(&trigger_data->work, ...);
+
+	mutex_unlock(&trigger_data->lock);
+}
+
+Will this cause the zombie worker to permanently overwrite the hardware
+offload state configured here and waste CPU by continuously rescheduling
+itself?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260929120902.2793=
-138-1-alexander.sverdlin@siemens.com?part=3D3
-
+138-1-alexander.sverdlin@siemens.com?part=3D4
