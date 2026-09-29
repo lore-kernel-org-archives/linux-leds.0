@@ -1,46 +1,47 @@
 Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CE24E5359;
-	Tue, 29 Sep 2026 09:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA514E5331;
+	Tue, 29 Sep 2026 09:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790673938; cv=none; b=bTsl19jvTT7T9aBxsXeT0oFb8CX6PFZt0PuKTJmeEEg7yXZHP43Db7EQjjYlM9yhbA7VhJnbnR+v/XlSLESS9HNFsRCXewMf4gQvDvAbHeH/g38J6+nVoCNGL0ilIXa2e3lml1y/YJak0BECYWoKtJHGHAeiJlzovf4wupJ1X4g=
+	t=1790674047; cv=none; b=jO17d5sg+hPdUZOQovcbDOL4mGU/JWYac5vdBST2DeuFC77OyX8CBEBibW3PgvCNVECZQbrtg4EC1ZLSm8CGL0ItQAnUXChHAoci6xYLS0p7UFHQR+oPjSwHeOYcNp/wuBNB+m6H998M5kWm+0wgNN41nhCjbhROFdIfO8r3r/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790673938; c=relaxed/simple;
-	bh=1ebFvCkPdGwK1XWzERMm32eRY9/xFogwF3EyTsERAQ8=;
+	s=arc-20240116; t=1790674047; c=relaxed/simple;
+	bh=uZnwL9mwrmur0vHEMWEEwWNSeteVcxeC32QE2NWQOjk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lHDguQfYqGrDg1l7KQMeVFw+3ppJHiXWZ88Hw6N6hAFUTjFsMhZ+OkPtKh+2X7U8xzV1xirEW44mS1dzZJc8xQg0UcmXmAR9SxBg3pFHrN9porVPDwJRezs2uLphSwqCWYXoHu0bnMmaw4xkevNx0hrJUl9Bki3A6LPIAZCkFtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=m/hvgsiY; arc=none smtp.client-ip=188.40.3.216
+	 Content-Type:MIME-Version; b=Ox8Tce5Uh4GDgZE1pLczDtyX9gaRKquLauGPKTHKUlQsWmZLe4PBtDSFtCZ5yBEsGAIIupIzUaDVr5UbFWq/jjUv4r38URJtxlw6NpXAV3R5ytFm60zKKthfzul86FQm/g/REBS5LcnmSVp6yuei1t9biHqa7XCpzAHh4Za1N9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=TA+nVprn; arc=none smtp.client-ip=188.40.3.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="m/hvgsiY"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="TA+nVprn"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
 	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=tFswUodyOJ45iAg/pEVuXCSp8bBCpsODnMlSqoBVUxE=; b=m/hvgsiYxRWxWf8kvIDdZATMwM
-	w8YlmtDW5U2VmD3X4yvaHbTj/n4tnGX/yIW6D6BBPg0Ocn8OxgAlE2SYpzPkCe2X+UISLGHzubP5f
-	7RVHIqqEpgGfaGe2xC38KMfgcK5fOc/Zhwl1EiSVOV0Gu6ScjGBF6i7TWdmvrNwZ29iXHXM8E48+d
-	XkAv/TnPLaukSLgkEExB5gYqLP5rx+q9wQxs4USXk5CpbSz4JFbuALwwsutIv/y2vzSxUB3UhdY41
-	sO2kFLM4P/ZuFrlIqU2hd6uFSepnTjU/GA+UKhm8hSvH00+91UTVOk7GO4yajgRyU32egdKDDwmSD
-	6QOZXp9A==;
+	bh=ijrOHhCN7oa5Qm7hU1nW+Tu2/lZ0PHw9bM6SdNnuOlw=; b=TA+nVprnOMCVGLStMe84nKIY4X
+	N5bFPe5VoO5PxY+qQEVTE8hQVsGZsurPJEr5X8ItbW+Au44TKYhSSoNpV3i+/MKhx6A2dvaaQe1eT
+	pr4SKyunCmB/Vrm6dZEmK0had/l3WNXlT33vrRve04+0eDgKk8Gmjah7xI0PoNTcTF0NcIxFU6qui
+	dQflidFK/W7UrjrQfDyxhobV2qSejkWTUpmNjFLArHD7yjhQMqxOst81piJFY/zIa1vilAgWtz7fH
+	O7UrCa1xeJHi+5ug98DkvCBHmZXtPw80mSJDxzgkr4sSENug7Jz20+18DJJ/NoqMA5XWTT90ym+ud
+	zAcOq93A==;
 Received: from sslproxy01.your-server.de ([78.46.139.224])
 	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xBU5U-0002of-2E;
-	Tue, 29 Sep 2026 11:25:24 +0200
+	id 1xBU7K-0003jA-2f;
+	Tue, 29 Sep 2026 11:27:18 +0200
 Received: from localhost ([127.0.0.1])
 	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xBU5U-000FPY-1q;
-	Tue, 29 Sep 2026 11:25:24 +0200
-Message-ID: <f90d0a7853d5e2489ea491e7c87bad3ce77aeeb1.camel@ew.tq-group.com>
-Subject: Re: [PATCH v3 06/10] leds: pca995x: Add support for reset GPIO
+	id 1xBU7K-000ATb-2I;
+	Tue, 29 Sep 2026 11:27:18 +0200
+Message-ID: <a6f07d24fda8c7482c91e54b92fc8a7029f91eb6.camel@ew.tq-group.com>
+Subject: Re: [PATCH v3 04/10] leds: pca995x: Fix fwnode handle leaks in
+ error paths
 From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>
 Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -50,11 +51,11 @@ Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
  Carrasco <javier.carrasco.cruz@gmail.com>,  linux@ew.tq-group.com,
  linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-Date: Tue, 29 Sep 2026 11:25:23 +0200
-In-Reply-To: <20260929091428.GE2112133@google.com>
+Date: Tue, 29 Sep 2026 11:27:17 +0200
+In-Reply-To: <179025017981.457255.5791421193775684526@kernel.org>
 References: <cover.1790087890.git.nora.schiffer@ew.tq-group.com>
-	 <ffbbfaf03a2b7b859a4ee01e18a161026ca319cd.1790087890.git.nora.schiffer@ew.tq-group.com>
-	 <20260929091428.GE2112133@google.com>
+	 <3d38609c96d387aec7eaff7cdb19fc2d8eb32a3e.1790087890.git.nora.schiffer@ew.tq-group.com>
+	 <179025017981.457255.5791421193775684526@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.52.3-0ubuntu1.1 
@@ -66,70 +67,100 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28138/Tue Sep 29 08:26:15 2026)
 
-On Tue, 2026-09-29 at 10:14 +0100, Lee Jones wrote:
+On Tue, 2026-09-29 at 10:20 +0100, Lee Jones wrote:
+> --- checkpatch.pl: clean (0 issues) ---
+>=20
 > On Tue, 22 Sep 2026, Nora Schiffer wrote:
 >=20
-> > The PCA9952/9955B/9956B have a reset pin. Use it to reset the LED drive=
-r
-> > if provided in the Device Tree.
+> > Each entry in led_fwnodes needs to be put as long as no LED device has
+> > been created for it yet - not just in the creation loop, but also in th=
+e
+> > first loop that iterates over the child nodes.
 > >=20
+> > By clearing entries in led_fwnodes once they have been used, the same
+> > cleanup loop can be used to handle errors in both loops.
+> >=20
+> > Fixes: 82c5ada1f9d0 ("leds: pca995x: Fix device child node usage in pca=
+995x_probe()")
 > > Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 > > ---
-> >  drivers/leds/leds-pca995x.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
+> >  drivers/leds/leds-pca995x.c | 26 +++++++++++++++++---------
+> >  1 file changed, 17 insertions(+), 9 deletions(-)
 > >=20
 > > diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> > index e6122b33451ed..b528b2b4990a7 100644
+> > index 8b05b3f12cf38..079ce3d8f1e49 100644
 > > --- a/drivers/leds/leds-pca995x.c
 > > +++ b/drivers/leds/leds-pca995x.c
-> > @@ -8,6 +8,8 @@
-> >   * Copyright 2023 Marek Vasut
-> >   */
-> > =20
-> > +#include <linux/delay.h>
-> > +#include <linux/gpio/consumer.h>
-> >  #include <linux/i2c.h>
-> >  #include <linux/leds.h>
-> >  #include <linux/module.h>
-> > @@ -121,6 +123,7 @@ static int pca995x_probe(struct i2c_client *client)
-> >  	struct fwnode_handle *led_fwnodes[PCA995X_MAX_OUTPUTS] =3D { 0 };
-> >  	struct device *dev =3D &client->dev;
+> > @@ -123,7 +123,7 @@ static int pca995x_probe(struct i2c_client *client)
 > >  	const struct pca995x_chipdef *chipdef;
-> > +	struct gpio_desc *reset_gpio;
 > >  	struct pca995x_chip *chip;
 > >  	struct pca995x_led *led;
-> >  	int i, reg, ret;
-> > @@ -130,6 +133,16 @@ static int pca995x_probe(struct i2c_client *client=
-)
-> >  	if (!dev_fwnode(dev))
-> >  		return -ENODEV;
-> > =20
-> > +	reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> > +	if (IS_ERR(reset_gpio))
-> > +		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-> > +				     "failed to request reset GPIO\n");
-> > +	if (reset_gpio) {
-> > +		udelay(3);
->=20
-> It's strange to see delays _before_ actions.
-
-devm_gpiod_get*() with GPIOD_OUT_HIGH asserts the reset GPIO if it was in a
-different state before. We keep the chip in reset for 3us, de-assert the re=
-set,
-and then wait for ~1.5ms until the chip is back up. This is a common patter=
-n
-seen in various drivers.
-
->=20
-> What are you delaying for exactly?
->=20
-> > +		gpiod_set_value_cansleep(reset_gpio, 0);
-> > +		usleep_range(1500, 1600);
-> > +	}
+> > -	int i, j, reg, ret;
+> > +	int i, reg, ret;
+> >=20
+> >  	chipdef =3D device_get_match_data(&client->dev);
+> >=20
+> > @@ -144,10 +144,12 @@ static int pca995x_probe(struct i2c_client *clien=
+t)
+> >  	device_for_each_child_node_scoped(dev, child) {
+> >  		ret =3D fwnode_property_read_u32(child, "reg", &reg);
+> >  		if (ret)
+> > -			return ret;
+> > +			goto err_put_nodes;
+> >=20
+> > -		if (reg < 0 || reg >=3D chipdef->num_leds || led_fwnodes[reg])
+> > -			return -EINVAL;
+> > +		if (reg < 0 || reg >=3D chipdef->num_leds || led_fwnodes[reg]) {
+> > +			ret =3D -EINVAL;
+> > +			goto err_put_nodes;
+> > +		}
+> >=20
+> >  		led =3D &chip->leds[reg];
+> >  		led_fwnodes[reg] =3D fwnode_handle_get(child);
+> > @@ -169,12 +171,12 @@ static int pca995x_probe(struct i2c_client *clien=
+t)
+> >  						     &chip->leds[i].ldev,
+> >  						     &init_data);
+> >  		if (ret < 0) {
+> > -			for (j =3D i; j < chipdef->num_leds; j++)
+> > -				fwnode_handle_put(led_fwnodes[j]);
+> > -			return dev_err_probe(dev, ret,
+> > -					     "Could not register LED %s\n",
+> > -					     chip->leds[i].ldev.name);
+> > +			dev_err_probe(dev, ret, "Could not register LED %s\n",
+> > +				      chip->leds[i].ldev.name);
+> > +			goto err_put_nodes;
+> >  		}
 > > +
-> >  	chip =3D devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> >  	if (!chip)
-> >  		return -ENOMEM;
+> > +		led_fwnodes[i] =3D NULL;
+>=20
+> Shouldn't we put this before removing it?
+
+The handle is only consumed when the LED has been registered successfully. =
+On
+error (ret < 0), led_fwnodes[i] must not have been unset yet to avoid the l=
+eak.
+
+
+>=20
+> >  	}
+> >=20
+> >  	/* Disable LED all-call address and set normal mode */
+> > @@ -184,6 +186,12 @@ static int pca995x_probe(struct i2c_client *client=
+)
+> >=20
+> >  	/* IREF Output current value for all LEDn outputs */
+> >  	return regmap_write(chip->regmap, chipdef->irefall, PCA995X_IREFALL_H=
+ALF_CFG);
+> > +
+> > +err_put_nodes:
+> > +	for (i =3D 0; i < chipdef->num_leds; i++)
+> > +		fwnode_handle_put(led_fwnodes[i]);
+> > +
+> > +	return ret;
+> >  }
+> >=20
+> >  static const struct i2c_device_id pca995x_id[] =3D {
 > > --=20
 > > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
 Germany
@@ -137,6 +168,7 @@ Germany
 > > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
  Schneider
 > > https://www.tq-group.com/
+> >=20
 > >=20
 >=20
 
