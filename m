@@ -1,112 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CD244607B;
-	Wed, 30 Sep 2026 07:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F1F31A556
+	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 07:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790753113; cv=none; b=h8mmIGsPTlBomHi+bJgiBUyB/vXwZaWOIh7UvVz9jpYOF3udkXMx16ueD9lXVl2J0rQeBLyglnORaNBCeHm6bH69bmDnS4lalK06lVkvbFD+s02CRwkqBeNrLkLJzWXPaM72YaX5WrJtfia5Svp//0E0k2KyAJptugyN5Cr1CNk=
+	t=1790753270; cv=none; b=pmdZzktwfGNFVA2g7dT/wbSOOtyMlY7J2IpGljw5eWPlb7cAnedUUw3iJvOoKytF1jHPZqPNCHrEUtXp17o9CXQKd04iUu5MEpXAO98mCXEMbmLMMPH2Tjb8y/jVLXezesw8vKINvTCrUkY3s6HY6Jh+HzFANsrBEI9lyxGJ4fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790753113; c=relaxed/simple;
-	bh=LRRmeTfBkDXJcA1eNj6xNbVrawx4Ccxq4Yp8YfU317k=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=La9WkD5ElHKsLmM2W488t8UTOCu4djXmjs262Q+tEeMZDCrw7bvoIommoxihW2XmGvopIT+pFqi1+DUTE1QCGI30Tk4TBv+INn3Ki4wIYQED6eg4R/J+np2L8Qr/QpUX9VFNChn2XQYNsYtfa+zyPDfmUH1zr0J2yo55LerZQDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PEh1wrjh; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790753270; c=relaxed/simple;
+	bh=tUpEzOCfmUF6KJldh55ia/zdgVa3346cD2y6uHf2ak8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CbnVNTGrY5o5hb8zmsaINxA6Ruq6G2nKePqLpovsav8+9EC6HPIH8owgzyw5y22kigQrQrfKUVshsi5GNgvMzXYcV68/fZqaGVpAsVh66FYGu/KDbcTyCsdt0jHUNiAmilBNlAOzRlvxTkPX8xLL8CDS98bFcD7ctFQfIhQkzxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PdmQiCaK; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEh1wrjh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DB6D1F000FF;
-	Wed, 30 Sep 2026 07:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790753111;
-	bh=szEAWm8vXvUGdw5LnGMd7rh8Pq4FstLVk5HenOVxV30=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=PEh1wrjh0rxj28jxtg6Z6N3M2qDkjqA4+R+ULkzAvMrXg0z+9InMpziRx67stvjoL
-	 5A4oNncgWCQUNb0T/3EWEU09wJIMdcyIBAOxyM8q1ULdlGpCgPZzLJzATHP0ueGsp0
-	 CfE8Q691QcgJ3jptyY425wqANciE6HFGgc311T+ot5cCVRzXg7kqoCRfppO9lw8G9o
-	 +bRun9I9FySV/hl/uftwJCb24JP4OmwJAGA2iJfc2xCKdebQxKdCIxqfG24lqNyhOJ
-	 nobTw5TmPI51ouCZW69XLqYEvonrSmRjPdiX+Fvvj3psP6J0QcJAOjyVzAfiv6je7G
-	 YcZ0il9QVE+RA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: mfd: Document Skyworks AAT2870
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: mfd@lists.linux.dev, lee@kernel.org, robh@kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20260930071513.54697-2-clamor95@gmail.com>
-References: <20260930071513.54697-1-clamor95@gmail.com>
- <20260930071513.54697-2-clamor95@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 30 Sep 2026 07:25:10 +0000
-Message-Id: <20260930072511.3DB6D1F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PdmQiCaK"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49fff6f0f87so24062975e9.3
+        for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 00:27:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790753266; x=1791358066; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=oO9cpDsPxHB73dE4R060h7YW2QBJW+MLJY5+WplAuUI=;
+        b=PdmQiCaKbfh73kpKBwwDZrdRadpyvsAXmWhJ0iswV02hW4/xHcSvv+cSnV0R2B6fiK
+         gXLd/8lDA5BU7fLz+rRCs9pjYt0ntOs60Ru0FyPxGnTdSk7IGnhDQyBwo9ZxXVPAR1Pf
+         ShmEeQ6ZnwY4RdOEfEdSrsA8Ko+jxljYETD1A0vsTQYAvBFbeAqoQOQ3d+kMgMHw+85t
+         plbEr5LVJC68fxDlSJNleH8Ndcc9c8aAiC3j9U45VDQ1qUMEGCh7FmuxAih5duCbsxrB
+         wynd6mnvftXls2iNbU2SI77NiH8NCzjQShmcbYQ9FpTZx005PVH9nmdDm3WiOlyQ2KSm
+         qDWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790753266; x=1791358066;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=oO9cpDsPxHB73dE4R060h7YW2QBJW+MLJY5+WplAuUI=;
+        b=pEV2YhwCRdumzyoLiFjgXe+reE6U65MFN1YGwxdrcPTXvAZdwY2Vp0FFFK4L6zg/En
+         L0pKWZPTBXK4wL5T5/ZW6rC2yue/ysK5zs3UPwnVw1tU/UE2wuVMN5tRyCrXw9HDTXsW
+         vyXv6MxpoiplMyKqt7FNppC3r5iRC81CFGt0obpk4UslBdyE24RfEkt3bHv11qb6r9Zp
+         KYp6M72aGaHGHHofAkb4aEzPTFN2HYtsd9oG2W/z95uGfKBMr48MN74xvzffI7LEp+Xv
+         QB5skr/JmrZ9ELCtw2Ptu9rH+jq2ha/1Krz3axQwda522gz5rnDXpVVGYp1oUMrE3qPA
+         NFUQ==
+X-Forwarded-Encrypted: i=1; AKwUvByCqIQ3wAzbMXpaw5ag1DlTAu0wCsT6QeI7BDbLUrRFDLKKFMZdUXlhVWcFO8010JOd6akAiXTjpzCb@vger.kernel.org
+X-Gm-Message-State: AFuF++nD16KBNnZZ/7g72q9FOJQAC2Aejxb058VV02/qC0uXirw9wBuK
+	jNr4AXXvu2xHMJQbvPfBK90R9fmwIePASzNdPg3btcb/eVLr7sE6n7qJ
+X-Gm-Gg: AYBFou0JumRddpKsNvUS7FzK7ZQublkrT/hD0ucNzVXNVCDLRIooc1ht1LxSTP2D3pa
+	D3ipzs40KfDOgljXfP/Eu7gQJe66jQJc1gld9mfjjGsYrZSrZOfo/x+bZt85C971JcNC5rt9yyu
+	mFMuaxREic9hdC6ZMy416WpQ+RE/J0/hn1s8H7OxK3SKPhpp33Kx7rdLi8qxRAzRTC6sR5CV0+L
+	x5QKChT5+7V9QMCYoQ8FGt5oB5wbeACvDXZwbCg9r7+tPmVlAM2NapE4upKar9jeO9IAeEgQL2z
+	r2W8XX/zX0lPl1e5QlAw/Na7cpNYekPaYqgBXZcXaNs7CRjDcc33A9Ncx5lzdTmLFVgu3PY602t
+	JFCFI1DAOBDBj+bG/w5fyZTKuobaJT0xjqwAu1KWZSsJU0PiWEhtd3CVSH2jYZHfPSq28kyMezM
+	fRTSOvZjZgFgtW1ZqYHIKpYJqVUyn0+by/kz/NpRkxHhOXnblzkYgNtvDZ7YQEhAzhGQIhJdNer
+	S467nrctkMGn59cB7g=
+X-Received: by 2002:a05:600c:8b88:b0:4a0:c4:a1e0 with SMTP id 5b1f17b1804b1-4a01adde996mr6121365e9.9.1790753266400;
+        Wed, 30 Sep 2026 00:27:46 -0700 (PDT)
+Received: from xeon ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a015a84419sm27680985e9.1.2026.09.30.00.27.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Sep 2026 00:27:45 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	mfd@lists.linux.dev
+Subject: [PATCH v1 0/1] leds: Add driver for MAX8907 LED cell
+Date: Wed, 30 Sep 2026 10:27:31 +0300
+Message-ID: <20260930072732.66578-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] leds: incorrect scaling for led-max-microamp constraints
---
+Add a small driver to control the LED cell provided by the MAX8907 PMIC.
+The LED does not require any specific configuration and is folded into the
+PMIC's node.
 
-commit 629a67ba3ff0e9f6e02a0fa733445881d67a7d0c
-Author: Svyatoslav Ryhel <clamor95@gmail.com>
+Svyatoslav Ryhel (1):
+  leds: Add driver for MAX8907 LED cell
 
-dt-bindings: mfd: Document Skyworks AAT2870
-   =20
-Document Skyworks AAT2870 LED Backlight Driver and Multiple LDO Lighting
-Management Unit.
+ drivers/leds/Kconfig        |  7 ++++
+ drivers/leds/Makefile       |  1 +
+ drivers/leds/leds-max8907.c | 81 +++++++++++++++++++++++++++++++++++++
+ drivers/mfd/max8907.c       |  1 +
+ include/linux/mfd/max8907.h |  2 +-
+ 5 files changed, 91 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/leds/leds-max8907.c
 
-> diff --git a/Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml=
- b/Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
-> new file mode 100644
-> index 0000000000000..6dfcd1fa399ca
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
-> @@ -0,0 +1,127 @@
-[ ... ]
-> +  backlight:
-> +    $ref: /schemas/leds/backlight/common.yaml#
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +      compatible:
-> +        const: skyworks,aat2870-backlight
-> +
-> +      led-max-microamp:
-> +        minimum: 450000
-> +        maximum: 27900000
-> +        default: 450000
+-- 
+2.53.0
 
-[Severity: Medium]
-Are these constraints for led-max-microamp mathematically correct? The valu=
-es
-range from 450,000 to 27,900,000 uA, which corresponds to 450 mA to 27.9 Am=
-ps.
-
-Real hardware limits appear to be 0.45 mA to 27.9 mA, which would be 450 to
-27,900 uA. Defining a physically correct value (e.g., <27900>) in a device
-tree will fail schema validation.
-
-> +
-> +      max-brightness:
-> +        default: 255
-[ ... ]
-> +            backlight {
-> +                compatible =3D "skyworks,aat2870-backlight";
-> +
-> +                skyworks,channels =3D /bits/ 8 <0xff>;
-> +                led-max-microamp =3D <27900000>;
-
-[Severity: Medium]
-Does this example propagate the erroneous 27.9 Amps value?
-
-The follow-up driver patch (commit mfd: aat2870: Convert to use OF bindings)
-propagates this incorrect scaling, meaning correct values will be wrongly
-clamped to minimum brightness.
-
-> +            };
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930071513.5469=
-7-1-clamor95@gmail.com?part=3D1
