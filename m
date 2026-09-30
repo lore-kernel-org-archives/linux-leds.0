@@ -1,77 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E1144C648
-	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 07:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23917451980
+	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 07:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790751736; cv=none; b=Hq4qg8nHWOodTVLtoPYepyLLZailO4fTjWIrFZvloU9YkEQe0HVTygATzTOOPwNAoEtGJf1/tBAIaL6hGsjr3S8ktz26v/TEfvSqjyNYN8XHd1q6eyviIMD0OWeMuRsOvTmzTWy+sDHj+jcFtQarqyRRJI24ynjx43Vm3XKuDtQ=
+	t=1790752530; cv=none; b=A8yA+QkgU+xng36HtP+VBhXmNUtcdwu0hoRHmtD1HbJQyRLgGBJv2/qnZyKQpRN337CrH1JYYcqTeglfK34i9PcrOrlOacRR7Dr+meQcO3KWRVbJwixRaEiNUJBFn+oDBpseAqRkZgTuFr7aRnSgTfHbzuyjnr2lPTpCU0Dko8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790751736; c=relaxed/simple;
-	bh=TLeM8vaK96Mk9Wwq3YmB8jL5oPzDrVflt0K0gjJCUVU=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=pqdwPTcQDf41jpd0/V+IM2F5ylOgax0P/fK/UrxzPUxz1hKvGCNPi/1yZzP2Dc84GWXH6qh4g2baDiCmdSca2BDTvw21VOhnFVTXaknmuMNupp0ooeqRi4htsVkf2/Zkbdbm8tEWSkOkZwWFKazllwPSLyiZf+LxObK/FIy2aBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PT7f0VYd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790752530; c=relaxed/simple;
+	bh=9++OyGSJWEwT7/ctMO79NTROZZy/+9e80noaO28S9RA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RktJP3dvd8WzBQKfeu7Dz8R/h/Y/B6D7NnDDRRNyMtIQkKyg2VZNCIwJ8YXsXJM7gcOD5+UNtthZKHBV88oS/6lzOtrxYKyRg6RKJsxJcWMnVSyGFViJAaHdbRFZthHNz9HzvBb7+F4cexCp7ORIGfIIC9horkPCgPCp1h2YSTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iO9Wd7u+; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PT7f0VYd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501591F000FF;
-	Wed, 30 Sep 2026 07:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790751721;
-	bh=TLeM8vaK96Mk9Wwq3YmB8jL5oPzDrVflt0K0gjJCUVU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=PT7f0VYdYYjrTgHbdL6r22OwP7Zx7i5s2uVrpW7IoWjCtRP5SL3dhwfUtWHkPOYpz
-	 kHaSYhB7w2vEGHTeuA9fRyqm42HtAxK7SSsr8MP5OPc3uPZ3zckijF9ZBz3JTpqzOj
-	 691yAeC2lNgz7HGScfou/jvlRhVXuRtbTPUmmo7eObmwR/fffnjpYvmri/JYZucNps
-	 uLab4e7Do8+IyaTonLKfSrBO+yjMGJetObAuRPz538VG+L8a4och2OlWp9V3OytvJj
-	 2vPvefZPfgGdVXG6OR9R8DB08ekk8LGGIiBtErEL1vZJb4FC2VO1rQjV6zi4fOwQNq
-	 gNDKKPCgcw0wA==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/2] leds: trigger: input-events: Restore previous
- brightness on input
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Nikolay Plastinin" <plaztininikolai@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20260930-leds-input-events-brightness-v2-2-3948d3cddd83@gmail.com>
-References: <20260930-leds-input-events-brightness-v2-0-3948d3cddd83@gmail.com>
- <20260930-leds-input-events-brightness-v2-2-3948d3cddd83@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 30 Sep 2026 07:02:00 +0000
-Message-Id: <20260930070201.501591F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iO9Wd7u+"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-4a006bb267eso15188365e9.0
+        for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 00:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790752524; x=1791357324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2prECYlfUYJhHJY0ODA9AKxpvoyiJexfpX9S3WhkkKk=;
+        b=iO9Wd7u+iqFXWGwmmsFge8nvX5Dvm3a/mif3zcYO03V6O3bEOxLoC8OONh2/XPzK4z
+         k2HqKqPfP6H4gltXcEw5xt2nkL4ffhFNFpwhrARCmgIlZSfEVC+DkMw1Fhil8AOkMrkH
+         dh3Zjy6NzZv4ppdWKUA5MfiPAKiQ/Od2eA/sKqewVoOKyNdYsiuYO4LLjBhASMVa0cSK
+         3GDFMZfaN5zz/vPMcYHbyVXtTJMlQ3U+fZEMykzwFtw9Fi/FuLMm4ncENuP0l/CQ2pvI
+         Qb39/faltsngUCqBf2wbRvwxmuGHlOLOK1vJ5pt+a83YHM0Z+O7A5jgZTKvb372ENKsb
+         83MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790752524; x=1791357324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=2prECYlfUYJhHJY0ODA9AKxpvoyiJexfpX9S3WhkkKk=;
+        b=OOYKzpUf12LcUMsdLI6FfOkeaEofuGZtDxOb1peANgfVdW+bx5rr2E1Bt26tn4/xZr
+         tejE5dlozehzK4zqC2K4m/roITaxX4wIrrAv4O/+akBGIXbo1lNyumjrCfG9zHpCSC+a
+         1UzFFS23FMyqRi65vscNWu9i2rVu3H5stBXWQyI+OKyAaFDdx3ASP64INtKc6M3YiVyZ
+         FAcAiDLzcuS3Y5r7zWsnvEt10pa3Fxt9PESaLEd8aot5tVLRtfertuucvD3UF+Lwt2PY
+         vajJvORXmz5wDfu1JKGB6Q1LgAIR6zOZYn0RO4lte8mpNoLLPN26aNzBy+rI7hZmFS8M
+         xlBg==
+X-Gm-Message-State: AFuF++kDSn3lez3SFOblzkCHxBYANznbTl/TjTcRmQndwUdqA84ycHLK
+	ftpaRirqD6LHKVGL7Vfk5dfKSxr9e4Ah5CQ5TfJJKZeHTm4/OxtiVXxC
+X-Gm-Gg: AYBFou0tiy3ej5b/Qh329QdH2tSmzLCo76kEWFYu/P72F9/bKRB3nmDcWKqyK/lHqaq
+	t0BEBho2WgvgOyq900slFx0mPwo8Vdgdq+Tlbr4mvF0kNIHgMaNH6h5WH+TZ6BminyHp3ojMDWN
+	JBaW7wuAoM4n4muy1/FgWbVowS63PIfQbOdLM2hk220wiPnWXzXxXA3uk9dy8iezamhLDNCFLNv
+	oX7O0azrbhgFVWi7Dv3+xzGAG94BCxsFGMZxSxvAnlzHZRj5hsRNxr91T4gPhzkuMxXk1aUD+P8
+	VN7ZQJDcCPp/+aLtycYLPqEkdeVGWm6sDJms+gwFqFIqSTNYAzhrnTuHY9VTqfDjRsgHVsfq0yB
+	rT44nyFulu6BzdaGsuDtdZkCalzZxeL9yXZCFsL6oSvzXEhEhW0htJv34fDNUQumCFzhDQwryaN
+	09Yc+5fhhlF1DtRe9mtWsSoEgDjsbUFiFqTw04nBITlGwGr+1QiHppRjCxf/pW4BIsUpSMNFdwq
+	IBbAYXj0GMswgPB6twe
+X-Received: by 2002:a05:600c:8b08:b0:4a0:4a8:d444 with SMTP id 5b1f17b1804b1-4a01b00226dmr7192805e9.33.1790752523915;
+        Wed, 30 Sep 2026 00:15:23 -0700 (PDT)
+Received: from xeon ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b029be7e4sm1256979f8f.12.2026.09.30.00.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Sep 2026 00:15:23 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mfd@lists.linux.dev,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v1 0/3] mfd: aat2870: Convert to use OF bindings
+Date: Wed, 30 Sep 2026 10:15:10 +0300
+Message-ID: <20260930071513.54697-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-> From: Nikolay Plastinin <plaztininikolai@gmail.com>
->=20
-> The trigger turns the LEDs back on with LED_FULL, which the LED core
-> clamps to max_brightness. For keyboard backlights with several levels,
-> such as asus::kbd_backlight, this means the backlight always comes back
-> at maximum after being idle instead of at the level the user picked.
->=20
-> Remember the brightness per LED before turning it off and restore it on
-> the next input event. The level is kept in a small per-LED state struct
-> allocated in activate() and freed in deactivate(), so the trigger is
-> converted from the simple trigger API to a regular trigger. Brightness
-> changes made while the trigger is active, for example with the keyboard
-> brightness hotkeys, are picked up too. The LEDs are walked with the new
-> led_trigger_walk_leds() helper instead of the trigger touching
-> trig->led_cdevs itself.
->=20
-> Tested on an ASUS ROG Flow X13 GV302XV: with the keyboard backlight at
-> level 1, it now comes back at level 1 after going idle instead of at 3.
-> A level changed with the brightness hotkeys while the trigger is active
-> is restored after the next idle period as well.
->=20
-> Assisted-by: LLM
-> Signed-off-by: Nikolay Plastinin <plaztininikolai@gmail.com>
+Document Skyworks AAT2870 into schema, convert existing driver to
+use OF bindings and remove platform data, add support for
+in-supplies.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Svyatoslav Ryhel (3):
+  dt-bindings: mfd: Document Skyworks AAT2870
+  mfd: aat2870: Convert to use OF bindings
+  mfd: aat2870: Add support for VIN and IN-LDO power supplies
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930-leds-input=
--events-brightness-v2-0-3948d3cddd83@gmail.com?part=3D2
+ .../bindings/leds/skyworks,aat2870.yaml       | 127 ++++++++++++++++++
+ drivers/mfd/aat2870-core.c                    | 120 +++++------------
+ drivers/regulator/aat2870-regulator.c         |  71 +++++++---
+ drivers/video/backlight/aat2870_bl.c          |  54 ++++----
+ include/linux/mfd/aat2870.h                   |  95 +------------
+ 5 files changed, 237 insertions(+), 230 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
+
+-- 
+2.53.0
 
