@@ -1,241 +1,241 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A045D44F543
-	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 07:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBB631A556;
+	Wed, 30 Sep 2026 07:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790753271; cv=none; b=k505B6AIhpLkCLYY+Y65lQlGdyNpQEg6Kc4NQJqH1a8lW9eJUbVlXMrLhtfikodcgBnq0iWqafOuAp/1yaWYFsr7g9SYAXyoUi0CehYU1uuQHRc9HMCoJy8lM8RMYtn+eOCY7JDXsIJqN8piHfVljjqX3uZLl/lqHL5rG+K6I1w=
+	t=1790753299; cv=none; b=nZD9gRdEWtL2yNrmi5RGzBqI410lysb20g5c56U1mJI8kRaPht6cAsSF1zQAl6NfPwNlfLa7KNZRIXcn1D9CbMpBZpAdd34yIVvsMTP5SV2zljyzPbbZI6kf5qvBuk8ub1b7cykfaQH99xyuVzd4CrnznR777mLd0F4QwMQjufQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790753271; c=relaxed/simple;
-	bh=9OsGp6MbSHvjE+muNEP4p1TUnXdoyedGt8UY6i3iUCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V7oguj1c3UasqOgpQarRsSk1u0NSoi38VQnmrFLe59kLw0eKYwUTnxmvYsChOzs7sSKEmvjjLkUg+il6LzY0b2V2sYcOlhwQ6LlZd+duyWTqs2GzCfxCOYZT+XbxqH1qgDFahI2vvtee2Gm10KWCaHqE0V6FhpQNd2/uziiFbmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJhSbWsC; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790753299; c=relaxed/simple;
+	bh=ZMnsSNimCA5mJ70F2UQv7MtndzpF0xQDQEzCcuO+JEc=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=acOF0C5wfzEp348wGorE5yyUusDQEnNYife/7S93aQDGgvT37jGHdj/YgsTDhxvgbxU57/NW+nx1CV7gOKCPm7mkPAo/PloSn/4X+zOtuEYLQUWjisUupVH4uxlJFGlbssyS6LephAiK5tv1l6I6i5dqMKadDsdCvrr31aljYew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WK8HCKIT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJhSbWsC"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e7bcb94d3so37486755e9.2
-        for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 00:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790753268; x=1791358068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=WruczPkazS4ZUlcOrN4t2XFu86i7R3FFqgwfWNzE8vs=;
-        b=AJhSbWsCUMpGeOPDm+Y0kftCfbUAgAd2uDxIB2s2J+FjswDQVvI2SEoHON5OJwBpOQ
-         3lhWZCLV8gK5FP3wDJUN8Xkx7ILsN2MWYCWa43DPGAQAUQeQkKd5uq2kRWjX+bzbpylp
-         KAnaHApW5D8Q2qMUbhDy6F2n2QHGxibPDWXpv0wHM/tMI7su1hx79YUjGSp4mFiOCzQD
-         oS+qP/HzoNW+aIaxNytrIu8sDxRfzrnhXLwlqBZj8b0uKe/g5PsipRUPfI+B5iAUmOTA
-         4TOh98OFSPp2UPMYOx6w/YsgJgoX/h/AuXUgt3/Yg2/JlhswuqaAy1Lw4PLg8kRqhrkz
-         76cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790753268; x=1791358068;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=WruczPkazS4ZUlcOrN4t2XFu86i7R3FFqgwfWNzE8vs=;
-        b=oy3e2q79hVdaRHZPaBncYgaUgNOHAxbqFAoRlT5XhKbMb4kO7JV+0nImJK2rj3owUT
-         D7sVRkmkzMvuS61InX7rB84L/L0Tib6z49Y/E6+5TRzUlXxHJz8BglViv26Kdt0+BLse
-         c97EvnQJctyL84egZ21YMX5xoqCzhHxy915Y5jNo9VxawM3nX5bW71myYiQiXCLpXvH3
-         eI1MF1Ko0Te2QJ5MQRIoJL9ard8S0NYZIOqWJc/DAJ12tBxJIxqWcx+qfPhwCzBGzpXR
-         omift501U9tP/Du5ZFk2QN/6IgChJOF3qi+5yrIqEze7r7TrAzkq0g6i5xqYtl5JNDNJ
-         TmJA==
-X-Forwarded-Encrypted: i=1; AKwUvBy8IdOU4Z+mE5gDpHn+XaHqJ5yMUW/bVZZcBD36j1L9bSr0DG0nV5gG4rMbys9+y6XbxVtshtjYtOZ/@vger.kernel.org
-X-Gm-Message-State: AFuF++lcY8HiiUF6q3EkGsl1PrH4f94sOZnjBWFMyQYj0EDE1ajjjg9J
-	rnwC22coHal0VlM0OQ3R1svusSZi7eRGJOHDQhavexhXbJQm//KP+HrD
-X-Gm-Gg: AYBFou02DjEP3U96HTOlXf2UDGpwRemy+/46Sa9D46tBNcj+rBeU6KnXDqI7F23P6ry
-	6AeoeQHlIeyCWJYsyExuVK80p+FVio8m7P702QpOsXV6pQA/nfSbO3pCFQER2DQDT6+q/VggGN9
-	+yC6GVuTjWRC3waPbqqS23QMmQWzLEwqNOPoZmq9euKakURs55MyOxY8XuDbL+1FEng6pUCv4BT
-	9r2eiKm3bbK/F0QSSHnZHrAaipFRK7fJjqpM72vfM1WW09YANTcMc9SzIMyhJU8vrIlC9oGBFLi
-	vAnNpnQK1dXDzkG5tVunpQmaq7nvmvsS+YE91zo07TU9uej8Hxc4zpWXnLUOpcQYXgIz2ixfSk8
-	DbvUzlRyYCpW2tGIMyp+EIksgEC0zLlVBlNDNhPMvArVpPPew6cGs4OIJJt2NqEFMG5/JBPkkBR
-	jOWkV1XHo3qqkozDoMT5SXbgr2Zkac3kZrswzrXd92e4rUs1U+k3j3k1MnwMvmZnCNr4dkQzIFp
-	o+9PoyYX08l8HaN4rE=
-X-Received: by 2002:a05:600c:3b1a:b0:49f:fe90:de63 with SMTP id 5b1f17b1804b1-4a01b12cbb8mr6207775e9.28.1790753267817;
-        Wed, 30 Sep 2026 00:27:47 -0700 (PDT)
-Received: from xeon ([188.163.112.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a015a84419sm27680985e9.1.2026.09.30.00.27.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 00:27:47 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	mfd@lists.linux.dev
-Subject: [PATCH v1 1/1] leds: Add driver for MAX8907 LED cell
-Date: Wed, 30 Sep 2026 10:27:32 +0300
-Message-ID: <20260930072732.66578-2-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260930072732.66578-1-clamor95@gmail.com>
-References: <20260930072732.66578-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WK8HCKIT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87201F000FF;
+	Wed, 30 Sep 2026 07:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790753297;
+	bh=ZXVY8tIAhS9qjxPb0Ele3g9MhKSgr/Y0y/yYr2pvjGc=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=WK8HCKITwBTX2ZDIl8xO14tpspQ6fnSgZzhQrDP5y7ucAEV9QvVfTOgpK4y7HYJ67
+	 a6tB9DFbQJCpYvtcDZwXL6OVF1vrJCAkDjQ5HAHXVTlIP0EqRZf5PPWpdaj1EZrBWp
+	 VxpIO/Nu6dI4CmqZZTZYVnLV/j7bpT/iYfGuNl8CzQ30DHcg+wXnbwNLzjDcVWWBpg
+	 k0eN7Jfhc6Dj6vrPsK69B9RhLI3G6rp2MemySZ/Ls1Kj0jshYVM09jpEfLV5G4L4Sn
+	 bf0566hOVntYbLmzMpoaBvJWV0Jf5b3Fl6U3DeLCyKEJNnu70WB8LlJ77HwteV7Og8
+	 SP6Gx6tmjXQNQ==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v1 2/3] mfd: aat2870: Convert to use OF bindings
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>
+Cc: lee@kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, dri-devel@lists.freedesktop.org, conor+dt@kernel.org, linux-leds@vger.kernel.org, robh@kernel.org
+In-Reply-To: <20260930071513.54697-3-clamor95@gmail.com>
+References: <20260930071513.54697-1-clamor95@gmail.com>
+ <20260930071513.54697-3-clamor95@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 30 Sep 2026 07:28:16 +0000
+Message-Id: <20260930072816.C87201F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add a small driver to control the LED cell provided by the MAX8907 PMIC.
-The LED does not require any specific configuration and is folded into the
-PMIC's node.
+Thank you for your contribution! Sashiko AI review found 7 potential issue(=
+s) to consider:
+- [High] regulator: Missing DT Configuration for aat2870
+- [High] regulator: Global state corruption causing UAF via of_regulator_ma=
+tch
+- [High] backlight: Logic error scales max_current to zero due to unit mism=
+atch
+- [High] backlight: Missing default initialization causes max_current trunc=
+ation to zero
+- [High] mfd: Resource Leak and UAF due to unmanaged of_platform_populate
+- [High] backlight: Divide by zero in aat2870_brightness()
+- [Low] backlight: Type mismatch passing int pointer to u32 reader
+--
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- drivers/leds/Kconfig        |  7 ++++
- drivers/leds/Makefile       |  1 +
- drivers/leds/leds-max8907.c | 81 +++++++++++++++++++++++++++++++++++++
- drivers/mfd/max8907.c       |  1 +
- include/linux/mfd/max8907.h |  2 +-
- 5 files changed, 91 insertions(+), 1 deletion(-)
- create mode 100644 drivers/leds/leds-max8907.c
+commit fb76177a0777d443ea10abf629ceb4bbf320d8b9
+Author: Svyatoslav Ryhel <clamor95@gmail.com>
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 59445bbf2140a..ff00ecf5d858d 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -813,6 +813,13 @@ config LEDS_MAX77705
- 	help
- 	  LED driver for MAX77705 PMIC from Maxim Integrated.
- 
-+config LEDS_MAX8907
-+	tristate "LED support for MAX8907 PMIC"
-+	depends on LEDS_CLASS && MFD_MAX8907
-+	help
-+	  This option enables support for on-chip LED drivers on
-+	  MAXIM MAX8907 PMIC.
-+
- config LEDS_MAX8997
- 	tristate "LED support for MAX8997 PMIC"
- 	depends on LEDS_CLASS && MFD_MAX8997
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index ed3fbf2aa2d2d..b9e815b2416d2 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_LEDS_LTC3220)		+= leds-ltc3220.o
- obj-$(CONFIG_LEDS_MAX5970)		+= leds-max5970.o
- obj-$(CONFIG_LEDS_MAX77650)		+= leds-max77650.o
- obj-$(CONFIG_LEDS_MAX77705)		+= leds-max77705.o
-+obj-$(CONFIG_LEDS_MAX8907)		+= leds-max8907.o
- obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
- obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
- obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
-diff --git a/drivers/leds/leds-max8907.c b/drivers/leds/leds-max8907.c
-new file mode 100644
-index 0000000000000..358505a1c799f
---- /dev/null
-+++ b/drivers/leds/leds-max8907.c
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/err.h>
-+#include <linux/leds.h>
-+#include <linux/mfd/max8907.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+struct max8907_led_data {
-+	struct max8907 *max8907;
-+	struct regmap *regmap;
-+	struct led_classdev cdev;
-+};
-+
-+static enum led_brightness max8907_led_get_brightness(struct led_classdev *cdev)
-+{
-+	struct max8907_led_data *ddata = container_of(cdev, struct max8907_led_data, cdev);
-+	unsigned int brightness_lvl;
-+	int ret;
-+
-+	ret = regmap_read(ddata->regmap, MAX8907_REG_WLED_CNTL, &brightness_lvl);
-+	if (ret)
-+		return LED_OFF;
-+
-+	return brightness_lvl;
-+}
-+
-+static int max8907_led_set_brightness(struct led_classdev *cdev,
-+				      enum led_brightness brightness)
-+{
-+	struct max8907_led_data *ddata = container_of(cdev, struct max8907_led_data, cdev);
-+	int brightness_lvl, ret;
-+
-+	brightness_lvl = clamp(brightness, LED_OFF, LED_FULL);
-+
-+	if (brightness_lvl) {
-+		ret = regmap_write(ddata->regmap, MAX8907_REG_WLED_CNTL, brightness_lvl);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return regmap_update_bits(ddata->regmap, MAX8907_REG_WLED_MODE_CNTL,
-+				  LED_ON, brightness_lvl ? LED_ON : LED_OFF);
-+}
-+
-+static int max8907_led_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct max8907 *max8907 = dev_get_drvdata(dev->parent);
-+	struct max8907_led_data *ddata;
-+
-+	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-+	if (!ddata)
-+		return -ENOMEM;
-+
-+	ddata->max8907 = max8907;
-+	ddata->regmap = max8907->regmap_gen;
-+
-+	platform_set_drvdata(pdev, ddata);
-+
-+	ddata->cdev.brightness = LED_OFF;
-+	ddata->cdev.flags = LED_CORE_SUSPENDRESUME;
-+	ddata->cdev.max_brightness = LED_FULL;
-+	ddata->cdev.name = dev_name(dev);
-+
-+	ddata->cdev.brightness_get = max8907_led_get_brightness;
-+	ddata->cdev.brightness_set_blocking = max8907_led_set_brightness;
-+
-+	return devm_led_classdev_register(dev->parent, &ddata->cdev);
-+}
-+
-+static struct platform_driver max8907_led_driver = {
-+	.driver.name = "max8907-leds",
-+	.probe = max8907_led_probe,
-+};
-+module_platform_driver(max8907_led_driver);
-+
-+MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
-+MODULE_DESCRIPTION("MAX8907 LED driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/mfd/max8907.c b/drivers/mfd/max8907.c
-index a8cb2071aa7f4..b4562ec0ce18f 100644
---- a/drivers/mfd/max8907.c
-+++ b/drivers/mfd/max8907.c
-@@ -21,6 +21,7 @@
- 
- static const struct mfd_cell max8907_cells[] = {
- 	{ .name = "max8907-adc", },
-+	{ .name = "max8907-leds", },
- 	{ .name = "max8907-regulator", },
- 	{ .name = "max8907-rtc", },
- };
-diff --git a/include/linux/mfd/max8907.h b/include/linux/mfd/max8907.h
-index d960dfdd808ba..15901a1b07424 100644
---- a/include/linux/mfd/max8907.h
-+++ b/include/linux/mfd/max8907.h
-@@ -112,7 +112,7 @@
- #define MAX8907_REG_CHG_IRQ2_MASK	0x81
- #define MAX8907_REG_CHG_STAT		0x82
- #define MAX8907_REG_WLED_MODE_CNTL	0x84
--#define MAX8907_REG_ILED_CNTL		0x84
-+#define MAX8907_REG_WLED_CNTL		0x85
- #define MAX8907_REG_II1RR		0x8E
- #define MAX8907_REG_II2RR		0x8F
- #define MAX8907_REG_LDOCTL20		0x9C
--- 
-2.53.0
+mfd: aat2870: Convert to use OF bindings
 
+This commit converts the AAT2870 driver to use OF bindings, replacing the
+MFD registration API with of_platform_populate(). It updates the backlight
+and regulator child drivers to parse device tree properties directly and
+removes the legacy platform data initialization.
+
+> diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
+> --- a/drivers/mfd/aat2870-core.c
+> +++ b/drivers/mfd/aat2870-core.c
+[ ... ]
+> @@ -348,60 +309,29 @@ static int aat2870_i2c_probe(struct i2c_client *cli=
+ent)
+[ ... ]
+> -	ret =3D mfd_add_devices(aat2870->dev, 0, aat2870_devs,
+> -			      ARRAY_SIZE(aat2870_devs), NULL, 0, NULL);
+> -	if (ret !=3D 0) {
+> -		dev_err(aat2870->dev, "Failed to add subdev: %d\n", ret);
+> -		goto out_disable;
+> +	gpiod_set_value(aat2870->en_pin, 1);
+> =20
+> -	}
+> +	ret =3D of_platform_populate(client->dev.of_node, NULL, NULL, &client->=
+dev);
+> +	if (ret) {
+
+[Severity: High]
+Are we missing an of_platform_depopulate() call here?
+
+Since of_platform_populate() creates unmanaged child devices, if the parent
+I2C driver unbinds, the child devices will remain active. If a child device
+is accessed after the parent is removed, wouldn't it result in a
+use-after-free when dereferencing the freed parent driver data? Using
+devm_of_platform_populate() might resolve this leak.
+
+> +		gpiod_set_value(aat2870->en_pin, 0);
+> +		return dev_err_probe(&client->dev, ret, "Failed to populate cells\n");
+>  	}
+> =20
+>  	aat2870_init_debugfs(aat2870);
+[ ... ]
+> diff --git a/drivers/regulator/aat2870-regulator.c b/drivers/regulator/aa=
+t2870-regulator.c
+> --- a/drivers/regulator/aat2870-regulator.c
+> +++ b/drivers/regulator/aat2870-regulator.c
+[ ... ]
+> @@ -121,6 +130,13 @@ static struct aat2870_regulator aat2870_regulators[]=
+ =3D {
+>  	AAT2870_LDO(LDOD),
+>  };
+> =20
+> +static struct of_regulator_match aat2870_regulator_matches[] =3D {
+> +	{ .name =3D "ldo-a" },
+> +	{ .name =3D "ldo-b" },
+> +	{ .name =3D "ldo-c" },
+> +	{ .name =3D "ldo-d" },
+> +};
+
+[Severity: High]
+Does of_regulator_match() mutate this static array?
+
+of_regulator_match() typically writes device-specific of_node and init_data
+pointers into the matched array. If multiple AAT2870 devices are probed,
+wouldn't the second probe overwrite the pointers from the first, leading to
+data corruption and a potential use-after-free during devres cleanup?
+
+> +
+>  static struct aat2870_regulator *aat2870_get_regulator(int id)
+>  {
+[ ... ]
+> @@ -152,33 +167,50 @@ static int aat2870_regulator_probe(struct platform_=
+device *pdev)
+[ ... ]
+> +	for (int idx =3D 0; idx < ARRAY_SIZE(aat2870_regulator_matches); idx++)=
+ {
+> +		if (!aat2870_regulator_matches[idx].of_node)
+> +			continue;
+> =20
+> -		return PTR_ERR(rdev);
+> +		ri =3D aat2870_get_regulator(idx);
+> +		if (!ri)
+> +			return dev_err_probe(&pdev->dev, -EINVAL,
+> +					     "Invalid device ID, %d\n", idx);
+> +
+> +		ri->aat2870 =3D dev_get_drvdata(pdev->dev.parent);
+> +
+> +		config.dev =3D &pdev->dev;
+> +		config.driver_data =3D ri;
+> +
+> +		rdev =3D devm_regulator_register(&pdev->dev, &ri->desc, &config);
+
+[Severity: High]
+Is there a missing assignment for the Device Tree configuration?
+
+of_regulator_match() parses the DT constraints into the match array, but
+config.init_data and config.of_node don't seem to be populated from
+aat2870_regulator_matches[idx] before calling devm_regulator_register().
+Without these, do the regulators get registered without their DT constraint=
+s?
+
+> +		if (IS_ERR(rdev))
+> +			return dev_err_probe(&pdev->dev, PTR_ERR(rdev),
+> +					     "Failed to register regulator %s\n",
+> +					     ri->desc.name);
+>  	}
+[ ... ]
+> diff --git a/drivers/video/backlight/aat2870_bl.c b/drivers/video/backlig=
+ht/aat2870_bl.c
+> --- a/drivers/video/backlight/aat2870_bl.c
+> +++ b/drivers/video/backlight/aat2870_bl.c
+[ ... ]
+> @@ -140,20 +135,16 @@ static int aat2870_bl_probe(struct platform_device =
+*pdev)
+> =20
+>  	aat2870_bl->bd =3D bd;
+> =20
+> -	if (pdata->channels > 0)
+> -		aat2870_bl->channels =3D pdata->channels;
+> -	else
+> -		aat2870_bl->channels =3D AAT2870_BL_CH_ALL;
+> +	aat2870_bl->channels =3D AAT2870_BL_CH_ALL;
+> +	device_property_read_u8(&pdev->dev, "skyworks,channels", &aat2870_bl->c=
+hannels);
+> =20
+> -	if (pdata->max_current > 0)
+> -		aat2870_bl->max_current =3D pdata->max_current;
+> -	else
+> -		aat2870_bl->max_current =3D AAT2870_CURRENT_27_9;
+> +	device_property_read_u32(&pdev->dev, "led-max-microamp", &aat2870_bl->m=
+ax_current);
+> +	aat2870_bl->max_current =3D clamp(aat2870_bl->max_current, AAT2870_CURR=
+ENT_MIN,
+> +					AAT2870_CURRENT_MAX);
+> +	aat2870_bl->max_current /=3D AAT2870_CURRENT_STEP;
+
+[Severity: High]
+Can this sequence cause the max current to evaluate to 0?
+
+If the led-max-microamp property is missing, aat2870_bl->max_current starts=
+ at
+0 (due to devm_kzalloc) before entering the clamp logic.
+
+Also, the clamp and divide logic seems to mix units. If the DT provides a
+microamp value like 27900, it gets clamped up to AAT2870_CURRENT_MIN
+(450,000) and then integer-divided by AAT2870_CURRENT_STEP (900,000). This
+results in 0, which would lock the brightness at 0 when calculating
+aat2870_brightness(). Does this need scaling adjustments?
+
+> =20
+> -	if (pdata->max_brightness > 0)
+> -		bd->props.max_brightness =3D pdata->max_brightness;
+> -	else
+> -		bd->props.max_brightness =3D 255;
+> +	bd->props.max_brightness =3D 255;
+> +	device_property_read_u32(&pdev->dev, "max-brightness", &bd->props.max_b=
+rightness);
+
+[Severity: Low]
+Is it safe to pass a pointer to a signed int here? bd->props.max_brightness
+is an int, but device_property_read_u32() expects a u32 pointer. This might
+cause signedness mismatch issues.
+
+[Severity: High]
+Could this lead to a division by zero in aat2870_brightness()?
+
+If the device tree configures max-brightness =3D <0>, this property reader =
+will
+directly overwrite the default 255 with 0. Later, aat2870_brightness()
+executes val /=3D bd->props.max_brightness, which would cause a kernel pani=
+c.
+
+> =20
+>  	aat2870_bl->brightness =3D 0;
+>  	bd->props.power =3D BACKLIGHT_POWER_ON;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930071513.5469=
+7-1-clamor95@gmail.com?part=3D2
