@@ -1,123 +1,64 @@
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7694DE701
-	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 15:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FCC4F55B5;
+	Wed, 30 Sep 2026 15:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790781654; cv=none; b=kjc/6UiMtxSDHg6amJf8J0a6EucQiUy5EeTGqzPcGOS//mim2eQun5mFZoxBsN00FDf4dt00L0TFqE3YpmVmqBb5y3raYx22FZnVAHnk8BZta8XzSMcmoV1wqgH30N+BQkbPEDEuplJpVEAmo7/H53pinxQ1WKqo1SUMaxL5rpc=
+	t=1790781868; cv=none; b=gSD5XtNbHBGoMLlR+SM0e9E7crrTAe/nbHv7VQLVChGKq1iX3OIOj2fcLIE/f5x7Q9sFvrf9hY2E8nNJM+9Azqt3nFFJTmsZm8VuhW8D+DVH7aGFiLg87CaOK6ufRSzjvgmG/68dfAeKKgsbnm7DtUzXe3QoMdIE0KglUJJvSdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790781654; c=relaxed/simple;
-	bh=F4DOlzrHJ5Noxh2e84GcCJe5cJl1nVX0t0cPGeZkN0s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gCkpghJJsVplfb8cr9KPfsYkI+iU/9D5v4UjW5Q6EDJY09QXqgNE+kWDdebeC8WyU69wWNTBn36ZG8995Cf3nWASlX4phfnsgwS1N5mfM7f5TJCmQK2v2EzxinaC5qkyOOR72QdGWh/SZELbz6aY5iNUm5JX9U03MBHNuCcx8sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=JJPqAn58; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ktbriZ4U; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	s=arc-20240116; t=1790781868; c=relaxed/simple;
+	bh=rW6sO09SZvd/sv9CaoH4393gbu8zz/MMBDEZKdRpKDA=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=AkjEXvN8tGNi6MoDn2UlMqyt40jQ2UB4GckfZaVnS8fcoTZuUs7z/P1UCR9cr2C7uK5BArmR95JT9DREA4kfvmyf8YVNhi1P3dGfm/Q2wg/iGj2kfDSrbwx5fkAD9h427RHYRH6jAGB2jbbSWLrZXseAKmqcVj5B9b4mGMiX194=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3Uuw/Nq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="JJPqAn58";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ktbriZ4U"
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 401151D006A7;
-	Wed, 30 Sep 2026 11:20:46 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Wed, 30 Sep 2026 11:20:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1790781646; x=1790868046; bh=7S
-	K9o3JG7d9/VdHeZN5mVEVEqGphlzzK3n+QsyG/luo=; b=JJPqAn58N1cfPoZPra
-	2G1/AHQI2+AnjN7qJfGCbwuqxHFH/Mlf2vcCfuk1wowLYHiAqo7aujoHIoA0G30d
-	lWpImMn+4i/ztmjalkLgL6Bc7RdfD1zNH2oDVcpx7kBn3Q6JGr2jfMqBv8BSxuTR
-	sqQ7auB2ahRcdPppA58z1TaeKNV01ar+XTmpsFF9j5HNRiI5MaF3PAFx06cirlMH
-	mqJq71jS10Z1m+7cvU2XA+s0RTGLMrUrROD7VDLwNxlOJVKVR9c1B7guHB8/+rJd
-	DBipnHYYHztNxBdrAXGXxu/BrNOPbyw6XJIqc2nbLi6c8Aw0cuZZu0ai0FBRDyl8
-	a9zA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1790781646; x=1790868046; bh=7SK9o3JG7d9/VdHeZN5mVEVEqGph
-	lzzK3n+QsyG/luo=; b=ktbriZ4UFsWrCnK5TScxxGhqViqkPogS4YQ3/28hh7aq
-	d9RPNRuWmdamoYjT4oF78JoFpCMRFVgksZIyPB/tlZpzjnfHNexH3JLB2A9n6SDO
-	JOL/MlZIBAilEsv0Ny6uJZTN+o7ym0Af4StIQ/QB4jsth9lJYW3R+keKtAUgpbSm
-	3XrMRcO60qcu1455gsjri1CdnzmKvGv4tY4J5XBWGxU1q7H3g+NG/nuE/UAT+er3
-	0+i5be9MjfucQ/HJtvC92ICxxys4arba1dUGnkcK8nYiwfGsJBjgyRfJ23KQzf7E
-	tngcybfBbW7zPQJs+S1kmsS9xia+Mz6WSYTjFIPvTw==
-X-ME-Sender: <xms:zii9aunYvd5iGUZ3ytI-aVXbEblaFmzKYIdJRcUrmH-scDpwAm8kvg>
-    <xme:zii9as1xsc91YqoWwlyD2jCIkmA2cWGrd041fcm3sCa_oeaiLA4IqFuCyjrI7Xg5T
-    vvckmZInU4NK5iE_GyDEepD-wq-vAUFyOyylFRDlWV_YNw1IkI>
-X-ME-Received: <xmr:zii9ahqwsff3mVXFepsEhLX0DRy3lTlCyC4mT7anfrIii2WTY1bEbj7d9e3PFWN616F3UiOlS821Phuou6aGWWwHEju8H2_sXWXB>
-X-ME-Proxy-Cause: dmFkZTE2EHFg2943HWFNKKSj/ksTwsa9gk6/XorljKYppycUozyVl6VJtov/Qxxqnywmhb
-    epcVH0+PL+s2u7WXAU6kqPUEPdFLHrT5cJ1AJdZuNywQquao3LWC364FfaPPgeiR/94hyc
-    R318LNxNcv6ce8QtNc26k7zCLHTYcRB2bsuXqwnIpE+xQka5veynK49309ofp2IQBegdSZ
-    xdFg4NZjUe9iS4l1TRmnP9hv6wgsfnhuQroTkS1T/PFOQ75I8bUi8cxmOrNI7U+BCdVVY3
-    LHg9n7tTUeawC6mwrNBOtP8Qu9U+3sXtvf2l+wfdh7LeCdhmrpam3ElDMXlsFkeYszFKUV
-    axzeRjpQCkFKlDaZmqkgPTZBCv8xac3ujcd0QtR0MvDU0DlTCjGMM7Nmc7e519DOtHkpX5
-    u/7Sn5EQGfSsmcHLR+eW7u/GZSn8jMa5ufvYtHnExlytJ9dV2DWP/0LCCmiunKTPT5QcWy
-    spYwPZojwj10xZyKDyjL9vjxm0zEQHjDzvb6wLf2O/KxDvrpxlHwbNOBDbwRKCKpMsy+4+
-    tJumyZnbsPjCCj4yk+oXBFLb6mTe1xQ5CrtK6tR5LGCcJ9M3Hx5KYZc25Ly+St6N7EKJqp
-    bcTG+VKpBxlf4vOQ7BCdYIME7I3vMBF6128+4EMsZFhl712SqgrC7vD8DsEA
-X-ME-Proxy: <xmx:zii9ahdl99fTs3FKyXbac9e3U0RpGdPPqyII7mqhmpaB5F0Mp5Ezvw>
-    <xmx:zii9aorqnQmLL_INrezLK5hMTpt4LTFm4kPgy4xIvlx-rg8jFHr79A>
-    <xmx:zii9aqEmwyrk71KQDsxDcYJsZfdCBYNBrO398HgT2DCmtHFNGdYm3Q>
-    <xmx:zii9agssI0wLpKnAsbc4kZLIJZSB3QcREBzb7MtfV0MSfh-ow3BdwQ>
-    <xmx:zii9as4vddstaTobdqmCqXk7F_Kwj1uUojp_kuR7VRYkaB-JyKoBfXbv>
-Feedback-ID: i1d2843be:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Sep 2026 11:20:45 -0400 (EDT)
-From: Griffin Kroah-Hartman <griffin@kroah.com>
-Date: Wed, 30 Sep 2026 17:20:26 +0200
-Subject: [PATCH] MAINTAINERS: Add myself as a LED SUBSYSTEM reviewer
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3Uuw/Nq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3452A1F000FF;
+	Wed, 30 Sep 2026 15:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790781859;
+	bh=rW6sO09SZvd/sv9CaoH4393gbu8zz/MMBDEZKdRpKDA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=L3Uuw/Nq6QAdkzhDh28IUNeP/zabvPwcZiEzXCyAwExavR12baMQ7xXK02X+Uuh4U
+	 vBAFGi9pVKMNRji95s1SlcGl6itR9l7CY6Um7G2MLtn0yM4FLw8FZ11SQf5PLjUT/C
+	 k2xbioGaORXcnG06TzNx7x0dXkMk+IUpm4v/6z9dgUBZGs6BVIueHg0Y386yOhThVj
+	 zf6xqjYMbgOwpMPIpSj9rOY0dqJ6VQ3sajz69V5aQcXF/m15rnhs1/9tgf/VwfzcQP
+	 3rPZrusfRqP/7ZNua/YVnX0US2+e8jSEkGVkO4iyUKkLNpBE5v/BWTGA8ofshK3AUx
+	 QCSQ+Nil1e62A==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 04/10] leds: pca995x: Fix fwnode handle leaks in
+ error paths
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Nora Schiffer" <nora.schiffer@ew.tq-group.com>
+Cc: devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <b2fedfd41b25fb3b1b6eca231d009d5497b1e003.1790684839.git.nora.schiffer@ew.tq-group.com>
+References: <cover.1790684839.git.nora.schiffer@ew.tq-group.com>
+ <b2fedfd41b25fb3b1b6eca231d009d5497b1e003.1790684839.git.nora.schiffer@ew.tq-group.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 30 Sep 2026 15:24:18 +0000
+Message-Id: <20260930152419.3452A1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260930-led-add-maintainers-v1-1-ebd45f8b6ab1@kroah.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQ6CMBCE4Vche3aTpQYIvorx0NIB1mg1XTQmh
- Hen6mEO32H+lQxZYXSqVsp4q+kjFdSHiobZpwmssZicuFb6o/ANkX2MfPealjJkY+lqBDf20ki
- g8nxmjPr5Vc+Xv+0VrhiWb4q2bQeVT98RdwAAAA==
-X-Change-ID: 20260930-led-add-maintainers-071eb2f9050b
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org, Griffin Kroah-Hartman <griffin@kroah.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790781645; l=762;
- i=griffin@kroah.com; s=20260910; h=from:subject:message-id;
- bh=F4DOlzrHJ5Noxh2e84GcCJe5cJl1nVX0t0cPGeZkN0s=;
- b=x0OE2Tk4wfy7KE9Ke8PCFbgYF2FqyZIyyhpTVar/Lz9JhuxU2qL1zD/PkBYdfard+4e/q2S/U
- /ChTKzSsGxwBfkrTdm72NSNMnGf797vxOCCs7/GoATpL5hmAuLAKguV
-X-Developer-Key: i=griffin@kroah.com; a=ed25519;
- pk=HlyUkuZAN9I5qlPbOHN5N9xxdQ5sT6AbPgC4TsLCxzA=
 
-I will be helping to review LED patches.
+> Each entry in led_fwnodes needs to be put as long as no LED device has
+> been created for it yet - not just in the creation loop, but also in the
+> first loop that iterates over the child nodes.
+>=20
+> By clearing entries in led_fwnodes once they have been used, the same
+> cleanup loop can be used to handle errors in both loops.
+>=20
+> Fixes: 82c5ada1f9d0 ("leds: pca995x: Fix device child node usage in pca99=
+5x_probe()")
+> Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 
-Signed-off-by: Griffin Kroah-Hartman <griffin@kroah.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Sashiko has reviewed this patch and found no issues. It looks great!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 360977678f70..707e45c64b0e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14781,6 +14781,7 @@ F:	drivers/scsi/leapraid/
- LED SUBSYSTEM
- M:	Lee Jones <lee@kernel.org>
- M:	Pavel Machek <pavel@kernel.org>
-+R:	Griffin Kroah-Hartman <griffin@kroah.com>
- L:	linux-leds@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git
-
----
-base-commit: 551c722f40809618230001baccf219193e22fc5a
-change-id: 20260930-led-add-maintainers-071eb2f9050b
-
-Best regards,
---  
-Griffin Kroah-Hartman <griffin@kroah.com>
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1790684839.gi=
+t.nora.schiffer@ew.tq-group.com?part=3D4
 
