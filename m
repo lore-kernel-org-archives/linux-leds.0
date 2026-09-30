@@ -1,268 +1,302 @@
-Received: from mx0b-0002e601.pphosted.com (mx0b-0002e601.pphosted.com [148.163.154.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f42.google.com (mail-ej2-f42.google.com [74.125.228.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7CE41F359;
-	Tue, 29 Sep 2026 15:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.154.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC323ED3B4
+	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 06:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.170
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790697405; cv=fail; b=WtKW3zWffQdNmcn66uk+pPKS/Q/B9qKRXq6gLhaM6D7PcSeBvSj18iZDNykNYq69PWFCmENT8tkmOO6a326e/QPI6SqZYqqRxxR2r3WT90ZWPsXpSa4WuG9BhqPYzSNREFlXXi78Bj054cZf4HIaApLYyfvNC/xfvsIBhakb5k0=
+	t=1790751122; cv=pass; b=L32n2zmY/fbSnw1MN0WLAD8FCHqhTG9XQ5bMks0pFEj32rWeFhtwesFhniNJc6G9ifc/0f2yMlyMVuCJfiofUxpRenQ54rBs0keemxhUZ1kCa/hEV6PGr+G08JFP+k1ovYeRtbUpWqQ+al4K/gMfHeVIk20cm4Bu7sw2vb4p2Yo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790697405; c=relaxed/simple;
-	bh=azOf2D0+1E8FYMIXbzd+vVtdtBPpmVF+VKoIiExmZkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GM9u8v+8pAc9LdPcql1UY1Jea08kwFC330ax3P2Zwz1VC/JSjzTppqNtfx9QOjbTD/7vIBZbQv5N7tmSlqd8rd7dN73CkVK7JDGzOkP+k/iCDUd5nXPVegXI2o9Yc0eA9MwNCuKg9Zifx0TzGHCn0lQH+JouZnOfCslQhtaFJr4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=lWFu2H90; dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b=mxPCWjZv; arc=fail smtp.client-ip=148.163.154.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1790751122; c=relaxed/simple;
+	bh=I6jbNKfZAvp5tvYtV1+kCMvXtvpuuUsJtMHruICNvgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k2q73RsGYG+86ddzhydNTYAj/fmfdiYzgfdZirYsBS3WY7pg8eeLRNjpX8YV606VtwO/7CEkFT9W/0tTz8M8YR3nRtPacv7JeX4EuecE8NJMK50BJRKDCRfYBURNF/Mflx28CeFMaINsHsRcAQz51WPxjpsfL3xV1EB1E3e4Zbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTXfSIaL; arc=pass smtp.client-ip=74.125.228.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="lWFu2H90";
-	dkim=pass (1024-bit key) header.d=ticloud.onmicrosoft.com header.i=@ticloud.onmicrosoft.com header.b="mxPCWjZv"
-Received: from pps.filterd (m0374956.ppops.net [127.0.0.1])
-	by mx0b-0002e601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68TFfoQm4076839;
-	Tue, 29 Sep 2026 10:56:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	proofpoint-05-2026; bh=ubGDs3PbtR65nrXQehf629qSftFGohLLLoRmcemod
-	qE=; b=lWFu2H90SbgmVri6691WXu39tUvxMDe17W4uuyB9CCwvRBCMGipctdEON
-	7woLAUiq6qo1nwF+lbB1l6qR3EM+oR0swoqhvsRIhY9PVkr6UpS8Zi0YbpCLoKCc
-	wYnJ0srT+Jv1iOy83VIGP0d0EE1oyCmDIcrRGyPiHwH3oFrEnBlNmHmAk+PkUuM6
-	kZJqSHhYZu16UIvhTv5EfYfqfjVjpXK46nDDbkwWF0pGLQCtxwlG2RdHvWbdc0jT
-	BrIQNW8cYQUmALgKU7Xo32j7tlvJsnQp8wfFJlHGAclrh0NAg5EHRLUVCW3WgcNN
-	9DSzZUZtgZLXeNOkbJ9gccYFWHk4w==
-Received: from ch5pr02cu005.outbound.protection.outlook.com (mail-northcentralusazon11012019.outbound.protection.outlook.com [40.107.200.19])
-	by mx0b-0002e601.pphosted.com (PPS) with ESMTPS id 4h03adcw6q-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Sep 2026 10:56:32 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZAKitwH+qT/hQiZdssTbp/kGhJRYx2srkz+2kIZtnmjpRYDZDf3T8KayVxr7yvqPe2KXSzwpr6S3KoR7hKmbNd7B6MSMFL7ww8EH4O+YpGVO+rSZKHlQ/iquxuEbMh9lHsIaCbs1Vx13HgENdahtxQlXq4pcl56zhsBhM+uVEUdxZmZYadNw4hV8p1tCnAfIFLRNzjaw3C5hmCairai5wtQ9hVG58t6UtGmv9+Ec5G8ecVuwMBxRhmNPLKkS0lua5OYIiZu/OoJt5BcTkof30w1su33hMH34MSoZPqc4to2Hxl6trSOXgdlBQ2x3YANhppRMN1ub2QbJsHtc8e8i+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ubGDs3PbtR65nrXQehf629qSftFGohLLLoRmcemodqE=;
- b=BgSKEW5xlhKGiKROn5PxQ1L63rh2N7KU3r2SkFQWcHj9J4gHV6ZQXlJoq2qUFANgcNyT9treOCs/WbvfkwF1rCt4UkEIYLLtf9TTUpCswdKbekfegMT9W/o/NH6ikP54rItxhIk0oe6EJPWpsUCqTJtDDcgeYkf2wKDlwx3MFqeVwkTMBlcyDL8VqDr79YI6O6SU/G0xhO7OMN/16NskHK7J7z74B7WodLKb3YZzvHiEMsKO3GPll67+hurD4CECfaX6vv+flw6dgwlP+RMbzcJwBDolyjYb4nzidh3oe2Gq8PSn1JzADnrlxNGBKCZn79MXgmjgdghCZXPH4HKwag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTXfSIaL"
+Received: by mail-ej2-f42.google.com with SMTP id a640c23a62f3a-c2da4eea067so496520166b.3
+        for <linux-leds@vger.kernel.org>; Tue, 29 Sep 2026 23:51:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790751116; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jYQ7o+XzyPCGDZckk18WviqCOG8SQ+xgdNb83V6TWl3OdSABJ6tyqXUj6EwokBjEHv
+         pIJqpa7Dnq9cH06YPPw9dc/ascfh9UBL2ej7Ll3Jhysts2S/Qb5FbPB5D48TYGCi0KIf
+         +MdI1N8/VGtqT7rWkRrbO05rcEFBbFI+d+c49q/BfZqEZFXC0+cE3sFZICBKtvG3XVxH
+         oIxa4NsFFtHW0JlQZUlwchhuWPj4Qt3gG1RgSCG+SB7bkSM1I1LgkqzO+GbzPngClP/U
+         hVNxP4NfTPluhs5FzMMA55FRyd2WpkBRPuC4JDKJPSbJV+SQd3IeSJ8f9m8rt1F7/8ac
+         03NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=3jgho2CpwH+56sVlMNdVicCaOg7sOZW/brWJTYh16cs=;
+        fh=Gp31NVnT2QiCRl4PfgPzvt/g+v6Cn5sdYaTeSmaU/G4=;
+        b=MUqJm74+iCtPN9C6OtB8CRLKzCjy9rSLRXBGC14QwirHHSqhzV0RQScxdGk9JbJgLY
+         qJnHEU7+1KcV2dOt+N3y3GKEctFYwjyzEhxwIQV3igmNTkoP4135FIvr5adFwXL/nPYj
+         xvR7G9BLTXs+/eUsgd3Y9jrhCfGxTHv2okhB6N+MTFhuzjrpMnlTLlHfoQTibzWh+kRF
+         vLJdJFk4hFH+/QX57eSI7YuskxsRX1XQDG02Wbt4EIx86ZpfZpoS05NHlvT6aDxq3Ccf
+         j0zTzPIMb2KepZg7+flUKe965X1skvbBM5q75uDUQykTPSJeyD6RYWujaOt8JF/axaCC
+         xFtg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=ticloud.onmicrosoft.com; s=selector1-ticloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ubGDs3PbtR65nrXQehf629qSftFGohLLLoRmcemodqE=;
- b=mxPCWjZvOJxQEundRy6BniN3zxIEf6TVddl83Am2Se11sYih6BJaRtvgNJaI8hGaeFMds4OTDuA1j2SXuSPlOdeJWADiPDPWURwzbaSIAioSsQ303JGt7hBuUPm/RYPxJBzBhBbsYLgUY8YjE+wXqvPVRAJrn3FOL10kowwwlMM=
-Received: from BN0PR04CA0146.namprd04.prod.outlook.com (2603:10b6:408:ed::31)
- by BY5PR10MB4179.namprd10.prod.outlook.com (2603:10b6:a03:206::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.15; Tue, 29 Sep
- 2026 15:56:28 +0000
-Received: from LV8PEPF00000067.namprd03.prod.outlook.com
- (2603:10b6:408:ed:cafe::76) by BN0PR04CA0146.outlook.office365.com
- (2603:10b6:408:ed::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.24 via Frontend Transport; Tue,
- 29 Sep 2026 15:56:28 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 198.47.21.194) smtp.mailfrom=ti.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- LV8PEPF00000067.mail.protection.outlook.com (10.167.248.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.14 via Frontend Transport; Tue, 29 Sep 2026 15:56:27 +0000
-Received: from DFLE203.ent.ti.com (10.64.6.61) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 29 Sep
- 2026 10:55:48 -0500
-Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE203.ent.ti.com
- (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Tue, 29 Sep
- 2026 10:55:48 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE206.ent.ti.com
- (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45 via Frontend
- Transport; Tue, 29 Sep 2026 10:55:48 -0500
-Received: from [10.249.37.61] ([10.249.37.61])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 68TFtmMK2223740;
-	Tue, 29 Sep 2026 10:55:48 -0500
-Message-ID: <9b723a8f-6cd8-4993-9fc7-6cbe7d0545a3@ti.com>
-Date: Tue, 29 Sep 2026 10:55:48 -0500
+        d=gmail.com; s=20251104; t=1790751116; x=1791355916; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=3jgho2CpwH+56sVlMNdVicCaOg7sOZW/brWJTYh16cs=;
+        b=VTXfSIaLpMyaPvqvMWHVsACDZ2/xvbsutkWV6/YweLx+0+odVccOnEPDeoskVnQQPr
+         LO/k8JFd080QVvaGkds/yNJt4kl/dpTWvywY/o59z4auktMCBlN8q0TeQAzOWTFiVWOI
+         JYIgjthl+UMDvC9PhtgVXsQ7s3nT13SecQJ8IaVW9OK96/7UpsWaCNPetr5Zw4uX1Puh
+         8pjecE1Q+x0wbGTtHMGJj5vDvd2L2mknA0/B353Rmkh+hRK9xIDv2YsIo1P8Hm8Pq1fU
+         /tTfGjIi9zrXxAqai8ZSqOxavUlVyD2hfFf0xEZPFDDetMExvfQE8YAR3j2fMndUfK7r
+         zMYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790751116; x=1791355916;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3jgho2CpwH+56sVlMNdVicCaOg7sOZW/brWJTYh16cs=;
+        b=c+1OiFyvwc7rOUt1J/cOoE30kJXqt6CICKLovryH6RhRjqAqZzFEy5lL/bWA8ATQ9D
+         5Dpdbx9P/Ha9ocxGlPlPtliey0Afw4GoKh1YAuy2zIgioBedkcN6/BtZ1VqdcWgNnGDY
+         C8nNxrvyn85Tb72PpF9IRkCKpBlUtPUquCia7e6WlBo1IQ/vj3jYG07ZuV+FtT2FYfFA
+         QaSVsDeJ3W9ak1gZt0UHjNmBKSxQM0LStJBRiugNesAWN42crsBlepPAu4EPqH27Erq7
+         ZmhHROQ0CUYYZCkW54Op+ZjSrfnUvMzT1EBPYuYNGH9d4ZcPN6AQqA3BGfBJkR/CWKl/
+         P6wQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxli3HSY58VELtA6zFuUn4hoMJhE/aNINiIMcyAp6zNyvxNrn3L2MP1oih3wHW6ddSwQ/UmXjjdM86n@vger.kernel.org
+X-Gm-Message-State: AFuF++mCpyDjI8aFRtvEMrpZFvPt2fg0rXXEejX6/cKYbsOOyl5JLw3A
+	f1s7yEQy1SNFGlZyLvsp4FEnfVO816skV3V8onnxqonHGAuzRFUM9sb5agZsCaBizClYiv8lv0j
+	/bpxkuxG8eZqVxm5IJWEx8wZbB9aoe7kmFubg
+X-Gm-Gg: AYBFou0S9pYUQFTfb5zKVUy19YYfhOk3YpGeg/KyOWJVNPQYiwXOX+uzaQNIdxsIHkr
+	2lZ4YzoQuKLU8kW41evsVwo1VJX8XC2CZEX/rcX5APaqIiscSyr80g6GXdjZlGSCK2MBYVCq+As
+	lJiUBnS7kyrMlk/xTt0Ug4O5ZLLaxoNemL1kbXpcmLz8dmMZGdF7h5uhAEhBgDqyta1PwKD8r53
+	BeLswzCb+cYwDQmJtBQZvlJLhnAvZElgQdtexDHyP78pPq5+81PHJTyBw9vndE2diM++GJeSeIo
+	VLV83Xqkolx01f3pHFZMxz9AZPkHV17isGQk25o9uWLnJE3CCka/vvP5AivMCOXAXTZUZAzjkqK
+	DabuNohabUfgi
+X-Received: by 2002:a17:907:7b86:b0:c2d:bf4f:3b75 with SMTP id
+ a640c23a62f3a-c2e23d99ba1mr28701166b.31.1790751115995; Tue, 29 Sep 2026
+ 23:51:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: tca6507: Fix use-after-free on unbind
-To: Danish Khateeb <danishkhateeb03@gmail.com>, <lee@kernel.org>,
-        <pavel@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20260926172115.543800-1-danishkhateeb03@gmail.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20260926172115.543800-1-danishkhateeb03@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PEPF00000067:EE_|BY5PR10MB4179:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c495987-8eae-47f9-9b80-08df1e4238ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|82310400026|1800799024|36860700016|376014|3023799007|5023799004|56012099006|10067099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	owrG1kd//SXLdQv5WWo65Jwmg2EkCrlBitweaExhP+x4sR0YSSPrY1W2grCPA5jurv5S+weECEZScxr5U1GIi0LkQVd0stpZYtX9BOL0CmVBxGWc0Kbp4PpCx1kCj/GiFhE1Ai6PGjm8SYj/ZwD3kbWtgmBoxbi5oRbto8Sp9u4psmBWkCYTtTxDQPdhnNFC2Y9KI+0GEMFZgBEQSBKFUiOT3Xi424C/JNzY+TWCRlkPiSGedmQQSuai7aKBecukGsynhaQC6jtm9NJESRfwMTDDC57Aey1WX5Rv/XqC8ilq8k+QeUuHJ0gBgdhvt4C1RqvsaQtOG376F1O9RTqLq0z9+vsKZgkigg/1P6381gcJ6/3Z3KHBGRxWKFp/PnXLRTMkyHk2MzAVoFZdMLkPAVLQeCjW7QsNmP1yEzbAMWD3r5LYoBOZhIAb9ZU6XnUKOBXr6bUCmw6DMGusSdpKdWpshjzPL8FU2kUkmdHFGToHFwFE1anPB0j39N1sNPWCXP5QQBfgKAl1/KYSBN0qHTVU/4x8ui+srYbqZodas0YwtC0S5endCinxB2bovrhRsFORr1/8yu6ljQlWWAuyg6ntqeZzQsnBKdjH3dibcC2Khg2fM1219Qp5ZVukw67PDWiUzIpAC1FqUEKf8jBrCizuA68rCJyEDu60ouTxF6UEzYNxEnyJ8/uvyXoFYRnWRN8AvSWuSDNtkWpmTvGTrA==
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(1800799024)(36860700016)(376014)(3023799007)(5023799004)(56012099006)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	Wc5l7WUMQ4OUmpJ+ZpTBaC/1vy4qvmn1a3GSIXGcaoyNw1/NSKrBetiRLeCFbQYWjMwvqHXkvBgIyGUfBCi1nsjWWj+gl481rRcJxpXdoPWlDy1dTepmGzUn8fSkw7MrE11HrT5D7hZfkRRMebskg1mzYXowQc68bZKho2QYf/ssIvp8XrjgKLOGfwvuu7DWyBY4IQ2B5O1xeUI1wRmxJ0dHFow0fMtNTg77r72aE34LP6W3S526hqIYBQ09DJXuBZfgvgYj9K2Mnf3ULZOrnvGSauYTDFOmKdjnubyH46sYNtiUJJY7AfXRz1uWWx+8m2lMSSbsSAr+qgwqW72x2GwTU7faPwQyPpY3BEwy5o8RHx60ukWAOXS2Jh7JoyIAgNwfn8kE8RK5VT6btRxFRuWp7MHcQ6PAwnkncJ3WCqxJ85Cd5hETUrFC3c1PHEcV
-X-Exchange-RoutingPolicyChecked:
-	n/BGx3jSflYmotJ9sP7J90L+R/3gdDXXb5vpGehGcD5aoCYS3G20dm5qpwsAuud6X+/7n0GyHzuFUrw6M8Sb34PIdWaOIvOiENSL7GMZZ2FvUMjvLfgBUIHEY+SUzH5wkeR19F25kdGC+HSLFdN7htnkHQj/Wan21Zv8bka4DuYi537XlOZdTlLLjtDkihKIajUxiGIPZJ7hG9dSywub4AUH6xsWs+viG3mQ+ebryn+0UrwybENajFP2oUDQ9OV3ZTx+wsSgquHeg2MxiwO5nIk+hr0Gdy+Jh8oEIAS0ku9RR62Zt7l5wgDuuotNfAspwBLD2YVrSYirLTR+X0F1gw==
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2026 15:56:27.6331
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c495987-8eae-47f9-9b80-08df1e4238ae
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	LV8PEPF00000067.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4179
-X-Authority-Analysis: v=2.4 cv=c94+0h9l c=1 sm=1 tr=0 ts=6abbdfb1 cx=c_pps
- a=jJxBgQE0Gv9vBhouG1T1Tg==:117 a=iwqwCZQqcuTv3JOpYdM7/Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10
- a=AlMIdn_sM9wA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z8NIEmU8O1QQgoT56wFK:22
- a=jwouBfj2j3NM8CExmVVE:22 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=pNW3mJ0fZ0nBVP3wtR4A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: sC0vYehClxP3-aPotxKqocZkajRic6lQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI5MDA2MyBTYWx0ZWRfX9Cvb7EO3ERzo
- meQGfPiuMsmfSJYRVeURN0JUGXKs3xY3N4fuAh/r0RXXTEMbkywY4SqpZzMMQTwtD5zxZwPJ34J
- 6cnfWUO9+AZXm+1YkblzEmwPCsArnuPQ521bK6Bys9Ll2NJzP2ErChk4KGs8w1F2iiTuM6bx6E4
- fwoNModOPdw162ie7b2NTQJ16LxqOKaCzvVdxL0qTdCaYcnUbmJ3iI4GT6NzCELyE+/q6/LmEFc
- 7cQ3UH/ifH1sUPiUNRYtJ/9LVCRcAWUqtQVEOY4/r2d6XSF5shIs00FIJwrMEXwuQzlTpG9/y/E
- uf/UeMAC34/jecmLkk+uwefINDybi63WNO3KziZqxcdcXkIcaPh78gftqsvnXk+SFSb6vdRwTOV
- X7sonnNhaBC7v4yiZ56qX6DMeg0CAKqVQPtD3IQyMl7ZEKmV0Pm9bNMSdb8cUoxLaF61wKUu92d
- oST83APQ+AfWeYT0iaA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI5MDA2MyBTYWx0ZWRfXyFhink9l6TJN
- CmjEwVx7nYhwWY1dsiikxbVcKBnOT9nLs5p4JYhsy1f6T6/GZ62DgPysMlv2R4+jLsX4LYjBk0z
- thr1XkUkerPDtr3QxW6d4OTQdEa7CgQ=
-X-Proofpoint-GUID: sC0vYehClxP3-aPotxKqocZkajRic6lQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-29_04,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- impostorscore=0 phishscore=0 priorityscore=1501 adultscore=0 clxscore=1011
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609290063
+References: <20260924-leds-input-events-brightness-v1-1-b0ceff3a2343@gmail.com>
+ <20260929091141.GD2112133@google.com>
+In-Reply-To: <20260929091141.GD2112133@google.com>
+From: =?UTF-8?B?0J3QuNC60L7Qu9Cw0Lkg0J/Qu9Cw0YHRgtC40L3QuNC9?= <plaztininikolai@gmail.com>
+Date: Wed, 30 Sep 2026 14:51:44 +0800
+X-Gm-Features: AclHuK8Vo-obQ9NX3gHnZZTuObnmb52lqPA1EGkVfEGsKUuEMADZIWtyghVj7Qw
+Message-ID: <CAEbFrdiD1G8ROr+bv+xrXdFZ175fXvR4588Nu3VjsBxt9RPapA@mail.gmail.com>
+Subject: Re: [PATCH] leds: trigger: input-events: Restore previous brightness
+ on input
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, Hans de Goede <hansg@kernel.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/26/26 12:21 PM, Danish Khateeb wrote:
-> Since the LEDs are registered with devm_led_classdev_register(), they
-> are unregistered only after tca6507_remove() has cancelled the work.
-> Unregistering an LED that is on turns it off, which queues the work
-> again from led_assign(), and the work then runs after devres has freed
-> the chip:
-> 
+> Should we be overloading 'blink_brightness' like this?   It would be clea=
+ner to
+> allocate a small per-LED state struct in the 'activate()' callback, store=
+ it in
+> 'led_cdev->trigger_data', and free it in a 'deactivate()' callback.
 
-Seems odd to not be able to cancel the work before unregistering,
-this driver is a little odd that it uses a work queue for updating
-the registers in the first place though.
+Agreed, I'll keep the saved level in a small per-LED struct allocated in
+activate() and freed in deactivate().
 
-Anyway, we can sort that all out later, this patch looks correct
-for now,
+> Please avoid accessing 'led_cdevs' and 'trig_list' directly from outside =
+the LED
+> core.  As you suggested in the commit message, adding a helper in
+> 'led-triggers.c' would be much preferred.
 
-Acked-by: Andrew Davis <afd@ti.com>
+Will do: v2 adds led_trigger_walk_leds() to led-triggers.c and the
+trigger uses that instead of walking the list itself.
 
->    BUG: KASAN: slab-use-after-free in assign_work+0x414/0x5b0
->    Read of size 8 at addr ffff888010d5c0c0 by task kworker/1:2/65
->    ...
->    Last potentially related work creation:
->     ...
->     queue_work_on+0xb6/0xc0
->     led_assign+0x223/0x340 [leds_tca6507]
->     led_classdev_unregister+0x26b/0x340
->     release_nodes+0xb3/0x140
->     devres_release_group+0x247/0x470
->     i2c_device_remove+0xbf/0x1b0
-> 
-> Set up the work with devm_work_autocancel() before the LEDs are
-> registered, so that devres cancels it after they are gone, and drop
-> tca6507_remove().
-> 
-> Fixes: 1b5c2fa7081c ("leds: tca6507: Use devm_led_classdev_register() to simplify remove path")
-> Cc: stable@vger.kernel.org
-> Assisted-by: LLM
-> Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
-> ---
-> 
-> Notes:
->      Tested in QEMU on a next-20260925 KASAN kernel, with the driver built as
->      a module and a test-only module that adds a fake I2C adapter and a
->      software node for a TCA6507 with two LEDs. With the LEDs on, unbinding
->      hits the report above (38 reports in 20 unbind/bind cycles), and so does
->      unloading the driver in 2 of 3 runs. With this patch there are no
->      reports in 20 cycles or 3 unloads, and the LEDs come back after each
->      rebind. A W=1 build with GPIOLIB is clean.
-> 
->   drivers/leds/leds-tca6507.c | 19 +++++++++----------
->   1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> index 9afe2722986c..503a465a07f4 100644
-> --- a/drivers/leds/leds-tca6507.c
-> +++ b/drivers/leds/leds-tca6507.c
-> @@ -79,6 +79,7 @@
->   #include <linux/gpio/driver.h>
->   #include <linux/property.h>
->   #include <linux/workqueue.h>
-> +#include <linux/devm-helpers.h>
->   
->   /* LED select registers determine the source that drives LED outputs */
->   #define TCA6507_LS_LED_OFF	0x0	/* Output HI-Z (off) */
-> @@ -735,9 +736,15 @@ static int tca6507_probe(struct i2c_client *client)
->   		return -ENOMEM;
->   
->   	tca->client = client;
-> -	INIT_WORK(&tca->work, tca6507_work);
->   	spin_lock_init(&tca->lock);
-> -	i2c_set_clientdata(client, tca);
-> +
-> +	/*
-> +	 * Unregistering the LEDs turns them off, which queues the work again,
-> +	 * so it must be cancelled after them: set this up before registering.
-> +	 */
-> +	err = devm_work_autocancel(dev, &tca->work, tca6507_work);
-> +	if (err)
-> +		return err;
->   
->   	for (i = 0; i < NUM_LEDS; i++) {
->   		struct tca6507_led *l = tca->leds + i;
-> @@ -766,20 +773,12 @@ static int tca6507_probe(struct i2c_client *client)
->   	return 0;
->   }
->   
-> -static void tca6507_remove(struct i2c_client *client)
-> -{
-> -	struct tca6507_chip *tca = i2c_get_clientdata(client);
-> -
-> -	cancel_work_sync(&tca->work);
-> -}
-> -
->   static struct i2c_driver tca6507_driver = {
->   	.driver   = {
->   		.name    = "leds-tca6507",
->   		.of_match_table = of_match_ptr(of_tca6507_leds_match),
->   	},
->   	.probe    = tca6507_probe,
-> -	.remove   = tca6507_remove,
->   	.id_table = tca6507_id,
->   };
->   
-> 
-> base-commit: 05b4738b0078f7d6f154f68068a11c8a0635e9df
+Thanks for the review, v2 to follow.
 
+Nikolay
+
+=D0=B2=D1=82, 29 =D1=81=D0=B5=D0=BD=D1=82. 2026=E2=80=AF=D0=B3. =D0=B2 17:1=
+1, Lee Jones <lee@kernel.org>:
+>
+> On Thu, 24 Sep 2026, Nikolay Plastinin via B4 Relay wrote:
+>
+> > From: Nikolay Plastinin <plaztininikolai@gmail.com>
+> >
+> > The trigger turns the LEDs back on with LED_FULL, which the LED core
+> > clamps to max_brightness. For keyboard backlights with several levels,
+> > such as asus::kbd_backlight, this means the backlight always comes back
+> > at maximum after being idle instead of at the level the user picked.
+> >
+> > Remember the brightness in blink_brightness before turning the LEDs off
+> > and use it when turning them back on, as the netdev trigger does.
+> > Brightness changes made while the trigger is active are picked up too.
+> > This needs per-LED handling, so convert the trigger from the simple
+> > trigger API to a regular trigger with an activate callback.
+> >
+> > Tested on an ASUS ROG Flow X13 GV302XV: with the keyboard backlight at
+> > level 1, it now comes back at level 1 after going idle instead of at 3.
+> > A level changed with the brightness hotkeys while the trigger is active
+> > is restored after the next idle period as well.
+> >
+> > Assisted-by: Claude Opus 5.5
+> > Signed-off-by: Nikolay Plastinin <plaztininikolai@gmail.com>
+> > ---
+> > This came up while looking at a keyboard backlight idle timeout for ASU=
+S
+> > laptops in asusctl:
+> > https://github.com/OpenGamingCollective/asusctl/issues/98
+> >
+> > The trigger walks trig->led_cdevs under rcu_read_lock() the same way
+> > led_trigger_event() does. I can add a helper in led-triggers.c instead
+> > if that is preferred.
+> > ---
+> >  drivers/leds/trigger/ledtrig-input-events.c | 56 +++++++++++++++++++++=
+++++----
+> >  1 file changed, 50 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/leds/trigger/ledtrig-input-events.c b/drivers/leds=
+/trigger/ledtrig-input-events.c
+> > index d057b2a23..d1ef14ae8 100644
+> > --- a/drivers/leds/trigger/ledtrig-input-events.c
+> > +++ b/drivers/leds/trigger/ledtrig-input-events.c
+> > @@ -10,6 +10,7 @@
+> >  #include <linux/leds.h>
+> >  #include <linux/module.h>
+> >  #include <linux/moduleparam.h>
+> > +#include <linux/rculist.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/spinlock.h>
+> >  #include <linux/workqueue.h>
+> > @@ -28,7 +29,48 @@ static struct input_events_data {
+> >       unsigned long led_off_time;
+> >  } input_events_data;
+> >
+> > -static struct led_trigger *input_events_led_trigger;
+> > +static int input_events_activate(struct led_classdev *led_cdev)
+> > +{
+> > +     struct input_events_data *data =3D &input_events_data;
+> > +     unsigned long flags;
+> > +
+> > +     spin_lock_irqsave(&data->lock, flags);
+> > +
+> > +     if (led_cdev->brightness)
+> > +             led_cdev->blink_brightness =3D led_cdev->brightness;
+>
+> Should we be overloading 'blink_brightness' like this?   It would be clea=
+ner to
+> allocate a small per-LED state struct in the 'activate()' callback, store=
+ it in
+> 'led_cdev->trigger_data', and free it in a 'deactivate()' callback.
+>
+> > +     if (!led_cdev->blink_brightness)
+> > +             led_cdev->blink_brightness =3D led_cdev->max_brightness;
+> > +
+> > +     led_set_brightness(led_cdev, data->led_on ? led_cdev->blink_brigh=
+tness : LED_OFF);
+> > +
+> > +     spin_unlock_irqrestore(&data->lock, flags);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static struct led_trigger input_events_led_trigger =3D {
+> > +     .name =3D "input-events",
+> > +     .activate =3D input_events_activate,
+> > +};
+> > +
+> > +/* Must be called with input_events_data.lock held */
+> > +static void input_events_set_leds(bool on)
+> > +{
+> > +     struct led_classdev *led_cdev;
+> > +
+> > +     rcu_read_lock();
+> > +     list_for_each_entry_rcu(led_cdev, &input_events_led_trigger.led_c=
+devs, trig_list) {
+>
+> Please avoid accessing 'led_cdevs' and 'trig_list' directly from outside =
+the LED
+> core.  As you suggested in the commit message, adding a helper in
+> 'led-triggers.c' would be much preferred.
+>
+> > +             /*
+> > +              * Remember the brightness the LED was last set to, so th=
+at it
+> > +              * is restored instead of max brightness on the next inpu=
+t event.
+> > +              */
+> > +             if (led_cdev->brightness)
+> > +                     led_cdev->blink_brightness =3D led_cdev->brightne=
+ss;
+> > +
+> > +             led_set_brightness(led_cdev, on ? led_cdev->blink_brightn=
+ess : LED_OFF);
+> > +     }
+> > +     rcu_read_unlock();
+> > +}
+> >
+> >  static void led_input_events_work(struct work_struct *work)
+> >  {
+> > @@ -42,7 +84,7 @@ static void led_input_events_work(struct work_struct =
+*work)
+> >        * running before a new event pushed led_off_time back.
+> >        */
+> >       if (time_after_eq(jiffies, data->led_off_time)) {
+> > -             led_trigger_event(input_events_led_trigger, LED_OFF);
+> > +             input_events_set_leds(false);
+> >               data->led_on =3D false;
+> >       }
+> >
+> > @@ -59,7 +101,7 @@ static void input_events_event(struct input_handle *=
+handle, unsigned int type,
+> >       spin_lock_irqsave(&data->lock, flags);
+> >
+> >       if (!data->led_on) {
+> > -             led_trigger_event(input_events_led_trigger, LED_FULL);
+> > +             input_events_set_leds(true);
+> >               data->led_on =3D true;
+> >       }
+> >       data->led_off_time =3D jiffies + led_off_delay;
+> > @@ -138,11 +180,13 @@ static int __init input_events_init(void)
+> >       INIT_DELAYED_WORK(&input_events_data.work, led_input_events_work)=
+;
+> >       spin_lock_init(&input_events_data.lock);
+> >
+> > -     led_trigger_register_simple("input-events", &input_events_led_tri=
+gger);
+> > +     ret =3D led_trigger_register(&input_events_led_trigger);
+> > +     if (ret)
+> > +             return ret;
+> >
+> >       ret =3D input_register_handler(&input_events_handler);
+> >       if (ret) {
+> > -             led_trigger_unregister_simple(input_events_led_trigger);
+> > +             led_trigger_unregister(&input_events_led_trigger);
+> >               return ret;
+> >       }
+> >
+> > @@ -153,7 +197,7 @@ static void __exit input_events_exit(void)
+> >  {
+> >       input_unregister_handler(&input_events_handler);
+> >       cancel_delayed_work_sync(&input_events_data.work);
+> > -     led_trigger_unregister_simple(input_events_led_trigger);
+> > +     led_trigger_unregister(&input_events_led_trigger);
+> >  }
+> >
+> >  module_init(input_events_init);
+> >
+> > ---
+> > base-commit: f475845eaf3d749114a63270bf2efea459e14dd2
+> > change-id: 20260924-leds-input-events-brightness-a76ae9a77b85
+> >
+> > Best regards,
+> > --
+> > Nikolay Plastinin <plaztininikolai@gmail.com>
+> >
+> >
+>
+> --
+> Lee Jones
