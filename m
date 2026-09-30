@@ -1,241 +1,316 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBB631A556;
-	Wed, 30 Sep 2026 07:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAAE4E80BC
+	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 13:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790753299; cv=none; b=nZD9gRdEWtL2yNrmi5RGzBqI410lysb20g5c56U1mJI8kRaPht6cAsSF1zQAl6NfPwNlfLa7KNZRIXcn1D9CbMpBZpAdd34yIVvsMTP5SV2zljyzPbbZI6kf5qvBuk8ub1b7cykfaQH99xyuVzd4CrnznR777mLd0F4QwMQjufQ=
+	t=1790773543; cv=none; b=F1u8ohfyGJokeFqfqMFPgb0I/NoUdwAlluBfxvzNd2N4gJtHEyl0WQV1MWW9JzGCVmU+vJPgTFabxywV50S5wYCbDgfscowfnoQVsliSp7ztgaRVAdckPLMO13YISVYCdpHhfgzrTj5oVolFc9c1aIj+XlAi1g+Ie8w6+Ya98sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790753299; c=relaxed/simple;
-	bh=ZMnsSNimCA5mJ70F2UQv7MtndzpF0xQDQEzCcuO+JEc=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=acOF0C5wfzEp348wGorE5yyUusDQEnNYife/7S93aQDGgvT37jGHdj/YgsTDhxvgbxU57/NW+nx1CV7gOKCPm7mkPAo/PloSn/4X+zOtuEYLQUWjisUupVH4uxlJFGlbssyS6LephAiK5tv1l6I6i5dqMKadDsdCvrr31aljYew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WK8HCKIT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790773543; c=relaxed/simple;
+	bh=5/dSgJIN06fJXwEpkDKWKACZadsjzrdEv51F34/4pVw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XjOKu2ToPwh2nsDAvmYQHsN2pJsuarQiKFHkt4GqPQdLUQO9obTzJQnPoNK2jZA3PIuJQeadDivnWmGNiBlB6zwbttRmrZ/zN/WQWLkViTZa9RaPFEGhjqWATzaJmBVp8HG38yNbQyu6H6oxF5YPzcC26PLKIBdEotVmSAETWfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=YLevYyMr; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WK8HCKIT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C87201F000FF;
-	Wed, 30 Sep 2026 07:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790753297;
-	bh=ZXVY8tIAhS9qjxPb0Ele3g9MhKSgr/Y0y/yYr2pvjGc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=WK8HCKITwBTX2ZDIl8xO14tpspQ6fnSgZzhQrDP5y7ucAEV9QvVfTOgpK4y7HYJ67
-	 a6tB9DFbQJCpYvtcDZwXL6OVF1vrJCAkDjQ5HAHXVTlIP0EqRZf5PPWpdaj1EZrBWp
-	 VxpIO/Nu6dI4CmqZZTZYVnLV/j7bpT/iYfGuNl8CzQ30DHcg+wXnbwNLzjDcVWWBpg
-	 k0eN7Jfhc6Dj6vrPsK69B9RhLI3G6rp2MemySZ/Ls1Kj0jshYVM09jpEfLV5G4L4Sn
-	 bf0566hOVntYbLmzMpoaBvJWV0Jf5b3Fl6U3DeLCyKEJNnu70WB8LlJ77HwteV7Og8
-	 SP6Gx6tmjXQNQ==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 2/3] mfd: aat2870: Convert to use OF bindings
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: lee@kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, dri-devel@lists.freedesktop.org, conor+dt@kernel.org, linux-leds@vger.kernel.org, robh@kernel.org
-In-Reply-To: <20260930071513.54697-3-clamor95@gmail.com>
-References: <20260930071513.54697-1-clamor95@gmail.com>
- <20260930071513.54697-3-clamor95@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 30 Sep 2026 07:28:16 +0000
-Message-Id: <20260930072816.C87201F000FF@smtp.kernel.org>
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="YLevYyMr"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id BC1A424010D
+	for <linux-leds@vger.kernel.org>; Wed, 30 Sep 2026 15:05:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1790773525;
+	bh=sP+ek8du+ngUTIKuAUr/EPUyHaRfz1WiHojok3iQuJ0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:To:Cc:Autocrypt:OpenPGP:From;
+	b=YLevYyMraoQaNC1/DyHYeZzy6X2+DWZAUHQ5KSjEi5fmrcKRVTE7JOFyKDT62Hqwx
+	 F8ZOwkTPxUyLv7BaxI9bKpq8X5y0zwY034NgY0JKWBIDoH6GhfmuzKeokL2ZhWcLyM
+	 xmiLaadBVjhOjh7QUJfVrTosHG3ztBfOqJMwZr/eUX1497n9D7rcFA2SEK9k/iXTQQ
+	 ijO2RrM3KIC5+aCkWhO+HmF7daNdF4CDhFm4X8PvKYBszZqye7AFYVDyR/wbc1abr6
+	 /TA09k8jHebhfn72HNGHSWqEZaVqaRVhOGRbzsqC1TZBvRvagX24VcpkRcYA1OTNek
+	 rFwJ+8Y2NUSxg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hvwJL02k1z9rxF;
+	Wed, 30 Sep 2026 15:05:21 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+Subject: [PATCH v26 0/4] rust: leds: Add led classdev abstractions
+Date: Wed, 30 Sep 2026 13:05:24 +0000
+Message-Id: <20260930-rust_leds-v26-0-83837331020e@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XU22rcMBAG4FdZfF2HmZFG0uSq71FK0bExNHFib
+ 5aWkHevvCGsVNEbg42/GWn8W2/Tnrcl79P96W3a8mXZl/Wp3pD5cprig3/6mecl1QcTATEi6nl
+ 73c8/fuW0z15Yio1UbJGpvv+85bL8vhb79r3ePyz7ed3+XGtf3PH0swo3VS5uhjmJ11gUMyv39
+ Xndz3m9S3k6qlykldJKqdKZiJw8Chj1r0T4pAYQTEsRqs3gkY12ThcZLN5svXQWq2XHCaMLmSA
+ OllprO0vVlhQYnUYbLA9W3ayibruoqiX0LBI5UMLB6pvV1PfV1eqiA9rMidEMllvb9+VqxWaxg
+ WwOYVyzuVkG7Kw5bKk7KSmnmMY528Yq6KytNoIRF7UyLtNgXWv7vtdUgUWg4BktDFZutk66s0e
+ uyFdbv3H2ecgVNbky/azoyFXRonyoSwq6DBb/b/H6jaCgsJU0zpmaXFnsMklHroA5gGbxYIc5k
+ 2pt9y/QkassWDgYcIGHbFCTK+lnRUeuXJKsI+gUzNi3yZVgb49coUdQFpN1sZvz+8eBsuWX13o
+ onT9OlSn4Pc9xfXxczveni72r9SLXl9//AhxJD/PJBAAA
+X-Change-ID: 20251114-rust_leds-a959f7c2f7f9
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ Ira Weiny <iweiny@kernel.org>, Boqun Feng <boqun@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Markus Probst <markus.probst@posteo.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6169;
+ i=markus.probst@posteo.de; h=from:subject:message-id;
+ bh=5/dSgJIN06fJXwEpkDKWKACZadsjzrdEv51F34/4pVw=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBqvQkRCghV0cTKCHqqhg8+KrOX7rRsdO705Dukg
+ YX5HERKNKuJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCar0JERsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9Jvzw//XT0E06gGzK65Xq75Qg5zSoqH1N7XEW5
+ 00SFHnA+FPGL27X6wDdFCeEE0NsvS0WJSdU4u/4ZjquPsyDAn7Mf+7VCE/ngSyINZsMfbEgqNEg
+ JYnoxDNffkBNu+wiwGpofy2zBGl37MfNyvsBnzcDmXS5j1dnB1Ol3uc2jA4Xfv70a3CN+8/B+xJ
+ iMDSG5lHo0Lrzvt2dJUJmT2MBIgxHkmvyr4avTlcwe8pc8b2yqMl568EKws/Z46pWXvHLxkltrZ
+ bYOlwEqd0+w9YvEVavvy8u3au6LR91Z2LcjvpFlEPVgCtkdxj7d43VMaGRlcUy8cBjJcpkzymOQ
+ ch4Ng2wXOVRMbSmiLiEERfrYhAamb7clwAh8TuwlhtSIM68lPds8wpjOxe4yIyjNSIVW0/WThBw
+ ZTR/iHup0XHFuSZ5J/yhKChvhrRLI0uIABfz2fXCVPmJVPpBkVzX6FicoRTUzFtHXj37qk5ccG1
+ GvI7igdecxIyJ3qJ/atEU3QdXqg8fnpL7zeCvWg6sZ0R6GYIc61HGfhm5ANxqWMqHS242hd3cpq
+ h+1zGZ+IIQaEivUzynYWiH61cGYwnf2R+/KG4AFnaevQx07mACE1VMoZVyzurrdTxqkVJYd8nOn
+ vqu53Zf8AUfm7hYTIRh4Yjdb/+L6+sCfbzX+M10lTEUciT9sNFcM=
+X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
+ fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-Thank you for your contribution! Sashiko AI review found 7 potential issue(=
-s) to consider:
-- [High] regulator: Missing DT Configuration for aat2870
-- [High] regulator: Global state corruption causing UAF via of_regulator_ma=
-tch
-- [High] backlight: Logic error scales max_current to zero due to unit mism=
-atch
-- [High] backlight: Missing default initialization causes max_current trunc=
-ation to zero
-- [High] mfd: Resource Leak and UAF due to unmanaged of_platform_populate
-- [High] backlight: Divide by zero in aat2870_brightness()
-- [Low] backlight: Type mismatch passing int pointer to u32 reader
---
+The abstraction is used by
+https://lore.kernel.org/rust-for-linux/20260724-synology_microp_initial-v18-0-fb2f49f10e77@posteo.de/
+.
 
-commit fb76177a0777d443ea10abf629ceb4bbf320d8b9
-Author: Svyatoslav Ryhel <clamor95@gmail.com>
+The following changes were made:
+* add basic led classdev abstractions to register and unregister leds
 
-mfd: aat2870: Convert to use OF bindings
+* add basic led classdev abstractions to register and unregister
+  multicolor leds
 
-This commit converts the AAT2870 driver to use OF bindings, replacing the
-MFD registration API with of_platform_populate(). It updates the backlight
-and regulator child drivers to parse device tree properties directly and
-removes the legacy platform data initialization.
+Changes since v25:
+* fix issues reported by Sashiko:
+  * fix vertical import
+* add drivers/leds/*.rs to MAINTAINERS file (Kari)
+* s/add/Add/ in commit message
 
-> diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
-> --- a/drivers/mfd/aat2870-core.c
-> +++ b/drivers/mfd/aat2870-core.c
-[ ... ]
-> @@ -348,60 +309,29 @@ static int aat2870_i2c_probe(struct i2c_client *cli=
-ent)
-[ ... ]
-> -	ret =3D mfd_add_devices(aat2870->dev, 0, aat2870_devs,
-> -			      ARRAY_SIZE(aat2870_devs), NULL, 0, NULL);
-> -	if (ret !=3D 0) {
-> -		dev_err(aat2870->dev, "Failed to add subdev: %d\n", ret);
-> -		goto out_disable;
-> +	gpiod_set_value(aat2870->en_pin, 1);
-> =20
-> -	}
-> +	ret =3D of_platform_populate(client->dev.of_node, NULL, NULL, &client->=
-dev);
-> +	if (ret) {
+Changes since v24:
+* remove `LedOps::Bus` (Gary)
+* support type-erased `Device` and `MultiColorDevice` types (Gary)
+* use `Device` and `MultiColorDevice` as arbitrary self types in
+  callbacks. Remove separate `classdev` argument (Gary)
+* remove unnecessary imports in doc example
 
-[Severity: High]
-Are we missing an of_platform_depopulate() call here?
+Changes since v23:
+* add separate patch for MAINTAINERS file update
 
-Since of_platform_populate() creates unmanaged child devices, if the parent
-I2C driver unbinds, the child devices will remain active. If a child device
-is accessed after the parent is removed, wouldn't it result in a
-use-after-free when dereferencing the freed parent driver data? Using
-devm_of_platform_populate() might resolve this leak.
+Changes since v22:
+* readded CStrExt import, because it is imported with `as _` in prelude.
+  A `# CONFIG_RUST is not set` sneaked into my .config while
+  development, so the compile error was unnoticed.
 
-> +		gpiod_set_value(aat2870->en_pin, 0);
-> +		return dev_err_probe(&client->dev, ret, "Failed to populate cells\n");
->  	}
-> =20
->  	aat2870_init_debugfs(aat2870);
-[ ... ]
-> diff --git a/drivers/regulator/aat2870-regulator.c b/drivers/regulator/aa=
-t2870-regulator.c
-> --- a/drivers/regulator/aat2870-regulator.c
-> +++ b/drivers/regulator/aat2870-regulator.c
-[ ... ]
-> @@ -121,6 +130,13 @@ static struct aat2870_regulator aat2870_regulators[]=
- =3D {
->  	AAT2870_LDO(LDOD),
->  };
-> =20
-> +static struct of_regulator_match aat2870_regulator_matches[] =3D {
-> +	{ .name =3D "ldo-a" },
-> +	{ .name =3D "ldo-b" },
-> +	{ .name =3D "ldo-c" },
-> +	{ .name =3D "ldo-d" },
-> +};
+Changes since v21:
+* use 'init for lifetime that is only alive during initialization
+* remove unnecessary CStrExt import
 
-[Severity: High]
-Does of_regulator_match() mutate this static array?
+Changes since v20:
+* resolve Sashiko regressions:
+  * fix typo
+  * fix fwnode refcount decremented too early
 
-of_regulator_match() typically writes device-specific of_node and init_data
-pointers into the matched array. If multiple AAT2870 devices are probed,
-wouldn't the second probe overwrite the pointers from the first, leading to
-data corruption and a potential use-after-free during devres cleanup?
+Changes since v19:
+* rebase on v7.2-rc1:
+  * Add `max_intensity` to `MultiColorSubLed`
+* use safer `KBox::pin_slice` instead of `KVec`
+  (len might not equal capacity)
+* explicitly call `FwNode::dec_ref` instead of dropping a reconstructed
+  `ARef<FwNode>`.
+* remove direct access to `intensity` and `brightness` fields,
+  which may get mutated concurrently by the C side
+* fix safety comments pointing to functions from previous revisions
 
-> +
->  static struct aat2870_regulator *aat2870_get_regulator(int id)
->  {
-[ ... ]
-> @@ -152,33 +167,50 @@ static int aat2870_regulator_probe(struct platform_=
-device *pdev)
-[ ... ]
-> +	for (int idx =3D 0; idx < ARRAY_SIZE(aat2870_regulator_matches); idx++)=
- {
-> +		if (!aat2870_regulator_matches[idx].of_node)
-> +			continue;
-> =20
-> -		return PTR_ERR(rdev);
-> +		ri =3D aat2870_get_regulator(idx);
-> +		if (!ri)
-> +			return dev_err_probe(&pdev->dev, -EINVAL,
-> +					     "Invalid device ID, %d\n", idx);
-> +
-> +		ri->aat2870 =3D dev_get_drvdata(pdev->dev.parent);
-> +
-> +		config.dev =3D &pdev->dev;
-> +		config.driver_data =3D ri;
-> +
-> +		rdev =3D devm_regulator_register(&pdev->dev, &ri->desc, &config);
+Changes since v18:
+* add inlines
+* fix invalid documentation
+* improve led color duplicate checking
 
-[Severity: High]
-Is there a missing assignment for the Device Tree configuration?
+Changes since v17:
+* use lifetimes instead of Devres
 
-of_regulator_match() parses the DT constraints into the match array, but
-config.init_data and config.of_node don't seem to be populated from
-aat2870_regulator_matches[idx] before calling devm_regulator_register().
-Without these, do the regulators get registered without their DT constraint=
-s?
+Changes since v16:
+* use for loops for duplicate checking
 
-> +		if (IS_ERR(rdev))
-> +			return dev_err_probe(&pdev->dev, PTR_ERR(rdev),
-> +					     "Failed to register regulator %s\n",
-> +					     ri->desc.name);
->  	}
-[ ... ]
-> diff --git a/drivers/video/backlight/aat2870_bl.c b/drivers/video/backlig=
-ht/aat2870_bl.c
-> --- a/drivers/video/backlight/aat2870_bl.c
-> +++ b/drivers/video/backlight/aat2870_bl.c
-[ ... ]
-> @@ -140,20 +135,16 @@ static int aat2870_bl_probe(struct platform_device =
-*pdev)
-> =20
->  	aat2870_bl->bd =3D bd;
-> =20
-> -	if (pdata->channels > 0)
-> -		aat2870_bl->channels =3D pdata->channels;
-> -	else
-> -		aat2870_bl->channels =3D AAT2870_BL_CH_ALL;
-> +	aat2870_bl->channels =3D AAT2870_BL_CH_ALL;
-> +	device_property_read_u8(&pdev->dev, "skyworks,channels", &aat2870_bl->c=
-hannels);
-> =20
-> -	if (pdata->max_current > 0)
-> -		aat2870_bl->max_current =3D pdata->max_current;
-> -	else
-> -		aat2870_bl->max_current =3D AAT2870_CURRENT_27_9;
-> +	device_property_read_u32(&pdev->dev, "led-max-microamp", &aat2870_bl->m=
-ax_current);
-> +	aat2870_bl->max_current =3D clamp(aat2870_bl->max_current, AAT2870_CURR=
-ENT_MIN,
-> +					AAT2870_CURRENT_MAX);
-> +	aat2870_bl->max_current /=3D AAT2870_CURRENT_STEP;
+Changes since v15:
+* fix issues reported by Sashiko bot:
+  * fix returning error not possible on `brightness_get` callback
 
-[Severity: High]
-Can this sequence cause the max current to evaluate to 0?
+Changes since v14:
+* fix issues reported by Sashiko bot:
+  * add missing inlines
+  * add missing Sync trait bound
+  * fix vertical import layout for public export of private types
+  * fix potential memory leak, if a multicolor led device with over
+    `u32::MAX` subleds is registered
+* remove default_trigger option
+* fix missing CAST doc
 
-If the led-max-microamp property is missing, aat2870_bl->max_current starts=
- at
-0 (due to devm_kzalloc) before entering the clamp logic.
+Changes since v13:
+* rebased onto v7.1-rc1
 
-Also, the clamp and divide logic seems to mix units. If the DT provides a
-microamp value like 27900, it gets clamped up to AAT2870_CURRENT_MIN
-(450,000) and then integer-divided by AAT2870_CURRENT_STEP (900,000). This
-results in 0, which would lock the brightness at 0 when calculating
-aat2870_brightness(). Does this need scaling adjustments?
+Changes since v12:
+* add `led::DeviceBuilder::name()` and `DeviceBuilderState'
+* add `led::Color::as_c_str`
 
-> =20
-> -	if (pdata->max_brightness > 0)
-> -		bd->props.max_brightness =3D pdata->max_brightness;
-> -	else
-> -		bd->props.max_brightness =3D 255;
-> +	bd->props.max_brightness =3D 255;
-> +	device_property_read_u32(&pdev->dev, "max-brightness", &bd->props.max_b=
-rightness);
+Changes since v11:
+* use `led::DeviceBuilder` instead of `led::InitData`
+* use static_assert instead of const { assert!(...) }
+* restructured patches to avoid moving `led::Device` from
+  rust/kernel/led.rs to rust/kernel/led/normal.rs in the 2. patch
 
-[Severity: Low]
-Is it safe to pass a pointer to a signed int here? bd->props.max_brightness
-is an int, but device_property_read_u32() expects a u32 pointer. This might
-cause signedness mismatch issues.
+Changes since v10:
+* allow in-place initialization of `LedOps`
+* run rustfmt for code inside `try_pin_init!`
 
-[Severity: High]
-Could this lead to a division by zero in aat2870_brightness()?
+Changes since v9:
+* add missing periods in documentation
+* duplicate `led::Device` and `led::Adapter` instead of using a complex
+  trait
+* fix imports not using prelude
+* adapt to CStr change
+* documented `led::Color::Multi` and `led::Color::Rgb`
 
-If the device tree configures max-brightness =3D <0>, this property reader =
-will
-directly overwrite the default 255 with 0. Later, aat2870_brightness()
-executes val /=3D bd->props.max_brightness, which would cause a kernel pani=
-c.
+Changes since v8:
+* accept `Option<ARef<Fwnode>>` in `led::InitData::fwnode()`
+* make functions in `MultiColorSubLed` const
+* drop the "rust: Add trait to convert a device reference to a bus
+  device reference" patch, as it has been picked into driver-core
 
-> =20
->  	aat2870_bl->brightness =3D 0;
->  	bd->props.power =3D BACKLIGHT_POWER_ON;
+Changes since v7:
+* adjusted import style
+* added classdev parameter to callback functions in `LedOps`
+* implement `led::Color`
+* extend `led::InitData` with
+  - initial_brightness
+  - default_trigger
+  - default_color
+* split generic and normal led classdev abstractions up (see patch 3/4)
+* add multicolor led class device abstractions (see patch 4/4)
+* added MAINTAINERS entry
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20260930071513.5469=
-7-1-clamor95@gmail.com?part=3D2
+Changes since v6:
+* fixed typos
+* improved documentation
+
+Changes since v5:
+* rename `IntoBusDevice` trait into `AsBusDevice`
+* fix documentation about `LedOps::BLOCKING`
+* removed dependency on i2c bindings
+* added `AsBusDevice` implementation for `platform::Device`
+* removed `device::Device` fallback implementation
+* document that `AsBusDevice` must not be used by drivers and is
+  intended for bus and class device abstractions only.
+
+Changes since v4:
+* add abstraction to convert a device reference to a bus device
+  reference
+* require the bus device as parent device and provide it in class device
+  callbacks
+* remove Pin<Vec<_>> abstraction (as not relevant for the led
+  abstractions)
+* fixed formatting in `led::Device::new`
+* fixed `LedOps::BLOCKING` did the inverse effect
+
+Changes since v3:
+* fixed kunit tests failing because of example in documentation
+
+Changes since v2:
+* return `Devres` on `led::Device` creation
+* replace KBox<T> with T in struct definition
+* increment and decrement reference-count of fwnode
+* make a device parent mandatory for led classdev creation
+* rename `led::Handler` to `led::LedOps`
+* add optional `brightness_get` function to `led::LedOps`
+* use `#[vtable]` instead of `const BLINK: bool`
+* use `Opaque::cast_from` instead of casting a pointer
+* improve documentation
+* improve support for older rust versions
+* use `&Device<Bound>` for parent
+
+Changes since v1:
+* fixed typos noticed by Onur Özkan
+
+Signed-off-by: Markus Probst <markus.probst@posteo.de>
+---
+Markus Probst (4):
+      rust: leds: Add basic led classdev abstractions
+      rust: leds: Add Mode trait
+      rust: leds: Add multicolor classdev abstractions
+      MAINTAINERS: rust: leds: Add rust abstraction entry
+
+ MAINTAINERS                     |   9 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/kernel/led.rs              | 317 ++++++++++++++++++++++++++++
+ rust/kernel/led/multicolor.rs   | 445 ++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/led/normal.rs       | 230 +++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ 6 files changed, 1003 insertions(+)
+---
+base-commit: 5a956dde5526a634dca7ccad27c051ebcc306089
+change-id: 20251114-rust_leds-a959f7c2f7f9
+
