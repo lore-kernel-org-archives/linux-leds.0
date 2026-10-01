@@ -1,67 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9F72E7378
-	for <linux-leds@vger.kernel.org>; Thu,  1 Oct 2026 06:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A603AFCF3;
+	Thu,  1 Oct 2026 08:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790837403; cv=none; b=m3vvqLf8QG5jxlKudLL4MnI+5ozkNXH2qRjTAkZTHyRQobBJToIxpnLuGAivtpY9f7NRhsnv2ljDURlNfrdGfB6KhqprAxb4cmL3LhHF1mYBG4le91tXpYOJuZlrN8aXAl5w0/feBHMbQDRnC5BGPClpULu7YLVVxblV17hTVBY=
+	t=1790841813; cv=none; b=D+21IHs53l+QTL9E2nF3tb6Wfy8odhffR7R9ub624klR7mrXbQKMo/F16Hhi5xSRV/yoceWm/jIUFcSMAwsD3DRHNhhRBsrJxr7fBbixR4H4ImSc06fTKtCdWqOIc8yeBBMCk9Bb7kpJj9xOmn+2XUvg6ZNhtv7T9QxVGRXOfL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790837403; c=relaxed/simple;
-	bh=CGuWqWlzhyuz3hUF86vS1i7e7F+A9EWe7o7EC45wtFU=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=NcENA7xyqc55/nhgQ/BoeRUE+M3u/dLXGiiANSrfMAiK8y8XoTntl3+2J25j5U+rabU9K52f4fviUmWVyJokaAp0J+XGE3QfZMSETe9Morfej2XJsdfrs7Y5vk4iAi78oXPZmbTuEKw8LaRc0nuhKy8Lh83Qu+x5Fq/9RnJ8p9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WifWdAmc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790841813; c=relaxed/simple;
+	bh=0h0aexifzoPXfbUZClj0yqJPccXtsYDA5KZI5w0hEmY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QLGil8MlG7QCDWJvjCXsJTot6QDS5O+1uQy5FEOgporaPA98tHXPb/KbqOKpMjxGH8+i8pJmCun8z0U5GEAaNSWlb3LZN4s29zkpI2WRTYqwVxcYhg1SLDy+wIgSZZb4sEe5vFSIrauCxVoiJT2H5sA96YlmTnteK448ma+MS2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=kJqDj22S; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WifWdAmc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2E31F000FF;
-	Thu,  1 Oct 2026 06:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790837402;
-	bh=CGuWqWlzhyuz3hUF86vS1i7e7F+A9EWe7o7EC45wtFU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=WifWdAmcYD8eDZozjWvAzKdIE9BfvAPRLHgYb+gkrlbNoVeJVAqDWcC5PZsJ4duUd
-	 eFmqV20wVCFoUc0xpIaF6omWBYptb4aDOEpOMhDYMUMPYUNzN304t1gXhq33E0CuiL
-	 Qxe9JuaqABXEnU6gdGI7CaHkDnnD/IAK1i1SmVApDFWZ3BoU1mGUd9xigUZLAVkz5H
-	 buA3NsS3Yzsi38xcXRInm1QjpI+eaPLqv6vYZL64qHF6529dGcDUmv3Rksrg4eeZeV
-	 9DTBpFMkVxau8tbkITlEdNke8fYREhS2cUc/RNYA5D9Wp/z6/2DHlzy7Tz97t2z8nc
-	 IWnxM6jWKYckg==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] Documentation: ABI: leds: document timer, heartbeat
- and activity attributes
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Wayne Ho" <wayneho219@gmail.com>
-Cc: lee@kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20261001-docs-leds-abi-trigger-attrs-v1-2-54f0529bf0f6@gmail.com>
-References: <20261001-docs-leds-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com>
- <20261001-docs-leds-abi-trigger-attrs-v1-2-54f0529bf0f6@gmail.com>
-Content-Type: text/plain; charset=utf-8
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="kJqDj22S"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=394NVBA+I3aKDJvMtsiHLQQOBJKP9/gvjWUusXvjJFA=; b=kJqDj22StpD/Ysk8rs5g+GW/0A
+	5BS1xzWABhab3V5O8jqlUqMqDrdS9KQCtqgwa4vwRrAElBhT3qFw1M9Lh6oi6QEIWe4kZRSad5GJe
+	3yYVCKC47KkFQwpRKsH6zfZsVI+Hp24xFdIUAq8kIpHxoHpa5lkv0FGYKMl+VbSgUk3vuafGiPTKA
+	wvSyq6+vkuanaVOYU82sVhIY/6kxepciDjtwU3EtAYZMuHem1ZCFYlTe5e8GWbNTO1mFc2RTYqInQ
+	R//idZ2lvq8AJMYBtixsgeik5JLO8xPx5GdcsWnY/u8IjHsNze30MtAYmp/RiKZgChGHcUxIPnbva
+	emen9CNw==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1xCBlI-0002Wj-18;
+	Thu, 01 Oct 2026 10:03:28 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1xCBlH-000ISz-34;
+	Thu, 01 Oct 2026 10:03:28 +0200
+Message-ID: <addd45d2eed383ba0885fe841ba5fafc2be7accb.camel@ew.tq-group.com>
+Subject: Re: [PATCH v4 08/10] leds: pca995x: Add sysfs files for error
+ reporting
+From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+To: sashiko-reviews@lists.linux.dev, lee@kernel.org
+Cc: robh@kernel.org, devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+  conor+dt@kernel.org, linux@ew.tq-group.com
+Date: Thu, 01 Oct 2026 10:03:27 +0200
+In-Reply-To: <20260930154824.5083C1F000FF@smtp.kernel.org>
+References: <cover.1790684839.git.nora.schiffer@ew.tq-group.com>
+	 <3232b9b6f3574b19082281c0d03873e80bc8e2e5.1790684839.git.nora.schiffer@ew.tq-group.com>
+	 <20260930154824.5083C1F000FF@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 01 Oct 2026 06:50:00 +0000
-Message-Id: <20261001065001.AD2E31F000FF@smtp.kernel.org>
+User-Agent: Evolution 3.52.3-0ubuntu1.1 
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28140/Thu Oct  1 08:24:38 2026)
 
-> From: Wayne Ho <wayneho219@gmail.com>
+On Wed, 2026-09-30 at 15:48 +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 1 potential issu=
+e(s) to consider:
+> - [High] leds: pca995x: unintentional overwrite of MODE2 register during =
+probe
+> --
 >=20
-> The delay_on and delay_off attributes created by the timer trigger and
-> the invert attribute created by the heartbeat and activity triggers
-> are not documented. They share their sysfs paths with the oneshot
-> trigger attributes, so adding a separate entry per trigger would make
-> get_abi.py warn about the same path being defined more than once.
+> commit 1bf2389241c12cac5965e7df3db32ae52db81482
+> Author: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 >=20
-> Move the delay_on, delay_off and invert entries from
-> sysfs-class-led-trigger-oneshot to sysfs-class-led and describe the
-> behaviour of each trigger that creates them.
+> leds: pca995x: Add sysfs files for error reporting
 >=20
-> Signed-off-by: Wayne Ho <wayneho219@gmail.com>
+> The PCA995x has builtin failure detection. Provide sysfs files for
+> individual LED status (reporting "okay", "short-circuit" or
+> "open-circuit") as well as a global "has_errors" flag. has_errors is
+> sticky and must be cleared by writing "clear" to the sysfs file.
+>=20
+> > diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
+> > index df3f7ab2e1f87..1fc8de5a77bbc 100644
+> > --- a/drivers/leds/leds-pca995x.c
+> > +++ b/drivers/leds/leds-pca995x.c
+> [ ... ]
+> > @@ -185,11 +279,20 @@ static int pca995x_probe(struct i2c_client *clien=
+t)
+> >  	if (ret)
+> >  		goto err_put_nodes;
+> > =20
+> > +	/* Clear errors on probe */
+> > +	ret =3D regmap_write(chip->regmap, PCA995X_MODE2, PCA995X_MODE2_CFG);
+>=20
+> [Severity: High]
+> Does this unconditional write clobber the entire MODE2 register?
+>=20
+> Using regmap_write() instead of regmap_update_bits() zeroes out all other
+> bits in the MODE2 register.
+>=20
+> This clobbers the power-on reset defaults of the hardware, specifically t=
+he
+> OUTDRV bit (typically bit 2), which defaults to 1 (totem-pole output).
+>=20
+> Clearing it changes the output driver to open-drain, which can cause the
+> LEDs to fail to light up or behave erratically.
+>=20
+> Could regmap_update_bits() be used here instead to only set the CLRERR bi=
+t,
+> similar to how it is handled in has_errors_store()?
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+Okay, while the description of the specific flag is nonsense (none of the
+PCA995x have an "OUTDRV" bit), the unconditional initialization of MODE2 wi=
+ll
+have to differ between the PCA9952 and PCA9955B/PCA9956B, and only the latt=
+er
+implement the error reporting as handled by my patch - I'll fix this in the=
+ next
+revision.
+
+One question: The AI reviews made conflicting suggestions in different revi=
+sions
+of my series. First it suggested to fully initialize MODE2 instead of relyi=
+ng on
+reset defaults. Now it suggested the opposite. Which should I go with?
+
+@Lee Jones: Patches 8-10 will definitely need another revision, but if patc=
+hes
+1-7 look good to you, they could be applied by themselves, so the next seri=
+es
+would be smaller.
+
+Best,
+Nora
+
+
+
+
+>=20
+> > +	if (ret)
+> > +		goto err_put_nodes;
+> > +
+>=20
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261001-docs-leds-=
-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com?part=3D2
-
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
