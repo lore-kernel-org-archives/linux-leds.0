@@ -1,93 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB0847CA9E;
-	Thu,  1 Oct 2026 06:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3EA488757
+	for <linux-leds@vger.kernel.org>; Thu,  1 Oct 2026 06:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790837132; cv=none; b=YNmk5B6sLbbBnZnjVv6NhCU2vVxP6CYxu6xMl7FQeAE+TQ+esRGQQ1JH6Db1+xrYUxF1XCoRXz8vA2WG18bxpkOm4tGMYUaqR2GF089gUNaPfiUYJUq027ucsm2QKavbry9u90S1kL79ldevXrwEhic4VxVn/xtlOEQCgivWOE8=
+	t=1790837312; cv=none; b=BlYITDJ7SMFkTl3bsXgGu3l5pN5I0QuaBPsDCUkfeuRocAP9wrOlvjMZSO1jJAbmXt2r4+IgpN30lmr7KeDYuxoVHO9C5wfHozyoUkavI698UvdPJzx3kQWBw0gvjF81QNwvyEw9/oUfuc5sOsIoqww7Mtry4p2JYV3aYlOPOdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790837132; c=relaxed/simple;
-	bh=v8uG9Smink0uRFJk2fnGacVV8dxbQbtmUsiGJbhLD5o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SooATQVjAz5dmTk/BZxpjV81mmUvLCm/t8xa/RgXNBz/nQbG0IAAJyxvAsPZD8qQFglctfK+BgAu3h7TVSVd1AW1svbsEmx0FRMy8d61YHeNmDR5i8WL9Q19zC04V1vuV5UCAWNf/1kVe677bxlrz08cyZdRxqKUYDFdewpOyjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cXCq557w; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1790837312; c=relaxed/simple;
+	bh=ozg1TUfGK2RFSo2ZXeveTRwK0n5JiEsmXx1D1d/0oBU=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=MFOW8NT6gvRkXlCwHlfDqBRF1yLr8wZU6PuAvLUq/gyc9/HfBwXeIdihczrTFMYel5SDveGTRBbVcwjR37sIw8/n52y4VvbZSWOkUN3SAqfiX5/TiSNBT1+OTZ4koIwv611yi3wks+yYKWgENA7cIapT3gIVNqZcU6DWESY1RHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCXqdvfA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXCq557w"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 241A4C4AF12;
-	Thu,  1 Oct 2026 06:45:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1790837132;
-	bh=v8uG9Smink0uRFJk2fnGacVV8dxbQbtmUsiGJbhLD5o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cXCq557w92QUNnsECXKIuQRzmcEN1Uyph4hA9FvdsW36F65iatvPnocfB6CuHJewh
-	 IrpfjgFJPRgQ4Y51faNpMTrEzjYVQ9vkqdy8Y7nYMfeJiHIgCEKlQNunmGNxsNoSai
-	 PHTSC4VcuEkRWUcg6h8ShzCI2IXEKIx1sdx5BFi4ZeVuVIBCXmHhKglLb+8jHH0PVt
-	 dDxLbyIOGVBj1wyU9wWLz1ekuYCajMrCEPXm4ViLi+nPTid0usnn+MeBnRzdeaAIxF
-	 8JG3oE5JebNbIk2zoL3UpD9McKTJnJTLNxx9nLE18Z5HeXPBE9gFcw5mNqpJtK5Fs+
-	 DpkOx/0+HU+fQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BDBCA5FB3;
-	Thu,  1 Oct 2026 06:45:31 +0000 (UTC)
-From: Wayne Ho via B4 Relay <devnull+wayneho219.gmail.com@kernel.org>
-Date: Thu, 01 Oct 2026 14:45:11 +0800
-Subject: [PATCH 1/2] Documentation: ABI: leds: inverted is specific to the
- backlight trigger
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCXqdvfA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1113A1F0089A;
+	Thu,  1 Oct 2026 06:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790837305;
+	bh=ozg1TUfGK2RFSo2ZXeveTRwK0n5JiEsmXx1D1d/0oBU=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=PCXqdvfAVEe3oOmhnMcWN15lOwwJDa5Na0Vr4VDQZA9IZv8qMxC/RGJI76SsTFjTw
+	 8N6z6MiF8I3oewakGqOqlJzjwcez+1vRm59O240/Pf1VasZb2iKa8LIF0YQ0zNs2nl
+	 XadSTp5N3jKFFlTL0TEfJ+mjZ/PcUMTC9t6ZXhe4XZzEn+mGBm7IYmqKGzAgGHavDJ
+	 evxNsbfFj9YhVOXM3o/sgML05sQS0Pu3EU4pyGvsaDn6dIefYlSRL9boyYbnSXfVwP
+	 fmqAnumDugdxTf4TMkZjUs2wFHyZZtm5mjrpbHoSQHpkW5sw8J1lOp9peb38Q2sgju
+	 9iegPySGlaLYg==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 1/2] Documentation: ABI: leds: inverted is specific to
+ the backlight trigger
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Wayne Ho" <wayneho219@gmail.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
+References: <20261001-docs-leds-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com>
+ <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 01 Oct 2026 06:48:24 +0000
+Message-Id: <20261001064825.1113A1F0089A@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
-References: <20261001-docs-leds-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com>
-In-Reply-To: <20261001-docs-leds-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com>
-To: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790837130; l=1162;
- i=wayneho219@gmail.com; s=20261001; h=from:subject:message-id;
- bh=1kSwJWvbUgMk5BRB5AL/9PD/agaA7eFnk07FgPmlgzs=;
- b=4Gnq8XKnv0dE9+gXX1PvOlz68AZIlNAO/k8ZgC8MOag6pRcjb0AlMRUxifGXbfOK7EZH9mF7i
- qzIk5sF6U2fDml+Xjmqr9MRHovpHFTYFVJTFYgYacenFskq7/Y8pv4H
-X-Developer-Key: i=wayneho219@gmail.com; a=ed25519;
- pk=j25LRSikYRlv0PpovZSgSrCQwsy7WDzIYum/mydUa3A=
-X-Endpoint-Received: by B4 Relay for wayneho219@gmail.com/20261001 with
- auth_id=1093
-X-Original-From: Wayne Ho <wayneho219@gmail.com>
-Reply-To: wayneho219@gmail.com
 
-From: Wayne Ho <wayneho219@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] leds: commit message description is not capitalized
+--
 
-The description of the inverted attribute says it is specific to the
-gpio and backlight triggers, but the gpio trigger no longer creates it;
-it only provides desired_brightness. Only the backlight trigger creates
-the inverted attribute today.
+commit 3ae418ca93d0206cc940b490c5c31c35740d2dcd
+Author: Wayne Ho <wayneho219@gmail.com>
 
-Drop the reference to the gpio trigger.
+Documentation: ABI: leds: inverted is specific to the backlight trigger
 
-Signed-off-by: Wayne Ho <wayneho219@gmail.com>
----
- Documentation/ABI/testing/sysfs-class-led | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+This commit updates the documentation for the inverted attribute in the
+LED subsystem to clarify that it is now only created by the backlight
+trigger. It drops the outdated reference to the gpio trigger.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
-index d4c918cc..c72cb1e0 100644
---- a/Documentation/ABI/testing/sysfs-class-led
-+++ b/Documentation/ABI/testing/sysfs-class-led
-@@ -84,6 +84,5 @@ KernelVersion:	2.6.38
- Contact:	Richard Purdie <rpurdie@rpsys.net>
- Description:
- 		Invert the LED on/off state. This parameter is specific to
--		gpio and backlight triggers. In case of the backlight trigger,
--		it is useful when driving a LED which is intended to indicate
--		a device in a standby like state.
-+		the backlight trigger. It is useful when driving a LED which
-+		is intended to indicate a device in a standby like state.
+> Documentation: ABI: leds: inverted is specific to the backlight trigger
 
--- 
-Git-155)
+[Severity: Low]
+This isn't a bug, but does the commit subject line violate the LED
+subsystem capitalization guidelines? The description portion after the
+subsystem prefix is expected to be capitalized, meaning "inverted" should
+be "Inverted".
 
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261001-docs-leds-=
+abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com?part=3D1
