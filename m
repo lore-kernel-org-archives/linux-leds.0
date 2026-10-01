@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE409489FCB
-	for <linux-leds@vger.kernel.org>; Thu,  1 Oct 2026 13:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE9E4AB1D0
+	for <linux-leds@vger.kernel.org>; Thu,  1 Oct 2026 13:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790860848; cv=none; b=JQDRH3b4MxmrZfQ+CgoyLTE147RwXey6fShr709sbBPFGrnUgOtXqBCB2OcLh7J/gfUJBiQD90/mhlQWtvo1y5kSJG5WPlarNF/XLELdbcr5/bk7z+IZg52nD78jVA7WLtbxCOc8gV4WHPFV5JMSouyHyR3qn3uSC8OLZoM/MrQ=
+	t=1790860961; cv=none; b=WkT8seKCBZz3TNHNo9xZWTUoL+TVvm5aIWf4hxHtIUew9IEy6RqBOW7JFR/e2HuV27S/sfqb3AL8h4kGo5nCQot32JcR35XBCME6NjF/L0Xilv59P9GGStumGPDo/4StQFJD2QugtxUz/ZtygWIlPy7Diy+fMZZSSdpJeppyS/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790860848; c=relaxed/simple;
-	bh=UBCvD/8H7U1G6l+zkRF1O0TvQPJkvfc8Ju2LSglSakI=;
+	s=arc-20240116; t=1790860961; c=relaxed/simple;
+	bh=1dqQrPMyuIvozzA+IlruAjNwgtwCsa55iRE/yg/ruts=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=PLuQPAKZUiV9lHQaKQfcqvMKRwQei77a0uu3CeCiu2fUaqK1RV0m3UZHKKFwTfi2oO9mUzMN7ocRdHA4pm5bLfA6jd0nEhX8Rqv8QtPkCLxIN9gYSDhS+JA9ivcQ//5oitYDBdw3r5/QVPGeBsuc/64pnEJhq4bR3VuS/znUG5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCEskdR/; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=nuh/Cppw1wKP1fL8dIwGsnlg2Wk3LPsCjP1Y5OySSc0vQXXQ67EeEkQ/cStDWtRMTnl+rDkDuKFCmZgkZnT9u+Sz3tTJy9eqml8zKR3V2qjaqmMJiVL4/3mo6TKMLcxSkScrBbkOv+C+k+pyTP+L2rfcJ6fdKGZd4+2k+Ay5K/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1JjlXVw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCEskdR/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FE221F00898;
-	Thu,  1 Oct 2026 13:20:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1JjlXVw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C6411F000FF;
+	Thu,  1 Oct 2026 13:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790860846;
-	bh=nBolW6Swa+SuS5C9fUBinHTcdW1OO73WR2RPAF2YHLE=;
+	s=k20260515; t=1790860959;
+	bh=1dqQrPMyuIvozzA+IlruAjNwgtwCsa55iRE/yg/ruts=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=oCEskdR/zSOdP+NM9wviR/7cmNUvItcQsKNwdtXoWaM9fyBTO1t+40LmWzKWBAOTo
-	 w4yqG+vQYzIP4MLDIyS9WJ5Lsx8ZI66fC09uL1BlWO0l2y2hUQEr3bu00pm+0gyHW3
-	 /yZShKpUog7Gil3WCm3i8uqjuYZRHCf398kIDV7mztEGV3pof7Qne6yifGugMV0rSG
-	 ZoVNVog9csEYNjYzxXiceZnB9qKzb9TKSna2gGB/n0AFuyciXbAN2oFjy/FxbvWqnb
-	 Khm+XsbEd5Z1aiCLGxfpiNIDIWfp4DuwTjrf2I4DHmKdcTCvs7B9AwWLxdTsBasGom
-	 v/X0zplV8fTOA==
+	b=H1JjlXVwzco9gPcVGqLCS1p4V2N28+BwH3rNn7FyQrtiIXgnEdd1UnEGiChZHjOru
+	 AKxvcmxegmY0j84daeedG0gG4kvqcZMb7kJ+wD5X5DLH8OuIYq/xGp66mCzDbRduAi
+	 rXHVpeXPX3/6f5lN5olJ1qBcP6KG6VlpFypQklJSOZJvjI/Uiy5D3j1WVAPhjMDZD+
+	 too1QUhkgx1ma6oXP8yn9bXnjG8gK3nxotzH12OpeAgBZjx4cLtPiLxOH+SdOO/mFw
+	 CLKe9xuQ077P9N0BenME8GLYs/aRdtK497geQEKFsXuSGSYIal0zQ1Gib2gdwidBUN
+	 ubJqpuqig6IuQ==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 4/4] leds: trigger: netdev: Serialize mode/interval
- stores with trigger lock
+Subject: Re: [PATCH v4 1/4] leds: trigger: netdev: Put netdev on activate
+ error path
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261001131206.2513248-5-alexander.sverdlin@siemens.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org
+In-Reply-To: <20261001131206.2513248-2-alexander.sverdlin@siemens.com>
 References: <20261001131206.2513248-1-alexander.sverdlin@siemens.com>
- <20261001131206.2513248-5-alexander.sverdlin@siemens.com>
+ <20261001131206.2513248-2-alexander.sverdlin@siemens.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 01 Oct 2026 13:20:45 +0000
-Message-Id: <20261001132046.4FE221F00898@smtp.kernel.org>
+Date: Thu, 01 Oct 2026 13:22:39 +0000
+Message-Id: <20261001132239.9C6411F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,41 +47,20 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 > From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 >=20
-> netdev_led_attr_store() and interval_store() update ->mode and run
-> set_baseline_state() without trigger_data->lock.  kernfs only serializes
-> writes to the same file, so two attribute writes race on the non-atomic
-> read-modify-write of ->mode:
->=20
->   CPU0 (echo 1 > link_10)       CPU1 (echo 1 > link_100)
->   -----------------------       ------------------------
->   mode =3D trigger_data->mode;
->                                 mode =3D trigger_data->mode;
->   set_bit(LINK_10, &mode);
->                                 set_bit(LINK_100, &mode);
->   trigger_data->mode =3D mode;
->                                 trigger_data->mode =3D mode;  // LINK_10 =
-lost
->=20
-> They also race the notifier's link-state and ->hw_control updates.
->=20
-> Take trigger_data->lock in both stores. netdev_trig_work() also holds it,
-> so use the async cancel_delayed_work().
->=20
-> The async cancel cannot stop a worker already blocked on the lock: it may
-> resume after a store enabled hw_control and keep software-blinking and
-> rescheduling itself. Gate the worker and its arming in set_baseline_state=
-()
-> on a shared netdev_trig_sw_blink() helper, so it stops once offload is
-> active or RX/TX monitoring is off.
+> When hw control is active, set_device_name() takes a reference on the
+> netdev via dev_get_by_name(). The register_netdevice_notifier() failure
+> path frees trigger_data without dropping it, leaking the netdev.
 >=20
 > Cc: stable@vger.kernel.org
-> Fixes: d5e01266e7f5 ("leds: trigger: netdev: add additional specific link=
- speed mode")
+> Closes: https://lore.kernel.org/all/20260914140045.B8F4C1F000FF@smtp.kern=
+el.org/
+> Fixes: 0316cc5629d1 ("leds: trigger: netdev: init mode if hw control alre=
+ady active")
 > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
 Sashiko has reviewed this patch and found no issues. It looks great!
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261001131206.2513=
-248-1-alexander.sverdlin@siemens.com?part=3D4
+248-1-alexander.sverdlin@siemens.com?part=3D1
 
