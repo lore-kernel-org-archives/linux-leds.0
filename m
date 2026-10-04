@@ -1,109 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705A63C81BE;
-	Sun,  4 Oct 2026 16:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8453C7685;
+	Sun,  4 Oct 2026 16:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791132657; cv=none; b=cAmVeVuInTSl8vZ8We8rCtSyGPoPLyur1HykOnOJrZP7pIAPFT4fO/oiaiCYLmSK8Pw1aUQPRw3Nlg8STVV9bo0zoYVw+K+0IGG9+zpBMqK63MRWqcVQ1MRlVAw1DNHwWfJx8bK8uh3ZmYGW1Gsu2EQG5QOk588xBsyxVcxaCH0=
+	t=1791132658; cv=none; b=CF4rsDpFjXVu9NThCsN2dt7McQeKQsKxoASRTfN2bule+rQgQ12RU6dSP+jK7Z6G6BFSuzFtmx9yiDj7tC0XaTJ/QyP+uP6C/nej0yswCF+n/zckqJushxHo2GHQFtDdbhfRsIWfxRJ5jNKAZAkRaypUuFdV8QudznoZ791H1U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791132657; c=relaxed/simple;
-	bh=91Y2GiYRfZm3zYM7GHdrGRZS+Ui5eJ/8VPfFHxi+JjI=;
+	s=arc-20240116; t=1791132658; c=relaxed/simple;
+	bh=JXSPLFHFWp41xF4FlvC4+Wtb0mQxXkCErio9PDsMkfk=;
 	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=WvO6/7elQzoghVUKC87PGkHuVXfyI5klsto3IWxIbjynWb+AoeXtof6zsIpvNYU0IkPjHgcdIAfk3ivwJ+R+siqkYL7jhO1xv9aXjNU6Ypf3wBK6iKSaisCNFGNxhaUViNro70n5y2TGY+ToIrzJc/A4PpVpokvqaJ2aZipcB4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dCMKylm5; arc=none smtp.client-ip=100.103.45.18
+	 Message-Id; b=EV0b0bZvocwYFclNH2OU7js6t354zF9p3kKge39qoxS59Fd2hRe9Lhrx3xjtmAU0BoGthAJWnve4NcusXXHs2VSoj/kYsFTFPMQOpEpQT2DzJ9IdRhH3CBymQDdxUP26+60hsloCcJU5hU341O7nV4ZgiTQhV0cK8vRArvaiNkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IOfzX0q0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dCMKylm5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF0D1F000FF;
-	Sun,  4 Oct 2026 16:50:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IOfzX0q0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DE01F00898;
+	Sun,  4 Oct 2026 16:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791132656;
-	bh=91Y2GiYRfZm3zYM7GHdrGRZS+Ui5eJ/8VPfFHxi+JjI=;
+	s=k20260515; t=1791132657;
+	bh=5AdhvBZtdreGBBfmpt7FZcqlh2Deh824eypm0xyIOvo=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=dCMKylm5KREkHfQNqBKtcdDStkBrXLbNgXlsffc7LyvjOCpE0yCp79VsqDkp0x/4z
-	 sXCDHt+pXG4YMF/fVVFVLcIajLmhyWEXHJlxkid07IPL1VTQoG9jgtt1/nb0Sojcx6
-	 9bBQdApZ8ldWaG1RF0EDedoKG/9G0AHIaC7vWt9eNE0loo9Q8oq7TgvVapDZrGL68v
-	 +UOyt4KwjZl4JR1ogxGP5cvyxh7iypTNy44bEhEiXlwp2YJtADrmtOzqNNn5ox9GOW
-	 2y54jmNh9iVMmKX6W49E4/+W0/FteJyly8WKCiopeevbkgoVLnX0YunXST/wxNdJn4
-	 aJYErQria7Okg==
+	b=IOfzX0q0fXUn9Sc5DYV52XXzTIAESBsA09hUyPpXTE2HuFjdVdpB9hr+5jlynu1tp
+	 AtpDcUAAR5m/HoiDqC2frk7sF1VjZzjkkNdAp62BLaSmZks0xlTxe4ypn+mVwbd6Uu
+	 pqpx/XaYgNG25y/W6OB2Ef0CpEfHiyyASvTS2sueJpniV6zEMK7+Sl/P889hIT1Nd3
+	 RFz09EusddKAdf808WYmCeJ/EZnFAx5eqroa78V7j8ze/TLmsfleTJyBfzh3HQ63aB
+	 gVd2JWVQTfRPi+x3NosarB3x9ltj/TqI6UgP2QmLilBH7f/2/XzKFHOygeFjjG32ie
+	 5YM7Mho9bJVuA==
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 2/3] mfd: aat2870: Convert to use OF bindings
+Subject: Re: [PATCH v2 1/3] dt-bindings: mfd: Document Skyworks AAT2870
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: robh@kernel.org, lee@kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, conor+dt@kernel.org, mfd@lists.linux.dev, linux-leds@vger.kernel.org
-In-Reply-To: <20261004164121.193514-3-clamor95@gmail.com>
+Cc: lee@kernel.org, linux-leds@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, mfd@lists.linux.dev, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <20261004164121.193514-2-clamor95@gmail.com>
 References: <20261004164121.193514-1-clamor95@gmail.com>
- <20261004164121.193514-3-clamor95@gmail.com>
+ <20261004164121.193514-2-clamor95@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 04 Oct 2026 16:50:55 +0000
-Message-Id: <20261004165055.8DF0D1F000FF@smtp.kernel.org>
+Date: Sun, 04 Oct 2026 16:50:56 +0000
+Message-Id: <20261004165056.86DE01F00898@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] regulator: UAF and memory leak due to shared static array in of_re=
-gulator_match
-- [Medium] video: backlight: functional regression when led-max-microamp is=
- missing
-- [Low] video: backlight: incompatible pointer type in device_property_read=
-_u32
+- [Low] dt-bindings: missing `type: object` constraints for child nodes
 --
 
-commit 084e352aa2d7fee86a0e56df75d5d10cdd400379
+commit 44544968b5bc5130f1768962ce3f85c8bc12cfad
 Author: Svyatoslav Ryhel <clamor95@gmail.com>
-Subject: mfd: aat2870: Convert to use OF bindings
 
-This patch converts the AAT2870 driver to use OF bindings, replacing the
-MFD registration API with of_platform_populate() and adding dedicated
-compatible strings for its sub-devices. It also updates the regulator and
-backlight child drivers to parse properties directly from the device tree
-and removes redundant platform data.
+dt-bindings: mfd: Document Skyworks AAT2870
 
-In drivers/regulator/aat2870-regulator.c around line 133, there is a static
-array defined for aat2870_regulator_matches. Later in aat2870_regulator_pro=
-be()
-around line 171, this shared static array is passed directly to
-of_regulator_match().
+Document Skyworks AAT2870 LED Backlight Driver and Multiple LDO Lighting
+Management Unit.
 
-[Severity: High]
-Could passing this shared static array to of_regulator_match() cause a
-use-after-free or memory leak if multiple AAT2870 devices are probed?
-of_regulator_match() actively mutates the passed array to store device nodes
-and binds its lifetime to the device via devres. If a second device probes,
-it would overwrite the array, leaking the first device's nodes. Upon unbind,
-devres would drop references to whatever nodes are currently in the array,
-potentially causing a double-free or use-after-free for the remaining
-references.
-
-In drivers/video/backlight/aat2870_bl.c around line 141 in aat2870_bl_probe=
-(),
-the code calls device_property_read_u32() to read led-max-microamp into
-aat2870_bl->max_current.
+> diff --git a/Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml=
+ b/Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
+> new file mode 100644
+> index 0000000000000..014678616076f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
+[ ... ]
+> +  vin-supply:
+> +    description: Regulator providing power to the "IN" pin.
+> +
+> +  backlight:
+> +    $ref: /schemas/leds/backlight/common.yaml#
+> +    unevaluatedProperties: false
 
 [Severity: Low]
-Does this trigger an incompatible pointer types compiler warning?
-aat2870_bl->max_current is declared as an int, but device_property_read_u32=
-()
-expects a u32 pointer.
+Does this node definition need an explicit type: object?
 
-Also in drivers/video/backlight/aat2870_bl.c around line 141, the max_curre=
-nt
-value is read via device_property_read_u32() without prior initialization.
+Since this backlight property references /schemas/leds/backlight/common.yam=
+l#
+which does not define type: object at its root, the dt_binding_check schema
+validation tool will fail with a type is missing error when checking this
+new schema. In dt-schema, properties representing child nodes must explicit=
+ly
+declare type: object if it is not inherited from a $ref.
 
-[Severity: Medium]
-Will the backlight permanently disable itself if the led-max-microamp prope=
-rty
-is omitted from the device tree? If the property is missing, max_current
-remains 0. Passing 0 into clamp(0, 450, 27900) returns 450. When 450 is
-divided by AAT2870_CURRENT_STEP (which is 900), the result evaluates to 0.
-Since the brightness calculation multiplies by max_current, this appears to
-leave the backlight permanently disabled under these conditions.
+[ ... ]
+> +    patternProperties:
+> +      "^(ldo-(a|b|c|d))$":
+> +        $ref: /schemas/regulator/regulator.yaml#
+> +        unevaluatedProperties: false
+
+[Severity: Low]
+Similarly, do these regulator subnodes matching ldo-[a-d] require a
+type: object constraint?
+
+Like the backlight node above, the referenced external schema
+(/schemas/regulator/regulator.yaml#) does not inherently provide type: obje=
+ct,
+which will also result in validation failures.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261004164121.1935=
-14-1-clamor95@gmail.com?part=3D2
+14-1-clamor95@gmail.com?part=3D1
