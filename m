@@ -1,201 +1,129 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DF6472076
-	for <linux-leds@vger.kernel.org>; Sun,  4 Oct 2026 18:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.180
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791137840; cv=pass; b=aVNQ/NErBtYD+udHruJBunBAUzi5I3svM5IzwbLcmHep28zoSOmRSVvuzLEfCsw4+b4zXPB/27eDRr3qR3ObaaKzcSfz/qVfiyoEF8wy4sntXKak9ewC9eZIhsuVR1CiWoBoukzkpBvwraYgkAudHHV7IDB/sTB0o2Ocqxnm/D0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791137840; c=relaxed/simple;
-	bh=cJR4lAp9V5AURTVqP2Gl5OsN2xzomRNzgeycLcomVm8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BGugjN5BbJRp0izhDdZzlg4tR5o6Agoev7PWHUufdm6WIZSnB/K0X2h6ZiVLJfCI4+hkpmqz7FHqUPjiDfEvUvVrxeLqEKadEbukejC5D9ZhZzmil0rkLZA5tHhMnp1tdSMovR68Tx6jkmWigU1oZre0v/NF0t6+Xmzo7m1LqXc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAYqgGy9; arc=pass smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04271477285
+	for <linux-leds@vger.kernel.org>; Mon,  5 Oct 2026 10:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791196993; cv=none; b=MRMngkIlGGUgGRMliH8gLjNhmE3285Vkoc1AlLPo/zm/SJu2OXnePar0arTAulRQNZ0iyX8vNRVJcJcOsylDQBbm1mocyJXDJgmmPQXgJD7cyt6xA+2Qtt6zkabxUxh5pruwF/I5jZLoCPaicWi79GsdzIQq2hy9iYrtvIpHUIo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791196993; c=relaxed/simple;
+	bh=Bn6oPg2w8ZKrRi+o7oENZgvxPZbBCet0rPXr5hVG/L0=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=i9ZcEK8h84cUPkmko5GU+0+ND1lvH4W5KTTQ+V+c132vqrl9WryTfDdQ6/QMx7aNNwtdPQ8ztO38+8hHeNCNokXalRQ8LtTuq/qhmfCmGrB+uylKw4qO5tBY+PdUVQa+vAnLaVW1lSb9wKAYQ3dRPLadmZ1Z77UgvQtXwyWn+V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=jA1vgCX0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U7sAsgrA; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAYqgGy9"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-8aca68653e3so1509397b3.3
-        for <linux-leds@vger.kernel.org>; Sun, 04 Oct 2026 11:17:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791137838; cv=none;
-        d=google.com; s=arc-20260327;
-        b=hmR7TYsuLa+f5IQzjb9Iw7QYWrOcvi4CVPCvlsp1kBqTYPAlrYoNRpnFTvT0YaI3ov
-         VHZCIQYSoajaE4UvzuTSEibkQBTxKtX6S0tHloowVKuPH7WrmdeHZ55v138a9fY7k9Xx
-         zNkgqABxA5/emtsVtNKFFQDrvqViJ5ePT4nTuriO5U5vFIJw6nToraZrUo5kpcLveFIu
-         OCKjWSIcpJt3orwYgtwauvP91FrADWANq/z69KGsoz+AkKzgy8eC3WQezvBUUYQnEIfC
-         mm5Imrs3hpFrscSyjyJQ22jMeOy6LKQyXK0mRZxQ+/id4qP6pc+jn+4lCK10KIzP3d0y
-         fUaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=xFmpccpIR+RbcQ/MVQmCJHkfs/R9fTCLwYQLZmcFH54=;
-        fh=LuZixMmSihmQ9zqgH2WxF7fA5lorPaZLDZC6BA8gbjQ=;
-        b=jr9C7DQWY0nnwOb/mN3s4cqQ8M0SSMYsnVun1PO34mmIjBkFk6OHNfVnFPHEuMvlEt
-         dICVy8I0Sad2W/fvcyrQA7iMv8RmdFZX+ApD9ohtiV9wDVuauTZVfAaNmYfGNkyJDm/5
-         /2oOdlKvD9VaDg38PcCc+b4mAupUExrGvOWgn1W2RmngKCG3vXhwyeJsQNyoFtJtlDKe
-         VEYalThAwGnQClBsvB2elYByb7lhivr4SQ7AqECasCO61Y6ZNGxU6oKzAoyi5gSuFK9o
-         oa3Hi6yqxtMJMQL9wzpsThPx+0UyuM37zmIL3c1igYhHZmGAD1Q1jBFm6tdLvPo4vRPb
-         PoTw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791137838; x=1791742638; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=xFmpccpIR+RbcQ/MVQmCJHkfs/R9fTCLwYQLZmcFH54=;
-        b=MAYqgGy9y5v1+6oe21qsvjYKYOjtqMCZCAXKdKRrBxJP6obvD5VsSRYhk48kJksZ3T
-         s19bsLQ0z7YSFxqcIzVofZmjwOxf1U3NGExx+Um+hgYRubpXoIwkvqC4BS2Fsz0TFEN5
-         v/Nkq2Q25TrkNRA1osSp8usmyxIPMEg/+jGOq0D/UwizXxP3qmA/CXaRY1FvyfMcumse
-         UC1qZr2ez4JF5lQoeviwIjjfrK/9XwylCv2Yd7Vp3wbDrD7AY8Gf4sDqjQX+YkDhVVSR
-         E1KtL5iTWLs59qX5Jb7nSKKo+ExYlZhfTCBP8xrlNSseBp3phODL3ez3zXnCCS5rqY33
-         6M1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791137838; x=1791742638;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=xFmpccpIR+RbcQ/MVQmCJHkfs/R9fTCLwYQLZmcFH54=;
-        b=kBOo/VRkA/II2Hg2rC5I9JkiLh2iYlU6W3LN+kjPqF9x2r/8BSpt08WSN4nSf1qQLo
-         +wPlOZv3ppzStFNvTM8KDIcxavvQTDsIezsxTGuClbkmZkve8GBomLdgfFPysSa/wPDL
-         bBfdCONVqfzSawsPk0ypEai0xAa8OSlSg5sVfNAM5QM4qY51Fu3ou0J2YvDfkgxI0YgT
-         3lEMuweObfBR13kMyVqKXb4fYrGxLAv3DKqjBolS62es5u6792W195Oz1vyq5JSnWlyL
-         2eVoiivbVeome8MBZ1lnS2PTrHVXJCt7odx3hijvbtJ22Cbe8i0u4iAI6XfTO3AgEIaP
-         3Z9g==
-X-Forwarded-Encrypted: i=1; AKwUvBzShrO/pWiKpZlrfdAqfg7O9H5bRQuxu7qcXZTDEsxxwO10Wzs4mfnU7EM0KZHfB2R8WPNrBYPZqN5z@vger.kernel.org
-X-Gm-Message-State: AFq9FYLRfj+zSgJJ8igzjZe/ymSrZM/cHOVLi3DobrydtneJNt61Um3T
-	FDUC/+Lm71i3gVSapJJkWGDUKZw27jBspTdZvfnkqyAD72IYgQD9+ZsL9rM/VAtb4KBvckljJz4
-	HgHb2M0ms8aHqU+GRb8CsNo7ywcvOYrQ=
-X-Gm-Gg: AYBFou2+850r2cil3NiRjsbxN/kaotZE8t66d3xk8oTtoNUG/DI+T3qjsz9gDnluhJR
-	j31T94iGAf9UH/IdDq31mOBIVeWNkcLadMTCLDfhb5+jif88YuQwAbygmMDFtkp+ZyJyIDtjrWI
-	8lNdAXTLie7E4rjTcktnrgbcCjLBqlmppAjlB+D+fmCx6zGIyvflj5LG6TZojfK2FBKIaOp9AdO
-	zw4XAlQS6tMN1lamU4IpMUhtkZAiWZJGNAvz/TXBvwbJAE34aTW8Ie3M8CWpYSTvwH5F66yDYlF
-	jS4tm/gD9OkV2zFTCohKEd5yLv27o7mra+ERqFb2U2JI7y1JOYteKI5+q6zvRC2LbZc=
-X-Received: by 2002:a05:690c:67c3:b0:8a5:af04:fb1d with SMTP id
- 00721157ae682-8ae957d3279mr23973447b3.55.1791137838008; Sun, 04 Oct 2026
- 11:17:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="jA1vgCX0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U7sAsgrA"
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4C4C27A0035
+	for <linux-leds@vger.kernel.org>; Mon,  5 Oct 2026 06:43:11 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 05 Oct 2026 06:43:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1791196990;
+	 x=1791283390; bh=h64JS2eiCKhOsTcQ5TmWniQe3LI5Tmhk0rXb8wPu1JI=; b=
+	jA1vgCX0YoS/fV9cjc5AgPtPuCn2ntcUrfEgVmLxDrYkOiWwV1dJhRn/gjFwMFgV
+	722j8CQomPs3PveKoOTrD4+8URvTjmtSo7wWnw62ztX+9UZA1xQ/SRAzX+Kv3bC/
+	eLAUUN9DOI2742OpetRSjl5ol763juqPS8d20drO+fKX/+MVFDdZZ9iLJTH921fc
+	Z4edTlVv29hSzlA53/PFThS3tSxuU3HQN/ETpramnVJ65U5I7MhASKkb0o820QCl
+	Z4YSa62WJAW/oujwQahE0xM8jQwHOjwi+Tw1ycs9xW1WrjNb+1qL+ARKBnGQzwar
+	KpgUZqnBv1t7M0tHJh1Bzw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791196990; x=
+	1791283390; bh=h64JS2eiCKhOsTcQ5TmWniQe3LI5Tmhk0rXb8wPu1JI=; b=U
+	7sAsgrAciTfXyDNGqrQHE3N9KMHyiXQm2xf9B9nNREPfIkKXgEwyzBtvpnknpRex
+	DlaKsdHzkf9uONjFDJhnovO89lDSE5IjW8BiLGH88zscV/h5u62UXvnJIw72fiFL
+	5HH0BrXkEkk/Y22JCctEdn2hVt69TT5qnMHC6iaMbAqgAKv5MxGYTiLF668a9+v+
+	ZScl6/QZKDsmZDVW7iDLxuvjoyUB3NNj6MEUkhImutb9N449i+zg0Li6KbeT5m0j
+	5hgbDQh6csj7UOzXdIvtu5O83TfCy0S5EIYgXzeGCZVgsK4kMSKKGIXn9aV5kybc
+	aJ+u57biIjUf1qH4vxIWA==
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
+	action=sign d=kroah.com a=rsa-sha256;
+DKIM2-Signature: i=1; m=1; t=1791196990; d=kroah.com;
+	mf=PGdyaWZmaW5Aa3JvYWguY29tPg==;
+	rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
+	s=fm2:rsa-sha256:fakygwOH5C8VQ2QegsUG1UuXr/l8q3Dnn9nBey4FZW74+rf
+	zvayk7vYtOx3tKxK0ZzN+4ECZSTQAUI4zTLkxiAJ1JngfceyiUJeFkyRRLMeFRVh
+	JGnBK9pnAco11xfE1OervwK41wM03iSvydySQeN+n1XitN/H3Y8EEIQP9hl4Gt1r
+	GSi1GIpGEz1KEBkBpccrrYddI5HNFtsdhfatCUBWrw3gNWeJAlcaQFgM+PLZQtgw
+	OF/1q5iWhB0Wyt2+tqmNrWQCjo3+wYyq9jk+0vtdu0Iv2WlxlNAqoUlrBVeAs/J5
+	OCRzlZfFjCR2sLm/d6/rPcwZnmSNyfwlEG/e2bw==;
+X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
+	repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
+	action=mi-m=1; hc=12;
+	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
+	from,in-reply-to,message-id,mime-version,references,subject,to;
+Message-Instance: m=1; h=sha256:lZ9SuZilP8eJauHH766zIsTOxaAfJBZZratPhTC2cSA=:Bn6oPg2w8ZKrRi+o7oENZgvxPZbBCet0rPXr5hVG/L0=;
+X-ME-Sender: <xms:Pn_Dam0Oi50W5_iYER8tdpxqpMIEDQL9D_9OIqCtXRFnDrc_yf0nPg>
+    <xme:Pn_Daqk8SFs3qNbgwoY1jzJhHWj1fwQV-4UdsNSUOL1b-PnM_EdRmUXNwDTwlIGfI
+    h82r6yWeILYgRc80LuL4fQeVw_48AjE-5TMs03nwIKtFZ7xKHo6>
+X-ME-Received: <xmr:Pn_Dau9mI3MB4FIiGQ_VMb3tU0LKyGnIl5TG4a9y8aKDtS6isRUzU31CGPJLNYfTI2l9NvfNg5LYt5aCzZ9p5nY>
+X-ME-Proxy-Cause: dmFkZTE7mjkfJoHrgIdp7nYFIk0dkBTiRlgJTkkavtq5LqJ9BdmpzxrjglHqKjyP+ZH2vn
+    7k7VW5+zMBpSgwarYyAlUu7ogYCdWzJBqoSuxsglgg9bZdwpsFB9re3OMRB47ojLnUj7Yh
+    +Q2XtSFSUn6Q6/8avW19X/jnDT2/xjCQcJyvQX9Q8Xf+eeC6vj5dFrhRMKtvjLB3b8NL2b
+    vn3NSR4+RL+LqsgqQXOYhECawVuPqWtAIyG/z+FzkS8G7iftCjwxkKCsGwoRj9tKYEPvnh
+    Oi3fd/saK0PpcYu/txavwTJe9ZQRyJUqd4+MLhEyRj9LNXUbyZbU317NjgTAWwHeAbn6VH
+    FY9LTpfpwJcGUjAwQlnc7huP0nFknq8ARB3YJ8qqzF/5UUYUVlR1UuQNNJXUthDKKRJP8+
+    y9kC3hWb2zOpFQHELmiiT8M+UAHYHoCYxgRHNZRX2/xYHnfalQRpY6kHwetKp/SAyX7QyS
+    YLczEgZHyzU/7n4LdQIGm3RWJbrA00pDal/u7iOa8mttekQyUwzyjPVl0y0fBKrVpr+zxO
+    +8HmhrFZdpdk+XCvyXTlPkiuycWM++3y3itORIF43YKJYKzqYuGILpiP+U3G8PJDl9amdx
+    eElP7TcrY/hdmRHXnKc194fyUGMW66oDbudx0jT0GZmDrxPIkrdxFS60V3KQ
+X-ME-Proxy: <xmx:Pn_Danrn3f7C4FwzRXryzAxnQf_RIyM-OPSkEm2VIRP56LQrAt_NIA>
+    <xmx:Pn_DavlyJGmf8DC3nWPeA8lCGo-RRSJhW_5Uh4YWeqzzgmtViJm8RA>
+    <xmx:Pn_DamjrzWZuxPAleH91mnziF1yIvH4gdbusFTf5-IsQSPcSGjHD7A>
+    <xmx:Pn_DavcF0EOdkIZyDU4LQfZUJgKB7WGmQH_LuLHnQ2hm3HoRNhUeEQ>
+    <xmx:Pn_DahF4EH1UtWDe6bItvrseqW0lwcpIzb7de15P_ZnGAOz3XEJ_otYI>
+Feedback-ID: i1d2843be:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 5 Oct 2026 06:43:09 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260901170358.176103-1-challauday369@gmail.com>
- <20260909-arcane-yellow-beluga-5ce6f7@quoll> <CAAj-GBkiTvFwx+3htJaKGFCYAC0jGdhyxkfUa8dKWPkYmbGViw@mail.gmail.com>
- <f402d93f-4443-4209-a6c7-5c30e7c8751a@kernel.org> <CAAj-GBnyFnVhNpuPTBoQhBZJLUYdXnBcxnEYy8rsYqkqX=UK7g@mail.gmail.com>
- <82b71784-4bb9-4165-a0f0-cf00fedde944@kernel.org> <CAAj-GBkPTmSxjKcXrzeMA3bz89vPGHt0Ai4Gat3KSz3epusRjw@mail.gmail.com>
- <5b34d2da-6e53-4a93-9d08-7d64e9072562@kernel.org>
-In-Reply-To: <5b34d2da-6e53-4a93-9d08-7d64e9072562@kernel.org>
-From: Uday Kiran <challauday369@gmail.com>
-Date: Sun, 4 Oct 2026 23:47:06 +0530
-X-Gm-Features: AclHuK8yMHOs5OrM1gtLGut4uFd1mZ5OV0auRu3panCfI1lvD8IXn4aLVjemE3g
-Message-ID: <CAAj-GBnDZ1NoGamjXFpE1wsnnQcUzjoSnsqxjzT6nsetYW0QZw@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: leds: lacie,netxbig-leds: Convert to DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: lee@kernel.org, pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, skhan@linuxfoundation.org, me@brighamcampbell.com, 
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/2] Documentation: ABI: leds: inverted is specific to
+ the backlight trigger
+From: Griffin Kroah-Hartman <griffin@kroah.com>
+To: Wayne Ho <wayneho219@gmail.com>
+Cc: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, 
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
+References: <20261001-docs-leds-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com>
+ <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
+Date: Mon, 05 Oct 2026 12:43:01 +0200
+Message-Id: <179119698191.10341.17981065372386761527.b4-review@b4>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791196989; l=453;
+ i=griffin@kroah.com; s=20260910; h=from:subject:message-id;
+ bh=Bn6oPg2w8ZKrRi+o7oENZgvxPZbBCet0rPXr5hVG/L0=;
+ b=glKyEvVFtFrM32CncmX3Ajjypxtn5uNlZn0lyhV/c0OHDAUckrxmiVjHBlwMzdPENL7x0cfIS
+ 67uYE1SsLHfAvZsDQQghA6mDqqQ4g/DKEvuQXkyFI6NKNqYfBr5aPyi
+X-Developer-Key: i=griffin@kroah.com; a=ed25519;
+ pk=HlyUkuZAN9I5qlPbOHN5N9xxdQ5sT6AbPgC4TsLCxzA=
 
-On Sun, Oct 4, 2026 at 8:00=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 04/10/2026 16:04, Uday Kiran wrote:
-> > On Wed, Sep 16, 2026 at 11:39=E2=80=AFAM Krzysztof Kozlowski <krzk@kern=
-el.org> wrote:
-> >>
-> >> On 14/09/2026 19:58, Uday Kiran wrote:
-> >>> On Sat, Sep 12, 2026 at 1:20=E2=80=AFPM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> >>>>
-> >>>> On 11/09/2026 16:29, Uday Kiran wrote:
-> >>>>>>> +properties:
-> >>>>>>> +  compatible:
-> >>>>>>> +    const: lacie,netxbig-leds
-> >>>>>>> +
-> >>>>>>> +  gpio-ext:
-> >>>>>>> +    description: Phandle for the gpio-ext bus.
-> >>>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
-> >>>>>>> +
-> >>>>>>> +  timers:
-> >>>>>>> +    description: |
-> >>>>>>> +      Timer array. Each timer entry is represented by three inte=
-gers:
-> >>>>>>> +      Mode (gpio-ext bus), delay_on and delay_off.
-> >>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> >>>>>>> +
-> >>>>>>> +patternProperties:
-> >>>>>>> +  "^(?!gpio-ext$|pinctrl-[0-9]+$)[a-z][a-z0-9]*(-[a-z0-9]+)+$":
-> >>>>>>
-> >>>>>> This is an odd pattern. Why is pinctrl an LED? or gpio-ext?
-> >>>>>>
-> >>>>>> Actually entire pattern is very odd - it has $ in the middle, but =
-then
-> >>>>>> followed with other REQUIRED stuff. I am surprised it works, but
-> >>>>>> regardless it is absolutely not readable. Looks like a begative pa=
-ttern,
-> >>>>>> but why would you have negative pattern for known properties?
-> >>>>>
-> >>>>> Thanks for the review Krzysztof.
-> >>>>>
-> >>>>> The negative lookahead was added because patternProperties matches =
-all top-
-> >>>>> level property names that fit the pattern, so excluded known top-le=
-vel
-> >>>>> properties like gpio-ext and pinctrl-*;
-> >>>>>
-> >>>>> In patch v1, I've used additionalProperties which removes the regex=
- entirely
-> >>>>> and allows arbitrary child-node names. But removed and used pattern=
-Properties
-> >>>>> as per the review feedback.
-> >>>>>
-> >>>>> Could you please suggest to me which way to proceed? with additiona=
-lProperties
-> >>>>> or patternProperties
-> >>>>
-> >>>>
-> >>>> The children are leds, so they should use generic node name pattern =
-like
-> >>>> "^led-[a-z0-9]+$"
-> >>>
-> >>> Yes, Krzysztof but the original binding uses blue-power, red-power,
-> >>> blue-sata0, etc.
-> >>> as LED child node names. Would you like me to rename these nodes to
-> >>> led-blue-power, led-red-power, etc. to use the suggested
-> >>> ^led-[a-z0-9]+$ pattern,
-> >>> or should I retain the existing node names and use a more specific
-> >>> pattern for them
-> >>> like "^(blue|red)-(power|sata[0-9]+)$"
-> >>
-> >> I did not see original binding mentioning any names. Neither in the dr=
-iver.
-> >
-> > Sorry for the delayed response, Krzysztof.
-> >
-> > You are right that the binding text and the driver do not mandate node =
-names.
-> > However, the existing device tree source use names like blue-power,
-> > red-sata0, etc.:
-> >
-> > arch/arm/boot/dts/marvell/kirkwood-netxbig.dtsi
-> >
-> > Also, the driver uses the node name as a fallback LED label when the la=
-bel
-> > property is absent.
-> >
-> > drivers/leds/leds-netxbig.c, lines 585-588.
->
-> So what is the problem exactly? You rename the nodes and use label. Does
-> anything break?
+On Thu, 01 Oct 2026 14:45:11 +0800, Wayne Ho <wayneho219@gmail.com> wrote:
+> The description of the inverted attribute says it is specific to the
+> gpio and backlight triggers, but the gpio trigger no longer creates it;
+> it only provides desired_brightness. Only the backlight trigger creates
+> the inverted attribute today.
+> 
 
-You are right. It will not break anything. will update the binding and DTS =
-files
-accordingly and send the next revision
+What commit changed this? Should there be a fixes tag?
 
-Regards,
-Udaya Kiran Challa
+Thanks
+
+-- 
+Griffin Kroah-Hartman <griffin@kroah.com>
