@@ -1,43 +1,43 @@
 Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9684908BA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA3D4908BD;
 	Mon,  5 Oct 2026 13:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791208485; cv=none; b=VWD4R0iXupye4L15Ho+QMgfJhcWrFT/u5VwRXE5kWSHxe3Ohrxxg7ELme6w4uKu2X9d5tw8veTn/YBgUxD0AJnsJ2e4s6zX18chkA8EHCwMoeDXIlTUWx7apHgTmYgKGcT0Ws393eEVZj1a66xaJ4Orqi/N6ZsCjNoEdZdAuOR0=
+	t=1791208485; cv=none; b=UbwQI4ksTf2Uvs6aclgSLI7Zkn7ZlNzBSopw2DqRHofzVTjhUyI6L74uMgnS7MT3Cd5XPopMiTNRolmBXiUoBrpkUt/wcOM6LcfZc+VAXxEMunLD48v0qD2x8Q05LUgpJaA42kAqazlq5yLRmDlDlcOHh+sd/OBXYsDyTCjpfjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791208485; c=relaxed/simple;
-	bh=x34LHTwBatjlELoJlVjVjMc0ih2t5zfVwePL41nvduw=;
+	bh=1EJ3I1svHPeJrHvLGB+g4xhf1ULp4UqBWn7KgIFjZEc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q3Hhvd8+evMVVNOAQUf59JYrZzMQPEe7CwjHkWoibCMPgW+t/1VOXszBtpbvaoZz9gOgkXZd3S2OjWzK8NA+KqUQJO3UQKIbDylsrdnuo7omGOUF6khXg/3oeO46k2HnPBz27M0riagHrjpWZgCtV6Co8HYelcFcnVJgvlI7WMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=kNRdQz7h; arc=none smtp.client-ip=188.40.3.216
+	 MIME-Version:Content-Type; b=ENES0ruPKJDbgszElxCsHdyfG93qNqCRIqGwhlLMulRHw+uBWAHcD9htCTkvt1ee/xbeeNbs9hLPVUa3sM2KdGeioblCblHhBrN42cBeCTQY/bOIee7q6EcA3OgiycvUlwTA91hBZafUmZiH9yaae1VGESVehe2FgJpjHoD17yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=AeuvdcqI; arc=none smtp.client-ip=188.40.3.216
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="kNRdQz7h"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="AeuvdcqI"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:Content-Type:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
 	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=7/9j/ZIB/tsoCyWFj5gYto+ZmNGdvuaACBD0+J0poL0=; b=kNRdQz7hp5QMYRsB7Mbdhn/yVW
-	bySEuhLGVWmEiwP0yv9RvfUKeuOkRBDsYe5KOYWt08cjolS/bPt7GHLlQxM0m/AqpdjWON6u+idF1
-	ObHhcclcCrQ2D2x685N8I3d25hO7tqeT7H4nEXsjsabG69UssWg1mU887siDttAUU1lcMhPMPEmif
-	9b5LOyghFH9FwloyELQUGbIK2VkV8HDpVE2VVyDlBk+AqtAqXaJ75mtdaCk5XvMGg89ESplDc00Ry
-	gZhSqPxuVWybjnsFyDoxYvR0fMcEzgqudrWvciXnNekrENXZMFi2/Tf1QxTOK/WeSJQ8tXfDmaUei
-	1f72rcGA==;
+	bh=K8LfEIiH2RRlQ+idMFlmLYlhhnOG1kdBPcs1LE/RjTI=; b=AeuvdcqIVQbc9eT4yXqkXi5rOt
+	uyZmiMBARWvYP3a7ezfNJzR1B20Hg7GAvD4vN71rSvBggBGMVu9LEK3JarLtY4d6+0ny0Bkmsegr3
+	3whr4BwpT63UCwaPHyCSxEpfF0zQBAIoCwl66G+oWPeYx5WpWCkw1FHjFxkKG9JXuSRj/PDQ6x2TH
+	6n4iLVbjsdbhOTpaQNbM2zw8aYa/D1vdn7SR2GvySrELI7pEik5RWOSlw43g9PjnZxYh7Ew3LRsYE
+	ZKSv7At3SjEITPvuWPEFjGHf4pfZ8rWC0MaM1PF9oZKx0EWKIv20MULq6MrDDM26ysBtGwfBxC2Ul
+	YtLTFHqw==;
 Received: from sslproxy04.your-server.de ([78.46.152.42])
 	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xDj9H-000OzF-2U;
-	Mon, 05 Oct 2026 15:54:35 +0200
+	id 1xDj9I-000OzV-1L;
+	Mon, 05 Oct 2026 15:54:36 +0200
 Received: from localhost ([127.0.0.1])
 	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xDj9G-000HEr-33;
+	id 1xDj9H-000HEr-1n;
 	Mon, 05 Oct 2026 15:54:35 +0200
 From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>,
@@ -54,9 +54,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Nora Schiffer <nora.schiffer@ew.tq-group.com>
-Subject: [PATCH v5 06/11] leds: pca995x: Add support for reset GPIO
-Date: Mon,  5 Oct 2026 15:53:30 +0200
-Message-ID: <fd45facac5cdf1930f2ca1666a66cd06cd1f659c.1791207391.git.nora.schiffer@ew.tq-group.com>
+Subject: [PATCH v5 07/11] leds: pca995x: Make output gain configurable
+Date: Mon,  5 Oct 2026 15:53:31 +0200
+Message-ID: <f1ff88185074948a40a1e8e6f022cae4fcc55fc1.1791207391.git.nora.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <cover.1791207391.git.nora.schiffer@ew.tq-group.com>
 References: <cover.1791207391.git.nora.schiffer@ew.tq-group.com>
@@ -70,52 +70,52 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: Clear (ClamAV 1.4.3/28144/Mon Oct  5 08:24:24 2026)
 
-The PCA9952/9955B/9956B have a reset pin. Use it to reset the LED driver
-if provided in the Device Tree.
+The output gain linearly configures the LED current in 255 levels; the
+absolute current depends on both the gain value and the R_ext resistor
+connected to the LED driver. Make the gain configurable in the Device
+Tree instead of hardcoding it to 128, allowing to adjust the current
+for different hardware designs.
 
 Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
 ---
- drivers/leds/leds-pca995x.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/leds/leds-pca995x.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-index e6122b33451ed..b528b2b4990a7 100644
+index b528b2b4990a7..df3f7ab2e1f87 100644
 --- a/drivers/leds/leds-pca995x.c
 +++ b/drivers/leds/leds-pca995x.c
-@@ -8,6 +8,8 @@
-  * Copyright 2023 Marek Vasut
-  */
- 
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/leds.h>
- #include <linux/module.h>
-@@ -121,6 +123,7 @@ static int pca995x_probe(struct i2c_client *client)
+@@ -122,6 +122,7 @@ static int pca995x_probe(struct i2c_client *client)
+ {
  	struct fwnode_handle *led_fwnodes[PCA995X_MAX_OUTPUTS] = { 0 };
  	struct device *dev = &client->dev;
++	u32 val, iref = PCA995X_IREFALL_HALF_CFG;
  	const struct pca995x_chipdef *chipdef;
-+	struct gpio_desc *reset_gpio;
+ 	struct gpio_desc *reset_gpio;
  	struct pca995x_chip *chip;
- 	struct pca995x_led *led;
- 	int i, reg, ret;
-@@ -130,6 +133,16 @@ static int pca995x_probe(struct i2c_client *client)
- 	if (!dev_fwnode(dev))
- 		return -ENODEV;
+@@ -154,6 +155,13 @@ static int pca995x_probe(struct i2c_client *client)
  
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(reset_gpio),
-+				     "failed to request reset GPIO\n");
-+	if (reset_gpio) {
-+		udelay(3);
-+		gpiod_set_value_cansleep(reset_gpio, 0);
-+		usleep_range(1500, 1600);
+ 	i2c_set_clientdata(client, chip);
+ 
++	if (!device_property_read_u32(dev, "nxp,output-gain", &val)) {
++		if (val > PCA995X_IREFALL_FULL_CFG)
++			return dev_err_probe(dev, -EINVAL, "invalid nxp,output-gain\n");
++
++		iref = val;
 +	}
 +
- 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
+ 	device_for_each_child_node_scoped(dev, child) {
+ 		ret = fwnode_property_read_u32(child, "reg", &reg);
+ 		if (ret)
+@@ -178,7 +186,7 @@ static int pca995x_probe(struct i2c_client *client)
+ 		goto err_put_nodes;
+ 
+ 	/* IREF Output current value for all LEDn outputs */
+-	ret = regmap_write(chip->regmap, chipdef->irefall, PCA995X_IREFALL_HALF_CFG);
++	ret = regmap_write(chip->regmap, chipdef->irefall, iref);
+ 	if (ret)
+ 		goto err_put_nodes;
+ 
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
