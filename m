@@ -1,129 +1,139 @@
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04271477285
-	for <linux-leds@vger.kernel.org>; Mon,  5 Oct 2026 10:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E2A37DE99;
+	Mon,  5 Oct 2026 13:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791196993; cv=none; b=MRMngkIlGGUgGRMliH8gLjNhmE3285Vkoc1AlLPo/zm/SJu2OXnePar0arTAulRQNZ0iyX8vNRVJcJcOsylDQBbm1mocyJXDJgmmPQXgJD7cyt6xA+2Qtt6zkabxUxh5pruwF/I5jZLoCPaicWi79GsdzIQq2hy9iYrtvIpHUIo=
+	t=1791208482; cv=none; b=gD5BjHL73pqW2JXsrRL7XhY1XDmhCErQ0MqtTQkWFyvWTpEk1+Vz18sSOST8agHeTHkk2dwuGKEEoDnN354wn7lgfCjw6FM8RQUUU4Fpz54wIVCIsqUDS175Kccwiz85WMDKY6sCIeJ+IKs3Uc8cDR3ZQ6eRZ1lhchopEXpSiMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791196993; c=relaxed/simple;
-	bh=Bn6oPg2w8ZKrRi+o7oENZgvxPZbBCet0rPXr5hVG/L0=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=i9ZcEK8h84cUPkmko5GU+0+ND1lvH4W5KTTQ+V+c132vqrl9WryTfDdQ6/QMx7aNNwtdPQ8ztO38+8hHeNCNokXalRQ8LtTuq/qhmfCmGrB+uylKw4qO5tBY+PdUVQa+vAnLaVW1lSb9wKAYQ3dRPLadmZ1Z77UgvQtXwyWn+V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=jA1vgCX0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=U7sAsgrA; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	s=arc-20240116; t=1791208482; c=relaxed/simple;
+	bh=LeHXcG9KS4npORtxIyRROa13wIKBeufTCVEbgLF/geE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=srpWrpv4M+iW2TQTCiErhBV4U7m5Uo2LlPqQXwnk48mYAO35IRHSqvb0WKc5VraCuCB1/l3TomHBpNRidgujf32t8YCw2iuumVyONA6IQexlLWV5oBVZQshxIRxL2NRLBfmcP+oNSoOc6W4mUf33q3wL1RkxLrfP51PnOh1lvTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=H+Ywe0yc; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="jA1vgCX0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="U7sAsgrA"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 4C4C27A0035
-	for <linux-leds@vger.kernel.org>; Mon,  5 Oct 2026 06:43:11 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 05 Oct 2026 06:43:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1791196990;
-	 x=1791283390; bh=h64JS2eiCKhOsTcQ5TmWniQe3LI5Tmhk0rXb8wPu1JI=; b=
-	jA1vgCX0YoS/fV9cjc5AgPtPuCn2ntcUrfEgVmLxDrYkOiWwV1dJhRn/gjFwMFgV
-	722j8CQomPs3PveKoOTrD4+8URvTjmtSo7wWnw62ztX+9UZA1xQ/SRAzX+Kv3bC/
-	eLAUUN9DOI2742OpetRSjl5ol763juqPS8d20drO+fKX/+MVFDdZZ9iLJTH921fc
-	Z4edTlVv29hSzlA53/PFThS3tSxuU3HQN/ETpramnVJ65U5I7MhASKkb0o820QCl
-	Z4YSa62WJAW/oujwQahE0xM8jQwHOjwi+Tw1ycs9xW1WrjNb+1qL+ARKBnGQzwar
-	KpgUZqnBv1t7M0tHJh1Bzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791196990; x=
-	1791283390; bh=h64JS2eiCKhOsTcQ5TmWniQe3LI5Tmhk0rXb8wPu1JI=; b=U
-	7sAsgrAciTfXyDNGqrQHE3N9KMHyiXQm2xf9B9nNREPfIkKXgEwyzBtvpnknpRex
-	DlaKsdHzkf9uONjFDJhnovO89lDSE5IjW8BiLGH88zscV/h5u62UXvnJIw72fiFL
-	5HH0BrXkEkk/Y22JCctEdn2hVt69TT5qnMHC6iaMbAqgAKv5MxGYTiLF668a9+v+
-	ZScl6/QZKDsmZDVW7iDLxuvjoyUB3NNj6MEUkhImutb9N449i+zg0Li6KbeT5m0j
-	5hgbDQh6csj7UOzXdIvtu5O83TfCy0S5EIYgXzeGCZVgsK4kMSKKGIXn9aV5kybc
-	aJ+u57biIjUf1qH4vxIWA==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
-	action=sign d=kroah.com a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791196990; d=kroah.com;
-	mf=PGdyaWZmaW5Aa3JvYWguY29tPg==;
-	rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:fakygwOH5C8VQ2QegsUG1UuXr/l8q3Dnn9nBey4FZW74+rf
-	zvayk7vYtOx3tKxK0ZzN+4ECZSTQAUI4zTLkxiAJ1JngfceyiUJeFkyRRLMeFRVh
-	JGnBK9pnAco11xfE1OervwK41wM03iSvydySQeN+n1XitN/H3Y8EEIQP9hl4Gt1r
-	GSi1GIpGEz1KEBkBpccrrYddI5HNFtsdhfatCUBWrw3gNWeJAlcaQFgM+PLZQtgw
-	OF/1q5iWhB0Wyt2+tqmNrWQCjo3+wYyq9jk+0vtdu0Iv2WlxlNAqoUlrBVeAs/J5
-	OCRzlZfFjCR2sLm/d6/rPcwZnmSNyfwlEG/e2bw==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-09-30; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:lZ9SuZilP8eJauHH766zIsTOxaAfJBZZratPhTC2cSA=:Bn6oPg2w8ZKrRi+o7oENZgvxPZbBCet0rPXr5hVG/L0=;
-X-ME-Sender: <xms:Pn_Dam0Oi50W5_iYER8tdpxqpMIEDQL9D_9OIqCtXRFnDrc_yf0nPg>
-    <xme:Pn_Daqk8SFs3qNbgwoY1jzJhHWj1fwQV-4UdsNSUOL1b-PnM_EdRmUXNwDTwlIGfI
-    h82r6yWeILYgRc80LuL4fQeVw_48AjE-5TMs03nwIKtFZ7xKHo6>
-X-ME-Received: <xmr:Pn_Dau9mI3MB4FIiGQ_VMb3tU0LKyGnIl5TG4a9y8aKDtS6isRUzU31CGPJLNYfTI2l9NvfNg5LYt5aCzZ9p5nY>
-X-ME-Proxy-Cause: dmFkZTE7mjkfJoHrgIdp7nYFIk0dkBTiRlgJTkkavtq5LqJ9BdmpzxrjglHqKjyP+ZH2vn
-    7k7VW5+zMBpSgwarYyAlUu7ogYCdWzJBqoSuxsglgg9bZdwpsFB9re3OMRB47ojLnUj7Yh
-    +Q2XtSFSUn6Q6/8avW19X/jnDT2/xjCQcJyvQX9Q8Xf+eeC6vj5dFrhRMKtvjLB3b8NL2b
-    vn3NSR4+RL+LqsgqQXOYhECawVuPqWtAIyG/z+FzkS8G7iftCjwxkKCsGwoRj9tKYEPvnh
-    Oi3fd/saK0PpcYu/txavwTJe9ZQRyJUqd4+MLhEyRj9LNXUbyZbU317NjgTAWwHeAbn6VH
-    FY9LTpfpwJcGUjAwQlnc7huP0nFknq8ARB3YJ8qqzF/5UUYUVlR1UuQNNJXUthDKKRJP8+
-    y9kC3hWb2zOpFQHELmiiT8M+UAHYHoCYxgRHNZRX2/xYHnfalQRpY6kHwetKp/SAyX7QyS
-    YLczEgZHyzU/7n4LdQIGm3RWJbrA00pDal/u7iOa8mttekQyUwzyjPVl0y0fBKrVpr+zxO
-    +8HmhrFZdpdk+XCvyXTlPkiuycWM++3y3itORIF43YKJYKzqYuGILpiP+U3G8PJDl9amdx
-    eElP7TcrY/hdmRHXnKc194fyUGMW66oDbudx0jT0GZmDrxPIkrdxFS60V3KQ
-X-ME-Proxy: <xmx:Pn_Danrn3f7C4FwzRXryzAxnQf_RIyM-OPSkEm2VIRP56LQrAt_NIA>
-    <xmx:Pn_DavlyJGmf8DC3nWPeA8lCGo-RRSJhW_5Uh4YWeqzzgmtViJm8RA>
-    <xmx:Pn_DamjrzWZuxPAleH91mnziF1yIvH4gdbusFTf5-IsQSPcSGjHD7A>
-    <xmx:Pn_DavcF0EOdkIZyDU4LQfZUJgKB7WGmQH_LuLHnQ2hm3HoRNhUeEQ>
-    <xmx:Pn_DahF4EH1UtWDe6bItvrseqW0lwcpIzb7de15P_ZnGAOz3XEJ_otYI>
-Feedback-ID: i1d2843be:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 Oct 2026 06:43:09 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="H+Ywe0yc"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=THhWSCP3j8arPcp30ni+dC3XmdCk47t1sUp/jlYxkg0=; b=H+Ywe0ycKyqMLxSF0H/oz2DDVI
+	B5JXFgNz3zFwCKqktCQuant+qOlj3oUCBoZhGqSpyGLX8+8YKivqJQaPeD8NarhNQxpxxGd4vK0s4
+	gSwh0FoLs4/wcTH6rCnnZTDuovXaGE1Dy3cIvmMe3kfXWDnVQm2PXxUgyeyTHfAxZ7/SXr0CKmlTo
+	VqAUNO8Ym3ElrGv0sKpRz0XlRRi4tUcc2IeXlI2Mv9H7sYJw6xoQKToQRMweMS1wd0Yl6s9P86cY/
+	dxJru4Vp2lYwMVZKZoeOCysLbYWG1LmvM9ScPxHeBFNbXHnbbwm2+uPdqc5tY/z+57lvET7No5ksx
+	g7SPGZUw==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1xDj9E-000Owo-0r;
+	Mon, 05 Oct 2026 15:54:32 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <nora.schiffer@ew.tq-group.com>)
+	id 1xDj9D-000HEr-1W;
+	Mon, 05 Oct 2026 15:54:31 +0200
+From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Isai Gaspar <isaiezequiel.gaspar@nxp.com>,
+	Marek Vasut <marex@denx.de>,
+	Pieterjan Camerlynck <pieterjanca@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	linux@ew.tq-group.com,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nora Schiffer <nora.schiffer@ew.tq-group.com>
+Subject: [PATCH v5 00/11] leds: pca995x: Minor fixes; reset, output-gain, error reporting and group brightness support
+Date: Mon,  5 Oct 2026 15:53:24 +0200
+Message-ID: <cover.1791207391.git.nora.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/2] Documentation: ABI: leds: inverted is specific to
- the backlight trigger
-From: Griffin Kroah-Hartman <griffin@kroah.com>
-To: Wayne Ho <wayneho219@gmail.com>
-Cc: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
-References: <20261001-docs-leds-abi-trigger-attrs-v1-0-54f0529bf0f6@gmail.com>
- <20261001-docs-leds-abi-trigger-attrs-v1-1-54f0529bf0f6@gmail.com>
-Date: Mon, 05 Oct 2026 12:43:01 +0200
-Message-Id: <179119698191.10341.17981065372386761527.b4-review@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791196989; l=453;
- i=griffin@kroah.com; s=20260910; h=from:subject:message-id;
- bh=Bn6oPg2w8ZKrRi+o7oENZgvxPZbBCet0rPXr5hVG/L0=;
- b=glKyEvVFtFrM32CncmX3Ajjypxtn5uNlZn0lyhV/c0OHDAUckrxmiVjHBlwMzdPENL7x0cfIS
- 67uYE1SsLHfAvZsDQQghA6mDqqQ4g/DKEvuQXkyFI6NKNqYfBr5aPyi
-X-Developer-Key: i=griffin@kroah.com; a=ed25519;
- pk=HlyUkuZAN9I5qlPbOHN5N9xxdQ5sT6AbPgC4TsLCxzA=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28144/Mon Oct  5 08:24:24 2026)
 
-On Thu, 01 Oct 2026 14:45:11 +0800, Wayne Ho <wayneho219@gmail.com> wrote:
-> The description of the inverted attribute says it is specific to the
-> gpio and backlight triggers, but the gpio trigger no longer creates it;
-> it only provides desired_brightness. Only the backlight trigger creates
-> the inverted attribute today.
-> 
+This series adds several new features to the PCA995x LED driver:
 
-What commit changed this? Should there be a fixes tag?
+- Reset GPIO
+- Output current configuration
+- Error reporting via sysfs (short/open circuit)
+- Group brightness control (modulating individual LED brightness with a
+  second, chip-global PWM signal)
 
-Thanks
+The series also includes a number of low-priority fixes:
+
+- Prevent configuration of out-of-bounds LED indices on 16-channel variants
+- Avoid fwnode leaks in error paths
+- Finish initializing hardware before making LED devices visible to
+  userspace
+
+Changelog:
+
+v5:
+- Collect Reviewed-bys
+- Limit fault detection to PCA9955B/PCA9956B. PCA9952/PCA9955 have a fault
+  test feature that works differently and is not covered by this series.
+- Correctly specify MODE2 reset defaults for all supported chips. The
+  initialization of MODE2 is introduced in a separate patch now.
+
+v4:
+- Make code for output-gain range check and default value clearer
+- Use dev_get_drvdata() instead of i2c_get_clientdata()
+- Use devres for sysfs group
+
+v3:
+- Collect Reviewed-bys
+- New patch: Fix fwnode handle leaks in error paths
+- New patch: Write global registers before creating LED devices
+- Add chip-global sysfs groups before creating LED devices
+
+v2:
+- Collect Reviewed-bys
+- Use full hardware model names in commit descriptions
+- Add nxp, to output-gain property
+- Fix nxp,output-gain default in binding docs
+- Describe rationale for using register value directly in commit message
+- New patch: Fix maximum LED index for 16-channel variants
+- Use correct #includes for GPIO consumer and delays
+- Use udelay for small delay
+- Use sysfs_streq() for has_errors write
+- Explicitly initialize MODE2 register, clear reported errors on probe
+- Set GRPPWM register on probe
+
+Nora Schiffer (11):
+  dt-bindings: leds: pca995x: Describe reset-gpios property
+  dt-bindings: leds: pca995x: Describe nxp,output-gain property
+  leds: pca995x: Fix maximum LED index for 16-channel variants
+  leds: pca995x: Fix fwnode handle leaks in error paths
+  leds: pca995x: Write global registers before creating LED devices
+  leds: pca995x: Add support for reset GPIO
+  leds: pca995x: Make output gain configurable
+  leds: pca995x: Initialize MODE2 register on probe
+  leds: pca995x: Add sysfs files for error reporting
+  leds: pca995x: Do not use full on LED mode
+  leds: pca995x: Add support for group brightness control
+
+ .../devicetree/bindings/leds/nxp,pca995x.yaml |  13 +
+ drivers/leds/leds-pca995x.c                   | 265 +++++++++++++++---
+ 2 files changed, 244 insertions(+), 34 deletions(-)
 
 -- 
-Griffin Kroah-Hartman <griffin@kroah.com>
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
