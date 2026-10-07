@@ -1,115 +1,119 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D775247607C;
-	Wed,  7 Oct 2026 09:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B36347604E;
+	Wed,  7 Oct 2026 10:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791363935; cv=none; b=c3ohNEBqlAfKXVp7C2tCdsbrX6SxKUqZ4AN/JO8myGWxVhWEKx+UH2ahFO5Ad15zUWQbtBlHZSpSVzbiZl9HzYIkTIxR+Ac7OeIEsRdM8DV+fEgIhHa9w3MDT+dbu6BD/puIsNaR3+ZTsEw6E8z9FlTWsNXlkd2gDwLbqz/O3vM=
+	t=1791369060; cv=none; b=idJAhioMupXIbunF8RaOYJr/68JSqomZc73a2vbvX79uvB3C7HtKWXsAvXFnw5JZLjU+9d8tZIUm+sjD8f71A6qNlMrBCmEfJztmySG6Nb2Tgd2TyfeGNihl7r5O0jq4smarycxkQpc+4pHVe4zG8P5a9WkVaxzGrSIi2u4mEys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791363935; c=relaxed/simple;
-	bh=CYBsxr2IwJA1wCxDoMiuZLUDgGhKOHwyR7+gFg1+dLk=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=chfsmGdlFonooHwGwnykA+e0sWOsTkDWGzfzKIZaNEy/ShWHAfC8GIAtgop6DRh8aYaRbzsXhrdwb7TVg/Bb2WGfymHAHC+ofqk37Uf0unyuKpY018QOENTximgDfA/bwXHh/dfQHpDpdpoRiL/Ax129oysi3GMSE6g1zUIOvi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9TcxAi8; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791369060; c=relaxed/simple;
+	bh=OnAEGVP5i/cMSbQnRO123wE6Sw0W4vq9egppWpZslTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmvtEJPgB7yfIKvuo9j/O0B7q9xeK9qQotFLWAx8WWGuI/eTzbvAsUA2HdkXFi9hJjgqWbpPWOo5eMU8bL98zeNS3Mp20EVdvz0tiZkIRu0yT6sPgBkpvZSy/ysZdpDH4JFSnhSjhJH4fwLfnX4zfJiNiBswCfD7ZpF0h88hUPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2YTdCBK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9TcxAi8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DE71F0089B;
-	Wed,  7 Oct 2026 09:05:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2YTdCBK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE361F0089B;
+	Wed,  7 Oct 2026 10:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791363905;
-	bh=hzC7U8bLRfIHJnmJn7lk5G12sd0Tm8xJmGUwEdKI2Ug=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=P9TcxAi8PjQSrLEN01gtBlhTT8vzD03CC2XBUOiFP9ejqA8giWEyOTVGH1MAV3fNt
-	 Mv7gsmeYoIL4Rhibf7SjtoKYovWYxBRipxUpO/h6qGP03SGMStomoclMj0ZzpftOmV
-	 sbAVML4jXDlKwWb+z05DAli5O7Ikx90MAJdEsAAMGyBKgXdPzAmWWfVz9qxYNLrU2n
-	 KkEzROZjhMB5TjNC7NDPHH65fm4PxNNTlXZFiH/ZHaICf5aac/y8kFSFqsSssXaxTD
-	 VKYcEr9r+P/P8y01P3pIMVw0ea1x705hmjPEAbmIJCFiuKR+6VlISiJQ2oitjYVXpX
-	 UYosf7xBylv7A==
-Message-ID: <sashiko-outbox-162772@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1 3/3] leds: aat1290: Add support for AAT1270 Current
- Regulator for Flash LEDs
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, lee@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261007085457.98762-4-clamor95@gmail.com>
-References: <20261007085457.98762-1-clamor95@gmail.com>
- <20261007085457.98762-4-clamor95@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 07 Oct 2026 09:05:04 +0000
+	s=k20260515; t=1791369042;
+	bh=P5LPj1NW6rnNh9kPL9LQzoHJmXTwfZST/nzVnxiMQ7c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=T2YTdCBKgHdH9/bq+OLhUr78800G65r1+KnVdq4OdydO2+wUHcVWUQSJeSi8ADsV5
+	 pbaRDSxCbZzbiqNfRy6rLMS5WYmV54KoJDCBfsOAmyksc5QFsxuZp10wiAN+xZsxES
+	 yt4kovqS0ax2rPc8NE424GvF8pmeVaCuG4+t9pYaef/zKWd01/gptYUPgBgR6wP+Un
+	 HNeuKIazfb8/Kio4xWfQuH+U4XNVesVLpqRN2UKr/Tz+6Wlck+Y4y6LPB3iW6ucygo
+	 x8gWSQ8rw+Os2TKSPYLf7QuckrpDHbwaCymaUiVL/6K41LUOIOIp5Pbn0NTSgEUjXp
+	 u4K4DQrOpWR6w==
+Date: Wed, 7 Oct 2026 11:30:37 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Paul Sajna <sajattack@postmarketos.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nikita Travkin <nikitos.tr@gmail.com>,
+	Alexey Min <alexeymin@minlexx.ru>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 1/7] dt-bindings: leds: aw2013: Add awinic,aw2027
+ compatible
+Message-ID: <20261007-d8dfc11bbafa58dc5de32a29@squawk>
+References: <20261005-aw2013-aw20xx-rename-v2-0-108ecbdf2775@postmarketos.org>
+ <20261005-aw2013-aw20xx-rename-v2-1-108ecbdf2775@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="97/KKRKBlksTlc+D"
+Content-Disposition: inline
+In-Reply-To: <20261005-aw2013-aw20xx-rename-v2-1-108ecbdf2775@postmarketos.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] leds: aat1270: silently ignores flash timeout while exposing sys=
-fs attribute
---
+--97/KKRKBlksTlc+D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit 74189882b25371dce0e983ebf15bb883544c3cfd
-Author: Svyatoslav Ryhel <clamor95@gmail.com>
+On Mon, Oct 05, 2026 at 08:46:02PM -0700, Paul Sajna wrote:
+> Very similar chip from the same family to be added
 
-leds: aat1290: Add support for AAT1270 Current Regulator for Flash LEDs
+Please explain what actually differs between this and the existing
+device that prevents use of a fallback.
 
-This commit adds support for the AAT1270 flash LED controller. It
-differentiates it from the AAT1290 by introducing a chip description struct=
-ure
-that flags whether the Advanced Simple Serial Control (AS2C) interface is
-supported, and gates AS2C-specific features accordingly.
+pw-bot: changes-requested
 
-> diff --git a/drivers/leds/flash/leds-aat1290.c b/drivers/leds/flash/leds-=
-aat1290.c
-> index 49251cfd33509..773cdcc73a9e1 100644
-> --- a/drivers/leds/flash/leds-aat1290.c
-> +++ b/drivers/leds/flash/leds-aat1290.c
-[ ... ]
-> @@ -178,7 +190,8 @@ static int aat1290_led_flash_strobe_set(struct led_cl=
-assdev_flash *fled_cdev,
->  	mutex_lock(&led->lock);
+Thanks,
+Conor.
+
+>=20
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+> ---
+>  Documentation/devicetree/bindings/leds/leds-aw2013.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml b/Do=
+cumentation/devicetree/bindings/leds/leds-aw2013.yaml
+> index 26238446f2bd..1ad165cfe34a 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+> +++ b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/leds/leds-aw2013.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
 > =20
->  	if (state) {
-> -		aat1290_set_flash_safety_timer(led, timeout->val);
-> +		if (led->info->as2c)
-> +			aat1290_set_flash_safety_timer(led, timeout->val);
+> -title: AWINIC AW2013 3-channel LED Driver
+> +title: AWINIC AW2013/AW2027 3-channel LED Driver
+> =20
+>  maintainers:
+>    - Nikita Travkin <nikitos.tr@gmail.com>
+> @@ -15,7 +15,9 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    const: awinic,aw2013
+> +    enum:
+> +      - awinic,aw2013
+> +      - awinic,aw2027
+> =20
+>    reg:
+>      maxItems: 1
+>=20
+> --=20
+> 2.55.0
+>=20
 
-[Severity: Medium]
-Can this regression silently ignore the flash timeout for the AAT1270 chip
-while still exposing the sysfs attribute?
+--97/KKRKBlksTlc+D
+Content-Type: application/pgp-signature; name=signature.asc
 
-The patch bypasses programming the hardware flash safety timer here for chi=
-ps
-without AS2C support (like the AAT1270). However, the driver unconditionally
-populates the fled_cdev->timeout bounds for all chips in
-aat1290_init_flash_timeout():
+-----BEGIN PGP SIGNATURE-----
 
-drivers/leds/flash/leds-aat1290.c:aat1290_init_flash_timeout() {
-	...
-	/* Init flash timeout setting */
-	setting =3D &fled_cdev->timeout;
-	setting->min =3D cfg->max_flash_tm / AAT1290_FLASH_TM_NUM_LEVELS;
-	setting->max =3D cfg->max_flash_tm;
-	setting->step =3D setting->min;
-	setting->val =3D setting->max;
-}
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCasYfTQAKCRB4tDGHoIJi
+0h04AP0cKcYg9XzkZHNziwvYYH585+AqnRh6Q97FQkQ7I7W9nQD/ZJITPrHbVmkz
+uyo7JTmPqeGCTAboA/acQiJ8gD8q1wY=
+=Txsz
+-----END PGP SIGNATURE-----
 
-As a result, the LED subsystem will expose a writable flash_timeout sysfs
-attribute to userspace. Userspace can configure a timeout value, believing
-it provides safety bounds, but the driver will silently discard it during
-the actual flash strobe for the AAT1270.
-
-Could this violate the API contract and mislead userspace into overestimati=
-ng
-thermal safety margins?
-
->  		gpiod_direction_output(led->gpio_fl_en, 1);
->  	} else {
->  		gpiod_direction_output(led->gpio_fl_en, 0);
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261007085457.9876=
-2-1-clamor95@gmail.com?part=3D3
+--97/KKRKBlksTlc+D--
