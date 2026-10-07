@@ -1,163 +1,97 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0373D3FFFA9;
-	Wed,  7 Oct 2026 07:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FC34503E4
+	for <linux-leds@vger.kernel.org>; Wed,  7 Oct 2026 08:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791358629; cv=none; b=hkIAmnd3elbmpGH9rA6Mf/t7Wh1TVk9cKDUDOsoIm8kKL+/2TAPH6YzmTOjBZyB2ZOkMDBkLssrEo0VIR0y/EUy1DIL7nCeKRVLHYG9MtYkdM6pqUMT630C6uZFV6R8nfNVLJt5eTVER8PwB3oNZ3c7IibItWZB8s/eF2kfqujU=
+	t=1791363319; cv=none; b=YIjw8vKlTTwHbAFM6Afl1NQoHUAJfvDqK58o4AkXFvmdskz2diu0iiz9ZhDB8gQ+ibOKaR1vis4kzEoH6ZPqAnbQKVhkn0E254nCKoWGoxD1qhVx6Pt6Lud/wtIpp/L8E/pj+db1r4m73Y/szJS7nrp5CVSXycUjFkgmyVJ4fx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791358629; c=relaxed/simple;
-	bh=QCJ3uApyy62/gG7ICwjLCiG2yTBSuQGZTIjl4AV2ahs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hqDLogdzZGsQsnNlQ3Ld6ktdvCSKfjxURMv3LnUAqv41fEo9MgPA7zNml9GLUtrALf5IvA7X2VuCyYvJBC/kRc6+QKMBK/Ehg/BCozyNyRNChl54Myzcai8dx7CtugsZ1idSFzZLjJZkVXm93nExUQWRCKRVPgQuUcRF7SHE07E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=6FgwnO6V; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1791363319; c=relaxed/simple;
+	bh=pRig2jwfRvKIPmscPv3ga8MjLPmvBeWTyHRup+5LxN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iwBF00WQhZnR3pHbRtNzgMALoBALhf+qmU4Y97mEDa0BYa9cWmwRzYWEptIsLoQ/7apazfE4rshYz92tpst4HgAIeZInBDKiDOf1b4yamQ/N2STbA4pciUc1IkscCZfQyXnaibKIdhreVZ/vWcA0MAp0rrywm6KkLyh64fgS5qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZE17Nib; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="6FgwnO6V"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=AnfuN7MVcz66iWXUZSEQcYw5WdKZnD7eJ6R+4ZAlaiA=; t=1791358628; x=1792568228; 
-	b=6FgwnO6VcByo8h86otOYYSz2OszqH+wb8G0iDFAf1Mxvak6dRnf8LE/En6LUscwmgCniVaTv8Cv
-	UXpfNwc/dIm+4Hm1o8CMRMqnt63StXEcoweNSkMWx6PRbVyPOVddiDOrUHaZfReZtkP1c0m2A4a2o
-	8ZZmVoPJhDYNdE6zEJsLpOIZeQYwxsiV2xfROSOzCT/+8FhxmM8SO5qfV9AX3kAHhb/Z1dbgPoZz7
-	cj0l3ps5P8ypdo+Wgdr97jNLZ3tQlgD/cnAbVP8BndTiTpFJTQYUCndxRKrptYJ9jOrR2B/VHjb54
-	CPZCMPhSuSL51kePuK67/+koPhDFzCbntQHA==;
-Date: Wed, 7 Oct 2026 09:36:48 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>, Alexey Min
- <alexeymin@minlexx.ru>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 4/7] leds: aw2013: use dev_err_probe
-Message-ID: <20261007093649.29a2dd6d@kemnade.info>
-In-Reply-To: <20261005-aw2013-aw20xx-rename-v2-4-108ecbdf2775@postmarketos.org>
-References: <20261005-aw2013-aw20xx-rename-v2-0-108ecbdf2775@postmarketos.org>
-	<20261005-aw2013-aw20xx-rename-v2-4-108ecbdf2775@postmarketos.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZE17Nib"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a01933b584so14001275e9.0
+        for <linux-leds@vger.kernel.org>; Wed, 07 Oct 2026 01:55:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791363316; x=1791968116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=idGrLQ96uf8XUCDMxXSwM26M1eSYrrZBxKOU5D9zkzs=;
+        b=JZE17Nib2Vjng4ryH+LLlIkU5DZi/0OSlS5srF5fkQbJ0gVTCfzC9vEqomaXL/KIR9
+         /Ylr6LQoheCY+DpnQFToSd41UPY3pmL2OyNRXdpexscevpzpGUwVMDfyRi5pNd0J+k3T
+         cIsNto2JlXJn/bI43xzRMOj5NBo2BVe4q5PiEM9NE2iJGVo7b0WTC65ZIK/6EOG4DNen
+         iF+/Yiu7YnFpUa8kAEceg1VW+l5AOtJ6EWQPGWXE2jYLuK/9XCHE2H764fkDyEuzh90F
+         AxSILEkkFMckzZH/M7QOakHkFLnF8yM87H9y7DnhFx2f+qc3ntDBhlbMZEyrxU9jaxnr
+         WkWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791363316; x=1791968116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=idGrLQ96uf8XUCDMxXSwM26M1eSYrrZBxKOU5D9zkzs=;
+        b=xU1HhWBqRXte/l/2264Xy85hKyTXP8tPm1vGYFuwvSJIB3qKBfBH54nCdi6NS8kgoq
+         bkxPAsWqdIJ9ZzoNdvGNOsyzeXVSdDXNDKpe+m/C1WSF/RhN8rKgwDvP53TVxep/RoHp
+         PtuRwJ+XjKhCix1LOp3oplDr0FBVpRiYNKpj2nQRNkF98nfhkaut+Miy0haljNI2nrBU
+         kXQ5Y3pvh35zigY0YCsJ49ZClPK8kJ4c31AEWaNd11v0F4dwHK9Bp6Xu+Jj+RVG464g4
+         w/izLSXyIN+tPnP1b7DXonk17zWWZTmPuI7elFrQV++pDnpHMoJw5fL998/rZ/AHtl9k
+         e+0Q==
+X-Gm-Message-State: AFuF++mBX+Wkpnx64wLl+JiYPO5lRPJpP3rBheHL1nxD9YKyTq5f3tv2
+	FCxJA1Muc8TY+Mwvj4izQWbKw+8mP49pspEv/FN75XxPJzZ1ePP3UYHy
+X-Gm-Gg: AYBFou3ZQ3mr0YRcI00CYjkJBtaxJNyoiotdm9z4DhftydvO6WJXFwpH4MsyTYq3Rbl
+	Ikp6ewj0pbK8bYUpglR2VH2PPOqWAaRaFE2P9Aynw/EGIbLjb6dApLQ553ZMsBscP5AnGQBBzCJ
+	cvTdVzb5FlKjyb2krDfkvb6E0FSFQ5BVF7lL27g7hiX5apNynrepocIfu7n9puYFUxLa6t+NsgO
+	GTwAA7CasGyAoFVoUQgfZ/+cjybChr/ICnewfMlKIdwv42StVFRVnU86Og+5qUGETybAVsTNXPf
+	gwxl2tiKYu/7rCNDxSLFBlBp8GrZSUynxBPhYewWDoyB4ZS8RNngd9HLhokZ01SDdX8CS83BnB3
+	tRgSomL5u/UhK3/ml3w9NWaHdFpyfwywcBBuudnmpR952bC4VAD4wQdDQ0kFnbEzXtynDN6t9Or
+	0a0pZKz7BGs7aAlq2MN6p+lpyefMNjRld7xEsL+KYYaIA5IrxbPcWLs8/6GWQSUS4+Mg/c6yOP6
+	hCXeCUEIV77RbhOhIQ=
+X-Received: by 2002:a05:600c:a088:b0:4a1:7e77:c382 with SMTP id 5b1f17b1804b1-4a180313b89mr20150835e9.5.1791363316178;
+        Wed, 07 Oct 2026 01:55:16 -0700 (PDT)
+Received: from xeon ([188.163.112.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a17f493761sm81709225e9.2.2026.10.07.01.55.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Oct 2026 01:55:15 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] leds: aat1290: Add support for AAT1270
+Date: Wed,  7 Oct 2026 11:54:54 +0300
+Message-ID: <20261007085457.98762-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 05 Oct 2026 20:46:05 -0700
-Paul Sajna <sajattack@postmarketos.org> wrote:
+Document AAT1270 and FLINH pin, adjust driver to suport AAT1270.
 
-> Failure to use dev_err_probe() for regulator requests violates
-> LED subsystem guidelines.
-> 
-This cleanup is good.
+Svyatoslav Ryhel (3):
+  dt-bindings: leds: skyworks,aat1290: Document AAT1270 Current
+    Regulator for Flash LEDs
+  dt-bindings: leds: skyworks,aat1290: Document FLINH pin
+  leds: aat1290: Add support for AAT1270 Current Regulator for Flash
+    LEDs
 
-But your comment sounds like there are documented guidelines and not just common
-practice, so please add a link if it is not in an usual place which it is not:
+ .../bindings/leds/skyworks,aat1290.yaml       |  8 ++-
+ drivers/leds/flash/leds-aat1290.c             | 66 +++++++++++++------
+ 2 files changed, 54 insertions(+), 20 deletions(-)
 
-~/linux/Documentation/leds$ grep -R probe *
-leds-blinkm.rst:  $ modprobe ledtrig-heartbeat
-well-known-leds.txt:wants to use particular feature, you should probe for good name, first,
-
-~/linux/Documentation/leds$ grep -R http *
-leds-lm3556.rst:* Datasheet: http://www.national.com/ds/LM/LM3556.pdf
-leds-lp3944.rst:	http://www.national.com/pf/LP/LP3944.html
-leds-lp5521.rst:* Datasheet: http://www.national.com/pf/LP/LP5521.html
-leds-lp5523.rst:* Datasheet: http://www.national.com/pf/LP/LP5523.html
-leds-lp5812.rst:* Datasheet: https://www.ti.com/product/LP5812#tech-docs
-
-No links to additional documentation either.
-
-If no such documentation exist, then do not talk about it. Just
-say something like "to simplify und unify error reporting" as reason.
-
-Regards,
-Andreas
-
-> The original driver didn't use it, but it's worth cleaning up
-> while I'm here.
-> 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
-> ---
->  drivers/leds/leds-aw2013.c | 28 +++++++++++++---------------
->  1 file changed, 13 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
-> index 340eefdda04f..705de95c6eac 100644
-> --- a/drivers/leds/leds-aw2013.c
-> +++ b/drivers/leds/leds-aw2013.c
-> @@ -448,9 +448,8 @@ static int aw20xx_probe(struct i2c_client *client)
->  
->  	chip->regmap = devm_regmap_init_i2c(client, chip->cdef->regmap_cfg);
->  	if (IS_ERR(chip->regmap)) {
-> -		ret = PTR_ERR(chip->regmap);
-> -		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-> -			ret);
-> +		ret = dev_err_probe(&client->dev, PTR_ERR(chip->regmap),
-> +				    "Failed to allocate register map\n");
->  		goto error;
->  	}
->  
-> @@ -460,30 +459,30 @@ static int aw20xx_probe(struct i2c_client *client)
->  				      ARRAY_SIZE(chip->regulators),
->  				      chip->regulators);
->  	if (ret < 0) {
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(&client->dev,
-> -				"Failed to request regulators: %d\n", ret);
-> +		ret = dev_err_probe(&client->dev, ret,
-> +				     "Failed to request regulators\n");
->  		goto error;
->  	}
->  
->  	ret = regulator_bulk_enable(ARRAY_SIZE(chip->regulators),
->  				    chip->regulators);
->  	if (ret) {
-> -		dev_err(&client->dev,
-> -			"Failed to enable regulators: %d\n", ret);
-> +		ret = dev_err_probe(&client->dev, ret,
-> +				     "Failed to enable regulators\n");
->  		goto error;
->  	}
->  
->  	ret = regmap_read(chip->regmap, AW20XX_RSTR, &chipid);
->  	if (ret) {
-> -		dev_err(&client->dev, "Failed to read chip ID: %d\n",
-> -			ret);
-> +		ret = dev_err_probe(&client->dev, ret,
-> +				     "Failed to read chip ID\n");
->  		goto error_reg;
->  	}
->  	if (chipid != chip->cdef->chip_id) {
-> -		dev_err(&client->dev, "Chip reported wrong ID: %x\n",
-> -			chipid);
->  		ret = -ENODEV;
-> +		ret = dev_err_probe(&client->dev, ret,
-> +				     "Chip reported wrong ID: %x\n",
-> +				     chipid);
->  		goto error_reg;
->  	}
->  
-> @@ -498,13 +497,12 @@ static int aw20xx_probe(struct i2c_client *client)
->  	ret = regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
->  				     chip->regulators);
->  	if (ret) {
-> -		dev_err(&client->dev,
-> -			"Failed to disable regulators: %d\n", ret);
-> +		ret = dev_err_probe(&client->dev, ret,
-> +				     "Failed to disable regulators\n");
->  		goto error;
->  	}
->  
->  	mutex_unlock(&chip->mutex);
-> -
->  	return 0;
->  
->  error_reg:
-> 
+-- 
+2.53.0
 
