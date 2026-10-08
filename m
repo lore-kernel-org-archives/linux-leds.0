@@ -1,125 +1,312 @@
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E2A372EF3
-	for <linux-leds@vger.kernel.org>; Thu,  8 Oct 2026 07:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791445752; cv=none; b=D+creDISgSZaXrUldAVE9tnRRwg8K0OzJcgfpHjdqQKiAoDqZOeDhiOGLKp1J3OubBnILEZTztABP6wmKD94clVSLGMrXj3QdxCGHdEDoSuImtXoZrbUCVquKo19Y7Pz2LVCKZlXOILfgdS+2xUsdg3DRkjIFfHfLETHmeKKHUo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791445752; c=relaxed/simple;
-	bh=D7I4ryDYuH2K61FRATP1kZWTCu8iA6QgH1OfVhoadc8=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=PPH8NrE6BKenm8NaTZDnJdNFbso8hMgAgytIURsh3bVTR7fGUUdf9Sbz+OP1yOKyQiMWMEA2k/c3hEehasRSqxrkySb1jmc1x+Lb/1RMOeXZUpllXUdRVSKeN2Ga8IzRZ2HMl9H0ps+WPnioqR2H/CpY66gX6dUJox0rExsUrE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=HSgpvZBk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oSsw8hOu; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ACD44C4F2
+	for <linux-leds@vger.kernel.org>; Thu,  8 Oct 2026 08:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791447320; cv=pass; b=UN8HUjf9plGMuNQcxhXQVTk6lH8j6F+DqWRi5LPFDoGUwDq9S/7ribOJ/LmLl+vFpCJudBy+4krBfvmDfuJcXc5d5OUILn4pxMFViYQZmlG2XDevuhtXvyZrW8lr3sFt1+Z8YmHPM/dAXFAdtb4aDfp9nMSeoB0idhRqesr49gw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791447320; c=relaxed/simple;
+	bh=5cnw4MgwQFZdLGMn6q6mk8Zr2/rF6j4AwXXpyNou4n4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sO6Bp152UV2XtsKjsnjdyvjhbnU44qMPefzpTf7sx2cWqov5wes7OTWWEl7FcJ81aG7wY3CJ+EFIXVJm96e/ahdp3yU77Oz/bghqBoGtCM7T9yqBlcS68orwL5kcxNbyUSM/9Q2QjsJlMAwTds9NI0rfheyP8TvuSqrElEg6zN8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=baogCcxx; arc=pass smtp.client-ip=74.125.82.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="HSgpvZBk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oSsw8hOu"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 317BC1D000F8
-	for <linux-leds@vger.kernel.org>; Thu,  8 Oct 2026 03:49:10 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Thu, 08 Oct 2026 03:49:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1791445749;
-	 x=1791532149; bh=j8urfC9sQNDaR/sS9ku7IsysnC9H4KjwsmbzDxs1ONc=; b=
-	HSgpvZBkOkq8C4c3jiNFUlP2+UKVaLIwEZLAgptOAxnyeJhQVLXmqO+P0Dl3V6/Z
-	ITw+pl2iIpr43ok1pykA4JfdXVKnShD6or2oNZ7Inu6DxVCQDd/PyiN/KLBXcNED
-	F+IKWQ5y6BjWhsjOOxe5yYrJomOQZkE8DnbCioHexjSkieCnoU8iVUgPZQFEjdGu
-	1YywfCElGksFW4iap8OcB65pX7nuxReTyiLEo/1kmJ8Qa+lZ0UDqsigDlFjdzRmL
-	UHsTtqtZCGUvFc4ISMFPJCxJisiAwDYn7qTkgSzOYibyNZ0eAakmp0sqbdkgpFc5
-	DXyef45ktq1fZ6CrbcX2Qw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1791445749; x=
-	1791532149; bh=j8urfC9sQNDaR/sS9ku7IsysnC9H4KjwsmbzDxs1ONc=; b=o
-	Ssw8hOuSebuvVBQSzoGZAVk1QzbJGnlp+stEStWPvXQXL4xfn2gjDqEuqqOlqGKc
-	Ks2oce0zR17QK9Gk++egOB9tSK5NHsDZ7sC0kSyQBdcbWD7pR07+MClaQjMdSI3y
-	wc4eo3/LaMS5TRntj3Osap7nCfmKSieT0ol5l3SPtDoUUbzc/59CfS6nzQ8ChwS5
-	7VaDHoynzOHiK8/rtp2DBc+B5QHmufqLHjIUEX94uZ3db4Mym+LOPyWnNdyVdAzw
-	vhG4VRZHAOPNThrP9i5HPZfV4oa7qNyniex8u1BA9zWxzNm02HrdpOCuQZlNDUMZ
-	DJ6/va+H07LVJbD2Spiag==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
-	action=sign d=kroah.com a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1791445749; d=kroah.com;
-	mf=PGdyaWZmaW5Aa3JvYWguY29tPg==;
-	rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:G3b1ipeYoq1ViPcn0uaXXRFwSijoIKcw3uF3IyDHAuJBvH9
-	1PziZhfYXmnHyUbEUQHrFyBI7Yv/a/amal47k8k8lCHaNRL4bhpyHxLQ3pn/SfpC
-	4nKPeajVuuUFJHeXBWmfdwruHvM7E1WuhNrzLHilkec2CMMJxtGttvV6o0XKKAem
-	hnUjVsoTsZ6DNwYxE8cPmbiGjE1XR7MJfofIQiPzCnA76ifbSFZOfa/CLi1lkZh4
-	Wv6ggzZZ7eGURNigq3a0FB9fDWOoXPSGOzM+4zIki0CQHLJW63tY+dBAaBHiKs2/
-	a7kBA05YWHmXd3/qZ+9DZu+SyEMwDQa/eXru/BA==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-06;
-	repo=github.com/dkim2wg/interop; date=2026-10-04; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:F2ROxuKvY/WAYJD+mbhFypnb/mmgPwk1ilsw2eb4V0k=:D7I4ryDYuH2K61FRATP1kZWTCu8iA6QgH1OfVhoadc8=;
-X-ME-Sender: <xms:9UrHarWkIzsR2Mu3zb2lOhzy4OSn9BPL7U_Ay5jWvmqGoMVDxHmZMA>
-    <xme:9UrHas4u8eTfpv6jooxXyRyYBqZbQoM_hi4HA5AsX3cBZLrOVvaIFd7pGeqVwTM28
-    hI27CeaTHuNiiBFCNDUYCvAD7dI09oS4AKR96_S3x1qIanl21yg>
-X-ME-Received: <xmr:9UrHaurQG1tJ7YFW5c7zk6-Ll1IITCEnJBgCE_izDUgQNEQTiZ5bWwVSH2NwR3N6xrXI6AVyPxNz-k6RGhAkX4A>
-X-ME-Proxy-Cause: dmFkZTGDO3x6YjsbvfokPk7PrUKzGpn1Wo47Rxv4gq4sPG6QY4oEnXTykKj9SpOuF4OLPA
-    cGMjp4nuZeGGjmaZDf5aUX4kJ3e140sEuj5rCkNU/QqPp23FK8R0DlCn/IPi9CZnxJT8RE
-    XdrJNx2dlZCvryzfMAWx2CpaUyyMYKoZLAsGFqh7BlPvEm8xkSAkAkQfsijoCrFsc3xyAj
-    KnoVVUny7p2mGoyLkyezg817hDdcyayvYvlX3PqhKxV2aaW8Zzv4kdVdMDTs1dG0syqbGh
-    j63JyKvBjdTuYmsLcXZS6HtHdo13WTiqxVusZ9m1sS7+cUOuiF+JqZ3qqIUd5gILrU4FfI
-    LEqPyf6/LF9tcwHuDY+zz30XZKZRk14Dk8AJLiusl9raSrIQFa9n56tIBUyX3SXghbGujH
-    qNo6u6LAduhXIhrz11aHqgxK2qjjqJHyBBSn6CvxaSJfFK9xopwLpO0lVb9hvjrI3K51DF
-    8hOL6WGLqQItxtvZ96p8BimcCTwMcY8Nk2K7i0HDTgReIstA9ktdhFm6PqO0rMDs7EMnnY
-    umnsho7fgXbRBp4eMTey1Ln2hbEiUn1h97z17D6FOoDfv0sTAlZTmnVu+SsGwC5upwrtRp
-    9HRtCRzhoWooVE1uClRYKW9JqiaettWzFc5k3mgDv5rbRVs/eJ+y7BArWDQQ
-X-ME-Proxy: <xmx:9UrHanlOctuYFYmFk06mKxTOnw6r_ThrYsw352mV560oRGgb3_1V1g>
-    <xmx:9UrHaiOWwHX3CI7lWTjy6fxkWiwXHxl0EcyBI6nmjSJhBWB9o9Wryw>
-    <xmx:9UrHajNj9epgv_xU0W1suUyZm6INpeHiUm3zPQZpsVPbSioRKFYG5g>
-    <xmx:9UrHarjq4hnUeGGTrnvlBHcN821Yrppp3__25DWXQkIqBoiK2nwtrQ>
-    <xmx:9UrHahNx1cDyv4Y8ywD3rEAD1M76WzS19G1cHPHUer-itWLDQtGS7xB->
-Feedback-ID: i1d2843be:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 8 Oct 2026 03:49:07 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baogCcxx"
+Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-14fc585291cso1336270c88.1
+        for <linux-leds@vger.kernel.org>; Thu, 08 Oct 2026 01:15:16 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791447315; cv=none;
+        d=google.com; s=arc-20260327;
+        b=l+4g4smosGexCVbGG86jxRLTKSFkEuVmRUJE8MEXZyLfADBDPQv0KGiTmzsFgN2myP
+         9HZM6JpriU3GXHzyV4nryf+cD5i/b2Qh61Vkkp5wveQ/hwRItfkJeNOEzazj0y0+lyPH
+         q9WVjDA98Q2zJ9UjhSa1Ww4S3SUmyiw2rcDvIuLb/NzFLWUyiM2y2cF8F6xoxroBZJ9j
+         cn0qVGn0J4CMRGXRKnkAO1g3BoOzYoqFfU4RJLz/4HLtMyo7wTyNwGfMssJARp3/pUaM
+         hUAoLKvBSsoVDaBhmKRVKk/8LutMvDcQFWWy3RQNxQKcrHjbpI2UffsJMTbuF/N9tmjS
+         7eow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pL3azhN+e8+Ll8Q2wR7Y9QWc8pVlu6BuKJTaisy1mTE=;
+        fh=WuSyemOb5/GFHH2nDJYavAEYc1xRu83naj1cIN6tFto=;
+        b=GrVKE2vKGtHh/0XlgOyhtNeex6unID7N5XyKqBV6xoA4GDpcU4J4vUD/a9RYDk3Kvb
+         UPKsM/lph4emJQlGXgnhc28lBPY2Rt8sTQ9U4/OuR+joldbZxDYbgvPDeqj/QTd45WyI
+         mw2NCew440lPiwHKsQPUycZTnSb6wirMnD7H8QfzsHpflogtrdW0vwUYIdMyqWPtnrnV
+         P2n4YyHHBtz5GzDy0d3PHBE+2u+i2prMGCbW6BHttMfetrwhmJ3s58Da0BEijyIXb+sL
+         OE9o7Xz95OyqJyVARjiiYmU2UJpkwp+ZaOeZrtHNl9gsaAwXfjS41tgwlps3uQBvaZOV
+         Ib8g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791447315; x=1792052115; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pL3azhN+e8+Ll8Q2wR7Y9QWc8pVlu6BuKJTaisy1mTE=;
+        b=baogCcxxNvfktxl+YBzBdr+5XsgiYnzFN5vfPudgGddX1mCcyo+wcNh+RrQneDWzSt
+         m/vHHwoErfmnctYYQ7M23D96l7Bhj5mKrEuFv5A7mr1fsUJZc+AorNF+WGEgUODXkylr
+         8nx4E7MflZ3JwS9SKo1t3INQkUBPsIJW+3l31TuZE9ig6zlgQF3lGhTESnuVqRs37bUc
+         ACvYLkmgmwV0JrpNb2MGZ+YI43HTJP0kEtYsqTMLYPpH3IIePkYTXUkMCka1CliPxxAI
+         6KCJMgtvIx8WNdru+6PNbgdGweUfwHkELkcvJb65LruFS78QRMExgrrRIQEjl8VZrVEq
+         4HAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791447315; x=1792052115;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pL3azhN+e8+Ll8Q2wR7Y9QWc8pVlu6BuKJTaisy1mTE=;
+        b=WxSH3hgXgrEcvnXLo3cngMIQsCOXPUf0NusoKtjtBq2wLTxW+LLEQaylz7wR3MrOUt
+         wNkf2M6CkrxG5s6dShzkvJsEWrQfTvp10lPuTlDKmIoek9khiDsMTUPdarZqMJf8XVVa
+         jqJZWlt8c71HdHHWGtG7aJL48rt/HE69zzJiyc84xn9+soKJWKHHpAyeDNERvCPtB5u0
+         7eiu+Zpd7lRPVdkdS6XTeHjFU/yVdpy7YWpdfayyB1M00XwM/o7qNVwAVjg0/SCbvP2T
+         njB8rZtnn2ULIH+lIwxtzf7NKXhZ6RTzl1lAih3R+d1TzLImysKwaXXX4IX144z/ZsXK
+         nNpw==
+X-Forwarded-Encrypted: i=1; AKwUvBzVMkk+tx9gZsKkZw2pme0oXi4fukKkKj4oZCk7ChKaI6F7p7PUWkUwXtZIQ6q2pE6/nLZN2Nky736z@vger.kernel.org
+X-Gm-Message-State: AFq9FYKzP20aAysjm/kNkH7fCtHCQyE+nX3KYhWLpSt82LDNR7K2teSe
+	6wXUN42gwL3eydIyh6Wv79LQZg8g7KSjPEMgkpgN3e/eX5yMtZOvTX/d9UzLOT7xjVpA+Pyet4g
+	CRD1ONtgR7akC4o/HUejDtTi8/9iHOKA=
+X-Gm-Gg: AYBFou1hXgX+2KnLE8zHsfNnYn02aDWZ3U9+cpisYebavk2OfcLxmRF9jlOrj2mTELW
+	/Ewlj7Lq1oMHfZ5CONxI1iKIz5MAbwj1cySW+GfefhvtcjMP1KJSWhtsm0LExevck6yohWP97mP
+	vEBC0U/Jefn23GstM1XVCCHJjDdVLLZBr3x0LYqq2KMyU/C0jsPstHmscW6+sftGPcYm23Xkn30
+	TOxLFYUsNH+MWisi9/xeThu1We78YFPxQBOW+etMRGSXWqq4inL3rZ2QAT1aHb8sbiViRAdBkhh
+	mKZILcCQlFRG3uDAzTu0Zvd2g6c7yyTxnRPPI80janXJLBLDIN2lDdum5MpNNBV+S3PpZMTP25i
+	tR4ZfimTHWxNNGWvQnXLawLVP
+X-Received: by 2002:a05:693c:20cb:20b0:351:62ef:7cfe with SMTP id
+ 5a478bee46e88-35162ef8211mr4800802eec.11.1791447314716; Thu, 08 Oct 2026
+ 01:15:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] leds: is31fl32xx: Fix NULL pointer dereference when
- binding via I2C ID table
-From: Griffin Kroah-Hartman <griffin@kroah.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-leds@vger.kernel.org, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261005194923.161411-1-rosenp@gmail.com>
-References: <20261005194923.161411-1-rosenp@gmail.com>
-Date: Thu, 08 Oct 2026 09:49:03 +0200
-Message-Id: <179144574308.8475.10124322936037033713.b4-review@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1791445747; l=223;
- i=griffin@kroah.com; s=20260910; h=from:subject:message-id;
- bh=D7I4ryDYuH2K61FRATP1kZWTCu8iA6QgH1OfVhoadc8=;
- b=wLGz21L6NshJtBzgRXt+Ystu3i37gbGIin2M9z+J6Udq/O3/C6w2iLtsdAiSAPjeL/v2VJshB
- ZBAJzTFunKQDotnm6SGexgU5aNj1UWS1BOq3e7IxGiz/8BggnQ63WlM
-X-Developer-Key: i=griffin@kroah.com; a=ed25519;
- pk=HlyUkuZAN9I5qlPbOHN5N9xxdQ5sT6AbPgC4TsLCxzA=
+References: <20261007085457.98762-1-clamor95@gmail.com> <20261007085457.98762-4-clamor95@gmail.com>
+ <e69041a4-c03e-46ae-b83a-3d8363070e80@gmail.com>
+In-Reply-To: <e69041a4-c03e-46ae-b83a-3d8363070e80@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 8 Oct 2026 11:15:02 +0300
+X-Gm-Features: AclHuK8oO-wrh3Vky1FNjCoz08eeII-MlKBmUclvEYuGK-wSYsHn_Xcl26MdxN8
+Message-ID: <CAPVz0n2t5tcQB+YhNCFoQCStizEjTdyx7pDzLHtYkoz=B2MPwg@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] leds: aat1290: Add support for AAT1270 Current
+ Regulator for Flash LEDs
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 05 Oct 2026 12:49:23 -0700, Rosen Penev <rosenp@gmail.com> wrote:
-> leds: is31fl32xx: Fix NULL pointer dereference when binding via I2C ID table
+=D1=81=D1=80, 7 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 22:04=
+ Jacek Anaszewski <jacek.anaszewski@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> Hi Svyatoslav,
+>
+> On 10/7/26 10:54 AM, Svyatoslav Ryhel wrote:
+> > The AAT1270 is quite similar to the AAT1290, but it does not support th=
+e
+> > Advanced Simple Serial Control (AS2C) used in the AAT1290. The AAT1270
+> > uses an earlier version of AS2C, namely Simple Serial Control, which la=
+cks
+> > address-sending capabilities.
+>
+> It seems that it is not possible to set brightness level and flash
+> timeout. Those values are controlled by the values of RSET and CT
+> elements attached to the controller.
 
-Reviewed-by: Griffin Kroah-Hartman <griffin@kroah.com>
+This is not entirely true. S2C allows setting brightness level
+perfectly fine, I have tested it on my LG Optimus 2X P990 (star) that
+has this LED flash driver. Flash timeout is fixed, that is true, but
+both AAT1270 and AAT1290 feature mandatory flash inhibit logic which
+is not implemented by this driver and can be used to set emergency
+flash disable.
 
--- 
- 
+> Those values should be conveyed
+> via Device Tree, and the LED device API should reflect that accordingly.
+>
 
+They are calculated same way as AAT1290 does and set in the device
+tree. Being fixed does not mean they should be removed. Device tree
+describes hardware and those values are part of hw description.
+
+> The question is whether it is worth a hassle to add support for this
+> older chipset version. Could you let as know on which device it is
+> present.
+>
+
+LG Optimus 2X P990 (star). It is a Tegra smartphone, it is not yet
+supported by mainline Linux kernel, but it will be in near future. I
+am currently upstreaming missing parts for better support.
+
+>
+> > Differentiate the chips by using a description structure with a flag to
+> > indicate if AS2C is supported, placing all AS2C-only features under a
+> > conditional check.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >   drivers/leds/flash/leds-aat1290.c | 66 ++++++++++++++++++++++--------=
+-
+> >   1 file changed, 47 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/leds/flash/leds-aat1290.c b/drivers/leds/flash/led=
+s-aat1290.c
+> > index 49251cfd33509..773cdcc73a9e1 100644
+> > --- a/drivers/leds/flash/leds-aat1290.c
+> > +++ b/drivers/leds/flash/leds-aat1290.c
+> > @@ -43,9 +43,6 @@
+> >   #define AAT1290_FLASH_TM_NUM_LEVELS 16
+> >   #define AAT1290_MM_CURRENT_SCALE_SIZE       15
+> >
+> > -#define AAT1290_NAME                 "aat1290"
+> > -
+> > -
+> >   struct aat1290_led_config_data {
+> >       /* maximum LED current in movie mode */
+> >       u32 max_mm_current;
+> > @@ -59,6 +56,13 @@ struct aat1290_led_config_data {
+> >       enum led_brightness max_brightness;
+> >   };
+> >
+> > +struct aat1290_led_chip_info {
+> > +     /* led controller name */
+> > +     const char *name;
+> > +     /* Advanced Simple Serial Control support */
+> > +     bool as2c;
+> > +};
+> > +
+> >   struct aat1290_led {
+> >       /* platform device data */
+> >       struct platform_device *pdev;
+> > @@ -74,6 +78,10 @@ struct aat1290_led {
+> >       struct gpio_desc *gpio_fl_en;
+> >       /* EN|SET pin  */
+> >       struct gpio_desc *gpio_en_set;
+> > +
+> > +     /* led controller description */
+> > +     const struct aat1290_led_chip_info *info;
+> > +
+> >       /* movie mode current scale */
+> >       int *mm_current_scale;
+> >       /* device mode */
+> > @@ -101,15 +109,17 @@ static void aat1290_as2cwire_write(struct aat1290=
+_led *led, int addr, int value)
+> >
+> >       udelay(AAT1290_FLEN_OFF_DELAY_TIME_US);
+> >
+> > -     /* write address */
+> > -     for (i =3D 0; i < addr; ++i) {
+> > -             udelay(AAT1290_EN_SET_TICK_TIME_US);
+> > -             gpiod_direction_output(led->gpio_en_set, 0);
+> > -             udelay(AAT1290_EN_SET_TICK_TIME_US);
+> > -             gpiod_direction_output(led->gpio_en_set, 1);
+> > -     }
+> > +     if (led->info->as2c) {
+> > +             /* write address */
+> > +             for (i =3D 0; i < addr; ++i) {
+> > +                     udelay(AAT1290_EN_SET_TICK_TIME_US);
+> > +                     gpiod_direction_output(led->gpio_en_set, 0);
+> > +                     udelay(AAT1290_EN_SET_TICK_TIME_US);
+> > +                     gpiod_direction_output(led->gpio_en_set, 1);
+> > +             }
+> >
+> > -     usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIME_MAX_US=
+);
+> > +             usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIM=
+E_MAX_US);
+> > +     }
+> >
+> >       /* write data */
+> >       for (i =3D 0; i < value; ++i) {
+> > @@ -150,16 +160,18 @@ static int aat1290_led_brightness_set(struct led_=
+classdev *led_cdev,
+> >               led->movie_mode =3D false;
+> >       } else {
+> >               if (!led->movie_mode) {
+> > -                     aat1290_as2cwire_write(led,
+> > -                             AAT1290_MM_CURRENT_RATIO_ADDR,
+> > -                             AAT1290_MM_TO_FL_1_92);
+> > +                     if (led->info->as2c)
+> > +                             aat1290_as2cwire_write(led,
+> > +                                     AAT1290_MM_CURRENT_RATIO_ADDR,
+> > +                                     AAT1290_MM_TO_FL_1_92);
+> >                       led->movie_mode =3D true;
+> >               }
+> >
+> >               aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CURRENT_AD=
+DR,
+> >                               AAT1290_MAX_MM_CURR_PERCENT_0 - brightnes=
+s);
+> > -             aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CONFIG_ADD=
+R,
+> > -                             AAT1290_MOVIE_MODE_ON);
+> > +             if (led->info->as2c)
+> > +                     aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CO=
+NFIG_ADDR,
+> > +                                            AAT1290_MOVIE_MODE_ON);
+> >       }
+> >
+> >       mutex_unlock(&led->lock);
+> > @@ -178,7 +190,8 @@ static int aat1290_led_flash_strobe_set(struct led_=
+classdev_flash *fled_cdev,
+> >       mutex_lock(&led->lock);
+> >
+> >       if (state) {
+> > -             aat1290_set_flash_safety_timer(led, timeout->val);
+> > +             if (led->info->as2c)
+> > +                     aat1290_set_flash_safety_timer(led, timeout->val)=
+;
+> >               gpiod_direction_output(led->gpio_fl_en, 1);
+> >       } else {
+> >               gpiod_direction_output(led->gpio_fl_en, 0);
+> > @@ -475,6 +488,10 @@ static int aat1290_led_probe(struct platform_devic=
+e *pdev)
+> >       fled_cdev->ops =3D &flash_ops;
+> >       led_cdev =3D &fled_cdev->led_cdev;
+> >
+> > +     led->info =3D device_get_match_data(dev);
+> > +     if (!led->info)
+> > +             return -ENODEV;
+> > +
+> >       ret =3D aat1290_led_get_configuration(led, &led_cfg, &sub_node);
+> >       if (ret < 0)
+> >               return ret;
+> > @@ -489,7 +506,7 @@ static int aat1290_led_probe(struct platform_device=
+ *pdev)
+> >       aat1290_init_flash_timeout(led, &led_cfg);
+> >
+> >       init_data.fwnode =3D of_fwnode_handle(sub_node);
+> > -     init_data.devicename =3D AAT1290_NAME;
+> > +     init_data.devicename =3D led->info->name;
+> >
+> >       /* Register LED Flash class device */
+> >       ret =3D led_classdev_flash_register_ext(&pdev->dev, fled_cdev,
+> > @@ -528,8 +545,19 @@ static void aat1290_led_remove(struct platform_dev=
+ice *pdev)
+> >       mutex_destroy(&led->lock);
+> >   }
+> >
+> > +static const struct aat1290_led_chip_info aat1290_info =3D {
+> > +     .name =3D "aat1290",
+> > +     .as2c =3D true,
+> > +};
+> > +
+> > +static const struct aat1290_led_chip_info aat1270_info =3D {
+> > +     .name =3D "aat1270",
+> > +     .as2c =3D false,
+> > +};
+> > +
+> >   static const struct of_device_id aat1290_led_dt_match[] =3D {
+> > -     { .compatible =3D "skyworks,aat1290" },
+> > +     { .compatible =3D "skyworks,aat1290", .data =3D &aat1290_info },
+> > +     { .compatible =3D "skyworks,aat1270", .data =3D &aat1270_info },
+> >       {},
+> >   };
+> >   MODULE_DEVICE_TABLE(of, aat1290_led_dt_match);
+>
+> --
+> Best regards,
+> Jacek Anaszewski
+>
