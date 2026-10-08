@@ -1,312 +1,332 @@
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ACD44C4F2
-	for <linux-leds@vger.kernel.org>; Thu,  8 Oct 2026 08:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791447320; cv=pass; b=UN8HUjf9plGMuNQcxhXQVTk6lH8j6F+DqWRi5LPFDoGUwDq9S/7ribOJ/LmLl+vFpCJudBy+4krBfvmDfuJcXc5d5OUILn4pxMFViYQZmlG2XDevuhtXvyZrW8lr3sFt1+Z8YmHPM/dAXFAdtb4aDfp9nMSeoB0idhRqesr49gw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791447320; c=relaxed/simple;
-	bh=5cnw4MgwQFZdLGMn6q6mk8Zr2/rF6j4AwXXpyNou4n4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sO6Bp152UV2XtsKjsnjdyvjhbnU44qMPefzpTf7sx2cWqov5wes7OTWWEl7FcJ81aG7wY3CJ+EFIXVJm96e/ahdp3yU77Oz/bghqBoGtCM7T9yqBlcS68orwL5kcxNbyUSM/9Q2QjsJlMAwTds9NI0rfheyP8TvuSqrElEg6zN8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=baogCcxx; arc=pass smtp.client-ip=74.125.82.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A207C42BC43
+	for <linux-leds@vger.kernel.org>; Thu,  8 Oct 2026 11:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791459146; cv=none; b=oBmZu//2KzgyY9DY7GNAMRjNN1kdUzpNsiCRvp+UMF1NJy1cP7V4/u69fCQwQ/PYfhoIw9QlKr6otBAKJS803L6idVQPbKs7h5ErCPu3AYGUPC8WyNsOtdvHWz/1aqnhrPa6Mvn4XkcK9kgXSIAYmog5aoQFZwHJJ4ay6R4J+nE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791459146; c=relaxed/simple;
+	bh=UeuCAU/sCWyG54xqgCdm24InupWUv371orXdBtfrgk0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N4QG3ur62yJnpBYNY14A7OF56VOHVU1fjeDes4hMPwgElDKKeCmtb/zQs4im5zj/xJUCT3WFNAf8ZBdihUJ0LsEhVvcgY0dNUqgKnFoeGSn4igfDja+Ee35ISjwpNPd72Ezn4VWy9sF48Q3V186DW4Y0BxxSwNiE/C2adC9CWLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=ADk8CJ6t; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baogCcxx"
-Received: by mail-dl1-f49.google.com with SMTP id a92af1059eb24-14fc585291cso1336270c88.1
-        for <linux-leds@vger.kernel.org>; Thu, 08 Oct 2026 01:15:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791447315; cv=none;
-        d=google.com; s=arc-20260327;
-        b=l+4g4smosGexCVbGG86jxRLTKSFkEuVmRUJE8MEXZyLfADBDPQv0KGiTmzsFgN2myP
-         9HZM6JpriU3GXHzyV4nryf+cD5i/b2Qh61Vkkp5wveQ/hwRItfkJeNOEzazj0y0+lyPH
-         q9WVjDA98Q2zJ9UjhSa1Ww4S3SUmyiw2rcDvIuLb/NzFLWUyiM2y2cF8F6xoxroBZJ9j
-         cn0qVGn0J4CMRGXRKnkAO1g3BoOzYoqFfU4RJLz/4HLtMyo7wTyNwGfMssJARp3/pUaM
-         hUAoLKvBSsoVDaBhmKRVKk/8LutMvDcQFWWy3RQNxQKcrHjbpI2UffsJMTbuF/N9tmjS
-         7eow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pL3azhN+e8+Ll8Q2wR7Y9QWc8pVlu6BuKJTaisy1mTE=;
-        fh=WuSyemOb5/GFHH2nDJYavAEYc1xRu83naj1cIN6tFto=;
-        b=GrVKE2vKGtHh/0XlgOyhtNeex6unID7N5XyKqBV6xoA4GDpcU4J4vUD/a9RYDk3Kvb
-         UPKsM/lph4emJQlGXgnhc28lBPY2Rt8sTQ9U4/OuR+joldbZxDYbgvPDeqj/QTd45WyI
-         mw2NCew440lPiwHKsQPUycZTnSb6wirMnD7H8QfzsHpflogtrdW0vwUYIdMyqWPtnrnV
-         P2n4YyHHBtz5GzDy0d3PHBE+2u+i2prMGCbW6BHttMfetrwhmJ3s58Da0BEijyIXb+sL
-         OE9o7Xz95OyqJyVARjiiYmU2UJpkwp+ZaOeZrtHNl9gsaAwXfjS41tgwlps3uQBvaZOV
-         Ib8g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791447315; x=1792052115; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=pL3azhN+e8+Ll8Q2wR7Y9QWc8pVlu6BuKJTaisy1mTE=;
-        b=baogCcxxNvfktxl+YBzBdr+5XsgiYnzFN5vfPudgGddX1mCcyo+wcNh+RrQneDWzSt
-         m/vHHwoErfmnctYYQ7M23D96l7Bhj5mKrEuFv5A7mr1fsUJZc+AorNF+WGEgUODXkylr
-         8nx4E7MflZ3JwS9SKo1t3INQkUBPsIJW+3l31TuZE9ig6zlgQF3lGhTESnuVqRs37bUc
-         ACvYLkmgmwV0JrpNb2MGZ+YI43HTJP0kEtYsqTMLYPpH3IIePkYTXUkMCka1CliPxxAI
-         6KCJMgtvIx8WNdru+6PNbgdGweUfwHkELkcvJb65LruFS78QRMExgrrRIQEjl8VZrVEq
-         4HAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791447315; x=1792052115;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=pL3azhN+e8+Ll8Q2wR7Y9QWc8pVlu6BuKJTaisy1mTE=;
-        b=WxSH3hgXgrEcvnXLo3cngMIQsCOXPUf0NusoKtjtBq2wLTxW+LLEQaylz7wR3MrOUt
-         wNkf2M6CkrxG5s6dShzkvJsEWrQfTvp10lPuTlDKmIoek9khiDsMTUPdarZqMJf8XVVa
-         jqJZWlt8c71HdHHWGtG7aJL48rt/HE69zzJiyc84xn9+soKJWKHHpAyeDNERvCPtB5u0
-         7eiu+Zpd7lRPVdkdS6XTeHjFU/yVdpy7YWpdfayyB1M00XwM/o7qNVwAVjg0/SCbvP2T
-         njB8rZtnn2ULIH+lIwxtzf7NKXhZ6RTzl1lAih3R+d1TzLImysKwaXXX4IX144z/ZsXK
-         nNpw==
-X-Forwarded-Encrypted: i=1; AKwUvBzVMkk+tx9gZsKkZw2pme0oXi4fukKkKj4oZCk7ChKaI6F7p7PUWkUwXtZIQ6q2pE6/nLZN2Nky736z@vger.kernel.org
-X-Gm-Message-State: AFq9FYKzP20aAysjm/kNkH7fCtHCQyE+nX3KYhWLpSt82LDNR7K2teSe
-	6wXUN42gwL3eydIyh6Wv79LQZg8g7KSjPEMgkpgN3e/eX5yMtZOvTX/d9UzLOT7xjVpA+Pyet4g
-	CRD1ONtgR7akC4o/HUejDtTi8/9iHOKA=
-X-Gm-Gg: AYBFou1hXgX+2KnLE8zHsfNnYn02aDWZ3U9+cpisYebavk2OfcLxmRF9jlOrj2mTELW
-	/Ewlj7Lq1oMHfZ5CONxI1iKIz5MAbwj1cySW+GfefhvtcjMP1KJSWhtsm0LExevck6yohWP97mP
-	vEBC0U/Jefn23GstM1XVCCHJjDdVLLZBr3x0LYqq2KMyU/C0jsPstHmscW6+sftGPcYm23Xkn30
-	TOxLFYUsNH+MWisi9/xeThu1We78YFPxQBOW+etMRGSXWqq4inL3rZ2QAT1aHb8sbiViRAdBkhh
-	mKZILcCQlFRG3uDAzTu0Zvd2g6c7yyTxnRPPI80janXJLBLDIN2lDdum5MpNNBV+S3PpZMTP25i
-	tR4ZfimTHWxNNGWvQnXLawLVP
-X-Received: by 2002:a05:693c:20cb:20b0:351:62ef:7cfe with SMTP id
- 5a478bee46e88-35162ef8211mr4800802eec.11.1791447314716; Thu, 08 Oct 2026
- 01:15:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="ADk8CJ6t"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 859E5240104
+	for <linux-leds@vger.kernel.org>; Thu,  8 Oct 2026 13:32:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1791459142;
+	bh=jiR6BVaSgY4gROjK2KwVqFQDqFXzWQiwsI2Dx12ojdc=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 MIME-Version:OpenPGP:From;
+	b=ADk8CJ6tAq4ZycsZpe4vDB7HAdOsuXDoyZtChC+TmEQ4fRbJn2rZYyAorzj/1u6L9
+	 SPzMV/0KxBQ7IXG3jkesLT9FfcigEIpAmU+4JqIZzaTljW4mkXJ77gsTnj2ma6akBl
+	 FuGgUF/h8FcuqgHGsX4sz3gJewNHn0mr+ym5tol6ruuGxRYQ6Qs5M/CUCrN8d1zdrU
+	 U/qpENORo7GfgFjfuvOCTxUSi0jDedENda6z1icutFevBwYlHN8hym8BmcMeprRQM/
+	 Zm6dqSn1A3icrvtko22w1MltwudyWgEilsDiWhy53NMKtLxtKGU574p/fJrlRqjtmM
+	 jbSfOKHCnm9hQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4j0nsF6TRFz6txp;
+	Thu,  8 Oct 2026 13:32:17 +0200 (CEST)
+Message-ID: <c816c2986a4227285b83a7c76d5acce3d5eeaafd.camel@posteo.de>
+Subject: Re: [PATCH v26 0/4] rust: leds: Add led classdev abstractions
+From: Markus Probst <markus.probst@posteo.de>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman
+ <david.m.ertman@intel.com>, Leon Romanovsky	 <leon@kernel.org>, Miguel
+ Ojeda <ojeda@kernel.org>, Alex Gaynor	 <alex.gaynor@gmail.com>, Gary Guo
+ <gary@garyguo.net>,  =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron	
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross	 <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ "Rafael J. Wysocki"	 <rafael@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=	
+ <kwilczynski@kernel.org>, Boqun Feng <boqun@kernel.org>, Daniel Almeida	
+ <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, Onur =?ISO-8859-1?Q?=D6zkan?=
+ <work@onurozkan.dev>, Ira Weiny	 <iweiny@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Date: Thu, 08 Oct 2026 11:32:20 +0000
+In-Reply-To: <20260930-rust_leds-v26-0-83837331020e@posteo.de>
+References: <20260930-rust_leds-v26-0-83837331020e@posteo.de>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ jfGillcaQOqFZ3WwVqyzG1BUfTow==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-yrJNECpr2bBA+Pk+f9+3"
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261007085457.98762-1-clamor95@gmail.com> <20261007085457.98762-4-clamor95@gmail.com>
- <e69041a4-c03e-46ae-b83a-3d8363070e80@gmail.com>
-In-Reply-To: <e69041a4-c03e-46ae-b83a-3d8363070e80@gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 8 Oct 2026 11:15:02 +0300
-X-Gm-Features: AclHuK8oO-wrh3Vky1FNjCoz08eeII-MlKBmUclvEYuGK-wSYsHn_Xcl26MdxN8
-Message-ID: <CAPVz0n2t5tcQB+YhNCFoQCStizEjTdyx7pDzLHtYkoz=B2MPwg@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] leds: aat1290: Add support for AAT1270 Current
- Regulator for Flash LEDs
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+
+
+--=-yrJNECpr2bBA+Pk+f9+3
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D1=81=D1=80, 7 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 22:04=
- Jacek Anaszewski <jacek.anaszewski@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Hi Svyatoslav,
->
-> On 10/7/26 10:54 AM, Svyatoslav Ryhel wrote:
-> > The AAT1270 is quite similar to the AAT1290, but it does not support th=
-e
-> > Advanced Simple Serial Control (AS2C) used in the AAT1290. The AAT1270
-> > uses an earlier version of AS2C, namely Simple Serial Control, which la=
-cks
-> > address-sending capabilities.
->
-> It seems that it is not possible to set brightness level and flash
-> timeout. Those values are controlled by the values of RSET and CT
-> elements attached to the controller.
+On Wed, 2026-09-30 at 13:05 +0000, Markus Probst wrote:
+> The abstraction is used by
+> https://lore.kernel.org/rust-for-linux/20260724-synology_microp_initial-v=
+18-0-fb2f49f10e77@posteo.de/
+> .
+>=20
+> The following changes were made:
+> * add basic led classdev abstractions to register and unregister leds
+>=20
+> * add basic led classdev abstractions to register and unregister
+>   multicolor leds
+>=20
+> Changes since v25:
+> * fix issues reported by Sashiko:
+>   * fix vertical import
+> * add drivers/leds/*.rs to MAINTAINERS file (Kari)
+> * s/add/Add/ in commit message
+>=20
+> Changes since v24:
+> * remove `LedOps::Bus` (Gary)
+> * support type-erased `Device` and `MultiColorDevice` types (Gary)
+> * use `Device` and `MultiColorDevice` as arbitrary self types in
+>   callbacks. Remove separate `classdev` argument (Gary)
+> * remove unnecessary imports in doc example
+>=20
+> Changes since v23:
+> * add separate patch for MAINTAINERS file update
+>=20
+> Changes since v22:
+> * readded CStrExt import, because it is imported with `as _` in prelude.
+>   A `# CONFIG_RUST is not set` sneaked into my .config while
+>   development, so the compile error was unnoticed.
+>=20
+> Changes since v21:
+> * use 'init for lifetime that is only alive during initialization
+> * remove unnecessary CStrExt import
+>=20
+> Changes since v20:
+> * resolve Sashiko regressions:
+>   * fix typo
+>   * fix fwnode refcount decremented too early
+>=20
+> Changes since v19:
+> * rebase on v7.2-rc1:
+>   * Add `max_intensity` to `MultiColorSubLed`
+> * use safer `KBox::pin_slice` instead of `KVec`
+>   (len might not equal capacity)
+> * explicitly call `FwNode::dec_ref` instead of dropping a reconstructed
+>   `ARef<FwNode>`.
+> * remove direct access to `intensity` and `brightness` fields,
+>   which may get mutated concurrently by the C side
+> * fix safety comments pointing to functions from previous revisions
+>=20
+> Changes since v18:
+> * add inlines
+> * fix invalid documentation
+> * improve led color duplicate checking
+>=20
+> Changes since v17:
+> * use lifetimes instead of Devres
+>=20
+> Changes since v16:
+> * use for loops for duplicate checking
+>=20
+> Changes since v15:
+> * fix issues reported by Sashiko bot:
+>   * fix returning error not possible on `brightness_get` callback
+>=20
+> Changes since v14:
+> * fix issues reported by Sashiko bot:
+>   * add missing inlines
+>   * add missing Sync trait bound
+>   * fix vertical import layout for public export of private types
+>   * fix potential memory leak, if a multicolor led device with over
+>     `u32::MAX` subleds is registered
+> * remove default_trigger option
+> * fix missing CAST doc
+>=20
+> Changes since v13:
+> * rebased onto v7.1-rc1
+>=20
+> Changes since v12:
+> * add `led::DeviceBuilder::name()` and `DeviceBuilderState'
+> * add `led::Color::as_c_str`
+>=20
+> Changes since v11:
+> * use `led::DeviceBuilder` instead of `led::InitData`
+> * use static_assert instead of const { assert!(...) }
+> * restructured patches to avoid moving `led::Device` from
+>   rust/kernel/led.rs to rust/kernel/led/normal.rs in the 2. patch
+>=20
+> Changes since v10:
+> * allow in-place initialization of `LedOps`
+> * run rustfmt for code inside `try_pin_init!`
+>=20
+> Changes since v9:
+> * add missing periods in documentation
+> * duplicate `led::Device` and `led::Adapter` instead of using a complex
+>   trait
+> * fix imports not using prelude
+> * adapt to CStr change
+> * documented `led::Color::Multi` and `led::Color::Rgb`
+>=20
+> Changes since v8:
+> * accept `Option<ARef<Fwnode>>` in `led::InitData::fwnode()`
+> * make functions in `MultiColorSubLed` const
+> * drop the "rust: Add trait to convert a device reference to a bus
+>   device reference" patch, as it has been picked into driver-core
+>=20
+> Changes since v7:
+> * adjusted import style
+> * added classdev parameter to callback functions in `LedOps`
+> * implement `led::Color`
+> * extend `led::InitData` with
+>   - initial_brightness
+>   - default_trigger
+>   - default_color
+> * split generic and normal led classdev abstractions up (see patch 3/4)
+> * add multicolor led class device abstractions (see patch 4/4)
+> * added MAINTAINERS entry
+>=20
+> Changes since v6:
+> * fixed typos
+> * improved documentation
+>=20
+> Changes since v5:
+> * rename `IntoBusDevice` trait into `AsBusDevice`
+> * fix documentation about `LedOps::BLOCKING`
+> * removed dependency on i2c bindings
+> * added `AsBusDevice` implementation for `platform::Device`
+> * removed `device::Device` fallback implementation
+> * document that `AsBusDevice` must not be used by drivers and is
+>   intended for bus and class device abstractions only.
+>=20
+> Changes since v4:
+> * add abstraction to convert a device reference to a bus device
+>   reference
+> * require the bus device as parent device and provide it in class device
+>   callbacks
+> * remove Pin<Vec<_>> abstraction (as not relevant for the led
+>   abstractions)
+> * fixed formatting in `led::Device::new`
+> * fixed `LedOps::BLOCKING` did the inverse effect
+>=20
+> Changes since v3:
+> * fixed kunit tests failing because of example in documentation
+>=20
+> Changes since v2:
+> * return `Devres` on `led::Device` creation
+> * replace KBox<T> with T in struct definition
+> * increment and decrement reference-count of fwnode
+> * make a device parent mandatory for led classdev creation
+> * rename `led::Handler` to `led::LedOps`
+> * add optional `brightness_get` function to `led::LedOps`
+> * use `#[vtable]` instead of `const BLINK: bool`
+> * use `Opaque::cast_from` instead of casting a pointer
+> * improve documentation
+> * improve support for older rust versions
+> * use `&Device<Bound>` for parent
+>=20
+> Changes since v1:
+> * fixed typos noticed by Onur =C3=96zkan
+>=20
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> ---
+> Markus Probst (4):
+>       rust: leds: Add basic led classdev abstractions
+>       rust: leds: Add Mode trait
+>       rust: leds: Add multicolor classdev abstractions
+>       MAINTAINERS: rust: leds: Add rust abstraction entry
+>=20
+>  MAINTAINERS                     |   9 +
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/kernel/led.rs              | 317 ++++++++++++++++++++++++++++
+>  rust/kernel/led/multicolor.rs   | 445 ++++++++++++++++++++++++++++++++++=
+++++++
+>  rust/kernel/led/normal.rs       | 230 +++++++++++++++++++++
+>  rust/kernel/lib.rs              |   1 +
+>  6 files changed, 1003 insertions(+)
+> ---
+> base-commit: 5a956dde5526a634dca7ccad27c051ebcc306089
+> change-id: 20251114-rust_leds-a959f7c2f7f9
 
-This is not entirely true. S2C allows setting brightness level
-perfectly fine, I have tested it on my LG Optimus 2X P990 (star) that
-has this LED flash driver. Flash timeout is fixed, that is true, but
-both AAT1270 and AAT1290 feature mandatory flash inhibit logic which
-is not implemented by this driver and can be used to set emergency
-flash disable.
+Today is the 1st Year Anniversary of this patch series.
 
-> Those values should be conveyed
-> via Device Tree, and the LED device API should reflect that accordingly.
->
+That's a fairly long time.
+I hope it gets merged before there is a 2nd one.
 
-They are calculated same way as AAT1290 does and set in the device
-tree. Being fixed does not mean they should be removed. Device tree
-describes hardware and those values are part of hw description.
+Thanks
+- Markus Probst
 
-> The question is whether it is worth a hassle to add support for this
-> older chipset version. Could you let as know on which device it is
-> present.
->
 
-LG Optimus 2X P990 (star). It is a Tegra smartphone, it is not yet
-supported by mainline Linux kernel, but it will be in near future. I
-am currently upstreaming missing parts for better support.
 
->
-> > Differentiate the chips by using a description structure with a flag to
-> > indicate if AS2C is supported, placing all AS2C-only features under a
-> > conditional check.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >   drivers/leds/flash/leds-aat1290.c | 66 ++++++++++++++++++++++--------=
--
-> >   1 file changed, 47 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/leds/flash/leds-aat1290.c b/drivers/leds/flash/led=
-s-aat1290.c
-> > index 49251cfd33509..773cdcc73a9e1 100644
-> > --- a/drivers/leds/flash/leds-aat1290.c
-> > +++ b/drivers/leds/flash/leds-aat1290.c
-> > @@ -43,9 +43,6 @@
-> >   #define AAT1290_FLASH_TM_NUM_LEVELS 16
-> >   #define AAT1290_MM_CURRENT_SCALE_SIZE       15
-> >
-> > -#define AAT1290_NAME                 "aat1290"
-> > -
-> > -
-> >   struct aat1290_led_config_data {
-> >       /* maximum LED current in movie mode */
-> >       u32 max_mm_current;
-> > @@ -59,6 +56,13 @@ struct aat1290_led_config_data {
-> >       enum led_brightness max_brightness;
-> >   };
-> >
-> > +struct aat1290_led_chip_info {
-> > +     /* led controller name */
-> > +     const char *name;
-> > +     /* Advanced Simple Serial Control support */
-> > +     bool as2c;
-> > +};
-> > +
-> >   struct aat1290_led {
-> >       /* platform device data */
-> >       struct platform_device *pdev;
-> > @@ -74,6 +78,10 @@ struct aat1290_led {
-> >       struct gpio_desc *gpio_fl_en;
-> >       /* EN|SET pin  */
-> >       struct gpio_desc *gpio_en_set;
-> > +
-> > +     /* led controller description */
-> > +     const struct aat1290_led_chip_info *info;
-> > +
-> >       /* movie mode current scale */
-> >       int *mm_current_scale;
-> >       /* device mode */
-> > @@ -101,15 +109,17 @@ static void aat1290_as2cwire_write(struct aat1290=
-_led *led, int addr, int value)
-> >
-> >       udelay(AAT1290_FLEN_OFF_DELAY_TIME_US);
-> >
-> > -     /* write address */
-> > -     for (i =3D 0; i < addr; ++i) {
-> > -             udelay(AAT1290_EN_SET_TICK_TIME_US);
-> > -             gpiod_direction_output(led->gpio_en_set, 0);
-> > -             udelay(AAT1290_EN_SET_TICK_TIME_US);
-> > -             gpiod_direction_output(led->gpio_en_set, 1);
-> > -     }
-> > +     if (led->info->as2c) {
-> > +             /* write address */
-> > +             for (i =3D 0; i < addr; ++i) {
-> > +                     udelay(AAT1290_EN_SET_TICK_TIME_US);
-> > +                     gpiod_direction_output(led->gpio_en_set, 0);
-> > +                     udelay(AAT1290_EN_SET_TICK_TIME_US);
-> > +                     gpiod_direction_output(led->gpio_en_set, 1);
-> > +             }
-> >
-> > -     usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIME_MAX_US=
-);
-> > +             usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIM=
-E_MAX_US);
-> > +     }
-> >
-> >       /* write data */
-> >       for (i =3D 0; i < value; ++i) {
-> > @@ -150,16 +160,18 @@ static int aat1290_led_brightness_set(struct led_=
-classdev *led_cdev,
-> >               led->movie_mode =3D false;
-> >       } else {
-> >               if (!led->movie_mode) {
-> > -                     aat1290_as2cwire_write(led,
-> > -                             AAT1290_MM_CURRENT_RATIO_ADDR,
-> > -                             AAT1290_MM_TO_FL_1_92);
-> > +                     if (led->info->as2c)
-> > +                             aat1290_as2cwire_write(led,
-> > +                                     AAT1290_MM_CURRENT_RATIO_ADDR,
-> > +                                     AAT1290_MM_TO_FL_1_92);
-> >                       led->movie_mode =3D true;
-> >               }
-> >
-> >               aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CURRENT_AD=
-DR,
-> >                               AAT1290_MAX_MM_CURR_PERCENT_0 - brightnes=
-s);
-> > -             aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CONFIG_ADD=
-R,
-> > -                             AAT1290_MOVIE_MODE_ON);
-> > +             if (led->info->as2c)
-> > +                     aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CO=
-NFIG_ADDR,
-> > +                                            AAT1290_MOVIE_MODE_ON);
-> >       }
-> >
-> >       mutex_unlock(&led->lock);
-> > @@ -178,7 +190,8 @@ static int aat1290_led_flash_strobe_set(struct led_=
-classdev_flash *fled_cdev,
-> >       mutex_lock(&led->lock);
-> >
-> >       if (state) {
-> > -             aat1290_set_flash_safety_timer(led, timeout->val);
-> > +             if (led->info->as2c)
-> > +                     aat1290_set_flash_safety_timer(led, timeout->val)=
-;
-> >               gpiod_direction_output(led->gpio_fl_en, 1);
-> >       } else {
-> >               gpiod_direction_output(led->gpio_fl_en, 0);
-> > @@ -475,6 +488,10 @@ static int aat1290_led_probe(struct platform_devic=
-e *pdev)
-> >       fled_cdev->ops =3D &flash_ops;
-> >       led_cdev =3D &fled_cdev->led_cdev;
-> >
-> > +     led->info =3D device_get_match_data(dev);
-> > +     if (!led->info)
-> > +             return -ENODEV;
-> > +
-> >       ret =3D aat1290_led_get_configuration(led, &led_cfg, &sub_node);
-> >       if (ret < 0)
-> >               return ret;
-> > @@ -489,7 +506,7 @@ static int aat1290_led_probe(struct platform_device=
- *pdev)
-> >       aat1290_init_flash_timeout(led, &led_cfg);
-> >
-> >       init_data.fwnode =3D of_fwnode_handle(sub_node);
-> > -     init_data.devicename =3D AAT1290_NAME;
-> > +     init_data.devicename =3D led->info->name;
-> >
-> >       /* Register LED Flash class device */
-> >       ret =3D led_classdev_flash_register_ext(&pdev->dev, fled_cdev,
-> > @@ -528,8 +545,19 @@ static void aat1290_led_remove(struct platform_dev=
-ice *pdev)
-> >       mutex_destroy(&led->lock);
-> >   }
-> >
-> > +static const struct aat1290_led_chip_info aat1290_info =3D {
-> > +     .name =3D "aat1290",
-> > +     .as2c =3D true,
-> > +};
-> > +
-> > +static const struct aat1290_led_chip_info aat1270_info =3D {
-> > +     .name =3D "aat1270",
-> > +     .as2c =3D false,
-> > +};
-> > +
-> >   static const struct of_device_id aat1290_led_dt_match[] =3D {
-> > -     { .compatible =3D "skyworks,aat1290" },
-> > +     { .compatible =3D "skyworks,aat1290", .data =3D &aat1290_info },
-> > +     { .compatible =3D "skyworks,aat1270", .data =3D &aat1270_info },
-> >       {},
-> >   };
-> >   MODULE_DEVICE_TABLE(of, aat1290_led_dt_match);
->
-> --
-> Best regards,
-> Jacek Anaszewski
->
+--=-yrJNECpr2bBA+Pk+f9+3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmrHfzwbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPS0YoP/0sawsXX+ilKVdvoOCK5
+LNeTE1zcH0nj8Ye/fn3AhVarxycbG7IXo6jsqzRwYgtZmRg9GQkokFwUnePOx1zr
+jxay9LhoQ2Wqq0c/LppNPDcKycB56D2n8w9utGH9+ZQ+z7rPE6uRuMaKrVmHWaAA
+6rn+ejJZGd4502p0npjaNNtwgC3/1v5BVphIBD8p73UTe3LZOqbMp80VA2Ac04p6
+aKSfxs3Y8+mAnjp6J+xbHjiMDaDRMyqV2ZCPGR7+rguWDUhWSJCsJbJsIGach8Z8
+6PiD01CduIFfX38x4NGBDQOGiPmVYErJ5VAddaepj4/GSrJmACUK3D3os7768ASR
+asGK5pUSey9fu+UkFKRUeSu/Ts99PVuEVisG9YD1eIbiFu28JFN1VYJHC7CHaBHW
+n6T8TNmiU+qceTnebDu8/F1UbY5qrMrggpo+Sf7QqFgR95aXlsDAIqG8a5aNTi4G
+RXy59bGg1uDu680C9NjZYEemJUXGGZXrcl9zsYHHB/3w6sgCNmOA02R/TA5Trb84
+uAENaanPaSYSy9TqGcGpBU6AM2jQWQO3Dt/KIVC5bKKeTzTyq/cKsGfixFHr38C3
+9v2CGsOzwUfK6V0Pa+9PfuxNV198bHlv21wdIDPxJCkR4Qa+Y2ugIV5mJLsrQWq5
+Ap7Nba0S5i9v/FJTFykqhrE2
+=uWp8
+-----END PGP SIGNATURE-----
+
+--=-yrJNECpr2bBA+Pk+f9+3--
