@@ -1,64 +1,64 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C5033BBB9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BE4451982
 	for <linux-leds@vger.kernel.org>; Sun, 11 Oct 2026 19:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791745851; cv=none; b=ONzfbnTyh9tFDSZeRjI6r6vUvXo10oSLvg6s36VMug7AP2IPyFfm407Vos4WIrHiyC/8u80yz0EQ0DZYBhDOVw/5hVeemyT9c8AZJmaB7sMIwTMOYmrunkBDDInxIn2+p0fsnMU0+7MgFc6IzF5mwdIv1JfURBIbZl8Ys7g9z4Y=
+	t=1791745851; cv=none; b=AvQwJxZre4kfw1i4DoFlHMuNCae0XhOprBl8mu+PVGiptM8tEvxAIqmQM+7D8N2rIFCxeEw10wiYr9fJlZF7un4lCggz7kbcVPWGXw1OkR2f0wjt5eLfNMGfI1HYUa9C8h5h7U/20bxTJqpf7quehWiFovnAZYfv6m5mQYYt5UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1791745851; c=relaxed/simple;
-	bh=4KJPKZfhPGaNSJ584xBrXJX++esbm9JiU+zUzWkZH34=;
+	bh=41aqWEsL0TDa4o5y1W7gWA+e67KcxMXL8EjuVYj0gRw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y9X4yT6xQ24MYc391eUoX8UAA0JznHdYEHxWCz+JkjrIgTAY7Cn7jscjxCR4B+Y5qRvXLmE3WO9pjVNTA2YWKwc/aelwLKlDLcJnvj9kLexhqqG3rUkTKn9HjuU1BA4EkBJiM0tZb2gFKJ2Ndp5jpvQrSTQB7NxRa+CVxIGrHms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTOzWNEa; arc=none smtp.client-ip=209.85.128.47
+	 MIME-Version; b=NPJc/EGJGXTFtXEuEFdsuyYioRzhmhapBC+xsU/1ZigYR36kOwAoJgHrcMs43XR1BzaYg/ggTqBIvp7FV2lo72WNup4vb7q8QxvArw6UjRy89vJumGO6nttl5crPeGzM5LiQznOUcjV7hoyfhdvPpIdfklh5H03gL6hzT7FkuyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IUzHDHrh; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTOzWNEa"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a16aaf2067so15339975e9.0
-        for <linux-leds@vger.kernel.org>; Sun, 11 Oct 2026 12:10:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUzHDHrh"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4a16aaf2067so15339885e9.0
+        for <linux-leds@vger.kernel.org>; Sun, 11 Oct 2026 12:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791745847; x=1792350647; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791745846; x=1792350646; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=nhv2CnG2FYdgl8+HPdEE4WFVSjMRZar70ioMHDUdu/s=;
-        b=kTOzWNEa1V5xk7RUnRdiHBxzo2nXrgjjXmrovfr8WBQhRjf75WJlFOpTwIHqCjNfSF
-         i/RyK1iErkincAz9cObtYkOwuadRBRVqF8IDA8vdM0RZi3aTxpS8fyAfoNy4xSdL/RCR
-         0bFA+/RXGubZfDYoLweWBcE3WQz8f2iuyYL5zPFqduNApkIRFEnmvrxZcRcjseatP72W
-         Ed/YF1zzBiErzAKq8P26Hwc89HrUxxnXE6lWwRQIoTzl2f5EUJvRzWbsn4EwVQ2apbgi
-         ih22xNnuGhxmN6/oRcCIPnGPk4nS0vy62b5uLfHqCu3LjwJbMjiY0zsey8iA/KYOt2gp
-         aR5A==
+        bh=N5TaAuJAWKT94I4Kxd3ax2z8uurzF0AQLXnV0gl+SV8=;
+        b=IUzHDHrhtTa3N+D6blUjkDwFZ7ufYek12ZqutT9W3VPgA51dlQ58qa0KQT+XZqKv2u
+         MDJTjc7vw9moTF2paqJ5kc8J1qCXwmdArB+0JS0m0ta/0qSJvY8qCZ7CIf0rDBr2QcOu
+         Co/9K3Xa83pzgM9CVIrbJjlg7fONomsInbOFqParUQ4Ws1pYLPAwEnW8Fe10hsVhjRAM
+         /Tm2AOaxBTiVR8mFqS30AavA1jIAtZ0SGL6xyfBNF4OYaOeD+/ev8ijrm5BEZYCgyNrv
+         1oVoQDGmXxettssSht2V4xPxZPIqNwkEYgg39lun3VZCOhjHG6so3NfNO0A/OJse7f0B
+         9Rmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791745847; x=1792350647;
+        d=1e100.net; s=20260707; t=1791745846; x=1792350646;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=nhv2CnG2FYdgl8+HPdEE4WFVSjMRZar70ioMHDUdu/s=;
-        b=cL4OXp3gEeymOPVHnv+S0fHAFGYYMVF6E8VkmaIHTCt0lE0iphRHqdxNMrGE5H8C1e
-         6/xGRFcBhWzv4TijMYWCr2D7jW57t8FcY7zLDrmjGxBDQwtlAZSJp05ltlre5l3owM4B
-         tHJfQ07B0N1z/aTvjXosWofeGiHEWF09sbb463TgmxUnHp0RhDDX9hoz80QzU2u8d0PJ
-         g3DL4Lc08gyG7DXybfEN/pHUi4nqqs08Dz6SmNIWbzJ3I1Cz8yhSZFU4s25xBbXTvRXp
-         bqg5aWOMoB11DDTn1FwmFntjKACh+z1OBj6fM2HkZDLP8UNH+F/gUaaPC5hxlQ3d4Rcg
-         D2WQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzeeZ37nVErwK9SeLflLRaNbMoCMsJkF9l+NfXzb+kGrYI5EbQr4soALrvBpnuZYMTM89IuK1QwHZ96@vger.kernel.org
-X-Gm-Message-State: AFq9FYKvz3hPZKnbO3wn5lMM+oIsw8F1NxXi8+FFKHQrAXhkhkl2Xxvs
-	UwtKxMMeX1fXaMsZdW2Emz5StluHwybSAw+emkNWJRKfQoqQtdJs/i0F
-X-Gm-Gg: AYBFou1VWRlrQmF36UJoqRlE9JHB0R+mCCSPGxH+nionGvGHAdafeDRB8Hm+CtpDRcz
-	mzJ2LalI2vUZltYDrWEA7xwsXiyuTKPsuZMEtM6tnw3NR9quLh1y2/3oaNQ9ov8FLitrULO2vJ9
-	EjQNbphRfYX4/P3uH70fiXPsdXNuP8uP7S/s5RXs1Rc3D6SUE/RzEKuIi/BmL5uL/C592bzYXdO
-	bcK8kyfr+sUrLeEyq6ib+hHrpQyPeD2pSNVybfivVFyJV8MSns5GF+aSsgxOpnZSwSlzMbnJ4+2
-	nXrtMOxC7v3glQhyFmNr0zVu6Tj7F5nDj+BLW5O98Ej+AItR78oY1HiSKRYL7KPZ1vZEcWZYJ+/
-	qTDgJjcmZDuMbYXHEnPWQdnXQ41Qxit07t1vXr9VYbKRKhl+meG/EjLTfkRFfU3JcDemfH1WUbR
-	6D2mq+8OYl8FIT2ba1YHEMhRurOkWoufaJhpogswxTUd26ycHn1EOkw2uH7MZMpsFad2OjKS7Xb
-	+nivKXzwOC+q+IWqdwshJUdbl68Hqp7ZjU=
-X-Received: by 2002:a05:600c:3111:b0:4a0:159b:d2a2 with SMTP id 5b1f17b1804b1-4a18e4e14e8mr133241775e9.29.1791745847068;
-        Sun, 11 Oct 2026 12:10:47 -0700 (PDT)
-Received: from rillian-arch ([90.244.147.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf15691sm225209795e9.6.2026.10.11.12.10.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=N5TaAuJAWKT94I4Kxd3ax2z8uurzF0AQLXnV0gl+SV8=;
+        b=e91P2OIdwgI8pPu7zqUwiq+y2WtR35HmofpVfOQ7/d9K92VIrUoKlPOzQrbBxGBsi3
+         iRz83bJv+uOr5ppTuArK09Hya+/0JsMuX8wS1h43bieE9uaWeOvOZw3jPFrvzH+0SBOH
+         VoaIukm8j8PNbEv9lkiHJ235MwjxV7pf+TmLyaojmazZI4EbAI1rqIEVmrl+y6qXYHsT
+         i6fFwQRrBYuJdOIwMehIl2Qnnp1RkWAG1SApRU3Ql8KuvhZLbuvgz5yW8bRMVhG4IKB3
+         fXxF7jADKQsuMN+uAvwpwgsbh6Y6PraL6Ymy9Db7UsFYosGWrBz3fq/kiKzBX813mRsV
+         pJXw==
+X-Forwarded-Encrypted: i=1; AKwUvBwwxX27tMqTR6Orrfp9dOxPDWcpZlC4FdJiGVjBaZxcVEth3u7A9hjPpS1oGKKo82gI1n8JLeUnaHpc@vger.kernel.org
+X-Gm-Message-State: AFq9FYIspAdamTWTnZKWSqXbggRge4xIxn8eI93pKzPp5u7JPx7XZg+/
+	tAQxaVRmLNefAIG06mDlRSnSKphCWZds8kfQcBr1MnHcMXJzcwfzzZrmLNwlpaN5
+X-Gm-Gg: AYBFou0Ju/D5cVkx+EeRJdtvBH28jObdEMBSFq7NIIZePj3T4vRvbSqIXM39z3ceKf/
+	Q3VxdasiZ2mfWjM1qkZ0yAat2DhMV8z0u4caOUQtRcwe1oWjEvf9N9Pw4fd2pZTDaJMpwvDtOnn
+	Sh77oXknyVW/HpWxUCgwKk7pVdBN8B//Zm3nq+j/bDq44UJ5XPlFW6ndRfVoapM4aHnp3+T+fN9
+	y2fEtKjZI5NpdSRT2EL1FLKscjfk75tiGK1T2/0Ef/JIu1t3TSAfNByFLXOeyHMLYTTL3em48qZ
+	D4F+7zXnPNbgjSsUu7EEU5YoE0b0PoP3lrv3o74QT3m/CDlpQt6PyTT/gwfGwSHpIUVi78fU0UX
+	2yCtCswZiaPHtEGcAkKZZ6O73uM126MM7NjEcN2v8SOET5mbKogZ7Vq7sChrbiF3iB4kszrGyEn
+	GRFPoelESywWbKu0FMUe2QqJ+clDws8YGEXJnPrpfOM1oaOlD5ErVoO9g8+zWkfdf2kE2rQj2i0
+	mFHY/bw7qInFj9oziSntFH7XokVEMxaFkSaUB32BKcNkA==
+X-Received: by 2002:a05:600c:a01:b0:49f:ce72:e931 with SMTP id 5b1f17b1804b1-4a18e4fe3e1mr156284295e9.35.1791745846058;
         Sun, 11 Oct 2026 12:10:46 -0700 (PDT)
+Received: from rillian-arch ([90.244.147.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf15691sm225209795e9.6.2026.10.11.12.10.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Oct 2026 12:10:45 -0700 (PDT)
 From: Rillian Grant <rillian.grant@gmail.com>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>
@@ -70,9 +70,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Rillian Grant <rillian.grant@gmail.com>
-Subject: [PATCH v3 3/4] leds: flash: lm3643: Describe the LED of ACPI boards without LED nodes
-Date: Sun, 11 Oct 2026 20:09:45 +0100
-Message-ID: <20261011191026.149338-4-rillian.grant@gmail.com>
+Subject: [PATCH v3 2/4] leds: flash: Add support for the TI LM3643 dual LED flash driver
+Date: Sun, 11 Oct 2026 20:09:44 +0100
+Message-ID: <20261011191026.149338-3-rillian.grant@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261011191026.149338-1-rillian.grant@gmail.com>
 References: <20261011191026.149338-1-rillian.grant@gmail.com>
@@ -84,162 +84,890 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ruslan Koreev <koreev.r@gmail.com>
+The LM3643 is an I2C dual LED flash driver. Its two high-side current
+sources share a synchronous boost converter and each supports torch and
+flash modes with programmable current and flash timeout alongside fault
+reporting.
 
-Lenovo ThinkPads enumerate the LM3643 through ACPI (HID TXNW3643)
-without a _DSD, so the device has no LED child nodes and the driver
-refuses to probe. On these laptops the chip drives the Windows Hello IR
-flood illuminator, with both current sources feeding a single LED, and
-Lenovo's Windows driver applies a fixed configuration to any LM3643 it
-finds.
+It also supports connecting both sources together to supply one LED with
+current up to the boost converter's 1.5A maximum. In that case the current
+will be split between each source symmetrically and the sources will be
+enabled and disabled at the same time.
 
-Add a DMI table that provides that description as a software node when
-the firmware offers none: one IR flash LED on both outputs, with torch
-and flash limits well below the chip's maximums. Start with the ThinkPad
-X1 Carbon Gen 14.
+As strobing is toggled chip-wide the driver returns -EBUSY when a sibling
+LED is active.
 
-The description is keyed by DMI instead of being applied to every
-TXNW3643 because the wiring is a board property: which output feeds
-which LED and how much current the LED tolerates cannot be read from the
-chip, and a wrong guess overdrives an LED. The firmware cannot be fixed
-from the driver side, and a per-board table is what x86-android-tablets
-does for devices whose ACPI tables describe nothing either. Boards with
-a _DSD are not affected, the fallback only runs when the device has no
-child nodes. The limits are conservative because the LED part is not
-documented; the illuminator is bright enough for face authentication at
-a fraction of them.
+Flash timeouts do not have a constant step. The driver advertises the most
+granular step and rounds down to the nearest supported value.
 
-Tested on that laptop: torch through /sys/class/leds/ir:flash lights the
-ST VD55G1 IR camera's field of view, and the resulting frames are good
-enough for face authentication.
+Register behavior was taken from the datasheet (SNVS967A).
 
+Co-developed-by: Ruslan Koreev <koreev.r@gmail.com>
 Signed-off-by: Ruslan Koreev <koreev.r@gmail.com>
-[rillian: add reg property to match the DT binding]
-[rillian: change DMI activation log to dev_dbg()]
-[rillian: use DMI_EXACT_MATCH]
 Signed-off-by: Rillian Grant <rillian.grant@gmail.com>
 ---
- drivers/leds/flash/leds-lm3643.c | 93 ++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+ MAINTAINERS                      |   7 +
+ drivers/leds/flash/Kconfig       |  12 +
+ drivers/leds/flash/Makefile      |   1 +
+ drivers/leds/flash/leds-lm3643.c | 796 +++++++++++++++++++++++++++++++
+ 4 files changed, 816 insertions(+)
+ create mode 100644 drivers/leds/flash/leds-lm3643.c
 
-diff --git a/drivers/leds/flash/leds-lm3643.c b/drivers/leds/flash/leds-lm3643.c
-index cbe66e90d8e1..18ac75df72e2 100644
---- a/drivers/leds/flash/leds-lm3643.c
-+++ b/drivers/leds/flash/leds-lm3643.c
-@@ -9,6 +9,7 @@
- #include <linux/bitfield.h>
- #include <linux/bits.h>
- #include <linux/cleanup.h>
-+#include <linux/dmi.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
- #include <linux/led-class-flash.h>
-@@ -691,6 +692,92 @@ static int lm3643_register_led(struct device *dev, struct lm3643 *chip,
- 	return lm3643_register_v4l2(dev, led, fwnode);
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a1eb0937238d..0c186a7f2648 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -27036,6 +27036,13 @@ F:	include/linux/dma/k3-udma-glue.h
+ F:	include/linux/dma/ti-cppi5.h
+ X:	drivers/dma/ti/cppi41.c
  
++TEXAS INSTRUMENTS LM3643 LED FLASH DRIVER
++M:	Rillian Grant <rillian.grant@gmail.com>
++L:	linux-leds@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/leds/ti,lm3643.yaml
++F:	drivers/leds/flash/leds-lm3643.c
++
+ TEXAS INSTRUMENTS TPS25990 HARDWARE MONITOR DRIVER
+ M:	Jerome Brunet <jbrunet@baylibre.com>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
+index 9b6dd3f1ffe8..0f0a60a902fc 100644
+--- a/drivers/leds/flash/Kconfig
++++ b/drivers/leds/flash/Kconfig
+@@ -39,6 +39,18 @@ config LEDS_LM3601X
+ 	  This option enables support for the TI LM3601x family
+ 	  of flash, torch and indicator classes.
+ 
++config LEDS_LM3643
++	tristate "LED support for LM3643 dual LED flash driver"
++	depends on I2C
++	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
++	select REGMAP_I2C
++	help
++	  This option enables support for the Texas Instruments LM3643 dual
++	  LED flash driver.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called "leds-lm3643".
++
+ config LEDS_MAX77693
+ 	tristate "LED support for MAX77693 Flash"
+ 	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
+diff --git a/drivers/leds/flash/Makefile b/drivers/leds/flash/Makefile
+index 44e6c1b4beb3..e2e885e02123 100644
+--- a/drivers/leds/flash/Makefile
++++ b/drivers/leds/flash/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_LEDS_AAT1290)	+= leds-aat1290.o
+ obj-$(CONFIG_LEDS_AS3645A)	+= leds-as3645a.o
+ obj-$(CONFIG_LEDS_KTD2692)	+= leds-ktd2692.o
+ obj-$(CONFIG_LEDS_LM3601X)	+= leds-lm3601x.o
++obj-$(CONFIG_LEDS_LM3643)	+= leds-lm3643.o
+ obj-$(CONFIG_LEDS_MAX77693)	+= leds-max77693.o
+ obj-$(CONFIG_LEDS_QCOM_FLASH)	+= leds-qcom-flash.o
+ obj-$(CONFIG_LEDS_RT4505)	+= leds-rt4505.o
+diff --git a/drivers/leds/flash/leds-lm3643.c b/drivers/leds/flash/leds-lm3643.c
+new file mode 100644
+index 000000000000..cbe66e90d8e1
+--- /dev/null
++++ b/drivers/leds/flash/leds-lm3643.c
+@@ -0,0 +1,796 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Lenovo ThinkPads enumerate the chip through ACPI (HID TXNW3643) without a
-+ * _DSD, so the LED is not described by firmware. On the boards below it drives
-+ * the Windows Hello IR flood illuminator, with both current sources feeding a
-+ * single LED. Describe that with a software node, with torch and flash limits
-+ * (100 mA and 300 mA per output) well below the chip's maximums.
++ * Texas Instruments LM3643(A) Synchronous Boost Dual LED Flash Driver
++ *
++ * Copyright 2026 Rillian Grant <rillian.grant@gmail.com>
 + */
-+static const u32 lm3643_ir_flood_sources[] = { 0, 1 };
 +
-+static const struct property_entry lm3643_ir_flood_props[] = {
-+	PROPERTY_ENTRY_U32("reg", 0),
-+	PROPERTY_ENTRY_U32_ARRAY("led-sources", lm3643_ir_flood_sources),
-+	PROPERTY_ENTRY_STRING("function", LED_FUNCTION_FLASH),
-+	PROPERTY_ENTRY_U32("color", LED_COLOR_ID_IR),
-+	PROPERTY_ENTRY_U32("led-max-microamp", 200000),
-+	PROPERTY_ENTRY_U32("flash-max-microamp", 600000),
-+	PROPERTY_ENTRY_U32("flash-max-timeout-us", 100000),
-+	{ }
++#include <linux/acpi.h>
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/cleanup.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/led-class-flash.h>
++#include <linux/leds.h>
++#include <linux/minmax.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
++#include <media/v4l2-flash-led-class.h>
++
++#define LM3643_NUM_CHANNELS 2
++#define LM3643_CHAN_JOINT LM3643_NUM_CHANNELS
++
++#define LM3643_REG_ENABLE 0x01
++#define LM3643_REG_FLASH_BR_LED1 0x03
++#define LM3643_REG_FLASH_BR_LED2 0x04
++#define LM3643_REG_TORCH_BR_LED1 0x05
++#define LM3643_REG_TORCH_BR_LED2 0x06
++#define LM3643_REG_CONFIG 0x08
++#define LM3643_REG_FLAGS1 0x0A
++#define LM3643_REG_FLAGS2 0x0B
++#define LM3643_REG_DEV_ID 0x0C
++
++#define LM3643_ENABLE_LED_MASK GENMASK(1, 0)
++#define LM3643_ENABLE_LED1 BIT(0)
++#define LM3643_ENABLE_LED2 BIT(1)
++
++#define LM3643_MODE_MASK GENMASK(3, 2)
++#define LM3643_MODE_STANDBY 0x00
++#define LM3643_MODE_TORCH FIELD_PREP(LM3643_MODE_MASK, 0x2)
++#define LM3643_MODE_FLASH FIELD_PREP(LM3643_MODE_MASK, 0x3)
++
++#define LM3643_TORCH_BR_MASK GENMASK(6, 0)
++#define LM3643_TORCH_BR_LED2_OVERRIDE BIT(7)
++#define LM3643_TORCH_BR_CODE_RESET 0x3F
++#define LM3643_TORCH_BR_CODE_MAX 0x7F
++
++/* Torch: microamps = (code x 1.4) + 0.977 */
++#define LM3643_TORCH_BR_UA_OFFSET 977
++#define LM3643_TORCH_BR_UA_STEP 1400
++#define LM3643_TORCH_BR_UA_TO_CODE(ua) \
++	(((ua) - LM3643_TORCH_BR_UA_OFFSET) / LM3643_TORCH_BR_UA_STEP)
++#define LM3643_TORCH_BR_CODE_TO_UA(code) \
++	(((code) * LM3643_TORCH_BR_UA_STEP) + LM3643_TORCH_BR_UA_OFFSET)
++#define LM3643_TORCH_BR_UA_MIN LM3643_TORCH_BR_CODE_TO_UA(0)
++
++#define LM3643_FLASH_BR_MASK GENMASK(6, 0)
++#define LM3643_FLASH_BR_LED2_OVERRIDE BIT(7)
++#define LM3643_FLASH_BR_CODE_RESET 0x3F
++#define LM3643_FLASH_BR_CODE_MAX 0x7F
++
++/* Flash: microamps = (code x 11.725) + 10.9 */
++#define LM3643_FLASH_BR_UA_OFFSET 10900
++#define LM3643_FLASH_BR_UA_STEP 11725
++#define LM3643_FLASH_BR_UA_TO_CODE(ua) \
++	(((ua) - LM3643_FLASH_BR_UA_OFFSET) / LM3643_FLASH_BR_UA_STEP)
++#define LM3643_FLASH_BR_CODE_TO_UA(code) \
++	(((code) * LM3643_FLASH_BR_UA_STEP) + LM3643_FLASH_BR_UA_OFFSET)
++#define LM3643_FLASH_BR_UA_MIN LM3643_FLASH_BR_CODE_TO_UA(0)
++/* Maximum current the chip can produce across both sources */
++#define LM3643_FLASH_BR_UA_TOTAL_MAX 1500000
++
++/* CDEV brightness values are 1-indexed for use by led_classdev */
++#define LM3643_TORCH_BR_CODE_TO_CDEV(code) ((code) + 1)
++#define LM3643_TORCH_BR_CDEV_TO_CODE(brightness) ((brightness) - 1)
++#define LM3643_TORCH_BR_CDEV_MAX LM3643_TORCH_BR_CODE_TO_CDEV(LM3643_TORCH_BR_CODE_MAX)
++#define LM3643_TORCH_BR_UA_TO_CDEV(ua) \
++	  LM3643_TORCH_BR_CODE_TO_CDEV(LM3643_TORCH_BR_UA_TO_CODE(ua))
++#define LM3643_TORCH_BR_CDEV_TO_UA(brightness) \
++	  LM3643_TORCH_BR_CODE_TO_UA(LM3643_TORCH_BR_CDEV_TO_CODE(brightness))
++
++#define LM3643_CONFIG_FLASH_TIMEOUT_MASK GENMASK(3, 0)
++#define LM3643_CONFIG_FLASH_TIMEOUT_RESET 0xA
++
++#define LM3643_TIMEOUT_US_MIN 10000
++#define LM3643_TIMEOUT_US_STEP 10000
++#define LM3643_TIMEOUT_US_MAX 400000
++
++#define LM3643_FLAGS1_MASK GENMASK(6, 0)
++#define LM3643_FLAGS1_FAULT_TIMEOUT BIT(0)
++#define LM3643_FLAGS1_FAULT_UVLO BIT(1)
++#define LM3643_FLAGS1_FAULT_TSD BIT(2)
++#define LM3643_FLAGS1_FAULT_CURRENT_LIMIT BIT(3)
++#define LM3643_FLAGS1_FAULT_VLED2_SHORT BIT(4)
++#define LM3643_FLAGS1_FAULT_VLED1_SHORT BIT(5)
++#define LM3643_FLAGS1_FAULT_VOUT_SHORT BIT(6)
++#define LM3643_FLAGS1_LED1_FAULTS (LM3643_FLAGS1_MASK & ~LM3643_FLAGS1_FAULT_VLED2_SHORT)
++#define LM3643_FLAGS1_LED2_FAULTS (LM3643_FLAGS1_MASK & ~LM3643_FLAGS1_FAULT_VLED1_SHORT)
++
++#define LM3643_FLAGS2_MASK GENMASK(2, 0)
++#define LM3643_FLAGS2_FAULT_TEMP BIT(0)
++#define LM3643_FLAGS2_FAULT_OVP BIT(1)
++#define LM3643_FLAGS2_FAULT_IVFM_TRIP BIT(2)
++
++#define LM3643_FAULTS_ALL ( \
++	LED_FAULT_TIMEOUT \
++	| LED_FAULT_UNDER_VOLTAGE \
++	| LED_FAULT_OVER_TEMPERATURE \
++	| LED_FAULT_OVER_CURRENT \
++	| LED_FAULT_SHORT_CIRCUIT \
++	| LED_FAULT_LED_OVER_TEMPERATURE \
++	| LED_FAULT_OVER_VOLTAGE \
++	| LED_FAULT_INPUT_VOLTAGE \
++)
++
++#define LM3643_DEV_ID_MASK GENMASK(5, 3)
++#define LM3643_DEV_ID 0x00
++
++struct lm3643_chan {
++	u8 enable_bit;
++	u8 torch_br_reg;
++	u8 flash_br_reg;
++	u8 flags1_faults;
++	u8 num_sources;
 +};
 +
-+static const struct software_node lm3643_ir_flood_root = {
-+	.name = "lm3643",
-+};
-+
-+static const struct software_node lm3643_ir_flood_led = {
-+	.name = "led-0",
-+	.parent = &lm3643_ir_flood_root,
-+	.properties = lm3643_ir_flood_props,
-+};
-+
-+static const struct software_node *lm3643_ir_flood_nodes[] = {
-+	&lm3643_ir_flood_root,
-+	&lm3643_ir_flood_led,
-+	NULL
-+};
-+
-+static const struct dmi_system_id lm3643_dmi_leds[] = {
++static const struct lm3643_chan lm3643_chans[LM3643_NUM_CHANNELS + 1] = {
 +	{
-+		/* Lenovo ThinkPad X1 Carbon Gen 14 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X1 Carbon Gen 14"),
-+		},
-+		.driver_data = (void *)lm3643_ir_flood_nodes,
++		.enable_bit = LM3643_ENABLE_LED1,
++		.torch_br_reg = LM3643_REG_TORCH_BR_LED1,
++		.flash_br_reg = LM3643_REG_FLASH_BR_LED1,
++		.flags1_faults = LM3643_FLAGS1_LED1_FAULTS,
++		.num_sources = 1,
 +	},
-+	{ }
++	{
++		.enable_bit = LM3643_ENABLE_LED2,
++		.torch_br_reg = LM3643_REG_TORCH_BR_LED2,
++		.flash_br_reg = LM3643_REG_FLASH_BR_LED2,
++		.flags1_faults = LM3643_FLAGS1_LED2_FAULTS,
++		.num_sources = 1,
++	},
++	[LM3643_CHAN_JOINT] = {
++		.enable_bit = LM3643_ENABLE_LED_MASK,
++		.torch_br_reg = LM3643_REG_TORCH_BR_LED1,
++		.flash_br_reg = LM3643_REG_FLASH_BR_LED1,
++		.flags1_faults = LM3643_FLAGS1_MASK,
++		.num_sources = LM3643_NUM_CHANNELS,
++	},
 +};
 +
-+static void lm3643_remove_dmi_leds(void *data)
-+{
-+	struct device *dev = data;
-+	const struct dmi_system_id *id = dmi_first_match(lm3643_dmi_leds);
++static const struct led_flash_setting lm3643_flash_br_setting = {
++	.max = LM3643_FLASH_BR_CODE_TO_UA(LM3643_FLASH_BR_CODE_MAX),
++	.min = LM3643_FLASH_BR_UA_MIN,
++	.step = LM3643_FLASH_BR_UA_STEP,
++	.val = LM3643_FLASH_BR_CODE_TO_UA(LM3643_FLASH_BR_CODE_RESET),
++};
 +
-+	set_secondary_fwnode(dev, NULL);
-+	if (id)
-+		software_node_unregister_node_group(id->driver_data);
++static const u32 lm3643_timeout_us[] = {
++	LM3643_TIMEOUT_US_MIN,
++	20000,
++	30000,
++	40000,
++	50000,
++	60000,
++	70000,
++	80000,
++	90000,
++	100000,
++	150000,
++	200000,
++	250000,
++	300000,
++	350000,
++	LM3643_TIMEOUT_US_MAX,
++};
++
++static_assert(ARRAY_SIZE(lm3643_timeout_us) == LM3643_CONFIG_FLASH_TIMEOUT_MASK + 1);
++
++static unsigned int lm3643_timeout_to_code(u32 timeout)
++{
++	unsigned int i;
++
++	for (i = ARRAY_SIZE(lm3643_timeout_us) - 1; i > 0; i--)
++		if (timeout >= lm3643_timeout_us[i])
++			break;
++
++	return i;
 +}
 +
-+static int lm3643_add_dmi_leds(struct device *dev)
++/* The chip's timeouts step by 10 ms up to 100 ms and then by 50 ms. */
++static const struct led_flash_setting lm3643_flash_time_setting = {
++	.max = LM3643_TIMEOUT_US_MAX,
++	.min = LM3643_TIMEOUT_US_MIN,
++	.step = LM3643_TIMEOUT_US_STEP,
++	.val = lm3643_timeout_us[LM3643_CONFIG_FLASH_TIMEOUT_RESET],
++};
++
++struct lm3643_led {
++	struct lm3643 *chip;
++	struct regmap *regmap;
++	struct led_classdev_flash flash_cdev;
++	struct v4l2_flash *v4l2_flash;
++
++	const struct lm3643_chan *chan;
++
++	u8 flags1, flags2;
++};
++
++struct lm3643 {
++	struct regmap *regmap;
++	/* Synchronizes access to enable and flag registers */
++	struct mutex lock;
++	struct lm3643_led leds[LM3643_NUM_CHANNELS];
++	unsigned int leds_active;
++};
++
++static enum led_brightness lm3643_torch_get_brightness(struct led_classdev *led_cdev)
 +{
-+	const struct dmi_system_id *id;
-+	const struct software_node **nodes;
++	struct lm3643_led *led = container_of(lcdev_to_flcdev(led_cdev),
++					      struct lm3643_led,
++					      flash_cdev);
++	const struct lm3643_chan *chan = led->chan;
++	unsigned int brightness;
++	unsigned int enable;
 +	int ret;
 +
-+	if (!has_acpi_companion(dev))
-+		return 0;
++	guard(mutex)(&led->chip->lock);
 +
-+	id = dmi_first_match(lm3643_dmi_leds);
-+	if (!id)
-+		return 0;
++	ret = regmap_read(led->regmap, LM3643_REG_ENABLE, &enable);
++	if (ret) {
++		dev_err(led_cdev->dev, "failed to get enable register\n");
++		return LED_OFF;
++	}
++	enable &= LM3643_MODE_MASK | chan->enable_bit;
++	if (enable != (LM3643_MODE_TORCH | chan->enable_bit))
++		return LED_OFF;
 +
-+	nodes = id->driver_data;
-+	/* The nodes are static: a second chip on the same board cannot reuse them */
-+	if (software_node_fwnode(nodes[0]))
-+		return dev_err_probe(dev, -EBUSY, "LED description already in use\n");
++	ret = regmap_read(led->regmap, chan->torch_br_reg, &brightness);
++	if (ret) {
++		dev_err(led_cdev->dev,
++			"failed to get LED brightness register 0x%02x\n",
++			chan->torch_br_reg);
++		return LED_OFF;
++	}
++	brightness &= LM3643_TORCH_BR_MASK;
 +
-+	ret = software_node_register_node_group(nodes);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register the LED description\n");
-+
-+	set_secondary_fwnode(dev, software_node_fwnode(nodes[0]));
-+	dev_dbg(dev, "no LED nodes in firmware, using the DMI description\n");
-+
-+	return devm_add_action_or_reset(dev, lm3643_remove_dmi_leds, dev);
++	return LM3643_TORCH_BR_CODE_TO_CDEV(brightness);
 +}
 +
- static int lm3643_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -701,6 +788,12 @@ static int lm3643_probe(struct i2c_client *client)
- 	int ret;
- 
- 	count = device_get_child_node_count(dev);
-+	if (!count) {
-+		ret = lm3643_add_dmi_leds(dev);
++static int lm3643_torch_set_brightness(struct led_classdev *led_cdev,
++				       enum led_brightness brightness)
++{
++	struct lm3643_led *led = container_of(lcdev_to_flcdev(led_cdev),
++					      struct lm3643_led, flash_cdev);
++	const struct lm3643_chan *chan = led->chan;
++	struct lm3643 *chip = led->chip;
++	unsigned int sibling_bit, keep, enable, mode;
++	int ret;
++
++	guard(mutex)(&chip->lock);
++
++	ret = regmap_read(led->regmap, LM3643_REG_ENABLE, &enable);
++	if (ret)
++		return ret;
++	sibling_bit = LM3643_ENABLE_LED_MASK & ~chan->enable_bit;
++
++	if (brightness == 0) {
++		unsigned int mask = chan->enable_bit;
++
++		/* Last active output: leave torch mode, back to standby */
++		if (!(enable & sibling_bit))
++			mask |= LM3643_MODE_MASK;
++
++		return regmap_update_bits(led->regmap, LM3643_REG_ENABLE, mask, 0);
++	}
++
++	mode = enable & LM3643_MODE_MASK;
++	if ((enable & sibling_bit) &&
++	    mode != LM3643_MODE_STANDBY &&
++	    mode != LM3643_MODE_TORCH)
++		return -EBUSY;
++
++	ret = regmap_update_bits(led->regmap, chan->torch_br_reg, LM3643_TORCH_BR_MASK,
++				 LM3643_TORCH_BR_CDEV_TO_CODE(brightness));
++	if (ret)
++		return ret;
++
++	keep = (enable & LM3643_MODE_MASK) == LM3643_MODE_TORCH
++		? enable & sibling_bit
++		: 0;
++
++	return regmap_update_bits(led->regmap,
++				  LM3643_REG_ENABLE,
++				  LM3643_MODE_MASK | LM3643_ENABLE_LED_MASK,
++				  LM3643_MODE_TORCH | chan->enable_bit | keep);
++}
++
++static int lm3643_flash_brightness_get(struct led_classdev_flash *fled_cdev, u32 *brightness)
++{
++	struct lm3643_led *led = container_of(fled_cdev,
++					      struct lm3643_led,
++					      flash_cdev);
++	const struct lm3643_chan *chan = led->chan;
++	int ret;
++
++	ret = regmap_read(led->regmap, chan->flash_br_reg, brightness);
++	if (ret)
++		return ret;
++
++	*brightness &= LM3643_FLASH_BR_MASK;
++	*brightness = LM3643_FLASH_BR_CODE_TO_UA(*brightness);
++	*brightness *= chan->num_sources;
++
++	return 0;
++}
++
++static int lm3643_flash_brightness_set(struct led_classdev_flash *fled_cdev, u32 brightness)
++{
++	struct lm3643_led *led = container_of(fled_cdev, struct lm3643_led, flash_cdev);
++	const struct lm3643_chan *chan = led->chan;
++
++	brightness /= chan->num_sources;
++	brightness = LM3643_FLASH_BR_UA_TO_CODE(brightness);
++
++	return regmap_update_bits(led->regmap,
++				  chan->flash_br_reg,
++				  LM3643_FLASH_BR_MASK,
++				  brightness);
++}
++
++static int lm3643_flash_timeout_set(struct led_classdev_flash *fled_cdev, u32 timeout)
++{
++	unsigned int code = lm3643_timeout_to_code(timeout);
++
++	fled_cdev->timeout.val = lm3643_timeout_us[code];
++
++	return 0;
++}
++
++static int lm3643_flash_strobe_get(struct led_classdev_flash *fled_cdev, bool *state)
++{
++	struct lm3643_led *led = container_of(fled_cdev, struct lm3643_led, flash_cdev);
++	const struct lm3643_chan *chan = led->chan;
++	unsigned int mode;
++	int ret;
++
++	ret = regmap_read(led->regmap, LM3643_REG_ENABLE, &mode);
++	if (ret)
++		return ret;
++
++	*state = (mode & (LM3643_MODE_MASK | chan->enable_bit)) ==
++		 (LM3643_MODE_FLASH | chan->enable_bit);
++
++	return 0;
++}
++
++static int lm3643_flash_strobe_set(struct led_classdev_flash *fled_cdev, bool state)
++{
++	struct lm3643_led *led = container_of(fled_cdev, struct lm3643_led, flash_cdev);
++	const struct lm3643_chan *chan = led->chan;
++	unsigned int enable_reg, sibling_bit, mode;
++	int ret;
++
++	guard(mutex)(&led->chip->lock);
++
++	ret = regmap_read(led->regmap, LM3643_REG_ENABLE, &enable_reg);
++	if (ret)
++		return ret;
++	sibling_bit = LM3643_ENABLE_LED_MASK & ~led->chan->enable_bit;
++	mode = enable_reg & LM3643_MODE_MASK;
++
++	if (!state) {
++		unsigned int mask = chan->enable_bit;
++
++		if (mode != LM3643_MODE_FLASH)
++			return 0;
++
++		/* Leave flash mode once no other output is strobing */
++		if (!(enable_reg & sibling_bit))
++			mask |= LM3643_MODE_MASK;
++
++		return regmap_update_bits(led->regmap, LM3643_REG_ENABLE, mask, 0);
++	}
++	if ((enable_reg & sibling_bit) && mode != LM3643_MODE_STANDBY)
++		return -EBUSY;
++
++	ret = regmap_update_bits(led->regmap,
++				 LM3643_REG_CONFIG,
++				 LM3643_CONFIG_FLASH_TIMEOUT_MASK,
++				 lm3643_timeout_to_code(fled_cdev->timeout.val));
++	if (ret)
++		return ret;
++
++	return regmap_update_bits(led->regmap,
++				  LM3643_REG_ENABLE,
++				  LM3643_MODE_MASK | LM3643_ENABLE_LED_MASK,
++				  LM3643_MODE_FLASH | chan->enable_bit);
++}
++
++static unsigned int lm3643_decode_faults(u8 flags1, u8 flags2)
++{
++	unsigned int faults = 0;
++
++	if (flags1 & LM3643_FLAGS1_FAULT_TIMEOUT)
++		faults |= LED_FAULT_TIMEOUT;
++	if (flags1 & LM3643_FLAGS1_FAULT_UVLO)
++		faults |= LED_FAULT_UNDER_VOLTAGE;
++	if (flags1 & LM3643_FLAGS1_FAULT_TSD)
++		faults |= LED_FAULT_OVER_TEMPERATURE;
++	if (flags1 & LM3643_FLAGS1_FAULT_CURRENT_LIMIT)
++		faults |= LED_FAULT_OVER_CURRENT;
++
++	/*
++	 * The caller has already masked off the sibling channel's short flag,
++	 * so all three short conditions collapse to the one generic fault.
++	 */
++	if (flags1 & (LM3643_FLAGS1_FAULT_VLED1_SHORT |
++			  LM3643_FLAGS1_FAULT_VLED2_SHORT |
++			  LM3643_FLAGS1_FAULT_VOUT_SHORT))
++		faults |= LED_FAULT_SHORT_CIRCUIT;
++
++	/* TSD is the die tripping at 150C; TEMP is the external NTC at the LED. */
++	if (flags2 & LM3643_FLAGS2_FAULT_TEMP)
++		faults |= LED_FAULT_LED_OVER_TEMPERATURE;
++	if (flags2 & LM3643_FLAGS2_FAULT_OVP)
++		faults |= LED_FAULT_OVER_VOLTAGE;
++	if (flags2 & LM3643_FLAGS2_FAULT_IVFM_TRIP)
++		faults |= LED_FAULT_INPUT_VOLTAGE;
++
++	return faults;
++}
++
++static int lm3643_fault_get(struct led_classdev_flash *fled_cdev, u32 *fault)
++{
++	struct lm3643_led *led = container_of(fled_cdev, struct lm3643_led, flash_cdev);
++	struct lm3643 *chip = led->chip;
++	u32 flags1, flags2;
++	int ret;
++
++	guard(mutex)(&chip->lock);
++
++	ret = regmap_read(chip->regmap, LM3643_REG_FLAGS1, &flags1);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(chip->regmap, LM3643_REG_FLAGS2, &flags2);
++	if (ret)
++		return ret;
++
++	flags1 &= LM3643_FLAGS1_MASK;
++	flags2 &= LM3643_FLAGS2_MASK;
++
++	for (int i = 0; i < LM3643_NUM_CHANNELS; i++) {
++		struct lm3643_led *sibling = &chip->leds[i];
++
++		if (!sibling->chan)
++			continue;
++
++		sibling->flags1 |= flags1 & sibling->chan->flags1_faults;
++		sibling->flags2 |= flags2;
++	}
++
++	*fault = lm3643_decode_faults(led->flags1, led->flags2);
++	led->flags1 = 0;
++	led->flags2 = 0;
++
++	return 0;
++}
++
++static const struct led_flash_ops lm3643_flash_ops = {
++	.strobe_get = lm3643_flash_strobe_get,
++	.strobe_set = lm3643_flash_strobe_set,
++	.flash_brightness_get = lm3643_flash_brightness_get,
++	.flash_brightness_set = lm3643_flash_brightness_set,
++	.timeout_set = lm3643_flash_timeout_set,
++	.fault_get = lm3643_fault_get,
++};
++
++static const struct regmap_config lm3643_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0x0D,
++	.cache_type = REGCACHE_NONE,
++};
++
++static void lm3643_v4l2_release(void *v4l2_flash)
++{
++	v4l2_flash_release(v4l2_flash);
++}
++
++static void lm3643_standby(void *regmap)
++{
++	regmap_write(regmap, LM3643_REG_ENABLE, LM3643_MODE_STANDBY);
++}
++
++static void lm3643_scale_flash_setting_microamps(struct led_flash_setting *setting, u8 num_sources)
++{
++	setting->max *= num_sources;
++	setting->min *= num_sources;
++	setting->step *= num_sources;
++	setting->val *= num_sources;
++}
++
++static struct lm3643_led *lm3643_claim_channels(struct device *dev, struct lm3643 *chip,
++						struct fwnode_handle *fwnode)
++{
++	u32 sources[LM3643_NUM_CHANNELS];
++	struct lm3643_led *led;
++	int num_sources;
++	int ret;
++
++	guard(mutex)(&chip->lock);
++
++	num_sources = fwnode_property_count_u32(fwnode, "led-sources");
++	if (num_sources < 0)
++		return ERR_PTR(dev_err_probe(dev, num_sources,
++			"failed to read led-sources property\n"));
++	if (num_sources < 1 || num_sources > LM3643_NUM_CHANNELS)
++		return ERR_PTR(dev_err_probe(dev, -EINVAL,
++			"led-sources has %d entries, expected 1 to %d\n",
++			num_sources, LM3643_NUM_CHANNELS));
++
++	ret = fwnode_property_read_u32_array(fwnode, "led-sources", sources, num_sources);
++	if (ret)
++		return ERR_PTR(dev_err_probe(dev, ret,
++			"failed to read led-sources property\n"));
++
++	for (int i = 0; i < num_sources; i++) {
++		if (sources[i] >= LM3643_NUM_CHANNELS)
++			return ERR_PTR(dev_err_probe(dev, -EINVAL,
++				"led-sources entry %u exceeds the %d current outputs\n",
++				sources[i], LM3643_NUM_CHANNELS));
++		if (chip->leds_active & BIT(sources[i]))
++			return ERR_PTR(dev_err_probe(dev, -EINVAL,
++				"current output %u claimed more than once\n", sources[i]));
++
++		chip->leds_active |= BIT(sources[i]);
++	}
++
++	if (num_sources == LM3643_NUM_CHANNELS) {
++		led = &chip->leds[0];
++		led->chan = &lm3643_chans[LM3643_CHAN_JOINT];
++	} else {
++		led = &chip->leds[sources[0]];
++		led->chan = &lm3643_chans[sources[0]];
++	}
++
++	led->chip = chip;
++	led->regmap = chip->regmap;
++
++	return led;
++}
++
++static int lm3643_apply_fw_limits(struct device *dev, struct lm3643_led *led,
++				  struct fwnode_handle *fwnode)
++{
++	struct led_classdev_flash *flash_cdev = &led->flash_cdev;
++	struct led_classdev *led_cdev = &flash_cdev->led_cdev;
++	u8 num_sources = led->chan->num_sources;
++	u32 max_us, max_torch_ua, max_flash_ua, max_br;
++
++	if (!fwnode_property_read_u32(fwnode, "flash-max-microamp", &max_flash_ua)) {
++		if (max_flash_ua < LM3643_FLASH_BR_UA_MIN * num_sources)
++			return dev_err_probe(dev, -EINVAL,
++				"flash-max-microamp %u is below the %u uA minimum\n",
++				max_flash_ua, LM3643_FLASH_BR_UA_MIN * num_sources);
++
++		/* Rounded down to a supported value. */
++		flash_cdev->brightness.max = min(flash_cdev->brightness.max, max_flash_ua);
++	}
++
++	if (!fwnode_property_read_u32(fwnode, "led-max-microamp", &max_torch_ua)) {
++		if (max_torch_ua < LM3643_TORCH_BR_UA_MIN * num_sources)
++			return dev_err_probe(dev, -EINVAL,
++				"led-max-microamp %u is below the %u uA minimum\n",
++				max_torch_ua, LM3643_TORCH_BR_UA_MIN * num_sources);
++
++		led_cdev->max_brightness = min(led_cdev->max_brightness,
++					       LM3643_TORCH_BR_UA_TO_CDEV(max_torch_ua /
++									  num_sources));
++	}
++
++	if (!fwnode_property_read_u32(fwnode, "flash-max-timeout-us", &max_us)) {
++		if (max_us < LM3643_TIMEOUT_US_MIN)
++			return dev_err_probe(dev, -EINVAL,
++				"flash-max-timeout-us %u below the %u us minimum\n",
++				max_us, LM3643_TIMEOUT_US_MIN);
++
++		flash_cdev->timeout.max = lm3643_timeout_us[lm3643_timeout_to_code(max_us)];
++	}
++
++	/* LED core applies this value */
++	if (!fwnode_property_read_u32(fwnode, "max-brightness", &max_br) &&
++	    (!max_br || max_br > led_cdev->max_brightness))
++		return dev_err_probe(dev, -EINVAL,
++				     "max-brightness %u is outside 1 to %u\n",
++				     max_br, led_cdev->max_brightness);
++
++	return 0;
++}
++
++static int lm3643_register_v4l2(struct device *dev, struct lm3643_led *led,
++				struct fwnode_handle *fwnode)
++{
++	struct led_classdev *led_cdev = &led->flash_cdev.led_cdev;
++	struct v4l2_flash_config v4l2_flash_config = {};
++
++	strscpy(v4l2_flash_config.dev_name, dev_name(led_cdev->dev),
++		sizeof(v4l2_flash_config.dev_name));
++	v4l2_flash_config.flash_faults = LM3643_FAULTS_ALL;
++	v4l2_flash_config.has_external_strobe = false;
++	v4l2_flash_config.intensity.min = LM3643_TORCH_BR_UA_MIN;
++	v4l2_flash_config.intensity.step = LM3643_TORCH_BR_UA_STEP;
++	v4l2_flash_config.intensity.max = LM3643_TORCH_BR_CDEV_TO_UA(led_cdev->max_brightness);
++	v4l2_flash_config.intensity.val =
++		min_t(u32, LM3643_TORCH_BR_CODE_TO_UA(LM3643_TORCH_BR_CODE_RESET),
++		      v4l2_flash_config.intensity.max);
++
++	lm3643_scale_flash_setting_microamps(&v4l2_flash_config.intensity, led->chan->num_sources);
++
++	led->v4l2_flash = v4l2_flash_init(dev, fwnode, &led->flash_cdev, NULL,
++					  &v4l2_flash_config);
++	if (IS_ERR(led->v4l2_flash))
++		return dev_err_probe(dev,
++				     PTR_ERR(led->v4l2_flash),
++				     "failed to register v4l2 flash\n");
++
++	return devm_add_action_or_reset(dev, lm3643_v4l2_release, led->v4l2_flash);
++}
++
++static int lm3643_register_led(struct device *dev, struct lm3643 *chip,
++			       struct fwnode_handle *fwnode)
++{
++	struct led_init_data init_data = { .fwnode = fwnode };
++	struct led_classdev_flash *flash_cdev;
++	struct led_classdev *led_cdev;
++	struct lm3643_led *led;
++	int ret;
++
++	led = lm3643_claim_channels(dev, chip, fwnode);
++	if (IS_ERR(led))
++		return PTR_ERR(led);
++
++	flash_cdev = &led->flash_cdev;
++	led_cdev = &flash_cdev->led_cdev;
++
++	if (led->chan->num_sources == LM3643_NUM_CHANNELS) {
++		/* Bit 7 of the LED1 brightness registers override LED2 with the same values. */
++		ret = regmap_update_bits(chip->regmap, LM3643_REG_TORCH_BR_LED1,
++					 LM3643_TORCH_BR_LED2_OVERRIDE,
++					 LM3643_TORCH_BR_LED2_OVERRIDE);
 +		if (ret)
 +			return ret;
-+		count = device_get_child_node_count(dev);
++
++		ret = regmap_update_bits(chip->regmap, LM3643_REG_FLASH_BR_LED1,
++					 LM3643_FLASH_BR_LED2_OVERRIDE,
++					 LM3643_FLASH_BR_LED2_OVERRIDE);
++		if (ret)
++			return ret;
 +	}
- 	if (!count || count > LM3643_NUM_CHANNELS)
- 		return dev_err_probe(dev, -EINVAL, "%u LED nodes found, expected 1 to %d\n",
- 					 count, LM3643_NUM_CHANNELS);
++
++	flash_cdev->brightness = lm3643_flash_br_setting;
++	lm3643_scale_flash_setting_microamps(&flash_cdev->brightness, led->chan->num_sources);
++	flash_cdev->timeout = lm3643_flash_time_setting;
++	flash_cdev->ops = &lm3643_flash_ops;
++
++	led_cdev->flags |= LED_DEV_CAP_FLASH;
++	led_cdev->max_brightness = LM3643_TORCH_BR_CDEV_MAX;
++	led_cdev->brightness_set_blocking = lm3643_torch_set_brightness;
++	led_cdev->brightness_get = lm3643_torch_get_brightness;
++
++	ret = lm3643_apply_fw_limits(dev, led, fwnode);
++	if (ret)
++		return ret;
++
++	flash_cdev->brightness.max = min(flash_cdev->brightness.max, LM3643_FLASH_BR_UA_TOTAL_MAX);
++	flash_cdev->brightness.val = min(flash_cdev->brightness.val, flash_cdev->brightness.max);
++	flash_cdev->timeout.val = min(flash_cdev->timeout.val, flash_cdev->timeout.max);
++
++	ret = lm3643_flash_brightness_set(flash_cdev, flash_cdev->brightness.val);
++	if (ret)
++		return ret;
++
++	ret = devm_led_classdev_flash_register_ext(dev, flash_cdev, &init_data);
++	if (ret)
++		return ret;
++
++	return lm3643_register_v4l2(dev, led, fwnode);
++}
++
++static int lm3643_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct lm3643 *chip;
++	struct gpio_desc *hwen;
++	unsigned int dev_id;
++	unsigned int count;
++	int ret;
++
++	count = device_get_child_node_count(dev);
++	if (!count || count > LM3643_NUM_CHANNELS)
++		return dev_err_probe(dev, -EINVAL, "%u LED nodes found, expected 1 to %d\n",
++					 count, LM3643_NUM_CHANNELS);
++
++	ret = devm_regulator_get_enable_optional(dev, "vin");
++	if (ret && ret != -ENODEV)
++		return dev_err_probe(dev, ret, "failed to enable vin-supply\n");
++
++	hwen = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(hwen))
++		return dev_err_probe(dev, PTR_ERR(hwen), "failed to get enable GPIO\n");
++
++	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
++	if (!chip)
++		return -ENOMEM;
++	i2c_set_clientdata(client, chip);
++
++	chip->regmap = devm_regmap_init_i2c(client, &lm3643_regmap_config);
++	if (IS_ERR(chip->regmap))
++		return dev_err_probe(dev,
++				     PTR_ERR(chip->regmap),
++				     "failed to allocate register map\n");
++
++	ret = regmap_read(chip->regmap, LM3643_REG_DEV_ID, &dev_id);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to read device ID\n");
++
++	dev_id &= LM3643_DEV_ID_MASK;
++	if (dev_id != LM3643_DEV_ID)
++		return dev_err_probe(dev, -ENODEV, "wrong chip id 0x%02x (expected 0x%02x)\n",
++					 dev_id, LM3643_DEV_ID);
++
++	ret = devm_mutex_init(dev, &chip->lock);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to create mutex\n");
++
++	ret = regmap_write(chip->regmap, LM3643_REG_ENABLE, LM3643_MODE_STANDBY);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to put device in standby mode\n");
++	ret = devm_add_action_or_reset(dev, lm3643_standby, chip->regmap);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(chip->regmap, LM3643_REG_TORCH_BR_LED1,
++				 LM3643_TORCH_BR_LED2_OVERRIDE,
++				 0);
++	if (ret)
++		return dev_err_probe(dev,
++				     ret,
++				     "failed to clear LED2 torch current override register\n");
++
++	ret = regmap_update_bits(chip->regmap, LM3643_REG_FLASH_BR_LED1,
++				 LM3643_FLASH_BR_LED2_OVERRIDE,
++				 0);
++	if (ret)
++		return dev_err_probe(dev,
++				     ret,
++				     "failed to clear LED2 flash current override register\n");
++
++	device_for_each_child_node_scoped(dev, child) {
++		ret = lm3643_register_led(dev, chip, child);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static const struct acpi_device_id lm3643_acpi_leds_match[] = {
++	{ "TXNW3643" },
++	{ },
++};
++MODULE_DEVICE_TABLE(acpi, lm3643_acpi_leds_match);
++
++static const struct of_device_id lm3643_of_leds_match[] = {
++	{ .compatible = "ti,lm3643" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, lm3643_of_leds_match);
++
++static struct i2c_driver lm3643_i2c_driver = {
++	.driver = {
++		.name = "lm3643",
++		.acpi_match_table = lm3643_acpi_leds_match,
++		.of_match_table = lm3643_of_leds_match,
++	},
++	.probe = lm3643_probe,
++};
++module_i2c_driver(lm3643_i2c_driver);
++
++MODULE_DESCRIPTION("Texas Instruments LM3643 LED Flash Driver");
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Rillian Grant <rillian.grant@gmail.com>");
 -- 
 2.56.0
 
