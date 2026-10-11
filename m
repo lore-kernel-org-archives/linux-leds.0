@@ -1,39 +1,67 @@
-Received: from ixit.cz (ixit.cz [84.42.129.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B629C2EEE67;
-	Sat, 10 Oct 2026 20:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.42.129.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E54D381E86
+	for <linux-leds@vger.kernel.org>; Sun, 11 Oct 2026 13:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791662813; cv=none; b=ZYUIwNyWwkaS3p25YzqAbrsNt1DDhL2fkWK+Xh1YGtH2Gku+rpXVIIhE6wBOvMVd4Fx7I/UOQETTomvUvcyBhvgKKKykZRN8xC1qzP7lvMzairYLnFQVsaw2OOA510sA3s3X3yob6bytxhvvkIr4cihQZUJOmsn8KX1P7E6uwXA=
+	t=1791725207; cv=none; b=Y3P7gVgMAjDRgvI/EgwDXkLKbKzPGXX4DZzye9trF/GqMObyHYA6yLyL3IE0vcyRh49JdFqVkRBgcVpX1/Jcg+fA/TJQEMZx95jHKH/1Vi/b9+WXRr9mq7r9vJaLaV7QlfPcqO8LAd8aAj9LrdQpcV4Ja4lwqeV0ktWXAfb/cko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791662813; c=relaxed/simple;
-	bh=A9FBofGl37xJR8oq5OmosIEL/I/7sJ1nPNlbFn06omM=;
+	s=arc-20240116; t=1791725207; c=relaxed/simple;
+	bh=LekSBkMyp1NKME9mT37Qep2+fVAjUZWCUrLVs0DcLw0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFHwMDz35F0JoT6Pouw9bL6tFf5vlmmu/jaSC4fGvXmcS2Hdj40KHqzq+k7Zbuwl/dAd2QfgK4O0E7yyQSU2Dugn8YDz2Tx6RyWM3lJXWCM0QRn1suykLpzFEuqhD0rBRKapqRW4Sv6voWL9lOBe/PL90bxXZRIjMfYfSxolUbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=aa2kzHLT; arc=none smtp.client-ip=84.42.129.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+	 In-Reply-To:Content-Type; b=JsKucblsYZ1VB4Ben/cEWltchJXhU1AsL31ekR+eKG1DKqHJaZ32fSXf80Zo2JlzxGBhGcKWYDp/G7iYsR8eo2Roa3t/RWK9UBdSpva0Y64FYkz5mpSIXVXFBO9iwJsLQH8dpqrulwsG0fUs30bBV7nact7l0CkWFUoZqru1Dao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oace8+8X; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="aa2kzHLT"
-Received: from [IPV6:2003:100:7701:8b01::1815] (p2003010077018b010000000000001815.dip0.t-ipconnect.de [IPv6:2003:100:7701:8b01::1815])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 511775340CAD;
-	Sat, 10 Oct 2026 22:06:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1791662808;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=GB5ACTloRf11HyvbWvz+MY68dePD95J5caH0jBxNFcc=;
-	b=aa2kzHLTcftUxHlhoQFtvrAL+RM2wWuV3uAazwvQQgrzsEuusZSjZ1iW0CTvr5MsP7yclp
-	87Buh4DHQaAVPp2+s5KtOz5FIyc6e4k6KbfjGfhWhksM1sl0B1jbQrtNDrCYJ1v2S/Wdks
-	NfxHYDaB8y/Y7H6yr8RUbvwpvAXpwf8=
-Message-ID: <177c2c79-dcc5-4fad-8ffd-7ed3f4d3978c@ixit.cz>
-Date: Sat, 10 Oct 2026 22:06:47 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oace8+8X"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6b1aa377c61so686060a12.3
+        for <linux-leds@vger.kernel.org>; Sun, 11 Oct 2026 06:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791725203; x=1792330003; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=JJJPn9UyV831uYdNfIkGYdx+OB6dNWB2tEtVbP6gR7Y=;
+        b=Oace8+8Xd3ax5Ltp4syRPXIZ7bOBKmenMj1bv5ASKAY1nPA3xks1HYRdWpA4k39z9N
+         I4DdSsUVfN7Vx/J3/DmWLShrYPfuRIcqlUXiSwedzL8+zwM17QwgG/ifWp4vErNE6T5K
+         DrM+BJPSSNffRwmX4Iqk7D4uupnHo0y66lD80yFXLSmK8CX7O/V6ijCKJ/LY/j6J60yL
+         +rGM6d5P4EmMQj6W/IiLRcQzA8mJCsTjit/3vIZd1CWcMIYlXHuL99/VRjh++lfzLUYl
+         oM98b6hIJm8qm8ZF9h7TEvnwMWJRzmjRC8xw3dcmHxbSyGPXQEjfI9wm2dLdlinmHjsu
+         mTgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791725203; x=1792330003;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=JJJPn9UyV831uYdNfIkGYdx+OB6dNWB2tEtVbP6gR7Y=;
+        b=x8vMjPvjUiEq3bMocWdF65nqJjKdSG1gBS3f0TjMB7OZYlhjalMRkQ9X04uoVlDbRf
+         dc4y6n27wVaR58+u1qzEzmmv+/ojLHOxm64yKfCMOjwf+GKM+VNItTwQGYhJg6AoibH6
+         NaNyNEEwbstpcEbEy3LjP21IW9lHCCkn0RfgUcIFc5Ldfmr6uc6GI5S7xjRXfGiQQ0f8
+         swV9cc5M0L2EyE0slkgEQC+1Yuh//gfw0R0gM/Bq0QW2UYNr4rYMBIwkMqo8phubjfyk
+         Ga3lvUr6M2uh7wpl4xVkAfTGR0IHAaiDQ+PQHJsIXA67t62l7zsmSL7E/DIKlnfPPtqg
+         gE0Q==
+X-Gm-Message-State: AFq9FYI513sMz8YIb5tWeBSFL4vFJH7gnUm/dlMOP9vkrveiAsVJTbjV
+	GpKhqYPK/EKicq5TiSXhxX54Pgl4USinCYcE1GAiTdSMYPL6i6l/hof9
+X-Gm-Gg: AYBFou39TZpdP11O6/F28bE6F6i4CHgnXkiJtjTpcJWkjplNau58l/bdPJMrick5zn/
+	WWVrMLOvqgY37v4NttH+nBbDZDxgh7Vx98XpgK0VJcCtbtqad5pQoAUdRjmE8CrI8bPfs7M6ZXB
+	9yBAo2LIpmcW271cJ8ZYddxvfYGSUxavdhigUkgF0pOst/VSIeBA/xc1uGGdQouvlDIYTYeIEuk
+	ZakOf6AMozwICJu3yi2ISBudLTX26g1zbbk219jXmGz2vVlgw164Ohq5gGi2sgm7QVt1ZtbCKBO
+	j31iSM7fec2RXtivb6PNPj5vHwIAbLBnWPCX3pfhyXmyc0Fqun1qpgWkt3xZIu/9hZLlVPvlbvN
+	Z7R04IRmi4AYzYsqUU+gbP9YwXfrPL3lFfdDNGVIoAz0HecXnRUvekvxkghls8S1CFytasZwmBA
+	tHUPtv4h7e6G3C9aXotAhN71xsyFhQuDgoR75Opy40qTuEdO5oE5v38/8VpP71JkROsRszK9vCJ
+	r8nZY1PqQ==
+X-Received: by 2002:a05:6402:46d9:b0:6ac:bd7d:39d3 with SMTP id 4fb4d7f45d1cf-6b17c23f4c8mr5246670a12.7.1791725203101;
+        Sun, 11 Oct 2026 06:26:43 -0700 (PDT)
+Received: from [192.168.0.193] ([194.183.54.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b179dd5979sm3986556a12.16.2026.10.11.06.26.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Oct 2026 06:26:41 -0700 (PDT)
+Message-ID: <5af976ef-6c6d-451f-891f-bc70dd2e8c00@gmail.com>
+Date: Sun, 11 Oct 2026 15:26:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -41,76 +69,201 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] leds: aw2013: use dev_err_probe
-To: Paul Sajna <sajattack@postmarketos.org>, Lee Jones <lee@kernel.org>,
+Subject: Re: [PATCH v1 3/3] leds: aat1290: Add support for AAT1270 Current
+ Regulator for Flash LEDs
+To: Svyatoslav Ryhel <clamor95@gmail.com>, Lee Jones <lee@kernel.org>,
  Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>,
- Alexey Min <alexeymin@minlexx.ru>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20261005-aw2013-aw20xx-rename-v2-0-108ecbdf2775@postmarketos.org>
- <20261005-aw2013-aw20xx-rename-v2-4-108ecbdf2775@postmarketos.org>
-Content-Language: en-US, cs-CZ
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- xsFNBF5v1x4BEADS3EddwsNsvVAI1XF8uQKbdYPY/GhjaSLziwVnbwv5BGwqB1tfXoHnccoA
- 9kTgKAbiXG/CiZFhD6l4WCIskQDKzyQN3JhCUIxh16Xyw0lECI7iqoW9LmMoN1dNKcUmCO9g
- lZxQaOl+1bY/7ttd7DapLh9rmBXJ2lKiMEaIpUwb/Nw0d7Enp4Jy2TpkhPywIpUn8CoJCv3/
- 61qbvI9y5utB/UhfMAUXsaAgwEJyGPAqHlC0YZjaTwOu+YQUE3AFzhCbksq95CwDz4U4gdls
- dmv9tkATfu2OmzERZQ6vJTehK0Pu4l5KmCAzYg42I9Dy4E6b17x6NncKbcByQFOXMtG0qVUk
- F1yeeOQUHwu+8t3ZDMBUhCkRL/juuoqLmyDWKMc0hKNNeZ9BNXgB8fXkRLWEUfgDXsFyEkKp
- NxUy5bDRlivf6XfExnikk5kj9l2gGlNQwqROti/46bfbmlmc/a2GM4k8ZyalHNEAdwtXYSpP
- 8JJmlbQ7hNTLkc3HQLRsIocN5th/ur7pPMz1Beyp0gbE9GcOceqmdZQB80vJ01XDyCAihf6l
- AMnzwpXZsjqIqH9r7T7tM6tVEVbPSwPt4eZYXSoJijEBC/43TBbmxDX+5+3txRaSCRQrG9dY
- k3mMGM3xJLCps2KnaqMcgUnvb1KdTgEFUZQaItw7HyRd6RppewARAQABzSBEYXZpZCBIZWlk
- ZWxiZXJnIDxkYXZpZEBpeGl0LmN6PsLBlAQTAQgAPgIbAwULCQgHAgYVCgkICwIEFgIDAQIe
- AQIXgBYhBNd6Cc/u3Cu9U6cEdGACP8TTSSByBQJl+KksBQkPDaAOAAoJEGACP8TTSSBy6IAQ
- AMqFqVi9LLxCEcUWBn82ssQGiVSDniKpFE/tp7lMXflwhjD5xoftoWOmMYkiWE86t5x5Fsp7
- afALx7SEDz599F1K1bLnaga+budu55JEAYGudD2WwpLJ0kPzRhqBwGFIx8k6F+goZJzxPDsf
- loAtXQE62UvEKa4KRRcZmF0GGoRsgA7vE7OnV8LMeocdD3eb2CuXLzauHAfdvqF50IfPH/sE
- jbzROiAZU+WgrwU946aOzrN8jVU+Cy8XAccGAZxsmPBfhTY5f2VN1IqvfaRdkKKlmWVJWGw+
- ycFpAEJKFRdfcc5PSjUJcALn5C+hxzL2hBpIZJdfdfStn+DWHXNgBeRDiZj1x6vvyaC43RAb
- VXvRzOQfG4EaMVMIOvBjBA/FtIpb1gtXA42ewhvPnd5RVCqD9YYUxsVpJ9d+XsAy7uib3BsV
- W2idAEsPtoqhVhq8bCUs/G4sC2DdyGZK8MRFDJqciJSUbqA+5z1ZCuE8UOPDpZKiW6H/OuOM
- zDcjh0lOzr4p+/1TSg1PbUh7fQ+nbMuiT044sC1lLtJK0+Zyn0GwhR82oNM4fldNsaHRW42w
- QGD35+eNo5Pvb3We5XRMlBdhFnj7Siggp4J8/PJ6MJvRyC+RIJPGtbdMB2/RxWunFLn87e5w
- UgwR9jPMHAstuTR1yR23c4SIYoQ2fzkrRzuazsFNBF5v1x4BEADnlrbta2WL87BlEOotZUh0
- zXANMrNV15WxexsirLetfqbs0AGCaTRNj+uWlTUDJRXOVIwzmF76Us3I2796+Od2ocNpLheZ
- 7EIkq8budtLVd1c06qJ+GMraz51zfgSIazVInNMPk9T6fz0lembji5yEcNPNNBA4sHiFmXfo
- IhepHFOBApjS0CiOPqowYxSTPe/DLcJ/LDwWpTi37doKPhBwlHev1BwVCbrLEIFjY0MLM0aT
- jiBBlyLJaTqvE48gblonu2SGaNmGtkC3VoQUQFcVYDXtlL9CVbNo7BAt5gwPcNqEqkUL60Jh
- FtvVSKyQh6gn7HHsyMtgltjZ3NKjv8S3yQd7zxvCn79tCKwoeNevsvoMq/bzlKxc9QiKaRPO
- aDj3FtW7R/3XoKJBY8Hckyug6uc2qYWRpnuXc0as6S0wfek6gauExUttBKrtSbPPHiuTeNHt
- NsT4+dyvaJtQKPBTbPHkXpTO8e1+YAg7kPj3aKFToE/dakIh8iqUHLNxywDAamRVn8Ha67WO
- AEAA3iklJ49QQk2ZyS1RJ2Ul28ePFDZ3QSr9LoJiOBZv9XkbhXS164iRB7rBZk6ZRVgCz3V6
- hhhjkipYvpJ/fpjXNsVL8jvel1mYNf0a46T4QQDQx4KQj0zXJbC2fFikAtu1AULktF4iEXEI
- rSjFoqhd4euZ+QARAQABwsF8BBgBCAAmAhsMFiEE13oJz+7cK71TpwR0YAI/xNNJIHIFAmX4
- qVAFCQ8NoDIACgkQYAI/xNNJIHKN4A/+Ine2Ii7JiuGITjJkcV6pgKlfwYdEs4eFD1pTRb/K
- 5dprUz3QSLP41u9OJQ23HnESMvn31UENk9ffebNoW7WxZ/8cTQY0JY/cgTTrlNXtyAlGbR3/
- 3Q/VBJptf04Er7I6TaKAmqWzdVeKTw33LljpkHp02vrbOdylb4JQG/SginLV9purGAFptYRO
- 8JNa2J4FAQtQTrfOUjulOWMxy7XRkqK3QqLcPW79/CFn7q1yxamPkpoXUJq9/fVjlhk7P+da
- NYQpe4WQQnktBY29SkFnvfIAwqIVU8ix5Oz8rghuCcAdR7lEJ7hCX9bR0EE05FOXdZy5FWL9
- GHvFa/Opkq3DPmFl/0nt4HJqq1Nwrr+WR6d0414oo1n2hPEllge/6iD3ZYwptTvOFKEw/v0A
- yqOoYSiKX9F7Ko7QO+VnYeVDsDDevKic2T/4GDpcSVd9ipiKxCQvUAzKUH7RUpqDTa+rYurm
- zRKcgRumz2Tc1ouHj6qINlzEe3a5ldctIn/dvR1l2Ko7GBTG+VGp9U5NOAEkGpxHG9yg6eeY
- fFYnMme51H/HKiyUlFiE3yd5LSmv8Dhbf+vsI4x6BOOOq4Iyop/Exavj1owGxW0hpdUGcCl1
- ovlwVPO/6l/XLAmSGwdnGqok5eGZQzSst0tj9RC9O0dXO1TZocOsf0tJ8dR2egX4kxM=
-In-Reply-To: <20261005-aw2013-aw20xx-rename-v2-4-108ecbdf2775@postmarketos.org>
+ linux-kernel@vger.kernel.org
+References: <20261007085457.98762-1-clamor95@gmail.com>
+ <20261007085457.98762-4-clamor95@gmail.com>
+Content-Language: en-US
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+In-Reply-To: <20261007085457.98762-4-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 06/10/2026 05:46, Paul Sajna wrote:
-> Failure to use dev_err_probe() for regulator requests violates
-> LED subsystem guidelines.
+Hi Svyatoslav,
+
+On 10/7/26 10:54 AM, Svyatoslav Ryhel wrote:
+> The AAT1270 is quite similar to the AAT1290, but it does not support the
+> Advanced Simple Serial Control (AS2C) used in the AAT1290. The AAT1270
+> uses an earlier version of AS2C, namely Simple Serial Control, which lacks
+> address-sending capabilities.
 > 
-> The original driver didn't use it, but it's worth cleaning up
-> while I'm here.
+> Differentiate the chips by using a description structure with a flag to
+> indicate if AS2C is supported, placing all AS2C-only features under a
+> conditional check.
 > 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->   drivers/leds/leds-aw2013.c | 28 +++++++++++++---------------
->   1 file changed, 13 insertions(+), 15 deletions(-)
+>   drivers/leds/flash/leds-aat1290.c | 66 ++++++++++++++++++++++---------
+>   1 file changed, 47 insertions(+), 19 deletions(-)
 > 
-Reviewed-by: David Heidelberg <david@ixit.cz>
+> diff --git a/drivers/leds/flash/leds-aat1290.c b/drivers/leds/flash/leds-aat1290.c
+> index 49251cfd33509..773cdcc73a9e1 100644
+> --- a/drivers/leds/flash/leds-aat1290.c
+> +++ b/drivers/leds/flash/leds-aat1290.c
+> @@ -43,9 +43,6 @@
+>   #define AAT1290_FLASH_TM_NUM_LEVELS	16
+>   #define AAT1290_MM_CURRENT_SCALE_SIZE	15
+>   
+> -#define AAT1290_NAME			"aat1290"
+> -
+> -
+>   struct aat1290_led_config_data {
+>   	/* maximum LED current in movie mode */
+>   	u32 max_mm_current;
+> @@ -59,6 +56,13 @@ struct aat1290_led_config_data {
+>   	enum led_brightness max_brightness;
+>   };
+>   
+> +struct aat1290_led_chip_info {
+> +	/* led controller name */
+> +	const char *name;
+> +	/* Advanced Simple Serial Control support */
+> +	bool as2c;
+> +};
+> +
+>   struct aat1290_led {
+>   	/* platform device data */
+>   	struct platform_device *pdev;
+> @@ -74,6 +78,10 @@ struct aat1290_led {
+>   	struct gpio_desc *gpio_fl_en;
+>   	/* EN|SET pin  */
+>   	struct gpio_desc *gpio_en_set;
+> +
+> +	/* led controller description */
+> +	const struct aat1290_led_chip_info *info;
+> +
+>   	/* movie mode current scale */
+>   	int *mm_current_scale;
+>   	/* device mode */
+> @@ -101,15 +109,17 @@ static void aat1290_as2cwire_write(struct aat1290_led *led, int addr, int value)
+>   
+>   	udelay(AAT1290_FLEN_OFF_DELAY_TIME_US);
+>   
+> -	/* write address */
+> -	for (i = 0; i < addr; ++i) {
+> -		udelay(AAT1290_EN_SET_TICK_TIME_US);
+> -		gpiod_direction_output(led->gpio_en_set, 0);
+> -		udelay(AAT1290_EN_SET_TICK_TIME_US);
+> -		gpiod_direction_output(led->gpio_en_set, 1);
+> -	}
+> +	if (led->info->as2c) {
+> +		/* write address */
+> +		for (i = 0; i < addr; ++i) {
+> +			udelay(AAT1290_EN_SET_TICK_TIME_US);
+> +			gpiod_direction_output(led->gpio_en_set, 0);
+> +			udelay(AAT1290_EN_SET_TICK_TIME_US);
+> +			gpiod_direction_output(led->gpio_en_set, 1);
+> +		}
+>   
+> -	usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIME_MAX_US);
+> +		usleep_range(AAT1290_LATCH_TIME_MIN_US, AAT1290_LATCH_TIME_MAX_US);
+> +	}
+>   
+>   	/* write data */
+>   	for (i = 0; i < value; ++i) {
+> @@ -150,16 +160,18 @@ static int aat1290_led_brightness_set(struct led_classdev *led_cdev,
+>   		led->movie_mode = false;
+>   	} else {
+>   		if (!led->movie_mode) {
+> -			aat1290_as2cwire_write(led,
+> -				AAT1290_MM_CURRENT_RATIO_ADDR,
+> -				AAT1290_MM_TO_FL_1_92);
+> +			if (led->info->as2c)
+> +				aat1290_as2cwire_write(led,
+> +					AAT1290_MM_CURRENT_RATIO_ADDR,
+> +					AAT1290_MM_TO_FL_1_92);
+
+In AAT1270 the Maximum Movie to Flash Mode Current Ratio is constant
+and set to 1/7.3, whereas for AAT1290 we alter it to 1/1.92 here.
+
+This is taken into account while calculating max_mm_current in
+init_mm_current_scale(), where AAT1290_MAX_MM_CURRENT definition is
+used, which is based on AAT1290_MM_TO_FL_RATIO (1000 / 1920).
+
+Obviously it would have to be changed to 1000 / 7300 for AAT1270,
+for the calculations between brightness levels and microamperes for
+V4L2 Flash interface to work properly for this controller.
+
+>   			led->movie_mode = true;
+>   		}
+>   
+>   		aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CURRENT_ADDR,
+>   				AAT1290_MAX_MM_CURR_PERCENT_0 - brightness);
+> -		aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CONFIG_ADDR,
+> -				AAT1290_MOVIE_MODE_ON);
+> +		if (led->info->as2c)
+> +			aat1290_as2cwire_write(led, AAT1290_MOVIE_MODE_CONFIG_ADDR,
+> +					       AAT1290_MOVIE_MODE_ON);
+>   	}
+>   
+>   	mutex_unlock(&led->lock);
+> @@ -178,7 +190,8 @@ static int aat1290_led_flash_strobe_set(struct led_classdev_flash *fled_cdev,
+>   	mutex_lock(&led->lock);
+>   
+>   	if (state) {
+> -		aat1290_set_flash_safety_timer(led, timeout->val);
+> +		if (led->info->as2c)
+> +			aat1290_set_flash_safety_timer(led, timeout->val);
+
+AAT1290 has the capability of setting flash safety timer timeout, not
+like AAT1270, for which this is controlled solely by the discrete
+elements, basing on the formula T = 21.5s/µF · CT. This needs to be
+reflected both in the DT bindings and in the
+aat1290_init_flash_timeout(), where the minimum value should be also
+fixed for AAT1270.
+
+
+>   		gpiod_direction_output(led->gpio_fl_en, 1);
+>   	} else {
+>   		gpiod_direction_output(led->gpio_fl_en, 0);
+> @@ -475,6 +488,10 @@ static int aat1290_led_probe(struct platform_device *pdev)
+>   	fled_cdev->ops = &flash_ops;
+>   	led_cdev = &fled_cdev->led_cdev;
+>   
+> +	led->info = device_get_match_data(dev);
+> +	if (!led->info)
+> +		return -ENODEV;
+> +
+>   	ret = aat1290_led_get_configuration(led, &led_cfg, &sub_node);
+>   	if (ret < 0)
+>   		return ret;
+> @@ -489,7 +506,7 @@ static int aat1290_led_probe(struct platform_device *pdev)
+>   	aat1290_init_flash_timeout(led, &led_cfg);
+>   
+>   	init_data.fwnode = of_fwnode_handle(sub_node);
+> -	init_data.devicename = AAT1290_NAME;
+> +	init_data.devicename = led->info->name;
+>   
+>   	/* Register LED Flash class device */
+>   	ret = led_classdev_flash_register_ext(&pdev->dev, fled_cdev,
+> @@ -528,8 +545,19 @@ static void aat1290_led_remove(struct platform_device *pdev)
+>   	mutex_destroy(&led->lock);
+>   }
+>   
+> +static const struct aat1290_led_chip_info aat1290_info = {
+> +	.name = "aat1290",
+> +	.as2c = true,
+> +};
+> +
+> +static const struct aat1290_led_chip_info aat1270_info = {
+> +	.name = "aat1270",
+> +	.as2c = false,
+> +};
+> +
+>   static const struct of_device_id aat1290_led_dt_match[] = {
+> -	{ .compatible = "skyworks,aat1290" },
+> +	{ .compatible = "skyworks,aat1290", .data = &aat1290_info },
+> +	{ .compatible = "skyworks,aat1270", .data = &aat1270_info },
+>   	{},
+>   };
+>   MODULE_DEVICE_TABLE(of, aat1290_led_dt_match);
+
+-- 
+Best regards,
+Jacek Anaszewski
+
