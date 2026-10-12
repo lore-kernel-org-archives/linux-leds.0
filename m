@@ -1,405 +1,310 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD02253EB;
-	Mon, 12 Oct 2026 13:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791811135; cv=pass; b=SS3uAj7DCk2BhILgw6GkB4A4jxsqsH4GiU3uPMBMr7HLsZ5TYdg9j9Z0wKiAVlB8bPZkkMi9hj1A4/H2rzWz8/CnYYvXdc5jyHo05/0+uZ9lx1XcJ6I0Wst8ozlopEHxGcs8kynQIdAkimTl+AMnrV1uKCn3fb75psW9k/5yUjo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791811135; c=relaxed/simple;
-	bh=2yhZZaOrQxsobXMDAWqu2vt1FJ0JABBZoi5ayoXNvpo=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=n7ns9Nk6U08w9dL5K6e3NNhvTNmyihYZLSX5Q5MDD2W2tY00V6rcYB4FecHZsWZXQ5pe/3obqTSz+hzYhldNwUNEcPpUN3mIhEzpIOf6BezrK+aQGi5PhmLFLzN2gIWB9Ki37DZxLIe8FZz4oDAldNXNosXpmZfFdIj/GVd48EA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=ZSWLaBkR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BD8493D40
+	for <linux-leds@vger.kernel.org>; Mon, 12 Oct 2026 14:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791816645; cv=none; b=cUu7a9861PR379syi6hu8MJw4UCFfZN4PIntXGRxdBkz6IRTsMdIVDoZBjnRc94dENuxQ7JcdxIZMyeEMq8BMO5apP6HmH6TW7zw2ExPfdl7TNKmBaG6ZTb8UAjEyasvXCJrHDMn2G0M+7ML4EurtCsUdcybgJQogVJMA1d/+GA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791816645; c=relaxed/simple;
+	bh=9/a4GtDSJgIKnq+PHDcdGLyfvIsIi6jNZ2Wj3gemz9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQzhjjs5dshyYTqcKmBbGUOtDapLHBDy+1+EgM59CJuAGD/Hl+8cA3nu8k1fCWJSahQ4BjiTcVWHfFmgvK/NR7MUgeTmYKjQqsFfpNtgpcfn7hANiWH3388yW4ZJ7nMFL7kPPWn06pw9JoLddgUNhh5sPZc4XjPs8lKa461pnIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEgrSBYa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="ZSWLaBkR"
-ARC-Seal: i=1; a=rsa-sha256; t=1791811122; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=A+K/0nWODc2mGNFn3BDcAZT37aIc0Pn40w2ONpPBJnglx8cjxToeWc06RxrN60B6V7cU5DrkrTbsj8pODFVwbMuacxoWh7TjCbF5+8/k+2sK75ZkLGG2jlu/D7K1/sgvTwnFcERxqeLF6Q2he4noJlzRy5tXuq89XS4WU3RftRE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1791811122; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=N6ioNyzBt/xFoPdVedoNIpQfcgtRNqWGcbASu5Y/h1Y=; 
-	b=d1gBf4hxy96tLThDCsyTMSgmGGa25xOyvFZFE8BkyW+NpYBc+gtE9zoeO+ionwTqg4DsSRGfzT2prHMJL+l9YtcECWjHnpQPeUcG70KuB2LsrBS15exvZ7jaSzbCK9uFrfhI1mD7lZfup6Oz2o1E+fl7lLU6K0ykXObHe4IYL6k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791811122;
-	s=zmail2048; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=N6ioNyzBt/xFoPdVedoNIpQfcgtRNqWGcbASu5Y/h1Y=;
-	b=ZSWLaBkR89FjBaNvEo3jzbQdPE35ghsz7QCGMNMcnWHKiCPH2PvTwz+3EOmBS6wQ
-	i2bcZX/XpSHFgf0xty5o6cSvxVfmZTjVb5LujWlz+WzblmnwBQ7ozV+Z4Rg2Ey1YyBI
-	AhAm/ztgva/7sW5WVdIPYgRPS3eviPim0zYYbuFghE/6xu+bpKDCSb+lQnrXJZiYA6p
-	InZuXfV4xURkmhHQ5uvjaVKotcnxktMajvh8/NFc9atHj65bnYxVymVpUU72vFgQwPD
-	bY8Gyh9JSe1HUGiC1qBylQzDUhxGVCmw0yjfgGAF1gjC8Ovx6duidfiH0ZMdHR9VdR3
-	FUxqmDKKBg==
-Received: by smtp.zohomail.com with SMTPS id 1791811121347690.662621604263;
-	Mon, 12 Oct 2026 06:18:41 -0700 (PDT)
-Message-ID: <fada38eed34b0a76c7e65f702ecaed8e61ae9c1d.camel@rong.moe>
-Subject: Re: [PATCH v2 2/5] platform/x86: uniwill-laptop: Implement rainbow
- animation as trigger
-From: Rong Zhang <i@rong.moe>
-To: Armin Wolf <W_Armin@gmx.de>, hansg@kernel.org, 
-	ilpo.jarvinen@linux.intel.com
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	wse@tuxedocomputers.com, platform-driver-x86@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <30de83b7-8016-4b33-9e5c-6138b32766ab@gmx.de>
-References: <20261007144101.323289-1-W_Armin@gmx.de>
-	 <20261007144101.323289-3-W_Armin@gmx.de>
-	 <035799dd461fe0e7a60564e11f10fd23eb3daabf.camel@rong.moe>
-	 <9087d109-d757-43bc-b80d-64df7dc9ff82@gmx.de>
-	 <b31878aeb4af648106adc74efbb2d1e839f9f8ea.camel@rong.moe>
-	 <30de83b7-8016-4b33-9e5c-6138b32766ab@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 Oct 2026 21:13:32 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEgrSBYa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B75B31F0089B;
+	Mon, 12 Oct 2026 14:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791816644;
+	bh=OnMHe5dXcqTc5v2OsRfJDhhba3wwXmp+sAVt9h94tR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IEgrSBYa/Cu+FGu4IXUohks7fiOVrMl9oGd+cC+cRLt9nk90c/LtRrC7OsVEzeL+p
+	 3oGtXt1PSVmvO5piuRlp/6/wWGZgVS/9tgDt2GlrT1yLGtZCgprfX93EN3Ctk40gQj
+	 B0gEsbCNQ/nES4hllcCOWhff8viaq8woPbX/YMeq8ZoVVrLgAKt5zPw3+OEl8TJXMa
+	 vdQv/eWb5ff8mPSpM2gucGm944UHJCgoZbKtScc430qd+bC2IWX4Exa3pqzRvNoVpq
+	 Ny1cW9DMGtkImCRHkpesBAHqEJtQgy3WyGjXPcKeabIAO+GKxLgFYRdIH/uJstc87H
+	 4QtB/XrJFdb+g==
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id D38D1F40068;
+	Mon, 12 Oct 2026 10:50:42 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 12 Oct 2026 10:50:42 -0400
+X-ME-Sender: <xms:wvPMalFsBQ5YGdMWYxVa6QIC6pwu3hgFyIeNuTALRvJVjxkuyrJgrA>
+    <xme:wvPMah08Q6gQDvvS_7OH7WF3E-VxJwfYsa7kzUjbYoObG75N-J8-N8gjS0ylYmABP
+    J6suPrHXr9eQRiGx90oUzkKsCDqM2sha2vMa_8PX93FSFocl8aEF6qa>
+X-ME-Received: <xmr:wvPMatO8AidNv5JLhkEME9vBnyml-fYf5xZ1-1IBKx_4wZqV6Ia58fxStaN3l1NaItcQBHsv6Ym7OlC7jKb1Y7v8kGnsn-I5>
+X-ME-Proxy-Cause: dmFkZTEJ5fBHj3ZE/whec/dIgXoSMWDPDe2NuyMizwmDQk/pueXv6evpgNyw+I0Gh43Blh
+    I4M5VA/i04E9vIzksBOxpmPwjlx+0vm2O2jxHpWuotQr4QwBx4yhEnwv+0mco2N3V4OfBV
+    OPWz8IZGDF95dze9i4BTU4aBJuuvecc9JQNmYbcrkJYmmm2ClQQ3sraLBQA48WMMkX2d6a
+    J0KuEGF9necxhBEPOwCVcnIMeQQXK8Q2sowCEW3buLPpNvH32Mi72AamY9MoCuq5ox2Zrs
+    MDPWJl7tyMKyQshVplGIwG5Apx3g9vll4Gq1dBpJIZqoEEBS4rAkzG6cfbcufE4f2KcVk7
+    Zldf/7Kd7FSM2K/X12Ueg4V8KTDSIeTVmkjFYSh40aNl+drp/RQHzR/AbMpyOI7AN48Dn5
+    zH4HoZyu87c1wq+Y52RNHFKEgu3BKA4aaVkvCaC1NmvW1My6uL3L1OajS9q1eJp6Onbm/8
+    wqi8sXsjwUXzOLGULteWtBfJHnbrQEcPxJgZnfai6Kz95WKBchi2w1DApgvxyq+AjhF0A2
+    NjJheitzwRdMC9fMKeMfivLmvjcD+Og8yohp36aa+GUjkPUGfCsjvefBaaPWRPz/9rfruZ
+    puexGXL6DWvqgTblOIa7An7ElJgeYcZtJ8Sm9i7JFqx9PmkCQoovNTsKqjdQ
+X-ME-Proxy: <xmx:wvPMapIBBW5SbsC8JiFGzTK9dBpoP3MaYgptSA_ZmlQzS7DSbICuJA>
+    <xmx:wvPMama40GNRYSWZsOkXRKP0DT6q_gKHQraof0tpCyyvjS2ck3tBxQ>
+    <xmx:wvPMaql6tbQoRjHODBnohohMXHzjeuOJWUYE20iP2pkD8B5lsZ4hpQ>
+    <xmx:wvPMahb6_4NO-FoZFtW8IZotsYU3HyFaCC9jtCEZiOae-PtwWh7qaw>
+    <xmx:wvPMaiDDQEs0VWbkA0JfY8yhf0_bYuH6TfAhV4b8rB53QiAr4lbZ8GIy>
+Feedback-ID: i8dbe485b:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 12 Oct 2026 10:50:41 -0400 (EDT)
+Date: Mon, 12 Oct 2026 07:50:40 -0700
+From: Boqun Feng <boqun@kernel.org>
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>,
+	Ira Weiny <iweiny@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: leds: KCSAN report
+Message-ID: <aszzwEPkfPjAYNLQ@tardis.local>
+References: <20260930-rust_leds-v26-0-83837331020e@posteo.de>
+ <20260930-rust_leds-v26-3-83837331020e@posteo.de>
+ <ask31EX01lSL9QJ9@tardis.local>
+ <81e1aa92ebc389468eb6f493393a1c58a79373e7.camel@posteo.de>
+ <aslB3lFUKpMEWOiM@tardis.local>
+ <7174e1f95dcbeb8802d9e9c9715afa32784f0c20.camel@posteo.de>
+ <aslJ1ISONL9ojP-3@tardis.local>
+ <1c414e776b56ae215d2d07b73a384ed4542c963e.camel@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2-10+b1 
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c414e776b56ae215d2d07b73a384ed4542c963e.camel@posteo.de>
 
-Hi Armin,
+On Fri, Oct 09, 2026 at 10:11:20PM +0000, Markus Probst wrote:
+> On Fri, 2026-10-09 at 13:08 -0700, Boqun Feng wrote:
+> > On Fri, Oct 09, 2026 at 07:59:02PM +0000, Markus Probst wrote:
+> > [..]
+> > > > > > > +/// The multicolor sub led info representation.
+> > > > > > > +///
+> > > > > > > +/// This structure represents the Rust abstraction for a C `struct mc_subled`.
+> > > > > > > +#[repr(C)]
+> > > > > > > +#[derive(Debug)]
+> > > > > > > +#[non_exhaustive]
+> > > > > > > +pub struct MultiColorSubLed {
+> > > > > > > +    /// The color of the sub led
+> > > > > > > +    pub color: Color,
+> > > > > > > +    brightness: UnsafeCell<u32>,
+> > > > > > > +    intensity: UnsafeCell<u32>,
+> > > > > > 
+> > > > > > These should be `Atomic<u32>`, or am I missing something here? Using
+> > > > > > `Atomic<u32>` should resolve sashiko's comment on this patch.
+> > > > > Snippet of the `Atomic::from_ptr` rustdoc:
+> > > > > 
+> > > > > "
+> > > > > For the duration of 'a, other accesses to *ptr must not cause data
+> > > > > races (defined by LKMM) against atomic operations on the returned
+> > > > > reference. Note that if all other accesses are atomic, then this safety
+> > > > > requirement is trivially fulfilled.
+> > > > > "
+> > > > > 
+> > > > > This safety requirement is likely not met if I see this correctly,
+> > > > > because the led subsystem does not use atomic accesses.
+> > > > > 
+> > > > 
+> > > > Then the C side has a data race that needs some fix (or they use
+> > > > READ_ONCE() or WRITE_ONCE() which are *atomic* to avoid the data race).
+> > > They don't use READ_ONCE or WRITE_ONCE.
+> > > 
+> > > Writes to "intensity" can happen at anytime by `multi_intensity_store`.
+> > > It does lock the `led_access` mutex on write. It is not locked on read
+> > > and `grep "READ_ONCE" -r drivers/leds/` has no matches in drivers
+> > > either.
+> > > 
+> > 
+> > I wonder whether KCSAN will report an issue of this (w/o
+> > CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC).
+> First of all, thats a pretty noticable performance impact on desktop
+> here. Gotta recompile my kernel very soon.
+> 
 
-On Mon, 2026-10-12 at 00:48 +0200, Armin Wolf wrote:
-> Am 11.10.26 um 21:47 schrieb Rong Zhang:
->=20
-> > Hi Armin,
-> >=20
-> > On Sun, 2026-10-11 at 02:52 +0200, Armin Wolf wrote:
-> > > Am 10.10.26 um 13:20 schrieb Rong Zhang:
-> > >=20
-> > > > Hi Armin,
-> > > >=20
-> > > > On Wed, 2026-10-07 at 16:38 +0200, Armin Wolf wrote:
-> > > > > It turns out that some models require the lightbar to be activate=
-d
-> > > > > in order to display the rainbow animation, so users have to acces=
-s
-> > > > > both the "rainbow_animation" sysfs attribute and the LED sysfs
-> > > > > interface when enabling the rainbow animation. This can cause sho=
-rt
-> > > > > glitches when the lightbar was previously disabled.
-> > > > >=20
-> > > > > Fix this by replacing the sysfs attribute with a custom LED trigg=
-er
-> > > > > called "uniwill-rainbow". Selecting this trigger will atomically
-> > > > > activate the lightbar and enable the rainbow animation mode. This
-> > > > > can potentially break userspace applications using the old sysfs
-> > > > > attribute, but so far no such application is known to exist (yet)=
-.
-> > > > >=20
-> > > > > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> > > > > ---
-> > > > >    .../ABI/removed/sysfs-driver-uniwill-laptop   |  10 ++
-> > > > >    .../ABI/testing/sysfs-driver-uniwill-laptop   |  11 --
-> > > > >    .../admin-guide/laptops/uniwill-laptop.rst    |   5 +-
-> > > > >    MAINTAINERS                                   |   1 +
-> > > > >    drivers/platform/x86/uniwill/Kconfig          |   1 +
-> > > > >    drivers/platform/x86/uniwill/uniwill-acpi.c   | 133 ++++++++++=
-+-------
-> > > > >    6 files changed, 95 insertions(+), 66 deletions(-)
-> > > > >    create mode 100644 Documentation/ABI/removed/sysfs-driver-uniw=
-ill-laptop
-> > > > >=20
-> > > > > diff --git a/Documentation/ABI/removed/sysfs-driver-uniwill-lapto=
-p b/Documentation/ABI/removed/sysfs-driver-uniwill-laptop
-> > > > > new file mode 100644
-> > > > > index 000000000000..c226efc23b59
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/ABI/removed/sysfs-driver-uniwill-laptop
-> > > > > @@ -0,0 +1,10 @@
-> > > > > +What:		/sys/bus/platform/devices/INOU0000:XX/rainbow_animation
-> > > > > +Date:		November 2025
-> > > > > +KernelVersion:	6.19
-> > > > > +Contact:	Armin Wolf <W_Armin@gmx.de>
-> > > > > +Description:
-> > > > > +		Forces the integrated lightbar to display a rainbow animation =
-when the machine
-> > > > > +		is not suspended. Writing "1"/"0" into this file enables/disab=
-les this
-> > > > > +		functionality.
-> > > > > +
-> > > > > +		Reading this file returns the current status of the rainbow an=
-imation functionality.
-> > > > It'd be more helpful by documenting the removal date, version and w=
-hat
-> > > > has replaced it.
-> > > True, i will write a patch to address this.
-> > [..snip..]
-> >=20
-> > > > > -
-> > > > >    static ssize_t breathing_in_suspend_store(struct device *dev, =
-struct device_attribute *attr,
-> > > > >    					  const char *buf, size_t count)
-> > > > >    {
-> > > > > @@ -1258,7 +1213,6 @@ static struct attribute *uniwill_attrs[] =
-=3D {
-> > > > >    	&dev_attr_super_key_enable.attr,
-> > > > >    	&dev_attr_touchpad_toggle_enable.attr,
-> > > > >    	/* Lightbar-related */
-> > > > > -	&dev_attr_rainbow_animation.attr,
-> > > > >    	&dev_attr_breathing_in_suspend.attr,
-> > > > >    	/* Power-management-related */
-> > > > >    	&dev_attr_ctgp_offset.attr,
-> > > > > @@ -1288,8 +1242,7 @@ static umode_t uniwill_attr_is_visible(stru=
-ct kobject *kobj, struct attribute *a
-> > > > >    			return attr->mode;
-> > > > >    	}
-> > > > >   =20
-> > > > > -	if (attr =3D=3D &dev_attr_rainbow_animation.attr ||
-> > > > > -	    attr =3D=3D &dev_attr_breathing_in_suspend.attr) {
-> > > > > +	if (attr =3D=3D &dev_attr_breathing_in_suspend.attr) {
-> > > > >    		if (uniwill_device_supports(data, UNIWILL_FEATURE_LIGHTBAR))
-> > > > >    			return attr->mode;
-> > > > It'd be better to convert breathing_in_suspend into an LED device
-> > > > attribute. See led_classdev->groups.
-> > > We cannot do this because this field is being used by the multicolor =
-LED class.
-> > Whoops, I didn't notice that.
-> >=20
-> > > I can try to find a workaround for this.
-> > (+CC Lee, Pavel, linux-leds)
-> >=20
-> > IMO the best way to solve the dilemma is to introduce class_group for
-> > led-class-multicolor and led-class-flash, or else we will have to
-> > introduce (or have already introduced?) more workarounds for other
-> > drivers.
->=20
-> I think we should rather use a separate device_type for multicolor/flash =
-LED devices,
-> because this allows us to inject the sysfs groups without having to intro=
-duce yet
-> another field.
+:) Yes, but it helps find data races. In general, it should run in a
+test environment.
 
-Sounds neat. Nice inspiration!
+> Second of all, it does.
+> (Also like every second reports with something else, e.g. vfs, tty,
+> _find_next_bit, btrfs and more).
+> 
+> Reproduced with:
+> - Software to write random values to "multi_intensity":
+> https://gist.github.com/0xIO32/2ec10e7521fc80e96f700e1f6fe219c4
+> - Self-written low-quality multicolor led driver (to not overload real
+> led hardware for this test)
+> https://gist.github.com/0xIO32/1b46b8965a9d52f6e3ec5355c1f054a7
+> - the timer led trigger with delay_on = 1 and delay_off = 1 has been
+> enabled, so there is concurrent access.
+> 
+> Tainted because nvidia drivers, external module: v4l2loopback.
+> Gentoo Kernel, running on desktop. Its on 6.18, but as far as I know,
+> this logic hasn't changed (and fixed would be backported).
+> 
 
->=20
-> Would it be acceptable if multicolor/flash LED support cannot be build as=
- a module anymore?
+Right, so generally, this data races should be fixed (via marked
+accesses [1]). See also [2].
 
-In fact, even LEDS_CLASS is tristate (though rarely built as a module
-because LEDS_TRIGGERS promotes it to bool).
+In practice whether these need to be fixed usually depends on the
+maintainers, and back to my original point, we should at least make Rust
+side "data race free" if C side can be treated as "data race free".
 
-From my perspective, forcing LEDS_CLASS_FLASH and LEDS_CLASS_MULTICOLOR
-as bool will be too harsh for distros. We don't need to build them into
-vmlinux, as long as an internal register function with an extra
-device_type parameter is exported. We've already had several glue exports
-declared in drivers/leds/leds.h.
+[1]: tools/memory-model/Documentation/access-marking.txt
+[2]: tools/memory-model/Documentation/explanation.txt (Section 25. PLAIN
+     ACCESS AND DATA RACES).
 
-Thanks,
-Rong
+Regards,
+Boqun
 
->=20
-> Thanks,
-> Armin Wolf
->=20
-> >=20
-> > For this cycle let's keep the attribute as is.
-> >=20
-> > [..snip..]
-> >=20
-> > > > > +
-> > > > > +static struct led_trigger uniwill_lightbar_trigger =3D {
-> > > > > +	.name =3D "uniwill-rainbow",
-> > > > > +	.activate =3D uniwill_lightbar_trigger_activate,
-> > > > > +	.deactivate =3D uniwill_lightbar_trigger_deactivate,
-> > > > > +	.trigger_type =3D &uniwill_lightbar_trigger_type,
-> > > > > +};
-> > > > > +
-> > > > >    #define LIGHTBAR_MASK	(LIGHTBAR_APP_EXISTS | LIGHTBAR_S0_OFF |=
- LIGHTBAR_S3_OFF | LIGHTBAR_WELCOME)
-> > > > >   =20
-> > > > >    static int uniwill_led_init(struct uniwill_data *data)
-> > > > > @@ -1587,12 +1593,18 @@ static int uniwill_led_init(struct uniwil=
-l_data *data)
-> > > > >    	data->led_mc_cdev.led_cdev.max_brightness =3D 1;
-> > > > >    	data->led_mc_cdev.led_cdev.flags =3D LED_REJECT_NAME_CONFLICT=
-;
-> > > > >    	data->led_mc_cdev.led_cdev.brightness_set_blocking =3D uniwil=
-l_led_brightness_set;
-> > > > > +	data->led_mc_cdev.led_cdev.trigger_type =3D &uniwill_lightbar_t=
-rigger_type;
-> > > > > +	data->led_mc_cdev.led_cdev.hw_control_trigger =3D uniwill_light=
-bar_trigger.name;
-> > > > > +	data->led_mc_cdev.led_cdev.hw_control_set =3D uniwill_led_hw_co=
-ntrol_set;
-> > > > A private trigger does not need hw_control_set, which is only meant=
- to
-> > > > coordinate between different drivers, i.e., in the case when the LE=
-D
-> > > > device and the hardware control trigger are located at different dr=
-ivers.
-> > > >=20
-> > > > I've also updated the documentation in commit 8e04e5382aa9 ("leds:
-> > > > trigger: Add hw_offloaded() callback and provide
-> > > > trigger_may_offload_to_hw attribute"), quoted below:
-> > > >=20
-> > > >      Alternatively, a private trigger can be implemented along with=
- the LED
-> > > >      driver if the LED's hardware control doesn't fit any generic t=
-rigger. To
-> > > >      associate the private trigger with the LED classdev, their `tr=
-igger_type`
-> > > >      must be the same. To declare that the private trigger provides=
- hardware
-> > > >      control for the associated LED classdev, set the `hw_control_t=
-rigger`
-> > > >      string to the trigger's name. Since both the LED classdev and =
-the private
-> > > >      trigger are in the same LED driver, it's not necessary for the=
-m to
-> > > >      coordinate via `hw_control_*` callbacks.
-> > > >=20
-> > > > I'd suggest calling uniwill_led_hw_control_set() directly from the
-> > > > trigger's [de]activate callbacks, just like other drivers.
-> > > I decided to use this callbacks in order to be able to add support fo=
-r the keyboard backlight
-> > > animation in the future (if we someday find a device that supports th=
-is feature).
-> > The name "uniwill-rainbow" sounds irrelevant to keyboard backlight
-> > animation. In this case the latter needs a new private trigger with a n=
-ew
-> > name, and it can have different [de]activate callbacks. IOW, we don't
-> > need hw_control_set() either.
-> >=20
-> > Otherwise, using hw_control_set() makes sense to me as long as the
-> > current name is relevant.
-> >=20
-> >=20
-> >=20
-> > Since I've CC'ed leds folks:
-> >=20
-> > Per-key lighting is becoming increasingly common for keyboard backlight=
-.
-> >=20
-> > I am actually thinking about introducing LED array/matrix support to th=
-e
-> > leds subsystem. An LED array/matrix device is just a special LED device
-> > that controls all constituent LED devices, so that we can:
-> >=20
-> > - implement keyboard backlight animation (or LampArray autonomous mode)
-> > as an array/matrix hardware control trigger [1]
-> > - tune the lighting of the whole array/matrix at once by tuning the LED
-> > array/matrix device [2]
-> > - tune per-key lighting by tuning constituent LED devices
-> > - apply generic LED triggers to the whole array/matrix [1]
-> > - apply different generic LED triggers to different constituent LED
-> > devices
-> > - properly deconflict the above operations
-> >=20
-> > It definitely requires a lot of work to get things (especially locking
-> > and atomicity) right, but it should be very helpful for devices with pe=
-r-
-> > key lighting once done. I believe missing proper LED array/matrix suppo=
-rt
-> > was the main reason why tuxedo_nb04_wmi_ab [3] implemented a virtual
-> > LampArray HID device far before any userspace LampArray tool emerged.
-> >=20
-> > [1]: The constituent LED devices will be inoperable when a trigger is
-> > active on their array/matrix LED device.
-> >=20
-> > [2]: The leds subsystem won't emulate this. The driver must implement
-> > brightness_get() and brightness_set[_blocking]() for the LED array/matr=
-ix
-> > device.
-> >=20
-> > [3]: I know Texudo folks are working on adding hid-lamparray to connect
-> > it to the LED subsystem. I've had another independent implementation wi=
-th
-> > HIDRAW sniff, no hid-generic dependency, autonomous mode as a trigger,
-> > non-RGB LampArray support, and per-key LED device support in my local
-> > tree, but that's another story. I will firstly push it further without
-> > LED array/matrix support. Then I will try to add LED array/matrix
-> > support, with hid-lamparray being the first user.
-> >=20
-> > Thanks,
-> > Rong
-> >=20
-> > > > >   =20
-> > > > >    	if (value & LIGHTBAR_S0_OFF)
-> > > > >    		data->led_mc_cdev.led_cdev.brightness =3D 0;
-> > > > >    	else
-> > > > >    		data->led_mc_cdev.led_cdev.brightness =3D 1;
-> > > > >   =20
-> > > > > +	if (value & LIGHTBAR_WELCOME)
-> > > > Check !LIGHTBAR_S0_OFF too?
-> > > >=20
-> > > > If the last state is LIGHTBAR_S0_OFF|LIGHTBAR_WELCOME (probably cau=
-sed by
-> > > > an outdated driver without this patch), the trigger's activate call=
-back
-> > > > will be called on probe, lighting up the previously off LED. Is thi=
-s
-> > > > intentional?
-> > > >=20
-> > > > Thanks,
-> > > > Rong
-> > > Yes, this is intentional. LIGHTBAR_WELCOME implies !LIGHTBAR_S0_OFF, =
-some devices
-> > > even assume this.
-> > >=20
-> > > Thanks,
-> > > Armin Wolf
-> > >=20
-> > > > > +		data->led_mc_cdev.led_cdev.default_trigger =3D uniwill_lightba=
-r_trigger.name;
-> > > > > +
-> > > > >    	for (int i =3D 0; i < LED_CHANNELS; i++) {
-> > > > >    		data->led_mc_subled_info[i].color_index =3D color_indices[i]=
-;
-> > > > >   =20
-> > > > > @@ -3540,17 +3552,31 @@ static int __init uniwill_init(void)
-> > > > >    		pr_warn("Enabling potentially unsupported features\n");
-> > > > >    	}
-> > > > >   =20
-> > > > > -	ret =3D platform_driver_register(&uniwill_driver);
-> > > > > +	/*
-> > > > > +	 * We cannot register the trigger inside the .probe callback of=
- the
-> > > > > +	 * platform driver, because each trigger needs a unique name.
-> > > > > +	 */
-> > > > > +	ret =3D led_trigger_register(&uniwill_lightbar_trigger);
-> > > > >    	if (ret < 0)
-> > > > >    		return ret;
-> > > > >   =20
-> > > > > +	ret =3D platform_driver_register(&uniwill_driver);
-> > > > > +	if (ret < 0)
-> > > > > +		goto err_platform;
-> > > > > +
-> > > > >    	ret =3D uniwill_wmi_register_driver();
-> > > > > -	if (ret < 0) {
-> > > > > -		platform_driver_unregister(&uniwill_driver);
-> > > > > -		return ret;
-> > > > > -	}
-> > > > > +	if (ret < 0)
-> > > > > +		goto err_wmi;
-> > > > >   =20
-> > > > >    	return 0;
-> > > > > +
-> > > > > +err_wmi:
-> > > > > +	platform_driver_unregister(&uniwill_driver);
-> > > > > +
-> > > > > +err_platform:
-> > > > > +	led_trigger_unregister(&uniwill_lightbar_trigger);
-> > > > > +
-> > > > > +	return ret;
-> > > > >    }
-> > > > >    module_init(uniwill_init);
-> > > > >   =20
-> > > > > @@ -3558,6 +3584,7 @@ static void __exit uniwill_exit(void)
-> > > > >    {
-> > > > >    	uniwill_wmi_unregister_driver();
-> > > > >    	platform_driver_unregister(&uniwill_driver);
-> > > > > +	led_trigger_unregister(&uniwill_lightbar_trigger);
-> > > > >    }
-> > > > >    module_exit(uniwill_exit);
-> > > > >   =20
+> [  273.080793] Reported by Kernel Concurrency Sanitizer on:
+> [  273.080805] CPU: 1 UID: 0 PID: 4070 Comm: write_intensity Tainted: P
+> O        6.18.54 #1 PREEMPT(lazy)
+> [  273.080826] Tainted: [P]=PROPRIETARY_MODULE, [O]=OOT_MODULE
+> [  273.080836] Hardware name: Micro-Star International Co., Ltd. MS-
+> 7C56/MPG B550 GAMING PLUS (MS-7C56), BIOS 1.K0 09/02/2025
+> [  273.080847]
+> ==================================================================
+> [  275.913835]
+> ==================================================================
+> [  275.913855] BUG: KCSAN: data-race in led_mc_calc_color_components /
+> multi_intensity_store
+> 
+> [  275.913883] write to 0xffff8a84e71d1c70 of 4 bytes by task 4067 on
+> cpu 8:
+> [  275.913896]  multi_intensity_store+0x1a4/0x2b0
+> [  275.913912]  dev_attr_store+0x41/0x60
+> [  275.913931]  sysfs_kf_write+0x192/0x1d0
+> [  275.913948]  kernfs_fop_write_iter+0x1cb/0x400
+> [  275.913964]  vfs_write+0x5ad/0x650
+> [  275.913977]  __x64_sys_pwrite64+0xaf/0x100
+> [  275.913992]  x64_sys_call+0x206c/0x24c0
+> [  275.914006]  do_syscall_64+0x89/0x390
+> [  275.914022]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> [  275.914043] read to 0xffff8a84e71d1c70 of 4 bytes by interrupt on
+> cpu 3:
+> [  275.914056]  led_mc_calc_color_components+0x87/0xf0
+> [  275.914072]  led_set_brightness_nopm+0x2f/0xd0
+> [  275.914093]  led_timer_function+0x1f5/0x2c0
+> [  275.914106]  call_timer_fn+0x32/0x1e0
+> [  275.914126]  __run_timer_base+0x7b3/0x980
+> [  275.914146]  run_timer_softirq+0x31/0x60
+> [  275.914166]  handle_softirqs+0x157/0x400
+> [  275.914181]  __irq_exit_rcu+0xb9/0x200
+> [  275.914195]  sysvec_apic_timer_interrupt+0x7a/0x90
+> [  275.914212]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+> [  275.914228]  osq_lock+0x121/0x260
+> [  275.914246]  __mutex_lock+0x172/0xf70
+> [  275.914261]  __mutex_lock_slowpath+0xf/0x20
+> [  275.914278]  mutex_lock+0x9f/0xb0
+> [  275.914293]  kernfs_fop_write_iter+0x11b/0x400
+> [  275.914310]  vfs_write+0x5ad/0x650
+> [  275.914322]  __x64_sys_pwrite64+0xaf/0x100
+> [  275.914337]  x64_sys_call+0x206c/0x24c0
+> [  275.914351]  do_syscall_64+0x89/0x390
+> [  275.914367]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> [  275.914389] value changed: 0x000000f8 -> 0x00000034
+> 
+> Thanks
+> - Markus Probst
+> 
+> > 
+> > > Writes to "brightness" are on the C-side handled by the driver by
+> > > calling `led_mc_calc_color_components`. This rust abstraction always
+> > > calles it in `brightness_set_callback`. So on the C-side, this at least
+> > > is less of an issue, as writes and reads are controlled by the C
+> > > driver.
+> > > 
+> > 
+> > Thank you for taking a look into this.
+> > 
+> > > > 
+> > > > The general rule is: if C side has a data race, they should fix it, if C
+> > > > side doesn't care ("the compiler should not data race on this code"),
+> > > > then the Rust side treat it as atomic operations. This is the only way
+> > > > to better code regarding data races.
+> > > It probably should use WRITE_ONCE and READ_ONCE, but it also shouldn't
+> > > create any issues if its not used. There is no load tearing on a 32-bit
+> > > integer and memory ordering is not required. Not sure if its worth the
+> > 
+> > I think some people would disagree with you on "no load tearing"
+> > (because data race = UB = anything can happen), but..
+> > 
+> > > trouble changing every existing multicolor led driver.
+> > > 
+> > 
+> > I agree it's probably not worth doing this at the moment.
+> > 
+> > > > 
+> > > > > Ofc, this function won't be used, but I think given that the same
+> > > > > struct is also accessed by the C-side, it should also apply here.
+> > > > > 
+> > > > > Like Sashiko suggests, "core::ptr::read_volatile()" might be a better
+> > > > > option to prevent certain compiler optimizations.
+> > > > > 
+> > > > 
+> > > > No, please don't over-use read_volatile(). The reason that READ_ONCE()
+> > > > and WRITE_ONCE() are safe to use for synchronization is because
+> > > > semantics-wise they are atomic on certain types (if aligned), and the
+> > > > them being volatile is just an implementation detail.
+> > > Ok.
+> > > 
+> > > I will need to make .get_mut() const for this.
+> > > 
+> > 
+> > Sounds good to me.
+> > 
+> > Regards,
+> > Boqun
+> > 
+> > > > 
+> > > > Regards,
+> > > > Boqun
+> > > 
+> > > Thanks
+> > > - Markus Probst
+> > > 
+> > > > 
+> > > > > Thanks
+> > > > > - Markus Probst
+> > > > > 
+> > > > > > 
+> > > > > > Regards,
+> > > > > > Boqun
+> > > > > > 
+> > > > > > > +    /// The maximum supported intensity value.
+> > > > > > > +    ///
+> > > > > > > +    /// If None the maximum intensity equals to [`LedOps::MAX_BRIGHTNESS`].
+> > > > > > > +    pub max_intensity: Option<NonZero<u32>>,
+> > > > > > > +    /// Arbitrary data for the driver to store.
+> > > > > > > +    pub channel: u32,
+> > > > > > > +}
+> > > > > > > +
+> > > > > > [...]
+> > > > 
+> > 
+
+
