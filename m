@@ -1,115 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E194B44B8;
-	Tue, 13 Oct 2026 06:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7317379EE7;
+	Tue, 13 Oct 2026 08:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791873098; cv=none; b=NEOedbLpS2lUC/BJAqL7TSlZ5kuWGJoSzlBhZUs+G8UUb2FGq7BRcXiQJT16s8LNFoeJ9MK6rHBxjfqTchhvWihOv77JkfbMkdSXPvEtuWfOA8OjYi/tnEkflPMcI94C7qbtlGcbpfANdFLhUR+D5+9R5+nELDfZgTvByI0P9IA=
+	t=1791879886; cv=none; b=cDgCZe9P1GbqAJq5fSR0c/vDakHkYDcP6hl/zgCYB9ie25i0TrHXmP6Us996gTv+KzWsoJp9LOCQmBuYNp/LFOEMN/tzgF8gFzoMd/aZJoSwcOad0nF/pHFai9SVOB7+S89FIpdhkZsMj9v1ZAFb/E30SpX1HzwsxGm6koPaayo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791873098; c=relaxed/simple;
-	bh=oa+hL0321nW9Vwn1O3ILBBR3F88eydIuimTI3ISKCd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EyP1x5rCkPr0nMqJVbkOKMPHOJdS8toR7FS1iWdy+PykJ/iSoG2v7vFGPVGufLiiNG0q5xxRqRD75sSKnidF8GUtBtVjbXuRMwAWhNGGqdRKoNJqNyHuJ1B+MCZfrTBMzKDzCTpmFXkh1wD/T740YNCLOj9eBaehid8kcRobTeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfxmsxoD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791879886; c=relaxed/simple;
+	bh=Vhsk+az7pLWe3uoK3zp/16ASEYEg4HGF+a3mQpKx9YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4sYBFmN3MJUUTMUz7uu8YkxRUU73Xt7cpLj7QiaS+QtVGPDNr6BKpaIhTiScMgWTMuMc4Jmqfpckl2vR4PC7HFOYeaOPCzd85teFrEULS2QgA8POsWKVNIx2+oNVg2veg8UkkowP1edWBamlNqC6CMYsgcIZ5vnj8tZZebCxKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSGqx7rk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfxmsxoD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC2031F000FF;
-	Tue, 13 Oct 2026 06:31:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSGqx7rk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E79701F000FF;
+	Tue, 13 Oct 2026 08:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791873096;
-	bh=ysieIhLPikkToW2dfhq3fTbSynlZIJEUp5hlkhgJWaM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LfxmsxoDhWv+zNEv9x+kWUc4/I1YMrYc6XMe51XeffW0S4jvftWJII52jEIfsGlTb
-	 uRkVS1MXohKxY8YDMZHnl6VALyzFk0XV3TPvzHQ0tZ0t3gyAsYpSvZTIKPwzRd7hNM
-	 ehBIKWwFrr4QqIIr1x7CAMv7bCZp6t8RsBmk4ll0FbZSmSuKC9IfBltEp76vSTkv7D
-	 kpaJkLxld2momnjAzXs4K6kGPSkQJaUDzVnCWTSPLI6Qsxn+CyFXjE92t2hI5nI3/M
-	 uJhY26lPX2yD+C0UOYDUpA/VwpAhVONMyzQnKhRcwKvgPX4Bgb1hWJW/+Yug7jVOiF
-	 4tMS2knm7jRUg==
-Message-ID: <62ce5a6e-5f79-4245-b432-d8eacf34709b@kernel.org>
-Date: Tue, 13 Oct 2026 08:31:28 +0200
+	s=k20260515; t=1791879885;
+	bh=LruYlVld4rS6kylK4MX/2i9K5nPc2qp8o4UxcajCndg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VSGqx7rk0zCrQ7E9rHZsPNQKC9F1NDW8T2aaA1I39jBFb/BdWI0L9Y3EPWCKcEJWz
+	 nyzm4WlyIxLwO6+jWMM7gRGL/qv4uk5G/MdX9UHCotxerv/BzcZR6A0Ba5D29PyFcf
+	 WNcy+D+mh6RGe+UETBBSKBjNax6CECeK5FLYg16FCYRnJ6wMSLuvNi0vmIvqfOV7Q+
+	 fo2+NVwwKR7CCx7N1hy/B3fBZOUCrhZNeuZyuoU4Ok08uIefaWjJ1R2sFHtEa3rL7o
+	 VeWqe01dZF113Y9e88fKEDcDJp+yeXQ+Eq1wwf0kA71nN1aO3fdR6dzxqWz5/fttS/
+	 auSooqCguDR+g==
+Date: Tue, 13 Oct 2026 09:24:41 +0100
+From: Lee Jones <lee@kernel.org>
+To: phucduc.bui@gmail.com
+Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/2] leds: lm3532: Propagate enable GPIO errors
+Message-ID: <20261013082441.GC199624@google.com>
+References: <20261009091059.25729-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: leds: aw2013: Add awinic,aw2027
- compatible
-To: Paul Sajna <sajattack@postmarketos.org>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>,
- Alexey Min <alexeymin@minlexx.ru>
-Cc: Nikita Travkin <nikita@trvn.ru>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20261012-aw2013-aw20xx-rename-v3-0-cab1fdd050b6@postmarketos.org>
- <20261012-aw2013-aw20xx-rename-v3-1-cab1fdd050b6@postmarketos.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20261012-aw2013-aw20xx-rename-v3-1-cab1fdd050b6@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261009091059.25729-1-phucduc.bui@gmail.com>
 
-On 13/10/2026 07:39, Paul Sajna wrote:
-> The aw2027 is largely the same as the aw2013, with the
-> exception of the way the max current is written to registers.
-> This exception makes it different enough to not work without
-> driver modifications, but similar enough to fall under the
-> umbrella of the same driver.
+On Fri, 09 Oct 2026, phucduc.bui@gmail.com wrote:
+
+> From: bui duc phuc <phucduc.bui@gmail.com>
 > 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+> devm_gpiod_get_optional() returns NULL when the optional GPIO is not
+> present, but may return -EPROBE_DEFER or other errors.
+> 
+> lm3532_parse_node() currently treats GPIO lookup errors as if the GPIO
+> were not present.
+> 
+> Check the return value and propagate errors from the enable GPIO lookup.
+> 
+> Fixes: bc1b8492c764 ("leds: lm3532: Introduce the lm3532 LED driver")
+> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 > ---
->  Documentation/devicetree/bindings/leds/leds-aw2013.yaml | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> Changes in v2:
+>  - Capitalize the first letter of the commit message subject 
+> 
+>  drivers/leds/leds-lm3532.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+> index b51496910b08..a3bc9680dc4c 100644
+> --- a/drivers/leds/leds-lm3532.c
+> +++ b/drivers/leds/leds-lm3532.c
+> @@ -560,7 +560,8 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+>  	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
+>  						   "enable", GPIOD_OUT_LOW);
+>  	if (IS_ERR(priv->enable_gpio))
+> -		priv->enable_gpio = NULL;
+> +		return dev_err_probe(&priv->client->dev, PTR_ERR(priv->enable_gpio),
+> +				     "failed to get enable GPIO\n");
 
+This changes the semantics of the GPIO handling.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Currently we treat the GPIO as optional, regardless of what is returned.
 
-Best regards,
-Krzysztof
+Ideally we'd have the author review this - did you Cc them?
+
+>  	if (priv->enable_gpio) {
+>  		ret = devm_add_action(&priv->client->dev, gpio_set_low_action, priv);
+> -- 
+> 2.43.0
+> 
+
+-- 
+Lee Jones
