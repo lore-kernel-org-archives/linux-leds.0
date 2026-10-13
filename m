@@ -1,254 +1,110 @@
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E357F4E2F0F;
-	Tue, 13 Oct 2026 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2237743DECD;
+	Tue, 13 Oct 2026 10:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791885651; cv=none; b=WzdzE/T+vnRFdbVJ1U1CYbYeyrp9c1IlVEtt/dnDHeX1baqKbL68ly2Z7ltwo72mk7z5CmSDh0sp2USSc3ONvXslouhK4Hf+v/xH2rYJJpCKML4cReTnyFUZU4F4/1P0dzR+6btm1f9s7hlFEl+sDinDg/l8gTRcAP574slGrlA=
+	t=1791885756; cv=none; b=C6JnfLqs31b11kqm/PPJu2vTc2Wg22PDDyNHvUcaRbADJo7TNwAXW8zp8tFPQtL8ijIt3Qn5TXvkRV0573so4q41RY326OjwSm5ePEVLcfyQE1To/Q6I8Mt0qybMM4MN6QyOaIJd+NVaLtBlbuWUJ8X+IrY91E1urU5YXpEd+cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791885651; c=relaxed/simple;
-	bh=wecnArJD8j6gwk39Hs3k2OrJJqICmNTLwLxzf4XIJDg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tv6U2Pu3zevpUmpTYJASO1xQRRBs0r5FxPV6MfaXTccGwn1LoeBTbmYSIRN3SDcUq/QB1BOi/+87LKnwlHNTQIB5LYO0SHW1y5G9qfI0CahWNVgYGEZ3DPrKfXVZmTXU2XBfZA5iz/zT332ftPq7uonMEWdpn8E3g7XgJPS70zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net; spf=pass smtp.mailfrom=amieiro.net; dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b=zxcAQ1nO; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
+	s=arc-20240116; t=1791885756; c=relaxed/simple;
+	bh=+AdCjzBxyeY+CRF9CVFl0xtIvwqVs++Uy25whxs7I8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RCrYT4TMAmMl86+ZcrQoyOZSRGiSgKe15HI+INIYKUQdKwX5g/Z/hKR7NyA28gDx+JR5PmGlA43ycOyFKo80PojkBZASaubAgOA7Srp+JaBo7GgVtbHg9SObEuktH0/JTil7gQfKZU9uyHYMK0HjPBtc2Jbp2oW6C+cBIaYlQek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpGVnQ+y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b="zxcAQ1nO"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4j3qbL3vf5zKns4;
-	Tue, 13 Oct 2026 12:00:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
-	t=1791885646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NqnN8DHuzjLWZmu5E3fr14FJ2emMBi6H0waaqQ4+MI8=;
-	b=zxcAQ1nOa0KmXdBA5Cv2HYP5CvHAz4kj7mPyPbHn8QPdoL9DkKN1INm7zABPwywpz25z7Y
-	Fm6KpNxH1CnGcY2IbOC3PNGCOl0fmp2i0wzhqpXNo0f/KkZPTjy30O6w1uUFuSA8kAyY7L
-	8bbNqN1oxs3Xxwj7eCJ3OYNqB0mptANNnKlP7lFMVyxOu86WyQdBzxrA6AmCMI4FESni3q
-	ncn6CsbHP10f/RieIO5+m4TNz4TVztOnrMgaU2pcr9d0/KxWLfNtG3Z0AoTXdeEAXHohjw
-	QrJ2vDBmzbsumCBnpUI3C+woSfQOd3Raa5HxRRaSQ3HlFCRlBJ80Vv7AY5e1yw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=flavio@amieiro.net
-From: Flavio Amieiro <flavio@amieiro.net>
-Date: Tue, 13 Oct 2026 07:00:10 -0300
-Subject: [PATCH v3 2/2] leds: is31f132xx: Add support for is31fl3206
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpGVnQ+y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2749B1F000FF;
+	Tue, 13 Oct 2026 10:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791885754;
+	bh=Q0kkJFssebGivQUm1PfruH8KxOvZuaXpWnOivd9cA94=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=kpGVnQ+yqo+PZB6PjA/6xZ371m64A5NvQzXzqDf8VGorrafQjBot9Gg8gEEe3FNOY
+	 CIrNYWbEJ5TkjRmlMXoVQzS1jjg3m1ez/8lLJ3u6toYsp0W4h0yWG5ksbhBY9wQ8lH
+	 Caim/Rhwv4l5G/zDBUj/g/Yi/pTT6H8UinljtaXigeg6d04Ue5wnuCV2hHjcQHtfGm
+	 1g2c4KIYkc3ipPPgt3XZ9rr++atInk5G92eNYAVRMKSt9oFL0dDuW29q04hTW/UdZi
+	 iCF7bkQyLOyITTwYFfc8MeFzUf762XIbwCz+e9XA9516BT3JUYHfj6uPa6+3hYVBBb
+	 sAAGSATcCgbCQ==
+Message-ID: <7f43a5c0-e781-45db-bc8b-db6684c9aac0@kernel.org>
+Date: Tue, 13 Oct 2026 12:02:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261013-add-is31fl3206-support-v3-2-66a762a3c12f@amieiro.net>
-References: <20261013-add-is31fl3206-support-v3-0-66a762a3c12f@amieiro.net>
-In-Reply-To: <20261013-add-is31fl3206-support-v3-0-66a762a3c12f@amieiro.net>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Flavio Amieiro <flavio@amieiro.net>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6461; i=flavio@amieiro.net;
- h=from:subject:message-id; bh=wecnArJD8j6gwk39Hs3k2OrJJqICmNTLwLxzf4XIJDg=;
- b=owGbwMvMwCX2bmrBFGnZ5lDG02pJDFnnGPX0TnVfCptSXrJx/dyp/saTtsofWxea4bWdg8W5I
- zTtXVl0RykLgxgXg6yYIgtLGUuZd/vB5t3TVkvCzGFlAhnCwMUpABNx+svI0BxvMaOqyiW7Nlfe
- r8BdRiD16BqlGVwuEh1BWv/0F6cYMfzTOm3zzfVUeULXr50XyxZt/T5jV2rqD9mpeTsS+Twa/N4
- wAQA=
-X-Developer-Key: i=flavio@amieiro.net; a=openpgp;
- fpr=047604764B87C183BB96AB19EE9570941B1D8355
-X-Rspamd-Queue-Id: 4j3qbL3vf5zKns4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: leds: Add issi,is31fl3206 to
+ leds-is31fl32xx
+To: =?UTF-8?Q?Fl=C3=A1vio_Amieiro?= <flavio@amieiro.net>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20261013-add-is31fl3206-support-v1-0-08c066cc241d@amieiro.net>
+ <20261013-add-is31fl3206-support-v1-2-08c066cc241d@amieiro.net>
+ <20261013-jolly-salamander-of-tact-7cf46e@quoll> <87zewhudle.fsf@berlin>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <87zewhudle.fsf@berlin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This chip has a different layout for the LED Control Register when
-compared to the other variants. This register contains the enable bit
-(in the highest nibble) but also the current control.
+On 13/10/2026 11:58, Flávio Amieiro wrote:
+> Krzysztof Kozlowski <krzk@kernel.org> writes:
+>> Please organize the patch documenting the compatible (DT bindings)
+>> before the patch using that compatible.
+> 
+> I'm sorry, I read this e-mail after sending v2 of the patch series. I
+> will organize the commits and send v3.
 
-According to the datasheet, a value of 010000 (0x10) in the register
-enables an LED with the output current set to maximum.
+v1 was sent today, so how could review be after v2?
 
-This commit adds support for this IC following the previous limitation
-of the other variants: all LEDs are enabled and set with maximum
-current, letting brightness be controlled by the PWM registers.
+One version per 24h, so you actually allow people to look at this code.
 
-Signed-off-by: Flavio Amieiro <flavio@amieiro.net>
----
- drivers/leds/leds-is31fl32xx.c | 95 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 79 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
-index 285085d27453..a22d814be4b0 100644
---- a/drivers/leds/leds-is31fl32xx.c
-+++ b/drivers/leds/leds-is31fl32xx.c
-@@ -49,6 +49,9 @@
- #define IS31FL3293_RESET_MAGIC 0xc5
- #define IS31FL3293_MAX_MICROAMP 20000
- 
-+/* Custom LED Control enable value for IS31FL3206 */
-+#define IS31FL3206_CONTROL_ENABLE_WITH_IMAX BIT(4)
-+
- struct is31fl32xx_priv;
- struct is31fl32xx_led_data {
- 	struct led_classdev cdev;
-@@ -79,6 +82,7 @@ struct is31fl32xx_priv {
-  * @enable_bits_per_led_control_register: number of LEDs enable bits in each
-  * @brightness_steps    : number of brightness steps supported by the chip
-  * @reset_func          : pointer to reset function
-+ * @enable_all_channels_func  : pointer to enable all channels function
-  * @sw_shutdown_func    : pointer to software shutdown function
-  *
-  * For all optional register addresses, the sentinel value %IS31FL32XX_REG_NONE
-@@ -88,6 +92,11 @@ struct is31fl32xx_priv {
-  * necessary registers to a known initialization state. This is needed
-  * for chips that do not have a @reset_reg.
-  *
-+ * If non-NULL, @enable_all_channels_func will be used in place of the
-+ * generic channel enable function. This is needed for chips that have
-+ * a LED Control Register that control more than simply the
-+ * enable/disable state of the channel.
-+ *
-  * @enable_bits_per_led_control_register must be >=1 if
-  * @led_control_register_base != %IS31FL32XX_REG_NONE.
-  */
-@@ -105,6 +114,7 @@ struct is31fl32xx_chipdef {
- 	u8	enable_bits_per_led_control_register;
- 	u16	brightness_steps;
- 	int (*reset_func)(struct is31fl32xx_priv *priv);
-+	int (*enable_all_channels_func)(struct is31fl32xx_priv *priv);
- 	int (*sw_shutdown_func)(struct is31fl32xx_priv *priv, bool enable);
- };
- 
-@@ -228,6 +238,28 @@ static int is31fl3293_software_shutdown(struct is31fl32xx_priv *priv,
- 	return is31fl32xx_write(priv, IS31FL3293_SHUTDOWN_REG, value);
- }
- 
-+/*
-+ * Custom enable_all_channels function for IS31FL3206 because this
-+ * variant has only one bit in the higher nibble for enable, and the
-+ * lower nibble controls output current.
-+ */
-+static int is31fl3206_enable_all_channels(struct is31fl32xx_priv *priv)
-+{
-+	const struct is31fl32xx_chipdef *cdef = priv->cdef;
-+	u8 num_regs = cdef->channels / cdef->enable_bits_per_led_control_register;
-+	int i, ret;
-+
-+	for (i = 0; i < num_regs; i++) {
-+		ret = is31fl32xx_write(priv,
-+				       cdef->led_control_register_base+i,
-+				       IS31FL3206_CONTROL_ENABLE_WITH_IMAX);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * NOTE: A mutex is not needed in this function because:
-  * - All referenced data is read-only after probe()
-@@ -315,6 +347,33 @@ static int is31fl32xx_reset_regs(struct is31fl32xx_priv *priv)
- 	return 0;
- }
- 
-+static int is31fl32xx_enable_all_channels(struct is31fl32xx_priv *priv)
-+{
-+	const struct is31fl32xx_chipdef *cdef = priv->cdef;
-+	int ret;
-+
-+	if (cdef->enable_all_channels_func)
-+		return cdef->enable_all_channels_func(priv);
-+
-+	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
-+		u8 value =
-+			GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
-+		u8 num_regs = cdef->channels /
-+			cdef->enable_bits_per_led_control_register;
-+		int i;
-+
-+		for (i = 0; i < num_regs; i++) {
-+			ret = is31fl32xx_write(priv,
-+					       cdef->led_control_register_base+i,
-+					       value);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int is31fl32xx_software_shutdown(struct is31fl32xx_priv *priv,
- 					bool enable)
- {
-@@ -345,24 +404,12 @@ static int is31fl32xx_init_regs(struct is31fl32xx_priv *priv)
- 		return ret;
- 
- 	/*
--	 * Set enable bit for all channels.
-+	 * Enable all channels.
- 	 * We will control state with PWM registers alone.
- 	 */
--	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
--		u8 value =
--		    GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
--		u8 num_regs = cdef->channels /
--				cdef->enable_bits_per_led_control_register;
--		int i;
--
--		for (i = 0; i < num_regs; i++) {
--			ret = is31fl32xx_write(priv,
--					       cdef->led_control_register_base+i,
--					       value);
--			if (ret)
--				return ret;
--		}
--	}
-+	ret = is31fl32xx_enable_all_channels(priv);
-+	if (ret)
-+		return ret;
- 
- 	ret = is31fl32xx_software_shutdown(priv, false);
- 	if (ret)
-@@ -552,7 +599,22 @@ static const struct is31fl32xx_chipdef is31fl3293_cdef = {
- 	.sw_shutdown_func			= is31fl3293_software_shutdown,
- };
- 
-+static const struct is31fl32xx_chipdef is31fl3206_cdef = {
-+	.channels				= 12,
-+	.shutdown_reg				= 0x00,
-+	.pwm_update_reg			= 0x13,
-+	.global_control_reg			= 0x26,
-+	.reset_reg				= 0x2f,
-+	.output_frequency_setting_reg		= 0x27,
-+	.pwm_register_base			= 0x04,
-+	.led_control_register_base		= 0x17,
-+	.enable_bits_per_led_control_register	= 1,
-+	.brightness_steps			= 256,
-+	.enable_all_channels_func		= is31fl3206_enable_all_channels,
-+};
-+
- static const struct of_device_id of_is31fl32xx_match[] = {
-+	{ .compatible = "issi,is31fl3206",  .data = &is31fl3206_cdef, },
- 	{ .compatible = "issi,is31fl3293",  .data = &is31fl3293_cdef, },
- 	{ .compatible = "issi,is31fl3236",  .data = &is31fl3236_cdef, },
- 	{ .compatible = "issi,is31fl3236a", .data = &is31fl3236a_cdef, },
-@@ -616,6 +678,7 @@ static void is31fl32xx_remove(struct i2c_client *client)
-  * even though it is not used for DeviceTree based instantiation.
-  */
- static const struct i2c_device_id is31fl32xx_id[] = {
-+	{ .name = "is31fl3206" },
- 	{ .name = "is31fl3293" },
- 	{ .name = "is31fl3236" },
- 	{ .name = "is31fl3236a" },
-
--- 
-2.53.0
-
+Best regards,
+Krzysztof
