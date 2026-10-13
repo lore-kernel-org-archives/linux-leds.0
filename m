@@ -1,112 +1,315 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD51551DAED
-	for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 18:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A73528441;
+	Tue, 13 Oct 2026 18:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791915508; cv=none; b=exE/DP7Hc5PEoMcIF5dIuLLrva2phkaBiB/WGPfTM+hoslBqikoKiJd0S2c9ioI97myue6SUiq3FGIJFp1R60bpcP3ZKjtz5zMt0ImuhfTiyYK77pWQobI6W/8P0jmRKTTpc+O+tJdBTbCUkr7o/+NIJebGeiAZMUp2y0SW4wbg=
+	t=1791915675; cv=none; b=a2V1QRWbvcobz1UN0SrpS0EmOUb1tXTUzIU/VMuA8Etx6TFAGS1+Q86+A5hUxh/+gP5tqtGcCJ8BU/jdar64rwEJCp3g5+er4OrI9oOvf2/J0vzNRbOENfi8p4n8wHEXftHTTBfv7IeSQ56zmEM+T+/zpt/v2er6v1CTGgS7Lqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791915508; c=relaxed/simple;
-	bh=lU65QQOg/GcibNh5g7Zm+usPEygQ/b2DT9OWNFxlqSk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rO4EE0/N+qJlMW4YMor+KtG7ZrjPlgHNsYorMYSQ6x8nmnz6J1F8mmkcJI+ED73rl0dp5mpAnlaQyPUw1/PheLvkQHMwMpOvmRYLxXKyd1TURmSijCvv8E6eGz0mxAe+om8W/62MpaxwaxyQdOqgXJE/1FBiaQNYgX731Ndjn/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCECqCcM; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791915675; c=relaxed/simple;
+	bh=3JnN+dnKAn+YvwUbRhGfJyn8HtZttzjMPwobBzMGpiE=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=HJf1IFeAYN8pkq45XZ3XfBHvZDvGrXTB55NOZNIxqCo9pGrLdtN3aR7yKfebMJNI0LEMOCWPijt9qnmpbh1K8CcnyfZbIvUQBx8Muk3o608n6k3w2JWY1hxKub4LWM6YjWTVM7WpR/PxStbIu142q7tqzZxE4LQtb7GwbD9yd9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzVj3J5n; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCECqCcM"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-48b0584ad71so1906006f8f.0
-        for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 11:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791915499; x=1792520299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1Bk4II3Yi7edkXaVIjuxBcIHECnvxgrsvWyjVkvqUUw=;
-        b=SCECqCcMswpP1Jqe/3SKc4yBh8DNfsTlhoUk6WxJNygxwBO6vCwn4v3T0A08M5/HR6
-         3u2JLAllLO+YhIUFR6/0ZMqITR7j4FajTS3EJDxUSMt7J4T8HfJPW0w39OyY25VvsEUa
-         FFmZb44fcIuNgN1hJFvLc8Gw+93W1Qgb0gM10vGkEH45ReAdfyhOTPaTEBE5cyirikMh
-         KwlBOKYwhP6XlDtaJdX066xnvYytbAJaTYRZz9mYE11H1YztPyYFftrKmSU8t9q43daJ
-         jrrBuEECvy3umyrGGAG2VMR+pIagIbsNoFn3p89Lp1vTbHobKP6DVV5/bOsk3qFlv+11
-         E8lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791915499; x=1792520299;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1Bk4II3Yi7edkXaVIjuxBcIHECnvxgrsvWyjVkvqUUw=;
-        b=GoOPsVM1AG4l3geBbMbuYZGwmtOmEwnC1G+Ln/EBUYTfNJaN2/lIpW7nGOEwpQORI+
-         6OEC9nPlCOBZxIQ67bRiq18vwLVwMhbs8NbpchZyVfyU8mn2HIEsg+xWVnWIe+rWO322
-         Dh+m6YmVzY2d3q86FlbDg7ta1JvA00piPUoo/8bHckWvyObp3z3SlPvNuo8g2wBqkCj+
-         lvcUr3H7F836sJsRabtoQAYoQ/EWr+MfcZFVsWSd9PSA5k2GqyYLxhYpmkHvQsF1QXXK
-         iP4YTwllINJX2tY93lBBRPagSYuekmncSlec54U7zoOm2UmiOeXFcjclFvljrnAchy3b
-         s30g==
-X-Gm-Message-State: AFq9FYJFumaRxgcKIvEG0PoeRpVvv3UCg68+unIIeKnXCqR69QDLdLnk
-	K2uX5dXuliy09Tj4DloGNvsA+Ci1WYrONpBSvud2HYZKz65tPQmhdHRz
-X-Gm-Gg: AYBFou2AQrQvi2M4pfHUmjFD93dg/VR2nPkpauBzwLcfgJEvfXcX/NO8U0A8gJJYryu
-	80eW6Vyh/D3dzUvgecLuR14SQdYDssVK2lHcZbFi3GOo5AHbcnEUUVdOKpP8WKjV/Fj7lzVcmCc
-	qDZjY9kH2tVPiyHoSCrTi9xfg4NZW/vh/cxQcAs8+8Xvwo8jYzymRAF23eYvg5vApo6SDOV8OPI
-	/aLmxwMn9WgOFs22YoaS0M/D++cT7TP0VVB/1p1Y4EQttZ8Vw8+eYs/mnqnkxaGreU/MGL6LMNh
-	KUDk0snegPWkYvMOE5xPA+16uQi7QerQDLxKlWugZuevU8LlIsx6cJLGssB103bSrjEqcREk2tT
-	j98qwl/IqUrikSJqrRxGHrZK3wd64owd3QDNOn5BeI5eyowTqKYGjdeySwkMLjHxuLHriZJ3LDA
-	kQSLcNrEjX3LjQ273NVU6M9QxrO0mFBBzNWyqMeWaHl2yMvz3ozcif2SPPS23OJ9ERz4pUNcrHi
-	FyDYwNIRLvZWe+1owU=
-X-Received: by 2002:a05:600c:630f:b0:4a1:9f59:ee7 with SMTP id 5b1f17b1804b1-4a19f5911f4mr137303645e9.0.1791915498902;
-        Tue, 13 Oct 2026 11:18:18 -0700 (PDT)
-Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0ac36f9sm6379903f8f.36.2026.10.13.11.18.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 11:18:18 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kees Cook <kees+treewide@kernel.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] dt-bindings: leds: skyworks,aat1290: Document FLINH pin
-Date: Tue, 13 Oct 2026 21:18:02 +0300
-Message-ID: <20261013181803.496627-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261013181803.496627-1-clamor95@gmail.com>
-References: <20261013181803.496627-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzVj3J5n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83AC61F000FF;
+	Tue, 13 Oct 2026 18:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791915674;
+	bh=F5ZDCkRw8VVdeYAs2vWti8KDb0kjYXkm9J+gbJ7w07k=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=NzVj3J5njiwF9GXU/dmWYgrIVduAORQA/s6MYbtSFyZsTi8lMLdhvjCVFQvsOqKRc
+	 R0JA4b0R/+Hgp6R9I2/iyfS6XJcGpX0PkX6luBkl/X6FSV32aZmTb4VwyNCOKLExj4
+	 XfMDAD9qUeAL8SkOVKCLEqCbPslqtgL2xpvTZB6VXROoDSGhkuKtrrnP7LO7de2oYm
+	 4IwQP2hrhjhgteAKvjyUqoqo0Pe/cTf/LvBX0pqVWPe0nEqgu3e5tpl7Ljzp83v1GX
+	 VeQ2akA6dAp4J/AHU4tnFdZOmJslnaPHETEUlCzMb2IG8qS2VXJRkbvJ2GjFersDAK
+	 NDx8ohyEU2rrA==
+Message-ID: <sashiko-outbox-170318@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 3/4] mfd: aat2870: Convert to use OF bindings
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, dri-devel@lists.freedesktop.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <20261013180933.487013-4-clamor95@gmail.com>
+References: <20261013180933.487013-1-clamor95@gmail.com>
+ <20261013180933.487013-4-clamor95@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 13 Oct 2026 18:21:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Both the AAT1270 and AAT1290 feature a FLINH pin used for mandatory Flash
-inhibition.
+Thank you for your contribution! Sashiko AI review found 4 potential issue(=
+s) to consider:
+- [Medium] video: missing default value for optional led-max-microamp prope=
+rty
+- [Medium] mfd: aat2870: WARNING triggered by gpiod_set_value on sleepable =
+GPIOs
+- [Low] video: incompatible pointer type in device_property_read_u32
+- [Low] regulator: missing const on aat2870_regulators array
+--
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+commit 44f47c7fe6dfacca37d21c28bab7fce4a68f379a
+Author: Svyatoslav Ryhel <clamor95@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml b/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
-index 7c26bb135c0a7..a5f3eba7d6480 100644
---- a/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
-+++ b/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
-@@ -31,6 +31,10 @@ properties:
-     maxItems: 1
-     description: FL_EN pin
- 
-+  flinh-gpios:
-+    maxItems: 1
-+    description: FLINH pin
-+
-   led:
-     $ref: common.yaml#
-     unevaluatedProperties: false
--- 
-2.53.0
+mfd: aat2870: Convert to use OF bindings
 
+This commit converts the AAT2870 driver to use OF bindings by replacing
+mfd_add_devices() with of_platform_populate() and adding separate compatible
+strings for its backlight and regulator sub-devices. It also updates the
+GPIO enable logic to use gpiod helpers and modifies the child drivers to pa=
+rse
+properties directly from the Device Tree, allowing the removal of platform =
+data.
+
+> diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
+> index 0d56cd6fbc6a5..909c14ee60323 100644
+> --- a/drivers/mfd/aat2870-core.c
+> +++ b/drivers/mfd/aat2870-core.c
+[ ... ]
+> @@ -348,60 +309,29 @@ static int aat2870_i2c_probe(struct i2c_client *cli=
+ent)
+> =20
+>  	aat2870->reg_cache =3D aat2870_regs;
+> =20
+> -	if (pdata->en_pin < 0)
+> -		aat2870->en_pin =3D -1;
+> -	else
+> -		aat2870->en_pin =3D pdata->en_pin;
+> +	aat2870->en_pin =3D devm_gpiod_get_optional(&client->dev, "enable",
+> +						  GPIOD_OUT_HIGH);
+> +	if (IS_ERR(aat2870->en_pin))
+> +		return dev_err_probe(&client->dev, PTR_ERR(aat2870->en_pin),
+> +				     "Failed to get EN GPIO\n");
+> =20
+> -	aat2870->init =3D pdata->init;
+> -	aat2870->uninit =3D pdata->uninit;
+>  	aat2870->read =3D aat2870_read;
+>  	aat2870->write =3D aat2870_write;
+>  	aat2870->update =3D aat2870_update;
+> =20
+>  	mutex_init(&aat2870->io_lock);
+> =20
+> -	if (aat2870->init)
+> -		aat2870->init(aat2870);
+> -
+> -	if (aat2870->en_pin >=3D 0) {
+> -		ret =3D devm_gpio_request_one(&client->dev, aat2870->en_pin,
+> -					GPIOF_OUT_INIT_HIGH, "aat2870-en");
+> -		if (ret < 0) {
+> -			dev_err(&client->dev,
+> -				"Failed to request GPIO %d\n", aat2870->en_pin);
+> -			return ret;
+> -		}
+> -	}
+> -
+> -	aat2870_enable(aat2870);
+> -
+> -	for (i =3D 0; i < pdata->num_subdevs; i++) {
+> -		for (j =3D 0; j < ARRAY_SIZE(aat2870_devs); j++) {
+> -			if ((pdata->subdevs[i].id =3D=3D aat2870_devs[j].id) &&
+> -					!strcmp(pdata->subdevs[i].name,
+> -						aat2870_devs[j].name)) {
+> -				aat2870_devs[j].platform_data =3D
+> -					pdata->subdevs[i].platform_data;
+> -				break;
+> -			}
+> -		}
+> -	}
+> +	gpiod_set_value(aat2870->en_pin, 1);
+
+[Severity: Medium]
+Should this use gpiod_set_value_cansleep() instead?
+
+Since this device is an I2C MFD, the enable GPIO could be attached to an
+I2C or SPI expander, which means toggling it might sleep. Using the
+non-cansleep gpiod_set_value() here, as well as in the probe error path and
+suspend/resume callbacks, could trigger a WARN_ON() in gpiolib if the
+underlying controller requires sleeping.
+
+> =20
+> -	ret =3D mfd_add_devices(aat2870->dev, 0, aat2870_devs,
+> -			      ARRAY_SIZE(aat2870_devs), NULL, 0, NULL);
+> -	if (ret !=3D 0) {
+> -		dev_err(aat2870->dev, "Failed to add subdev: %d\n", ret);
+> -		goto out_disable;
+> +	ret =3D devm_of_platform_populate(&client->dev);
+> +	if (ret) {
+> +		gpiod_set_value(aat2870->en_pin, 0);
+
+[Severity: Medium]
+Similar to the above, would gpiod_set_value_cansleep() be safer here on the
+error path to avoid a potential gpiolib WARN_ON()?
+
+> +		return dev_err_probe(&client->dev, ret, "Failed to populate cells\n");
+>  	}
+> =20
+>  	aat2870_init_debugfs(aat2870);
+> =20
+>  	return 0;
+> -
+> -out_disable:
+> -	aat2870_disable(aat2870);
+> -	return ret;
+>  }
+> =20
+>  static int aat2870_i2c_suspend(struct device *dev)
+> @@ -409,7 +339,7 @@ static int aat2870_i2c_suspend(struct device *dev)
+>  	struct i2c_client *client =3D to_i2c_client(dev);
+>  	struct aat2870_data *aat2870 =3D i2c_get_clientdata(client);
+> =20
+> -	aat2870_disable(aat2870);
+> +	gpiod_set_value(aat2870->en_pin, 0);
+
+[Severity: Medium]
+Should we use gpiod_set_value_cansleep() here in the suspend handler?
+
+> =20
+>  	return 0;
+>  }
+> @@ -421,7 +351,7 @@ static int aat2870_i2c_resume(struct device *dev)
+>  	struct aat2870_register *reg =3D NULL;
+>  	int i;
+> =20
+> -	aat2870_enable(aat2870);
+> +	gpiod_set_value(aat2870->en_pin, 1);
+
+[Severity: Medium]
+Should we use gpiod_set_value_cansleep() here in the resume handler?
+
+> =20
+>  	/* restore registers */
+>  	for (i =3D 0; i < AAT2870_REG_NUM; i++) {
+> diff --git a/drivers/regulator/aat2870-regulator.c b/drivers/regulator/aa=
+t2870-regulator.c
+> index 970d86f2bbb81..9b8eb8df220a7 100644
+> --- a/drivers/regulator/aat2870-regulator.c
+> +++ b/drivers/regulator/aat2870-regulator.c
+[ ... ]
+> @@ -101,84 +102,60 @@ static const unsigned int aat2870_ldo_voltages[] =
+=3D {
+>  	3000000, 3100000, 3200000, 3300000,
+>  };
+> =20
+> -#define AAT2870_LDO(ids)				\
+> -	{						\
+> -		.desc =3D {				\
+> -			.name =3D #ids,			\
+> -			.id =3D AAT2870_ID_##ids,		\
+> -			.n_voltages =3D ARRAY_SIZE(aat2870_ldo_voltages),	\
+> -			.volt_table =3D aat2870_ldo_voltages, \
+> -			.ops =3D &aat2870_ldo_ops,	\
+> -			.type =3D REGULATOR_VOLTAGE,	\
+> -			.owner =3D THIS_MODULE,		\
+> -		},					\
+> -	}
+> +#define AAT2870_LDO(ids, match, vsel, vmask) {		\
+> +	.name =3D #ids,					\
+> +	.of_match =3D (match),				\
+> +	.id =3D AAT2870_ID_##ids,				\
+> +	.n_voltages =3D ARRAY_SIZE(aat2870_ldo_voltages),	\
+> +	.volt_table =3D aat2870_ldo_voltages,		\
+> +	.ops =3D &aat2870_ldo_ops,			\
+> +	.type =3D REGULATOR_VOLTAGE,			\
+> +	.owner =3D THIS_MODULE,				\
+> +	.vsel_reg =3D (vsel),				\
+> +	.vsel_mask =3D (vmask),				\
+> +	.enable_reg =3D AAT2870_LDO_EN,			\
+> +	.enable_mask =3D BIT(AAT2870_ID_##ids),		\
+> +}
+> =20
+> -static struct aat2870_regulator aat2870_regulators[] =3D {
+> -	AAT2870_LDO(LDOA),
+> -	AAT2870_LDO(LDOB),
+> -	AAT2870_LDO(LDOC),
+> -	AAT2870_LDO(LDOD),
+> +static struct regulator_desc aat2870_regulators[] =3D {
+
+[Severity: Low]
+Could we add the const qualifier to this array?
+
+Since the descriptions are static and never modified at runtime, and
+devm_regulator_register() expects a const struct regulator_desc *, adding
+const would allow this array to be placed in read-only .rodata memory
+instead of mutable .data.
+
+> +	AAT2870_LDO(LDOA, "ldo-a", AAT2870_LDO_AB, AAT2870_LDO_AB_A_MASK),
+> +	AAT2870_LDO(LDOB, "ldo-b", AAT2870_LDO_AB, AAT2870_LDO_AB_B_MASK),
+> +	AAT2870_LDO(LDOC, "ldo-c", AAT2870_LDO_CD, AAT2870_LDO_CD_C_MASK),
+> +	AAT2870_LDO(LDOD, "ldo-d", AAT2870_LDO_CD, AAT2870_LDO_CD_D_MASK),
+>  };
+> =20
+> diff --git a/drivers/video/backlight/aat2870_bl.c b/drivers/video/backlig=
+ht/aat2870_bl.c
+> index eb686e315921d..705a8d32d224f 100644
+> --- a/drivers/video/backlight/aat2870_bl.c
+> +++ b/drivers/video/backlight/aat2870_bl.c
+[ ... ]
+> @@ -129,21 +124,20 @@ static int aat2870_bl_probe(struct platform_device =
+*pdev)
+> =20
+>  	aat2870_bl->bd =3D bd;
+> =20
+> -	if (pdata->channels > 0)
+> -		aat2870_bl->channels =3D pdata->channels;
+> -	else
+> -		aat2870_bl->channels =3D AAT2870_BL_CH_ALL;
+> +	aat2870_bl->channels =3D AAT2870_BL_CH_ALL;
+> +	device_property_read_u8(&pdev->dev, "skyworks,channels", &aat2870_bl->c=
+hannels);
+> =20
+> -	if (pdata->max_current > 0)
+> -		aat2870_bl->max_current =3D pdata->max_current;
+> -	else
+> -		aat2870_bl->max_current =3D AAT2870_CURRENT_27_9;
+> +	device_property_read_u32(&pdev->dev, "led-max-microamp", &aat2870_bl->m=
+ax_current);
+
+[Severity: Low]
+Does this cause an incompatible pointer type warning?
+
+aat2870_bl->max_current is defined as a signed int, but
+device_property_read_u32() expects a u32 pointer. This could break
+builds that treat -Wincompatible-pointer-types as an error.
+
+[Severity: Medium]
+What happens if the optional "led-max-microamp" property is missing from
+the device tree?
+
+If the property is missing, device_property_read_u32() leaves max_current
+at 0 (its initial value from devm_kzalloc). When passed into clamp(0, 450,
+27900), it gets forced to 450, and dividing by 900 evaluates to 0.
+
+This sets bd->props.max_brightness to 1 (0 + 1), silently degrading the
+backlight limits to an almost invisible state, whereas the previous behavior
+correctly defaulted to 27.9mA (32 steps). Should max_current be initialized
+to a default value before reading the property?
+
+> +	aat2870_bl->max_current =3D clamp(aat2870_bl->max_current, AAT2870_CURR=
+ENT_MIN,
+> +					AAT2870_CURRENT_MAX);
+> +	aat2870_bl->max_current /=3D AAT2870_CURRENT_STEP;
+> =20
+>  	/*
+>  	 * The maximum number of brightness steps is determined by the max curr=
+ent.
+> -	 * The aat2870_current enum maps directly to the allowed brightness ste=
+ps.
+> +	 * The aat2870_bl->max_current value maps to the allowed brightness ste=
+ps
+> +	 * with +1 offset since max_current 0 is still 450uA.
+>  	 */
+> -	bd->props.max_brightness =3D pdata->max_current;
+> +	bd->props.max_brightness =3D aat2870_bl->max_current + 1;
+> =20
+>  	aat2870_bl->brightness =3D 0;
+>  	bd->props.power =3D BACKLIGHT_POWER_ON;
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013180933.4870=
+13-1-clamor95@gmail.com?part=3D3
