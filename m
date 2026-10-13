@@ -1,98 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E150C51814B;
-	Tue, 13 Oct 2026 14:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2314C442B06;
+	Tue, 13 Oct 2026 14:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791901614; cv=none; b=t/BHeGtZ3aDOn2t87hyJ1D8FjIuQMEfuesZT3qK89MRC8+vpC8dSmocowgmMuvn13zZEe1wHNrmbtCKpDzqhA6Qudyo8HhRtQo9zTVDf+77isb5XScKiSX06wTiPI2g+f9B4TtUEpS6rxw1OFXt65EQz7OP4xm4JEFV77b5Z8hY=
+	t=1791902013; cv=none; b=VKV1838nhTjzHsiJm7Saeqk55OSdOaJPHfWuPn/iXSwTx0gjCzXDCiUJKkK3I9NyP+AYqGicUcN/nOCtDPKRoKRmi5AinaBbtSKsiTjwwrcghYeF1p6LqVs+cm7Fae1Kz+DXoCBfkzNx5U5IX5CnujqJ4vO0oeQ6+l8mt+iKuC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791901614; c=relaxed/simple;
-	bh=XfZVuH37TjJbVLTM/jEvSNl35LQfRki5rmhJIud0Ta0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=W22b3GDrs2wJr2fAAyV3PK9zi0blscSclNyffSYbSfJicAuhCWkTWp52+uEc6mjMJ05de6VpVybUezhfFuHxex3Tw/hzP6OhSSLFYST9J60P62Doi30CStIMEr4MXO4An9rJ5l+AlCQhxXuSl9Hp/CCveWNIV0svv5iJYSDEeXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M84dz03/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791902013; c=relaxed/simple;
+	bh=Zo10NXRqx5D37pf0J1b9IQrJCHhglnI5U4jRS2cU+wo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IskpTkxYPrAmFFUNsxzXxWytCEwF/ClCk7YTzVbfB0wKoXRj4BUv3Q07rudDT4WOMyqfaBN+nBY60/k34Pi3x4pG5aE5VApMl96RuWMgnjhf/6sjMLt91FxVBnro0cCNbJb+3xmBzNjW3eV6CC5LNvdcIfBg32OjGdB2mTt0KRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTwrDwPs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M84dz03/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CAC1F000FF;
-	Tue, 13 Oct 2026 14:26:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTwrDwPs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74621F000FF;
+	Tue, 13 Oct 2026 14:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791901613;
-	bh=Vu9GFTSwpA+ThnhYFOK02kJtnNFAzU/CFrFuq53MJ60=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=M84dz03/ue983O1uOEriK2mgDcd8I0/vK6Wc4QCEqLcvOhVeUdQBHbaY2nuLf+iK/
-	 XxomRz5py81Ziy9sUEwpXdILr5KvWnvev6t8n7wyw6HkYDK5aoD9KRd8XOOKyvX3rj
-	 GQFYmV+CPCyD+120q7nulE5M9oTcSmjPo88uleWGa83Add7aiqXDFuoeLEX3yUaA9S
-	 V+djX8SDohHXmxu8z+AnJ5ZG5HwMWSwG5XpFun/GHc15TVd3t9wsuZzZ8nS7MEADwm
-	 HOxyxVw/pZ2GfT7d272Ud9GtVDy+bRNWC3M6hvF9U06Dh/vTYKKi+J8Vj14Yq62tZS
-	 EtCRK0fPHxjPg==
-Date: Tue, 13 Oct 2026 16:25:46 +0200 (CEST)
-From: Imre Kaloz <kaloz@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Lee Jones <lee@kernel.org>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, mfd@lists.linux.dev, 
-    linux-serial@vger.kernel.org, 
-    Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-    linux-rtc@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@kernel.org>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-    Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org, 
-    Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, 
-    Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 00/53] MIPS: SGI-IP27: add support for the IP35 (Bedrock
- hub) machines
-In-Reply-To: <as4zsLZvV411ooEv@ryzen>
-Message-ID: <24d821f4-63ff-aa35-a36f-a72046fe59a7@kernel.org>
-References: <cover.1791890466.git.kaloz@kernel.org> <as4zsLZvV411ooEv@ryzen>
+	s=k20260515; t=1791902011;
+	bh=4ZdtDg0KoevCPpzkapooRr26wNz42E2qRM8yqhcMI9Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=jTwrDwPsYaToknegM8NWiL133eg+9i71dQXUQb37u139VLfZp9zSPPX6M9aF8iKzx
+	 lEH2u0nmRHB9nZNZhioOEQlg35+MldaXobwupjXvjv6gJ3Uh8sz902yobqqmFv0cBD
+	 ND/hrKIc/7uYCVTTvTYzTOKFDYzFXpCC1/SuTyWkQmrm+DR3TMTnZKktwBM/WTXau2
+	 udgULVgh+WuPuBADKNmUw9kesnD63fAQTnaD16XlzPK3Jy/jhsCAlsjytwIkwvWixE
+	 15733hXHFziGnNAHm1v5BfjeiJZ2zwa/BRWSouysu08T/twTacXS6qNlfnDhKtQoox
+	 cWj+e6vk9DXzA==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260921232709.3133716-1-robh@kernel.org>
+References: <20260921232709.3133716-1-robh@kernel.org>
+Subject: Re: (subset) [PATCH] dt-bindings: leds: Allow PHY RX triggers
+Message-Id: <179190200961.3967776.4408382849497202472.b4-ty@b4>
+Date: Tue, 13 Oct 2026 15:33:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1641235930-1791901553=:27186"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, 21 Sep 2026 18:27:08 -0500, Rob Herring (Arm) wrote:
+> The ZynqMP ZCU100 revC DTS uses separate phy0tx and phy0rx triggers for
+> its WLAN activity LEDs. Allow the RX form alongside the existing TX
+> form.
 
---8323329-1641235930-1791901553=:27186
-Content-Type: text/plain; charset=ISO-8859-7; format=flowed
-Content-Transfer-Encoding: 8BIT
+Applied, thanks!
 
-Hello Niklas,
+[1/1] dt-bindings: leds: Allow PHY RX triggers
+      commit: 1c93924893871c517e54fefc1feb420af3eadcfb
 
-On Tue, 13 Oct 2026, Niklas Cassel wrote:
+--
+Lee Jones [李琼斯]
 
-> Hello Imre,
->
-> This series is rather large.
->
-> I would recommend you to submit a minimal patch series
-> to get the basic support for your new board, such that
-> it can boot with a ramdisk and serial console.
->
-> Then in the next cycle, send separate series for ata,
-> net, leds, mfc, rtc, etc.
-
-Hi Niklas,
-
-Thanks for having a look. I checked what the minimum is: 31 of the 53 
-patches (1, 6-24, 26-29, 31-36 and 39) boot a Tezro to a ramdisk with a 
-serial console. Two mfd/ioc3 patches have to be part of that, as they 
-provide the console UARTs (31 for IOC4 on the Tezro, 36 for the IOC3 on 
-the Fuel). The rest separates cleanly into follow-ups: the remaining 
-Bridge fixes (2-5), ioc3-eth (25, 38), rtc (30), the IO8 serial IRQs (37), 
-machine identification and the Odyssey widget (40-44), ata (45-47, 49), 
-the defconfig refresh (48) and the LEDs (50-53).
-
-I�ll wait for Thomas to say whether he prefers it split that way for v3.
-
-
-Thanks,
-Imre
---8323329-1641235930-1791901553=:27186--
