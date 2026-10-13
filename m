@@ -1,44 +1,45 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08AE4B4864;
-	Tue, 13 Oct 2026 09:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5992F4BD0FD;
+	Tue, 13 Oct 2026 09:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791884667; cv=none; b=KwFXXa0Bjd25QeK3bqcto/ulQL4q6epqpdCgcWe+zlLl3S7RTuyXKSYyzBdG6gqzQ2AUsy4j8bUdR2oYhNNIfKlxH/IU1nn4D9WjGQBPutHSpJH8uSXdbJSPbZvApXHkS/eODeNTFmrME4O8T9vj8pMjCpyM47rD6s75+nYzXMM=
+	t=1791884674; cv=none; b=VFQo57Bq0ILVUVYcXhu3q2jf8Lx1fiy9IO7tisKl9wx8WV088v3zML8IIsGLmp4Gs/WWG2wmMrhNTBm7Z1v4IJfkToLo7TQrdTjgxkEi6HKzvbFP30eMfCqf7/QB0soYYnxiIg97+uqieet5ReqatSqr1N9412wmtAGOkie1kJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791884667; c=relaxed/simple;
-	bh=w2AdlNpBy+1TwF9d4CHcLsL5oZ/y5bqPPF21Ann5FNE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gfMT5lCExyd/f0vxxCmZCTmoPtCyw00n9Ctt3lTLflA/F6KX+g5gwf8bkZ/OYQGO2xqiHA4m+fpYzLP+ZnVT/FA2MjcWqVqeLs9YkyP6BRIXRSDw/I+RdRCfgDDUhlee/q0biPH2iW35S0lVY6op1T1C2UXA2Jf4h46PjGV/h7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net; spf=pass smtp.mailfrom=amieiro.net; dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b=AgL38F/d; arc=none smtp.client-ip=80.241.56.171
+	s=arc-20240116; t=1791884674; c=relaxed/simple;
+	bh=wecnArJD8j6gwk39Hs3k2OrJJqICmNTLwLxzf4XIJDg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=EDtg6bmcfQQ2KTuYSLZDCEQ8k1X061xkInKhAW5mrAVMB8gHkE8ioJjiNwDBONC1zaFgRKXzK4F92oSUah5TiOanryl0cmjQQhiIYW+iLQyDG7KKRNgQqDVT+1ERyb8FDB3m7mxsMQ/o1S5kGel/BA64SWSlO4pam9GtyLgtnHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net; spf=pass smtp.mailfrom=amieiro.net; dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b=GGyTyYC1; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b="AgL38F/d"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b="GGyTyYC1"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4j3qDN4XCyzMlHW;
-	Tue, 13 Oct 2026 11:44:20 +0200 (CEST)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4j3qDX5MJMz8sfB;
+	Tue, 13 Oct 2026 11:44:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
-	t=1791884660;
+	t=1791884668;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+ek82YOwxY2ZyMmaquQUEhCsrfdE0Z/M/Xy2E8wUM9Q=;
-	b=AgL38F/dmSM+by9AJXo/gj6A8Q1zJzIMyuqJ+4V6DP7phJK76ZejwFua1ujK3+tw5EpulG
-	pfAmbnpiI33iGu1LSCHJWnPyVC2BzM58jx3Bk4CbwA6X6jkFW0hKortV1S7NoTd//KIMur
-	KxSJeXw0EO3MfKPDjv6K6foKWG7b/kfSywlFK8dc7Wzt4IvtXk4YUWQmnvTbImf55blj1D
-	DqNX5M5+4FFQzufQUgyFB5vWKD/+iE5WCsbLcvrKtGPowi7+954JFnYcQiCgPrQJKMhAaw
-	9S1KBiG6szgAV6FmIngWJerJjVqgDAPrZMX45fbXoJCyB8SsvlfrBHCrr9LhOw==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NqnN8DHuzjLWZmu5E3fr14FJ2emMBi6H0waaqQ4+MI8=;
+	b=GGyTyYC17AaJ8kYzLeDRuAlsvBg5iTlIlSFCNa/FTme9qU4bEUqkVe39NOpgAFbw7pd7VD
+	hBhM4Rwh6fr+/D6akxGFTLP5F80MoZgCZXbdDY3s/4atQqUI35xKkTGyYO0rcS3T67Mo0O
+	bEKp6IhjBPGaTtUXIDAOUynwf8IC7JIybQpu2hliY4zGz6ZFWOf0BIpX4U0bebObTRjC2r
+	p5lYgT1BiAayobxoqHy/7Z+tw4Z6vYdgNsNIA3vWtmBauSENIOfX/WXT9VsdushxRIWNHC
+	B7V3/LRiuTSslYAhgF+t14sgaBL34Flskc4HiMKbKa2jDAEgitbyBuPFrV9Bcg==
 Authentication-Results: outgoing_mbo_mout;
 	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=flavio@amieiro.net
+	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=flavio@amieiro.net
 From: Flavio Amieiro <flavio@amieiro.net>
-Subject: [PATCH v2 0/2] leds: Add support for the is31fl3206 LED driver
-Date: Tue, 13 Oct 2026 06:43:40 -0300
-Message-Id: <20261013-add-is31fl3206-support-v2-0-ca0d2bf5783f@amieiro.net>
+Date: Tue, 13 Oct 2026 06:43:41 -0300
+Subject: [PATCH v2 1/2] leds: is31f132xx: Add support for is31fl3206
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -47,79 +48,207 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3WNyw6CMBBFf4V07Zg+pKAr/8OwqO0gY7QlbSEaw
- r8LGJcuT3LvORNLGAkTOxUTizhSouAXkLuC2c74GwK5hZnkUgsuJBjngJIS7UNJriENfR9iBle
- WVVtrZY6VYcu5j9jSaxNfmi+n4XpHm1fbuugo5RDfW3kU6+4XUf8iowAOvLZca2vlQbizeRJSD
- HuPmTXzPH8AZwkhONAAAAA=
-X-Change-ID: 20261012-add-is31fl3206-support-d557f863a97a
+Message-Id: <20261013-add-is31fl3206-support-v2-1-ca0d2bf5783f@amieiro.net>
+References: <20261013-add-is31fl3206-support-v2-0-ca0d2bf5783f@amieiro.net>
+In-Reply-To: <20261013-add-is31fl3206-support-v2-0-ca0d2bf5783f@amieiro.net>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Flavio Amieiro <flavio@amieiro.net>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2279; i=flavio@amieiro.net;
- h=from:subject:message-id; bh=w2AdlNpBy+1TwF9d4CHcLsL5oZ/y5bqPPF21Ann5FNE=;
- b=owGbwMvMwCX2bmrBFGnZ5lDG02pJDFln/0akilnbRCmJOhkJFlk9Upi6WeaZyVJZpY8n/092f
- hRr8upvRykLgxgXg6yYIgtLGUuZd/vB5t3TVkvCzGFlAhnCwMUpABNpecTI0N4yqaiFUWfWn3fT
- o4Waa2/31Jmtf73Zh+sul8Spu2J3bzIyXGNzLTpRIFFQLc65vvHyX9Zjul/s9USn/vsqVWzNfHw
- nPwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6461; i=flavio@amieiro.net;
+ h=from:subject:message-id; bh=wecnArJD8j6gwk39Hs3k2OrJJqICmNTLwLxzf4XIJDg=;
+ b=owGbwMvMwCX2bmrBFGnZ5lDG02pJDFln/2ZVc3pqhz4/8v2nBhvPZHe1LvXw/RtvhIUYpSsop
+ Nyvfbi1o5SFQYyLQVZMkYWljKXMu/1g8+5pqyVh5rAygQxh4OIUgImUZTMyLHVTevpQMCLk7O82
+ XU/J56vU5c+b+O4SiNY5/Otw7u2tiowML4pEN/w4FSvnrHbr+Zclq6Q/1pe+s4tV2Hc6jeeGRPU
+ MVgA=
 X-Developer-Key: i=flavio@amieiro.net; a=openpgp;
  fpr=047604764B87C183BB96AB19EE9570941B1D8355
-X-Rspamd-Queue-Id: 4j3qDN4XCyzMlHW
+X-Rspamd-Queue-Id: 4j3qDX5MJMz8sfB
 
-This patch series adds support for the is31fl3206 LED driver to the
-already existing is31fl32xx driver.
+This chip has a different layout for the LED Control Register when
+compared to the other variants. This register contains the enable bit
+(in the highest nibble) but also the current control.
 
-The main difference between this specific variant and the others in
-the series is that the LED Control Register controls not only the
-enable status of the channel, but also the maximum output current for
-it.
+According to the datasheet, a value of 010000 (0x10) in the register
+enables an LED with the output current set to maximum.
 
-Because the layout of the register is very different from the previously
-supported variants, this patch follows a similar pattern present in the
-driver for paths that deviated from the norm: the chipdef can define a
-pointer to an extra function that (if non-NULL) will be called during
-probing. This was already done for reset_func and for sw_shutdown_func
-in order to support other chips in the same family but here, if the
-function is defined, the original initialization code will not run. This
-is because, in the previously existing cases, the lack of a register
-meant the generic code could be skipped, while here the registers exist,
-but differ in function.
-
-The patches keep the previous behavior of using only the PWM registers
-to control the state of the LEDs. For that reason, the current output
-is always set to the maximum value.
+This commit adds support for this IC following the previous limitation
+of the other variants: all LEDs are enabled and set with maximum
+current, letting brightness be controlled by the PWM registers.
 
 Signed-off-by: Flavio Amieiro <flavio@amieiro.net>
 ---
-Changes in v2:
-- Avoid double initialization when enable_all_channels is non-NULL
-- Add missing entry in the i2c_device_id table
-- Link to v1: https://patch.msgid.link/20261013-add-is31fl3206-support-v1-0-08c066cc241d@amieiro.net
+ drivers/leds/leds-is31fl32xx.c | 95 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 79 insertions(+), 16 deletions(-)
 
-To: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@kernel.org>
-To: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Conor Dooley <conor+dt@kernel.org>
-Cc: linux-leds@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org
+diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+index 285085d27453..a22d814be4b0 100644
+--- a/drivers/leds/leds-is31fl32xx.c
++++ b/drivers/leds/leds-is31fl32xx.c
+@@ -49,6 +49,9 @@
+ #define IS31FL3293_RESET_MAGIC 0xc5
+ #define IS31FL3293_MAX_MICROAMP 20000
+ 
++/* Custom LED Control enable value for IS31FL3206 */
++#define IS31FL3206_CONTROL_ENABLE_WITH_IMAX BIT(4)
++
+ struct is31fl32xx_priv;
+ struct is31fl32xx_led_data {
+ 	struct led_classdev cdev;
+@@ -79,6 +82,7 @@ struct is31fl32xx_priv {
+  * @enable_bits_per_led_control_register: number of LEDs enable bits in each
+  * @brightness_steps    : number of brightness steps supported by the chip
+  * @reset_func          : pointer to reset function
++ * @enable_all_channels_func  : pointer to enable all channels function
+  * @sw_shutdown_func    : pointer to software shutdown function
+  *
+  * For all optional register addresses, the sentinel value %IS31FL32XX_REG_NONE
+@@ -88,6 +92,11 @@ struct is31fl32xx_priv {
+  * necessary registers to a known initialization state. This is needed
+  * for chips that do not have a @reset_reg.
+  *
++ * If non-NULL, @enable_all_channels_func will be used in place of the
++ * generic channel enable function. This is needed for chips that have
++ * a LED Control Register that control more than simply the
++ * enable/disable state of the channel.
++ *
+  * @enable_bits_per_led_control_register must be >=1 if
+  * @led_control_register_base != %IS31FL32XX_REG_NONE.
+  */
+@@ -105,6 +114,7 @@ struct is31fl32xx_chipdef {
+ 	u8	enable_bits_per_led_control_register;
+ 	u16	brightness_steps;
+ 	int (*reset_func)(struct is31fl32xx_priv *priv);
++	int (*enable_all_channels_func)(struct is31fl32xx_priv *priv);
+ 	int (*sw_shutdown_func)(struct is31fl32xx_priv *priv, bool enable);
+ };
+ 
+@@ -228,6 +238,28 @@ static int is31fl3293_software_shutdown(struct is31fl32xx_priv *priv,
+ 	return is31fl32xx_write(priv, IS31FL3293_SHUTDOWN_REG, value);
+ }
+ 
++/*
++ * Custom enable_all_channels function for IS31FL3206 because this
++ * variant has only one bit in the higher nibble for enable, and the
++ * lower nibble controls output current.
++ */
++static int is31fl3206_enable_all_channels(struct is31fl32xx_priv *priv)
++{
++	const struct is31fl32xx_chipdef *cdef = priv->cdef;
++	u8 num_regs = cdef->channels / cdef->enable_bits_per_led_control_register;
++	int i, ret;
++
++	for (i = 0; i < num_regs; i++) {
++		ret = is31fl32xx_write(priv,
++				       cdef->led_control_register_base+i,
++				       IS31FL3206_CONTROL_ENABLE_WITH_IMAX);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ /*
+  * NOTE: A mutex is not needed in this function because:
+  * - All referenced data is read-only after probe()
+@@ -315,6 +347,33 @@ static int is31fl32xx_reset_regs(struct is31fl32xx_priv *priv)
+ 	return 0;
+ }
+ 
++static int is31fl32xx_enable_all_channels(struct is31fl32xx_priv *priv)
++{
++	const struct is31fl32xx_chipdef *cdef = priv->cdef;
++	int ret;
++
++	if (cdef->enable_all_channels_func)
++		return cdef->enable_all_channels_func(priv);
++
++	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
++		u8 value =
++			GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
++		u8 num_regs = cdef->channels /
++			cdef->enable_bits_per_led_control_register;
++		int i;
++
++		for (i = 0; i < num_regs; i++) {
++			ret = is31fl32xx_write(priv,
++					       cdef->led_control_register_base+i,
++					       value);
++			if (ret)
++				return ret;
++		}
++	}
++
++	return 0;
++}
++
+ static int is31fl32xx_software_shutdown(struct is31fl32xx_priv *priv,
+ 					bool enable)
+ {
+@@ -345,24 +404,12 @@ static int is31fl32xx_init_regs(struct is31fl32xx_priv *priv)
+ 		return ret;
+ 
+ 	/*
+-	 * Set enable bit for all channels.
++	 * Enable all channels.
+ 	 * We will control state with PWM registers alone.
+ 	 */
+-	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
+-		u8 value =
+-		    GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
+-		u8 num_regs = cdef->channels /
+-				cdef->enable_bits_per_led_control_register;
+-		int i;
+-
+-		for (i = 0; i < num_regs; i++) {
+-			ret = is31fl32xx_write(priv,
+-					       cdef->led_control_register_base+i,
+-					       value);
+-			if (ret)
+-				return ret;
+-		}
+-	}
++	ret = is31fl32xx_enable_all_channels(priv);
++	if (ret)
++		return ret;
+ 
+ 	ret = is31fl32xx_software_shutdown(priv, false);
+ 	if (ret)
+@@ -552,7 +599,22 @@ static const struct is31fl32xx_chipdef is31fl3293_cdef = {
+ 	.sw_shutdown_func			= is31fl3293_software_shutdown,
+ };
+ 
++static const struct is31fl32xx_chipdef is31fl3206_cdef = {
++	.channels				= 12,
++	.shutdown_reg				= 0x00,
++	.pwm_update_reg			= 0x13,
++	.global_control_reg			= 0x26,
++	.reset_reg				= 0x2f,
++	.output_frequency_setting_reg		= 0x27,
++	.pwm_register_base			= 0x04,
++	.led_control_register_base		= 0x17,
++	.enable_bits_per_led_control_register	= 1,
++	.brightness_steps			= 256,
++	.enable_all_channels_func		= is31fl3206_enable_all_channels,
++};
++
+ static const struct of_device_id of_is31fl32xx_match[] = {
++	{ .compatible = "issi,is31fl3206",  .data = &is31fl3206_cdef, },
+ 	{ .compatible = "issi,is31fl3293",  .data = &is31fl3293_cdef, },
+ 	{ .compatible = "issi,is31fl3236",  .data = &is31fl3236_cdef, },
+ 	{ .compatible = "issi,is31fl3236a", .data = &is31fl3236a_cdef, },
+@@ -616,6 +678,7 @@ static void is31fl32xx_remove(struct i2c_client *client)
+  * even though it is not used for DeviceTree based instantiation.
+  */
+ static const struct i2c_device_id is31fl32xx_id[] = {
++	{ .name = "is31fl3206" },
+ 	{ .name = "is31fl3293" },
+ 	{ .name = "is31fl3236" },
+ 	{ .name = "is31fl3236a" },
 
----
-Flavio Amieiro (2):
-      leds: is31f132xx: Add support for is31fl3206
-      dt-bindings: leds: Add issi,is31fl3206 to leds-is31fl32xx
-
- .../devicetree/bindings/leds/leds-is31fl32xx.txt   |  1 +
- drivers/leds/leds-is31fl32xx.c                     | 95 ++++++++++++++++++----
- 2 files changed, 80 insertions(+), 16 deletions(-)
----
-base-commit: 05b4738b0078f7d6f154f68068a11c8a0635e9df
-change-id: 20261012-add-is31fl3206-support-d557f863a97a
-
-Best regards,
---  
-Flavio Amieiro <flavio@amieiro.net>
+-- 
+2.53.0
 
