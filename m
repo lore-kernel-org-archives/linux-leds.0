@@ -1,61 +1,63 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0117E525A8B
-	for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 18:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC934A4830
+	for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 18:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791915503; cv=none; b=TFFNH4pws3Q+ZjHbArLIxi2vfRxBk2UDALO6sTk2A0IHi/Qk1hPHy2vz/h3bQt/cXa/6gyD5aPX0sAai4WLM9Q5TZD0NDCTD5BvEZC6owpjt1358RaL8SdqfzRRu1LFwlOIulBztxlbykJGQuKOgWOjYwaWQP/+KafCY3J85fkI=
+	t=1791915504; cv=none; b=nPDhOjTSOMCL7io5cw3UaWqy2gFl2zOwQlUeo8SLX5juqu2wyBh6SoLDZvID444x3T2IGw6eywXcIAQR28B759b5/xLKDRQDNmSyz1/RkJynGvm0GLG7TAf4yNn67jYNhIxupISReO6TGPF6Z1tu2HiFkB27fHtIMwkrf7cyiKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791915503; c=relaxed/simple;
-	bh=nxoM6aqmzwRV8bE4p6kF3mZpEO4PV/m/0sBGUc2ECkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dbOSv3iRFJDpzarxd9T1UGLodTNgmS2ckbBbLizQzr4pKOgcV/M8r+XmmVFGIN7w9hEea56arsMWsnksDG/64rxqvKI9sT94OMlmtDbht89PUnhrDRztG8953IIy7xC0FNwCtnGSmSDiyZ+8PwjHoidnBVxwYeB/ZY/lgSd9H7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0EXaT74; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1791915504; c=relaxed/simple;
+	bh=8P8wMFD51eL/Z26XPFzVuRJ6ptZ4ugBGIA3pAZ7sK/I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qdz1rGxzaz4Aarr+f5/DHqDc8Smcb0Xx20zuYe4mBJnKYtzDHxCXJnF8AH/IWi+lUqgOLulFuNa9I8hbVooLVmY6xlXPo2MyR0ZY/3Ug5IlRCCvjXaZrXQWkVTV+yzAWB6HO7E7ECu/3NpemGAgid8rqdro6LfE65rNFXANbkdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsXi40xH; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0EXaT74"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a1698ea378so27487325e9.2
-        for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 11:18:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsXi40xH"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48b02a2359aso3090948f8f.0
+        for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 11:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791915495; x=1792520295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=E3hQjmEMreIOp/z0zH8ILmz0PDZuKIXrXvhSTza6jwU=;
-        b=Y0EXaT74IxmPk6Gm057hWy/QFEVGQheYGSjsaVWWit6ogybM15dEsBYkRDKJuJgYkB
-         ZYFRDLTfZkDWguhVVfFV6caxQVLNmWC7DrqTDkwW9+6tqF8ti/BVy1afyjjIjJuM3CRA
-         dJnZxUSsVFppFFHviNheWzjNmMdZc0C24biruwEealLwGoMfsmhOEZM3wP+/jfjALKeU
-         NiQhy6qGD468Dla54HW6s5WqwFqAU07WftGTzl6SL74g3ek+y9agntGB/VLWbYM4kOBZ
-         B6XUzOpYNi5+JAoP+AoSNL0Pa2a5cKvpyOU/eb367ed+ELHryuQLAzE9hvtKWmndxto3
-         oYQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791915495; x=1792520295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1791915497; x=1792520297; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=E3hQjmEMreIOp/z0zH8ILmz0PDZuKIXrXvhSTza6jwU=;
-        b=qVSEnh74ecQucJCu2oUnqJqv5bZxnJrq3INJ8yLr54nGm8Vj/vyX/XH0kQHsxcmKtY
-         Vsirp35ZbRzmv28a8MZVnwV9tXiDfeAuTzOadRQTAjOv/ESbYtPGFZW5dsABVU74xZXB
-         tu23fG8ybsknx0catvTPpcBo+tJQl0EDzty+mqWnkqsubOXgb2aOeajvqtXGAauwpzhp
-         21fF7MDK+ix6spgSiyEmx+Iuhr6vvnIDtf4u/m0qHAMvgEaQzkxo6ESmpscGHrLKZhwi
-         /SaiN9rVO9UvQA9iorAsArQOlLa4fozgkldfhPgMSi0p+miYPLE3gZMTHmJZ1eE3hvEw
-         aXuw==
-X-Gm-Message-State: AFq9FYJrJ/kmvZY0s64bsKhjILG2h3rTgCD4VnJi0FXg1BKqcyJh0CcH
-	sGGuZpXoWZyzRxQlNrUnnVR9IPO47004llI5dlYRKnXD5451WrVwydM+
-X-Gm-Gg: AYBFou1qpg8Ye4xvX7xrWCO8WVtFjtjcUghj0z0aeS1F+bJQtNxibymxvtJyMO+0PLv
-	jexZTuI2rkm1hrGuMAif9hU0xQOQLu3LgOidaM+pFZ9/Uh4uIvUFsRHGM3gQaRmMGqQdPZb3qM+
-	xvOUH6KBOAGoVkJUTtM9m2w7UGyrKuYTIQwg34UgmXgQPHe3jQj5H6F/9EBMrRu4OpBYuxFiVls
-	PfXOXhotgbg8SqK9KQSOsqi40r5o3NvGSlju6l9o1/cL7wOcYkRuKwacbBpXN0Lpy9uEpu2gv4d
-	2unbjh/ljuukgCgYIbRq7p6RZoVHgMFIo59exUVezBWKMojcGwPjdnjNXAA/JPkI9WXZzFVMKQ5
-	HZ+dQATcRG3TPnnUmngebJb+F0R6OcifcqWAFvDGy3WZHgI726jtvXDMLmzQu60xdlIUtCzTrpx
-	OyMlqelcXLeL6CaT+VeIlrdvuwPHeJuHGvHqHLf6FhgAjlPf40JP5rYU3A9iPPmdeM7unMg/yWT
-	ZswT9IR8vobYGjJ7KU=
-X-Received: by 2002:a05:600c:5391:b0:49e:7a10:1b71 with SMTP id 5b1f17b1804b1-4a18e4a003cmr266822965e9.11.1791915494922;
-        Tue, 13 Oct 2026 11:18:14 -0700 (PDT)
+        bh=xPweYRO+AA51z02Botwdqdgd38/WeFQ6rWWhfhO+GPc=;
+        b=SsXi40xHvzG8/XruY/yhZP51+L4CumK6Ohsc10c1BLaywh9/CmgDUNfehe5U4brPXe
+         E8naqRZQ1O2qaFG8wtra3VlBaVmrbzeuB2RQfJRB8broMdNl+2/lgjyv4YhCd58kP1Az
+         YNSQvNamn+fv4t60rVpEOav/jkpv/uC55VWay/8JN59cI5/VHr3XrHUiZeGDnIPMcSZV
+         mPgExRIVAu1XOLWGmV+lRBn/uljcWLGLRiRQBaQdAT6+Y1xI3hX744nhhE4D+CGXCg5a
+         N7NjR++FKoGbooLCyrzkdNtxlW4jyVOlC+QfN1eptmHkw5U78M/KD/qTZcKLFG1oEJTH
+         U69A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791915497; x=1792520297;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xPweYRO+AA51z02Botwdqdgd38/WeFQ6rWWhfhO+GPc=;
+        b=egpZbAKI5bmw6jT2E9baKqE/uir9bHErmuMV9U02hiUIQ/3WCVUo4toO/v0lWNaDFN
+         FN4vGtwFifOU+Zn9XnDi78YFYA6fhemCdtWvz3/1ht3GqrC5pJVwEy5eUTfdw3+KNdfI
+         juVPIRkM1fFq1TFvp7lbVoedCaEu7BTVPXs+soJxIlKgWo2zQKNgn7p7lt852Urw6Rx7
+         qN3lB6bKY7Knh3i3guH0M2XyBvR3LwufyogUQKidhS8fzFyyilO0KRC9uViYq/JOn2AY
+         rZcE+STjFtwO+WyE8/6FoIAB6Wsz1FU65FQVJZesJKNvz2KcDKN9tEb+JhckN8JUg64O
+         0MOw==
+X-Gm-Message-State: AFq9FYIJ4Ri6gYCTqh2VH1j71xPdI2OlOpxHZDOBeewGfcoc1ukyipE+
+	+u6Lsk21jxUYhuugqsFVKCPkEk3LlX+PKyGwU4M/HjhYjvwpii2HYQlk
+X-Gm-Gg: AYBFou0wWhrXN/UbGQVT/5rSJ0kxuvxXbqzM8Dv3wmqum2RIDTl9dT7BU63CgxmB7rF
+	rgGHJmh/sTT+3j8lC+Y9E7X4+lvY7FPJscWKUAQjEjXWk1+vrFQO7EY1u9Uf4gtpEYyyehVW82O
+	hqaTFgooioZriAj9uhJGUkIrYeKKY1xJuP03NWY+qCq7aHoXIHe2vcq3WgpdzwRZgjcz2rdwgGb
+	TZEvZx/K03dPndzBOdYv7iE+/4mrMcaJvnfOZT1x9yZjHLlmrsQ+NzU6ON30eADM26vapLPUokv
+	PUVl63PDbhvnlsDaeFZhof52WZuQKQkxrUu9jgJBxwDW3VoHurTCqUyRCz13vcWpOSsCC+UTCka
+	qwPcXrsJqes0QYEbPzEteJk9FnbnCy3AFg7agXRofAMCngGrw1nBLAGsy2jZ89tFS/gktJm4zXR
+	n4na+96PG/QTMLTm9ZXef7L7rJWpRWUG5gOaBxF3bE01Eq6DVcRs2YijAWhtYNVn50Mlf2BjgIG
+	C6UhafCowMI1sZ99Fw=
+X-Received: by 2002:a05:6000:4553:b0:48a:fad8:52a2 with SMTP id ffacd0b85a97d-48dbacf732cmr18793821f8f.23.1791915497390;
+        Tue, 13 Oct 2026 11:18:17 -0700 (PDT)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0ac36f9sm6379903f8f.36.2026.10.13.11.18.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de0ac36f9sm6379903f8f.36.2026.10.13.11.18.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 11:18:14 -0700 (PDT)
+        Tue, 13 Oct 2026 11:18:16 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -68,10 +70,12 @@ To: Lee Jones <lee@kernel.org>,
 Cc: linux-leds@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] leds: aat1290: Add support for AAT1270
-Date: Tue, 13 Oct 2026 21:18:00 +0300
-Message-ID: <20261013181803.496627-1-clamor95@gmail.com>
+Subject: [PATCH v2 1/3] dt-bindings: leds: skyworks,aat1290: Document AAT1270 Current Regulator for Flash LEDs
+Date: Tue, 13 Oct 2026 21:18:01 +0300
+Message-ID: <20261013181803.496627-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261013181803.496627-1-clamor95@gmail.com>
+References: <20261013181803.496627-1-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -80,26 +84,46 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document AAT1270 and FLINH pin, adjust driver to support AAT1270.
+The AAT1270 Current Regulator for Flash LEDs has a similar configuration
+to the AAT1290, but it uses a different programming model and requires a
+separate compatible.
 
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
-Changes in v2:
-- added formulas for calculations
-- adjusted mm_to_fl_ratio to be set according to chip info
-- adjusted timeout configuration to be set according to chip info
----
+ .../devicetree/bindings/leds/skyworks,aat1290.yaml       | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Svyatoslav Ryhel (3):
-  dt-bindings: leds: skyworks,aat1290: Document AAT1270 Current
-    Regulator for Flash LEDs
-  dt-bindings: leds: skyworks,aat1290: Document FLINH pin
-  leds: aat1290: Add support for AAT1270 Current Regulator for Flash
-    LEDs
-
- .../bindings/leds/skyworks,aat1290.yaml       | 13 ++-
- drivers/leds/flash/leds-aat1290.c             | 91 ++++++++++++++-----
- 2 files changed, 77 insertions(+), 27 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml b/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
+index 65576dfdca110..7c26bb135c0a7 100644
+--- a/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
++++ b/Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml
+@@ -19,7 +19,9 @@ description: |
+ 
+ properties:
+   compatible:
+-    const: skyworks,aat1290
++    enum:
++      - skyworks,aat1290
++      - skyworks,aat1270
+ 
+   enset-gpios:
+     maxItems: 1
+@@ -39,12 +41,13 @@ properties:
+       flash-max-microamp:
+         description: |
+           Maximum flash LED supply current can be calculated using following
+-          formula: I = 1A * 162 kOhm / Rset.
++          formula: I = 1A * 162 kOhm / Rset (for AAT1290) and
++          I = 1A * 81 kOhm / Rset (for AAT1270).
+ 
+       flash-max-timeout-us:
+         description: |
+           Maximum flash timeout can be calculated using following formula:
+-            T = 8.82 * 10^9 * Ct.
++          T = 8.82 * 10^9 * Ct (for AAT1290) and T = 21.5 * 10^9 * Ct (for AAT1270).
+ 
+     required:
+       - flash-max-microamp
 -- 
 2.53.0
 
