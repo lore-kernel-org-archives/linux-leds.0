@@ -1,65 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733233F4DDD
-	for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6F14C77BC;
+	Tue, 13 Oct 2026 09:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791885484; cv=none; b=dnjp4OYFqQAycMRIbU8YLhex9CeS5Odv6S8MlUmCkuS2YmZMSi3qT35yGJtaTxDpTkdK+Ejv+hsWYa6SNVeGo3SKAQMY7Z5daD1WEURocfio1MGZ/wNTz9K41Zg3mbcavwTNK52KgIbRvtl30LKNqwrRvtg5D8KSujgRJmsveHU=
+	t=1791885516; cv=none; b=G4+zpolS34+Kby+D0HGLgdJKZHGWSS7WQaNueIpYCQS0L477em+Gfpj8lsMHeoF8O374DXO85Ie7vY7PVT/Td5gshfFnbYlNRK25IMifcD5UKaAgCjKMbpvNwJrLg5R/QLCUtyiymWFu6mL1gh7rpIgXC/LDBEfLclZf95R6vCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791885484; c=relaxed/simple;
-	bh=qn1x3GJmCwIWRBGXbcIEbHT0yyEaFW2wxg0oZD0ov0Y=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=E4Gzk6BjnHJM3yBh20wqADNqKQv/dKq6ruJ6lKdzyhoGGhDl7U0TyWV2+QKcHY3mxytQA2mh6TXb6ztxGJmOAyCJ/hq6yi9+rUkiDwu0ISQQuhvZHCBtBK03++Wc+lL+tZVu4o/Hju0JckTHpTAKAR203zacR4miQKI4yMePUy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGqCkNQx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791885516; c=relaxed/simple;
+	bh=CSO6NTt2mVPFWWK2F/I1n0QJQ3s8fuZYA2OSPW8iU3A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lW+PYXprV6Vt3q/s9M7EmccNV0TxGQt2fGLiEIxioj1x3uaTUIj2C8cdWV07u5O32NGgFtgAlsnvjU+Jmoy+jEcVt9GNTNlFbAYMfDZ0vC4+yrR0BLifYemlhzXQ1symYLAC7tKJNNdNvozhZVBUPUKr67/6hW7jZHaoxAel+y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net; spf=pass smtp.mailfrom=amieiro.net; dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b=sWS5bZ++; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGqCkNQx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D90E41F000FF;
-	Tue, 13 Oct 2026 09:58:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791885483;
-	bh=qn1x3GJmCwIWRBGXbcIEbHT0yyEaFW2wxg0oZD0ov0Y=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=NGqCkNQxhp3mSqBY/Inb8AXAgb6wKemQIt+dOD9EY9OrpIOKyyLsPHoJJMu2DN2JS
-	 /XNnUPpXzhoEM05Y9a4qbokkg2Q+h1PxC31sbBQSrqPsRz9VL97G2Igw7xbjJiu3J8
-	 WYL+aA9lIYXAR9mWwvZuaVyi0dms42kooGWC9S5Dn3C1BHvBn56r5ND2/heYToajow
-	 2uIJb4SnLSNEN2Lb4ReRNVq6MyQdT2mUxsECQ700sqMEDb11cJuRzovvnytKAZqIGP
-	 4Yyb9Z7MwX1iG2Qc4VS0CKQ3Hlex6yEDGVq0Ubb9Pb0LeUYlHXQST+T/l4Q22Opymp
-	 6QiBrkpOnZ0mw==
-Message-ID: <sashiko-outbox-169407@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/2] leds: is31f132xx: Add support for is31fl3206
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Flavio Amieiro" <flavio@amieiro.net>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261013-add-is31fl3206-support-v2-1-ca0d2bf5783f@amieiro.net>
-References: <20261013-add-is31fl3206-support-v2-0-ca0d2bf5783f@amieiro.net>
- <20261013-add-is31fl3206-support-v2-1-ca0d2bf5783f@amieiro.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 13 Oct 2026 09:58:02 +0000
+	dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b="sWS5bZ++"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4j3qXd0zvFzMlbZ;
+	Tue, 13 Oct 2026 11:58:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
+	t=1791885505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CSO6NTt2mVPFWWK2F/I1n0QJQ3s8fuZYA2OSPW8iU3A=;
+	b=sWS5bZ+++W4NPaSorp8b6DJwV9wS+TG1YGv584H1wk1Ya/AS64svqdxXQ0EDnuLSDgDRbl
+	8Zprpq+eOc3g1WrnVIWYbN96BinUF1FUHZDfiDV4ain/k95XIb7txVrkTYD/WZm/TkDlZ/
+	UFx+lrGRCQnZRSIIeJerF7d689g+B9nQXs3kkG0T+fzClDwYUX3JuXOdnhaCMCePbJ5Bot
+	hfUAU3NuhKfGcP1fWDeKls3Yal9VJy67NDamCmczX4C69lnJmxQQvzyrwBpdM4TlUveVO7
+	qfAzeHqZzVvUYYeFe7m2TzuROgxUqk8ZuT6GtX18+xH8MatTFNMJltt4JZOlcA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=flavio@amieiro.net
+From: =?utf-8?Q?Fl=C3=A1vio?= Amieiro <flavio@amieiro.net>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: leds: Add issi,is31fl3206 to
+ leds-is31fl32xx
+In-Reply-To: <20261013-jolly-salamander-of-tact-7cf46e@quoll>
+References: <20261013-add-is31fl3206-support-v1-0-08c066cc241d@amieiro.net>
+ <20261013-add-is31fl3206-support-v1-2-08c066cc241d@amieiro.net>
+ <20261013-jolly-salamander-of-tact-7cf46e@quoll>
+Date: Tue, 13 Oct 2026 06:58:05 -0300
+Message-ID: <87zewhudle.fsf@berlin>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 4j3qXd0zvFzMlbZ
 
-> This chip has a different layout for the LED Control Register when
-> compared to the other variants. This register contains the enable bit
-> (in the highest nibble) but also the current control.
->=20
-> According to the datasheet, a value of 010000 (0x10) in the register
-> enables an LED with the output current set to maximum.
->=20
-> This commit adds support for this IC following the previous limitation
-> of the other variants: all LEDs are enabled and set with maximum
-> current, letting brightness be controlled by the PWM registers.
->=20
-> Signed-off-by: Flavio Amieiro <flavio@amieiro.net>
+Krzysztof Kozlowski <krzk@kernel.org> writes:
+> Please organize the patch documenting the compatible (DT bindings)
+> before the patch using that compatible.
 
-Sashiko has reviewed this patch and found no issues. It looks great!
+I'm sorry, I read this e-mail after sending v2 of the patch series. I
+will organize the commits and send v3.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261013-add-is31fl=
-3206-support-v2-0-ca0d2bf5783f@amieiro.net?part=3D1
+Thank you for your review!
 
+Best regards,
+Fl=C3=A1vio Amieiro
