@@ -1,160 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FED4BD352;
-	Mon, 12 Oct 2026 17:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128C243BDDF;
+	Tue, 13 Oct 2026 03:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791827214; cv=none; b=tAylykmAadmEvVp5AJjWH2t4QJUDmH4TEm2aiVzQ/ZEWjKKyEakuwnJRY1r+G0SKmEI0R67j5XA2KW2HJqYufOrq0sCEZOgZQ9AOGi0EDWieIjN2+TpRAnJapEr0XlRTi6EZ3zvCyRg+daRH2969MeaNv7e6LxkFnGCGG1mKsVU=
+	t=1791862442; cv=none; b=KyWjH5o+aia4iN2RCXVdNAhYKqFApI/XbVu7NgAHpo9imgtV1IvJ81FZunWjCLJLB/gf8N9OEQpBfIfERqHSJbpT6EOjnDOW2woWCnznwa6F3mejlArCVEZ13ORSnaQzx5EVhZBtLhbEBbaO2n+aTu15IqqLy3Z10rAL8SSAnbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791827214; c=relaxed/simple;
-	bh=FSKl+tC2xV1nip/FsJ/R2v1Ev0C36qf/tlzUL9ovBC8=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=p/YyGDRuGyh0Yr0J/8c0t27eP5iwMpIHLJGiVIf4o9iqStQaY95seM5X3ddGTns0kuGTz+YcSPN9tDkfZh4KXE1j/wz+vU8QssRmVF38VDR9REkuNPI25/Axnln2AC6sQH8l0BKl8xcgNzfJ+1UTIddI1EbyfKWpPovZHpbJPps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5hbN9PQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791862442; c=relaxed/simple;
+	bh=ZWmvi75A8cRSXcq0gb36sZx/g8Wce62zkJ2ecnlSg58=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JnAX9tumX3hnQrbWQYLP6RUbaBtlb7sk9vFwxTvbPN6ZnU+x07vrn+Fb2/Fbu+ykcrLzudKf8vfkTOGWYZSXAzHFpgTIcwHl0eIc/DfZ66Smk9YXZx04LupgMkm1Z8f9xhN+0cRXWhmreptpf83qw2V3NwCMwNrSpZhHJfWnju4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net; spf=pass smtp.mailfrom=amieiro.net; dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b=fl7ms5W3; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5hbN9PQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39241F008A1;
-	Mon, 12 Oct 2026 17:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791827213;
-	bh=BOo4tMyDdgZeY3Yeeazza39JFRX3WIXRNLB2dK20Wh0=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=F5hbN9PQPUbcxIWt3ixZHf99ZYa/rUJBcXFWy2EytkaZTx6fSsfLw8sBcC7mtQ455
-	 i7kP7FtETUnCGbLbxmhttbjNCqANeu/VSDZXjFPZKreDubPjTu6uL0pBdbU8cBXUBx
-	 IpNFrt0jBWfQBlR54U7IYTrp07g1oLXByBSgbvYoBGeWVx0cD4C++nCKINJOw/3Tvn
-	 PMKDQ2riL0pYjw+etu4cgKCqDMcphFEHKEINVk8mid32SZPhNersjeVWC57LYHa78c
-	 hC9dhVhigzfFUaTSThHXQj7r/gwAENOBLUEblV0CeqXuLKrktx8pks3x45HDuT0ihX
-	 7p17q2I3kBZAQ==
-Message-ID: <sashiko-outbox-168489@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 07/11] leds: Add NVIDIA LSTP LED driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Adrian Ambrozewicz" <aambrozewicz@nvidia.com>
-Cc: lee@kernel.org, linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
-In-Reply-To: <20261012-lstp-usb-adapter-v1-7-aambrozewicz@nvidia.com>
-References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
- <20261012-lstp-usb-adapter-v1-7-aambrozewicz@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 Oct 2026 17:46:52 +0000
+	dkim=pass (2048-bit key) header.d=amieiro.net header.i=@amieiro.net header.b="fl7ms5W3"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4j3g0s2lLJzMlh2;
+	Tue, 13 Oct 2026 05:33:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
+	t=1791862429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=adG69Ja7OsWsel0AKizfQSv5CcAToVcXhzPW/2o1mq4=;
+	b=fl7ms5W3bbGuJBWH8SdYSfF7QKVpg19XxtPa8rK6ka1yxnnjX7kN+GF/9rVKa3XO9jrGNf
+	T6jGC1ZF0BMIJp7nHsvdyG1C23TAY4CY3VrK4sL2COWxGRshakPyoWTFDLF7OcTyp0wf3s
+	WyL6jvpKIrmHWBzAZpRb2n5toOsn48ty6ZskKzHQZjIxYuugFoEARRK/VtozoXBXn/M8QU
+	rEJ/qjOrxwjsVLZIvRznm1wCzmi0XmAFSzVxBOaUybMSA+5yWY3kGGYKq97nIa2vwp4dvo
+	ekTnfSFx2zOlveQp746VuW0U94RMbPIxWSjOrd/D+pHCXw8cXL4Kj/kO6PFIBA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=flavio@amieiro.net
+From: Flavio Amieiro <flavio@amieiro.net>
+Subject: [PATCH 0/2] leds: Add support for the is31fl3206 LED driver
+Date: Tue, 13 Oct 2026 00:33:13 -0300
+Message-Id: <20261013-add-is31fl3206-support-v1-0-08c066cc241d@amieiro.net>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMTQqDMBBA4avIrDuQH4xtr1JcRDOxU4qGjIog3
+ t20Lr/FezsIZSaBZ7VDppWFp7FA3yro334cCDkUg1HGaaUN+hCQxer4tUY5lCWlKc8Y6rqJd2f
+ 9o/FQ4pQp8vYfv9rLsnQf6uffDY7jBBfkyFl6AAAA
+X-Change-ID: 20261012-add-is31fl3206-support-d557f863a97a
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Flavio Amieiro <flavio@amieiro.net>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1595; i=flavio@amieiro.net;
+ h=from:subject:message-id; bh=ZWmvi75A8cRSXcq0gb36sZx/g8Wce62zkJ2ecnlSg58=;
+ b=owGbwMvMwCX2bmrBFGnZ5lDG02pJDFlnl03+W5EZ/cAnMGzq/vzemQa7JjlbLeTZafZkJ8vsP
+ dMWChxy7ihlYRDjYpAVU2RhKWMp824/2Lx72mpJmDmsTCBDGLg4BWAi3syMDG3r/7ydPfVv9tUH
+ TC1zD35z6dTknbyxwTz95fxXRmfnbL/OyLDfXlfsoMb37NdVW34vCVz5dE/d4RuO7Obub+xrJXq
+ cnZkA
+X-Developer-Key: i=flavio@amieiro.net; a=openpgp;
+ fpr=047604764B87C183BB96AB19EE9570941B1D8355
+X-Rspamd-Queue-Id: 4j3g0s2lLJzMlh2
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] leds: applying initial brightness before parsing DT max-brightness
-- [Medium] leds: rejecting DT nodes with only color and allowing deprecated=
- label
-- [Low] leds: non-standard commit message prefix missing driver name
---
+This patch series adds support for the is31fl3206 LED driver to the
+already existing is31fl32xx driver.
 
-commit 231bdc9e871148317f849221691f708a54dbd399
-Author: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+The main difference between this specific variant and the others in
+the series is that the LED Control Register controls not only the
+enable status of the channel, but also the maximum output current for
+it.
 
-leds: Add NVIDIA LSTP LED driver
-   =20
-This commit introduces a new driver for LEDs on NVIDIA LSTP USB adapters.
-It uses the GPIO channel of the adapter, hands blink and pattern requests
-directly to the hardware, and configures them via device tree child nodes.
+Because the layout of the register is very different from the
+previously supported variants, this patch follows the same pattern
+present in the driver for paths that deviated from the norm: the
+chipdef can define a pointer to an extra function that (if non-NULL)
+will be called during probing. This was already done for reset_func
+and for sw_shutdown_func in order to support other chips in the same
+family.
 
-> leds: Add NVIDIA LSTP LED driver
+The patches keep the previous behavior of using only the PWM registers
+to control the state of the LEDs. For that reason, the current output
+is always set to the maximum value.
 
-[Severity: Low]
-This isn't a bug, but the commit message prefix seems to be missing the
-driver name. Should this follow the standard format, such as
-"leds: lstp: Add NVIDIA LSTP LED driver" to help with git history
-categorization?
+This is my first attempt at a patch for the linux kernel, so please
+let me know how I can improve it.
 
-diff --git a/drivers/leds/leds-lstp.c b/drivers/leds/leds-lstp.c
-new file mode 100644
-index 0000000000000..352e484eb9194
---- /dev/null
-+++ b/drivers/leds/leds-lstp.c
-[ ... ]
-@@ -275,20 +275,21 @@ static int lstp_led_register(struct device *dev, stru=
-ct lstp_led *led, struct fw
-+		if (!ret) {
-+			bool pattern =3D fwnode_property_present(fwnode, "led-pattern");
-+			bool trigger =3D fwnode_property_present(fwnode, "linux,default-trigger=
-");
-+
-+			/* A trigger takes precedence; the LED core applies it from @fwnode. */
-+			if (pattern && trigger)
-+				dev_err(dev,
-+					"%s: ch_%d: Ignoring led-pattern of LED '%s': %pfw also sets linux,de=
-fault-trigger\n",
-+					__func__, led->ch->ch_id, led->cdev.name, fwnode);
-+			if (pattern && !trigger)
-+				lstp_led_send_fwnode_pattern(led, fwnode);
-+			else
-+				lstp_led_apply_default_state(led, fwnode);
+Signed-off-by: Flavio Amieiro <flavio@amieiro.net>
+---
+Flavio Amieiro (2):
+      leds: is31f132xx: Add support for is31fl3206
+      dt-bindings: leds: Add issi,is31fl3206 to leds-is31fl32xx
 
-[Severity: High]
-Does applying the initial hardware state here happen too early? At this
-point, led_classdev_register_ext() has not yet been called, so the device
-tree max-brightness property hasn't been parsed into led->cdev.max_brightne=
-ss.
+ .../devicetree/bindings/leds/leds-is31fl32xx.txt   |  1 +
+ drivers/leds/leds-is31fl32xx.c                     | 89 ++++++++++++++++++----
+ 2 files changed, 74 insertions(+), 16 deletions(-)
+---
+base-commit: 05b4738b0078f7d6f154f68068a11c8a0635e9df
+change-id: 20261012-add-is31fl3206-support-d557f863a97a
 
-As a result, lstp_led_apply_default_state() will use the uninitialized
-max_brightness value of 255 (U8_MAX) to drive the hardware. Could this risk
-over-driving the hardware before the registration layer correctly enforces
-the bound?
+Best regards,
+--  
+Flavio Amieiro <flavio@amieiro.net>
 
-+			ret =3D lstp_led_classdev_register(dev, &led->cdev, &init_data);
-+		}
-+	}
-+
-+	if (ret)
-+		dev_warn(dev, "%s: ch_%d: Could not register LED '%s', pin %u (%pe)\n", =
-__func__,
-+			 led->ch->ch_id, led->cdev.name, led->pin, ERR_PTR(ret));
-+	return ret;
-+}
-[ ... ]
-@@ -328,34 +328,41 @@ static int lstp_leds_probe(struct auxiliary_device *a=
-uxdev, const struct auxilia
-[ ... ]
-+		if (led->cdev.dev) {
-+			dev_warn(dev, "%s: ch_%d: Ignoring %pfw: pin %u is already described\n",
-+				 __func__, ch->ch_id, child, pin);
-+			continue;
-+		}
-+		if (!fwnode_property_present(child, "label") &&
-+		    !fwnode_property_present(child, "function")) {
-
-[Severity: Medium]
-Does this logic incorrectly reject modern device tree nodes? The LED
-subsystem guidelines dictate that the label property is deprecated and
-should be avoided, while color and function are preferred.
-
-By warning and skipping nodes that lack both label and function, valid
-modern DT nodes that rely solely on the color property (e.g.,
-color =3D <LED_COLOR_ID_GREEN>) would be entirely rejected. Should this che=
-ck
-be updated to account for the color property and align with modern naming
-requirements?
-
-+			dev_warn(dev, "%s: ch_%d: Ignoring %pfw: neither label nor function\n",
-+				 __func__, ch->ch_id, child);
-+			continue;
-+		}
-+		lstp_led_register(dev, led, child);
-+	}
-+	fwnode_handle_put(node);
-+
-+	for (u16 i =3D 0; i < pins->npins; i++) {
-+		if (!leds[i].cdev.dev)
-+			lstp_led_register(dev, &leds[i], NULL);
-+	}
-+
-+	return 0;
-+}
-[ ... ]
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012-lstp-usb-a=
-dapter-v1-0-aambrozewicz@nvidia.com?part=3D7
