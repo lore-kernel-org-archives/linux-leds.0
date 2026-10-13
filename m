@@ -1,41 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FB824A06D;
-	Tue, 13 Oct 2026 13:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42B1509EE1;
+	Tue, 13 Oct 2026 13:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791897617; cv=none; b=AdVocoN3hxDGGJ0Lf9TO4FxJ5cMP338Vxfggnv6hRTX1KR4Jwwmb1W3WX4dWkId4yP7/M6tbSy2Y5OOk2lVQLvLAkMpZXuW8Cy4VJfustoF3li6QoFrbDiKWdGj+MDq32yGuc36gL23jhKd8xpLFWDn9jC7+yH2etE6PxqE9NuY=
+	t=1791897619; cv=none; b=B5Wg6ERWbHI88Y+7vbwm9P5KSWWkMkVggcsU0yqEZWhMK53PwLYDIBEL03HaFBjP9mqtTC+fkat6WD+GagnYwjFsCJTKzjex1Y0X/2xCAI6RyyZgZKzBUfVO9uy5S9vkFE33WtABcL4ue3/1jPYv+6+zTVyTkDG/mkQowCm0Qu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791897617; c=relaxed/simple;
-	bh=Rt33wOIJJitTHfnH+fhCMpQqc0rq5yW2fiqzkBUedkc=;
+	s=arc-20240116; t=1791897619; c=relaxed/simple;
+	bh=48d57+IQsIth6Z+Fm0GmcfiShALw7Y8TuNiZbYduTyU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EwTMLCaiN/MUpnf3YQ/E94gA3hFwIcJlFXh+8koQ06M7mOEm3O92/MntQZNscbHqZBwpiqb+Kncq4VkPdqCYbpjPWzS/Q0BlMir/EaDB2s4rGH4qc5NOsB/juBE/g42p3WJmMq6EbnrDrfP5DKtaSHMnznF3FKqIpe9zLdajZ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsfMkCaI; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=HZ/A0kSK0W2kx8MvflRuYR6jMD97HULikAPAR6ty3mzBEP3jTD9h1aKIclU3DLHF2Wrfgluol2XFix19kDcWb5Rfrmu0VBm6T9EFF82neTW1mSGYX6t2RMeZ7QQyDSNjAVABz2jG3cB5cDaYoOoQD7u6/ptG9AY2GZU9pr5iLws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVdC1XQz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsfMkCaI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818F61F0089A;
-	Tue, 13 Oct 2026 13:20:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVdC1XQz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C630F1F000FF;
+	Tue, 13 Oct 2026 13:20:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791897616;
-	bh=fwUkauhzS92GDOPf9cylqjINAbl7pJNuHEZtBuz9rWA=;
+	s=k20260515; t=1791897618;
+	bh=BgMKm2Pl1C00n7ciOY2UhRXgRDc/udpc+oFvEk1tamc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=GsfMkCaIaJPCUArjtDsYhtTRquPGmUxfpfSWQAOYnsdYOsy/7ffBgwj1yOVkRUWHO
-	 UdW61jv2sE5eocJt8uLMAUP/PxvW3y1lkDBIhWvRip3Dd2Gewxg2JRbTj8jxzqpkNl
-	 hsJj4m8ykQXR/CcxNRC5fUE2J5IeBSUmk70+6yPVa1FzHNytYU0/n7uu6hJeDH9Lu6
-	 1ygEiiohTeSvxhmR0TtqnDNsC66f+ZqbU4KMRNnv5OkuBGSQHI8l3Trbt9TsGTjPoT
-	 oqBMRCIPGRQwXkveUBINrDKS2k9Rc4yXw4cuqpcsWPC7JP9r1K8JWs6fnOD8sJxEu8
-	 nXCtlLqGyEsoQ==
+	b=XVdC1XQzOR4t6M47zdpcXfdDuiUNHanhrGrvlUfcib6HBZ1EWLy04OuV1TLaDHdhz
+	 F0Bu4AUixMV6vHdq5CVZj/EOB3/C+aRtu1zj6ni3mjSph+DOBgMO6zjZrYeIjynTAR
+	 9ftehhzujl3nyJU96HDBL3Fo6vmL2fsP17uYmmhoqq3U2aeWg2DRgi8yO1CQeNFPV/
+	 HOGsPi6GB80z0DS5njDqQ4H1OgN5OaaIm6qSdzqB85F67LZWeTOOW3Nc47VlGD1xxq
+	 DQX43RLc1t6b1+/Bqceew90VdYvOciJIDZwec8ySZhwUjdyBnF6eb1b7A5cijiqTD4
+	 W7+3wQ6zUHADQ==
 From: Imre Kaloz <kaloz@kernel.org>
 To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 Cc: linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
 	linux-leds@vger.kernel.org
-Subject: [PATCH v2 51/53] leds: Add driver for the SGI Fuel and Tezro front-panel LEDs
-Date: Tue, 13 Oct 2026 15:17:11 +0200
-Message-ID: <bdc0fa8089faf9ce4ff80695035173ab59357227.1791890466.git.kaloz@kernel.org>
+Subject: [PATCH v2 52/53] MIPS: SGI-IP27: show the OS state on the Fuel and Tezro front panels
+Date: Tue, 13 Oct 2026 15:17:12 +0200
+Message-ID: <41d8479c20bad97828ead618348f3bb4379af8e9.1791890466.git.kaloz@kernel.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1791890466.git.kaloz@kernel.org>
 References: <cover.1791890466.git.kaloz@kernel.org>
@@ -47,204 +46,99 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The SGI Fuel and Tezro front-panel LEDs are set through the L1 system
-controller, whose LED request switches off every LED outside its mask,
-so send the pattern of both LEDs on each change. Probe takes over the
-PROM's state without writing it.
+Register the front-panel LED device on a Fuel and a deskside Tezro and
+blink the red LED on panic. A Tezro also shows "Linux booting", "Linux
+running" or "Linux panic" on line 2 of its L1 display.
 
 Signed-off-by: Imre Kaloz <kaloz@kernel.org>
 ---
- drivers/leds/Kconfig     |  12 ++++
- drivers/leds/Makefile    |   1 +
- drivers/leds/leds-ip35.c | 144 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 157 insertions(+)
- create mode 100644 drivers/leds/leds-ip35.c
+ arch/mips/sgi-ip27/ip27-init.c | 52 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index d0d3182236be..9ca75364264b 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -1035,6 +1035,18 @@ config LEDS_IP30
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called leds-ip30.
- 
-+config LEDS_IP35
-+	tristate "LED support for SGI Fuel and Tezro"
-+	depends on LEDS_CLASS
-+	depends on SGI_IP27
-+	help
-+	  This option enables support for the red and white front-panel
-+	  LEDs of SGI Fuel and Tezro workstations, which the L1 system
-+	  controller drives.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-ip35.
-+
- config LEDS_ACER_A500
- 	tristate "Power button LED support for Acer Iconia Tab A500"
- 	depends on LEDS_CLASS && MFD_ACER_A500_EC
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index a68244bd50fb..b45d1d70c431 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_LEDS_GPIO_REGISTER)	+= leds-gpio-register.o
- obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
- obj-$(CONFIG_LEDS_INTEL_SS4200)		+= leds-ss4200.o
- obj-$(CONFIG_LEDS_IP30)			+= leds-ip30.o
-+obj-$(CONFIG_LEDS_IP35)			+= leds-ip35.o
- obj-$(CONFIG_LEDS_IPAQ_MICRO)		+= leds-ipaq-micro.o
- obj-$(CONFIG_LEDS_IS31FL319X)		+= leds-is31fl319x.o
- obj-$(CONFIG_LEDS_IS31FL32XX)		+= leds-is31fl32xx.o
-diff --git a/drivers/leds/leds-ip35.c b/drivers/leds/leds-ip35.c
-new file mode 100644
-index 000000000000..fba918265e3d
---- /dev/null
-+++ b/drivers/leds/leds-ip35.c
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * LED driver for the SGI Fuel and Tezro front panels, which the L1
-+ * system controller drives.
-+ *
-+ * Copyright (C) 2026 Imre Kaloz <kaloz@kernel.org>
-+ */
-+
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
+diff --git a/arch/mips/sgi-ip27/ip27-init.c b/arch/mips/sgi-ip27/ip27-init.c
+index e657155ef7c9..f7de09515c0c 100644
+--- a/arch/mips/sgi-ip27/ip27-init.c
++++ b/arch/mips/sgi-ip27/ip27-init.c
+@@ -13,6 +13,9 @@
+ #include <linux/smp.h>
+ #include <linux/mm.h>
+ #include <linux/export.h>
++#include <linux/notifier.h>
++#include <linux/panic_notifier.h>
 +#include <linux/platform_device.h>
+ #include <linux/cpumask.h>
+ #include <linux/ctype.h>
+ #include <asm/bootinfo.h>
+@@ -122,6 +125,8 @@ static const struct {
+ 	{ 'Q', "SGI Tezro Rackmount", NULL },
+ };
+ 
++static int ip27_brick_type;
 +
-+#include <dt-bindings/leds/common.h>
-+
-+#include <asm/sn/l1.h>
-+
-+struct ip35_leds;
-+
-+struct ip35_led {
-+	struct led_classdev cdev;
-+	struct ip35_leds *leds;
-+	unsigned int mask;
-+	unsigned int state;
-+};
-+
-+struct ip35_leds {
-+	struct mutex lock;	/* protects ->state of both LEDs */
-+	struct ip35_led led[2];
-+};
-+
+ static bool __init ip27_has_graphics(void)
+ {
+ 	nasid_t nasid;
+@@ -145,6 +150,7 @@ static void __init ip27_set_machine_name(void)
+ 	brick_type = l1_read_brick_type();
+ 	if (brick_type < 0)
+ 		return;
++	ip27_brick_type = brick_type;
+ 
+ 	gfx = ip27_has_graphics();
+ 
+@@ -165,6 +171,52 @@ static void __init ip27_set_machine_name(void)
+ 		gfx ? "with" : "without");
+ }
+ 
 +/*
-+ * ON and BLINK switch off every LED outside their mask, so each change
-+ * sends the pattern of both LEDs. A steady LED next to a blinking one
-+ * cannot be shown; the blinking one wins.
++ * A Fuel (brick type 'A') and a deskside Tezro ('9') have L1-driven
++ * front-panel LEDs, the Tezro also an L1 display. A blinking red LED,
++ * with the white one off, marks a panic.
 + */
-+static int ip35_led_update(struct ip35_led *led, unsigned int state)
++static int ip27_panel_panic(struct notifier_block *nb, unsigned long event,
++			    void *ptr)
 +{
-+	struct ip35_leds *leds = led->leds;
-+	unsigned int old, on = 0, blink = 0;
-+	int i, ret;
++	l1_set_leds(L1_LED_RED, L1_LED_BLINK);
++	if (ip27_brick_type == '9')
++		l1_set_display("Linux panic");
 +
-+	mutex_lock(&leds->lock);
-+
-+	old = led->state;
-+	led->state = state;
-+
-+	for (i = 0; i < ARRAY_SIZE(leds->led); i++) {
-+		if (leds->led[i].state == L1_LED_ON)
-+			on |= leds->led[i].mask;
-+		else if (leds->led[i].state == L1_LED_BLINK)
-+			blink |= leds->led[i].mask;
-+	}
-+
-+	if (blink)
-+		ret = l1_set_leds(blink, L1_LED_BLINK);
-+	else if (on)
-+		ret = l1_set_leds(on, L1_LED_ON);
-+	else
-+		ret = l1_set_leds(L1_LED_RED | L1_LED_WHITE, L1_LED_OFF);
-+
-+	if (ret)
-+		led->state = old;
-+
-+	mutex_unlock(&leds->lock);
-+
-+	return ret;
++	return NOTIFY_DONE;
 +}
 +
-+static int ip35_led_set(struct led_classdev *cdev, enum led_brightness value)
-+{
-+	struct ip35_led *led = container_of(cdev, struct ip35_led, cdev);
-+
-+	return ip35_led_update(led, value ? L1_LED_ON : L1_LED_OFF);
-+}
-+
-+/* The L1 blinks at a fixed 2 s period of its own, whatever the delays. */
-+static int ip35_led_blink_set(struct led_classdev *cdev,
-+			      unsigned long *delay_on,
-+			      unsigned long *delay_off)
-+{
-+	struct ip35_led *led = container_of(cdev, struct ip35_led, cdev);
-+
-+	*delay_on = 1000;
-+	*delay_off = 1000;
-+
-+	return ip35_led_update(led, L1_LED_BLINK);
-+}
-+
-+/* The PROM leaves the white LED lit and the red one dark. */
-+static const struct {
-+	const char *name;
-+	unsigned int mask;
-+	unsigned int state;
-+} ip35_led_info[] = {
-+	{ "white:" LED_FUNCTION_STATUS, L1_LED_WHITE, L1_LED_ON },
-+	{ "red:" LED_FUNCTION_FAULT, L1_LED_RED, L1_LED_OFF },
++static struct notifier_block ip27_panel_panic_nb = {
++	.notifier_call = ip27_panel_panic,
 +};
 +
-+static int ip35_leds_probe(struct platform_device *pdev)
++static int __init ip27_panel_init(void)
 +{
-+	struct ip35_leds *leds;
-+	int i, ret;
++	struct platform_device *pdev;
 +
-+	leds = devm_kzalloc(&pdev->dev, sizeof(*leds), GFP_KERNEL);
-+	if (!leds)
-+		return -ENOMEM;
++	if (ip27_brick_type != 'A' && ip27_brick_type != '9')
++		return 0;
 +
-+	ret = devm_mutex_init(&pdev->dev, &leds->lock);
-+	if (ret)
-+		return ret;
++	atomic_notifier_chain_register(&panic_notifier_list,
++				       &ip27_panel_panic_nb);
++	if (ip27_brick_type == '9')
++		l1_set_display("Linux booting");
 +
-+	for (i = 0; i < ARRAY_SIZE(leds->led); i++) {
-+		struct ip35_led *led = &leds->led[i];
++	pdev = platform_device_register_simple("ip35-leds", PLATFORM_DEVID_NONE,
++					       NULL, 0);
++	return PTR_ERR_OR_ZERO(pdev);
++}
++arch_initcall(ip27_panel_init);
 +
-+		led->leds = leds;
-+		led->mask = ip35_led_info[i].mask;
-+		led->state = ip35_led_info[i].state;
-+		led->cdev.name = ip35_led_info[i].name;
-+		led->cdev.max_brightness = 1;
-+		led->cdev.brightness = led->state == L1_LED_ON;
-+		led->cdev.brightness_set_blocking = ip35_led_set;
-+		led->cdev.blink_set = ip35_led_blink_set;
-+
-+		ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
-+		if (ret)
-+			return ret;
-+	}
++static int __init ip27_panel_running(void)
++{
++	if (ip27_brick_type == '9')
++		l1_set_display("Linux running");
 +
 +	return 0;
 +}
++late_initcall_sync(ip27_panel_running);
 +
-+static struct platform_driver ip35_leds_driver = {
-+	.probe		= ip35_leds_probe,
-+	.driver		= {
-+		.name	= "ip35-leds",
-+	},
-+};
-+module_platform_driver(ip35_leds_driver);
-+
-+MODULE_AUTHOR("Imre Kaloz <kaloz@kernel.org>");
-+MODULE_DESCRIPTION("SGI Fuel and Tezro front-panel LED driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:ip35-leds");
+ /*
+  * Prefer ttyS0 at the baud rate the IP35 PROM recorded for its console
+  * UART in the KLCONFIG header.
 -- 
 2.47.3
 
