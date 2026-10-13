@@ -1,108 +1,120 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB163905F0
-	for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 08:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.215.178
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791881368; cv=pass; b=sBoHcI++wDqefRib/Yf4ro8WO20mj1Tf1FFBAVTC+Pg5bn1NlufDNe/HC40wnr/t+D/dEd8P1de56QuP0uagy+2e/yVCEw0m8wrul9nJ2Zz77qxZehvlmnXkCuzxrLXPyL3kl+49qtFDlE9gvteqQqn/jIhvybt5cn+JkaHdI34=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791881368; c=relaxed/simple;
-	bh=05+TzFrE6wURrdbD4RkYQxWL2S7RN+hKvrxXNJt5MXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQYmQjFjaGPB1QrFk4M21tD4iz8NQX/NGRmfQ7+a95aL9sU9406lhpGPSqQDTkuuTlSSVk+/otZevJ204sonQ12mq8Jkxct7ze2X1moz3oEfsupZ4NWHIqj+TnrMbphbvFjWWtLDgtKvJv9ZaAOyBuJn5h/U1BI9mDruu/NEMZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qNV50YvU; arc=pass smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB493D9DC3
+	for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 09:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791883875; cv=none; b=tzx3OUR+pcYMqHFFNLPU5ALRghDCASaUzsH+2IeWstvXZxjKkmoNNmY7G07lCd3Og6ZsZmfmUWtC5+ke+yOAB4mDDtmukZuDFVTQib8l9WodvFqYMS2I0ahr4ck4oHtjuJm/buUBuZ02RFpGHHdDQ0Dks6VEceogwmpRjh/RauM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791883875; c=relaxed/simple;
+	bh=XVFaXEYG2jOij3HyMr7u9yLLDZy3V4Xivvx6eVWoUcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hNUUaEYKiZXMjr/wWTwaLI9U/A2I5fq9QcYMz0n7gvAdBPCh+u6BeWYIniJwzQRmQvSb1zXvTGky9qJAPSg2M7qM5Eu9JOZmOpIRYO4ZrFuD9cBu0qFs5Uzd/7ZouvM+FTvu2ElxY77/z/4gUyF1/ozkgBvY5MCSkGh9VImB8iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjQ4WzFM; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qNV50YvU"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-cc4b1f7e8f4so1485003a12.1
-        for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 01:49:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791881367; cv=none;
-        d=google.com; s=arc-20260327;
-        b=R61d9oVHZ4i/enIPk1wVcXSu9tYWH6nuHgyJHcd/2PQ2m2Z0YAQxuVHo4K6tKEdbh6
-         079D4r0HNIlJcMewxzPn+WMY+Pl08Wa1Z1OvUN/+/8kf1m9fA2GLDI2v3FQXmIImnNnZ
-         5XaFMj/oTdNqQ1cDp2vgPNschfSSywpyDmi8+gBIbrTgwP4LCyLvs6VKUHLa7JPxrotc
-         Nbowk7HhVSDvpGMPjT4z6U7mtGAJtgmjfRCRPgcXzlHxDuL4IBmlvvws5pnV83dISH/6
-         /9hWzJMATtEsTad1vujyE5UUWo9iRDoltVP/bY2tgNgEKgpGW54RXjxECTGXNEbPwgGW
-         bNlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=05+TzFrE6wURrdbD4RkYQxWL2S7RN+hKvrxXNJt5MXc=;
-        fh=9+/2yslTLV0NH/3blVD8FTP3qxRCNQEqEaQKGFpQtm8=;
-        b=a1yP49ny6JIcWUV22yKcLADP9biy6p+/gAv5KGP8h4Cl9Q7KXHUSyX4qYQbnidhrwR
-         ccfgM17xdtyqOmeXBxPkRQfRBNfs6eLdPbsdRqNABplM5FqiaMIpDiW4zBY/t7FiPOLj
-         bKWSp7Ukud4qhbGS8Rslb5bng0wdp0EJlHN3va4w5hiMONCJ2oHh2Nk4evzbtT6kuT96
-         UY/xuwPviT/sAZ2vqOGD7AD5AtFmpYAqT9oHxMDRcv3VoVVEz1bQTH5DRTXl0Cog7WNM
-         Wy6gZ7faRwbYFgSTkGsWaLusux0XCxw8noVLs4Seh/20PjfbRxjZa+u7i+O0jv2fsX8x
-         xPog==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjQ4WzFM"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c2acc1e170cso438496266b.1
+        for <linux-leds@vger.kernel.org>; Tue, 13 Oct 2026 02:31:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791881367; x=1792486167; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=05+TzFrE6wURrdbD4RkYQxWL2S7RN+hKvrxXNJt5MXc=;
-        b=qNV50YvUT/Dl0P0XxnkzbcuOPlYIhaII64QkxnI4hwyKgPUtlMLzcCo/U1jFS56l5d
-         PPL2A9SRDEgYJcPO8YP9p8PElSr6ZwYbqobWHhRK4JcoHDlU1wY9WE424e9BvQP8jxod
-         2r7HIx/heI1Tqc6oGK1BzpNjKrptFKkq8Hyi7fh4Q9B5k9L9JrjYIKIiW8wkyWq5k4vm
-         ZUXkxi09iIv6nP9zEO0Mn3hBdSTMEROH9Madyk95aj6O5KlgH/+2TC4OzbUWld7U2T1m
-         naBT/Rbvk3pMJ50vMvWnmFLIHupgXGO8rw0ffcWNqVYLg78yFhW1orHjU8Rhugn0bnF7
-         30Vw==
+        d=gmail.com; s=20251104; t=1791883872; x=1792488672; darn=vger.kernel.org;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+NB6q1K55xrXTqewDbSwetE1j/mAPNyb/yxnJTgeOys=;
+        b=hjQ4WzFMmAF+BTTFBWaPHmNTmT7t4JVL9XfcTBk1GPItkoyMHhNLM9Xt/rJov0k8ZR
+         Ii+6lhUwIIN6FILMdsxGClz0OOMBbouOfNaSnw+1JFT5AO6B0XD8KQ1XQyVGXbJSCGrm
+         npqiXa5LfkTOkL4JLo3rY9UkfoyS5Krt4jbmk38dZ9r0NjlbIxEtzgj2asowAra+CFA2
+         IA+I4henvLe7xk3mViB8IhIqJOTVkxGzDRzIPEYz/SgSHjqvl1IO3EJ0dP2M30vLJQam
+         eGBpgGN4yP57HLRtdaNj4RRg8aPicBTbz4qXZoySHsAud0ODuJt6ytAStknUL2aMLOLY
+         PV+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791881367; x=1792486167;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=05+TzFrE6wURrdbD4RkYQxWL2S7RN+hKvrxXNJt5MXc=;
-        b=emuyGALx9df0QxQMb8I+eSWcgyldv1frS3+PAXb6eGUhOLy32mK8S/wQWoisiaANQe
-         /NRKKCG4zVgA9ArgTpVFhxbYtFVYv2ipYqODat57i5UaRj6qkdSVe5vLDQvp2wXHZkfY
-         yN401IombtJ8J7CqNkJ1SsNCGeZ4pIYeJg9KuFxNIZpzj4UGYEBIAgU4Ui26OUyZryAG
-         Xg5r+wcFtncAIEFcG3CYhoQNl367Ht5RDrHgn60FKUeYhrUHJYpBkEHEJ+zY5cWYAj+i
-         RVcLgvr+z0B54XHpX/Rw7YamBhBev54p9dqkYeO40emWmy5LjNNufpmbZ/tJSE72gBex
-         9JRw==
-X-Forwarded-Encrypted: i=1; AKwUvBy4DYuoz1nJ4/ouchrG+fSG0GuKAtlkcptOJIjRVZUQLmZ8VkXCGBAflarJEsBZIcGbNJN5ogsWOm9J@vger.kernel.org
-X-Gm-Message-State: AFq9FYKU1ZXesTwvfq9LCxOQVTs53FpLas6HSDzZU+P0bTHjiNtnoxj+
-	iTa21NzMIEhRB9giD7SHIVxr2Q3D/n/GV0B90RY+tRjLuiPmE9HyYohV+atYjsVefV3HrIEy+yM
-	TjW80GCJlAe+vna/dppxTN5BdFptcaqA=
-X-Gm-Gg: AYBFou1ufxhf5dizqsG5aDiuoHm+E+X4JmZxHcF/Csw2pgp8hSNBRh1Jxy3zTL9t2Ym
-	3CkK+m0vy5zR9cbrupYanMkRxLE5RifVD4kFzGwglu48HhVPHcHIsRcTITec3AX1oW6oipgVTRe
-	l7fWOsC29weoLZpAOlJeN0zSyDp2dTdv4um8ETSA4dPSXrUOGgXSjw2lg7tU7uoqYQXGYiAlk8E
-	j5PTfYaKYvJ81v7W54W0AoOEDpCHhTk5VSn+hJNggagpkmueECiZwmrirx24O4HazX8ynJ/JQH4
-	iWXq5L0ojD290vksrEAj6kknP55yvh0Qfz2wKs06pCxJrmqyhOYYtA7e0awNAICikFRAxCuDXvV
-	+kU3okpP1WwhtRuahMTnAQl9KmQgwk+mifiE0jyM2pDUwL9obOoI6+6Q869uGGCgNtCE=
-X-Received: by 2002:a05:6a20:3d06:b0:3d1:39e9:b261 with SMTP id
- adf61e73a8af0-3e16b7aa7dcmr10821454637.0.1791881366815; Tue, 13 Oct 2026
- 01:49:26 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791883872; x=1792488672;
+        h=content-type:content-transfer-encoding:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+NB6q1K55xrXTqewDbSwetE1j/mAPNyb/yxnJTgeOys=;
+        b=wVVfXKtSebwH9yQH47kXe4tb0Rlum+hoKciHEydqjHPI+YgpibahhpJWKYsY1WqLaK
+         T7euT/XmkjIEY+QqwPPxOTWnBTapimNk2BuiIhFNpVob+pVvseS2rWLkc4I3DLejVD3l
+         HBzrnQx/+s9YoDSUrx+2tPTTNnln3Sr79aEYbGMKdUbi9ADvENAbUxIkz6jiiLcbuG6J
+         CVA3P3FIhGwdJBaFDhi+CKHsEYWub6UGv0G6wAGFTVW9hFBjHbs+EQ84v325XmJiTx5V
+         nLiMGCrLXtMUJn+a7SHZ0SEwgGwjED7NMISf2fbkpbIkVr1NqBBeC8J7vsTmfpR7uV/R
+         FCZw==
+X-Forwarded-Encrypted: i=1; AKwUvBxNE4LYzV5WbG+gxiQ9bA6RO5nH14IBX34kWTJqkXcFgh1t7PIRIFNAalmWvJs9mIFRf6gboEsHu6RY@vger.kernel.org
+X-Gm-Message-State: AFq9FYKigdVhzvLeA1b3mEImZ/vVgPPbHlOtyXo4T+P/2mv+GLlZKqXi
+	TBeSTMQ4f8Ob0MacM3yKoYL1y8Wdf4bzPtSIn44rsD1Ns1oy22ei+2qE
+X-Gm-Gg: AYBFou2fXQnnfrpK7qC/IH6CexY/QHdOH4CJnnbQbvpc8xTPFjBi1W6uNJfyE2HsQdv
+	2XjOiyzVaSVIRcb9WlM74UkauNn/Z96KSdUSUkAV6ORhPGCNDx5eVWssY8kAz7J4GCQpYjPQn4F
+	PFQSWEcb/L1ZwTvRGXKUPmkj/vElKdw4zShyEpTmCE3M6V8tfIY+908iZWugo4JSQf1xAVw74kU
+	AsLsQaQYoaMZbsWwAf4GmMP2cQJv8m0NsOeMdNiIpZmSNLxLOnbrdQew94cgXxMQGARH6eKFHP8
+	R499NjGni779jahDG+Mm4Vz9vHLdcVmssEdFi3Qp8fQZhvYwOFUEqjAPKboQCREV2YbQoYSah5J
+	29JjIHtFB1AZy0Y4IH8cTA8azoTtdl70Z/CCXbFcSGhTq5LJMiBnLsdFyG/zQkdF4fzDhckoJKv
+	pULH7K8V/iyR8zOU8gpwVSnZu5z4eEDDQ9BkfwBv2ovCxqdUZX4NmjvE7KckYbSo98Ipa1dNib4
+	Nr4x0CzpqtGp8Za4WqHqzjdVkNg1P2jyDklk+HRaBKvAtRSZc2Mu56u+J5R
+X-Received: by 2002:a17:906:f5aa:b0:c2e:3abd:aadd with SMTP id a640c23a62f3a-c31aa093e85mr1058348666b.37.1791883872324;
+        Tue, 13 Oct 2026 02:31:12 -0700 (PDT)
+Received: from rillian-arch.localnet ([2a00:23a8:8f4:6a01:5ffc:da36:c891:cd3c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c366ed191basm105213166b.15.2026.10.13.02.31.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Oct 2026 02:31:11 -0700 (PDT)
+From: Rillian Grant <rillian.grant@gmail.com>
+To: sashiko-reviews@lists.linux.dev
+Cc: robh@kernel.org, conor+dt@kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, lee@kernel.org
+Subject:
+ Re: [PATCH v3 2/4] leds: flash: Add support for the TI LM3643 dual LED flash
+ driver
+Date: Tue, 13 Oct 2026 10:31:11 +0100
+Message-ID: <LwK5_fJASKu0tC1wo7o7Uw@gmail.com>
+In-Reply-To: <sashiko-outbox-167401@kernel.org>
+References:
+ <20261011191026.149338-1-rillian.grant@gmail.com>
+ <20261011191026.149338-3-rillian.grant@gmail.com>
+ <sashiko-outbox-167401@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261009091059.25729-1-phucduc.bui@gmail.com> <20261013082441.GC199624@google.com>
-In-Reply-To: <20261013082441.GC199624@google.com>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Tue, 13 Oct 2026 15:49:13 +0700
-X-Gm-Features: AclHuK8OWPyPTBv5w267K9ocnsdZsqZeERbiyZTzVq6qJslWRdmCxKS4n-cxkqI
-Message-ID: <CAABR9nEgZZrEJ-HLUfN+8SEdRhbZ6Jc-ybYk3m96twB-npS5hA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] leds: lm3532: Propagate enable GPIO errors
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
-	Dan Murphy <dmurphy@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hi Lee,
+> [Severity: Low]
+> This isn't a bug, but does this commit subject violate the subsystem naming
+> conventions?
+> 
+> According to the LED subsystem guidelines, embedding subsystem subdirectory
+> names like flash into the prefix hinders Git history categorization.
+> Embedding implementation details can also create rigid and non-reusable
+> drivers.
+> 
+> Could the driver name lm3643 be used in the prefix instead, such as
+> "leds: lm3643: "?
 
->
-> Ideally we'd have the author review this - did you Cc them?
->
+Happy to switch to "leds: flash: lm3643:" across the series if there is
+another revision, or for the maintainer to adjust when applying.
 
-Yes, I Cc'd both authors listed in commit bc1b8492c764:
-Dan Murphy and Jacek Anaszewski.
+> [Severity: Medium]
+> Does this sequence require a hardware startup delay after asserting the
+> enable GPIO?
+> 
+> The lm3643_probe() function drives the HWEN GPIO high and then shortly after
+> initiates an I2C regmap_read() to fetch the device ID. Failing to provide a
+> programmatic delay (e.g., via usleep_range) might cause the I2C transfer to
+> fail on platforms where the CPU executes the bus transaction before the
+> hardware state machine and internal oscillator are fully initialized.
+> 
+> Could a small delay be added here to ensure the chip is ready for I2C
+> traffic before the register read is attempted?
 
-Best regards,
-Phuc
+The LM3643 datasheet specifies no delay between HWEN high and I2C ready,
+so I'd rather not add an arbitrary sleep.
+
+-- 
+Rillian Grant
+
+
