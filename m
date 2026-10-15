@@ -1,223 +1,240 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BA6524B14;
-	Thu, 15 Oct 2026 16:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDE153F690
+	for <linux-leds@vger.kernel.org>; Thu, 15 Oct 2026 16:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792080348; cv=none; b=PuKYx5xo7VVTaEKUjvyycIGnaB3+F6SW4GIne+iSwUHG+QQOtwbjghw/QtBqwMSmoEX5NEURe9WABJ7MYAyX7DoHXepa9EA+1sl5TidA4ZzGpqfvT6DDVvGbzBf6RCHLU0XAfcBzeuQi2/0XtK2+ctP0cvsTMe0n4VzO4nYhQDQ=
+	t=1792082837; cv=none; b=GQLDfWRCrU5JseljrLu3eAiIP48RDaED0LjGiBwer1yfH57klXsNwciV+J9HCnRagk1xvgQjjpqenpzOm1IN7FMqvX9qU2PuHzTnTOhdQPbPNY/KeZr9NzQ1v1QRw0261rSCtJnODwdqkuOuJDTIWvOEQTJ4KYPtBHs7rpbL9qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792080348; c=relaxed/simple;
-	bh=pii2WeTzEcDB5GIk4OSjp/CmMbtefKP6NirjtPvEHpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIQQrnugqyjdrHm6NnkINz77AjZZMtrvlxRByhKRZSRxyuiAxyER2+wLjrAfdWU7cTwK1OcI4+WnLM2WvWP7KwtyV2LAJwpqrNAmn13o+qp36pSDfYRtjghCUZk1hWP86shXqArMDbrnlcuA4rQ0SuKrf+auSvzlgMx9jcrpDHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLhnR2Af; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792082837; c=relaxed/simple;
+	bh=UVkLFT/iCNBYM+zZuBoiPE7e9ayV+mTZppqPDWCEcbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRg4zkO5G1xNYfTVjDvy649hE64uBPihYiHAqIkJXZ9TNQAk+eKGzxGZ30my6c8aO2Uzg8Mk8rLYkHGLrqMCxVf8S5OxON+EHeZliHGsp/45El83fGNt9dwgMxJL5yaOGCh8Wyg+wXAKxWmVi81oaECiZxLRAEbYvcXndSRT+To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYQuOaLl; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLhnR2Af"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1C81F000C4;
-	Thu, 15 Oct 2026 16:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792080337;
-	bh=XUlxJX0sV23/Ido8B7tNQRar/Q/7R1Ur3G2zGashXqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FLhnR2AfZhflczK40jQhPPw29WpdvtrvOSbc2el5nLQsqGswIdF0OQR5RSK3UGWCa
-	 LrLsg3GWHTRRUto6FyZ+z5Axha2LFZ9jHPuQLbaC154MKU74c9JFW+Q10JyZUxsj5e
-	 bNlgWK7sEstlwoiJRHeH7Em03FUDGSqyevJ08+gnd25NtGPBCSCXACrDPYJawS5KWf
-	 B+HSotdUeFoziHM5Ld3PGwqZoFOzIs316GLxc8vdYPU+n1AeWd+1/X6mBi8djfRjQg
-	 N5DHTAJ2TneiIHankNL8494wzf5BQ/SelAgsZYERR/Mnh3MVk3+WmG4pJ+QV784bzH
-	 ml0bxzwAtLI9g==
-Date: Thu, 15 Oct 2026 17:05:33 +0100
-From: Lee Jones <lee@kernel.org>
-To: Marcus Flyckt <marcus.flyckt@kvaser.com>
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jimmy Assarsson <extja@kvaser.com>
-Subject: Re: [PATCH v2] leds: trigger: netdev: Support devices in other
- network namespaces
-Message-ID: <179198415957.839288.9912294144956773410@kernel.org>
-References: <20261006064603.1081262-1-marcus.flyckt@kvaser.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYQuOaLl"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-487049569b6so3857019f8f.1
+        for <linux-leds@vger.kernel.org>; Thu, 15 Oct 2026 09:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792082822; x=1792687622; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ehnaBlhbeGX+36y2twAo3wrCg2vlEmltEl+fRRTFHPs=;
+        b=SYQuOaLlfUmFTCD4uugosnodqNXtl+YIVPvZKu/nXXDfkKXwZ1R7cKtALyhtBqbRzQ
+         GPfShfuUdc57OxnSL7Z8RiNP/3y8Nf/G2qJs4ZSrwqFXzBkreTGqo0Ze+nOTa8sDfu6K
+         e8mn9PuKpIPqEooUjnMlwftkdn3+efAOfBpHdExFZj0pI9N1NbkLikvnBXJoAZ3+Rjzr
+         EXYgpDbQ4/2X44/8QEaqfLRhguMeHpXjf19iH9m6/1mf+NKxk8pxtT+b4nemtldoXDEA
+         acQUzF7JFwwLVWqV7LasPzBZYu2B7bSChnydVhlXwJO1k19RGfF1/sez+0p3Q4qZurpz
+         bs7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792082822; x=1792687622;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ehnaBlhbeGX+36y2twAo3wrCg2vlEmltEl+fRRTFHPs=;
+        b=J+wGl5KgFE82E0pkE2rDuN+23SHW6486UYbHHGha1gQs8PGBS/hnJSVleExP8z1GDN
+         iZQRWPbW3YQWT3HOfnyqlTsfdrEGG80TsJWsuhmG29Al8gO44+n+pBYO45e2TMLZjCSN
+         Emeo2qLJm2KcQ54q0095niGOxUjcol1hqosjgvd+C4UwURihNb5bpGOtzyMtfhhSdWcB
+         1e+hOfNlYwMvRFpUEMvav6mVzgZIHKy3zB8NhqPSlpJVoGwQN2aNPG6CEffcGlSD4snf
+         O/g3K488DmSXJ04AjwBqU6JVnL+fiY6IakWcFPYykI+ZlP1CKPHW11HKCyrB6ulGUEJG
+         M0Eg==
+X-Forwarded-Encrypted: i=1; AKwUvByn4gcY0dEQvZpSWokDtYWq50+ZtGKib8sZSE8WZgbAL7pwniS2656rfrjVGRGSmnsP5g43bBf8WuKm@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ1iGT0RPDObVIhRL30QAdELaHSav5KgUnkkM2qpmXiRBHdxmv+
+	5zrejZ4lD3p79rEYwzrn8/1T8IeOOklctn56bhCg5zmKX+T0BGg9eEcb
+X-Gm-Gg: AYBFou0AIboaJX2PsKRuf/+F1wKp4bNH8wNAwGzB7G1pV8BTqa9kDPX3GV9YwDwE02B
+	X7RPrC0JqxbPhg7/15I7ehiDcFz63TZ7to2UDTNaVdXEFuAyH3GZSGk0MQSH9Km4tE/KBgdrNVy
+	Kw9vdPGczWe40mSyoG8tTIuCac2PwbDjoU9NS1V5h/ZA/DPT9u2NAzrYZ3fYfxyPgdJo2Jpr4+I
+	jDyGTwNupAsfCG8at3apwkLgUobMUxEPGamaXEK5CJ+g1ocO8Nru4/q1TlSR0rxG8ySWXEdr0hz
+	/S+OIfTloX073ABF947F7rIRtJfCs3mAb9rI9fv4ixkQwPCw45RuVx4yLEshwa0Mg3Fw6/ftFHy
+	v/+VviAARaKr64VfJdDk5L1d8fA+oqM71WXTV6Ec9reAma7HxwF4DtTFwybg8ACx4X3m2H6O8CI
+	zZmmAJzisF+EVcy9gmDPtGo6onwjCjjuOy2WT6JtEVyaHyQwtiVu9jUGmjUc1joKpBXOy/CAo9F
+	N5rw3QsZ0vw6+KzEWDi7NyXTYPYiA==
+X-Received: by 2002:a05:6000:46d9:b0:48c:557d:ab24 with SMTP id ffacd0b85a97d-48dba784b8dmr26077336f8f.4.1792082822068;
+        Thu, 15 Oct 2026 09:47:02 -0700 (PDT)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48de72d2b13sm14672251f8f.55.2026.10.15.09.47.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Oct 2026 09:47:01 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	mfd@lists.linux.dev
+Subject: [PATCH v2] leds: Add driver for MAX8907 LED cell
+Date: Thu, 15 Oct 2026 19:46:41 +0300
+Message-ID: <20261015164641.363500-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261006064603.1081262-1-marcus.flyckt@kvaser.com>
-X-AI-Review-Draft: <20261006064603.1081262-1-marcus.flyckt@kvaser.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, 06 Oct 2026, Marcus Flyckt wrote:
+Add a small driver to control the LED cell provided by the MAX8907 PMIC.
+The LED does not require any specific configuration and is folded into the
+PMIC's node.
 
-> The netdev LED trigger currently cannot resolve a network device that
-> has been moved into another network namespace.
->
-> For example:
->
->   ip link add vm1 type veth peer vm2
->   tools/leds/uledmon test:green:netdev &
->
->   echo netdev > /sys/class/leds/test:green:netdev/trigger
->   echo 1 > /sys/class/leds/test:green:netdev/link
->
->   ip netns add ledns
->   ip link set vm2 netns ledns
->   ip netns exec ledns \
->           sh -c 'echo vm2 > /sys/class/leds/test:green:netdev/device_name'
->
-> Before this change, the lookup fails because it is always performed in
-> the initial network namespace.
->
-> Resolve the device name in the network namespace of the task writing
-> device_name. Once resolved, follow the device through renames and
-> network namespace moves.
->
-> With the example above, bringing both ends up makes the LED reflect the
-> link state of vm2:
->
->   ip link set vm1 up
->   ip netns exec ledns ip link set vm2 up
->
-> A possibly confusing aspect of this change is that the feature uses the
-> global LED sysfs interface, which is not network namespace aware. The
-> namespace is therefore effectively selected by the task that last wrote
-> device_name.
->
-> Signed-off-by: Marcus Flyckt <marcus.flyckt@kvaser.com>
-> Reviewed-by: Jimmy Assarsson <extja@kvaser.com>
-> Tested-by: Jimmy Assarsson <extja@kvaser.com>
-> ---
-> Changes in v2:
-> - Instead of taking a reference to a network namespace, use net_cookie
-> - Include used headers explicitly
-> - Use C-style comments
->
->  drivers/leds/trigger/ledtrig-netdev.c | 50 +++++++++++++++++++--------
->  1 file changed, 36 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-> index 5b0132484594..16357d45b3cd 100644
-> --- a/drivers/leds/trigger/ledtrig-netdev.c
-> +++ b/drivers/leds/trigger/ledtrig-netdev.c
-> @@ -22,10 +22,13 @@
->  #include <linux/list.h>
->  #include <linux/module.h>
->  #include <linux/netdevice.h>
-> +#include <linux/nsproxy.h>
->  #include <linux/mutex.h>
->  #include <linux/phy.h>
->  #include <linux/rtnetlink.h>
-> +#include <linux/string.h>
->  #include <linux/timer.h>
-> +#include <net/net_namespace.h>
->  #include <net/netdev_lock.h>
->  #include "../leds.h"
->
-> @@ -64,6 +67,8 @@ struct led_netdev_data {
->  	struct led_classdev *led_cdev;
->  	struct net_device *net_dev;
->
-> +	/* net namespace cookie associated with device_name */
-> +	u64 net_cookie;
->  	char device_name[IFNAMSIZ];
->  	atomic_t interval;
->  	unsigned int last_activity;
-> @@ -274,7 +279,7 @@ static ssize_t device_name_show(struct device *dev,
->  }
->
->  static int set_device_name(struct led_netdev_data *trigger_data,
-> -			   const char *name, size_t size)
-> +			   struct net *net, const char *name, size_t size)
->  {
->  	struct net_device *new_dev = NULL;
->  	char device_name[IFNAMSIZ];
-> @@ -294,9 +299,12 @@ static int set_device_name(struct led_netdev_data *trigger_data,
->  	 */
->  	rtnl_lock();
->  	if (device_name[0]) {
-> -		new_dev = dev_get_by_name(&init_net, device_name);
-> +		trigger_data->net_cookie = net->net_cookie;
-> +		new_dev = dev_get_by_name(net, device_name);
->  		if (new_dev)
->  			netdev_lock_ops(new_dev);
-> +	} else {
-> +		trigger_data->net_cookie = 0;
->  	}
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+---
+Changes in v2:
+- rebased so patch is now applicable to linux/next
+---
+ drivers/leds/Kconfig        |  7 ++++
+ drivers/leds/Makefile       |  1 +
+ drivers/leds/leds-max8907.c | 81 +++++++++++++++++++++++++++++++++++++
+ drivers/mfd/max8907.c       |  1 +
+ include/linux/mfd/max8907.h |  2 +-
+ 5 files changed, 91 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/leds/leds-max8907.c
 
-Should this be done under a lock?
-
->  	mutex_lock(&trigger_data->lock);
->
-> @@ -331,7 +339,8 @@ static ssize_t device_name_store(struct device *dev,
->  	struct led_netdev_data *trigger_data = led_trigger_get_drvdata(dev);
->  	int ret;
->
-> -	ret = set_device_name(trigger_data, buf, size);
-> +	ret = set_device_name(trigger_data, current->nsproxy->net_ns, buf,
-> +			      size);
->
->  	if (ret < 0)
->  		return ret;
-> @@ -616,15 +625,24 @@ static int netdev_trig_notify(struct notifier_block *nb,
->  		container_of(nb, struct led_netdev_data, notifier);
->  	struct led_classdev *led_cdev = trigger_data->led_cdev;
->
-> -	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE
-> -	    && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER
-> -	    && evt != NETDEV_CHANGENAME)
-> +	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE &&
-> +	    evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER &&
-> +	    evt != NETDEV_CHANGENAME)
->  		return NOTIFY_DONE;
->
-> -	if (!(dev == trigger_data->net_dev ||
-> -	      (evt == NETDEV_CHANGENAME && !strcmp(dev->name, trigger_data->device_name)) ||
-> -	      (evt == NETDEV_REGISTER && !strcmp(dev->name, trigger_data->device_name))))
-> -		return NOTIFY_DONE;
-> +	if (trigger_data->net_dev) {
-> +		if (dev != trigger_data->net_dev)
-> +			return NOTIFY_DONE;
-> +		/* Ignore namespace transfers */
-> +		if (evt == NETDEV_UNREGISTER &&
-> +		    dev->reg_state != NETREG_UNREGISTERING)
-> +			return NOTIFY_DONE;
-> +	} else {
-> +		if ((evt != NETDEV_REGISTER && evt != NETDEV_CHANGENAME) ||
-> +		    dev_net(dev)->net_cookie != trigger_data->net_cookie ||
-> +		    strcmp(dev->name, trigger_data->device_name) != 0)
-> +			return NOTIFY_DONE;
-> +	}
->
->  	cancel_delayed_work_sync(&trigger_data->work);
->
-> @@ -636,9 +654,12 @@ static int netdev_trig_notify(struct notifier_block *nb,
->  	switch (evt) {
->  	case NETDEV_CHANGENAME:
->  	case NETDEV_REGISTER:
-> -		dev_put(trigger_data->net_dev);
-> -		dev_hold(dev);
-> -		trigger_data->net_dev = dev;
-> +		if (!trigger_data->net_dev) {
-> +			dev_hold(dev);
-> +			trigger_data->net_dev = dev;
-> +		}
-> +		trigger_data->net_cookie = dev_net(dev)->net_cookie;
-> +		strscpy(trigger_data->device_name, dev->name, IFNAMSIZ);
->  		if (evt == NETDEV_CHANGENAME)
->  			get_device_state(trigger_data);
->  		break;
-> @@ -765,7 +786,8 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
->  			const char *name = dev_name(dev);
->
->  			trigger_data->hw_control = true;
-> -			set_device_name(trigger_data, name, strlen(name));
-> +			set_device_name(trigger_data, dev_net(to_net_dev(dev)),
-> +					name, strlen(name));
->
->  			rc = led_cdev->hw_control_get(led_cdev, &mode);
->  			if (!rc)
-> -- 
-> 2.43.0
->
-
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 788e689fe875c..3796c562919fe 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -813,6 +813,13 @@ config LEDS_MAX77705
+ 	help
+ 	  LED driver for MAX77705 PMIC from Maxim Integrated.
+ 
++config LEDS_MAX8907
++	tristate "LED support for MAX8907 PMIC"
++	depends on LEDS_CLASS && MFD_MAX8907
++	help
++	  This option enables support for on-chip LED drivers on
++	  MAXIM MAX8907 PMIC.
++
+ config LEDS_MAX8997
+ 	tristate "LED support for MAX8997 PMIC"
+ 	depends on LEDS_CLASS && MFD_MAX8997
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 3da746279bb81..24efda3fbaa44 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -67,6 +67,7 @@ obj-$(CONFIG_LEDS_LTC3220)		+= leds-ltc3220.o
+ obj-$(CONFIG_LEDS_MAX5970)		+= leds-max5970.o
+ obj-$(CONFIG_LEDS_MAX77650)		+= leds-max77650.o
+ obj-$(CONFIG_LEDS_MAX77705)		+= leds-max77705.o
++obj-$(CONFIG_LEDS_MAX8907)		+= leds-max8907.o
+ obj-$(CONFIG_LEDS_MAX8997)		+= leds-max8997.o
+ obj-$(CONFIG_LEDS_MC13783)		+= leds-mc13783.o
+ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+diff --git a/drivers/leds/leds-max8907.c b/drivers/leds/leds-max8907.c
+new file mode 100644
+index 0000000000000..358505a1c799f
+--- /dev/null
++++ b/drivers/leds/leds-max8907.c
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/err.h>
++#include <linux/leds.h>
++#include <linux/mfd/max8907.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++struct max8907_led_data {
++	struct max8907 *max8907;
++	struct regmap *regmap;
++	struct led_classdev cdev;
++};
++
++static enum led_brightness max8907_led_get_brightness(struct led_classdev *cdev)
++{
++	struct max8907_led_data *ddata = container_of(cdev, struct max8907_led_data, cdev);
++	unsigned int brightness_lvl;
++	int ret;
++
++	ret = regmap_read(ddata->regmap, MAX8907_REG_WLED_CNTL, &brightness_lvl);
++	if (ret)
++		return LED_OFF;
++
++	return brightness_lvl;
++}
++
++static int max8907_led_set_brightness(struct led_classdev *cdev,
++				      enum led_brightness brightness)
++{
++	struct max8907_led_data *ddata = container_of(cdev, struct max8907_led_data, cdev);
++	int brightness_lvl, ret;
++
++	brightness_lvl = clamp(brightness, LED_OFF, LED_FULL);
++
++	if (brightness_lvl) {
++		ret = regmap_write(ddata->regmap, MAX8907_REG_WLED_CNTL, brightness_lvl);
++		if (ret)
++			return ret;
++	}
++
++	return regmap_update_bits(ddata->regmap, MAX8907_REG_WLED_MODE_CNTL,
++				  LED_ON, brightness_lvl ? LED_ON : LED_OFF);
++}
++
++static int max8907_led_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct max8907 *max8907 = dev_get_drvdata(dev->parent);
++	struct max8907_led_data *ddata;
++
++	ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
++	if (!ddata)
++		return -ENOMEM;
++
++	ddata->max8907 = max8907;
++	ddata->regmap = max8907->regmap_gen;
++
++	platform_set_drvdata(pdev, ddata);
++
++	ddata->cdev.brightness = LED_OFF;
++	ddata->cdev.flags = LED_CORE_SUSPENDRESUME;
++	ddata->cdev.max_brightness = LED_FULL;
++	ddata->cdev.name = dev_name(dev);
++
++	ddata->cdev.brightness_get = max8907_led_get_brightness;
++	ddata->cdev.brightness_set_blocking = max8907_led_set_brightness;
++
++	return devm_led_classdev_register(dev->parent, &ddata->cdev);
++}
++
++static struct platform_driver max8907_led_driver = {
++	.driver.name = "max8907-leds",
++	.probe = max8907_led_probe,
++};
++module_platform_driver(max8907_led_driver);
++
++MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
++MODULE_DESCRIPTION("MAX8907 LED driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/mfd/max8907.c b/drivers/mfd/max8907.c
+index 6d5e6a1556fd5..9f737ad7eb398 100644
+--- a/drivers/mfd/max8907.c
++++ b/drivers/mfd/max8907.c
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ 
+ static const struct mfd_cell max8907_cells[] = {
++	{ .name = "max8907-leds", },
+ 	{ .name = "max8907-regulator", },
+ 	{ .name = "max8907-rtc", },
+ };
+diff --git a/include/linux/mfd/max8907.h b/include/linux/mfd/max8907.h
+index e222250f0cc1e..35b2ede54f856 100644
+--- a/include/linux/mfd/max8907.h
++++ b/include/linux/mfd/max8907.h
+@@ -112,7 +112,7 @@
+ #define MAX8907_REG_CHG_IRQ2_MASK	0x81
+ #define MAX8907_REG_CHG_STAT		0x82
+ #define MAX8907_REG_WLED_MODE_CNTL	0x84
+-#define MAX8907_REG_ILED_CNTL		0x84
++#define MAX8907_REG_WLED_CNTL		0x85
+ #define MAX8907_REG_II1RR		0x8E
+ #define MAX8907_REG_II2RR		0x8F
+ #define MAX8907_REG_LDOCTL20		0x9C
 -- 
-Lee Jones
+2.53.0
+
