@@ -1,47 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8333E31A07F;
-	Thu, 15 Oct 2026 11:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C4A50B8A1;
+	Thu, 15 Oct 2026 11:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792065051; cv=none; b=nsT6UcAA00M1s5doY8crVSeV1CZIS3jZwoX6mqWHu5OEFg6e5ktfsUFkPPDb4jBmjr4IZEc2nXrKKFkclfRwSZ5dH1wGYkdwNZpBRzztJ/UWT8JuallUO9/JX/EDZFJbruA1fVj6cIfbmm1dByDfPNzgRmEVmfVuXAM+aav5m1c=
+	t=1792065279; cv=none; b=qlOiGr3ZWMtwDT1BNSgwCEi7kry/7R4xQYO9tWYljOP7IQl9Vwd8GMzRCL27P+qLdyyuxeZckiKVUdR0XOlJWXl4sgtrjhcqkk/2ydm702Lc6iZ82yHl9HDrrpSyGSRSVi24nHG0REs8ZZJp/689S9X0YYT6CYQjq8yFZFvEpZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792065051; c=relaxed/simple;
-	bh=VSdHStomVn46F4ewruQ4QMhJT/fq+4WwDnwnLS9gKzI=;
+	s=arc-20240116; t=1792065279; c=relaxed/simple;
+	bh=xYOp1G1jxzxOUfjE0zV3ZGoO+SvXwIrIA3wjJIwpViU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQidKskCANqX3kYyjE4UceRtoSby4SInsDTw56DONwP6cM8wJ/F218H9tqgqaV+slJB7G9WWYsz8pF24s8SAHuQIVgBLrdLV7KYeYKJ5e3fiDG91utjztFUi1CXPbCybYKsA/2yYPsXQ6PxZqhL7uL+FcyZ9DNaHB/W7DeyKC8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JUK8s7P7; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTWyXFHOZdsL0g9YyQ65VmimDhboAlSNY/wdeuhfF9brRunA3EINCrsfy24s7D9ke11SHxhVC4wEeOZ7Wt9rtQrkn9lSCS4VcYcTMm6GE9lbUIR2bn51EtZyrhMTZxrj0HhGfetmZfcaspvEvSN+7KjrpVwaGxvZ2zS2SLC5IRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8nkOOa1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUK8s7P7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689D31F000C4;
-	Thu, 15 Oct 2026 11:50:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8nkOOa1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EF81F000C4;
+	Thu, 15 Oct 2026 11:54:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792065049;
-	bh=dJ4bhnxKo74R9ZM5Fm1e/unKSpya17F001qaVop7plU=;
+	s=k20260515; t=1792065277;
+	bh=P2y0MpldF4+kwQvIj2Qel3DB2HC+sKuBQKtA4I9yV7Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=JUK8s7P7SnzLUBf/a2RN7iwciGazWHAl6KIKTZSh0ogwXl/sONhLL19yeNbCXj73U
-	 Kph3yZqY+JtINzB5/rRsBt4YdaYRMCxYibSRNUSxkkdmu/ZZ7rxXV/q9In60IzD54I
-	 h2mOf3fnsmUUevoooPcGwe31+DnXRSJPHcByif53gioY31ZOC6gDtITC1ncPwI8+ar
-	 3WCAr5FiUsfd+XbPx3Y88FId02tLGUs18oqCoj/rqia+m+ABHG+TYN4DsY/NIaynD7
-	 zrctA26cKfHMMxd3T84Y9T+erE++R17oJswtkauKi0AVriBH96kcIryCUJJB+LTTXI
-	 DW1q/6OqHovlA==
-Date: Thu, 15 Oct 2026 12:50:43 +0100
+	b=F8nkOOa1SYIJxkN5Kv6B84mABuizZOrfSDsAmY5A1h3moNGBnSj1mXrSBl8Tp9Cfp
+	 HxfGZjgY5RDozrqhZE5Ft3bsmFvjxGMR9nlWe26uIfDI5tJF1ZWxLdOEkZziXX4W3Y
+	 Vcr6frg6PBiG1KOL8+WLVvSV2bI3hnyKf/1MXgwTXfqz6Cz96ZGovV6O92MyXH9Mcf
+	 nso7RhOmaXSSosumsuOd+CDg2r5MAiRfhTv7dkxMouTRW8rpO9KH/wyOrSzA4cwwvA
+	 zxsRKLKw2CpfmxJaoWqKWOpRsabPtEF21hy2GV0ShG/V3opahtvZn+FOiND3pdO2OZ
+	 tVL4q5I2p1/gQ==
+Date: Thu, 15 Oct 2026 12:54:33 +0100
 From: Lee Jones <lee@kernel.org>
-To: Liang Haowen <nbg2974@gmail.com>
-Cc: linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
-	"Martin K . Petersen" <mkp@kernel.org>, linux-scsi@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Denis Benato <denis.benato@linux.dev>, Armin Wolf <W_Armin@gmx.de>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-	Marco Scardovi <scardracs@disroot.org>
-Subject: Re: [RFC v9 1/1] leds: asus-aura-scsi: Add ASUS Aura RGB LED driver
- for ROG NVMe enclosures
-Message-ID: <20261015115043.GA1863739@google.com>
-References: <20260925134010.2815025-1-nbg2974@gmail.com>
- <20260925134010.2815025-2-nbg2974@gmail.com>
- <179198503855.839288.7797731903424311774@kernel.org>
+To: Myeonghun Pak <mhun512@gmail.com>
+Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>,
+	Pavel Machek <pavel@kernel.org>,
+	Joseph Strauss <jstrauss@mailbox.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] leds: blinkm: Clean up sysfs group on LED
+ registration failure
+Message-ID: <179198508016.839288.4695468891309561458@kernel.org>
+References: <20260926000344.29899-1-mhun512@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -50,94 +45,83 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <179198503855.839288.7797731903424311774@kernel.org>
+In-Reply-To: <20260926000344.29899-1-mhun512@gmail.com>
+X-AI-Review-Draft: <20260926000344.29899-1-mhun512@gmail.com>
 
-On Fri, 25 Sep 2026, Lee Jones wrote:
+On Fri, 25 Sep 2026, Myeonghun Pak wrote:
 
-> --- checkpatch.pl: clean (0 issues) ---
-> 
-> On Fri, 25 Sep 2026, Liang Haowen wrote:
-> 
-> > ASUS ROG external NVMe enclosures (ROG STRIX Arion, USB 0b05:1932) are
-> > plain USB mass-storage devices with no HID interface: the Aura LEDs
-> > hang off an ENE controller driven by vendor SCSI commands on the same
-> > LUN as the disk. The enclosure has 4 independently addressable LEDs,
-> > verified on hardware.
-> >
-> > Register a scsi_device_handler matched by INQUIRY (vendor "ROG",
-> > model "ESD-S1C"); it does not claim the sdev (sd keeps owning the
-> > disk) and exposes each LED as a multicolor LED class device,
-> > /sys/class/leds/asus-arion-0-0-0-0::led-0 through led-3. The
-> > H:C:T:L part of the sdev name keeps the names unique when more than
-> > one enclosure is connected, with its colons flattened to dashes. The
-> > color section stays empty, since multicolor LEDs enumerate their
-> > palette via multi_intensity, and the four identical zones use the
-> > function name with a "-N" ordinal, as the naming section in
-> > Documentation/leds/leds-class.rst asks for.
-> >
-> > Protocol: a 16-byte vendor CDB (opcode 0xec, 'A' 'S' signature,
-> > BE16 register index, argument count in byte 13), modelled by
-> > struct ene_cdb. MODE 0x8021 (Static) must be written first in every
-> > sequence or the device ignores it; colours go to 0x8160 + 3 * led
-> > and 0x8100 + 3 * led (3 bytes, wire order R, B, G; both tables are
-> > written because firmware revisions pull from one or the other);
-> > APPLY 0x80a0 takes 0x01 to apply; the controller also accepts 0xaa
-> > to save the state to its flash, which this driver never sends: the
-> > LED class interface is runtime state and does not promise persistence
-> > across power cycles, and a save on every update would wear the
-> > controller flash. The colour reverts to the stored default on power
-> > cycle, like any other runtime-only LED.
-> >
-> > The CDB cannot go through scsi_execute_cmd(): it sizes the command
-> > via scsi_command_size(opcode), which maps vendor opcode 0xec to
-> > 10 bytes, so byte 13 is dropped and the device silently ignores the
-> > write (GOOD status, no error). scsi_execute_cmd() also offers no way
-> > to override the derived length. The request is therefore built with
-> > scsi_alloc_request(), which initializes the scsi_cmnd parts a
-> > passthrough needs, with cmd_len set to the CDB size, mirroring what
-> > SG_IO does from userspace. A 5 s timeout and a single retry-less
-> > quiet submission cover the register writes.
-> >
-> > The write payload is copied into a per-device buffer before it is
-> > mapped with blk_rq_map_kern(), so no stack memory is ever mapped for
-> > DMA (VMAP_STACK).
-> >
-> > brightness_set only caches the colour and marks the LED pending
-> > under a spinlock; led_mc_calc_color_components() runs under that
-> > lock too, because it writes the shared subled_info array and
-> > trigger events call led_set_brightness() without the led_access lock
-> > that serializes sysfs stores. A single work item per enclosure then
-> > snapshots the pending LEDs and runs one ENE sequence for all of
-> > them. Funneling every update through one work item keeps the
-> > sequences from interleaving between concurrent LED updates and
-> > batches multi-LED updates into a single APPLY. A re-queued run
-> > with nothing pending returns before touching the device, so it
-> > cannot wear the flash with a pointless SAVE, and the lock keeps a
-> > colour write from being reordered after its pending flag on weakly
-> > ordered architectures.
-> >
-> > This is the monolithic out-of-tree version as verified on hardware;
-> > the Kconfig/Makefile/MAINTAINERS wiring lands with the agreed split
-> > into a SCSI transport helper and a shared ASUS Aura LED interface.
-> >
-> > Signed-off-by: Liang Haowen <nbg2974@gmail.com>
-> > ---
-> >  drivers/leds/rgb/leds-asus-aura-scsi.c | 404 +++++++++++++++++++++++++
-> >  1 file changed, 404 insertions(+)
-> >  create mode 100644 drivers/leds/rgb/leds-asus-aura-scsi.c
-> 
-> A driver source file without 'Kconfig' or 'Makefile' integration is dead code in
-> the tree.  Either wire it up now or hold off on submitting until the rest of the
-> pieces are ready.
+> blinkm_probe() creates the BlinkM sysfs group before registering the LED
+> class devices. If multicolor sub-LED allocation fails, probe returns
+> without removing the group. If multicolor LED registration fails, the
+> helper removes the group but returns success, leaving the device bound
+> without an LED class device.
+>
+> Keep LED class device rollback in the registration helpers, but remove
+> the BlinkM sysfs group in blinkm_probe() when either registration mode
+> fails. Propagate the multicolor registration error so probe can perform
+> this cleanup and report the failure.
+>
+> Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
+> Cc: stable@vger.kernel.org
+> Assisted-by: LLM
+> Co-developed-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+> ---
+> Changes in v2:
+> - Move sysfs group cleanup to blinkm_probe() for both LED registration modes.
+> - Propagate multicolor LED registration errors to blinkm_probe().
+>
+>  drivers/leds/leds-blinkm.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+> --- a/drivers/leds/leds-blinkm.c
+> +++ b/drivers/leds/leds-blinkm.c
+> @@ -671,7 +671,6 @@ failblue:
+>  failgreen:
+>  	led_classdev_unregister(&leds[RED]->cdev.led_cdev);
+>  failred:
+> -	sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+>
+>  	return err;
+>  }
+> @@ -714,9 +713,8 @@ static int register_multicolor(struct i2c_client *client, struct blinkm_data *da
+>  	if (err < 0) {
+>  		dev_err(&client->dev, "couldn't register LED %s\n",
+>  				mc_led->cdev.led_cdev.name);
+> -		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+>  	}
+> -	return 0;
+> +	return err;
+>  }
+>
+>  static int blinkm_probe(struct i2c_client *client)
+> @@ -749,13 +747,12 @@ static int blinkm_probe(struct i2c_client *client)
+>  	}
+>
+> -	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR)) {
+> +	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR))
+>  		err = register_separate_colors(client, data);
+> -		if (err < 0)
+> -			return err;
+> -	} else {
+> +	else
+>  		err = register_multicolor(client, data);
 
-Also:
+Please add a newline after the 'if-else' block.
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(s) to consider:
-- [Low] leds: asus-aura-scsi: undefined function kzalloc_obj() causes build failure       
-- [Low] leds: asus-aura-scsi: blk_rq_map_kern() missing required request_queue argument   
-- [Low] leds: asus-aura-scsi: strscpy() called with missing size argument
+> -		if (err < 0)
+> -			return err;
+> +	if (err < 0) {
+> +		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
 
-Was this even tested?
+How about using 'devm_device_add_group() to automate clean-up?
+
+> +		return err;
+>  	}
+>
+>  	blinkm_init_hw(client);
 
 -- 
 Lee Jones
