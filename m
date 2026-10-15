@@ -1,150 +1,127 @@
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D827C5226AA
-	for <linux-leds@vger.kernel.org>; Thu, 15 Oct 2026 12:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D565851AFDB;
+	Thu, 15 Oct 2026 12:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792068629; cv=none; b=bwbMNUyQSWpf9zrrdDwvF8eFWrM1bBocZm/won9aI4Q/1ZTTYejZ68cVCWBx+A+4Vf1twP5Yq3qAR1BFKujikjUzZtscq1lwEoiG+WIrD8lCbYRIlh9IpzV/4vi6K7SEkHg9pXL93RHcMH07EJ9weaE2p2CHp9RPm6PqTFV+8BA=
+	t=1792068706; cv=none; b=YNUpR52de3t+fOU5/Rc50jsjqzPtvOx5SfSRDKRm3KyEKBdPTvBpKM/q8RwAZW2UG6IkoAnUkpKyQy9OQUpKVDCR0JWcPTE0G0MSYchbVlwxfT8+xWLSidvssSl8vGANrzdJsd8U+UQ+1HYeFkbbpj3g9w51f02TwoJ3FpOhl04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792068629; c=relaxed/simple;
-	bh=vLkp7CnrKfl1dEHGT8RtciddFshZjtcg5UAArZDgK7s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BipuR/rnzWCLBEFzNa+VWkt0vHiq7gSFFNG9uOmBnv39CqjwTl7gwEsPoseJPg3BFV3nejOQXU2y4ATelP3EbSaLFLC0EuwGEgyqSsJMiB8Rs0o5SOuQi3LMZi7KoYfmoUI1KexwCoCejc5Kl4ZCanc1d4W6OtlSHFfBnA0ouTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20251104.gappssmtp.com header.i=@thegoodpenguin-co-uk.20251104.gappssmtp.com header.b=gMEPEmug; arc=none smtp.client-ip=74.125.82.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+	s=arc-20240116; t=1792068706; c=relaxed/simple;
+	bh=QXllR0xP8nWVvi4ycSEzU3+CGxjq+MXIYtSkdlH3t/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nsZZspeHyQK3qyakEMLK6q6fyoF7BD5uRJjxnLg1bQydNDy0YMfDauyQ6L6rmtjMxvjHdf33ToX0TA1/yFbJE5nGG2U5+lSSUuHY8qLVszl5k5zB6eE/WytL+s3osAdJ8zI1cTGwF7OLtzANFc16VN2pX1hNYJoe0NhGLkhAAAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JoNhX8C7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20251104.gappssmtp.com header.i=@thegoodpenguin-co-uk.20251104.gappssmtp.com header.b="gMEPEmug"
-Received: by mail-dl1-f53.google.com with SMTP id a92af1059eb24-16ad92569b5so4954238c88.1
-        for <linux-leds@vger.kernel.org>; Thu, 15 Oct 2026 05:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20251104.gappssmtp.com; s=20251104; t=1792068626; x=1792673426; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=keTa3jZbkpCAH7JHtH8sV3LYGMY6X3FohOSa8WF+qeg=;
-        b=gMEPEmugERMbdQO6g1m5+hsEBaIKqm37RuS05QVdiY/tw6TF/1o3++dzMCiRiXjCVQ
-         yqMZwkbd+6a23Orvnyu4RWjW466e8qNT14SGpaunKnCWJntYkbExCZlBYP0ILuIwbBQ/
-         d/wlDaz4jEG1wNZ5cYzPR9hKL9nX4OOJQCC1UZK4tfjYmko5GHI2hqciRTRkZsoHE1Mc
-         VIgpmON5A8Z0zJk56qKb0cGWX8laQwisuSPkrrqTJya10cTD5gE5078oTrtKH3cQNXjA
-         pNT9LC+DJBHsGtbfMPXEAlfefDiX8f7u0lEiIhKNo+CilQSSliES2+CsZH1ux6rUYx3Y
-         RQJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792068626; x=1792673426;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=keTa3jZbkpCAH7JHtH8sV3LYGMY6X3FohOSa8WF+qeg=;
-        b=MQm15OKQRxVljtjPZiIJatarX5Hwg2u4VR3Azqp49UEQ7ENr6F0t7/5s6yQFArKzOZ
-         jnLamMwMeR+GP4Cm8fnAfd6HNQ2DC/jquCNsjiaVxdP1nhTbfaPv9WDhZEvneY6J0RjQ
-         3oJYOZzzEOPNBDeOoF+YBvDxUo1lr76DxYjb43hp6pjSJV3a5uSQcOWtIiK7Ri6vrQVQ
-         QSWhqn6iqIRlF+ytYDRc+eBUDKGKRRrh5zeZQnjfECzXHlw28UAHIgeyHswou7C243vy
-         psTTiP+xqCrZrOHyQ+6Z42l9vR2Qk8mpKYWTYVd71L5mHZc3gC46WZdUeh7eqk0ucoVO
-         k0Rw==
-X-Gm-Message-State: AFq9FYIL98whYBCr6PBNrV6bT0dKwgqRh8AibyUpRMxzkYAj/txZPRk4
-	zXQyIFaoLNGulgrhTXyM6yWL5MJJYTTv9js4RQ2aW5lKf4pSCBEI7/ErHdchS5Tp5NY=
-X-Gm-Gg: AYBFou2SojKnOOdgtwXI5SpGlipHBFZzknczzpKASmZY8vTvPeFj1rjTcA2kPHsD7TT
-	OQB4ajgrNOpE2nLKkr//NciumAsUQya9PUkCeOVUzfJ3zdQZyxPFCe/yR0H1y5vQ9hS51XEqu4W
-	2Sjq3lQtFr5WUMAfnLc4oSdgXLGiNyfy3yay1OL6FAOphA6VMGjjEmRe2MYTarYFAwHvbU527dl
-	dqmEo4FoHeZjRc4Yn+bkQkRC48QXDqW0OyKVwFnJihJK4ibQq3NIVBwDC+9npAjcz8MjZL+eVpC
-	Rbj/C3G38CBjthrn3JM8iUwmUBgTSwrJdLf1AbwIGgefZkTiRs4/ZC4b0+cFP24Qsse7+/MYTL0
-	VWyCOuSAKpoGc5YO2fCpTaDXJwtlhV0EyguBu2NmsAhNzWVWMOIXHKfXrtJNLACK1iCN9i3cwsD
-	FRuMnJVSO8/LoS4hUjDHGFjAQKptG2CuQs26TQKjjVMAxwcRi7QUK6xXea1blwWDWoGWJOxtmuq
-	pPqesFYHPKIqeZE
-X-Received: by 2002:a05:7022:5f04:b0:17d:961d:7db0 with SMTP id a92af1059eb24-17d961d7e11mr5695442c88.28.1792068625670;
-        Thu, 15 Oct 2026 05:50:25 -0700 (PDT)
-Received: from [10.42.0.1] ([2a00:23c7:1d1a:9c01:efe0:7af6:c627:5f7f])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-169a567aef5sm54602983c88.19.2026.10.15.05.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Oct 2026 05:50:25 -0700 (PDT)
-From: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-Date: Thu, 15 Oct 2026 13:50:18 +0100
-Subject: [PATCH] leds: nic78bx: Use named initializers for acpi_device_id
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JoNhX8C7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 178A01F000C4;
+	Thu, 15 Oct 2026 12:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
+	s=korg; t=1792068704;
+	bh=IWtHMI/eMhJnI9me/c92CVJGdl0B9ute1Ne9yIrUfww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=JoNhX8C77Ykv96e4Yk0ko6Smt0zFrtP1GFRE4zwmTf3o6Jd6iuQoBEf/NAvmW6JaH
+	 BIHCVrqch7YPo6bMoc5X5nXp2LHMOtCUpRSFVEXKldzxmzfdESHrirTyNb2Jf1Lpxr
+	 71rZ4W/HsrP6AoOPDq6VtBzX6Z9gApAzzXSSxFa8=
+Date: Thu, 15 Oct 2026 14:51:47 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Myeonghun Pak <mhun512@gmail.com>,
+	Jan-Simon Moeller <jansimon.moeller@gmx.de>,
+	Pavel Machek <pavel@kernel.org>,
+	Joseph Strauss <jstrauss@mailbox.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] leds: blinkm: Clean up sysfs group on LED
+ registration failure
+Message-ID: <2026101556-boxer-underfoot-1e9f@gregkh>
+References: <20260926000344.29899-1-mhun512@gmail.com>
+ <179198508016.839288.4695468891309561458@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261015-acpi-leds-v1-1-81ac99b105e7@thegoodpenguin.co.uk>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXM0QpFQBRG4VfRvjY1M2FO51XkgvFj64RmIyXvb
- g6XX63WSYLAEPomJwXsLDxPESZNyA/11ENxG01W28Jok6vaL6x+aEVp5zqXI/tYOIr9EtDx8bz
- K6rVszQi//gd0XTeQI5kCbQAAAA==
-X-Change-ID: 20261015-acpi-leds-077f75e482e7
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792068623; l=2393;
- i=pzalewski@thegoodpenguin.co.uk; s=20260430; h=from:subject:message-id;
- bh=vLkp7CnrKfl1dEHGT8RtciddFshZjtcg5UAArZDgK7s=;
- b=VpHQcFjgGl/s94WgtEQN/3l7VvDhkmuP3BgqZ+1g31WYFr8ZJ2/Glqm8dWYh0zImRyV1hrG39
- 5JyH37lZrZHDO3hn7jdeE2S7N2xf5cYCvhUoHn+p6K5/KIupDbHPSNs
-X-Developer-Key: i=pzalewski@thegoodpenguin.co.uk; a=ed25519;
- pk=vHq4n9IonORH2GTzLv8r6CWAFHzgfBuNkQPXA8NSly0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <179198508016.839288.4695468891309561458@kernel.org>
 
-Use a designated initializer for the acpi_device_id fields which makes the
-code more readable and consistent with how lists are initialized in the
-rest of the kernel code base.
+On Thu, Oct 15, 2026 at 12:54:33PM +0100, Lee Jones wrote:
+> On Fri, 25 Sep 2026, Myeonghun Pak wrote:
+> 
+> > blinkm_probe() creates the BlinkM sysfs group before registering the LED
+> > class devices. If multicolor sub-LED allocation fails, probe returns
+> > without removing the group. If multicolor LED registration fails, the
+> > helper removes the group but returns success, leaving the device bound
+> > without an LED class device.
+> >
+> > Keep LED class device rollback in the registration helpers, but remove
+> > the BlinkM sysfs group in blinkm_probe() when either registration mode
+> > fails. Propagate the multicolor registration error so probe can perform
+> > this cleanup and report the failure.
+> >
+> > Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
+> > Cc: stable@vger.kernel.org
+> > Assisted-by: LLM
+> > Co-developed-by: Ijae Kim <ae878000@gmail.com>
+> > Signed-off-by: Ijae Kim <ae878000@gmail.com>
+> > Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Move sysfs group cleanup to blinkm_probe() for both LED registration modes.
+> > - Propagate multicolor LED registration errors to blinkm_probe().
+> >
+> >  drivers/leds/leds-blinkm.c | 15 ++++++---------
+> >  1 file changed, 6 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
+> > --- a/drivers/leds/leds-blinkm.c
+> > +++ b/drivers/leds/leds-blinkm.c
+> > @@ -671,7 +671,6 @@ failblue:
+> >  failgreen:
+> >  	led_classdev_unregister(&leds[RED]->cdev.led_cdev);
+> >  failred:
+> > -	sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+> >
+> >  	return err;
+> >  }
+> > @@ -714,9 +713,8 @@ static int register_multicolor(struct i2c_client *client, struct blinkm_data *da
+> >  	if (err < 0) {
+> >  		dev_err(&client->dev, "couldn't register LED %s\n",
+> >  				mc_led->cdev.led_cdev.name);
+> > -		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+> >  	}
+> > -	return 0;
+> > +	return err;
+> >  }
+> >
+> >  static int blinkm_probe(struct i2c_client *client)
+> > @@ -749,13 +747,12 @@ static int blinkm_probe(struct i2c_client *client)
+> >  	}
+> >
+> > -	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR)) {
+> > +	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR))
+> >  		err = register_separate_colors(client, data);
+> > -		if (err < 0)
+> > -			return err;
+> > -	} else {
+> > +	else
+> >  		err = register_multicolor(client, data);
+> 
+> Please add a newline after the 'if-else' block.
+> 
+> > -		if (err < 0)
+> > -			return err;
+> > +	if (err < 0) {
+> > +		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+> 
+> How about using 'devm_device_add_group() to automate clean-up?
 
-Signed-off-by: Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
----
-This series is converting lists that contain the acpi_device_id struct,
-which is defined in the include/linux/device-id/acpi.h to make use of named
-initializers (which they do not use currently). This work is part of the on
-going effort in the kernel associated with device-ids [1]
+Wait, why is a driver manually adding sysfs files at all?  Shouldn't
+this "just work" if it's a default group for the driver?  This way (or
+with the devm_device_add_group() call) will race with userspace and
+loose.
 
-The plan is to convert acpi_device_id::driver_data to have an anonymous
-union, similarly to what was introduced for PCI and I2C device ID tables.
-The goal is to increase type-safety (most of the existing casts are gone),
-to improve readability and to make use intent a bit more clear:
+thanks,
 
-```
-union {
-	kernel_ulong_t driver_data;
-	const void *driver_data_ptr;
-}
-```
-
-But for that to work all lists containing the structs need to use named
-initializers first to avoid triggering -Wmissing-braces. I already have
-patches that implement this and touching a lot of kernel subsystmes that
-use the acpi_device_id struct and that list keeps on growing. Therefore,
-I have decided to split the series per every subsystem into:
-- pre-clean-ups that convert the lists to use named initializers
-  (which is this series)
-- actual implementations that make some of the modules use the new
-  driver_data_ptr member (does not apply to this tree)
-
-That way the task can be fragmented into manageable and independent chunks
-of work and makes this effort easier to review.
-
-[1] https://lore.kernel.org/all/cover.1780048925.git.u.kleine-koenig@baylibre.com/
----
- drivers/leds/leds-nic78bx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-nic78bx.c b/drivers/leds/leds-nic78bx.c
-index 5e3098e1e1ad..d0f80aa3cf47 100644
---- a/drivers/leds/leds-nic78bx.c
-+++ b/drivers/leds/leds-nic78bx.c
-@@ -188,7 +188,7 @@ static int nic78bx_probe(struct platform_device *pdev)
- }
- 
- static const struct acpi_device_id led_device_ids[] = {
--	{ "NIC78B3" },
-+	{ .id = "NIC78B3" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, led_device_ids);
-
----
-base-commit: 0fcb05b72344f40806cbe810de8872f1698bf053
-change-id: 20261015-acpi-leds-077f75e482e7
-
-Best regards,
---  
-Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
-
+greg k-h
