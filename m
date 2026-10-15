@@ -1,42 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C4A50B8A1;
-	Thu, 15 Oct 2026 11:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFB4524B1C;
+	Thu, 15 Oct 2026 12:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792065279; cv=none; b=qlOiGr3ZWMtwDT1BNSgwCEi7kry/7R4xQYO9tWYljOP7IQl9Vwd8GMzRCL27P+qLdyyuxeZckiKVUdR0XOlJWXl4sgtrjhcqkk/2ydm702Lc6iZ82yHl9HDrrpSyGSRSVi24nHG0REs8ZZJp/689S9X0YYT6CYQjq8yFZFvEpZA=
+	t=1792068043; cv=none; b=NbNJIDEPG/MmLW+nxmdFUhvO/H7gblvD3Q8U04ObB9r4QYnL+5pE5B9joZIfvt3kHcxRjOBlYNk1/nBZ/iIuX800b0bKVQsa2+SprYHx0xlIU1fRZN4XH8oyJIp+X401bvtmcBypcGoRXZ9dHHqjAOgFsnve2DXvx8KjqO8jaBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792065279; c=relaxed/simple;
-	bh=xYOp1G1jxzxOUfjE0zV3ZGoO+SvXwIrIA3wjJIwpViU=;
+	s=arc-20240116; t=1792068043; c=relaxed/simple;
+	bh=Cevq8m4biap8mXnqmeOT5z3NEclaoSR37+Xq0JCgVJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTWyXFHOZdsL0g9YyQ65VmimDhboAlSNY/wdeuhfF9brRunA3EINCrsfy24s7D9ke11SHxhVC4wEeOZ7Wt9rtQrkn9lSCS4VcYcTMm6GE9lbUIR2bn51EtZyrhMTZxrj0HhGfetmZfcaspvEvSN+7KjrpVwaGxvZ2zS2SLC5IRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8nkOOa1; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=boYOCKs8yWUIWidUjPY7q3UaN3gGUi3LWf1c6l1mleq5LupdULtw8Eko6iLOK5xaTPMdtGPCA0wxXphN4lNak7b0myJX+TyULV4ITz6vFMiJh1Slj64o2i9Ez2rWSRQrXeQXrlddrRKxjPj6n4oa8Mn7BtefYCP58X+3ErST0zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuB4upJW; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8nkOOa1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EF81F000C4;
-	Thu, 15 Oct 2026 11:54:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuB4upJW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC341F000C4;
+	Thu, 15 Oct 2026 12:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792065277;
-	bh=P2y0MpldF4+kwQvIj2Qel3DB2HC+sKuBQKtA4I9yV7Y=;
+	s=k20260515; t=1792068042;
+	bh=4jYUWj1Z8lVtLtLhT03lBD4WoGFffEkFo9Ee1+0Henc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=F8nkOOa1SYIJxkN5Kv6B84mABuizZOrfSDsAmY5A1h3moNGBnSj1mXrSBl8Tp9Cfp
-	 HxfGZjgY5RDozrqhZE5Ft3bsmFvjxGMR9nlWe26uIfDI5tJF1ZWxLdOEkZziXX4W3Y
-	 Vcr6frg6PBiG1KOL8+WLVvSV2bI3hnyKf/1MXgwTXfqz6Cz96ZGovV6O92MyXH9Mcf
-	 nso7RhOmaXSSosumsuOd+CDg2r5MAiRfhTv7dkxMouTRW8rpO9KH/wyOrSzA4cwwvA
-	 zxsRKLKw2CpfmxJaoWqKWOpRsabPtEF21hy2GV0ShG/V3opahtvZn+FOiND3pdO2OZ
-	 tVL4q5I2p1/gQ==
-Date: Thu, 15 Oct 2026 12:54:33 +0100
+	b=DuB4upJWt1qSCI+i7geWSb9+9TPb4HM2H1uDDt/DNXFkVyi1gl1Xv+4+gJCLfxwih
+	 hYpKqczX3TB1U5YgRg/C1t0r9JbvdlEY/MrL7Fne2jvEpSd3xA70Go3tciTrwSOxA1
+	 kalGW3Smei/DH/1n3KXifHX70SxiGk8amkResDIYdYc6dfowmbrZoP5nC9u+ZKVUh1
+	 JgtsD5vDBLRPpOyXk93xbiZ8lgCPl47/VpdgjNWpydcJi3fDveV1+HtAb+Nxo2Gwc5
+	 Mu3BK/RAGCUstfXTCynrIKpY1fT9HjTi3mi+0LwdwRVL7A+/rBFDlpOdCVOzohoIY4
+	 3o5dlaNfq5hNA==
+Date: Thu, 15 Oct 2026 13:40:38 +0100
 From: Lee Jones <lee@kernel.org>
-To: Myeonghun Pak <mhun512@gmail.com>
-Cc: Jan-Simon Moeller <jansimon.moeller@gmx.de>,
-	Pavel Machek <pavel@kernel.org>,
-	Joseph Strauss <jstrauss@mailbox.org>, linux-leds@vger.kernel.org,
+To: Danish Khateeb <danishkhateeb03@gmail.com>
+Cc: pavel@kernel.org, afd@ti.com, linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] leds: blinkm: Clean up sysfs group on LED
- registration failure
-Message-ID: <179198508016.839288.4695468891309561458@kernel.org>
-References: <20260926000344.29899-1-mhun512@gmail.com>
+Subject: Re: [PATCH] leds: tca6507: Fix use-after-free on unbind
+Message-ID: <179198531901.839288.3981290104893464587@kernel.org>
+References: <20260926172115.543800-1-danishkhateeb03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -45,83 +42,116 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260926000344.29899-1-mhun512@gmail.com>
-X-AI-Review-Draft: <20260926000344.29899-1-mhun512@gmail.com>
+In-Reply-To: <20260926172115.543800-1-danishkhateeb03@gmail.com>
+X-AI-Review-Draft: <20260926172115.543800-1-danishkhateeb03@gmail.com>
 
-On Fri, 25 Sep 2026, Myeonghun Pak wrote:
+On Sat, 26 Sep 2026, Danish Khateeb wrote:
 
-> blinkm_probe() creates the BlinkM sysfs group before registering the LED
-> class devices. If multicolor sub-LED allocation fails, probe returns
-> without removing the group. If multicolor LED registration fails, the
-> helper removes the group but returns success, leaving the device bound
-> without an LED class device.
+> Since the LEDs are registered with devm_led_classdev_register(), they
+> are unregistered only after tca6507_remove() has cancelled the work.
+> Unregistering an LED that is on turns it off, which queues the work
+> again from led_assign(), and the work then runs after devres has freed
+> the chip:
 >
-> Keep LED class device rollback in the registration helpers, but remove
-> the BlinkM sysfs group in blinkm_probe() when either registration mode
-> fails. Propagate the multicolor registration error so probe can perform
-> this cleanup and report the failure.
+>   BUG: KASAN: slab-use-after-free in assign_work+0x414/0x5b0
+>   Read of size 8 at addr ffff888010d5c0c0 by task kworker/1:2/65
+>   ...
+>   Last potentially related work creation:
+>    ...
+>    queue_work_on+0xb6/0xc0
+>    led_assign+0x223/0x340 [leds_tca6507]
+>    led_classdev_unregister+0x26b/0x340
+>    release_nodes+0xb3/0x140
+>    devres_release_group+0x247/0x470
+>    i2c_device_remove+0xbf/0x1b0
 >
-> Fixes: 56e8c56c9af0 ("leds: Add multicolor support to BlinkM LED driver")
+> Set up the work with devm_work_autocancel() before the LEDs are
+> registered, so that devres cancels it after they are gone, and drop
+> tca6507_remove().
+>
+> Fixes: 1b5c2fa7081c ("leds: tca6507: Use devm_led_classdev_register() to simplify remove path")
 > Cc: stable@vger.kernel.org
 > Assisted-by: LLM
-> Co-developed-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Ijae Kim <ae878000@gmail.com>
-> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+> Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
 > ---
-> Changes in v2:
-> - Move sysfs group cleanup to blinkm_probe() for both LED registration modes.
-> - Propagate multicolor LED registration errors to blinkm_probe().
 >
->  drivers/leds/leds-blinkm.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
+> Notes:
+>     Tested in QEMU on a next-20260925 KASAN kernel, with the driver built as
+>     a module and a test-only module that adds a fake I2C adapter and a
+>     software node for a TCA6507 with two LEDs. With the LEDs on, unbinding
+>     hits the report above (38 reports in 20 unbind/bind cycles), and so does
+>     unloading the driver in 2 of 3 runs. With this patch there are no
+>     reports in 20 cycles or 3 unloads, and the LEDs come back after each
+>     rebind. A W=1 build with GPIOLIB is clean.
 >
-> diff --git a/drivers/leds/leds-blinkm.c b/drivers/leds/leds-blinkm.c
-> --- a/drivers/leds/leds-blinkm.c
-> +++ b/drivers/leds/leds-blinkm.c
-> @@ -671,7 +671,6 @@ failblue:
->  failgreen:
->  	led_classdev_unregister(&leds[RED]->cdev.led_cdev);
->  failred:
-> -	sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+>  drivers/leds/leds-tca6507.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 >
->  	return err;
->  }
-> @@ -714,9 +713,8 @@ static int register_multicolor(struct i2c_client *client, struct blinkm_data *da
->  	if (err < 0) {
->  		dev_err(&client->dev, "couldn't register LED %s\n",
->  				mc_led->cdev.led_cdev.name);
-> -		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
->  	}
-> -	return 0;
-> +	return err;
->  }
->
->  static int blinkm_probe(struct i2c_client *client)
-> @@ -749,13 +747,12 @@ static int blinkm_probe(struct i2c_client *client)
->  	}
->
-> -	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR)) {
-> +	if (!IS_ENABLED(CONFIG_LEDS_BLINKM_MULTICOLOR))
->  		err = register_separate_colors(client, data);
-> -		if (err < 0)
-> -			return err;
-> -	} else {
-> +	else
->  		err = register_multicolor(client, data);
+> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
+> index 9afe2722986c..503a465a07f4 100644
+> --- a/drivers/leds/leds-tca6507.c
+> +++ b/drivers/leds/leds-tca6507.c
+> @@ -79,6 +79,7 @@
+>  #include <linux/gpio/driver.h>
+>  #include <linux/property.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/devm-helpers.h>
 
-Please add a newline after the 'if-else' block.
+Nit: Alphabetical.
 
-> -		if (err < 0)
-> -			return err;
-> +	if (err < 0) {
-> +		sysfs_remove_group(&client->dev.kobj, &blinkm_group);
+>
+>  /* LED select registers determine the source that drives LED outputs */
+>  #define TCA6507_LS_LED_OFF	0x0	/* Output HI-Z (off) */
+> @@ -735,9 +736,15 @@ static int tca6507_probe(struct i2c_client *client)
+>  		return -ENOMEM;
+>
+>  	tca->client = client;
+> -	INIT_WORK(&tca->work, tca6507_work);
+>  	spin_lock_init(&tca->lock);
+> -	i2c_set_clientdata(client, tca);
 
-How about using 'devm_device_add_group() to automate clean-up?
+Nice catch.
 
+> +
+> +	/*
+> +	 * Unregistering the LEDs turns them off, which queues the work again,
+> +	 * so it must be cancelled after them: set this up before registering.
+> +	 */
+
+Correct life-time ordering is expected.  This comment is superfluous.
+
+> +	err = devm_work_autocancel(dev, &tca->work, tca6507_work);
+> +	if (err)
 > +		return err;
->  	}
 >
->  	blinkm_init_hw(client);
+>  	for (i = 0; i < NUM_LEDS; i++) {
+>  		struct tca6507_led *l = tca->leds + i;
+> @@ -766,20 +773,12 @@ static int tca6507_probe(struct i2c_client *client)
+>  	return 0;
+>  }
+>
+> -static void tca6507_remove(struct i2c_client *client)
+> -{
+> -	struct tca6507_chip *tca = i2c_get_clientdata(client);
+> -
+> -	cancel_work_sync(&tca->work);
+> -}
+> -
+>  static struct i2c_driver tca6507_driver = {
+>  	.driver   = {
+>  		.name    = "leds-tca6507",
+>  		.of_match_table = of_match_ptr(of_tca6507_leds_match),
+>  	},
+>  	.probe    = tca6507_probe,
+> -	.remove   = tca6507_remove,
+>  	.id_table = tca6507_id,
+>  };
+>
+>
+> base-commit: 05b4738b0078f7d6f154f68068a11c8a0635e9df
+> -- 
+> 2.55.0
+>
 
 -- 
 Lee Jones
