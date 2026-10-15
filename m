@@ -1,97 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D0E2C21F7
-	for <linux-leds@vger.kernel.org>; Thu, 15 Oct 2026 14:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83DF223336;
+	Thu, 15 Oct 2026 14:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792075731; cv=none; b=CPaOk6Sg1OkZ4lheuvBaE1qucw1BRvsCo1lvggp/mmvJLbQy4kugOvN5342d3KGv48jycMTyEBfO3X/bdXVA7Ezn57xCFqtSl8GxQvRbBAvOFjMifdY9i6B02eOIvyTN7u9QQHUv1TsX+TiJNSNzPYKna+daEMeR22RG8ELnJy0=
+	t=1792075969; cv=none; b=c1+ez2WRL+iwhjkbBZOadcBIKTIQIprTKxjlYu7y9+D5JAI2csuteuzERiXkeR+J3/Uh80YbFxw/hOkwcCi1Y6mdaw4wqRFzx5AkmU71yWclStzGqHqP1iXGor30vuMrYc4aYzU4SWXhNEATst2Q0BoonDpuIc1OExmN6Jnrxzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792075731; c=relaxed/simple;
-	bh=8T9WZmyrgiIjpD4j4SECaM+w+ZhVmi4IhmjzTilrNFY=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=WH/eAUahb8rY2AxQc+fcNCwRMe5DTCknvmn5RPoQu5FKT75k7uviG4LgqshMcd2ZvnN/UgGCdqgzTVvh9Kzzt1KnFoMvqoM0KheXkIiMrxjUMJ1qTKCGZR+60ayUgXkBRlLqGzG1/X/nHpcbrzei1y2SyFOuR7Ptqe59E9p5bK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EiAysanW; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792075969; c=relaxed/simple;
+	bh=WUD7ZmFpEH5pp45xghtynRttTm+KE9DanMZl0k9Dhzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPPm6xAJRzcePAISBScYhHhx/npjVE9NLlXqATaZQi6pXX2848tGyXJB8j3b7LjBg8Jciv9KC9qKa9SvFe9cZIa+BtYhwZWe92DTMiDcw33yM4QULAAidt+chLmNFoIZbCf3yopRPXxaNl/3cFhpUH6O99duCTDbGFs+Qo2TCl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCSKPFoj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EiAysanW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B92F1F000C4;
-	Thu, 15 Oct 2026 14:48:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCSKPFoj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5D11F000C4;
+	Thu, 15 Oct 2026 14:52:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792075730;
-	bh=Q9YzuHZfySbbLil2K+Y6H+K09O4t5H3fvsXFc482PUE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EiAysanW9QD1ys5leqVJENQhG5LRLNHebYT7AXZBvgsM86RcCcIgnwJwiw3l7mIUi
-	 L7FkMBHRIuXIkrc9Cj4TuBO1VuYHFkGDONc3fHeGJ5IwRPOF2VPMdNSg3ll2KwMlmm
-	 7dPEgOoTLaIm0X40xa6r2wrbvjsPyWW9mlxmG2j3A1NgiRnOw7C67T7RCu5nbJsfAl
-	 Dx7ctp15I1UNhTnYKkFKlGv2od30Ql+uriA+aBX7BEFGTnZFiHupmIE1ogaQAxuNjv
-	 s/r1vS5ki8MSI7Jd+ip28YDG1RxyA6ZjV3QWJ75Oj8EJzakTpn5pR93/irISEwtj/k
-	 BF4gWqnDSEQXQ==
-Message-ID: <sashiko-outbox-172992@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] leds: tca6507: Fix use-after-free on unbind
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Danish Khateeb" <danishkhateeb03@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261015144033.56519-1-danishkhateeb03@gmail.com>
-References: <20261015144033.56519-1-danishkhateeb03@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 15 Oct 2026 14:48:49 +0000
+	s=k20260515; t=1792075968;
+	bh=Ei46+KxB+IHBh4EjqfXrbgGpc7y+UFCPlOwCEn9c6qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=iCSKPFoj/AukWTunBsDJA/3NTgkG89Hs1yjswr5NFYg/KmdSkBAgchB4Lto1NE7X/
+	 Y0/JfDkPDbLHV/ReJEI029Q6/SV6FVKAcEycLHrZgyUDDIOOlvVDk9ezg/SuKlBurM
+	 /xY992S/kuAMx/O5zs04x3hSnfb4UouGSsObcNF7QhzXvc7KqVgITf6m+kcWMsC4KO
+	 8N3uBNosC1wVtI1QNNJJwFzKLJgQnScmBzWz3O8t+W9mD9qpXhOq8k2c277fPxT3Y3
+	 fSZ+88QWZB+ylrhesoXuAaQCYdP+ZJoOSdLsngVegYEGX+xf5Sds0e/PMzOzBQ6GHu
+	 DDqlPfzKzKHvA==
+Date: Thu, 15 Oct 2026 15:52:43 +0100
+From: Lee Jones <lee@kernel.org>
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+Cc: linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Mike Marciniszyn <mike.marciniszyn@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Kees Cook <kees@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] leds: trigger: netdev: Put netdev on activate
+ error path
+Message-ID: <179198456306.839288.14631216021466477145@kernel.org>
+References: <20261001131206.2513248-1-alexander.sverdlin@siemens.com>
+ <20261001131206.2513248-2-alexander.sverdlin@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261001131206.2513248-2-alexander.sverdlin@siemens.com>
+X-AI-Review-Draft: <20261001131206.2513248-2-alexander.sverdlin@siemens.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] leds: tca6507: devres cancels work before LED off commands are s=
-ent
---
+On Thu, 01 Oct 2026, A. Sverdlin wrote:
 
-commit 26c3a76d710837c5d81cb4e74292b31880a4a3d5
-Author: Danish Khateeb <danishkhateeb03@gmail.com>
+> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+>
+> When hw control is active, set_device_name() takes a reference on the
+> netdev via dev_get_by_name(). The register_netdevice_notifier() failure
+> path frees trigger_data without dropping it, leaking the netdev.
+>
+> Cc: stable@vger.kernel.org
+> Closes: https://lore.kernel.org/all/20260914140045.B8F4C1F000FF@smtp.kernel.org/
+> Fixes: 0316cc5629d1 ("leds: trigger: netdev: init mode if hw control already active")
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> ---
+> Changelog:
+> v3:
+> - introduced unset_device_name() as a counterpart of set_device_name()
+>
+>  drivers/leds/trigger/ledtrig-netdev.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+> index 5b0132484594c..e2a6c95a0dc97 100644
+> --- a/drivers/leds/trigger/ledtrig-netdev.c
+> +++ b/drivers/leds/trigger/ledtrig-netdev.c
+> @@ -324,6 +324,13 @@ static int set_device_name(struct led_netdev_data *trigger_data,
+>  	return 0;
+>  }
+>
+> +static void unset_device_name(struct led_netdev_data *trigger_data)
+> +{
+> +	dev_put(trigger_data->net_dev);
+> +	trigger_data->net_dev = NULL;
+> +	trigger_data->device_name[0] = 0;
+> +}
 
-leds: tca6507: Fix use-after-free on unbind
-   =20
-Set up the work with devm_work_autocancel() before the LEDs are registered,
-so that devres cancels it after they are gone, and drop tca6507_remove().
-This resolves a previous use-after-free.
+Given that both callers immediately 'kfree(trigger_data)' after calling
+this, why bother clearing these at all?  Wouldn't calling 'dev_put()'
+directly in 'netdev_trig_activate()' be simpler than introducing a
+helper here?
 
-> diff --git a/drivers/leds/leds-tca6507.c b/drivers/leds/leds-tca6507.c
-> index 9afe2722986cf..0f987e551f03d 100644
-> --- a/drivers/leds/leds-tca6507.c
-> +++ b/drivers/leds/leds-tca6507.c
-[ ... ]
-> @@ -735,9 +736,11 @@ static int tca6507_probe(struct i2c_client *client)
->  		return -ENOMEM;
-> =20
->  	tca->client =3D client;
-> -	INIT_WORK(&tca->work, tca6507_work);
->  	spin_lock_init(&tca->lock);
-> -	i2c_set_clientdata(client, tca);
 > +
-> +	err =3D devm_work_autocancel(dev, &tca->work, tca6507_work);
-> +	if (err)
-> +		return err;
+>  static ssize_t device_name_store(struct device *dev,
+>  				 struct device_attribute *attr, const char *buf,
+>  				 size_t size)
+> @@ -776,8 +783,10 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
+>  	led_set_trigger_data(led_cdev, trigger_data);
+>
+>  	rc = register_netdevice_notifier(&trigger_data->notifier);
+> -	if (rc)
+> +	if (rc) {
+> +		unset_device_name(trigger_data);
+>  		kfree(trigger_data);
+> +	}
+>
+>  	return rc;
+>  }
+> @@ -790,7 +799,7 @@ static void netdev_trig_deactivate(struct led_classdev *led_cdev)
+>
+>  	cancel_delayed_work_sync(&trigger_data->work);
+>
+> -	dev_put(trigger_data->net_dev);
+> +	unset_device_name(trigger_data);
+>
+>  	kfree(trigger_data);
+>  }
+> -- 
+> 2.55.0
+>
 
-[Severity: Medium]
-Since this devres action is registered before the LEDs are registered later
-in tca6507_probe(), doesn't it run after them during unbind?
-
-When the driver is unbound, devres will first unregister the LEDs, which
-sets their brightness to LED_OFF. The driver's brightness_set callback
-will queue an I2C transaction via schedule_work(&tca->work).
-
-Immediately after, devres invokes the devm_work_autocancel action, which
-calls cancel_work_sync(&tca->work). Since the work is still pending, it gets
-cancelled before it can run, meaning the I2C write to turn off the LEDs
-never occurs.
-
-Although this resolves the previous use-after-free, does it prevent the
-LEDs from correctly turning off on teardown, causing the hardware LEDs to
-physically stay on after driver unbind?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261015144033.5651=
-9-1-danishkhateeb03@gmail.com?part=3D1
+-- 
+Lee Jones
