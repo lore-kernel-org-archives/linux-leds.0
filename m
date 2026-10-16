@@ -1,132 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23FC3A901C;
-	Fri, 16 Oct 2026 06:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E4F377A83
+	for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2026 06:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792132650; cv=none; b=VIkjtXoioepBr5XXTuxm+DPYXMTC9W9MYD0zViggEIqcgT1CQPA/lihvduE5A0IRGiDZYhUa9yMJVKqCxf8kZsNj6pugldJW2qO6ugtTU+JZaY/VzDvq9WDibhvIq6qZEPGcR8agU8aqqMI7KjLf//vdjcWhbTSMruiLnphmqr0=
+	t=1792133070; cv=none; b=QR7HHrUvB3SkoCEdFrWSOTa3GvHdDak2kD813zYceNg/Kf7ZsuxQdibcgGxnJG4Zi3p4eRPpntgbsZVZytTx0TLykRPjagE/UOFC7huQRu2CvIddeoVu1bKUXjpwgKPxBoUIvsw6qzc20wNKzDx8bzXUOr0VcKRc58nbWgDU3KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792132650; c=relaxed/simple;
-	bh=BnnYdFFWWwOCp+3d1u2NUGSicwuidY4Oh+2ora6rmm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gI/ZIMwG1iOxKAdZOJkEMdHJVCkxgFUALtW2t4ok46ve/4hEr8IxhP2zx1Iy+dVyxD4N8U5wskrug7r9M8PsuUs8df5b26N/Hoy+0ruR38rlh1ENld4e5Z6EloEVbHLHEPPW6sGfp+v5OI8LwUWsbC7dU7ttn8CP6qbh7NipRrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7uBH0ae; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1792133070; c=relaxed/simple;
+	bh=TxTWc1kOj60lEAfw5ut9YNnhTR1rX3CTGkLhPog4Uvc=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=AvbX4R6/MqDXhOVHcdTYoeU3CsgR9wm8R0qzc9quahv3f9JTeGV7qh/gZHc1I+QrF/5b5D2una36GFE4wtQdk70j872yCaHYu3zpsjViZKPphTCzHFBUru//dBc+GM6l7nMgcLuGSCrP2ZjmTD+ByKsgJdkoh5yIdSQoAzOISuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3nq4h0O; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7uBH0ae"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 666BFC2BCF5;
-	Fri, 16 Oct 2026 06:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1792132650;
-	bh=BnnYdFFWWwOCp+3d1u2NUGSicwuidY4Oh+2ora6rmm4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=V7uBH0ae19vKw9EKFz+V70/q5WnpRTNmyHOxkHICdNLXdMLdBDRelduklBv8Odu6z
-	 5j/FhvWG3tVkN3HlvyLOZUfpqqorYDGZ1jFjOaxKZgeA+7TcmVdUkNBwkSRE4BXVYf
-	 bNqi/Glma/UtL0xcqWXZFEh4QzyyO1Ae4vgKRLYNeD65T0JxV1qjOmZ8XopGYr+YDI
-	 oREvSV5zBpteWDvw+Y8+84yUcaFOvns/nEFWMybxCgX7D+7QHdlwz1a7EXJqHUVd17
-	 U1CCNxxtPXbbInfzEU/olEF2CyWXnuiCVwOTHMfOah3mFFgx0TzbuLuzj6PmkcLgRk
-	 N+Fei/NaKmmjw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40568CCA462;
-	Fri, 16 Oct 2026 06:37:30 +0000 (UTC)
-From: George Neacsu via B4 Relay <devnull+geocausa.gmail.com@kernel.org>
-Date: Fri, 16 Oct 2026 07:37:30 +0100
-Subject: [PATCH] leds: flash: leds-qcom-flash: Release all V4L2 flash
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3nq4h0O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21791F000C4;
+	Fri, 16 Oct 2026 06:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792133069;
+	bh=LqP6cWEjXP++89QGFe5JFcUEag8YMlSpHs29KI4fpMo=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=C3nq4h0OGz0MvDsKStPr7Mqd9kolJI/WN8XMCR9UqqAfXxUZvgU2Ul7thuIAI3BZ7
+	 O8/dIxLVxP4iVJU6eAQ4OKhmkIHSi0Q8DuTcHmPrR16EU9u1BgHQeaKjf7Bv38ndiD
+	 XF+demXwf2/hfc/f00S23e0SzOweWWljuhmcEvM59+nxKSongOiEpGy+vjgVHli61f
+	 0gBgxVP2w+TgJl83GESWEdtIlXpz68qNRug0j+sHT6BrALVt2udhpn8i0ysr5WVd/R
+	 96BuNd5it0ZHrRW9OdyfCMf5i3+ZNg3TPjL5Qr1XdFHs2iHxXDdwbmK2gTeBIXY415
+	 wBlTHJB3LYhNw==
+Message-ID: <sashiko-outbox-173877@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] leds: flash: leds-qcom-flash: Release all V4L2 flash
  devices
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "George Neacsu" <geocausa@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261016-qcom-flash-v4l2-release-v1-1-0e92aa7c9327@gmail.com>
+References: <20261016-qcom-flash-v4l2-release-v1-1-0e92aa7c9327@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 16 Oct 2026 06:44:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261016-qcom-flash-v4l2-release-v1-1-0e92aa7c9327@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MTQqAIBBA4avErBtQKaOuEi1EpxywPwciiO6et
- PwW7z0glJkEhuqBTBcL71uBrivw0W0LIYdiMMpYrbTF0+8rzslJxKtJBjMlckLYB9X6vgvaNx2
- U+sg08/2fx+l9Pwh7F4ppAAAA
-X-Change-ID: 20261016-qcom-flash-v4l2-release-9d05c97d1c47
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-leds@vger.kernel.org, stable@vger.kernel.org, 
- George Neacsu <geocausa@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792132649; l=2721;
- i=geocausa@gmail.com; s=20261015; h=from:subject:message-id;
- bh=CI6yYCRJ7s3Nt//a396V+HzvBRozRkOc2yI+sV9seYA=;
- b=DE117K+Hxmkt3xq1NNeUAoIn3zCf1lMjMnJNMAANQL01b7nbzwHXfl0Z11u4w79aYj/WJzgHn
- vCp+h0y+s/wDodjhieEW2JemsODWQ23ZCIUI8Eb1lm2RN6QCKkuFsfv
-X-Developer-Key: i=geocausa@gmail.com; a=ed25519;
- pk=KyQk/iWbxsikewDBh0SwlHI51RvAqahD3loqmRp9DVI=
-X-Endpoint-Received: by B4 Relay for geocausa@gmail.com/20261015 with
- auth_id=1199
-X-Original-From: George Neacsu <geocausa@gmail.com>
-Reply-To: geocausa@gmail.com
 
-From: George Neacsu <geocausa@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Low] leds: missing mutex_destroy() on probe error paths
+--
 
-The probe error path and qcom_flash_led_remove() walk the V4L2 flash
-array like this:
+commit 02e8e6631f1731424fa6ad18e025af7434984559
+Author: George Neacsu <geocausa@gmail.com>
 
-	while (flash_data->v4l2_flash[flash_data->leds_count] && flash_data->leds_count)
-		v4l2_flash_release(flash_data->v4l2_flash[flash_data->leds_count--]);
+leds: flash: leds-qcom-flash: Release all V4L2 flash devices
 
-leds_count is the number of registered LEDs, so the first test reads
-one entry past the last registered one. The array holds exactly one
-entry per LED child node, so after a full probe that read is out of
-bounds. The loop also stops before index 0. With a single LED nothing
-is released at all.
+This commit fixes an out-of-bounds array access and a loop logic error
+during probe failure and driver removal. It ensures all registered V4L2
+flash sub-devices are correctly released.
 
-The V4L2 flash sub-device then stays registered after the driver is
-unbound, still pointing at the driver's freed devm memory. On a Surface
-Pro 11 (X1E80100, PM8550 flash, IR LED linked to a sensor through
-flash-leds), unloading the module and then setting a flash control on
-the sub-device triggered UBSAN shift-out-of-bounds reports and a NULL
-pointer dereference in regmap_field_update_bits_base(), called from
-update_allowed_flash_current().
+> diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/le=
+ds-qcom-flash.c
+> index b03a6833e3e3a..c2fefeec9b80c 100644
+> --- a/drivers/leds/flash/leds-qcom-flash.c
+> +++ b/drivers/leds/flash/leds-qcom-flash.c
+> @@ -953,8 +953,8 @@ static int qcom_flash_led_probe(struct platform_devic=
+e *pdev)
+> =20
+>  	return regmap_field_write(flash_data->r_fields[REG_TORCH_CLAMP], flash_=
+data->torch_clamp);
+>  release:
+> -	while (flash_data->v4l2_flash[flash_data->leds_count] && flash_data->le=
+ds_count)
+> -		v4l2_flash_release(flash_data->v4l2_flash[flash_data->leds_count--]);
+> +	while (flash_data->leds_count)
+> +		v4l2_flash_release(flash_data->v4l2_flash[--flash_data->leds_count]);
 
-Release the registered entries from leds_count - 1 down to 0.
+[Severity: Low]
+Are we missing a call to mutex_destroy() for flash_data->lock on the error
+paths?
 
-Fixes: 96a2e242a5dc ("leds: flash: Add driver to support flash LED module in QCOM PMICs")
-Cc: stable@vger.kernel.org
-Assisted-by: Claude:claude-opus-5-5
-Signed-off-by: George Neacsu <geocausa@gmail.com>
----
- drivers/leds/flash/leds-qcom-flash.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Earlier in qcom_flash_led_probe(), the driver calls
+mutex_init(&flash_data->lock). However, neither this release cleanup block
+nor the earlier direct error returns destroy it:
 
-diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
-index b03a683..c2fefee 100644
---- a/drivers/leds/flash/leds-qcom-flash.c
-+++ b/drivers/leds/flash/leds-qcom-flash.c
-@@ -953,8 +953,8 @@ static int qcom_flash_led_probe(struct platform_device *pdev)
- 
- 	return regmap_field_write(flash_data->r_fields[REG_TORCH_CLAMP], flash_data->torch_clamp);
- release:
--	while (flash_data->v4l2_flash[flash_data->leds_count] && flash_data->leds_count)
--		v4l2_flash_release(flash_data->v4l2_flash[flash_data->leds_count--]);
-+	while (flash_data->leds_count)
-+		v4l2_flash_release(flash_data->v4l2_flash[--flash_data->leds_count]);
- 	return rc;
- }
- 
-@@ -962,8 +962,8 @@ static void qcom_flash_led_remove(struct platform_device *pdev)
- {
- 	struct qcom_flash_data *flash_data = platform_get_drvdata(pdev);
- 
--	while (flash_data->v4l2_flash[flash_data->leds_count] && flash_data->leds_count)
--		v4l2_flash_release(flash_data->v4l2_flash[flash_data->leds_count--]);
-+	while (flash_data->leds_count)
-+		v4l2_flash_release(flash_data->v4l2_flash[--flash_data->leds_count]);
- 
- 	mutex_destroy(&flash_data->lock);
- }
+	count =3D device_get_child_node_count(dev);
+	if (count =3D=3D 0 || count > flash_data->max_channels) {
+		dev_err(dev, "No child or child count exceeds %d\n", ...);
+		return -EINVAL;
+	}
 
----
-base-commit: 62f482ff73bf3ae88b0c899115527752cf9cbf13
-change-id: 20261016-qcom-flash-v4l2-release-9d05c97d1c47
+While the memory for flash_data is devres-managed, bypassing mutex_destroy()
+omits CONFIG_DEBUG_MUTEXES validation hooks during teardown and leaves the
+cleanup asymmetric compared to qcom_flash_led_remove().
 
-Best regards,
--- 
-George Neacsu <geocausa@gmail.com>
+>  	return rc;
+>  }
 
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016-qcom-flash=
+-v4l2-release-v1-1-0e92aa7c9327@gmail.com?part=3D1
