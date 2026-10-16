@@ -1,158 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEDF4F5DF0;
-	Fri, 16 Oct 2026 16:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2189A494299;
+	Fri, 16 Oct 2026 18:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792168779; cv=none; b=GUSGO0UYwS5VU62BVWrAavmIqUY4fOwlSHRlbFv9vwoGAeGjMtNSd//oMqZr8Yw68U8RkLfrGyUJXJH/lOWZRPhJoyg9PaUVjduoNOOquOyuQZeByaS6cmdr8RsWPega06p7wFvgYKybAPmm+NAoeXxRqUCZv+Wr5M0DIihiBJ4=
+	t=1792174088; cv=none; b=OV/aZ6ZQQ2ZFqzncjCs9iBkyYjBDknbzCiOYEPyW+IYXKeo2n85r5oLXsmsSzYIHtL0x/9WwNgiHseC2oeJJJIYajYOGe3ikN7doKK4bmShN8bnfMteVbFOFuHcTHCINoqhxNwk9nK4zK+4/Uj9iNj+lpjxbwbuMqD0blgVogSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792168779; c=relaxed/simple;
-	bh=dHATyNE/FfGScpjzpErBx+zJ3QcicVAAVnH4mLN2T/M=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=AF7UeLiH83VLyaCKHnJherO0PQdEPHSKpXr/ErBpwYtgz9AOtxuZvNCsd4FdsETiHoNYQ0MnImZ3QdPOctEBpSPVUlPqQsKTBhCPuywGIBtGfHdTec4T+bkbbYdZXTDv1qBdp87Twe6WnxzbGDMWVzTNi3t7fa2NIfBA7eiQjp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZp0Nc47; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792174088; c=relaxed/simple;
+	bh=cuXXWcKApSYi8idG8I3CY1fSknjNP3FY1dJN+DkO1AE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oW+UEe0TAZcd9+i6jxtQZSy2iPUSFD70GYOpno49B1RtZRlCVqMOABd7mAar9jgXqbnNvUixQUK75uaf21nLVhs+JnQS6AQGfpXkNJOwYT16iGZOXcseFNKFIrwFeebUGgnDGJ0xDUD17PFtp3a/s5fpOdKWZhOrOVtuobp0iZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SU8cXl89; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZp0Nc47"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7491E1F000C4;
-	Fri, 16 Oct 2026 16:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792168777;
-	bh=mu5Or24tAvvN5+fThhSll8YuACjLcuqS/05wCRz8M40=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TZp0Nc475kkzdpWZEJMAFQF5eNY6VLidiNVrAvZ2AdGDQnN1o9EsEVUpReJC434KS
-	 Vt1Slo0dCvBLK427Qp7K87COm9qoHZ71DL0dyCqTjiyZmkKFVZse/+Kv6K9XRKlvoR
-	 hfLRBnJL6g8i8xlfYas9mugeksUFFQAErBYSHUkVXlHXhvBkop4LcLEOLljI/puIWc
-	 tidV4lxlb0nVkket5HQcjg/bvWul697W1KUhM1oDl3mECn5Ibv3j4ZnQ6PyeJJzvth
-	 foXfyGapn/e+4HyUCoyanmN99aCPjm2TUqHmFfU1elxYjhhIYXRuuNvhZYYdRYAbWG
-	 fgKaTtKA9aRBg==
-Message-ID: <sashiko-outbox-174655@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 2/2] backlight: Add Awinic AW99703 backlight driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Luka Panio" <lukapanio@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261016162912.64581-3-lukapanio@gmail.com>
-References: <20261016162912.64581-1-lukapanio@gmail.com>
- <20261016162912.64581-3-lukapanio@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 16:39:36 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SU8cXl89"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C245DC2BD00;
+	Fri, 16 Oct 2026 18:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1792174087;
+	bh=cuXXWcKApSYi8idG8I3CY1fSknjNP3FY1dJN+DkO1AE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=SU8cXl898XubSbG94veKS22aiqx5PTfseS8ONT/7cWzb8Xs6QgNNCEea9o2lI6I1p
+	 i5/TA6NEKa6UQhJ76QFnWq7fBypVJ7nh8OMexkoPQYQLNrZv8wqQMOoSz+f1cQhUTV
+	 wXNWMnha5oFi07T5gW3R/xq/e6+xJQX2hxz9J7Sito6Mn8RoixdEMutrpE7DefBOkw
+	 3qXPVV3O2bcqlWEax7oshGTHgOQfeKjhKqyyV8I0PC6JioHVD4sFpyCyrLxAVocZRI
+	 YZ07JGb9YdTzUBraYbhqtEBqcU73RiJnmTo9R/A08ju/+bJ9MCO7snQLkTSr8qFaDq
+	 lVlGkRMyItXRA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F273CCF2C2;
+	Fri, 16 Oct 2026 18:08:07 +0000 (UTC)
+From: Markus Probst via B4 Relay <devnull+markus.probst.posteo.de@kernel.org>
+Date: Fri, 16 Oct 2026 20:08:03 +0200
+Subject: [PATCH v27 2/4] rust: leds: Add Mode trait
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261016-rust_leds-v27-2-2c296d8a8e5b@posteo.de>
+References: <20261016-rust_leds-v27-0-2c296d8a8e5b@posteo.de>
+In-Reply-To: <20261016-rust_leds-v27-0-2c296d8a8e5b@posteo.de>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Leon Romanovsky <leon@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ Ira Weiny <iweiny@kernel.org>, Boqun Feng <boqun@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ Markus Probst <markus.probst@posteo.de>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4103;
+ i=markus.probst@posteo.de; h=from:subject:message-id;
+ bh=T5jFSZhnJXyl8J1nAaebPNgFMg1/74G8qletYMXyqFc=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBq0mgFWc/4vVj1smifRSMEWAs169P8StA5fMJBh
+ yQ+cIXHM5qJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCatJoBRsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9KswhAAuuk+TRejynPCTcrPhj9ASdkWFIAiw0b
+ oDbcI6sEhsqygJUexRBrtHJxKvGTbmUM5el8cxRHa4DGBmRKSxHV2VjyLKrZQUfRcDy0+3H2vgl
+ yacKuB+TCV/S9WlSRqfiqUy9fk5RQ5QUyeJadqR4cNK/Y4JtdKW8ciY9NkdXs9EWnVkJ/cXWPmy
+ e6/FuB8PlwiVps2q/aFI4mdAipoms6pu5/gFFU20FkX8wSCvfMOs6tb7psWWcW1Nvdm821twzT5
+ qugZaHR7sgsVMIOJA6M5CQQ4N/cHbvkvB3KWtArdP0bQwc0PA1JhKWLzYcitCzpDsbrH2X+I8hH
+ xEIZbVhEIR4vymK4Amh0GRJuzQZ9jrDzDrjObMBULAEfP4yJ68uTlyWa2GuSKauy+SYwoJ0EBXq
+ dObEiI4saXWNec2GbUK3F1ykN0OVX9DZjyJUs801bRSZ8YwbXgW9L/f2oSWv4NMKz/aMa10wloS
+ HMdHgqYnaYyofgZK0mSiEAw0pGeyrjTuErAWuOG1SbJaJGiKPlMU/X02EmwHegsBaxq8r3WadXK
+ h1CgAOCoO2qy+LDfZcc/F6BrqXk8PooIFd9pV3yglU5wUufjT1qgAiyoMHqAgC/O6ZYtbHhlnTm
+ WTw/P0l2d9SbAzT/eu5vmEv8B5XCGcupiAg8IyFdixvyBEKZbToM=
+X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
+ fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
+X-Endpoint-Received: by B4 Relay for markus.probst@posteo.de/default with
+ auth_id=680
+X-Original-From: Markus Probst <markus.probst@posteo.de>
+Reply-To: markus.probst@posteo.de
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] build: Incompatible pointer type passed to device_property_read_u3=
-2()
-- [Medium] gpio: Hardware left powered on upon early probe failure
-- [Low] backlight: TOCTOU race in aw99703_shutdown() missing update_lock
---
+From: Markus Probst <markus.probst@posteo.de>
 
-commit b010e2c6526192785d6b65bcadf761f3928c7acd
-Author: Luka Panio <lukapanio@gmail.com>
+Add the `led::Mode` trait to allow for other types of led class devices
+in `led::LedOps`.
 
-backlight: Add Awinic AW99703 backlight driver
+Signed-off-by: Markus Probst <markus.probst@posteo.de>
+---
+ rust/kernel/led.rs        | 32 ++++++++++++++++++++++++++------
+ rust/kernel/led/normal.rs | 12 ++++++++++--
+ 2 files changed, 36 insertions(+), 8 deletions(-)
 
-Add a driver for the Awinic AW99703 3-string WLED backlight controller.
+diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
+index deda8cc548a8..c17f8ef75006 100644
+--- a/rust/kernel/led.rs
++++ b/rust/kernel/led.rs
+@@ -7,6 +7,7 @@
+ use core::{
+     marker::PhantomData,
+     mem::transmute,
++    ops::Deref,
+     ptr::NonNull, //
+ };
+ 
+@@ -31,7 +32,10 @@
+ 
+ mod normal;
+ 
+-pub use normal::Device;
++pub use normal::{
++    Device,
++    Normal, //
++};
+ 
+ /// The name of the led is determined by the driver.
+ pub enum Named {}
+@@ -156,6 +160,7 @@ pub fn name(self, name: &'init CStr) -> Self {
+ ///
+ /// #[vtable]
+ /// impl led::LedOps for MyLedOps {
++///     type Mode = led::Normal;
+ ///     const BLOCKING: bool = false;
+ ///     const MAX_BRIGHTNESS: u32 = 255;
+ ///
+@@ -176,16 +181,21 @@ pub trait LedOps: Send + Sync + Sized {
+     const BLOCKING: bool;
+     /// The max brightness level.
+     const MAX_BRIGHTNESS: u32;
+-
+     /// Sets the brightness level.
+     ///
+     /// See also [`LedOps::BLOCKING`].
+-    fn brightness_set<'bound>(self: &Device<'bound, Self>, brightness: u32) -> Result<()>;
+-
++    fn brightness_set<'bound>(
++        self: &<Self::Mode as Mode>::Device<'bound, Self>,
++        brightness: u32,
++    ) -> Result<()>;
+     /// Gets the current brightness level.
+-    fn brightness_get<'bound>(self: &Device<'bound, Self>) -> Result<u32> {
++    fn brightness_get<'bound>(self: &<Self::Mode as Mode>::Device<'bound, Self>) -> Result<u32> {
+         build_error!(VTABLE_DEFAULT_ERROR)
+     }
++    /// The led mode to use.
++    ///
++    /// See [`Mode`].
++    type Mode: Mode;
+ 
+     /// Activates hardware accelerated blinking.
+     ///
+@@ -196,7 +206,7 @@ fn brightness_get<'bound>(self: &Device<'bound, Self>) -> Result<u32> {
+     ///
+     /// See also [`LedOps::BLOCKING`].
+     fn blink_set<'bound>(
+-        self: &Device<'bound, Self>,
++        self: &<Self::Mode as Mode>::Device<'bound, Self>,
+         delay_on: &mut usize,
+         delay_off: &mut usize,
+     ) -> Result<()> {
+@@ -260,6 +270,16 @@ fn try_from(value: u32) -> core::result::Result<Self, Self::Error> {
+     }
+ }
+ 
++/// The led mode.
++///
++/// Each led mode has its own led class device type with different capabilities.
++///
++/// See [`Normal`].
++pub trait Mode: private::Sealed {
++    /// The class device for the led mode.
++    type Device<'bound, T: LedOps<Mode = Self> + 'bound>: Deref<Target = T>;
++}
++
+ mod private {
+     pub trait Sealed {}
+ }
+diff --git a/rust/kernel/led/normal.rs b/rust/kernel/led/normal.rs
+index a22c29cfd262..992353319522 100644
+--- a/rust/kernel/led/normal.rs
++++ b/rust/kernel/led/normal.rs
+@@ -8,6 +8,14 @@
+ 
+ use super::*;
+ 
++/// The led mode for the `struct led_classdev`. Leds with this mode can only have a fixed color.
++pub enum Normal {}
++
++impl Mode for Normal {
++    type Device<'bound, T: LedOps<Mode = Self> + 'bound> = Device<'bound, T>;
++}
++impl private::Sealed for Normal {}
++
+ /// The led class device representation.
+ ///
+ /// This structure represents the Rust abstraction for a led class device.
+@@ -22,7 +30,7 @@ pub struct Device<'bound, T: 'bound = ()> {
+ 
+ impl<'init, S: DeviceBuilderState> DeviceBuilder<'init, S> {
+     /// Registers a new [`Device`].
+-    pub fn build<'bound: 'init, T: LedOps + 'bound>(
++    pub fn build<'bound: 'init, T: LedOps<Mode = Normal> + 'bound>(
+         self,
+         parent: &'bound device::Device<Bound>,
+         ops: impl PinInit<T, Error> + 'init,
+@@ -120,7 +128,7 @@ struct Adapter<T: LedOps> {
+     _p: PhantomData<T>,
+ }
+ 
+-impl<T: LedOps> Adapter<T> {
++impl<T: LedOps<Mode = Normal>> Adapter<T> {
+     /// # Safety
+     /// `led_cdev` must be a valid pointer to a `led_classdev` embedded within a
+     /// `led::Device`.
 
-> diff --git a/drivers/video/backlight/aw99703.c b/drivers/video/backlight/=
-aw99703.c
-> new file mode 100644
-> index 0000000000000..b0a46753d1765
-> --- /dev/null
-> +++ b/drivers/video/backlight/aw99703.c
-[ ... ]
-> +static void aw99703_dt_parse(struct aw99703_device *aw,
-> +			     struct backlight_properties *props)
-> +{
-[ ... ]
-> +	props->max_brightness =3D AW99703_MAX_BRT_LVL;
-> +	device_property_read_u32(aw->dev, "max-brightness",
-> +				 &props->max_brightness);
+-- 
+2.55.0
 
-[Severity: High]
-Does this code trigger a -Wincompatible-pointer-types build failure?
 
-device_property_read_u32() expects a u32 * as its third argument, but
-&props->max_brightness is a pointer to int. In recent kernel builds, this
-warning is promoted to a fatal error.
-
-> +	if (props->max_brightness > AW99703_MAX_BRT_LVL)
-> +		props->max_brightness =3D AW99703_MAX_BRT_LVL;
-> +
-> +	props->brightness =3D props->max_brightness >> 1;
-> +	device_property_read_u32(aw->dev, "default-brightness",
-> +				 &props->brightness);
-
-[Severity: High]
-Similarly, &props->brightness is also a pointer to int.
-
-[ ... ]
-> +static void aw99703_power_off(void *data)
-> +{
-> +	struct aw99703_device *aw =3D data;
-> +
-> +	aw99703_update_brightness(aw, 0);
-> +	gpiod_set_value_cansleep(aw->hwen_gpio, 0);
-> +}
-> +
-> +static int aw99703_probe(struct i2c_client *client)
-> +{
-[ ... ]
-> +	if (aw->hwen_gpio) {
-> +		ret =3D gpiod_direction_output(aw->hwen_gpio, 1);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret,
-> +					     "failed to drive enable gpio\n");
-> +		fsleep(AW99703_HWEN_ON_DELAY_US);
-> +	}
-> +
-> +	ret =3D aw99703_chip_id_read(aw);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "chip id check failed\n");
-
-[Severity: Medium]
-If the chip ID read fails, does this return without de-asserting the GPIO?
-
-The probe function sets the hwen_gpio output to 1 to power on the chip,
-but if aw99703_chip_id_read() or aw99703_hw_init() fail, it returns an
-error code immediately. Since the devm_add_action_or_reset() for
-aw99703_power_off is registered later in the function, the cleanup
-action won't execute on early probe failure, leaving the hardware
-permanently enabled.
-
-> +
-> +	props.type =3D BACKLIGHT_RAW;
-> +	aw99703_dt_parse(aw, &props);
-> +	aw99703_read_boot_brightness(aw, &props);
-> +
-> +	ret =3D aw99703_hw_init(aw);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to initialize chip\n");
-> +
-> +	ret =3D devm_add_action_or_reset(dev, aw99703_power_off, aw);
-[ ... ]
-> +static void aw99703_shutdown(struct i2c_client *client)
-> +{
-> +	aw99703_power_off(i2c_get_clientdata(client));
-> +}
-
-[Severity: Low]
-Is there a data race between this shutdown callback and concurrent sysfs
-writes to the brightness attribute?
-
-aw99703_shutdown() invokes aw99703_power_off(), which modifies the
-aw->bl_enable flag and writes to I2C registers via aw99703_update_brightnes=
-s()
-without acquiring the backlight bd->update_lock mutex. Since userspace tasks
-are not frozen during system shutdown, a concurrent sysfs operation could
-attempt to communicate with the chip while its registers are being written
-or after the power pin is de-asserted.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016162912.6458=
-1-1-lukapanio@gmail.com?part=3D2
