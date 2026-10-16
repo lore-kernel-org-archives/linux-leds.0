@@ -1,42 +1,40 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3672F7F01;
-	Fri, 16 Oct 2026 10:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698BF471CE0;
+	Fri, 16 Oct 2026 10:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792145115; cv=none; b=iKuOgM66uBxisRhkq9zGBS6WZ+XchTUnJqJ1DLqf4ijMwoAQ5YPzfBJUxERU0Aikqlu10eLb7v6WFXh3xFfdpWaS9BMV8cdxqL7EDc5PCEfFxkyz0Aru2CGB0h3Q8jRGrUYp2ZLA6PIScABEH2nWp2VxjxpBedroeZ8qgYyJ+7E=
+	t=1792145151; cv=none; b=kB1x7BJsAUAjeiCnWw7gqffgWVauOhmaS3+baCA4/zshU2qpjsLOEx4i0JLzzFYiDsJdYO1t5Jgl7Wqu2F/qVu1HokIysrfvKMqyQd+7csr/meA/VkCJjCXAo7OZfkh0INxzbrpissyG9KkKM3vhmt1Uf5SkT/VFRidR2NMk1JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792145115; c=relaxed/simple;
-	bh=CqBvM/AXogvrufs8sWxvD7c3UiarnKOmk/rrJGTdF2A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=quCiQ8rUsyGIs7HVK5Nu1Zg4++tx1Jn1sbi1gZ0nGbrK8oV6L0YIhhdmRNYdt82RmcQWqlc3j07HrdjaixuwvMNipiozEUhEl/WWWl3qZgcvS+Xnd1GAy9hcTYFsPSkHaDVd2Rq8SzghTthVE+1Ig5my8zNn7DeuymgVaUURBGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TBylhj3L; arc=none smtp.client-ip=220.197.31.3
+	s=arc-20240116; t=1792145151; c=relaxed/simple;
+	bh=I0tA1GmRBeMKbGhGvVcrGI33rN8E+MZQodbKIVQF3+Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fD5Th78j7Xw4efgZo+IF94MniAlmTgG6sTXV5WFurBvVJcmf3HJZdhQTg5rUPP3n/VC+nf+p5hjTurfs1Wq/gKpzvuaiYbWIh7BMFJ0a/WmQW844/+SCBLmpD9W18RCnyoGCrXjjIdRpz8o0u0o1F66F1/Zq038OeKVbrX07TIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=T3HL+19E; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TBylhj3L"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="T3HL+19E"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=74
-	JzXrDW0j6GdutimLDXQZzHxh2RkaeDShqkvOmCgHU=; b=TBylhj3LgGwwIxGJ/y
-	iPg6bRhqvm2XW0ebjR0PWkHSdhMo3nBTeM+gO2B2/w8nKAgZREniOlRNTNQif6Tk
-	XOLv2VIdAzEw/yl8vAebmDscRlfvy/9B3r1QlNojyjbz3FV16VeIYt5fXb2lkUqp
-	Ia3maOvKYi+1ML7Ql9ZGGh2ZI=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=AG
+	/G2jTHLJL3HM12FlhdzuebFvon4l4oP56M8P9835E=; b=T3HL+19EgOqXkImTJU
+	p0UD6YeWQqAs7991MJ6hLf6cnZqrrUHwIxuDgttNO4PkvKQpZtXjubIjiZKeoxa0
+	e1VJ1FAE/CckAgcLtHbRUmeMc/utryRAh1AJpU4HU5O1EFBxj5sekH6e6TYolV8F
+	6KT+i9eii4SyZ10cMxVOcLJIQ=
 Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD332+29tFqQfLjAA--.14422S4;
-	Fri, 16 Oct 2026 18:04:49 +0800 (CST)
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD332+29tFqQfLjAA--.14422S2;
+	Fri, 16 Oct 2026 18:04:39 +0800 (CST)
 From: Jiale Yao <yaojiale02@163.com>
-To: Lee Jones <lee@kernel.org>,
+To: Matthias Fend <matthias.fend@emfend.at>,
+	Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
 	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH 2/2] leds: cr0014114: queue recount work on freezable workqueue
-Date: Fri, 16 Oct 2026 18:04:35 +0800
-Message-Id: <20261016100435.2581303-3-yaojiale02@163.com>
+Subject: [PATCH 0/2] leds: freeze delayed hardware access during suspend
+Date: Fri, 16 Oct 2026 18:04:33 +0800
+Message-Id: <20261016100435.2581303-1-yaojiale02@163.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20261016100435.2581303-1-yaojiale02@163.com>
-References: <20261016100435.2581303-1-yaojiale02@163.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -44,50 +42,30 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD332+29tFqQfLjAA--.14422S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw17Aw18ZFyDGrW8GFW8tFb_yoW8GF4UpF
-	ZxCFyYkay5tayxt34ktF47Xa45uan2krW5KFW8C345Ar4kZw18Z348GrW5JFs8Jryvy3W5
-	uFWUXryxZF1jvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zizwZ7UUUUU=
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQH8N2rR9sF45wAA3U
+X-CM-TRANSID:_____wD332+29tFqQfLjAA--.14422S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKw4fZryDJryDJrW3KFy3Arb_yoW3Wwc_ur
+	97Cr97K3yqgFWqga1IyF10vFWrCa4j93y8Xan0vry7trWxZrWrXFZxXrWUA3yDXFWjywn3
+	WFs0g3ySywsFkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_oGQ5UUUUU==
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzhf5NGrR9rfgnwAA3R
 
-The firmware workaround periodically recounts the LED state by issuing
-SPI transfers. Its delayed work runs on the non-freezable system
-workqueue and can therefore access the controller after it has been
-suspended.
+The TPS6131x torch watchdog refresh and CR0014114 firmware recount
+callbacks perform bus transfers from delayed work. Both callbacks use the
+non-freezable system workqueue and can run after their I2C or SPI controller
+has been suspended.
 
-Queue the recount work on system_freezable_wq so hardware access is
-deferred until devices have resumed.
+Queue both callbacks on system_freezable_wq. This freezes their hardware
+access before device suspend and resumes it after devices become available
+again. Each patch is independent and can be applied separately.
 
-Signed-off-by: Jiale Yao <yaojiale02@163.com>
----
- drivers/leds/leds-cr0014114.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Jiale Yao (2):
+  leds: tps6131x: queue torch refresh work on freezable workqueue
+  leds: cr0014114: queue recount work on freezable workqueue
 
-diff --git a/drivers/leds/leds-cr0014114.c b/drivers/leds/leds-cr0014114.c
-index 3f6931ae0bcc..afe3730e1222 100644
---- a/drivers/leds/leds-cr0014114.c
-+++ b/drivers/leds/leds-cr0014114.c
-@@ -155,7 +155,8 @@ static void cr0014114_recount_work(struct work_struct *work)
- 	if (ret)
- 		dev_warn(priv->dev, "sync of LEDs failed %d\n", ret);
- 
--	schedule_delayed_work(&priv->work, CR_RECOUNT_DELAY);
-+	queue_delayed_work(system_freezable_wq, &priv->work,
-+			   CR_RECOUNT_DELAY);
- }
- 
- static int cr0014114_set_sync(struct led_classdev *ldev,
-@@ -256,7 +257,8 @@ static int cr0014114_probe(struct spi_device *spi)
- 		return ret;
- 
- 	/* setup recount work to workaround buggy firmware */
--	schedule_delayed_work(&priv->work, CR_RECOUNT_DELAY);
-+	queue_delayed_work(system_freezable_wq, &priv->work,
-+			   CR_RECOUNT_DELAY);
- 
- 	spi_set_drvdata(spi, priv);
- 
+ drivers/leds/flash/leds-tps6131x.c | 11 +++++++----
+ drivers/leds/leds-cr0014114.c      |  6 ++++--
+ 2 files changed, 11 insertions(+), 6 deletions(-)
+
 -- 
 2.34.1
 
