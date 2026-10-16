@@ -1,126 +1,158 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C92471268;
-	Fri, 16 Oct 2026 16:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEDF4F5DF0;
+	Fri, 16 Oct 2026 16:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792168478; cv=none; b=TNx8HLPd7D6GYpjLNu2wcku0+L+e8ELg+SW6/JFuJ1wPd4PxpCtxaGSmedR6K3kXlmBGQje1Yzv7AQ9vny3zLKAbTz/ShllGcmt7ZeI+RvuiD9pqINS9XxHr8t7prK9okciEDv9hl1r0a7VpoFyYuPnEETfhv2B3wEhdx3//PGA=
+	t=1792168779; cv=none; b=GUSGO0UYwS5VU62BVWrAavmIqUY4fOwlSHRlbFv9vwoGAeGjMtNSd//oMqZr8Yw68U8RkLfrGyUJXJH/lOWZRPhJoyg9PaUVjduoNOOquOyuQZeByaS6cmdr8RsWPega06p7wFvgYKybAPmm+NAoeXxRqUCZv+Wr5M0DIihiBJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792168478; c=relaxed/simple;
-	bh=n9UXeNGZSq934a6r4agCoS65X4HMJj1z0ZVbuJCqE+g=;
+	s=arc-20240116; t=1792168779; c=relaxed/simple;
+	bh=dHATyNE/FfGScpjzpErBx+zJ3QcicVAAVnH4mLN2T/M=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=QI+fiqslmwUi3XlixBCWovAu4SM6E8O9exvWWli12avf6u45qab65Eoc0ZJ8JHOqaQOCs2OXuhir1k3XZGyk37L1rILMX77on2wK+QDDLFBF7L/5c8bD7xwck3xNaCzIrlpnAuGC9P5mJH1t/mtpDD7Gn/RS3B1931sJCz7iHZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMBW9Hil; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=AF7UeLiH83VLyaCKHnJherO0PQdEPHSKpXr/ErBpwYtgz9AOtxuZvNCsd4FdsETiHoNYQ0MnImZ3QdPOctEBpSPVUlPqQsKTBhCPuywGIBtGfHdTec4T+bkbbYdZXTDv1qBdp87Twe6WnxzbGDMWVzTNi3t7fa2NIfBA7eiQjp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZp0Nc47; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMBW9Hil"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBEFA1F000C4;
-	Fri, 16 Oct 2026 16:34:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZp0Nc47"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7491E1F000C4;
+	Fri, 16 Oct 2026 16:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792168476;
-	bh=nPZ1tobbugwxIkrvSON12T5qqG/QLDhvrRmZL9DUI0Y=;
+	s=k20260515; t=1792168777;
+	bh=mu5Or24tAvvN5+fThhSll8YuACjLcuqS/05wCRz8M40=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=YMBW9HilrVcOJcifDBGmwtDX/r+jkfEQXICC2b5LH+DU9sC/vG9Xsi+0IIejn5jmC
-	 AdlZd6XBF8k3joH/BwD34NHCTFddi46XbIKEFuUd+seeYcjUOdhpBpnhobOK03dnRo
-	 nE8+42yeyoJC4JqYTKFiGyD9r+hbaf0Nv7XOES/VnRBj+wv+09UsfWkW6MuJAWiPVV
-	 plESLWV2cOnkS4u/3d775LSN5uVp0hTixoptFnJKeA4bMkjAgtRsdsOrTh5297QKhs
-	 61K9lqsYbBHxcy0x5MKu3661xI3Vz+l/A8cn/zyZxIc3jDjAmZdZ+5p7DpERpHYAlb
-	 y3wSmcdsSvjLQ==
-Message-ID: <sashiko-outbox-174646@kernel.org>
+	b=TZp0Nc475kkzdpWZEJMAFQF5eNY6VLidiNVrAvZ2AdGDQnN1o9EsEVUpReJC434KS
+	 Vt1Slo0dCvBLK427Qp7K87COm9qoHZ71DL0dyCqTjiyZmkKFVZse/+Kv6K9XRKlvoR
+	 hfLRBnJL6g8i8xlfYas9mugeksUFFQAErBYSHUkVXlHXhvBkop4LcLEOLljI/puIWc
+	 tidV4lxlb0nVkket5HQcjg/bvWul697W1KUhM1oDl3mECn5Ibv3j4ZnQ6PyeJJzvth
+	 foXfyGapn/e+4HyUCoyanmN99aCPjm2TUqHmFfU1elxYjhhIYXRuuNvhZYYdRYAbWG
+	 fgKaTtKA9aRBg==
+Message-ID: <sashiko-outbox-174655@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: leds: backlight: Add Awinic AW99703
- backlight
+Subject: Re: [PATCH 2/2] backlight: Add Awinic AW99703 backlight driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Luka Panio" <lukapanio@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261016162912.64581-2-lukapanio@gmail.com>
+In-Reply-To: <20261016162912.64581-3-lukapanio@gmail.com>
 References: <20261016162912.64581-1-lukapanio@gmail.com>
- <20261016162912.64581-2-lukapanio@gmail.com>
+ <20261016162912.64581-3-lukapanio@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 16:34:35 +0000
+Date: Fri, 16 Oct 2026 16:39:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
 s) to consider:
-- [Medium] dt-bindings: missing 'pwms' property for PWM input
-- [Low] dt-bindings: missing power supply property
+- [High] build: Incompatible pointer type passed to device_property_read_u3=
+2()
+- [Medium] gpio: Hardware left powered on upon early probe failure
+- [Low] backlight: TOCTOU race in aw99703_shutdown() missing update_lock
 --
 
-commit bdcbdabe3e1453e58fc8f39fabc82b20db81480c
+commit b010e2c6526192785d6b65bcadf761f3928c7acd
 Author: Luka Panio <lukapanio@gmail.com>
 
-dt-bindings: leds: backlight: Add Awinic AW99703 backlight
+backlight: Add Awinic AW99703 backlight driver
 
-The Awinic AW99703 is a 3-string WLED driver converter with an
-integrated boost converter and 11-bit brightness control over I2C,
-optionally combined with a PWM input.
+Add a driver for the Awinic AW99703 3-string WLED backlight controller.
 
-> diff --git a/Documentation/devicetree/bindings/leds/backlight/awinic,aw99=
-703.yaml b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99703.=
-yaml
+> diff --git a/drivers/video/backlight/aw99703.c b/drivers/video/backlight/=
+aw99703.c
 > new file mode 100644
-> index 0000000000000..62e8cc3118f2e
+> index 0000000000000..b0a46753d1765
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99703.yaml
-> @@ -0,0 +1,131 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/backlight/awinic,aw99703.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Awinic AW99703 WLED Backlight Driver
-> +
-> +maintainers:
-> +  - Luka Panio <lukapanio@gmail.com>
-> +
-> +description:
-> +  The AW99703 is a 3-string WLED driver with an integrated boost convert=
-er
-> +  and 11-bit I2C (optionally PWM) brightness control.
-> +
-> +allOf:
-> +  - $ref: common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: awinic,aw99703
+> +++ b/drivers/video/backlight/aw99703.c
+[ ... ]
+> +static void aw99703_dt_parse(struct aw99703_device *aw,
+> +			     struct backlight_properties *props)
+> +{
+[ ... ]
+> +	props->max_brightness =3D AW99703_MAX_BRT_LVL;
+> +	device_property_read_u32(aw->dev, "max-brightness",
+> +				 &props->max_brightness);
 
-[Severity: Low]
-Is a power supply property needed for the boost converter?
+[Severity: High]
+Does this code trigger a -Wincompatible-pointer-types build failure?
 
-The hardware has an integrated boost converter, which typically requires
-a supply such as 'vin-supply' or 'vcc-supply'. Because the schema enforces
-'unevaluatedProperties: false', boards with a controllable regulator poweri=
-ng
-the backlight will fail schema validation if they attempt to define it.
+device_property_read_u32() expects a u32 * as its third argument, but
+&props->max_brightness is a pointer to int. In recent kernel builds, this
+warning is promoted to a fatal error.
+
+> +	if (props->max_brightness > AW99703_MAX_BRT_LVL)
+> +		props->max_brightness =3D AW99703_MAX_BRT_LVL;
+> +
+> +	props->brightness =3D props->max_brightness >> 1;
+> +	device_property_read_u32(aw->dev, "default-brightness",
+> +				 &props->brightness);
+
+[Severity: High]
+Similarly, &props->brightness is also a pointer to int.
 
 [ ... ]
-
-> +  awinic,inductor-nanohenry:
-> +    description: Boost inductor value.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [4700, 10000]
-> +    default: 4700
+> +static void aw99703_power_off(void *data)
+> +{
+> +	struct aw99703_device *aw =3D data;
 > +
-> +  awinic,pwm-input:
-> +    description: Combine the PWM input pin with the I2C brightness.
-> +    type: boolean
+> +	aw99703_update_brightness(aw, 0);
+> +	gpiod_set_value_cansleep(aw->hwen_gpio, 0);
+> +}
+> +
+> +static int aw99703_probe(struct i2c_client *client)
+> +{
+[ ... ]
+> +	if (aw->hwen_gpio) {
+> +		ret =3D gpiod_direction_output(aw->hwen_gpio, 1);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					     "failed to drive enable gpio\n");
+> +		fsleep(AW99703_HWEN_ON_DELAY_US);
+> +	}
+> +
+> +	ret =3D aw99703_chip_id_read(aw);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "chip id check failed\n");
 
 [Severity: Medium]
-Should the standard 'pwms' property be defined alongside this property?
+If the chip ID read fails, does this return without de-asserting the GPIO?
 
-The schema defines 'awinic,pwm-input' to indicate the hardware uses a PWM
-input pin, but it doesn't define the standard 'pwms' property. Since this
-schema uses 'unevaluatedProperties: false', board device trees attempting
-to properly link a PWM controller using 'pwms =3D <&pwm ...>;' will fail
-schema validation.
+The probe function sets the hwen_gpio output to 1 to power on the chip,
+but if aw99703_chip_id_read() or aw99703_hw_init() fail, it returns an
+error code immediately. Since the devm_add_action_or_reset() for
+aw99703_power_off is registered later in the function, the cleanup
+action won't execute on early probe failure, leaving the hardware
+permanently enabled.
+
+> +
+> +	props.type =3D BACKLIGHT_RAW;
+> +	aw99703_dt_parse(aw, &props);
+> +	aw99703_read_boot_brightness(aw, &props);
+> +
+> +	ret =3D aw99703_hw_init(aw);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to initialize chip\n");
+> +
+> +	ret =3D devm_add_action_or_reset(dev, aw99703_power_off, aw);
+[ ... ]
+> +static void aw99703_shutdown(struct i2c_client *client)
+> +{
+> +	aw99703_power_off(i2c_get_clientdata(client));
+> +}
+
+[Severity: Low]
+Is there a data race between this shutdown callback and concurrent sysfs
+writes to the brightness attribute?
+
+aw99703_shutdown() invokes aw99703_power_off(), which modifies the
+aw->bl_enable flag and writes to I2C registers via aw99703_update_brightnes=
+s()
+without acquiring the backlight bd->update_lock mutex. Since userspace tasks
+are not frozen during system shutdown, a concurrent sysfs operation could
+attempt to communicate with the chip while its registers are being written
+or after the power pin is de-asserted.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016162912.6458=
-1-1-lukapanio@gmail.com?part=3D1
+1-1-lukapanio@gmail.com?part=3D2
