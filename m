@@ -1,101 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E4F377A83
-	for <linux-leds@vger.kernel.org>; Fri, 16 Oct 2026 06:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEF93988E3;
+	Fri, 16 Oct 2026 08:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792133070; cv=none; b=QR7HHrUvB3SkoCEdFrWSOTa3GvHdDak2kD813zYceNg/Kf7ZsuxQdibcgGxnJG4Zi3p4eRPpntgbsZVZytTx0TLykRPjagE/UOFC7huQRu2CvIddeoVu1bKUXjpwgKPxBoUIvsw6qzc20wNKzDx8bzXUOr0VcKRc58nbWgDU3KY=
+	t=1792138578; cv=none; b=QU05o+LXS1p/04+tqRhN1z9/pJ5NEj9HOx6lbBIMiDD0DEF88hgLxcuRCEvh3NaEUFiDcZzOTxf9OZX+IN2pZdIh+7ayzLf+M48UuBM6mtshcv/n7wy5wfgwpuAbB/BxhXPUWgrd6vj8Le5nmscN5QlfMJSMlh6NXeVVQa3ZMZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792133070; c=relaxed/simple;
-	bh=TxTWc1kOj60lEAfw5ut9YNnhTR1rX3CTGkLhPog4Uvc=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=AvbX4R6/MqDXhOVHcdTYoeU3CsgR9wm8R0qzc9quahv3f9JTeGV7qh/gZHc1I+QrF/5b5D2una36GFE4wtQdk70j872yCaHYu3zpsjViZKPphTCzHFBUru//dBc+GM6l7nMgcLuGSCrP2ZjmTD+ByKsgJdkoh5yIdSQoAzOISuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3nq4h0O; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792138578; c=relaxed/simple;
+	bh=v4b25STYzExUB4CgTbGnnseMgcYhGzvLvYJY56DZNqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLxx1i6b0pw+3kHaue9BLszSRsK6o5zN1Wvi7ikc3llqRYOytj6cIq0podfjgi61BIV9mNjBTbm1iefuhs5PiersdumLvSrxyA1Kuknukw9vChQv+4GhnzMX7xUZ1rhDn6zMFqsNo6YmcHl4XYSfC499xmx1gDwNARp13Exdhd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHf4jric; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3nq4h0O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21791F000C4;
-	Fri, 16 Oct 2026 06:44:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHf4jric"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271F21F000C4;
+	Fri, 16 Oct 2026 08:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792133069;
-	bh=LqP6cWEjXP++89QGFe5JFcUEag8YMlSpHs29KI4fpMo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=C3nq4h0OGz0MvDsKStPr7Mqd9kolJI/WN8XMCR9UqqAfXxUZvgU2Ul7thuIAI3BZ7
-	 O8/dIxLVxP4iVJU6eAQ4OKhmkIHSi0Q8DuTcHmPrR16EU9u1BgHQeaKjf7Bv38ndiD
-	 XF+demXwf2/hfc/f00S23e0SzOweWWljuhmcEvM59+nxKSongOiEpGy+vjgVHli61f
-	 0gBgxVP2w+TgJl83GESWEdtIlXpz68qNRug0j+sHT6BrALVt2udhpn8i0ysr5WVd/R
-	 96BuNd5it0ZHrRW9OdyfCMf5i3+ZNg3TPjL5Qr1XdFHs2iHxXDdwbmK2gTeBIXY415
-	 wBlTHJB3LYhNw==
-Message-ID: <sashiko-outbox-173877@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: flash: leds-qcom-flash: Release all V4L2 flash
- devices
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "George Neacsu" <geocausa@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261016-qcom-flash-v4l2-release-v1-1-0e92aa7c9327@gmail.com>
-References: <20261016-qcom-flash-v4l2-release-v1-1-0e92aa7c9327@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 16 Oct 2026 06:44:29 +0000
+	s=k20260515; t=1792138574;
+	bh=Z9/VuixvD7efBDyaSXMAmmQZz0Nx6CDhSPtZF1e3b8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=gHf4jricOYuY4HFxwOXHHQCAH+C+wf9EBZ3AcHEENw/R9pa6ge2HPBarJDtcIYdrL
+	 wO1LIQ1cIrX5T9JA2vwCi2ZsacR+Mg3GX7C6KDswaHjziICJSeG7C8lqvH3wlvIGqa
+	 D803r1mA4Jcbk4jW07JtF0qNJSelZCu2SunX/3EhOrElt88/QDT2Iv75rwt/jShPj6
+	 kDB2Np/cydNHbmsvYJk7lLOIzBYjlJAfZceb43dY7So0nqCT81quHWk82xh9yqjT2+
+	 VLSaAX4UEVNHpSsKx+iVeOUPqqwNV/IwR/J3utU/cy4tAREoKsY1YMRGv2SzXivnVM
+	 I9GkxH0/TvWgQ==
+Date: Fri, 16 Oct 2026 09:16:10 +0100
+From: Lee Jones <lee@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] leds: is31fl32xx: Fix NULL pointer dereference when
+ binding via I2C ID table
+Message-ID: <20261016081610.GA2663669@google.com>
+References: <20261005194923.161411-1-rosenp@gmail.com>
+ <179198424632.839288.1637324900719734962@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <179198424632.839288.1637324900719734962@kernel.org>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] leds: missing mutex_destroy() on probe error paths
---
+On Mon, 05 Oct 2026, Lee Jones wrote:
 
-commit 02e8e6631f1731424fa6ad18e025af7434984559
-Author: George Neacsu <geocausa@gmail.com>
+> --- checkpatch.pl: clean (0 issues) ---
+> 
+> On Mon, 05 Oct 2026, Rosen Penev wrote:
+> 
+> > If the device binds via the I2C ID table (e.g., fallback matching by
+> > node name, sysfs new_device, or software node),
+> > device_get_match_data() in is31fl32xx_probe() returns NULL because
+> > the is31fl32xx_id table entries have no .driver_data.
+> >
+> > Without a NULL check, is31fl32xx_parse_dt() will unconditionally
+> > dereference cdef when checking cdef->output_frequency_setting_reg,
+> > and is31fl32xx_parse_child_dt() will dereference cdef->channels,
+> > leading to a NULL pointer dereference and kernel oops.
+> >
+> > Add a NULL check for cdef alongside the existing child count check in
+> > is31fl32xx_probe(), returning -EINVAL if no match data is available.
+> >
+> > Fixes: 2779f4724b2f ("leds: various: use device_get_match_data")
+> > Cc: stable@vger.kernel.org
+> > Assisted-by: LLM
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/leds/leds-is31fl32xx.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+> > index 285085d27453..7bb0295b0b49 100644
+> > --- a/drivers/leds/leds-is31fl32xx.c
+> > +++ b/drivers/leds/leds-is31fl32xx.c
+> > @@ -577,7 +577,7 @@ static int is31fl32xx_probe(struct i2c_client *client)
+> >  	cdef = device_get_match_data(dev);
+> >
+> >  	count = device_get_child_node_count(dev);
+> > -	if (!count)
+> > +	if (!cdef || !count)
+> >  		return -EINVAL;
 
-leds: flash: leds-qcom-flash: Release all V4L2 flash devices
+If it's possible for devices to be autoloaded via is31fl32xx_id,
+wouldn't it make more sense to populate its .driver_data instead?
 
-This commit fixes an out-of-bounds array access and a loop logic error
-during probe failure and driver removal. It ensures all registered V4L2
-flash sub-devices are correctly released.
+Or, if that's not possible for some odd reason (which you must specify),
+since this is an || it's odd to check the return values like this.  It
+more inline with current coding guidelines to place the check below its
+caller / allocator.
 
-> diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/le=
-ds-qcom-flash.c
-> index b03a6833e3e3a..c2fefeec9b80c 100644
-> --- a/drivers/leds/flash/leds-qcom-flash.c
-> +++ b/drivers/leds/flash/leds-qcom-flash.c
-> @@ -953,8 +953,8 @@ static int qcom_flash_led_probe(struct platform_devic=
-e *pdev)
-> =20
->  	return regmap_field_write(flash_data->r_fields[REG_TORCH_CLAMP], flash_=
-data->torch_clamp);
->  release:
-> -	while (flash_data->v4l2_flash[flash_data->leds_count] && flash_data->le=
-ds_count)
-> -		v4l2_flash_release(flash_data->v4l2_flash[flash_data->leds_count--]);
-> +	while (flash_data->leds_count)
-> +		v4l2_flash_release(flash_data->v4l2_flash[--flash_data->leds_count]);
+> >  	priv = devm_kzalloc(dev, struct_size(priv, leds, count),
+> > -- 
+> > 2.56.0
+> >
+> 
+> -- 
+> Lee Jones
 
-[Severity: Low]
-Are we missing a call to mutex_destroy() for flash_data->lock on the error
-paths?
-
-Earlier in qcom_flash_led_probe(), the driver calls
-mutex_init(&flash_data->lock). However, neither this release cleanup block
-nor the earlier direct error returns destroy it:
-
-	count =3D device_get_child_node_count(dev);
-	if (count =3D=3D 0 || count > flash_data->max_channels) {
-		dev_err(dev, "No child or child count exceeds %d\n", ...);
-		return -EINVAL;
-	}
-
-While the memory for flash_data is devres-managed, bypassing mutex_destroy()
-omits CONFIG_DEBUG_MUTEXES validation hooks during teardown and leaves the
-cleanup asymmetric compared to qcom_flash_led_remove().
-
->  	return rc;
->  }
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261016-qcom-flash=
--v4l2-release-v1-1-0e92aa7c9327@gmail.com?part=3D1
+-- 
+Lee Jones
