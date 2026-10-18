@@ -1,86 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A898835F5E3
-	for <linux-leds@vger.kernel.org>; Sun, 18 Oct 2026 21:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCF235C692;
+	Sun, 18 Oct 2026 22:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792359741; cv=none; b=IiCqkQ/98as1zzYD7gLDVodUsT6X2aaPXRGviTacCnJR4SyF4l69tQ3AYPk+GJcR+cO8+wnYeQ5WkaZltr/196J3jmyhqeibk/U+Vi0acrSkcIcEUYgZ8oyipzglF/cy6Hhd1yHnFqQwZLrvjOxlHkvtTxJCDXeBp4PeZoaMWxM=
+	t=1792363011; cv=none; b=JEVq6ZmjBPVL8BHt3U1N0CAxQiLlGq54DbwYBh0AZ/ovLmrybPmXFXtLAK5d3HRhSHuZAcArjd0MoL9pzJsBR75JWNyMsml5C1J+9GazCrYIMFmP4vb2UbKuVLMw3nYr0tr6lqjfP0qonAgnljA1YjzX34gz0YndWI8U8uPKcYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792359741; c=relaxed/simple;
-	bh=Kq4u5wMOungtYjEwunlnRnR9K21G2hGwUHUeWT5V7Xk=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Po9hEZriBrq241+1UsiqNcgOcb6OMRXmol0UgZ84/u53BrraBPlkQSSy49R509WRwWp2teqcTZy92AbsF/dTODu/thZVmZsI100bWpntbCoUnvVxC7GBtiHvLsgWo8x8LIJvyytLmktVUomA9c+DbkiBh2yjpK+BHM7YatW5znU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I82laPD+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792363011; c=relaxed/simple;
+	bh=ZeewAg9wYSyurcD5dxynwnZUpu/Yk4R4eIqDhPBdPU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvRahYHBlZnbPp6axf+OREUuDmYNAxZWPX7rsllhZNackPK628IQ6ok031FCqATrSyhQ+oYjoswaxT4rlJCPVa5ykKHT4tKOObS2AwRgvgKbhKsnoSwTbJIKG/gat7Vdwo4TIcbVL7gfiJOvudpci7/lJL1stEGEeGZMuOewMkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pz3fXrXP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I82laPD+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF021F000C4;
-	Sun, 18 Oct 2026 21:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792359740;
-	bh=Kq4u5wMOungtYjEwunlnRnR9K21G2hGwUHUeWT5V7Xk=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=I82laPD+qskWMlmRZdCFS/4uZScD5T9k3it8jgcSo7qo40zq938Bbv62AyxGGLHYT
-	 IJla4K97CCxFLJwa/Vtv9Oz+xx+1Mi74EgqiQpSZBYqmjm1zCEezERMq6wQWRzdsTJ
-	 AU9zHHqMTTxYf5X0mWCAbuxegttdAh1MTcJ7+vs9wqU3OykazgWhzcXUXtcVTcsY27
-	 MvMgLqXsP0aMXga2KS7eNHn5JtfMK9snLAbaJrtKSeKox6QDZX1+0AriJHKwBHYAeL
-	 fpoX9pqlPK/xIb9gwbYqTgH5rKpRuxtW/KrDp3tKIQStSRP66IDi1gqhy35o6izAKH
-	 7+Zd4/Xty9CmA==
-Message-ID: <sashiko-outbox-176408@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3] leds: flash: leds-qcom-flash: Release all V4L2 flash
- devices
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "George Neacsu" <geocausa@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261018-qcom-flash-v4l2-release-v3-1-02e18d30b18a@gmail.com>
-References: <20261018-qcom-flash-v4l2-release-v3-1-02e18d30b18a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 18 Oct 2026 21:42:19 +0000
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pz3fXrXP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5fIsGMGoebHtNXp30RZKr7vIRqrvytc5rBOOxkQ7c3A=; b=pz3fXrXPoxQZReonwN2KlN2hFK
+	H+GPdYWDZPve8ZaSre5JF/qPkINZO5ZmmuL5WFkIinzze4adySCuFkZtLoOwkNbIe3SSsLYnVmOa+
+	kytXVJFcZMlWZYW11bHiYzKG4VYGNkNcASa9t3c1wYRkthkYC/6DDSakKlMZPWaBsnHs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1xIZUS-00BX0t-3B; Mon, 19 Oct 2026 00:36:28 +0200
+Date: Mon, 19 Oct 2026 00:36:28 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ross Cawston <ross@r-sc.ca>
+Cc: lee@kernel.org, pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, chris.packham@alliedtelesis.co.nz,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@kernel.org,
+	kuba@kernel.org, pabeni@redhat.com, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] leds: add Realtek RTL9300 port LEDs under software
+ control
+Message-ID: <59f75e7d-9b56-441d-a4b5-58ad3862267e@lunn.ch>
+References: <20261018194339.132-1-ross@r-sc.ca>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261018194339.132-1-ross@r-sc.ca>
 
-> From: George Neacsu <geocausa@gmail.com>
->=20
-> The probe error path and qcom_flash_led_remove() use leds_count as an
-> array index before decrementing it. Since leds_count is the number of
-> registered LEDs, that first access is one entry past the last registered
-> V4L2 flash device. The loops also stop before index 0, so with a single
-> LED nothing is released at all.
->=20
-> The V4L2 flash sub-device then stays registered after the driver is
-> unbound, still pointing at the driver's freed devm memory. On a Surface
-> Pro 11 (X1E80100, PM8550 flash, IR LED linked to a sensor through
-> flash-leds), unloading the module and then setting a flash control on
-> the sub-device triggered UBSAN shift-out-of-bounds reports and a NULL
-> pointer dereference in regmap_field_update_bits_base(), called from
-> update_allowed_flash_current().
->=20
-> Release the registered entries from leds_count - 1 down to 0. Initialize
-> the mutex with devm_mutex_init() before registering managed LED class
-> devices so it remains valid until their devres cleanup has completed.
-> Route a final torch-clamp programming failure through the V4L2 cleanup
-> as well.
->=20
-> Fixes: 96a2e242a5dc ("leds: flash: Add driver to support flash LED module=
- in QCOM PMICs")
-> Cc: stable@vger.kernel.org
-> Reported-by: Sashiko AI review <sashiko-bot@kernel.org>
-> Link: https://sashiko.dev/#/patchset/20261016-qcom-flash-v4l2-release-v1-=
-1-0e92aa7c9327@gmail.com?part=3D1
-> Link: https://sashiko.dev/#/patchset/20261018-qcom-flash-v4l2-release-v2-=
-1-8e2297844d9f@gmail.com?part=3D1
-> Assisted-by: Claude:claude-opus-5-5
-> Assisted-by: ChatGPT:gpt-5.6-sol
-> Signed-off-by: George Neacsu <geocausa@gmail.com>
+On Sun, Oct 18, 2026 at 12:43:35PM -0700, Ross Cawston wrote:
+> The RTL9300 switch drives up to four LEDs per port over its LED
+> interface, serial or scanned, each normally showing a hardware function
+> chosen by the LED set of the port. Some boards wire LEDs to it that have
+> no hardware function and that the vendor firmware switches in software,
+> such as the PoE status LEDs of the MokerLink POE-10G07110GSM.
+> 
+> This series adds a binding for such LEDs as a child of the switch, like
+> its I2C and MDIO controllers, and a driver that takes them under
+> software control and exposes them as LED class devices.
 
-Sashiko has reviewed this patch and found no issues.
+This is an odd architecture when compared to other switch drivers with
+LEDs.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261018-qcom-flash=
--v4l2-release-v3-1-02e18d30b18a@gmail.com?part=3D1
+Port LEDs should be within the port node of the switch in DT. Ideally
+you want all LEDs for a port to start the with basics, on/off control.
+That gives the minimum, enough that you can make them software blink
+on traffic, show link speed, poe, shift lock, morse code panic dumps.
 
+If the LED has more capabilities, you can then advertise this, and the
+led triggers will offload blinking to the hardware. But this is an
+extension, not a requirement.
+
+So please don't make these LEDs special.
+
+	Andrew
