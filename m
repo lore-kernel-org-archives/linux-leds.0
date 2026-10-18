@@ -1,72 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-2uec-a118.jellyfish.systems (out-2uec-a118.jellyfish.systems [63.250.43.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406DF2D738F
-	for <linux-leds@vger.kernel.org>; Sun, 18 Oct 2026 22:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED8A3DCDB0
+	for <linux-leds@vger.kernel.org>; Sun, 18 Oct 2026 23:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792363933; cv=none; b=onCLRDww9PzbwKBrijZJzHxZMgHAjae7HakCj8Pp+I/KT4LXx4PDQQdtbV8HDErJ/Emz+1ncnhsu5UJijGOlbh7MjdOjZLb2SRXg07lxTB7edgiORjBSjgnHE72uN+alTdTm/UhNSdgwJKvqJpBvT+Uu9u3RRN/C8mAGnsOO8jM=
+	t=1792365640; cv=none; b=LLk7D9wrgbhvENhgOkyB9HhOJhd4GHzOSy7cdf75G/qVUpyxPD0zx4GkxQdEDUELr3blr78C6YdtYJwa3vv4fbXxhT+PvElUIbK60cnNLcrhgxpK4WJt1yvsd3FdhomE4WPkFlgoSLlN6zKmE3D2UzlpfCywldT9bqu/xMB9dwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792363933; c=relaxed/simple;
-	bh=z5SSfzdWUCzqcb6iZza7dJ0CL1hUsBWlDnzLCGLZ0jc=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=hk5K4cMggkyzKl+RFiAdyZQIALboZbABKE27jsKdDr/9LcfaVUTWJb6HMhE1mvjF837AUIPhWd7rNp/zf4wkVNQUM2M9a74lKRN3XdSj7YPruFjJj1OpUFpoUpCgBq7/6BMjNVfAeT7GXvfJIx+tUtyrR3EJOnbow8ie8F/SNVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRA9aavx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1792365640; c=relaxed/simple;
+	bh=k/i3Nsiw4H9TRxL0j87EVx9jYyettyuwElHn7x2/IBQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SccNBS9Qc6vfbF3Zqmt7/39GApsVWZiWtI1+x6DF254cqV15ZeSJw2XDZX2H+jwZKCWT0rLnwESN58QDMdxpv+vHHOWmRQqqqM58AQpFFLldWxIV34Lo+wM3xqn9mR6+Vi77yJWr0v2XOor8R1uQ0zIxJKfGPz8Ov/KBduIPDKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=r-sc.ca; spf=pass smtp.mailfrom=r-sc.ca; dkim=pass (2048-bit key) header.d=r-sc.ca header.i=@r-sc.ca header.b=E5j+KawY; arc=none smtp.client-ip=63.250.43.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=r-sc.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=r-sc.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRA9aavx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56A31F000C4;
-	Sun, 18 Oct 2026 22:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792363932;
-	bh=z5SSfzdWUCzqcb6iZza7dJ0CL1hUsBWlDnzLCGLZ0jc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VRA9aavxoA8aEOraDJ+7HkJk5psHRUQE6C6co9WqdCklA3u3OxQciGfrUjsnpKyUz
-	 8+67TV5n1X+TBL8d1O18OC8MDGDREL7tabQgjS0J+8IyBIDRD1PXSbjHbGCwRqUdK9
-	 3wcnGcETqYBF0LEKakFmfyzfqBkNzAUTDYJF/PioqcWZiCVUyI2q5GFKcKda4w4AdW
-	 vtCkRF81QRwuVdMhbpKDHE0piLRpPbkExXmoiQFOv7ge6kSeFXzXAgmbE3C7FmgCk8
-	 lYlJxXn5acYnkwR93ClPA14U5BqFWmJybrQ3zdyYWCgtdd9+YGrEtRnTwaydLs1cjS
-	 IciueJAF+6SMw==
-Message-ID: <sashiko-outbox-176435@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3] leds: is31fl32xx: Fix NULL pointer dereference when
- binding via I2C ID table
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Rosen Penev" <rosenp@gmail.com>, linux-leds@vger.kernel.org
-Cc: lee@kernel.org
-In-Reply-To: <20261018225036.12000-1-rosenp@gmail.com>
-References: <20261018225036.12000-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 18 Oct 2026 22:52:11 +0000
+	dkim=pass (2048-bit key) header.d=r-sc.ca header.i=@r-sc.ca header.b="E5j+KawY"
+Received: from DESKTOP-290OH2S (d207-6-150-133.bchsia.telus.net [207.6.150.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4j7F5f5FkZz8sWQ;
+	Sun, 18 Oct 2026 23:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=r-sc.ca;
+	s=spacemail; t=1792365623;
+	bh=k/i3Nsiw4H9TRxL0j87EVx9jYyettyuwElHn7x2/IBQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=E5j+KawYgqYYcTobdqa3Y7Ldaa+3FTZw7GAJhzxHXjOcx03vb2+se1rs90BESlczf
+	 7emm0ugBi2Faozym1+OEMK9n7naGEf+8BvN4oz5jGTPPtLkY28rYQWNMezJpc9fNSk
+	 i87MHcF+xamwqWyEIHA89tYSrolGSLFkpbsQ/udMlSsTjgT2sPihiS4btvwmQ7tZUX
+	 5M2jo0RM5N8kMqhuTa1CeDSdYxegdYKVGxJN9H54SZWW/5uRkrtvm7Y86o+3hDJDeJ
+	 M6TnBfLRm3H7OxMDWF6/e24/JNbu1k18dzhqPgr/GJ9qI7XxCUCejEzpJqrty7F1R5
+	 yqe3m3vSXBGvw==
+From: Ross Cawston <ross@r-sc.ca>
+To: andrew@lunn.ch
+Cc: lee@kernel.org,
+	pavel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	chris.packham@alliedtelesis.co.nz,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ross Cawston <ross@r-sc.ca>
+Subject: Re: [PATCH 0/3] leds: add Realtek RTL9300 port LEDs under software control
+Date: Sun, 18 Oct 2026 16:20:14 -0700
+Message-ID: <20261018232015.527-1-ross@r-sc.ca>
+X-Mailer: git-send-email 2.55.0.windows.5
+In-Reply-To: <59f75e7d-9b56-441d-a4b5-58ad3862267e@lunn.ch>
+References: <20261018194339.132-1-ross@r-sc.ca> <59f75e7d-9b56-441d-a4b5-58ad3862267e@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Envelope-From: ross@r-sc.ca
 
-> If the device binds via the I2C ID table (e.g. sysfs new_device, a
-> software node, or a firmware node without a matching compatible),
-> device_get_match_data() in is31fl32xx_probe() returns NULL, since only
-> the OF match table carries the chip definition. is31fl32xx_parse_dt()
-> then dereferences cdef->output_frequency_setting_reg and
-> is31fl32xx_parse_child_dt() dereferences cdef->channels, causing a
-> kernel oops.
->=20
-> Populate .driver_data in is31fl32xx_id with the same chip definitions
-> as the OF table and use i2c_get_match_data(), which falls back to the
-> I2C ID table when no firmware match data is available. Every entry
-> now carries match data, so cdef can no longer be NULL.
->=20
-> Drop the comment above the ID table, as the table is now used for
-> matching data as well.
->=20
-> Fixes: 2779f4724b2f ("leds: various: use device_get_match_data")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+On Sun, Oct 18, 2026 at 10:36 PM UTC, Andrew Lunn wrote:
+> Port LEDs should be within the port node of the switch in DT. Ideally
+> you want all LEDs for a port to start the with basics, on/off control.
+[...]
+> So please don't make these LEDs special.
 
-Sashiko has reviewed this patch and found no issues.
+That makes sense. The catch is that RTL9300 has no switch driver
+upstream yet, so there is no port node with a driver behind it to put
+them in: mainline only has drivers for the switch's I2C and MDIO
+controllers.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261018225036.1200=
-0-1-rosenp@gmail.com?part=3D1
+Unless you see a place they could go in the meantime, I'll withdraw
+this series until there is one.
 
+Chris, do you know of anyone working on an RTL9300 switch driver? If
+so, I'd be glad to help with the port LEDs there.
+
+Ross
