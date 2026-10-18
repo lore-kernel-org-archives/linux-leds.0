@@ -1,46 +1,46 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A381E4C8FF0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35764C6535;
 	Sun, 18 Oct 2026 13:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792331649; cv=none; b=jdoNGF1HZBjcPYrPdmXPZlp3gnBa0uHYXHDGqhOVJSw2PFCIKwtxnoK4YFTtezslCP4D2HlDvFQ6qSPNZDh7O7TeGkym9YdfvZDu397b+FX+8Af4YqUu+b7XFaFHNrEvtGvpPcz2PHwCd8htttNuBOG9gXZ3730HjwiSPs13KMI=
+	t=1792331649; cv=none; b=PWjFinEy63yPc5yUMC/kk77m4h7nNV3KPv4zutStVOesQepnbOcGdoG3ecIiv5qIHy8pQgzamThcPDfVT4CnZDOW2orWnqqVjgEuWAzlq1GS+6PjJMlKKZcsNybBP6EEqlLnVRbQAf2h+8TSiI+MA0erb+h+fbsOFBn+g0UmAMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1792331649; c=relaxed/simple;
-	bh=yT7fzQ8G1q4g/Ekc844X0jCwWSHLH8hjOPnWIay+iUs=;
+	bh=ueI5E09/e+I3Q6tmFxYTRZPJxQdaw6F9+MbJzYIdUiM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kLEcUO63KsGabgvThRmR19rj2FDgNhsVteA5gThn18BWQzefllO8s8XC2cZF6+ThiWZKlzMfVtP2g3M7/IfXIjjLcmQrnxFZOEFO7RTxfISfl18VB/lIAH5saTgYeWPf0frh1KZQ5e/IcBtq+4G47gn6cLc/v30LI3k7xpCaCh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=mikew5a9; arc=none smtp.client-ip=212.227.17.22
+	 MIME-Version; b=G6a0lYBDuRlGWCvsiYHrolRLEpjKYNIuxisbDvI2ZrPKB+U+sD/pMBB0vLllNsWXVxPmIwVtDy+UVYr7dPB/ymzCV82pTqDfUtP7UcHhB8oG+6BpwiV5I71XzOkehBDwg4rlvGLQjngWti49quz2LWYqw0Fc1zTLtk/d6WT/uZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=OjFnlW/L; arc=none smtp.client-ip=212.227.17.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="mikew5a9"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="OjFnlW/L"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1792331637; x=1792936437; i=w_armin@gmx.de;
-	bh=OiXw0Iv+iWoDexQ6pBl1/MRZbKDOSh8SdianSRDHpx0=;
+	s=s31663417; t=1792331640; x=1792936440; i=w_armin@gmx.de;
+	bh=MEhk+zU8HWoZEDt9lixGtDZPBeCzX7lv344RkSQy1iM=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=mikew5a9z+jfxW8E2WLibJ9Lu7NO1c779mtPErTINcqRzMPEosqLE51SJqHbnKCy
-	 MCz9o8i9WNv7KjQeGqwYDwtDUuZCu7GUOiySelOTlUW1Ee8qYoHtnKVexQyBkXgch
-	 VW5F9gCA1B+RjoH7iqLH1IOoM2BpAaRq5jY+OksJypUREpsFVehJCa70jXUeWuG6O
-	 vBX6tjUkvFJr8QJVzJ9HNoGAh4hx55jtZoPmpfo5j1wX4HK5G0NhNNbgG8HEPJkNq
-	 DA+v+PetLxJMMTklsT7MKkFrLPZIW4Anifm3j94zBECV7wQDl7VTenKGMb5ydBZyy
-	 ysF12jHBclQiXETaIQ==
+	b=OjFnlW/LKhCwMMlqUOT7cTEfc7qgSXI0yuARp50HnnBFe7HVGANRH0AVf2pSi+xn
+	 e7852n0gbOwsa7Ho1qEC5NViui+4PRtdyCS5j/5POQnYY9eEDlTxoFI4v98rxc8CY
+	 af6QS+fj+/ebo4+WsGvsl5jzD1zSF579utFPT87PQxiaokl8UqJW8y8CxSNvrj+P8
+	 MAXYCIAGdWa2RjgP95FX9mtX6z3F4Jp5GgIEpXQijZ+BShbhmQrBC6ffmQyfgpc4H
+	 UTosROE9u1N9k8cGaFl4CTCvddDx0NhApPn7hdSY4i+X0L7gg92eaFB4QC3kn81UN
+	 v03CyMGFnge8bIPKAg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from client.hidden.invalid by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MxDkm-1wPFJV19Ng-011OqX; Sun, 18
- Oct 2026 15:53:57 +0200
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1McpJq-1wjeY62IU6-00puv3; Sun, 18
+ Oct 2026 15:54:00 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: lee@kernel.org,
 	pavel@kernel.org
 Cc: linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 04/10] leds: class: Create "brightness_hw_changed" attribute atomically
-Date: Sun, 18 Oct 2026 15:46:23 +0200
-Message-ID: <20261018135339.1109271-5-W_Armin@gmx.de>
+Subject: [PATCH 09/10] leds: Support custom sysfs groups on multicolor and flash LEDs
+Date: Sun, 18 Oct 2026 15:46:28 +0200
+Message-ID: <20261018135339.1109271-10-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261018135339.1109271-1-W_Armin@gmx.de>
 References: <20261018135339.1109271-1-W_Armin@gmx.de>
@@ -51,284 +51,396 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Eb0X5gA6kAv+nrwdpa1+hWgY5V/7pAGnov0jKoEEzyO04aEwLHG
- 0eWWISH+skivGsTB48gc2kBv0haF4FBUBRXpYUZGHZRju1c3O59kE2DSHeXxtsNENyRF/Ez
- 49889c4ZDBl/DxmNRvroNPpFXpD/DhM/MFK52kgGMJ7oyHP/U2Qt8cvin6ZKL4bXT6mStnm
- evAw8JUPlnXvdUwPASBQQ==
+X-Provags-ID: V03:K1:qdeHOE3NLjSTGt12xAiZqMjJ+kn0/l4aCIUIJivSvG8U57h+lpM
+ I7b/UUvqUASOK6X1ae6T9WUoakp9ZZVRuNbkMI6VW6/py3lE+sH8Uns/b4JN9bCwMCFtK84
+ W7Ugzaap1AQ0QGN94HX1oR77c9/Z+c/KWm+en45Ge25D1T90n+AGYMWVP7YOBXLIPXn3So2
+ gcIMkkRqnfYMXw7LLLYpA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OwJrkMq0JxY=;7JPzZUjMxFsKSg/N+fq5yTTzaUb
- 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
- cK2EBmArmVLtp+LJUt9U=
+UI-OutboundReport: notjunk:1;M01:P0:YNv2EKJBaNQ=;f8TJWpgirWetgfuO/ORtUC+cuRK
+ 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
+ loZZcd0CqqXrYU3aCGu3lmZ6xl665s8c
 
-Using device_create_file() might cause userspace applications
-listening for uevents to inspect a new LED device before the kernel
-has registered all sysfs attributes for it. This might cause those
-applications to incorrectly assume that the new LED device does not
-support the "brightness_hw_changed" attribute.
+Drivers registering multicolor/flash LEDs currently cannot use
+led_cdev->groups due to said field being overwritten by the
+multicolor/flash LED registration functions. Fix this by assigning
+each LED type a seperate device type ("multicolor" and "flash")
+that carries the sysfs attributes instead.
 
-Fix this by letting the device core create the sysfs attribute before
-the uevent is being send to userspace.
+Also assign a device type for standard LEDs ("standard") for symmetry.
 
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/leds/led-class.c | 85 +++++++++++++++-------------------------
- include/linux/leds.h     |  2 -
- 2 files changed, 31 insertions(+), 56 deletions(-)
+ drivers/leds/led-class-flash.c      | 108 ++++++++++++++--------------
+ drivers/leds/led-class-multicolor.c |  18 ++++-
+ drivers/leds/led-class.c            |   5 ++
+ include/linux/led-class-flash.h     |   5 --
+ 4 files changed, 73 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 3775ad13762f..d460f041ed86 100644
-=2D-- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -17,6 +17,7 @@
- #include <linux/property.h>
+diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash=
+.c
+index 953265fddb7d..e023511cea1c 100644
+=2D-- a/drivers/leds/led-class-flash.c
++++ b/drivers/leds/led-class-flash.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
  #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/sysfs.h>
- #include <linux/timer.h>
- #include <uapi/linux/uleds.h>
- #include <linux/of.h>
-@@ -101,14 +102,6 @@ static const struct attribute_group led_group =3D {
- 	.attrs_const =3D led_class_attrs,
- };
+ #include <linux/sysfs.h>
++#include "leds.h"
 =20
--static const struct attribute_group *const led_groups[] =3D {
--	&led_group,
--#ifdef CONFIG_LEDS_TRIGGERS
--	&led_trigger_group,
--#endif
+ #define has_flash_op(fled_cdev, op)				\
+ 	(fled_cdev && fled_cdev->ops->op)
+@@ -207,42 +208,56 @@ static ssize_t flash_fault_show(struct device *dev, =
+const struct device_attribut
+ }
+ static const DEVICE_ATTR_RO(flash_fault);
+=20
+-static const struct attribute *const led_flash_strobe_attrs[] =3D {
++static const struct attribute *const led_flash_attrs[] =3D {
+ 	&dev_attr_flash_strobe.attr,
 -	NULL,
 -};
 -
- #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
- static ssize_t brightness_hw_changed_show(struct device *dev, const struc=
-t device_attribute *attr,
- 					  char *buf)
-@@ -123,51 +116,48 @@ static ssize_t brightness_hw_changed_show(struct dev=
-ice *dev, const struct devic
+-static const struct attribute *const led_flash_timeout_attrs[] =3D {
+ 	&dev_attr_flash_timeout.attr,
+ 	&dev_attr_max_flash_timeout.attr,
+-	NULL,
+-};
+-
+-static const struct attribute *const led_flash_brightness_attrs[] =3D {
+ 	&dev_attr_flash_brightness.attr,
+ 	&dev_attr_max_flash_brightness.attr,
+-	NULL,
+-};
+-
+-static const struct attribute *const led_flash_fault_attrs[] =3D {
+ 	&dev_attr_flash_fault.attr,
+ 	NULL,
+ };
 =20
- static const DEVICE_ATTR_RO(brightness_hw_changed);
-=20
--static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
--{
--	struct device *dev =3D led_cdev->dev;
--	int ret;
-+static const struct attribute *const led_brightness_hw_changed_attrs[] =
-=3D {
-+	&dev_attr_brightness_hw_changed.attr,
-+	NULL,
-+};
-=20
--	ret =3D device_create_file(dev, &dev_attr_brightness_hw_changed);
--	if (ret) {
--		dev_err(dev, "Error creating brightness_hw_changed\n");
--		return ret;
--	}
-+static umode_t led_brightness_hw_changed_is_visible(struct kobject *kobj,
-+						    const struct attribute *attr, int n)
+-static const struct attribute_group led_flash_strobe_group =3D {
+-	.attrs_const =3D led_flash_strobe_attrs,
+-};
++static umode_t led_flash_is_visible(struct kobject *kobj, const struct at=
+tribute *attr, int n)
 +{
 +	struct device *dev =3D kobj_to_dev(kobj);
 +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-=20
--	led_cdev->brightness_hw_changed_kn =3D
--		sysfs_get_dirent(dev->kobj.sd, "brightness_hw_changed");
--	if (!led_cdev->brightness_hw_changed_kn) {
--		dev_err(dev, "Error getting brightness_hw_changed kn\n");
--		device_remove_file(dev, &dev_attr_brightness_hw_changed);
--		return -ENXIO;
--	}
-+	if (attr =3D=3D &dev_attr_brightness_hw_changed.attr &&
-+	    led_cdev->flags & LED_BRIGHT_HW_CHANGED)
++	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
++
++	if (attr =3D=3D &dev_attr_flash_strobe.attr)
 +		return attr->mode;
++
++        if (attr =3D=3D &dev_attr_flash_timeout.attr && fled_cdev->ops->t=
+imeout_set)
++                return attr->mode;
 =20
- 	return 0;
+-static const struct attribute_group led_flash_timeout_group =3D {
+-	.attrs_const =3D led_flash_timeout_attrs,
++	if (attr =3D=3D &dev_attr_max_flash_timeout.attr && fled_cdev->ops->time=
+out_set)
++		return attr->mode;
++
++	if (attr =3D=3D &dev_attr_flash_brightness.attr && fled_cdev->ops->flash=
+_brightness_set)
++		return attr->mode;
++
++	if (attr =3D=3D &dev_attr_max_flash_brightness.attr && fled_cdev->ops->f=
+lash_brightness_set)
++		return attr->mode;
++
++	if (attr =3D=3D &dev_attr_flash_fault.attr && fled_cdev->ops->fault_get)
++		return attr->mode;
++
++        return 0;
++}
++
++static const struct attribute_group led_flash_group =3D {
++	.is_visible_const =3D led_flash_is_visible,
++	.attrs_const =3D led_flash_attrs,
+ };
+=20
+-static const struct attribute_group led_flash_brightness_group =3D {
+-	.attrs_const =3D led_flash_brightness_attrs,
++static const struct attribute_group *led_flash_groups[] =3D {
++	&led_flash_group,
++	NULL,
+ };
+=20
+-static const struct attribute_group led_flash_fault_group =3D {
+-	.attrs_const =3D led_flash_fault_attrs,
++static const struct device_type led_flash_device_type =3D {
++	.name =3D "flash",
++	.groups =3D led_flash_groups,
+ };
+=20
+ static void led_flash_resume(struct led_classdev *led_cdev)
+@@ -254,28 +269,6 @@ static void led_flash_resume(struct led_classdev *led=
+_cdev)
+ 	call_flash_op(fled_cdev, timeout_set, fled_cdev->timeout.val);
  }
 =20
--static void led_remove_brightness_hw_changed(struct led_classdev *led_cde=
-v)
+-static void led_flash_init_sysfs_groups(struct led_classdev_flash *fled_c=
+dev)
 -{
--	sysfs_put(led_cdev->brightness_hw_changed_kn);
--	device_remove_file(led_cdev->dev, &dev_attr_brightness_hw_changed);
+-	struct led_classdev *led_cdev =3D &fled_cdev->led_cdev;
+-	const struct led_flash_ops *ops =3D fled_cdev->ops;
+-	const struct attribute_group **flash_groups =3D fled_cdev->sysfs_groups;
+-
+-	int num_sysfs_groups =3D 0;
+-
+-	flash_groups[num_sysfs_groups++] =3D &led_flash_strobe_group;
+-
+-	if (ops->flash_brightness_set)
+-		flash_groups[num_sysfs_groups++] =3D &led_flash_brightness_group;
+-
+-	if (ops->timeout_set)
+-		flash_groups[num_sysfs_groups++] =3D &led_flash_timeout_group;
+-
+-	if (ops->fault_get)
+-		flash_groups[num_sysfs_groups++] =3D &led_flash_fault_group;
+-
+-	led_cdev->groups =3D flash_groups;
 -}
-+static const struct attribute_group led_brightness_hw_changed_group =3D {
-+	.is_visible_const =3D led_brightness_hw_changed_is_visible,
-+	.attrs_const =3D led_brightness_hw_changed_attrs,
-+};
-+#endif	/* CONFIG_LEDS_BRIGHTNESS_HW_CHANGED */
+-
+ int led_classdev_flash_register_ext(struct device *parent,
+ 				    struct led_classdev_flash *fled_cdev,
+ 				    struct led_init_data *init_data)
+@@ -289,26 +282,29 @@ int led_classdev_flash_register_ext(struct device *p=
+arent,
 =20
-+static const struct attribute_group *const led_groups[] =3D {
-+	&led_group,
-+#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
-+	&led_brightness_hw_changed_group,
-+#endif
-+#ifdef CONFIG_LEDS_TRIGGERS
-+	&led_trigger_group,
-+#endif
-+	NULL,
+ 	led_cdev =3D &fled_cdev->led_cdev;
+=20
+-	if (led_cdev->flags & LED_DEV_CAP_FLASH) {
+-		if (!led_cdev->brightness_set_blocking)
+-			return -EINVAL;
++	if (!(led_cdev->flags & LED_DEV_CAP_FLASH))
++		return led_classdev_register_ext(parent, led_cdev, init_data);
+=20
+-		ops =3D fled_cdev->ops;
+-		if (!ops || !ops->strobe_set)
+-			return -EINVAL;
++	if (!led_cdev->brightness_set_blocking)
++		return -EINVAL;
+=20
+-		led_cdev->flash_resume =3D led_flash_resume;
++	ops =3D fled_cdev->ops;
++	if (!ops || !ops->strobe_set)
++		return -EINVAL;
+=20
+-		/* Select the sysfs attributes to be created for the device */
+-		led_flash_init_sysfs_groups(fled_cdev);
+-	}
++	led_cdev->flash_resume =3D led_flash_resume;
+=20
+ 	/* Register led class device */
+-	ret =3D led_classdev_register_ext(parent, led_cdev, init_data);
++	ret =3D led_classdev_init(parent, led_cdev, init_data);
+ 	if (ret < 0)
+ 		return ret;
+=20
+-	return 0;
++	led_cdev->dev->type =3D &led_flash_device_type;
++	ret =3D led_classdev_add(led_cdev);
++	if (ret < 0)
++		put_device(led_cdev->dev);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(led_classdev_flash_register_ext);
+=20
+diff --git a/drivers/leds/led-class-multicolor.c b/drivers/leds/led-class-=
+multicolor.c
+index 57df0b2e785b..9b8c37f7bdf4 100644
+=2D-- a/drivers/leds/led-class-multicolor.c
++++ b/drivers/leds/led-class-multicolor.c
+@@ -12,6 +12,7 @@
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include <linux/uaccess.h>
++#include "leds.h"
+=20
+ static unsigned int led_mc_get_max_intensity(struct led_classdev_mc *mcle=
+d_cdev, size_t index)
+ {
+@@ -159,11 +160,17 @@ static const struct attribute *const led_multicolor_=
+attrs[] =3D {
+ };
+ ATTRIBUTE_GROUPS(led_multicolor);
+=20
++static const struct device_type led_multicolor_device_type =3D {
++	.name =3D "multicolor",
++	.groups =3D led_multicolor_groups,
 +};
 +
-+#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
- void led_classdev_notify_brightness_hw_changed(struct led_classdev *led_c=
-dev, unsigned int brightness)
+ int led_classdev_multicolor_register_ext(struct device *parent,
+ 				     struct led_classdev_mc *mcled_cdev,
+ 				     struct led_init_data *init_data)
  {
--	if (WARN_ON(!led_cdev->brightness_hw_changed_kn))
--		return;
--
- 	led_cdev->brightness_hw_changed =3D brightness;
--	sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
-+	sysfs_notify(&led_cdev->dev->kobj, NULL, "brightness_hw_changed");
+ 	struct led_classdev *led_cdev;
++	int ret;
+=20
+ 	if (!mcled_cdev)
+ 		return -EINVAL;
+@@ -176,9 +183,16 @@ int led_classdev_multicolor_register_ext(struct devic=
+e *parent,
+=20
+ 	led_cdev =3D &mcled_cdev->led_cdev;
+ 	led_cdev->flags |=3D LED_MULTI_COLOR;
+-	mcled_cdev->led_cdev.groups =3D led_multicolor_groups;
++	ret =3D led_classdev_init(parent, led_cdev, init_data);
++	if (ret < 0)
++		return ret;
++
++	led_cdev->dev->type =3D &led_multicolor_device_type;
++	ret =3D led_classdev_add(led_cdev);
++	if (ret < 0)
++		put_device(led_cdev->dev);
+=20
+-	return led_classdev_register_ext(parent, led_cdev, init_data);
++	return ret;
  }
- EXPORT_SYMBOL_GPL(led_classdev_notify_brightness_hw_changed);
--#else
--static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
--{
--	return 0;
--}
--static void led_remove_brightness_hw_changed(struct led_classdev *led_cde=
-v)
--{
--}
- #endif
+ EXPORT_SYMBOL_GPL(led_classdev_multicolor_register_ext);
 =20
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index ace417a2388e..49b321b3d863 100644
+=2D-- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -613,6 +613,10 @@ int led_classdev_add(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_classdev_add);
+=20
++static const struct device_type led_device_type =3D {
++	.name =3D "standard",
++};
++
  /**
-@@ -544,16 +534,6 @@ int led_classdev_register_ext(struct device *parent,
- 	if (init_data && init_data->fwnode)
- 		device_set_node(led_cdev->dev, init_data->fwnode);
+  * led_classdev_register_ext - register a new object of led_classdev clas=
+s
+  *                             with init data.
+@@ -631,6 +635,7 @@ int led_classdev_register_ext(struct device *parent,
+ 	if (ret < 0)
+ 		return ret;
 =20
--	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
--		ret =3D led_add_brightness_hw_changed(led_cdev);
--		if (ret) {
--			device_unregister(led_cdev->dev);
--			led_cdev->dev =3D NULL;
--			mutex_unlock(&led_cdev->led_access);
--			return ret;
--		}
--	}
++	led_cdev->dev->type =3D &led_device_type;
+ 	ret =3D led_classdev_add(led_cdev);
+ 	if (ret < 0)
+ 		put_device(led_cdev->dev);
+diff --git a/include/linux/led-class-flash.h b/include/linux/led-class-fla=
+sh.h
+index 775a96217518..5204ef60dc4b 100644
+=2D-- a/include/linux/led-class-flash.h
++++ b/include/linux/led-class-flash.h
+@@ -28,8 +28,6 @@ struct led_classdev_flash;
+ #define LED_FAULT_LED_OVER_TEMPERATURE	(1 << 8)
+ #define LED_NUM_FLASH_FAULTS		9
+=20
+-#define LED_FLASH_SYSFS_GROUPS_SIZE	5
 -
- 	led_cdev->work_flags =3D 0;
- #ifdef CONFIG_LEDS_TRIGGERS
- 	init_rwsem(&led_cdev->trigger_lock);
-@@ -626,9 +606,6 @@ void led_classdev_unregister(struct led_classdev *led_=
-cdev)
+ struct led_flash_ops {
+ 	/* set flash brightness */
+ 	int (*flash_brightness_set)(struct led_classdev_flash *fled_cdev,
+@@ -79,9 +77,6 @@ struct led_classdev_flash {
 =20
- 	flush_work(&led_cdev->set_brightness_work);
-=20
--	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED)
--		led_remove_brightness_hw_changed(led_cdev);
+ 	/* flash timeout value in microseconds along with its constraints */
+ 	struct led_flash_setting duration;
 -
- 	device_unregister(led_cdev->dev);
+-	/* LED Flash class sysfs groups */
+-	const struct attribute_group *sysfs_groups[LED_FLASH_SYSFS_GROUPS_SIZE];
+ };
 =20
- 	down_write(&leds_list_lock);
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index beaf23993063..6f975078cc14 100644
-=2D-- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -21,7 +21,6 @@ struct attribute_group;
- struct device_node;
- struct fwnode_handle;
- struct gpio_desc;
--struct kernfs_node;
- struct led_pattern;
- struct platform_device;
-=20
-@@ -237,7 +236,6 @@ struct led_classdev {
-=20
- #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
- 	int			 brightness_hw_changed;
--	struct kernfs_node	*brightness_hw_changed_kn;
- #endif
-=20
- #ifdef CONFIG_LEDS_TRIGGERS_HW_CHANGED
+ static inline struct led_classdev_flash *lcdev_to_flcdev(
 =2D-=20
 2.56.0
 
