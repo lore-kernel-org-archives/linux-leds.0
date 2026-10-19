@@ -1,60 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F594A2A56;
-	Mon, 19 Oct 2026 10:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B22498922;
+	Mon, 19 Oct 2026 10:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792404751; cv=none; b=lmw+BnHqJHwDSqNRwkpt+J+MdqVvwogoWifb1Own5B0Df9r1YLzCc3y1lPtbgZzmBvuH92c7RZgclPOlTWdfz8m9zeQ6MUjupyMvGbnJF25T/sDpZI9CTNPLgoV1AO26XbL9jhnuaae8NzqQ9Bxltf6bWgkSIsX8CI4wEij05Ns=
+	t=1792404756; cv=none; b=rYJLwYmUPrSc5xG9yrm3WEGD+cVpGn3f6Sw1Exb//vKkM6DOAEEgY/Ky5klN2cALl+2ppCVr24Jwwe0uEOTUW0+ZMl+GjF1b1/kSKzurGrIdUevl/m09sObGzPvjYa/P3yI2AVnK4zJmEFL1knhR2ByCqe6vjwj5Gj2gsG7ytko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792404751; c=relaxed/simple;
-	bh=K1TNRz3YmcairHAaNp7TruR6RgQVAZMBea9UKymyhMY=;
+	s=arc-20240116; t=1792404756; c=relaxed/simple;
+	bh=t6akOkspDM6DuO44EedMLUgBQZp0uz4pPTQNubsWsMU=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=ocqqmVtzsE3bOKyTvdbn61LQoBJoOOwqK0AUOToimCODZS4egw/jiMz3mSYY5D2Kyg/ms8RmY/YoD/2t+Xd57DF5QWLnmBRG26DohNU11E7SDhbxyrnyYzGW6fQHttlpkZN3SH+yehgg1BeUQzZ9EvUn6bosKgyfbKJUPD5MkaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URHtqCif; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=jeHBBlVb/8Kop6/ib4IGykcUIA6UfLOjOQKB3v2T0FfXej3h3EyiKKuyYY0eQDsDZIFk4//yfNud/sQYSBYPfNCKZ0SHduX5GjCdfUMnLahxsY7AXPgivdd4G26uw8YkDNj2gL6PcA4/rNhIL9wWWMsiHX3a8waEE/jm7T6kX+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Smo1v6vw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URHtqCif"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 794C31F000C4;
-	Mon, 19 Oct 2026 10:12:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Smo1v6vw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 482C61F000C5;
+	Mon, 19 Oct 2026 10:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792404749;
-	bh=K1TNRz3YmcairHAaNp7TruR6RgQVAZMBea9UKymyhMY=;
+	s=k20260515; t=1792404755;
+	bh=t6akOkspDM6DuO44EedMLUgBQZp0uz4pPTQNubsWsMU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=URHtqCif6/NrJMIIWHz2AjF/IeZydbm+r20bH3An8nUUGbJQg3W4BnuXj36do6DTg
-	 fdgz4K8RjTId/79IeFwuhM3GRXpkBjf3c2TMSgHmuqFJzL7cagIo7q7frhlM4HohFP
-	 mDO3qa9ywFiReTpzOln31V4wV6/XyX/40/yaLdDSUFACf8DTqb+VVmjpz5uVHyphIH
-	 ypQQzbT8GULlRb5BUmiXcfp5rdQ8k9cOUO41ZUC92XBMa+sylMNhbgGfBy0ZFNIkrN
-	 VGrsXh1Kyx/CKT5oOtl46SsH61+c+8/ZYhetuwlnJZfIu5WI7mdcLgrUJhOsbP9Pc6
-	 1+QNMl6c8RkaQ==
-Message-ID: <sashiko-outbox-176963@kernel.org>
+	b=Smo1v6vwGP++nBiJEgSI61+Y2qL0nhLAcS7ynFl3r7+qOt8PNu0er0+IIw+OP0SDH
+	 z6nhRpM6jocU+W7JVVDiapgESHyVgxSk96CZo+4AGaTbapt5bSE9REz4Jd2eOdoNNd
+	 GNDi6hLCGXbWWda9HBTsaq/Wb9xnFwuHDaioKt5TFqDJboHzwPJRp4re6BaOvErQ1z
+	 PO51Qjdh4SsWZezPwtLO52QyMCJuwbITKj2i/YVL198Mi7Ll95xSJIs6kzIQnv8w15
+	 5dY64sR83lFpYIQwMv0uzTgxwgDKevvjwC0KDMaBVeixOnxcO5ZfVXnrmbCBzb7Kus
+	 MKHUNxlndvy+Q==
+Message-ID: <sashiko-outbox-176964@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/4] mfd: aat2870: Derive brightness steps from max
- current
+Subject: Re: [PATCH v4 1/4] dt-bindings: mfd: Document Skyworks AAT2870
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Svyatoslav Ryhel" <clamor95@gmail.com>
 Cc: linux-leds@vger.kernel.org, mfd@lists.linux.dev, lee@kernel.org
-In-Reply-To: <20261019100930.110954-3-clamor95@gmail.com>
+In-Reply-To: <20261019100930.110954-2-clamor95@gmail.com>
 References: <20261019100930.110954-1-clamor95@gmail.com>
- <20261019100930.110954-3-clamor95@gmail.com>
+ <20261019100930.110954-2-clamor95@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 10:12:29 +0000
+Date: Mon, 19 Oct 2026 10:12:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> The AAT2870 allows only 32 steps of brightness, with this amount defined
-> by the maximum supported current. Remove the need for max_brightness by
-> calculating the allowed number of steps from the maximum current.
+> Document Skyworks AAT2870 LED Backlight Driver and Multiple LDO Lighting
+> Management Unit.
 >=20
-> Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
+> Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org> # for backli=
+ght
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019100930.1109=
-54-1-clamor95@gmail.com?part=3D2
+54-1-clamor95@gmail.com?part=3D1
 
