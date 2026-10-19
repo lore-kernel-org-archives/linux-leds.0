@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792440297;
-	b=K6gTvG3PZQRcnMoiYi2G9Tv7NSZ1jMIrWuAMYljPDc/nk6XTTx62Ze+hVXgiRdDR9QUU
-	 6CNbsQxGR+Ti+hr605JJP6ioXkfcmhrCmgmYUAvrgryPmnUQ/3FJ8vVNCFYZokIfb9mvL
-	 ZVVz54G6Jau0TYAQJneKYJHDzgYS2IE4huL3Uip49N528fNhs6mvyvsLppF63My6J2nFv
-	 etRJnF8flxsdu4fhIu9HFC2ed9YuFprlp3C4nv1HkZmQqibIH29MCvHFhEvz3JSDGPfWS
-	 l7CYpN6p+A4d49sLj41L0UyOfL5KMq/QztTL0/GH5rMWG4mrtqeUzzMge/QUUh2PFbg==
+	t=1792440298;
+	b=kL8/DElQm4sMCJJA0ezsrpjQSQpRX4pLryF30EhfFf2LSHbNKTbCyG0wPg0th4I8ylxS
+	 XiNwTuV33sKF+8WmwTtQPXqjXaEJRPMm8Izmwi2xDsioDulxifvZOSdQud0gRYcFphC80
+	 7Y2Nw6j+J0xovLMU9zJX4vuB7lrRvUA52vVExduRlGrFWGmdT+Im/O0sP4mtzRqeqIW1e
+	 GvSyIMB0GhpZA9uAnXDP/4l0nVFzQfYWAzLCO5zhmfM2hF13Vqhkb4qK9tb2L0C7gACze
+	 yhm2w29y8PtM6Mbpjneqzh/WZpNlCJ3Jv36vCGXMhwFQnOej0kvDHeRT4wkKE2xuWgQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792440297;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792440298;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=wd2J2U3CBhe3v92sIV+81ASbrUC1cu2LGcUWPJ6cy4g=;
-	b=RqtFZExLOO+KFAP9Q8eFJLUKD+NdEjvXx8b3ZJHMYGo3x0PRoK5E8TC4wEDPrTcbrdlN
-	 kp3OLcfRXy7q2fGkrKgTrwFOKtcdrkswRUtu/DZ4/jeiRX8+u4pAeDjclEwhijcftVJBK
-	 6uFMxIFoVmT8I8aOYNIhbUjuYhRk2jb08K0yMSbXlxlKbKVyukzpTovJxfDO36dTGRSbw
-	 TQWNtngrrPZX0za1hPXBA1Ey75wkHBSeEmXNR56nE7sw3GgrSNl+ZNVrpXpGFNb7LUvNK
-	 uB5qW3zLaPN6hhx2GmJvJyt+cfuyNhhQYgns46GFJPmCI02MBhh4BnJLyby2ajrhFuA==
+	bh=ANvo9St3v2ROepdEoAmexdzOPCPIt7+sxVgJI5u94wM=;
+	b=KX/whlSy26DmtPsV6J/VMTN/UtPfZKm9kT7GE3mWQx6CtDWYvBJJNtAJJEIOtq02rfFD
+	 LJ7Ifb/Exw2qS1CXtcXLDV1QjF7Yd8UlV1V2aJd6tzD4sZ0jxp0oo4rpoXR+6bm5OHcDR
+	 Rhgwb6Wiipcv4Nzafi5dF/2kXs7t89u2wECb5yeksFCUtHmFqfAFwLDzfq3M8/hl3gkSs
+	 Sn/qHuHAu15Q2PMANdOJsDHSeK8O5d5dT7qd9ViVQ0irgI7VbIvMM8sbVkB8wYunTWIgH
+	 +5N583yZyJXdadRUshNiIpBx3riQWVYnnRgVZUECepOv+lRuEOe/nEtqLNCbo9d+8SQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y2HOzQW2;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mqw4YgoV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA41F606A319;
-	Mon, 19 Oct 2026 20:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFB0606A319
+	for <linux-leds@vger.kernel.org>; Mon, 19 Oct 2026 20:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Y2HOzQW2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487D11F000C4;
-	Mon, 19 Oct 2026 20:04:56 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mqw4YgoV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 422F81F000C4;
+	Mon, 19 Oct 2026 20:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792440296;
-	bh=wd2J2U3CBhe3v92sIV+81ASbrUC1cu2LGcUWPJ6cy4g=;
+	s=k20260515; t=1792440297;
+	bh=ANvo9St3v2ROepdEoAmexdzOPCPIt7+sxVgJI5u94wM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Y2HOzQW2qpSQtNLRNYjXMlY/L8yzQixXQMeCKIW5yf36LFHVknnn039QfCcUScM0k
-	 mEk86V9ryCZBq55yKBA0iTnQpqCeDgz6s7eeuG25cn0lCGMYbDXxUSQAXtIberoWR6
-	 QQzeomua/FJIIVyjyosepo7aWLkwj0xC1xeeu2+XKzZiqCrnpd+TAczqgfP3ZqMeqD
-	 ijllve8XFEBilJwszgYO4sZpWK4zxrD6oVDQMpaxrNW7Ki+Rb9301k23WNvLCQlzoq
-	 qDevWcYEVVLtHiwkmeBrratDRUNlyHW9+yx3Ll3Y9gXN6HfuZ15c3NmkwDi4duPP1r
-	 pj8kYa3fN1XNA==
-Message-ID: <sashiko-outbox-178158@kernel.org>
+	b=mqw4YgoVbo1WRDwiGoh26yTSMhyuu3hKCSXpd9gH63Nxic+ggYwaLtXuntprgI8Rm
+	 K/t32Y5j7KPpU5+cQwpFf01BeXoL9oXzGu1B/BlioW9wmw1CVCyaDNBz9uDMqvd7mf
+	 cIJPrUeMmFbF0hYLV6wGNw+8HVXSaPiy6M7B85KwAaHCe0Ocov+0C52pny0doxMYiN
+	 vKAABZqLOZFHCaNOqf3/PjxnX/YkEYXOTuxGSxPawV24Qpk9/JhoSPnFNLYAZZMjYM
+	 anbQruhEj7XQvG+FChiHi2cBmQgojlburdUZP3B2fIvZLeMkCNVbUqb229Tye5W/uo
+	 O2XLZmj0iNb4Q==
+Message-ID: <sashiko-outbox-178159@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: leds: add Realtek RTL9301 port LEDs
+Subject: Re: [PATCH 2/3] dt-bindings: net: realtek,rtl9301-switch: add port
+ LED controller
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Ross Cawston" <ross@r-sc.ca>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261018194339.132-2-ross@r-sc.ca>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261018194339.132-3-ross@r-sc.ca>
 References: <20261018194339.132-1-ross@r-sc.ca>
- <20261018194339.132-2-ross@r-sc.ca>
+ <20261018194339.132-3-ross@r-sc.ca>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 20:04:55 +0000
+Date: Mon, 19 Oct 2026 20:04:56 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,72 +61,17 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Low] dt-bindings: leds: rtl9301-port-leds example uses raw function stri=
-ng
---
+> The switch drives the port LEDs, and some boards wire LEDs to it that
+> have no hardware function and are switched in software, such as PoE
+> status LEDs. Allow the software LED control block, described by
+> realtek,rtl9301-port-leds, as a child of the switch like its I2C and
+> MDIO controllers.
+>=20
+> Signed-off-by: Ross Cawston <ross@r-sc.ca>
 
-commit c5aa8893c90e31ee15e18fbf27c8f17550a77f2f
-Author: Ross Cawston <ross@r-sc.ca>
-
-dt-bindings: leds: add Realtek RTL9301 port LEDs
-
-This commit adds a devicetree binding schema for Realtek RTL9300 switch
-port LEDs controlled by software.
-
-> diff --git a/Documentation/devicetree/bindings/leds/realtek,rtl9301-port-=
-leds.yaml b/Documentation/devicetree/bindings/leds/realtek,rtl9301-port-led=
-s.yaml
-> new file mode 100644
-> index 0000000000000..8d6b35525263f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/realtek,rtl9301-port-leds.ya=
-ml
-> @@ -0,0 +1,84 @@
-
-[ ... ]
-
-> +examples:
-> +  - |
-> +    #include <dt-bindings/leds/common.h>
-> +
-> +    led-controller@cc48 {
-> +        compatible =3D "realtek,rtl9301-port-leds";
-> +        reg =3D <0xcc48 0x84>;
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <0>;
-> +
-> +        led@0,2 {
-> +            reg =3D <0 2>;
-> +            color =3D <LED_COLOR_ID_GREEN>;
-> +            function =3D "poe";
-> +            function-enumerator =3D <1>;
-> +        };
-> +
-> +        led@8,2 {
-> +            reg =3D <8 2>;
-> +            color =3D <LED_COLOR_ID_GREEN>;
-> +            function =3D "poe";
-> +            function-enumerator =3D <2>;
-> +        };
-> +    };
-
-[Severity: Low]
-In Documentation/devicetree/bindings/leds/realtek,rtl9301-port-leds.yaml,
-the ^led@[0-9a-f]+,[0-3]$ child nodes reference /schemas/leds/common.yaml#,
-where properties:function states:
-
-  function:
-    description:
-      LED function. Use one of the LED_FUNCTION_* prefixed definitions
-      from the header include/dt-bindings/leds/common.h. If there is no
-      matching LED_FUNCTION available, add a new one.
-
-Should the example use a LED_FUNCTION_* macro from
-include/dt-bindings/leds/common.h (or define LED_FUNCTION_POE there)
-instead of the raw string literal "poe"?
+Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261018194339.132-=
-1-ross@r-sc.ca?part=3D1
+1-ross@r-sc.ca?part=3D2
+
