@@ -1,164 +1,258 @@
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4874E80DA
-	for <linux-leds@vger.kernel.org>; Mon, 19 Oct 2026 11:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB953E558D;
+	Mon, 19 Oct 2026 11:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792409196; cv=pass; b=L00Q/yb3l9OH92EVpN9Okfr2SWJqDhu3dxDYBJJtwBY8YyGabdi6//m7anQ5l3CCPIBDTcEQ44AoV1NQ4EdZSdD/jFlLqP+rpzsCu3LCyhlSRm8VRhRBVLs94P7NXEbsx5e/3fAUgDbHJRQCv8QssUJboTk0Vb+3UZA5uMekWAs=
+	t=1792411008; cv=pass; b=F/GiIApasE+vvAP1XLkNWfwqL3VcnLMQ5IemR9ovTQgwcNiSQbHuF+/Kq8mCOeVxwQz1ifmtTj7NL9seiARbW+FblaH9SZ1SEho8/Pb20i2OSd69k6uIWr42RB/W+9rHJg4UlCIBALOuqBF0KIFn+0VDBDq+v/wTGRgvVY43+dE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792409196; c=relaxed/simple;
-	bh=NjvtDbKF6HXkZCMqwsd9sCUJNo+Nw1euiIQvE/sseso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F3Hk+a4mAJYUTjlXccuKCrMf0hhtRLQPlwxGhJEIFx7Pz+x5MK8EWnEUnQzVdUUUdpIo4injZqmNWkXHokOKXsegXetIMasTzx1ynshz0Ef4JMASJv5h2w+yKlMmQlEMSpvpcTdIeem5x+gbx1hRhCKtCqV2Gp4+gdd88+fcumk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lD1QQ9YH; arc=pass smtp.client-ip=74.125.224.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1792411008; c=relaxed/simple;
+	bh=GmvXdHlBbJQ42OnAwy60xRNtTG+wMpW25E4bM7I76AY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=WraU0PFbzC8GE5/TkQ4lc9aoM+RIvbvu+ezgxMi6b9nYlo+ujZDYuB8YTZ9m/Mv5YJ5taUZmW/ykhYl/oxk7pJHTcadXlu1VXsc8jmjcZEZXGKBqTmwVWO8gWEiURa/RLXlaX+uwki1YyvQdtWypxC5t98oiitolkd4gwFTOONU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b=l79MFJOg; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lD1QQ9YH"
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-6768403e9bbso1376943d50.1
-        for <linux-leds@vger.kernel.org>; Mon, 19 Oct 2026 04:26:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1792409192; cv=none;
-        d=google.com; s=arc-20260327;
-        b=eA/vojdvRGNEi52SulHSoNupTJuU/QK7HL9mZ1HSNbbnY6DwzaY6KahzPAf3/5uOt8
-         yDEE8He8RLlmFKW34/s60hGZDlqG879hmIAyNMHnGpJCFakNS0RKW5gFevP+WgoFhL36
-         NP55Va7PipTTd0frl8a+5bOjJJw0pFLbjFWK650YjDvubFb3oG7p3od08A+mivkCItAI
-         n9ToXctMiGHNIP8mNtc1Rl6z37hVDo7RRbinOV8iVGWo5/NPLcjDLo1/xrnEjvG3BVdd
-         ugKcKAJaPQMef6n7otdEIsmQpnychCjep1Wj0koPzEbJrParm+vYNPeXoIj11HCM1bpm
-         Nd6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=GTD0jeXtR60aME/UdLAfLsdgVjEQHvE/dqZ2xHjZShQ=;
-        fh=h1pARgusayGh0qei80iv8YqtdZwHLiZs4ppI6GNWrpw=;
-        b=TYI0cb0xq1GO2hHAVG7kFfkUOPsGZj3c+6aCED4TQo2G39g97PkxKDn15oNJl2gEhS
-         QQluT/8MpeTnxXxiUfBVOp1jc33TcAz4gwFZ3mjTezupXeN05JRlSVthuEThJ5wue9yR
-         iHxno+Sz9tS33dt/Qd/gJaq/Tk02N6j0T2UWJovfRO0MUObyMBITDcKerf+ZNn290F/r
-         R+N9fjO++6czO5mVq1PJ51W5x94ivV9XljxXqy4v4dTBlxoET1DxQwZKYxlG/yyLVSKL
-         6cmgkZ1VFf4oujHDRatJESWrVI8M2Cko7pBzlHloxcicQJcIj0Dzu9gykdGQghptadn3
-         A1wQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792409192; x=1793013992; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=GTD0jeXtR60aME/UdLAfLsdgVjEQHvE/dqZ2xHjZShQ=;
-        b=lD1QQ9YHwcxcfb9TQhswu+Ci+TiBOawx7r4a0gt7brNLXnxv1n4k6CyoA7kpBBRiJZ
-         Nxuoc8vFMAXptnwT5IHq+1/1YL1pn4AFxKwOdYAl9qYWvSaO43e18c6xnZgsbxfDVvcJ
-         7lDPWKrVPfESajInGUBhgOoDZzqrCZ1fK8db5DJKyakEmX6b56pLAkn5f6rzwLUP4F0E
-         V+iWeSrJI3lDp2o0pg1Nz8Qw5CwtsQX9EtAPtxDTU+Zyz815yiYCNP4tVZs3HXs/VWJs
-         O0zvk5/j9JJRfs4rKiEGA90XXJwVmodlm4RBfBmdz8O6MVhbljztZ3U8BV2nmKA5Dr0K
-         OxkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792409192; x=1793013992;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=GTD0jeXtR60aME/UdLAfLsdgVjEQHvE/dqZ2xHjZShQ=;
-        b=TgMHZ+AIhGv3KE8Yvxip/PFyYhlcy3G7UkHyKhUt0rgQVYiwakRuw089iAFHdLK1mY
-         83la8sMFnqopu8Z0DI0q+pswjq3DdUgTvdMqG60Aa0bnqYGNuEKLWclpXZ2h3BON4sHx
-         vaLsQzA4d7sVQp3jb5a0ElMCyn7Ee8n5prulwLelr/UZhOoyQsmByVfoVfudyzNSX0DG
-         1A7tj3VoWw0pHquxXg08NTjaknPmXNIzfrBlS1VxQ2J3Pk5tKUTvM42wGmK+gEwkWW9u
-         a9V560dmK3igrAdZO4TxlYS85qC8t5rAnhOPIzZ4Yw1AN5nf6VQx++r7JW4B408C0FS4
-         TB2Q==
-X-Forwarded-Encrypted: i=1; AKwUvBxsYulsX7PijCzRhpPU2PdAKAAgqdPnH51LmmERRWoz6onpMXvTwr9D18s3wuRfulkJ22a8QbLkgmgq@vger.kernel.org
-X-Gm-Message-State: AFq9FYJOk5lbGDTDOIYSkW6lSP/2NEyrqfj1M75ld3A8Gcgdcg0tPKSR
-	nfzU7INkuwy7XrnIMvTo5Zem8lBM+fPpavMB2ybpqMTIoM49i5dhDGAT1DbTpvgF4GlPRK0zPqQ
-	twt19vjIBuFCXv7PAN6QOFs52bRIXpLU=
-X-Gm-Gg: AYBFou23Xoan9xE/2wLFSPptrraP0dbyL1CXr3yPhFFd8hWvRBMzXKeJihhcNVvbYB6
-	VtBrneUKoQ44tXVNO6DGwxS8h0BJ0Ougt2F3qgKmqeGQ/0zKRXdCJY/jkh8MRSNS20I01yBUX4y
-	MMXxqfZy0d0Pxy9qZxV01cZkrN2jHrf2FimRBlcOvBfwfmsy3CmnZktin1TH3rxCH8xAeOxwfbm
-	oqOfp35Ci+RtreirBIpkhWMEoyRwWziwZ3HKEFc3SqdrQKfbdt3Ki/vKqkF2ZU9LBZuFBJqy/Ur
-	dfh6t/R/tqMvVl3+lWVjh67WajPR14gEm/HP4JkkahRBghqRW4gQaYAjGKzDuKvNRA8NZ8Fb+lj
-	SDbWlOkbHHbWdV/i2SYuAG/jso958rgxq74+m4rFKmHv8FWrE7ihegt964vkZcHe3tBfdhA0q7I
-	UHe0PLSQ==
-X-Received: by 2002:a05:690e:1347:b0:675:66f1:5ed9 with SMTP id
- 956f58d0204a3-679ca90ed21mr2347287d50.101.1792409192148; Mon, 19 Oct 2026
- 04:26:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=i@rong.moe header.b="l79MFJOg"
+ARC-Seal: i=1; a=rsa-sha256; t=1792411002; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ZGGOlWD9PbrELfxgx9STRVG7S3e5pVE8YE1OD9dHRYi7Lh3tpTN4EmshV5tPtQhOKyzn3783beUXQ4fW2Io1RemAy/rBLvZktMuU/5zH+8C9PJtsHuoxN9pzolzV0e4URlUw+9UIMkJrh0vBdh7qm3h48Ql9CcGo+RHy9Z3JQTk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1792411002; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VBYs3UcJ7j0jMgAB5kvc4W88NduOOIiQftkEb+hzZr4=; 
+	b=WO9lXl0vYV5Dju+wGfqMwB9cVhZzchdOZW+iJGRmUpHHLOQVYHGUXAh81H1W6K+G2Qq8pO0AAGW6mS9hGAVSmNMK68c3V/QloHD118PSctRa80QPkH/WVkZeEPYZ8c3jpqB/77RRA2e9Onma3txS3vcjAsYi9Wpzal4/VEVryX0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1792411002;
+	s=zmail2048; d=rong.moe; i=i@rong.moe;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
+	bh=VBYs3UcJ7j0jMgAB5kvc4W88NduOOIiQftkEb+hzZr4=;
+	b=l79MFJOgNTIliQ6lVApJCec/sJw/va1expSTUNmECTVNv4U4FAGtAAaoAv5dvFoe
+	Hc/3ja/yq/fF7awIzZpT3lVrlkixW5FkyES45YAgQouGycpEAXzvaYmU+DUgqEbZnsV
+	pKGy5HqfBslwz9kiDt9KTh0x7UYwFEjU7f59CZOrYIZlYX6+VTDQJW5yrgKc20SQtb1
+	N/vmJCHnu3mlfOd1i31Z04ajSNyysR2sD19wovQFcJdjVhhVIIvKoKZCGbrf6uQv9Lu
+	Mg3mKCSP+uOBIjoJF+jo7seLYTufZHx1M20LvfgqVuR6aom0QitKOgLVyAqHn//A5OI
+	IewZiUJApA==
+Received: by smtp.zohomail.com with SMTPS id 1792410998921572.21201724772;
+	Mon, 19 Oct 2026 04:56:38 -0700 (PDT)
+Message-ID: <fbb6a7b4b674d11dab0acc2b855f59a68fae6346.camel@rong.moe>
+Subject: Re: [PATCH 04/10] leds: class: Create "brightness_hw_changed"
+ attribute atomically
+From: Rong Zhang <i@rong.moe>
+To: Armin Wolf <W_Armin@gmx.de>, lee@kernel.org, pavel@kernel.org
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261018135339.1109271-5-W_Armin@gmx.de>
+References: <20261018135339.1109271-1-W_Armin@gmx.de>
+	 <20261018135339.1109271-5-W_Armin@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Oct 2026 19:51:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261016162912.64581-1-lukapanio@gmail.com>
-In-Reply-To: <20261016162912.64581-1-lukapanio@gmail.com>
-From: Luka Panio <lukapanio@gmail.com>
-Date: Mon, 19 Oct 2026 13:26:21 +0200
-X-Gm-Features: AclHuK8NAOp_nRQSq-Iz-AG3DYdUQ7KXnVtQSaGV8OFLCu20HF33SdrAf0b1-9c
-Message-ID: <CACi=Ov6Jg5eUxskBbmtWOS03jta90RK0nByhWf4EQs1PNhvuKQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] backlight: Add Awinic AW99703 driver
-To: lee@kernel.org, danielt@kernel.org, jingoohan1@gmail.com, pavel@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, deller@gmx.de, 
-	daniel@riscstar.com, krzk@kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, junjie.cao@linux.dev, mitltlatltl@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-10+b1 
+X-ZohoMailClient: External
 
-Hi Daniel, Krzysztof,
+Hi Armin,
 
-Thanks for the reviews. Before reworking this for v2 I'd like to agree
-on the approach.
+Nice refactor!
 
-Following Daniel's suggestion I'll add AW99703 support to the aw99706
-driver using per-chip data instead of adding a new driver. The register
-maps differ almost entirely, so most of the DT properties stay
-per-chip (dim-mode/UVLO/ramp-ctl on AW99706, OVP/OCP/inductor on
-AW99703).
+On Sun, 2026-10-18 at 15:46 +0200, Armin Wolf wrote:
+> Using device_create_file() might cause userspace applications
+> listening for uevents to inspect a new LED device before the kernel
+> has registered all sysfs attributes for it. This might cause those
+> applications to incorrectly assume that the new LED device does not
+> support the "brightness_hw_changed" attribute.
+>=20
+> Fix this by letting the device core create the sysfs attribute before
+> the uevent is being send to userspace.
+>=20
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/leds/led-class.c | 85 +++++++++++++++-------------------------
+>  include/linux/leds.h     |  2 -
+>  2 files changed, 31 insertions(+), 56 deletions(-)
+>=20
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 3775ad13762f..d460f041ed86 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/property.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/sysfs.h>
+>  #include <linux/timer.h>
+>  #include <uapi/linux/uleds.h>
+>  #include <linux/of.h>
+> @@ -101,14 +102,6 @@ static const struct attribute_group led_group =3D {
+>  	.attrs_const =3D led_class_attrs,
+>  };
+> =20
+> -static const struct attribute_group *const led_groups[] =3D {
 
-Following Krzysztof's review, the AW99703 binding will drop the
-ramp/transition timing and mapping properties and use the standard
-led-sources and led-max-microamp properties.
+This is a back-and-forth change. How about moving led_groups to the right
+place in PATCH 1 beforehand?
 
-That leaves the one common property, the maximum LED current,
-spelled differently in a single driver: awinic,iled-max-microamp for
-AW99706 and led-max-microamp for AW99703. To avoid that I'd like to:
+Other than that, FWIW:
 
-  - add led-max-microamp to awinic,aw99706.yaml and mark
-    awinic,iled-max-microamp as deprecated
-  - have the driver read led-max-microamp for both chips, falling back
-    to awinic,iled-max-microamp on AW99706 so existing DTs keep working
-
-Does that sound acceptable?
+   Reviewed-by: Rong Zhang <i@rong.moe>
 
 Thanks,
-Luka
+Rong
 
-On Fri, Oct 16, 2026 at 6:29=E2=80=AFPM Luka Panio <lukapanio@gmail.com> wr=
-ote:
->
-> The Awinic AW99703 is a high-efficiency 3-channel WLED driver with an
-> integrated boost converter and 11-bit brightness control over I2C,
-> optionally combined with a PWM input. It is used as an LCD backlight
-> driver in some mobile devices.
->
-> This series adds the devicetree binding and a driver for it.
->
-> Tested on the Nexphone by Nex Computers.
->
-> A board DTS using it will follow separately.
->
-> Luka Panio (2):
->   dt-bindings: leds: backlight: Add Awinic AW99703 backlight
->   backlight: Add Awinic AW99703 backlight driver
->
->  .../leds/backlight/awinic,aw99703.yaml        | 131 ++++
->  MAINTAINERS                                   |   6 +
->  drivers/video/backlight/Kconfig               |  11 +
->  drivers/video/backlight/Makefile              |   1 +
->  drivers/video/backlight/aw99703.c             | 583 ++++++++++++++++++
->  5 files changed, 732 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/backlight/awin=
-ic,aw99703.yaml
->  create mode 100644 drivers/video/backlight/aw99703.c
->
->
-> base-commit: d419d682257d813f6cb7a28e42b35d0edf4ad038
-> --
-> 2.55.0
->
+> -	&led_group,
+> -#ifdef CONFIG_LEDS_TRIGGERS
+> -	&led_trigger_group,
+> -#endif
+> -	NULL,
+> -};
+> -
+>  #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+>  static ssize_t brightness_hw_changed_show(struct device *dev, const stru=
+ct device_attribute *attr,
+>  					  char *buf)
+> @@ -123,51 +116,48 @@ static ssize_t brightness_hw_changed_show(struct de=
+vice *dev, const struct devic
+> =20
+>  static const DEVICE_ATTR_RO(brightness_hw_changed);
+> =20
+> -static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
+> -{
+> -	struct device *dev =3D led_cdev->dev;
+> -	int ret;
+> +static const struct attribute *const led_brightness_hw_changed_attrs[] =
+=3D {
+> +	&dev_attr_brightness_hw_changed.attr,
+> +	NULL,
+> +};
+> =20
+> -	ret =3D device_create_file(dev, &dev_attr_brightness_hw_changed);
+> -	if (ret) {
+> -		dev_err(dev, "Error creating brightness_hw_changed\n");
+> -		return ret;
+> -	}
+> +static umode_t led_brightness_hw_changed_is_visible(struct kobject *kobj=
+,
+> +						    const struct attribute *attr, int n)
+> +{
+> +	struct device *dev =3D kobj_to_dev(kobj);
+> +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+> =20
+> -	led_cdev->brightness_hw_changed_kn =3D
+> -		sysfs_get_dirent(dev->kobj.sd, "brightness_hw_changed");
+> -	if (!led_cdev->brightness_hw_changed_kn) {
+> -		dev_err(dev, "Error getting brightness_hw_changed kn\n");
+> -		device_remove_file(dev, &dev_attr_brightness_hw_changed);
+> -		return -ENXIO;
+> -	}
+> +	if (attr =3D=3D &dev_attr_brightness_hw_changed.attr &&
+> +	    led_cdev->flags & LED_BRIGHT_HW_CHANGED)
+> +		return attr->mode;
+> =20
+>  	return 0;
+>  }
+> =20
+> -static void led_remove_brightness_hw_changed(struct led_classdev *led_cd=
+ev)
+> -{
+> -	sysfs_put(led_cdev->brightness_hw_changed_kn);
+> -	device_remove_file(led_cdev->dev, &dev_attr_brightness_hw_changed);
+> -}
+> +static const struct attribute_group led_brightness_hw_changed_group =3D =
+{
+> +	.is_visible_const =3D led_brightness_hw_changed_is_visible,
+> +	.attrs_const =3D led_brightness_hw_changed_attrs,
+> +};
+> +#endif	/* CONFIG_LEDS_BRIGHTNESS_HW_CHANGED */
+> =20
+> +static const struct attribute_group *const led_groups[] =3D {
+> +	&led_group,
+> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+> +	&led_brightness_hw_changed_group,
+> +#endif
+> +#ifdef CONFIG_LEDS_TRIGGERS
+> +	&led_trigger_group,
+> +#endif
+> +	NULL,
+> +};
+> +
+> +#ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+>  void led_classdev_notify_brightness_hw_changed(struct led_classdev *led_=
+cdev, unsigned int brightness)
+>  {
+> -	if (WARN_ON(!led_cdev->brightness_hw_changed_kn))
+> -		return;
+> -
+>  	led_cdev->brightness_hw_changed =3D brightness;
+> -	sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
+> +	sysfs_notify(&led_cdev->dev->kobj, NULL, "brightness_hw_changed");
+>  }
+>  EXPORT_SYMBOL_GPL(led_classdev_notify_brightness_hw_changed);
+> -#else
+> -static int led_add_brightness_hw_changed(struct led_classdev *led_cdev)
+> -{
+> -	return 0;
+> -}
+> -static void led_remove_brightness_hw_changed(struct led_classdev *led_cd=
+ev)
+> -{
+> -}
+>  #endif
+> =20
+>  /**
+> @@ -544,16 +534,6 @@ int led_classdev_register_ext(struct device *parent,
+>  	if (init_data && init_data->fwnode)
+>  		device_set_node(led_cdev->dev, init_data->fwnode);
+> =20
+> -	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
+> -		ret =3D led_add_brightness_hw_changed(led_cdev);
+> -		if (ret) {
+> -			device_unregister(led_cdev->dev);
+> -			led_cdev->dev =3D NULL;
+> -			mutex_unlock(&led_cdev->led_access);
+> -			return ret;
+> -		}
+> -	}
+> -
+>  	led_cdev->work_flags =3D 0;
+>  #ifdef CONFIG_LEDS_TRIGGERS
+>  	init_rwsem(&led_cdev->trigger_lock);
+> @@ -626,9 +606,6 @@ void led_classdev_unregister(struct led_classdev *led=
+_cdev)
+> =20
+>  	flush_work(&led_cdev->set_brightness_work);
+> =20
+> -	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED)
+> -		led_remove_brightness_hw_changed(led_cdev);
+> -
+>  	device_unregister(led_cdev->dev);
+> =20
+>  	down_write(&leds_list_lock);
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index beaf23993063..6f975078cc14 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -21,7 +21,6 @@ struct attribute_group;
+>  struct device_node;
+>  struct fwnode_handle;
+>  struct gpio_desc;
+> -struct kernfs_node;
+>  struct led_pattern;
+>  struct platform_device;
+> =20
+> @@ -237,7 +236,6 @@ struct led_classdev {
+> =20
+>  #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
+>  	int			 brightness_hw_changed;
+> -	struct kernfs_node	*brightness_hw_changed_kn;
+>  #endif
+> =20
+>  #ifdef CONFIG_LEDS_TRIGGERS_HW_CHANGED
