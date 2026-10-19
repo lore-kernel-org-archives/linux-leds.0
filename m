@@ -1,192 +1,137 @@
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791634C8484
-	for <linux-leds@vger.kernel.org>; Mon, 19 Oct 2026 14:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FB64D1F83;
+	Mon, 19 Oct 2026 14:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792421006; cv=none; b=aWlAMBojnuBAqZngc8VQZP+UsICEQ9vX3UPzGIIBW3dnFtky17l8i1csM/URUF+nViZorMRgdMQKiYwkFhDA19JG/eOpEPr+3Yh2LX8mu4DkXxzFNrUi3DPATBJf+5EGrpI0Hq0zpYUTx/zC4l6iiJ/Os5zpyHw8u3MeZBU9RT4=
+	t=1792421060; cv=none; b=Z58qsr5Zb+BIZ4mMfRsh/qdrPXn0AxZXlAdJVtgVGHHIrBvYxpJyM5mbWPFrn5B1mPwA7UE6+k1kQJELRbj0PVRcHsi4df9inRESTbmi7JI7Fc8Ymy9//WzzkDNQ1z7zV+kYhN4bV37nb9bWi5R1LGPe5VIH+JP3TAzKbTOxMTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792421006; c=relaxed/simple;
-	bh=XuAQhT27dgprpauQebxMnfPyIPPrLN2DLmbOYs4sxMM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eHRiRYSF+dbMr3lcV7JCenLxoMFKmWm/LQhqzPo34yg+6YMuthc2M9jzzTyZiB6MbVkK9KaA94u0XfIXqFhajS1Vqqh27ht/sTfB6eNDC9pd2FO0JZKlCzJIvUCJz2OEFkEIt7CZSqWI3QQ+C33Fcs+rcw6/8U++4Zjq566exwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=A1JgaV+p; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1792421060; c=relaxed/simple;
+	bh=BzHlguVRDGn243HxthdpSWmhl6vWDFal+ulBsdbrE/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwdX5gyegAqKVKZwVsse11WGRkXeEZMMD5mkTW0RopisraYbdz/dqYt7p5/HSJM//zDpCh8FU2I59NBLSqDpxPJfZvqgpTJnYo2zPjsf0OXMh1EG81+HliSikvv5VfshpRMsJVjLx64P0VDLjl4YPweXoUcQ40nFWv94uWMYBPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SEn9dHSA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="A1JgaV+p"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id 767C2240103
-	for <linux-leds@vger.kernel.org>; Mon, 19 Oct 2026 16:43:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
-	s=1984.8680eb; t=1792421001;
-	bh=2A9eKbg05P4THItmcWKEQ8pJe/MMiQmJQ/gzVrOiOr0=;
-	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
-	 MIME-Version:OpenPGP:From;
-	b=A1JgaV+pbA7bHR4eTlkJ67mo2FC+m1Cc4YeL4D2EvKsCpXcPI0J5dzDi1TJBrHR4q
-	 jUflazlzNM/twoPr+mT8jfJWft6d0Uv26esg9lb1AhFbMrA5fQ05tq+E9tHrK/+cpB
-	 rbwDPRjnJ9/DZ4TikRVsrv1h8R1YSpfOQf+AbHC8OiED+jRN5Fo3z5s04n3XWsOyIg
-	 M55n/rBrbdcHAkV6sNHkMMdzhylWdPqZ1oN9vrfbDTuxKEaDKFwYBviX03JZbIyHGV
-	 rVH7i2lLx6NPTWgabhrClQRy7xyFFI8esW/fadVIjxQEZAriYI1AHHiSrrQjbL+AXp
-	 v2bzsxD7NCfgA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4j7dZX73D3z6twP;
-	Mon, 19 Oct 2026 16:43:16 +0200 (CEST)
-Message-ID: <236149b4c90323f412d6385c034a78908013e2d7.camel@posteo.de>
-Subject: Re: [PATCH v27 4/4] MAINTAINERS: rust: leds: Add rust abstraction
- entry
-From: Markus Probst <markus.probst@posteo.de>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>,  Gary Guo <gary@garyguo.net>,
- =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  Benno
- Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Boqun Feng <boqun@kernel.org>, Daniel Almeida
- <daniel.almeida@collabora.com>, Tamir Duberstein	 <tamird@kernel.org>,
- Alexandre Courbot <acourbot@nvidia.com>, Onur =?ISO-8859-1?Q?=D6zkan?=	
- <work@onurozkan.dev>, Ira Weiny <iweiny@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Mon, 19 Oct 2026 14:43:20 +0000
-In-Reply-To: <20261019143818.GC2663669@google.com>
-References: <20261016-rust_leds-v27-0-2c296d8a8e5b@posteo.de>
-	 <20261016-rust_leds-v27-4-2c296d8a8e5b@posteo.de>
-	 <20261019143818.GC2663669@google.com>
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
- keydata=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
- jfGillcaQOqFZ3WwVqyzG1BUfTow==
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-wqZHFZr17D4zIZ7eLDSB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SEn9dHSA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DAB61F000C4;
+	Mon, 19 Oct 2026 14:44:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792421059;
+	bh=aBNqd6JFNU7OqTTmF0Y9kAceZh0q/au21FecJGMmahc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SEn9dHSAvdTVqt74t/ThZI05e1Do3f8fNCl/QvPs6kWEBDSmmqb2VfoRPLAf/QfUR
+	 SiCitR18M/fDCVJTgPPWJzAERkC0qc6Q4EmJ7jsY17ypiHIhpdNz3GWoS6cq0r/8kj
+	 BwXhdYbzqxd9VQQHrp2rc8+DCEumQtYNVeFEGWrzB81YlnKkKRJisy+fZXEnQvWy0/
+	 E5k8ij2d7kaqeCONS78wYSDvcl9YnvXuGm+xLL2lrKB5EbdeEWI0mePt7EJmDMXTtf
+	 6ZRJscYMRIwozHsxBmpB1X5yNvJYPVSrKdiLTP4PTumbNKnnodQEqN+k3o5r9dTPcc
+	 +SEIv9EPX6xxw==
+Date: Mon, 19 Oct 2026 15:44:13 +0100
+From: Lee Jones <lee@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mfd@lists.linux.dev, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 2/4] mfd: aat2870: Derive brightness steps from max
+ current
+Message-ID: <179198332384.839288.13126529382772558553@kernel.org>
+References: <20261013180933.487013-1-clamor95@gmail.com>
+ <20261013180933.487013-3-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261013180933.487013-3-clamor95@gmail.com>
+X-AI-Review-Draft: <20261013180933.487013-3-clamor95@gmail.com>
 
+Wrong subject line.
 
---=-wqZHFZr17D4zIZ7eLDSB
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Please review, explain or fix the Sashiko review(s).
+If this is a set, this request includes the other patches too.
 
-On Mon, 2026-10-19 at 15:38 +0100, Lee Jones wrote:
-> On Fri, 16 Oct 2026, Markus Probst via B4 Relay wrote:
->=20
-> > From: Markus Probst <markus.probst@posteo.de>
-> >=20
-> > Add self as maintainer.
-> >=20
-> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> > ---
-> >  MAINTAINERS | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index f53047aa8d3c..3ae821614cd8 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -14791,6 +14791,15 @@ F:	drivers/leds/
-> >  F:	include/dt-bindings/leds/
-> >  F:	include/linux/leds.h
-> > =20
-> > +LED SUBSYSTEM [RUST]
-> > +M:	Markus Probst <markus.probst@posteo.de>
-> > +L:	linux-leds@vger.kernel.org
-> > +L:	rust-for-linux@vger.kernel.org
-> > +S:	Maintained
->=20
-> > +F:	drivers/leds/*.rs
->=20
-> -ENOENT
+> The AAT2870 allows only 32 steps of brightness, with this amount defined
+> by the maximum supported current. Remove the need for max_brightness by
+> calculating the allowed number of steps from the maximum current.
+>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  drivers/video/backlight/aat2870_bl.c | 30 ++++++++++------------------
+>  1 file changed, 10 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/video/backlight/aat2870_bl.c b/drivers/video/backlight/aat2870_bl.c
+> index 8b790df1e842b..eb686e315921d 100644
+> --- a/drivers/video/backlight/aat2870_bl.c
+> +++ b/drivers/video/backlight/aat2870_bl.c
+> @@ -24,18 +24,6 @@ struct aat2870_bl_driver_data {
+>  	int brightness; /* current brightness */
+>  };
+>
+> -static inline int aat2870_brightness(struct aat2870_bl_driver_data *aat2870_bl,
+> -				     int brightness)
+> -{
+> -	struct backlight_device *bd = aat2870_bl->bd;
+> -	int val;
+> -
+> -	val = brightness * (aat2870_bl->max_current - 1);
+> -	val /= bd->props.max_brightness;
+> -
+> -	return val;
+> -}
+> -
+>  static inline int aat2870_bl_enable(struct aat2870_bl_driver_data *aat2870_bl)
+>  {
+>  	struct aat2870_data *aat2870
+> @@ -69,10 +57,11 @@ static int aat2870_bl_update_status(struct backlight_device *bd)
+>  	dev_dbg(&bd->dev, "brightness=%d, power=%d, state=%d\n",
+>  		 bd->props.brightness, bd->props.power, bd->props.state);
+>
+> -	ret = aat2870->write(aat2870, AAT2870_BLM,
+> -			     (u8)aat2870_brightness(aat2870_bl, brightness));
+> -	if (ret < 0)
+> -		return ret;
+> +	if (brightness) {
+> +		ret = aat2870->write(aat2870, AAT2870_BLM, (u8)brightness - 1);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+>
+>  	if (brightness == 0) {
+>  		ret = aat2870_bl_disable(aat2870_bl);
+> @@ -150,10 +139,11 @@ static int aat2870_bl_probe(struct platform_device *pdev)
+>  	else
+>  		aat2870_bl->max_current = AAT2870_CURRENT_27_9;
+>
+> -	if (pdata->max_brightness > 0)
+> -		bd->props.max_brightness = pdata->max_brightness;
+> -	else
+> -		bd->props.max_brightness = 255;
+> +	/*
+> +	 * The maximum number of brightness steps is determined by the max current.
+> +	 * The aat2870_current enum maps directly to the allowed brightness steps.
+> +	 */
+> +	bd->props.max_brightness = pdata->max_current;
 
-Yes, but why is this an issue?
-It will catch future rust led drivers.
+What happens if 'pdata->max_current' is 0?  Above, we fall back to
+AAT2870_CURRENT_27_9 when assigning 'aat2870_bl->max_current'.  Shouldn't this
+use 'aat2870_bl->max_current' instead, and if 'aat2870_bl->max_current' is no
+longer used anywhere else, should it be dropped from 'aat2870_bl_driver_data'?
 
-Thanks
-- Markus Probst
+>
+>  	aat2870_bl->brightness = 0;
+>  	bd->props.power = BACKLIGHT_POWER_ON;
+> -- 
+> 2.53.0
+>
 
-
->=20
-> > +F:	rust/kernel/led.rs
-> > +F:	rust/kernel/led/
-> > +
-> >  LEGO MINDSTORMS EV3
-> >  R:	David Lechner <david@lechnology.com>
-> >  S:	Maintained
-> >=20
-> > --=20
-> > 2.55.0
-> >=20
-> >=20
-
---=-wqZHFZr17D4zIZ7eLDSB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmrWLH8bFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPSqQ0P/R7964DLgRe1Zmqw1Zxg
-TfJ+n3tqPR/oLuObPKwv7DAEcx7KXldajgDyVBsiBcl0jCZ1e0s96ivwDmcyCFvX
-Om9/SMrXaK4rN007mLBykWF6mfrTNuJr+cOUkSN5UW6GowPHGY1QxsjnCJ9RV1T0
-HdTbk38RaqSpaNCtX/bcmL/UbsZhnOLMxn2Mh9b64UeZyMIObBhlfH9PTHz6DEuY
-6ongibq8666j98ue7sVQoCtcBl8+aaQe61iKLP7zM9mm2C9UmITemDs4ryaSGMBa
-4oTmd1pBgVrC3E1xXprvM1c1pDauU0P5AjHkWDww5H0N7I9vk/Mvr7q7efj+NOVa
-feYTyql1b6xN7f/HzdNDN92zTEw6HbmiI8HT2SHvvIna45vMWUzrWo5kv6QXBvaj
-SvJHWFl6fz2redEf0njOkek3JeiyDGKcAfFbA3BspZI6iMMe+zmvXEHI6HSP+JnJ
-zZFi8L/6xK/ICesJUP2MFesDOqM6sPexwQBqwThVFPBQLv50yYXzubKbXLpO7KPU
-x6VspScAtQ0P+cvsZErV8EMeG9et2VeLo0rzihpO9sHbr78UrVPwpiAb5ALMjv3B
-/dbR10T151ERpy32RgnruRUeqvC7UJvPa+U+rYw2jC7y/JIHAx5+e2CzG+AUrHgH
-PxTqWDinxpiS2AmrXlEJk/0Q
-=bru9
------END PGP SIGNATURE-----
-
---=-wqZHFZr17D4zIZ7eLDSB--
+-- 
+Lee Jones
