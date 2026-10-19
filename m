@@ -1,43 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87344D09FD;
-	Mon, 19 Oct 2026 10:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8178C4C225E;
+	Mon, 19 Oct 2026 10:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792405275; cv=none; b=otTExIVsKzamMAiGWrsMN4mSQ+fKfNxDs7H+Xk5qnZHq9KHlHgRrQu+tNSzZ/+QPxU1J1Uh5hbl38cZPpIQmdGqHE1aNiD2U95ndIVPUG/AFW/NrHrLiSe14Yp4oZ9YAMuDWqBLtfTTHGL2LTLSJOpezixzcXx3wqnBtgn1skAg=
+	t=1792405325; cv=none; b=AaSdPOLM5bEhd4sZ3xUYmYtEqCoRiXBlt3vZRUxcZNmSs2NVCHsU0hpQY7dcmy4jMgbNvPeIwoiJTdMXoVYmN3HHPS4ecxXoQ1RFFT/M5zq+vdKg4Zx0v7WrYucAeImd+aWauOqZe5ZCia0WS3lndCXdap766izH4tlSaYM+3R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792405275; c=relaxed/simple;
-	bh=l0v06s7BZKjv4w/J6KoIHK12NHCkvAm4w8ObQlHFSXE=;
+	s=arc-20240116; t=1792405325; c=relaxed/simple;
+	bh=d8Bj4vzObU/jRIwHnyVsu4EjR9LZ3fZZc+NYrJEJoEY=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=dViLwZ/YXWPjaOjjgNYzcrRjI8WM17YxV/DSxy3X8kSf4xf3MzDjifMmdRzpT/lctRNSFlTYPFQFI6svUHUbS1ByUk7hYUirYB3MxHsuDORmk2vmm7LH61u8zmctBWYAs7w1cAd2GHLGqjVbplSQYq7/qZPa7N2vt0vMw+0vOwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zv/d5KId; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=J0NkuRzRV1d+52AK/I1ppYMbi71MzOVQkLw3jPXRoUmMmQ4GygVrisCn66smnQn4sr5RTyfJ8FZwSOSDlizTBhKzEKLFmD4svYmVV0xeiacq4/+r1fGLuqQuc2Qmzah156WnOR8On4NDJ0aCI+08GsJ38zekCI0SaXDj2arNz24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUGiEgar; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zv/d5KId"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D01181F000C4;
-	Mon, 19 Oct 2026 10:21:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUGiEgar"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1BAB1F000C4;
+	Mon, 19 Oct 2026 10:22:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792405273;
-	bh=8UJg2BKoLo6QJa+/0Y5EWFsrBfSroDSG6h0pgdbGvF0=;
+	s=k20260515; t=1792405324;
+	bh=p8cCog9OtPuO8i1Zg+6ar7IAkRn0H6P47rVBxkYuGQY=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Zv/d5KIdTE7tXKMbD5QvZnf8/OYyCVzQp6gJl0IZ52Ek2oFEF+ho6SCiprgSEUUjh
-	 8EMHLWObz+p+ui9FX6IUqh3i9WTIWDKVxKQkclg1ThzlHnTllEpyVgOK+CQGvAzG1Y
-	 UIh5VFaXiVaiuG5PnMzr7zJyDWo22Eg/MxMS+pzSu7Z5tyMl6LDSH7/vFh/Puaf/uv
-	 Oa6NMLXJZ2/3MIsQqdHCcOOVESUhs5fuoZ7UQyrBjX50L1nlx+hv1NcP5fk+9xVUrh
-	 TMa7s+z2hznOHxdrzPbfVyI5V+DnQe7+QmOqQs1gcji6SOlysiYE4kNhYQIrH/TQEl
-	 I9uUnHm1xYU+w==
-Message-ID: <sashiko-outbox-176974@kernel.org>
+	b=SUGiEgar4hfSFzwPhNYHQnhzusIIJaNO1bQEeR26pu08jH2NsDqOxhLS+VtDy+uXA
+	 9MPoZNXzvkcQaNfurstnTym9nH84L1StkJ2B0acU9iWEnpaALTCUGJWZkRSthdgVCt
+	 CAqFw8iZCXtqg3HxxzcTfkEoqWDBHxpVKpSTu5De15nNgtPz5BlXrqHMfTEm/0imM3
+	 GhVsKRR+3DEgBnU4MDIubIkMZ9T1ZovQl7RyIvKC0rcL8zxje67KuPEVvFAuOACwqF
+	 ET+mDpfvho/9MeeskFJbi1lmDZM1oU2F/ZnVFl5wgzAFdDFHYG66HOrksdp5MvdZzu
+	 GHbFPcC3iowpg==
+Message-ID: <sashiko-outbox-176977@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 3/4] mfd: aat2870: Convert to use OF bindings
+Subject: Re: [PATCH v12 3/7] input: serio: Add driver for ASUS Transformer
+ dock keyboard and touchpad
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, mfd@lists.linux.dev, dri-devel@lists.freedesktop.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261019100930.110954-4-clamor95@gmail.com>
-References: <20261019100930.110954-1-clamor95@gmail.com>
- <20261019100930.110954-4-clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-input@vger.kernel.org, mfd@lists.linux.dev, linux-leds@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, dmitry.torokhov@gmail.com, lee@kernel.org
+In-Reply-To: <20261019100406.103687-4-clamor95@gmail.com>
+References: <20261019100406.103687-1-clamor95@gmail.com>
+ <20261019100406.103687-4-clamor95@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 10:21:12 +0000
+Date: Mon, 19 Oct 2026 10:22:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -46,113 +47,133 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Low] mfd: aat2870: missing linux/gpio/consumer.h include breaks !CONFIG_=
-GPIOLIB build
+- [Medium] input: serio: serio ports registered before notifier in asus_ec_=
+kbc_probe()
 --
 
-commit 7efa32d759fbc7ee0e1963e704db3b5316d972db
-Author: Svyatoslav Ryhel <clamor95@gmail.com>
+commit 03f99aa77c8833478d88304ecd5af6dc8d7131c2
+Author: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 
-mfd: aat2870: Convert to use OF bindings
+input: serio: Add driver for ASUS Transformer dock keyboard and touchpad
 
-This commit converts the AAT2870 core, regulator, and backlight drivers from
-platform data to Device Tree bindings and modern GPIO consumer helpers.
+This commit adds a serio driver for the ASUS Transformer dock keyboard and
+touchpad controller, forwarding EC notifications to serio ports and
+remapping several non-standard keycodes.
 
-> diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
-> index 0d56cd6fbc6a5..fe43ef675f257 100644
-> --- a/drivers/mfd/aat2870-core.c
-> +++ b/drivers/mfd/aat2870-core.c
-> @@ -16,8 +16,15 @@
->  #include <linux/gpio/legacy.h>
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/aat2870.h>
-> +#include <linux/of_platform.h>
->  #include <linux/regulator/machine.h>
+> diff --git a/drivers/input/serio/asus-transformer-ec-kbc.c b/drivers/inpu=
+t/serio/asus-transformer-ec-kbc.c
+> new file mode 100644
+> index 0000000000000..fa7f7c3f037db
+> --- /dev/null
+> +++ b/drivers/input/serio/asus-transformer-ec-kbc.c
+> @@ -0,0 +1,264 @@
 
 [ ... ]
 
-> @@ -348,60 +309,29 @@ static int aat2870_i2c_probe(struct i2c_client *cli=
-ent)
-> =20
->  	aat2870->reg_cache =3D aat2870_regs;
-> =20
-> -	if (pdata->en_pin < 0)
-> -		aat2870->en_pin =3D -1;
-> -	else
-> -		aat2870->en_pin =3D pdata->en_pin;
-> +	aat2870->en_pin =3D devm_gpiod_get_optional(&client->dev, "enable",
-> +						  GPIOD_OUT_HIGH);
-> +	if (IS_ERR(aat2870->en_pin))
-> +		return dev_err_probe(&client->dev, PTR_ERR(aat2870->en_pin),
-> +				     "Failed to get EN GPIO\n");
-> =20
-> -	aat2870->init =3D pdata->init;
-> -	aat2870->uninit =3D pdata->uninit;
->  	aat2870->read =3D aat2870_read;
->  	aat2870->write =3D aat2870_write;
->  	aat2870->update =3D aat2870_update;
-> =20
->  	mutex_init(&aat2870->io_lock);
-> =20
-> -	if (aat2870->init)
-> -		aat2870->init(aat2870);
-> -
-> -	if (aat2870->en_pin >=3D 0) {
-> -		ret =3D devm_gpio_request_one(&client->dev, aat2870->en_pin,
-> -					GPIOF_OUT_INIT_HIGH, "aat2870-en");
-> -		if (ret < 0) {
-> -			dev_err(&client->dev,
-> -				"Failed to request GPIO %d\n", aat2870->en_pin);
-> -			return ret;
-> -		}
-> -	}
-> -
-> -	aat2870_enable(aat2870);
-> -
-> -	for (i =3D 0; i < pdata->num_subdevs; i++) {
-> -		for (j =3D 0; j < ARRAY_SIZE(aat2870_devs); j++) {
-> -			if ((pdata->subdevs[i].id =3D=3D aat2870_devs[j].id) &&
-> -					!strcmp(pdata->subdevs[i].name,
-> -						aat2870_devs[j].name)) {
-> -				aat2870_devs[j].platform_data =3D
-> -					pdata->subdevs[i].platform_data;
-> -				break;
-> -			}
-> -		}
-> -	}
-> +	gpiod_set_value_cansleep(aat2870->en_pin, 1);
+> +static int asus_ec_register_serio(struct platform_device *pdev, int idx,
+> +				  const char *name, int cmd)
+> +{
+> +	struct asus_ec_kbc_data *priv =3D platform_get_drvdata(pdev);
+> +	struct i2c_client *parent =3D priv->parent;
+> +	struct serio *port =3D kzalloc_obj(*port);
+> +
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	priv->sdev[idx] =3D port;
+> +	port->dev.parent =3D &pdev->dev;
+> +	port->id.type =3D SERIO_8042;
+> +	port->id.extra =3D cmd & 0xFF;
+> +	port->write =3D asus_ec_serio_write;
+> +	port->port_data =3D (void *)priv;
+> +	snprintf(port->name, sizeof(port->name), "%s %s",
+> +		 priv->ec->model, name);
+> +	snprintf(port->phys, sizeof(port->phys), "i2c-%u-%04x/serio%d",
+> +		 i2c_adapter_id(parent->adapter), parent->addr, idx);
+> +
+> +	serio_register_port(port);
+> +
+> +	return devm_add_action_or_reset(&pdev->dev, asus_ec_serio_remove, port);
+> +}
+> +
+> +static void asus_ec_notifier_chain_unregister(void *data)
+> +{
+> +	struct asus_ec_kbc_data *priv =3D data;
+> +	struct asusec_core *ec =3D priv->ec;
+> +
+> +	blocking_notifier_chain_unregister(&ec->notify_list, &priv->nb);
+> +}
+> +
+> +static int asus_ec_kbc_probe(struct platform_device *pdev)
+> +{
+> +	struct asusec_core *ec =3D dev_get_drvdata(pdev->dev.parent);
+> +	struct asus_ec_kbc_data *priv;
+> +	int error;
+> +
+> +	priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	priv->ec =3D ec;
+> +	priv->parent =3D to_i2c_client(pdev->dev.parent);
+> +
+> +	error =3D asus_ec_register_serio(pdev, 0, "Keyboard", 0);
+> +	if (error)
+> +		return error;
+> +
+> +	error =3D asus_ec_register_serio(pdev, 1, "Touchpad", I8042_CMD_AUX_SEN=
+D);
+> +	if (error)
+> +		return error;
+> +
+> +	priv->nb.notifier_call =3D asus_ec_kbc_notify;
+> +
+> +	error =3D blocking_notifier_chain_register(&ec->notify_list, &priv->nb);
+> +	if (error)
+> +		return dev_err_probe(&pdev->dev, error,
+> +				     "failed to register blocking notifier chain");
+> +
+> +	error =3D devm_add_action_or_reset(&pdev->dev,
+> +					 asus_ec_notifier_chain_unregister,
+> +					 priv);
 
-[Severity: Low]
-Should drivers/mfd/aat2870-core.c replace #include <linux/gpio/legacy.h>
-with #include <linux/gpio/consumer.h>?
+[Severity: Medium]
+Can registering the serio ports before registering the notifier in
+asus_ec_kbc_probe() cause a race with serio driver probing?
 
-In drivers/mfd/aat2870-core.c, aat2870_i2c_probe(), aat2870_i2c_suspend(),
-and aat2870_i2c_resume() now use devm_gpiod_get_optional(), GPIOD_OUT_HIGH,
-and gpiod_set_value_cansleep(), which are declared in
-<linux/gpio/consumer.h>.
+Inside asus_ec_register_serio(), serio_register_port() immediately queues
+SERIO_REGISTER_PORT onto system_long_wq (serio_event_work). If
+serio_event_work runs on another CPU before
+blocking_notifier_chain_register() completes, serio_add_port() will bind
+atkbd or psmouse, which immediately send PS/2 reset and identification
+commands via asus_ec_serio_write() and wait for responses via
+serio_interrupt().
 
-However, <linux/gpio/legacy.h> only pulls in <linux/gpio/consumer.h> when
-CONFIG_GPIOLIB is enabled:
+Since the parent MFD driver has already enabled its IRQ handler
+asus_ec_interrupt(), the EC response will be read from ASUSEC_READ_BUF and
+passed to blocking_notifier_call_chain(&ddata->ec.notify_list, ...) before
+priv->nb is on the list, dropping the response bytes and causing
+ps2_command() timeouts.
 
-include/linux/gpio/legacy.h:
-    #ifdef CONFIG_GPIOLIB
+Similarly, on driver unbind, devm will run
+asus_ec_notifier_chain_unregister() before asus_ec_serio_remove() calls
+serio_unregister_port(), disconnecting the receive path while the serio
+ports and their drivers are still active.
 
-    #include <linux/gpio/consumer.h>
+Should the notifier be registered (or gated via serio open/close or
+start/stop callbacks with priv->sdev[] initialized beforehand) so that the
+receive path is active whenever the serio ports are registered?
 
-Because MFD_AAT2870_CORE in drivers/mfd/Kconfig has:
-
-    depends on GPIOLIB || COMPILE_TEST
-
-building with CONFIG_MFD_AAT2870_CORE=3Dy, CONFIG_COMPILE_TEST=3Dy, and
-CONFIG_GPIOLIB=3Dn will fail to compile due to missing declarations for
-GPIOD_OUT_HIGH, devm_gpiod_get_optional(), and gpiod_set_value_cansleep().
+> +	if (error)
+> +		return error;
+> +
+> +	return 0;
+> +}
 
 [ ... ]
-
->
-> base-commit: 8c3ce6554a5b995599b84388347b301553e9efd5
-> --
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019100930.1109=
-54-1-clamor95@gmail.com?part=3D3
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019100406.1036=
+87-1-clamor95@gmail.com?part=3D3
