@@ -1,66 +1,62 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7384249E13C;
-	Mon, 19 Oct 2026 10:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED7C4A2A56;
+	Mon, 19 Oct 2026 10:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792404613; cv=none; b=dPghFcA/pzOMFDQAQ4HPp9PYL6Sk8EvlFZl03kvxeEtFBbHTeMpCScUaCLXhJd4n8EXgFIh5S79mOC4Y/eLFZY3ymqFswD19U5J75QWFXO/ncNWcfEtxRAX8j+m4PDlb6hccXGkCz6m71c3sUqD+fv0Mz61KEiGYNtLRrpfUE+U=
+	t=1792404745; cv=none; b=Za9VsWwiZJ/CMdQmLMvEB6/04cWljEX+RGsYYZp1TdUxBR0s5OxKD0tp+Y8D76OxqbNFmcsQdch2O6kBjBje0vnTxrtpwwcr1tm4p/e6Tr2IpegN9VcW742Nk1npLs4cGJf9sG/y8v/7PWR75DYVg1toj8xkb7MJJKobJIzvyAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792404613; c=relaxed/simple;
-	bh=8e6Su5VIzeA7G9Wk3hAaziDayWC+MDI0SEz2Mhil0+M=;
+	s=arc-20240116; t=1792404745; c=relaxed/simple;
+	bh=Y9tReA2b3n3teryhzZpgElTYzCcEgdTH+UWVfdvxqOU=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=bI8bNoIDORnfhgw1tTM0jiVjpj0XXaRmONjSkucqf2oD8MKxcXMSm3ueT+S4SUpSojfXxseNzwJ3kipHal69I80AZpB7zrMlR4iTL2PlSY9IA6yb8JJz4dNtV1San3LZtAIr9/WDDBEzspVy6rn2yzLD1uXDPWhzGwSLiRnvCMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7rdLeQ5; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=FpWLg5uoqeIrpo0uO+Zr1Hdhml7WR6qYA5F4yV57ihPw52nqF/cuKmeR4V9oD7Zmw70w4nyh+bozotMZ9XEarSFEPzCfSREH4tkXzQv6rF9HfRTk6fQ2W36TsTOiIMt6N0irkLxGjgScjd/K4TLwnCFHMaICY/USAatfuRsER78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FggwKCJI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7rdLeQ5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEB31F000C6;
-	Mon, 19 Oct 2026 10:10:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FggwKCJI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8951F000C4;
+	Mon, 19 Oct 2026 10:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792404612;
-	bh=8e6Su5VIzeA7G9Wk3hAaziDayWC+MDI0SEz2Mhil0+M=;
+	s=k20260515; t=1792404744;
+	bh=Y9tReA2b3n3teryhzZpgElTYzCcEgdTH+UWVfdvxqOU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=H7rdLeQ5RaQLVmF8e1iEqpSSe3TYXm3MwuHRQbyXWBvT3PmiHyDhUeQa0FtJyk5TZ
-	 gTRsgOZrI1WQVVTXXMGb4taCPd+i0GNnYq+8mwmF3m60xUYeDp/05hnjKKSL5J+ci+
-	 5m+hztPTCg0o6G4f6Z1qoGHAVEeHP+QdUI3gSql/wKqVSLOVpDF2qRP48KsAwXrgGU
-	 bO1yKvtzjMMbHnqcb3mRKmPHic3wShVuMEvA8t0C/w7J4DP1qbgSsDs7dUEWW4hhcw
-	 UYdTLmo4/p+Xiwb/jbjexbiNHFC3WZFwOv7Os3WiT7ZBDdwGuI7b1qfQmhop6DT8uQ
-	 Acrel5SPzz+RQ==
-Message-ID: <sashiko-outbox-176956@kernel.org>
+	b=FggwKCJIqI+DIVcpFmeg+r1QJ32RfUKP5u7uMnCDXg6QCElDWQ6UtjHvYda4GCc/I
+	 2FRhE6DoBYN08eQVsvAXnDUSD4hNzPwSPvWrY2LmUAxfVHhzfPMqZY3rFB/pvT7qag
+	 /kp6vpITChQkuhTWymn8/flwOgVI6ZeTOeQ+cu7hXHED6XPt3EEgRzlxEIyAb0IRok
+	 1zVXA0j4ILyBXZ0WXHhhYPLJJCZB4YhoWhOe62iMxGvHS4EWlfYxQPjD2YS7YI4m3V
+	 zeQrAvtxwyZ70a+6IEcGvVYSfkacauOdccqhOnj+0j0/WiDTeCQDDgeJ+YYthTuVdt
+	 zdw2r+C4009yA==
+Message-ID: <sashiko-outbox-176961@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v12 4/7] input: keyboard: Add driver for ASUS
- Transformer dock multimedia keys
+Subject: Re: [PATCH v4 4/4] mfd: aat2870: Add support for VIN and IN-LDO
+ power supplies
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: mfd@lists.linux.dev, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261019100406.103687-5-clamor95@gmail.com>
-References: <20261019100406.103687-1-clamor95@gmail.com>
- <20261019100406.103687-5-clamor95@gmail.com>
+Cc: linux-leds@vger.kernel.org, mfd@lists.linux.dev, lee@kernel.org
+In-Reply-To: <20261019100930.110954-5-clamor95@gmail.com>
+References: <20261019100930.110954-1-clamor95@gmail.com>
+ <20261019100930.110954-5-clamor95@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 19 Oct 2026 10:10:11 +0000
+Date: Mon, 19 Oct 2026 10:12:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 
-> From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> The AAT2870 supports a dedicated main power supply input alongside parent
+> power supply for its internal regulators.
 >=20
-> Add support for multimedia top button row of ASUS Transformer's Mobile
-> Dock keyboard. Driver is made that function keys (F1-F12) are used by
-> default which suits average Linux use better and with pressing
-> ScreenLock + AltGr function keys layout is switched to multimedia keys.
-> Only Dock keyboard input events are tracked for AltGr pressing.
+> Add support for retrieving and managing these supply regulators
+> (vin-supply and in-ldo-supply) using the regulator framework to ensure
+> proper power supply dependencies and power-up sequencing.
 >=20
-> Co-developed-by: Ion Agorria <ion@agorria.com>
-> Signed-off-by: Ion Agorria <ion@agorria.com>
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019100406.1036=
-87-1-clamor95@gmail.com?part=3D4
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261019100930.1109=
+54-1-clamor95@gmail.com?part=3D4
 
