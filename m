@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792501148;
-	b=dy9IltuQXzMvg30CSs9eBkSfj/reoN1DDecs7Zoiefw9/vwemcWdnFoJRGpgsTq65dAw
-	 /PtaTGnqAP/2ilOx87a4hCyuRigvQg5ya+gs59US+BX1euHwSxdHhdJGyTvBzcB9CbBK+
-	 2Mj9u5IVfuTL1D4e6PN0C4jWMW/D6XW8r0faeUl6R1jjMg1PZf5Of/4zhCAkTVzdDe1jB
-	 kP4hiw5r3/0eT0EMX756rX6qcsd97P3DHC9k8+HfYRFRs9BIRCi4ZzjO6e4vWGXf1Eocn
-	 mSV3mX6nn/Oloc4WR6TlZfv0taf89zAxgSjggwF9VvKGmjfc1BOZPVszQypRThBV3ag==
+	t=1792501342;
+	b=DvImXods/1KUl5TKXIY1CsKVsXo+IocsSctc4SgF3oPb8k04iupB3kA62nuHMGXA8mmN
+	 EHFMnW98Bv3FEDZGJjuEYTjix/afPfa+fNEOd3F3z6fVZjfpQFJ6IlSQ5juNOxuH4C51p
+	 gpMbtY3QR3T/JgUQ5GjD9vJ4wW+H/XLAXzdKrtmSgmumGHxAY8R5sy3156dnhi2kq4HBu
+	 Zpe7MuubZJClmV5IY23+diIMjmvaCWHPiB553AZPKAp7CQygoxh4VwRZDazMoBYLA4BOk
+	 jwq4QTWKXjFQxTqFoPhfkz+qp1mJ9fRBYmbWa4QLGfcoN4slj/fIYN/b3mIF5Vbqu6w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792501148;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792501342;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=yCRMTjRp7KnGZFSOy7SlGCsfS32+WsKfWYpdsBeVsng=;
-	b=VxOFTyIt7Gi13FeKUHTBS7tJN4AlmbMPtHq4FH1L8vA1cvFiaxMpDRYOIJmDYqGwlJN7
-	 c4kr2VNmGDDa7ezlraJz1LoWwxXq7TUeRdYTft78kYUZzAPOtXyxfBQf0SGKA27lcSMKR
-	 5Mi+LfPyiInjek5icNdZE+vPRj1Gs9LBn8jsTN8A/sK7RSUks3PfYouXOGDsZOZhYw77A
-	 kFtej7DhOnENv/1Il4gyMwsNVb2J1ktUV84HgEQZ7exTdDavKOo2UmHh4MyzxknpI2uJs
-	 mKJJ/Dz7Vh6KXwxQTagHhcGptcs7nVqJ6UH0RRwO97r6KRkVfESfLTSMUtoGq8j1Wkg==
+	bh=vUZF4ORfnSHMOz4AsAX4ufI1kc9TvJPiD5AJKA8YHtg=;
+	b=IsuFu/0kQ3iFzoR38rQbsaHqOwnYzAUQ3CGYwOqtt+l8ACPqKTXzY6qrAnu9ZJj5gSoH
+	 9liIhGrAY2Cmn8MHQyUDuK2bNyxPrKeCsq1Flbfbbjj/9zpY97oaTr4FsywruY2yk54pf
+	 NruV3Nlsj8HTn+UeoXoHylC/MwyIfBJYrcNUTHV6eDyYZupN8+uVOx/qkbOo+FyBFMxya
+	 vmPVYRt9HfhJJ6U/hktKIkqia2/5Hq80CO/t1Z1ZLFVykscl7MujRfzHHQEyusrlJbXmC
+	 6fZoMwesgOjLBwsUaEdd7lnNPSJI3ohQCT8+QqbDJYyCVqxcK/qHBnkpqkFNWwb+iDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LPcLvyuz;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dmsdyHO4;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A38E606A31A
-	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 12:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C999960A4AF1
+	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 13:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LPcLvyuz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 980E81F000C4;
-	Tue, 20 Oct 2026 12:59:07 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dmsdyHO4
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499E81F000CF;
+	Tue, 20 Oct 2026 13:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792501147;
-	bh=yCRMTjRp7KnGZFSOy7SlGCsfS32+WsKfWYpdsBeVsng=;
+	s=k20260515; t=1792501341;
+	bh=vUZF4ORfnSHMOz4AsAX4ufI1kc9TvJPiD5AJKA8YHtg=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LPcLvyuz3vrlcyJ7g63SFOM/SXIzF3FGqwMoQCwu1zv316Oxu0jUScyP0wIql1xYM
-	 TEiHbVjkTZ6IG5q3IXCkDOQwDpzA25AnoCWK2Yz4Yhu2T2NuAlUX6S+Z9/CXHC1d6U
-	 fjL2+ze+wE7qcqrLmt/Yfs/paoMmGrQ+8/MHR00JkRkgChRzY/7umupbBreomQ1yjR
-	 H01iev9Q3SB+MAjp/mzdfxy3IodURVCimlDZ7JmpKnLAKdyK+vVwfi/GTsVaagnB8v
-	 75kDYx1fsXB6GcjdeiuzjUzPyaWdR66UVCQZdQfqbEESHGbLiAaytjZGdmh+eKaeS4
-	 jxUVG0+9duBNQ==
-Message-ID: <sashiko-outbox-178980@kernel.org>
+	b=dmsdyHO4a8WaElBJAf/ug9Z9+2PRX79Dw9UvCnu2yfyhXbs/S59wGtVNmJRi5Ddk5
+	 Z0GzOFKiwMYv/mwqjN1PuZtbXqAeMROnwz+rlno/UwLRwh75aaTNBEbTDlMmKCbA4m
+	 r/OhZYyksQI8+XRQWr2vM6vhccZwU0+A3u/6Wlm7t3MxD8HuEht70m4uDLo16UYAFS
+	 vjR+o0NC3IICdyCpFjge1JX6s4G202DNwf1Ktx1gVNz/NCd7sZwjb/LZ1MEGd4nCzn
+	 ao5CRIm8/UVqYDfY0qa4h9laIQLmSC4X45AnZ6O6/lRKQUBtty66U/S8gxQ6B18L02
+	 QGBWyUj2pGbEA==
+Message-ID: <sashiko-outbox-178987@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 4/4] leds: trigger: netdev: Serialize mode/interval
- stores with trigger lock
+Subject: Re: [PATCH v5 2/4] leds: trigger: netdev: Access net_dev under
+ trigger_data->lock in the worker
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "A. Sverdlin" <alexander.sverdlin@siemens.com>, linux-leds@vger.kernel.org
 Cc: lee@kernel.org
-In-Reply-To: <20261020124651.1987272-5-alexander.sverdlin@siemens.com>
+In-Reply-To: <20261020124651.1987272-3-alexander.sverdlin@siemens.com>
 References: <20261020124651.1987272-1-alexander.sverdlin@siemens.com>
- <20261020124651.1987272-5-alexander.sverdlin@siemens.com>
+ <20261020124651.1987272-3-alexander.sverdlin@siemens.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 20 Oct 2026 12:59:07 +0000
+Date: Tue, 20 Oct 2026 13:02:20 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,140 +61,25 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] leds: trigger: netdev: unlocked hw_control check in interval_sto=
-re()
-- [Medium] leds: trigger: netdev: missing carrier_link_up check in netdev_t=
-rig_sw_blink()
---
+> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+>=20
+> netdev_trig_work() dereferences trigger_data->net_dev without the lock,
+> while set_device_name() and netdev_trig_notify() dev_put() and replace it
+> under trigger_data->lock. On NETDEV_UNREGISTER the worker can run
+> dev_get_stats() on a netdev being freed (UAF).
+>=20
+> Take trigger_data->lock in the worker. cancel_delayed_work_sync() must
+> then never run under that lock.
+>=20
+> Cc: stable@vger.kernel.org
+> Closes: https://lore.kernel.org/all/20260914142116.6DAC51F000FF@smtp.kern=
+el.org/
+> Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-commit fa618832fa8e967d013f87c080cded7d0b155827
-Author: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-
-leds: trigger: netdev: Serialize mode/interval stores with trigger lock
-
-This commit serializes sysfs mode and interval attribute stores in the
-netdev LED trigger using trigger_data->lock, switches to asynchronous
-work cancellation to avoid deadlocking with netdev_trig_work(), and adds
-a netdev_trig_sw_blink() helper to gate software activity polling.
-
-> diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger=
-/ledtrig-netdev.c
-> index bf9a5ec245a43..6859783422f5d 100644
-> --- a/drivers/leds/trigger/ledtrig-netdev.c
-> +++ b/drivers/leds/trigger/ledtrig-netdev.c
-> @@ -81,6 +81,16 @@ struct led_netdev_data {
-> =20
->  static const struct attribute_group netdev_trig_link_speed_attrs_group;
-> =20
-> +/* True while the software activity worker should keep polling and blink=
-ing. */
-> +static bool netdev_trig_sw_blink(struct led_netdev_data *trigger_data)
-> +{
-> +	return trigger_data->net_dev && !trigger_data->hw_control &&
-> +	       (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ||
-> +		test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ||
-> +		test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) ||
-> +		test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode));
-> +}
-
-[Severity: Medium]
-Should netdev_trig_sw_blink() also check trigger_data->carrier_link_up?
-
-In set_baseline_state(), trigger_data->work is only scheduled when
-trigger_data->carrier_link_up is true, and it is not cancelled when
-carrier_link_up is false:
-
-drivers/leds/trigger/ledtrig-netdev.c:set_baseline_state() {
-	if (!trigger_data->carrier_link_up) {
-		led_set_brightness(led_cdev, LED_OFF);
-	} else {
-		...
-		if (netdev_trig_sw_blink(trigger_data))
-			schedule_delayed_work(&trigger_data->work, 0);
-	}
-}
-
-Both netdev_trig_notify() and set_device_name() call
-cancel_delayed_work_sync(&trigger_data->work) before acquiring
-trigger_data->lock:
-
-drivers/leds/trigger/ledtrig-netdev.c:netdev_trig_notify() {
-	cancel_delayed_work_sync(&trigger_data->work);
-
-	mutex_lock(&trigger_data->lock);
-
-	trigger_data->carrier_link_up =3D false;
-	...
-	set_baseline_state(trigger_data);
-
-	mutex_unlock(&trigger_data->lock);
-}
-
-If a concurrent netdev_led_attr_store() or interval_store() acquires
-trigger_data->lock in the window between cancel_delayed_work_sync() and
-mutex_lock(&trigger_data->lock) while carrier_link_up is still true,
-set_baseline_state() will re-arm trigger_data->work.
-
-When netdev_trig_notify() or set_device_name() then acquires
-trigger_data->lock, it sets carrier_link_up =3D false and sets the LED to
-LED_OFF without cancelling the newly scheduled work. When netdev_trig_work()
-runs, netdev_trig_sw_blink() returns true despite carrier_link_up being
-false, allowing the worker to keep polling, blinking via
-led_blink_set_oneshot(), and rescheduling itself while the link is down
-(and leaving the LED on when any link or duplex mode bit sets invert =3D 1).
-
-[ ... ]
-
-> @@ -503,10 +520,14 @@ static ssize_t interval_store(struct device *dev,
-> =20
->  	/* impose some basic bounds on the timer interval */
->  	if (value >=3D 5 && value <=3D 10000) {
-> -		cancel_delayed_work_sync(&trigger_data->work);
-> +		mutex_lock(&trigger_data->lock);
-> +
-> +		cancel_delayed_work(&trigger_data->work);
-> =20
->  		atomic_set(&trigger_data->interval, msecs_to_jiffies(value));
->  		set_baseline_state(trigger_data);	/* resets timer */
-> +
-> +		mutex_unlock(&trigger_data->lock);
->  	}
-> =20
->  	return size;
-
-[Severity: Medium]
-Can interval_store() race with concurrent trigger_data->hw_control updates?
-
-At the start of interval_store(), trigger_data->hw_control is checked
-before acquiring trigger_data->lock:
-
-drivers/leds/trigger/ledtrig-netdev.c:interval_store() {
-	if (trigger_data->hw_control)
-		return -EINVAL;
-	...
-	if (value >=3D 5 && value <=3D 10000) {
-		mutex_lock(&trigger_data->lock);
-}
-
-If trigger_data->hw_control is false during that unlocked check, a
-concurrent netdev_led_attr_store() or netdev_trig_notify() (on NETDEV_UP)
-can acquire trigger_data->lock first, see the default interval in
-can_hw_control(), and set trigger_data->hw_control =3D true.
-
-When interval_store() then acquires trigger_data->lock, it does not
-re-check trigger_data->hw_control before updating trigger_data->interval
-and calling set_baseline_state(). Doesn't this allow trigger_data->interval
-to be changed to a non-default value while hw_control is active, causing
-subsequent can_hw_control() checks to unexpectedly drop out of hardware
-offload?
-
-[ ... ]
-
->
-> base-commit: 3d229ce89862b8e82d71a9e11d6f840ca272a6d6
+Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261020124651.1987=
-272-1-alexander.sverdlin@siemens.com?part=3D4
+272-1-alexander.sverdlin@siemens.com?part=3D2
+
