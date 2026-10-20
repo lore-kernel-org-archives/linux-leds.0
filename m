@@ -1,59 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.15.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792529984;
-	b=47j9DiCCjQQOZTgsycgyLtdJDY9Ymq0Mv6b/x7a3fjKVB5+Qc6mhXRF4ZI6REAzl6tlZ
-	 rGYZS6HvNbEh66cnPWyH/I7Cun1go4FucY1rLLTyeTJYcMH00fTcmefJhMzVWw0mW5VMO
-	 qkNcKaEbkoG8rTlKqXxjcCwhRZqpXe583vw/eh+6c1qTR6hBWLgxWCg1wEOtRlnMJoKG0
-	 lmRj6G8HFy297pOR4lfTp3pbZZ0kQNmTPJg5eXpumHKKqCosRfbWH0ib+INY9GPvxhD52
-	 uUozHpo2GGUFojXvTeVGB2oTWkYotDZq4J0KzCP7pzkOXLU5jVhpgIbzGKVWSbA7y6g==
+	t=1792530110;
+	b=gT/tjyma1G24pJt5gF3+u+8GJTHYEOet1oME1eXGqPp67WgMmFLtdnaIQkSa1HlK8j61
+	 a1p0AKT9bE0kjRdYAI1NiuI2WLvV70cKKOE+fg8C+3aHRkob1msFQKV2hRDDm7jV9uoBn
+	 cMMNIRoo/T0d2G5VaPGaefTr8jPryplfEJXEfPJPCgC+TyKnH4phPnFIjrfv0Q0EPhYLY
+	 C7g4Sq93sbOaIHLKhPVKVtpv3O6VaAWXpGZhnly2WJmu1ly90MxLyNntDk8vmlfIBcqbl
+	 FY2VA8k/fpn77a5a6y+iGOB2iQ6mymdJBNXUYSbtTfWWj2nfZioyLuLbucIZpPLJf+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792529984;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792530110;
 	h=DMARC-Filter:DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:
 	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
-	bh=aHL6XdJfEOKyhQKVZfVw4BPkgKX5KK8BAOSsTuyLXeQ=;
-	b=ZFpL7i+FlP8kYL28qsmOMiKLiS84pHaH9lwU6iMcpEBl1Kgugq5PzbFh5RoO4fRbbYBU
-	 hO9vhK4r455OKVAztNVVzxY0ZXFNX0FR+O95uveKl/NSKJvyfEeFOJZam2H9N7ujoHJoo
-	 7iwKCUTu4QgB1kaQZneNnzsh5OOujxkbhe6JUbNen7aU7Hkj3kQ4CVqmDzPWGc38gHNy2
-	 QTQUuZ30UaTT87ZoT4qddzlrpHSNtuufgeiMX2MSI27euVzrtwrABkjhTpujJhqho6P5L
-	 HDLlPHjRjOk+uBOeFq7iALblwzGwLGbZTi9SPy/Rdq6GoPxiEmqz7htZsXIa0YRVzPA==
+	bh=brKNXuDD/mpiRHORLBW7NSVaDvD0hq9jnS4V3xq/32A=;
+	b=ASEPRgGWJ3vWJxdQHp/oPtrF/OAand2r0LBxLOXumc+C5MucrnYYjAjQpag/312nIjWA
+	 MIjVthY3JIhpD/lhD390IJw3VslfwzOmjcRAYu0t2agnpJFMncr5ZzeAyYt4p1X8md2Bu
+	 H8NO0WApyJWushxR2cyYiCS/5A9Jm4p47Mq5LmGsvlbO/Q+ELlTlYnDroZIi9UiaDYtjF
+	 hoVf5RUVhTAKl9qHX5CWtbaJF7aqLv64f+gIjYbya35VUpw3jFDfGKf7XrH88d7W/VEm3
+	 BSEgvF6shswU4Bn1WGBHGUsQXjpI9wSHi+ntE3diMwPBHflvyOsQNvKaeHNM7/l0kpQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmx.de;
 	spf=pass smtp.mailfrom=gmx.de;
-	dkim=pass header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=DxArZPqR;
-	arc=none smtp.remote-ip=212.227.15.15
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=im+1fV3V;
+	arc=none smtp.remote-ip=212.227.15.18
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D090D606A32F;
-	Tue, 20 Oct 2026 20:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D090D606A32F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8F3606A31A
+	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 21:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8D8F3606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=DxArZPqR
+	dkim=pass (2048-bit key, unprotected) header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=im+1fV3V
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1792529981; x=1793134781; i=w_armin@gmx.de;
-	bh=aHL6XdJfEOKyhQKVZfVw4BPkgKX5KK8BAOSsTuyLXeQ=;
+	s=s31663417; t=1792530107; x=1793134907; i=w_armin@gmx.de;
+	bh=brKNXuDD/mpiRHORLBW7NSVaDvD0hq9jnS4V3xq/32A=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=DxArZPqRCKFataor+OTxAnCj4BXyllGTuKFihQBLRSbNH85P7O6zz8CgIrx4h2I9
-	 cmGTXtsitPD8xzeW9dnsES3nDZW8tCFBb3Tmyu47OuMEOR5I/S3bL2G0pS8dnAKRR
-	 xBc3zzLqkEb0JsbNPWSQaqImqygSAKTi6e4rQkoStzmAm6AuRS11rmbt71T6J9yR5
-	 I/3larD6xKXmY+UWkOuUCb6gYzyu3Ik5F+yEwA9hMyL06GtA7h0HsXLK0nUi5Pllw
-	 MGyUp/JuEZtF2f+pV7r4JOZVcUpXoiCJ3/uHLlJso9+XX9ji2MDBmC51gW+qAibXj
-	 cdpSPG0634eCO3wXBg==
+	b=im+1fV3VQvRdS0iK8cqKB2/Wc6Pr4AZVPpi2oSmuw4uVbkNY57skExtC0vakzbFX
+	 8A5OMRNo3I+FKUFTXt6TaD9ds254uqNNU75SxH6FgTNyDGe0uKOJeiGWr24HT81YS
+	 KukAHa5JBvoyY17d8xmyWL7rVdfGWXQOgFbRW1Nds/GdzXtbHi64t/kqDo0pGBiH3
+	 WmyzgGBJGzUucmvZWvi+orhl//Ajlde5b7L24aPIr/Qd/FozpBsfdsu8qb1hzhp+1
+	 FsK4OUQCFGRb1gE/dDWiOEKFy13NNXKIgLF0sQsBiRby3ApCP9fyuv9MeGxhK6BuX
+	 oKb710z4pT6I/sufdg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from client.hidden.invalid by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N0X8o-1wMkUT2Ptk-015CVk; Tue, 20
- Oct 2026 22:59:41 +0200
-Message-ID: <76f70649-1953-4e58-a194-347a215f85f5@gmx.de>
-Date: Tue, 20 Oct 2026 22:59:40 +0200
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mr9Bk-1wmhI51t7m-00fFd5; Tue, 20
+ Oct 2026 23:01:47 +0200
+Message-ID: <f58e0b3a-d82a-4e3e-91f0-2c9114019f26@gmx.de>
+Date: Tue, 20 Oct 2026 23:01:46 +0200
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -64,225 +64,254 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/10] leds: multicolor: Adjust maximum subled intensity
- during initialization
-To: Rong Zhang <i@rong.moe>, lee@kernel.org, pavel@kernel.org
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/10] leds: class: Take the LED access lock when reading
+ brightness_hw_changed
+To: Rong Zhang <i@rong.moe>, sashiko-reviews@lists.linux.dev
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
 References: <20261018135339.1109271-1-W_Armin@gmx.de>
- <20261018135339.1109271-11-W_Armin@gmx.de>
- <9a13ff3a5d799a50cc1353b94af9be6c70d87f47.camel@rong.moe>
+ <20261018135339.1109271-7-W_Armin@gmx.de> <sashiko-outbox-176178@kernel.org>
+ <81e458c4-b9c9-4881-b669-16c87171046f@gmx.de>
+ <24d07a72cfdfb39963fc3771fc105deb3b2eaddc.camel@rong.moe>
 Content-Language: en-US
 From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <9a13ff3a5d799a50cc1353b94af9be6c70d87f47.camel@rong.moe>
+In-Reply-To: <24d07a72cfdfb39963fc3771fc105deb3b2eaddc.camel@rong.moe>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Hg2pSA07LlL6TcIPWhemMaMQRRbu9psPNalVJlT4ZgsTu7CmOMZ
- +aMskohDLi45k9XoEh8Yha0+uufDqfiIYe9HBuLGj5McUK56aIrHLZG/1+el1d0XuxIgE6j
- KHNGV3WDz1987vX2LMKiaj2vM+hwDLT4qVV140TwbrYFMkrjSvXDiNiFC2KAIJ1Xu2W/i1h
- lBpWhyakm0cUTc+auFPeg==
+X-Provags-ID: V03:K1:BDxPwBKACZED5zR3Ckd43m13ycT3+K1/ShEO7Bx7wztTkvcWLNN
+ eHREXjV/fMtZC/JtRFvoOw19Tljt8GO6PcpczYQdPNF2UPz+khUiG21Q9KdQ8wXFkNTrx4L
+ J0D38GqIgY3WZvzSqISTEG5hoPzo7WZeD0FNWMy5FKiNizPRAcccSyYo5le87vrJS6VnCW+
+ sgpp53ojWpVTGCtTEO+LQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DNJaB5S6r8M=;v+R+SA+8xRItTIPVakrqWIjE64z
- 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
+UI-OutboundReport: notjunk:1;M01:P0:DmXsxEV1yg8=;OX++TSYCBSS5+YYpqibSjNpkiPu
+ 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
 
-Am 19.10.26 um 13:54 schrieb Rong Zhang:
+Am 19.10.26 um 13:53 schrieb Rong Zhang:
 
 > Hi Armin,
 >
-> Nice cleanup!
+> On Sun, 2026-10-18 at 19:08 +0200, Armin Wolf wrote:
+>> Am 18.10.26 um 16:03 schrieb sashiko-bot@kernel.org:
+>>
+>>> Thank you for your contribution! Sashiko AI review found 1 potential i=
+ssue(s) to consider:
+>>> - [Medium] leds: one-sided locking in brightness_hw_changed_show()
+>>> --
+>>>
+>>> commit ef875f7f46dcbf0a55900c763a37bd3cfcb02775
+>>> Author: Armin Wolf <W_Armin@gmx.de>
+>>>
+>>> leds: class: Take the LED access lock when reading brightness_hw_chang=
+ed
+>>>
+>>> This patch acquires the led_cdev->led_access mutex in
+>>> brightness_hw_changed_show() to guard reading brightness_hw_changed
+>>> against concurrent updates by led_classdev_notify_brightness_hw_change=
+d().
+>>>
+>>>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+>>>> index e1f1b710536b0..77a0fce039528 100644
+>>>> --- a/drivers/leds/led-class.c
+>>>> +++ b/drivers/leds/led-class.c
+>>> [ ... ]
+>>>> @@ -102,11 +103,15 @@ static ssize_t brightness_hw_changed_show(struc=
+t device *dev, const struct devic
+>>>>    					  char *buf)
+>>>>    {
+>>>>    	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
+>>>> +	unsigned int brightness_hw_changed;
+>>>>   =20
+>>>> -	if (led_cdev->brightness_hw_changed =3D=3D -1)
+>>>> +	scoped_guard(mutex, &led_cdev->led_access)
+>>>> +		brightness_hw_changed =3D led_cdev->brightness_hw_changed;
+>>>> +
+>>>> +	if (brightness_hw_changed =3D=3D -1)
+>>>>    		return -ENODATA;
+>>>>   =20
+>>>> -	return sysfs_emit(buf, "%u\n", led_cdev->brightness_hw_changed);
+>>>> +	return sysfs_emit(buf, "%u\n", brightness_hw_changed);
+>>>>    }
+>>>>   =20
+>>>>    static const DEVICE_ATTR_RO(brightness_hw_changed);
+>>> [Severity: Medium]
+>>> Does taking led_cdev->led_access here actually synchronize against
+>>> led_classdev_notify_brightness_hw_changed()?
+>>>
+>>> Looking at drivers/leds/led-class.c, the writer updates
+>>> led_cdev->brightness_hw_changed without holding led_cdev->led_access:
+>>>
+>>> void led_classdev_notify_brightness_hw_changed(struct led_classdev *le=
+d_cdev, unsigned int brightness)
+>>> {
+>>> 	led_cdev->brightness_hw_changed =3D brightness;
+>>> 	sysfs_notify(&led_cdev->dev->kobj, NULL, "brightness_hw_changed");
+>>> }
+>>>
+>>> In addition, most callers invoke led_classdev_notify_brightness_hw_cha=
+nged()
+>>> without holding led_cdev->led_access, such as t14s_kbd_bl_update() in
+>>> drivers/platform/arm64/lenovo-thinkpad-t14s.c:
+>>>
+>>> static void t14s_kbd_bl_update(struct t14s_ec *ec)
+>>> {
+>>> 	enum led_brightness brightness =3D t14s_kbd_bl_get(&ec->kbd_backlight=
+);
+>>>
+>>> 	led_classdev_notify_brightness_hw_changed(&ec->kbd_backlight, brightn=
+ess);
+>>> }
+>>>
+>>> Some callers also run in atomic context where a sleeping mutex cannot =
+be
+>>> taken, such as lg_g15_raw_event() -> lg_g13_event() in
+>>> drivers/hid/hid-lg-g15.c:
+>>>
+>>> 	if (backlight_disabled ^ g15->backlight_disabled) {
+>>> 		led_classdev_notify_brightness_hw_changed(
+>>> 			&g15->leds[LG_G15_KBD_BRIGHTNESS].mcdev.led_cdev,
+>>> 			backlight_disabled
+>>> 			? 0 : g15->leds[LG_G15_KBD_BRIGHTNESS].brightness);
+>>> 		g15->backlight_disabled =3D backlight_disabled;
+>>> 	}
+>>>
+>>> Meanwhile, uniwill_ec_notify() in drivers/platform/x86/uniwill/uniwill=
+-acpi.c
+>>> already holds led_cdev->led_access across the call:
+>>>
+>>> 	guard(mutex)(&led_cdev->led_access);
+>>>
+>>> 	/* Sync the LED brightness with the actual hardware state */
+>>> 	ret =3D led_update_brightness(led_cdev);
+>>> 	if (ret < 0)
+>>> 		return ret;
+>>>
+>>> 	led_classdev_notify_brightness_hw_changed(led_cdev, brightness);
+>>>
+>>> Since the writer side does not consistently hold led_cdev->led_access =
+(and
+>>> cannot take it inside led_classdev_notify_brightness_hw_changed() with=
+out
+>>> sleeping in atomic context or deadlocking uniwill_ec_notify()), should
+>>> brightness_hw_changed_show() and led_classdev_notify_brightness_hw_cha=
+nged()
+>>> use READ_ONCE() and WRITE_ONCE() instead, similar to how trigger_hw_ch=
+anged
+>>> is handled in drivers/leds/led-triggers.c?
+>> I am not sure if READ_ONCE() guarantees atomic behavior here. What do t=
+he LED
+>> subsystem maintainers say?
+> While I am not a maintainer, paired READ_ONCE() and WRITE_ONCE() is
+> usually sufficient, as the attribute is only a hint for userspace OSD.
 >
-> On Sun, 2026-10-18 at 15:46 +0200, Armin Wolf wrote:
->> The maximum brightness of a LED device is fixed after having called
->> led_classdev_init(), so performing the adjustment during runtime is
->> no longer necessary.
->>
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->>   drivers/leds/led-class-multicolor.c | 40 ++++++++++++----------------=
--
->>   1 file changed, 16 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/leds/led-class-multicolor.c b/drivers/leds/led-cla=
-ss-multicolor.c
->> index 9b8c37f7bdf4..875c615c33fc 100644
->> --- a/drivers/leds/led-class-multicolor.c
->> +++ b/drivers/leds/led-class-multicolor.c
->> @@ -14,24 +14,6 @@
->>   #include <linux/uaccess.h>
->>   #include "leds.h"
->>  =20
->> -static unsigned int led_mc_get_max_intensity(struct led_classdev_mc *m=
-cled_cdev, size_t index)
->> -{
->> -	unsigned int max_intensity;
->> -
->> -	/*
->> -	 * The maximum global brightness value might still be changed by
->> -	 * led_classdev_register_ext() using devicetree properties. This
->> -	 * prevents us from changing subled_info[X].max_intensity when
->> -	 * registering a multicolor LED class device, so we have to do
->> -	 * this during runtime.
->> -	 */
->> -	max_intensity =3D mcled_cdev->subled_info[index].max_intensity;
->> -	if (max_intensity)
->> -		return max_intensity;
->> -
->> -	return mcled_cdev->led_cdev.max_brightness;
->> -}
->> -
->>   int led_mc_calc_color_components(struct led_classdev_mc *mcled_cdev,
->>   				 enum led_brightness brightness)
->>   {
->> @@ -53,12 +35,10 @@ static ssize_t multi_max_intensity_show(struct devi=
-ce *dev,
->>   {
->>   	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
->>   	struct led_classdev_mc *mcled_cdev =3D lcdev_to_mccdev(led_cdev);
->> -	unsigned int max_intensity;
->>   	int len =3D 0;
->>  =20
->> -	for (int i =3D 0; i < mcled_cdev->num_colors; i++) {
->> -		max_intensity =3D led_mc_get_max_intensity(mcled_cdev, i);
->> -		len +=3D sysfs_emit_at(buf, len, "%u", max_intensity);
->> +	for (unsigned int i =3D 0; i < mcled_cdev->num_colors; i++) {
->> +		len +=3D sysfs_emit_at(buf, len, "%u", mcled_cdev->subled_info[i].ma=
-x_intensity);
->>   		if (i < mcled_cdev->num_colors - 1)
->>   			len +=3D sprintf(buf + len, " ");
->>   	}
->> @@ -98,8 +78,8 @@ static ssize_t multi_intensity_store(struct device *d=
-ev,
->>   		goto err_out;
->>   	}
->>  =20
->> -	for (int i =3D 0; i < mcled_cdev->num_colors; i++) {
->> -		max_intensity =3D led_mc_get_max_intensity(mcled_cdev, i);
->> +	for (unsigned int i =3D 0; i < mcled_cdev->num_colors; i++) {
->> +		max_intensity =3D mcled_cdev->subled_info[i].max_intensity;
->>   		mcled_cdev->subled_info[i].intensity =3D min(intensity_value[i], ma=
-x_intensity);
->>   	}
->>  =20
->> @@ -187,6 +167,18 @@ int led_classdev_multicolor_register_ext(struct de=
-vice *parent,
->>   	if (ret < 0)
->>   		return ret;
->>  =20
->> +	/*
->> +	 * The maximum global brightness value might still be changed by
-> s/still be/have been/ ?
+> The memory access itself is inherently atomic, i.e., neither a RMW
+> operation nor a split R/W. Since the led_cdev->brightness_hw_changed is
+> never used to synchronize other things, no memory barrier is needed here=
+.
+> Using rwonce prevents the compiler from reordering memory access, which
+> fulfills our requirements.
 >
 > Thanks,
 > Rong
 
-Good catch, will be fixed in v2.
+Nice, this also means that all the drivers calling led_classdev_notify_bri=
+ghtness_hw_changed() do not
+need to be audited for taking the led_access lock.
+
+I will use READ_ONCE()/WRITE_ONCE() in the v2 revision.
 
 Thanks,
 Armin Wolf
 
->> +	 * led_classdev_init() using devicetree properties. Because of this
->> +	 * we can only adjust subled_info[X].max_intensity after said functio=
-n
->> +	 * was called.
->> +	 */
->> +	for (unsigned int i =3D 0; i < mcled_cdev->num_colors; i++)
->> +	{
->> +		if (!mcled_cdev->subled_info[i].max_intensity)
->> +			mcled_cdev->subled_info[i].max_intensity =3D led_cdev->max_brightne=
-ss;
->> +	}
->> +
->>   	led_cdev->dev->type =3D &led_multicolor_device_type;
->>   	ret =3D led_classdev_add(led_cdev);
->>   	if (ret < 0)
+>> Thanks,
+>> Armin Wolf
