@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.174
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792522489;
-	b=ftFa/gGwyIKmrsAhHkaoSi4amhnenDHDXUhYyc2hhr82ZyaorjIks5Mc/8uZ9q7hIvRW
-	 HJ+HeaMkdpa/KyliJzU6Ey6N0Bo4roO72jgtYJ0UhSU6CWRbiy8xm2uTnmP+hht+STfCl
-	 o8QdFXwVJsIxfVTC5nXuBotC9KaHJ9JBX0xKfsryzShQAOuT6i0WBIDiIXkelAb4V7d3w
-	 H2Z1vqIzBPX0jE5CqY7x9TSJG2G1kyAKkOaSkSU91gmC4zmwYyZhSDIUtdYYoMwJcdbxi
-	 uD/8xYa99OcQ1sqAKMdP7MwlnS1i0fRLNUeXQxejwKcwEEoDODgfev6rER5Nayy58tA==
+	t=1792523052;
+	b=TcLMlb7eEsxNidPFme17Xda+IDOGdclNRIO7nCDo+pYMWPEhWl//weJ4w8IR4Gis5sUD
+	 qK9XONluCk/m0gQoPwig4UDaTKN3+pLNEXn5Titcx/bFifkaMFamgNat8kVXyXhcj9Cmf
+	 8O6yktm6HGWffIUFowaWbkQEFSydM7T+fA1CE3qaCTAJDhmis5xcSXa4+Je1odSVyqqNZ
+	 HdrKBjgv30IAiqy259jmZXNKsCxZPcFfxnGDV0wZiVZy1fqzYZ+0uA79SShDOcwYlFN7c
+	 Q9d01gEbjgYGyWOxSctYoKayqbHcgnJ9Z3p/nr+QwvqSPY29ud0EoLDnB4wO5ShcDqg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792522489;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792523052;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
 	 In-Reply-To;
-	bh=a+YGUJeEL21flQxeJgEyROLOEEmxFMPwen0F3bt91wI=;
-	b=vXeTh8UEz892EPwkf/OzczGVlDRaU5zE4weMuFHkfsiIudcnnU01CnzWHdzeyK5z4Bk+
-	 7nuz97Nbl0FOosJxYKGgVHegW4NWTIiuzKu9LDTE8Ju1EfHZEQuG+hOIBGQBgJg861u2K
-	 ZhTYNO77EZK5I+nsIqawCvoIF08ajhuDdQqOiz6lsYI9ggzwqPDTgyXC66UtmdYG1D/D/
-	 TPTCJF/o/LKYR19vA7RlKMSmD8H7/v5YVGyH+6j5KZ4ZcEZoXvhG2DOAmkuUoI9KdqpBm
-	 MsoRKCsixk81uODnch0KP0izMT8RLKf5j5X04VaebZPUx+fEtNSjyMyU71OkIwMHLlQ==
+	bh=7NqznRIlKLn/pELhTMEco0REzkh4v7wlCaqZptITogI=;
+	b=ACj9kozQdKGdFsNkqSbFuJcSVvK9y0o3DQ6g5nq3ZWverOiIPw3gYnQh5UclEnPQJy88
+	 0ESfQ5l6XvNEwT0ZkEl3p8Rg5VDNjQ2GVraL7fLZBnh+OgBm+MP0sMNFXM2spw2EB0pyu
+	 kvi/HDE5Y4OdgYZEJO5psfiKJGuFzkSei9MVabVX41uWZYkIvn6/ExDvYjMoLv9NcrKN9
+	 tVCQctXx2Ooe+sTn9cSwoF/GrSjnSAU00eVfPrb1FhblgxwBrLMT31mOCpSlwgDySFH/H
+	 HIccbvc9UeJ6+kNQRi92AiqzroMCoOmkrUBAoy30m4IJ9nYo/Rah7razYcGjBDx3EGg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=cNpSjyVD;
-	arc=none smtp.remote-ip=74.125.82.174
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com [74.125.82.174])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=hLr4Pt+J;
+	arc=none smtp.remote-ip=74.125.82.48
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E54C606A319
-	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 18:54:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E54C606A319
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B30606A321
+	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 19:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 33B30606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=cNpSjyVD
-Received: by mail-dy1-f174.google.com with SMTP id 5a478bee46e88-36681e85e87so1419644eec.1
-        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 11:54:49 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=hLr4Pt+J
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-15ea896ddc8so4511500c88.0
+        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 12:04:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792522488; x=1793127288; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792523050; x=1793127850; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=a+YGUJeEL21flQxeJgEyROLOEEmxFMPwen0F3bt91wI=;
-        b=cNpSjyVDxeZMqcqxOqB9EKCdiKtPdvBLoG6NwPB2ME90BEBUSoASCok3BTJCWRzmch
-         pNWcgsLpP4PYDmJr8a0L4mKvc7JsdLL2H7n7kPI2wZkDtIaq0W1rRg/MY6hUM/gy5Uoy
-         W+m7CWwruUbFTIYyqnOJmBOL0w946NXdRSpxe6jaOK0BT0sCvBvGsnj6H5fBmWcWNvLZ
-         msrgSrE2dYQ/4jED9CbuOpHR4ZW8ZY384J9TEKtFsWkaRluoI3p5WBWwaKkqlP4+GRbQ
-         U4HwE9gc512DhP6yTqnRZIiJQwgX36aA+yBDDi2k7JIy8yC1YZIs0MXwbGp1hJ1veg6G
-         SECw==
+        bh=7NqznRIlKLn/pELhTMEco0REzkh4v7wlCaqZptITogI=;
+        b=hLr4Pt+JNnJwfVdSIiwSzVwN2M1EdektMGoj8qGvTIg2MHi43g6P3LOjqDktLIrXJc
+         /LbjGbnm0fv1Cio5pJKxGcmBKzdvQ1Bf8jSuV8V5JJip79CY3ECKV2x7PotCCn1kvzCQ
+         4YaZ8G9IpdE+7Ow3oYO6+adNmYfrSPrPRZiHksLbJk7N1fryAL33UOp5jSq6Nup2ngpH
+         wOl0+Aik0n+dpNKqrXJHKnb8BU2rkXjhhP8rhu7nQdn7ktiO6XlCo5a1Jmr294bKdHsr
+         TPkfN5DqX8YEfDV0yTlKP0LpctSqRfqyj58P+bLiOitnTlcAmXRX4sdFHQMGgmS5yS9g
+         opWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792522488; x=1793127288;
+        d=1e100.net; s=20260707; t=1792523050; x=1793127850;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :content-type:mime-version:references:message-id:subject:cc:to:from
          :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=a+YGUJeEL21flQxeJgEyROLOEEmxFMPwen0F3bt91wI=;
-        b=lZIL0otehLzp45twcXCRV7Sfm45Ima9s9MxG7GQzcZjeBausyj62C+qvQRuby3nsvH
-         VztEtO6Zs1SgHGxpZt+DoRZsnPoR2zv/PBQnUaxyfC5BCo02yV9dYUhKmLgSBV/XnBX4
-         4eUHmsbhgLcuhEQFDvaEeZqKtGn5sLhNsW0Py8Uit27XljQ0p20pvy80qce6AaUMV8Ux
-         /lIsCEiOn4nRcjKwJTX/WM9Mvu/KeOB9I0UVXm/QzlL29cwZ4HlkRzMgFAu7TQ+h5jBV
-         DziNYArdQIjlabG73O3YHwn56SeOldB6rbDJfgoqppm/Q7FNx+GZGW/kyKlVBGYqpA9h
-         S+ug==
-X-Forwarded-Encrypted: i=1; AKwUvBzkhxh5jkw3RGyB6bQjBTvZi4nZiJKioM9v34BnC0jNrl9n9K9EZ4BfEny51FY55KXV/fZ+g7ohDeoU@vger.kernel.org
-X-Gm-Message-State: AFq9FYLBCbA9k6M2uz62581WRXvkQg8j8AmTK2UxIsWz8VbPlCRn3D/4
-	TV84hJy6kdP+N6rnVO2eJQ+NyjPKc6mI4GvY2LpV9tak2fAYFLmhnOXG
-X-Gm-Gg: AYBFou0vMRgPsWDGPQhBnsu4ioNWw1N3+WvrGTRjlWofZSGNOjS5C/01YQCI4yKVbPU
-	T9/XkF0ngWlZJ8ZSkU1KXvjpNJ6A4OBz20e9Bo3dq8SeW+bw3aGS3rENa2sv1AGcuLYQ/pb3OQs
-	+dWSCYl1nTVMn7JnPVvUG38dZWkHjon0wOpGvBMEA9MyEi0+z6Pv7eCTFxc59NGjx2IfQ511PCO
-	mHAFFz5YL5sEBL6KCgJ9flt24K8XBFW4v/jZJkvRLXW3HCI/y0FRxAII9fG9VQUv5t1qBP7kFmm
-	qr/wOauYpsVOCM6Q3Zs0vnpaIW2tGuCIpWoeUVQiWbBCfF4bl5pt07j5L2L+gHALnBkCIyYXvYE
-	gXyrLUHGltXemLaEZqHP580FGK1GaDzFcnkYYTWteqSYxqNwFwZdgv6g7YDqFAMkiH//X3bMDI4
-	W/9nCdI5F03g7R8X5oHe2ZmNpysUhUPdnusdQbBSISyAh8nGd9tGSv3Jgv9lUfsvg2ALIhSO1g7
-	RIwNxXEZGA4zxITYc5+kRIYQEbMzcPfIS5ufvw4
-X-Received: by 2002:a05:693c:6382:10b0:35c:de00:93d3 with SMTP id 5a478bee46e88-3674f6143a2mr134088eec.40.1792522488031;
-        Tue, 20 Oct 2026 11:54:48 -0700 (PDT)
+        bh=7NqznRIlKLn/pELhTMEco0REzkh4v7wlCaqZptITogI=;
+        b=Ea0CIV5hxWaAq8AtXhSSpBiUp8tB2aNodHB59hVseZ/amZWiAZPeCy2IdHNYXnSLo/
+         eCbZvtharoyA7EJma0Cg9qFBq6an6PzEHXiZO8txtue1ATnwkvLzskIg8W9ckCaowV9F
+         qsEwMZF2RnzUmH0HS7cg5XGW8KEl5R+TVOMVCDKjnUOfmuxhOmoGc0jcP361TL1B0SEN
+         lTK4UJrFSWGRuuOi6UEttIRpnnbmcnpc5DNWLEZVv3jmfOab+T65YFJlXgQ6w0NrdYa5
+         RDgGiTtYDCLjQnavEhrK+uc7CHgsqloz1jSlgj7s33ZCV4ilmtYON3kmigPACkzfumWe
+         Cx4Q==
+X-Forwarded-Encrypted: i=1; AKwUvByOgUsv8Qx6U+0odkbeFA9Ys86jVXKqnU0OwCAYLXaP9kmzl7bm60kyCuPNGLKpyqb9lQ4E7La83sdU@vger.kernel.org
+X-Gm-Message-State: AFq9FYLMDrpZbDNB8ZSjry+mVkTw5/Fh8RnFp0Z6Qd7ysyGgojJQkQrL
+	bCC0ZcnXeXSijb6/5alHtzdi2RJTvvYIIVml06P84+t7ZYdEE5gVFAFb
+X-Gm-Gg: AYBFou0oSMAPKFnC56YRPHQaA0byBlYu+ZcuiXw5EftGLPet1o8/EQEnqFji0G6Zj66
+	CRQvlF61eSt6k9QsEraecwcufz6DWxZUEXDUn5NFd8s2V75SCxksi3YH3Lg93jimRu9mQkC2rQj
+	ImIrRQDkG8eITkMVBFK9nMjF9aDd1sX+E9q3NeLUZXuJPZ2MCm69gRO/63YLmWFpSvme5pfttSY
+	kl0pUS7sqer2qPxGnQypndvvY8/DbrzfxpbJJnc4h+h2Bqg7ebj3y6rm/BA88rMmAttcMmfcGH2
+	Yf2y6ol/E5VjFMTid9aVSIFQ7juTi3qx+QW1kxX6Tzo0yWdSGJ8aij6vxcSvyx+agba+PPFL7bV
+	Lh5vN+vobR/lIWvN/6brhTzLe5vQH7e11oMbeHVWqRvCInwzr+NpC2QRd4cWKzZ8u5hXwYlRxGj
+	JXclTkiWfLUWZ33QKsQGYQTtCzOBSPAAhzjKxNPSqSm5fAVmXpxWzNyu8WW5nbjgobzd8qrMvSf
+	GjNts2zu7YvSADTsgt85PHO9SAVegmOWSNZnE4eiudvcgfRDKs=
+X-Received: by 2002:a05:7022:e804:b0:13b:3132:6e99 with SMTP id a92af1059eb24-18512c38164mr17695167c88.20.1792523049985;
+        Tue, 20 Oct 2026 12:04:09 -0700 (PDT)
 Received: from google.com ([2a00:79e0:2ebe:8:92d1:8038:c4e7:1f0c])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-367405ed2absm606896eec.5.2026.10.20.11.54.46
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1903aefe90asm552320c88.9.2026.10.20.12.04.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 11:54:47 -0700 (PDT)
-Date: Tue, 20 Oct 2026 11:54:43 -0700
+        Tue, 20 Oct 2026 12:04:09 -0700 (PDT)
+Date: Tue, 20 Oct 2026 12:04:05 -0700
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, 
@@ -89,11 +89,11 @@ Cc: Rob Herring <robh@kernel.org>,
 	Florian Krischer <florian.krischer@fkr.dev>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-input@vger.kernel.org, mfd@lists.linux.dev, linux-leds@vger.kernel.org, 
 	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v12 4/7] input: keyboard: Add driver for ASUS Transformer
- dock multimedia keys
-Message-ID: <ate3WJz8gg9LUG9u@google.com>
+Subject: Re: [PATCH v12 3/7] input: serio: Add driver for ASUS Transformer
+ dock keyboard and touchpad
+Message-ID: <ate5K6ZdrSoBUI08@google.com>
 References: <20261019100406.103687-1-clamor95@gmail.com>
- <20261019100406.103687-5-clamor95@gmail.com>
+ <20261019100406.103687-4-clamor95@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -106,16 +106,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261019100406.103687-5-clamor95@gmail.com>
+In-Reply-To: <20261019100406.103687-4-clamor95@gmail.com>
 
-On Mon, Oct 19, 2026 at 01:04:03PM +0300, Svyatoslav Ryhel wrote:
+On Mon, Oct 19, 2026 at 01:04:02PM +0300, Svyatoslav Ryhel wrote:
 > From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 > 
-> Add support for multimedia top button row of ASUS Transformer's Mobile
-> Dock keyboard. Driver is made that function keys (F1-F12) are used by
-> default which suits average Linux use better and with pressing
-> ScreenLock + AltGr function keys layout is switched to multimedia keys.
-> Only Dock keyboard input events are tracked for AltGr pressing.
+> Add input driver for ASUS Transformer dock keyboard and touchpad.
+> 
+> Some keys in ASUS Dock report keycodes that don't make sense according to
+> their position, this patch modifies the incoming data that is sent to
+> serio to send proper scancodes.
 > 
 > Co-developed-by: Ion Agorria <ion@agorria.com>
 > Signed-off-by: Ion Agorria <ion@agorria.com>
@@ -124,95 +124,42 @@ On Mon, Oct 19, 2026 at 01:04:03PM +0300, Svyatoslav Ryhel wrote:
 
 Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-> +
-> +static void asus_ec_keys_setup_keymap(struct asus_ec_keys_data *priv)
+> +static int asus_ec_kbc_probe(struct platform_device *pdev)
 > +{
-> +	struct input_dev *dev = priv->xidev;
-> +	unsigned int i;
-> +
-> +	BUILD_BUG_ON(ARRAY_SIZE(priv->keymap) < ARRAY_SIZE(asus_ec_dock_ext_keys));
-> +
-> +	dev->keycode = priv->keymap;
-> +	dev->keycodesize = sizeof(*priv->keymap);
-> +	dev->keycodemax = ARRAY_SIZE(priv->keymap);
-> +
-> +	input_set_capability(dev, EV_MSC, MSC_SCAN);
-> +	input_set_capability(dev, EV_KEY, KEY_UNKNOWN);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(asus_ec_dock_ext_keys); i++) {
-> +		unsigned int code = asus_ec_dock_ext_keys[i];
-> +
-> +		if (!code)
-> +			continue;
-
-Nit: this check is not needed, input core will remove KEY_RESERVED (0)
-from the keybit when device is registered.
-
-> +
-> +		__set_bit(code, dev->keybit);
-> +		priv->keymap[i] = code;
-> +	}
-> +}
-> +
-> +static int asus_ec_keys_probe(struct platform_device *pdev)
-> +{
-> +	struct i2c_client *parent = to_i2c_client(pdev->dev.parent);
 > +	struct asusec_core *ec = dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev = &pdev->dev;
-> +	struct asus_ec_keys_data *priv;
+> +	struct asus_ec_kbc_data *priv;
 > +	int error;
 > +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
 > +	if (!priv)
 > +		return -ENOMEM;
 > +
 > +	platform_set_drvdata(pdev, priv);
+> +
 > +	priv->ec = ec;
+> +	priv->parent = to_i2c_client(pdev->dev.parent);
 > +
-> +	priv->xidev = devm_input_allocate_device(dev);
-> +	if (!priv->xidev)
-> +		return -ENOMEM;
-> +
-> +	priv->xidev->name = devm_kasprintf(dev, GFP_KERNEL, "%s Keyboard Ext",
-> +					   ec->model);
-> +	priv->xidev->phys = devm_kasprintf(dev, GFP_KERNEL, "i2c-%u-%04x",
-> +					   i2c_adapter_id(parent->adapter),
-> +					   parent->addr);
-> +
-> +	if (!priv->xidev->name || !priv->xidev->phys)
-> +		return -ENOMEM;
-> +
-> +	asus_ec_keys_setup_keymap(priv);
-> +
-> +	error = input_register_device(priv->xidev);
-> +	if (error)
-> +		return dev_err_probe(dev, error,
-> +				     "failed to register extension keys\n");
-> +
-> +	priv->nb.notifier_call = asus_ec_keys_notify;
-> +
-> +	error = blocking_notifier_chain_register(&ec->notify_list, &priv->nb);
+> +	error = asus_ec_register_serio(pdev, 0, "Keyboard", 0);
 > +	if (error)
 > +		return error;
 > +
-> +	ec->ext_keys_enabled = true;
-
-I think this block (after input_register_device()) can go into open()
-method for the input device.
-
+> +	error = asus_ec_register_serio(pdev, 1, "Touchpad", I8042_CMD_AUX_SEND);
+> +	if (error)
+> +		return error;
 > +
-> +	return 0;
-> +}
+> +	priv->nb.notifier_call = asus_ec_kbc_notify;
 > +
-> +static void asus_ec_keys_remove(struct platform_device *pdev)
-> +{
-> +	struct asus_ec_keys_data *priv = platform_get_drvdata(pdev);
-> +	struct asusec_core *ec = priv->ec;
-> +
-> +	ec->ext_keys_enabled = false;
-> +	blocking_notifier_chain_unregister(&ec->notify_list, &priv->nb);
+> +	error = blocking_notifier_chain_register(&ec->notify_list, &priv->nb);
+> +	if (error)
+> +		return dev_err_probe(&pdev->dev, error,
+> +				     "failed to register blocking notifier chain");
 
-And this into close().
+I think sashiko is right that we need to register the notifier first,
+and in it check if serio ports are ready/registered or not. For that we
+probably need a lock and set pointers or flags in serio's start()/stop()
+or open()/close() methods.
+
+This can be done as a followup I think.
 
 Thanks.
 
