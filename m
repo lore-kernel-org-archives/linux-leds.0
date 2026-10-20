@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=157.90.84.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792489996;
-	b=b+9Yi4vVjq5CQ+JAc5UpETSaUVk/WtkVb3qPUaQrsW8QCC2CBCEjkKq4YXdqzzKss1PU
-	 DJaKPuXoRet4qT6qpSoL3sF0uk5rwCkfNNS8WrMDQAA/BS9TNspT0yv0HIbMr57YOGSpx
-	 DVllk1mihT8qTcyKIbD8QnsGCgig6Eg8pzhq8YzD1xGbweQ09U1ECJH+Rm3NNwutGd3my
-	 7+mJiQaqTSQdyw35Wn+DWAoU/SHlp2QIuuZNk5Kiu567b1nEQYDhPgP+de0OSDRIfq54+
-	 nj2x/qzMcBl41cC4JV+z0Jn9h0Hf3KyGlPxKkuy64C9doZLRQZ5ABCMxi9RWHKfrPoQ==
+	t=1792489995;
+	b=WkjX7bEVJWxp6PdpxkJmqCNTHs/fDDe3VsmcR5CE2rbKVkc+/slhZsdrV6wXUdtXPQO9
+	 PrkOSErAwBwntmZAyHy25owh4KU+H+1Gj/l7Px26lVwQSsHQhA/WgAvh6LcCbUWZzBrl4
+	 XffIiA0Lz9W5Zrbu/PV9mLmVzEAnS/eKGiv1RHX/rP5AFeMLDGINX4NJk2ev+UdmkhS/D
+	 IUjqCHNHY2vJj89tbdpw5Qbf0XIuq0r2pPmWfna1esY5I69otoOKo5j86dvzrgJXnqJIr
+	 CAT6Dh4Wuu5383Xg5gMmpr+pfkTpK645lTQRFSujHhHWCNvTOhpgDVlZWlw8oWd3mpg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792489996;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792489995;
 	h=DMARC-Filter:Received:DKIM-Signature:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer;
-	bh=lFQxO8k+vj500HfjNLXzltOIsVCC27jFZ9/nZ8FupzE=;
-	b=xuSfZ6tHr2vv+9any+on73ChNXyNm0rTYhvW3TLNltsoyLY1T9RkZ22it8KEAtUXQSyQ
-	 3sCmrC5RrfnoLhrflUywuvoNv8dBc3XEgiKtzGPAL9NkMrJuv0XSU6qn9brMjh9QuQ+L1
-	 laQwhUZwgSSET8lS+jJx4p8gi823nVjfgwAvLZk8OvQiBHArxBZ17xyodItig3xoxuLwe
-	 R0ZYQIh965MBUZZfbUsxonsfag7VEDeGbBDpBqMAhmlrsno4tfjtoYIvyCu7wZWo2Cefn
-	 HI2mQv9KrutgRnwPuWMALCE/VLbsTIB66DD3gHlNIw/hAMUi7jVku23zNRzsautO1yA==
+	bh=hjiDGPYB2K+D7Y1vJcaKbb6AEjbcs6XdQq2usn0rk9w=;
+	b=mWyuelkkvc4l9dwYTs6lsyce6/cSt4BS8BaXpj6sClwyIN9fc00vxL2I6kQz3NTNP5hK
+	 KZOXlLcrNLjsA5EHsqUDWtWcZbQ+KCWQFihnvEpllMzLzpkS4Tm1881HwD19XIuGbUEQJ
+	 jOmf0ozLxLGkzD1S8ANWlSUBFhyu2PcSV/7gUkQdPpTrIOM4fJAsHL/njKY9gt/oSlecy
+	 fWSNu5BMHRc0XBgz3evhAd9KOi7SLK4jODbfxcxaaCGWiMUESMJ4whwBbD8F4HSZNkhAQ
+	 zEL9nQEgZ3X4F+RlxZXNVta/2JCH65mt8KDIBlODuxhEHnD+m6jI1bz9xJVefGUwJvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=tuxedocomputers.com;
 	spf=pass smtp.mailfrom=tuxedocomputers.com;
-	dkim=pass header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.a=rsa-sha256 header.s=default header.b=T0SbFbqE;
+	dkim=pass header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.a=rsa-sha256 header.s=default header.b=VxYlYkF7;
 	arc=none smtp.remote-ip=157.90.84.7
 Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58626606A319;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586CC606A31A;
 	Tue, 20 Oct 2026 09:53:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 58626606A319
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 586CC606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.a=rsa-sha256 header.s=default header.b=T0SbFbqE
+	dkim=pass (1024-bit key, unprotected) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.a=rsa-sha256 header.s=default header.b=VxYlYkF7
 Received: from [127.0.1.1] (business-024-134-105-141.24.134.pools.vodafone-ip.de [24.134.105.141])
 	(Authenticated sender: a.erhardt@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id B82242FC0069;
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 600812FC0065;
 	Tue, 20 Oct 2026 11:53:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1792489987;
+	s=default; t=1792489986;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lFQxO8k+vj500HfjNLXzltOIsVCC27jFZ9/nZ8FupzE=;
-	b=T0SbFbqE9gyNM8z2cnh85vmxivkJrPusKGS2ZsNF6j72gv1UbEi9eNM53e/85OJ3zelQwt
-	PCjXgYpwxz/5UoXGAEgfQMrEQOzOjAq3ZHUJKl+ol1pqRGjzOKBhb62mImOGe9GvrjLk9e
-	s6woTfAgUOYoXPxkc2nsBFoYL1TCVfw=
+	bh=hjiDGPYB2K+D7Y1vJcaKbb6AEjbcs6XdQq2usn0rk9w=;
+	b=VxYlYkF7LjAmxOJb9c3rmdg0kgNg52FYHlsIai9zEbdvFEFZ3W71/xhl2HOqM9aA1omlBa
+	5zAsbxtBg7+1GUyOzF+YnmzsuyWd7ckPb/WIu7oPk5yW7oD7DbGZ4gaKKHzklA/k4CAyuL
+	3fmL6NvCbLKuqpJ9+S/u8UCAIf85gMk=
 Authentication-Results: mail.tuxedocomputers.com;
 	auth=pass smtp.auth=a.erhardt@tuxedocomputers.com smtp.mailfrom=aer@tuxedocomputers.com
 From: Aaron Erhardt <aer@tuxedocomputers.com>
-Date: Tue, 20 Oct 2026 11:51:49 +0200
-Subject: [PATCH v7 3/3] HID: lamparray: blank lamps across suspend and
- restore on resume
+Date: Tue, 20 Oct 2026 11:51:48 +0200
+Subject: [PATCH v7 2/3] HID: generic: add LampArray support via
+ hid-lamparray helper
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -64,210 +64,131 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261020-hid-lamparray-v7-3-47418b667b47@tuxedocomputers.com>
+Message-Id: <20261020-hid-lamparray-v7-2-47418b667b47@tuxedocomputers.com>
 References: <20261020-hid-lamparray-v7-0-47418b667b47@tuxedocomputers.com>
 In-Reply-To: <20261020-hid-lamparray-v7-0-47418b667b47@tuxedocomputers.com>
 To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
 Cc: Cristian Mazzotta <cmmazzo@icloud.com>, 
  Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>, 
  linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-leds@vger.kernel.org, Aaron Erhardt <aer@tuxedocomputers.com>
+ linux-leds@vger.kernel.org, Tim Guttzeit <tgu@tuxedocomputers.com>, 
+ Aaron Erhardt <aer@tuxedocomputers.com>
 X-Mailer: b4 0.15.2
 
-From: Cristian Mazzotta <cmmazzo@icloud.com>
+The hid-generic driver now checks for LampArray support after
+hid_parse() and optionally registers a lamparray instance. Failures in
+the helper do not abort device probe to keep the device unchanged.
 
-The helper installs no PM callbacks, so lamps keep their last state
-across suspend. Firmware is not required to turn them off in low power
-states, and on devices where it does not, they stay lit for the whole
-suspend.
+LampArray resources are released on driver remove.
 
-On an Acer Predator PT14-52T, system power draw during s2idle is 12.35W
-with the lamps lit and 3.14W with them blanked, measured at the charger.
+This patch was successfully tested on the Microsoft MacroPad reference
+implementation (https://github.com/microsoft/RP2040MacropadHidSample
+1d6c3ad) and in combination with the tuxedo_nb04_wmi driver, albeit only
+functional with a recent fix posted to the LKML.
 
-Add lamparray_suspend(), which writes zeroes to the color channels
-while leaving the cached RGB and brightness untouched, and
-lamparray_resume(), which restores that cache. Both return early when
-use_leds_uapi is 0 so a userspace driver keeps full control. hid-generic
-gains suspend and resume callbacks to drive them, and calls
-lamparray_resume() from reset_resume as well.
+Link:
+https://lore.kernel.org/all/20260728115918.125349-2-aer@tuxedocomputers.com
 
-Some devices return to firmware control across a hibernate transition
-while still reporting AutonomousMode = 0, and ignore host lamp updates
-until the value genuinely transitions. Force a 1 -> 0 on resume
-before restoring state.
-
-Co-developed-by: Aaron Erhardt <aer@tuxedocomputers.com>
+Co-developed-by: Tim Guttzeit <tgu@tuxedocomputers.com>
+Signed-off-by: Tim Guttzeit <tgu@tuxedocomputers.com>
 Signed-off-by: Aaron Erhardt <aer@tuxedocomputers.com>
-Signed-off-by: Cristian Mazzotta <cmmazzo@icloud.com>
 ---
- drivers/hid/hid-generic.c     | 29 ++++++++++++++++++++++-
- drivers/hid/hid-lamparray.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
- include/linux/hid-lamparray.h | 29 +++++++++++++++++++++++
- 3 files changed, 111 insertions(+), 1 deletion(-)
+ drivers/hid/Kconfig       |  1 +
+ drivers/hid/hid-generic.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index 934e502ba5058..919d495090d97 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -82,6 +82,7 @@ config UHID
+ 
+ config HID_GENERIC
+ 	tristate "Generic HID driver"
++	depends on HID_LAMPARRAY if HID_LAMPARRAY
+ 	default HID
+ 	help
+ 	Support for generic devices on the HID bus. This includes most
 diff --git a/drivers/hid/hid-generic.c b/drivers/hid/hid-generic.c
-index fde772c5014bb..f78c62f796fbb 100644
+index c2de916747dec..fde772c5014bb 100644
 --- a/drivers/hid/hid-generic.c
 +++ b/drivers/hid/hid-generic.c
-@@ -102,9 +102,34 @@ static int hid_generic_probe(struct hid_device *hdev,
+@@ -20,6 +20,7 @@
+ #include <asm/byteorder.h>
  
- static int hid_generic_reset_resume(struct hid_device *hdev)
+ #include <linux/hid.h>
++#include <linux/hid-lamparray.h>
+ 
+ static struct hid_driver hid_generic;
+ 
+@@ -60,6 +61,7 @@ static int hid_generic_probe(struct hid_device *hdev,
+ 			     const struct hid_device_id *id)
  {
-+	struct lamparray *la = hid_get_drvdata(hdev);
-+
- 	if (hdev->claimed & HID_CLAIMED_INPUT)
- 		hidinput_reset_resume(hdev);
+ 	int ret;
++	struct lamparray *la;
  
-+	if (IS_ENABLED(CONFIG_HID_LAMPARRAY) && la)
-+		lamparray_resume(la);
+ 	hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
+ 
+@@ -67,6 +69,34 @@ static int hid_generic_probe(struct hid_device *hdev,
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * Optional: attach LampArray support if present.
++	 * Never fail probe on LampArray errors; keep device functional.
++	 */
++	if (IS_ENABLED(CONFIG_HID_LAMPARRAY) && lamparray_is_supported_device(hdev)) {
++		/*
++		 * Use HID_CONNECT_DRIVER to make sure requests are
++		 * processed in hid_report_raw_event. Without this,
++		 * hid-core will skip parsing for devices that are only
++		 * claimed by hidraw, thus making it impossible to query
++		 * the required information.
++		 * See 7704ac937345 for more information about this flag
++		 * and why it is necessary.
++		 */
++		ret = hid_hw_start(hdev, HID_CONNECT_DEFAULT | HID_CONNECT_DRIVER);
++		if (ret)
++			return ret;
 +
-+	return 0;
-+}
++		la = lamparray_register(hdev, NULL);
++		if (IS_ERR(la)) {
++			hid_hw_stop(hdev);
++			hid_warn(hdev, "LampArray init failed: %ld\n", PTR_ERR(la));
++		} else {
++			hid_set_drvdata(hdev, la);
++			return 0;
++		}
++	}
 +
-+static int hid_generic_suspend(struct hid_device *hdev, pm_message_t message)
-+{
-+	struct lamparray *la = hid_get_drvdata(hdev);
-+
-+	if (IS_ENABLED(CONFIG_HID_LAMPARRAY) && la)
-+		lamparray_suspend(la);
-+
-+	return 0;
-+}
-+
-+static int hid_generic_resume(struct hid_device *hdev)
-+{
-+	struct lamparray *la = hid_get_drvdata(hdev);
-+
-+	if (IS_ENABLED(CONFIG_HID_LAMPARRAY) && la)
-+		lamparray_resume(la);
-+
+ 	return hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+ }
+ 
+@@ -78,6 +108,16 @@ static int hid_generic_reset_resume(struct hid_device *hdev)
  	return 0;
  }
  
-@@ -129,8 +154,10 @@ static struct hid_driver hid_generic = {
- 	.id_table = hid_table,
++static void hid_generic_remove(struct hid_device *hdev)
++{
++	struct lamparray *la = hid_get_drvdata(hdev);
++
++	if (IS_ENABLED(CONFIG_HID_LAMPARRAY) && la)
++		lamparray_unregister(la);
++
++	hid_hw_stop(hdev);
++}
++
+ static const struct hid_device_id hid_table[] = {
+ 	{ HID_DEVICE(HID_BUS_ANY, HID_GROUP_ANY, HID_ANY_ID, HID_ANY_ID) },
+ 	{ }
+@@ -90,6 +130,7 @@ static struct hid_driver hid_generic = {
  	.match = hid_generic_match,
  	.probe = hid_generic_probe,
--	.reset_resume = hid_generic_reset_resume,
- 	.remove = hid_generic_remove,
-+	.reset_resume = pm_ptr(hid_generic_reset_resume),
-+	.suspend = pm_ptr(hid_generic_suspend),
-+	.resume = pm_ptr(hid_generic_resume),
+ 	.reset_resume = hid_generic_reset_resume,
++	.remove = hid_generic_remove,
  };
  module_hid_driver(hid_generic);
  
-diff --git a/drivers/hid/hid-lamparray.c b/drivers/hid/hid-lamparray.c
-index fb3082f6d19a0..5c97cafbd25d2 100644
---- a/drivers/hid/hid-lamparray.c
-+++ b/drivers/hid/hid-lamparray.c
-@@ -852,6 +852,60 @@ void lamparray_unregister(struct lamparray *la)
- }
- EXPORT_SYMBOL_GPL(lamparray_unregister);
- 
-+/*
-+ * Blank all lamps on suspend rather than handing control back to the firmware,
-+ * which may not turn them off in low power states. On an Acer Predator PT14-52T,
-+ * system power draw during s2idle was ~12.35W with lamps lit, and ~3.14W with
-+ * them blanked; the lighting accounted for ~75% of the power draw during suspend.
-+ * Since writing zeroes is well defined on all lamparray devices, always do it.
-+ * This is ignored if use_leds_uapi is 0; let userspace keep full control.
-+ */
-+void lamparray_suspend(struct lamparray *la)
-+{
-+	struct lamparray_device *ldev;
-+
-+	if (!la)
-+		return;
-+
-+	ldev = &la->ldev;
-+
-+	if (!ldev->use_leds_uapi)
-+		return;
-+
-+	mutex_lock(&ldev->dev_lock);
-+	lamparray_hw_set_state(ldev, 0, 0, 0, 0);
-+	mutex_unlock(&ldev->dev_lock);
-+
-+	hid_hw_wait(ldev->hdev);
-+}
-+EXPORT_SYMBOL_GPL(lamparray_suspend);
-+
-+void lamparray_resume(struct lamparray *la)
-+{
-+	struct lamparray_device *ldev;
-+
-+	if (!la)
-+		return;
-+
-+	ldev = &la->ldev;
-+
-+	if (!ldev->use_leds_uapi)
-+		return;
-+
-+	/*
-+	 * After a S4 transition, some devices report
-+	 * AutonomousMode = 0 while still ignoring host lamp updates.
-+	 * Writing 0 again does nothing; forcing a 1 -> 0
-+	 * will guarantee the device will update.
-+	 */
-+	lamparray_hw_set_autonomous(ldev, true);
-+	hid_hw_wait(ldev->hdev);
-+	lamparray_hw_set_autonomous(ldev, false);
-+
-+	lamparray_restore_state(ldev);
-+}
-+EXPORT_SYMBOL_GPL(lamparray_resume);
-+
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Tim Guttzeit <tgu@tuxedocomputers.com>");
- MODULE_AUTHOR("Aaron Erhardt <aer@tuxedocomputers.com>");
-diff --git a/include/linux/hid-lamparray.h b/include/linux/hid-lamparray.h
-index 6124878859392..dc9df938e5b7e 100644
---- a/include/linux/hid-lamparray.h
-+++ b/include/linux/hid-lamparray.h
-@@ -66,6 +66,27 @@ struct lamparray *lamparray_register(struct hid_device *hdev,
-  */
- void lamparray_unregister(struct lamparray *la);
- 
-+/**
-+ * lamparray_suspend() - blank all lamps ahead of sleep transition
-+ * @la: LampArray handle returned by lamparray_register()
-+ *
-+ * Writes zeroes to the rgb and brightness values, unless the use_leds_uapi
-+ * sysfs attribute is 0, in which case, it will return early before writing
-+ * anything. The cached state is left untouched so lamparray_resume() can
-+ * restore it.
-+ */
-+void lamparray_suspend(struct lamparray *la);
-+
-+/**
-+ * lamparray_resume() - restore host control and LampArray state
-+ * @la: LampArray handle returned by lamparray_register()
-+ *
-+ * Disables autonomous mode (in case device returns to firmware control after suspend)
-+ * and restores the cached state of the device. If the use_leds_uapi attribute is 0,
-+ * it will return early and prevent any unwanted writing.
-+ */
-+void lamparray_resume(struct lamparray *la);
-+
- #else /* !CONFIG_HID_LAMPARRAY */
- 
- static inline bool lamparray_is_supported_device(struct hid_device *hdev)
-@@ -84,6 +105,14 @@ static inline void lamparray_unregister(struct lamparray *la)
- {
- }
- 
-+static inline void lamparray_suspend(struct lamparray *la)
-+{
-+}
-+
-+static inline void lamparray_resume(struct lamparray *la)
-+{
-+}
-+
- #endif /* CONFIG_HID_LAMPARRAY */
- 
- #endif /* _HID_LAMPARRAY_H */
 
 -- 
 2.43.0
