@@ -1,79 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.177.127.220
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=158.120.86.30
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792450889;
-	b=HhrYwIoFBHa+ixSXh7mXOnsPdGgjCpLDsFQCLbTIpj7Ma7B44TTms6qNUu8rI4fr4uDd
-	 WRapw/XfKq0dUy9idxMity2QTxg2fPePcw7DrnDJ2oyP9CYMbdWRzfXP5cW+sTnRdErv5
-	 VK/ZIr+aDYAZDJBuVmq34SIJCaeIxHqFbheKoHpQo6xaODWJcR9g+huYzciG1COLngfVc
-	 5xZSPxvqefwShVvmYxOThmN7BJjrGafWguIcgrMRlPmKdfQmORbcckkvsUEqJR3+UEM+O
-	 1MKjzr4VmvqDL8FzNzao/yOLqDit9Pp9mVAWVj2CfSX9QFAHRcrxXQ3YimVGZ4Kqxxg==
+	t=1792457839;
+	b=o1NxiNW7ntnk8XcI6W9wdu4ZWSt7lTehesE03VY6Dgb+APmMTG/BP8+33e+fOpzYohyY
+	 wCIkQ5jnokXjxY4qSCG/9mcjA/a8ut1CKjYHErKEL+yLgxoX26EkiXK8OQuo1ZEyFrRgj
+	 wfLMg/76lPMPCdi+mYvP39MgWGkD/FFKcOWbtOJIpgamevrFEQVAYo1ex4QCI0L7K8phN
+	 G50kYFN/yIUOG0mcDjalCht5BjFu3C+77A3FCYk5VmFWEZgCcUlFF+WYfMuABsiX/hf/h
+	 fHqMKkULCPxtUZs0wCEoXrxb0jU5DoS07o68z2aj8Bpx05fNokVjKJCByLeGW4hk6Mw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792450889;
-	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-Envelope-From;
-	bh=emO6sEIDSkEFWkAyFtAW5uo9IdZWrTOY02AsTAB3ghg=;
-	b=OoZVNgLKfSX7esYaUrE4NBTyjafk5GCT7dPKmby45cAYw3vvfumgCMaogkLUQn3MSTX9
-	 curPoMKHlz/GuVnscRD7GH4DCsWR7wbDVEzE5/xBx20pjGNRtq8OFIifZL0SdvoWo8Tbq
-	 Kh5JI0Gba1lIraLWSGOh97XQhdRWzttscgLDmoxEAW8HfU0ARVgC3lnorzVPqvilkmyNe
-	 cQewZ4gUTREKWuB2I0FP0mgqtKFM5FLz3AQo+dRcTuZwx1t3pxvuWA6gd7GgQJQZUfcjv
-	 18TwBdvzx9wQh3aXgbxYZIDXzHkaPEKTXA7+Ab+xwEJz1WIi32pxbLFJ+1dlRvdYcQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792457839;
+	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:
+	 X-Report-Abuse:Feedback-ID:X-smtpcorp-track:Date:Message-ID:From:To:
+	 Cc:Subject:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=baFTI7feHfHjUs2Z1HfLPGTNQHlNGEUNjb1UhcudQe8=;
+	b=fq4QSpzy2cp705GYfFgyG3+2gw5BKofTrrkLFGVi+NS5jKAvcGL2CovFpNonvZAybl2t
+	 tUw+mWzGJM4wfgqZz4vGFmKCuI3QmeOlIFIvmV84dzbIEId+CiZTjRsCj68wv2vspivPD
+	 evsC77E07gbMCRpT/IrO7OyykgbB+O0NQQLBWPs+9snXPZf5PVIci35qpdD0dq7yaO1Ti
+	 tdwdvN/jaMR17aRzkspV5gcrsyzvX+ufLxjmGv0XmShw6Y/VrvH77YlySzQbDhwBcjd8X
+	 AsSC0wLNunhS6JGISmHHKD1oIAV5BWwInujl6GwgrfYhcjfPi1ipJBWhXnF7brq4czQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=r-sc.ca;
-	spf=pass smtp.mailfrom=r-sc.ca;
-	dkim=pass header.d=r-sc.ca header.i=@r-sc.ca header.a=rsa-sha256 header.s=spacemail header.b=kbEdxGlY;
-	arc=none smtp.remote-ip=198.177.127.220
-Received: from out-utut-a220.jellyfish.systems (out-utut-a220.jellyfish.systems [198.177.127.220])
+	dmarc=pass header.from=fkr.dev;
+	spf=pass smtp.mailfrom=em1020969.fkr.dev;
+	dkim=pass header.d=fkr.dev header.i=@fkr.dev header.a=rsa-sha256 header.s=s1020969 header.b="QyMmvi1/";
+	dkim=pass header.d=fkr.dev header.i=@fkr.dev header.a=rsa-sha256 header.s=default header.b=X5G4kOiQ;
+	arc=none smtp.remote-ip=158.120.86.30
+Received: from e3i542.smtp2go.com (e3i542.smtp2go.com [158.120.86.30])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12B4606A319
-	for <linux-leds@vger.kernel.org>; Mon, 19 Oct 2026 23:01:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B12B4606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=r-sc.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=r-sc.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDB0606A327
+	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 00:57:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8EDB0606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fkr.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1020969.fkr.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=r-sc.ca header.i=@r-sc.ca header.a=rsa-sha256 header.s=spacemail header.b=kbEdxGlY
-Received: from DESKTOP-290OH2S (d207-6-150-133.bchsia.telus.net [207.6.150.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.spacemail.com (Postfix) with ESMTPSA id 4j7rcq5L1Gz8sWN;
-	Mon, 19 Oct 2026 23:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=r-sc.ca;
-	s=spacemail; t=1792450860;
-	bh=emO6sEIDSkEFWkAyFtAW5uo9IdZWrTOY02AsTAB3ghg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kbEdxGlY9Nlbf4rp/11jWG32FqrEyxlFiYY1zJbOTD/+utKtaYNDlVzg8jgCqtgGB
-	 6K4uPO4SeNrtk47TN8NZzN8CUIGZKuZ8PNrGlGG9EtmYXQ/3Ezn7HPZGci8vPK+nhz
-	 MDLzYkXQF94JKsOnSSYNr+d+5Nn9aGpEOXEi3f6d2MqQDKNdPUf0BAagTYLlubK9PJ
-	 N+3fcNxexu0Cpb8BMKcdgQEgx34J17WYCDxL/F2DMviO6MtbsMGnGVSD/Pjp4fl8Xf
-	 2Yjs/X7Aq2YkRdLI7I90SEVWbubj0grzDbgIxEx7TUwXB/fG2FmNLhAtxyFUcPnvrE
-	 VkzOWlCdLUjzQ==
-From: Ross Cawston <ross@r-sc.ca>
-To: markus.stockhausen@gmx.de,
-	andrew@lunn.ch
-Cc: lee@kernel.org,
-	pavel@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	chris.packham@alliedtelesis.co.nz,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-leds@vger.kernel.org,
+	dkim=pass (2048-bit key, unprotected) header.d=fkr.dev header.i=@fkr.dev header.a=rsa-sha256 header.s=s1020969 header.b=QyMmvi1/;
+	dkim=pass (2048-bit key, unprotected) header.d=fkr.dev header.i=@fkr.dev header.a=rsa-sha256 header.s=default header.b=X5G4kOiQ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fkr.dev;
+ i=@fkr.dev; q=dns/txt; s=s1020969; t=1792457832; h=from : subject : to
+ : message-id : date : list-unsubscribe : list-unsubscribe-post;
+ bh=baFTI7feHfHjUs2Z1HfLPGTNQHlNGEUNjb1UhcudQe8=;
+ b=QyMmvi1/NFc85iuzd0C04qpc3ibgyFv8OGDr34el+hyTbI30rh9ki3gVAANxyWnIKsPJQ
+ jbW6woB6RsqK6Vg870ZYbAhUe11uUs7KNz4iyY9jbSVoEsGNxi1n29+GEVjFPf8IN056zUt
+ j0/vyA1RAXFSPmnat8sidgVzkzw8tH/3h2zAfiQpx6O0+8hnJHyNJn/iZuRwue4q30BtmpP
+ 9PujCMWZUrxgyZseUt8Vnvlwzm9ovluwrhFiJ0UIUhZ5+Lo1Nr1pkMgt7naBZOCDebXtkNQ
+ zfCgkW0HQJ24ahUKpvGb2zuE7uij3YgnwQB2dYErD3+M8/q1HmTZPuok3LIw==
+Received: from [10.244.246.9] (helo=fkr.dev)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128:X25519)
+	(Exim 4.100.1)
+	(envelope-from <florian.krischer@fkr.dev>)
+	id 1xIyA6-FnQW0hPvgRA-l4b6;
+	Tue, 20 Oct 2026 00:57:06 +0000
+DKIM-Signature: a=rsa-sha256; bh=baFTI7feHfHjUs2Z1HfLPGTNQHlNGEUNjb1UhcudQe8=; c=relaxed/relaxed; d=fkr.dev;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@fkr.dev; s=default; t=1792457824; v=1; x=1792889824;
+ b=X5G4kOiQaw0oaWEFVOVcN8ACj5el/tE15KiCmx5ZmF7yp1Y1qajbyAJEPkpol0Zi4Sn4Yqfm
+ L2HfKgXtNB5ChfTtM1CH5qd5GYisvgI9OSrkbowFKQeVZ1VJHvbEiFgCl8OqYPTMK+08+sxKgEA
+ e7rd/f+ZnnyqRl9kNPUOQ26jr5a6XXaAsqqiirg4B3NzcZzWCau74dg97dlR0vE5cFL7qxZ7Y2U
+ PBGn3KJRVR8qMQPV80hFuvk2ijpXtIEQZb4CpbNEptimpTHkU3JcNOgd3bQUjwEoDDcJ1JcU41I
+ RQ8crMwUucd7sO249fwKG3ugn+c9wOUG9v+hGmYbCY4lg==
+Received: by fkr.dev (envelope-sender <florian.krischer@fkr.dev>) with
+ ESMTPS id 5b88a664; Tue, 20 Oct 2026 00:57:04 +0000
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1020969m:1020969amTSgpp:1020969sMMvfpqAzu
+X-smtpcorp-track: iV_ZDZKnEBJe.EOA0vGa8enFZ.nzSLpA1lU5y
+Date: Tue, 20 Oct 2026 02:57:03 +0200
+Message-ID: <70f4c4d7f6263385d29ed8baa2106769@fkr.dev>
+From: "Florian Krischer" <florian.krischer@fkr.dev>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Ion Agorria <ion@agorria.com>,
+	Michał Mirosław <mirq-linux@rere.qmqm.pl>,
 	devicetree@vger.kernel.org,
-	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Ross Cawston <ross@r-sc.ca>
-Subject: Re: [PATCH 0/3] leds: add Realtek RTL9300 port LEDs under software control
-Date: Mon, 19 Oct 2026 16:00:53 -0700
-Message-ID: <20261019230053.503-1-ross@r-sc.ca>
-X-Mailer: git-send-email 2.55.0.windows.5
-In-Reply-To: <010701dd5f94$d636ff70$82a4fe50$@gmx.de>
-References: <20261018194339.132-1-ross@r-sc.ca> <59f75e7d-9b56-441d-a4b5-58ad3862267e@lunn.ch> <20261018232015.527-1-ross@r-sc.ca> <38ca5375-ecea-4361-ab26-c044f38ceadb@lunn.ch> <20261019054233.1884-1-ross@r-sc.ca> <010701dd5f94$d636ff70$82a4fe50$@gmx.de>
+	linux-input@vger.kernel.org,
+	mfd@lists.linux.dev,
+	linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v12 0/7] mfd: Add support for Asus Transformer embedded controller
+In-Reply-To: <20261019100406.103687-1-clamor95@gmail.com>
+References: <20261019100406.103687-1-clamor95@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -83,16 +95,15 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Envelope-From: ross@r-sc.ca
 
-On Mon, Oct 19, 2026 at 08:41 AM +0200, Markus Stockhausen wrote:
-> [...] it is currently beyond the time available.
+I tested the v12 series on an ASUS Eee Pad Slider SL101 running Debian 13
+with the 7.0.1 postmarketOS Grate kernel.
 
-Thanks Markus, that answers it.
+The system booted successfully. The EC identified as ASUS-EP102-DOCK,
+firmware SL101-0202. I verified keyboard key events from the EC keyboard
+and touchscreen contact and coordinate events from the tablet's maXTouch
+device.
 
-Then please drop this series. The PoE LEDs of this board go to OpenWrt
-with openwrt/openwrt#25341 for now, and I'll come back to the port LEDs,
-in the port nodes, once there is an RTL930x switch driver upstream.
-
-Ross
+Tested-by: Florian Krischer <florian.krischer@fkr.dev>
