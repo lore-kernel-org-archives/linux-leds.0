@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792492373;
-	b=wYfoWTB12i2DfGLHPCHV+V0GcpmYvz7tNwYS9CTgcd4vGBOef5/Q7Fwmx0grDsLmiTkt
-	 B28WB224rS0gyOhJzZTJrxjjyOJh+lMUfns2GTAoy6qoFncEz9Mf7nfNwuwmGrfQPFXEv
-	 m52GBvo0LNGNukuMEEWP0r0a6SEuZzim/KzzJwZNhyxVjZGJv5+QuRZhTeyZWp0aWqxCp
-	 q5RG6aO79LWrpSUXEn6fLkunmfWHPD2RJ8dX0zlbxfAcHX2jXAcMG+FnYuSlA3iTmW6bs
-	 4cWMPvm3m5BZ0OJFWHs7hxi7cdp6GSF7BwKAKsdIJZCUXXs46rlrIqrJFv7diaofLcQ==
+	t=1792492670;
+	b=ronXHcObjmb65o7h53SW7VfextyPBnMdjfIBDypFcmKuKzCYpzFsXsns9HObnQSd4gFY
+	 eWNq4i2FErslBCLRatnZkLm01mrcJSiiLkPO04ZfxtCM8/jCKCf3caVtJdqJXVXxOA7FU
+	 DhDj8bOZuNgTtwSHtW9uofiO4RoaUqNKYJH483v+Diy4AQSI81ETCPBD3CXd/Q9kmrWpH
+	 NL4nxxVHbWe4F+t+oxZSgToREJKMLK5BoztXNZRx18mS0XEtMjV4c2WNxKgTKCCikUTXR
+	 5aAn/7cnMuuX+onxNOygc4DnqfFa7ESYglOp7HDvzM0U1Purya84aGUBBLmWix9nZGw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792492373;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792492670;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-AI-Review-Draft;
-	bh=G48PL0tn1VYTaXsE0CA/o2f0ngz2pO+EXwjhRCct9GU=;
-	b=HA2o+Bmac7DRXqfyf90Yi9dKm+FxhAc1CctGRPrJ1Dp8IFqzqk797vOKzgAquUj6LTWG
-	 bGZ/361V0lmKEyhK+1O67tqIh8Y6k49lvdkcmomnytM3Syobr/NkHpnf8v7PEXv0SHo7x
-	 3eaZHOoP6xQmSpM4DG5b/qJnHMOXmOGrBUas4htq4Tc+WdEO8w+wg7jvME2HnvtVgvtFn
-	 jNznSSmkKS1tc3fDeNRyxuccqRbY6uLatE+agMM/KZKThfMo05dnUwaTbfmqirmX+TjFP
-	 VB/0WH0s4viuaj/u10sM5XS7lNFuniU8bJ2EC/AO2iE/edOIrk2Ay7ibYtNjOrDIf7w==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=pQ7BMpJBbKomkOvbdvd4pG9zo1vWZwj/fOjMBE4qlBw=;
+	b=dyQxIfanF2fDWzUXokhdi1ONejEhnohzH7buVa4QsH07a0bjMnNIwvsr3dIZ/18+prf1
+	 sc399XmhIPyi/K1zYFOP+2U9kxDJTZEmr6bQG3ITtKxlkRW89e+V30HpvNyS+kNWgYHUC
+	 KGGtE5SEREz5AS4fTA6l7avseh4EDepGm7WopV8a5D3OSzFhSahEU2ficVUsbt2GKB+vY
+	 6QAomQzlcc8u4wqqv1HnXyU+a7vwHVF4xuB9iyC9wFVWbuZ2/kHJAuFKB09dLcvaEuK5s
+	 YzSfNOsbP6NzFfKmP/NFre2XDnE5IXuRozQ67Y8kZr0zQ3eW8q+cxrLwAo7dmh5ysEA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CmCsMbOt;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YHZO7ujt;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1015606A31A;
-	Tue, 20 Oct 2026 10:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D7D606A31B;
+	Tue, 20 Oct 2026 10:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CmCsMbOt
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B3F1F000C4;
-	Tue, 20 Oct 2026 10:32:50 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YHZO7ujt
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21531F000C6;
+	Tue, 20 Oct 2026 10:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792492372;
-	bh=G48PL0tn1VYTaXsE0CA/o2f0ngz2pO+EXwjhRCct9GU=;
+	s=k20260515; t=1792492669;
+	bh=pQ7BMpJBbKomkOvbdvd4pG9zo1vWZwj/fOjMBE4qlBw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=CmCsMbOtkVhG8+5EY5epF5v7VhGTsfehD6k/FI+5xmbUx0urhxXfRsGCuiS7Or7k8
-	 JDuDpCaxnAHhQzBrHeGnkR0y5ubZAsd3bJ3IxzmPrSTcwqUWL+C1n9c05rHOqyjk2i
-	 hpw+9mDMr7PBJCObm2V0d7P8ApNHH+lAg5s/WUdInMKwkIPYmeuwR4hM7gean4M006
-	 5/61zIM9lLSxJb8bi3L35bWFehJ63BJCrGO9H1xa7VoS0OlsaVYCLlUI8MVZLB6946
-	 G0Zh2pLSTpU5Y2/4FgCj+gDEJBz7eVBByd2GVdKHsGGUhkHg8XSh0duqnU/Bn89lwh
-	 3MByZaPVcr/eQ==
-Date: Tue, 20 Oct 2026 11:32:48 +0100
+	b=YHZO7ujtOVIZxltquLVTT1oIJuSNp2iqSJq6Iw6bHLIra+5yetHQHAMeUP8vzbbWm
+	 iOdOQ8sjiGcTXkL2K7tq1Ocv8yl23zC52sPX42TKpbonGKHmHYs4EpHClEyVfGpKOZ
+	 QwP+a5vnZ6T/EHUva9ZO+gczps6mcfmy3dBmXkHLd7pJlod8/Jn9tNooZLzwoUlbb+
+	 BxOkiOnBZmYo+riboRxgkJSZdxV3+M/TSAjmZNr8Gt0BnsndOcUnnk19L6By5f9WI3
+	 XxBQEsz7A3CMUCXP6DOMh3rFz/hJYte6MbnK1iSuNOID/Rh3voT07pSHQNhoLP7BMH
+	 BHiamWTYnavWw==
+Date: Tue, 20 Oct 2026 11:37:44 +0100
 From: Lee Jones <lee@kernel.org>
-To: phucduc.bui@gmail.com
-Cc: Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH v2 2/2] leds: lm3532: Avoid duplicate error messages
-Message-ID: <179198414722.839288.1086260869798370727@kernel.org>
-References: <20261009091059.25729-1-phucduc.bui@gmail.com>
- <20261009091059.25729-2-phucduc.bui@gmail.com>
+To: Rillian Grant <rillian.grant@gmail.com>
+Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, robh@kernel.org
+Subject: Re: [PATCH v3 3/4] leds: flash: lm3643: Describe the LED of ACPI
+ boards without LED nodes
+Message-ID: <20261020103744.GA1795367@google.com>
+References: <20261011191026.149338-1-rillian.grant@gmail.com>
+ <20261011191026.149338-4-rillian.grant@gmail.com>
+ <sashiko-outbox-167402@kernel.org>
+ <37Wk96VpSLOh-P0MeN457Q@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,59 +62,26 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261009091059.25729-2-phucduc.bui@gmail.com>
-X-AI-Review-Draft: <20261009091059.25729-2-phucduc.bui@gmail.com>
+In-Reply-To: <37Wk96VpSLOh-P0MeN457Q@gmail.com>
 
---- checkpatch.pl: clean (0 issues) ---
+On Tue, 13 Oct 2026, Rillian Grant wrote:
 
-On Fri, 09 Oct 2026, phucduc.bui@gmail.com wrote:
+> > [Severity: High]
+> > Is there a potential race condition here when multiple devices probe
+> > concurrently?
+> > 
+> > If two threads execute lm3643_add_dmi_leds() simultaneously (for example,
+> > during concurrent sysfs bind or async probe of two LM3643 devices matching
+> > the same DMI table), they both might pass the lockless
+> > software_node_fwnode(nodes[0]) check before either registers the nodes.
+> 
+> This condition is currently unreachable. It would require two LM3643
+> instances on the same DMI entry.
+> 
+> I'd be happy to add a static mutex if preferred, or alongside any future
+> DMI entry for a board with more than one LM3643.
 
-> From: bui duc phuc <phucduc.bui@gmail.com>
->
-> Most error paths in lm3532_parse_node() already log errors. Add an
-> error message for the devm_add_action() failure and remove the
-> redundant error message from lm3532_probe() to avoid duplicate logs.
->
-> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
-
-Please capitalise your name appropriately here and in the 'From:' line.
-
-> ---
->  drivers/leds/leds-lm3532.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-> index a3bc9680dc4c..05856c053fac 100644
-> --- a/drivers/leds/leds-lm3532.c
-> +++ b/drivers/leds/leds-lm3532.c
-> @@ -566,7 +566,8 @@ static int lm3532_parse_node(struct lm3532_data *priv)
->  	if (priv->enable_gpio) {
->  		ret = devm_add_action(&priv->client->dev, gpio_set_low_action, priv);
->  		if (ret)
-> -			return ret;
-> +			return dev_err_probe(&priv->client->dev, ret,
-> +					     "failed to add GPIO action\n");
-
-We do not usually print messages for '-ENOMEM' failures.
-
-It was better before.
-
->  	}
->
->  	priv->regulator = devm_regulator_get(&priv->client->dev, "vin");
-> @@ -708,10 +709,8 @@ static int lm3532_probe(struct i2c_client *client)
->  	i2c_set_clientdata(client, drvdata);
->
->  	ret = lm3532_parse_node(drvdata);
-> -	if (ret) {
-> -		dev_err(&client->dev, "Failed to parse node\n");
-> +	if (ret)
->  		return ret;
-> -	}
->
->  	return ret;
-
-return lm3532_parse_node(drvdata);
+Please.
 
 -- 
 Lee Jones
