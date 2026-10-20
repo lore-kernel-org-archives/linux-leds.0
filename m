@@ -1,89 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792495193;
-	b=nXnz7gl8ou0mIpZAUXJzXb6itx/EFbweHvnOdpU/lPkO7tjkX+H94AC8tiAxmVSeo8na
-	 WTlmkC/DXD6RGFhS5AHJiKnvjDsUQsrQ0F9pUnrGVqfuyZCI4owmJbxMfISU5Im7F2bYd
-	 uPCT3Pz7prYfl8oCvKSUyXjdN6ei5gzrqccic0s8OgAg4/jngu31/x+tj5qBAuPbG81ed
-	 vRf/WBOi+qWFPCtsaM7BLAbThnN4njMB+jOL+mP9F51+/04feB8PW7nfrAFXHhPFtK4NN
-	 ZsDvZPY2KFOieZxyldRvI0Of+z5olsOob6OiN3OI/HCfr3FUorCa54OyviMqLzR6oYg==
+	t=1792495447;
+	b=eTTlUDt4rCPbKnzH9h7V4C6h+uNqH/+4RRSnnPkLuBrmH7tbprL9+K/7CWD8FViHb0KY
+	 d3GP9eRDADpIZ8dxSE1a1fhefMmqenaPEbx5M+TuUazQ852CdozTky/pxOlbKq5d62wyG
+	 U7sR9WzcVNOMLjjQ2oIeNNj9gTW3Ac8d7psAFiUoLt6d2jYYjEruIsxMOr7vg+dBofkyy
+	 wVtzdNhKbwPh48Z8jpr7o+Wko05PvLv2xOALAV+bfge2wjoEjkbvgp+zdTugMTCLYrh7v
+	 p85DUTcdQmHMUv+fxAiKM9NvhazIwTM58BSRJLwynwkBDLD5O1fYChKm13C46NX7RSw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792495193;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:
-	 Organization:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=AMia+D58A/8/Yr2fbaI0Wg1o6qEQxkVnI4avM+pRLeM=;
-	b=Wp8dIi16tBNDe4sNsH9fvOQZpoH+YK1vn/w0Tjdtxn9m+Sie7Yp7QL/pi94Kj5iMNGeQ
-	 hHwNc8SjXsx7IQKAbcPAM3C4o7V/HmQeF8dISOnADGv/LboE4eS/Wh9bjUDi2Of5K4abg
-	 +VkkqvbHFg28WbleCVw4mqm8iC3Mtb813pOiUA/s6QzvMcbUy0i8xKl/otIhSj+r5+6fa
-	 n43S3Y3a5gUuFXYSx/RyQc9gIoP5Pxl9iLSbLcT+hnKlSkiUtNMXwEtgvmkAL3kS0+8sU
-	 afb4KWeaZpbRj1Tpf71EhmTe/WkOJU2DaPiJC1graabcd/D4ifMupamLsAqSZJUhZPQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792495447;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=Ux/VRwVLa3G6qJ7mYxcImYPhsAeqaZtgWCoOJwEhM3E=;
+	b=O/lC0i7uMXZ9CnLrKOx1HMrSrKZjsLSObF1rNtTbdDNJANnlq4eyvne5Rfrxxavym9Mk
+	 8zoTwkOruQDZ+Guwq5Sp+7Mz87tC2wgPs4MEQYcmIaU/LqMzbHBzeQf5voM3l0e3mc9fY
+	 QTFgspSK7FCEuSgAqL68nyFe58xMiAXkrsqrA4QLRTw6YNp9TTURj1o+QNinnTqnujjhu
+	 r34IDCaTqLCkCwrGBJt8cFmYDwyYOMITLXFSz+QDf1wvecVlRrlv41Hg+sPXYx6pKalF7
+	 eq5DU1inUvbhlSKPrsCPGWspDmUh/hTWfGFfg0gSv3WrGHd+7tRC6n6KVeuJb50gtPw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=f3kKcYK4;
-	arc=none smtp.remote-ip=192.198.163.12
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hoqykk03;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D45606A32D;
-	Tue, 20 Oct 2026 11:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D8D45606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD19606A31A;
+	Tue, 20 Oct 2026 11:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=f3kKcYK4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792495193; x=1824031193;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KEOSegekDMJf6c6yUunYimqfLWSZKBnvoz61oRPNdjs=;
-  b=f3kKcYK4gsxs72h70SGSq3wSZqA3AIt5XAhgRil3X4JTriTPcwc63VpD
-   hphswtKSWqp1uklHKYiGxViQ4noNobAN0EJjHV1O/w4OieNWCpoGp61lY
-   SlqzkrHABsfAGsJ2a8yeApaOA5O/qDKFBOGdav8PexCUTJJvIuog2ZLaW
-   hrIuzxARs2NkF9QBbeZgjj5YJRWUAerit59TINYmwQkiRk0XO0NU4flis
-   HscnjafLXqaJdq4jv3cAQUvwx2V2+wufVUNihIUJNActZ5PjveM145Axh
-   fx2h8/K/5xPL5rhomIvZTEWSFQY4DOqFFdT6Ied9qHjOV5xIkNuymKdkj
-   Q==;
-X-CSE-ConnectionGUID: jBRG6DzSSjmqHetBXCDD3A==
-X-CSE-MsgGUID: vYQIyqxgQc6eo+PJAcarEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11940"; a="1097968"
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="1097968"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 04:19:52 -0700
-X-CSE-ConnectionGUID: fw2LKXyeTouVwBipAlpsuQ==
-X-CSE-MsgGUID: 9z4uI4HZS/CbFZ/iyxTLdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,168,1787036400"; 
-   d="scan'208";a="2748263"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.132])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 04:19:49 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1D6FE11F7E8;
-	Tue, 20 Oct 2026 14:19:46 +0300 (EEST)
-Date: Tue, 20 Oct 2026 14:19:46 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Rillian Grant <rillian.grant@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ruslan Koreev <koreev.r@gmail.com>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] leds: flash: lm3643: Describe the LED of ACPI
- boards without LED nodes
-Message-ID: <atdOUv937j63NKAL@kekkonen.localdomain>
-References: <20261011191026.149338-1-rillian.grant@gmail.com>
- <20261011191026.149338-4-rillian.grant@gmail.com>
- <179198404917.839288.1364319566324835013@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hoqykk03
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E331F000C5;
+	Tue, 20 Oct 2026 11:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792495446;
+	bh=Ux/VRwVLa3G6qJ7mYxcImYPhsAeqaZtgWCoOJwEhM3E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=hoqykk03cXr4E3eGH8T/nByTP3MQsPFQqskQBWD70/Xv0J30G6Y/nbg7fuFKX0UAb
+	 M0XLkH6Wxv1vW/Jr78dUEwH/rjh/iMlC9dftzgnWZc8FtpXw12k3kn2TFulN9YTFYL
+	 YS9aW9vnCMvCHRnFzNCadsP0dE5cEghBMHD6agA1vOBErrWgoJFuOLb4SePKHz82M3
+	 hBuMQltTQq4HJvwKAgp5vNr6V3gWVPm+e93if7bKtEDJuO2PW7T50+iQk89HoA8I0N
+	 zBTPYW+AE0RCS8W3Hi9QYNDcPrgYHjqrr9A4JPEv8a/fEvLC4nL74X77t1hBvHwpNA
+	 b+Zt9CUKLLDAw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees+treewide@kernel.org>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20261013181803.496627-1-clamor95@gmail.com>
+References: <20261013181803.496627-1-clamor95@gmail.com>
+Subject: Re: [PATCH v2 0/3] leds: aat1290: Add support for AAT1270
+Message-Id: <179249544365.1830910.16989533900579942396.b4-ty@b4>
+Date: Tue, 20 Oct 2026 12:24:03 +0100
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -93,78 +62,22 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179198404917.839288.1364319566324835013@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-Hi Lee, others,
+On Tue, 13 Oct 2026 21:18:00 +0300, Svyatoslav Ryhel wrote:
+> Document AAT1270 and FLINH pin, adjust driver to support AAT1270.
 
-On Tue, Oct 20, 2026 at 11:45:06AM +0100, Lee Jones wrote:
-> > @@ -691,6 +692,92 @@ static int lm3643_register_led(struct device *dev, struct lm3643 *chip,
-> >  	return lm3643_register_v4l2(dev, led, fwnode);
-> >  }
-> >
-> > +/*
-> > + * Lenovo ThinkPads enumerate the chip through ACPI (HID TXNW3643) without a
-> > + * _DSD, so the LED is not described by firmware. On the boards below it drives
-> > + * the Windows Hello IR flood illuminator, with both current sources feeding a
-> > + * single LED. Describe that with a software node, with torch and flash limits
-> > + * (100 mA and 300 mA per output) well below the chip's maximums.
-> > + */
-> > +static const u32 lm3643_ir_flood_sources[] = { 0, 1 };
-> > +
-> > +static const struct property_entry lm3643_ir_flood_props[] = {
-> > +	PROPERTY_ENTRY_U32("reg", 0),
-> > +	PROPERTY_ENTRY_U32_ARRAY("led-sources", lm3643_ir_flood_sources),
-> > +	PROPERTY_ENTRY_STRING("function", LED_FUNCTION_FLASH),
-> > +	PROPERTY_ENTRY_U32("color", LED_COLOR_ID_IR),
-> > +	PROPERTY_ENTRY_U32("led-max-microamp", 200000),
-> > +	PROPERTY_ENTRY_U32("flash-max-microamp", 600000),
-> > +	PROPERTY_ENTRY_U32("flash-max-timeout-us", 100000),
-> > +	{ }
-> > +};
-> > +
-> > +static const struct software_node lm3643_ir_flood_root = {
-> > +	.name = "lm3643",
-> > +};
-> > +
-> > +static const struct software_node lm3643_ir_flood_led = {
-> > +	.name = "led-0",
-> > +	.parent = &lm3643_ir_flood_root,
-> > +	.properties = lm3643_ir_flood_props,
-> > +};
-> > +
-> > +static const struct software_node *lm3643_ir_flood_nodes[] = {
-> > +	&lm3643_ir_flood_root,
-> > +	&lm3643_ir_flood_led,
-> > +	NULL
-> > +};
-> > +
-> > +static const struct dmi_system_id lm3643_dmi_leds[] = {
-> > +	{
-> > +		/* Lenovo ThinkPad X1 Carbon Gen 14 */
-> > +		.matches = {
-> > +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-> > +			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X1 Carbon Gen 14"),
-> > +		},
-> > +		.driver_data = (void *)lm3643_ir_flood_nodes,
-> 
-> Andy, et al.,
-> 
-> I don't usually allow data from other registration mechanisms to be
-> passed through another (MFD data via OF for instance).
-> 
-> Is this okay?
+Applied, thanks!
 
-In this case the ipu-bridge needs to provide the information to the lm3643
-driver via software nodes, as it already does for a number of other
-devices. There's no point in putting the information to the LED driver.
+[1/3] dt-bindings: leds: skyworks,aat1290: Document AAT1270 Current Regulator for Flash LEDs
+      commit: 9fe421537c14ed83d17edc8fcbd913833575ad67
+[2/3] dt-bindings: leds: skyworks,aat1290: Document FLINH pin
+      commit: 8b81978dac2bb1cb260dd921b6b54d280f6c0557
+[3/3] leds: aat1290: Add support for AAT1270 Current Regulator for Flash LEDs
+      commit: c4adf638e1663885e2b3b3cbdf7116c743150d4f
 
-Presumably the ACPI device node already exists so this should be
-straightforward. What's also missing from the sensor then is the flash-leds
-property, the lens-focus handling serves as an example.
+--
+Lee Jones [李琼斯]
 
--- 
-Regards,
-
-Sakari Ailus
