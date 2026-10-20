@@ -1,49 +1,49 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.64.226
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1792500424;
-	b=LM+kbwQiabbljl0GqESL46v/vJQvw1468ocawkd6gtlK2rrqhcrGHd0s8xkCFnF0CazW
-	 Grrm8fR8EYO56dsR28LZDm6Kn7hszY4bzQWccwdov9zB9SDmR6qDBpEnyZUQGn9bmczU8
-	 r/i03EcOrG87sRI3NS0fRPF0fDRd6kVcPraceFQUzBNd4d4C+76KHKPCcHJpilCNnr0AM
-	 FjpTodpowbFPcdlv9DztO7nQc1CaSU6FJZU6G8pY3exItz2FWcmLt55IK0IFSs1LiILex
-	 20eLz98YPlSNYfpfKkByXKYN+vDDK8cuSUNjQWx2pBGiRbsumAOWMQLKOfPOg0w+rDw==
+	b=VULeKfhUezkxKYnh0ysVGJ5irZBnjS+D53MeaIz4WZt3UQJGXGSEOF7bLgyBXGyS8n+T
+	 sZbFP0PN8vXXTM51+j+iSXkKg+LfaeguMmVsbnF0ecwMD5HM5EpQCwObSTEnUkZmWxxFA
+	 ZC2ZWukw3Z1JBskteG91orulccNFDvwjr8lQ9LSD2Wym6CsXRnE2KCbn8pIPVDVRDg0sx
+	 5deuZwN33sanqrhulNPewquLfAz1TrR3UEnAxDUJZMvdzVyeA7rgL9bfDdANzgZ2GIfvv
+	 FEV/K0w9TEPI4u08FSXZBLLj8DOGveligN4JuzldclGKRVwynwjPNheuDMkneNzCPJA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1792500424;
 	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
 	 Message-ID:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-Flowmailer-Platform:Feedback-ID;
-	bh=STMhpQSWWR8+cjHldTlQT+VSuoqYr6XlJYSMgywImpQ=;
-	b=efI3AREGQDoXoN/IaOYF61oN+7CmZT129BT9n30NTn9eflMyNn00WDl7263g4UwnxRNX
-	 92En7mY4VCLf8Yf5rgGh4yQL3rY6V8Kykpn5tXTc2MfvOtp9e8EBo+rx1KmJm+SnUi+pk
-	 7Foury5m5dTCfR0EK5zKk540J9/ElApLXQBiP6RMRqfbolVu1mnrJeWEim8zLq0bDkerE
-	 Xa5g8ckWFEIu7+JGEnHbIIgrMJl2gOOlZfvDIakiInJTZOwUWbWBTFSrKIgWd658n3cDO
-	 SbY2G8pJgEWKshWMoGY7xCvcXSJ8YcQnccN5PXaWu9xm3Ol15Xc2WrfY2bLlIOSUmYA==
+	bh=CN0dtFVmpDOGFXmF2YV+l5pk0MBZMY+XXE39oRFUnQs=;
+	b=0DAwauPDk7puoRG7kqu99Caj1jdESOFMgXDa040eXDMhv/liRVa0F8WnJO0azMKXd5lE
+	 W41muECcw6vqh1PfoNEaMjeYzHhDiEJk/Bj1/fr1soFg7DW2pZ7v2/nHEVprszHYj114S
+	 1jaqd8nMOmaB7K9tsiyRJrtH6WzcP77dlfaZwh7YHtR39NjwtQNpm/ex+JE9sVeeTZAue
+	 r/fIU2nm6F9j0TPwmRnEQ3sx53ZjhzGGnZBSfTHCC6PFZpfm4/K122A6EdXBMOcg3VeNy
+	 nep9qaCu6tnbJhpYp28QGRcY1/9DYrNt2zohfSSTWC/hyxhbVM8AueRPIju+IzXdAJw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=siemens.com;
 	spf=pass smtp.mailfrom=rts-flowmailer.siemens.com;
-	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm2 header.b=XSak9CQw;
-	arc=none smtp.remote-ip=185.136.64.225
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm2 header.b=R4GAtmOQ;
+	arc=none smtp.remote-ip=185.136.64.226
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7793A60A260C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A299606A32D
 	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 12:47:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7793A60A260C
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A299606A32D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm2 header.b=XSak9CQw
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202610201246541aefc85a5f00020737
+	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm2 header.b=R4GAtmOQ
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20261020124654fcec45189100020785
         for <linux-leds@vger.kernel.org>;
         Tue, 20 Oct 2026 14:46:54 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=alexander.sverdlin@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=STMhpQSWWR8+cjHldTlQT+VSuoqYr6XlJYSMgywImpQ=;
- b=XSak9CQwjaiMICK8pPiUPD+oWZIuB2kJaGzDkbpW0vIvZ2QxZUdG05R/zUyGL0fJwnxIIt
- NkpBeqQInjlnhOW+P6P1123KB59toFdSsON3RbBo6bSQfcO15g4mXiIXyGDNyfBRQybaL16K
- KD++zYrO2/rRbCI/feH5utirRhQaL0IJYzT8vtYsgRM8jCpZvdwob+lFqgCX0+RuLKTAchH/
- 68SbNufvY/oonJgDxEf2Fp140e5QUmdmAJMb0DMV72kz44fThGEthW7iVMDioHIyaaO1y5lJ
- elCo/L1xTFJfkL4rKFVLwT3TIR7DH23FhZNQ4WKZlK05xgHs7LK0DQWQ==;
+ bh=CN0dtFVmpDOGFXmF2YV+l5pk0MBZMY+XXE39oRFUnQs=;
+ b=R4GAtmOQIooqPO3ObyGmpj/ByBKJELHW9cHIb7n3I1sT29fn8As9z9+PcUIGLCljk2Ge2/
+ NSadxiE/kmRiGXX+sikRQE8bW5U7yi/G+QhpEjCaPg4ej3CxYeyTw4jm62FDc0ZQYvXTJaKb
+ Qe6F3kn3Zo1DwVP4tlulpyRY3mvuSle6fng3BwJAT4hTQM4EIG/c7L/qynTmYkMy077SnWNR
+ k1sj6Nk47agGPiLuR+BAHASRFYzTO3UV3pEJxbZ8xBokzObrfs0LEXJ0j0KG5gy9yKF/PlS8
+ psyUNYbbYcruXVN+V7ZjCsv/tiqzvIt//79qs62m0iQR/l8YqGxmxSxw==;
 From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
 To: linux-leds@vger.kernel.org
 Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
@@ -57,9 +57,9 @@ Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
 	Christian Marangi <ansuelsmth@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH v5 2/4] leds: trigger: netdev: Access net_dev under trigger_data->lock in the worker
-Date: Tue, 20 Oct 2026 14:46:46 +0200
-Message-ID: <20261020124651.1987272-3-alexander.sverdlin@siemens.com>
+Subject: [PATCH v5 1/4] leds: trigger: netdev: Put netdev on activate error path
+Date: Tue, 20 Oct 2026 14:46:45 +0200
+Message-ID: <20261020124651.1987272-2-alexander.sverdlin@siemens.com>
 In-Reply-To: <20261020124651.1987272-1-alexander.sverdlin@siemens.com>
 References: <20261020124651.1987272-1-alexander.sverdlin@siemens.com>
 X-Mailing-List: linux-leds@vger.kernel.org
@@ -77,64 +77,40 @@ Feedback-ID: 519:519-456497:519-21489:flowmailer
 
 From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-netdev_trig_work() dereferences trigger_data->net_dev without the lock,
-while set_device_name() and netdev_trig_notify() dev_put() and replace it
-under trigger_data->lock. On NETDEV_UNREGISTER the worker can run
-dev_get_stats() on a netdev being freed (UAF).
-
-Take trigger_data->lock in the worker. cancel_delayed_work_sync() must
-then never run under that lock.
+When hw control is active, set_device_name() takes a reference on the
+netdev via dev_get_by_name(). The register_netdevice_notifier() failure
+path frees trigger_data without dropping it, leaking the netdev.
 
 Cc: stable@vger.kernel.org
-Closes: https://lore.kernel.org/all/20260914142116.6DAC51F000FF@smtp.kernel.org/
-Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
+Closes: https://lore.kernel.org/all/20260914140045.B8F4C1F000FF@smtp.kernel.org/
+Fixes: 0316cc5629d1 ("leds: trigger: netdev: init mode if hw control already active")
 Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 ---
 Changelog:
+v5:
+- removed unset_device_name()
 v3:
-- explicit mutex_lock()/mutex_unlock() instead of guard()
+- introduced unset_device_name() as a counterpart of set_device_name()
 
- drivers/leds/trigger/ledtrig-netdev.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/leds/trigger/ledtrig-netdev.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index cfaf130157b3d..e72e850e0070f 100644
+index 5b0132484594c..cfaf130157b3d 100644
 --- a/drivers/leds/trigger/ledtrig-netdev.c
 +++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -676,9 +676,12 @@ static void netdev_trig_work(struct work_struct *work)
- 	unsigned long interval;
- 	int invert;
+@@ -776,8 +776,10 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
+ 	led_set_trigger_data(led_cdev, trigger_data);
  
-+	mutex_lock(&trigger_data->lock);
-+
- 	/* If we dont have a device, insure we are off */
- 	if (!trigger_data->net_dev) {
- 		led_set_brightness(trigger_data->led_cdev, LED_OFF);
-+		mutex_unlock(&trigger_data->lock);
- 		return;
- 	}
- 
-@@ -686,8 +689,10 @@ static void netdev_trig_work(struct work_struct *work)
- 	if (!test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) &&
- 	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) &&
- 	    !test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) &&
--	    !test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode))
-+	    !test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode)) {
-+		mutex_unlock(&trigger_data->lock);
- 		return;
+ 	rc = register_netdevice_notifier(&trigger_data->notifier);
+-	if (rc)
++	if (rc) {
++		dev_put(trigger_data->net_dev);
+ 		kfree(trigger_data);
 +	}
  
- 	dev_stats = dev_get_stats(trigger_data->net_dev, &temp);
- 	new_activity =
-@@ -728,6 +733,8 @@ static void netdev_trig_work(struct work_struct *work)
- 
- 	schedule_delayed_work(&trigger_data->work,
- 			(atomic_read(&trigger_data->interval)*2));
-+
-+	mutex_unlock(&trigger_data->lock);
+ 	return rc;
  }
- 
- static int netdev_trig_activate(struct led_classdev *led_cdev)
 -- 
 2.56.0
 
