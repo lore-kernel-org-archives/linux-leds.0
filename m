@@ -1,45 +1,66 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792518327;
-	b=PI8xZTgbp2VYdhwsw3/fpNCVU3ItjF076yqU9mknBuTqdqIz3sOUdHE9ZTbKcdSogih6
-	 fmKPaiDcWZXq/jf8rdrlhq8na00J3gipjkov0IQw7GWP/rmmUhQnV7titjlsxS222NXg9
-	 /6WCchGS28lR7C9thMLzetRW0rbO5oex20WXn/5f/nX4r6zitnumM2uBVTtJVXngxmiG3
-	 UFEkwF4HDz/8eSKPGNx0ibuBIv1JzfJeZu4QU/VmpEauYX6I/zHbYz1tDLgEI+ZhymjWc
-	 XtLHJck2yG/smxAU8BkgfQX1FBMdFsG3JuDFgPGRli/8skYMlSlAIbZ6iBj1uveThug==
+	t=1792519581;
+	b=yRxVG1cn2VDemaZX9X34VXm+aBqqsT38soHCB7l6vr+e0rdZ84YSBiLJAVplL0PUubQA
+	 pBalpFyoaEZLUH7rI/zB5wIfGLAIXbguXr4gTJ5/pm+1ctz5wW/FVcvOOGsngoqZaeQe1
+	 4VjLk71lzchdy1Bvb8/gTfF8nagOVDHbeq1omLtUBrZ9eR4OyUzIMZ6FwvAGQALNXtNC+
+	 sBR4ZC4pNbgl7puDHECxYy11fs3S7sbC5AkFsmp3+KfA3DGeAUilDxQAgzwT+I3l3dz3l
+	 fmvAuNdXY9Ogk9OSLzeII/7fN2ijoxQ5Te8mqrJveaJheZsU4lkuNz76Yy1rgi79F8g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792518327;
-	h=Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=PAqiBxOuUjcVVcRZ2MUwiiwHtGhdU4gm9a/O1b6JhhY=;
-	b=ButbI/upRNi1xNjCwtdQBbrdjq+8l1akzvYwcfmBQIzvKJUm5j3CRPwM/s4aOayLgAAz
-	 4tXWluTgKzKlfDLVqnqNcwuZPSAlB+B2IgazdSOJ1lzn2B7rSDd1+t2CYKDluQGaWquOJ
-	 GA3x4zeN/bVifUSG7MPTCyVI3MmVAY5NU5ipJdEkGIZLS2Dk4Uf+34oDoapJNl3/Dxv4K
-	 ApZ1enkUldsJ7oZFE3npQUfVOegnGLXPzQW+YloCndRMLXtfyAzu1w0V33YMW8EuXLHq4
-	 esQvQtkY5+6jkzgdzBmo3CR/MGsCfMJU9rSA24U/h1sQKVoOCu11N1LIF85hzP/V4Sg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792519581;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=HVb+cZJd/B0SyswVrB5yNoiyhOraxVQrSwREAf5tTOE=;
+	b=teARR8Ol0RpM2q/I6oKAzG3P94nRztZZo0rStM9vgYTYSgh/5gM6i6ceD2/aPv8M43b7
+	 i/wb3vejoioWbSQ5dIYmRMdis7SutRBdRjkubh201pBm0T7BiOPP/T7ErhFf/+F/iDfDd
+	 CsbNt37bunaDxroi4eBnWVDBpirU9ExHDnXK4BR0zD7Pkq4/VNLpm+9rextk8vELFQuxp
+	 1PuYJyg3TxhYaQSRJU5Yxj3qEuEtuUS9xXWprEAyf1Qhan2bcVe6ICLpHGAyae17tZOFA
+	 pZ1Gkr901ji1Or1c/nGHaMBkp+tWMZrTnyZWE0GIHLmL/S47zTiBpRJwEv+THm6gVZA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VOSCLcav;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DB5606A31D;
-	Tue, 20 Oct 2026 17:45:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A4A1F000C9;
-	Tue, 20 Oct 2026 17:45:26 +0000 (UTC)
-Date: Tue, 20 Oct 2026 12:45:23 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	devicetree@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>,
-	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-	linux-leds@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, mfd@lists.linux.dev
-Subject: Re: [PATCH v4 1/4] dt-bindings: mfd: Document Skyworks AAT2870
-Message-ID: <179251832264.345015.830998474723147925.robh@kernel.org>
-References: <20261019100930.110954-1-clamor95@gmail.com>
- <20261019100930.110954-2-clamor95@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAFA606A323;
+	Tue, 20 Oct 2026 18:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VOSCLcav
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F9B1F000C9;
+	Tue, 20 Oct 2026 18:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1792519581;
+	bh=HVb+cZJd/B0SyswVrB5yNoiyhOraxVQrSwREAf5tTOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=VOSCLcav+2Q4vNjUNvhkr6i5DNiI17LtAqaaIRzCzrM8wZyC5l4KcdrlFDpvx5311
+	 SEo6MM2zhzIGkyPZXOnlvwBXy6MFWr3/RnJaISTv+py52eDkP3e4GcI070pM172tyA
+	 aN9qceol4RnuUJReHmdm/O+2skabYnJSxsPSNRHdhamkukSo5wMIWfncUJIpwQm6A1
+	 iZu/hz1oyXwCkgHMK8aqynuQK/TsdwJQ5k636/lNnJ3/8qBYlWEZ0bsE2odhTVdnJU
+	 /Os3eb+hvwQdYrZMQNU7V5fqPT3awKe8qb+OD5vIErPd7bWxHq17+Xs4tg8sbSyrMe
+	 zj9J8181KItxQ==
+Date: Tue, 20 Oct 2026 11:06:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Imre Kaloz <kaloz@kernel.org>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, Lee Jones
+ <lee@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri
+ Slaby <jirislaby@kernel.org>, mfd@lists.linux.dev,
+ linux-serial@vger.kernel.org, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, linux-rtc@vger.kernel.org, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel
+ <cassel@kernel.org>, linux-ide@vger.kernel.org, Pavel Machek
+ <pavel@kernel.org>, linux-leds@vger.kernel.org, Bjorn Helgaas
+ <bhelgaas@google.com>, linux-pci@vger.kernel.org, Christoph Hellwig
+ <hch@lst.de>
+Subject: Re: [PATCH v2 00/53] MIPS: SGI-IP27: add support for the IP35
+ (Bedrock hub) machines
+Message-ID: <20261020110619.12774a1c@kernel.org>
+In-Reply-To: <cover.1791890466.git.kaloz@kernel.org>
+References: <cover.1791890466.git.kaloz@kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -49,22 +70,11 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261019100930.110954-2-clamor95@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 13 Oct 2026 15:16:20 +0200 Imre Kaloz wrote:
+> This series adds support for the SGI machines built around the Bedrock
+> hub (IP35), such as Fuel and Tezro, to the IP27 platform code.
 
-On Mon, 19 Oct 2026 13:09:27 +0300, Svyatoslav Ryhel wrote:
-> Document Skyworks AAT2870 LED Backlight Driver and Multiple LDO Lighting
-> Management Unit.
-> 
-> Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org> # for backlight
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../bindings/leds/skyworks,aat2870.yaml       | 124 ++++++++++++++++++
->  1 file changed, 124 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Why do we need support for machines discontinued 20+ years ago?
