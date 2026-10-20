@@ -1,58 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792493663;
-	b=EXWYArUPzvCNNzI3DXieq1uNpZWby4AV4KhdFzQ8Gv6ru+HwYeJj54MtCuoQry7XUOqC
-	 is8gVn66hw9g7nRtj5cG6Aa5cX6q+zERo/O+V9X40z/zsLApbpwVaNkjx7B6E+XoC35y+
-	 7ozAyyd6OwZDnlfdAlli4PoSiQfIhJ2cKU6iz1SEDKDByPFs0MpnlhtjRL2whH1B/820n
-	 vCsfeZHKjMeU6se7CkwjYNOhBFFaMx6VIW2W0h3WrWC7/DQ2uwreIJYsZJVT3RN3Z2lIx
-	 E2m973Z2kJ40UlYNALVzsIcIA+Z/lbuaqbt+uvbb1kLBP6tWLenpp7iGNX+IsMhnYAw==
+	t=1792494238;
+	b=HJUFujGNx4nDc580aOKGB2ljyP2Iz56uPfsInNrXL2NoEYttfZCi8dJwIAr9G/grTxYA
+	 fuh/QeHph/5k5IrRoFgcT8v3peSdlrpD34qsl2lN+D9TSqVs6tG9mGlw7LuI4xiepb+yo
+	 PUSMTfgiBTD7XfLyHO1muH2EbXT91Wo5ZIq6BNGOIrCE7sBOqexzCPs3LMLld0r/h4DRn
+	 UPasUZJuVWK4o7PFKA3bdaDXBGoiIjyJc3LwIPr/NaO/A6LH4TT3JoWL/apDDOdRuPFYi
+	 Q3JehmSlEQTOYvl4lKlZAsN2lFw+Ttp22dIu2/fqbJ91tLOS/Seu68tpEoBUyWf7oOw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792493663;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792494238;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-AI-Review-Draft;
-	bh=Jta0Pxpw0hwdi1pMSSLJ0Vt8+ko0+bO97qAIr9mi+uQ=;
-	b=KCU2ohWywD+KCDpsaAfc/HC8u03+1BMF1YASWmfLK3Oz6+TdmLIhTGFQRKa9JItt1bbt
-	 LbMK65wbuQOsAd7zuYMZSvNIezO4X8aENevJxpVcUXxdQqU1Vx3CARHjOPs0l/4D3ThyF
-	 Rx9oC6RWMkX70BltOMW+ngrEiLOgWY2LvJ6pXRdDGxWDbaLIP2ptBvpESuiPr2PBoUyNK
-	 hl6rAt4fhbBaBUAXvg9jgmxkx+LXAYa8AZZRNlpfVNNo42sE2FIa2IrX7hN9+CmTLln8H
-	 PmAZLf5okRFRtAYRnT3JUVU4Pis4XXVx99k4voajbwtBBzcPhxPOXEh0iDAOJnRlj3g==
+	bh=Q+8hmYVwSuQQaSXfjPgdsvBl0XEA6DarkJ9b0W+ddiI=;
+	b=ArvEe4C1npmxSSAqlrQlVDFuDuoBjESxqCNBYJ8YXiqHFrB8D0qn6H/wRrorNUmkh98E
+	 jOpG8js6ChxZ7ZFUYcpdC1gdDxpIm7YkL/na0TR7Ik/KRxfJVGBSVhoVC3+gSLF0b81bX
+	 K3yObY4qVV9gQITxfcZCB/L86d8Pq85P/AamWNHOsmNfuCjfq2BrnLhMLOBI0raGIV4Qy
+	 NxUIRuJYSfjhTMBNj0ZrIiReMZAg7PF1y/unMiqyrutFvDBuY8f5AWYpseazGjgq/UXFW
+	 wUjA07Cl32g6NPoNdeQv7TgmuNJ1nnIyxLI7QoaNv0QXx5exSakPi1N1nkwC7Un2UjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeR1sJiZ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QbMbt0a+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79251606A319;
-	Tue, 20 Oct 2026 10:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71699606A319;
+	Tue, 20 Oct 2026 11:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeR1sJiZ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EE041F000C5;
-	Tue, 20 Oct 2026 10:54:21 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=QbMbt0a+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06D81F000C4;
+	Tue, 20 Oct 2026 11:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792493663;
-	bh=Jta0Pxpw0hwdi1pMSSLJ0Vt8+ko0+bO97qAIr9mi+uQ=;
+	s=k20260515; t=1792494238;
+	bh=Q+8hmYVwSuQQaSXfjPgdsvBl0XEA6DarkJ9b0W+ddiI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SeR1sJiZpNbhY55IhV1zHJkLqG+9VsTlTHYEZucK9HtkNmfBjJBq1YSn9+h1gJF8c
-	 dMRLqWmV+wRWfvBQLY2ZIu3F/1DhLyt9nFSgMAKk9lmVqt+sN9/YhLVRAktUFN6o0V
-	 hkhj5lTQF4YYkhnx7JhUmXtUm7wGeaunIvqhv7sqr8Rjc/CdLjLovrQsggKoBn40rI
-	 5cwT4ImuDy7i2GqwvFyNqW/aA7DwwY2KTKUUgcJ2+ew/Ta6408cdGGNYopBIn0wyBi
-	 Ghf93mkOexP73V5csYP/agVvv0xDvqA42BImFdoHzPmQ6F0an6n6R8Wb4+hoDLD46r
-	 0JGOP+OtocN/w==
-Date: Tue, 20 Oct 2026 11:54:18 +0100
+	b=QbMbt0a+WSlFf6HPyB0w2tGgOUAacWPjd4wAqylOrlRY6e+N+g0lbKbRBvOmeHI8G
+	 NOuJoch7658dOAyydZhUEAbpJUXE/RL5DbySWyYJxVIA7ik9IPhODyowBWjl2X/Zp3
+	 IRMxTsGLSp8wH6LCtSJVUsbDWd5J8RYWH4Hk3D6xrAk4W+X4zwMBMnHyjStcunUmyD
+	 gGgoTRrYu5gU1DlRfzQ8ozQL0EGwMd2tQ6KEXIx8N/ae9fGmH04jMyNFJR0iIauw3u
+	 f8gYMx1yKiC5Zuzu59CRzfuY/XtmHj+jQUgv93g1SAAXLl3V674nwxg0HM2WscpEC6
+	 V2uBj1vPwSL5A==
+Date: Tue, 20 Oct 2026 12:03:52 +0100
 From: Lee Jones <lee@kernel.org>
-To: Rillian Grant <rillian.grant@gmail.com>
+To: Flavio Amieiro <flavio@amieiro.net>
 Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ruslan Koreev <koreev.r@gmail.com>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] leds: flash: lm3643: Describe the LED on the
- Lenovo ThinkPad X9-15 Gen 1
-Message-ID: <179198409516.839288.2293417415100693160@kernel.org>
-References: <20261011191026.149338-1-rillian.grant@gmail.com>
- <20261011191026.149338-5-rillian.grant@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] leds: is31f132xx: Add support for is31fl3206
+Message-ID: <179198370454.839288.5327794631276643738@kernel.org>
+References: <20261013-add-is31fl3206-support-v3-0-66a762a3c12f@amieiro.net>
+ <20261013-add-is31fl3206-support-v3-2-66a762a3c12f@amieiro.net>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -64,160 +62,216 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261011191026.149338-5-rillian.grant@gmail.com>
-X-AI-Review-Draft: <20261011191026.149338-5-rillian.grant@gmail.com>
+In-Reply-To: <20261013-add-is31fl3206-support-v3-2-66a762a3c12f@amieiro.net>
+X-AI-Review-Draft: <20261013-add-is31fl3206-support-v3-2-66a762a3c12f@amieiro.net>
 
---- checkpatch.pl: clean (0 issues) ---
+--- checkpatch.pl (1 issue) ---
+Line 172: WARNING: DT compatible string "issi,is31fl3206" appears un-documented -- check ./Documentation/devicetree/bindings/
 
-On Sun, 11 Oct 2026, Rillian Grant wrote:
+This true, or is it documented in this set?
 
-> The ThinkPad X9-15 Gen 1 enumerates the LM3643 through ACPI (HID
-> TXNW3643) without a _DSD, like the X1 Carbon Gen 14. It drives the
-> Windows Hello IR flood illuminator with both current sources feeding a
-> single LED.
+> This chip has a different layout for the LED Control Register when
+> compared to the other variants. This register contains the enable bit
+> (in the highest nibble) but also the current control.
 >
-> The flash limits were obtained from an ETW trace of the SPB class
-> extension during a Windows Hello unlock. The Windows driver programs
-> 304 mA per current source (code 0x19 with the LED2 override set) and a
-> 400 ms flash timeout.
+> According to the datasheet, a value of 010000 (0x10) in the register
+> enables an LED with the output current set to maximum.
 >
-> There is no vendor value for the torch limit, so use the same
-> conservative limit as the X1 Carbon Gen 14.
+> This commit adds support for this IC following the previous limitation
+> of the other variants: all LEDs are enabled and set with maximum
+> current, letting brightness be controlled by the PWM registers.
 >
-> Rename the X1 Carbon Gen 14 nodes after the machine now that the table
-> has a second entry. Sources and root node remain shared.
->
-> Signed-off-by: Rillian Grant <rillian.grant@gmail.com>
+> Signed-off-by: Flavio Amieiro <flavio@amieiro.net>
 > ---
->  drivers/leds/flash/leds-lm3643.c | 70 +++++++++++++++++++++++++-------
->  1 file changed, 55 insertions(+), 15 deletions(-)
+>  drivers/leds/leds-is31fl32xx.c | 95 +++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 79 insertions(+), 16 deletions(-)
 >
-> diff --git a/drivers/leds/flash/leds-lm3643.c b/drivers/leds/flash/leds-lm3643.c
-> index 18ac75df72e2..38b1dd09a1b7 100644
-> --- a/drivers/leds/flash/leds-lm3643.c
-> +++ b/drivers/leds/flash/leds-lm3643.c
-> @@ -692,16 +692,21 @@ static int lm3643_register_led(struct device *dev, struct lm3643 *chip,
->  	return lm3643_register_v4l2(dev, led, fwnode);
+> diff --git a/drivers/leds/leds-is31fl32xx.c b/drivers/leds/leds-is31fl32xx.c
+> index 285085d27453..a22d814be4b0 100644
+> --- a/drivers/leds/leds-is31fl32xx.c
+> +++ b/drivers/leds/leds-is31fl32xx.c
+> @@ -49,6 +49,9 @@
+>  #define IS31FL3293_RESET_MAGIC 0xc5
+>  #define IS31FL3293_MAX_MICROAMP 20000
+>
+> +/* Custom LED Control enable value for IS31FL3206 */
+> +#define IS31FL3206_CONTROL_ENABLE_WITH_IMAX BIT(4)
+> +
+>  struct is31fl32xx_priv;
+>  struct is31fl32xx_led_data {
+>  	struct led_classdev cdev;
+> @@ -79,6 +82,7 @@ struct is31fl32xx_priv {
+>   * @enable_bits_per_led_control_register: number of LEDs enable bits in each
+>   * @brightness_steps    : number of brightness steps supported by the chip
+>   * @reset_func          : pointer to reset function
+> + * @enable_all_channels_func  : pointer to enable all channels function
+>   * @sw_shutdown_func    : pointer to software shutdown function
+>   *
+>   * For all optional register addresses, the sentinel value %IS31FL32XX_REG_NONE
+> @@ -88,6 +92,11 @@ struct is31fl32xx_priv {
+>   * necessary registers to a known initialization state. This is needed
+>   * for chips that do not have a @reset_reg.
+>   *
+> + * If non-NULL, @enable_all_channels_func will be used in place of the
+> + * generic channel enable function. This is needed for chips that have
+> + * a LED Control Register that control more than simply the
+> + * enable/disable state of the channel.
+> + *
+>   * @enable_bits_per_led_control_register must be >=1 if
+>   * @led_control_register_base != %IS31FL32XX_REG_NONE.
+>   */
+> @@ -105,6 +114,7 @@ struct is31fl32xx_chipdef {
+>  	u8	enable_bits_per_led_control_register;
+>  	u16	brightness_steps;
+>  	int (*reset_func)(struct is31fl32xx_priv *priv);
+> +	int (*enable_all_channels_func)(struct is31fl32xx_priv *priv);
+>  	int (*sw_shutdown_func)(struct is31fl32xx_priv *priv, bool enable);
+>  };
+>
+> @@ -228,6 +238,28 @@ static int is31fl3293_software_shutdown(struct is31fl32xx_priv *priv,
+>  	return is31fl32xx_write(priv, IS31FL3293_SHUTDOWN_REG, value);
 >  }
 >
-> -/*
-> - * Lenovo ThinkPads enumerate the chip through ACPI (HID TXNW3643) without a
-> - * _DSD, so the LED is not described by firmware. On the boards below it drives
-> - * the Windows Hello IR flood illuminator, with both current sources feeding a
-> - * single LED. Describe that with a software node, with torch and flash limits
-> - * (100 mA and 300 mA per output) well below the chip's maximums.
-> - */
->  static const u32 lm3643_ir_flood_sources[] = { 0, 1 };
->
-> -static const struct property_entry lm3643_ir_flood_props[] = {
-> +static const struct software_node lm3643_ir_flood_root = {
-> +	.name = "lm3643",
-> +};
-> +
 > +/*
-> + * The Lenovo ThinkPad X1 Carbon Gen 14 enumerates the chip through ACPI
-> + * (HID TXNW3643) without a _DSD, so the LED is not described by firmware.
-> + * On the X1 Gen 14 it drives the Windows Hello IR flood illuminator, with
-> + * both current sources feeding a single LED. Describe that with a software
-> + * node, with torch and flash limits (100 mA and 300 mA per output) well below
-> + * the chip's maximums.
+> + * Custom enable_all_channels function for IS31FL3206 because this
+> + * variant has only one bit in the higher nibble for enable, and the
+> + * lower nibble controls output current.
 > + */
-> +static const struct property_entry lm3643_x1c14_props[] = {
->  	PROPERTY_ENTRY_U32("reg", 0),
->  	PROPERTY_ENTRY_U32_ARRAY("led-sources", lm3643_ir_flood_sources),
->  	PROPERTY_ENTRY_STRING("function", LED_FUNCTION_FLASH),
-> @@ -712,19 +717,46 @@ static const struct property_entry lm3643_ir_flood_props[] = {
->  	{ }
+> +static int is31fl3206_enable_all_channels(struct is31fl32xx_priv *priv)
+> +{
+> +	const struct is31fl32xx_chipdef *cdef = priv->cdef;
+> +	u8 num_regs = cdef->channels / cdef->enable_bits_per_led_control_register;
+> +	int i, ret;
+> +
+> +	for (i = 0; i < num_regs; i++) {
+
+New for() loops should initiate the variable.
+
+  for (int i = 0; ...
+
+> +		ret = is31fl32xx_write(priv,
+> +				       cdef->led_control_register_base+i,
+
+Spaces around '+' please.
+
+> +				       IS31FL3206_CONTROL_ENABLE_WITH_IMAX);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * NOTE: A mutex is not needed in this function because:
+>   * - All referenced data is read-only after probe()
+> @@ -315,6 +347,33 @@ static int is31fl32xx_reset_regs(struct is31fl32xx_priv *priv)
+>  	return 0;
+>  }
+>
+> +static int is31fl32xx_enable_all_channels(struct is31fl32xx_priv *priv)
+> +{
+> +	const struct is31fl32xx_chipdef *cdef = priv->cdef;
+> +	int ret;
+> +
+> +	if (cdef->enable_all_channels_func)
+> +		return cdef->enable_all_channels_func(priv);
+
+I detest pointers to functions at the device driver level.
+
+Please find another way to do this.
+
+> +	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
+> +		u8 value =
+> +			GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
+> +		u8 num_regs = cdef->channels /
+> +			cdef->enable_bits_per_led_control_register;
+> +		int i;
+> +
+> +		for (i = 0; i < num_regs; i++) {
+
+As above.
+
+> +			ret = is31fl32xx_write(priv,
+> +					       cdef->led_control_register_base+i,
+
+As above.
+
+> +					       value);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int is31fl32xx_software_shutdown(struct is31fl32xx_priv *priv,
+>  					bool enable)
+>  {
+> @@ -345,24 +404,12 @@ static int is31fl32xx_init_regs(struct is31fl32xx_priv *priv)
+>  		return ret;
+>
+>  	/*
+> -	 * Set enable bit for all channels.
+> +	 * Enable all channels.
+>  	 * We will control state with PWM registers alone.
+>  	 */
+> -	if (cdef->led_control_register_base != IS31FL32XX_REG_NONE) {
+> -		u8 value =
+> -		    GENMASK(cdef->enable_bits_per_led_control_register-1, 0);
+> -		u8 num_regs = cdef->channels /
+> -				cdef->enable_bits_per_led_control_register;
+> -		int i;
+> -
+> -		for (i = 0; i < num_regs; i++) {
+> -			ret = is31fl32xx_write(priv,
+> -					       cdef->led_control_register_base+i,
+> -					       value);
+> -			if (ret)
+> -				return ret;
+> -		}
+> -	}
+> +	ret = is31fl32xx_enable_all_channels(priv);
+> +	if (ret)
+> +		return ret;
+>
+>  	ret = is31fl32xx_software_shutdown(priv, false);
+>  	if (ret)
+> @@ -552,7 +599,22 @@ static const struct is31fl32xx_chipdef is31fl3293_cdef = {
+>  	.sw_shutdown_func			= is31fl3293_software_shutdown,
 >  };
 >
-> -static const struct software_node lm3643_ir_flood_root = {
-> -	.name = "lm3643",
-> +static const struct software_node lm3643_x1c14_led = {
-> +	.name = "led-0",
-> +	.parent = &lm3643_ir_flood_root,
-> +	.properties = lm3643_x1c14_props,
+> +static const struct is31fl32xx_chipdef is31fl3206_cdef = {
+> +	.channels				= 12,
+> +	.shutdown_reg				= 0x00,
+> +	.pwm_update_reg			= 0x13,
+> +	.global_control_reg			= 0x26,
+> +	.reset_reg				= 0x2f,
+> +	.output_frequency_setting_reg		= 0x27,
+> +	.pwm_register_base			= 0x04,
+> +	.led_control_register_base		= 0x17,
+> +	.enable_bits_per_led_control_register	= 1,
+> +	.brightness_steps			= 256,
+> +	.enable_all_channels_func		= is31fl3206_enable_all_channels,
 > +};
 > +
-> +static const struct software_node *lm3643_x1c14_nodes[] = {
-> +	&lm3643_ir_flood_root,
-> +	&lm3643_x1c14_led,
-> +	NULL
->  };
+>  static const struct of_device_id of_is31fl32xx_match[] = {
+> +	{ .compatible = "issi,is31fl3206",  .data = &is31fl3206_cdef, },
+>  	{ .compatible = "issi,is31fl3293",  .data = &is31fl3293_cdef, },
+>  	{ .compatible = "issi,is31fl3236",  .data = &is31fl3236_cdef, },
+>  	{ .compatible = "issi,is31fl3236a", .data = &is31fl3236a_cdef, },
+> @@ -616,6 +678,7 @@ static void is31fl32xx_remove(struct i2c_client *client)
+>   * even though it is not used for DeviceTree based instantiation.
+>   */
+>  static const struct i2c_device_id is31fl32xx_id[] = {
+> +	{ .name = "is31fl3206" },
+>  	{ .name = "is31fl3293" },
+>  	{ .name = "is31fl3236" },
+>  	{ .name = "is31fl3236a" },
 >
-> -static const struct software_node lm3643_ir_flood_led = {
-> +/*
-> + * The Lenovo ThinkPad X9-15 Gen 1 enumerates the chip through ACPI
-> + * (HID TXNW3643) without a _DSD. On the X9-15 it drives the Windows Hello IR
-> + * flood illuminator, with both current sources feeding a single LED. Flash
-> + * maximums were obtained from an SPB class extension ETW trace of the
-> + * vendor-supplied Windows driver. The torch limit is a conservative value well
-> + * below the chip's maximum.
-> + */
-> +static const struct property_entry lm3643_x9_15_props[] = {
-> +	PROPERTY_ENTRY_U32("reg", 0),
-> +	PROPERTY_ENTRY_U32_ARRAY("led-sources", lm3643_ir_flood_sources),
-> +	PROPERTY_ENTRY_STRING("function", LED_FUNCTION_FLASH),
-> +	PROPERTY_ENTRY_U32("color", LED_COLOR_ID_IR),
-> +	PROPERTY_ENTRY_U32("led-max-microamp", 200000),
-> +	PROPERTY_ENTRY_U32("flash-max-microamp", 608050),
-> +	PROPERTY_ENTRY_U32("flash-max-timeout-us", 400000),
-> +	{ }
-> +};
-
-Given that Patch 3 [0] uses conservative fallback values (600000 uA and
-300000 us) versus these traced Windows driver values (608050 uA and
-400000 us), why don't we just use the same set of properties for both
-machines and save ourselves some duplication?
-
-[0]
-
-static const struct property_entry lm3643_ir_flood_props[] = {
-       PROPERTY_ENTRY_U32("reg", 0),
-       PROPERTY_ENTRY_U32_ARRAY("led-sources", lm3643_ir_flood_sources),
-       PROPERTY_ENTRY_STRING("function", LED_FUNCTION_FLASH),
-       PROPERTY_ENTRY_U32("color", LED_COLOR_ID_IR),
-       PROPERTY_ENTRY_U32("led-max-microamp", 200000),
-       PROPERTY_ENTRY_U32("flash-max-microamp", 600000),
-       PROPERTY_ENTRY_U32("flash-max-timeout-us", 100000),
-       { }
-};
-
-> +
-> +static const struct software_node lm3643_x9_15_led = {
->  	.name = "led-0",
->  	.parent = &lm3643_ir_flood_root,
-> -	.properties = lm3643_ir_flood_props,
-> +	.properties = lm3643_x9_15_props,
->  };
->
-> -static const struct software_node *lm3643_ir_flood_nodes[] = {
-> +static const struct software_node *lm3643_x9_15_nodes[] = {
->  	&lm3643_ir_flood_root,
-> -	&lm3643_ir_flood_led,
-> +	&lm3643_x9_15_led,
->  	NULL
->  };
->
-> @@ -735,7 +767,15 @@ static const struct dmi_system_id lm3643_dmi_leds[] = {
->  			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
->  			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X1 Carbon Gen 14"),
->  		},
-> -		.driver_data = (void *)lm3643_ir_flood_nodes,
-> +		.driver_data = (void *)lm3643_x1c14_nodes,
-> +	},
-> +	{
-> +		/* Lenovo ThinkPad X9-15 Gen 1 */
-> +		.matches = {
-> +			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-> +			DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X9-15 Gen 1"),
-> +		},
-> +		.driver_data = (void *)lm3643_x9_15_nodes,
->  	},
->  	{ }
->  };
 > -- 
-> 2.56.0
->
+> 2.53.0
 >
 
 -- 
