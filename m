@@ -1,128 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.67.36.66
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792513357;
-	b=zfbHuYZE7OTK/q9LrGFPZ6eLCyKhcIua9iMJq1JN8tANrQewbCy4tFvxtkEn4CusGcMY
-	 koUYpV2CgXychO9jozSdNC6oqEVqfuGq7ymUx0/Xx0kJDaaiQyXQi67NEkzNNGuwuKmpD
-	 GvmJc3BQs9zW4fD3289FO4ijYWR9FNM06rceny5Rc+cibxZOg2qJlUJH4r38IGfSsjP3Y
-	 KH+Mnx3gKsxwr5wLtN+Gw9A8gCSyF757IgP7DSioAIP8ru6zEEjMEfZAU9lTUkJxqMexr
-	 vf0PFlkzd5bseqBTC21s5wcshsaso8R8qi/NtKZn+8giAaEG5cRSxWqa+i6QmcMM9tA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792513357;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Message-ID:Subject:
-	 From:To:Cc:Date:In-Reply-To:References:Autocrypt:Content-Type:
-	 MIME-Version:OpenPGP;
-	bh=H/vNvjrtMUqOQt9qQYr+tk8Yq6LHFR9p8potps30VmA=;
-	b=RfhyRg8M4eqTgeqi+QpcWB0iMk4sTEyoKMp9aPTvEPhBx9sHwSxZZCexRRe3awWuIj0c
-	 PeBqBfinmG+EPbTcn2MFUuR7uRAqBMNrfxnqiV+38qLgaUVbJYbafKuqN7CXEM+X69cy3
-	 ZfPuF24CsN0qUaB7RXQBYlljb3oOzQm4Egy/JDvK+cUR5IGTJxP1hhs6BM95EoaSqa4en
-	 XjYF4LnnW0/PqHzaS0y69G+O8ajqpvDud/LBrzvr/9zUAE3qFw7M5iJqr40iTTVvl2GH0
-	 c1nrLnYXijGEf4IHlc7q5fp7scherjZNzVykMmLZN5kC67JVgB6VMGy6GsylVQHXroQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=posteo.de;
-	spf=pass smtp.mailfrom=posteo.de;
-	dkim=pass header.d=posteo.de header.i=@posteo.de header.a=rsa-sha256 header.s=1984.8680eb header.b=ZuhLWjjZ;
-	arc=none smtp.remote-ip=185.67.36.66
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.175
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792514367;
+	b=vnhaGixF+DczJmPMbJvKnE1/bP1Pj5ixmJbBRrgd8ehI2QMN7oFYxXXnb+Ljk2bepx7Z
+	 uTNbIUUfuuZB+wNQZeHcaerlHJCj3otqffbq7yes63tP1HZeWvMfJKOXB3/zfhzjinu2q
+	 onOfZmlYJfQYiwgsDkDsauu5wg9CoTWklNZRvly5y13lG2Nc9tGoZubx6JGcZhHqGPjww
+	 0ioWeVjLY2Oj6OCSJXcuy5jCXlU7UYuRsiKOE/qseCIjpJaWz6yyzpoKsH6JM5WDBPS2Y
+	 NOeENWy1/usb+yFZFoS0E9DyISIvVvMsCe64K4CbPJYxFgZzwAQ30/eOhM00jpDO6EA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792514367;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=9cdkm/1auD8QI195+wns4rrwS9hItJzoaOrK80+ng1w=;
+	b=CkSUZXZrb0KWfhCZcbtYzCxKbMhKkcO6i5syCbOmnzzxOsWImBRsduUZy2DntTMKr+vI
+	 B9B8HzQcY88jBdnUDK1d3v5aLDphCTABxIPXZ4Lr53eaeRSIOXtlCCabvi7/DTa6WBttq
+	 7HknoB2VnI3IodiahhAmTQ4FfTMYZdCJpuRDvQNxvqMh2wS5QiAFt2ZXZd1Dgm5ilbRPr
+	 HQqo2ymucctjg4TVRI7hLVMgDngzGA3XZV4/SL/ErmzJmWJjs201/yElsnaAPscHdYgvg
+	 Y+oiuJJRwrenIsZH4QIeHrJaC3dY2sA8LdCAobLe83DL462T9LVySi4trJosl1yra/g==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=enkbmR5N;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.175
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E417A606A330
-	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 16:22:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E417A606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5784F606A32D
+	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 16:39:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5784F606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=posteo.de header.i=@posteo.de header.a=rsa-sha256 header.s=1984.8680eb header.b=ZuhLWjjZ
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id B6E4D240124
-	for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 18:22:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
-	s=1984.8680eb; t=1792513353;
-	bh=H/vNvjrtMUqOQt9qQYr+tk8Yq6LHFR9p8potps30VmA=;
-	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
-	 MIME-Version:OpenPGP:From;
-	b=ZuhLWjjZreDPtCadjSox0Y3JWwlqoyXmsmBA/zXxjBweRfKu85JN7o47RhQsJeQ63
-	 okuqBLAJjtyaTfr4mpBOmZh/lStLXfsS8//zrrrBrA0E9svhFvzQ60NDN1CPlVkXcn
-	 /pqPbI5zyfdy+chDNkmLckj9WuPVaiTa5lr0rNj2ffyyDvEMbI61CH4POQ64CInwu0
-	 kxvc8wzGG+OqridbZ38v3RNogI5HiL6fQUJSSvMyk08q7PPC2r44s+gve6KUFuqtjU
-	 4duGaRQcay4xUiUXyU6d0+SL2ur+zux1a2P9UPVKg0P9yQ0bCcLbBonL8qj/9jhWzB
-	 kDf0XLLcP/iKg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4j8HkT0032z9rxP;
-	Tue, 20 Oct 2026 18:22:24 +0200 (CEST)
-Message-ID: <14fd9a916dd0792a74ca01ae073e714f95a9c780.camel@posteo.de>
-Subject: Re: [PATCH v27 4/4] MAINTAINERS: rust: leds: Add rust abstraction
- entry
-From: Markus Probst <markus.probst@posteo.de>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Leon
- Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>,  Gary Guo <gary@garyguo.net>,
- =?ISO-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,  Benno
- Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>,  Trevor Gross <tmgross@umich.edu>, Danilo
- Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, Boqun Feng <boqun@kernel.org>, Daniel Almeida
- <daniel.almeida@collabora.com>, Tamir Duberstein	 <tamird@kernel.org>,
- Alexandre Courbot <acourbot@nvidia.com>, Onur =?ISO-8859-1?Q?=D6zkan?=	
- <work@onurozkan.dev>, Ira Weiny <iweiny@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Date: Tue, 20 Oct 2026 16:22:29 +0000
-In-Reply-To: <20261019160407.GG2663669@google.com>
-References: <20261016-rust_leds-v27-0-2c296d8a8e5b@posteo.de>
-	 <20261016-rust_leds-v27-4-2c296d8a8e5b@posteo.de>
-	 <20261019143818.GC2663669@google.com>
-	 <236149b4c90323f412d6385c034a78908013e2d7.camel@posteo.de>
-	 <20261019160407.GG2663669@google.com>
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
- keydata=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
- jfGillcaQOqFZ3WwVqyzG1BUfTow==
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-RhW9kQSDmlQzQnDLToQh"
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=enkbmR5N
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-355724d032fso425333eec.3
+        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 09:39:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792514366; cv=none;
+        d=google.com; s=arc-20260327;
+        b=dcQIb45fE5nShBAaO2dXXn8TydP7gx1cGC3NJlRg9LIyvCeW3mIskVMSbwdGYmPZYH
+         yJ9GK3XR8gJgXo5KLvTZ62pgHQVUc5I8i04XztidySqDjNOGwzEG9j+s4FiVBDv44RbV
+         fud2rhEodst9wM3JObel4OPajiPq3xHyf14eqFaj9ntvBk3CMIJuQnGBRb12mQCsQ1AL
+         ZSLKcmbtSX+8G27xvG25Nz3V/rMjzk89f+Mebuay8qCy4ioYQ3UMsJpVoDNNpH9zRZEY
+         w3rY6d7nsu/MsQTl+MnOhr5d2dIIOUyaT9vd7Ragya8jg90ErQvvCL69j9M5jhQNrfgK
+         YfXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=9cdkm/1auD8QI195+wns4rrwS9hItJzoaOrK80+ng1w=;
+        fh=z6OuPgIGnJbVOXsynCyWy/bIY2RDlRbW5ao4A68sewc=;
+        b=aVZDWwvasysx1PbDefIhs9CN0Jo4upCnvMOUz0ngPO3OhtHfHCByC8gBD04bH6QkHQ
+         JFeEfFx3q6G//rnTTByEKEVPqwYtDxo54sr1LWHQgk3Q1yviw1Zljm3d25L0ZdZZXDPm
+         NGEx+ycHBFfyQ/lAwlj/nQ9N9P/f4I6fvt33hCz4m4kuUyTwV7ttNPaaLY3N1SD9KzV0
+         xjSt6fQ0nMttKrYfhgry91IIPp76GaDTeKKFaBnpQCxQe2BqlH2enOMX2TuhgBKIsLfq
+         sm5+mSHv2ofe1nLOD0w9XRvroc8j8oVwJn6HvfVNer7d17kUd2yrtNSEferSqIv5NEv3
+         vT/g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792514366; x=1793119166; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=9cdkm/1auD8QI195+wns4rrwS9hItJzoaOrK80+ng1w=;
+        b=enkbmR5NTVbQ3UrlQC171YQTmcaAcweChXaMlD/dH3Kb0NdENuVXXvN6HdylZ9SxOc
+         YZDdTFSVaIlTSe+WbxvtGwjaue5Oso8RDImcyW75nMxyHJv4wJLaVJYMckH1jXWy7M4V
+         jjVwjSnIkX7ngKBx12o/x0jHhkNsYjaMeEqeYPTlLs2s7qN0vYhvrJk62IysjOGbMHXk
+         BKM0oi7e3qstE3umQzjkF5wcADd87bZr9CfbK5CVLXuY0F6yh6vIT1l1N8rExH/j8BuO
+         OrzSzEVnZbIAFyjMi9EAa+l25RIvlyXNJ7A3AT9Fn38GUnYn3ohZjgFIHOUUSKMmjmwS
+         d0ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792514366; x=1793119166;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9cdkm/1auD8QI195+wns4rrwS9hItJzoaOrK80+ng1w=;
+        b=v6dM8BX92cBj36e5n/hIEvXQl1OYhFB5naUInesc1bACAyurhiUhUifXeMRu3OSMiS
+         PHQfGBOHovAq758f2GKFwUi47U+ubS+V4i/uv2IUNszIO/F/W3bTEIgs0i8GB7a0hAkD
+         JQa4FUFrlFFwYqdkaof0UfTqLz5XXZtHgMDcKs6EIM0aXv9fWEcVIeQCYzstthKJCiYb
+         x0TFOTWaSO92SshKq3Pp3MadE9BFcWjH8qf9Lh+brRzMhbiTiiG/lGlkB0fBog9AEYV7
+         0sYSfKqEdIi4fMS+OOTd14DQzs54iGSp9GOnp/DUHt4x70lHPrh65R6zM/VzmrUieBdl
+         H9vg==
+X-Forwarded-Encrypted: i=1; AKwUvByGqwPQxX76QY5JqRMfR9yuq9URAZSZwQOZlq7c4/M+CDvXczVdFbMnFpjk8rWEDkxffQyC+w4aLvLt@vger.kernel.org
+X-Gm-Message-State: AFq9FYKnOzuBPvIi/cJMo1kkXQZA9cZHRNLg5FI7DtCKxJPCXJZIFD31
+	b0Bb4DcLmVRrF0tV2/CSgmo7mVier8zOV0I1upc2KP21LNyATcCWdZlnFBBseTZwKwhu1yh5YxG
+	/g08Qv6zftQeyLl2964PlF1spqaVWX28=
+X-Gm-Gg: AYBFou1KcSf66YX3u4GHNo/AFhKcvEWnqz9oHK+M+B5+MhFpAAI1uQddpoQco+YiZQI
+	gbjrybCIWtz+WypiSKxPJdv7gnksLMQFUHlJTK3tqYcqYUFtxpTIyHutmU8e61arM/1/vNDdOk2
+	bQSRUil6fGX6YQOhXzY5gpTU5kQNs5Bqwx/95Tmqt4Dyz/zQaUpwXptXh9dVrx3oKOSYOj1dOh5
+	qF54Ipl3my4Ejyt4gyUuEElQLfF1XZZf10hRNeMwcT3W6WUNl7TjlQGVP7EVgfJmU6b8Sp5OPFa
+	LouLpRuEjhm1c4D9ZbB3fBcn3qLmUGfXsgB2fw7HiCSaHW9t0rBiphn2BvXPeCAcQQuen2JyMV/
+	nSlWzQz7Joq7JCbjlFwnvoPLbd8+3e7JBH+FrTVneQ0598ON5LTXUrT/5GsdHwaM3V3Oan2w6F5
+	ZmT9nf3b1+Ch4jwvBt0UMRvNJQmuaO+efDZxH0Pe+eSI9xGWEy9TPRTi9Fx1j8SRoLxwVY0wS0t
+	ybZ4ttLp6kaGNFt4yh57HepeFXxGYHEq6Ib
+X-Received: by 2002:a05:7301:da84:b0:351:7e15:9c59 with SMTP id
+ 5a478bee46e88-3619b30919emr24534750eec.0.1792514366275; Tue, 20 Oct 2026
+ 09:39:26 -0700 (PDT)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -132,88 +106,46 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
-
-
---=-RhW9kQSDmlQzQnDLToQh
+References: <20261016-rust_leds-v27-0-2c296d8a8e5b@posteo.de>
+ <20261016-rust_leds-v27-4-2c296d8a8e5b@posteo.de> <20261019143818.GC2663669@google.com>
+ <236149b4c90323f412d6385c034a78908013e2d7.camel@posteo.de>
+ <20261019160407.GG2663669@google.com> <14fd9a916dd0792a74ca01ae073e714f95a9c780.camel@posteo.de>
+In-Reply-To: <14fd9a916dd0792a74ca01ae073e714f95a9c780.camel@posteo.de>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 20 Oct 2026 18:39:13 +0200
+X-Gm-Features: AclHuK8raElhkbPr-7bZyBZSZrGqtKLbWS10csaRXDChmKEDOAjNZ5GlvVMRpWY
+Message-ID: <CANiq72mRvmHOM3wHseReRXUCgpWh2Qzbhto5LqG+eOQ_pUGLGA@mail.gmail.com>
+Subject: Re: [PATCH v27 4/4] MAINTAINERS: rust: leds: Add rust abstraction entry
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Boqun Feng <boqun@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, 
+	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+	Ira Weiny <iweiny@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2026-10-19 at 17:04 +0100, Lee Jones wrote:
-> On Mon, 19 Oct 2026, Markus Probst wrote:
->=20
-> > On Mon, 2026-10-19 at 15:38 +0100, Lee Jones wrote:
-> > > On Fri, 16 Oct 2026, Markus Probst via B4 Relay wrote:
-> > >=20
-> > > > From: Markus Probst <markus.probst@posteo.de>
-> > > >=20
-> > > > Add self as maintainer.
-> > > >=20
-> > > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> > > > ---
-> > > >  MAINTAINERS | 9 +++++++++
-> > > >  1 file changed, 9 insertions(+)
-> > > >=20
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index f53047aa8d3c..3ae821614cd8 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -14791,6 +14791,15 @@ F:	drivers/leds/
-> > > >  F:	include/dt-bindings/leds/
-> > > >  F:	include/linux/leds.h
-> > > > =20
-> > > > +LED SUBSYSTEM [RUST]
-> > > > +M:	Markus Probst <markus.probst@posteo.de>
-> > > > +L:	linux-leds@vger.kernel.org
-> > > > +L:	rust-for-linux@vger.kernel.org
-> > > > +S:	Maintained
-> > >=20
-> > > > +F:	drivers/leds/*.rs
-> > >=20
-> > > -ENOENT
-> >=20
-> > Yes, but why is this an issue?
-> > It will catch future rust led drivers.
->=20
-> Is this where drivers will go then?
-Yes.
+On Tue, Oct 20, 2026 at 6:23=E2=80=AFPM Markus Probst <markus.probst@posteo=
+.de> wrote:
+>
+> drivers/ includes rust drivers. (e.g. drivers/pwm/pwm_th1520.rs)
+> rust/ is only for the rust abstractions (the layer between the C api
+> and the rust drivers).
 
-Rust led drivers go into drivers/leds/ .
+Yeah, and we will be moving soon even abstractions out of `rust/` too.
 
->=20
-> I assumed the Rust parts would be self contained.
-Generally,
+i.e. there is no difference between C and Rust in that regard;
+subsystems already own their Rust code (unless they explicitly decided
+not to).
 
-drivers/ includes rust drivers. (e.g. drivers/pwm/pwm_th1520.rs)
-rust/ is only for the rust abstractions (the layer between the C api
-and the rust drivers).
-
->=20
-> No worries either way.  Just setting expectations.
-
-Thanks
-- Markus Probst
-
---=-RhW9kQSDmlQzQnDLToQh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmrXlTsbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPSZtAQAJ5ir+O8N0ajOVPE7xyC
-6kk7jLTude8WkuAYtiSJEgWw7rGRIZ85hBAKRnQxO+ZwanZlCjONOczc3Z0M+OdK
-aQJ//bdwtaDc0rS6JuMcgr5tQl++Phta9f06yP0hZMOKSqIqgz9Hou+xw0lvkxzL
-+h2CV8KwUUaVqubA/ayBeh/xtEe7Io1V1g/bInE1qJ4fJRXB89mQ25hE77d9EHOt
-AoGFm94WWqentJTGSXBbNK1e/rV1OrGi+Y48i3PoQGwnCgEDqkI/bEU/5nehNmCR
-eLfB+Q9qcmlnlo1QIeBg9xyo9nLDKcVyfDIdEvtBFBQWFM9vMyHSu3ztQtBMVWgn
-W4BvFeDG7d1Hn2h6mW7TKg4izK/WUdD7w6H+oSGPRcScQv0qx5WSQt1zjXMdzJhj
-2CeOuM0q1rSkpdo+AqEdSyvLnFk0RvBGy7KDbMP3D9nYRhOoBzd8u0hsluGSLKaI
-0ERNJ8pfcit9JaLxaU0HnPjR/2DhYQ1WmFcz5zftN1CZqxb5LDUD/QtHSIYW7xLA
-rZ9qCYwxsgE+SchoNZeYYx25MdxAUV28COkAInlgDs8nEfRkypJFaXE72HHc62gM
-s0ZqdxiG/rGp3q7sISX/Ajb2upfTis/DbDydv3vIJx5R7WTaM297u4EWKHqZTCOO
-VgGlfzFTJI7PagntrNadkTuH
-=Yjx2
------END PGP SIGNATURE-----
-
---=-RhW9kQSDmlQzQnDLToQh--
+Cheers,
+Miguel
