@@ -1,65 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=157.90.84.7
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792489959;
-	b=C3qAUGB9tZ8OzgfibpYo5zeToheSZP1YJ/SXuaNCjEGuiD/9z4qpyWRdUYF00wbwIIM8
-	 gv8S/ojJSWqkpeOOpYLw3vtM89D81HzAtbXhNqzoPVM3pO8DUWjGW4Q2yWLvrGzlqxVEV
-	 PpUsr91dChiUH0s+6DJ+yh0bTwxHGtyQRNTwhiXmBdzx3l3pIT5JpwXROuunCSCEnvUNt
-	 TgKRa8taWSMjSae7sSX4yx4vGKqOkNCnVWWVUJE/ImwAfhGWmxufCWgieW64ZkyP0s/lK
-	 CUS/Ekct/WlsvuHUrvOajNFjVzR8V87CewN89lSBHpahN0V1hAVkwSkRa7QcxMuIhXw==
+	t=1792489995;
+	b=gLg49d45uUElf8py22OeHvmdqO9cnXDCFl5epmmpQnKVCemXC9IVk6IV79uh0UxLouPr
+	 kkEAQfelVUHaEWRINkISKAdzWNPOgvLFhCaxg9OeGL0M4CWnSIsrRJR9+LWa8FLYXl9Fm
+	 GT8f7WFzqxfOX/YVdJN9qgiGy3wwrLZAe5vy1KbBZhah+7iQT5H1jfyqRjTtEGM5+TD7b
+	 xyMSapK7E6YSBfPcSo9z5nWDhAGjYbHVIdtLw3LGf2VYT0Li7mTh1d+NKILTvLsZsKopB
+	 owdBazTSVbHbRbDW4WniR5Y81etVwitSbjFRw2DhUs1BIxd1UXlbmrC/LTB52fSyMcQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792489959;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=gQ2SwmVXUkAUiM9XFThemWfYw0T4dJSWAXZ4yepXyAM=;
-	b=ePKcqADXZJGzq7YF4MZMF4NuxHkG/Zt46EcnA30kcmYaCZQAqVqhZ7ET75LVmGjzhuT2
-	 lRt87KrWFmGW7EStJHyuS6M3L0xWxm8ijrKgWoq9NbEV0nQWf9dcdPzqzEquk1Qz3rYUl
-	 0wOrlp2mdMiUc0cXdyuoWegiy9raB0HdyIKRe3VHJ/KWlvW6wtYwzx4stVnB4bL3sJh4p
-	 bImxAXsCqDdOvU+fQ0KJ9/LN0zzqbjrYhNOtvW00yBfvZ4PpkhRYBdxwrec7HoGdck8NG
-	 uiiqPnjGspKWmxgb6SwiAVu0FtcxzvDqdTCnp0ZPA7Sf1/RVgx6JZKPb4dygxbahpmQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792489995;
+	h=DMARC-Filter:Received:DKIM-Signature:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer;
+	bh=iBm7nKcdxGcP2XmL/BoyALjoY1B+1zyhy13dnFLpCCM=;
+	b=HsitXjFlE3KCsg6RILVxCtd6j+t8qLbE9kNC3fiaha4+jo1s3BpqinGFsRVUXYXcWQEN
+	 1GAhW4aA+pn0yoUL7SOrUJZ4Ltt/uWJGQom+KTWaPownu8TY1+Nyy0xRmzpu0LogDz88l
+	 Kny/DNu0UUaITqi98wlDy2Rmd4dVltAy857sgKRXYIqqXj0GysxK9N7JqDg33OebXWhl/
+	 xGza9SWEzODMGAdGRxUjh5tMJ8G+li37YuvMTWevtDscO2vCkW2Cbi5ebMYofmdDClj+8
+	 Vj7fyNJUm5acVISy5tx1aGMANnDEe31uncX1rZ9YO3prt/7fSzTOPoneAd8v2Fv2/Iw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XrnqkHe4;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=tuxedocomputers.com;
+	spf=pass smtp.mailfrom=tuxedocomputers.com;
+	dkim=pass header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.a=rsa-sha256 header.s=default header.b=q8HDHaCv;
+	arc=none smtp.remote-ip=157.90.84.7
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF682606A31D;
-	Tue, 20 Oct 2026 09:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0340606A31F;
+	Tue, 20 Oct 2026 09:53:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D0340606A31F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XrnqkHe4
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC39F1F000C4;
-	Tue, 20 Oct 2026 09:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792489958;
-	bh=gQ2SwmVXUkAUiM9XFThemWfYw0T4dJSWAXZ4yepXyAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XrnqkHe4uJYsKtQ9X8rF4PEAzOicSm3Mz/s8Rvk8PEjj+zJw07rHCGDEmVBaSruUx
-	 vFrSfGPWvy+oNjXImFA62m1qgYS70pJXFH4iQ3Ec9pXWk43aXu0Y+CvNjFrUMALkNC
-	 64oq5K7Y5Anz+SyxaWFpKP0NFdrLPvMeOjeaPScRk+VGHPE2DjWt/o8JVXLbLy8anV
-	 gTF6bmDWc1ZeZCSQphYyibI2lPy6VbPfFvcPYMn8VIW9k7ZeZF2Cr9ddajpHC8bVIV
-	 pZSg+aVDdcc8ejQvGBLLvMZPtPgeaaY8VbWHt9ErWutVJn4+T1erRSNFsN4HF94WZ9
-	 oB6MpK2nhCRfg==
-Date: Tue, 20 Oct 2026 10:52:32 +0100
-From: Lee Jones <lee@kernel.org>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
-	"pavel@kernel.org" <pavel@kernel.org>,
-	"kees@kernel.org" <kees@kernel.org>,
-	"kabel@kernel.org" <kabel@kernel.org>,
-	"ansuelsmth@gmail.com" <ansuelsmth@gmail.com>,
-	"mike.marciniszyn@gmail.com" <mike.marciniszyn@gmail.com>,
-	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/4] leds: trigger: netdev: Put netdev on activate
- error path
-Message-ID: <20261020095232.GD1206986@google.com>
-References: <20261001131206.2513248-1-alexander.sverdlin@siemens.com>
- <20261001131206.2513248-2-alexander.sverdlin@siemens.com>
- <179198456306.839288.14631216021466477145@kernel.org>
- <cd3b43e958eeb97af33c23cfa6c49b7abceacfea.camel@siemens.com>
+	dkim=pass (1024-bit key, unprotected) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.a=rsa-sha256 header.s=default header.b=q8HDHaCv
+Received: from [127.0.1.1] (business-024-134-105-141.24.134.pools.vodafone-ip.de [24.134.105.141])
+	(Authenticated sender: a.erhardt@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 60AA22FC005D;
+	Tue, 20 Oct 2026 11:53:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1792489985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iBm7nKcdxGcP2XmL/BoyALjoY1B+1zyhy13dnFLpCCM=;
+	b=q8HDHaCvpSkU3eX4vZF5O5zZcU2Fd/So/mHLsaZ4yfo3tsdH7dNHy35xRXRYzhP/+JWU7K
+	HXyQP9pL2vKLZObsGfEP0PMx/P11zPjb4U6BO9XkpTi9H9emIfLyNH4STzRZI2SGsA80hp
+	gDPmzC4HoRIfACRHzUXgspfrZ0zGAKI=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=a.erhardt@tuxedocomputers.com smtp.mailfrom=aer@tuxedocomputers.com
+From: Aaron Erhardt <aer@tuxedocomputers.com>
+Subject: [PATCH v7 0/3] HID: generic: add LampArray support via
+ hid-lamparray helper
+Date: Tue, 20 Oct 2026 11:51:46 +0200
+Message-Id: <20261020-hid-lamparray-v7-0-47418b667b47@tuxedocomputers.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -69,102 +62,109 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cd3b43e958eeb97af33c23cfa6c49b7abceacfea.camel@siemens.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALI512oC/z3MQQ6CMBCF4auQWTukLbWAK+9hXIwwlSZCyRQMh
+ nB3Gxfu3rd4/w6JJXCCS7GD8DukEKeM+lRAN9D0ZAx9NhhlnFZG4RB6fNE4kwh90Pnakalbzc0
+ D8mcW9mH79W73bC9xxGUQpn9Ftdppa5uqKe3ZmapFjcRyXdaN+9jFcV4XllTmBcfxBZMMLlShA
+ AAA
+X-Change-ID: 20261020-hid-lamparray-6f76a2791e8b
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: Cristian Mazzotta <cmmazzo@icloud.com>, 
+ Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Tim Guttzeit <tgu@tuxedocomputers.com>, 
+ Aaron Erhardt <aer@tuxedocomputers.com>
+X-Mailer: b4 0.15.2
 
-On Tue, 20 Oct 2026, Sverdlin, Alexander wrote:
+Add a new hid-lamparray helper module and integrate it with the
+hid-generic driver.
 
-> Hi Lee!
-> 
-> On Thu, 2026-10-15 at 15:52 +0100, Lee Jones wrote:
-> > > When hw control is active, set_device_name() takes a reference on the
-> > > netdev via dev_get_by_name(). The register_netdevice_notifier() failure
-> > > path frees trigger_data without dropping it, leaking the netdev.
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > Closes: https://lore.kernel.org/all/20260914140045.B8F4C1F000FF@smtp.kernel.org/
-> > > Fixes: 0316cc5629d1 ("leds: trigger: netdev: init mode if hw control already active")
-> > > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> > > ---
-> > > Changelog:
-> > > v3:
-> > > - introduced unset_device_name() as a counterpart of set_device_name()
-> > > 
-> > >   drivers/leds/trigger/ledtrig-netdev.c | 13 +++++++++++--
-> > >   1 file changed, 11 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-> > > index 5b0132484594c..e2a6c95a0dc97 100644
-> > > --- a/drivers/leds/trigger/ledtrig-netdev.c
-> > > +++ b/drivers/leds/trigger/ledtrig-netdev.c
-> > > @@ -324,6 +324,13 @@ static int set_device_name(struct led_netdev_data *trigger_data,
-> > >   	return 0;
-> > >   }
-> > > 
-> > > +static void unset_device_name(struct led_netdev_data *trigger_data)
-> > > +{
-> > > +	dev_put(trigger_data->net_dev);
-> > > +	trigger_data->net_dev = NULL;
-> > > +	trigger_data->device_name[0] = 0;
-> > > +}
-> > 
-> > Given that both callers immediately 'kfree(trigger_data)' after calling
-> > this, why bother clearing these at all?  Wouldn't calling 'dev_put()'
-> > directly in 'netdev_trig_activate()' be simpler than introducing a
-> > helper here?
-> 
-> I agree on all points!
-> The v2 was indeed simpler [1].
-> unset_device_name() was proposed by Andrew [2], but maybe I went to far
-> clearing things which are not required to be cleared actually.
-> 
-> Shall we agree on v2 of this patch as it was initially published, or shall
-> I just drop the redundant zeroing from unset_device_name() and leave it
-> just calling single dev_put() for now?
-> 
-> [1] https://lore.kernel.org/all/20260921093249.3481413-2-alexander.sverdlin@siemens.com/
-> [2] https://lore.kernel.org/all/13e58137-2104-4ba4-9d41-e30ba5dfb367@lunn.ch/
+While more complex lamparray handling should be done in userspace via
+hidraw, providing a small module to add basic lamparray support makes it
+possible for userspace software to interact with lamparrays by simply
+using well-known APIs of the LED subsystem. One use-case would be to
+enable desktop environments to support keyboard backlight control out of
+the box for HID lamparray devices without having to implement the whole
+HID protocol themselves.
 
-How many call-sites are there, and how many lines would
-unset_device_name() actually save?
+This patch is based on previous discussions:
+https://lore.kernel.org/all/1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedocomputers.com/
 
-I think you are free to use your common sense.  Don't free / zero
-anything that you don't need to, and if it makes sense to move the
-clean-up to unset_device_name() do it, if not, don't.
+The helper provides basic support for devices exposing a
+Lighting/LampArray application collection (usage page 0x59) and
+registers a single-zone RGB LED representation via the LED subsystem.
 
-=:-)
+hid-generic now checks for LampArray support after hid_parse() and
+optionally registers a lamparray instance. Failures in the helper do not
+abort device probe to keep the driver logic otherwise unchanged.
 
-> > >   static ssize_t device_name_store(struct device *dev,
-> > >   				 struct device_attribute *attr, const char *buf,
-> > >   				 size_t size)
-> > > @@ -776,8 +783,10 @@ static int netdev_trig_activate(struct led_classdev *led_cdev)
-> > >   	led_set_trigger_data(led_cdev, trigger_data);
-> > > 
-> > >   	rc = register_netdevice_notifier(&trigger_data->notifier);
-> > > -	if (rc)
-> > > +	if (rc) {
-> > > +		unset_device_name(trigger_data);
-> > >   		kfree(trigger_data);
-> > > +	}
-> > > 
-> > >   	return rc;
-> > >   }
-> > > @@ -790,7 +799,7 @@ static void netdev_trig_deactivate(struct led_classdev *led_cdev)
-> > > 
-> > >   	cancel_delayed_work_sync(&trigger_data->work);
-> > > 
-> > > -	dev_put(trigger_data->net_dev);
-> > > +	unset_device_name(trigger_data);
-> > > 
-> > >   	kfree(trigger_data);
-> > >   }
-> 
-> -- 
-> Alexander Sverdlin
-> Siemens AG
-> www.siemens.com
+LampArray resources are released on driver remove.
 
--- 
-Lee Jones
+This commit was successfully tested on the Microsoft MacroPad reference
+implementation (https://github.com/microsoft/RP2040MacropadHidSample
+1d6c3ad) and in combination with the tuxedo_nb04_wmi driver, albeit only
+fully functional with a recent fix already on
+platform-drivers-x86/for-next
+(https://lore.kernel.org/all/20261007080202.81694-1-aer@tuxedocomputers.com).
+
+Others reported the driver to work on the Acer Predator PT14-52T and the
+ASUS Prime B650-Plus, with the former requiring some patches on top of
+v5, which should now be included in v6.
+
+v7:
+- Use white with zero brightness as new default
+- Fix measurements in comments and commit message
+v6:
+- Read attribute reports synchronously (by Cristian Mazotta)
+- Raise log level of fatal probe errors (by Cristian Mazotta)
+- Transfer control when use_leds_uapi changes (by Cristian Mazotta)
+- Blank lamps across suspend and restore on resume (by Cristian Mazotta)
+- Add quirk for devices that ignore intensities (reported by Armin Wolf)
+- Better locking, fixing rare races in uapi registration
+- Use scope guards for locking and allocations where possible
+- Remove obsolete calls to led_mc_calc_color_components and
+  hid_device_io_start/stop
+- Updated and slightly improved documentation
+v5:
+- Proper hardware detection (no quirks necessary anymore)
+- Add documentation for new sysfs knob
+- Pass limits of the device to sysfs (intensities & brightness)
+- More flexible Kconfig (use tristate)
+- Improved locking
+- Several memory leak and (de-)initialization fixes
+- Don't read current color values from hardware (the HID spec does not
+  offer this option)
+- Remove redundant report dump functionality
+v4:
+- Restrict CONFIG_HID_LAMPARRAY to built-in configurations only to fix
+  additional randconfig build errors
+v3:
+- Squash V1 and V2 into one patch
+v2:
+- Fix Kconfig to avoid build errors when LEDS_CLASS_MULTICOLOR is
+  disabled
+
+---
+Aaron Erhardt (2):
+      HID: lamparray: add new LampArray helper module
+      HID: generic: add LampArray support via hid-lamparray helper
+
+Cristian Mazzotta (1):
+      HID: lamparray: blank lamps across suspend and restore on resume
+
+ .../ABI/testing/sysfs-driver-hid-lamparray         |  15 +
+ drivers/hid/Kconfig                                |  18 +
+ drivers/hid/Makefile                               |   2 +
+ drivers/hid/hid-generic.c                          |  70 +-
+ drivers/hid/hid-lamparray.c                        | 912 +++++++++++++++++++++
+ include/linux/hid-lamparray.h                      | 118 +++
+ 6 files changed, 1134 insertions(+), 1 deletion(-)
+---
+base-commit: f47d223627f80cb7a1eb14c585fe6cb35de5e984
+change-id: 20261020-hid-lamparray-6f76a2791e8b
+
+Best regards,
+--  
+Aaron Erhardt <aer@tuxedocomputers.com>
+
