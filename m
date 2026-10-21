@@ -1,82 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792558752;
-	b=jOl6hg+EpqzSmwDTCE21UpwJTDMuOhm6Y7R3UZb6i+fPMN8iZT5wnECxfHLqubZcLPRH
-	 hVz+pDBWqFAHObFEsueFRVI7QsBMpafXVn8/eUSSio1RZBAYaMzh7JPS+j+tzgh5fTKWh
-	 Vd2RiE9G8XzDUsTBWo7No7I7OojTdHb9uMEhWsVmGUdoyieGDNxLhHUMkViWQqa6nLrQ/
-	 P/J2aepxeVgOS2KRHvZgzkfs6ktxfIF+IoDC8DXzFLS2eS0xiMjY2GFLAopD7U8EweZ4s
-	 Aulx9z6/hLEeoOQlTsj21ssNzO/fj7YDQVNoqmK6mQK/DFO/KVAAEYOzErDeM/q+9Qg==
+	t=1792558756;
+	b=1huSJBlaxoTh+2JQFoVm/PFohCMdcUT9PjnRd/S090ancmfIKSCQ4apaFrEvyR90/+CS
+	 v/FCyKmmUD0Gwbqg1cSlDJL3T0RstoIQbNbnqYA6duSPXCLedXLT3UFlqmydys7X9n9S4
+	 v63BRgm2Br4fCftAos3+2Tl1TgcTsQzW99blLXy660T/BjhDYltFbx2vhnohNKDarYGL3
+	 /B9Md03zHp2YQqk/Wc4s0wjHvkVpspY3bzyJCgsiMXdRXkOTXYEE8T2mLZglevMWJTyAJ
+	 SsFY7uHzYayajYydqQTYzd6Mg0QFSlPoOiYZv3KryrDtA6BFGJNG4h2KhjNgGD5Ft9g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792558752;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792558756;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=iSU38EcMZfIIXouCuIDccJH8EhhzfGLu0Vv+v6R4YDQ=;
-	b=3BbK0JvtMEri6fdQFMu3bjOx3WUPy7G4wyTh4z8+aVIRuivMDqpzmjADvVvVFF6Zk1uW
-	 LRURR+8N6GxmGOwJjwaJAUSNd8geQTEoPx+h6ZWZt4LE0mUbGapnl/rWzOKqXhwZsjKKs
-	 qHXqf/SqFHR/MTeqbabDaRROmcKABELpN+yY40ObqqR6+h0DBUoWrF4yjPRiqSEduLovN
-	 rgncnXfsIV92RT+zptFT9buxU/Po5EJ2bLi+0UVmpuiomVC1xpHUEECnXYQstuRhh9svu
-	 Xhs0MFRVN+raBswHceIK2geOR+xt5MnSgco95tD5D3KkbkDmdj4YSqJvzFxjhVQOtMA==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=kGNdHjEa4vRNWwuyZwToyKUED19fBzxo8nKXU+sdJBU=;
+	b=NyOLynXnKZBv1gF6gCf/roKdtg93JkEldA/KZ5UgCc/WqKcmn9IoiyUT18epQ8Q6Z1+i
+	 IRXtqYTz9lNZST+M0pm91w6RGcrr6lVr2U0+NsAiJi7qkll3Uchx8tEsrjkCU0PEdqmfu
+	 gZC119sLAzctnhTegkwR5A68hjNRZAqphhohTOmSzZ5YxqTbnYOLj4PADVz8Vp69S1NKz
+	 RWMj0MS8w/ItxlEJ8plOgLQLEkNOHJpSdqY9irMe8b46ZuGF8Rx2UJZQrqeF0o62wwksi
+	 LyqgSJ5z6SQvDGIevLC++7tBW+16RxP+EEz/z6YCfg6AJUUDD7VfvJuVMR0JljnOXmw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=QCnqB7Qa;
-	arc=none smtp.remote-ip=209.85.215.170
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=G1YzsQwR;
+	arc=none smtp.remote-ip=209.85.216.41
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB14A606A31C
-	for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2026 04:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB14A606A31C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25260606A31D
+	for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2026 04:59:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25260606A31D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=QCnqB7Qa
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cc1d57602e8so58760a12.3
-        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 21:59:11 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=G1YzsQwR
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3ac677668a9so329368a91.2
+        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 21:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792558751; x=1793163551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=iSU38EcMZfIIXouCuIDccJH8EhhzfGLu0Vv+v6R4YDQ=;
-        b=QCnqB7QaEQOw+6rI0X7E8ZaIqfc1YdvX+5dUjvduWaQI9agXq/UfU0HaW9/RDQgOjM
-         qB+Avv33iFu+4WQb2ZkEFPFUMj4nffOJ5TztpUeK8eBqnLeOzUgWjbce72ZGyz2QmTVK
-         +f7dNz7eziJ84QT+H5mafLjeqeUHP8FrmcBtTQf9UFSF2mpouQviRHPpuNHdAw/3Ccdx
-         a1/qabzriMy1BP394FHUWXKxqYV4yI7573RJ73nyiRZaFNuSpQ/nuMI0+t1mKFtn34Vm
-         IjoEDVe60LNtjj7LnJpgeyR7Sx/DTp6l0xyeIPfucZ53tFGieQmMsIBwsdHEZU2zX7yZ
-         sybQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792558751; x=1793163551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1792558755; x=1793163555; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=iSU38EcMZfIIXouCuIDccJH8EhhzfGLu0Vv+v6R4YDQ=;
-        b=w94c9MqgBjyRQfu3PIToNEgp15zMVeZassaWF534/HIU5ew8gNB5jAIhXaTx9G5imy
-         qkjVC+sunNgAelnzdRx6Yuxjw3deG8/dmdUD3vvTISd9UDY6SNBBdd1Hg9TQ2u4nYMUj
-         UlX+SkV034w7sF52tDXhVN/kuAhTX08ehbYy1T5oFfyngtUA/DvC1LF+UH7p+CsNoU49
-         nsLgfJ2qUNnMmTbbWTSWqgxdi5WxpL9wQN49aoWnRtb5MfLiUrCuYpFiwIKMyc71aWun
-         QmGAVcaI2Hm7db5MdYsHY+eYXX8FDi5Iow/bjrmBQWVyfl32vWMUBQZdR45YfvZIj/Zv
-         e19A==
-X-Forwarded-Encrypted: i=1; AKwUvBwyqFuUCvK0XWpqZNDuZ+Ep57h+FqjHWuUT9TuhPNrhi9Gb95fIevwQRMTSI/sBc2p/h4zR1mbKLekY@vger.kernel.org
-X-Gm-Message-State: AFq9FYJgtHb0tlQhb127hjHXC5vTdgrgnC3WVE4riX1YUhE3FGX5IGzr
-	nZ6aKgaLEExTwtgiTwicApNuRUOPArT87WLlxdHwKJKAJ8Tf06KnYoR4
-X-Gm-Gg: AYBFou3nuF33TM6asyU8FHccNJP9LYJFp7A3CJWK/oP5yX4kFDDzFYXHsqOh2UbJeHd
-	Orza2IuYMrpcJFCreAw8O9bh6vJ++DMW3EUU76yz+5VLHPaTX0fg64GOqleP6C3cmREWSir3G0s
-	luYu8FidJA8Hl9hLzxKMwauqLoP41Pr57ky5yhqcEVOhNU89be71kLq50X9Q27KKSesu6x6GAW+
-	4qua6Dj5j6AE5ufJ8b9he1U7/2ILIHLK+1DVhOLHVigTak+587o1mjkK3hQI5kBXRL92lk/xnlx
-	Ez72JBIZBeupawfk0+NTnEXStGRlXqyTAeLBa1InW+lQTeOOInfH6Ka7CVdY7MSPIpXLKuLx578
-	Kej5+PY/YuB3WfBNf2mvOxo+oqAYtcN1J9ecd1/UgtsZn+y6KAT+qG0Sbrc1atd5f4xt4KJP9sS
-	xRfTB+o203Pk4ghN+Uc23nvTFM1JI312rAH6OF855JAfs5dib71GuSE0D/GdnrYq+DsXVAMeWL+
-	m7BUPxEtdGwyVC6zPfERuIGNoCY+6DURH3DSl5o7oXtNCfTTs1RqCVEm3NKy//He1RgN2JlIadR
-	wmSI6mK2CE2wEYAEx78R/vXMaXVM7OiX0I3EwKERrnTHXtaQQ5vVk+RUkhd4/MlrrjysW6g=
-X-Received: by 2002:a05:6a20:3d09:b0:3e0:bb59:7fc0 with SMTP id adf61e73a8af0-3e287e7e807mr824422637.52.1792558751116;
-        Tue, 20 Oct 2026 21:59:11 -0700 (PDT)
+        bh=kGNdHjEa4vRNWwuyZwToyKUED19fBzxo8nKXU+sdJBU=;
+        b=G1YzsQwRcj2dAThCInl/b1U1xXwHSBgdUOLik6J/MxL1gHWp0lIXX8nvppqRum4FBz
+         /ghmu4nRKCAnDSZJ+eR4JoWk+D4KN5la7SBdoiz44GXFsBHC5gbMisSiK6Mhh+HKkJF7
+         RBKazmQWyehkcXUPItTT2h0vBxp9o++wq2Pr6SNogBw27gRCxLjtHyUtxyfhAZDmDf8a
+         1kIrAC21jt/u2y3XyLju6FIVZUdcVNlZzgINVsLMie4DNbdbptwP+xdUlyPkH6wYHASY
+         Q0Eox1O20ghiehe8viHL90lIpkcvvu4sCXSlcw7OAWJczt3PLrPB69wZwjl32DEX7ymc
+         CxxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792558755; x=1793163555;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=kGNdHjEa4vRNWwuyZwToyKUED19fBzxo8nKXU+sdJBU=;
+        b=SQZSPk6AHw4IdqWcxFx9bQ0uoi6hWmU2/bnjIfF8vOlCoRQyQ3aN4WVSNvYhXFBEeT
+         eWTBxx0oW7UYsLLyApR+WOit4aWfxSdFoeJXcuGSt34A1sh4KAGJ4hbtIUoPPBSGALvt
+         oYDAHB4eeSyZtXsV718YjzoW+iBmVoEL+ruAJhDd6tYk1XYxuh1Xx7S9Uo48GQqILa9V
+         oOGqsr0dQ7pRYYXEXanvXU7DW9Fv88wMGjeY9ZW8aXu6j+m7ivDGdzh7L/U2ehQldm4r
+         Ox3v47qhcPqAbRliYQgRc6M+rwLE+p9dRpncwcKjbPRzjChD+326Tg+kqlinOR5ATS8k
+         MNDQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw1h9kuuNCTZw9awjX9AzG3Oo2/6gXZamLQ8EbLLn9mKXuooyfdNfus59P7Sm0lnUhmjIWNn6WsiDDw@vger.kernel.org
+X-Gm-Message-State: AFq9FYKbO9M1lDI/qMTl/El3tomO2rDr1OIT0KKdAz3g4/T4m4SZg9Aq
+	rPdJWHg91+JYnaynWYoMC6m2ZMgNE6oSqX+eek4jwh2IgRw+XilVZ3PF
+X-Gm-Gg: AYBFou3bIKO8JHUTmMDDgLgW8TCFrTKKalY3w7ew6MMwwqwxy8QgMUrZY3TjOfxtTs2
+	JKJyidGCt3x6+e0y9IpkYKWMSXvz4k7CygztqcEPiSWWsQA4oNaUglBliizW0NArmRI+hJAsNQc
+	9yr4lVVzqBAqlkdNA9PnDTk80zLkfub7CYWgn6tTzBTXopE5vd86iZQNrjqlltRHF+eAQKNoOnp
+	MqN125HDfitYyhLvL30QUPWgqajHoJWsLnttxSBG5mSiaHqwRVhCjh+5TDp9C5bO6xlZGPdN/OS
+	QNk6iz1k9fzlRvbUvDYGy+O0vrHashwt7Dv+BpdFeFrAoYP1sTfj2JO9pPYPAhmDlm4wnfavCeZ
+	UyJqnVhPnEo/G6DZC7EDEuZuRo5c8y35or0+7JKj+KUu4b55jtqslUsfg+QXebk0t4+w5Ybq6zY
+	PahcQ4XNvWKlIrsRS5ZN3vc2DIcMEm5c5YuQXX44b2PJ/Ko4qJH6QUV7r6ytfLFWWu/r8EPC2IF
+	uMB26OWfvKZ8ItlfI4UplHLSVjKURMSSuVAANedmP3nToPhPTwFL7xo0mnChX7zcQWi4W71/sOo
+	gnG2n6Va6jjCRXmxqcKyWaAgS0OLcy8OTCpqYD98IDLOq2D5UBaXmJ85xLGTvl+YaCAxrM0=
+X-Received: by 2002:a17:90a:d883:b0:3ac:17c:6e74 with SMTP id 98e67ed59e1d1-3ad86cc2074mr805091a91.53.1792558755404;
+        Tue, 20 Oct 2026 21:59:15 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd6a871dbb9sm313903a12.24.2026.10.20.21.59.08
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd6a871dbb9sm313903a12.24.2026.10.20.21.59.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 21:59:09 -0700 (PDT)
+        Tue, 20 Oct 2026 21:59:14 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -85,10 +86,12 @@ To: Lee Jones <lee@kernel.org>,
 Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
 	Dan Murphy <dmurphy@ti.com>,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH v3 1/2] leds: lm3532: Propagate enable GPIO errors
-Date: Wed, 21 Oct 2026 11:58:31 +0700
-Message-ID: <20261021045832.16356-1-phucduc.bui@gmail.com>
+Subject: [PATCH v3 2/2] leds: lm3532: Avoid duplicate error messages
+Date: Wed, 21 Oct 2026 11:58:32 +0700
+Message-ID: <20261021045832.16356-2-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261021045832.16356-1-phucduc.bui@gmail.com>
+References: <20261021045832.16356-1-phucduc.bui@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -102,15 +105,10 @@ Content-Transfer-Encoding: 8bit
 
 From: bui duc phuc <phucduc.bui@gmail.com>
 
-devm_gpiod_get_optional() returns NULL when the optional GPIO is not
-present, but may return -EPROBE_DEFER or other errors.
+Most error paths in lm3532_parse_node() already log errors. Remove
+the redundant error message from lm3532_probe() to avoid duplicate
+logs.
 
-lm3532_parse_node() currently treats GPIO lookup errors as if the GPIO
-were not present.
-
-Check the return value and propagate errors from the enable GPIO lookup.
-
-Fixes: bc1b8492c764 ("leds: lm3532: Introduce the lm3532 LED driver")
 Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 ---
 
@@ -119,26 +117,28 @@ https://lore.kernel.org/all/20261007104915.507801-1-phucduc.bui@gmail.com/
 Link v2 : 
 https://lore.kernel.org/all/20261009091059.25729-1-phucduc.bui@gmail.com/
 
-Changes in v2:
- - Capitalize the first letter of the commit message subject 
+Changes in v3:
+ - Remove the error message for devm_add_action() failures.
 
- drivers/leds/leds-lm3532.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/leds/leds-lm3532.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-index b51496910b08..a3bc9680dc4c 100644
+index a3bc9680dc4c..a050e4350bdb 100644
 --- a/drivers/leds/leds-lm3532.c
 +++ b/drivers/leds/leds-lm3532.c
-@@ -560,7 +560,8 @@ static int lm3532_parse_node(struct lm3532_data *priv)
- 	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
- 						   "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(priv->enable_gpio))
--		priv->enable_gpio = NULL;
-+		return dev_err_probe(&priv->client->dev, PTR_ERR(priv->enable_gpio),
-+				     "failed to get enable GPIO\n");
+@@ -708,10 +708,8 @@ static int lm3532_probe(struct i2c_client *client)
+ 	i2c_set_clientdata(client, drvdata);
  
- 	if (priv->enable_gpio) {
- 		ret = devm_add_action(&priv->client->dev, gpio_set_low_action, priv);
+ 	ret = lm3532_parse_node(drvdata);
+-	if (ret) {
+-		dev_err(&client->dev, "Failed to parse node\n");
++	if (ret)
+ 		return ret;
+-	}
+ 
+ 	return ret;
+ }
 -- 
 2.43.0
 
