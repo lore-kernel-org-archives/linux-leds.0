@@ -1,85 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.12
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792564725;
-	b=NB709c5L+NhuuBIyfhanB1FILuAMjhLfpT5NPJCoYsKo4L6TPApzOOfDU9PcGRIxcKwP
-	 jRODStcCP8QezCHqAWDRZR83TdyhdVHENyY1JGUGZnBEiSvxsPAX5rpEjJKB59TcrHNad
-	 NZdiTGwmT8AEKRQATTuQdrFVg+ReAVFcaFBRrXC4Sup5XcAFDQfx+yUFySW2K0qLnO1OV
-	 6iv5o/mjxCYuPH9OpBELtw4lfx/lcXeOSdMU+Yshg7B7uDwcYkwazOlOSvdGSng7QSAuC
-	 29V7UOnsTk52Gir4dM9+HsE3T5A/ozUy6zAhHY26OWrsSH3XPqYWEGgw4+GMskM89bg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792564725;
-	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
-	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
-	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:Organization;
-	bh=ZG+JNpgq8xf6/8phq+LlPLZvg6PgeNlHrr4kZ8JT0rA=;
-	b=puGarhtqhLgXr1InLsQKkWhQvb6bMso1MyBb6D5LRqjN08tEQBSadww3GRTnIGPkv5Vl
-	 b6JTrmKIMsaUa1mTq3bczOgGNRF+7F24s7CKKow8tGm1sTN3kLthWaRWfxcbEl/73lWoL
-	 m30xxOePVIEys1SlGx1e8MyWLqYDUdXV6DeHejIFT0JTcxdGHLEAFbIcsaNQHuZ7NY2Pj
-	 Eql/YYe/Hrfhgfib70TJqJ75FUt57ZW4ntcGIypY/xF0dHYNON/G2qJj/x1xyjImymofP
-	 BN/hTbEFTfiTrwNhjN10Sr1U4PZ4Xz+62KLOJ0+bJIRf21y2nD2u6Qn00vV3keP834A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linux.intel.com;
-	spf=pass smtp.mailfrom=linux.intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=itwSQO6k;
-	arc=none smtp.remote-ip=198.175.65.12
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.175
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792565202;
+	b=Iz0iIamUB89EMOr4mYH06ovn2EiveRPDa6V0B8D4Gfqc3iiGEXY1TDjo3n4DlnGtNjLq
+	 04Oi6Z2we9fqwiBnoFdJwBnmHP9w0WPfyARIc7v2odTIKJXT/wIOGdpA4fBU0eJ9v+l2P
+	 yCoBE32H1QSYr0s2qb5peFkF0CAttEuH6+tDKzmYb4dUtIwZNXnwEinD2X8hZl1zQefTC
+	 q92oLroB397ZRucz2qdl84e5Js5M+xokvjPygAZHJOUH0+HL7Yx9Zg+cRVx7jT/CMI/p7
+	 NeEMTHAlUhmNuKt68lZ42106qZQQ/LDfCUeboGG+vyhldNidax3c0T+C53OpLrTW21Q==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792565202;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=MFx6RfKZoDg30I8aWbaaH8/QBhrTkiLCB5URy2j6R9Y=;
+	b=f3mY9ZRSYkW+K8aNdLxHqsj85akL+T2IqYfgdfAJmTwYQiKMQJKHH7l1xv1/4QQx/s3V
+	 CIWst1hwMaJEEq1rCWsTDcNM99c1KAWaO6YoOMtGZZf+pIU/oC5ns34QjbwriGiqYZOOd
+	 FQJxp6sbPyHJ9L95jkv1Vpzld3ozsQkt6rxlxtwDnSs+CrjbDa3ed08dJYNj7YEE3LT7k
+	 EeggASPyBEkcxTBJgt4ztPmZ9/eHqGm7WXTZvmRqj1IGYb1sL4HkJdiW9tL9XX9Q4OwNB
+	 svZs2gwTaoFZK5NAGff4OhHKMb4KT6MjeBy2rPnDaFqX/hwmJimO5pJmC8qSVPsMYXw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=qhmxhi0T;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.175
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA4F606A319;
-	Wed, 21 Oct 2026 06:38:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6EA4F606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50FB606A319
+	for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2026 06:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B50FB606A319
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=itwSQO6k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1792564725; x=1824100725;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=E6SujCVFOC+/QzOXkD/kxTkiNpkEgQajo4+U5CSVmL0=;
-  b=itwSQO6kMxHUwcsk42oQvdGGTK6+UkkTXr4VgvUNHueGuJ+U7GVt8+jE
-   Vr+B7c05zhBk/VBaqrk/ykzxeyZgCxTCszb+sIYUTWQ1rjLfcjpEjv15R
-   EJrBwsWueXaDy4KkXz8uBknDhS0TBSW2Z4sEAHTNmhrgNtIzDRd0hIpj7
-   zrjwtKhCLhrTr/FY0M0s3HsDFKiykqxHphn6X9iLpOYApIxu2eziNlIFC
-   NHD3dz+4Z6tnPn1Skw04AY52O7mF0dDu96cxTs8CLL4DimTsmkoLaWoXz
-   q63w2WXz6It4HdePqMobb5Nkz9ixbPtHNM2ZrvJVwv2wwN3sk5hl8omiY
-   A==;
-X-CSE-ConnectionGUID: QpxtaETBR/uPozr2Xu6geQ==
-X-CSE-MsgGUID: V7FyBd6+SJGoN/A3oL5mZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11941"; a="1160251"
-X-IronPort-AV: E=Sophos;i="6.27,169,1787036400"; 
-   d="scan'208";a="1160251"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 23:38:45 -0700
-X-CSE-ConnectionGUID: LWLu7o7ATsKhTPs3B7W0AQ==
-X-CSE-MsgGUID: 3ULkdz0lS5m7GlFDvFsZfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,169,1787036400"; 
-   d="scan'208";a="3358248"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.24])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Oct 2026 23:38:42 -0700
-Date: Wed, 21 Oct 2026 09:38:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Lee Jones <lee@kernel.org>, Rillian Grant <rillian.grant@gmail.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ruslan Koreev <koreev.r@gmail.com>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] leds: flash: lm3643: Describe the LED of ACPI
- boards without LED nodes
-Message-ID: <athd74yu2qng04Tc@ashevche-desk.local>
-References: <20261011191026.149338-1-rillian.grant@gmail.com>
- <20261011191026.149338-4-rillian.grant@gmail.com>
- <179198404917.839288.1364319566324835013@kernel.org>
- <atdOUv937j63NKAL@kekkonen.localdomain>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=qhmxhi0T
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-35c76e9614aso705232eec.0
+        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 23:46:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792565201; cv=none;
+        d=google.com; s=arc-20260327;
+        b=hN0OYjx0ly79h9e3SnR/dCFEanfkzDaLcZO8l9Zo0KcECiWTHSMZWvexJaEVhxsbzn
+         AJcnWtlJ3tSaln/3zWbV6aNPNS1KkOloQ/Pp/Hy/4ZE5mx5DDYF7Wca2jt/ryBjDvZZ7
+         aCLIwxy/kYkda5IVDXO4xzbQ2UkgkdGmUGWsz5HrSX1hbNno+Po1akbwr1fFZPvlQJ0n
+         9HYL2E2NjfOS8tLkpFoTkTTtPEaMX2Ye2Q5qKt2hlHn9siy3CuS+wIsM/VIxTdHtIrm8
+         iPTGblAo77ZFxhqjDXrGbNiHHivRbdtCzsbrkU772UukSEzuTqvDRJWgf9o1Sd14cf5f
+         yncw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=MFx6RfKZoDg30I8aWbaaH8/QBhrTkiLCB5URy2j6R9Y=;
+        fh=NXme+0hJKq7G0TZU36kaZg0lm3y1xUfmHnTj8cyTXmM=;
+        b=FJAxoWaJP9aGe6UUlywteR6m+EXtOd2ki3lLZs2aZFY8hWJ6y3Arh0G7APtdmmm7+H
+         de4OF265RU39lHLdJCIdvjhoeV4TfgbP18gH4mZH71PQ94KFLoud0GxB+FiZBHYwmztZ
+         QE02w2coNlQSbw9Hoqm2RhwJfTKW/TB1mx83LQA+ovYAblvqqrmom+G7SgfNT9Xe51p/
+         nIayxYS8+0q05FFmfy+YWjrIpc9ca4YTgiHlfGjCxkOxaWtB1ZTADqKPWNdFOWBrjsZ2
+         fEFBqAPH1DlHdZdwM4Bl2rlgnR95NvdLBzSqv8efPlE5lZS6tYCOe/IVL1ZtvKwCa4aA
+         80nA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792565201; x=1793170001; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=MFx6RfKZoDg30I8aWbaaH8/QBhrTkiLCB5URy2j6R9Y=;
+        b=qhmxhi0TbMwtXBvTVlFY4f2LPpHPl8poznD9dAUHw8+/Z9wZhQBqqYwfND7kTtB/dj
+         BDT7fy1OHPOT3SsXcIJoCO2P5QWvHhSGsWpWrDlHwCxU3wdGdBZJo+CJDKK8hjNN6KtJ
+         ZTBEpRPZ/CzppBKznbLND/WVtTUpHxpIjv8l4Dszl6GShVbqspGQMSfdEn1YLZCusCt9
+         8XZUeUrLgiEXnrc9s2V2o2rhr6TPF2UsE6frYfs2vuDhFHmb1RIg6wUfaQGU2siObxeN
+         QZxhnIASpBqZUpMRUn6UfJAhdRPi9Cf8ml1LkjDPLUFZ1OJH0H7A3t4eraOGGpReFZps
+         J94w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792565201; x=1793170001;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MFx6RfKZoDg30I8aWbaaH8/QBhrTkiLCB5URy2j6R9Y=;
+        b=EON0ktYXToH3bQww96CmcZqOsks70tYl76UXJqMj8ut8OLthVrKcI/dla/Q27JOJ7Q
+         z/7SIsdSsEiK1DsRBOPyG6kXi5FaFV+a/tqw7N0WQfuUU5hDrsZJHAwvTVHXFRkaixz/
+         pRGt/M5pFko/sRn6nl+dm9xEW/hLVvgobtcO3knDKaXx3GYvrSs9BtKMD13sYTwj+hj1
+         Lp7dkmsBwo/28gNmfzAjS7yHhVKjBQOhhTe5i3RDlzbRWPZmETG0jkp4W4/wapLUrGt2
+         wQSdPhcWuSZ/erDe0kXrbEAhneyZ3vJcZAfjVzF9b40EYbo59fl5s/z/v5y8Cs0BfAtM
+         BxCA==
+X-Forwarded-Encrypted: i=1; AKwUvBxhV87sb927cnHsDBfNFc9PZ7eTlXLnDY/xvlAunbiDNMAxH+4zU3NXJ2Gwhi9nueYiwJ/VwsgMIK1S@vger.kernel.org
+X-Gm-Message-State: AFq9FYIAhD2X/J7n70p4m8pO8he2eI+VRg01QW5o7JaCps/9y/DKKmrN
+	OWLv8uBqQL2TQciKhPC55Qpq/M2v3BRzMVfQKOPcCwK1kxnOgtYz69dxsJdrra3D0Fs6rs0i8X6
+	TLJvblNu1qfwXfi37TJSpfhQL2F/FuP4=
+X-Gm-Gg: AYBFou2hOcM9RHU8Wjj43iK7RtN5N8LibCKwE4h6Hhxb4ap3CL57GaM+s468lPJOWXy
+	k7ZZgZzh335Uvt992IijviSLVdduCWUQqrWRzOWGwnTSjJ4zpfsG4DKh2PgvW6+c0KO+VROlAQc
+	xsIbQd+QiPDBBbZeWosSd9kk5AkpwS/IJp75Davd6y+lUemboKqd5xrmHpK+EGxLXJ1ryztuSG3
+	sIAKB+Fhu3czeKFCoSWnRIA7FjhmQpaNl85zHhRHFTs+WhW+mW9mvfo+PuRJkvsSwXEMmzDEcz/
+	MYQOLbdIVI/zUiQACpY6HcHiN8d6FUPUmHjEcfBhU6/zdpG04TSRVZn7jzmhozFJzqcY47tQy4+
+	x1+HZt7GLf6PT+JVje5sVhryCvi8vtE6x62Di/CJb5Br1dzCIGovvEdYNNUXFKeHEkttn0g==
+X-Received: by 2002:a05:693c:88c7:20b0:366:703c:5f0e with SMTP id
+ 5a478bee46e88-3674ef1f33cmr2092100eec.35.1792565200654; Tue, 20 Oct 2026
+ 23:46:40 -0700 (PDT)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -89,38 +104,94 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <atdOUv937j63NKAL@kekkonen.localdomain>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20261019100406.103687-1-clamor95@gmail.com> <20261019100406.103687-4-clamor95@gmail.com>
+ <ate5K6ZdrSoBUI08@google.com>
+In-Reply-To: <ate5K6ZdrSoBUI08@google.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 21 Oct 2026 09:46:29 +0300
+X-Gm-Features: AclHuK9vSBGobmYgXVnmsJbAb2zJc_kKp_DYHLaIwx6A0bp9NGDYceSKiyk9FqE
+Message-ID: <CAPVz0n13NFbY1ChZRkc8_2CQd8HfjahA-gcRWzxsv7KbAxf5Ag@mail.gmail.com>
+Subject: Re: [PATCH v12 3/7] input: serio: Add driver for ASUS Transformer
+ dock keyboard and touchpad
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Ion Agorria <ion@agorria.com>, 
+	=?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Florian Krischer <florian.krischer@fkr.dev>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+	mfd@lists.linux.dev, linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 20, 2026 at 02:19:46PM +0300, Sakari Ailus wrote:
-> On Tue, Oct 20, 2026 at 11:45:06AM +0100, Lee Jones wrote:
+=D0=B2=D1=82, 20 =D0=B6=D0=BE=D0=B2=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 22:0=
+4 Dmitry Torokhov <dmitry.torokhov@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Mon, Oct 19, 2026 at 01:04:02PM +0300, Svyatoslav Ryhel wrote:
+> > From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> >
+> > Add input driver for ASUS Transformer dock keyboard and touchpad.
+> >
+> > Some keys in ASUS Dock report keycodes that don't make sense according =
+to
+> > their position, this patch modifies the incoming data that is sent to
+> > serio to send proper scancodes.
+> >
+> > Co-developed-by: Ion Agorria <ion@agorria.com>
+> > Signed-off-by: Ion Agorria <ion@agorria.com>
+> > Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>
+> > +static int asus_ec_kbc_probe(struct platform_device *pdev)
+> > +{
+> > +     struct asusec_core *ec =3D dev_get_drvdata(pdev->dev.parent);
+> > +     struct asus_ec_kbc_data *priv;
+> > +     int error;
+> > +
+> > +     priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv)
+> > +             return -ENOMEM;
+> > +
+> > +     platform_set_drvdata(pdev, priv);
+> > +
+> > +     priv->ec =3D ec;
+> > +     priv->parent =3D to_i2c_client(pdev->dev.parent);
+> > +
+> > +     error =3D asus_ec_register_serio(pdev, 0, "Keyboard", 0);
+> > +     if (error)
+> > +             return error;
+> > +
+> > +     error =3D asus_ec_register_serio(pdev, 1, "Touchpad", I8042_CMD_A=
+UX_SEND);
+> > +     if (error)
+> > +             return error;
+> > +
+> > +     priv->nb.notifier_call =3D asus_ec_kbc_notify;
+> > +
+> > +     error =3D blocking_notifier_chain_register(&ec->notify_list, &pri=
+v->nb);
+> > +     if (error)
+> > +             return dev_err_probe(&pdev->dev, error,
+> > +                                  "failed to register blocking notifie=
+r chain");
+>
+> I think sashiko is right that we need to register the notifier first,
+> and in it check if serio ports are ready/registered or not. For that we
+> probably need a lock and set pointers or flags in serio's start()/stop()
+> or open()/close() methods.
+>
+> This can be done as a followup I think.
+>
 
-...
+FYI, Sashiko likes to hallucinate. Initially notifier was registered
+after ports, then sashiko suggested to move it before. Then in v10 it
+fussed again and suggested to move after. Then v11 passed without
+regressions and now in v12 it fusses again that notifier should be
+before.
 
-> > Andy, et al.,
-> > 
-> > I don't usually allow data from other registration mechanisms to be
-> > passed through another (MFD data via OF for instance).
-> > 
-> > Is this okay?
-
-Seconding Sakari's answer, this doesn't sound like the best approach.
-
-> In this case the ipu-bridge needs to provide the information to the lm3643
-> driver via software nodes, as it already does for a number of other
-> devices. There's no point in putting the information to the LED driver.
-> 
-> Presumably the ACPI device node already exists so this should be
-> straightforward. What's also missing from the sensor then is the flash-leds
-> property, the lens-focus handling serves as an example.
-
-+1 to all the above.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Thanks.
+>
+> --
+> Dmitry
