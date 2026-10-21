@@ -1,75 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792573629;
-	b=rJumeTl39JHTbqjLTwfTxJUB5jCU8SoP6Xt42Vtog9CeFnGWvaT5vzBFwePrgjlgwM/Y
-	 i0i2FHbX9uUuB04slTejOoyhkGrBAIfdDHoZvM/zb83VW+Mcah4/YNr1OTMxFoFdM1d6D
-	 dFKf7ywiJMU7Dl8SRYf/GA1Yw3XSSOWFrIvS/Xv4vZOJUmp/PRNwDSNYyoIi2+w0Iwt9Z
-	 lbe+r5JeFSJUXuaexh6K5p+OXmvadm37Yp0RauPNBWSLLFwXcQrxeENaX61zJn1lvvCvO
-	 jZGEVloxlO0v5vN2gKqYdABbETtGxJRW2dhS95V5LhQjQFDIVTc5rP0twOsC0HbuxoA==
+	t=1792575683;
+	b=cuA8GkdwvKcZQYo84N0nIMn5nPSUc3qSlm+RB+IOq2wkc4aTU+n/VsyJQ3cnXLOmNJeX
+	 MhD8OtWCrMxZ979axyldX8XXoKW47pSl8BuTAUu8StREtHBHPn5InvrjsN2WsG3ttdc14
+	 dGfpoEmUuq1Obmiv1+dCEf0ieabPefCNG2aqL7GKBVSW3bHFYCLDyejfz4hsJR8JUSD3Q
+	 Rrga/rddBPETZjQ30RUK/aHIix/v769aLkqjjg3S7FYU2bentNLAi7ZADrTp6UUJxY3F1
+	 KRlQL66W51j2X6KGc62QYId7dMcko+DHJD7rREu08gW0udulTBWZaLPsQPyO0EcQWOA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792573629;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=rg0LSI4npnBDUHtGy7KX4tR0xQfgXS+TF5Cj0A9UQlA=;
-	b=TwReF0pqTdL156r1ljAVacn3FKYqMOkoZvCi5WusGSUgovFNjyx8XCN8rA3MD/j+Skg3
-	 mIV3JwvsqZqrvj9xKeM3wWFkgly+FhRNyxHbDZ2p4TmMC2SIZ7BO0p8v6Lc2XIZQrovF/
-	 86k0YDC4YAbZAaesDpJm1I1MQgikWhOOtf0i3O+has/Ats5Q/baZYUP1UZapDSmrV2Vjj
-	 XrjK3IoW7IsWOo/lUM/N4neMQAp39fD/8DKyAWlSFH0XLKsEyJTo4CZOLcd5BCdHfu9RA
-	 PgGaDlEPmmJXWrW1UnbuxoFQflcUR1uDAUVtvhT+l4763yVqXZ2j7Kqxb7V1sLQiozA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792575683;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=TPO+R3thzPxQgf9DrBuSBzE6PC5fK7jKh86d73REbgA=;
+	b=bnV+MlS6QPhpmtkiqPHbdq+ktcnyLLg00IGmy0rSsasQA213z1h7v/dUKjzr9VQlhkqF
+	 7IXMKiWGyN15tqYZYnI7ahLGxV5YF7ElIezXXXOIIfqnqbh16vgDeNryaiJr7qyCt1Y4U
+	 GNAr8nXsqoeDoXUPDlixa8AgzJI/7jpCo6LrI/pr4CoJcKGM/X3noo7NUzGB2FWonZNdz
+	 uTcHrUcB8TItnUdn+0Gc86QPil8ZYhXRnu9+8u+NvAin+0v00VNq91GsKx3zJ0GY8WO0v
+	 YtUztJoASEZZqxsEu5E+dM8KQ/Q/2OzHRc6W0iADicScZRFxSAfUN9hWl/2ZBAKD14g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="dyuS/W3e";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="UpEn/Iqy";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59655606A31A;
-	Wed, 21 Oct 2026 09:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D0A606A325;
+	Wed, 21 Oct 2026 09:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dyuS/W3e
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFFE11F000C9;
-	Wed, 21 Oct 2026 09:07:03 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UpEn/Iqy
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD9F81F000CA;
+	Wed, 21 Oct 2026 09:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792573629;
-	bh=rg0LSI4npnBDUHtGy7KX4tR0xQfgXS+TF5Cj0A9UQlA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dyuS/W3ea7Wx2GQYveNRK6A4clR9WKquzSo7emGhmilDJhGfkRm482JLiSIwwvRnx
-	 tRz4YkGWU3RkgKsj26EjGPNpY38Ya01YaNDP0hCT90bnF7P5q+D7Py9DsMI5woYLHu
-	 wWbIaBLbHYHuXIVgoDtWJ0GLSihrVcRJkLfNz8gTGWeofTATdXiiLIVoIqZpPBnzRO
-	 XCtataIa6A8TKYyIOUu2+EzZ1bNvRfuGc+c8P/3T4KJasoornuP0Gp+q4aozA5S8bU
-	 fB3ivzGfBxENRbMhT6L4jvtekd5apDXWVnfilDfcEojbQzi8sh0s8xZWFvkeCBEgDP
-	 PUnDjzchRcszg==
-From: Imre Kaloz <kaloz@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	mfd@lists.linux.dev,
-	linux-serial@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org,
-	Pavel Machek <pavel@kernel.org>,
-	linux-leds@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 00/53] MIPS: SGI-IP27: add support for the IP35 (Bedrock hub) machines
-Date: Wed, 21 Oct 2026 11:05:55 +0200
-Message-ID: <20261021090556.21168-1-kaloz@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261020145611.4e277615@kernel.org>
-References: <cover.1791890466.git.kaloz@kernel.org> <20261020110619.12774a1c@kernel.org> <20261020204214.28625-1-kaloz@kernel.org> <20261020145611.4e277615@kernel.org>
+	s=k20260515; t=1792575683;
+	bh=TPO+R3thzPxQgf9DrBuSBzE6PC5fK7jKh86d73REbgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UpEn/IqycnjTZeflPVgIgxOiYJcslS33OUkDey9yiSnNPnLBJaYhPj/Tvk+mrJvSv
+	 J7JoJRotfrDL9P58L3d7SshPUrspw0VStjDURtbSECNFzabLEhC+RtSy4mCIOL4Y56
+	 UXV0KEGSLsnTznCEU6MrWHnY4ZFEAPDSGPjsTqFVhqY3c7hi0l9K2LDnF0G3lPuZhp
+	 lK9St9sVGc+mGE1/kOVyda3hrCX0KvzTayPlorRsC2LsEvJojbG/UAXsisIYUytLPO
+	 JoxWv8saEz35FxPwAWcchuI7b5jEuFMOf5nsO2APEuUWdxnSFYGcNBpUsuYVUa/wyv
+	 +0onhIEhf5+gw==
+Date: Wed, 21 Oct 2026 10:41:18 +0100
+From: Lee Jones <lee@kernel.org>
+To: Paul Sajna <sajattack@postmarketos.org>
+Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v3 5/6] leds: aw2013: Prevent writes to unpowered chip
+Message-ID: <20261021094118.GF1795367@google.com>
+References: <20261012-aw2013-aw20xx-rename-v3-0-cab1fdd050b6@postmarketos.org>
+ <20261012-aw2013-aw20xx-rename-v3-5-cab1fdd050b6@postmarketos.org>
+ <sashiko-outbox-169017@kernel.org>
+ <20261020101654.GF1206986@google.com>
+ <338bdb9dddd9cf502a05ae8a79ccf5bb368b37a7@postmarketos.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -79,28 +60,23 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <338bdb9dddd9cf502a05ae8a79ccf5bb368b37a7@postmarketos.org>
 
-On Tue, 20 Oct 2026 14:56:11 -0700 Jakub Kicinski wrote:
-> I don't think you answered my question, or at least I'm too daft 
-> to catch what you mean. IP35 was not supported so nobody is using
-> it with Linux today. You're adding the support, and since it's 
-> a platform discontinued 20 years ago there's 0 chance of real users 
-> of any of this code.
+On Tue, 20 Oct 2026, Paul Sajna wrote:
+
+> October 20, 2026 at 3:16 AM, "Lee Jones" <lee@kernel.org mailto:lee@kernel.org?to=%22Lee%20Jones%22%20%3Clee%40kernel.org%3E > wrote:
 > 
-> What am I missing?
+> > > 
+> > No more reviews until Sashko is clean or everything has been reasoned about.
+> 
+> 
+> Thanks for the review, wasn't expecting anything until I fixed Sashiko, just didn't have time to circle back yet.
 
-The users are the people running these machines, the same population
-as for IP27 and IP30, and the ioc3-eth driver in net/ exists for them
-today. The series was developed and tested on a Fuel and a Tezro in
-regular use, so "nobody is using it with Linux" is true only in the
-sense that the support isn't merged yet; that was equally true of IP30
-when it went in for 5.5, and of every port before it.
+Totally understandable.
 
-The kernel's test for a platform isn't commercial relevance, it's a
-maintainer, which Thomas is, and testers, which this series has. If
-netdev doesn't want to spend time on it, say so and I'll ask Thomas to
-take the two ioc3-eth patches through the MIPS tree.
+A very short note to that effect would save us all a great deal of time.
 
-
-Imre
+-- 
+Lee Jones
