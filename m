@@ -1,71 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792551543;
-	b=KIAb5hFTrmcwcTiO/j5mpI4LnLjcloZ9KJ+cxebR029fSuzezRuoBkZ2tej6IWRt1hyl
-	 PseVm4Htx2Hs4S1CcjIdOhKTOPS9sd6e9sEzKr4nLciwLQM7sPED9kES6lTrm+VDTINpb
-	 izzdzTE/Xr+dfW3IwlrcxYhz1dX9fBrgS1PhTdZPxvOEfGw64JtoPTjV0qtgw4wPXYTRZ
-	 VrFgCyJuWlPHGYI1EKn+lt6TgH4c/2lfokjv51e59yINyYTy95FjSmMya+nr+yRX6Z9rY
-	 TMIlCGkHVgDlHOKrWuxMuAWMJUL/qGeECv/6SEpc4/mmHYo3dXKfdQ01+LNkNC3jGNw==
+	t=1792558752;
+	b=jOl6hg+EpqzSmwDTCE21UpwJTDMuOhm6Y7R3UZb6i+fPMN8iZT5wnECxfHLqubZcLPRH
+	 hVz+pDBWqFAHObFEsueFRVI7QsBMpafXVn8/eUSSio1RZBAYaMzh7JPS+j+tzgh5fTKWh
+	 Vd2RiE9G8XzDUsTBWo7No7I7OojTdHb9uMEhWsVmGUdoyieGDNxLhHUMkViWQqa6nLrQ/
+	 P/J2aepxeVgOS2KRHvZgzkfs6ktxfIF+IoDC8DXzFLS2eS0xiMjY2GFLAopD7U8EweZ4s
+	 Aulx9z6/hLEeoOQlTsj21ssNzO/fj7YDQVNoqmK6mQK/DFO/KVAAEYOzErDeM/q+9Qg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792551543;
-	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:In-Reply-To:
-	 References:Date:Message-ID:MIME-Version:Content-Type:
-	 X-Rspamd-Queue-Id;
-	bh=9irHhHnCujc5RAVXrKbQ14J5j6Rz+ul2vccLXkSCxdk=;
-	b=vKcgvAYRekFH8BSP4F4zULAO4SB/NUbXOn0XLL3b2OLWMFA8MlgmIxbKJqzuCXAN13Hc
-	 UpN6Jg9ulFIRJX/xrSzZ4UDmUAD7h5h0x7F+312q+ZEbgWW9PfmTvT9tOQi6yO/yvoxGF
-	 vOtHLVwdwmJrXsRL2KTa+fJlhhBigP73e26IAcsWYGrurA8oi38QH8zpupBxnqOjUfM7T
-	 TAgtAp5J7wrV3+8r4x73FICJWPdgzAnDoU8lbQhBTyWeTuJ9F9N9CdUQGeng2244FDg/I
-	 JBOqSEZmr1LDFt0A8YkplV053LM6bA9X57DfgrIeFek7/FZx86Emx4bHwk/vLrgCLtQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792558752;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=iSU38EcMZfIIXouCuIDccJH8EhhzfGLu0Vv+v6R4YDQ=;
+	b=3BbK0JvtMEri6fdQFMu3bjOx3WUPy7G4wyTh4z8+aVIRuivMDqpzmjADvVvVFF6Zk1uW
+	 LRURR+8N6GxmGOwJjwaJAUSNd8geQTEoPx+h6ZWZt4LE0mUbGapnl/rWzOKqXhwZsjKKs
+	 qHXqf/SqFHR/MTeqbabDaRROmcKABELpN+yY40ObqqR6+h0DBUoWrF4yjPRiqSEduLovN
+	 rgncnXfsIV92RT+zptFT9buxU/Po5EJ2bLi+0UVmpuiomVC1xpHUEECnXYQstuRhh9svu
+	 Xhs0MFRVN+raBswHceIK2geOR+xt5MnSgco95tD5D3KkbkDmdj4YSqJvzFxjhVQOtMA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amieiro.net;
-	spf=pass smtp.mailfrom=amieiro.net;
-	dkim=pass header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=Nd5xfZ8K;
-	arc=none smtp.remote-ip=80.241.56.151
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=QCnqB7Qa;
+	arc=none smtp.remote-ip=209.85.215.170
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE438606A319;
-	Wed, 21 Oct 2026 02:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CE438606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB14A606A31C
+	for <linux-leds@vger.kernel.org>; Wed, 21 Oct 2026 04:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DB14A606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=Nd5xfZ8K
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4j8Yrr5TXfz8vb3;
-	Wed, 21 Oct 2026 04:58:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
-	t=1792551532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9irHhHnCujc5RAVXrKbQ14J5j6Rz+ul2vccLXkSCxdk=;
-	b=Nd5xfZ8KAPJN00NYRGcHUve+BpneGqZBqKfhUD/yUWiA45/6aWyleEc6OsAD3cve8YcXMN
-	gsBSbIFZeuW7cCDeI4J2aC1pBBfoWw1Pu8/7ovh4tFtn15naIK5G12RL3IVnKx1nPevO/a
-	px2PfjNT2SmbSGl4bQNgcV6Zb/h47BFbzKV33LKYDPQfCFCU3tDL9wPx+CVJ2c6Gjsh3A/
-	fNiMCVJBF4liQhE3WJyXC7xQDgkm5LDYTT10SKg53i1g0OQ2uvkm515nT1lWYscIvBlVGi
-	+y1BP8hhEdHgWQPItIADYnyYeoym8liouca59AkhG8M1h1GMkoa5stx3YTW6mg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=flavio@amieiro.net
-From: =?utf-8?Q?Fl=C3=A1vio?= Amieiro <flavio@amieiro.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] leds: is31f132xx: Add support for is31fl3206
-In-Reply-To: <179198370454.839288.5327794631276643738@kernel.org>
-References: <20261013-add-is31fl3206-support-v3-0-66a762a3c12f@amieiro.net>
- <20261013-add-is31fl3206-support-v3-2-66a762a3c12f@amieiro.net>
- <179198370454.839288.5327794631276643738@kernel.org>
-Date: Tue, 20 Oct 2026 23:58:38 -0300
-Message-ID: <87bj8noj35.fsf@berlin>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=QCnqB7Qa
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cc1d57602e8so58760a12.3
+        for <linux-leds@vger.kernel.org>; Tue, 20 Oct 2026 21:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792558751; x=1793163551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=iSU38EcMZfIIXouCuIDccJH8EhhzfGLu0Vv+v6R4YDQ=;
+        b=QCnqB7QaEQOw+6rI0X7E8ZaIqfc1YdvX+5dUjvduWaQI9agXq/UfU0HaW9/RDQgOjM
+         qB+Avv33iFu+4WQb2ZkEFPFUMj4nffOJ5TztpUeK8eBqnLeOzUgWjbce72ZGyz2QmTVK
+         +f7dNz7eziJ84QT+H5mafLjeqeUHP8FrmcBtTQf9UFSF2mpouQviRHPpuNHdAw/3Ccdx
+         a1/qabzriMy1BP394FHUWXKxqYV4yI7573RJ73nyiRZaFNuSpQ/nuMI0+t1mKFtn34Vm
+         IjoEDVe60LNtjj7LnJpgeyR7Sx/DTp6l0xyeIPfucZ53tFGieQmMsIBwsdHEZU2zX7yZ
+         sybQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792558751; x=1793163551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=iSU38EcMZfIIXouCuIDccJH8EhhzfGLu0Vv+v6R4YDQ=;
+        b=w94c9MqgBjyRQfu3PIToNEgp15zMVeZassaWF534/HIU5ew8gNB5jAIhXaTx9G5imy
+         qkjVC+sunNgAelnzdRx6Yuxjw3deG8/dmdUD3vvTISd9UDY6SNBBdd1Hg9TQ2u4nYMUj
+         UlX+SkV034w7sF52tDXhVN/kuAhTX08ehbYy1T5oFfyngtUA/DvC1LF+UH7p+CsNoU49
+         nsLgfJ2qUNnMmTbbWTSWqgxdi5WxpL9wQN49aoWnRtb5MfLiUrCuYpFiwIKMyc71aWun
+         QmGAVcaI2Hm7db5MdYsHY+eYXX8FDi5Iow/bjrmBQWVyfl32vWMUBQZdR45YfvZIj/Zv
+         e19A==
+X-Forwarded-Encrypted: i=1; AKwUvBwyqFuUCvK0XWpqZNDuZ+Ep57h+FqjHWuUT9TuhPNrhi9Gb95fIevwQRMTSI/sBc2p/h4zR1mbKLekY@vger.kernel.org
+X-Gm-Message-State: AFq9FYJgtHb0tlQhb127hjHXC5vTdgrgnC3WVE4riX1YUhE3FGX5IGzr
+	nZ6aKgaLEExTwtgiTwicApNuRUOPArT87WLlxdHwKJKAJ8Tf06KnYoR4
+X-Gm-Gg: AYBFou3nuF33TM6asyU8FHccNJP9LYJFp7A3CJWK/oP5yX4kFDDzFYXHsqOh2UbJeHd
+	Orza2IuYMrpcJFCreAw8O9bh6vJ++DMW3EUU76yz+5VLHPaTX0fg64GOqleP6C3cmREWSir3G0s
+	luYu8FidJA8Hl9hLzxKMwauqLoP41Pr57ky5yhqcEVOhNU89be71kLq50X9Q27KKSesu6x6GAW+
+	4qua6Dj5j6AE5ufJ8b9he1U7/2ILIHLK+1DVhOLHVigTak+587o1mjkK3hQI5kBXRL92lk/xnlx
+	Ez72JBIZBeupawfk0+NTnEXStGRlXqyTAeLBa1InW+lQTeOOInfH6Ka7CVdY7MSPIpXLKuLx578
+	Kej5+PY/YuB3WfBNf2mvOxo+oqAYtcN1J9ecd1/UgtsZn+y6KAT+qG0Sbrc1atd5f4xt4KJP9sS
+	xRfTB+o203Pk4ghN+Uc23nvTFM1JI312rAH6OF855JAfs5dib71GuSE0D/GdnrYq+DsXVAMeWL+
+	m7BUPxEtdGwyVC6zPfERuIGNoCY+6DURH3DSl5o7oXtNCfTTs1RqCVEm3NKy//He1RgN2JlIadR
+	wmSI6mK2CE2wEYAEx78R/vXMaXVM7OiX0I3EwKERrnTHXtaQQ5vVk+RUkhd4/MlrrjysW6g=
+X-Received: by 2002:a05:6a20:3d09:b0:3e0:bb59:7fc0 with SMTP id adf61e73a8af0-3e287e7e807mr824422637.52.1792558751116;
+        Tue, 20 Oct 2026 21:59:11 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd6a871dbb9sm313903a12.24.2026.10.20.21.59.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Oct 2026 21:59:09 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Dan Murphy <dmurphy@ti.com>,
+	bui duc phuc <phucduc.bui@gmail.com>
+Subject: [PATCH v3 1/2] leds: lm3532: Propagate enable GPIO errors
+Date: Wed, 21 Oct 2026 11:58:31 +0700
+Message-ID: <20261021045832.16356-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -75,69 +98,47 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4j8Yrr5TXfz8vb3
+Content-Transfer-Encoding: 8bit
 
-Lee Jones <lee@kernel.org> writes:
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-> --- checkpatch.pl (1 issue) ---
-> Line 172: WARNING: DT compatible string "issi,is31fl3206" appears un-documented -- check ./Documentation/devicetree/bindings/
->
-> This true, or is it documented in this set?
->
+devm_gpiod_get_optional() returns NULL when the optional GPIO is not
+present, but may return -EPROBE_DEFER or other errors.
 
-It is documented in the first patch in the series[1].
+lm3532_parse_node() currently treats GPIO lookup errors as if the GPIO
+were not present.
 
+Check the return value and propagate errors from the enable GPIO lookup.
 
->
-> New for() loops should initiate the variable.
->
->   for (int i = 0; ...
->
+Fixes: bc1b8492c764 ("leds: lm3532: Introduce the lm3532 LED driver")
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
 
-I will make sure to initialize the variable in the loop for any new code
-I add in v4. Some of this code, though, was old code that simply moved
-around (and by changing the approach in v4 it might not move anymore).
+Link v1 : 
+https://lore.kernel.org/all/20261007104915.507801-1-phucduc.bui@gmail.com/
+Link v2 : 
+https://lore.kernel.org/all/20261009091059.25729-1-phucduc.bui@gmail.com/
 
-Should I add a patch to the series to fix this in portions of the code I
-move to another place?
+Changes in v2:
+ - Capitalize the first letter of the commit message subject 
 
-If it is helpful, I can also change this in the entire file, just let me
-know if this is welcome as a patch in this series or if it better to
-send it in a different one.
+ drivers/leds/leds-lm3532.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->
-> Spaces around '+' please.
->
-
-This is the same as the for loops: I'll make sure to take this into
-consideration for code added in v4.
-
->
-> I detest pointers to functions at the device driver level.
->
-> Please find another way to do this.
->
-
-I'll find another approach for this but, since this is my first patch,
-maybe it's better to align on it before sending in a new version
-unnecessarily to the list.
-
-One option that comes to mind is to use the approach taken in the driver
-for the is31fl319x[2]: have a boolean flag named is_is31fl3206 in the
-chipdef, which means this is a special case, and we should initialize
-the LED Control Register specifically for it. This has the added benefit
-of still alowing us to set the current in the future (even if it's not
-supported now). Does that sound like a good approach?
-
-There are, of course, a few other ways I could do this if that doesn't
-sound good.
-
-Also, if it is preferable to discuss over actual patches, please let me
-know and I will implement this and send over a new version of this
-series.
-
-
-[1]: https://lore.kernel.org/linux-leds/20261013-add-is31fl3206-support-v3-0-66a762a3c12f@amieiro.net/T/#meb963e4bcc9943bde08cbe679a59f553c2184bcf
-[2]: https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git/tree/drivers/leds/leds-is31fl319x.c?h=for-leds-next#n112
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index b51496910b08..a3bc9680dc4c 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -560,7 +560,8 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+ 	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
+ 						   "enable", GPIOD_OUT_LOW);
+ 	if (IS_ERR(priv->enable_gpio))
+-		priv->enable_gpio = NULL;
++		return dev_err_probe(&priv->client->dev, PTR_ERR(priv->enable_gpio),
++				     "failed to get enable GPIO\n");
+ 
+ 	if (priv->enable_gpio) {
+ 		ret = devm_add_action(&priv->client->dev, gpio_set_low_action, priv);
+-- 
+2.43.0
 
