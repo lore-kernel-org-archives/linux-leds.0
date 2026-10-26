@@ -1,100 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793039849;
-	b=jzaWc/adgPaZj+5vLg9oJQFnG5luWzRtpP3XGjdGKEH/AGxD37yIqLbaFTjAXX63HHSI
-	 a0LZd7cj+RfLFvUJIYM0LVvF6g0P7nJUcDQ3nVIswkafKukKNRoB4CUT1enORNEIGy4D3
-	 qLBV4TBIePl/ISztwS1KcliPNjzCp/AwiJRvE4eiHejP3Do57veprSSxBWHJnoUnmuXfy
-	 qb1LG8bT4fC4qb+fHRAw388snC2n4r3Yin5CrVDygBttWRjIU/32Gcn8IPxgKDc0fRSQI
-	 Qb+rjsp2M26N1WTAzDubFRoV5g31ZSkAZcpoXfbnnQMvVd3ip6aoNVAj+nOWiXR7J/g==
+	t=1793044286;
+	b=xhCg7gdfyF/fJ147jByqRpAjE2cmQej2RauH2EqqCP6+YZmmufZl2fMgr4cl4pnwVXU+
+	 Vlukn4jQvXUkkVBbCWZc0Zyv8I6Y7dcj/a8N1ZbUsPPL1sq+7yIQiPYCxohLP98+oFnVO
+	 TpeOKN/vf3BrjDufNCNeIHQrtlI6z3XAmZkGxkdhtIKzA5p1XqZROLSe4fI541kDGkMyl
+	 iSnV/MowrEIb5hGKxc58q2H0qtpbHTGfbmxwqdd08Zh4Mj5mL9IhPuqdQRuiNszvXwaQT
+	 UmjQQYgGwnkQhOKu6VL1m0QlAJdjFHVFiaxAZzqSDgzjr3WCOlh6snDvcThMQNsWSEw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793039849;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793044286;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:X-Mailer:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=jz6PhmHAqHAHeg3j44XUyEwE6Xd1Y8uRjpXGP04iFfo=;
-	b=X5Sgo81JkgqVuDvkMCR3p3cw3051L0eTbpqhUtHU1WCX9IXs+C4IipWIadb6KU65P8tj
-	 Mqv4ArqkrauT+0T54mTtpjGGCHdBP3glLRIOhA0ghFhnaDnS7Qr+7H2Nhbn4rz8LeB9aJ
-	 JiNEj6PhzsDvg2GeBdbF8eVLL9gPDW1mG57yNHlKQVZebLeAIMyYSaJRm81yXMRfG6xGG
-	 d+Gc+ZjCJ5Al7FH2e605J2IzMpeCUdgB7np8yu1kGW7TG0ammDaV3G7JiCsEoBYxqGaJ2
-	 omrw2IFGVSozdXKb3HCEkJ5Yw5CCYIRsI326rOrnkXylKftGj6m2ZJsWlB3c9pVy8lA==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=4b2ajp4FBPrDna2YeWMnx5O5XVNt9W3jkATtNW1wXKo=;
+	b=PCVGCDjOMUojkfDvvXFE4nUSmTbalWiin8i5Lk3VNt/TJefeKc7qSRjEw/J4OV0698AM
+	 sEwHFP/PoCCT/973YMdFc+gw74O0MczGmkWMv8dfGAs4MrQtfszQDPPbeVNmZ/2cmp3UK
+	 UCL1gwQeQQ9UwfOGPrLPFlNxeBODqIbFBkWh+WhKT01iTWQBzCYb3mTI5IrbuLa5yxnMx
+	 /f+pkrm5QycKJq8r+iPtEFDR3bE6PyCoXD9EAIVF6iL6Ls1Yl7zlIq5lNDlq96wkVXdkK
+	 MzhNVHkTSp5QpT/CGHZerF/QTmW1Kc1C3zxMDJABCtwH+UQcw3XBB8CKDYqGzbs19kg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=cVO0Vd4B;
-	arc=none smtp.remote-ip=209.85.128.49
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=feYEH80F;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F79F606A323
-	for <linux-leds@vger.kernel.org>; Mon, 26 Oct 2026 18:37:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5F79F606A323
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42469606A31F
+	for <linux-leds@vger.kernel.org>; Mon, 26 Oct 2026 19:51:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 42469606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=cVO0Vd4B
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a5036bbac7so11494305e9.3
-        for <linux-leds@vger.kernel.org>; Mon, 26 Oct 2026 11:37:29 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=feYEH80F
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48dee593f18so2564606f8f.3
+        for <linux-leds@vger.kernel.org>; Mon, 26 Oct 2026 12:51:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1793039848; x=1793644648; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=jz6PhmHAqHAHeg3j44XUyEwE6Xd1Y8uRjpXGP04iFfo=;
-        b=cVO0Vd4BaAgLdWISFKSYTIzQtS1MXDzRDVaSVak7zkkNZEW5+3DDGPQvwc1ImtkYYv
-         yINVsVjI2CegnkPDhWXYOUuK0LVB/YZkXr5B3/P3IPiOiJZJIigJ27grxIEVt/3yyQut
-         ZSJET+gCiv1LI3fM9mA4LNQq2TpU1GcRnP2vBl0rVylFXi3tAN/d3tIzMVHBIDHwvLAB
-         uKPpT+lxdnIlLVIDYzFiCi/RRIv5zkhBM5wKxZASjWoNLOQFYg6qGn3iPixYOhg9ky09
-         qkkbmrA/P20ZQVk6g0ePZUg4pvAZxwDZNeS4oZAVcU7P0L8lHKDyCIb++tsiW4QABTip
-         fXXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793039848; x=1793644648;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20251104; t=1793044284; x=1793649084; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jz6PhmHAqHAHeg3j44XUyEwE6Xd1Y8uRjpXGP04iFfo=;
-        b=HLE/3oiNkW8l/OAbkeS8Zuf1lnH+6Cca0BQqY1IdXyxPYQIRTlwC1ZUVe4PW63bBbC
-         K66JFO9Y1Tt1w6q9Uc6Q1+KFx7CVrD2tuQDt1LKSj4FSE5AKnVEjGsF/4kgna+YiL1x7
-         0dZG5Aa4/Kuk4uiEVfC/QGQCBvDEkZQvk4uBxJ3pptL47xXwuBmjxYc8qMAImuOoayKK
-         s4KipB+iit/aMipbSo6rahbxDPPm3awj4VHCIsK30N5rY9yrbpF3UD31I1gM+KXSFoIk
-         fO5+983nTmQfW75dSMQKGIt4ludVxLPSK+eCJqXJFLOnjKD9Nosdu/b4lx2pKIuwh08Q
-         gPrA==
-X-Forwarded-Encrypted: i=1; AKwUvByElj7pcCzBVVcXfP5SCFsLsT7G0NdTDY47j+o+gINmBXkltBg8CHQ2NcH1whTSevVf7dfBHEQSh9RG@vger.kernel.org
-X-Gm-Message-State: AFq9FYJK3lnJXjTBRZgpAXSGGh9YQhpLE1TyR18T0KcBFLKdJqFW0kYu
-	O8OxhjA84ZVekXBsk34MXsM2iC5oxmoSIV+GAXbShj7RfRz6qqgC1lw16GFlvVoD
-X-Gm-Gg: AYBFou3jr/AfRP09M8KC6MWxr0uB6mpVQic+TOzV6UVmrkX0bpceBFtmMFMRlGF6Toa
-	pAA8KmUSrBOkDgrTBQNh13M1i0OgAuZsiXFGRVMWdN1R3RhQ9wxyMezUvLFQ1cEueSAmhb1bPVa
-	ck1gtkN6GHW389MJzKHnA6j4LU/P5m0f1hKf0CiYSQD4tuWJVfDaewgtdTf1tin++ERYvuIZJpt
-	VuP2HVulOggXkcMTJmW/64Zy3By5p/QHjpBNXCT/35q9VVi3XBVKlbR0NlMNrS6kegdynxyFlDX
-	a356Sz2jJ/VmGQERd44Bxcm2NeMBNZD1x86bJotoIjSVXHQdywU95n73CC0uWgZEH7rbxrpFehN
-	j9yPbKINelw0wiax8Uz5IEW/TXQ3/Xa1y9v762LCRoaJD+/6uNDX/Zalv8zGFhGTESnNZEr9ua3
-	dndCRCikTDvk7SzrK9isc90b6seOXC0Df0AwGfr21gnZdYLMkOkvCB1hxB4w+hpU/dggaazBDpk
-	p+hnj/W/SGqUM3/j+Xmluw+RFxzg4PlxSkKiXnGfmao9vf/ziTgSBchZl8U1zDmm1t1dBRi8KJO
-	dbj0idB+6AqvGf+z
-X-Received: by 2002:a05:600c:3e8c:b0:4a2:392:9de2 with SMTP id 5b1f17b1804b1-4a35acab6cdmr122544295e9.28.1793039847593;
-        Mon, 26 Oct 2026 11:37:27 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a35a5698f1sm211231605e9.8.2026.10.26.11.37.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 11:37:27 -0700 (PDT)
-Date: Mon, 26 Oct 2026 18:37:26 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Dmitry Antipov <dmantipov@yandex.ru>,
- Jacek Anaszewski <j.anaszewski@samsung.com>, Bryan Wu <cooloney@gmail.com>,
- Kyungmin Park <kyungmin.park@samsung.com>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 14/21] leds: flash: Avoid divide-by-zero in
- led_clamp_align()
-Message-ID: <20261026183726.30238d39@pumpkin>
-In-Reply-To: <20261026173129.GF2195460@google.com>
-References: <20261021123406.3163547-1-lee@kernel.org>
-	<20261021123406.3163547-15-lee@kernel.org>
-	<20261022220006.6e066670@pumpkin>
-	<20261026173129.GF2195460@google.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=4b2ajp4FBPrDna2YeWMnx5O5XVNt9W3jkATtNW1wXKo=;
+        b=feYEH80FuTGX+mIFQCD8uHGEvbXlUSxByhEejpRyuyYMvBwvTKkmB4LKU/2Q1Dqxn1
+         rYWTjYz66FLvEv1pfmg27AmldxWdkiAxR3O1SFimiZStr7xUn6PdYCaj+Hbv+XikVdFj
+         VTknQCYldsZepXSHr7pp0srQrvhA3eurw+JQoWJ4au1n4XOlbJ+pJruBw4sDCnxExG1F
+         8P/7jSRwzoUNjBfF6RbEwwgRfBtinYu+JXUyGzlsCdrA6yj20YrVZXSXab6v0Ch/mH4i
+         x2FSuRADTowDXvsmjP6zwXY/6pEKpkH8ywOmrIJbHazptQKGEeUJVjTBqBk4qOUXKN/t
+         OzRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793044284; x=1793649084;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=4b2ajp4FBPrDna2YeWMnx5O5XVNt9W3jkATtNW1wXKo=;
+        b=OWArH7h6At5uBjMMKBkubXzfd34PHnb6qgW8ygF3bISnQt1eEs5wjnw0DSO7w51HMy
+         Ae7mePeoFy0r9zin5cP0GjaTCZ5LxoCQNNhvoICv8aw9O0z5xkUSe1K+8AZ/OHBajFpa
+         YpQcw8sW8AGI0kBW8ZxluoCYeF/NIPaKX0cAeUk3ysZ1GaQ58POd85L3YdGB8tA//+3S
+         Hd5go/cQ55M9TBbYdvcs1M6/SrrrTo+lD/dVNLyHv22+fSdOF6/27TNScPPwxAN8VpDr
+         wgZZvYZgMTZYDEdWQItGBWR8HCn3d1mZPIJriIObUq2Ocef7rk6NDkPe1vrm1WA7x6kn
+         bYuQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzPSBcgWRSFHP3dCfF2g+U/bRM6iPnD2FG3Nu2OqrBQ94ZIdnH1nAssnaoJhfvrOWR4qCqEg+JkNEKg@vger.kernel.org
+X-Gm-Message-State: AFq9FYL+wKaje8edYi4eWuZWO73QPnwnmj6naB2E+XKkg9y7lJAblI3S
+	zYmCdf3MzAnSelP4WmNNIfg+rZt0B/pgN4uANFb5BY8XUPeT9zFA5ejH
+X-Gm-Gg: AYBFou3YFeGvXa5vRnFDuKwqmnCdoMIXE917hwCOKsLl292Khihi5Xu8RRNUV51G4ca
+	um68Fc7orqOetnPiFb6HRdLPvMmTPwQYIuO83IIcf7aXDb/iS17R5RBdeBwf45BANkyRFuUFlpB
+	2a0sWOv3lc83oummu1etDdLbLL/Qm+kecIIXQr+3kPoLoAuHUhrTZUhqK4FfU2WDcWtq4fRA5Rs
+	ZoD5fW4EsFctxcmhZAI3f8b3JrPzmBlB6/2o/HOw+aN6YLgJpYy7OUfytjheTumztASQS8xDuTx
+	mK9kuFuHp4q/+kKGd8ASKdqdGxwcbklbLHHhr36ogx8NDwvFrLQtiQIMXP895pqPbUsTLAmEznH
+	iUuyvpvrt9D0fV5GWa58wpEObwlF65VAiGCi9oeSK84V1S3JwJmtm1vV0ZkJTJ7XTEoAwSIbjF5
+	7pVpJNRICbRmLuK7kyIXNUnJ0e/RCkD0aCPoi9F6QfoduIzr0M3dzJWUcTuMCY3Q3oha8PRxKml
+	aOGhewc9y3iq8bn2pqsvSuj3y8RnZ5Q0FZItlil9MK4FmxAcnnvc3JYlfWrJMvHmxRssEmWnNkJ
+	MmS73uxU1dy14wrCSPLvD7VfuY/Xt+DF8PFkFhgYCFK+BLC7Ql/26yNGAfam7m1KQgrK53l3aC+
+	xh2hVikYqKF4vKy/Gg7+BNjPNO6klpHtWHwlEF6opSxzI0zKmFEmY5biUYf/9YtuWfX6d9Y7z/O
+	v7kMZe
+X-Received: by 2002:a5d:5e8d:0:b0:48d:ee35:b3fe with SMTP id ffacd0b85a97d-48e3eb3cbfamr12691780f8f.8.1793044284375;
+        Mon, 26 Oct 2026 12:51:24 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a00-1028-8388-a84e-8ce1-bbf6-5949-b0f3.ipv6.o2.cz. [2a00:1028:8388:a84e:8ce1:bbf6:5949:b0f3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ebc3c5bsm18877654f8f.9.2026.10.26.12.51.22
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 26 Oct 2026 12:51:23 -0700 (PDT)
+From: Josef Schlehofer <pepe.schlehofer@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rong Zhang <i@rong.moe>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] leds: Add support for CZ.NIC Turris 1.x LEDs
+Date: Mon, 26 Oct 2026 20:51:18 +0100
+Message-ID: <20261026195120.12759-1-pepe.schlehofer@gmail.com>
+X-Mailer: git-send-email 2.54.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -104,67 +109,69 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 26 Oct 2026 17:31:29 +0000
-Lee Jones <lee@kernel.org> wrote:
+The CZ.NIC Turris 1.x routers have eight RGB LEDs driven by the CPLD.
+turris1x.dts already describes the controller, but there is no driver.
 
-> On Thu, 22 Oct 2026, David Laight wrote:
-> 
-> > On Wed, 21 Oct 2026 12:32:23 +0000
-> > Lee Jones <lee@kernel.org> wrote:
-> >   
-> > > If a flash LED driver leaves a setting's step size as zero, writing to
-> > > the corresponding sysfs attribute invokes led_clamp_align() and triggers
-> > > an integer division by zero when aligning the offset to s->step.
-> > > 
-> > > Clamp s->val to [s->min, s->max] and return early when s->step is zero.
-> > > 
-> > > Fixes: 7aea8389a77a ("leds: Add LED Flash class extension to the LED subsystem")
-> > > Closes: https://sashiko.dev/#/bug/linux-9d06d7fe-310b-4aee-8b16-0fb49550c287
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Lee Jones <lee@kernel.org>
-> > > ---
-> > >  drivers/leds/led-class-flash.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash.c
-> > > index 181dfd49c6ad..16b3b6b9365b 100644
-> > > --- a/drivers/leds/led-class-flash.c
-> > > +++ b/drivers/leds/led-class-flash.c
-> > > @@ -375,6 +375,11 @@ static void led_clamp_align(struct led_flash_setting *s)
-> > >  {
-> > >  	u32 v, offset;
-> > >  
-> > > +	if (!s->step) {
-> > > +		s->val = clamp(s->val, s->min, s->max);
-> > > +		return;
-> > > +	}  
-> > 
-> > Why not just:
-> > 	u32 step = s->step ?: 1;
-> > and then use step instead of s->step.  
-> 
-> I can see where you're coming from, but I don't think this is better.
-> 
-> With `step = 1`, the reader has to mentally trace `1 / 2 == 0` and `1 *
-> (offset / 1) == offset` to see that it reduces to a plain clamp and the
-> CPU still executes a redundant integer division.
+Pali posted v1, v2 and a RESEND in 2022 [1][2][3]. I took the series
+over with v3 [4] and kept Pali as the author.
 
-That happens with a step of one anyway.
-All my suggestion does is treat the unexpected 0 as being the same as 1
-instead of optimising for it being zero.
+The main change in v4 follows Marek's review. The five LAN LEDs share
+one colour and can only be switched on and off, so rgb:lan-1 is now the
+only multicolor LAN LED and its colour applies to all five. All five
+have max_brightness 1.
 
-David
+Marek, I left out the symlinks. Linking a single attribute needs
+compat_only_sysfs_link_entry_to_kobj(), which is meant for keeping old
+paths working. Instead, the ABI says that rgb:lan-1 sets the colour of
+all five. A link to the whole rgb:lan-1 directory can come on top if
+you or Lee want it.
 
-> 
-> IMHO, simple, easy-to-read, maintainable code wins out over clever code.
-> 
-> > > +
-> > >  	v = s->val + s->step / 2;
-> > >  	v = clamp(v, s->min, s->max);
-> > >  	offset = v - s->min;  
-> >   
-> 
+The global brightness moved from the Omnia ABI file to the Turris 1.x
+one, because here it is a 0-255 CPLD level, not a percentage.
+
+Based on leds/for-leds-next (59cf91cf87ab), because the driver uses
+the hw_offloaded() callback queued there.
+
+Tested on a Turris 1.1 with leds/for-leds-next plus this series, the
+driver as a module and CONFIG_PROVE_LOCKING:
+- the colour set through rgb:lan-1 shows on all LAN LEDs that are on,
+  also while rgb:lan-1 is off or under a trigger
+- brightness levels, triggers, unbind/bind and rmmod work as in v3
+- no lockdep report from the driver
+- after a reboot, the stock U-Boot (2015.04) finds the LEDs back under
+  CPLD control, after sysrq-b they keep the Linux state (checked with
+  v3, the shutdown code is the same)
+
+W=1 and sparse on powerpc, COMPILE_TEST on x86_64 and arm64,
+dt_binding_check, dtbs_check and get_abi.py show nothing new.
+checkpatch --strict only asks about MAINTAINERS on 1/2 and warns about
+a macro argument reuse on 2/2.
+
+[1] https://lore.kernel.org/r/20220705000448.14337-1-pali@kernel.org/
+[2] https://lore.kernel.org/r/20220705155929.25565-1-pali@kernel.org/
+[3] https://lore.kernel.org/r/20221226123630.6515-1-pali@kernel.org/
+[4] https://lore.kernel.org/r/20260928111907.72592-1-pepe.schlehofer@gmail.com/
+
+Pali Rohár (2):
+  dt-bindings: leds: Add CZ.NIC Turris 1.x LED controller
+  leds: turris-1x: Add support for CZ.NIC Turris 1.x LEDs
+
+ .../testing/sysfs-class-led-driver-turris1x   |  58 ++
+ .../bindings/leds/cznic,turris1x-leds.yaml    | 132 ++++
+ MAINTAINERS                                   |   9 +
+ drivers/leds/Kconfig                          |  13 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-turris-1x.c                 | 624 ++++++++++++++++++
+ 6 files changed, 837 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-driver-turris1x
+ create mode 100644 Documentation/devicetree/bindings/leds/cznic,turris1x-leds.yaml
+ create mode 100644 drivers/leds/leds-turris-1x.c
+
+
+base-commit: 59cf91cf87abb67a49b1bb7b9d3b06486abde8cf
+-- 
+2.54.0 (Apple Git-157)
 
