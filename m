@@ -1,81 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793088860;
-	b=KjYEd/HvOcL9dUAsa0jId4SdH9vohpYdV+AR+yffRz/em+JADAxbIP6dPtPBewXFe6SA
-	 jCJmPjkltDfCb1IvNH8SL4mFLHcwzLMe33A92dEWutwle9ETAkPp9IDunv7jvwi1P7rHA
-	 2KzcrbqWp4/Kc8ZSVCmmzC0SnPnBMF/LbNdUqahFiFbt4nrSXVH0otxnr/nntUycRGv7q
-	 NU6q4qBHdGuQdPaDWvUPTIlXIZpMt1FL1gu8CoZJFZUeg9jg4UfdBrgmV3CXdjZ8o6AcK
-	 tMnWD5wMTQEq4yoTeu3nOSelPRApzkd/sBVoqYOzyVla7TiVRljd8fFUtKsooHWUGug==
+	t=1793100774;
+	b=IVGA7+nNOpm5Vth3SnAnSqJK0tsMDfMWEfwZ3YyRk+W2cyhCwtrBBjb4IFg6m2zVx3tB
+	 8vdb2tEeePbQAWYzVQ/pwlmvD0uTyYxgRRATnlexKTds6yLKs/m9BxscZK4cl9wrYwrqN
+	 u2Y8OtMBjLTYOA5YHJ0/CREZfqmmo/D2Ojw8sQBjKY6vcmdMBROpx9oQI17A0GVZZ3B5i
+	 6/4hHLi/bIwMhJf50mDYXY2c3TUY1wg/2udAWtp+gG1NW2gRB194GtaK1N7cp5bbGytkt
+	 fXM0ql5qlkvck8xaEF71TPfzNiJKUkMbIuKxTgZW+9JtG5b4OfWLY/SGBXM4AfxFULg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793088860;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Subject:
-	 From:To:Cc:Date:In-Reply-To:References:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version:X-Virus-Scanned;
-	bh=hiF6cXI3agkYyku3rSyd2OOmEROL56RdvaFl7yHcXqU=;
-	b=XUBUyMYVWLn1H48i5I8uPTjriNK8EqH6cNAfPblqgG/HfqyKatLTz9IebbMEN6MNEDOI
-	 Te9pIqNfe+/KonzNlu7ucBiDMU4dipoauVIOnOpt2DUMZJNW+axPhQ1cU+XzlY6tURcc+
-	 qJz9zU6TySA4yCgcR8fnVd2b8+VLcgrGc5CP5pGTQO1xp1rAvTW5mendYPXE8He48iumd
-	 +W6x6owPcbNPGUWki5dWqwGXnCjei4rYlIQx3eKOAhqHVe/NxdbHsFdmC17OTEG21Up5n
-	 DC7cEesWO6m7bjrZ8NtbrMsXA2NN4VNSH0e18wPWyLMPM6IzR9z3zkPTnTSzO7jqWfQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793100774;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=t4IJra9NQJkRGyVR4RCc/9Aohe97L8CkEFMWXcoToWo=;
+	b=Aha8H3hEFqwWGOPtnec5lF/HcYBmKkemd/Kz+yUsSUgufcKC9O9Ma9ZYvqbzEshfqe+Z
+	 4yoQxEpVOrQ0eVuE1S/GaqXeSCrSOj8fDGrfJd0n4RtkisVJ0Xwv2qDeKXIgNnv8+pmUi
+	 Vra8Xx5GgHeAnj/RTLddG7eNV5ShSJ7dYH7l0lmurPPSAcRiWiF5koujztAr44eeEuv+q
+	 YRB+oDCgrdUPAjPV2L7P3SXpz3bI/fU1bwnI6jXItBvMHoJlXIF3oPeDvn/pzkVpWnEQZ
+	 g7OLZ/Q/8jLPqO/xlmNA2ho8YMONirGVZnceTcJ+0IYLn+3qR4Q6ftEQ9jW3I8PpVew==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ew.tq-group.com;
-	spf=pass smtp.mailfrom=ew.tq-group.com;
-	dkim=pass header.d=ew.tq-group.com header.i=@ew.tq-group.com header.a=rsa-sha256 header.s=default2602 header.b="pCnc/ldS";
-	arc=none smtp.remote-ip=188.40.3.216
-Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=rtjbDRds;
+	arc=none smtp.remote-ip=209.85.208.49
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED278606A324;
-	Tue, 27 Oct 2026 08:14:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED278606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B059B606A325
+	for <linux-leds@vger.kernel.org>; Tue, 27 Oct 2026 11:32:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B059B606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.a=rsa-sha256 header.s=default2602 header.b=pCnc/ldS
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=ew.tq-group.com; s=default2602; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=hiF6cXI3agkYyku3rSyd2OOmEROL56RdvaFl7yHcXqU=; b=pCnc/ldScfXAZKsP43bxJVnw2K
-	7FwCJmgqQLQIraGdSvdNpkpIxa2Z97Tkc86YLGbMWqGAyjurCP6LtRK0cXJxPaUV06uvfKnDzJiRs
-	RwgUnQ8nIWaE0fyz2WURQWBq0Buy2jE1Mw1GhmMGR0gZJI8GkqPvkgwggck7h8yIfNge3/wWKucAw
-	UxxT2lBRex8/ivIlWFbn2aU1d9mUadq+yndE80ajagHRUIoIqXLeoEAwjTjWQ5cCQAFpnL5ARItMJ
-	rS0SHtNTqVhgmMHfaCyi0/ctfxd9AOosJRZv+GpoHIM4+reFNAoRmOwJrHnipAXpYCLTv9FfC9VLE
-	vsH7bqaw==;
-Received: from sslproxy08.your-server.de ([78.47.166.52])
-	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xLcK0-000GVU-2B;
-	Tue, 27 Oct 2026 09:14:16 +0100
-Received: from localhost ([127.0.0.1])
-	by sslproxy08.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <nora.schiffer@ew.tq-group.com>)
-	id 1xLcJz-000P5W-2Z;
-	Tue, 27 Oct 2026 09:14:16 +0100
-Message-ID: <e1d1f2ba1c5191c93ed7c5ad737740780a506676.camel@ew.tq-group.com>
-Subject: Re: [PATCH v5 09/11] leds: pca995x: Add sysfs files for error
- reporting
-From: Nora Schiffer <nora.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Isai Gaspar	 <isaiezequiel.gaspar@nxp.com>, Marek
- Vasut <marex@denx.de>, Pieterjan Camerlynck <pieterjanca@gmail.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, 	linux@ew.tq-group.com,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 27 Oct 2026 09:14:14 +0100
-In-Reply-To: <179198432570.839288.16507714780245784283@kernel.org>
-References: <cover.1791207391.git.nora.schiffer@ew.tq-group.com>
-	 <5ec0d621cc430d730e51845d4aafb1c2be166fbc.1791207391.git.nora.schiffer@ew.tq-group.com>
-	 <179198432570.839288.16507714780245784283@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-9 
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=rtjbDRds
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6b4883643ccso350129a12.1
+        for <linux-leds@vger.kernel.org>; Tue, 27 Oct 2026 04:32:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1793100772; x=1793705572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=t4IJra9NQJkRGyVR4RCc/9Aohe97L8CkEFMWXcoToWo=;
+        b=rtjbDRdsa+4/69vIpPHLS8kfTWwktRQGDqe1KoMSE8nnsKH7mio/0L6cY2FmWHuGAB
+         hznm6SUWdCgpdhf69MYg4Mjh5nO/xikxw/GdJVyYySrCnsAjyUEDlhOtlp72OpuzcZqP
+         kKoDPsAVIcKa0jvSEAmGNicp9Llmf0awS8YRZGx5YFWVf1DgNXXcaebpGXMJ0ymIsQWL
+         uxHkEKkb8yxbEVusPQtksOoSpgaycjK+vk7iiuqINGZ+HQW1sr4ugIjRWm1WPJf5f1Rh
+         7DhZ4XZr3M5DjPCPkmGsXfCg5oR4sDUqFmg3BqGltiRJrNhmX9f78LmYBVySflYJtW3C
+         KeYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793100772; x=1793705572;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=t4IJra9NQJkRGyVR4RCc/9Aohe97L8CkEFMWXcoToWo=;
+        b=YDqxoCHX6DrLZy4+PFz/MkisZoV4EEloClOp7utmT5MM6Gjt+O+K07vvGRQ8G7dbdi
+         kd3U9YHkgoUUP4xUkM22fBkyVWnUASSTlYV+LNAphaQopaUlaalyRykzXYE9paXtSO9j
+         QqZx4LqoKnIg5qu5NN52dhWsf421UPg0oWGa7R6qMARvnAA/t4Qy8n/ZENNhhTwAIvvH
+         p+g4D21AlnQYH73KVABk2N+HdQ6wd/RWXu0JbTBON5P2vxpMpmNGq15nn4qHWfzn5hty
+         khHPOWU89lJRjEU4IsUMNpiI9YK5Bq+4382kDckWAe9Qe/eGGHFXlGKWZjP0ywOj5lvN
+         5z0w==
+X-Gm-Message-State: AFq9FYL1ZLeqLaP7RxPQfE+etX418Nk15xzghm8on+h+e6sG2vmwcbr5
+	mCVjU1gJMLxPqqUoX2d7aq/aYHUbuqe98zgyJJ1EkzBDnE3kWXKF979R
+X-Gm-Gg: AYBFou1AlTUQ1JwdrZfbHTKtEZe88TGCi0HG8Vwy2jjGjxSD/fjsgvInNtgDcKeNNoy
+	19tGYmHjOHuTcLoLHLuTxXmlMDJeMXqD3ASme5eCERPYnxb6c+VwkY8FzUMbHSXsj5S46Kuh4/m
+	WdE3OqACn1O0FUMBfClW5bycJV5rjo3J6ZXEKFcDhea+nG3v94lyD6wuf4WXZugNJzeBzeFSFIu
+	v8us2itLOi5Vz/7vcqSlI7dhYm6+ClOfUkLOZtUPVVXhPVFRcMWeWq9l71r3RiWUKnHZ0ntiUTl
+	6feyC4aI9D92NRYFafdHlAYDcW4yiS2lb1MJSJTOg5k22OK/RWYKY1B/kdL3buntuBiSQ8/cLs/
+	M8y2JvBIiZe95WaQHozjACWmHYIgMSILAi88SNadk1xWOu4NvGTe7vzljgGYEHJqUAEbD6apTcm
+	yVVPjSU0GpTDxxM4qqjoEVI163QI5tZeFEkK5m87yzaVSt4uBxkkd6h8Dv+MtY0T+JAg02qdPvc
+	cTSY9uhdXcJS5EClVyhA0EHCzAl5esEGPwniT3mc7KohNy2P7UBRpWFbMq1VsWfPHF1bn7TsG4Y
+X-Received: by 2002:a17:907:9307:b0:c29:4915:83cb with SMTP id a640c23a62f3a-c46bde93525mr1103423366b.39.1793100771899;
+        Tue, 27 Oct 2026 04:32:51 -0700 (PDT)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c46bd4ea608sm428920566b.21.2026.10.27.04.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Oct 2026 04:32:51 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mfd@lists.linux.dev,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v5 0/4] mfd: aat2870: Convert to use OF bindings
+Date: Tue, 27 Oct 2026 13:32:26 +0200
+Message-ID: <20261027113230.47538-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -85,252 +103,51 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-Virus-Scanned: Clear (ClamAV 1.4.6/28166/Tue Oct 27 07:24:12 2026)
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2026-10-15 at 16:47 +0100, Lee Jones wrote:
-> On Mon, 05 Oct 2026, Nora Schiffer wrote:
->=20
-> > The PCA9955B/PCA9956B have builtin failure detection. Provide sysfs fil=
-es
-> > for individual LED status (reporting "okay", "short-circuit" or
-> > "open-circuit") as well as a global "has_errors" flag. has_errors is
-> > sticky and must be cleared by writing "clear" to the sysfs file.
-> >=20
-> > Failure detection on the PCA9952/PCA9955 (without "B") works differentl=
-y
-> > and is currently unsupported.
-> >=20
-> > Signed-off-by: Nora Schiffer <nora.schiffer@ew.tq-group.com>
-> > ---
-> >  drivers/leds/leds-pca995x.c | 112 ++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 108 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> > index 3d6053625b1c9..359803d0030fb 100644
-> > --- a/drivers/leds/leds-pca995x.c
-> > +++ b/drivers/leds/leds-pca995x.c
-> > @@ -8,6 +8,7 @@
-> >   * Copyright 2023 Marek Vasut
-> >   */
-> >=20
-> > +#include <linux/bits.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/gpio/consumer.h>
-> >  #include <linux/i2c.h>
-> > @@ -24,6 +25,9 @@
-> >  /* Auto-increment disabled. Normal mode */
-> >  #define PCA995X_MODE1_CFG		0x00
-> >=20
-> > +#define PCA995X_MODE2_CLRERR		BIT(4)
-> > +#define PCA995X_MODE2_ERROR		BIT(6)
-> > +
-> >  /* LED select registers determine the source that drives LED outputs *=
-/
-> >  #define PCA995X_LED_OFF			0x0
-> >  #define PCA995X_LED_ON			0x1
-> > @@ -37,19 +41,37 @@
-> >  #define PCA995X_IREFALL_FULL_CFG	0xFF
-> >  #define PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_FULL_CFG / 2)
-> >=20
-> > +#define PCA995X_EFLAG_UNSUPPORTED	U8_MAX
-> > +
-> > +#define PCA995X_EFLAG_BITS		2
-> > +#define PCA995X_EFLAG_MASK		GENMASK(1, 0)
-> > +
-> >  #define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
-> >=20
-> >  struct pca995x_chipdef {
-> >  	unsigned int num_leds;
-> >  	u8 pwm_base;
-> >  	u8 irefall;
-> > +	u8 eflag_base;
-> >  	u8 mode2_cfg;
-> > +	const struct attribute_group **attr_groups;
-> >  };
-> >=20
-> > +static ssize_t status_show(struct device *dev, struct device_attribute=
- *attr, char *buf);
->=20
-> Please avoid forward declaring functions.
->=20
-> Shuffle things around so that it is not required.
+Document Skyworks AAT2870 into schema, convert existing driver to
+use OF bindings and remove platform data, add support for
+in-supplies.
 
-I found it a bit ugly to define status_show() above the pca995x_chipdef str=
-ucts,
-far away from all other function definitions, but if you prefer it that way=
-,
-I'll change it.
+---
+Changes in v2:
+- fixed led-max-microamp scaling
+- fixed max_brightness parsing
+- fixed regulator init_data and of_node passing
+- of_platform_populate > devm_of_platform_populate
 
->=20
-> > +
-> > +static DEVICE_ATTR_RO(status);
-> > +
-> > +static struct attribute *pca995x_led_error_attrs[] =3D {
-> > +	&dev_attr_status.attr,
-> > +	NULL,
-> > +};
-> > +ATTRIBUTE_GROUPS(pca995x_led_error);
->=20
-> Are these documented as per the guidance?
+Changes in v3:
+- removed max-brightness property
+- switched from dedicated max_brightness property to dynamically
+  calculating brightness steps
+- update regulator registration to use mostly core regulator framework
 
-Ah, I forgot about that, will fix.
+Changes in v4:
+- set max_brightness form aat2870_bl->max_current instead pdata->max_current
+- switch gpiod_set_value() > gpiod_set_value_cansleep()
+- constify aat2870_regulators
+- max_current in bl switched from int to u32
 
->=20
-> > +
-> >  static const struct pca995x_chipdef pca9952_chipdef =3D {
-> >  	.num_leds	=3D 16,
-> >  	.pwm_base	=3D 0x0a,
-> >  	.irefall	=3D 0x43,
-> > +	.eflag_base	=3D PCA995X_EFLAG_UNSUPPORTED,
-> >  	/* Reset default */
-> >  	.mode2_cfg	=3D 0x05,
-> >  };
-> > @@ -58,16 +80,20 @@ static const struct pca995x_chipdef pca9955b_chipde=
-f =3D {
-> >  	.num_leds	=3D 16,
-> >  	.pwm_base	=3D 0x08,
-> >  	.irefall	=3D 0x45,
-> > -	/* Reset default */
-> > -	.mode2_cfg	=3D 0x01,
-> > +	.eflag_base	=3D 0x46,
-> > +	/* Reset default + clear errors on probe */
-> > +	.mode2_cfg	=3D 0x01 | PCA995X_MODE2_CLRERR,
-> > +	.attr_groups	=3D pca995x_led_error_groups,
-> >  };
-> >=20
-> >  static const struct pca995x_chipdef pca9956b_chipdef =3D {
-> >  	.num_leds	=3D 24,
-> >  	.pwm_base	=3D 0x0a,
-> >  	.irefall	=3D 0x40,
-> > -	/* Reset default */
-> > -	.mode2_cfg	=3D 0x05,
-> > +	.eflag_base	=3D 0x41,
-> > +	/* Reset default + clear errors on probe */
-> > +	.mode2_cfg	=3D 0x05 | PCA995X_MODE2_CLRERR,
-> > +	.attr_groups	=3D pca995x_led_error_groups,
-> >  };
-> >=20
-> >  struct pca995x_led {
-> > @@ -119,6 +145,77 @@ static int pca995x_brightness_set(struct led_class=
-dev *led_cdev,
-> >  	}
-> >  }
-> >=20
-> > +static ssize_t status_show(struct device *dev, struct device_attribute=
- *attr, char *buf)
-> > +{
-> > +	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
-> > +	struct pca995x_led *led =3D ldev_to_led(led_cdev);
-> > +	struct pca995x_chip *chip =3D led->chip;
-> > +	const struct pca995x_chipdef *chipdef =3D chip->chipdef;
-> > +	const char *status =3D "unknown";
-> > +	unsigned int val;
-> > +	int shift, ret;
-> > +	u8 reg;
-> > +
-> > +	reg =3D chipdef->eflag_base + (led->led_no / PCA995X_OUTPUTS_PER_REG)=
-;
-> > +	shift =3D PCA995X_EFLAG_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG=
-);
-> > +
-> > +	ret =3D regmap_read(chip->regmap, reg, &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	switch ((val >> shift) & PCA995X_EFLAG_MASK) {
-> > +	case 0:
-> > +		status =3D "okay";
-> > +		break;
-> > +	case 1:
-> > +		status =3D "short-circuit";
-> > +		break;
-> > +	case 2:
-> > +		status =3D "open-circuit";
-> > +	}
-> > +
-> > +	return sysfs_emit(buf, "%s\n", status);
-> > +}
-> > +
-> > +static ssize_t has_errors_show(struct device *dev, struct device_attri=
-bute *attr, char *buf)
-> > +{
-> > +	struct pca995x_chip *chip =3D dev_get_drvdata(dev);
-> > +	unsigned int val;
-> > +	int ret;
-> > +
-> > +	ret =3D regmap_read(chip->regmap, PCA995X_MODE2, &val);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return sysfs_emit(buf, "%d\n", !!(val & PCA995X_MODE2_ERROR));
-> > +}
-> > +
-> > +static ssize_t has_errors_store(struct device *dev, struct device_attr=
-ibute *attr,
-> > +				const char *buf, size_t count)
-> > +{
-> > +	struct pca995x_chip *chip =3D dev_get_drvdata(dev);
-> > +	int ret;
-> > +
-> > +	if (!sysfs_streq(buf, "clear"))
-> > +		return -EINVAL;
-> > +
-> > +	ret =3D regmap_update_bits(chip->regmap, PCA995X_MODE2,
-> > +				 PCA995X_MODE2_CLRERR, PCA995X_MODE2_CLRERR);
-> > +
-> > +	return ret ?: count;
-> > +}
-> > +
-> > +static DEVICE_ATTR_RW(has_errors);
-> > +
-> > +static struct attribute *pca995x_error_attrs[] =3D {
-> > +	&dev_attr_has_errors.attr,
-> > +	NULL,
-> > +};
-> > +
-> > +static const struct attribute_group pca995x_error_group =3D {
-> > +	.attrs =3D pca995x_error_attrs,
-> > +};
-> > +
-> >  static const struct regmap_config pca995x_regmap =3D {
-> >  	.reg_bits =3D 8,
-> >  	.val_bits =3D 8,
-> > @@ -185,6 +282,7 @@ static int pca995x_probe(struct i2c_client *client)
-> >  		led->led_no =3D reg;
-> >  		led->ldev.brightness_set_blocking =3D pca995x_brightness_set;
-> >  		led->ldev.max_brightness =3D 255;
-> > +		led->ldev.groups =3D chipdef->attr_groups;
-> >  	}
-> >=20
-> >  	/* Disable LED all-call address and set normal mode */
-> > @@ -202,6 +300,12 @@ static int pca995x_probe(struct i2c_client *client=
-)
-> >  	if (ret)
-> >  		goto err_put_nodes;
-> >=20
-> > +	if (chipdef->eflag_base !=3D PCA995X_EFLAG_UNSUPPORTED) {
-> > +		ret =3D devm_device_add_group(dev, &pca995x_error_group);
-> > +		if (ret)
-> > +			goto err_put_nodes;
-> > +	}
-> > +
-> >  	for (i =3D 0; i < chipdef->num_leds; i++) {
-> >  		struct led_init_data init_data =3D {};
-> >=20
-> > --=20
-> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
-Germany
-> > Amtsgericht M=C3=BCnchen, HRB 105018
-> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
- Schneider
-> > https://www.tq-group.com/
-> >=20
-> >=20
+Changes in v5:
+- drop max_current from aat2870_bl_driver_data entirely
+- remove legacy gpio and mfd core headers
+- headers in aat2870 sorted alphabetically
+---
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Svyatoslav Ryhel (4):
+  dt-bindings: leds: Document Skyworks AAT2870
+  backlight: aat2870: Derive brightness steps from max current
+  mfd: aat2870: Convert to use OF bindings
+  mfd: aat2870: Add support for VIN and IN-LDO power supplies
+
+ .../bindings/leds/skyworks,aat2870.yaml       | 124 ++++++++++++++
+ drivers/mfd/aat2870-core.c                    | 133 ++++-----------
+ drivers/regulator/aat2870-regulator.c         | 160 ++++++++----------
+ drivers/video/backlight/aat2870_bl.c          |  78 ++++-----
+ include/linux/mfd/aat2870.h                   |  95 +----------
+ 5 files changed, 264 insertions(+), 326 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/skyworks,aat2870.yaml
+
+-- 
+2.53.0
+
