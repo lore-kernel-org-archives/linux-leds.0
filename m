@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793198549;
-	b=hZPALLSl9VD0q4MLLcZGLqLRam2hFJHK++6qfcQ0P1J2U8P4TO7v8Uj/X1IA/cRBYyB5
-	 T8ojBo/k+TDQRHqkOlQZwh+yzGR1md5/n6Xup7lT3QmwzamXUGFLK1TRZhWW/ifyZUJqb
-	 G5lIJgF0T21Hl49yV/Jq/Pr7cR80RNNH7WE3v0sWeK+Kg24BCi4RK5YNlgyjhKJMeTL+M
-	 B+rHEXMUR/mJwXSR/kSbTW02iQg+0nSEPcJRbOogu883OOZoxs+zr5DRn323o+h54VRMM
-	 R4+HFJX15kOJVnzr1cpBPdic8O5ZnqsnoMAPtwJPgWyRudGkgyxmbAHR4zxDlumn3mA==
+	t=1793199508;
+	b=Zwe5sDLyswGxWt+UBJBdNhtIFL/jA4rAzeB1TucatiSgah3pi+e91w3U5UwwCYIB7Ceh
+	 ZhNnvRteza67jpkPsAIlDDgFuf0NI2vdyBDuo66kSVd+u+1AnGAjpiE99u847AMxO8A57
+	 TEqHcBUguLriyHh8hxl9nugB1bKW0/RgPgIVYWlQa7Kb6ESGZRSfdAd5UgHLmcvV8PMw7
+	 yOu9wPOdbBJ6KSSqGJMfg8xYEvdqcHZzO8vu0SehX3Fa0QMrE0aFQ8Ew44D09EX5Yc1Ez
+	 mBEGG6G8FNBvH8iBlLwDzgvfv1ldG320FfvzcPl7nYkRWcD0uifth0xrxHIFKFvSkXw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793198549;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793199508;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer;
-	bh=TFJBnND1FRI31n2cTrtgv8IYWoLakQkBsVk708a+dhM=;
-	b=gQG61tvWIfsuO9Z5VDzotSjhaH/kyfiZtn86ylXXJDRmawDdAuPTPZHv2UvqoYCIKeKd
-	 227Lnm94n8oGnBFwk8JMaABHGDNugyq5wFW5AL/Te8WLaAnV7jjuonOYgXnrR09QkQWI4
-	 tSzXR6DHzuVCBfr/5xAhZSVDGDFnSh+7e1XLqoK/GXH8WC+9f51rm9EubG9mGDvSETy5M
-	 Lmdj6rM9tmQHslX34kB5jRGN6gc78IO1snlFYlcrvC7lOkdjjcf2BajXzw4KWnjSp7CKW
-	 sBi0gfeccNsd8UilnReZQ1tPlJyuoVEV9gySu9ExFgxyYCLXRoFRqoxguWfsQL/sR/g==
+	bh=7qow57ht7mISLIlMRjimt2Eo/fJc5CpcIz1Vbvs6jWE=;
+	b=poIZgASJIRU43NJCScwdp5YQ4zq+k4ntXLDztgHG+z7FRsihdWxr7LnZKhaCVZLUmIiD
+	 NAAWM7sCUfkMCtvvvrQyYkKnj29wBrR2QjzeWfn6lgdOFUY8povnJsXNMsRx3TBj5A+co
+	 2ZqJ12jXwb0jeVrkpf/qn5Ku79etkC0rE7JnJPU3/5kNWtt7BUrKX3oO547B4gkFPZyYc
+	 91rpi+kQHlyl3qYCoLCyZer4A7E6Tr83i2ni1KiSUjqNpMTAwvZbU1WqcZVhlef60z9DA
+	 VgWULaAY8JnBxyqhDnWDvFRY7zGwaiqv8kQBBbzLN/qvZ4seNhFEGkG6uU6he5J+GCw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JKGUnVQl;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FcRD2qbB;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334F7606A31A;
-	Wed, 28 Oct 2026 14:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EC2606A31F;
+	Wed, 28 Oct 2026 14:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JKGUnVQl
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E731F01825;
-	Wed, 28 Oct 2026 14:42:27 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FcRD2qbB
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395271F01829;
+	Wed, 28 Oct 2026 14:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793198549;
-	bh=TFJBnND1FRI31n2cTrtgv8IYWoLakQkBsVk708a+dhM=;
+	s=k20260515; t=1793199508;
+	bh=7qow57ht7mISLIlMRjimt2Eo/fJc5CpcIz1Vbvs6jWE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=JKGUnVQl7ZyavXtT7Kczvq0hvgEijuwKpQeX6Y3YltdL23/t7iXuxD7fyfBh7AUYV
-	 Gn1+X9ULNU1J1D5QfP4X3ElvIvvBZM6yR00qKGlaZhrF5JpQQqtBNfISmpfOHKuttn
-	 HwgS8wbrVxQ+vW+T5NMybHHL00/dJvJ9WnzVqZRFVt5p1xOMK4JicmwJnDtYtviKVS
-	 y06NJL4w0pQ7FcfnQbXI4lqmbX4hhH8Da+bzoWJfw+jG+MoRK9RC7f0d1WdGAGCOqq
-	 H8fW765Dp5jrCmB7DAXvZ6hDI9qPhxqmptHixHWCqOFDyXupTtaQELWirzvXdVggmM
-	 rDVdJ5ka4rnFQ==
+	b=FcRD2qbBJP5KMSKif0GlI97MN3m+C/ii9PhrYujlHkOijVsEKYoksHVNGCDcp5YFO
+	 l5t2MxzwnU3fMUbTQH1Lmw0J4jr9EYHiqhefPWV8nbCCSFHKgkdee+LovgveePhq0l
+	 RF2p9rsBH2ndTyqS0aACFIDhoxC+6NvvrTxG8nj7cs65JbCHi03XpcYpqy+DQ1TCcY
+	 X+8eNCpoMIL1gpZB56lZwFkfHkZZjgzY7zLQUJxYaet0odDJjrAj9erIK2SjNue+0V
+	 iqZPwjlpIUBVcZB0yvYLDge+vHTTqDLQChhXkwRuqGpqCGLKsfRKfJsVXx8Isv/CJh
+	 lHlJjJzMvV7Fw==
 From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- George Neacsu <geocausa@gmail.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Sashiko AI review <sashiko-bot@kernel.org>
-In-Reply-To: <20261018-qcom-flash-v4l2-release-v3-1-02e18d30b18a@gmail.com>
-References: <20261018-qcom-flash-v4l2-release-v3-1-02e18d30b18a@gmail.com>
-Subject: Re: (subset) [PATCH v3] leds: flash: leds-qcom-flash: Release all
- V4L2 flash devices
-Message-Id: <179319854743.3749657.15932777477345365666.b4-ty@b4>
-Date: Wed, 28 Oct 2026 14:42:27 +0000
+To: linux-leds@vger.kernel.org, Rosen Penev <rosenp@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20261018225036.12000-1-rosenp@gmail.com>
+References: <20261018225036.12000-1-rosenp@gmail.com>
+Subject: Re: (subset) [PATCH v3] leds: is31fl32xx: Fix NULL pointer
+ dereference when binding via I2C ID table
+Message-Id: <179319950697.3761109.15444646566740456953.b4-ty@b4>
+Date: Wed, 28 Oct 2026 14:58:26 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -64,27 +64,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.16-dev-ad80c
 
-On Sun, 18 Oct 2026 22:38:27 +0100, George Neacsu wrote:
-> The probe error path and qcom_flash_led_remove() use leds_count as an
-> array index before decrementing it. Since leds_count is the number of
-> registered LEDs, that first access is one entry past the last registered
-> V4L2 flash device. The loops also stop before index 0, so with a single
-> LED nothing is released at all.
-> 
-> The V4L2 flash sub-device then stays registered after the driver is
-> unbound, still pointing at the driver's freed devm memory. On a Surface
-> Pro 11 (X1E80100, PM8550 flash, IR LED linked to a sensor through
-> flash-leds), unloading the module and then setting a flash control on
-> the sub-device triggered UBSAN shift-out-of-bounds reports and a NULL
-> pointer dereference in regmap_field_update_bits_base(), called from
-> update_allowed_flash_current().
+On Sun, 18 Oct 2026 15:50:36 -0700, Rosen Penev wrote:
+> If the device binds via the I2C ID table (e.g. sysfs new_device, a
+> software node, or a firmware node without a matching compatible),
+> device_get_match_data() in is31fl32xx_probe() returns NULL, since only
+> the OF match table carries the chip definition. is31fl32xx_parse_dt()
+> then dereferences cdef->output_frequency_setting_reg and
+> is31fl32xx_parse_child_dt() dereferences cdef->channels, causing a
+> kernel oops.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] leds: flash: leds-qcom-flash: Release all V4L2 flash devices
-      commit: 4b2f49cc6998dc7fa243eed13cab8c48a4d95138
+[1/1] leds: is31fl32xx: Fix NULL pointer dereference when binding via I2C ID table
+      commit: add6cef9f655ba85155c1afc554c3856ab164660
 
 --
 Lee Jones [李琼斯]
