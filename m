@@ -1,68 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793187893;
-	b=5QQxnFpgVW8wjmRPtq7OehpJ8tzidzfSrWLA/l/Rafk9sD1Mf1no8gatso7B3YRmRYzl
-	 5SQpVhXXOfoy2O8CO7UeHrCXNeES/mh6zxTsqY8zPcfq3gldRhm08jvTJoV4tkgxnoJDO
-	 HraiPTIR0tMSPQ91UJhqRke1/o1Yw087btvLpOnujzBahim0XaVvbYNY6LforcQV8nBdY
-	 GBG99By/paqbSDfencIaj+Yl65ai/OdqlX/adLAgo5uy65AtoxD4Gc2ZTsJMYmDrzJE3c
-	 rTnMsUT9pTTzFxbxPKhJ78qFdW8DD7BkwxA8fqYkiBV33Gca3Yx2ZVQAU5bjXkxajfA==
+	t=1793190544;
+	b=o6zZNvzNTPQSEnH27pZZgow6suh2gqqUtZGfLjs6pP3HVLy6CNJEQwv6UZ+OB39UvrfT
+	 Cfw3K5VRjft+2VhMI7PB1rYYsnQj9awBCbKEGS+jixCU2wTax8DUo56XmJRoYmFIpv7C7
+	 GKMCvHwNK3oFtRxG9QNmW37N5BLg93T5ej02+jMkhINqgdnmDWahwRg9q9MNBN0Vsi5iA
+	 RiN3T9mCy5ye6bLvMKdUFEWQuFbahjo9Z6TeBtzuDvnIeyuHTcKk11tQ038vxkp073T9i
+	 vD6rbEjvSPkwpzUF+2zq/2ZL2//vkxQFymN00z5UETs3d64d3OsTCrRihsGEJZXyacQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793187893;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=AzxsreGIazEGHNZ+Tlba7bzQuuS0/SXodByMLbgqMaI=;
-	b=ynDV06ewaWsOqp7ResbKt6zx7/rr8SEcUcS5znagb4Loc0x9owzPLTP7bLlWsCY0IGwf
-	 p4dgyn7ceDzx6eVFP0nQBL0I5W4RmY0d0WWF/lQfdVBN7P7vq+QmHpffNlTEtFvAujf3f
-	 /fyqRLQnlM5bRSmUsjfM+wxF1azSgagNt0eIZmHhIEldrokmVLUMKB3PSr9jZGBeRLRYF
-	 G1N7UtuicIO103V5y/6e8u8IaAasnvCrJ1YqR0Sh1a4vzhWgrQO2C/oqX66zA+nK87F2a
-	 YGPMb19FJPmtQaszA2MfQH8FBDRkspyU0gBtbx5s7UVDZGhhU7qgRjXRqGzH+2JCn+Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793190544;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=5KMtrcUKz85wlxgc8qPMGoLF75cz2MIgF3C+ao5Phew=;
+	b=OqpGhJ60Ju/4cG7aXP9bisoHeUwbIkoZZ4PFvPZShmDwsDIKmYOInpQ8HuHDAcyV24uj
+	 lsxILNBr+KO1am4nlQllzqmtd1Z60uaFqujs2Ng1hH5adVaGMqkBRo81XkdA38pWaAP3N
+	 AB22uvYvQT358vVhKwgP7pX2xK8XdQHstB/92VmV1nNssd4bOMHvkHZ5E6/y3X9/Lwkcy
+	 DsyCmpUY81rKXxrR5X6JcTItrrtLr5o8ammAwZ5tCQSbSm/qq0l4r1ihmIcPKvD21JQwN
+	 Bj9OYQ3hIvsvnkl4fNTUlIaPcSK3ELf/pnJ7hv5ZPhCjzfyqM8n3/5XRtl188zfWAQg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JW4NmbXM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifxBqF4W;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F52606A31A;
-	Wed, 28 Oct 2026 11:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7203606A31A;
+	Wed, 28 Oct 2026 12:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JW4NmbXM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7167F1F01825;
-	Wed, 28 Oct 2026 11:44:51 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ifxBqF4W
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A4D1F01825;
+	Wed, 28 Oct 2026 12:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793187892;
-	bh=AzxsreGIazEGHNZ+Tlba7bzQuuS0/SXodByMLbgqMaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=JW4NmbXMV9NgnBU1HlqkVlN+rre+4AqJtfnOYsCrZ1r+jx0JuneNnyHXtAgbJhcCm
-	 oGoH7Sf0QLhsPHYJ4VS3tj9kTxIwtUgUtfQrlW3PBdn2exn76z9iW9PGXPGM7wzI9x
-	 At4s0hoSb59+TSET152LixjqCST6NybH81zHXNXle6qHlbYtt+3P9F/grboN9LPDNx
-	 xzflTm1Ec4mh4z9eI8VLirREUz5LLnYViE+P42WUDgoR0QejsFy2B/B+DLWbjrllQj
-	 91G7GnwWDaZoA9reF7WmdaYzo1PUQd8JuF3UHtJOxu/4CYIjVpedfBJtBtUN0pf7S9
-	 lIU5MaIshhDuA==
-Date: Wed, 28 Oct 2026 12:44:48 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Dmitry Ilvokhin <d@ilvokhin.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Ryan Chen <ryan_chen@aspeedtech.com>, Billy Tsai <billy_tsai@aspeedtech.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Subject: Re: [PATCH 07/10] drm/gem: Switch to __nonnull_args() macro
-Message-ID: <auHgHcU4fYauP_eD@zenone.zhora.eu>
-References: <cover.1793027261.git.d@ilvokhin.com>
- <5bfdc1491d297b5e98cf42322c790f06481c28c7.1793027261.git.d@ilvokhin.com>
+	s=k20260515; t=1793190543;
+	bh=5KMtrcUKz85wlxgc8qPMGoLF75cz2MIgF3C+ao5Phew=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=ifxBqF4WteBQvdyb6CHmm655L14E7vB6STmUOX8oqgh9pWgCOtpD7KrR9Bg5Jqznc
+	 mmVAHJwu1YKgm5t/+acYxJtPKL9eFoQKRRP0baQ8O9X5Jg+dCfpiBCsrnZYH3G9r2h
+	 40EIwKsxyBtzTVa5Hbq59a97opCGAuxzOC+XjxEtYGyjtbUuUiSAT3/5/njEy4QhAx
+	 QZVRb/jAvWpjHYNnVl4Dx0whvXlsa8mZcLOlcJMLNGIKhzBhrNNeGfKkjXYgMKx8QX
+	 CN5ueLxXmKEo9zrDfShhhCwsM/GxqbnlGT9wi51lrGmDDHpRkE1rz+wDbg0ekbz+b8
+	 FQsBrHXW68sew==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261015-acpi-leds-v1-1-81ac99b105e7@thegoodpenguin.co.uk>
+References: <20261015-acpi-leds-v1-1-81ac99b105e7@thegoodpenguin.co.uk>
+Subject: Re: (subset) [PATCH] leds: nic78bx: Use named initializers for
+ acpi_device_id
+Message-Id: <179319054230.3660691.12607178300340418619.b4-ty@b4>
+Date: Wed, 28 Oct 2026 12:29:02 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -72,25 +59,20 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5bfdc1491d297b5e98cf42322c790f06481c28c7.1793027261.git.d@ilvokhin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.16-dev-ad80c
 
-Hi Dmitry,
+On Thu, 15 Oct 2026 13:50:18 +0100, Pawel Zalewski wrote:
+> Use a designated initializer for the acpi_device_id fields which makes the
+> code more readable and consistent with how lists are initialized in the
+> rest of the kernel code base.
 
-On Wed, Oct 28, 2026 at 08:19:46AM +0000, Dmitry Ilvokhin wrote:
-> Commit 22302af28d3f ("cleanup: Annotate guard constructors with
-> nonnull") added the macro __nonnull_args() to wrap raw compiler
-> attribute.
-> 
-> Replace __attribute__((nonnull)) with __nonnull_args() to standardize
-> nonnull attribute usage across the tree and keep the attribute's quirks
-> in one place rather than open-coded at every call site.
-> 
-> Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+Applied, thanks!
 
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+[1/1] leds: nic78bx: Use named initializers for acpi_device_id
+      commit: cd2d303d92b9aef102f82a653f77c7fb62bf1c0b
 
-Thanks,
-Andi
+--
+Lee Jones [李琼斯]
+
