@@ -1,56 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.137.202.133
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793209904;
-	b=Sca7LWiCAtZVKHlIUfLwQFBLv0Q+CnRVMm82NkQU4598w/Bc1P6ryIIJ7AlGDqQOO44o
-	 CwtbNG3MdSqEyTZCeOzHe7QeS+yDatH2TpRyE6lK0eAi7UP8k+faff04gjkF0nO3DZK9k
-	 5Ue/ZSt9pJ6ZF/XsZujiCGotgmQnT+RgVIikJxrIHzQINPqhJ9gzkuZrleRzgTrwAXSiu
-	 gWDYuHCrEPVUGZEFPeMVxOB4WR/SX3Wc2TABl1g9aTWqntjPAg2tF6V5uPfSiil82XiTn
-	 p2DDhZuI6l69yHpngK6DXeICxGsbj1EZETJX+t1f9HI+pEz4DbO72TAQBB3yFwPEHAA==
+	t=1793220323;
+	b=HmMG3zWQU7LSm+vkF++XkCYzK5eIQIxf9FNzdnevevcRBe8MZaZyKUh3zyKp1HOpqcSx
+	 ShNxBYLCwvlWZubStiZUs/H+bcT14v+D35OTsKNYulcuIdq23kqJ+haKLNv2+ICoSv68E
+	 8x54Hf69Ze7A4Yx+qmT+h2MmR7ljvDAnPVNT5tYcSZVPYACo24KB6G59ZTClsOydDnl9f
+	 UdhDJxnX3pjxmejgGZJHEL6yHVolXmcN8Xw3mdlHbZvgo/FU4zbUeZu5zpspavYmoApfj
+	 9LZeoPvE4qCAG3uH1+CICDdjC5EF3ydpYAbfCkiAsXFLR0teuE/Pp9hd58CSb0ysuGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793209904;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=UZ5+rjBNi+BewuXkaanArcvAAZkaIBbqzLuY44p/cKs=;
-	b=y1avyh8HjuYXaga8l92htSa8cOlL/Y26z9yGLKBbPJzYjEJgvYN2n0Wsha861oMjzyd/
-	 fD+JGWfajCnJYPa3/bkhH8Zyq7mbOuvKUsouB3fpuvhMD5mvD87FHTYzjyNqsvTTg2SwF
-	 IU39Iepa98VFh+72I8C9PtqT7B5oHw9Sc8abFO/qTzGypnGrPS97BuQ4LGSNxvB85r78L
-	 ffzhI7ncHIzVpL8JWWUvM31HcJZliK2bkY+9uEkT6U284GlSkprh3ElEvETcXIpqPe+Ae
-	 sW2tQzfJ95FWTJEMU4tDFrNtLpCvIXIUeJ+BE3q9q+oE1ut3w4Ef76GUZL5oA2z1M+A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793220323;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=xhSU0Ll/YflHcbTsaPvMuTReTRNyw9O7ljUv0SFKW4A=;
+	b=aTUX0v/02eGl0431wE2Jq/0tTOQ11B6atodGQUtW5Z8jMIwtxdPyCdZ1sKSvMC90PJEm
+	 Fjuu7eIjzjy2MdU0Tu0XqdHKJiXoSeaxq5nqt1CMvJvuXlLvhgrRHRw9NiCHFrhVkQcAW
+	 QXkU9Bm3AalR5iRdwNOu0BKNjDRU6AKahPE/zp1naNHKF37usHYP52L60/+F2ygqlANOd
+	 CC2BECo01ZSlUzkhEs69Kh3CNmnGbp7GyKmrHDgb1tM2+jzyjRDXlmNF6230u1JibWgbq
+	 mzZv5qSgx5496UNcnDMZTrVV26LEW3IOTlk7USlfGvOIpIGwiET1/SVCkFZEQGagQ7w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7zI9d3F;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=infradead.org;
+	spf=pass smtp.mailfrom=infradead.org;
+	dkim=pass header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=uwiMqCzW;
+	arc=none smtp.remote-ip=198.137.202.133
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238DE606A321
-	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 17:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391E1606A31E;
+	Wed, 28 Oct 2026 20:45:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 391E1606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7zI9d3F
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7361F01825;
-	Wed, 28 Oct 2026 17:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793209903;
-	bh=UZ5+rjBNi+BewuXkaanArcvAAZkaIBbqzLuY44p/cKs=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=k7zI9d3FKwC9pNtcnLk/Q2n58gMtKjJg8owH6e9Kcs1OJ7i+/NhM87ULQZXQ5DRQ/
-	 Telr5OX6bLN27fMYt52bXMD/b5CTFAbBXNfMeqQ3afYy4LOsYdfn4Geof9nZ8+8mM3
-	 tJG0lH2lMIc3x0WbDhCNWVsQ/DstruQgtx23HmLxBHD9Apl1MzMiC5WuYwE3cGlyXt
-	 UIyGDjdHh5ogzAVujjdoWkBwfN/LErDHGSzMqGpGmNkiArLDU2+hrLnn0HOwDt9SNv
-	 A5rzkPZma/Gqt8ijvgie1RFaWbxaRZiDq4HCvf9NzNxmaKg9wBc5IuhUsz//poKHlO
-	 l3UUQq7T0hIjg==
-Message-ID: <sashiko-outbox-188257@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/2] leds: tca6507: Turn the LEDs off on unbind
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Danish Khateeb" <danishkhateeb03@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261028174348.64014-3-danishkhateeb03@gmail.com>
-References: <20261028174348.64014-1-danishkhateeb03@gmail.com>
- <20261028174348.64014-3-danishkhateeb03@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 17:51:42 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=uwiMqCzW
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=xhSU0Ll/YflHcbTsaPvMuTReTRNyw9O7ljUv0SFKW4A=; b=uwiMqCzWxlSLOyvJWx1EpAyUkI
+	8btbBfprVdCDyHYW3PydxYRJfRc+kFnuoObOoozn1rwW58Vj2BVWhqh0F+wlp8xlwih90BYwI51Em
+	K1iI2tMdxPVFIWoitj5UhzFd4b/5QNlPTbdXz9zJMTATbRVGeZUbYvxryNKsjaEpApTR2/Y1wym5S
+	RWkAgUP9MihkaliXEWdKo6u9MyrEOFdwTO3LSL1qUppz7BzJah7zzT1oZKKj6Mf9SU1NRxYMWkfbQ
+	WLJ0+6zjDTz5RuWWZ/Qmx/h26GtaT+lmVMT47+gjluaxiNFrhSxl9AUI43A4wXxL3uIkD/jLlvX82
+	Gvlz4IVw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.100.1 #2 (Red Hat Linux))
+	id 1xMAW5-00000007wax-2Fqn;
+	Wed, 28 Oct 2026 20:45:01 +0000
+Message-ID: <cce30180-c1c4-4b10-b681-8944057bc698@infradead.org>
+Date: Wed, 28 Oct 2026 13:44:59 -0700
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,21 +57,108 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] treewide: switch to __nonnull_args() macro
+To: Dmitry Ilvokhin <d@ilvokhin.com>, Alex Deucher
+ <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Ryan Chen <ryan_chen@aspeedtech.com>, Billy Tsai
+ <billy_tsai@aspeedtech.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Andy Whitcroft
+ <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-hardening@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+References: <cover.1793027261.git.d@ilvokhin.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <cover.1793027261.git.d@ilvokhin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Unregistering an LED that is on turns it off, and the driver does that
-> from its work, which is queued from led_assign(). On unbind the work is
-> then cancelled by devres, so if it has not run yet the LED stays on after
-> the driver is gone.
->=20
-> Flush the work instead of cancelling it. By the time the devres action
-> runs, the LEDs and the GPIO chip have been unregistered, and the work
-> does not queue itself, so nothing can queue it again.
->=20
-> Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
 
-Sashiko has reviewed this patch and found no issues.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028174348.6401=
-4-1-danishkhateeb03@gmail.com?part=3D2
+On 10/28/26 1:19 AM, Dmitry Ilvokhin wrote:
+> Commit 22302af28d3f ("cleanup: Annotate guard constructors with
+> nonnull") added the __nonnull_args() macro to wrap the raw compiler
+> attribute, keeping the attribute's quirks in one place rather than
+> open-coded at every call site.
+> 
+> This series replaces the remaining open-coded __attribute__((nonnull))
+> users with __nonnull_args() to standardize nonnull attribute usage
+> across the tree.
+> 
+> Each patch can be applied separately by the respective maintainers. The
+> only dependency is kernel-doc: the string and lib/list_sort patches need
+> patch 1 ("docs: xforms_lists: support __nonnull_args()") in the same
+> release, otherwise strends() and list_sort() drop out of the generated
+> documentation.
+> 
+> Latest Sparse release could not properly parse __nonnull_args() without
+> arguments. Fix was proposed [1] and merged, but until updated version of
+> Sparse will reach wide masses it might trip on __nonnull_args() without
+> arguments.
+> 
+> There are few more instances of __attribute__((nonnull)) usages left in
+> the tools subdirectory, they are perf related copied files and can
+> (should?) be updated separately after this patchset lands.
+> 
+> Build-tested allmodconfig with GCC 11.5.0 and clang 22.1.8.
+
+What ARCH(es)?
+
+Did you mean to use such an "old" version of GCC?
+
+thanks.
+
+> 
+> [1]: https://lore.kernel.org/all/20261019175633.415493-19-bvanassche@acm.org/
+> 
+> Dmitry Ilvokhin (10):
+>   docs: xforms_lists: support __nonnull_args()
+>   string: Switch to __nonnull_args() macro
+>   lib/list_sort: Switch to __nonnull_args() macro
+>   xarray: switch to __nonnull_args() macro
+>   drm/i915: switch to __nonnull_args() macro
+>   drm/amdgpu: switch to __nonnull_args() macro
+>   drm/gem: Switch to __nonnull_args() macro
+>   leds: pwm: Switch to __nonnull_args() macro
+>   soc: aspeed: lpc-snoop: Switch to __nonnull_args() macro
+>   checkpatch: suggest nonnull attribute conversion
+> 
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c    | 2 +-
+>  drivers/gpu/drm/i915/gem/i915_gem_object.h | 4 ++--
+>  drivers/gpu/drm/i915/i915_request.h        | 4 ++--
+>  drivers/leds/leds-pwm.c                    | 2 +-
+>  drivers/soc/aspeed/aspeed-lpc-snoop.c      | 4 ++--
+>  include/drm/drm_gem.h                      | 2 +-
+>  include/linux/list_sort.h                  | 4 ++--
+>  include/linux/string.h                     | 2 +-
+>  include/linux/xarray.h                     | 4 ++--
+>  lib/list_sort.c                            | 6 +++---
+>  scripts/checkpatch.pl                      | 3 +++
+>  tools/include/linux/compiler.h             | 4 ++++
+>  tools/lib/python/kdoc/xforms_lists.py      | 1 +
+>  13 files changed, 25 insertions(+), 17 deletions(-)
+> 
+> 
+> base-commit: 6b4b543fa18757297ac756a6fe6e64f506b7844a
+
+-- 
+~Randy
 
