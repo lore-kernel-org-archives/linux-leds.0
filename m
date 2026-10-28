@@ -1,97 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793195340;
-	b=WuUGuBSs2Ygzj3B1CHNcjrWXk9ViOZ8ofCcxmTEwkaZ5BGHO/0kUQgPub+LSdt+cshxe
-	 zfIq8jWg7sN9KnuznPO6kw8RvcscM2cBeGyzJH1ylVV1FHzTI9FcJl3o5SmzypMtOr9Ue
-	 hL5bVPs1ncQ3PPjWLF978yiH8K2d6HgteciUb9vzGw2us2ERolbqjjTuXVrvWal0J9p/n
-	 3vVCz1K/6l5TEo4c3D/aGd2WzNr12KvpRy7poNNvBHzm/zp8Xb+EYG8SIP9FgreuJSBRb
-	 D2Qt0kTBU4HFPtxnpCV7b1tTfyi9QvHidD3kpZaInJ90bGVxYhrS7VwpRPyE7+/0lmQ==
+	t=1793198245;
+	b=opvFs5MXMOFWdZ55AFcCracJHcLljVTa4X1TWK1YFJW07kIP5+rqfL/xXWpb/TwreKvO
+	 avxI4r+gkZDBqHwqEjU0nWcPNH8PwXXGFzk/x069lr6ue5VZO+NwvmhqYaKeIUYD0/14r
+	 CjJKZCQbzJnbKEVvij1DG8T3yT/7kNC/nqRtnsYx2wD3SgCvVTTZWywdQDUHrpStuos6s
+	 GBhGor7p8t8oIb3esUTlKDRQreFHaX+8Eb3V8HsCHUJeS7FGrWHzcOOPoIAOeUd0wuF4n
+	 0ZFUmrCogyqQWhwCOyqzKR0eUFo+XgGugzGYAL63iPTxrC2rE5Qvm/ZFTUwXJesrXzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793195340;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=1YuJ53WOk7jrtj0trQZSUgggEA4iaV0qdnW5q4z5Yxk=;
-	b=vOHHtrz5cP1z1n63xdK9I0kQWEf6t0peKks88wHKcw6cIcEJKui0UlE1Ubr+9ajZOfUl
-	 D4FA55EFw+GM/15gJhPou+EdOSzKPzXPRNoV6fgd/EcCyG/S3gYj+HvIdlv53+4FA2tDk
-	 T9SpW3VjQ7tl59efuZFKJsPmU4bseYaQoQm68bsEDS6ryWzJN6OeUgF7gCJKs64T+PiKN
-	 D3lKcqToXQNTeWrV+2a8pKSYLAjVfp8JblEBkXHzyZ0aMzoATpk7j4W/AR/UU6+bJ3h3j
-	 XfHQlM5Vfl64YV8teT7wZ1knIBQ7MJwhOqmGVa7Zh3273TsCNm1pw5PIc9iaV00XYmQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793198245;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To;
+	bh=2GSJb2Ef+xHdoxKrqms4kNytjyE5DiInki1+4FCz33c=;
+	b=AO69zJacnq21bjq7L0II8LW8X3155dgeGze8QHJQs/R5my88BYZ0eawjlzMoROQJwNeb
+	 wNevVWEBtUjt6IM/4EjnyqNo1/Q3LS/2elei3Oq2XA9Aol7d5K/KFSNAfFx62jBTk3vWy
+	 1zEXSHetVTbp9YskpZfRWHAMxT8HfKfoTGnlNC+IH58TZQExw3+h2hgyhloRzbh52hdGv
+	 R44VJBx9mre4Tihm0gZDodWCbYjnkm+8MIC8Xkbd6zFizwKhxG/zE5n7Bvo7woIRVqlxk
+	 wVSuzfGAMNzDro4d48BETzF25HMEf/7N3Z778EW7zSgLPVP6t3Dy9DORYZP0YmbsjQA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=apmeTwME;
-	arc=none smtp.remote-ip=209.85.161.44
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VieSFjqU;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198BB606A31E
-	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 13:48:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 198BB606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AA2606A323;
+	Wed, 28 Oct 2026 14:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=apmeTwME
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-7037daaa820so482534eaf.2
-        for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 06:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793195339; x=1793800139; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1YuJ53WOk7jrtj0trQZSUgggEA4iaV0qdnW5q4z5Yxk=;
-        b=apmeTwMEm7Er4RiiqptHiz26E8hD/INQ3q5n5r9r9rcJQ24FsKAzrfsc6yRE8hcFGV
-         g7pUEMwhgEqcgWHsgW4LhmiDEPnRRuEIcz04lWjkq/1zxTucRWdRiPvtcrfdIDEJT9Uo
-         UhdzOhTsphug2En4UvmxPYdE4i3WR72Dyt23Pb01/5fxRdxU7SrhSRjMHpzP8JONhr7u
-         WXNLqAB/YC7hxIPgiSDjDb4vZvIp5Wzpw+Cx/P/HLmb1/wbVFFT8tCQJCYxOEP21WlHH
-         6jghq5Q9o+r/ZqWSJILVxnG7GlU+T/WIS9MnM5ImdRY7Y7km3vr+hy5qjD3MzbFYe8iN
-         GwqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793195339; x=1793800139;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1YuJ53WOk7jrtj0trQZSUgggEA4iaV0qdnW5q4z5Yxk=;
-        b=05c9PKhO43p+xUP7RQHt8MsNg53O6zTuxYebMXp5huh+iUpL6gfg/fUwVWefNqBD/q
-         JCXIwLArUupbyMjqpqAUUg4eu5ChKymJ9JJRk1FDgjTDcaqMOeEDURle+Dnz6NVLVldZ
-         TqnG0mMlda/uCZSmuaQaEfz14cO7EI1ROnpoDCoFeZWrETQbqEwJuGEBhr7dOLYNv0lG
-         gJ3yjSw5ODL/Y+lLj/CI/u7hD9EZbLx8/OEnVOt3yxppTCsDr4S9rDSLLCm4CeZ2N03b
-         hvKb3P5FJJrZVHHeLE1ubBSGCnSTcHuX2721jjATjaHNWQQB1B7d/ZljXJwOZ5CNIkKm
-         tZqA==
-X-Forwarded-Encrypted: i=1; AKwUvBzrMFuh8x6U1fXOxPohgtDI8WfA7f04RpkWKcNzkfPGDokEuqsvbBwXhn1I8dYMn2vkVzJP7HbWIkJP@vger.kernel.org
-X-Gm-Message-State: AFq9FYIklNTB8BjehyioVv/pojxsFGF+1AT/+HJB0giBpkfyZBa2EESA
-	7E8ggroPYyz1csHO0D+JceHD6ukaO43UAsWdGBnw9HUCTUaXstbJS5bBZi+u14lo
-X-Gm-Gg: AYBFou1DHsjQAWbxZCl8JbxmWZQEPt/3IER5LStP9x0uXL6yEfgVKtuMurtDZ5dlppl
-	PujesWTDRdBIMKi4ubXCEhR0iJ+6fCBfaSa4qtvT9tWXlH0uthwb5Sql+3MGhnaJt9kg/ZiIOVy
-	5W7vJQpqFnLmkbwMVBnEFwPsj2Shui/fGZtu7kJqJ6GFjRMupXGEaYC6cPYsa3inVzmc9heuoAN
-	zLfAbosRN5deMmwWxEerRUhqYoZHWyXLxEA+G0BFsdRM11q1s/zvfsFDkHrqA91eKAS5WdGfdBp
-	vGB8ue8qd+tecPWLTCEJFVkSOR/ZlKhdRAEWYs/JjNy9Oi/B/ALLVktIC/nWQk/OKtfE4Y5/n3s
-	+WSQq/3vIaih80X61QmD3g9Z5LBAwJEI05d5v0Pw5vni9v2VhbLucm7ddmTBuq/KleSNKtyhtd/
-	Q+7C9Gx1YRY5Sd9wPK0yht17/1q3sip0tmEymblTLlk67ulGRBcYU19cv7QzwCA0S8DGYm9bI/K
-	GgOOspj793998sQPcuRrH6T27yqTlSC9Uz5NwgJjFKNgtGdY6HkBMxk/hgTPseQaik55m+HdqJt
-	+SvJlimghaYrDwe0YO0G66T0Kt+rsYzcQ7ajhs+p49rpLhJfmkAQPQ0aXSKyKICMeSZ+0qI=
-X-Received: by 2002:a05:6820:450f:b0:6fc:373a:176a with SMTP id 006d021491bc7-713efb16571mr1090755eaf.77.1793195338875;
-        Wed, 28 Oct 2026 06:48:58 -0700 (PDT)
-Received: from archlinux.lan ([136.34.156.120])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-7142d124f03sm1409758eaf.13.2026.10.28.06.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2026 06:48:58 -0700 (PDT)
-From: Danish Khateeb <danishkhateeb03@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Danish Khateeb <danishkhateeb03@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Andrew Davis <afd@ti.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] leds: tca6507: Fix use-after-free on unbind
-Date: Wed, 28 Oct 2026 08:48:57 -0500
-Message-ID: <20261028134857.36086-1-danishkhateeb03@gmail.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <179213356828.2581328.5085333261240588869@kernel.org>
-References: <20261015144033.56519-1-danishkhateeb03@gmail.com> <179213356828.2581328.5085333261240588869@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VieSFjqU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0141D1F01825;
+	Wed, 28 Oct 2026 14:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793198244;
+	bh=2GSJb2Ef+xHdoxKrqms4kNytjyE5DiInki1+4FCz33c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=VieSFjqUDh7ixhoaoxc9O6b9dVOdlCmPrQ8SFoHcVrmKELjAAgQXBacHt4+7H+XZs
+	 uNxMlFxYZ2wAzOf5DMF2ViKttdU1eQhHIO69EhaAqyXGcAedOmSiPVSxn24r0imSB2
+	 6UALCjg5e/4M7xKEYuMtLwdfQYJXAADoa4NLYHh8JMiISOYOvUUz32/pX3Yd8G44rd
+	 /i8Y/NXZJ0r+yP2++jbH/kGyUxoVp9HI+F4EvEmWlp557tndak54aVA0JkEiefGFc4
+	 9wEHCrVcNBoF5A86LL6wWOy/bG5HTn7FHW9SkEBDU8IRQuyE96plN6TB5orXmzCDGh
+	 4NuJhq44hHQNw==
+Date: Wed, 28 Oct 2026 14:37:21 +0000
+From: Lee Jones <lee@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: Jiale Yao <yaojiale02@163.com>, linux-leds@vger.kernel.org
+Subject: Re: [PATCH 1/2] leds: tps6131x: queue torch refresh work on
+ freezable workqueue
+Message-ID: <20261028143721.GA3605912@google.com>
+References: <20261016100435.2581303-1-yaojiale02@163.com>
+ <20261016100435.2581303-2-yaojiale02@163.com>
+ <sashiko-outbox-174141@kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -101,17 +59,74 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <sashiko-outbox-174141@kernel.org>
 
-On Wed, 28 Oct 2026, Lee Jones wrote:
-> Please review, explain or fix the Sashiko review(s).
+On Fri, 16 Oct 2026, sashiko-bot@kernel.org wrote:
 
-Sashiko is right that the "LED off" write queued on unbind gets
-cancelled, but that predates 1b5c2fa7081c: remove() used to call
-led_classdev_unregister() and then cancel_work_sync(), the same order
-this patch restores. Since 1b5c2fa7081c that write only ran on freed
-memory. If you'd like the LEDs turned off on unbind, I can send a
-separate patch that flushes the work instead of cancelling it.
+> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
+> - [Medium] leds: tps6131x: torch unintentionally turns back on upon system resume
 
-Thanks,
-Danish
+This needs an answer.
+
+> - [Low] leds: Commit message description is not capitalized
+> --
+> 
+> commit f183582cffa51c16f099031455716678dcb8eab8
+> Author: Jiale Yao <yaojiale02@163.com>
+> 
+> leds: tps6131x: queue torch refresh work on freezable workqueue
+> 
+> This commit changes the torch refresh watchdog work to use the
+> system_freezable_wq instead of the non-freezable system workqueue. This
+> prevents the work from running and attempting I2C register writes after
+> the I2C adapter has been suspended.
+> 
+> > leds: tps6131x: queue torch refresh work on freezable workqueue
+> 
+> [Severity: Low]
+> This isn't a bug, but the description after the subsystem prefix should
+> be capitalized. Should "queue" be changed to "Queue" to align with the
+> subsystem conventions?
+> 
+> > diff --git a/drivers/leds/flash/leds-tps6131x.c b/drivers/leds/flash/leds-tps6131x.c
+> > index 5c9a5af5af05c..841a6538e75e1 100644
+> > --- a/drivers/leds/flash/leds-tps6131x.c
+> > +++ b/drivers/leds/flash/leds-tps6131x.c
+> [ ... ]
+> > @@ -307,8 +308,9 @@ static void tps6131x_torch_refresh_handler(struct work_struct *work)
+> >  		return;
+> >  	}
+> >  
+> > -	schedule_delayed_work(&tps6131x->torch_refresh_work,
+> > -			      TPS6131X_TORCH_REFRESH_INTERVAL_JIFFIES);
+> > +	queue_delayed_work(system_freezable_wq,
+> > +			   &tps6131x->torch_refresh_work,
+> > +			   TPS6131X_TORCH_REFRESH_INTERVAL_JIFFIES);
+> >  }
+> 
+> [Severity: Medium]
+> Does this unintentionally cause the torch to turn back on upon system resume?
+> 
+> Because the driver does not set the LED_CORE_SUSPENDRESUME flag, the LED is
+> not cleanly turned off and its workqueue canceled during suspend. Instead,
+> during suspend, the hardware watchdog will automatically shut off the LED
+> after 13 seconds.
+> 
+> When using the previous non-freezable system workqueue, the handler would
+> execute during suspend, fail to perform I2C transfers because the adapter
+> is suspended, and return without rescheduling itself. This cleanly broke the
+> refresh loop.
+> 
+> Now that the workqueue is freezable, won't it simply pause during suspend
+> and thaw upon resume? When it thaws, tps6131x_torch_refresh_handler() will
+> execute and force the torch back on via I2C, which seems like an unintended
+> behavioral regression.
+> 
+> -- 
+> Sashiko AI review · https://sashiko.dev/#/patchset/20261016100435.2581303-1-yaojiale02@163.com?part=1
+
+-- 
+Lee Jones
