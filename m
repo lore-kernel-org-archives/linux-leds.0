@@ -1,54 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.172
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793220323;
-	b=HmMG3zWQU7LSm+vkF++XkCYzK5eIQIxf9FNzdnevevcRBe8MZaZyKUh3zyKp1HOpqcSx
-	 ShNxBYLCwvlWZubStiZUs/H+bcT14v+D35OTsKNYulcuIdq23kqJ+haKLNv2+ICoSv68E
-	 8x54Hf69Ze7A4Yx+qmT+h2MmR7ljvDAnPVNT5tYcSZVPYACo24KB6G59ZTClsOydDnl9f
-	 UdhDJxnX3pjxmejgGZJHEL6yHVolXmcN8Xw3mdlHbZvgo/FU4zbUeZu5zpspavYmoApfj
-	 9LZeoPvE4qCAG3uH1+CICDdjC5EF3ydpYAbfCkiAsXFLR0teuE/Pp9hd58CSb0ysuGQ==
+	t=1793223129;
+	b=SEpYGsvH1giSlCLN2vdNIocP9ILL+ft/8u2AT/mHVvj9IxrVfwjhDGSk0nKnecjNYzv9
+	 YlyDRFAj1JDPOwjK76yDJZ8DwN9DoDtBUAAO7AdEqg0TFNKMXXxWvU/9hx0Yd+T5W0RSb
+	 qOtWe/++KJXjBmw4G4zFUrm3lDLCLNsmHEt8u9ndh2CyNq14suo3BZE25TaM/sG7XloGr
+	 5VjE240xJ1ynqzZP68KQH20V/wBgubp2CDi+kHU/kk4s7mS1/fgm8kLhafTsQp3+dQjdS
+	 7dJ9VcpI2qKglS5U9Ng1DBYBgG6uaZ+Rjd4RQ5n56tRfoHiAPD3cagNeDnLvvkpp+zw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793220323;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Date:MIME-Version:
-	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=xhSU0Ll/YflHcbTsaPvMuTReTRNyw9O7ljUv0SFKW4A=;
-	b=aTUX0v/02eGl0431wE2Jq/0tTOQ11B6atodGQUtW5Z8jMIwtxdPyCdZ1sKSvMC90PJEm
-	 Fjuu7eIjzjy2MdU0Tu0XqdHKJiXoSeaxq5nqt1CMvJvuXlLvhgrRHRw9NiCHFrhVkQcAW
-	 QXkU9Bm3AalR5iRdwNOu0BKNjDRU6AKahPE/zp1naNHKF37usHYP52L60/+F2ygqlANOd
-	 CC2BECo01ZSlUzkhEs69Kh3CNmnGbp7GyKmrHDgb1tM2+jzyjRDXlmNF6230u1JibWgbq
-	 mzZv5qSgx5496UNcnDMZTrVV26LEW3IOTlk7USlfGvOIpIGwiET1/SVCkFZEQGagQ7w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793223129;
+	h=DMARC-Filter:Received:DKIM-Signature:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Rspamd-Queue-Id;
+	bh=29LyQxk7QfI967PaMQaBEjAkv6FF+It48n/6M4uIjfA=;
+	b=TWmnR//vDkZquBuYMH4bj7nehfLzCN81fbsaarVoVHGKBrUYQyK2JSTst2bFluoYGmZK
+	 sgc96BGk62YnwLPec83YV3qQkSzFPEbkPP5XfXom4YYP8qsQ9oBqMKvq+MMoiR7VHm3YM
+	 oGJxhkklwaDnpX7B2YWTXvudSjcknO2ArABJC9cptOsXhmUCyOgVH285iiYLzUtluOq1o
+	 /7W27bSScsaq8ltD8ZR/OaT2pwWTNsFy37mmO0JOGLu4IqeoyG1Q0LoUJQDLrEp89v0HD
+	 V32RHkEpzk/V0x0d2Iw3e+ju7+Igg2+/ss/UBUJuVYReJg240DiTayU9D6/2wKRrdjQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=infradead.org;
-	spf=pass smtp.mailfrom=infradead.org;
-	dkim=pass header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=uwiMqCzW;
-	arc=none smtp.remote-ip=198.137.202.133
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dmarc=pass header.from=amieiro.net;
+	spf=pass smtp.mailfrom=amieiro.net;
+	dkim=pass header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=SadAVY8c;
+	arc=none smtp.remote-ip=80.241.56.172
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391E1606A31E;
-	Wed, 28 Oct 2026 20:45:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 391E1606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196B4606A31D;
+	Wed, 28 Oct 2026 21:32:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 196B4606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=infradead.org header.i=@infradead.org header.a=rsa-sha256 header.s=bombadil.20210309 header.b=uwiMqCzW
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=xhSU0Ll/YflHcbTsaPvMuTReTRNyw9O7ljUv0SFKW4A=; b=uwiMqCzWxlSLOyvJWx1EpAyUkI
-	8btbBfprVdCDyHYW3PydxYRJfRc+kFnuoObOoozn1rwW58Vj2BVWhqh0F+wlp8xlwih90BYwI51Em
-	K1iI2tMdxPVFIWoitj5UhzFd4b/5QNlPTbdXz9zJMTATbRVGeZUbYvxryNKsjaEpApTR2/Y1wym5S
-	RWkAgUP9MihkaliXEWdKo6u9MyrEOFdwTO3LSL1qUppz7BzJah7zzT1oZKKj6Mf9SU1NRxYMWkfbQ
-	WLJ0+6zjDTz5RuWWZ/Qmx/h26GtaT+lmVMT47+gjluaxiNFrhSxl9AUI43A4wXxL3uIkD/jLlvX82
-	Gvlz4IVw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.100.1 #2 (Red Hat Linux))
-	id 1xMAW5-00000007wax-2Fqn;
-	Wed, 28 Oct 2026 20:45:01 +0000
-Message-ID: <cce30180-c1c4-4b10-b681-8944057bc698@infradead.org>
-Date: Wed, 28 Oct 2026 13:44:59 -0700
+	dkim=pass (2048-bit key, unprotected) header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=SadAVY8c
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4jFLCy0mctzMlkr;
+	Wed, 28 Oct 2026 22:31:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
+	t=1793223118;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=29LyQxk7QfI967PaMQaBEjAkv6FF+It48n/6M4uIjfA=;
+	b=SadAVY8c/YQYYi991/Ti6forBNFuFNtq+jUQzzFc7w0BagQISDddMd+fJzgRAav8TkmjzH
+	3r/EvZvLbM8IGO3mdBf6lXllflq19Qr9PGmThowVgzEXcPBi1CH0NfcTUlO8h3RRziKgM6
+	Hh2JV8LHjZpyoc9HLxwyjXXBJ2H+e8pqeyk83vrtKM72XTvf05MGWrOso/gDR3bol4PXQX
+	YR3kqFE5l8UX2X3mPRE39k8Yo5YmZrGwEQa6N6X++PgpM0qNbSTuL/SLsJtDFw2w0MFoqP
+	9eR5RFBtkYv23hmkl2ocmQaYUO80Q+t1E8mq2NjVtaxEbcNTP0wN5eTnq6BOfg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=flavio@amieiro.net
+From: Flavio Amieiro <flavio@amieiro.net>
+Subject: [PATCH v4 0/2] leds: Add support for the is31fl3206 LED driver
+Date: Wed, 28 Oct 2026 18:31:00 -0300
+Message-Id: <20261028-add-is31fl3206-support-v4-0-e331cee9fcb3@amieiro.net>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -58,107 +67,89 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] treewide: switch to __nonnull_args() macro
-To: Dmitry Ilvokhin <d@ilvokhin.com>, Alex Deucher
- <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Ryan Chen <ryan_chen@aspeedtech.com>, Billy Tsai
- <billy_tsai@aspeedtech.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Matthew Wilcox <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Whitcroft
- <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-hardening@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-References: <cover.1793027261.git.d@ilvokhin.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <cover.1793027261.git.d@ilvokhin.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43NTQ6CMBCG4auYrq1pp1DQlfcwLkp/ZIxS0gLRE
+ O5uwbjRmLD8kpnnHUm0AW0kh81Igh0wom/SyLYbomvVXCxFkzYBBpIzDlQZQzEK7m4CmKSxb1s
+ fOmryvHClFGpfKJKe22AdPhb4dH7v2FdXq7tZmy9qjJ0Pz6U88PnuExH/IgOnjLJSMym1hoybo
+ 7qjxeB3je3InBlgHQQJ0ooZqFxelML9QmIdJBIkpSokKKE5fEHTNL0Asl6QoGIBAAA=
+X-Change-ID: 20261012-add-is31fl3206-support-d557f863a97a
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Griffin Kroah-Hartman <griffin@kroah.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Flavio Amieiro <flavio@amieiro.net>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2388; i=flavio@amieiro.net;
+ h=from:subject:message-id; bh=OO1YFmI+MRuQUZp6oC4XaIg5Wu43v85bGykH0oXWE3E=;
+ b=owGbwMvMwCX2bmrBFGnZ5lDG02pJDFmPMo+t6VJxVVt6945U5PawyYdW72jbUfX53pL/syOvv
+ nbTUpjH1lHKwiDGxSArpsjCUsZS5t1+sHn3tNWSMHNYmUCGMHBxCsBECkwZGXaIT6qbaPI2J/zt
+ 5dc+f1cme+/tOJM7j3NFY0rfZ+Hbjq2MDDctbllP/v/uYmZrhXZ51pc/M1x+6UjdSvmWIuHw9Yl
+ eIwsA
+X-Developer-Key: i=flavio@amieiro.net; a=openpgp;
+ fpr=047604764B87C183BB96AB19EE9570941B1D8355
+X-Rspamd-Queue-Id: 4jFLCy0mctzMlkr
 
+This patch series adds support for the is31fl3206 LED driver to the
+already existing is31fl32xx driver.
 
+The main difference between this specific variant and the others in
+the series is that the LED Control Register controls not only the
+enable status of the channel, but also the maximum output current for
+it.
 
-On 10/28/26 1:19 AM, Dmitry Ilvokhin wrote:
-> Commit 22302af28d3f ("cleanup: Annotate guard constructors with
-> nonnull") added the __nonnull_args() macro to wrap the raw compiler
-> attribute, keeping the attribute's quirks in one place rather than
-> open-coded at every call site.
-> 
-> This series replaces the remaining open-coded __attribute__((nonnull))
-> users with __nonnull_args() to standardize nonnull attribute usage
-> across the tree.
-> 
-> Each patch can be applied separately by the respective maintainers. The
-> only dependency is kernel-doc: the string and lib/list_sort patches need
-> patch 1 ("docs: xforms_lists: support __nonnull_args()") in the same
-> release, otherwise strends() and list_sort() drop out of the generated
-> documentation.
-> 
-> Latest Sparse release could not properly parse __nonnull_args() without
-> arguments. Fix was proposed [1] and merged, but until updated version of
-> Sparse will reach wide masses it might trip on __nonnull_args() without
-> arguments.
-> 
-> There are few more instances of __attribute__((nonnull)) usages left in
-> the tools subdirectory, they are perf related copied files and can
-> (should?) be updated separately after this patchset lands.
-> 
-> Build-tested allmodconfig with GCC 11.5.0 and clang 22.1.8.
+This patch allows the chipdef to define at which offset the LED enable
+bits are inside the LED Control Register, so when calculating the
+value to write to the register we can offset it to the correct
+position in the register for ICs like the IS31FL3206.
 
-What ARCH(es)?
+The patches keep the behavior of the drivers for the other ICs in the
+family: initializing the LEDs by enabling all of them and setting
+output current to maximum and then using only the PWM registers to
+control the brightness of the LEDs.
 
-Did you mean to use such an "old" version of GCC?
+Signed-off-by: Flavio Amieiro <flavio@amieiro.net>
+---
+Changes in v4:
+- Changes approach from pointers to functions (used in v3) to
+  describing the LED control register layout.
+- Link to v3: https://patch.msgid.link/20261013-add-is31fl3206-support-v3-0-66a762a3c12f@amieiro.net
 
-thanks.
+Changes in v3:
+- Reorganizes the commits so the dt-bindings are documented before using
+  them
+- Link to v2: https://patch.msgid.link/20261013-add-is31fl3206-support-v2-0-ca0d2bf5783f@amieiro.net
 
-> 
-> [1]: https://lore.kernel.org/all/20261019175633.415493-19-bvanassche@acm.org/
-> 
-> Dmitry Ilvokhin (10):
->   docs: xforms_lists: support __nonnull_args()
->   string: Switch to __nonnull_args() macro
->   lib/list_sort: Switch to __nonnull_args() macro
->   xarray: switch to __nonnull_args() macro
->   drm/i915: switch to __nonnull_args() macro
->   drm/amdgpu: switch to __nonnull_args() macro
->   drm/gem: Switch to __nonnull_args() macro
->   leds: pwm: Switch to __nonnull_args() macro
->   soc: aspeed: lpc-snoop: Switch to __nonnull_args() macro
->   checkpatch: suggest nonnull attribute conversion
-> 
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c    | 2 +-
->  drivers/gpu/drm/i915/gem/i915_gem_object.h | 4 ++--
->  drivers/gpu/drm/i915/i915_request.h        | 4 ++--
->  drivers/leds/leds-pwm.c                    | 2 +-
->  drivers/soc/aspeed/aspeed-lpc-snoop.c      | 4 ++--
->  include/drm/drm_gem.h                      | 2 +-
->  include/linux/list_sort.h                  | 4 ++--
->  include/linux/string.h                     | 2 +-
->  include/linux/xarray.h                     | 4 ++--
->  lib/list_sort.c                            | 6 +++---
->  scripts/checkpatch.pl                      | 3 +++
->  tools/include/linux/compiler.h             | 4 ++++
->  tools/lib/python/kdoc/xforms_lists.py      | 1 +
->  13 files changed, 25 insertions(+), 17 deletions(-)
-> 
-> 
-> base-commit: 6b4b543fa18757297ac756a6fe6e64f506b7844a
+Changes in v2:
+- Avoid double initialization when enable_all_channels is non-NULL
+- Add missing entry in the i2c_device_id table
+- Link to v1: https://patch.msgid.link/20261013-add-is31fl3206-support-v1-0-08c066cc241d@amieiro.net
 
--- 
-~Randy
+To: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@kernel.org>
+To: Griffin Kroah-Hartman <griffin@kroah.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Flavio Amieiro (2):
+      dt-bindings: leds: Add issi,is31fl3206 to leds-is31fl32xx
+      leds: is31f132xx: Add support for is31fl3206
+
+ .../devicetree/bindings/leds/leds-is31fl32xx.txt   |  1 +
+ drivers/leds/leds-is31fl32xx.c                     | 25 ++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+---
+base-commit: 59cf91cf87abb67a49b1bb7b9d3b06486abde8cf
+change-id: 20261012-add-is31fl3206-support-d557f863a97a
+
+Best regards,
+--  
+Flavio Amieiro <flavio@amieiro.net>
 
