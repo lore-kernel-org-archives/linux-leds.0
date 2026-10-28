@@ -1,95 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793175643;
-	b=nwzjqMXXUBm0qfTey84PcjnHI1eaxJirrY7K8NjSbYDPcOumcqlVs/xC+0hLDAExkbZQ
-	 DxdjXPk627S+A9u1bGblssgV578ScC3a2RWMZPxcpsde/ICLQhBxAl/BDngQnx+El9z0y
-	 GQLAGHSEl+eU3p5cBOXB+yqMyaUoAPUeuwGePvGx0cQn2u/EGZyYMt2Jd/dFvYXPhvxD1
-	 qIWZotmv8H+H8XO5ATsUlieDenOu2EULYDV+/GcCITk0sYB1HtC+vIE9dAJVOaTEeC/GS
-	 mwb5S3o9bWK7ut4tOIwaKxXwEUFLSQKGF6ehlFowlXh6qeKSF1a+ghWqEJwUCyydmJQ==
+	t=1793176068;
+	b=nXcZhDdbllpHRRgG7231kKQxO8WBzkDt+3ReBreWd/u3kWeraZJkLhDdXVWKsUAZOk7F
+	 FJEkzv3faqvXU412+bN2qVKRB1Z2oTS9kHjcG/0BxqyQFGxMWupUOTbpmLueKKQYQ9LDy
+	 AITpAGrhXZLAIF8atkA88EclsqoQWRv06WkGKYVkHhh6RTf39ywoDDwF+4gdRtvJs52s+
+	 ++rCavvYR3CtPQBKv8dxA8BWiFbDR4Lh0mGMJ5XkQ6HrBQZbV7GZ6ueL95jmQfd/fU9Ea
+	 UQy/qnSDycR8cW0l/PpPOpR7cO1s3bJIbRaDjRa3gOIgByqbUK8OWdjGv1G8KJ8ZFOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793175643;
-	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=gVqyFTfbEx0Cy541rHtX1s3lHEBCWasBv5wrEWGFtiI=;
-	b=W4Ah4puMYdRZ2njnkDCGJoXZMNBM173gpGZDf3hGq5ehJ5GWoEsAbC2FoHfp9QUY4dul
-	 f8Dd0lNH6vW9gLwa1nZ0CO3LHzytdBrG5k+w2rNtEEGvmNFZ3ilZPEVKTBj4+aN0hOReI
-	 pX4aduqMc+/987XLtxNkgXrPe6SDOO0DBoKYxCbE3Qm7xDTfjv5YIOZoPoRhlUn62ecFi
-	 BD0d4q3x1VKYn0mwF7ENXZ3eSPC4aQwKq9KjLLpthWCrPcb5AVfNRJVwHm5BLRdq0Ky5i
-	 uIOFwnThtoEjDY3TPWCa+gnbGAAu83+J/xJHl0iCJUQg1WnuFnkZQsYsTXzs8t64KvA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793176068;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=6NZO65XRDkg1d/leK9twU/iDBpEn4gJLNpZY0SsrqyY=;
+	b=o7z3WtCceTrq8xWEHrrGOXHJj3buA/3QtmYjfoo7muaO4FZKcCgCalRriFVuHYwr2Vjq
+	 B8TcNCPAByLBhfmez/bxG493ZZ5F4pOkCp6ecyk9aAqr7BdhgvzZ36BpCRg6HP2tRqyjP
+	 +FIjNVdszFuqHVkJoSnX/TZrmUsiqEqF7NGQIXRgyTftdMldJx42fZSquBlgEOKLDQQto
+	 7W4fcDWpejtC5XhBv8s1f1Jy6eme+fTGX+HPuvZQsT5t6Lb9gBpz00RC+yzwY08bX8/m9
+	 8B8xf5eEfTteF5rnonfD8s4gK2gfZK97FXFuUaRa2uqUmwSXP2T0v7Qpi/XvCXehK6w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=ilvokhin.com;
-	spf=pass smtp.mailfrom=ilvokhin.com;
-	dkim=pass header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=zSnSDJrh;
-	arc=none smtp.remote-ip=178.62.254.231
-Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mbLyqZkG;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2E360A260A;
-	Wed, 28 Oct 2026 08:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A2E360A260A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A651606A31D
+	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 08:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=zSnSDJrh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
-	s=mail; t=1793175638;
-	bh=gVqyFTfbEx0Cy541rHtX1s3lHEBCWasBv5wrEWGFtiI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=zSnSDJrh8lBPc+WJwkieuUvYZceHyW7Vo/Rgps/0sKKYfp+K8gQiq+VtATPCk1zcM
-	 2R2y4VPojBg1miUzjCPiX1c/WXoMhA0i7UdNieYWkQzNjxxQaVUfA0XDy7P6CuqIG8
-	 6OdZZd54748+SoGV6+XeC+xLbbD4RuBe2dmrjidY=
-Received: from localhost.localdomain (shell.ilvokhin.com [138.68.190.75])
-	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id 232FBFBD1C;
-	Wed, 28 Oct 2026 08:20:38 +0000 (UTC)
-From: Dmitry Ilvokhin <d@ilvokhin.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Whitcroft <apw@canonical.com>,
-	Joe Perches <joe@perches.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-hardening@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Dmitry Ilvokhin <d@ilvokhin.com>
-Subject: [PATCH 10/10] checkpatch: suggest nonnull attribute conversion
-Date: Wed, 28 Oct 2026 08:19:49 +0000
-Message-ID: <bc2cd702455e58feb777cdb230e3ba4f7e1db60f.1793027261.git.d@ilvokhin.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <cover.1793027261.git.d@ilvokhin.com>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mbLyqZkG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B841F031E1;
+	Wed, 28 Oct 2026 08:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793176067;
+	bh=6NZO65XRDkg1d/leK9twU/iDBpEn4gJLNpZY0SsrqyY=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=mbLyqZkGorfxBMGH20evT1nT04z0DH7IaxfmhZuoGlRfJvpF4ACyLiPA4GB7tpQPU
+	 OGEJYn9niq79NDcFAKEI96iFbF2mdxV7WmOCrc6AlzZoedw8R6j4DDS9jeXppQP36E
+	 Jlu3LOaO2rcxMf/8f3dD7PchwI9QakfcDMQjcN9XQmZwQsEoNpnbJjKUaYS4O8aeu/
+	 5toIZNhH/fUpdf/j2JvGuPWewb+MObM4VLRRElqngEyA3tzrg/Uha6JXjNy6ilSQHy
+	 JiGnQuCMut048DpB++x9fI6SoHlmbalEcgPRVKIRgkIrMxfZJa8cg3sV3IQK+nJloJ
+	 7S9oub7PnnPVg==
+Message-ID: <sashiko-outbox-187618@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 01/10] docs: xforms_lists: support __nonnull_args()
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Dmitry Ilvokhin" <d@ilvokhin.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <fd33c32bb1f1cf80721887b6e9bfa49749e03d20.1793027261.git.d@ilvokhin.com>
 References: <cover.1793027261.git.d@ilvokhin.com>
+ <fd33c32bb1f1cf80721887b6e9bfa49749e03d20.1793027261.git.d@ilvokhin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Oct 2026 08:27:47 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -98,50 +59,18 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The kernel provides the __nonnull_args() macro as the preferred form for
-marking pointer arguments as non-NULL. Add a check suggesting the macro
-over the raw __attribute__((nonnull)) spelling, consistent with the
-existing attribute conversion suggestions.
+> Avoid kernel-doc warnings by supporting __nonnull_args()
+> as a function transform.
+>=20
+> This is a preparatory change for the treewide migration from
+> __attribute__((nonnull)) to __nonnull_args() macro.
+>=20
+> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
 
-Examples:
+Sashiko has reviewed this patch and found no issues.
 
-  WARNING: Prefer __nonnull_args(1, 2) over __attribute__((nonnull(1, 2)))
-  #11: FILE: drivers/soc/aspeed/aspeed-lpc-snoop.c:230:
-  +__attribute__((nonnull(1, 2)))
-
-  WARNING: Prefer __nonnull_args() over __attribute__((nonnull))
-  #11: FILE: drivers/soc/aspeed/aspeed-lpc-snoop.c:283:
-  +__attribute__((nonnull))
-
-Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
----
- scripts/checkpatch.pl | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index c9840f5219c2..e696fcd02337 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6856,6 +6856,7 @@ sub process {
- 				"no_caller_saved_registers"	=> "__no_caller_saved_registers",
- 				"noclone"			=> "__noclone",
- 				"noinline"			=> "noinline",
-+				"nonnull"			=> "__nonnull_args",
- 				"nonstring"			=> "__nonstring",
- 				"noreturn"			=> "__noreturn",
- 				"packed"			=> "__packed",
-@@ -6876,6 +6877,8 @@ sub process {
- 					if ($curr_attr eq "format" && $params) {
- 						$params =~ /^\s*\(\s*(\w+)\s*,\s*(.*)/;
- 						$new = "__$1\($2";
-+					} elsif ($curr_attr eq "nonnull" && $params eq "") {
-+						$new = "$new()";
- 					} else {
- 						$new = "$new$params";
- 					}
--- 
-2.53.0-Meta
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1793027261.gi=
+t.d@ilvokhin.com?part=3D1
 
