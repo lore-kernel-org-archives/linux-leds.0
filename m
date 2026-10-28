@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793209625;
-	b=Z1JhBJbqURsmjYEWrFHfMFqIpYTd8LEdR29h8O15Pyf9CPNku7h/bP13mKf2bdXtYpwG
-	 lMtf9Kopu9qrmQXhNz1pxNPV1z6QMge0cEAB0durBMwfzLjNwU0TMAcgR7CgqyccruHzw
-	 d6pLK1reT9Q45xGzDaeett9zzOtNW1NRnqg1w2x9kCmPSdfpYoDB/ghVCYJ+zt9G6WG2F
-	 31W0qqHEr0dMIt3TRaB/rrYBWkTXW09k/YsCxU/V3QshH9JrYaqlT9rfbrsXC3rLjR3Ow
-	 rVMsw1mbhxb7gXJMb6vnFI9xjX7Zi7EfOvqP7Mal2udlQJ9QB0FYDzGYiLExVCuf9bQ==
+	t=1793209904;
+	b=Sca7LWiCAtZVKHlIUfLwQFBLv0Q+CnRVMm82NkQU4598w/Bc1P6ryIIJ7AlGDqQOO44o
+	 CwtbNG3MdSqEyTZCeOzHe7QeS+yDatH2TpRyE6lK0eAi7UP8k+faff04gjkF0nO3DZK9k
+	 5Ue/ZSt9pJ6ZF/XsZujiCGotgmQnT+RgVIikJxrIHzQINPqhJ9gzkuZrleRzgTrwAXSiu
+	 gWDYuHCrEPVUGZEFPeMVxOB4WR/SX3Wc2TABl1g9aTWqntjPAg2tF6V5uPfSiil82XiTn
+	 p2DDhZuI6l69yHpngK6DXeICxGsbj1EZETJX+t1f9HI+pEz4DbO72TAQBB3yFwPEHAA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793209625;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793209904;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=kyLp2L/cNylrL67O7mfltdwKbZUOWRn7hX6cAyn8oNo=;
-	b=tLaBOO9Dk+WGBwPTvgxk7lFko9Ml0lPFJLhRfW0Zg791Ccj+pWrzhM+04nfDHnhHnpy+
-	 WzcimG9nZi2a448BpYXbeRDMe0WJhDUecnJ0lQ8FeeAjFgE36FZBzbxYXWXFahNbk1sG0
-	 PnITe4EJa5qo6g9Ae0iiI1tkaZmnu49sC4oPhlVWdqOow2Hq7QCyP1mQMWA0HHfls55lP
-	 DxKXeMyOGZ7+u5j+vCgzAErZj7yjh9SBLjKX11BjNgBgtuHH+Be47RpjVc0g4t9rAfSg3
-	 Q7Ty0rrxaDyXe+KvCzK/c2KC5hoGCWFqtmHiBID0X+DoKffquR3M2IE2H7S9lYJX+Yg==
+	bh=UZ5+rjBNi+BewuXkaanArcvAAZkaIBbqzLuY44p/cKs=;
+	b=y1avyh8HjuYXaga8l92htSa8cOlL/Y26z9yGLKBbPJzYjEJgvYN2n0Wsha861oMjzyd/
+	 fD+JGWfajCnJYPa3/bkhH8Zyq7mbOuvKUsouB3fpuvhMD5mvD87FHTYzjyNqsvTTg2SwF
+	 IU39Iepa98VFh+72I8C9PtqT7B5oHw9Sc8abFO/qTzGypnGrPS97BuQ4LGSNxvB85r78L
+	 ffzhI7ncHIzVpL8JWWUvM31HcJZliK2bkY+9uEkT6U284GlSkprh3ElEvETcXIpqPe+Ae
+	 sW2tQzfJ95FWTJEMU4tDFrNtLpCvIXIUeJ+BE3q9q+oE1ut3w4Ef76GUZL5oA2z1M+A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CsSJwJnH;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7zI9d3F;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB40606A31C
-	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 17:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238DE606A321
+	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 17:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CsSJwJnH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C37D1F01828;
-	Wed, 28 Oct 2026 17:47:05 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k7zI9d3F
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7361F01825;
+	Wed, 28 Oct 2026 17:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793209625;
-	bh=kyLp2L/cNylrL67O7mfltdwKbZUOWRn7hX6cAyn8oNo=;
+	s=k20260515; t=1793209903;
+	bh=UZ5+rjBNi+BewuXkaanArcvAAZkaIBbqzLuY44p/cKs=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CsSJwJnH5T9IUs1cbG4cLmfphOjdNTrdSMu1u0hNI8AoLfGbNgAtwZ1faViU0d7cT
-	 LRyrx0PlIdT71ElQEIycK/830jfrcaaFJaxHsihfC5NZtEoSGujizW5j36F0bnc9HU
-	 BPbnnSrDI35HWUfqNZTBPnQabK547gYL0iggzz1d6nRHvKNh8DM0f6SaZ/erkp2jJ7
-	 1T6wkkW9kyOATXEuZGqseHHByJmtfmNUW28JOJCMSxWukv5a/0j2WGIdsGvWUf/cZ0
-	 6PlubJXuM6KsesAH8boZp04oUPRJIMzhOnD63sKkRYWR+9fzmnmGoChdRt6pBCxu/f
-	 4R4HA82W34APQ==
-Message-ID: <sashiko-outbox-188255@kernel.org>
+	b=k7zI9d3FKwC9pNtcnLk/Q2n58gMtKjJg8owH6e9Kcs1OJ7i+/NhM87ULQZXQ5DRQ/
+	 Telr5OX6bLN27fMYt52bXMD/b5CTFAbBXNfMeqQ3afYy4LOsYdfn4Geof9nZ8+8mM3
+	 tJG0lH2lMIc3x0WbDhCNWVsQ/DstruQgtx23HmLxBHD9Apl1MzMiC5WuYwE3cGlyXt
+	 UIyGDjdHh5ogzAVujjdoWkBwfN/LErDHGSzMqGpGmNkiArLDU2+hrLnn0HOwDt9SNv
+	 A5rzkPZma/Gqt8ijvgie1RFaWbxaRZiDq4HCvf9NzNxmaKg9wBc5IuhUsz//poKHlO
+	 l3UUQq7T0hIjg==
+Message-ID: <sashiko-outbox-188257@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 1/2] leds: tca6507: Fix use-after-free on unbind
+Subject: Re: [PATCH v3 2/2] leds: tca6507: Turn the LEDs off on unbind
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Danish Khateeb" <danishkhateeb03@gmail.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261028174348.64014-2-danishkhateeb03@gmail.com>
+In-Reply-To: <20261028174348.64014-3-danishkhateeb03@gmail.com>
 References: <20261028174348.64014-1-danishkhateeb03@gmail.com>
- <20261028174348.64014-2-danishkhateeb03@gmail.com>
+ <20261028174348.64014-3-danishkhateeb03@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 17:47:04 +0000
+Date: Wed, 28 Oct 2026 17:51:42 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,37 +60,20 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> Since the LEDs are registered with devm_led_classdev_register(), they
-> are unregistered only after tca6507_remove() has cancelled the work.
-> Unregistering an LED that is on turns it off, which queues the work
-> again from led_assign(), and the work then runs after devres has freed
-> the chip:
+> Unregistering an LED that is on turns it off, and the driver does that
+> from its work, which is queued from led_assign(). On unbind the work is
+> then cancelled by devres, so if it has not run yet the LED stays on after
+> the driver is gone.
 >=20
->   BUG: KASAN: slab-use-after-free in assign_work+0x414/0x5b0
->   Read of size 8 at addr ffff888010d5c0c0 by task kworker/1:2/65
->   ...
->   Last potentially related work creation:
->    ...
->    queue_work_on+0xb6/0xc0
->    led_assign+0x223/0x340 [leds_tca6507]
->    led_classdev_unregister+0x26b/0x340
->    release_nodes+0xb3/0x140
->    devres_release_group+0x247/0x470
->    i2c_device_remove+0xbf/0x1b0
+> Flush the work instead of cancelling it. By the time the devres action
+> runs, the LEDs and the GPIO chip have been unregistered, and the work
+> does not queue itself, so nothing can queue it again.
 >=20
-> Set up the work with devm_work_autocancel() before the LEDs are
-> registered, so that devres cancels it after they are gone, and drop
-> tca6507_remove().
->=20
-> Fixes: 1b5c2fa7081c ("leds: tca6507: Use devm_led_classdev_register() to =
-simplify remove path")
-> Cc: stable@vger.kernel.org
-> Acked-by: Andrew Davis <afd@ti.com>
 > Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261028174348.6401=
-4-1-danishkhateeb03@gmail.com?part=3D1
+4-1-danishkhateeb03@gmail.com?part=3D2
 
