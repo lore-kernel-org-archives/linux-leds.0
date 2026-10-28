@@ -1,58 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.62.254.231
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793136604;
-	b=HESnWW16z685pXp/uSfcs9PoT9dFpv5D6fLaDu+1CBD6SJxWkv9rzXG7LDUQsZSIakce
-	 JeA+gZkGO/F/TLcqSK2U4jXKHGG8kuMGfmZviMrQy4K/W+69S647dgyPG4BAYiPJAA/Ni
-	 25HWUV9CwIXUTyAKv44Hk+DG0ajD0uGnDsACulFD1oYHx/DxfiVzzLpEje/dBzFGgRj7O
-	 0iD5dge6LuWQ/fAvDnVxnixLJ6ZlSqGw+Z5EL63oU3hBhIhBleZ2wzaaEZSFKioo11otC
-	 N9o0Iq5l80ckazbgNasS4JevCAu2IrT6zHjhFLGQqd2xFd7BawJWDSsUm+bjM9c78Jg==
+	t=1793175642;
+	b=YkrunWWlSX/7BMCyLcJxAQOexZ0/JSgBvQmZ0crPPqkn9Fpj7k9d2cYB/XlRxEj4RDGm
+	 ObZ/WvMLZoRJ9QWWoDBEH7i7KFMKeODANNwzBPyDuHcQwus6JqRH3Cy8f5g2q2IM9SugC
+	 lRLpXShaCzYG6vROkxdwGNGlblPU5wnWN31cWAnufY7mMdKI+0gzNX2v4hLAV+MHEys0D
+	 5EkuFqQJw+9qYDcAopDSpDdz6U0R4jzml9WATAyUih26t2TxpHDCk3DDa9qIZwWFSvLTa
+	 hrb5kigl94F27oE0CM9oWE2n056x1a+uXCnzfGUEtGK0N9kOi8zOze2dJjB8AKESQgA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793136604;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=OOuxZzX03Fi4IMOZT+u4uKVj+rtt/tc93nsz9tD3bXw=;
-	b=WmzYFmr07o1l4WTvCirQMZOoPnqrmFpwvumpqe8fMtpkwUTbg+22zGIBtwip3fZEcisn
-	 0BA7ZDBxWpD7wfAT7Y0hIni6ysRkRRBPJZJu2vumFR9XdG51Z8oA3oEKyIUU9FLB0/gma
-	 Q8bmE6fXKf+jNy/vXKVvJ/idpcYe8oa/JSL5yqss2Vv6jwum3JaY8goWMNtJy4i/Jysza
-	 PNArnDhg5AJ0Cj80lW252QqijNSV7x2o10BQcVic5xoiCziFGnoHmHXMR/lrZhuBwRPrc
-	 FHJvJr8rGfKVTQAh43tBnPi2XjRLOfm+R3o9wR1MmeQ55ogntj+d6KeihzQ/USO6BGg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793175642;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=K5LKyQgYKwl4SQBjA15TdSBAX9bbXAc3tVQHLRXEih8=;
+	b=s5LljF0zPkrRDmD40e4rO+xnIHHSuPwdC+LcbObTM1VfldOJ966N9K0LBpTnyiC9byVx
+	 YDFdomHE8lPYJdaWPS5i4672sIPpDF363NGkBRSo5VU9Ed8nXHP+ynw6NG+FHfb1XDa4t
+	 89yAtD56Rn1QaFm0kSUaOCyHuJLNdnhwMb+utdW4XfBtIY7NWWy/1iITQdWQitKgyY6ua
+	 Z35f1ASPPqOuNSgMxi2LXps1DBkYFHBOu23qDWE7TH6PL7xXf+bpnUYK6yOpachbO+ExC
+	 0UJee5J1mcLSp3p6LKzTXhCHZMHCsYj1tFuYmzvJrqNVlTnhjganvsSyMqetfb3vSjA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jnki2b8u;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=ilvokhin.com;
+	spf=pass smtp.mailfrom=ilvokhin.com;
+	dkim=pass header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=scmphY3W;
+	arc=none smtp.remote-ip=178.62.254.231
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D775606A31A;
-	Tue, 27 Oct 2026 21:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62250606A31D;
+	Wed, 28 Oct 2026 08:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 62250606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jnki2b8u
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38A51F01828;
-	Tue, 27 Oct 2026 21:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793136604;
-	bh=OOuxZzX03Fi4IMOZT+u4uKVj+rtt/tc93nsz9tD3bXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Jnki2b8u0n3/QXVN9wXdUVd6XlXvIeWGSJddSkLGBgsprFbZa57fVNMZH97wNm39n
-	 tKQSTKXHQiURdGTwUkABbN4Ij1+lNAsT+HR6SxdO/tYUGumbW6iJDc7eIsHwu9GLl8
-	 z/JxXbhG0b8nWOGahLcYkoAX8ZRq0IWgrPf7n9Kkr74P1bdIcMAGGKGWvsFyUbUKZB
-	 liRZgIFqgzEpxOExFedUZTTzUvS91D8dG9A2wYvPUorXr0WSezbGYV5pKVME3YW8o/
-	 /Ht6WHvP5/P92SRF3e58i/4PxSQfbr70MgEZvHmYS7GshP0x+W3UEMiiAzK6a2M24u
-	 PFrbmfkLpNIJA==
-Date: Tue, 27 Oct 2026 16:30:00 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Kees Cook <kees+treewide@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
-	Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: leds: skyworks,aat1290: Document
- FLINH pin
-Message-ID: <179313660040.1181023.12801334630310862763.robh@kernel.org>
-References: <20261013181803.496627-1-clamor95@gmail.com>
- <20261013181803.496627-3-clamor95@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=scmphY3W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1793175633;
+	bh=K5LKyQgYKwl4SQBjA15TdSBAX9bbXAc3tVQHLRXEih8=;
+	h=From:To:Cc:Subject:Date;
+	b=scmphY3Wunrsmp+34WEVPizPYNuER4OuyqQN+7wcAk8b243s6Ql6ZgZzt2Q3H2Zn3
+	 fwtCXvfv3lUFbjuEGdD5xIfcK8QirvUz/AoB8DzMfhdVnF9ZGl/3QyMwT3LvSHQOfV
+	 tYEhcDcVdgbtrWL1qNZRxMyUJGS6xrDDGVIAFe9A=
+Received: from localhost.localdomain (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id E3225FBCE3;
+	Wed, 28 Oct 2026 08:20:32 +0000 (UTC)
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-hardening@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Dmitry Ilvokhin <d@ilvokhin.com>
+Subject: [PATCH 00/10] treewide: switch to __nonnull_args() macro
+Date: Wed, 28 Oct 2026 08:19:39 +0000
+Message-ID: <cover.1793027261.git.d@ilvokhin.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,20 +96,65 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261013181803.496627-3-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
+
+Commit 22302af28d3f ("cleanup: Annotate guard constructors with
+nonnull") added the __nonnull_args() macro to wrap the raw compiler
+attribute, keeping the attribute's quirks in one place rather than
+open-coded at every call site.
+
+This series replaces the remaining open-coded __attribute__((nonnull))
+users with __nonnull_args() to standardize nonnull attribute usage
+across the tree.
+
+Each patch can be applied separately by the respective maintainers. The
+only dependency is kernel-doc: the string and lib/list_sort patches need
+patch 1 ("docs: xforms_lists: support __nonnull_args()") in the same
+release, otherwise strends() and list_sort() drop out of the generated
+documentation.
+
+Latest Sparse release could not properly parse __nonnull_args() without
+arguments. Fix was proposed [1] and merged, but until updated version of
+Sparse will reach wide masses it might trip on __nonnull_args() without
+arguments.
+
+There are few more instances of __attribute__((nonnull)) usages left in
+the tools subdirectory, they are perf related copied files and can
+(should?) be updated separately after this patchset lands.
+
+Build-tested allmodconfig with GCC 11.5.0 and clang 22.1.8.
+
+[1]: https://lore.kernel.org/all/20261019175633.415493-19-bvanassche@acm.org/
+
+Dmitry Ilvokhin (10):
+  docs: xforms_lists: support __nonnull_args()
+  string: Switch to __nonnull_args() macro
+  lib/list_sort: Switch to __nonnull_args() macro
+  xarray: switch to __nonnull_args() macro
+  drm/i915: switch to __nonnull_args() macro
+  drm/amdgpu: switch to __nonnull_args() macro
+  drm/gem: Switch to __nonnull_args() macro
+  leds: pwm: Switch to __nonnull_args() macro
+  soc: aspeed: lpc-snoop: Switch to __nonnull_args() macro
+  checkpatch: suggest nonnull attribute conversion
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c    | 2 +-
+ drivers/gpu/drm/i915/gem/i915_gem_object.h | 4 ++--
+ drivers/gpu/drm/i915/i915_request.h        | 4 ++--
+ drivers/leds/leds-pwm.c                    | 2 +-
+ drivers/soc/aspeed/aspeed-lpc-snoop.c      | 4 ++--
+ include/drm/drm_gem.h                      | 2 +-
+ include/linux/list_sort.h                  | 4 ++--
+ include/linux/string.h                     | 2 +-
+ include/linux/xarray.h                     | 4 ++--
+ lib/list_sort.c                            | 6 +++---
+ scripts/checkpatch.pl                      | 3 +++
+ tools/include/linux/compiler.h             | 4 ++++
+ tools/lib/python/kdoc/xforms_lists.py      | 1 +
+ 13 files changed, 25 insertions(+), 17 deletions(-)
 
 
-On Tue, 13 Oct 2026 21:18:02 +0300, Svyatoslav Ryhel wrote:
-> Both the AAT1270 and AAT1290 feature a FLINH pin used for mandatory Flash
-> inhibition.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  Documentation/devicetree/bindings/leds/skyworks,aat1290.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+base-commit: 6b4b543fa18757297ac756a6fe6e64f506b7844a
+-- 
+2.53.0-Meta
 
