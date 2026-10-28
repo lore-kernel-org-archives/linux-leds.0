@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793176069;
-	b=4A6ucKbui+2bqxw/bEKRWto0V0201byUfqOrHaU+AssNT4sY7qTRmjoM+eRfb65ub/dD
-	 I59OzlX7V64uz0dgHOggSXgxS7BG9aXnTsMCdKI8mKcKIwVuXbGQ0z4kPwIvdhPpD9wM3
-	 HwV69PpecsMqJ70s/4Osd/7R4tDwgHC52Ej4F8LzEokBh0qWaT626KLByEBhd0XTCufiW
-	 Vnw9s7naQYlYM1n7d4NVa0Q/mxU8vyxgR3//5Caovq+0OBXizUgA/FP8B4If3ngpg8PCW
-	 kVrU27BJuSgQbjsTywwn9kPa+Qa1yo6QMTYoUsskeP8micmJnDOdHvRWLwOverQTe9A==
+	t=1793176070;
+	b=ekIJHOCg324fSBLw8Xoigr1HWwuNhOfpT2mVmEDZphuQb3qB2kKYE8ESyJYH6q6tt1El
+	 zsikQc5vEQeUp/sVEQmhA7TsG/Ji0EJRm4uZr/hWDHmI8xjQ56qm3r1mei0GqFhdSvmSo
+	 J4UPoPGvKJeZlYL39pbXOobs7tBaFrgmwAS38SyoK5M8C4zwHB98iKufYbweBREZG36fo
+	 zG9kmJu91RwD4hl1Mh5oxtijyMhEB89IsiT5jhsMj9OPYSZTeHdW96dEADdcCtJBof3fw
+	 lkFhDh7TKOBMYB0aymyXbvqOLYcPG+zYGLNkipP3f1jkMqwDTkRqH0Lx7N7Ny8D7wUQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793176069;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793176070;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=uBYlOvVju148acY8a7z0mNzUp2vijez0Hhg3ZMTbtTU=;
-	b=AB5CQ8IOPB5X5ehHanvcQs2a6boG/yVZ5LCaB0uihOw1mDW36Esn151oHGxWoKG4f2LP
-	 X6irzkgWpgxrCpKHX4nT8nHGmkOrJvwgINnyvVq4pAjz4lxp9898mf1zJ8R90uCl9DvtE
-	 igXzBzH19eoUOW/vnt39QohbG4tPnFE3de3+2TOiwQExfaIbvxMVLg/lw23vdsnOUDg2u
-	 EG5eW7+107XgdoTB+MdB6dlMxCKl4kRXllL0loE+XhephgejW43eAQpKVCu1mJJYOxgMt
-	 nwt4zJiJPZE7MQG7LqBl4gFJm17mVns9oxynWSWwo8wyryYnZCcGpzFYO8dPtfBAnpA==
+	bh=qlHLIE2fTJe8ISEtj1MNWsbbd+L5mZrj+Dxiy+sEHyE=;
+	b=OvutCUgBwhidGnAqcUs1s3FjAKuyVCZjUrlv09K0FN9AbELmuEy0D49MSmplq2QnhhAD
+	 VKUvtcq3mxtMddQlmmd3LQhJsy326QMP2MFCDRGttGW/3aMn1XB31IdWuqHXDUVlYFT4s
+	 zcgtwALDC6+E+J7RFYl3u3O5m8BwBUlJSbTRwsZWOkNU7dQfqtQfE2CRJUAI75m2SVxKg
+	 i04YzamZNYdO6dldQrVBtyLyeK3yle4Uw7Xa8SUPeCW5ZuZmfYDy/i2vfGi+82LVAjPlE
+	 q0E6wUJ5bztsHWahyZhe1TURdMKD012Bvo4AD39I6lghEV176uj4TLDVOLJjXyTNpEg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SraZZeFg;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GDwfT56n;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846C4606A322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C585606A31D
 	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 08:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SraZZeFg
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0440B1F031E4;
-	Wed, 28 Oct 2026 08:27:48 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GDwfT56n
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DAF1F031E3;
+	Wed, 28 Oct 2026 08:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1793176069;
-	bh=uBYlOvVju148acY8a7z0mNzUp2vijez0Hhg3ZMTbtTU=;
+	bh=qlHLIE2fTJe8ISEtj1MNWsbbd+L5mZrj+Dxiy+sEHyE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=SraZZeFgFjcXcVCTv/S5nXECOJTdD0XQZ0raw2rUgQiyOcGFIIEBtBeUmA4GdeCb7
-	 jjceZ8wCmfpYjtqlg6KFkOBikWeuMnsOzRWCy6m9EPnB/7vON5kxWWuq6WXjh2b9QV
-	 B7rZi3Ss0todJNSfXKYXoDvbzXj2E1+2HXR0GxhEVfCyd5pk78usNwiUB6j97Ea+mT
-	 btjJqaMLzyYd/7+V1HSOGGASRFf+voasg+envTxMzxpp4JME42IAtfqR1AOAt+/qto
-	 vqgwsWfnq04rappENtzgIFoZUYYTDqvzWx9aF0v1Yu2RcJuPbgO8HrgqkSwLjT70/f
-	 b/i8uHPR8Lzpw==
-Message-ID: <sashiko-outbox-187620@kernel.org>
+	b=GDwfT56n5YuXtVoJvKU3TxOOKx46NjiWQD62deR3qSDDno2JadDouSzZXneogezLm
+	 yMv1pChiqdvCIoDy2owli2m0E/ltW1K+JdOMG2TwfLv/J+UV7OvYMpFsl23fYG1Wom
+	 qU+e5D10kQUU8r3SJax/USt8Ca5RoeaMgUuO7EQCK9h9uKzzhJ7f7HZsVF5xTeb/DA
+	 e4/T2VBOlKN1xYv9tMb4nqJXl3FtF+0utEjYKvhq9fvu3G/0JY1qWX9HRZVpxrTjy2
+	 tp1O5NKaVNUXR0yQ4Nq64GLj71Vi7sYYsPwzlpxA6dheKwhRNCFKfxfMN6im8yweq9
+	 YKAccySPyGakA==
+Message-ID: <sashiko-outbox-187621@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 03/10] lib/list_sort: Switch to __nonnull_args() macro
+Subject: Re: [PATCH 04/10] xarray: switch to __nonnull_args() macro
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Dmitry Ilvokhin" <d@ilvokhin.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <580fdfbe2eb6694438cbd8f5337bd2f1edac564b.1793027261.git.d@ilvokhin.com>
+In-Reply-To: <e2660c4c9f5e6f97be2ef7bd3752d259bce77d81.1793027261.git.d@ilvokhin.com>
 References: <cover.1793027261.git.d@ilvokhin.com>
- <580fdfbe2eb6694438cbd8f5337bd2f1edac564b.1793027261.git.d@ilvokhin.com>
+ <e2660c4c9f5e6f97be2ef7bd3752d259bce77d81.1793027261.git.d@ilvokhin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 28 Oct 2026 08:27:48 +0000
+Date: Wed, 28 Oct 2026 08:27:49 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -64,13 +64,15 @@ Precedence: list
 > nonnull") added the macro __nonnull_args() to wrap raw compiler
 > attribute.
 >=20
-> Replace __attribute__((nonnull)) with __nonnull_args() to
-> standardize nonnull attribute usage across the tree and keep the
-> attribute's quirks in one place rather than open-coded at every call
-> site.
+> Replace __attribute__((nonnull)) with __nonnull_args() to standardize
+> nonnull attribute usage across the tree and keep the attribute's quirks
+> in one place rather than open-coded at every call site.
 >=20
-> Add spaces after the commas in the __nonnull_args() argument list to
-> follow the usual coding style (according to checkpatch).
+> tools/testing/shared/linux/xarray.h directly includes the kernel's
+> include/linux/xarray.h, which now uses __nonnull_args(). The macro is
+> not defined under tools/, breaking test builds.
+>=20
+> Define __nonnull_args() in tools/include/linux/compiler.h.
 >=20
 > Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 > Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
@@ -79,5 +81,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1793027261.gi=
-t.d@ilvokhin.com?part=3D3
+t.d@ilvokhin.com?part=3D4
 
