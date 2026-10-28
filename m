@@ -1,55 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793198245;
-	b=opvFs5MXMOFWdZ55AFcCracJHcLljVTa4X1TWK1YFJW07kIP5+rqfL/xXWpb/TwreKvO
-	 avxI4r+gkZDBqHwqEjU0nWcPNH8PwXXGFzk/x069lr6ue5VZO+NwvmhqYaKeIUYD0/14r
-	 CjJKZCQbzJnbKEVvij1DG8T3yT/7kNC/nqRtnsYx2wD3SgCvVTTZWywdQDUHrpStuos6s
-	 GBhGor7p8t8oIb3esUTlKDRQreFHaX+8Eb3V8HsCHUJeS7FGrWHzcOOPoIAOeUd0wuF4n
-	 0ZFUmrCogyqQWhwCOyqzKR0eUFo+XgGugzGYAL63iPTxrC2rE5Qvm/ZFTUwXJesrXzw==
+	t=1793198549;
+	b=hZPALLSl9VD0q4MLLcZGLqLRam2hFJHK++6qfcQ0P1J2U8P4TO7v8Uj/X1IA/cRBYyB5
+	 T8ojBo/k+TDQRHqkOlQZwh+yzGR1md5/n6Xup7lT3QmwzamXUGFLK1TRZhWW/ifyZUJqb
+	 G5lIJgF0T21Hl49yV/Jq/Pr7cR80RNNH7WE3v0sWeK+Kg24BCi4RK5YNlgyjhKJMeTL+M
+	 B+rHEXMUR/mJwXSR/kSbTW02iQg+0nSEPcJRbOogu883OOZoxs+zr5DRn323o+h54VRMM
+	 R4+HFJX15kOJVnzr1cpBPdic8O5ZnqsnoMAPtwJPgWyRudGkgyxmbAHR4zxDlumn3mA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793198245;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=2GSJb2Ef+xHdoxKrqms4kNytjyE5DiInki1+4FCz33c=;
-	b=AO69zJacnq21bjq7L0II8LW8X3155dgeGze8QHJQs/R5my88BYZ0eawjlzMoROQJwNeb
-	 wNevVWEBtUjt6IM/4EjnyqNo1/Q3LS/2elei3Oq2XA9Aol7d5K/KFSNAfFx62jBTk3vWy
-	 1zEXSHetVTbp9YskpZfRWHAMxT8HfKfoTGnlNC+IH58TZQExw3+h2hgyhloRzbh52hdGv
-	 R44VJBx9mre4Tihm0gZDodWCbYjnkm+8MIC8Xkbd6zFizwKhxG/zE5n7Bvo7woIRVqlxk
-	 wVSuzfGAMNzDro4d48BETzF25HMEf/7N3Z778EW7zSgLPVP6t3Dy9DORYZP0YmbsjQA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793198549;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=TFJBnND1FRI31n2cTrtgv8IYWoLakQkBsVk708a+dhM=;
+	b=gQG61tvWIfsuO9Z5VDzotSjhaH/kyfiZtn86ylXXJDRmawDdAuPTPZHv2UvqoYCIKeKd
+	 227Lnm94n8oGnBFwk8JMaABHGDNugyq5wFW5AL/Te8WLaAnV7jjuonOYgXnrR09QkQWI4
+	 tSzXR6DHzuVCBfr/5xAhZSVDGDFnSh+7e1XLqoK/GXH8WC+9f51rm9EubG9mGDvSETy5M
+	 Lmdj6rM9tmQHslX34kB5jRGN6gc78IO1snlFYlcrvC7lOkdjjcf2BajXzw4KWnjSp7CKW
+	 sBi0gfeccNsd8UilnReZQ1tPlJyuoVEV9gySu9ExFgxyYCLXRoFRqoxguWfsQL/sR/g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VieSFjqU;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JKGUnVQl;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AA2606A323;
-	Wed, 28 Oct 2026 14:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334F7606A31A;
+	Wed, 28 Oct 2026 14:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VieSFjqU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0141D1F01825;
-	Wed, 28 Oct 2026 14:37:23 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=JKGUnVQl
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E731F01825;
+	Wed, 28 Oct 2026 14:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793198244;
-	bh=2GSJb2Ef+xHdoxKrqms4kNytjyE5DiInki1+4FCz33c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VieSFjqUDh7ixhoaoxc9O6b9dVOdlCmPrQ8SFoHcVrmKELjAAgQXBacHt4+7H+XZs
-	 uNxMlFxYZ2wAzOf5DMF2ViKttdU1eQhHIO69EhaAqyXGcAedOmSiPVSxn24r0imSB2
-	 6UALCjg5e/4M7xKEYuMtLwdfQYJXAADoa4NLYHh8JMiISOYOvUUz32/pX3Yd8G44rd
-	 /i8Y/NXZJ0r+yP2++jbH/kGyUxoVp9HI+F4EvEmWlp557tndak54aVA0JkEiefGFc4
-	 9wEHCrVcNBoF5A86LL6wWOy/bG5HTn7FHW9SkEBDU8IRQuyE96plN6TB5orXmzCDGh
-	 4NuJhq44hHQNw==
-Date: Wed, 28 Oct 2026 14:37:21 +0000
+	s=k20260515; t=1793198549;
+	bh=TFJBnND1FRI31n2cTrtgv8IYWoLakQkBsVk708a+dhM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=JKGUnVQl7ZyavXtT7Kczvq0hvgEijuwKpQeX6Y3YltdL23/t7iXuxD7fyfBh7AUYV
+	 Gn1+X9ULNU1J1D5QfP4X3ElvIvvBZM6yR00qKGlaZhrF5JpQQqtBNfISmpfOHKuttn
+	 HwgS8wbrVxQ+vW+T5NMybHHL00/dJvJ9WnzVqZRFVt5p1xOMK4JicmwJnDtYtviKVS
+	 y06NJL4w0pQ7FcfnQbXI4lqmbX4hhH8Da+bzoWJfw+jG+MoRK9RC7f0d1WdGAGCOqq
+	 H8fW765Dp5jrCmB7DAXvZ6hDI9qPhxqmptHixHWCqOFDyXupTtaQELWirzvXdVggmM
+	 rDVdJ5ka4rnFQ==
 From: Lee Jones <lee@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Jiale Yao <yaojiale02@163.com>, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 1/2] leds: tps6131x: queue torch refresh work on
- freezable workqueue
-Message-ID: <20261028143721.GA3605912@google.com>
-References: <20261016100435.2581303-1-yaojiale02@163.com>
- <20261016100435.2581303-2-yaojiale02@163.com>
- <sashiko-outbox-174141@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ George Neacsu <geocausa@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Sashiko AI review <sashiko-bot@kernel.org>
+In-Reply-To: <20261018-qcom-flash-v4l2-release-v3-1-02e18d30b18a@gmail.com>
+References: <20261018-qcom-flash-v4l2-release-v3-1-02e18d30b18a@gmail.com>
+Subject: Re: (subset) [PATCH v3] leds: flash: leds-qcom-flash: Release all
+ V4L2 flash devices
+Message-Id: <179319854743.3749657.15932777477345365666.b4-ty@b4>
+Date: Wed, 28 Oct 2026 14:42:27 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,74 +60,32 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <sashiko-outbox-174141@kernel.org>
+X-Mailer: b4 0.16-dev-ad80c
 
-On Fri, 16 Oct 2026, sashiko-bot@kernel.org wrote:
+On Sun, 18 Oct 2026 22:38:27 +0100, George Neacsu wrote:
+> The probe error path and qcom_flash_led_remove() use leds_count as an
+> array index before decrementing it. Since leds_count is the number of
+> registered LEDs, that first access is one entry past the last registered
+> V4L2 flash device. The loops also stop before index 0, so with a single
+> LED nothing is released at all.
+> 
+> The V4L2 flash sub-device then stays registered after the driver is
+> unbound, still pointing at the driver's freed devm memory. On a Surface
+> Pro 11 (X1E80100, PM8550 flash, IR LED linked to a sensor through
+> flash-leds), unloading the module and then setting a flash control on
+> the sub-device triggered UBSAN shift-out-of-bounds reports and a NULL
+> pointer dereference in regmap_field_update_bits_base(), called from
+> update_allowed_flash_current().
+> 
+> [...]
 
-> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
-> - [Medium] leds: tps6131x: torch unintentionally turns back on upon system resume
+Applied, thanks!
 
-This needs an answer.
+[1/1] leds: flash: leds-qcom-flash: Release all V4L2 flash devices
+      commit: 4b2f49cc6998dc7fa243eed13cab8c48a4d95138
 
-> - [Low] leds: Commit message description is not capitalized
-> --
-> 
-> commit f183582cffa51c16f099031455716678dcb8eab8
-> Author: Jiale Yao <yaojiale02@163.com>
-> 
-> leds: tps6131x: queue torch refresh work on freezable workqueue
-> 
-> This commit changes the torch refresh watchdog work to use the
-> system_freezable_wq instead of the non-freezable system workqueue. This
-> prevents the work from running and attempting I2C register writes after
-> the I2C adapter has been suspended.
-> 
-> > leds: tps6131x: queue torch refresh work on freezable workqueue
-> 
-> [Severity: Low]
-> This isn't a bug, but the description after the subsystem prefix should
-> be capitalized. Should "queue" be changed to "Queue" to align with the
-> subsystem conventions?
-> 
-> > diff --git a/drivers/leds/flash/leds-tps6131x.c b/drivers/leds/flash/leds-tps6131x.c
-> > index 5c9a5af5af05c..841a6538e75e1 100644
-> > --- a/drivers/leds/flash/leds-tps6131x.c
-> > +++ b/drivers/leds/flash/leds-tps6131x.c
-> [ ... ]
-> > @@ -307,8 +308,9 @@ static void tps6131x_torch_refresh_handler(struct work_struct *work)
-> >  		return;
-> >  	}
-> >  
-> > -	schedule_delayed_work(&tps6131x->torch_refresh_work,
-> > -			      TPS6131X_TORCH_REFRESH_INTERVAL_JIFFIES);
-> > +	queue_delayed_work(system_freezable_wq,
-> > +			   &tps6131x->torch_refresh_work,
-> > +			   TPS6131X_TORCH_REFRESH_INTERVAL_JIFFIES);
-> >  }
-> 
-> [Severity: Medium]
-> Does this unintentionally cause the torch to turn back on upon system resume?
-> 
-> Because the driver does not set the LED_CORE_SUSPENDRESUME flag, the LED is
-> not cleanly turned off and its workqueue canceled during suspend. Instead,
-> during suspend, the hardware watchdog will automatically shut off the LED
-> after 13 seconds.
-> 
-> When using the previous non-freezable system workqueue, the handler would
-> execute during suspend, fail to perform I2C transfers because the adapter
-> is suspended, and return without rescheduling itself. This cleanly broke the
-> refresh loop.
-> 
-> Now that the workqueue is freezable, won't it simply pause during suspend
-> and thaw upon resume? When it thaws, tps6131x_torch_refresh_handler() will
-> execute and force the torch back on via I2C, which seems like an unintended
-> behavioral regression.
-> 
-> -- 
-> Sashiko AI review � https://sashiko.dev/#/patchset/20261016100435.2581303-1-yaojiale02@163.com?part=1
+--
+Lee Jones [李琼斯]
 
--- 
-Lee Jones
