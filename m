@@ -1,53 +1,53 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793176070;
-	b=ekIJHOCg324fSBLw8Xoigr1HWwuNhOfpT2mVmEDZphuQb3qB2kKYE8ESyJYH6q6tt1El
-	 zsikQc5vEQeUp/sVEQmhA7TsG/Ji0EJRm4uZr/hWDHmI8xjQ56qm3r1mei0GqFhdSvmSo
-	 J4UPoPGvKJeZlYL39pbXOobs7tBaFrgmwAS38SyoK5M8C4zwHB98iKufYbweBREZG36fo
-	 zG9kmJu91RwD4hl1Mh5oxtijyMhEB89IsiT5jhsMj9OPYSZTeHdW96dEADdcCtJBof3fw
-	 lkFhDh7TKOBMYB0aymyXbvqOLYcPG+zYGLNkipP3f1jkMqwDTkRqH0Lx7N7Ny8D7wUQ==
+	t=1793176071;
+	b=Q5IvVjUkhpys0YPiqan1kYsyPG0mljyoMmQ0fXnVWUC+8IHzAcEFcpZct+/UdMlHsaHa
+	 UaQf5X9II3GWqlllzqiqSrVCwZEMa9yIMAoeF6n2BnMK83A3hHp75kBgn2QAE+8DVMc3s
+	 gsCtEtGlqB2nxC/DvjXUY2m1BfevMytV77MVnj2Y1cl3XtZ6F9zvC3IDyuAFFa3Huh1p5
+	 SpERKndYsCGMweaqx+TJaddU2VFkOpl6ccghuydDJC62NCDNbO8WVrXieZS8upwQj76n8
+	 WzeXc/3Tf3MCOk1pXCU4Si1MjgkC4lV/aPtJvry4jAkAbLB4IfC1kT4IumIZg4PJnCw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793176070;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793176071;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=qlHLIE2fTJe8ISEtj1MNWsbbd+L5mZrj+Dxiy+sEHyE=;
-	b=OvutCUgBwhidGnAqcUs1s3FjAKuyVCZjUrlv09K0FN9AbELmuEy0D49MSmplq2QnhhAD
-	 VKUvtcq3mxtMddQlmmd3LQhJsy326QMP2MFCDRGttGW/3aMn1XB31IdWuqHXDUVlYFT4s
-	 zcgtwALDC6+E+J7RFYl3u3O5m8BwBUlJSbTRwsZWOkNU7dQfqtQfE2CRJUAI75m2SVxKg
-	 i04YzamZNYdO6dldQrVBtyLyeK3yle4Uw7Xa8SUPeCW5ZuZmfYDy/i2vfGi+82LVAjPlE
-	 q0E6wUJ5bztsHWahyZhe1TURdMKD012Bvo4AD39I6lghEV176uj4TLDVOLJjXyTNpEg==
+	bh=ZLKiAU1YTfrOnj8P6p+c60tmfr60JNxo0+d83hbtfAY=;
+	b=yAkDX8Qu3YU/5Im1/NvTIv1rT+zTUtPdpyXfiCwxG7LJLkKEnAWsw9uRPerobF7kUeDX
+	 udbT84rJlUcgFOPeih+yjOa2uPWb/TBrTM+s1GeAKQwUnjdUrRXf3CwY5oHZaghPgY7UF
+	 PGACXyvk0jkwa7sx4qAKnf8pojK6wQKm8B9D8hOMNc6wcZtCB6d/I0oYWdhxTpvDLSDnq
+	 TPLMipULlEM1met8nb/OKVbEwerM+/WfksZaN7aMeryfaq+OgewlPpcfN+1v+PPr4oNR+
+	 DUB7MOas1x2PctrFE8Oo+pCLexiwf7vJuDppYFq/nF0ik42jt0390qaEDTiSFoc0pMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GDwfT56n;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L8odVYA3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C585606A31D
-	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 08:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDD7606A31D
+	for <linux-leds@vger.kernel.org>; Wed, 28 Oct 2026 08:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GDwfT56n
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DAF1F031E3;
-	Wed, 28 Oct 2026 08:27:49 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=L8odVYA3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 565781F031E4;
+	Wed, 28 Oct 2026 08:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793176069;
-	bh=qlHLIE2fTJe8ISEtj1MNWsbbd+L5mZrj+Dxiy+sEHyE=;
+	s=k20260515; t=1793176070;
+	bh=ZLKiAU1YTfrOnj8P6p+c60tmfr60JNxo0+d83hbtfAY=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=GDwfT56n5YuXtVoJvKU3TxOOKx46NjiWQD62deR3qSDDno2JadDouSzZXneogezLm
-	 yMv1pChiqdvCIoDy2owli2m0E/ltW1K+JdOMG2TwfLv/J+UV7OvYMpFsl23fYG1Wom
-	 qU+e5D10kQUU8r3SJax/USt8Ca5RoeaMgUuO7EQCK9h9uKzzhJ7f7HZsVF5xTeb/DA
-	 e4/T2VBOlKN1xYv9tMb4nqJXl3FtF+0utEjYKvhq9fvu3G/0JY1qWX9HRZVpxrTjy2
-	 tp1O5NKaVNUXR0yQ4Nq64GLj71Vi7sYYsPwzlpxA6dheKwhRNCFKfxfMN6im8yweq9
-	 YKAccySPyGakA==
-Message-ID: <sashiko-outbox-187621@kernel.org>
+	b=L8odVYA3TepWu85m7inbhQ37iuSQCghSxsMqP02MWMO1OzfT8P4fOxdJCslUuz4fZ
+	 MF0ZcYaawb2Vzsag/zOD+NMsYEDPSwnfR+qUsTALYXr18EoCDbo68Fg+UKiDdzsu5e
+	 3EG78yJPh4FtrmTMX1YQ0HdWsPvCnTR73tAxG8nzFPuFUA31by/LPIIUngKJ6W/jK1
+	 bLOsztxsKEPIrKIq2rU5PNRYdI0nEwYk8utQeg/brSvgBPCs298Ww4gNrJ/vQtrZ4z
+	 r3l8G6LyPL6r7D8fAngwb9KM3iSZ1K7prGPVJQiO+VYDf1hojeFQmXIeVgIRgCarfX
+	 ki1O79iYXBSsg==
+Message-ID: <sashiko-outbox-187622@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 04/10] xarray: switch to __nonnull_args() macro
+Subject: Re: [PATCH 05/10] drm/i915: switch to __nonnull_args() macro
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Dmitry Ilvokhin" <d@ilvokhin.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <e2660c4c9f5e6f97be2ef7bd3752d259bce77d81.1793027261.git.d@ilvokhin.com>
+In-Reply-To: <33ec8080594f9f4ef1d50e36497339c9a6897393.1793027261.git.d@ilvokhin.com>
 References: <cover.1793027261.git.d@ilvokhin.com>
- <e2660c4c9f5e6f97be2ef7bd3752d259bce77d81.1793027261.git.d@ilvokhin.com>
+ <33ec8080594f9f4ef1d50e36497339c9a6897393.1793027261.git.d@ilvokhin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Date: Wed, 28 Oct 2026 08:27:49 +0000
@@ -68,12 +68,6 @@ Precedence: list
 > nonnull attribute usage across the tree and keep the attribute's quirks
 > in one place rather than open-coded at every call site.
 >=20
-> tools/testing/shared/linux/xarray.h directly includes the kernel's
-> include/linux/xarray.h, which now uses __nonnull_args(). The macro is
-> not defined under tools/, breaking test builds.
->=20
-> Define __nonnull_args() in tools/include/linux/compiler.h.
->=20
 > Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 > Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
 
@@ -81,5 +75,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1793027261.gi=
-t.d@ilvokhin.com?part=3D4
+t.d@ilvokhin.com?part=3D5
 
