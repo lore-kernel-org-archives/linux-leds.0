@@ -1,48 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=178.62.254.231
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1793175642;
-	b=YkrunWWlSX/7BMCyLcJxAQOexZ0/JSgBvQmZ0crPPqkn9Fpj7k9d2cYB/XlRxEj4RDGm
-	 ObZ/WvMLZoRJ9QWWoDBEH7i7KFMKeODANNwzBPyDuHcQwus6JqRH3Cy8f5g2q2IM9SugC
-	 lRLpXShaCzYG6vROkxdwGNGlblPU5wnWN31cWAnufY7mMdKI+0gzNX2v4hLAV+MHEys0D
-	 5EkuFqQJw+9qYDcAopDSpDdz6U0R4jzml9WATAyUih26t2TxpHDCk3DDa9qIZwWFSvLTa
-	 hrb5kigl94F27oE0CM9oWE2n056x1a+uXCnzfGUEtGK0N9kOi8zOze2dJjB8AKESQgA==
+	b=zGj2Lj8DVacl0kxbP1fg01XPqIf+wESd7lMY3jWkZHU7p909J0LjWDY7qMSUZKlZFNBe
+	 eLRW20Icbuj3T3OJu/vNZ6N0QWU/eckdQErCx5j94MZR0GF1y7W3bFlcG15yptlcZAinB
+	 HhcENOOQtvLrZmPMmuU3fbnNgu4t+klA02ShVo4k7zzRSSac4E1sDVWcJALO8iXjocrKS
+	 phuKLT/atWW9Aeij53QsFkQGiL6xGlfOdn5YZNZIvOQ4jm/Z/6/OuTXADU83BMfdxHC4u
+	 jps7Y4regoIbjgL0fJA5W3+GMntphj8a3pu2dLeuhdfli88RpNKoMeD0J1+DcH2zYNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793175642;
 	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=K5LKyQgYKwl4SQBjA15TdSBAX9bbXAc3tVQHLRXEih8=;
-	b=s5LljF0zPkrRDmD40e4rO+xnIHHSuPwdC+LcbObTM1VfldOJ966N9K0LBpTnyiC9byVx
-	 YDFdomHE8lPYJdaWPS5i4672sIPpDF363NGkBRSo5VU9Ed8nXHP+ynw6NG+FHfb1XDa4t
-	 89yAtD56Rn1QaFm0kSUaOCyHuJLNdnhwMb+utdW4XfBtIY7NWWy/1iITQdWQitKgyY6ua
-	 Z35f1ASPPqOuNSgMxi2LXps1DBkYFHBOu23qDWE7TH6PL7xXf+bpnUYK6yOpachbO+ExC
-	 0UJee5J1mcLSp3p6LKzTXhCHZMHCsYj1tFuYmzvJrqNVlTnhjganvsSyMqetfb3vSjA==
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=SMf0dV4x3xb+DslLmuw7FBFheVT29/cwuNdKSpo2QkE=;
+	b=hTTcoCDID99rcsAHk7+nfhTtBpISZJib3mqSA6QO4wN4LKglRSuMrO0gkbDjiGKlO9WH
+	 EnA1LbZ05KVT301CwrMS+qFQNhgQLxHiZnLCIshGB3+QQHQt31TKYVX4dSleFGlMTQMOL
+	 tzYVhVeyhnfZXeEqSE+yjE4A0hwT3BRRNTJAT7OjYbLYSe0tXQLPnJv0j4TFvBA64biCY
+	 74REikzsYVGpbIxbKLlNGvNPWuZdgTj5JLJmiIvn6PEE/pKbGb2Wi5GXDa2aFbdrl47SM
+	 YtESztRNipfhJVNrxReVRsJH7grrYwQwxTulkQSJRz9lSfzFP6IynDsUQIsIbaiK+MQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=ilvokhin.com;
 	spf=pass smtp.mailfrom=ilvokhin.com;
-	dkim=pass header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=scmphY3W;
+	dkim=pass header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=iyuSnZld;
 	arc=none smtp.remote-ip=178.62.254.231
 Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62250606A31D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F7C606A325;
 	Wed, 28 Oct 2026 08:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 62250606A31D
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E2F7C606A325
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=scmphY3W
+	dkim=pass (1024-bit key, unprotected) header.d=ilvokhin.com header.i=@ilvokhin.com header.a=rsa-sha256 header.s=mail header.b=iyuSnZld
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
 	s=mail; t=1793175633;
-	bh=K5LKyQgYKwl4SQBjA15TdSBAX9bbXAc3tVQHLRXEih8=;
-	h=From:To:Cc:Subject:Date;
-	b=scmphY3Wunrsmp+34WEVPizPYNuER4OuyqQN+7wcAk8b243s6Ql6ZgZzt2Q3H2Zn3
-	 fwtCXvfv3lUFbjuEGdD5xIfcK8QirvUz/AoB8DzMfhdVnF9ZGl/3QyMwT3LvSHQOfV
-	 tYEhcDcVdgbtrWL1qNZRxMyUJGS6xrDDGVIAFe9A=
+	bh=SMf0dV4x3xb+DslLmuw7FBFheVT29/cwuNdKSpo2QkE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=iyuSnZldpZjUpO/QwNk+P5YouZek0N2mycnUxbkQccvDC4YJ19S4/mULi0aeehza5
+	 68UlH00B7Uiw50tvUL0mmPirCWsysK2dNqpdy84iHfp+1EmJSSkCPH4nrPYKSc8ftb
+	 VX/gnIntc+RIw7VOplejxDi+mip28Hr6aXN6ETg8=
 Received: from localhost.localdomain (shell.ilvokhin.com [138.68.190.75])
 	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id E3225FBCE3;
-	Wed, 28 Oct 2026 08:20:32 +0000 (UTC)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id 65638FBCE4;
+	Wed, 28 Oct 2026 08:20:33 +0000 (UTC)
 From: Dmitry Ilvokhin <d@ilvokhin.com>
 To: Alex Deucher <alexander.deucher@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
@@ -83,10 +84,12 @@ Cc: amd-gfx@lists.freedesktop.org,
 	linux-doc@vger.kernel.org,
 	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
 	Dmitry Ilvokhin <d@ilvokhin.com>
-Subject: [PATCH 00/10] treewide: switch to __nonnull_args() macro
-Date: Wed, 28 Oct 2026 08:19:39 +0000
-Message-ID: <cover.1793027261.git.d@ilvokhin.com>
+Subject: [PATCH 01/10] docs: xforms_lists: support __nonnull_args()
+Date: Wed, 28 Oct 2026 08:19:40 +0000
+Message-ID: <fd33c32bb1f1cf80721887b6e9bfa49749e03d20.1793027261.git.d@ilvokhin.com>
 X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cover.1793027261.git.d@ilvokhin.com>
+References: <cover.1793027261.git.d@ilvokhin.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -98,63 +101,29 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 22302af28d3f ("cleanup: Annotate guard constructors with
-nonnull") added the __nonnull_args() macro to wrap the raw compiler
-attribute, keeping the attribute's quirks in one place rather than
-open-coded at every call site.
+Avoid kernel-doc warnings by supporting __nonnull_args()
+as a function transform.
 
-This series replaces the remaining open-coded __attribute__((nonnull))
-users with __nonnull_args() to standardize nonnull attribute usage
-across the tree.
+This is a preparatory change for the treewide migration from
+__attribute__((nonnull)) to __nonnull_args() macro.
 
-Each patch can be applied separately by the respective maintainers. The
-only dependency is kernel-doc: the string and lib/list_sort patches need
-patch 1 ("docs: xforms_lists: support __nonnull_args()") in the same
-release, otherwise strends() and list_sort() drop out of the generated
-documentation.
+Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+---
+ tools/lib/python/kdoc/xforms_lists.py | 1 +
+ 1 file changed, 1 insertion(+)
 
-Latest Sparse release could not properly parse __nonnull_args() without
-arguments. Fix was proposed [1] and merged, but until updated version of
-Sparse will reach wide masses it might trip on __nonnull_args() without
-arguments.
-
-There are few more instances of __attribute__((nonnull)) usages left in
-the tools subdirectory, they are perf related copied files and can
-(should?) be updated separately after this patchset lands.
-
-Build-tested allmodconfig with GCC 11.5.0 and clang 22.1.8.
-
-[1]: https://lore.kernel.org/all/20261019175633.415493-19-bvanassche@acm.org/
-
-Dmitry Ilvokhin (10):
-  docs: xforms_lists: support __nonnull_args()
-  string: Switch to __nonnull_args() macro
-  lib/list_sort: Switch to __nonnull_args() macro
-  xarray: switch to __nonnull_args() macro
-  drm/i915: switch to __nonnull_args() macro
-  drm/amdgpu: switch to __nonnull_args() macro
-  drm/gem: Switch to __nonnull_args() macro
-  leds: pwm: Switch to __nonnull_args() macro
-  soc: aspeed: lpc-snoop: Switch to __nonnull_args() macro
-  checkpatch: suggest nonnull attribute conversion
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c    | 2 +-
- drivers/gpu/drm/i915/gem/i915_gem_object.h | 4 ++--
- drivers/gpu/drm/i915/i915_request.h        | 4 ++--
- drivers/leds/leds-pwm.c                    | 2 +-
- drivers/soc/aspeed/aspeed-lpc-snoop.c      | 4 ++--
- include/drm/drm_gem.h                      | 2 +-
- include/linux/list_sort.h                  | 4 ++--
- include/linux/string.h                     | 2 +-
- include/linux/xarray.h                     | 4 ++--
- lib/list_sort.c                            | 6 +++---
- scripts/checkpatch.pl                      | 3 +++
- tools/include/linux/compiler.h             | 4 ++++
- tools/lib/python/kdoc/xforms_lists.py      | 1 +
- 13 files changed, 25 insertions(+), 17 deletions(-)
-
-
-base-commit: 6b4b543fa18757297ac756a6fe6e64f506b7844a
+diff --git a/tools/lib/python/kdoc/xforms_lists.py b/tools/lib/python/kdoc/xforms_lists.py
+index 320f977c5bac..a8c47ede8637 100644
+--- a/tools/lib/python/kdoc/xforms_lists.py
++++ b/tools/lib/python/kdoc/xforms_lists.py
+@@ -108,6 +108,7 @@ class CTransforms:
+         (CMatch("__attribute__"), ""),
+         (CMatch("STATIC_IFN_KUNIT"), ""),
+         (CMatch("INLINE_IFN_KUNIT"), ""),
++        (CMatch("__nonnull_args"), ""),
+ 
+         #
+         # HACK: this is similar to process_export() hack. It is meant to
 -- 
 2.53.0-Meta
 
