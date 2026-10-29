@@ -1,104 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=192.198.163.8
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793280203;
-	b=usG0hTCXbfNODMvhz/MRaCgHzb2FVajl5kar5dKdUvD8Ih9fZvXdVd1ZuR/EvdcbNPgh
-	 PsvMKCHDbpS/S8el72izm7IHW6onQCA3ai+da36Taw1K8XfYdaffmbGUY22Mx1yns2Qxx
-	 LltHnZsuBe9DKT/PCgCetse/wdHl0M+2zMedZVfwE8CbXkE6VYoIEMmicAdTK9x4qouHu
-	 rAfgy7ZCjiGdo27fxDRnIBBOPaQARoJ0/U/jqKWX6bdftFLzEeeQmzVH1qH1iOWdDMiOH
-	 M4ZA4xs30WU70WWA/z20E2rJuGyhzuYNqGh5P5cOQK1gnTkoQ2vy/0kgQzDVYGGZAXA==
+	t=1793280625;
+	b=oxYq2OYKfVJox8F1eNs7yGZKIGbd3c7bxFtgDq4sEkxrC4/XcUEiiM+Y+pBtdPUVBVvt
+	 W90h9bYKMfGRFdo14YTO6C0hQ76ZZqLE2lUlga5V86PUo47Z5M+nZbriRGS6O8CbIr3u+
+	 nnElu7rBtyL7VPM0CIO6mane9BBUKh8zif2heaUi5o2MOtnMm5ypA2VvXELMUrEVJZNHK
+	 Z0uoKHvJwP7zx3OEaEdGJt1QCAsUXd/L9jVoKoLaSfxughMRezmd17nhr/yCUdbc5CG9U
+	 4p9iU9ZgsB4jo3h5R8vkTQ+s20TJTedt6gjn2QHGTAlUHxv0izqwKnakIcA8gojY9Rw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793280203;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793280625;
 	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
 	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
 	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Date:From:To:Cc:
 	 Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-	 Organization;
-	bh=p+3Crhy2vTaTH2VP8Hqb2z/w7m3gLKgpAXgDIf/pTwE=;
-	b=vDlr8nOUjWJLeqgoeIu3V/G3VgeDspZKyI/PkH95JmMSby2Nd4pBveZfGSvBIlB0T3LP
-	 //n/XVFIGTT0jfIBdb2YZsxWDylx8ndxu1wpqVUovBBsYxfVrdjcwxy1GpOYLoGGqzEs1
-	 Jz/+O8+QAyb8APB60nK7YYThgsOESWLBkr2wHYCaPqT7ZhiRCgEPaxwmhRmNEX5YyAF12
-	 r2hMklZ9eZN5BYC6NHZiyJv1T/8x0DGm4khavJEMUHoeiWiY2Wc6RJV2IGdp/6CYGby5W
-	 pTjlggt+gy0fc9QdVoUIT/oiRMknofSmIVCW/ku2I/UTn5kDGAczMMJdNNlcqbqfqNw==
+	 Content-Disposition:In-Reply-To:Organization;
+	bh=Mb2nUQU4M00SSUzZJSeoQpnNXAraCq7x3LdAKS30Euw=;
+	b=av59mA0JFVoyz4HJOq9OYY+bqom6HCJpdGpiVJZgY+AAAAPVDwFOBscIb2eE9diepS8a
+	 838mm8Qv1AJ5Ew7hqXjfDP08UFl5ExS2cKSlAhmM755PQbQ8sFnI93jLjEkU1AMzcega6
+	 I+P/CSQSOQqFPMkAYQI6/W7WEU+yng1qLG1kRzE4F5mquQXMfMaeL/nl9G6o74heCvQEa
+	 rpQqU7kMzF8FNOkada1v+mxwpETZCFwUIYkuux5HVTxkEX/osFBJflMCLDKoUROsZnXWa
+	 2Ob+h0uRQla21ncH85NoA+sTZKMIRLVybaHkb40iHT2q74gjkm7C+1c0AnHdWhQsHdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=intel.com;
 	spf=pass smtp.mailfrom=intel.com;
-	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MBinKNbI;
-	arc=none smtp.remote-ip=198.175.65.11
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW;
+	arc=none smtp.remote-ip=192.198.163.8
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC6D606A31A;
-	Thu, 29 Oct 2026 13:23:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5BC6D606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67996606A326;
+	Thu, 29 Oct 2026 13:30:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67996606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=MBinKNbI
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=moKhVdIW
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1793280203; x=1824816203;
+  t=1793280624; x=1824816624;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=9Cz3qGxvThs0rl/GR84Oy3PnSJHjpp3B9x+qw2O+AJs=;
-  b=MBinKNbInWo1azOpxCckzEmKPOm1qJhWDP0SKyHrQktYkzYTDDOnvgy+
-   Mp5XirOOcE0iqD0MI2yhoMUOt9eY0V9b1ASxPjrG72u76eaEpalhH7XUZ
-   fusx/thYdJ/v6Zw/PS48jRttvL7mMk9e87pFXCCAwzaOoFDS0Ot2ZYgN4
-   LSbbMDAK+X6K+v2OhSgj8owP7KMBB+WMl1tJX9rYqXaM/WkymuQqD4nPC
-   0qDuChHGA4No3BYe9PhN5w3ih7l08YUWLE5zU6ikD2D0Oh+D2FUX98twb
-   nej4RnUiyULLFN24BYdAV4lAeAjE7Xujxx+oqI3J+HFJSZ2kS02oA87fg
-   g==;
-X-CSE-ConnectionGUID: k6N2Pc+ZTumlYsJlEhrExQ==
-X-CSE-MsgGUID: +avD9XYuQiuQ8otbTMop9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1905320"
+   mime-version:in-reply-to;
+  bh=XiB/P3z67uNi54hQwr+HoGceAi4KeJ58DpxovBSc0bg=;
+  b=moKhVdIWHTlYBTM27yPpptcYvWfZxeoV5vQDl8tROPJHxcy1XOyrsLiH
+   UEC0pOG8yTIBOxOxX+8Sx3MfPvthNhhSVbg7hmXMLdY75L0ynvudB2qUB
+   xwDw8dlq+JFqmrEH1vF2p5uZ15A+7QpDyhHdm3QkceUndx7CjaFFhUM69
+   MGYS36fDRAR2PqPL1vCXsKjhaE/atqXAWFvoXUpwofjuL2spLHNDxelfM
+   4s5Iqm0+JQ+1YT0Rz6kf+pLQU6USwnYQL+Zb3tysqKRg5FvDcKhZdVdhv
+   IUM8pJpk+riQyMmNtQTeyuROg0DxK1r+WJdKbdMqvpLe47T3qLyVJqwQX
+   A==;
+X-CSE-ConnectionGUID: X1a7bbI8SnWe9Ef4aSkLOQ==
+X-CSE-MsgGUID: CjMqrJc6RY20tCJkecc5HQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11949"; a="1915313"
 X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
-   d="scan'208";a="1905320"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:23:22 -0700
-X-CSE-ConnectionGUID: sK2vSRAjTAqdx5FXxpCvqg==
-X-CSE-MsgGUID: o1lYrOQHRt+E7suodbHRNQ==
+   d="scan'208";a="1915313"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:23 -0700
+X-CSE-ConnectionGUID: pazyI6DLSZO+QuLDn2CgVg==
+X-CSE-MsgGUID: Eiw0OS5rRee86K4uWKSdfA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,184,1787036400"; 
-   d="scan'208";a="5156292"
+   d="scan'208";a="5273644"
 Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.129])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:23:14 -0700
-Date: Thu, 29 Oct 2026 15:23:11 +0200
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2026 06:30:12 -0700
+Date: Thu, 29 Oct 2026 15:30:09 +0200
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Dmitry Ilvokhin <d@ilvokhin.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Billy Tsai <billy_tsai@aspeedtech.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 07/10] drm/gem: Switch to __nonnull_args() macro
-Message-ID: <auNIv830Zu_1zWE5@ashevche-desk.local>
-References: <cover.1793027261.git.d@ilvokhin.com>
- <5bfdc1491d297b5e98cf42322c790f06481c28c7.1793027261.git.d@ilvokhin.com>
- <fb3b6a24-74ca-4da8-8593-352afd515313@suse.de>
- <CANiq72mMm75svCqevd8fHtVoczDpvpo4NwL0SC8=bWy030vQuQ@mail.gmail.com>
- <auNGJhSe3tVi7rDy@shell.ilvokhin.com>
+To: Atharva Tiwari <atharvatiwarilinuxdev@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-gpio@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+	mfd@lists.linux.dev, platform-driver-x86@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 03/14] watchdog: add driver for apple smc
+Message-ID: <auNKYRpfqrtKa50O@ashevche-desk.local>
+References: <20261029085504.3547-1-atharvatiwarilinuxdev@gmail.com>
+ <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -108,37 +112,75 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <auNGJhSe3tVi7rDy@shell.ilvokhin.com>
+In-Reply-To: <20261029085504.3547-4-atharvatiwarilinuxdev@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 29, 2026 at 01:12:06PM +0000, Dmitry Ilvokhin wrote:
-> On Thu, Oct 29, 2026 at 02:00:28PM +0100, Miguel Ojeda wrote:
-> > On Thu, Oct 29, 2026 at 8:32 AM Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> > >
-> > > Should gem.h now include <linux/compiler_attributes.h> ?
-> > 
-> > No, it should be included for you (unless you are doing something
-> > custom with the compiler flags etc.).
-> 
-> Just to add a bit more colour to Miguel's reply.
-> 
-> I believe idea behind include/linux/compiler_attributes.h is to make
-> attribute wrappers as simple and transparent to use as native compiler
-> attributes. In particular, this means they should be available in every
-> kernel compilation unit without any additional effort.
-> 
-> For this reason, all the nessesary plumbing is handled at the build
-> machinery level (see scripts/Makefile.lib:171), where '-include'
-> compiler flag is used to pull in include/linux/compiler_types.h, which
-> in turn pulls include/linux/compiler_attributes.h.
+On Thu, Oct 29, 2026 at 04:52:00AM -0400, Atharva Tiwari wrote:
+> Add a watchdog driver for the SMC on Intel Macs. It can
+> reset the machine if the system stops responding. It works
+> on both newer and older SMC versions.
 
-Ah, TIL! Please, discard my comment then. Perhaps we need to clean up all
-headers that pull compiler_types/compile_attributes directly (the same way
-we do for kconfig.h).
+...
+
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1810,6 +1810,17 @@ config SIEMENS_SIMATIC_IPC_WDT
+>  	  To compile this driver as a module, choose M here: the module will be
+>  	  called simatic-ipc-wdt.
+>  
+> +config MACSMC_WDT
+> +	tristate "Apple SMC Watchdog"
+> +	depends on X86 && MACSMC_ACPI
+> +	select WATCHDOG_CORE
+> +	help
+> +	  This driver adds support for Watchdogs in Intel macs Using
+> +	  Apple SMC.
+> +
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called macsmc_wdt.
+> +
+>  # M68K Architecture
+>  
+>  config M54xx_WATCHDOG
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index 9ac406677..f142a5d8d 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -158,7 +158,7 @@ obj-$(CONFIG_NIC7018_WDT) += nic7018_wdt.o
+>  obj-$(CONFIG_MLX_WDT) += mlx_wdt.o
+>  obj-$(CONFIG_KEEMBAY_WATCHDOG) += keembay_wdt.o
+>  obj-$(CONFIG_SIEMENS_SIMATIC_IPC_WDT) += simatic-ipc-wdt.o
+> -
+> +obj-$(CONFIG_MACSMC_WDT) += macsmc_wdt.o
+>  # M68K Architecture
+>  obj-$(CONFIG_M54xx_WATCHDOG) += m54xx_wdt.o
+
+In moth files the entries seems misplaced to me. Also, why did you touch
+the blank line?
+
+...
+
+> +struct macsmc_wdt {
+> +	struct apple_smc *smc;
+> +	bool has_oswd; /* Newer version of watchdogs in macsmc */
+> +	struct watchdog_device wdd;
+> +};
+
+Try with `pahole`.
+
+...
+
+> +	.probe = macsmc_wdt_probe,
+> +	.driver = {
+> +		.name = "macsmc-wdt"
+
+Always add a comma to non-terminator entries in the initializers
+(yes, there are some exceptions, but it's not the case here).
+
+> +	},
 
 -- 
 With Best Regards,
