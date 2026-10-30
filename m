@@ -1,80 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793368296;
-	b=rB41ucZL5CndljW2g2sF9Y1ocBkhHe43zpESYajvMmQZBTkKpu6gaVLF2UCMu6RNxA7Y
-	 Zoc7XeOKN7nvq0us6W2ZzmF2Ig+2TEZq33QmhW1Q+DBfuNBMdoY+OyDFNLH8RVZZn74fA
-	 RZXHaxVtCZWvkv4NS+lv98uxjJnMCoTXqoetlbGMG2nxz5WQfmDBBnxMoNZk0/JQ9MSkr
-	 O1MjjlQUvdhitXni0LHXd4dkOSA/GAYlz9pUhQc3iUAOVH4Zm7qC2lse5Swkfs/7EhnVl
-	 8YqtgAT0swcA14LWr0/MYY5UjTmWwj0YGlO4xDOidhlDLABe4eE3ZxsYYZ1Yn5hGG9w==
+	t=1793368297;
+	b=2QoZargDSJWXOVjY1HLZN8JWkILVbo5ROrEVf1d50xe4KBLh/IQzXiY7qg532395Tzgc
+	 jGwGHnXNAvSlFNLrkjj8RTMd5mxuXo00HTvQp8kpaxVpGB5SUnAAiqhor3sdDkfnmUs98
+	 n5t61iW7zNCsQJVYt3L0u3+Jy3UXtGoHiT7b2cCsse/6BGOPWpowhH9jbSGH2Sd6colAy
+	 F8M703j3gfx2w609e9N0vKQfM5tGSDzSdNh+Pk796kAXkgB2tZ/BAjGF7HOZmSQARZqK2
+	 naoJpybApw+TRwTQIOHCRDyEnqiPZZE6M1Ihzf4DYQCEctSuUPgaS2aM2MGyE6nxmkg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793368296;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=pnK8oBK/BP/5LlJyigwP8TEeAwBVqyULylx6DQ3SWrw=;
-	b=ONvHe26SbZ+jvhvifvcPMlQqrQn33Ylbq9Gzx4TglAVQvxzDRcNCsot/fbj5NBTmMU4a
-	 1laJZLAUDXuxr8sv65QqaKP4j5GT0HYfOcMjLZ54Zwh9iGMpvl566vdQhLgQRegRpRj6s
-	 9kxCo3o82CK8nvUrt7+/CDJkVEDOlKwHB1BIbf4HMO8jI1zv3wy1sczNGC5AreEpy3L61
-	 Ixw5O2vy7H0V1IoOjIkryLwuHsl8wfopc5W2LqNCAolZoQnbeuehkFWRTWaKLTHetKI0d
-	 rFX2RP2gsJCUfpJX31hJT244+2JxbsOCC/zuVXHg99dAg+3gFc10Atn+07m+Za916Og==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793368297;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=M64UvXS64vo0gOOtp0YAqMhGqcxzmBpD7h7yNGxoB2I=;
+	b=eWvGMP0pPvI88uQw/eD2TnNRot/sWeVzR14THIAjjzRyLGwnch5OnpUk3Mn78AUNlH82
+	 5JhmkMV/GV+99rWibPeSjCzVs7Zxiv6XzFZsutcgtxlCRDIlaDt2EddS6QklG3eULeqmo
+	 LMCAy4W5XnQudJPl4psKOs+HvBhb98NtBw5fv9l58AWNy7AaISoDQYCmSCYwoR02D6eb8
+	 k/Y2Ex5HYJE2kkLOYyPrs+vtOYI/8NRQIt0BI7dEKGc/ZVAHJvEKPuHBBDVxAzVEsdo00
+	 jAgFFsEEp4d5q7QfwMstv4CXtYYpARXk2IQMa5/nm0t1d0wSxJOTT+AMdqopRu+03Hg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eAH+Rm7d;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UAAwo16Y;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D579606A322;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D3E606A32D;
 	Fri, 30 Oct 2026 13:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eAH+Rm7d
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=UAAwo16Y
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1793368296;
-	b=HkCJIRxyleGL2dNStCwjQ5F7GLLm0dq4ygiMuMenfhsywC8WAxu5QP+mZKMngPq0Iahv
-	 KBBERLI4zmVHARR/cTh/BlkeGkeb6fN3hR4Hkcqe8PAB5Uj8VTvYad6SKpOJd7HUrn+Zq
-	 EvTFGXPums/n90hAbuMdp3ll+MbJ4Ir1iqTj52dHsa4e4K3Gb9uiUwUheqFZlzCFqypCr
-	 X6CbKucMLuMV//MVzAd2twOomeszhwurWfyQ/JfPFydVpYcujqHrWy7FdReOUBDvj6fI3
-	 6SYcc+HXPNSAHPMC5cJqgNXiEHbkn1rel/V6pLuvjL4odToElAW7p1lry7KlVl7YhRA==
+	b=3A62V09VkHt0AnEDAnx8v5zas8AB+3RU5oJdjSOGdpAOlMzOTjfHSEs7ko4iR9lZK3FM
+	 IkM1KyqLksfa5/nX0J8eObVsKQw2G7J24Yveg44vo8hJPAJQhseWBzZkhaIN19IEc729o
+	 wWt7sIX8VsTV55DUuOQ+rA63rp73jxEYb38kY9yF24HWTmwLrgTFF6YIt8NuFdLTkt1S1
+	 13Z9VSmuIeagOitwy4VBhVv3LHM3M7Bvovk3X0dc5/kKGchGPw1DY81GZgUTsQIEU1Fxn
+	 StV2PTBgQcc4iiNzt0W6afD3kewcloSufxsASvPyQUIvGNW7uRSZrvsC8cGEHTiZ8dA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1793368296;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=pnK8oBK/BP/5LlJyigwP8TEeAwBVqyULylx6DQ3SWrw=;
-	b=YZq3/5Wa+bcKWfs12k2dXKBctIsNi4YR5EqtMNSg8pNcvVFb8bWEzMD2JFkuJOSohbCO
-	 rBymaWOarGbVqJtx9q2uZH3rSoShivQ2MtyaegVrPYXxlc/UN1vxQkBCRzW1CY3ROEpoy
-	 EYPcEaJoMDiUSVcID3qdroUKvVd8KrBQXqRmFOLL1LiSfMKTR2Qtc8DYKueHLJ2wpkQYf
-	 6K9Y4FZ7ddk4E//Gcb+KMnp46dO3G0UIZV+9bT+7aexNJ3I9uMuYWe/oHfxQyh42Zi13U
-	 FRb0Na10WuE0hbOR1KzE/tM1dbkd1AiGCOCVpsqTBy2FLX9aqz216fjNrTjjkdS052A==
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=M64UvXS64vo0gOOtp0YAqMhGqcxzmBpD7h7yNGxoB2I=;
+	b=DOOXZ638M8V7uKg9Gz09SQAOq0zNbj5002u257t4ySaerLACheh1XSMdpCGzqTnkm7TF
+	 PupbK72TlNuJN1JCdfnbWOGHZ8adW22/oZ/wgVg0mbVcxVCFIPoPJqXIxyyqh8fABYa3u
+	 /Xs4Ziu7jq9hNXCN/AIe4lnl9iOi9yqnYj8UJRW502nZwSo3lWQwJWbt4MXHRhfSQ/DMt
+	 oOZUNl0zcrZVHrBQr1vpaT0G71E3oUO7L5zy7BIXsgCRHjIALvkG0pZEoNMoBwoGa9MKw
+	 5DlvDN6hlDOLyxAQ+fg2T3rUN2LvyOQVytdUseg+MMLIUPPWzlcVT5gsHYhVht0laSA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 055FF1F000C1;
+	by smtp.kernel.org (Postfix) with ESMTPS id 056511F00A16;
 	Fri, 30 Oct 2026 13:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793368295;
-	bh=pnK8oBK/BP/5LlJyigwP8TEeAwBVqyULylx6DQ3SWrw=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=eAH+Rm7dD2Q4MBBxg6mrUJSEp+k/Tt8TE4SrbnuCuNJaudbfA2uqk6zXxTXqSqb0+
-	 Xb5IeIsnq88NXp2JH0A+bmEhdUvll5YN+okZpZh3dn55VLqxwE3tDh6gK6mUdZjfLs
-	 n1sRAwh5iZnINwrwQS2VdS56IuzK/nQ6AyKx/olP9z7DLhvWi3BfeGlSlJrWmJjqdL
-	 AIs0IUBfAtGOeKI640x8xXOGgSlwiFto57/9GtM53eN47XxbN/VcJduh8DcvVoudBf
-	 nvkjKcfvKZjEJODazFPl7s6uYFQwCj6vaSkxz74yx4HCM3YVqYEAIbqURyp/yEcfF3
-	 CwfHcy2Vyuxyw==
+	s=k20260515; t=1793368296;
+	bh=M64UvXS64vo0gOOtp0YAqMhGqcxzmBpD7h7yNGxoB2I=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=UAAwo16Y0t/QiF0p6YXOkoKWoIleQ8laCqnq9Gm2kCexwVvDSqiVFqAUr0XSLHFdV
+	 bH2hSOLdhm60R1iil4qP67eYEu1e6mbfyMgHTELFRKnYZrtiYdrJ6SkUFxqnx7A8pS
+	 NP/UG9YqEWDx37hykyA/uNDJZ+yE7Sm2tx+h0IdX0a3u749UL2mkc8/ikMunODOPlm
+	 5lfDNLqNe0RpeOuOSQl56iKClLWWn2+o3f81l5EYud6OwudVVZtETysqRR65OaQHZA
+	 qn/WYITBo2kQw5ce/samq1B3RSiHW8OLWYH/OYfHV7eat4whw9s+yUYxpTOzEKUU/Z
+	 9LeV0+sShHvdQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 5A1A7437DF;
+	by lkml.kernel.org (Postfix) with ESMTP id 71B99437E3;
 	Fri, 30 Oct 2026 13:51:34 +0000 (UTC)
 From: Nikolay Plastinin via B4 Relay <devnull+plaztininikolai.gmail.com@kernel.org>
-Subject: [PATCH v4 0/2] leds: trigger: input-events: Restore previous
+Date: Fri, 30 Oct 2026 21:51:32 +0800
+Subject: [PATCH v4 2/2] leds: trigger: input-events: Restore previous
  brightness on input
-Date: Fri, 30 Oct 2026 21:51:30 +0800
-Message-Id: <20261030-leds-input-events-brightness-v4-0-5ea0ead7480c@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -85,99 +84,179 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43Nu47CMBCF4VdBrhlkj00uVLzHagvHniQjgRPZW
- WsRyrtjKBASBZT/Kb5zFYkiUxKHzVVEypx4CiXMdiPcaMNAwL60QImVbNHAiXwCDvPfApQpLAm
- 6yMO4BEoJbF1Zam1dd81eFGKO1PP/g//5LT1yWqZ4ebxldV+/hLMCBZ101Pfaojb6OJwtn3ZuO
- os7nPEF0/IDhiBBt6bx2nnvmzdMPzElVfUB0wVDZyp0tieJ8hVb1/UGcwEvD2IBAAA=
-X-Change-ID: 20260924-leds-input-events-brightness-a76ae9a77b85
+Message-Id: <20261030-leds-input-events-brightness-v4-2-5ea0ead7480c@gmail.com>
+References: <20261030-leds-input-events-brightness-v4-0-5ea0ead7480c@gmail.com>
+In-Reply-To: <20261030-leds-input-events-brightness-v4-0-5ea0ead7480c@gmail.com>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
 Cc: Hans de Goede <hansg@kernel.org>, linux-leds@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Nikolay Plastinin <plaztininikolai@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793368292; l=3666;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793368292; l=5347;
  i=plaztininikolai@gmail.com; s=20260924; h=from:subject:message-id;
- bh=TqfNC0LMUz3nz/opoj1+J7OcrmSpnFYU8zd02dPuZfo=;
- b=L3LbvudhFfLquOXHsn845Su6kFcFrxuQCzBgVsheOXwjGRXtmYd/SRGpeX/inSfaRveFKZyG5
- 8ts/vXyEKtvDyR9TV/Kptezr5pTv4qxa44UFRoVfowNtqrHDc7ZtXjh
+ bh=0gQ+lQNtTSZ2rrSnglNS4oz/wIOSXLqSOeeFoSbjpMk=;
+ b=xjgDMIhTZtF1JxtlsDoOtf9G2y5hQuqPvty+3ic+FOGw4chfj/eCkswdtA5K7dnq2X2A1oPy2
+ Fl+vKlISXuIAq4H/Ij/6ytqkq4Ub8UZU2rJSH0MmJjUFv4Un5h6YeiD
 X-Developer-Key: i=plaztininikolai@gmail.com; a=ed25519;
  pk=bmHrETa14IbiLNkJSoiLqUMni+IeSFwhOSDM4vVFN4s=
 X-Endpoint-Received: by B4 Relay for plaztininikolai@gmail.com/20260924
  with auth_id=1052
 X-Original-From: Nikolay Plastinin <plaztininikolai@gmail.com>
 Reply-To: plaztininikolai@gmail.com
+Content-Transfer-Encoding: 7bit
 
-The input-events trigger turns LEDs back on with LED_FULL, so a keyboard
-backlight with several levels always comes back at maximum after being
-idle. This series restores the level the user picked instead.
+From: Nikolay Plastinin <plaztininikolai@gmail.com>
 
-Patch 1 adds led_trigger_for_each_led(), an RCU list iterator in leds.h.
-Patch 2 uses it to save and restore each LED's brightness in one loop,
-with per-LED state allocated in activate() and freed in deactivate().
-There is no new exported function or callback API.
+The trigger turns the LEDs back on with LED_FULL, which the LED core
+clamps to max_brightness. For keyboard backlights with several levels,
+such as asus::kbd_backlight, this means the backlight always comes back
+at maximum after being idle instead of at the level the user picked.
 
-This came up while looking at a keyboard backlight idle timeout for ASUS
-laptops in asusctl:
-https://github.com/OpenGamingCollective/asusctl/issues/98
+Remember the brightness per LED before turning it off and restore it on
+the next input event. Keep the level in a per-LED state struct allocated
+in activate() and freed in deactivate(), converting the simple trigger
+to a regular trigger. Pick up brightness changes made while the LED is
+on before saving the level again.
 
-Validation for v4: the module builds out of tree with W=1 against Fedora
-7.2.12-200.fc44.x86_64 using the patched leds.h. A user-space harness using
-the driver functions reproduces a heap-use-after-free with v3 when the
-LED remains in the iteration after deactivate(), modelling the
-attribute-creation error path. With v4, the same test, brightness restore,
-and 10,000 concurrent deactivate/reinitialise cycles pass ASan/UBSan.
-The harness substitutes mutexes and a one-element list for kernel
-primitives; it is not kernel fault injection or an RCU implementation test.
+Use led_trigger_for_each_led() under guard(rcu)() for both the on and
+off paths. Skip LEDs whose activate() callback has not set up their
+state yet.
 
-V4 was tested on an ASUS ROG Flow X13 GV302XV with kernel
-7.2.12-200.fc44.x86_64 and no external monitor: brightness levels 1 and 2
-were restored after idle timeout and keyboard input, and 20 trigger
-activate/deactivate cycles passed. No kernel messages appeared during
-the test. The original brightness and trigger were restored afterwards.
-No full kernel build has been performed.
+Clear trigger_data under the same lock used by the LED walker before
+freeing the per-LED state. Although normal trigger removal waits for an
+RCU grace period, the device_add_groups() error path calls deactivate()
+while the LED is still linked, so a walker must see NULL after teardown.
 
-LLM assistance was used for the implementation, tests and message drafts.
+The previous revision was tested on an ASUS ROG Flow X13 GV302XV:
+keyboard backlight levels 1 and 2 were restored after idle timeout and
+keyboard input, and 20 trigger activate/deactivate cycles completed
+successfully.
 
+Assisted-by: LLM
+Signed-off-by: Nikolay Plastinin <plaztininikolai@gmail.com>
 ---
-Changes in v4:
-- Clear trigger_data under input_events_data.lock before freeing per-LED
-  state in deactivate(), as suggested by Lee Jones. This also covers the
-  device_add_groups() error path, which deactivates before list removal.
-- Update the NULL-state comment to cover activation error unwind.
-- Patch 1 is unchanged.
-- Link to v3: https://lore.kernel.org/r/20261016-leds-input-events-brightness-v3-0-2c462cafe020@gmail.com
-
-Changes in v3:
-- Replace led_trigger_walk_leds() with led_trigger_for_each_led(), an
-  RCU list iterator in include/linux/leds.h, as suggested by Lee Jones.
-- Remove the exported helper, callback typedef, and void-pointer argument.
-- Keep saving and restoring brightness in input_events_set_leds(), using
-  guard(rcu)() and a single loop for both the on and off paths.
-- Link to v2: https://lore.kernel.org/r/20260930-leds-input-events-brightness-v2-0-3948d3cddd83@gmail.com
-
-Changes in v2:
-- Keep the saved brightness in a per-LED struct allocated in activate()
-  and freed in deactivate(), stored in led_cdev->trigger_data, instead of
-  overloading blink_brightness (Lee Jones).
-- Add led_trigger_walk_leds() to led-triggers.c and use it instead of
-  walking led_cdevs/trig_list from the trigger (Lee Jones).
-- Use the Assisted-by tag format from coding-assistants.rst.
-- Link to v1: https://lore.kernel.org/r/20260924-leds-input-events-brightness-v1-1-b0ceff3a2343@gmail.com
-
----
-Nikolay Plastinin (2):
-      leds: triggers: Add led_trigger_for_each_led()
-      leds: trigger: input-events: Restore previous brightness on input
-
  drivers/leds/trigger/ledtrig-input-events.c | 76 ++++++++++++++++++++++++++---
- include/linux/leds.h                        | 12 +++++
- 2 files changed, 82 insertions(+), 6 deletions(-)
----
-base-commit: f475845eaf3d749114a63270bf2efea459e14dd2
-change-id: 20260924-leds-input-events-brightness-a76ae9a77b85
+ 1 file changed, 70 insertions(+), 6 deletions(-)
 
-Best regards,
+diff --git a/drivers/leds/trigger/ledtrig-input-events.c b/drivers/leds/trigger/ledtrig-input-events.c
+index d057b2a23..6b0bfd343 100644
+--- a/drivers/leds/trigger/ledtrig-input-events.c
++++ b/drivers/leds/trigger/ledtrig-input-events.c
+@@ -28,7 +28,69 @@ static struct input_events_data {
+ 	unsigned long led_off_time;
+ } input_events_data;
+ 
+-static struct led_trigger *input_events_led_trigger;
++struct input_events_led {
++	/* Brightness to restore on the next input event */
++	int brightness;
++};
++
++static int input_events_activate(struct led_classdev *led_cdev)
++{
++	struct input_events_data *data = &input_events_data;
++	struct input_events_led *led;
++	unsigned long flags;
++
++	led = kzalloc_obj(*led);
++	if (!led)
++		return -ENOMEM;
++
++	/* Start with the current brightness, or full if the LED is off */
++	led->brightness = led_cdev->brightness ?: led_cdev->max_brightness;
++
++	spin_lock_irqsave(&data->lock, flags);
++	led_set_trigger_data(led_cdev, led);
++	led_set_brightness(led_cdev, data->led_on ? led->brightness : LED_OFF);
++	spin_unlock_irqrestore(&data->lock, flags);
++
++	return 0;
++}
++
++static void input_events_deactivate(struct led_classdev *led_cdev)
++{
++	struct input_events_led *led;
++
++	scoped_guard(spinlock_irqsave, &input_events_data.lock) {
++		led = led_get_trigger_data(led_cdev);
++		led_set_trigger_data(led_cdev, NULL);
++	}
++	kfree(led);
++}
++
++static struct led_trigger input_events_led_trigger = {
++	.name = "input-events",
++	.activate = input_events_activate,
++	.deactivate = input_events_deactivate,
++};
++
++/* Must be called with input_events_data.lock held */
++static void input_events_set_leds(bool on)
++{
++	struct led_classdev *led_cdev;
++
++	guard(rcu)();
++	led_trigger_for_each_led(led_cdev, &input_events_led_trigger) {
++		struct input_events_led *led = led_get_trigger_data(led_cdev);
++
++		/* Not yet activated, or already deactivated during error unwind */
++		if (!led)
++			continue;
++
++		/* Preserve brightness changes made while the LED was on. */
++		if (led_cdev->brightness)
++			led->brightness = led_cdev->brightness;
++
++		led_set_brightness(led_cdev, on ? led->brightness : LED_OFF);
++	}
++}
+ 
+ static void led_input_events_work(struct work_struct *work)
+ {
+@@ -42,7 +104,7 @@ static void led_input_events_work(struct work_struct *work)
+ 	 * running before a new event pushed led_off_time back.
+ 	 */
+ 	if (time_after_eq(jiffies, data->led_off_time)) {
+-		led_trigger_event(input_events_led_trigger, LED_OFF);
++		input_events_set_leds(false);
+ 		data->led_on = false;
+ 	}
+ 
+@@ -59,7 +121,7 @@ static void input_events_event(struct input_handle *handle, unsigned int type,
+ 	spin_lock_irqsave(&data->lock, flags);
+ 
+ 	if (!data->led_on) {
+-		led_trigger_event(input_events_led_trigger, LED_FULL);
++		input_events_set_leds(true);
+ 		data->led_on = true;
+ 	}
+ 	data->led_off_time = jiffies + led_off_delay;
+@@ -138,11 +200,13 @@ static int __init input_events_init(void)
+ 	INIT_DELAYED_WORK(&input_events_data.work, led_input_events_work);
+ 	spin_lock_init(&input_events_data.lock);
+ 
+-	led_trigger_register_simple("input-events", &input_events_led_trigger);
++	ret = led_trigger_register(&input_events_led_trigger);
++	if (ret)
++		return ret;
+ 
+ 	ret = input_register_handler(&input_events_handler);
+ 	if (ret) {
+-		led_trigger_unregister_simple(input_events_led_trigger);
++		led_trigger_unregister(&input_events_led_trigger);
+ 		return ret;
+ 	}
+ 
+@@ -153,7 +217,7 @@ static void __exit input_events_exit(void)
+ {
+ 	input_unregister_handler(&input_events_handler);
+ 	cancel_delayed_work_sync(&input_events_data.work);
+-	led_trigger_unregister_simple(input_events_led_trigger);
++	led_trigger_unregister(&input_events_led_trigger);
+ }
+ 
+ module_init(input_events_init);
+
 -- 
-Nikolay Plastinin <plaztininikolai@gmail.com>
+2.56.0
 
 
