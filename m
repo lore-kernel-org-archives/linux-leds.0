@@ -1,90 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793324387;
-	b=tkrpy5wkHnAzdH+4LKyLW9538rjG8MpCOC0a4iND4CvWzy6LGJHRGsJukT3b9bYLa/GE
-	 RGd1jCCPHIG/fEZmBFKDdwxIj6Bvg6QyEnuIRD9m+uSTlVNYTgjOmXvQVb6eGJAJkQ8U4
-	 NjFXDKxTcmGC0gGRUyVSod9kmZaxbSuh9iJPMlp93yaQuAVCuQXq2/xt6LSXJ5fc9wqEf
-	 7hV5dNXBIftt2BC11P5MjPSgj48+lbTDGK2zNPpCrxrltS0Jy4Mm6uzfzbazeK8vWQG0w
-	 VJP9bzY3PqlSZ4sd//2sCNLOoNGGCBBcA2n/Z7Ap92HPdBqZoVFhkYAteLHzZb+SD/g==
+	t=1793324771;
+	b=MP+8WWkQ1sp5Otj2RRk1AqVM4rN4RW4pIbzh5yyhC4w/5VDxEblqvBS+9EDrP2k2Y3yr
+	 LM3D+KYC1QPYseTRBZwtUmhMMgT2qGxn4LKx5Phhy+TLgbPNz4jyAHMSonj76pg0QxRrt
+	 WeoVYDQo1gkG8H2gHmZ3PHgzVh/JHF36WGSxgjWFcTJMMvGb3DiuuIxHz4ZlB1MKRxAbE
+	 Ka2HqPrd9CSVu7xuHAMJ138neE9KLuO7kzltmzIlu7TCkEWAOyKVr64czVuR2nXh4hXbn
+	 lrtRyl2T7vClzKXVbu5TjEKhRKzrlukGT0c4vSRYsxC8k9baXBf22xs02fNaLNCOEmg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793324387;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=skxcpPsBeTV6ryw50kturftxInkxS+Kf6PxuE2pqHOk=;
-	b=XeKB4ihRDKOkiS4152j6M/3ARrpBpHa6V0Crx0j3jOJAswYxlDG40WyHQWwWFhypKz+A
-	 xZxBZK/VnXl+NYxcLbn5JfaLTXbXtQ8VJovlNU+/lcWwPnbtryl1+3JFyMVgFlpk6pqra
-	 uuVCsMXeDNhzhBfFF/0LvChONjyEyNm6Bk9Dq12O40UOJKLKzxBIVOHPn3s2LsPiBBVat
-	 5uAHSO3HCYB5tAf0KlNqiJcJA1cn/WGUrYlLvLQFCnLbY9nDky3ShZ04PDXA3nbv8CM9J
-	 RRAFOuoUn4qCQ23GotqqP0GWMGZ0QWEyNOlIQfMfGM9hfWEjzQlM1mYSBscXKrRhZsA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793324771;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=cwoAflfULkKi5dWJkLDkZFbtOP4YzBUn/BULp19p3/w=;
+	b=ZvKjawIqPqqJeSfgHHfoLA2I0nsKh7kl162z23FjWPuxLp0E0ASkAbSMLnXEaUfeQKqC
+	 gsSitNRR0ZgLPUcs6Ai0w0+9o0mYVyiEhcqlc242e7enskaUAMxhK+eo9HxNr14B6HswW
+	 j0HV63rVqMnFDgPV26ypP0VbmODk1T1TTELCp7Z9xsphyRtpwYskuHsa7DUjSebpe3t88
+	 88D2hOUQgGfuzRtfl30cKTnkQ4tRKBojueHKN7asemqUZwO1a/W/GTy3/xFeVUAjofOzB
+	 SReXldpeYddBteXcKNkeMGq6v/8GMCbJC1W8G1wJujj/1n9W995fZD0k/3oBCHgOpAg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xweoJmGd;
-	arc=none smtp.remote-ip=74.125.82.178
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com [74.125.82.178])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bOLQzDNE;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9B4606A31A
-	for <linux-leds@vger.kernel.org>; Fri, 30 Oct 2026 01:39:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8E9B4606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22210606A31C
+	for <linux-leds@vger.kernel.org>; Fri, 30 Oct 2026 01:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=xweoJmGd
-Received: by mail-dy1-f178.google.com with SMTP id 5a478bee46e88-3535bf8b3e0so382859eec.0
-        for <linux-leds@vger.kernel.org>; Thu, 29 Oct 2026 18:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793324386; x=1793929186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=skxcpPsBeTV6ryw50kturftxInkxS+Kf6PxuE2pqHOk=;
-        b=xweoJmGdu90CB8eP6J3RyMpLDHXOxQgOqBakF0y8/Ha12qCltrdngB1kBhfDF5NSn+
-         L10eMX+fQGaoFfl/4ZJN4rNl6Tcu2XG6c1im60xqkiuqRXuhWK0y6cxWu5Oxa1hxlIqj
-         A4OEkOlhVYmpttwuorY0ugQ3oqQn/jEMRhp+huXvc/dI9YXAOn7DE+eGvOtyVx2eGOe2
-         3LTl1CqQMAi/tcYL7Ve3x2yKtkfMZELh8zxxN379aSlmGO0D8huQoGsUfBACf8EP6sG8
-         //0MCKLOk+AL/+LU4GDlIkCMXKPa1cHE6AIPHZ7G3n+IpkXJ90cYFggEGcs8LpBKGQ9w
-         A8Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793324386; x=1793929186;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=skxcpPsBeTV6ryw50kturftxInkxS+Kf6PxuE2pqHOk=;
-        b=XQe0gTU5YHFqEsExu6etLewE5p1pE9vTAcehgcMRwisXIhpF/Cxh6oXAgJkF1iQUPo
-         GB+x4z5j6H5QQNqGWQO0qz4Dq6vgJxJZWNGNNFjZOl21e3k2u14PipZOXRo6h0Un3hG0
-         Q8ULJVfiIwXoJWVBCCyrGkllvVhkPz+PY5olQ4OxyEp3uDQlGHtnqlikAH3d+3n2gX7o
-         n5nIYkHqbAE5tZC9LfFr/siwGSsBltPiC4YLK/+JGPZQP+sZptUwORZsazyvwgOk0r0R
-         2lAfHs1YnQ2Aqb2bJw8MA19daUaPEYjFBQI4p9k+KO0JqMX8rVOMY7WeUUE9NJs5wEG3
-         DFYw==
-X-Gm-Message-State: AFq9FYLuNt0p63Kkp6Hr3sfiQ56dZIvnUHejpQ1dcS0VaOa+Oq4phgMI
-	5d5MO67TduQ5Z4v1+YM8G/L8jvhixhwZdMOvzpgDjHhYNbKUMmXntrjI+jTK3eY=
-X-Gm-Gg: AYBFou1BHkQerEg3y0hzzHg2b4ZxXhiqw+S9xfwmwsycBNJTE24uJbK18uSCn/qmbiJ
-	DK9WKqiifPjRo9V0u9fN9HF8Po5EX5ka/Zc//D2rNR0O9kS0s/UNtcWgtLzDYPvYjRyyUHQha0X
-	URBRyT7dUPuKRxHXRy6sOgySIEhryFyRqvPxG8naaFg8d+kN3iPkBWiVhAFVUlpE55VJTWjZexv
-	L7pLts+DmXlwNvMDhdz2D5eOg+0MXeTocZPbL+cN0A2x5ymHObwpKqWdTJ+2Ggg6+tw2Bw5QuJr
-	qhiret5tNipEbG85MvWmJ3htJoWvjUTw4drqyeOmlPsxeSapsuRzu/h7mc/IGqs7nC8brolQjm5
-	l3yhRXd8ZelUo9HIREqbrb5uMyj+k5x03BBzfgsTpZHLlXg65bgtJTeooeH6+TsCTYOEnFz1BBe
-	lQ6ESGeMzk74rYkTq/m4p1hHRivCSDZ/YdHkMtk3WzcyoUPbmeSgEvA1WfldWIiCJxv05NrJ0q1
-	z/hW6OLpg1Mf/FLy8krECgI0jnDLCds6picM1x67iBDjSRyU/lEaVIrPna2Q3uTumxXCNrWslY7
-	4pGPX4rPiJmoFc2teahkgxYs/IQdHrxt7kNHSzdDs338A8ke3jhvPCT/OjNJZQ5fGutD
-X-Received: by 2002:a05:7022:b05a:b0:19c:c396:37aa with SMTP id a92af1059eb24-1ac5d1d058amr1084996c88.22.1793324384575;
-        Thu, 29 Oct 2026 18:39:44 -0700 (PDT)
-Received: from localhost.localdomain ([2406:3003:2002:639c:61c8:985e:fbe6:4d1e])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1ac19f4b08bsm2860630c88.16.2026.10.29.18.39.42
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 29 Oct 2026 18:39:44 -0700 (PDT)
-From: Yige Jiang <yigejiang86@gmail.com>
-To: linux-leds@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: pwm-multicolor: manage the multi-led node reference
-Date: Fri, 30 Oct 2026 09:39:37 +0800
-Message-ID: <rc-review-20261029-ai27-27-2c77ed65cec2@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=bOLQzDNE
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03671F000C1;
+	Fri, 30 Oct 2026 01:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793324771;
+	bh=cwoAflfULkKi5dWJkLDkZFbtOP4YzBUn/BULp19p3/w=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=bOLQzDNEHrvaejDfdhaQJJvv01tivgf9PW83o2uXzL8g6RinXaM19zOXHW6lrmzV0
+	 EOAzXsNPD6+IOG5tZ/Vjl7vq6aYBzjm6pxMHlxRkQc7xvgp7XkU4J/HBENOZ9qv0ZG
+	 gMEQKC7tvziWlir2k2GA+3AN/v1IQkMAW04eicFuGU+zjHCvVn0EcS6NLPTJzYjlt8
+	 +ae6OCG7BhizqhDlCs+Xux+nx518CUGfJukM4npaAw5ykVWClRSLnlngl5mAaJqpRQ
+	 0WyO/bMsn/ikidvrCtddF7IcA4rQEv1++A08jLqBk7IDwPCi9slQcaM2+Oyg+dNbZV
+	 e/SRd8Bl9xGWA==
+Message-ID: <sashiko-outbox-190152@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] leds: pwm-multicolor: manage the multi-led node
+ reference
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Yige Jiang" <yigejiang86@gmail.com>, linux-leds@vger.kernel.org
+Cc: lee@kernel.org
+In-Reply-To: <rc-review-20261029-ai27-27-2c77ed65cec2@gmail.com>
+References: <rc-review-20261029-ai27-27-2c77ed65cec2@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 30 Oct 2026 01:46:10 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -93,65 +59,86 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-led_pwm_mc_probe() leaks the multi-led node reference on successful
-probe and if the final PWM update fails. LED registration borrows
-the node, so it must remain valid until the LED is unregistered.
+Thank you for your contribution! Sashiko AI review found 2 potential issue(=
+s) to consider:
+- [Low] leds: pwm-multicolor: lowercase commit subject description
+- [Low] leds: pwm-multicolor: unused release_mcnode label in led_pwm_mc_pro=
+be()
+--
 
-Register a managed put action before LED registration. Reverse devres
-order then unregisters the LED before releasing the node on unbind
-or probe failure. Remove the explicit error-path put to avoid
-releasing the reference twice.
+commit 67921ff7042ba5bbedd0da0b44a4a770d241be02
+Author: Yige Jiang <yigejiang86@gmail.com>
 
-Fixes: 9fa2762110dd ("leds: Add PWM multicolor driver")
-Assisted-by: LLM
-Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
----
-Based on linux-next next-20261016 (2efb7a11f1aa).
-Compile-tested: arm64, GCC 14.2.0, W=1, CONFIG_OF_DYNAMIC=y.
-COMPILE_TEST=y.
-The object was built from this exact base with the patch applied.
-No full kernel or module-link, hardware or runtime test was performed.
+leds: pwm-multicolor: manage the multi-led node reference
 
- drivers/leds/rgb/leds-pwm-multicolor.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+This commit registers a devm action in led_pwm_mc_probe() to release the
+multi-led fwnode reference upon driver unbind or probe failure, and removes
+the manual fwnode_handle_put() call on the error path.
 
-diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
-index 6365459ec27f17187804153cde6cb1805eca33e9..0ccf6839bc65f282f7c821e9fe7a50f431cc0d71 100644
---- a/drivers/leds/rgb/leds-pwm-multicolor.c
-+++ b/drivers/leds/rgb/leds-pwm-multicolor.c
-@@ -106,6 +106,11 @@ release_fwnode:
- 	return ret;
- }
- 
-+static void led_pwm_mc_put_node(void *data)
-+{
-+	fwnode_handle_put(data);
-+}
-+
- static int led_pwm_mc_probe(struct platform_device *pdev)
- {
- 	struct fwnode_handle *mcnode;
-@@ -121,6 +126,10 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
- 		return dev_err_probe(&pdev->dev, -ENODEV,
- 				     "expected multi-led node\n");
- 
-+	ret = devm_add_action_or_reset(&pdev->dev, led_pwm_mc_put_node, mcnode);
-+	if (ret)
-+		return ret;
-+
- 	/* count the nodes inside the multi-led node */
- 	count = fwnode_get_child_node_count(mcnode);
- 
-@@ -174,7 +183,6 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
- 	return 0;
- 
- release_mcnode:
--	fwnode_handle_put(mcnode);
- 	return ret;
- }
- 
+>     leds: pwm-multicolor: manage the multi-led node reference
+>    =20
+>     led_pwm_mc_probe() leaks the multi-led node reference on successful
+>     probe and if the final PWM update fails. LED registration borrows
+>     the node, so it must remain valid until the LED is unregistered.
+>    =20
+>     Register a managed put action before LED registration. Reverse devres
+>     order then unregisters the LED before releasing the node on unbind
+>     or probe failure. Remove the explicit error-path put to avoid
+>     releasing the reference twice.
+>    =20
+>     Fixes: 9fa2762110dd ("leds: Add PWM multicolor driver")
+>     Assisted-by: LLM
+>     Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
 
-base-commit: 2efb7a11f1aa4d2dc285fe2680cca22cb9f72f64
+[Severity: Low]
+Should the commit subject description after the subsystem and driver prefix
+be capitalized to follow the LED subsystem convention:
+
+  leds: pwm-multicolor: Manage the multi-led node reference
+
+> diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/le=
+ds-pwm-multicolor.c
+> index 6365459ec27f1..0ccf6839bc65f 100644
+> --- a/drivers/leds/rgb/leds-pwm-multicolor.c
+> +++ b/drivers/leds/rgb/leds-pwm-multicolor.c
+
+[ ... ]
+
+> @@ -121,6 +126,10 @@ static int led_pwm_mc_probe(struct platform_device *=
+pdev)
+>  		return dev_err_probe(&pdev->dev, -ENODEV,
+>  				     "expected multi-led node\n");
+> =20
+> +	ret =3D devm_add_action_or_reset(&pdev->dev, led_pwm_mc_put_node, mcnod=
+e);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* count the nodes inside the multi-led node */
+>  	count =3D fwnode_get_child_node_count(mcnode);
+> =20
+> @@ -174,7 +183,6 @@ static int led_pwm_mc_probe(struct platform_device *p=
+dev)
+>  	return 0;
+> =20
+>  release_mcnode:
+> -	fwnode_handle_put(mcnode);
+>  	return ret;
+>  }
+
+[Severity: Low]
+In led_pwm_mc_probe() in drivers/leds/rgb/leds-pwm-multicolor.c, now that
+fwnode_handle_put(mcnode) is registered via devm_add_action_or_reset() and
+removed from the release_mcnode label, the release_mcnode label only execut=
+es
+return ret.
+
+Could the release_mcnode label and the goto release_mcnode jumps on the
+subsequent error paths in led_pwm_mc_probe() be removed in favor of returni=
+ng
+directly?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/rc-review-20261029-=
+ai27-27-2c77ed65cec2@gmail.com?part=3D1
