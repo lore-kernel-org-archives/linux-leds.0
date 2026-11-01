@@ -1,56 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793543522;
-	b=lg4eQI0WGYB8rBSIXJrgnrnRVsr6U/gBQwHybqs9j6gLqoW3QO3PCr29AGbXSw2NX7Yv
-	 78COCUrLAPYh93g4PoOYUQz/Mn5RbDMMGCXg3N6/ke+53/YpFFnCyViEjSSbluYbmMDAp
-	 tNs3s89xvGVOA8dbU6KphpIM8GG5OKoQJuxo73j3Tm1y1/Xk3JysdIdr5KC1ulIPv1nys
-	 Xpzna+kziKA30j2atgwgUU9cpVgwfguDMdXI+0AtX+nnAWB3VIMAN9iYgjQehhYKy90Uv
-	 wY5T7mxk6W1bf0QeFI0s6tMiYNZs1HlNZ0nrANT0yxZWeiYK2aZ+4TGeRgpvKr00v7w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793543522;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=vMspBcuyqpwO+B/elY0GVC6yL3BryKaCZThjohGQxhE=;
-	b=l7h+3Z2Rq2NAHvq7qX4Dt8tjUcEStlO1DD5Xg2jTfO/I1enRa5N96lfRtiMhbm8gHlGT
-	 2Iaromex69JpyPBEEZQF+jQadYmpWbAzb6pyLWnZbYVs0kRpg/wg21JI1G2lMg7xWI7ND
-	 sg9qRZTaM8Rp1ea6xgHwgMC0XhHC0hZ2vYTe1OmIImxwdEEbUwZtyuue2gm+kKLMSFMN7
-	 y+8rZM+wbhRgDrdriVxnMMgfJziHTyfdHETZ4m8WhCiu1M1bKCILLnARbIg8iSWXxhjyM
-	 kfYPk+Sd//eXcRHsVo8mczw5wzed6za1f4ajOdLVMY/QdH1PHA33sxdVa2YZC7FAaOA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bk++1HiO;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793556196;
+	b=2QhYXnKimQ8GAVvVfahAmboiNSadglVe70WlqGVtkOtPn0XrjbCeuawbVDLne7hi8xka
+	 kdQvybjsumZKzwrPW06hrDvGEM+Oyp7y5NNWzXgqKtN/Ug7te0ooIHeNzPPdMAtfB/5Uc
+	 N252FKF94+GTncolH8OfKbmhjX/0+6RR58ycsiDwZ+f1TsVQDPHjmT6kFELUWEqo5oxad
+	 hC2HbNFj5WGQkNnlbHkfNoD53u78bAcWAti0ls7UM0TAKL6qcHf2O9IQJTS7EmuzJ1leJ
+	 6W8I9UjE2lHYjTUZ5P0gjYSgwhOzfzq6Suyzwle0ejUjclaZBrgoBdJuG3SfRPbb4aQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793556196;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
+	 MIME-Version:User-Agent:X-ZohoMailClient;
+	bh=eXHwMW4V4v8WMpgUgtwJi5ivKtzvlCeyOpj5yYo5S2Y=;
+	b=Pmppxf94sXnZCgk2KS2wotirjY2t3yvR21+PReKfuWq9lTeOOdPFUdW4UvRHKuEJcZ9V
+	 OGwdnZHMB65BS4QkQzs2hQwva7DzwaPJm3uY3q9BB30LR0oIpZS0F4gIed4WbIM5K8yjb
+	 BWRVVYrFZpwGfPipQixVb+JTmJXKck6AX/FF0U9Fd1qvR6u3vRXI3z3VkfaSbXISFdqMH
+	 1vwCp53hxZDWirpeZiu/9S/S7zUuuql0wnq58f2f+32uLqRIdTJa7+GSVSSCEC8OFwRPj
+	 vN75Ak1rhbZSxuvPH9N63Qtg692INxYbpPSsLWklglin0GYQT3Hr/nZSoQ0Ennugyug==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=rong.moe;
+	spf=pass smtp.mailfrom=rong.moe;
+	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=mg0iYvul;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD0606A326
-	for <linux-leds@vger.kernel.org>; Sun,  1 Nov 2026 14:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC660A2601;
+	Sun,  1 Nov 2026 18:03:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E5AC660A2601
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bk++1HiO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D3C1F000C1;
-	Sun,  1 Nov 2026 14:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793543521;
-	bh=vMspBcuyqpwO+B/elY0GVC6yL3BryKaCZThjohGQxhE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Bk++1HiOH07DKsUZllesmDaQ4r5HlsZd8QTuDT6Nr8BHVMGa2TKwG2E//5jkBJIy2
-	 kWjOMTF9FGdZbyVepJv5O/zu3qv47cXilRUVryZmsWRM7UI5AYV3QW6mIPXIKjq+OW
-	 2HPU0Odr+FOKP02OUlj07a49U/AWCeye0F9grl6AMjUUajBF+lS6QWiE4k5iEd5w/x
-	 tAUJeo+480U8qGCzCPNEWA8eHktruzDMq5EADO728neNXlD7rR/7EgsVYJ2cB/Dz/S
-	 JSDyIlY0Am5gOEZAXkVzsdrnrhvJ/VdG3ooZu/T7LzeZN0VxoDRcqPNg5ezsFeoiSj
-	 tg/tOp0yzfYGw==
-Message-ID: <sashiko-outbox-192448@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v1] video: leds: backlight: lm3533: Support getting LED
- sources from DT
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org, lee@kernel.org
-In-Reply-To: <20261101142435.130520-1-clamor95@gmail.com>
-References: <20261101142435.130520-1-clamor95@gmail.com>
-Content-Type: text/plain; charset=utf-8
+	dkim=pass (2048-bit key, unprotected) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=mg0iYvul
+ARC-Seal: i=1; a=rsa-sha256; t=1793556163; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jMfJx7mtJyvrl3hUMFXapoMuOUV0SW6njFh2wylHXITowpncs3kDe6RSZpctLhPcC9UEhO1QTHht9SG4glxsGPhwsiit30FYux7h73qov0oZbRkoE4u3+sh3V8090mGQMd470smDKWYoM2ceo9TvkH3iOAuvnIZdDf1eEJom+i8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1793556163; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eXHwMW4V4v8WMpgUgtwJi5ivKtzvlCeyOpj5yYo5S2Y=; 
+	b=XGbUC6+DOYEYYsCfwCgdmiekVba2XSqAjiNBGyrv22DYhE8FP48ze15u/GyHx9YnWc2XOx33wseNndNH6n3ioyuTq1CW1pWAfS8aoh+e146eBqC3JCUyewwXZC/JUYbHI0whcGcbZ6wyjKbZ2TQONP73xYhVptEMsm/TD4SSrF8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: a=rsa-sha256; b=mg0iYvul/EpjF52CrVKwuu2v4fCljaQRbvIOvjnfI8Ue5JzT5rpq++u7Mu8mvopHg3mnDNEVUnxlg7eJ0QWyUUJu9ijeqALN/upZmEMU1yUc6yg90bVkl25Ed5SW01CRJNaG+Q89G2yqUwoTf1XAxQZcKruQhhQEUN3dNqmgDsG0HKWulYx813jotdto6ZzDFbGXOq1UfbLSwaZUtTz8/DFUsGcp4jZCjGCn4fwfzoBZdvH/aphGb6Ak8T7OEs5Ls/rjQkZ6JEAq9LKmgVfwcIFbyFHbIBQLmUCLlcjshXJPu2+sQuApYPM80RvAPPvG9GZD7yugxrQl+NHaxPLVpQ==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=eXHwMW4V4v8WMpgUgtwJi5ivKtzvlCeyOpj5yYo5S2Y=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zohomail.com with SMTPS id 1793556161090217.19737328716076;
+	Sun, 1 Nov 2026 10:02:41 -0800 (PST)
+Message-ID: <0fd34add2ef37f6abcab1301f6249cc68423f148.camel@rong.moe>
+Subject: Re: [RFC PATCH 0/1] platform/x86: thinkpad_acpi: Add support for
+ auto keyboard backlight
+From: Rong Zhang <i@rong.moe>
+To: Qiling Zhu <kmatzkaczor244@gmail.com>, Mark Pearson	
+ <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Hans de Goede <hansg@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,  Henrique de Moraes Holschuh	
+ <hmh@hmh.eng.br>
+Cc: Vishnu Sankar <vishnuocv@gmail.com>, Vishnu Sankar
+ <vsankar@lenovo.com>,  Griffin Kroah-Hartman	 <griffin@kroah.com>,
+ ibm-acpi-devel@lists.sourceforge.net, Lee Jones	 <lee@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,  Pavel Machek
+ <pavel@kernel.org>, platform-driver-x86@vger.kernel.org,
+ vishnuocv@gmail.com, vsankar@lenovo.com
+In-Reply-To: <20261101100123.28749-1-kmatzkaczor244@gmail.com>
+References: <20261101100123.28749-1-kmatzkaczor244@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 01 Nov 2026 14:32:01 +0000
+Date: Mon, 02 Nov 2026 01:57:33 +0800
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,107 +75,101 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Evolution 3.56.2-10+b1 
+X-ZohoMailClient: External
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] leds: lm3533: unmasked upper bits in lm3533_led_setup() regmap u=
-pdate
---
+Hi Qiling,
 
-commit 65c330f7377fc6ec85de7b076ec8dcd4d456b54b
-Author: Svyatoslav Ryhel <clamor95@gmail.com>
+Thanks for working on this.
 
-video: leds: backlight: lm3533: Support getting LED sources from DT
+On Sun, 2026-11-01 at 18:01 +0800, Qiling Zhu wrote:
+> Hi Mark, Ilpo, Rong,
+>=20
+> Recent ThinkPads with an ambient light sensor (ALS) support an auto
+> mode for the keyboard backlight: the EC picks the backlight level
+> according to ambient light. The mode is EC keyboard backlight level 3,
+> above the two fixed levels exposed so far, and it is reachable only
+> through the Fn+Space shortcut, which is handled entirely by the
+> firmware. Userspace can neither select the mode nor observe whether it
+> is active.
+>=20
+> This series wires the auto mode up as a private hardware control
+> trigger, "tpacpi-kbd-auto", on top of the hw control trigger framework
+> that recently landed in mainline [1]. With it:
+>=20
+>   - selecting the trigger writes EC level 3 (auto mode on); writing
+>     "none" turns the backlight off
+>   - the trigger state (bracketed in the trigger sysfs attribute, and
+>     the new trigger_may_offload_to_hw attribute) is the userspace
+>     view of auto mode; reading brightness returns -ENODATA while
+>     auto mode is active, per the framework semantics
+>   - Fn+Space keeps cycling through levels and auto mode as before,
+>     and the trigger state now follows hardware-initiated transitions
+>     automatically
+>=20
+> This is the thinkpad_acpi counterpart of the ideapad-laptop wiring
+> from the same framework series, which is still queued; this patch
+> depends only on the LED core parts already in mainline and can be
+> applied independently.
+>=20
+> For background: the February discussion settled that auto mode must
+> not be exposed as a brightness value [2], but no agreement was
+> reached back then on how to expose it instead; the hardware control
+> trigger approach was established later by the framework series [1].
+>=20
+> Tested on a ThinkPad X1 Carbon Gen 14 (MT 21V8) running linux-next
+> next-20261030: 61 scripted user-visible assertions covering the
+> software paths, the Fn+Space event chain and the unchanged legacy
+> behavior, plus manual exercising of both the Fn+Space cycling and
+> desktop-environment brightness controls; checkpatch --strict clean.
+>=20
+> Deliberately unchanged (details in the commit message):
+>=20
+>   - max_brightness stays 2; auto mode is not multiplexed into the
+>     brightness value
+>   - writing 3 to /proc/acpi/ibm/kbdlight keeps returning -EINVAL
+>   - module unload still turns the keyboard backlight off
+>=20
+> Two open questions, the main reason for the RFC tag:
+>=20
+>   1. MLCG returns capability bits in the upper 16 bits; does one of
+>      them indicate auto mode support? If yes, I would gate trigger
+>      registration on it. Mark, does the EC documentation say?
+>   2. On models without an ALS, the EC behavior when asked for level 3
+>      via MLCS is unknown to me. If it is undefined rather than
+>      rejected, optimistic registration would need a rethink (e.g.
+>      DMI whitelisting).
+>=20
+> Rong, happy to rebase this on top of your series or fold it in, if
+> you prefer to keep both wirings together.
 
-This commit adds Control Bank to HVLED and LVLED muxing support to the
-lm3533 LED and backlight drivers based on the led-sources device tree
-property.
+(+CC Vishnu)
 
-> diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
-> index 7259097bd6a71..a1aeff70a90fc 100644
-> --- a/drivers/leds/leds-lm3533.c
-> +++ b/drivers/leds/leds-lm3533.c
-> @@ -26,6 +26,11 @@
->  #define LM3533_ALS_CHANNEL_LV_MIN	1
->  #define LM3533_ALS_CHANNEL_LV_MAX	2
-> =20
-> +#define LM3533_REG_OUTPUT_CONF1			0x10
-> +#define   OUTPUT_CONF1_SHIFT			2
-> +#define   OUTPUT_LVLED_MASK			0x3
-> +#define LM3533_REG_OUTPUT_CONF2			0x11
-> +#define   OUTPUT_CONF2_SHIFT			6
->  #define LM3533_REG_CTRLBANK_BCONF_BASE		0x1b
->  #define LM3533_REG_PATTERN_ENABLE		0x28
->  #define LM3533_REG_PATTERN_LOW_TIME_BASE	0x71
-> @@ -54,6 +59,9 @@ struct lm3533_led {
->  	u32 max_current;
->  	u32 pwm;
-> =20
-> +	int num_leds;
-> +	u32 leds[LM3533_LVCTRLBANK_MAX];
-> +
->  	bool have_als;
->  };
-> =20
-> @@ -622,8 +630,36 @@ static const struct attribute_group *lm3533_led_attr=
-ibute_groups[] =3D {
-> =20
->  static int lm3533_led_setup(struct lm3533_led *led)
->  {
-> +	u32 output_cfg_shift =3D 0;
-> +	u32 output_cfg_val =3D 0;
-> +	u32 output_cfg_mask =3D 0;
->  	int ret;
-> =20
-> +	if (led->num_leds) {
-> +		for (int i =3D 0; i < led->num_leds; i++) {
-> +			if (led->leds[i] >=3D LM3533_LVCTRLBANK_MAX)
-> +				continue;
-> +
-> +			output_cfg_shift =3D led->leds[i] * 2;
-> +			output_cfg_val |=3D led->id << output_cfg_shift;
-> +			output_cfg_mask |=3D OUTPUT_LVLED_MASK << output_cfg_shift;
-> +		}
-> +
-> +		/* LVLED1, LVLED2 and LVLED3 */
-> +		ret =3D regmap_update_bits(led->regmap, LM3533_REG_OUTPUT_CONF1,
-> +					 output_cfg_mask << OUTPUT_CONF1_SHIFT,
-> +					 output_cfg_val << OUTPUT_CONF1_SHIFT);
+AFAIK, Vishnu is also working on adding the same support using the hw
+control trigger framework. Maybe they can answer your questions or
+integrate your patch into theirs.
 
-[Severity: Medium]
-In drivers/leds/leds-lm3533.c, when lm3533_led_setup() configures LVLED4
-(3) or LVLED5 (4) on control bank D, E, or F (led->id > 0), output_cfg_mask
-and output_cfg_val have bits [9:6] set. Left-shifting them by
-OUTPUT_CONF1_SHIFT (2) without masking to 8 bits leaves bits [11:8] set
-when updating the 8-bit register LM3533_REG_OUTPUT_CONF1.
+Thanks,
+Rong
 
-In drivers/base/regmap/regmap.c:_regmap_update_bits():
-
-	ret =3D _regmap_read(map, reg, &orig);
-	if (ret !=3D 0)
-		return ret;
-
-	tmp =3D orig & ~mask;
-	tmp |=3D val & mask;
-
-	if (force_write || (tmp !=3D orig) || map->force_write_field) {
-		ret =3D _regmap_write(map, reg, tmp);
-
-Because orig is an 8-bit value (<=3D 0xff) and val & mask has bits [11:8]
-set, tmp exceeds 0xff and tmp !=3D orig is always true. This forces a
-register write with tmp > 0xff, which causes regmap_smbus_byte_reg_write()
-in drivers/base/regmap/regmap-i2c.c:
-
-	if (val > 0xff || reg > 0xff)
-		return -EINVAL;
-
-to reject the write with -EINVAL and fail lm3533_led_probe() on SMBus
-byte-data I2C controllers, or issue an unnecessary write on raw I2C
-controllers.
-
-Should the mask and value passed to regmap_update_bits() for
-LM3533_REG_OUTPUT_CONF1 be masked to 8 bits (e.g. & 0xff or u8)?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261101142435.1305=
-20-1-clamor95@gmail.com?part=3D1
+>=20
+> Comments welcome.
+>=20
+> Regards,
+> Qiling Zhu
+>=20
+> This patch was developed with LLM assistance; I reviewed every design
+> decision against the framework sources and validated the behavior on
+> real hardware myself.
+>=20
+> [1] https://lore.kernel.org/r/20260618-leds-trigger-hw-changed-v2-0-c28c4=
+4053cf3@rong.moe/
+> [2] https://lore.kernel.org/r/20260203232219.11683-1-vishnuocv@gmail.com/
+>=20
+> Qiling Zhu (1):
+>   platform/x86: thinkpad_acpi: Add support for auto keyboard backlight
+>=20
+>  drivers/platform/x86/lenovo/Kconfig         |   1 +
+>  drivers/platform/x86/lenovo/thinkpad_acpi.c | 104 ++++++++++++++++----
+>  2 files changed, 88 insertions(+), 17 deletions(-)
