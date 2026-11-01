@@ -1,95 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793543088;
-	b=NTngBYm6vEB9e23ucp07OWq5rEE5yVJGxO/dKRt62hgFx5yxIIi3QlaiNnPFWsMwArUh
-	 GDJECiyMD6GX/cGE3okR8uPy+T83/h5lx7RcfOd7pdow9XQF2KmNyb+4O1AB+R5noisqw
-	 qyXeN0zQd+q+6y2SERqfFo5v0c7ds6jqRyxWZNuSgo45en4gc2/SYNOxVDXm1Cpag5C5e
-	 wDyOnn/0B9uasjG62Zn9l6yPTDK5sYwyn0nh0hhc+2nW/jR+shmXUpRWg4NGFBo/h7rWm
-	 t6bgmywBROt3IktteYdDLE7ItT9AMJGGaH1CAuIFm+lqD48w+4xTay7LiuVv6seiE7A==
+	t=1793543522;
+	b=lg4eQI0WGYB8rBSIXJrgnrnRVsr6U/gBQwHybqs9j6gLqoW3QO3PCr29AGbXSw2NX7Yv
+	 78COCUrLAPYh93g4PoOYUQz/Mn5RbDMMGCXg3N6/ke+53/YpFFnCyViEjSSbluYbmMDAp
+	 tNs3s89xvGVOA8dbU6KphpIM8GG5OKoQJuxo73j3Tm1y1/Xk3JysdIdr5KC1ulIPv1nys
+	 Xpzna+kziKA30j2atgwgUU9cpVgwfguDMdXI+0AtX+nnAWB3VIMAN9iYgjQehhYKy90Uv
+	 wY5T7mxk6W1bf0QeFI0s6tMiYNZs1HlNZ0nrANT0yxZWeiYK2aZ+4TGeRgpvKr00v7w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793543088;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=9S5hKR3Q9jtJKLTHVg9rJOjWtvZaDRDoo7tiPR+mJPw=;
-	b=0n8/DkaQmZhDEa8LZam5hzBlargBlARVnlM4p9HQoWuhc/Kn/s8y7Db3WUyrZXB8nzkC
-	 12baxsmlUVDP7oOXjlB7lw9+Xf0IVCU+N9YQj6QT79LSZks7bQM+jdGWryU4QxUyDNj+y
-	 9txMELAb3Bdd4GNzKn/CdtVqDrA951q21n5MGHhDIuUHzXohguMOVpogqx4pQR2/C9QkY
-	 wdxn+t59mxEf8KPWayyxWzi8DJY0lHdEOGRnXVzlvE+7ZTQKBiYV8m07Og2f3/Uh2T7E9
-	 y33v011Ka1WASoeJdBjINhqYpFGvlYaELXkJ028aMS/h2+8ZCmxHc4L5T7CHuvat4Lw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793543522;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=vMspBcuyqpwO+B/elY0GVC6yL3BryKaCZThjohGQxhE=;
+	b=l7h+3Z2Rq2NAHvq7qX4Dt8tjUcEStlO1DD5Xg2jTfO/I1enRa5N96lfRtiMhbm8gHlGT
+	 2Iaromex69JpyPBEEZQF+jQadYmpWbAzb6pyLWnZbYVs0kRpg/wg21JI1G2lMg7xWI7ND
+	 sg9qRZTaM8Rp1ea6xgHwgMC0XhHC0hZ2vYTe1OmIImxwdEEbUwZtyuue2gm+kKLMSFMN7
+	 y+8rZM+wbhRgDrdriVxnMMgfJziHTyfdHETZ4m8WhCiu1M1bKCILLnARbIg8iSWXxhjyM
+	 kfYPk+Sd//eXcRHsVo8mczw5wzed6za1f4ajOdLVMY/QdH1PHA33sxdVa2YZC7FAaOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wq0p8kXt;
-	arc=none smtp.remote-ip=209.85.218.42
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bk++1HiO;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DE5606A326
-	for <linux-leds@vger.kernel.org>; Sun,  1 Nov 2026 14:24:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01DE5606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD0606A326
+	for <linux-leds@vger.kernel.org>; Sun,  1 Nov 2026 14:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wq0p8kXt
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c434376dbebso451672966b.1
-        for <linux-leds@vger.kernel.org>; Sun, 01 Nov 2026 06:24:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793543086; x=1794147886; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9S5hKR3Q9jtJKLTHVg9rJOjWtvZaDRDoo7tiPR+mJPw=;
-        b=wq0p8kXtaFaZumbLF7xYGaSfJRmZIQVIy/eK86L39ggOI67iXZNBjBD1AUVqgVOK0d
-         QSb65Z/6iwph4ucFEmljF7LtdNJzAYWLuuMJryKRaTYczY6q8XmRkvQoZj++VfIE7Ulj
-         KjMQEtIO5dhms/XcZ7wtTlRjii/meLFNYSaOZCWEzS9zjmKjm+HWBS1lAasFtmSH3IiZ
-         GDwwhD2OQOMaPvrX1aw4GOLmMgIvouegb59aAqPveENTeMPErvNumxfamdInCpFq/729
-         I1nIQtn5fZNxYtXMFR+03RnKE+CFMn8nnh71mG/eC1M99/GSZB3bu7EtnZmI3frTcZqw
-         W6Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793543086; x=1794147886;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=9S5hKR3Q9jtJKLTHVg9rJOjWtvZaDRDoo7tiPR+mJPw=;
-        b=UP82AZNDu3Idm0pDLffJjR2XjkjW4A4nx07QOct4e5/w5YBrZpq+6+hiAcmFwXNben
-         I5oKdq5tWNukpqZpC9GwlmRnj+9Q8SFBFMy5x1IEA8RT5h7gd58X79UBCTTk+ImjdJsn
-         qO1cWDtUhYZST0PaHXyuEITVp+ZCqDON9kE8x3a1c0X1oDl+nyocyFAXIv8szz0J2jng
-         BUprZ6iN12Bd+0kOlnw97FtmgNAxB/Ti1G7j4hOB/B6guRI69oUHnA7qlU1YrFqp9sif
-         QGU/+yjCRZK5KYcwLsHkHrTov64Abfo4vpkSFu/Cd7/IOKsV0fBQKGWRrIHqLNoB8yJI
-         6u2A==
-X-Gm-Message-State: APuU4Z9xTmfJ4EacYmZ6riAWuMvTDvEdvFCFtnwli4WQY63V/Ej+WVMw
-	RdRiVG0QFv1I5G1PDZcoS6noTD5DuSD6r9YCNyHemaBRBCO6nHcQxstP
-X-Gm-Gg: AYBFou2JInwharKBZkFeC110T7QD+9el/3nRI3KBBdTMaTWtwAgyWamUeOd2tslfxtu
-	1chKvoOLtYbPSz/R4/9cPfWyz+DztIwUQs/Be+Tj0c407Xy/KW50kcmmLqqEOEliK0zYe3qh7/k
-	V7N+s1jtcEtZKbyCp5A3HevjNSXh2b5q2q2wGgZXS6eRUdVnmJakTIN3HUFHzENmHlbKv/vHL7A
-	+u1nueyvo4ezcc1ctE9gwGwYEod+4kwxyeI04+gPqBBrAW9ns+EOMsV7gjGlQAIyRiR8NLwBoh2
-	JJP4NBOKXr6ewp2773xouxZRJRVeJLOlqlo4QttrU0zPUTk2ao6+aHc8MoqTwrD8wDOfcKqPTUF
-	KXfmivUa6Pff7rG6LRnJL1G/suvu/c+SVMaNK2ASe0H1Wi4zDpjIhkowcGqWAMssovD8ib2MdhF
-	gLM8VUiOFdETBIYiEh0YOwCklIisUkLui3EdrgVwlfdtU4f6DNPa77qcJ6UbXTNWAGwCZymOgUv
-	Zkh6ty5Qyml4kzvsA2z/EKURXwHyZRW4aPcjKxR6addmWnLyLCNnhGKpEQRLK7FhAwItDwO3o+i
-	eTB3o5caabwgEWGiKwnqAV6l41aENFDerYvwcOgC8NpAlV4tyg==
-X-Received: by 2002:a17:907:558:b0:c4c:c62a:b9b3 with SMTP id a640c23a62f3a-c4cc62ad38bmr131681666b.22.1793543086239;
-        Sun, 01 Nov 2026 06:24:46 -0800 (PST)
-Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4cabf0bfa2sm279135766b.80.2026.11.01.06.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Nov 2026 06:24:45 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Helge Deller <deller@gmx.de>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org
-Subject: [PATCH v1] video: leds: backlight: lm3533: Support getting LED sources from DT
-Date: Sun,  1 Nov 2026 16:24:35 +0200
-Message-ID: <20261101142435.130520-1-clamor95@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Bk++1HiO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D3C1F000C1;
+	Sun,  1 Nov 2026 14:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793543521;
+	bh=vMspBcuyqpwO+B/elY0GVC6yL3BryKaCZThjohGQxhE=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Bk++1HiOH07DKsUZllesmDaQ4r5HlsZd8QTuDT6Nr8BHVMGa2TKwG2E//5jkBJIy2
+	 kWjOMTF9FGdZbyVepJv5O/zu3qv47cXilRUVryZmsWRM7UI5AYV3QW6mIPXIKjq+OW
+	 2HPU0Odr+FOKP02OUlj07a49U/AWCeye0F9grl6AMjUUajBF+lS6QWiE4k5iEd5w/x
+	 tAUJeo+480U8qGCzCPNEWA8eHktruzDMq5EADO728neNXlD7rR/7EgsVYJ2cB/Dz/S
+	 JSDyIlY0Am5gOEZAXkVzsdrnrhvJ/VdG3ooZu/T7LzeZN0VxoDRcqPNg5ezsFeoiSj
+	 tg/tOp0yzfYGw==
+Message-ID: <sashiko-outbox-192448@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v1] video: leds: backlight: lm3533: Support getting LED
+ sources from DT
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Svyatoslav Ryhel" <clamor95@gmail.com>
+Cc: linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org, lee@kernel.org
+In-Reply-To: <20261101142435.130520-1-clamor95@gmail.com>
+References: <20261101142435.130520-1-clamor95@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 01 Nov 2026 14:32:01 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -98,208 +59,107 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add Control Bank to HVLED/LVLED muxing support based on the led-sources
-defined in the device tree.
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] leds: lm3533: unmasked upper bits in lm3533_led_setup() regmap u=
+pdate
+--
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
----
-This was part of the original LM3533 controller DT/OF conversion patchset,
-but it appears to have been accidentally separated during the final iteration.
-Therefore, I am sending it as a follow-up.
----
- drivers/leds/leds-lm3533.c          | 60 +++++++++++++++++++++++++++++
- drivers/video/backlight/lm3533_bl.c | 45 ++++++++++++++++++++++
- 2 files changed, 105 insertions(+)
+commit 65c330f7377fc6ec85de7b076ec8dcd4d456b54b
+Author: Svyatoslav Ryhel <clamor95@gmail.com>
 
-diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
-index 7259097bd6a71..a1aeff70a90fc 100644
---- a/drivers/leds/leds-lm3533.c
-+++ b/drivers/leds/leds-lm3533.c
-@@ -26,6 +26,11 @@
- #define LM3533_ALS_CHANNEL_LV_MIN	1
- #define LM3533_ALS_CHANNEL_LV_MAX	2
- 
-+#define LM3533_REG_OUTPUT_CONF1			0x10
-+#define   OUTPUT_CONF1_SHIFT			2
-+#define   OUTPUT_LVLED_MASK			0x3
-+#define LM3533_REG_OUTPUT_CONF2			0x11
-+#define   OUTPUT_CONF2_SHIFT			6
- #define LM3533_REG_CTRLBANK_BCONF_BASE		0x1b
- #define LM3533_REG_PATTERN_ENABLE		0x28
- #define LM3533_REG_PATTERN_LOW_TIME_BASE	0x71
-@@ -54,6 +59,9 @@ struct lm3533_led {
- 	u32 max_current;
- 	u32 pwm;
- 
-+	int num_leds;
-+	u32 leds[LM3533_LVCTRLBANK_MAX];
-+
- 	bool have_als;
- };
- 
-@@ -622,8 +630,36 @@ static const struct attribute_group *lm3533_led_attribute_groups[] = {
- 
- static int lm3533_led_setup(struct lm3533_led *led)
- {
-+	u32 output_cfg_shift = 0;
-+	u32 output_cfg_val = 0;
-+	u32 output_cfg_mask = 0;
- 	int ret;
- 
-+	if (led->num_leds) {
-+		for (int i = 0; i < led->num_leds; i++) {
-+			if (led->leds[i] >= LM3533_LVCTRLBANK_MAX)
-+				continue;
-+
-+			output_cfg_shift = led->leds[i] * 2;
-+			output_cfg_val |= led->id << output_cfg_shift;
-+			output_cfg_mask |= OUTPUT_LVLED_MASK << output_cfg_shift;
-+		}
-+
-+		/* LVLED1, LVLED2 and LVLED3 */
-+		ret = regmap_update_bits(led->regmap, LM3533_REG_OUTPUT_CONF1,
-+					 output_cfg_mask << OUTPUT_CONF1_SHIFT,
-+					 output_cfg_val << OUTPUT_CONF1_SHIFT);
-+		if (ret)
-+			return ret;
-+
-+		/* LVLED4 and LVLED5 */
-+		ret = regmap_update_bits(led->regmap, LM3533_REG_OUTPUT_CONF2,
-+					 output_cfg_mask >> OUTPUT_CONF2_SHIFT,
-+					 output_cfg_val >> OUTPUT_CONF2_SHIFT);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = lm3533_ctrlbank_set_max_current(&led->cb, led->max_current);
- 	if (ret)
- 		return ret;
-@@ -698,6 +734,30 @@ static int lm3533_led_probe(struct platform_device *pdev)
- 
- 	device_property_read_u32(&pdev->dev, "ti,pwm-config-mask", &led->pwm);
- 
-+	/*
-+	 * If led-sources property is not set then either this Control Bank uses
-+	 * its default LVLED or is not linked to any LVLED at all.
-+	 */
-+	led->num_leds = device_property_count_u32(&pdev->dev, "led-sources");
-+	if (led->num_leds > LM3533_LVCTRLBANK_MAX) {
-+		dev_err(&pdev->dev, "num of LED sources exceeds max %d: %d\n",
-+			LM3533_LVCTRLBANK_MAX, led->num_leds);
-+		ret = -EINVAL;
-+		goto err_deregister;
-+	}
-+
-+	if (led->num_leds < 0)
-+		led->num_leds = 0;
-+
-+	if (led->num_leds > 0) {
-+		ret = device_property_read_u32_array(&pdev->dev, "led-sources",
-+						     led->leds, led->num_leds);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to get led-sources\n");
-+			goto err_deregister;
-+		}
-+	}
-+
- 	ret = lm3533_led_setup(led);
- 	if (ret)
- 		goto err_deregister;
-diff --git a/drivers/video/backlight/lm3533_bl.c b/drivers/video/backlight/lm3533_bl.c
-index adcd6ac7cf229..e8164c8528577 100644
---- a/drivers/video/backlight/lm3533_bl.c
-+++ b/drivers/video/backlight/lm3533_bl.c
-@@ -7,6 +7,7 @@
-  * Author: Johan Hovold <jhovold@gmail.com>
-  */
- 
-+#include <linux/bits.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-@@ -21,6 +22,7 @@
- #define LM3533_HVCTRLBANK_COUNT		2
- #define LM3533_BL_MAX_BRIGHTNESS	255
- 
-+#define LM3533_REG_OUTPUT_CONF1		0x10
- #define LM3533_REG_CTRLBANK_AB_BCONF	0x1a
- #define   CTRLBANK_AB_BCONF_ALS(n)	BIT(2 * (n))
- #define   CTRLBANK_AB_BCONF_MODE(n)	BIT(2 * (n) + 1)
-@@ -35,6 +37,9 @@ struct lm3533_bl {
- 	u32 max_current;
- 	u32 pwm;
- 
-+	int num_leds;
-+	u32 led_strings[LM3533_HVCTRLBANK_COUNT];
-+
- 	bool have_als;
- 	bool linear;
- };
-@@ -236,6 +241,8 @@ static const struct attribute_group *lm3533_bl_attribute_groups[] = {
- static int lm3533_bl_setup(struct lm3533_bl *bl)
- {
- 	int ctrlbank = lm3533_bl_get_ctrlbank_id(bl);
-+	u32 output_cfg_val = 0;
-+	u32 output_cfg_mask = 0;
- 	int ret;
- 
- 	ret = regmap_assign_bits(bl->regmap, LM3533_REG_CTRLBANK_AB_BCONF,
-@@ -243,6 +250,21 @@ static int lm3533_bl_setup(struct lm3533_bl *bl)
- 	if (ret)
- 		return ret;
- 
-+	if (bl->num_leds) {
-+		for (int i = 0; i < bl->num_leds; i++) {
-+			if (bl->led_strings[i] >= LM3533_HVCTRLBANK_COUNT)
-+				continue;
-+
-+			output_cfg_val |= ctrlbank << bl->led_strings[i];
-+			output_cfg_mask |= BIT(bl->led_strings[i]);
-+		}
-+
-+		ret = regmap_update_bits(bl->regmap, LM3533_REG_OUTPUT_CONF1,
-+					 output_cfg_mask, output_cfg_val);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	ret = lm3533_ctrlbank_set_max_current(&bl->cb, bl->max_current);
- 	if (ret)
- 		return ret;
-@@ -320,6 +342,29 @@ static int lm3533_bl_probe(struct platform_device *pdev)
- 
- 	device_property_read_u32(&pdev->dev, "ti,pwm-config-mask", &bl->pwm);
- 
-+	/*
-+	 * If led-sources property is not set then either this Control Bank uses
-+	 * its default HVLED or is not linked to any HVLED at all.
-+	 */
-+	bl->num_leds = device_property_count_u32(&pdev->dev, "led-sources");
-+	if (bl->num_leds > LM3533_HVCTRLBANK_COUNT) {
-+		dev_err(&pdev->dev, "num of LED sources %d exceeds max %d\n",
-+			bl->num_leds, LM3533_HVCTRLBANK_COUNT);
-+		return -EINVAL;
-+	}
-+
-+	if (bl->num_leds < 0)
-+		bl->num_leds = 0;
-+
-+	if (bl->num_leds > 0) {
-+		ret = device_property_read_u32_array(&pdev->dev, "led-sources",
-+						     bl->led_strings,
-+						     bl->num_leds);
-+		if (ret)
-+			return dev_err_probe(&pdev->dev, ret,
-+					     "failed to get led-sources\n");
-+	}
-+
- 	ret = lm3533_bl_setup(bl);
- 	if (ret)
- 		return ret;
--- 
-2.53.0
+video: leds: backlight: lm3533: Support getting LED sources from DT
 
+This commit adds Control Bank to HVLED and LVLED muxing support to the
+lm3533 LED and backlight drivers based on the led-sources device tree
+property.
+
+> diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+> index 7259097bd6a71..a1aeff70a90fc 100644
+> --- a/drivers/leds/leds-lm3533.c
+> +++ b/drivers/leds/leds-lm3533.c
+> @@ -26,6 +26,11 @@
+>  #define LM3533_ALS_CHANNEL_LV_MIN	1
+>  #define LM3533_ALS_CHANNEL_LV_MAX	2
+> =20
+> +#define LM3533_REG_OUTPUT_CONF1			0x10
+> +#define   OUTPUT_CONF1_SHIFT			2
+> +#define   OUTPUT_LVLED_MASK			0x3
+> +#define LM3533_REG_OUTPUT_CONF2			0x11
+> +#define   OUTPUT_CONF2_SHIFT			6
+>  #define LM3533_REG_CTRLBANK_BCONF_BASE		0x1b
+>  #define LM3533_REG_PATTERN_ENABLE		0x28
+>  #define LM3533_REG_PATTERN_LOW_TIME_BASE	0x71
+> @@ -54,6 +59,9 @@ struct lm3533_led {
+>  	u32 max_current;
+>  	u32 pwm;
+> =20
+> +	int num_leds;
+> +	u32 leds[LM3533_LVCTRLBANK_MAX];
+> +
+>  	bool have_als;
+>  };
+> =20
+> @@ -622,8 +630,36 @@ static const struct attribute_group *lm3533_led_attr=
+ibute_groups[] =3D {
+> =20
+>  static int lm3533_led_setup(struct lm3533_led *led)
+>  {
+> +	u32 output_cfg_shift =3D 0;
+> +	u32 output_cfg_val =3D 0;
+> +	u32 output_cfg_mask =3D 0;
+>  	int ret;
+> =20
+> +	if (led->num_leds) {
+> +		for (int i =3D 0; i < led->num_leds; i++) {
+> +			if (led->leds[i] >=3D LM3533_LVCTRLBANK_MAX)
+> +				continue;
+> +
+> +			output_cfg_shift =3D led->leds[i] * 2;
+> +			output_cfg_val |=3D led->id << output_cfg_shift;
+> +			output_cfg_mask |=3D OUTPUT_LVLED_MASK << output_cfg_shift;
+> +		}
+> +
+> +		/* LVLED1, LVLED2 and LVLED3 */
+> +		ret =3D regmap_update_bits(led->regmap, LM3533_REG_OUTPUT_CONF1,
+> +					 output_cfg_mask << OUTPUT_CONF1_SHIFT,
+> +					 output_cfg_val << OUTPUT_CONF1_SHIFT);
+
+[Severity: Medium]
+In drivers/leds/leds-lm3533.c, when lm3533_led_setup() configures LVLED4
+(3) or LVLED5 (4) on control bank D, E, or F (led->id > 0), output_cfg_mask
+and output_cfg_val have bits [9:6] set. Left-shifting them by
+OUTPUT_CONF1_SHIFT (2) without masking to 8 bits leaves bits [11:8] set
+when updating the 8-bit register LM3533_REG_OUTPUT_CONF1.
+
+In drivers/base/regmap/regmap.c:_regmap_update_bits():
+
+	ret =3D _regmap_read(map, reg, &orig);
+	if (ret !=3D 0)
+		return ret;
+
+	tmp =3D orig & ~mask;
+	tmp |=3D val & mask;
+
+	if (force_write || (tmp !=3D orig) || map->force_write_field) {
+		ret =3D _regmap_write(map, reg, tmp);
+
+Because orig is an 8-bit value (<=3D 0xff) and val & mask has bits [11:8]
+set, tmp exceeds 0xff and tmp !=3D orig is always true. This forces a
+register write with tmp > 0xff, which causes regmap_smbus_byte_reg_write()
+in drivers/base/regmap/regmap-i2c.c:
+
+	if (val > 0xff || reg > 0xff)
+		return -EINVAL;
+
+to reject the write with -EINVAL and fail lm3533_led_probe() on SMBus
+byte-data I2C controllers, or issue an unnecessary write on raw I2C
+controllers.
+
+Should the mask and value passed to regmap_update_bits() for
+LM3533_REG_OUTPUT_CONF1 be masked to 8 bits (e.g. & 0xff or u8)?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261101142435.1305=
+20-1-clamor95@gmail.com?part=3D1
