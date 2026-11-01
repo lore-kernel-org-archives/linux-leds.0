@@ -1,51 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793538769;
-	b=0Y6rxLz6CVWw/+mYEMaWnrnZA5YN0WVJKSuK9eycPM8lNKrx+OA6ayqNTSRq+ci26VSL
-	 U/xrwbhohdykuB7dtOJ0Yo7iCX42OYuSWPJiAU7QWrqnRZMjI5q6vwjpBSR0wx6Ll/srx
-	 PzXftqyB6exBI/KUU6i10fdZ7RbAUiRCxWkoi7dYw3Fk7iZp73tf22t2mfT2nabnQ+Vea
-	 utPjPuR9lTMTdcE8HU1WsC26g2K/c47ETNBkuSMkmHtTK3b1K1r1MuqS4MzxD4YSlBSQW
-	 fCICRNOpKxoQXObeLx6j9g18j1B0vqNTMjDsz3dAEmYuRBT7JqFCAd6pQKwUC8W7bvw==
+	t=1793543088;
+	b=NTngBYm6vEB9e23ucp07OWq5rEE5yVJGxO/dKRt62hgFx5yxIIi3QlaiNnPFWsMwArUh
+	 GDJECiyMD6GX/cGE3okR8uPy+T83/h5lx7RcfOd7pdow9XQF2KmNyb+4O1AB+R5noisqw
+	 qyXeN0zQd+q+6y2SERqfFo5v0c7ds6jqRyxWZNuSgo45en4gc2/SYNOxVDXm1Cpag5C5e
+	 wDyOnn/0B9uasjG62Zn9l6yPTDK5sYwyn0nh0hhc+2nW/jR+shmXUpRWg4NGFBo/h7rWm
+	 t6bgmywBROt3IktteYdDLE7ItT9AMJGGaH1CAuIFm+lqD48w+4xTay7LiuVv6seiE7A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793538769;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=j2LtLhA9pLMVs8zDGaOJzNcnav4jLgFgsfOJEwz4Fd4=;
-	b=VcxN/q+Dik/ptHNxg2MeDyHvoySivigS03qcxOZegJ/zvgi+RRk5kbRTi+7Xw+J2cRdm
-	 8l6sT3RACwbkHLRk8I6FoBJCGAbT8/oA9yml2teJt6aiW+gOLEmM0PfDDGgLHpmPWVS3B
-	 2zv8Hc9OTP/vPTHuzjiojnKH4/KlEqyKg8I5tYlBFA8NFdHJvG0L6MX8ixDGXQdA1NRIj
-	 MQrFZWMI1hGXSqiW7Q6mu2lWALrvprynablnVTK5CFqG5fr8DPdtJGSm3MlBO8PveiLUr
-	 2ywyRl36z4m5VM80Ny4kk/qfiFnYsDt71uQ/9aIYAu3v/cRBhR5g8yUrpZ+caUL0b/Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793543088;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=9S5hKR3Q9jtJKLTHVg9rJOjWtvZaDRDoo7tiPR+mJPw=;
+	b=0n8/DkaQmZhDEa8LZam5hzBlargBlARVnlM4p9HQoWuhc/Kn/s8y7Db3WUyrZXB8nzkC
+	 12baxsmlUVDP7oOXjlB7lw9+Xf0IVCU+N9YQj6QT79LSZks7bQM+jdGWryU4QxUyDNj+y
+	 9txMELAb3Bdd4GNzKn/CdtVqDrA951q21n5MGHhDIuUHzXohguMOVpogqx4pQR2/C9QkY
+	 wdxn+t59mxEf8KPWayyxWzi8DJY0lHdEOGRnXVzlvE+7ZTQKBiYV8m07Og2f3/Uh2T7E9
+	 y33v011Ka1WASoeJdBjINhqYpFGvlYaELXkJ028aMS/h2+8ZCmxHc4L5T7CHuvat4Lw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=mvQO6LGC;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wq0p8kXt;
+	arc=none smtp.remote-ip=209.85.218.42
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B9F606A324;
-	Sun,  1 Nov 2026 13:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DE5606A326
+	for <linux-leds@vger.kernel.org>; Sun,  1 Nov 2026 14:24:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01DE5606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=mvQO6LGC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 035A61F000C1;
-	Sun,  1 Nov 2026 13:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1793538768;
-	bh=j2LtLhA9pLMVs8zDGaOJzNcnav4jLgFgsfOJEwz4Fd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mvQO6LGCSo6mN2bz+3xErtwHIbO0rP0HXGCvdAh6l13OFYzAQg8WpIwPBTVym9fiG
-	 XpKWbw5ElNsoYOkcBTAbEZXuFxqN7eicE+7ieYiIBqMHBbXfL06vT4imXHNcHbIyjE
-	 hUwm+RBfFb02XY6THmqk+1D0wBJLUI/FVgdbSEIo=
-Date: Sun, 1 Nov 2026 14:12:41 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: plaztininikolai@gmail.com
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Hans de Goede <hansg@kernel.org>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] leds: trigger: input-events: Restore previous
- brightness on input
-Message-ID: <2026110122-graveness-hazy-8d62@gregkh>
-References: <20261101-leds-input-events-brightness-v5-1-d5296b1957dc@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=wq0p8kXt
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c434376dbebso451672966b.1
+        for <linux-leds@vger.kernel.org>; Sun, 01 Nov 2026 06:24:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793543086; x=1794147886; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=9S5hKR3Q9jtJKLTHVg9rJOjWtvZaDRDoo7tiPR+mJPw=;
+        b=wq0p8kXtaFaZumbLF7xYGaSfJRmZIQVIy/eK86L39ggOI67iXZNBjBD1AUVqgVOK0d
+         QSb65Z/6iwph4ucFEmljF7LtdNJzAYWLuuMJryKRaTYczY6q8XmRkvQoZj++VfIE7Ulj
+         KjMQEtIO5dhms/XcZ7wtTlRjii/meLFNYSaOZCWEzS9zjmKjm+HWBS1lAasFtmSH3IiZ
+         GDwwhD2OQOMaPvrX1aw4GOLmMgIvouegb59aAqPveENTeMPErvNumxfamdInCpFq/729
+         I1nIQtn5fZNxYtXMFR+03RnKE+CFMn8nnh71mG/eC1M99/GSZB3bu7EtnZmI3frTcZqw
+         W6Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793543086; x=1794147886;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=9S5hKR3Q9jtJKLTHVg9rJOjWtvZaDRDoo7tiPR+mJPw=;
+        b=UP82AZNDu3Idm0pDLffJjR2XjkjW4A4nx07QOct4e5/w5YBrZpq+6+hiAcmFwXNben
+         I5oKdq5tWNukpqZpC9GwlmRnj+9Q8SFBFMy5x1IEA8RT5h7gd58X79UBCTTk+ImjdJsn
+         qO1cWDtUhYZST0PaHXyuEITVp+ZCqDON9kE8x3a1c0X1oDl+nyocyFAXIv8szz0J2jng
+         BUprZ6iN12Bd+0kOlnw97FtmgNAxB/Ti1G7j4hOB/B6guRI69oUHnA7qlU1YrFqp9sif
+         QGU/+yjCRZK5KYcwLsHkHrTov64Abfo4vpkSFu/Cd7/IOKsV0fBQKGWRrIHqLNoB8yJI
+         6u2A==
+X-Gm-Message-State: APuU4Z9xTmfJ4EacYmZ6riAWuMvTDvEdvFCFtnwli4WQY63V/Ej+WVMw
+	RdRiVG0QFv1I5G1PDZcoS6noTD5DuSD6r9YCNyHemaBRBCO6nHcQxstP
+X-Gm-Gg: AYBFou2JInwharKBZkFeC110T7QD+9el/3nRI3KBBdTMaTWtwAgyWamUeOd2tslfxtu
+	1chKvoOLtYbPSz/R4/9cPfWyz+DztIwUQs/Be+Tj0c407Xy/KW50kcmmLqqEOEliK0zYe3qh7/k
+	V7N+s1jtcEtZKbyCp5A3HevjNSXh2b5q2q2wGgZXS6eRUdVnmJakTIN3HUFHzENmHlbKv/vHL7A
+	+u1nueyvo4ezcc1ctE9gwGwYEod+4kwxyeI04+gPqBBrAW9ns+EOMsV7gjGlQAIyRiR8NLwBoh2
+	JJP4NBOKXr6ewp2773xouxZRJRVeJLOlqlo4QttrU0zPUTk2ao6+aHc8MoqTwrD8wDOfcKqPTUF
+	KXfmivUa6Pff7rG6LRnJL1G/suvu/c+SVMaNK2ASe0H1Wi4zDpjIhkowcGqWAMssovD8ib2MdhF
+	gLM8VUiOFdETBIYiEh0YOwCklIisUkLui3EdrgVwlfdtU4f6DNPa77qcJ6UbXTNWAGwCZymOgUv
+	Zkh6ty5Qyml4kzvsA2z/EKURXwHyZRW4aPcjKxR6addmWnLyLCNnhGKpEQRLK7FhAwItDwO3o+i
+	eTB3o5caabwgEWGiKwnqAV6l41aENFDerYvwcOgC8NpAlV4tyg==
+X-Received: by 2002:a17:907:558:b0:c4c:c62a:b9b3 with SMTP id a640c23a62f3a-c4cc62ad38bmr131681666b.22.1793543086239;
+        Sun, 01 Nov 2026 06:24:46 -0800 (PST)
+Received: from xeon ([188.163.112.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4cabf0bfa2sm279135766b.80.2026.11.01.06.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Nov 2026 06:24:45 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Helge Deller <deller@gmx.de>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org
+Subject: [PATCH v1] video: leds: backlight: lm3533: Support getting LED sources from DT
+Date: Sun,  1 Nov 2026 16:24:35 +0200
+Message-ID: <20261101142435.130520-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -55,224 +99,207 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261101-leds-input-events-brightness-v5-1-d5296b1957dc@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 01, 2026 at 03:19:18PM +0800, Nikolay Plastinin via B4 Relay wrote:
-> From: Nikolay Plastinin <plaztininikolai@gmail.com>
-> 
-> The trigger turns the LEDs back on with LED_FULL, which the LED core
-> clamps to max_brightness. For keyboard backlights with several levels,
-> such as asus::kbd_backlight, this means the backlight always comes back
-> at maximum after being idle instead of at the level the user picked.
-> 
-> Remember the brightness per LED before turning it off and restore it on
-> the next input event. Keep the level in a per-LED state struct allocated
-> in activate() and freed in deactivate(), converting the simple trigger
-> to a regular trigger. Pick up brightness changes made while the LED is
-> on before saving the level again.
-> 
-> Iterate directly with list_for_each_entry_rcu() under guard(rcu)() for
-> both the on and off paths. Skip LEDs whose activate() callback has not
-> set up their state yet.
+Add Control Bank to HVLED/LVLED muxing support based on the led-sources
+defined in the device tree.
 
-That says what you are doing, but not _WHY_ you are doing it.  Why is
-rcu needed here?  That feels very odd for something like a LED, why
-isn't the normal device lifetime rules applicable here which would
-require RCU to somehow be added just for this?
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
+---
+This was part of the original LM3533 controller DT/OF conversion patchset,
+but it appears to have been accidentally separated during the final iteration.
+Therefore, I am sending it as a follow-up.
+---
+ drivers/leds/leds-lm3533.c          | 60 +++++++++++++++++++++++++++++
+ drivers/video/backlight/lm3533_bl.c | 45 ++++++++++++++++++++++
+ 2 files changed, 105 insertions(+)
 
-> Clear trigger_data under the same lock used by the LED walker before
-> freeing the per-LED state. Although normal trigger removal waits for an
-> RCU grace period, the device_add_groups() error path calls deactivate()
-> while the LED is still linked, so a walker must see NULL after teardown.
+diff --git a/drivers/leds/leds-lm3533.c b/drivers/leds/leds-lm3533.c
+index 7259097bd6a71..a1aeff70a90fc 100644
+--- a/drivers/leds/leds-lm3533.c
++++ b/drivers/leds/leds-lm3533.c
+@@ -26,6 +26,11 @@
+ #define LM3533_ALS_CHANNEL_LV_MIN	1
+ #define LM3533_ALS_CHANNEL_LV_MAX	2
+ 
++#define LM3533_REG_OUTPUT_CONF1			0x10
++#define   OUTPUT_CONF1_SHIFT			2
++#define   OUTPUT_LVLED_MASK			0x3
++#define LM3533_REG_OUTPUT_CONF2			0x11
++#define   OUTPUT_CONF2_SHIFT			6
+ #define LM3533_REG_CTRLBANK_BCONF_BASE		0x1b
+ #define LM3533_REG_PATTERN_ENABLE		0x28
+ #define LM3533_REG_PATTERN_LOW_TIME_BASE	0x71
+@@ -54,6 +59,9 @@ struct lm3533_led {
+ 	u32 max_current;
+ 	u32 pwm;
+ 
++	int num_leds;
++	u32 leds[LM3533_LVCTRLBANK_MAX];
++
+ 	bool have_als;
+ };
+ 
+@@ -622,8 +630,36 @@ static const struct attribute_group *lm3533_led_attribute_groups[] = {
+ 
+ static int lm3533_led_setup(struct lm3533_led *led)
+ {
++	u32 output_cfg_shift = 0;
++	u32 output_cfg_val = 0;
++	u32 output_cfg_mask = 0;
+ 	int ret;
+ 
++	if (led->num_leds) {
++		for (int i = 0; i < led->num_leds; i++) {
++			if (led->leds[i] >= LM3533_LVCTRLBANK_MAX)
++				continue;
++
++			output_cfg_shift = led->leds[i] * 2;
++			output_cfg_val |= led->id << output_cfg_shift;
++			output_cfg_mask |= OUTPUT_LVLED_MASK << output_cfg_shift;
++		}
++
++		/* LVLED1, LVLED2 and LVLED3 */
++		ret = regmap_update_bits(led->regmap, LM3533_REG_OUTPUT_CONF1,
++					 output_cfg_mask << OUTPUT_CONF1_SHIFT,
++					 output_cfg_val << OUTPUT_CONF1_SHIFT);
++		if (ret)
++			return ret;
++
++		/* LVLED4 and LVLED5 */
++		ret = regmap_update_bits(led->regmap, LM3533_REG_OUTPUT_CONF2,
++					 output_cfg_mask >> OUTPUT_CONF2_SHIFT,
++					 output_cfg_val >> OUTPUT_CONF2_SHIFT);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = lm3533_ctrlbank_set_max_current(&led->cb, led->max_current);
+ 	if (ret)
+ 		return ret;
+@@ -698,6 +734,30 @@ static int lm3533_led_probe(struct platform_device *pdev)
+ 
+ 	device_property_read_u32(&pdev->dev, "ti,pwm-config-mask", &led->pwm);
+ 
++	/*
++	 * If led-sources property is not set then either this Control Bank uses
++	 * its default LVLED or is not linked to any LVLED at all.
++	 */
++	led->num_leds = device_property_count_u32(&pdev->dev, "led-sources");
++	if (led->num_leds > LM3533_LVCTRLBANK_MAX) {
++		dev_err(&pdev->dev, "num of LED sources exceeds max %d: %d\n",
++			LM3533_LVCTRLBANK_MAX, led->num_leds);
++		ret = -EINVAL;
++		goto err_deregister;
++	}
++
++	if (led->num_leds < 0)
++		led->num_leds = 0;
++
++	if (led->num_leds > 0) {
++		ret = device_property_read_u32_array(&pdev->dev, "led-sources",
++						     led->leds, led->num_leds);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to get led-sources\n");
++			goto err_deregister;
++		}
++	}
++
+ 	ret = lm3533_led_setup(led);
+ 	if (ret)
+ 		goto err_deregister;
+diff --git a/drivers/video/backlight/lm3533_bl.c b/drivers/video/backlight/lm3533_bl.c
+index adcd6ac7cf229..e8164c8528577 100644
+--- a/drivers/video/backlight/lm3533_bl.c
++++ b/drivers/video/backlight/lm3533_bl.c
+@@ -7,6 +7,7 @@
+  * Author: Johan Hovold <jhovold@gmail.com>
+  */
+ 
++#include <linux/bits.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+@@ -21,6 +22,7 @@
+ #define LM3533_HVCTRLBANK_COUNT		2
+ #define LM3533_BL_MAX_BRIGHTNESS	255
+ 
++#define LM3533_REG_OUTPUT_CONF1		0x10
+ #define LM3533_REG_CTRLBANK_AB_BCONF	0x1a
+ #define   CTRLBANK_AB_BCONF_ALS(n)	BIT(2 * (n))
+ #define   CTRLBANK_AB_BCONF_MODE(n)	BIT(2 * (n) + 1)
+@@ -35,6 +37,9 @@ struct lm3533_bl {
+ 	u32 max_current;
+ 	u32 pwm;
+ 
++	int num_leds;
++	u32 led_strings[LM3533_HVCTRLBANK_COUNT];
++
+ 	bool have_als;
+ 	bool linear;
+ };
+@@ -236,6 +241,8 @@ static const struct attribute_group *lm3533_bl_attribute_groups[] = {
+ static int lm3533_bl_setup(struct lm3533_bl *bl)
+ {
+ 	int ctrlbank = lm3533_bl_get_ctrlbank_id(bl);
++	u32 output_cfg_val = 0;
++	u32 output_cfg_mask = 0;
+ 	int ret;
+ 
+ 	ret = regmap_assign_bits(bl->regmap, LM3533_REG_CTRLBANK_AB_BCONF,
+@@ -243,6 +250,21 @@ static int lm3533_bl_setup(struct lm3533_bl *bl)
+ 	if (ret)
+ 		return ret;
+ 
++	if (bl->num_leds) {
++		for (int i = 0; i < bl->num_leds; i++) {
++			if (bl->led_strings[i] >= LM3533_HVCTRLBANK_COUNT)
++				continue;
++
++			output_cfg_val |= ctrlbank << bl->led_strings[i];
++			output_cfg_mask |= BIT(bl->led_strings[i]);
++		}
++
++		ret = regmap_update_bits(bl->regmap, LM3533_REG_OUTPUT_CONF1,
++					 output_cfg_mask, output_cfg_val);
++		if (ret)
++			return ret;
++	}
++
+ 	ret = lm3533_ctrlbank_set_max_current(&bl->cb, bl->max_current);
+ 	if (ret)
+ 		return ret;
+@@ -320,6 +342,29 @@ static int lm3533_bl_probe(struct platform_device *pdev)
+ 
+ 	device_property_read_u32(&pdev->dev, "ti,pwm-config-mask", &bl->pwm);
+ 
++	/*
++	 * If led-sources property is not set then either this Control Bank uses
++	 * its default HVLED or is not linked to any HVLED at all.
++	 */
++	bl->num_leds = device_property_count_u32(&pdev->dev, "led-sources");
++	if (bl->num_leds > LM3533_HVCTRLBANK_COUNT) {
++		dev_err(&pdev->dev, "num of LED sources %d exceeds max %d\n",
++			bl->num_leds, LM3533_HVCTRLBANK_COUNT);
++		return -EINVAL;
++	}
++
++	if (bl->num_leds < 0)
++		bl->num_leds = 0;
++
++	if (bl->num_leds > 0) {
++		ret = device_property_read_u32_array(&pdev->dev, "led-sources",
++						     bl->led_strings,
++						     bl->num_leds);
++		if (ret)
++			return dev_err_probe(&pdev->dev, ret,
++					     "failed to get led-sources\n");
++	}
++
+ 	ret = lm3533_bl_setup(bl);
+ 	if (ret)
+ 		return ret;
+-- 
+2.53.0
 
-This is obviously LLM generated, please start from scratch and rewrite
-this whole changelog on your own.
-
-> The previous revision was tested on an ASUS ROG Flow X13 GV302XV:
-> keyboard backlight levels 1 and 2 were restored after idle timeout and
-> keyboard input, and 20 trigger activate/deactivate cycles completed
-> successfully.
-> 
-> Assisted-by: LLM
-> Signed-off-by: Nikolay Plastinin <plaztininikolai@gmail.com>
-> ---
-> The input-events trigger turns LEDs back on with LED_FULL, so a keyboard
-> backlight with several levels always comes back at maximum after being
-> idle. This series restores the level the user picked instead.
-> 
-> V5 is a single patch. Iterate directly over the trigger's LEDs using
-> list_for_each_entry_rcu() under guard(rcu)(), as requested by Greg KH.
-> The per-LED state and locked teardown from v4 are unchanged. No changes
-> to include/linux/leds.h or the LED core are needed.
-> 
-> This came up while looking at a keyboard backlight idle timeout for ASUS
-> laptops in asusctl:
-> https://github.com/OpenGamingCollective/asusctl/issues/98
-> 
-> Validation for v5: the module builds out of tree with W=1 against Fedora
-> 7.2.12-200.fc44.x86_64 using the installed kernel headers. The user-space
-> harness using the driver functions passes ASan/UBSan for the error-unwind
-> ordering, brightness restoration, and 10,000 concurrent teardown cycles.
-> The harness uses a mutex and a one-element list instead of kernel
-> primitives; it is not kernel fault injection or an RCU implementation test.
-> V5 hardware testing passed on the GV302XV with kernel 7.2.12: levels 1
-> and 2 were restored after idle and input, and 20 activate/deactivate
-> cycles completed. The original brightness 2 and trigger none were
-> restored, and the test module was unloaded. A separate journalctl check
-> of the test interval showed no kernel entries; the script's dmesg output
-> included messages from earlier suspend/resume cycles.
-> 
-> V4 was tested on an ASUS ROG Flow X13 GV302XV with kernel
-> 7.2.12-200.fc44.x86_64 and no external monitor: brightness levels 1 and 2
-> were restored after idle timeout and keyboard input, and 20 trigger
-> activate/deactivate cycles passed. No kernel messages appeared during
-> the test. The original brightness and trigger were restored afterwards.
-> No full kernel build has been performed.
-> 
-> LLM assistance was used for the implementation, tests and message drafts.
-> ---
-> Changes in v5:
-> - Drop the common led_trigger_for_each_led() macro and its patch.
-> - Open-code list_for_each_entry_rcu() next to guard(rcu)() in the trigger,
->   as requested by Greg KH; include linux/rculist.h directly.
-> - Keep the locked trigger_data teardown from v4 unchanged.
-> - Link to v4: https://lore.kernel.org/r/20261030-leds-input-events-brightness-v4-0-5ea0ead7480c@gmail.com
-> 
-> Changes in v4:
-> - Clear trigger_data under input_events_data.lock before freeing per-LED
->   state in deactivate(), as suggested by Lee Jones. This also covers the
->   device_add_groups() error path, which deactivates before list removal.
-> - Update the NULL-state comment to cover activation error unwind.
-> - Patch 1 is unchanged.
-> - Link to v3: https://lore.kernel.org/r/20261016-leds-input-events-brightness-v3-0-2c462cafe020@gmail.com
-> 
-> Changes in v3:
-> - Replace led_trigger_walk_leds() with led_trigger_for_each_led(), an
->   RCU list iterator in include/linux/leds.h, as suggested by Lee Jones.
-> - Remove the exported helper, callback typedef, and void-pointer argument.
-> - Keep saving and restoring brightness in input_events_set_leds(), using
->   guard(rcu)() and a single loop for both the on and off paths.
-> - Link to v2: https://lore.kernel.org/r/20260930-leds-input-events-brightness-v2-0-3948d3cddd83@gmail.com
-> 
-> Changes in v2:
-> - Keep the saved brightness in a per-LED struct allocated in activate()
->   and freed in deactivate(), stored in led_cdev->trigger_data, instead of
->   overloading blink_brightness (Lee Jones).
-> - Add led_trigger_walk_leds() to led-triggers.c and use it instead of
->   walking led_cdevs/trig_list from the trigger (Lee Jones).
-> - Use the Assisted-by tag format from coding-assistants.rst.
-> - Link to v1: https://lore.kernel.org/r/20260924-leds-input-events-brightness-v1-1-b0ceff3a2343@gmail.com
-> ---
->  drivers/leds/trigger/ledtrig-input-events.c | 78 ++++++++++++++++++++++++++---
->  1 file changed, 72 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/leds/trigger/ledtrig-input-events.c b/drivers/leds/trigger/ledtrig-input-events.c
-> index d057b2a23..5fbd3e853 100644
-> --- a/drivers/leds/trigger/ledtrig-input-events.c
-> +++ b/drivers/leds/trigger/ledtrig-input-events.c
-> @@ -10,6 +10,7 @@
->  #include <linux/leds.h>
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
-> +#include <linux/rculist.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/workqueue.h>
-> @@ -28,7 +29,70 @@ static struct input_events_data {
->  	unsigned long led_off_time;
->  } input_events_data;
->  
-> -static struct led_trigger *input_events_led_trigger;
-> +struct input_events_led {
-> +	/* Brightness to restore on the next input event */
-> +	int brightness;
-> +};
-> +
-> +static int input_events_activate(struct led_classdev *led_cdev)
-> +{
-> +	struct input_events_data *data = &input_events_data;
-> +	struct input_events_led *led;
-> +	unsigned long flags;
-> +
-> +	led = kzalloc_obj(*led);
-> +	if (!led)
-> +		return -ENOMEM;
-> +
-> +	/* Start with the current brightness, or full if the LED is off */
-> +	led->brightness = led_cdev->brightness ?: led_cdev->max_brightness;
-> +
-> +	spin_lock_irqsave(&data->lock, flags);
-> +	led_set_trigger_data(led_cdev, led);
-> +	led_set_brightness(led_cdev, data->led_on ? led->brightness : LED_OFF);
-> +	spin_unlock_irqrestore(&data->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static void input_events_deactivate(struct led_classdev *led_cdev)
-> +{
-> +	struct input_events_led *led;
-> +
-> +	scoped_guard(spinlock_irqsave, &input_events_data.lock) {
-> +		led = led_get_trigger_data(led_cdev);
-> +		led_set_trigger_data(led_cdev, NULL);
-> +	}
-> +	kfree(led);
-> +}
-> +
-> +static struct led_trigger input_events_led_trigger = {
-> +	.name = "input-events",
-> +	.activate = input_events_activate,
-> +	.deactivate = input_events_deactivate,
-> +};
-> +
-> +/* Must be called with input_events_data.lock held */
-
-Great, then add the proper static checking for this state so that the
-tools catch it when someone does not do that.
-
-> +static void input_events_set_leds(bool on)
-
-"set" and "on"?  Naming is hard :)
-
-Look at how this is used:
-
-> +{
-> +	struct led_classdev *led_cdev;
-> +
-> +	guard(rcu)();
-> +	list_for_each_entry_rcu(led_cdev, &input_events_led_trigger.led_cdevs,
-> +				trig_list) {
-> +		struct input_events_led *led = led_get_trigger_data(led_cdev);
-> +
-> +		/* Not yet activated, or already deactivated during error unwind */
-> +		if (!led)
-> +			continue;
-> +
-> +		/* Preserve brightness changes made while the LED was on. */
-> +		if (led_cdev->brightness)
-> +			led->brightness = led_cdev->brightness;
-> +
-> +		led_set_brightness(led_cdev, on ? led->brightness : LED_OFF);
-> +	}
-> +}
->  
->  static void led_input_events_work(struct work_struct *work)
->  {
-> @@ -42,7 +106,7 @@ static void led_input_events_work(struct work_struct *work)
->  	 * running before a new event pushed led_off_time back.
->  	 */
->  	if (time_after_eq(jiffies, data->led_off_time)) {
-> -		led_trigger_event(input_events_led_trigger, LED_OFF);
-> +		input_events_set_leds(false);
-
-"Set" and "false"?  So you don't want to set anything?
-
-Again, naming is hard, the original code here was obvious what was
-happening, LED_OFF is self-describing.  Your change is now not that.
-
-thanks,
-
-greg k-h
