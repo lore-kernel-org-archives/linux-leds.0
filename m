@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793633177;
-	b=YsskpmkbcUlv0/j7KxiDADfLFBE+swGec9xDkmRBC3e4JWZsBPcDXCDANO0yYDzyBEUG
-	 rw2wrWFbzBYc6Hdlise1BQqqi5D/4zLZ24uvGvxpUYiRzYOpFfURzd9qivDUNLk4mJ4l8
-	 wq5kyBqGFLk1p9SlrOa35bpXhl0jV2xv6jAZqimw6wWzFrKDxvc2UMQ2uTw15WiN5A73K
-	 uC1Teb4IIG5Rx9GxPBvw7p2svJxqrCQCWtedkRWpCVNbG8MCRtU+alWlXQOpxFkdQMcFl
-	 BCfZkAQRj4GX33sEIx4ZINblpRp1+WwDKTIEGaPmw8PrK7bnCGp2wNqZQbqqMWOhcVQ==
+	t=1793633359;
+	b=EG678dN+huyiSnqUIGrLBv4eGKcjHqYQKDLOwhh7Gy05IEg1IwczmkvJSfKr33adr9ks
+	 lu+Dv1toPnJUF7l8Szhy2NcniB4IkO9z+LpZgpWXdxvywOnADsWC5zcn8d6nGcfLuVTrV
+	 N9XRwxjNBSddzpB0U83CyPNl62LAJW/Eeyz7QpvoXABBrd2/m/AE5dqXLIR/LGZJzFEl2
+	 2E2jsm7lM+AtNvSDhNWkVuz/Cw7reO3UUMiGOkMZYiUyvPGLsQXppBL/qzO6FSOPbrXKX
+	 1uQtxO27ohm6PJeCw8qplCatMj09jJ8JlaysRQ00UrxjvgPLLAapiNxQ0sleNvlFvNQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793633177;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793633359;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ZqguCfF0YyQu7sBK0Wnt/pXfbF7Q9j+fSL7Sz2w1T5A=;
-	b=BjO3O3QAul8RE9SEsJC+o82cxA5jpLXHOq+nwWfPiP+8YCcdMj+aEiDCHE85gIIgHPPr
-	 DO2T8wgtViSdf3dUwKgjMTeHX6lqfDTk99+tKHuD8Zf25R2Z1CHrCOgBuFZf3YaSs6Jaz
-	 c4AYM+Ok2xWpmzsW6UrwAS3P2EROSq04yBOWUj76q5Ona2eRCKC5ERL3L8e8rdce7iQAs
-	 XDs/Uj4ss0e9VhnxWJbo5huDWttSaS3eR4uw22r2dfiWJqeLRKdUKSo35IdiDBiBn+Pco
-	 ZYKUr+yGr6FPRYD7fyKSnR2mBYS0YUph9vPrQGgTH5MxE6uba6fwawTIwn+CkwW4JFg==
+	bh=tFzwDLbPKCgxHsxxWv7vVWRumuBAel5kbbtd9myH9jQ=;
+	b=HNmMw7JrytJi+zDHJy/UzAO00BWSJzIlEGgMi+zKU7sz832HuMnUFC3QEUmQ1LXuIpav
+	 5+9iaj/ae+YfOcu1F6xb9FBSYi4De80ntI8/kimIHxnSb4Jjmn0ARlNPO+nQ3Zc25VBK6
+	 qOu9YvaYEI7kxWyO9LYfaUC0mAisHsUacM8XndvzBdSq7N4vQzOHgEpmxVeDyor7s5E3f
+	 0R9/8ukS9oKw3yyaaUTTqbJl1d0VWkrTE3H0MmUHGXCScKoFhWCXXzwLntuGzURl06fWe
+	 s2XycYYq63MA7c3c5mjbBdZ4+7KCzEMIkLHbHIUqM+AH2qzLSZ53HzjP/i3P47b/rgg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CUw3D9L7;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EWKXGzFq;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE88E609A73D
-	for <linux-leds@vger.kernel.org>; Mon,  2 Nov 2026 15:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8C0606A91B
+	for <linux-leds@vger.kernel.org>; Mon,  2 Nov 2026 15:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CUw3D9L7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658031F00A1B;
-	Mon,  2 Nov 2026 15:26:16 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EWKXGzFq
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85DB1F00A16;
+	Mon,  2 Nov 2026 15:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793633176;
-	bh=ZqguCfF0YyQu7sBK0Wnt/pXfbF7Q9j+fSL7Sz2w1T5A=;
+	s=k20260515; t=1793633359;
+	bh=tFzwDLbPKCgxHsxxWv7vVWRumuBAel5kbbtd9myH9jQ=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=CUw3D9L7LzU+D7X4PzjcQqkcHGqS1aPJ41zORZYikfht51GuTDKD7pEhkWg52FT/Y
-	 WDaHFzJ51eGx+a1ooWeLETe0+kV5AeLwkXp1sDL4wujUFwtempq24TlVkoZ/4gGtNm
-	 WJgNpfpU5lerEZPUernSyEFEVeSvN5KUq2HG8rEcHbA6cxaXbRl6M+4ATtfaoHucyb
-	 2Kx5UH99Q3batmWB8m7IRUAXQg22EC0cARk+lGyOFxQyj0tLngNvzkSj6Yx/WRZajp
-	 Eg2MrvrysxbyDlp1BIC538wjhh+YAIRYDhvq6AAsmiIrwcw3sSi3xX7UMvLWHVdEaI
-	 VYQ7LMe9WUL1Q==
-Message-ID: <sashiko-outbox-193659@kernel.org>
+	b=EWKXGzFqvqjfpOj5WfLy2Xrnlj2sYaKvj34eRrD14+V5tVmZ9G3vM5OG2VTtRcj9+
+	 689FrC1Fc0yP+ql81oPQ0vuzAV4exe5O78ML42vZ16doK07XsXO2gy6lZbdmVkJZfn
+	 p8QMvlYwtYCMNWUUB6GdEFjcfHJ0lPdh2Nc0ZjO1Gsho573jfLEOeEedpdVSStQQCa
+	 1WfuXzRIfYnFsC6JBC50fDb7HfaDtdWhU20gqW3H9TzmvgA+VqeEcse0ATU4iGE4bE
+	 JazlozQcocdVTBgv+fuPQk4y16bO2qSlG6eXpb46sDFbGSpYal6IHsGFxceEt6ySlj
+	 WbjBiNPhvEQpg==
+Message-ID: <sashiko-outbox-193664@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: leds: irled: pwm-ir-tx: add power
- supply support
+Subject: Re: [PATCH 2/2] media: pwm-ir-tx: add regulator support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Roman Vivchar" <rva333@protonmail.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261102-6768-irled-v1-1-c7064f3afed1@protonmail.com>
+In-Reply-To: <20261102-6768-irled-v1-2-c7064f3afed1@protonmail.com>
 References: <20261102-6768-irled-v1-0-c7064f3afed1@protonmail.com>
- <20261102-6768-irled-v1-1-c7064f3afed1@protonmail.com>
+ <20261102-6768-irled-v1-2-c7064f3afed1@protonmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 15:26:16 +0000
+Date: Mon, 02 Nov 2026 15:29:18 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -63,10 +62,11 @@ Precedence: list
 
 > From: Roman Vivchar <rva333@protonmail.com>
 >=20
-> On some boards, the IR LED is connected to a switchable power rail, such
-> as an eMMC supply. If this regulator is disabled, IR transmission fails.
+> On some boards, the IR LED shares a power rail with other components.
+> If that rail is turned off, IR transmission can't function properly.
 >=20
-> Add an optional power-supply property to document this regulator.
+> Add optional regulator support to ensure the power supply is enabled when
+> needed.
 >=20
 > Signed-off-by: Roman Vivchar <rva333@protonmail.com>
 
@@ -74,5 +74,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102-6768-irled=
--v1-0-c7064f3afed1@protonmail.com?part=3D1
+-v1-0-c7064f3afed1@protonmail.com?part=3D2
 
