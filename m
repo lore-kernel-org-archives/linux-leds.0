@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793586046;
-	b=3J2HQTAeP3RsIU8ILTl1jEPlHfvakh0yNTg/WbJAnenLIhFoSDVlYnTkZx+jd8EaSewk
-	 oba5NvIMCoX44StbB1zrCpIp5eZMVXGsn5K0KMPFphD98rS+2sEKqo/HkDAbuGw9IVwo8
-	 5UXs27hiODMm9J0VrHT89tY4aXFyWk+PUoalLHGQLrhiyNG6hBBWo+13uujBgSUhNoD1e
-	 2aBxxJnhHQKXtaFQIxWKlaU4TxMZjUWs3Vv8Apc1SjBfG6UfTDeaJ5BCG/WLLCtEQSOgN
-	 XV5CGnbzCJjiGOGNAZ770e/Xpkw4JKL9XH45VJOQTT/IibroCzleGHnMLPXzSxTByiA==
+	t=1793586169;
+	b=Pxc101qUlfEO1Acw+Ma1vTKaUcXVsRQJrIyrkJdUk7THEfJQCEwFKkKHOF67dU6Vv4GF
+	 KCTxQTaTroDE5x5ZnOJzEKvcPZF7IkpnA+19svgI3yyC13tb2cBdfheQaUmenkj58iDCl
+	 52bQRZkw6c6hwswOehHBMnxH2T7hi9O14YZ+cLkMuu2oxPdx3xrOdxhSXEVpduwpxxTrA
+	 UPjyy93fqmCYVUtB8SjHYY+3MAYZ8RREiu7HJADzyRqU/9RXP7/uW4NTJEb0C/8LoSuGl
+	 +RSFn3mNYe3JjX2hHZxT95j2ss4Z/QbG4TDM/1lQj7IrQdrBlBzZE805FAGmW4wVd8g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793586046;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793586169;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=eZAh8bmYYo3lV58kJbc4nd/uT5KMYYMTo/QYww1LYl0=;
-	b=pv5NA7VetDmvVd+AkGbB2lI6aZtHzR6oEwvzX1g5XOx70kzEo7VlFSHr15f4M0f4ZZPp
-	 zxAtwqhhYKriTX2it5eMlvDFC+YjB5yvhbGoG6B99e08wpz0xoUtuznOy2/Zmpvzz6eNr
-	 +t5lHjic8gbZvHohbVag4pI/jBAJgI5Qh8OUgnM/Su/g0YfTOB8pjE7t3+FVK25scrWJ9
-	 SlWdtqZ0CD3HgmwL5g+bxE9YIKWpNnceL1JSPvGP+hNijnxTlO+sZKbvAg1mePqjzGedd
-	 NMLQdmw1d12XuCMAQ1zyIyL6Eej90UkWtwvxe82w4Aph2+oSMe9alQnsH1UDDSBc4Rw==
+	bh=14T2lJXzC+QlsgrD0XfylBjUX9fY5CQjCPMXfcZn1MM=;
+	b=w9WEN+aXhNGdgPaJKCyTDpDo3a/3scowOKxmA3ihnxd6VWOZDo2jqy40HWVKtSOula1m
+	 tO4qyX1rTUa3o7aFnQLidb/hKF2wtENjutKNCPvCGDR0onSdSkMQvz3uZWSn40OHiCc+6
+	 kKV7gayv5xoE6v4y8LGXViwEw/nFhyiKHE0TCb0NNQU0OeyRo6ioh+zWlPDyGnnYaB9Gg
+	 ghNIXtqTUvF/OHGftPNeGOq3zPzLDb7P+cAhk3yOCdt2YjimtTHmq3upleKk3hwoDdiO/
+	 sYkOtuGI4/LkERJcq1olbC67TSDWbJ1MQdb3t0gVjI5Xm9gjWVypWgMwhhtwgeRy8VQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zrozr9Zh;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FoEmFZX3;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBD606A326;
-	Mon,  2 Nov 2026 02:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40549606A32C;
+	Mon,  2 Nov 2026 02:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zrozr9Zh
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678B51F00919;
-	Mon,  2 Nov 2026 02:20:45 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FoEmFZX3
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BEA91F000C1;
+	Mon,  2 Nov 2026 02:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793586045;
-	bh=eZAh8bmYYo3lV58kJbc4nd/uT5KMYYMTo/QYww1LYl0=;
+	s=k20260515; t=1793586168;
+	bh=14T2lJXzC+QlsgrD0XfylBjUX9fY5CQjCPMXfcZn1MM=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Zrozr9ZhHXIGKSo0j/2gopTuLPfEZLAbjXsF8T8MoIxYnmR0yfaqSSk7SgSHOvlQ3
-	 MGwhpiiQSsfk0/KItionLgefA68YxM2gyJ2UH3H1M7OBmUC58qNJp+M2+il9qBM9da
-	 6m0FOxmigVEZVjeSpnpPSfwTPRYW7QYbfn+mU+VutDq1RkSs8R7l7/MT+Z9G8usw9K
-	 jCWYGAlvzxhLnmclM42AlCtk7B8KcTqoJhCAJHwQ7LFwGiQlsbwVl7x6IJVglC3LWA
-	 jf/yUxdyV3UQ66psnq+teQmt5tnYTXIgvIEsHmVz13O20FLlu38q6CjiSGPMs1VjhN
-	 sm88dKghpjz4g==
-Message-ID: <sashiko-outbox-192832@kernel.org>
+	b=FoEmFZX3ZnDSGz8JvRFyatND5eysGhah2Tnp4rmbJomvF0WzhHHC7lGcSTke7uTGj
+	 dbNo3jJJalwmlbsAA3mMojOLwZHOCvaGMi4hqonueD64uma2ErkZSA9DDMas+WMpvt
+	 sgA86IM+ahEc4+g6D9SjxgS4Q0zmH8WpiEV2HonyiNlXtaVBC4IqNa3xbf3nj3m5Hl
+	 q48mZAvKVOQDFX+9xpkp4O2pf0POGi13x/IvTyAx0+kF+4pFZx2NKwg5apQeSRCkQf
+	 kzZjkDBd7gqrMxJA6pMh1+zq3lW06IdvE4B0jjgUJCoIIfcfrUPiPCdYKZgP+v4BKq
+	 yxjVeXPMQhEbA==
+Message-ID: <sashiko-outbox-192833@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 06/10] leds: rgb: ktd202x: Add Etek ET6326 support
+Subject: Re: [PATCH 09/10] leds: rgb: ktd202x: Fail the probe when the chip
+ does not answer
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Joseph Telaak" <joseph@telaak.dev>
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261101-ktd202x-et6326-v1-6-eb51eddad08c@telaak.dev>
+In-Reply-To: <20261101-ktd202x-et6326-v1-9-eb51eddad08c@telaak.dev>
 References: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
- <20261101-ktd202x-et6326-v1-6-eb51eddad08c@telaak.dev>
+ <20261101-ktd202x-et6326-v1-9-eb51eddad08c@telaak.dev>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 02:20:45 +0000
+Date: Mon, 02 Nov 2026 02:22:47 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,105 +63,64 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [Medium] leds: ktd202x: delay_on truncation to 0 in ktd202x_blink_set() o=
-n ET6326
+- [High] leds: rgb: ktd202x: failing probe on reset write breaks KTD2026/KT=
+D2027
 --
 
-commit 7c2c5ad9958f725ed6f4b50a7cb2208921d4f6b4
+commit cbade43891d8603172b94d1364ff11d464697a37
 Author: Joseph Telaak <joseph@telaak.dev>
 
-leds: rgb: ktd202x: Add Etek ET6326 support
+leds: rgb: ktd202x: Fail the probe when the chip does not answer
 
-This commit moves the LED count and flash period parameters into per-chip
-match data and adds support for the Etek ET6326 LED controller.
-
-Link: https://www.etekmicro.com/wp-content/uploads/datasheets/ET6326_datash=
-eet.pdf
+This commit checks the return value of the reset register write in
+ktd202x_probe_fw() and fails probing if the I2C write fails.
 
 > diff --git a/drivers/leds/rgb/leds-ktd202x.c b/drivers/leds/rgb/leds-ktd2=
 02x.c
-> index feea33b7e8856..67e65c1fcb5fb 100644
+> index 48521f1e5a704..5f51df9930cb2 100644
 > --- a/drivers/leds/rgb/leds-ktd202x.c
 > +++ b/drivers/leds/rgb/leds-ktd202x.c
-[ ... ]
-> @@ -86,6 +85,33 @@ static const struct reg_default ktd202x_reg_defaults[]=
- =3D {
->  	{ KTD202X_REG_LED_IOUT(3), KTD202X_LED_CURRENT_10_mA },
->  };
+> @@ -722,20 +722,23 @@ static int ktd202x_probe_fw(struct ktd202x *chip)
+>  {
+>  	struct device *dev =3D chip->dev;
+>  	int count;
+> +	int ret;
+>  	int i =3D 0;
 > =20
-> +struct ktd202x_info {
-> +	unsigned long num_leds;
-> +	/* Flash period encoded by a Reg1 value of 0 */
-> +	unsigned int flash_period_min_ms;
-> +	unsigned int flash_period_max_steps;
-> +};
-[ ... ]
-> +/* The ET6326 flash period is (Reg1 + 1) * 128 ms, up to 16.38 s */
-> +static const struct ktd202x_info et6326_info =3D {
-> +	.num_leds =3D KTD2026_NUM_LEDS,
-> +	.flash_period_min_ms =3D 128,
-> +	.flash_period_max_steps =3D 127,
-> +};
-[ ... ]
-> @@ -300,11 +328,11 @@ static int ktd202x_blink_set(struct ktd202x_led *le=
-d, unsigned long *delay_on,
->  	/* Integer representation of time of flash period */
->  	if (check_add_overflow(*delay_on, *delay_off, &delay_total_ms))
->  		delay_total_ms =3D ULONG_MAX;
-> -	if (delay_total_ms < KTD202X_FLASH_PERIOD_MIN_MS)
-> +	if (delay_total_ms < info->flash_period_min_ms)
->  		num_steps =3D 0;
->  	else
-> -		num_steps =3D min_t(unsigned long, KTD202X_FLASH_PERIOD_MAX_STEPS,
-> -				  (delay_total_ms - KTD202X_FLASH_PERIOD_MIN_MS) /
-> +		num_steps =3D min_t(unsigned long, info->flash_period_max_steps,
-> +				  (delay_total_ms - info->flash_period_min_ms) /
->  				  KTD202X_FLASH_PERIOD_STEP_MS);
+>  	count =3D device_get_child_node_count(dev);
+>  	if (!count || count > chip->num_leds)
+>  		return -EINVAL;
 > =20
->  	/*
-> @@ -315,7 +343,7 @@ static int ktd202x_blink_set(struct ktd202x_led *led,=
- unsigned long *delay_on,
->  	on =3D clamp(on, 1, KTD202X_FLASH_ON_MAX - 1);
-> =20
->  	/* Actually used delay_{on,off} values */
-> -	delay_total_ms =3D num_steps * KTD202X_FLASH_PERIOD_STEP_MS + KTD202X_F=
-LASH_PERIOD_MIN_MS;
-> +	delay_total_ms =3D num_steps * KTD202X_FLASH_PERIOD_STEP_MS + info->fla=
-sh_period_min_ms;
->  	*delay_on =3D (delay_total_ms * on) / KTD202X_FLASH_ON_MAX;
+> -	regmap_write(chip->regmap, KTD202X_REG_RESET_CONTROL, KTD202X_RSTR_RESE=
+T);
+> +	/* Nothing is read back, so a failed reset is the only sign of a missin=
+g chip */
+> +	ret =3D regmap_write(chip->regmap, KTD202X_REG_RESET_CONTROL, KTD202X_R=
+STR_RESET);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to reset the chip\n");
 
-[Severity: Medium]
-Can this integer division truncate *delay_on to 0 on the ET6326?
+[Severity: High]
+Will failing ktd202x_probe_fw() when the KTD202X_RSTR_RESET write returns an
+error break probing on genuine Kinetic KTD2026 and KTD2027 hardware?
 
-On the KTD2026 and KTD2027, flash_period_min_ms is 256, which matches
-KTD202X_FLASH_ON_MAX (256), so (delay_total_ms * on) / KTD202X_FLASH_ON_MAX
-is always at least 1 when on is clamped to a minimum of 1.
+Per the Kinetic KTD2026/KTD2027 datasheet (Register 0 Reset/Control bits
+[2:0] =3D 111, Reset Complete Chip), executing the reset command resets the
+entire chip including its I2C state machine immediately upon latching the
+data byte, so the chip does not return an I2C ACK pulse for the reset
+command byte and requires a 200 us wait before the next I2C transfer.
 
-With et6326_info setting flash_period_min_ms to 128, if a user configures
-a short period where num_steps is 0 (delay_total_ms < 256 ms) and on is
-clamped to 1 (for example, writing delay_on =3D 1 and delay_off =3D 127 via
-the timer trigger), ktd202x_blink_set() computes:
+Because the KTD2026/KTD2027 NACKs the KTD202X_RSTR_RESET write by design,
+regmap_write() returns a NACK error (-ENXIO or -EREMOTEIO) during
+ktd202x_probe() -> ktd202x_probe_fw(), which is why commit 0ebdb7210943
+("leds: Add ktd202x driver") ignored the return value of the reset write.
 
-	delay_total_ms =3D 0 * 128 + 128;
-	*delay_on =3D (128 * 1) / 256;
-
-which sets *delay_on to 0 while still programming the hardware to blink
-with on =3D 1.
-
-When led_blink_setup() stores blink_delay_on =3D 0, any subsequent write to
-delay_off in sysfs calls led_delay_off_store() -> led_blink_set() with
-*delay_on =3D=3D 0, hitting the !*delay_on check in ktd202x_blink_single_se=
-t()
-or ktd202x_blink_mc_set():
-
-	/* Never on - just set to off */
-	if (!*delay_on)
-		return ktd202x_brightness_single_set(cdev, LED_OFF);
-
-and turning the LED off instead of updating the blink period, which breaks
-the invariant from commit fb5b897c7d3f ("leds: rgb: ktd202x: Never program
-an on time of zero").
+To detect a missing chip at probe time without regressing KTD2026/KTD2027,
+could the driver instead check the return value of a register write issued
+after usleep_range(200, 300) completes (for example, writing
+KTD202X_ENABLE_CTRL_SLEEP to KTD202X_REG_RESET_CONTROL after the reset
+delay)?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261101-ktd202x-et=
-6326-v1-0-eb51eddad08c@telaak.dev?part=3D6
+6326-v1-0-eb51eddad08c@telaak.dev?part=3D9
