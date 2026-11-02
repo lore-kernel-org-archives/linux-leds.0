@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
 	t=1793585586;
-	b=IsJnyXStZHGsVwehgR0rcoP3QT+8ATjl15i4Mcp+HE1BhIiUcgBMBjUQOEofSkISrLTj
-	 g7bzzx+sxTU5/Q8P1QCS0jQPPcTBa/Cm4yUn1FiaUlDS4i8cbts/Yuvgewwbe2g3DUYSn
-	 357oQK9XOY8uTaZdmovmm3iT+SGfjMaEG3gHi90Lb1lNO+vB0h5pYo9oY1iC9Dowjh0Uh
-	 t85DOcoy6nVccd401GGVNYwPTcoFn47loNaxarCJoy90n4sGqL7ObF4606CMUHB/6PUfW
-	 +N7pszMTl0lQLKt/Sf54Fah/JDnkJAodZTSbgRP5kfgTYLfB5ke4lWbJOrB7X7PvAJw==
+	b=r3+cexxPjS5UvpO5TqAKi+4pgupj++pvoXfVvo0FbSLp/V/Pv0TxSpuMq7/rtCPsd+j7
+	 WguI6Yin1YVF8dNRJQLN0vOGjMvg3jatLBQIp4YRRcXdbI3pK45I4Rz9aa9h/qSG+BHun
+	 dmcjHB4Jtrc63M1N9Df5gReJzBqoKk8iO2GhbqgrgxC+7R11K7uN5kUf5oJeNR0mnRKFo
+	 HujeRaymvNcmnDM6YCUj6+ouWuxAHsFPvMJdzmyIlFxDefy7pTx6+IKGMIEEJ59OHQQA0
+	 yUGYN13j7JfhvB3mE60XVck+P6VtoVj0CRz0UAOjZxiJveg6pQZNaC1Gmd2ETEEK5GQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1793585586;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=WETsAhIlVo0w6o+fQzwplCR7bSsh52s8bK+enXMB5go=;
-	b=cfxratJpyudFAYLRF4f8pnK2V0IbWwqsy7jm8hYuiVRExm1ZC4U5B4K99aQVoVK3e3Y7
-	 XL88a7W2OpF2RYH8c48Q1pdX2JomYEwzrnRFTKjyUuCah9DRbUC1/e6uKQQuSLxoo9Ze6
-	 ntyGCOn429ym+dQhfXWx9roaVWtRjtUACm4TEPlVsdviyZkFN+fX90m2KpiDO27igqULN
-	 RCwW7pdolTa1FuoON4H64yz2Y/TJ4muSh+S9kuAE1rhzvMw/exsgMNIycrd+eg14j1ukx
-	 OsTLqldKTWXIvOItAbWRFbgVYILi39A60SePS4v0uCf6bIFTq6nlW6qruJg9fEK7wbA==
+	bh=3f5q6m8fiPKkgrxkjFKyIq23mOu/iyYQBphecVZB/yI=;
+	b=0IHbaZD5VPeKcMZf2zaRmtEiOoDx2bPzsfMi63P+6ln9s9lmCTvlnWpB9H3/sqrwWgYC
+	 QTA6l6CXIHN8qf1jB/rePGGfjkWwqsjv/2i9cDnN3VTAH4p5ypJzvSlS3r1t3poqd3bv8
+	 CTteGmcJSqyrHXi3y6mZYdpoNOz5k1GhlvI5kfp8utGEqgGDRMSQzalLh8ZpcXpc+axNm
+	 mH2uECDzhV6Y++EX1BmrXI/RojQ6+HeRhoE461/s87KK7s6t0z7tmOIU8LgURVLHAy0sV
+	 nfv1+WzWtkDxNE81IE26jYA9iOroZStvtuSyQ4UEMCRvPYJ/b4o7W+OxWJSVUWRew7Q==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GSpbWGot;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lhgF1gtU;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F5A60A382B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286B60A3831;
 	Mon,  2 Nov 2026 02:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GSpbWGot
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=lhgF1gtU
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1793585585;
-	b=0n07sr/wGryimqJoO0aaqXmhpfHtl/enm3HeZm/btui43QjCi3S9DVYxcbDqO771ABdp
-	 MnvuaAL9tdECxL70rVXjubtFwtZbsSAcYx4eVmMT8orE00pX0JJZj86nTcKpTFQVRp0Lb
-	 3rnONh2yXzD787irwk/kfeyfbNu0W2R5Fjuo7vRiElw3GwY6vNPqKgZeu2PqF43hi6afw
-	 2dRWP+NTZA5Ptv68pI5zPe8aYQTDZkBe7AF4rrVXxB0tvTyivZ0irPClEJ0Ze4b8XFDr5
-	 2RvUoObuHAtsKVaDbjz47/C/xyEZGAQlcNi2+HAL85QQKJqc5esOQwi3Wl7NCoRppYw==
+	b=OxXbCR1b0ABas9aBUDfmuxPt+5889jzHqN3UwU1Bu840y5hdobPEgBQ4nOAZ21oCtY7B
+	 slvRe4Krsf694y1aIHTv1j/P51hkMVVY3K1qTHKnrMJN3+MNi3INO4gX3PlF1eyiBiWzt
+	 heXTtkXqkMfw/JFLJnHiZNuxgCo3H2QCjrygl1+y54M5n9nm7NhcuBBcUf+wkc1vClFj1
+	 F8Q5vpWrkVyfhLXmUHSjDGoBdUpP60yKUOgHGnKR67Lhb0LCalklrw27Hdd+Xeciyzl+q
+	 8/DspgxiX3RJAPcSuno+LtGpvwgroCBfVu0Tc/fGUlwZRbbTm/ncEyKYXUscizbXoGw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1793585585;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=WETsAhIlVo0w6o+fQzwplCR7bSsh52s8bK+enXMB5go=;
-	b=hhrQ30Ucz5VDIbsXxiuATesZ+9PBS/HLhFZX+viVdNVwXJn+kg+ZvEtPsKEfNvXuFg5n
-	 tnv67YxS6r3Yw7nFplUCZ/vP6kbsPOtRN9FcdfzFy4bh5uBclP6a3NfgWJCy89QLNyyOw
-	 6Zc3W5vQAEkRcDztdjWi8yIsyjjYZijQqu0Sv0Lh1AJebpQkqferNwIQ6JdMQusXFTAIC
-	 Pe7biCAoIrkh0B1oxg2TnyTZaVMF82yLTyQmBt2voH2AMDwudKFL72haPn14ppdh6Jpe5
-	 MQ5W7po9jjp8sKZzueNiWH+MBIeTlJqzKF0vsaiedTPBHniVMbc2WEZNewNCQopdLPg==
+	bh=3f5q6m8fiPKkgrxkjFKyIq23mOu/iyYQBphecVZB/yI=;
+	b=HCMTPqcCkGlSS8zIrCPQ9RJZbKAt9kDWNagmfWETabOvprU7nDCs0Wso4j343Yeek5xH
+	 V24y1hxswgtG5eP9mzZ9SCbUPe5nEBrSMuW25dNQpz1PnZi/QCsMa2do1P3BD1nLEYfkK
+	 s1ZOIEStm1zCkghCMSJX+moHtItxRX5ZNdorzqHWHRurdxYrD2BIAlErl2jGDxB46MhP/
+	 M30wNMgBF7BA8kX9kWya5EHjjxmcea7ucmLZ06KK2eEU2rIOAAKTV5OENUFoTqM73Z3Io
+	 rG0pFPNjtBcbFJRdWoQYsBQq/FyoANgjjW0x4k2wXIz62/LkhElE/7MybiYWqKJ3CEA==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 6DED51F00A26;
+	by smtp.kernel.org (Postfix) with ESMTPS id 543411F00A18;
 	Mon,  2 Nov 2026 02:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1793585585;
-	bh=WETsAhIlVo0w6o+fQzwplCR7bSsh52s8bK+enXMB5go=;
+	bh=3f5q6m8fiPKkgrxkjFKyIq23mOu/iyYQBphecVZB/yI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=GSpbWGotEIZLoXnfKRux6V27A2jcpKk4oWJDhq6rqfl1j/1QmeRtqSgBg731cSn4e
-	 il8T1wf/aDD45ZrzvGdWGf1g0oESsDxiWo5tX0r+dj1gOLVIAQGTPWtIZbw3lDI3zu
-	 dsC4Q/Xfgj7UxBToqbfIwrVGaMpySWgcHeoYbQfzS4AdbCnor+xnxMd9AfXr89iDLR
-	 mWSSKCrFz7OF7bBaRfPXLc7pcF2aBRk/Eyzm4pvffiE8F6f9we8ePwsPxhBrzx3HRJ
-	 QL8iDW3YBu74jbHsTLAhFe8/tzWhezSqwbSEUJJZhxIjdWvsZHEcmv+vzAx2R97vFP
-	 bAel5dJRnPVHQ==
+	b=lhgF1gtUSyjr6PrTO726jjLiRVD19gr1RhDOZ7NUaD8wIQ2yoP+Jc2ZRMu4d8EHPf
+	 A2mqEUxCeUcjy6B2oUtZ984agpmFVDe8RBigC0TgD5IbzuNIgXIw0JUBtRlvP/iShf
+	 tPkS1AInJB8drZEg8Oc+EAS5DCVwd+KW8Yowp+6hgWLOD0pv5aZd3nx4zig/z1uJ5A
+	 fQBMfVpvr+UcT+X4eam3nzS0U0PNqE7WA2a0PQV5zfiafZfd4awd5UcA/McNV88YPK
+	 luNEmDs99WRF5t9nwBLVtSvwCmb3y2q5iOUQRn1lzTSfzfjXLc3fjE9A92hTwMjXTX
+	 Axkth+jzVt0SQ==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 4D40B46332;
+	by lkml.kernel.org (Postfix) with ESMTP id 2407546326;
 	Mon,  2 Nov 2026 02:13:01 +0000 (UTC)
 From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
-Date: Sun, 01 Nov 2026 21:12:34 -0500
-Subject: [PATCH 10/10] leds: rgb: ktd202x: Don't let a blinking LED retime
- another one
+Date: Sun, 01 Nov 2026 21:12:31 -0500
+Subject: [PATCH 07/10] leds: rgb: ktd202x: Add hardware pattern support
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261101-ktd202x-et6326-v1-10-eb51eddad08c@telaak.dev>
+Message-Id: <20261101-ktd202x-et6326-v1-7-eb51eddad08c@telaak.dev>
 References: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
 In-Reply-To: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -99,11 +98,11 @@ Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-doc@vger.kernel.org, Joseph Telaak <joseph@telaak.dev>
 X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793585580; l=12784;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793585580; l=11473;
  i=joseph@telaak.dev; s=20261102; h=from:subject:message-id;
- bh=HivMUDrX79tqovMmLBbCBnjJ/uvbgMOr5RCG/wopo0M=;
- b=BKN72mi5JF0OpC3W4IT7jK2HSktvDBJ2FrbDs9tldmEJx6aETxqXgtLLdos2ruyJy8c1Ic9mN
- LCd7SgcOuoNABWcApHSYY8Nv6yEf+kXgBzCAy9RSWhfI2KPoHI/hC19
+ bh=0+c0jQacH2sGOCrU607P3BLkJKt/LsC1PUqmAfmNpf8=;
+ b=NiiT2orWSZ7QBkK8uIKCc9qFEK3s3o/W1TDeUqY/Wnn1m8kMZGiivqwRCW47wdjgOyvI1vJ6h
+ 73DIAEtlWNfD2/o6mQE5+yp4eK020lTf35VNN0/Nr+dswYEepEpUW1+
 X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
  pk=OmwSusdK4grZpiuZVfCZAvYyqz9FBkNemsV1EnHyVr4=
 X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261102 with
@@ -114,382 +113,338 @@ Content-Transfer-Encoding: 7bit
 
 From: Joseph Telaak <joseph@telaak.dev>
 
-Every LED blinks with the PWM1 flash timer. So when a second LED blinks,
-its period and on time silently replace those of the first one, while
-the sysfs of the first one still shows its old delays. The same happens
-between a blink and a hardware pattern, and the ramps a pattern sets
-leak into a later blink.
+The KTD202x and the ET6326 can ramp the LED current up and down on
+their own: the flash timer that already does blink_set also has rise
+and fall times of up to 1.92 s. Without them, a breathing light needs
+the software pattern trigger, which is an I2C write every 50 ms.
 
-The PWM2 timer can't take the second LED: in timer slot 1, which the
-driver uses, it repeats PWM1 (Reg3 has no effect, measured on an
-ET6326), and in the other slots it only runs after PWM1 within the same
-period.
+Implement pattern_set and pattern_clear for the pattern trigger's
+hw_pattern. A pattern is the one breathing cycle the hardware has,
+"0 rise brightness high brightness fall 0 low", which the software
+pattern trigger plays as the same breath, repeated forever.
 
-Track which LEDs are on the timer instead of reading the channel state
-back. A LED may join the timer while no other LED uses it, or when it
-asks for the very same period, on time and ramps. Otherwise it stays on
-and gets -EBUSY, which makes the LED core blink it in software. Only
-write the timer registers when they change, so that a LED joining the
-timer does not restart the blink of the others.
-
-The match is on the programmed values. The timer trigger writes delay_on
-and delay_off one at a time, and each write is rounded against the other's
-rounded value, so two LEDs set to the same delays can get on times a few
-steps apart. The second one then blinks in software, at the timing it
-asked for. The documentation says how to make them share.
+blink_set now clears the ramp times, so a blink after a pattern stays
+sharp.
 
 Assisted-by: Claude:claude-opus-5-5
 Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 ---
- Documentation/leds/leds-ktd202x.rst |  13 ++-
- drivers/leds/rgb/leds-ktd202x.c     | 213 ++++++++++++++++++++++--------------
- 2 files changed, 143 insertions(+), 83 deletions(-)
+ Documentation/leds/index.rst        |   1 +
+ Documentation/leds/leds-ktd202x.rst |  41 ++++++++
+ drivers/leds/rgb/leds-ktd202x.c     | 186 ++++++++++++++++++++++++++++++++++--
+ 3 files changed, 221 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+index 23fa9ff7a..54d1c7368 100644
+--- a/Documentation/leds/index.rst
++++ b/Documentation/leds/index.rst
+@@ -19,6 +19,7 @@ LEDs
+    leds-blinkm
+    leds-cht-wcove
+    leds-el15203000
++   leds-ktd202x
+    leds-lm3556
+    leds-lp3944
+    leds-lp5521
 diff --git a/Documentation/leds/leds-ktd202x.rst b/Documentation/leds/leds-ktd202x.rst
-index 2ee537f57..32ea9d6f6 100644
---- a/Documentation/leds/leds-ktd202x.rst
+new file mode 100644
+index 000000000..2ee537f57
+--- /dev/null
 +++ b/Documentation/leds/leds-ktd202x.rst
-@@ -31,9 +31,16 @@ equal and not 0. ``repeat`` must be -1, its default.
- The sum of the four times is the flash period. The driver rounds it up to the
- next step of 128 ms, between 256 ms (128 ms on the ET6326) and 16384 ms.
- 
--The flash period, the on time and the ramp times are shared by all LEDs of a
--chip. When several LEDs blink or breathe at once, they all follow the timing
--that was set last.
-+All LEDs of a chip blink and breathe with one flash timer. Several LEDs can
-+use it at once only with the same period, on time and ramps. A LED that asks
-+for different ones while another LED is on the timer gets -EBUSY: blinking
-+then falls back to the software timer, and ``hw_pattern`` returns the error.
+@@ -0,0 +1,41 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+The match is on the values programmed into the chip. The timer trigger sets
-+``delay_on`` and ``delay_off`` one at a time and the driver rounds each pair,
-+so two LEDs given the same delays can end up with slightly different on times,
-+and then the second one blinks in software. To share the timer, give the
-+second LED the delays that the first one reads back.
- 
- For example, to breathe with a period of 4 seconds::
- 
++=============================================
++Kinetic KTD2026/7 and Etek ET6326 LED driver
++=============================================
++
++The chips have a hardware timer that blinks or breathes the LEDs without the
++CPU. The timer trigger uses it for blinking, and the pattern trigger uses it
++for breathing through the ``hw_pattern`` file.
++
++The hardware pattern is one breathing cycle of four steps, which repeats
++forever::
++
++    "0 rise brightness high brightness fall 0 low"
++
++rise
++    Ramp-up time in ms, from 0 to 1920 in steps of 128 ms.
++
++high
++    Time spent at the brightness in ms.
++
++fall
++    Ramp-down time in ms, from 0 to 1920 in steps of 128 ms.
++
++low
++    Time spent off in ms.
++
++The first and the last brightness must be 0, and the two in the middle must be
++equal and not 0. ``repeat`` must be -1, its default.
++
++The sum of the four times is the flash period. The driver rounds it up to the
++next step of 128 ms, between 256 ms (128 ms on the ET6326) and 16384 ms.
++
++The flash period, the on time and the ramp times are shared by all LEDs of a
++chip. When several LEDs blink or breathe at once, they all follow the timing
++that was set last.
++
++For example, to breathe with a period of 4 seconds::
++
++    echo pattern > /sys/class/leds/blue:status/trigger
++    echo "0 1000 192 1000 192 1000 0 1000" > /sys/class/leds/blue:status/hw_pattern
 diff --git a/drivers/leds/rgb/leds-ktd202x.c b/drivers/leds/rgb/leds-ktd202x.c
-index 5f51df993..f4544ba33 100644
+index 67e65c1fc..ed0e8e74c 100644
 --- a/drivers/leds/rgb/leds-ktd202x.c
 +++ b/drivers/leds/rgb/leds-ktd202x.c
-@@ -128,6 +128,8 @@ struct ktd202x_led {
- 		struct led_classdev_mc mcdev;
- 	};
- 	u32 index;
-+	/* Blinking or breathing with the flash timer */
-+	bool on_timer;
- };
+@@ -62,12 +62,20 @@
  
- struct ktd202x {
-@@ -137,6 +139,10 @@ struct ktd202x {
- 	struct regmap *regmap;
- 	const struct ktd202x_info *info;
- 	bool enabled;
-+	/* Settings of the flash timer, valid while a LED is on it */
-+	u8 flash_period;
-+	u8 flash_on;
-+	u8 ramp_times;
- 	unsigned long num_leds;
- 	struct ktd202x_led leds[] __counted_by(num_leds);
- };
-@@ -196,13 +202,20 @@ static bool ktd202x_chip_in_use(struct ktd202x *chip)
- 	return false;
+ /* Register 5 */
+ #define KTD202X_RAMP_TIMES_2_MS			0x00
++#define KTD202X_RAMP_TRISE(x)			(x)
++#define KTD202X_RAMP_TFALL(x)			((x) << 4)
+ 
+ /* Register 6-9 */
+ #define KTD202X_LED_CURRENT_10_mA		0x4f
+ 
+ #define KTD202X_FLASH_PERIOD_STEP_MS 128
+ #define KTD202X_FLASH_ON_MAX 256
++#define KTD202X_RAMP_STEP_MS 128
++#define KTD202X_RAMP_MAX_STEPS 15
++
++/* rise, high, fall and low */
++#define KTD202X_PATTERN_LEN 4
++#define KTD202X_PATTERN_MAX_MS 16384
+ 
+ #define KTD202X_MAX_BRIGHTNESS 192
+ 
+@@ -294,6 +302,23 @@ static int ktd202x_brightness_mc_set(struct led_classdev *cdev,
+ 	return ret;
  }
  
-+/* The channel mode of a lit LED: on, or blinking with the flash timer */
-+static unsigned int ktd202x_channel_mode(struct ktd202x_led *led, int channel)
++static unsigned int ktd202x_flash_period_steps(const struct ktd202x_info *info,
++					       unsigned long period_ms)
 +{
-+	if (led->on_timer)
-+		return KTD202X_CHANNEL_CTRL_PWM1(channel);
++	if (period_ms < info->flash_period_min_ms)
++		return 0;
 +
-+	return KTD202X_CHANNEL_CTRL_ON(channel);
++	return min_t(unsigned long, info->flash_period_max_steps,
++		     (period_ms - info->flash_period_min_ms) /
++		     KTD202X_FLASH_PERIOD_STEP_MS);
 +}
 +
- static int ktd202x_brightness_set(struct ktd202x_led *led,
- 				  struct mc_subled *subleds,
- 				  unsigned int num_channels)
- {
--	bool mode_blink = false;
- 	int channel;
--	int state;
- 	int ret;
- 	int i;
- 
-@@ -212,24 +225,9 @@ static int ktd202x_brightness_set(struct ktd202x_led *led,
- 			return ret;
- 	}
- 
--	ret = regmap_read(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL, &state);
--	if (ret)
--		return ret;
--
--	/*
--	 * In multicolor case, assume blink mode if PWM is set for at least one
--	 * channel because another channel cannot be in state ON at the same time
--	 */
--	for (i = 0; i < num_channels; i++) {
--		int channel_state;
--
--		channel = subleds[i].channel;
--		channel_state = (state >> 2 * channel) & KTD202X_CHANNEL_CTRL_MASK(0);
--		if (channel_state == KTD202X_CHANNEL_CTRL_OFF)
--			continue;
--		mode_blink = channel_state == KTD202X_CHANNEL_CTRL_PWM1(0);
--		break;
--	}
-+	/* A LED that is turned off stops blinking and leaves the timer */
-+	if (!led->cdev.brightness)
-+		led->on_timer = false;
- 
- 	for (i = 0; i < num_channels; i++) {
- 		enum led_brightness brightness;
-@@ -245,10 +243,7 @@ static int ktd202x_brightness_set(struct ktd202x_led *led,
- 			if (ret)
- 				return ret;
- 
--			if (mode_blink)
--				mode = KTD202X_CHANNEL_CTRL_PWM1(channel);
--			else
--				mode = KTD202X_CHANNEL_CTRL_ON(channel);
-+			mode = ktd202x_channel_mode(led, channel);
- 		} else {
- 			mode = KTD202X_CHANNEL_CTRL_OFF;
- 		}
-@@ -320,6 +315,89 @@ static unsigned long ktd202x_flash_period_ms(const struct ktd202x_info *info,
- 	return num_steps * KTD202X_FLASH_PERIOD_STEP_MS + info->flash_period_min_ms;
- }
- 
-+/*
-+ * All LEDs blink with the PWM1 flash timer. PWM2 is no help: in timer slot 1
-+ * it repeats PWM1, and in the other slots it only runs after PWM1 within the
-+ * same period. So a LED may only join the timer while it is unused, or used
-+ * with the very same period, on time and ramps, so that it never retimes
-+ * another LED behind its back.
-+ */
-+static bool ktd202x_timer_busy(struct ktd202x_led *led, u8 flash_period,
-+			       u8 flash_on, u8 ramp_times)
++static unsigned long ktd202x_flash_period_ms(const struct ktd202x_info *info,
++					     unsigned int num_steps)
 +{
-+	struct ktd202x *chip = led->chip;
-+	int i;
-+
-+	for (i = 0; i < chip->num_leds; i++) {
-+		struct ktd202x_led *other = &chip->leds[i];
-+
-+		if (other == led || !other->on_timer)
-+			continue;
-+
-+		if (flash_period != chip->flash_period ||
-+		    flash_on != chip->flash_on || ramp_times != chip->ramp_times)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/* Called with the chip mutex held */
-+static int ktd202x_timer_set(struct ktd202x_led *led, struct mc_subled *subleds,
-+			     unsigned int num_channels, u8 flash_period, u8 flash_on,
-+			     u8 ramp_times)
-+{
-+	struct ktd202x *chip = led->chip;
-+	u8 ctrl_mask = 0;
-+	u8 ctrl_mode = 0;
-+	bool busy;
-+	int ret;
-+	int i;
-+
-+	busy = ktd202x_timer_busy(led, flash_period, flash_on, ramp_times);
-+	led->on_timer = !busy;
-+
-+	for (i = 0; i < num_channels; i++) {
-+		int channel = subleds[i].channel;
-+
-+		ctrl_mask |= KTD202X_CHANNEL_CTRL_MASK(channel);
-+		ctrl_mode |= ktd202x_channel_mode(led, channel);
-+	}
-+
-+	/* Without the timer, leave the LED steadily on */
-+	if (busy) {
-+		ret = regmap_update_bits(chip->regmap, KTD202X_REG_CHANNEL_CTRL,
-+					 ctrl_mask, ctrl_mode);
-+		return ret ? ret : -EBUSY;
-+	}
-+
-+	chip->flash_period = flash_period;
-+	chip->flash_on = flash_on;
-+	chip->ramp_times = ramp_times;
-+
-+	/*
-+	 * Update the timer registers only when they change, so that the
-+	 * blink of another LED on the timer is not restarted.
-+	 */
-+	ret = regmap_update_bits(chip->regmap, KTD202X_REG_FLASH_PERIOD, 0xff,
-+				 flash_period);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(chip->regmap, KTD202X_REG_PWM1_TIMER, 0xff,
-+				 flash_on);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(chip->regmap, KTD202X_REG_TRISE_FALL, 0xff,
-+				 ramp_times);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(chip->regmap, KTD202X_REG_CHANNEL_CTRL,
-+				  ctrl_mask, ctrl_mode);
++	return num_steps * KTD202X_FLASH_PERIOD_STEP_MS + info->flash_period_min_ms;
 +}
 +
  static int ktd202x_blink_set(struct ktd202x_led *led, unsigned long *delay_on,
  			     unsigned long *delay_off, struct mc_subled *subleds,
  			     unsigned int num_channels)
-@@ -328,22 +406,21 @@ static int ktd202x_blink_set(struct ktd202x_led *led, unsigned long *delay_on,
- 	unsigned long delay_total_ms;
- 	int ret, num_steps, on;
- 	u8 ctrl_mask = 0;
--	u8 ctrl_pwm1 = 0;
- 	u8 ctrl_on = 0;
- 	int i;
+@@ -328,12 +353,7 @@ static int ktd202x_blink_set(struct ktd202x_led *led, unsigned long *delay_on,
+ 	/* Integer representation of time of flash period */
+ 	if (check_add_overflow(*delay_on, *delay_off, &delay_total_ms))
+ 		delay_total_ms = ULONG_MAX;
+-	if (delay_total_ms < info->flash_period_min_ms)
+-		num_steps = 0;
+-	else
+-		num_steps = min_t(unsigned long, info->flash_period_max_steps,
+-				  (delay_total_ms - info->flash_period_min_ms) /
+-				  KTD202X_FLASH_PERIOD_STEP_MS);
++	num_steps = ktd202x_flash_period_steps(info, delay_total_ms);
  
- 	mutex_lock(&led->chip->mutex);
- 
--	for (i = 0; i < num_channels; i++) {
--		int channel = subleds[i].channel;
--
--		ctrl_mask |= KTD202X_CHANNEL_CTRL_MASK(channel);
--		ctrl_on |= KTD202X_CHANNEL_CTRL_ON(channel);
--		ctrl_pwm1 |= KTD202X_CHANNEL_CTRL_PWM1(channel);
--	}
--
- 	/* Never off - brightness is already set, disable blinking */
- 	if (!*delay_off) {
-+		for (i = 0; i < num_channels; i++) {
-+			int channel = subleds[i].channel;
-+
-+			ctrl_mask |= KTD202X_CHANNEL_CTRL_MASK(channel);
-+			ctrl_on |= KTD202X_CHANNEL_CTRL_ON(channel);
-+		}
-+
-+		led->on_timer = false;
- 		ret = regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
- 					 ctrl_mask, ctrl_on);
- 		goto out;
-@@ -363,28 +440,19 @@ static int ktd202x_blink_set(struct ktd202x_led *led, unsigned long *delay_on,
- 	on = mul_u64_u64_div_u64(*delay_on, KTD202X_FLASH_ON_MAX, delay_total_ms);
+ 	/*
+ 	 * Integer representation of percentage of LED ON time. A value of 0
+@@ -343,7 +363,7 @@ static int ktd202x_blink_set(struct ktd202x_led *led, unsigned long *delay_on,
  	on = clamp(on, 1, KTD202X_FLASH_ON_MAX - 1);
  
-+	/*
-+	 * Without the ramps a hardware pattern may have set. On -EBUSY the
-+	 * LED core falls back to software blinking.
-+	 */
-+	ret = ktd202x_timer_set(led, subleds, num_channels, num_steps, on,
-+				KTD202X_RAMP_TIMES_2_MS);
+ 	/* Actually used delay_{on,off} values */
+-	delay_total_ms = num_steps * KTD202X_FLASH_PERIOD_STEP_MS + info->flash_period_min_ms;
++	delay_total_ms = ktd202x_flash_period_ms(info, num_steps);
+ 	*delay_on = (delay_total_ms * on) / KTD202X_FLASH_ON_MAX;
+ 	*delay_off = delay_total_ms - *delay_on;
+ 
+@@ -356,6 +376,12 @@ static int ktd202x_blink_set(struct ktd202x_led *led, unsigned long *delay_on,
+ 	if (ret)
+ 		goto out;
+ 
++	/* Drop the ramps a hardware pattern may have left behind */
++	ret = regmap_write(led->chip->regmap, KTD202X_REG_TRISE_FALL,
++			   KTD202X_RAMP_TIMES_2_MS);
 +	if (ret)
 +		goto out;
 +
- 	/* Actually used delay_{on,off} values */
- 	delay_total_ms = ktd202x_flash_period_ms(info, num_steps);
- 	*delay_on = (delay_total_ms * on) / KTD202X_FLASH_ON_MAX;
- 	*delay_off = delay_total_ms - *delay_on;
--
--	/* Set timings */
--	ret = regmap_write(led->chip->regmap, KTD202X_REG_FLASH_PERIOD, num_steps);
--	if (ret)
--		goto out;
--
--	ret = regmap_write(led->chip->regmap, KTD202X_REG_PWM1_TIMER, on);
--	if (ret)
--		goto out;
--
--	/* Drop the ramps a hardware pattern may have left behind */
--	ret = regmap_write(led->chip->regmap, KTD202X_REG_TRISE_FALL,
--			   KTD202X_RAMP_TIMES_2_MS);
--	if (ret)
--		goto out;
--
--	ret = regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
--				 ctrl_mask, ctrl_pwm1);
+ 	ret = regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
+ 				 ctrl_mask, ctrl_pwm1);
  out:
- 	mutex_unlock(&led->chip->mutex);
- 	return ret;
-@@ -484,18 +552,9 @@ static int ktd202x_pattern_program(struct ktd202x_led *led,
- 	unsigned int t[KTD202X_PATTERN_LEN];
- 	unsigned int rise, fall, num_steps, on;
- 	unsigned long period_ms, ton_ms;
--	u8 ctrl_mask = 0;
--	u8 ctrl_pwm1 = 0;
- 	int ret;
- 	int i;
- 
--	for (i = 0; i < num_channels; i++) {
--		int channel = subleds[i].channel;
--
--		ctrl_mask |= KTD202X_CHANNEL_CTRL_MASK(channel);
--		ctrl_pwm1 |= KTD202X_CHANNEL_CTRL_PWM1(channel);
--	}
--
- 	for (i = 0; i < KTD202X_PATTERN_LEN; i++)
- 		t[i] = min_t(u32, pattern[i].delta_t, KTD202X_PATTERN_MAX_MS);
- 
-@@ -517,24 +576,10 @@ static int ktd202x_pattern_program(struct ktd202x_led *led,
- 		     1, KTD202X_FLASH_ON_MAX - 1);
- 
- 	mutex_lock(&led->chip->mutex);
--
--	ret = regmap_write(led->chip->regmap, KTD202X_REG_FLASH_PERIOD, num_steps);
--	if (ret)
--		goto out;
--
--	ret = regmap_write(led->chip->regmap, KTD202X_REG_PWM1_TIMER, on);
--	if (ret)
--		goto out;
--
--	ret = regmap_write(led->chip->regmap, KTD202X_REG_TRISE_FALL,
--			   KTD202X_RAMP_TFALL(fall) | KTD202X_RAMP_TRISE(rise));
--	if (ret)
--		goto out;
--
--	ret = regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
--				 ctrl_mask, ctrl_pwm1);
--out:
-+	ret = ktd202x_timer_set(led, subleds, num_channels, num_steps, on,
-+				KTD202X_RAMP_TFALL(fall) | KTD202X_RAMP_TRISE(rise));
- 	mutex_unlock(&led->chip->mutex);
-+
- 	return ret;
+@@ -420,6 +446,148 @@ static int ktd202x_blink_mc_set(struct led_classdev *cdev,
+ 				 mc->num_colors);
  }
  
-@@ -556,7 +601,11 @@ static int ktd202x_pattern_single_set(struct led_classdev *cdev,
- 
- 	info.channel = led->index;
- 
--	return ktd202x_pattern_program(led, pattern, &info, 1);
-+	ret = ktd202x_pattern_program(led, pattern, &info, 1);
++/*
++ * The hardware pattern is a single breathing cycle that repeats forever:
++ *
++ *   "0 rise brightness high brightness fall 0 low"
++ *
++ * The LED ramps up for the rise time, stays at the brightness for the high
++ * time, ramps down for the fall time and stays off for the low time.
++ */
++static int ktd202x_pattern_check(struct led_classdev *cdev,
++				 struct led_pattern *pattern, u32 len,
++				 int repeat)
++{
++	/*
++	 * Only forever: the pattern trigger passes -1, or 0 when repeat
++	 * has not been written since the trigger was set.
++	 */
++	if (len != KTD202X_PATTERN_LEN || repeat > 0)
++		return -EINVAL;
++
++	if (pattern[0].brightness || pattern[3].brightness ||
++	    pattern[1].brightness != pattern[2].brightness ||
++	    pattern[1].brightness <= 0 ||
++	    pattern[1].brightness > cdev->max_brightness)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int ktd202x_pattern_program(struct ktd202x_led *led,
++				   struct led_pattern *pattern,
++				   struct mc_subled *subleds,
++				   unsigned int num_channels)
++{
++	const struct ktd202x_info *info = led->chip->info;
++	unsigned int t[KTD202X_PATTERN_LEN];
++	unsigned int rise, fall, num_steps, on;
++	unsigned long period_ms, ton_ms;
++	u8 ctrl_mask = 0;
++	u8 ctrl_pwm1 = 0;
++	int ret;
++	int i;
++
++	for (i = 0; i < num_channels; i++) {
++		int channel = subleds[i].channel;
++
++		ctrl_mask |= KTD202X_CHANNEL_CTRL_MASK(channel);
++		ctrl_pwm1 |= KTD202X_CHANNEL_CTRL_PWM1(channel);
++	}
++
++	for (i = 0; i < KTD202X_PATTERN_LEN; i++)
++		t[i] = min_t(u32, pattern[i].delta_t, KTD202X_PATTERN_MAX_MS);
++
++	rise = min_t(unsigned int, KTD202X_RAMP_MAX_STEPS,
++		     DIV_ROUND_CLOSEST(t[0], KTD202X_RAMP_STEP_MS));
++	fall = min_t(unsigned int, KTD202X_RAMP_MAX_STEPS,
++		     DIV_ROUND_CLOSEST(t[2], KTD202X_RAMP_STEP_MS));
++
++	/* Round the period up so that the fall ramp is not cut short */
++	period_ms = t[0] + t[1] + t[2] + t[3];
++	num_steps = ktd202x_flash_period_steps(info, period_ms +
++					       KTD202X_FLASH_PERIOD_STEP_MS - 1);
++	period_ms = ktd202x_flash_period_ms(info, num_steps);
++
++	/* The on time includes the rise time */
++	ton_ms = t[0] + t[1];
++	on = clamp_t(unsigned long,
++		     DIV_ROUND_CLOSEST(ton_ms * KTD202X_FLASH_ON_MAX, period_ms),
++		     1, KTD202X_FLASH_ON_MAX - 1);
++
++	mutex_lock(&led->chip->mutex);
++
++	ret = regmap_write(led->chip->regmap, KTD202X_REG_FLASH_PERIOD, num_steps);
 +	if (ret)
-+		ktd202x_brightness_single_set(cdev, LED_OFF);
++		goto out;
 +
-+	return ret;
- }
- 
- static int ktd202x_pattern_single_clear(struct led_classdev *cdev)
-@@ -580,8 +629,12 @@ static int ktd202x_pattern_mc_set(struct led_classdev *cdev,
- 	if (ret)
- 		return ret;
- 
--	return ktd202x_pattern_program(led, pattern, mc->subled_info,
--				       mc->num_colors);
-+	ret = ktd202x_pattern_program(led, pattern, mc->subled_info,
-+				      mc->num_colors);
++	ret = regmap_write(led->chip->regmap, KTD202X_REG_PWM1_TIMER, on);
 +	if (ret)
-+		ktd202x_brightness_mc_set(cdev, LED_OFF);
++		goto out;
 +
++	ret = regmap_write(led->chip->regmap, KTD202X_REG_TRISE_FALL,
++			   KTD202X_RAMP_TFALL(fall) | KTD202X_RAMP_TRISE(rise));
++	if (ret)
++		goto out;
++
++	ret = regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
++				 ctrl_mask, ctrl_pwm1);
++out:
++	mutex_unlock(&led->chip->mutex);
 +	return ret;
- }
++}
++
++static int ktd202x_pattern_single_set(struct led_classdev *cdev,
++				      struct led_pattern *pattern, u32 len,
++				      int repeat)
++{
++	struct ktd202x_led *led = container_of(cdev, struct ktd202x_led, cdev);
++	struct mc_subled info;
++	int ret;
++
++	ret = ktd202x_pattern_check(cdev, pattern, len, repeat);
++	if (ret)
++		return ret;
++
++	ret = ktd202x_brightness_single_set(cdev, pattern[1].brightness);
++	if (ret)
++		return ret;
++
++	info.channel = led->index;
++
++	return ktd202x_pattern_program(led, pattern, &info, 1);
++}
++
++static int ktd202x_pattern_single_clear(struct led_classdev *cdev)
++{
++	return ktd202x_brightness_single_set(cdev, LED_OFF);
++}
++
++static int ktd202x_pattern_mc_set(struct led_classdev *cdev,
++				  struct led_pattern *pattern, u32 len,
++				  int repeat)
++{
++	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
++	struct ktd202x_led *led = container_of(mc, struct ktd202x_led, mcdev);
++	int ret;
++
++	ret = ktd202x_pattern_check(cdev, pattern, len, repeat);
++	if (ret)
++		return ret;
++
++	ret = ktd202x_brightness_mc_set(cdev, pattern[1].brightness);
++	if (ret)
++		return ret;
++
++	return ktd202x_pattern_program(led, pattern, mc->subled_info,
++				       mc->num_colors);
++}
++
++static int ktd202x_pattern_mc_clear(struct led_classdev *cdev)
++{
++	return ktd202x_brightness_mc_set(cdev, LED_OFF);
++}
++
+ static int ktd202x_setup_led_rgb(struct ktd202x *chip, struct fwnode_handle *fwnode,
+ 				 struct ktd202x_led *led, struct led_init_data *init_data)
+ {
+@@ -471,6 +639,8 @@ static int ktd202x_setup_led_rgb(struct ktd202x *chip, struct fwnode_handle *fwn
+ 	cdev = &led->mcdev.led_cdev;
+ 	cdev->brightness_set_blocking = ktd202x_brightness_mc_set;
+ 	cdev->blink_set = ktd202x_blink_mc_set;
++	cdev->pattern_set = ktd202x_pattern_mc_set;
++	cdev->pattern_clear = ktd202x_pattern_mc_clear;
  
- static int ktd202x_pattern_mc_clear(struct led_classdev *cdev)
+ 	return devm_led_classdev_multicolor_register_ext(chip->dev, &led->mcdev, init_data);
+ }
+@@ -492,6 +662,8 @@ static int ktd202x_setup_led_single(struct ktd202x *chip, struct fwnode_handle *
+ 	cdev = &led->cdev;
+ 	cdev->brightness_set_blocking = ktd202x_brightness_single_set;
+ 	cdev->blink_set = ktd202x_blink_single_set;
++	cdev->pattern_set = ktd202x_pattern_single_set;
++	cdev->pattern_clear = ktd202x_pattern_single_clear;
+ 
+ 	return devm_led_classdev_register_ext(chip->dev, &led->cdev, init_data);
+ }
 
 -- 
 Git-155)
