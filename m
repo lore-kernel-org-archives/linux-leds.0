@@ -1,56 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793586681;
-	b=ieVJ72/e4ICI0hQNeowFZnMSL5bWR93+LlmT3uH2/wYj5vDaMpQaKlUs8PwlgnZPkMEc
-	 v3RvYMsSj3ZAXnQGcKHHLJqgrmTbssdDtoGMK17FotWYD2n3sNqHbdzjpwiPK+n7zdLDI
-	 1Jq61Hs/dlWrvX5bskp3QFyP54ef0vl0pky0gVGhecgXqkUimd42pGbAUxGNNTSGPIiRE
-	 GDKdRpM1eLxz4SojkymqtwRMxCok/jw6EdkYPr04E/jfq/47WfBPkgXrlF8jF3BYZeils
-	 ncwovhQMZB1D5yKeFJY1Qhlyx8NUXiVgHcW6fM3CfI+4bdkv8UCkDJ1k4Sqy/ROYWjg==
+	t=1793587136;
+	b=P9lNWqQgN9ByFSsF0pia82QQK5bOJsH3Ax7IUd4x8IwcnEBmJF17aCh5CVPVRS9BfSIE
+	 lRdYx75z3otCBSICHKwP0dpr8UFq68s1L9EPifJ3zWZUPqlkdEduTMaJbVCE4CToPHPbF
+	 fIIXGQUXq+wNFm2njIcpwxxSfHpgce+EQSQaQfTQipefSxy3qCnk2FtSR0QNdDeTiayno
+	 yCqJyhKdGLANMEQw73qvG2S4SXLEr24b0oRdl9ttNh5wECGHtQSlZ19l2TLD6qImt63bN
+	 aRTVD9gtLVXGdLwNaE39eNF9wIv7VqAUvrbZqF/ECDbbBGdTEpLr0+aUQFMQ6KS8kuw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793586681;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=u5MNJlEIQfQn127qhQo2IR1UqQtyiCSnhtJ4iQCGshc=;
-	b=paaK2F/9QUGA+oh6+G3djjcLiMRMxKBnPmAaQyhs2x37W2RTesyLxmaDp/DnKzWJ7CBm
-	 LcokwWBUdOU/2SZyxZFHiT8KCYdyAUgMda8186Go5J0MfxLK4ZSG6eN65b1QYPXxBjIU+
-	 gu5fvPfKYrcVA+s6Vv4nD0Y5z9FIi5atZ6yV7u8ruBu4vNON6LbL2FgNZ93PhQI1fXMPN
-	 v9xTT6WqauAEyMV6jsQ0WhBVVSjndUXRVNf757drdpyWJ3+UXnbbKW6YTLiEhNbbAEwmm
-	 5ko3OXAvS6qAMAb9GTbK6TPe+b8askm1gft3vORReJGt/xkracZFwS+KDZND9eGEZDw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793587136;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Gm-Message-State:
+	 X-Gm-Gg:X-Received:Received:Received:X-Received:MIME-Version:
+	 References:In-Reply-To:From:Date:X-Gmail-Original-Message-ID:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=Jci9qiUbYMeQLnsVE23Fk/bmS6/YaF98wtPe2dPL9Rg=;
+	b=bLz2bUCj5S5HzXl1bdd5HPvvwOGuiv8yHJhqbcAKfKH2HffMTZn1iERRYGRVvOcESEm1
+	 mikB7sr6Xg7kqbi0vPo5Bpo3DMGFh86oKMw2wLQP9UFQrDbMIuZoG7mk0cF4SMbGeQ07p
+	 O4pIl0WmW3b9Y4GZqhvkIve3oqa7sh7/ao8+C2d9rYMoG7Uy3v8NIBa3AVVe0ziUA8dP+
+	 kfdaImBcvt/balnpuipzDlDDfUQWVacblr9UJTZ6K+NhfLiSpsvEbQzkKL15e4B9ki+mU
+	 2S3srkEE1Evx2kD1R0qR+jk74fb6spi31QQSV/WmBzgcFWZjmsa9RAQQjqijf3kt4BQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jVnBXWhi;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=telaak.dev;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.215.181
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B598606A324;
-	Mon,  2 Nov 2026 02:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jVnBXWhi
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FBCD1F000C1;
-	Mon,  2 Nov 2026 02:31:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793586680;
-	bh=u5MNJlEIQfQn127qhQo2IR1UqQtyiCSnhtJ4iQCGshc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=jVnBXWhiu5Grrz0NOfawNKyJCNaldJXjXhoSqJwmcZs3fiT2hy3vKmpBQXnif9pWP
-	 EOgq59A3O9BwzV6v1OkRX72+FPGy4okTUEvNGAr5RBbaeqXthcl1mdgaPL1Yrz50Db
-	 7vJWt9e8D9LfodW2zKqIubebG1GkV01N16uLM02LccBrf9wdxdioJwTatP2YDak6WN
-	 CsxkltmA0lu4IeO/a9YVtkVOZkdY4TvyhSQJTQunyBHz09J7loohmK2L7TNh8EqyOp
-	 /O6dFaxyUyBywZb/ziS0EugEQbCXWoe4V7ldj6VTm4ikbvkh60PyT/UTlNR5Y7BFso
-	 zYYJZrdqVc1ig==
-Message-ID: <sashiko-outbox-192836@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 07/10] leds: rgb: ktd202x: Add hardware pattern support
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Joseph Telaak" <joseph@telaak.dev>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261101-ktd202x-et6326-v1-7-eb51eddad08c@telaak.dev>
-References: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
- <20261101-ktd202x-et6326-v1-7-eb51eddad08c@telaak.dev>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 02:31:20 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25430606A32E
+	for <linux-leds@vger.kernel.org>; Mon,  2 Nov 2026 02:38:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25430606A32E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cc4aa0246b7so1108605a12.3
+        for <linux-leds@vger.kernel.org>; Sun, 01 Nov 2026 18:38:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793587135; x=1794191935;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Jci9qiUbYMeQLnsVE23Fk/bmS6/YaF98wtPe2dPL9Rg=;
+        b=V4mBIKNgsxNl4y9ZAqGoGf6sU1s/1CatZMFxXHfmHW9K6/joXwkil8QQClzqvOkN0A
+         kDVa8G4gwrbnngebneTMAGvwcAwqMY5HUZF0UaDNQb7mYpOEfDGBCt6L3w7LY5roNnOz
+         f4EOmW9m1Jz4j2eSQ30X5yEtq2FViNdX8u81tHdLsOjPC9oHr2YNsu3RejGBSy2gLQ+y
+         aEtuQWbi3HaA0iFdfkWlNOv1EmKZANsDR1osiXHESr2XaQ1qe0oq967FTurBmpy6jnUa
+         p/y4vnGoOAcncLOkp/GOht9MMxftm6hGQWAMpycudsEy3f0UKv7KTFK7dhkk2xWAR1yy
+         kzvg==
+X-Gm-Message-State: APuU4Z/cZ2NipLydaHbTWg56RRpwst5Oz4zbfdCAElaeQa8o96T4tCnV
+	yE3Mguk3FulFt7/P3mTG+2tgUVc5iTKthU9CM7RFOK2P2gp4fkwphnc9C7cqlawz
+X-Gm-Gg: AYBFou2drh6HNMsdSuPCyDrw5lanvYAhoL8Q7BZfbS4hWAdXhWi7EWMnx2qNd726da5
+	UTay7wsQS9GJSFzjA4lUkYaJPgn0hJWueB22lE69SsD5rI+5m3geiv6i9p2zXaSPK0d5xWEKmxO
+	mDrMSKVNclVrieKFApJkKZM4Tw0V5+hOLKc3R9NiIrOm3hdbjd+PGwXlWVQZMXrrCCqS8+DFbB4
+	SEOHcDjd7FeDo5teyiKzrVLyIayfkkYjX4k9bYOP/678+hHSc00zV5tiWpf5du7Y/ksHfnmHNF4
+	QBkiJscy4b08nEP/7tWmjTG9w5anskBD+9KJLRReqLtqSSWKN/WNARB8wJfeO9O3iZ53YfB7MaC
+	xDm8LGirVdbtfrZBBkm7rG7cjqBBoLODteFFc2Ldq5QH2PKTSgKs/2f0zQ5TY+lvYR6YqxuNJ84
+	zVihFhsStGCq1c8kHvIpmwCWFy+OG8JQfSugdbaLGL8FARKlCQSb6f4jYbLG+nDD8jhynSuUcUv
+	j8swsERX+3C0evj7NZOB5TdP4g3QDFq2UXv2tsN+HlGy5J4OqyBQd201V5lyGov+NxyR2nFOMAp
+	54f114e0XylzZrASxQ9nUx+05RpJKUmGV8jGX7Px7AkRYJrgB3J+ckZnNygFQzchhKZKJiHY0Du
+	hS+JhyTDLESGuOZEvRihH87VYEjnX1cCFIfn/5QlhCcWmc8IvGoZj9ZyMG1zFLIMI
+X-Received: by 2002:a17:90b:3d4b:b0:3a8:1a1a:7895 with SMTP id 98e67ed59e1d1-3ae8977640fmr5633296a91.18.1793587135522;
+        Sun, 01 Nov 2026 18:38:55 -0800 (PST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com. [74.125.82.180])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae87fc548fsm7528857a91.4.2026.11.01.18.38.54
+        for <linux-leds@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 01 Nov 2026 18:38:54 -0800 (PST)
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-353804b591eso4512984eec.0
+        for <linux-leds@vger.kernel.org>; Sun, 01 Nov 2026 18:38:54 -0800 (PST)
+X-Received: by 2002:a05:7301:db8a:b0:36a:279:c93f with SMTP id
+ 5a478bee46e88-36a423fda77mr13492128eec.33.1793587134291; Sun, 01 Nov 2026
+ 18:38:54 -0800 (PST)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,195 +79,40 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+References: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
+ <20261101-ktd202x-et6326-v1-9-eb51eddad08c@telaak.dev> <sashiko-outbox-192833@kernel.org>
+In-Reply-To: <sashiko-outbox-192833@kernel.org>
+From: Joseph Telaak <joseph@telaak.dev>
+Date: Sun, 1 Nov 2026 21:38:42 -0500
+X-Gmail-Original-Message-ID: <CAPY4CJ6GHfhAp9Ck6WakVy0yh5YjG-TApW4zaOp6vAFDGivTaA@mail.gmail.com>
+X-Gm-Features: AclHuK8Yeg2RaovImaieDc_RzvYkCKj9n4PkC3wjqPhvqeEv6To4mOIylRyTbUQ
+Message-ID: <CAPY4CJ6GHfhAp9Ck6WakVy0yh5YjG-TApW4zaOp6vAFDGivTaA@mail.gmail.com>
+Subject: Re: [PATCH 09/10] leds: rgb: ktd202x: Fail the probe when the chip
+ does not answer
+To: sashiko-reviews@lists.linux.dev
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, lee@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] leds: ktd202x: ktd202x_pattern_program() enables PWM1 on 0-brigh=
-tness channels
---
+On Sun, Nov 1, 2026 at 9:22=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
+> - regmap_write(chip->regmap, KTD202X_REG_RESET_CONTROL, KTD202X_RSTR_RESE=
+T);
+> + /* Nothing is read back, so a failed reset is the only sign of a missin=
+g chip */
+> + ret =3D regmap_write(chip->regmap, KTD202X_REG_RESET_CONTROL, KTD202X_R=
+STR_RESET);
+> + if (ret)
+> + return dev_err_probe(dev, ret, "Failed to reset the chip\n");
 
-commit cb2ed015f23bfa814b09df784ba07474c986d4de
-Author: Joseph Telaak <joseph@telaak.dev>
+Please don't apply this one as is. As Sashiko pointed out, the KTD2026/7
+does not ACK the reset command: its data sheet says the byte that resets
+the chip is followed by a "not acknowledge", which is to be ignored. The
+ET6326 I tested on does ACK it, so I missed that this breaks the probe on
+every KTD202x.
 
-leds: rgb: ktd202x: Add hardware pattern support
+v2 will ignore the reset write again, and fail the probe only when the
+write that puts the chip to sleep after the reset delay fails.
 
-This commit adds hardware pattern support to the ktd202x LED driver by
-implementing the pattern_set and pattern_clear callbacks using the chip's
-hardware flash timer and rise/fall ramp registers.
-
-> diff --git a/drivers/leds/rgb/leds-ktd202x.c b/drivers/leds/rgb/leds-ktd2=
-02x.c
-> index 67e65c1fcb5fb..ed0e8e74c9eab 100644
-> --- a/drivers/leds/rgb/leds-ktd202x.c
-> +++ b/drivers/leds/rgb/leds-ktd202x.c
-[ ... ]
-> @@ -420,6 +446,148 @@ static int ktd202x_blink_mc_set(struct led_classdev=
- *cdev,
-[ ... ]
-> +static int ktd202x_pattern_program(struct ktd202x_led *led,
-> +				   struct led_pattern *pattern,
-> +				   struct mc_subled *subleds,
-> +				   unsigned int num_channels)
-> +{
-> +	const struct ktd202x_info *info =3D led->chip->info;
-> +	unsigned int t[KTD202X_PATTERN_LEN];
-> +	unsigned int rise, fall, num_steps, on;
-> +	unsigned long period_ms, ton_ms;
-> +	u8 ctrl_mask =3D 0;
-> +	u8 ctrl_pwm1 =3D 0;
-> +	int ret;
-> +	int i;
-> +
-> +	for (i =3D 0; i < num_channels; i++) {
-> +		int channel =3D subleds[i].channel;
-> +
-> +		ctrl_mask |=3D KTD202X_CHANNEL_CTRL_MASK(channel);
-> +		ctrl_pwm1 |=3D KTD202X_CHANNEL_CTRL_PWM1(channel);
-> +	}
-> +
-> +	for (i =3D 0; i < KTD202X_PATTERN_LEN; i++)
-> +		t[i] =3D min_t(u32, pattern[i].delta_t, KTD202X_PATTERN_MAX_MS);
-> +
-> +	rise =3D min_t(unsigned int, KTD202X_RAMP_MAX_STEPS,
-> +		     DIV_ROUND_CLOSEST(t[0], KTD202X_RAMP_STEP_MS));
-> +	fall =3D min_t(unsigned int, KTD202X_RAMP_MAX_STEPS,
-> +		     DIV_ROUND_CLOSEST(t[2], KTD202X_RAMP_STEP_MS));
-> +
-> +	/* Round the period up so that the fall ramp is not cut short */
-> +	period_ms =3D t[0] + t[1] + t[2] + t[3];
-> +	num_steps =3D ktd202x_flash_period_steps(info, period_ms +
-> +					       KTD202X_FLASH_PERIOD_STEP_MS - 1);
-> +	period_ms =3D ktd202x_flash_period_ms(info, num_steps);
-> +
-> +	/* The on time includes the rise time */
-> +	ton_ms =3D t[0] + t[1];
-> +	on =3D clamp_t(unsigned long,
-> +		     DIV_ROUND_CLOSEST(ton_ms * KTD202X_FLASH_ON_MAX, period_ms),
-> +		     1, KTD202X_FLASH_ON_MAX - 1);
-> +
-> +	mutex_lock(&led->chip->mutex);
-> +
-> +	ret =3D regmap_write(led->chip->regmap, KTD202X_REG_FLASH_PERIOD, num_s=
-teps);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret =3D regmap_write(led->chip->regmap, KTD202X_REG_PWM1_TIMER, on);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret =3D regmap_write(led->chip->regmap, KTD202X_REG_TRISE_FALL,
-> +			   KTD202X_RAMP_TFALL(fall) | KTD202X_RAMP_TRISE(rise));
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret =3D regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
-> +				 ctrl_mask, ctrl_pwm1);
-> +out:
-> +	mutex_unlock(&led->chip->mutex);
-> +	return ret;
-> +}
-> +
-> +static int ktd202x_pattern_single_set(struct led_classdev *cdev,
-> +				      struct led_pattern *pattern, u32 len,
-> +				      int repeat)
-> +{
-> +	struct ktd202x_led *led =3D container_of(cdev, struct ktd202x_led, cdev=
-);
-> +	struct mc_subled info;
-> +	int ret;
-> +
-> +	ret =3D ktd202x_pattern_check(cdev, pattern, len, repeat);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D ktd202x_brightness_single_set(cdev, pattern[1].brightness);
-> +	if (ret)
-> +		return ret;
-> +
-> +	info.channel =3D led->index;
-> +
-> +	return ktd202x_pattern_program(led, pattern, &info, 1);
-> +}
-> +
-> +static int ktd202x_pattern_single_clear(struct led_classdev *cdev)
-> +{
-> +	return ktd202x_brightness_single_set(cdev, LED_OFF);
-> +}
-> +
-> +static int ktd202x_pattern_mc_set(struct led_classdev *cdev,
-> +				  struct led_pattern *pattern, u32 len,
-> +				  int repeat)
-> +{
-> +	struct led_classdev_mc *mc =3D lcdev_to_mccdev(cdev);
-> +	struct ktd202x_led *led =3D container_of(mc, struct ktd202x_led, mcdev);
-> +	int ret;
-> +
-> +	ret =3D ktd202x_pattern_check(cdev, pattern, len, repeat);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D ktd202x_brightness_mc_set(cdev, pattern[1].brightness);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return ktd202x_pattern_program(led, pattern, mc->subled_info,
-> +				       mc->num_colors);
-> +}
-
-[Severity: Medium]
-When a hardware pattern is set on a multicolor LED where one or more color
-channels have a computed brightness of 0 (for example, via multi_intensity),
-won't ktd202x_pattern_program() turn those 0-brightness channels on at their
-previous or reset-default (10 mA) current?
-
-In ktd202x_pattern_mc_set(), the call to ktd202x_brightness_mc_set() comput=
-es
-per-channel brightness into mc->subled_info[i].brightness and calls
-ktd202x_brightness_set():
-
-drivers/leds/rgb/leds-ktd202x.c:ktd202x_brightness_set() {
-	...
-	for (i =3D 0; i < num_channels; i++) {
-		enum led_brightness brightness;
-		int mode;
-
-		brightness =3D subleds[i].brightness;
-		channel =3D subleds[i].channel;
-
-		if (brightness) {
-			/* Register expects brightness between 0 and MAX_BRIGHTNESS - 1 */
-			ret =3D regmap_write(led->chip->regmap, KTD202X_REG_LED_IOUT(channel),
-					   brightness - 1);
-			...
-		} else {
-			mode =3D KTD202X_CHANNEL_CTRL_OFF;
-		}
-		ret =3D regmap_update_bits(led->chip->regmap, KTD202X_REG_CHANNEL_CTRL,
-					 KTD202X_CHANNEL_CTRL_MASK(channel), mode);
-		...
-	}
-}
-
-Because KTD202X_REG_LED_IOUT(channel) encodes currents starting at 0.125 mA
-(brightness - 1) and cannot encode 0 mA, channels with brightness =3D=3D 0 =
-do not
-update KTD202X_REG_LED_IOUT(channel) and instead rely on
-KTD202X_CHANNEL_CTRL_OFF in KTD202X_REG_CHANNEL_CTRL to remain off.
-
-However, ktd202x_pattern_program() then loops over all num_channels and
-unconditionally sets KTD202X_CHANNEL_CTRL_PWM1(channel) in ctrl_pwm1 for ev=
-ery
-channel regardless of subleds[i].brightness, overwriting
-KTD202X_REG_CHANNEL_CTRL so that the 0-brightness channels also breathe on
-PWM1.
-
-Also note that ktd202x_pattern_single_set() leaves info.brightness
-uninitialized on the stack before passing &info to ktd202x_pattern_program(=
-),
-and ktd202x_pattern_program() builds ctrl_pwm1 before acquiring
-led->chip->mutex (after ktd202x_brightness_mc_set() has already dropped it).
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261101-ktd202x-et=
-6326-v1-0-eb51eddad08c@telaak.dev?part=3D7
+Joseph
