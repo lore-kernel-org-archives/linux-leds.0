@@ -1,86 +1,59 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793598962;
-	b=YavxbU5EMo1ezAd4Cj3l8VBm4jRbc+w+2nJCDUqF7BApcpVMNppvjcDvKpAzBb++nwsq
-	 mvjJxwP7e/4xrt1U4luzeAZYrYzB9eSNnlMGKmP8krumpu8sW/DU548stjQNUX5rz9hrh
-	 fbadN7rbs9zW7nyU+zDORh6K6ryHrOFAFteAvE7i2W5XPny9JwF6c103OlRFwIO514rIe
-	 zE0Jl0+00iYELKUbxHgJAISJuIRKFeCYEuJQiJtwMJzkZeDX+brt6LfAElaL3bsVKw292
-	 ITomeniGyHb+1veNHQtPWWQeSRrDwWRicjVQ4tfzaCM0WMaMZNWIYL2fCAkh37M/wVQ==
+	t=1793619868;
+	b=gcCvwAx38BbYC/HiNvB4Ujm69i6jxREmNWZbxDKpE8dphn9+Et6RIjaRIjdoOPSkGjnD
+	 OufWoPJUHFqPXrQAxf04pLFcrQPH/LSVqPGITt8weoZglN0GqPPRx9aCSnvsBz0PxBFKk
+	 hxhrcwUYD8pIgL4rYPztY0rtehJueU+DfPRPP9SxiVfz/ccG74PjgIoJE7bL70EaozeL4
+	 OKx7sV+NJp/aSuaXDlkUNQVle5nPNmtS+xKuCVKLkZLbAswenRq8eFUMFtsloR6WvQpXo
+	 z9hg47fj5ZerMUrpvncB/03glRQJ1c75h30ah7uNU85cKrZcYXLWGBZWSbo3uHTZg+w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793598962;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=galmyEn4LbKSLuawhs4ZGQeiueItg3W/HcKq5KP6Bgs=;
-	b=vzkMZdVvmgQyjU5YcZ01n0KmtEVBlLrTtZxF/afaprf07O57UsshoN1T6bqH2ts4/O8T
-	 8W/ZYio3AKMohrNDA0hYdgrNeMaUEiwYpugTCmrsR+q2YWnGSIPwD9Rnh2SGhncQCskjA
-	 srrm+R+RgmsBCnYDpRHJwnzUhavayJH7fB7tiHBOrYyplbILYR9neHQ/3dmi3gIWsTXXr
-	 i+VO1Uxq6+j9mP5hGNo5sWhjGLU15L6acyRnoypPfAWoetXc3Gz0Y63n5b57j3nu5cGNy
-	 royho+hP6GnIcuF3apjkTT+ddD4DzsQ7RalOC7qu6KgBGmp14uYqsTF+3A6oWypWcYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793619868;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=DwNOUDx3s8aWtTDxni4gD4AvCFiiolZW9PK8Ed9xdqo=;
+	b=ZYPwGdEfRL4iEl45O3aEUibn7OJLiKlMt3ShD3ddat4kkRTR6hZ1aVZ3Ax7JYfs/LO7T
+	 WjUyPfkoVJPWLbUu54SvLZJ/xpS14werMCeNhfbPo7qgHOUlUXKtJmP6WtJzi7VOr9ApC
+	 8NMHrZADltwWDAy8JUpJCZBcjojdKymr4ApEKmHBQYceMtpd23GwMKj/p+rIKlp2uOEP1
+	 RwooC5xkBC3s/fZYd+opGVlIzf3UbFGNgadWava9NHm/48tsqmrUXY/R8F57yr8leTX+i
+	 jKZuXfyQ30y9+FAvSu2IRm2WwTuk1cz45aVuRQEnCaDrsqp996T5ML09XDS44M7hDPw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=codeconstruct.com.au;
-	spf=pass smtp.mailfrom=codeconstruct.com.au;
-	dkim=pass header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.a=rsa-sha256 header.s=2022a header.b=joEgN+t6;
-	arc=none smtp.remote-ip=203.29.241.158
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="SeuMbo/c";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA3606A326;
-	Mon,  2 Nov 2026 05:56:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8BCA3606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B28606A324;
+	Mon,  2 Nov 2026 11:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.a=rsa-sha256 header.s=2022a header.b=joEgN+t6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1793598959;
-	bh=galmyEn4LbKSLuawhs4ZGQeiueItg3W/HcKq5KP6Bgs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=joEgN+t6NvoovW7oKCyZDr2eqdix+/duqp4PMFPCW3+RRwMNBkk04YEGTrQqXFBfa
-	 tCJu2UBAyLCb6xV2/OxjkIAgqYEwt8p4FKq7NIXZ8waf1xyRvl97ugJ8Az60PQtVde
-	 NvMCCJ2xvX1Y80yfKQIMFQPgliXk6vJBrQiVp8GlhsxUBGqyqXyFYipUEdra2x9jW6
-	 7tbTiIxaXd9V6tZX11NmuzG84SPnnozNpGRH4UM+InMJfNnB/aLnlIf/7VxlhdH9xn
-	 720JtOYjZ6d7n7DjPBBG7Dva9h3DRuPJgRgoxCI6V889anGcx67nbuYl1n0zXg5WFV
-	 FmmJo+qfQ9KKA==
-Received: from [192.168.72.161] (210-10-213-150.per.static-ipl.aapt.com.au [210.10.213.150])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 6A55B648DC;
-	Mon,  2 Nov 2026 13:55:57 +0800 (AWST)
-Message-ID: <06e25064f8a5455c12b47033a1a62b94100e7590.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 00/11] Add NVIDIA LSTP USB adapter drivers
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Adrian Ambrozewicz <aambrozewicz@nvidia.com>, Donald Shannon	
- <donalds@nvidia.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski	
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij	
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Lee Jones	
- <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Andi Shyti	
- <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>, Jiri Slaby	
- <jirislaby@kernel.org>, Corey Minyard <corey@minyard.net>, "Rafael J.
- Wysocki"	 <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>,  Ilpo =?ISO-8859-1?Q?J=E4rvinen?=	
- <ilpo.jarvinen@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>,  Hans de Goede <hansg@kernel.org>, Lixu
- Zhang <lixu.zhang@intel.com>, Danilo Krummrich <dakr@kernel.org>,  Johan
- Hovold <johan@kernel.org>, Oliver Neukum <oneukum@suse.com>, Quan Nguyen
- <quan@os.amperecomputing.com>,  Andrew Jeffery
- <andrew@codeconstruct.com.au>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-gpio@vger.kernel.org,
- linux-leds@vger.kernel.org, 	linux-i2c@vger.kernel.org,
- linux-spi@vger.kernel.org, 	linux-serial@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net, 	linux-acpi@vger.kernel.org,
- linux-doc@vger.kernel.org, 	driver-core@lists.linux.dev,
- linux-kernel@vger.kernel.org, Bart Van Assche	 <bvanassche@google.com>
-Date: Mon, 02 Nov 2026 13:55:56 +0800
-In-Reply-To: <2026103015-stained-shudder-1582@gregkh>
-References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
-	 <2026101310-scuttle-unison-d4c3@gregkh>
-	 <c569c912141e9da7530121b8b2fc81527e0518a4.camel@codeconstruct.com.au>
-	 <f3f305a0f3195948bd25ca7eea4348113f998ee2.camel@codeconstruct.com.au>
-	 <2026103015-stained-shudder-1582@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SeuMbo/c
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64A51F00A16;
+	Mon,  2 Nov 2026 11:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793619867;
+	bh=DwNOUDx3s8aWtTDxni4gD4AvCFiiolZW9PK8Ed9xdqo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SeuMbo/cKza6FqQXc0v+eouBmO5lhLXVpA9ZMEUvoOtIXZnIo0XmMXnX16eD0fpLb
+	 +HazxW5slkl/F+LywE79ZY1Yv1xc3fLNL6cN1Lvdc7AFhXBUNaC3BjmEGby34L+jwx
+	 Cp8jKTSYeB2Ey1yeEdZCPVdXCn/XhwwfNK9uQwQgbQ0k/VxbqTy3Gnl3qzA+6dQfhM
+	 71D/4d72QvKfgg8CjpjgChaBt/M6TzWsQvcWB06gbkt5Uz9FJGqAu5WJtVZa2cPvAH
+	 T7qJNig1KW39sAp+N169vKELBIhHgJ30xHRwqDh2gAhfVXe7VC84AZ5FKDyAOIRvJ4
+	 S1C7ZVt2tS8rw==
+Date: Mon, 2 Nov 2026 12:44:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Joseph Telaak <joseph@telaak.dev>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Griffin Kroah-Hartman <griffin@kroah.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>, Jonathan Corbet <corbet@lwn.net>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 05/10] dt-bindings: leds: kinetic,ktd202x: Add Etek ET6326
+Message-ID: <20261102-enthusiastic-flounder-of-domination-fb3a01@quoll>
+References: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
+ <20261101-ktd202x-et6326-v1-5-eb51eddad08c@telaak.dev>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -90,38 +63,36 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261101-ktd202x-et6326-v1-5-eb51eddad08c@telaak.dev>
 
-Hi Greg,
+On Sun, Nov 01, 2026 at 09:12:29PM -0500, Joseph Telaak wrote:
+> The Etek ET6326 is a 3 channel LED driver with the register map, the I2C
+> address and the current steps of the KTD2026. It only differs in the
+> flash period, which is (Reg1 + 1) * 128 ms instead of 256 ms + Reg1 *
+> 128 ms, so a KTD2026 driver runs it with blink periods that are 128 ms
+> off. Document it with the KTD2026 as fallback.
+> 
+> The ET6326 drives the status LED of the GL.iNet GL-SFT1200 (Opal).
+> 
+> Assisted-by: Claude:claude-opus-5-5
 
-> I haven't read all of OBMF, as obviously that isn't what is being
-> proposed here, I was just complaining about the madness of attempting to
-> create a device tree representation for a single USB device that wanted
-> to be carved up into different virtual devices because no one decided to
-> learn from history.
->=20
-> I have other objections about OBMF-ICP, but that's not what this thread
-> is about, sorry.=C2=A0 Please propose your own patch series for that and =
-I'll
-> be glad to criticize it there.
+Drop.
 
-OK, fair enough - I'll defer this for an OBMF-ICP submission, rather
-than piling it on to this LSTP thread.
-=20
-> > With OBMF-ICP's super-minimal core protocol, and the use-case
-> > appropriate channels, seems like a suitable approach to me.
-> >=20
-> > The USB-IF has a class ID allocated for OBMF-ICP interface descriptors,
-> > with the intention that we have multiple vendor implementations of the
-> > common protocol; we would like Linux to be one of those.
->=20
-> It's always fun to make a new spec and protocol,
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-We seem to have different definitions of "fun" :D
+> Signed-off-by: Joseph Telaak <joseph@telaak.dev>
+> ---
+>  .../devicetree/bindings/leds/kinetic,ktd202x.yaml         | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
 
-Thanks for the discussion so far, I'll follow up again when we have a
-series to propose. That shouldn't be too long.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Cheers,
+Best regards,
+Krzysztof
 
-
-Jeremy
