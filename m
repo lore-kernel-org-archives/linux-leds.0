@@ -1,79 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793632979;
-	b=3eq1+HZmrB7UXLBcW59TB54Q/f3m6upHahfUY0mXS5XCTIBrU/8dwYCTv6lLhGQ6uGq7
-	 tZ3cTVdsZCOK0fkbUiL6UzVjkHYhTdGmq++m7JpPeNrNhByyh6t9KYxbMXM3Y4J3XcEpJ
-	 LAhwibV0+aX1Fmnj3ybcAtcv1Cnvq9SFfahnR4bRsWlVXwG1wb4I60aovbIi0PXdfnYEn
-	 RuL8jhehiKAypmfkqAZR89cyOy83Ysc2dHhTx3+uFaumaSyY9LVCbVWvUmV+Iqk8sfnYq
-	 uG5mdSX3yY1cM2zvqihzIRZhVIhzzFSfMc6qly3TFhd9n/IkFdDDoY814iCUlZaPe6w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793632979;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=1wuG1t645DYhkT3v1nTMe3PxAn0VwtDhlTpOvdLsMIA=;
-	b=RcfC91wDFF5rqC+7DZIUOq4Qzdu1x4D80rSI7kg+wyOonNwrb1h6oGEwiuupd4qHMZvQ
-	 67fEHfNYkRRVSWqBGK60qJcL6ZJRQ2ouV357fsM5xaTfvdf6WR4N2XgXR7fCIGy4jydDo
-	 VP6Ev6z3u0DNUCkKUhbupetuzTd9MilgUn9EgIPx9wTOtC1fTb0m3QIpZwi6OfbPBxOvv
-	 LXsRyhrVOw2zYJBDS+dY5BKv84rsy+mACmDQ25lu7Ag6WOVZ4HVRxmejfZhrrcYxzc65c
-	 169X4Ve2x8KeB1XMr/QJOYAQh/q7u0/JlMSjtXVVAst4miSUEqIioIGI2CZXhUxEiow==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BetumiTH;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793633177;
+	b=YsskpmkbcUlv0/j7KxiDADfLFBE+swGec9xDkmRBC3e4JWZsBPcDXCDANO0yYDzyBEUG
+	 rw2wrWFbzBYc6Hdlise1BQqqi5D/4zLZ24uvGvxpUYiRzYOpFfURzd9qivDUNLk4mJ4l8
+	 wq5kyBqGFLk1p9SlrOa35bpXhl0jV2xv6jAZqimw6wWzFrKDxvc2UMQ2uTw15WiN5A73K
+	 uC1Teb4IIG5Rx9GxPBvw7p2svJxqrCQCWtedkRWpCVNbG8MCRtU+alWlXQOpxFkdQMcFl
+	 BCfZkAQRj4GX33sEIx4ZINblpRp1+WwDKTIEGaPmw8PrK7bnCGp2wNqZQbqqMWOhcVQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793633177;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=ZqguCfF0YyQu7sBK0Wnt/pXfbF7Q9j+fSL7Sz2w1T5A=;
+	b=BjO3O3QAul8RE9SEsJC+o82cxA5jpLXHOq+nwWfPiP+8YCcdMj+aEiDCHE85gIIgHPPr
+	 DO2T8wgtViSdf3dUwKgjMTeHX6lqfDTk99+tKHuD8Zf25R2Z1CHrCOgBuFZf3YaSs6Jaz
+	 c4AYM+Ok2xWpmzsW6UrwAS3P2EROSq04yBOWUj76q5Ona2eRCKC5ERL3L8e8rdce7iQAs
+	 XDs/Uj4ss0e9VhnxWJbo5huDWttSaS3eR4uw22r2dfiWJqeLRKdUKSo35IdiDBiBn+Pco
+	 ZYKUr+yGr6FPRYD7fyKSnR2mBYS0YUph9vPrQGgTH5MxE6uba6fwawTIwn+CkwW4JFg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CUw3D9L7;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A57660C412D;
-	Mon,  2 Nov 2026 15:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE88E609A73D
+	for <linux-leds@vger.kernel.org>; Mon,  2 Nov 2026 15:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BetumiTH
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1793632979;
-	b=W1I9Us12TuAJMXVX9mi0HZei6frJ6eyxvrEM6yodKZOh+NlLA3ujBBsAwhjzGC1/EWTm
-	 RFShRpOUAU5wKZceUGYo1VxONu/OXQcMHi66eoc5ZKgjemvoV73g8PA9as/osHzK9udPw
-	 iTK86OTrtJQ+GsBSDAQdj9G9ar/UBmvqkyjhvHlDeHf02He4HYm1Vx9HltkrEKTE2I/jv
-	 v2Xb1GEvec7mByWB2EiJ3JJbmKEaXnbD8u5LO6Y0PXKrxCgBDgsmXnKdrbluxy2wzo3f2
-	 YKeokyIwIJIpyFaixe47EFQ2O8TtfwUwXTLWHzOsg45fm1hARCpqF20NguZY9G6RCFw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1793632979;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=1wuG1t645DYhkT3v1nTMe3PxAn0VwtDhlTpOvdLsMIA=;
-	b=JFzwSd/JcUzoN8Ped5om8avM15uF6R4uF7Mg2QNEJmUyT/UOoZia9eR1X22hXDfWgn8q
-	 8DP7FCBPNpSHlYhZ8O3JN8IupwMxctYhyAsEdo37UBq9+oRgrld2W4LrEQFZgvHl5GsIL
-	 /FAMEu4vmeClXG3mTFGt2ctBhvh5i2k8iwFpfUhXGUp6z68JqxU0TnqGbh4raxszVv4dQ
-	 WzA+S7zDdN837YReC59nYGLxVpprqNPlx2KGQkx7GQ5ZvoPoe2xVyb27MBH6nZk35HNBU
-	 f0sUxFvPY6C6l0gZGpIXWSslTNEnIyomKv6Ic1zJyeqSe5In7sLOJ4/N9fO+vi6mq/A==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E94D01F00A1A;
-	Mon,  2 Nov 2026 15:22:57 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CUw3D9L7
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 658031F00A1B;
+	Mon,  2 Nov 2026 15:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793632978;
-	bh=1wuG1t645DYhkT3v1nTMe3PxAn0VwtDhlTpOvdLsMIA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=BetumiTHUa35BXbujArBG2pvr6Twn1o45pTeIOzaw6fI7+VhnPWGfOhgErxgnCZ1t
-	 24vx+cdcCZ4HJ0gJwQChUD98rpoUxo02nm/5lRWxqYuInb6yPiNNrUINv8FzEEut0H
-	 LZnjpyYRTqTrKJj6v3cRzlANohrX34Wgz5/DWFtX6eGlXeKV+h2Y/wWGFdMMxvBObO
-	 kiObIIB1u3GEoJf96FW3dBiNo3wV/Obe2bYXI6awZb26LB8DjM0nVIKohEen5zQ8qc
-	 mnRI4nHmQfvoVa6GcLFZgn3LZEixOKsjf4wDNAfNSRKH4dmuR/eO54kp3wVKtWgypp
-	 BBSQZMyFcqeeQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 5AD3346564;
-	Mon,  2 Nov 2026 15:22:57 +0000 (UTC)
-From: Roman Vivchar via B4 Relay <devnull+rva333.protonmail.com@kernel.org>
-Date: Mon, 02 Nov 2026 17:22:56 +0200
-Subject: [PATCH 1/2] dt-bindings: leds: irled: pwm-ir-tx: add power supply
- support
+	s=k20260515; t=1793633176;
+	bh=ZqguCfF0YyQu7sBK0Wnt/pXfbF7Q9j+fSL7Sz2w1T5A=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=CUw3D9L7LzU+D7X4PzjcQqkcHGqS1aPJ41zORZYikfht51GuTDKD7pEhkWg52FT/Y
+	 WDaHFzJ51eGx+a1ooWeLETe0+kV5AeLwkXp1sDL4wujUFwtempq24TlVkoZ/4gGtNm
+	 WJgNpfpU5lerEZPUernSyEFEVeSvN5KUq2HG8rEcHbA6cxaXbRl6M+4ATtfaoHucyb
+	 2Kx5UH99Q3batmWB8m7IRUAXQg22EC0cARk+lGyOFxQyj0tLngNvzkSj6Yx/WRZajp
+	 Eg2MrvrysxbyDlp1BIC538wjhh+YAIRYDhvq6AAsmiIrwcw3sSi3xX7UMvLWHVdEaI
+	 VYQ7LMe9WUL1Q==
+Message-ID: <sashiko-outbox-193659@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: leds: irled: pwm-ir-tx: add power
+ supply support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Roman Vivchar" <rva333@protonmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261102-6768-irled-v1-1-c7064f3afed1@protonmail.com>
+References: <20261102-6768-irled-v1-0-c7064f3afed1@protonmail.com>
+ <20261102-6768-irled-v1-1-c7064f3afed1@protonmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 02 Nov 2026 15:26:16 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -82,63 +60,19 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261102-6768-irled-v1-1-c7064f3afed1@protonmail.com>
-References: <20261102-6768-irled-v1-0-c7064f3afed1@protonmail.com>
-In-Reply-To: <20261102-6768-irled-v1-0-c7064f3afed1@protonmail.com>
-To: Sean Young <sean@mess.org>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Roman Vivchar <rva333@protonmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1793632976; l=912;
- i=rva333@protonmail.com; s=20260510; h=from:subject:message-id;
- bh=lrAuDDWc631H8kDzeXXaEWZPrYdjJgCBsuDfNWjP9es=;
- b=QonYg6UGNgFyURq5T7Isz6r0IAf56o1L6vgClckpFuFmgYzieXOhemc4SwTYnbWOcbrKBkSEi
- OfuiQb1E3n4BoNCtnJScVv8SxCNs3M6cweo9I/v6/hbh9buCWI/GMI3
-X-Developer-Key: i=rva333@protonmail.com; a=ed25519;
- pk=zww/nWjBGoQ4POXCG0BV6fx2iuXK6jx77rsKPA5YK5Y=
-X-Endpoint-Received: by B4 Relay for rva333@protonmail.com/20260510 with
- auth_id=777
-X-Original-From: Roman Vivchar <rva333@protonmail.com>
-Reply-To: rva333@protonmail.com
-Content-Transfer-Encoding: 7bit
 
-From: Roman Vivchar <rva333@protonmail.com>
+> From: Roman Vivchar <rva333@protonmail.com>
+>=20
+> On some boards, the IR LED is connected to a switchable power rail, such
+> as an eMMC supply. If this regulator is disabled, IR transmission fails.
+>=20
+> Add an optional power-supply property to document this regulator.
+>=20
+> Signed-off-by: Roman Vivchar <rva333@protonmail.com>
 
-On some boards, the IR LED is connected to a switchable power rail, such
-as an eMMC supply. If this regulator is disabled, IR transmission fails.
+Sashiko has reviewed this patch and found no issues.
 
-Add an optional power-supply property to document this regulator.
-
-Signed-off-by: Roman Vivchar <rva333@protonmail.com>
----
- Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-index 7526e3149f72..35a601cc068b 100644
---- a/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-+++ b/Documentation/devicetree/bindings/leds/irled/pwm-ir-tx.yaml
-@@ -23,6 +23,10 @@ properties:
-   pwms:
-     maxItems: 1
- 
-+  power-supply:
-+    description:
-+      The regulator controlling the current to the LED.
-+
- required:
-   - compatible
-   - pwms
-
--- 
-2.56.0
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102-6768-irled=
+-v1-0-c7064f3afed1@protonmail.com?part=3D1
 
