@@ -1,58 +1,71 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793633586;
-	b=dm+18I6G45Rz+IK7w2Hlq++6CrcVXYkxw/Rqv4EZGvmfS/I/+hfUifUOvvJKvhCdzMnN
-	 CQzTjTyglBY+W2tH0VCF7rl3CXIjv5M0dhEKi260j4w4T66ZBdEH8APjLTovTDxyFCBt3
-	 2tTz/3kdH+i6aTFZS+H/J2iAj8GMzTnHiQ3l0eC1O3M2UKrSQZsNCRWs7/AIbVSypAtnR
-	 wIm5kBXunDSmHJEb08vppaP7LKYLH3MRx4Oqs9wE9621Ne6ED6dtJr+NhtcOIN7kbqNS5
-	 y29IuKGJRwA/mAdA11OTp4rtjd5jtuo+6eWdSPfDj/2nT8itvICSEzJgxsngwDfzlrg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793633586;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=E7OmF1plexl2eybJPKLWRZ6ZcMLGqMLDeKumJULg9+U=;
-	b=GBWN4IXWQexhLP3ZSSA5CWyaT+QUeCFoW7TVjlEK3rMvTf9pRwt9UaCsBLAMbywim7Nv
-	 QYlW+TjUlKHr9wcWxkOEI2BmRMvbUk21iSB2P+tTB1L/oBeqve5XvEacL3emQvcvWrJ+j
-	 zjRDChq9baBCS9d6bZPz7o6H+2N0bUxLAQCgAwRQjPboVPD6Bso+FDNnMeKURzrzcTc/s
-	 DvT0ivSoRJVoCZV9Ldtv0ZRED/to5/VoP3jdFdSFfcm2q9refrCXzcp5VpWs58wp4IDyt
-	 UK8L+C3nbswdW2LehGJH/BKD0uM8SxVITSalnSlqCNfK2t5823+/cXV13WyutyKb72g==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=awUlNYrk;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793643573;
+	b=U+PuAjuKms8E4oWo21HVu3bcyv5KbnpFW1QheMUjsCnXGy9P5bRupYRAIqu24QrMbpPT
+	 yIuTDYXM/OB2QSGH3IP/F03R083+bwPk8bSCj8QWu6fZCc92+9SO4G3vE9t6JAfuB3xDD
+	 EbnJbY37QQSGpTx1y6ao4A+tjypwHzbWyQ792ViT4wp8eN/tFZN5CiYYzeU+ghnhsghWG
+	 I8yW/xRSwh1VBxvOM2DcxVh3pDf01uq7pKba4Cr/c2nEmnOIS1IDM0AgEcTA0Gv7sD9+Y
+	 hQHCxU4kNwXctRTgUaQZtecoGqBybDC9WxsVCJTVHlj1IrmBAqHuOyy1/7l1Y81hpQg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793643573;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
+	 MIME-Version:User-Agent:X-ZohoMailClient;
+	bh=jnrpWo/1k3ciop1RwuuOGAdzFMo6kbFNnV7QoPWs5n8=;
+	b=B5FoHNiW2MVQcMSAy6p2HBUDYNMZ9C2LTxtFvOHrOspD9IEMFj5/bvLFWD8UzfFAL21z
+	 TkNV+0fuzc0HsF8bnuUxqBknMOmbfpSiC0VGrYeJA5e6vOX8Z4qtyeKDfUNZCsiHNYkpX
+	 Og3+DKaD4dKORU0m7tWzL/uU6dyZanjm8v4rv4Un1pGbg3X4VGNvy2w9/6Zyf/Nwvx83h
+	 x1Wn7SSsjIECuqbXT2DGCjNKXW92M40BlmReldr146BX+mbHkfqsypUu0TxfnZGW+oDkz
+	 dp9GH6hd6LnIAC4chxbw6xOGFjWIuE/S50CCA3PC7jiqeGzufQKYa04wHZBHCqWbbzg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=rong.moe;
+	spf=pass smtp.mailfrom=rong.moe;
+	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=W0qlPxcH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1206072ED4
-	for <linux-leds@vger.kernel.org>; Mon,  2 Nov 2026 15:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC052606D810;
+	Mon,  2 Nov 2026 18:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EC052606D810
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=awUlNYrk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 305151F00A18;
-	Mon,  2 Nov 2026 15:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793633585;
-	bh=E7OmF1plexl2eybJPKLWRZ6ZcMLGqMLDeKumJULg9+U=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=awUlNYrkt5MuN8jhxlkqf+noTfsbEiCaixB+jNRmDoEFw5sOTuuB0ntBUBgRUsJxB
-	 bhBhSruPcm6M15/4IwbxqIeBKh1YXePRcxBYzL1humOJTwP7ch7+3rwv7OvqEMilMz
-	 Isir2CIHE6YsrRKbPi+zPs/vGvxmDQiI0DiXuSaa/QII3MXAdezubgUXkN0tF2K/uI
-	 w9aqViPnOT0J8JI3zuBcpkCzKvpUdyZwJ89ZyHEqcr+tkdRlmiYsDY9TGokHyUnKwP
-	 lTWC1TwRYbQ80svUxMJxAQkAroRVnJvrUBTQmUz4hR5DoauXy9dW6/YEihUXli9Hhh
-	 39DHXkioZDJJA==
-Message-ID: <sashiko-outbox-193671@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH v2 2/2] platform/x86: thinkpad_acpi: Add support for
- auto keyboard backlight
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Qiling Zhu" <kmatzkaczor244@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261102151211.40701-3-kmatzkaczor244@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=W0qlPxcH
+ARC-Seal: i=1; a=rsa-sha256; t=1793643544; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GZMzWCHiJfYQa0fx4cqKgXRnvcNzfYwlEQ6AogyvfoN+TCC3D313maJBxv5CR7SiXinGP9/5Cf5xv7KKxeBqrOepVqISHpgWKjZn71v0Ttd5vL/yTf1vpEvjDvejKOFrjmXQHGRO4NWpMSqFaKBtr/q+Ge0HJRJZEW3t2QxoRhI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1793643544; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jnrpWo/1k3ciop1RwuuOGAdzFMo6kbFNnV7QoPWs5n8=; 
+	b=iyMbGwwzJs+29Yjo6cA1kbKsfFoUn6HsAMUVQihRdYDciLxtQIKGJ0vq46ysoB5QunWiAsU3i+ZS95TRH0pXYIinyiv/Y0k0oYg3hVA8Ohsugrhhqqi4gZFa9HYQtxIRzxnnSNWT3Yyo/GkC0hLHhlf7pY4yMwWHUbelN5Bl+J0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: a=rsa-sha256; b=W0qlPxcHPXZg18GTrVr9ozLsQdewcnwBB/a73g/YJgPZ6MYimm1Dvp5HZw8wpE01DSVM/vRXv8i5S4Z00MXo+zUrlXZFZ+hSBaePi+O79t56uqXNIm2LjJD6hkntRo8BTT0K3fNn8JAMyka9Go2oSyiU+cpU7IBLZL55o2W/JiaUbmHfiVC+X64A/DnwSuYsnwKfdsV7Lvn1gB/8ajyXL+7H6EOry3TOg29lMBkHG5up12+yGWTKAA2mbMtF13hF/sCuADv8Sf8y89pkuNiMV8Q0aOjux97rAvEsYHwyVO8QODn/oE9JkVVueLzzuO+vYoohSpHcBaOjhsT2FcIdCw==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=jnrpWo/1k3ciop1RwuuOGAdzFMo6kbFNnV7QoPWs5n8=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zohomail.com with SMTPS id 1793643541400173.10316889742307;
+	Mon, 2 Nov 2026 10:19:01 -0800 (PST)
+Message-ID: <c1bfa5151bbe73977725305613842f94616a8dbb.camel@rong.moe>
+Subject: Re: [RFC PATCH v2 0/2] Add support for auto keyboard backlight
+From: Rong Zhang <i@rong.moe>
+To: Qiling Zhu <kmatzkaczor244@gmail.com>, Mark Pearson	
+ <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Hans de Goede <hansg@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,  Henrique de Moraes Holschuh	
+ <hmh@hmh.eng.br>
+Cc: Griffin Kroah-Hartman <griffin@kroah.com>, 
+	ibm-acpi-devel@lists.sourceforge.net, Lee Jones <lee@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, Pavel Machek	
+ <pavel@kernel.org>, platform-driver-x86@vger.kernel.org,
+ vishnuocv@gmail.com, 	vsankar@lenovo.com
+In-Reply-To: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
 References: <20261101100123.28749-1-kmatzkaczor244@gmail.com>
- <20261102151211.40701-1-kmatzkaczor244@gmail.com>
- <20261102151211.40701-3-kmatzkaczor244@gmail.com>
-Content-Type: text/plain; charset=utf-8
+		 <20261102151211.40701-1-kmatzkaczor244@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 02 Nov 2026 15:33:04 +0000
+Date: Tue, 03 Nov 2026 02:13:55 +0800
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,362 +74,171 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Evolution 3.62.1-2 
+X-ZohoMailClient: External
 
-Thank you for your contribution! Sashiko AI review found 6 potential issue(=
-s) to consider:
-- [High] platform/x86: thinkpad_acpi: bad kbdlight_auto_trigger_hw_offloade=
-d() check
-- [High] platform/x86: thinkpad_acpi: race in kbdlight_auto_trigger_activat=
-e()
-- [Medium] platform/x86: thinkpad_acpi: unsigned enum check in kbdlight_ini=
-t()
-- [Medium] platform/x86: thinkpad_acpi: unchecked level in kbdlight_notify_=
-change()
-- [Medium] platform/x86: thinkpad_acpi: stale level when auto trigger activ=
-ate fails
-- [Medium] platform/x86: thinkpad_acpi: async race in kbdlight_set_level_an=
-d_update()
---
+Hi Qiling,
 
-commit 58813975928928e80e772abf45a021a9664adf5b
-Author: Qiling Zhu <kmatzkaczor244@gmail.com>
+On Mon, 2026-11-02 at 23:10 +0800, Qiling Zhu wrote:
+> Hi Mark, Rong, Ilpo,
+>=20
+> Thanks for the review comments on v1. This v2 addresses them and is
+> now split into a pure refactor (1/2) and the feature addition (2/2),
+> as requested.
 
-platform/x86: thinkpad_acpi: Add support for auto keyboard backlight
+You don't need to refresh the series in a hurry, unless you've got enough
+reviews or may miss the cycle. Asking an LLM agent to refresh the series
+is easy, but a human being needs time to review your series.
 
-This commit adds support for the ambient light sensor (ALS) automatic
-keyboard backlight mode (EC level 3) on ThinkPads by exposing a private
-"tpacpi-kbd-auto" hardware control LED trigger and synchronizing EC level
-changes with the LED core.
+Please leave some time for others to respond.
 
-> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platfo=
-rm/x86/lenovo/thinkpad_acpi.c
-> index 3260eaa620a0e..7b46ad6f9618c 100644
-> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> @@ -5102,6 +5102,14 @@ static struct ibm_struct video_driver_data =3D {
->   * Keyboard backlight subdriver
->   */
-> =20
-> +/* EC level that selects ALS-controlled auto mode for the keyboard backl=
-ight */
-> +#define TPACPI_KBD_LIGHT_AUTO_LEVEL	3
-> +
-> +/*
-> + * Cached EC level, including TPACPI_KBD_LIGHT_AUTO_LEVEL. All state
-> + * tracking compares EC levels; the auto mode is translated to a
-> + * brightness value only when reporting to the LED core.
-> + */
->  static enum led_brightness kbdlight_brightness;
->  static DEFINE_MUTEX(kbdlight_mutex);
-> =20
-> @@ -5180,6 +5188,15 @@ static bool kbdlight_is_supported(void)
->  	return status & BIT(9);
->  }
-> =20
-> +/* The auto mode is not a brightness level; report it as off to the LED =
-core. */
-> +static enum led_brightness kbdlight_level_to_brightness(int level)
-> +{
-> +	if (level =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL)
-> +		return 0;
-> +
-> +	return level;
-> +}
-> +
->  static int kbdlight_sysfs_set(struct led_classdev *led_cdev,
->  			enum led_brightness brightness)
->  {
-> @@ -5194,16 +5211,54 @@ static enum led_brightness kbdlight_sysfs_get(str=
-uct led_classdev *led_cdev)
->  	if (level < 0)
->  		return 0;
-> =20
-> -	return level;
-> +	return kbdlight_level_to_brightness(level);
-> +}
-> +
-> +static struct led_hw_trigger_type kbdlight_auto_trigger_type;
-> +
-> +static int kbdlight_auto_trigger_activate(struct led_classdev *led_cdev)
-> +{
-> +	/*
-> +	 * The EC may already be in auto mode (cycled there on Fn+Space, or
-> +	 * active since before the driver loaded), in which case there is
-> +	 * nothing to program.
-> +	 */
-> +	if (kbdlight_get_level() =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL)
-> +		return 0;
-> +
-> +	if (kbdlight_set_level(TPACPI_KBD_LIGHT_AUTO_LEVEL))
-> +		return -EIO;
+>=20
+> Summary of the changes:
+>=20
+> * Kconfig: the "depends on LEDS_TRIGGERS_HW_CHANGED" is gone. While
+>   at it I also added a "select LEDS_TRIGGERS": without it the trigger
+>   helpers become no-op stubs and the whole feature would silently
+>   disappear in configurations that don't opt into LEDS_TRIGGERS,
+>   which seemed worse than a small select. HW_CHANGED support stays
+>   optional; without it the trigger still works, only the
+>   hardware-initiated transitions are not reported. The select goes
+>   beyond what was suggested, so please let me know if you'd rather
+>   drop it.
+>=20
+> * The auto mode is never reported to the LED core as level 3: a
+>   single helper maps it to a brightness of 0, used by both
+>   brightness_get and the brightness_hw_changed notification, so
+>   level 3 has no path into the LED core at all. Internal state
+>   tracking compares raw EC levels.
+>=20
+> * Writing a regular level through /proc/acpi/ibm/kbdlight now drops
+>   the trigger when leaving auto mode. Instead of raising the
+>   hardware-control notification and letting the worker handle it, I
+>   went through the same path brightness_store() uses: drop the
+>   trigger and hand the new level to the LED core, which applies it
+>   after the LED_OFF queued by dropping the trigger. That way proc
+>   and sysfs behave alike.
+>=20
+> * suspend/resume no longer touch the LED while auto mode is active
+>   (v1 would have restored brightness 2 there and left the trigger
+>   state inconsistent, as Rong pointed out =E2=80=94 thank you). The LED c=
+ore
+>   is now kept out of suspend entirely in auto mode; resume just
+>   re-reads the EC level and reconciles. My reasoning is that in auto
+>   mode the EC owns the backlight, so the driver should not make
+>   decisions on its behalf =E2=80=94 the firmware already turns the backli=
+ght
+>   off for suspend and restores it on resume by itself. This is based
+>   on observing my own machine (s2idle), so I may be wrong about
+>   other models. The non-auto paths are unchanged: suspend still
+>   turns the backlight off and resume still restores the previous
+>   level.
 
-[Severity: High]
-Can a rapid Fn+Space sequence race with the asynchronous trigger activation
-worker here and leave the EC stuck in auto mode while the trigger is detach=
-ed?
+If the firmware properly handles it when hw brightness !=3D 3, you can skip
+led_classdev_{suspend,resume}() completely as long as the device supports
+auto mode. They are only needed when the firmware doesn't take care of
+the keyboard backlight. Skipping them should make our life mush easier.
 
-When Fn+Space cycles into auto mode (level 3), kbdlight_notify_change() cal=
-ls
-led_trigger_notify_hw_control_changed(led_cdev, true), which schedules
-trigger_hw_changed_work. Contrary to the comment in kbdlight_notify_change(=
-),
-led_trigger_hw_control_changed_worker() in drivers/leds/led-triggers.c does
-not call hw_offloaded(); instead it runs:
+Of course, we still need an approach to determine the support. That's why
+we should leave some time for Vishnu and Mark to answer the question.
 
-  led_trigger_hw_control_changed_worker()
-    led_trigger_do_hw_control_transition()
-      __led_trigger_set(led_cdev, hc_trig, true)
-        synchronize_rcu()
-        flush_work(&led_cdev->set_brightness_work)
-        kbdlight_auto_trigger_activate()
+>=20
+> One thing Sashiko (the Linux Foundation's AI review system)
+> brought up in its review of v1, and which I then verified in the
+> code, seems worth raising here: led_trigger_hw_control_changed_worker()
+> reads the transition flag before acquiring the LED's trigger_lock,
+> and the read and the transition are not atomic. If, while a worker
+> carrying "deactivate" is still on its way, userspace re-selects the
+> private trigger, the worker then drops the trigger that userspace
+> just set, and no further event arrives to reconcile the state.
+> I haven't reliably reproduced this, but the window looks real, and
+> the ideapad wiring seems equally exposed. My feeling is that this
+> would be better addressed in the trigger core than worked around in
+> each driver, but I may be missing something =E2=80=94 Rong, I'd appreciat=
+e
+> your thoughts.
 
-If a second Fn+Space press cycles the EC from level 3 to level 0 while the
-first transition is pending or sleeping in synchronize_rcu(),
-kbdlight_notify_change() sets trigger_hw_changed =3D false and re-queues
-trigger_hw_changed_work.
+It is an unfortunate side-effect of the workqueue deferral mechanism.=C2=A0=
+The
+mechanism was introduced in order that:
 
-When the first worker reaches kbdlight_auto_trigger_activate() in
-drivers/platform/x86/lenovo/thinkpad_acpi.c, kbdlight_get_level() returns 0,
-so kbdlight_auto_trigger_activate() calls
-kbdlight_set_level(TPACPI_KBD_LIGHT_AUTO_LEVEL) and programs the EC back to
-level 3. Immediately afterwards, the re-queued worker runs with
-activate =3D false and calls __led_trigger_set(led_cdev, NULL, true), which
-detaches the trigger without changing the hardware level (because
-hw_triggered is true), leaving the hardware in auto mode while sysfs reports
-the [none] trigger.
+- the LED driver can notify hw control change in an atomic context
+- the LED driver can properly serialize notification handling, trigger
+[de]activation, brightness_set[_blocking]() and hw_offloaded() callback
+without worrying about lock reentrance
 
-> +
-> +	/*
-> +	 * Check that the EC actually accepted the auto mode; on error the
-> +	 * trigger core reverts the LED to the "none" trigger.
-> +	 */
-> +	if (kbdlight_get_level() !=3D TPACPI_KBD_LIGHT_AUTO_LEVEL)
-> +		return -EIO;
+As for ideapad-laptop, it needs the second guarantee, as all said
+functions or callbacks need to acquire the same mutex to prevent TOCTOU
+issues.
 
-[Severity: Medium]
-If the EC does not support auto mode and rejects level 3 when a user selects
-tpacpi-kbd-auto via sysfs, does this leave kbdlight_brightness corrupted wi=
-th
-TPACPI_KBD_LIGHT_AUTO_LEVEL?
+IMHO the race condition is not a big deal. The interface was designed
+with an assumption: it's the user who decides to press the shortcut
+(Fn+Space) and/or select the trigger via sysfs. It can only be barely
+reproduced in fuzz tests with scripts and robotic fingers, which is as
+boring as fuzzing the bind/unbind interface to stress naive drivers...
 
-In drivers/platform/x86/lenovo/thinkpad_acpi.c, kbdlight_init() registers
-kbdlight_auto_trigger unconditionally on all ThinkPads with a keyboard
-backlight. When kbdlight_auto_trigger_activate() calls
-kbdlight_set_level(TPACPI_KBD_LIGHT_AUTO_LEVEL), kbdlight_set_level()
-unconditionally updates kbdlight_brightness:
+That being said, I am thinking of working around this by querying
+hw_offloaded() in the worker. I will find some time to prepare a patch to
+see if the approach works and submit it. It won't change the interface,
+so patches can be applied in an arbitrary order. Please ignore the issue
+for the time being (OTOH, you don't need to rebase on top of the said
+patch when it's ready).
 
-	if (!acpi_evalf(hkey_handle, NULL, "MLCS", "dd", level))
-		return -EIO;
+Thanks,
+Rong
 
-	kbdlight_brightness =3D level;
-	return 0;
-
-When kbdlight_get_level() !=3D TPACPI_KBD_LIGHT_AUTO_LEVEL then fails and
-returns -EIO, kbdlight_brightness remains set to 3. Because __led_trigger_s=
-et()
-only queues set_brightness_work asynchronously on activation failure (and s=
-kips
-it if LED_SUSPENDED is set), a concurrent or subsequent kbdlight_notify_cha=
-nge()
-call can observe kbdlight_brightness =3D=3D 3 while the EC is at a non-auto=
- level
-and emit spurious hardware control and brightness change notifications.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static bool kbdlight_auto_trigger_hw_offloaded(struct led_classdev *led_=
-cdev)
-> +{
-> +	return kbdlight_get_level() =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
-> +}
-
-[Severity: High]
-Does returning false from kbdlight_auto_trigger_hw_offloaded() when the EC
-is no longer at level 3 prevent the trigger from being removed?
-
-In drivers/leds/led-triggers.c, __led_trigger_is_hw_controlled() already
-checks that led_cdev->trigger is attached and matches
-led_cdev->hw_control_trigger before calling trig->hw_offloaded(led_cdev).
-The hw_offloaded() callback is meant to distinguish hardware offload from
-software fallback for hybrid triggers, rather than re-polling whether the
-hardware is still in auto mode.
-
-Because kbdlight_auto_trigger_hw_offloaded() in
-drivers/platform/x86/lenovo/thinkpad_acpi.c returns false as soon as the EC
-leaves level 3, __led_trigger_is_hw_controlled() also returns false even
-though kbdlight_auto_trigger is still the active trigger on led_cdev:
-
-1. If CONFIG_LEDS_TRIGGERS_HW_CHANGED is disabled (THINKPAD_ACPI only selec=
-ts
-   LEDS_TRIGGERS), pressing Fn+Space to exit auto mode changes the EC level=
- to
-   0 while led_cdev->trigger remains kbdlight_auto_trigger. Subsequent writ=
-es
-   to /sys/class/leds/tpacpi::kbd_backlight/brightness (via
-   led_trigger_remove_hw_control()) or /proc/acpi/ibm/kbdlight (via
-   kbdlight_set_level_and_update()) see led_trigger_is_hw_controlled() =3D=
-=3D false
-   and never detach the trigger.
-
-2. Even with CONFIG_LEDS_TRIGGERS_HW_CHANGED enabled, if the EC leaves leve=
-l 3
-   (for example across suspend/resume or via Fn+Space before the async noti=
-fication
-   runs) and userspace writes the matching level to /proc/acpi/ibm/kbdlight
-   before kbdlight_notify_change() executes, kbdlight_set_level_and_update()
-   sees led_trigger_is_hw_controlled() =3D=3D false, skips
-   led_trigger_remove_hw_control(), and calls kbdlight_set_level(level),
-   updating kbdlight_brightness =3D level. When kbdlight_notify_change() ru=
-ns
-   next, kbdlight_brightness =3D=3D level is already true, so it returns ea=
-rly
-   without calling led_trigger_notify_hw_control_changed(led_cdev, false),
-   leaving the LED stuck on tpacpi-kbd-auto.
-
-[ ... ]
-
-> @@ -5221,9 +5276,30 @@ static int __init kbdlight_init(struct ibm_init_st=
-ruct *iibm)
->  		return -ENODEV;
->  	}
-> =20
-> -	kbdlight_brightness =3D kbdlight_sysfs_get(NULL);
-> +	kbdlight_brightness =3D kbdlight_get_level();
-> +	if (kbdlight_brightness < 0)
-> +		kbdlight_brightness =3D 0;
-
-[Severity: Medium]
-Since kbdlight_brightness is declared as enum led_brightness, is the
-kbdlight_brightness < 0 check in kbdlight_init() always false?
-
-In include/linux/leds.h, enum led_brightness only defines non-negative
-constants (LED_OFF =3D 0 through LED_FULL =3D 255), so its underlying type =
+>=20
+> A few observations that may be useful for the discussion:
+>=20
+> * I disassembled the DSDT and instrumented the driver to see what
+>   MLCS returns: it is the EC status word, and bit 31 looks like an
+>   error flag =E2=80=94 the DSDT skips the hotkey event when it is set. On=
+ my
+>   machine it reads 0 for all levels, with no level echo, and the
+>   error path is not reachable. That is why activation verifies with a
+>   read-back rather than the return value.
+>=20
+> * The 0x1012 event is raised by the DSDT itself: MLCS issues it when
+>   the write succeeded, the level actually changed, and the hotkey is
+>   not masked. This explains why driver-initiated writes also see the
+>   event and why rewriting the same level doesn't.
+>=20
+> * The Fn+Space cycle order on this machine is 0 -> 3 -> 1 -> 2 -> 0,
+>   confirmed by testing; sharing in case it is useful for comparison
+>   across models. Nothing in the code or tests relies on it.
+>=20
+> An open question from v1 that I'm still unsure about: on models
+> without an ALS the auto mode presumably doesn't exist =E2=80=94 how shoul=
+d
+> the driver handle that? Mark, do you know what the EC does when
+> asked for level 3 on such machines, and whether there is a reliable
+> way to tell at probe time whether auto mode is supported? For now
+> the trigger is registered unconditionally on keyboard-backlight-
+> capable machines.
+>=20
+> Vishnu, Rong mentioned in the v1 discussion that you are also working
+> on the same support using the hw control trigger framework =E2=80=94 how =
 is
-unsigned int. Previously, kbdlight_sysfs_get() stored the return value of
-kbdlight_get_level() in a signed int local variable and checked level < 0
-before returning. Assigning kbdlight_get_level() directly to
-kbdlight_brightness in drivers/platform/x86/lenovo/thinkpad_acpi.c means a
-negative error code from kbdlight_get_level() wraps to a large unsigned val=
-ue
-and is not clamped to 0.
-
-[ ... ]
-
-> @@ -5246,9 +5322,22 @@ static int kbdlight_set_level_and_update(int level)
->  	int ret;
->  	struct led_classdev *led_cdev;
-> =20
-> -	ret =3D kbdlight_set_level(level);
->  	led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
-> =20
-> +	/*
-> +	 * Leaving auto mode through the proc interface has to drop the
-> +	 * trigger, like writing a brightness through sysfs does. Route the
-> +	 * new level through the LED core as well, so that it is applied
-> +	 * after the LED_OFF queued by dropping the trigger.
-> +	 */
-> +	if (led_trigger_is_hw_controlled(led_cdev)) {
-> +		led_trigger_remove_hw_control(led_cdev);
-> +		led_set_brightness(led_cdev, level);
-> +		return 0;
-> +	}
-> +
-> +	ret =3D kbdlight_set_level(level);
-> +
->  	if (ret =3D=3D 0 && !(led_cdev->flags & LED_SUSPENDED))
->  		led_cdev->brightness =3D level;
-
-[Severity: Medium]
-Because tpacpi_led_kbdlight uses brightness_set_blocking, calling
-led_trigger_remove_hw_control() and led_set_brightness() in
-kbdlight_set_level_and_update() clears led_cdev->trigger and queues
-set_brightness_work on leds_wq asynchronously without holding
-led_cdev->led_access or flushing set_brightness_work.
-
-Could this race with a second procfs write or with kbdlight_suspend()?
-
-If a second write to /proc/acpi/ibm/kbdlight arrives before
-set_brightness_work runs, led_trigger_is_hw_controlled(led_cdev) is already
-false, so the second write calls kbdlight_set_level() synchronously, and
-set_brightness_work from the first write then overwrites the EC level out of
-order. Similarly, if kbdlight_suspend() runs before set_brightness_work
-executes, kbdlight_get_level() in kbdlight_suspend() still sees
-TPACPI_KBD_LIGHT_AUTO_LEVEL and returns early without calling
-led_classdev_suspend(), allowing the pending work to program the backlight
-during suspend.
-
-[ ... ]
-
-> @@ -5301,38 +5392,75 @@ static void kbdlight_suspend(void)
-
-[ ... ]
-
->  static void kbdlight_notify_change(void)
->  {
->  	struct led_classdev *led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
->  	enum led_brightness brightness;
-> +	bool was_auto, is_auto;
-> +	int level;
-> =20
->  	guard(mutex)(&kbdlight_mutex);
-> =20
->  	/*
-> -	 * Check the brightness actually changed, setting the brightness
-> -	 * through kbdlight_set_level() also triggers this event.
-> +	 * Check the level actually changed, setting the brightness through
-> +	 * kbdlight_set_level() also triggers this event.
->  	 */
-> -	brightness =3D kbdlight_sysfs_get(NULL);
-> -	if (kbdlight_brightness =3D=3D brightness)
-> +	level =3D kbdlight_get_level();
-> +	if (kbdlight_brightness =3D=3D level)
->  		return;
-> =20
-> -	kbdlight_brightness =3D brightness;
-> +	/*
-> +	 * Notifying the trigger core is safe while holding
-> +	 * kbdlight_mutex: the transition is only queued, and the worker
-> +	 * re-reads the EC level (via hw_offloaded) after this critical
-> +	 * section has been left.
-> +	 */
-> +	is_auto =3D level =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
-> +	was_auto =3D kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
-> +	if (is_auto !=3D was_auto)
-> +		led_trigger_notify_hw_control_changed(led_cdev, is_auto);
-> +
-> +	brightness =3D kbdlight_level_to_brightness(level);
-> +	kbdlight_brightness =3D level;
->  	led_classdev_notify_brightness_hw_changed(led_cdev, brightness);
->  }
-
-[Severity: Medium]
-What happens in kbdlight_notify_change() if kbdlight_get_level() returns a
-negative error code on a hotkey notification or during kbdlight_resume()?
-
-Previously, kbdlight_notify_change() called kbdlight_sysfs_get(NULL), which
-checked if (level < 0). Now kbdlight_get_level() is called directly without=
- an
-error check. If kbdlight_get_level() fails and returns a negative value (su=
-ch
-as -EIO or -ENXIO):
-
-1. is_auto evaluates to false, so if was_auto was true,
-   led_trigger_notify_hw_control_changed(led_cdev, false) is called and dro=
-ps
-   the active auto trigger.
-
-2. kbdlight_level_to_brightness(level) returns the negative error value cas=
-t to
-   enum led_brightness, which is then stored in kbdlight_brightness and pas=
-sed
-   to led_classdev_notify_brightness_hw_changed(led_cdev, brightness), expo=
-sing
-   a wrapped unsigned error value through brightness_hw_changed in sysfs.
-
-Should kbdlight_notify_change() bail out when level < 0?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261102151211.4070=
-1-1-kmatzkaczor244@gmail.com?part=3D2
+> that going? If you have answers to the questions above, or if there
+> is a chance to combine the two efforts, I'd be happy to coordinate.
+>=20
+> Tested on the same ThinkPad X1 Carbon Gen 14 (linux-next
+> next-20261030) with targeted tests and on-hardware verification of
+> the affected paths, including suspend/resume; checkpatch --strict
+> clean.
+>=20
+> Regards,
+> Qiling Zhu
+>=20
+> This patch was developed with LLM assistance; I reviewed every design
+> decision against the framework sources and validated the behavior on
+> real hardware myself.
+>=20
+> Qiling Zhu (2):
+>   platform/x86: thinkpad_acpi: Extract kbdlight_notify_change() helper
+>   platform/x86: thinkpad_acpi: Add support for auto keyboard backlight
+>=20
+>  drivers/platform/x86/lenovo/Kconfig         |   1 +
+>  drivers/platform/x86/lenovo/thinkpad_acpi.c | 179 +++++++++++++++++---
+>  2 files changed, 159 insertions(+), 21 deletions(-)
