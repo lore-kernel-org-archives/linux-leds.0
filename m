@@ -1,68 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793808923;
-	b=TMhjKgoK8PYwEVOwVZJ/QFqkXjhyAwZZx9hPUp/Yc9oWNUDPFTNAC2nPsA4GHL0iZdvs
-	 rZSZ4jyNWUOrtxSPud1oOgAaNh+M1UenHCQbHNe8mbwYYD2EUA4+qly72g5BddfBWeDVS
-	 YDS8Lk3P9ZEjjRJ9cH2bvRazGE+bkos4z6Ix2Ai6fcaslOmWVQfJ3Ff8CLUywQYzEJk0e
-	 Si0GRe1TMYLRUVLsweLG1lIHshn0KB/1E4eHNTYLd68BtYgN1tANDlFHdzBId5OoKD3dP
-	 4kLmt0IsY/TXQRSqp37VRJX1fFdPdV2Rp9r6ID982uCWr/NT3wwnmqBrpVpUbY6/o3w==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793808923;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=hcY1Uu43KhKPu61zekwZCZY3iUNdgMXeEKBUOnnUUF0=;
-	b=UN1zs2qQlF/1KZOPIgp2LTYFWwH2K+4nGL1UtH0KZfAivRZMSN7ynNkzahGMiFx0RKIM
-	 DrcTL0JdAwBomI8n+0Cs0K9MUmwDZZjnbtYR7UxQ4JhlxomepTRRq6NBJKNJnOVX2n/1V
-	 wq6m1EfQYj82mtAPcp8T8JTTM51lKDtJTUgzp6dpxLR3DNKp84M8q5+yDHRc0G1ZhBBh7
-	 4Kmc/91IBDFDSNgTKpFmcKdUO6y8FJo0iVPHsh4xrVD4eBD4oK9PIrfLBQ6Ru0p0KNEHR
-	 BgkWWy55CA8qEhWVWSsb7R2YVxBGquukLaLM583u6py45g+bRjz0V+HpaRPuMDChZSw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="M/pjx6Ot";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793812303;
+	b=lgKqlfdtPqZwOrKBrajCcnaq+nS7jE/aru9oDkHLKCjIvirfy0R58aZMdUbXIJt2y29I
+	 89F65wYSRivPUsemWCMOWR7OCMvBw/En2uVGfvW1t4kXDpWIOjuUnQkiHljTKnrsS2/Ji
+	 pK3nP5HuqEmn3ye6+944Q+5hihA9/319nEZ/8e/oUI39kjzaq7prw/3yXSoNpzzMpKrSs
+	 b2+56PKUbP/oIDwfv3h2c/8072WWU7oC0hCS/P3LIzmNQ9x1a5UaQP2Jp9SbnQzXZPgHE
+	 1xrxItC1R9B3DR+CuIgzCymc32aE1q5SiVSNKa16Uj9abuMtX0WprJTrOiqfV9AikDw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793812303;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
+	b=PNTiwaVTzXVhdvbUgOJV20eQ0bzmqa44sIiDZbQy95W5YDPijkgYrINUYKFX1bl2W8zh
+	 ipqwfZ/nP7Z6ZvMjR2BTB3z/jY5j/tGRpTDykppfnh5o7XzqKbCQLLYJOrvXMhuFCUQbQ
+	 ZRgYQCKlYWPDI9ImPELsdGUsfmpy85RUEJ5vFzUZAeb4gfplZCUoaBvi8zkX8U2aap0VP
+	 ZYCmPz6ZKbehxLprk7cMDqvbAsNIednW6+6ORyZe4MauGizDx1UvHYlpzHjPeP9tL4RC1
+	 sUcthBYUbiOGl/nzZqpTxRKy2HLjWE6pt9g97ifRIhgJR7cgj9KzhxC8AO8MElvrYjg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="g9e2/awe";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992A4606A32D;
-	Wed,  4 Nov 2026 16:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE3606A326
+	for <linux-leds@vger.kernel.org>; Wed,  4 Nov 2026 17:11:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 17AE3606A326
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M/pjx6Ot
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800151F000C1;
-	Wed,  4 Nov 2026 16:15:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793808923;
-	bh=hcY1Uu43KhKPu61zekwZCZY3iUNdgMXeEKBUOnnUUF0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=M/pjx6Ot04PeKKujgVEQTPsX4KQFiHmCad45q5DnTD7hZzZNgVxrZKoTfhRigtiun
-	 1RFMfP6b/Y8+B9D1ArR9qvnEPJbXqC/epw1/wzFS6tY2N0/G13NN0Svter8QTd6LfX
-	 1qSQgejOjambOYru+xy2DdTICfV/Xw4LMf9xwXbcQw9H0v6dCfpWJEpfSGhvhJDRqD
-	 gKr0LuU5JAYkkKo96e4LqFtbK3fSUKON0l9BVYliepNZOE7wI5SoPj7FV3VYHPPR4J
-	 GyObBtE4UR8ovfZWLBxhCv2P693BWVcMocsPg732c1Ity1mgf5+91t/4yIo9LFItyU
-	 wrxrnn1y9A3Ug==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
- Ben Whitten <ben.whitten@gmail.com>, Bryan Wu <cooloney@gmail.com>, 
- Christian Hitz <christian.hitz@bbv.ch>, 
- Christian Marangi <ansuelsmth@gmail.com>, Daniel Mack <daniel@zonque.org>, 
- Dan Murphy <dmurphy@ti.com>, David Rivshin <drivshin@allworx.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Dmitry Antipov <dmantipov@yandex.ru>, Eddie James <eajames@linux.ibm.com>, 
- Florian Fainelli <ffainelli@freebox.fr>, 
- Jacek Anaszewski <j.anaszewski@samsung.com>, John Lenz <lenz@cs.wisc.edu>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Kyungmin Park <kyungmin.park@samsung.com>, linux-leds@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>, Luis Henriques <lhenriques@suse.com>, 
- Nate Case <ncase@xes-inc.com>, Nikita Travkin <nikitos.tr@gmail.com>, 
- Oliver Jowett <oliver@opencloud.com>, Pavel Machek <pavel@kernel.org>, 
- Richard Purdie <rpurdie@openedhand.com>
-In-Reply-To: <20261021123406.3163547-1-lee@kernel.org>
-References: <20261021123406.3163547-1-lee@kernel.org>
-Subject: Re: [PATCH 00/21] leds: Assorted bug fixes across core, flash,
- trigger, and drivers
-Message-Id: <179380891826.1821014.7246973015946975973.b4-ty@b4>
-Date: Wed, 04 Nov 2026 16:15:18 +0000
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=g9e2/awe
+Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-353804b591eso1767185eec.0
+        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 09:11:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793812301; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Zp7Ij14RMqSMQ2DsJAPSRUPCQ0UVDl/NO5qZh4k0JfnQGL8zL2NkH7llD90f1/aoXZ
+         F8Yl4QBh5zZsFd25Bpd2WKTJ7U1erCrobxyx8Um2Moocql427jJXFCJNU3cfk3nnUNO1
+         2qLoJs9qCg1q4Kh+bWFgKoUBqHJlcdkuz0JqC3xw2Nkw9/z0oorrxJfJWEep0Hxukp23
+         Ep+mRQHrSs6zPfNZvbkahE08lSTi2WAaoCn+Dms3ha+mTjvUU59GozEbq0ZRaX6u/uLW
+         P5KwhMORAn3Ae/PvE3lIEv1p3d6dNCi/HaRkeIK/oiRjX0uLEd7PbDiOfSE9cEA0F3tD
+         CSYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
+        fh=FkVFHsiR6MeOD441yTuoRECNdmDexR2RXpbMmVeWkdk=;
+        b=Jxad1Dzpzr0baDlCYmf1jXEpmFE+i+w/XOM8RukcMpeVZw+7Ny0D89JxGyKBJq2XmT
+         2dgzdsvA0lNPEaJIQwa2ypRx7ep2JodwQSW6zPcOLaUGmYJkyGWByXcRYilaW/TH3BbU
+         W3duWEzjiRMdyrfSuy77JIdhZXo11N62bsrikyzCRwC/plkREAzXdm/PXHoMXWkUMXhb
+         Ih2I/amUBIgeW9vbIF451yIq/+fgVFNOgkXfdYX6Na/qe/cuPJZj3ahDzXejrbJubYen
+         hiFygePF+3s8ct4RgKqGnSh88R84Pkj/wCW+TpONt2u6VSNfiYt3IcdqYmJTIVp3UJKo
+         dk5A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793812301; x=1794417101; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
+        b=g9e2/aweCrDqLnLcITse1QShLZthHw8Mqly8wXXa91UBm+nSLtmAQ3UHIgYBJmnKtj
+         0yhmcIs65LXXpK/TecaTncBnPQ6sJmAdUo5dBvrO/TFuODZFLra0oQudzDKAMDuqJr2t
+         TDQ8NUjAJ68cNOlHjpilc4tahvoVwdNp0wz+uZBpmuL4lZNOuqKzyP6HNEGH6Zqlyiw5
+         V4R3x78vyrMlj3j8WWwkXUjqIfBpvmqX0J9tnyaO2rnPcBiTDH59ENZOQ1JixF1J6zkk
+         iRqCx7J8sXMkMx6I+MGWG/QE7cZ9pJIfbhyV7wHT5D/mV+54jTln0fAU6ifd4AOibU0z
+         BtJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793812301; x=1794417101;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
+        b=oCN7UHnasqxMtJjENuhum93fxLHPdymQN4F6etZR8LmWTaU8tlMyxFL2ZiiVCbGWD9
+         XnZ6xNS0DNL1QEAO+EP22DLSB93ie8L1Ivz4JDAeWvpJ7uv0YH4GfqmxD808iGLzCSWm
+         Be3SPTx2hqvRQg1jxyMepkg6GqA2kIWfQzr7gremE2zlymowbLkFTIAYUGJd+mgvHO7B
+         VLsxg76MDthhKEvmiOeWZmwIT5VwUauLE4C4wW2SxumZMLL1rWZH7F4I0AdB/RREySkO
+         tV0GQQuFNzCaKmEa8PLK6+0VvicFoQwPfi0l1PAZXE5Lr2PBK4bLQVJrjwECKLR3uu54
+         +vSw==
+X-Forwarded-Encrypted: i=1; AKwUvBxwwjtWb4m0bjHqHy5WheWZoR0HnS4C6luZaTPUP6grvPNhjyStGevf0iOc7pOkl5QLsfRdF25hl+MB@vger.kernel.org
+X-Gm-Message-State: APuU4Z/4nmkPVeji/75ClPFXjELedy7UP9xAPCkf/NBE9oFa6t8B0J4P
+	2FjpoxYPaAY/HzFJB78S5pvDmd7BdMs+aqtRqjYjO9/ALDJiiD/9aro+1utMIKw3q5GXE2IAQWa
+	EF1hKeGM2WIYMLoSAeAGPuzFXOeoR09xOGw==
+X-Gm-Gg: AYBFou08TnFSN3iQg3O7V7oI03cv+A4vMWHrBoNV7pbBYbCgJU3hRYYIZfkYE9WwrqX
+	hhU9QxuehTd7PYkfMMU1ncbXWGd8Zr6XapNB1dA5LmVmNJs9sXHGNhhhGYabSzl1uFfQ1OPXzuh
+	lodt8YdU4wkHIkSN2f8SDqWhY7FkzlsIBgKqwupJ5yBGeX+l5UGUzO7zly03JfEcKeyV74MBgYf
+	fuwPIgAJCK9ZqOtbvcDGu3NfdrdNjWy/1CKaayUc047tR6hBtMg90e5gCfAHEAVPA3pw/5uF8+i
+	HTgifa+JW8PtTKrvnNxsEB2SB4xQAa1CCUZtwtn+lFm86g2NRcSsfloq5uirEJYfwJvAp7Y+jaZ
+	s0ZjIY5LaD3HNrwj9w7udXAsAI4rs8OkXN7tghGTGq1egOYszrcc8gq2tOgyGyXyXcFMQpO4=
+X-Received: by 2002:a05:701b:2094:20b0:15e:3a65:5b97 with SMTP id
+ a92af1059eb24-1ac5b028805mr25800804c88.16.1793812300785; Wed, 04 Nov 2026
+ 09:11:40 -0800 (PST)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -72,65 +104,251 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
+References: <20261027115006.86032-1-clamor95@gmail.com> <179318844110.3606039.5801345229436270811@kernel.org>
+In-Reply-To: <179318844110.3606039.5801345229436270811@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 4 Nov 2026 19:11:29 +0200
+X-Gm-Features: AclHuK-W6Ff7Myct4ijzugesQFIYDn63N4IFMyOx6cneGQ-BUwydTKZuesFNTiI
+Message-ID: <CAPVz0n3tR8R5xe_F20kChnHHrWG40o7prwY6kCYXM-UtYPFKLQ@mail.gmail.com>
+Subject: Re: [PATCH v4] leds: Add driver for MAX8907 LED cell
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-leds@vger.kernel.org, mfd@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 21 Oct 2026 12:32:09 +0000, Lee Jones wrote:
-> These issues were reported by Sashiko.
-> 
-> This series addresses a collection of bugs across the LEDs subsystem,
-> including locking and concurrency fixes, device-tree node reference
-> leaks, out-of-bounds array accesses, divide-by-zero and current-limit
-> clamping issues, and devres lifecycle ordering fixes.
-> 
-> [...]
+=D1=81=D1=80, 4 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 17:16=
+ Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> --- checkpatch.pl (1 issue) ---
+> Line 38: WARNING: please write a help paragraph that fully describes the =
+config symbol with at least 4 lines
+> ----------------------------------
+>
+> On Tue, 27 Oct 2026, Svyatoslav Ryhel wrote:
+>
+> > Add a small driver to control the LED cell provided by the MAX8907 PMIC=
+.
+> > The LED does not require any specific configuration and is folded into =
+the
+> > PMIC's node.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> > Changes in v2:
+> > - rebased so patch is now applicable to linux/next
+> >
+> > Changes in v3:
+> > - added check if led is off for get callback
+> > - added dedicated MAX8907_REG_WLED_MODE_ON mask
+> > - switched to devm_led_classdev_register_ext
+> >
+> > Changes in v4:
+> > - platform_set_drvdata dropped
+> > - init_data.devicename dropped
+> > - added MODULE_ALIAS
+> > ---
+> >  drivers/leds/Kconfig        |  7 +++
+> >  drivers/leds/Makefile       |  1 +
+> >  drivers/leds/leds-max8907.c | 90 +++++++++++++++++++++++++++++++++++++
+> >  drivers/mfd/max8907.c       |  1 +
+> >  include/linux/mfd/max8907.h |  2 +-
+> >  5 files changed, 100 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/leds/leds-max8907.c
+> >
+> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> > index 788e689fe875c..3796c562919fe 100644
+> > --- a/drivers/leds/Kconfig
+> > +++ b/drivers/leds/Kconfig
+> > @@ -813,6 +813,13 @@ config LEDS_MAX77705
+> >       help
+> >         LED driver for MAX77705 PMIC from Maxim Integrated.
+> >
+> > +config LEDS_MAX8907
+> > +     tristate "LED support for MAX8907 PMIC"
+> > +     depends on LEDS_CLASS && MFD_MAX8907
+> > +     help
+> > +       This option enables support for on-chip LED drivers on
+> > +       MAXIM MAX8907 PMIC.
+>
+> As requested on v3, please expand this help text to at least 4 lines to s=
+atisfy
+> 'checkpatch.pl'.
+>
+> > +
+> >  config LEDS_MAX8997
+> >       tristate "LED support for MAX8997 PMIC"
+> >       depends on LEDS_CLASS && MFD_MAX8997
+> > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+> > index 3da746279bb81..24efda3fbaa44 100644
+> > --- a/drivers/leds/Makefile
+> > +++ b/drivers/leds/Makefile
+> > @@ -67,6 +67,7 @@ obj-$(CONFIG_LEDS_LTC3220)          +=3D leds-ltc3220=
+.o
+> >  obj-$(CONFIG_LEDS_MAX5970)           +=3D leds-max5970.o
+> >  obj-$(CONFIG_LEDS_MAX77650)          +=3D leds-max77650.o
+> >  obj-$(CONFIG_LEDS_MAX77705)          +=3D leds-max77705.o
+> > +obj-$(CONFIG_LEDS_MAX8907)           +=3D leds-max8907.o
+> >  obj-$(CONFIG_LEDS_MAX8997)           +=3D leds-max8997.o
+> >  obj-$(CONFIG_LEDS_MC13783)           +=3D leds-mc13783.o
+> >  obj-$(CONFIG_LEDS_MENF21BMC)         +=3D leds-menf21bmc.o
+> > diff --git a/drivers/leds/leds-max8907.c b/drivers/leds/leds-max8907.c
+> > new file mode 100644
+> > index 0000000000000..a5c445f75d1b1
+> > --- /dev/null
+> > +++ b/drivers/leds/leds-max8907.c
+> > @@ -0,0 +1,90 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +
+> > +#include <linux/err.h>
+> > +#include <linux/leds.h>
+> > +#include <linux/mfd/max8907.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/property.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +#define MAX8907_REG_WLED_MODE_ON     BIT(0)
+> > +
+> > +struct max8907_led_data {
+> > +     struct max8907 *max8907;
+>
+> As asked on v3, what is 'max8907' used for?
+>
+> > +     struct regmap *regmap;
+> > +     struct led_classdev cdev;
+> > +};
+> > +
+> > +static enum led_brightness max8907_led_get_brightness(struct led_class=
+dev *cdev)
+> > +{
+> > +     struct max8907_led_data *ddata =3D container_of(cdev, struct max8=
+907_led_data, cdev);
+> > +     unsigned int brightness_lvl;
+> > +     int ret;
+> > +
+> > +     ret =3D regmap_read(ddata->regmap, MAX8907_REG_WLED_MODE_CNTL, &b=
+rightness_lvl);
+> > +     if (ret || !(brightness_lvl & MAX8907_REG_WLED_MODE_ON))
+> > +             return LED_OFF;
+> > +
+> > +     ret =3D regmap_read(ddata->regmap, MAX8907_REG_WLED_CNTL, &bright=
+ness_lvl);
+> > +     if (ret)
+> > +             return LED_OFF;
+> > +
+> > +     return brightness_lvl;
+> > +}
+> > +
+> > +static int max8907_led_set_brightness(struct led_classdev *cdev,
+> > +                                   enum led_brightness brightness)
+> > +{
+> > +     struct max8907_led_data *ddata =3D container_of(cdev, struct max8=
+907_led_data, cdev);
+> > +     int brightness_lvl, ret;
+> > +
+> > +     brightness_lvl =3D clamp(brightness, LED_OFF, LED_FULL);
+> > +
+> > +     if (brightness_lvl) {
+> > +             ret =3D regmap_write(ddata->regmap, MAX8907_REG_WLED_CNTL=
+, brightness_lvl);
+> > +             if (ret)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     return regmap_update_bits(ddata->regmap, MAX8907_REG_WLED_MODE_CN=
+TL,
+> > +                               MAX8907_REG_WLED_MODE_ON,
+> > +                               brightness_lvl ? MAX8907_REG_WLED_MODE_=
+ON : 0);
+> > +}
+> > +
+> > +static int max8907_led_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     struct max8907 *max8907 =3D dev_get_drvdata(dev->parent);
+> > +     struct led_init_data init_data =3D { };
+> > +     struct max8907_led_data *ddata;
+> > +
+> > +     ddata =3D devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
+> > +     if (!ddata)
+> > +             return -ENOMEM;
+> > +
+> > +     ddata->max8907 =3D max8907;
+> > +     ddata->regmap =3D max8907->regmap_gen;
+> > +
+> > +     init_data.fwnode =3D dev_fwnode(dev->parent);
+>
+> This will evaluate to 'pmic'.  The sysfs attribute will be incorrect.
+>
+> Since there is no child node, why not set 'ddata->cdev.name' directly
+> and use 'devm_led_classdev_register()'?
+>
 
-Applied, thanks!
+This is required to be able to reference led in the device tree. Since
+led node is folded into pmic's node, pmic's node is used to bind led.
 
-[01/21] leds: lm3532: Propagate error from devm_regulator_get()
-        commit: 4caf3517b994ca96a6e69362d58874318e68c066
-[02/21] leds: lm3532: Use dev_err_probe() when lm3532_parse_node() fails
-        commit: f8b582269b52ecc8f80cd81a4e05226775082d38
-[03/21] leds: trigger: netdev: Hold RTNL lock across hw_control_get_device() in activate
-        commit: d6563e5a79bed2e45610b4080d2a185b4426a634
-[04/21] leds: aw2013: Guard LED array index in aw2013_probe_dt()
-        commit: f8df415aa53ac4671c56e83685cf94f498c79776
-[05/21] leds: pca955x: Take a reference on the child firmware node
-        commit: abeb74220fefe28ab68789659f554f49e3b4a51e
-[06/21] leds: lp50xx: Guard sub-LED count in lp50xx_probe_dt()
-        commit: 4160f5a384fdedda2ce534a864bc6eb037042284
-[07/21] leds: trigger: netdev: Serialise work cancellation and state updates
-        commit: d8a052f6ccab98b456de3441432a5adfc143e1a5
-[08/21] leds: sgm3140: Replace powerdown timer with delayed work
-        commit: 162ce6b5029413f06b0e6f05d84baf1c0a294381
-[09/21] leds: sgm3140: Cancel powerdown work via devres after LED unregistration
-        commit: 602c82c086adff666bbec6c133cd4ccea0521a62
-[10/21] leds: class: Initialise trigger_lock before exposing sysfs attributes
-        commit: ee84e0edd891810874d2de481cd8b937302fb2f9
-[11/21] leds: class: Unlock led_access before unregistering device on error
-        commit: 54f4bbd0d38e8b5d56a74d98236373593806c06c
-[12/21] leds: aat1290: Retain child device_node reference for device lifetime
-        commit: 91bf0b65383d14693b5cb1071b341218a7d8b7ce
-[13/21] leds: aat1290: Prevent out-of-bounds read in aat1290_brightness_to_intensity()
-        commit: 4c664a55d4e15ae256350074ea9df1b04f6c31c0
-[14/21] leds: flash: Avoid divide-by-zero in led_clamp_align()
-        commit: 6204d67ea6e0bb3885cc76a1c358fdc8e737e475
-[15/21] leds: lm3532: Validate LED string indices in lm3532_parse_node()
-        commit: eb76e1d62af9376c8656020359cd94e7f7a23284
-[16/21] leds: lm3532: Clamp full-scale current to minimum bound
-        commit: ef0748fd1e5fd0cbc7fa6e0f21ebcafc967152ef
-[17/21] leds: aat1290: Avoid leaking devres pinctrl handles on strobe source changes
-        commit: a57e3e4813e89423931d3242031d87294e6e8deb
-[18/21] leds: aw2013: Unlock chip mutex before registering LEDs
-        commit: e6596ab1148379e9e32efd7a0b5a3ff3bd5f4670
-[19/21] leds: is31fl32xx: Clamp channel current limit in is31fl3293_reset()
-        commit: a0fbf5212e49f9b4f82f24031112d68f2896b188
-[20/21] leds: flash: Terminate sysfs_groups array with NULL
-        commit: dce797d3d7cc059c595548b2401a4aa95f45186a
-[21/21] leds: lm3692x: Use devm_mutex_init() to avoid premature mutex destruction
-        commit: a379f4e0adf2de7b11aa3ef87eeb7d9c838069b3
-
---
-Lee Jones [李琼斯]
-
+> > +
+> > +     ddata->cdev.brightness =3D LED_OFF;
+> > +     ddata->cdev.flags =3D LED_CORE_SUSPENDRESUME;
+> > +     ddata->cdev.max_brightness =3D LED_FULL;
+> > +
+> > +     ddata->cdev.brightness_get =3D max8907_led_get_brightness;
+> > +     ddata->cdev.brightness_set_blocking =3D max8907_led_set_brightnes=
+s;
+> > +
+> > +     return devm_led_classdev_register_ext(dev, &ddata->cdev, &init_da=
+ta);
+> > +}
+> > +
+> > +static struct platform_driver max8907_led_driver =3D {
+> > +     .driver.name =3D "max8907-leds",
+>
+> Cute.  But please expand.
+>
+> > +     .probe =3D max8907_led_probe,
+> > +};
+> > +module_platform_driver(max8907_led_driver);
+> > +
+> > +MODULE_ALIAS("platform:max8907-leds");
+> > +MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
+>
+> Your name is misspelt here.
+>
+> > +MODULE_DESCRIPTION("MAX8907 LED driver");
+> > +MODULE_LICENSE("GPL");
+> > diff --git a/drivers/mfd/max8907.c b/drivers/mfd/max8907.c
+> > index e282dd82ece69..826d7768fd8d0 100644
+> > --- a/drivers/mfd/max8907.c
+> > +++ b/drivers/mfd/max8907.c
+> > @@ -20,6 +20,7 @@
+> >  #include <linux/slab.h>
+> >
+> >  static const struct mfd_cell max8907_cells[] =3D {
+> > +     { .name =3D "max8907-leds", },
+>
+> Separate patch.
+>
+> >       { .name =3D "max8907-regulator", },
+> >       { .name =3D "max8907-rtc", },
+> >  };
+> > diff --git a/include/linux/mfd/max8907.h b/include/linux/mfd/max8907.h
+> > index e222250f0cc1e..35b2ede54f856 100644
+> > --- a/include/linux/mfd/max8907.h
+> > +++ b/include/linux/mfd/max8907.h
+> > @@ -112,7 +112,7 @@
+> >  #define MAX8907_REG_CHG_IRQ2_MASK    0x81
+> >  #define MAX8907_REG_CHG_STAT         0x82
+> >  #define MAX8907_REG_WLED_MODE_CNTL   0x84
+> > -#define MAX8907_REG_ILED_CNTL                0x84
+> > +#define MAX8907_REG_WLED_CNTL                0x85
+> >  #define MAX8907_REG_II1RR            0x8E
+> >  #define MAX8907_REG_II2RR            0x8F
+> >  #define MAX8907_REG_LDOCTL20         0x9C
+> > --
+> > 2.53.0
+> >
+> >
+>
+> --
+> Lee Jones
