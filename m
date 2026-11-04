@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793795485;
-	b=j7oc7j1nprf/87jq2/CR8Udm0pHdCiRqTHu17aBBezlEThlE6FpQ1P3fWRvlHRDcZcKO
-	 DPnJTMa16uZ/Xa8aBydc0rhfhNwNT/wyny+51jHyXIO9Nw2lBeqLVTltMIESlIObCtRhW
-	 vUq0uCHB6SUZdD6qRuIzyayY0t9cWah8AsTjUX5zIzrUSZY84UhXz807hzkuBOWjdYxyA
-	 stbS8dVzbXPS3nO66+PX3kmH49N1etW8AGLoTkRzhmb77Y8OqkQ/tlVPXikXsM3iHqIht
-	 1Y3E5gxCDPVey5NgfeTqZi/Fd7rO+B2GyAUB4JrzGMt/TESGXj7S4CAq9zNoAyi5GKg==
+	t=1793795516;
+	b=axtoA0iqbgTclp8Knx/UPrq/jldKY4mAuq+k/+tXDN3af3F1FsndizEbQS3I8YvY8fHH
+	 ruqnLkmMeeSMK0fqsAgXgEkjd3Vxh+ti/NE8vu2zCnK9Zq2djms7QWFuE64u7+2ylA6dz
+	 fvmI0m7ohz3LQvvjErCwcJmLjr6JFPwbslWTWbuHnRzmNDNm1Im8s7//TGU7tcEmYV5GJ
+	 kpL4bCCF+LAadFHmjAvmVjMI1hPpAEl4tRGjLqH7tjsRYDtkNHIZl8n4QR6UhCODNxe1z
+	 K6qIx1BL9gYz/IVysykaOAXuRqYC4nOj93k3PHjFvoeenbC3wtlMwwKhZ+LOHakCJmQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793795485;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793795516;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Y8Wl3/D0V9Jhn4OpeLz0IdVHJZgFAsEQkVnGwMbwJDg=;
-	b=zoYAK7u+ZBdqLQ8OqKnO99MOhmT3PnHodVDMVyyDrzCAVUzGXhT+MbethgWqul58qeyD
-	 p+tmRfShvGzn2v5628PknSIxe6R30Yhoafondxqpls+7E4TXNoVOyuOX73nrC6WKi70ES
-	 R6HufAEQunTxRt4h2+cFRYLmN0Un8YRcMZ+Rv6sxQF9TonNvxkmTOECrZas49bxNSAwI2
-	 Z3NkYhaMpyk52o+Pi6vmtqSx/0Gk6duevC52+tsj88NxszSGq5xdcK/RYWzNto5Z7+GKt
-	 OmcS6oygnPTJvouMSAURFfjBuF01g28leuuoU+3ZbWEqw0pOkFuyyQ+gcHPek9+WefQ==
+	bh=gRZuqZDo2MO49z651xLau16r4AJvqW2QZvwxYq1kx2I=;
+	b=i8Md73TomebZm9w6HAZvnCCO3UCtwBlX8GBUFFXY8ohPduyOgz5YV35epsI5LZjDEmim
+	 Ei2/FTXwpMyUraRY2TL0WzCnGWG7NOsBeqSXgl5dRgpFwLCYQ+lkYgoZNmn0hQPABY450
+	 ZJykwuegczUwrD1u+uZx+2jflOLT73+ITsxfa08aD+RfpuKJ1zG/j0NjReEIZVUAf0Qft
+	 jCN7pHvHuX7z/4wzV6mMAI8rAsl/WOQDUUfkMnBvnWQ78VufRJLeD4vniyRdrQQtTNklK
+	 chuCpWjnpwhFCP8KNIKEFs9Bj70Xe7YMrppt59hPHGvl09YXJzEwYupF284qoIXe4LA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PsjnCQ5r;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ChUZIiLk;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F6B606A31B;
-	Wed,  4 Nov 2026 12:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F8606A31B;
+	Wed,  4 Nov 2026 12:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PsjnCQ5r
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B4A1F000C1;
-	Wed,  4 Nov 2026 12:31:24 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ChUZIiLk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B41B61F000C1;
+	Wed,  4 Nov 2026 12:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793795485;
-	bh=Y8Wl3/D0V9Jhn4OpeLz0IdVHJZgFAsEQkVnGwMbwJDg=;
+	s=k20260515; t=1793795516;
+	bh=gRZuqZDo2MO49z651xLau16r4AJvqW2QZvwxYq1kx2I=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=PsjnCQ5raFljjuiRcz3tU3O6wbidOF/ZRA2G3N+ioZelOmktwtAfcRGWcX2qZAZYM
-	 2fkQZPaBQWRs4JuyPubvwXz9VvkOYIS8OyyBvZIpylAIzcVpL7obl/nEhi7zFxG1Tv
-	 xicJNnwM6zt1/l4S6u2tBTpaSpSpM3CIH/TEmYBX7hWJjUpmOoN8BbA/OZEmFzNqa9
-	 LMqFpJifXdXXABO12aO4zbIm9XFKluV6r0Mr9NyskI9BptHu83SxJikuBHwYxcQqzR
-	 I/T/eZ8M7/xLx93ETvkL/xUdgovQrC6oAeyCVhDTHNw0t7CK1cAk4gDGew7q6IJMWv
-	 MKPN3a/urrkCQ==
-Message-ID: <sashiko-outbox-197256@kernel.org>
+	b=ChUZIiLkeH3Zy6cs/VpO9KwMiFl6c7L/mMzjxZl2HnMNztQ/iaEK8w19rIXhhwMOu
+	 LRXRfvkLQmobp4cYwtEeCJDPJ4QWmk9h+g9yKylohpCms+KLa8cISaStjNLLWALoTL
+	 SlrEpkuItyXPtef/8ua/lcrPGvraklIZc73PmiYmXWOWLyhq64jl7YWns5tzJ63ul6
+	 AQ+ZoqmG2gHFnml00Dg/Ns9wTtIvOmUWAqk+5FddgaNV7CTjjtw1xkXW0730/wfrCL
+	 tLDMuW2Usxrf/rBPNR6DGWdp3cFlt2z1rm664231+TZIEWRhcmr4znRVk17maB3htQ
+	 FPwCixjfNV9Pg==
+Message-ID: <sashiko-outbox-197257@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 6/7] power: supply: Add driver for ASUS Transformer
- battery
+Subject: Re: [PATCH v13 1/7] dt-bindings: embedded-controller: document ASUS
+ Transformer EC
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Svyatoslav Ryhel" <clamor95@gmail.com>
 Cc: mfd@lists.linux.dev, linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261104122606.215629-7-clamor95@gmail.com>
+In-Reply-To: <20261104122606.215629-2-clamor95@gmail.com>
 References: <20261104122606.215629-1-clamor95@gmail.com>
- <20261104122606.215629-7-clamor95@gmail.com>
+ <20261104122606.215629-2-clamor95@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 12:31:24 +0000
+Date: Wed, 04 Nov 2026 12:31:55 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,18 +61,13 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Document embedded controller used in ASUS Transformer device series.
 >=20
-> Driver implements one battery cell per EC controller and supports reading
-> of battery status for ASUS Transformer's pad and mobile dock.
->=20
-> Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104122606.2156=
-29-1-clamor95@gmail.com?part=3D6
+29-1-clamor95@gmail.com?part=3D1
 
