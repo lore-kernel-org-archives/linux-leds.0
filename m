@@ -1,65 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793780997;
-	b=R1iX1xsuOqEZ/Hn60JFSsnCN5B7t1e5XIy84/WW7GAv2C8GDyLsLGlqJeqzV1+TRAbAT
-	 uzcPgFoQtyHdGvaEOEqeU7zD4Om+kabZoI5U0CV/ALdvN4cz1vtRn1APwFXCcqXdmuzD1
-	 lKpA3Kxe2IFnq6Oa4N8i1Lp3nVDUDkYGxldRIiUJcBA12nwIQau64fXDmFwrbgzoaKE9p
-	 BK0qGAOzcES/BKyt+JBqEz4dYNY7Y+jicdr3MjAHdh2ZFuW1qp0nDmDWCxEbwME60BGUD
-	 nLR2AEtDOAu1vdowqrPjQcbFuEqkiIz4LWgiBtzJM8YBcdlZMhsRziC8wydln5WvtYw==
+	t=1793781884;
+	b=RG0H3xnBg/iGFAEjOGeQVq6u1sruzgL1Q7HCCv2mK6XLmOLO/ciNRoNBD6WVbUP+qTib
+	 HyD8CQlI38pURZYMvNZF8Equq1MAu/c/RfB88WipGqOexRCpgCiXSOSc9UUlMep4H5Zy9
+	 zLSd3l/O+NQk8uqTn/epuaC99KgdBiBHDZKAh0pSRh+yDpKpKValMiBUAtAP5j1FNZJAi
+	 Fat9T9CjswBqL7qAexhHp+O6e9fJ/Tc2gVEDvAYeIbohCbv2QVlF9n0+TklQK/gOUscA5
+	 16l4iIVIi9Q3RGkiRBo8tmeL9+wEAltUXZxPcd1oOWlyAqroXfNEipf21r0cvPqQrNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793780997;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=A2oR25TfAqFTRaq2T50egnRcA+A2fhTzaJZw6MyR7fY=;
-	b=Mh5UBUkFu0allqqOUq9dOU4KwS7ZhSPNd2FQRq9SG5/xR7m6+IjjHVvqGX+MnXOQ6VkF
-	 nkBVGOGm7A1sjGHldnq6DZiyHTiVxYQZs4BisJ5LM/3PbmnE5UcGZLgwAWaok4BlRMDKZ
-	 mv0/Pv5eDTfVg/NubkG2TG+TvxBRCP1d5DRzy7sXuxZWou8DwTLN9/7FHtX0e3hgFi0BX
-	 Y6uKDflNJ0oM0mDAwP3KUV1na1on+nR0SGwTGxkl/EojUgjN80zB1WTOe0TWvdruUjvm4
-	 n1RrxHdVOE9UOuMProre2tFORedSl8S5IU9RVPcJgys9EEMuV4M5SaZa12dLaCaFOfw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793781884;
+	h=DMARC-Filter:Received:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:Received:
+	 X-Forwarded-Encrypted:X-Received:MIME-Version:References:In-Reply-To:
+	 From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:Message-ID:
+	 Subject:To:Cc:Content-Type;
+	bh=yUcMHykGBsdlMngLe5E8c5GRiAK228iYooBSZKs6auk=;
+	b=Xu+8js2GDHD/0nrFNLU2vExFOG1SDkGumyEqbfPPTMj2YsShEUM4SmxtSFhzFaTs+d7G
+	 DdkYZXLUnScUCC/ZtHKIe1hjX8Sc4AXFvohzCpRgjEj8gKkNl7VgPIs3ZUDiFH6TNr15M
+	 YAfHgA6oEEtZSilh637K89ZPMcpZAHkAkMBbGnW+4Um3+ZGmUQpTCwIlzxbF+WsZtdOJk
+	 wfCH43nzMTq0ryfFSoSYRRmc3X+I64cGCzNfnFBIEDgS4F8Xyo8IO4rNmCe20W3eTpUBj
+	 mbo5BGgV3ej2USqrgf02mJDGOC6ARaboiAoYp3a4xqsf6VFC9YHaOc7uPoYGf01f5Vw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mnOvNSwY;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=none header.from=telaak.dev;
+	spf=pass smtp.mailfrom=gmail.com;
+	arc=none smtp.remote-ip=209.85.215.174
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03A6606A31B;
-	Wed,  4 Nov 2026 08:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mnOvNSwY
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55991F00A17;
-	Wed,  4 Nov 2026 08:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793780996;
-	bh=A2oR25TfAqFTRaq2T50egnRcA+A2fhTzaJZw6MyR7fY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mnOvNSwYaqxGjYEZY0u20DCToR0tXCXUuSGprnItmV40Y09dW+2rmM8FHVDNem7m8
-	 Erniu4bTUbk6sSYKeKi9eo9JhEkjYMOTis3GRs00/SnBlEczHjo+h2SkvyIC8fQagi
-	 HKYdANYqE8MF4oQswh2LM0rQJ2CJVCctx2QAyc4aO03hsSeq2jgbBPM2voVbk13Jop
-	 Jcd86e0wf8UqhxvujHfPlndX75Dav3rMzl/lyeFNViP6hHH33SAhaeE/5wPp6U3OMc
-	 LNyoHdsjt1L2u8JmLAzc4pK7D0u0eO7oQPWMe2Cr185ib0YcTfCsDF7Efi2QZsZncF
-	 zEuIm1eabnxdw==
-Date: Wed, 4 Nov 2026 08:29:51 +0000
-From: Lee Jones <lee@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Ion Agorria <ion@agorria.com>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	Florian Krischer <florian.krischer@fkr.dev>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, mfd@lists.linux.dev,
-	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v12 2/7] mfd: Add driver for ASUS Transformer embedded
- controller
-Message-ID: <20261104082951.GE792264@google.com>
-References: <20261019100406.103687-1-clamor95@gmail.com>
- <20261019100406.103687-3-clamor95@gmail.com>
- <179249578293.1833288.15514260998480602004@kernel.org>
- <CAPVz0n0kKRpOsUNxvUKiTPSY7bF3h+ruV05B+9jSvs9NOxthkg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CC2606A332
+	for <linux-leds@vger.kernel.org>; Wed,  4 Nov 2026 08:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D4CC2606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=telaak.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-cd3310348d2so719428a12.1
+        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 00:44:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793781883; x=1794386683;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=yUcMHykGBsdlMngLe5E8c5GRiAK228iYooBSZKs6auk=;
+        b=aEkSQZuP7sLx71wsHNCnlBQ1y1shrSR/snnJpM9q9kDa4IsFNBbyWfx1TAodaLdeug
+         OD9yB1rTsJOWNlSMq1JhAkHW7ZqK61Lgpxq8SpaBnNYoBHlC9DH28FRpLPIVFqt3528K
+         BpzEnL7zlJJvfH2SEwWD6mcJEITyyeYK8xpNOp99nOOTNdHauvIiM2tf16IIUmmBB9Uz
+         VN6loYWdviPF6sEGcyUJDmWjUKrCiFPNNu7PZE3Hk/Z4zR+CIAC+0b7ML9vmg0bSzwN4
+         NYBYm0pW/gYis5oGEQA0oAAf7wy8t5sn4G7q7AYtsdx6Ujj88+Fn4iBDhxKXq+qNuQuX
+         p2mw==
+X-Forwarded-Encrypted: i=1; AKwUvBzQ5/r4WnMFb8ekRHzS4yLv6wHBZz+dxvgSH1e25Fmt3IlP3JL4m3BFyXv+FsdN7X+aOXBl/afemURm@vger.kernel.org
+X-Gm-Message-State: APuU4Z8DUYBbqKbIR4OR45YBU5mszt1koBofdh91bzY88+P/Z6bInOwD
+	i9/LCsk4jgHo5JvGSlT2xQ7rlgcnlaFMmTKsceEBHcNUtnggMpHsGvYClBVXfXYe
+X-Gm-Gg: AYBFou15+58mHOq8Urq7lum8ELkgpK+wRxWDbTkvLSPUO5P8+0ME7JP7gUvfYEE/Een
+	QCm/JQloLvIZjGsUYVPHDHWlkh5I92fWwwnAOxKK8d8ANqawjJOQLdS8kT84hi2pnqGBLFT+aTb
+	s/yiGkhvbeLTJfz8mCW5/lfqTYQluL+PkCCzR7iDmnsF7bvg1Ig8cJNy09JNXkM5rPO4r4xDJSF
+	cqJ2Tl2KrhiSPZcQzpF1V7O8CAt8qZHfyGf2vqUqj155FQxjMMLvQc8H+yYKhPYClGLGRMdEP3t
+	U8pl9BkMNNN8lOnH3bqwVTOU1P9Su7z5TxeOjQ2sxckoHf7H7PS0Ph7nPlfRJv6nUdfZqOw8hhA
+	zhnESIBhW572ZKZVB3r5qZsn3M/gVRhcvoc6pOZfGOycG4xesncPrPY8BKH8vJKgrUBZrb2ce82
+	D86GSBxpPYK4mW33+jlY4j5M4eFHYonEYzdyvZqXjSEBgXkc76yuAUMUTPWMiZoMUgCCLsSP7Un
+	N41Kv6AVxNKrG08doLcjWN48URr9dgpWicnjcZAuuwybKq1mUK9xCyMj0XEBY58fjxf/xIifg/n
+	vSQHKBFMGTco6XgIEHRePv/gR2WfReqsCsHRlKM5M2Y18bmBSijqIZQ1oXw5w7qHpkeftaoN2c5
+	ikkd6yGkI6PMGJ0fOlwy/kEf8FHjt2iU7rGNJMg4TuHE=
+X-Received: by 2002:a17:90b:4fc5:b0:3ac:928a:68ce with SMTP id 98e67ed59e1d1-3ae8979c4e1mr7298973a91.33.1793781883230;
+        Wed, 04 Nov 2026 00:44:43 -0800 (PST)
+Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com. [74.125.82.181])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0944a0ff7sm3060856a91.10.2026.11.04.00.44.42
+        for <linux-leds@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Nov 2026 00:44:42 -0800 (PST)
+Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-36cedf1bd63so407845eec.1
+        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 00:44:42 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AKwUvBw6OyBOwX7j3mjpu1T1lNCbJ4qFJbIq6C0WX4ONdQd7nuCqjKYSfYbyhNsg7zCP+IpBG/ntgCnhlBtH@vger.kernel.org
+X-Received: by 2002:a05:7300:c5a7:b0:36c:a1bc:6102 with SMTP id
+ 5a478bee46e88-36ca1bc68a8mr2873501eec.0.1793781881630; Wed, 04 Nov 2026
+ 00:44:41 -0800 (PST)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -69,171 +81,32 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n0kKRpOsUNxvUKiTPSY7bF3h+ruV05B+9jSvs9NOxthkg@mail.gmail.com>
+References: <20261101-ktd202x-et6326-v1-0-eb51eddad08c@telaak.dev>
+ <20261101-ktd202x-et6326-v1-5-eb51eddad08c@telaak.dev> <20261102-enthusiastic-flounder-of-domination-fb3a01@quoll>
+In-Reply-To: <20261102-enthusiastic-flounder-of-domination-fb3a01@quoll>
+From: Joseph Telaak <joseph@telaak.dev>
+Date: Wed, 4 Nov 2026 03:44:30 -0500
+X-Gmail-Original-Message-ID: <CAPY4CJ4cm117fjoZa302TKRmok_NnO62HhBWTSpNEzD8qAacdg@mail.gmail.com>
+X-Gm-Features: AclHuK9nnsy6U4khk5cNnlQ4F7O21MbUU3fY_2pf7x3dkjkCudC-yc-EGP9flSY
+Message-ID: <CAPY4CJ4cm117fjoZa302TKRmok_NnO62HhBWTSpNEzD8qAacdg@mail.gmail.com>
+Subject: Re: [PATCH 05/10] dt-bindings: leds: kinetic,ktd202x: Add Etek ET6326
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Griffin Kroah-Hartman <griffin@kroah.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-leds@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 03 Nov 2026, Svyatoslav Ryhel wrote:
+> Drop.
+>
+> Please run scripts/checkpatch.pl on the patches and fix reported
+> warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+> patches and (probably) fix more warnings.
 
-> вт, 3 лист. 2026 р. о 13:43 Lee Jones <lee@kernel.org> пише:
-> >
-> > --- checkpatch.pl (4 issues) ---
-> > Line 607: WARNING: DT compatible string "asus,sl101-ec-dock" appears un-documented -- check ./Documentation/devicetree/bindings/
-> > Line 610: WARNING: DT compatible string "asus,tf101-ec-dock" appears un-documented -- check ./Documentation/devicetree/bindings/
-> > Line 613: WARNING: DT compatible string "asus,tf201-ec-pad" appears un-documented -- check ./Documentation/devicetree/bindings/
-> > Line 616: WARNING: DT compatible string "asus,tf600t-ec-pad" appears un-documented -- check ./Documentation/devicetree/bindings/
-> > ----------------------------------
-> >
-> > On Mon, 19 Oct 2026, Svyatoslav Ryhel wrote:
-> > > From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> > >
-> > > Support Nuvoton NPCE795-based ECs as used in Asus Transformer TF201,
-> > > TF300T, TF300TG, TF300TL and TF700T pad and dock, as well as TF101 dock
-> > > and TF600T, P1801-T and TF701T pad. This is a glue driver handling
-> > > detection and common operations for EC's functions.
-> > >
-> > > Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  drivers/mfd/Kconfig                     |  16 +
-> > >  drivers/mfd/Makefile                    |   1 +
-> > >  drivers/mfd/asus-transformer-ec.c       | 569 ++++++++++++++++++++++++
-> > >  include/linux/mfd/asus-transformer-ec.h | 100 +++++
-> > >  4 files changed, 686 insertions(+)
-> > >  create mode 100644 drivers/mfd/asus-transformer-ec.c
-> > >  create mode 100644 include/linux/mfd/asus-transformer-ec.h
-> >
-> > [...]
-> >
-> > > +static int asus_ec_reset(struct asus_ec_data *ddata)
-> > > +{
-> > > +     int retry, ret;
-> > > +
-> > > +     guard(mutex)(&ddata->ecreq_lock);
-> > > +
-> > > +     for (retry = 0; retry < ASUSEC_RETRY_MAX; retry++) {
-> >
-> > As mentioned on v8, 'for (int retry = 0; ...)' is generally preferred for
-> > throw-away loop variables.
-> >
-> 
-> I must have overlooked this, appologies.
-> 
-> > > +             ret = i2c_smbus_write_word_data(ddata->client, ASUSEC_WRITE_BUF,
-> > > +                                             ASUSEC_RESET);
-> > > +             if (!ret)
-> > > +                     return 0;
-> > > +
-> > > +             msleep(ASUSEC_ACCESS_TIMEOUT);
-> > > +     }
-> > > +
-> > > +     return ret;
-> > > +}
-> >
-> > [...]
-> >
-> > > +static int asus_ec_probe(struct i2c_client *client)
-> > > +{
-> > > +     struct device *dev = &client->dev;
-> > > +     struct asus_ec_data *ddata;
-> > > +     const struct mfd_cell *cells;
-> > > +     unsigned int num_cells;
-> > > +     unsigned long irqflags;
-> > > +     int ret;
-> > > +
-> > > +     if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_I2C_BLOCK))
-> > > +             return dev_err_probe(dev, -ENXIO,
-> > > +                     "I2C bus is missing required SMBus block mode support\n");
-> > > +
-> > > +     ddata = devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-> > > +     if (!ddata)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     ddata->info = device_get_match_data(dev);
-> > > +     if (!ddata->info)
-> > > +             return -ENODEV;
-> > > +
-> > > +     switch (ddata->info->variant) {
-> > > +     case ASUSEC_SL101_DOCK:
-> > > +             cells = asus_ec_sl101_dock_mfd_devices;
-> > > +             num_cells = ARRAY_SIZE(asus_ec_sl101_dock_mfd_devices);
-> > > +             break;
-> > > +     case ASUSEC_TF101_DOCK:
-> > > +             cells = asus_ec_tf101_dock_mfd_devices;
-> > > +             num_cells = ARRAY_SIZE(asus_ec_tf101_dock_mfd_devices);
-> > > +             break;
-> > > +     case ASUSEC_TF201_PAD:
-> > > +             cells = asus_ec_tf201_pad_mfd_devices;
-> > > +             num_cells = ARRAY_SIZE(asus_ec_tf201_pad_mfd_devices);
-> > > +             break;
-> > > +     case ASUSEC_TF600T_PAD:
-> > > +             cells = asus_ec_tf600t_pad_mfd_devices;
-> > > +             num_cells = ARRAY_SIZE(asus_ec_tf600t_pad_mfd_devices);
-> > > +             break;
-> > > +     default:
-> > > +             return dev_err_probe(dev, -EINVAL,
-> > > +                                  "unknown device variant %d\n",
-> > > +                                  ddata->info->variant);
-> > > +     }
-> > > +
-> > > +     i2c_set_clientdata(client, ddata);
-> > > +     ddata->client = client;
-> > > +
-> > > +     ddata->ec.dockram = devm_asus_dockram_get(dev);
-> > > +     if (IS_ERR(ddata->ec.dockram))
-> > > +             return dev_err_probe(dev, PTR_ERR(ddata->ec.dockram),
-> > > +                                  "failed to get dockram\n");
-> > > +
-> > > +     ddata->ecreq_gpio = devm_gpiod_get(dev, "request", GPIOD_OUT_LOW);
-> > > +     if (IS_ERR(ddata->ecreq_gpio))
-> > > +             return dev_err_probe(dev, PTR_ERR(ddata->ecreq_gpio),
-> > > +                                  "failed to get EC request GPIO\n");
-> > > +
-> > > +     BLOCKING_INIT_NOTIFIER_HEAD(&ddata->ec.notify_list);
-> > > +     mutex_init(&ddata->ecreq_lock);
-> > > +
-> > > +     asus_ec_signal_request(ddata);
-> > > +
-> > > +     ret = asus_ec_detect(ddata);
-> > > +     if (ret)
-> > > +             return dev_err_probe(dev, ret, "failed to detect EC version\n");
-> > > +
-> > > +     ret = asus_ec_init(ddata);
-> > > +     if (ret)
-> > > +             return dev_err_probe(dev, ret, "failed to init EC\n");
-> > > +
-> > > +     /*
-> > > +      * Systems using device tree should set up interrupt via DTS,
-> > > +      * the rest will use the default low interrupt.
-> > > +      */
-> > > +     irqflags = dev->of_node ? 0 : IRQF_TRIGGER_LOW;
-> > > +
-> > > +     ret = devm_request_threaded_irq(dev, client->irq, NULL,
-> > > +                                     &asus_ec_interrupt,
-> > > +                                     IRQF_ONESHOT | irqflags,
-> > > +                                     client->name, ddata);
-> > > +     if (ret)
-> > > +             return dev_err_probe(dev, ret, "failed to register IRQ\n");
-> > > +
-> > > +     /* Parent I2C controller uses DMA, ASUS EC and child devices do not */
-> > > +     client->dev.coherent_dma_mask = 0;
-> > > +     client->dev.dma_mask = &client->dev.coherent_dma_mask;
-> > > +
-> > > +     return devm_mfd_add_devices(dev, 0, cells, num_cells, NULL, 0, NULL);
-> >
-> > Why not use 'PLATFORM_DEVID_NONE' or 'PLATFORM_DEVID_AUTO' here instead of a raw
-> > '0' and hard-coded cell IDs in 'asus_ec_tf101_dock_mfd_devices'?
-> >
-> 
-> There can be more then 1 EC in the tablet. PLATFORM_DEVID_NONE will
-> not work in this case and PLATFORM_DEVID_AUTO should work, but one of
-> EC is detachable (dock one) so devices there may need a fixed id. I
-> can test if PLATFORM_DEVID_AUTO works, but may this be sent as a
-> followup?
-
-Sure.
-
--- 
-Lee Jones
+Thanks, v2 drops it, and the series is clean with checkpatch and
+checkpatch --strict.
