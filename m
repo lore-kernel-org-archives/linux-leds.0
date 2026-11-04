@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793795186;
-	b=lhHhBQKYynSWd64WNxU5Uq+6qPdqLnLvmtJtYu26l+iB7MEthbmxClPFx0grWSi/DsmF
-	 27q3UauwWn92oZJsjIG/REJ+SY+0nh/abU5R05NTKgtK0dMZOccU7EfuBqJdnUB32f/ac
-	 iftrWBzUw0QIvzswXSTWSBvJY2LrVttyXcR2SOkSj4E+6IJI2/Z3ApxBwW5metZYygj9c
-	 y5JnHxiAiMYTOeH7yc7drpJ9N8mMxMm1lYxrng4gxD0JgHyy5quNoXoAyeuo1uFy+HVPG
-	 LbaFhYVRQVTgOewF4zMNK9ZOyCF5t9snpdXMjIiXaXgM/eXgmorsFbQWzjM5GrnCPKg==
+	t=1793795188;
+	b=4JF/IRJ5fgaIZYIbV0BQ4Q1go3tXzgaS4msjj160vCd+RBvTFK37fjAONFwRaM/GShga
+	 G6D6miJ0Bossb/Gg7s7b6TzUYK1bkhC3pyWzEcOZLZlo56/DGhPzBFD4IYJ0H2u7Zmgv8
+	 ZOoHcpFykOVElMYRR7EySE8y3bDC9raPZUBVArNKX52TCGsbRSL6AubaoL41waAWYym/v
+	 0wOr+QgxWQdaH0BIc6n4ZV+yydECP+nKHRPhZt1n7bFI4zmbwexDgvLD03B/QAZpx1782
+	 bgVBSNjlvWA8IG6LpGzhZV8zBwj0xDSE7uD0PA95np4kE5l9qDu9lvzwR55bTLubS2w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793795186;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793795188;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=thomxBGmhlzEQD85NB4cuQLLeHvP2M634LL7QtV22Rw=;
-	b=WjfSs3PfgHVpf44bwMsm9HKhZxnBSBckZqQAZpC4BkqOyMhlQhK0Grxf8K9XJsnZsMOx
-	 SLrTvLZQ+uQpZj8PFULTdWcQ0qD1gnveNXTWawS0zWUsKICSgMpb/8kUGew4xesftsqwN
-	 SLKNOervYKHq828HuJ2WBEJNg2xEyYP+ACiXSN3wcI49VpjM5yWLbAflyj1RYXuSbWCc7
-	 opCPblxJqoFFej1qAGGsuUtTXr55KvmadsmytmgDRO6VwQuGziAY26qDgLBsYcTkA7MWR
-	 JcWQD0N8zg3CvfO2T6mNAjkCzQ1810L+xBdBGkeFWpI0I5k8tUfF0n5in1bqrRlzO6Q==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=Y460qay5LS+R/33REWXsFlmhxRCfcVfcAqdFzdNEv44=;
+	b=bP+lMuGHjFYJXRnEaDIJnAjKMjm0XXbJqkcrJQmOgkCVe0v7oTwgDk6J+wSJash9GGTd
+	 EiTMc0pgqecy7FdbTExcnEDbd/P5zVPNnsAolb9V7oIbJRS6yo8MDaGLqnC26pTAPQzID
+	 lSRW/4eWaS+aP9VU5qkjtEtZt7nohyo0542X3cRGa5g3IGj92sZJ9+LT9IN+OXuIpkK90
+	 5EIgmKWV86elhyv6bAZO+kX/JLtvBVv6GZp4U76Czd/CO+apiKw8+81wG/65q7LGi+WfJ
+	 754K5TytXxy7GBlLrwbzzaFys4L1W6R9CdqytPq+ySybNy0BXEF9KN33wbmUStI5EFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HRBcL15j;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zqxTgXZC;
+	arc=none smtp.remote-ip=209.85.128.53
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF4C606A331
-	for <linux-leds@vger.kernel.org>; Wed,  4 Nov 2026 12:26:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CDF4C606A331
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A07B606D80F
+	for <linux-leds@vger.kernel.org>; Wed,  4 Nov 2026 12:26:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A07B606D80F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HRBcL15j
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a214af2076so4314795e9.0
-        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 04:26:25 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=zqxTgXZC
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4a5036bbac7so3758395e9.3
+        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 04:26:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793795184; x=1794399984; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=thomxBGmhlzEQD85NB4cuQLLeHvP2M634LL7QtV22Rw=;
-        b=HRBcL15j+yHMy3baKSzZG+feycDT3bLz/2Py0auzYiUnpUrrwKeNmbv2D93vhW+Y6y
-         4GFqlUTeaAxVs9Ja5WdO7TxR7CuFlucR8E9ngwCf3jN78C+Iad65or/2zRQV5tOXzDdl
-         baL5Y9sPvdHOysZNSsz2mrdqfUY4TPoe8QcRemBMDZAZ9pvOqYezCN3Kt9v01FO2hm7A
-         /vACd1WxhJGMCaIb0SheVEM4alHwz/yJNILaKigsl6JE4hdJGYjj7R7Lx/K6B9+e5f6O
-         A493Gudgn/Ervo4IDnA9vrDfTX28gDzpeqQwRkVCanlMTpy1m2K9BlzF7fOANqCa8C5r
-         ffmQ==
+        d=gmail.com; s=20260707; t=1793795186; x=1794399986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Y460qay5LS+R/33REWXsFlmhxRCfcVfcAqdFzdNEv44=;
+        b=zqxTgXZCedl88xAPuNpOKy5fkDuI/WY5HEZHcMrLocsOyvu65KxpiKziAlKb5ah9B1
+         yCl288vMVkvMdiPl5/3Vui4txDSN1utH1vfyc20VNcH/IWtCoFQIjxg/mozXyD4ZhAUs
+         Ac8bgLWYI9wAwDxNzSLAtJjWYxxRByaEWfNF/23IFcyXQ2pCnNy/N6B2dE0A4Q8Fa89C
+         hBSxJY/4RN5a22kyLdZf4HkmUM9EfC9uu4b9PdkPZ7o0EIvsezP3JiDCy3ccXu6pqYG7
+         qCXsNU5nf2+jLQP4XxE8fNz4dp3tGW8L+d+0qRj4W/3AT/+tHGAZOz72gv0JUCErPrqA
+         Ehkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793795184; x=1794399984;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=thomxBGmhlzEQD85NB4cuQLLeHvP2M634LL7QtV22Rw=;
-        b=c+0QePdo+nNGkmhZ5A8pR/YxJwfQ3G3jy2mo74Uk1bmnws453lr460UOWq6ngQG3g6
-         wkL9nFXvyLh4WrrCOV5IK+ZC8y6e75sAhgPeZDj8sgHP01gccnZclzPFwqCB8c/liJsH
-         4yp/cLQlRr3y2Ch6stgd70hKNtzr3j1SI8CXv12yzBZ4tvP+Faz4roAm+NtMu8pk3y4P
-         8Yi20fAXRQy7wwd33G1f5Qe9Gv+mAYKJzlEWwkoS34HrFl6+Chqn43WQL+GGTubU3+DT
-         y4v0lwVuvlLfB6Vlxf/Sbfsjb9RfVyvtrJOORHooICR6OWoBIIkGnyZPlljw963aanOg
-         a5iA==
-X-Forwarded-Encrypted: i=1; AKwUvBzeRNIEwzMkY4zBJWkIHD9m4XBLYs18+w9TQYiF2tFHkVqmmHv4TS0qMNtPFFKeSFfzJp5GgVVjID3V@vger.kernel.org
-X-Gm-Message-State: APuU4Z9MdmtRm6iOMJB6Fr4sXCg2rsV8sY/+MuXIpoGsn+PqavghJULk
-	G8gBAwHohk9QrbyEog34pJMx55Ih0xdonuO4x1p3T7Ss3MpV3p29s0H+
-X-Gm-Gg: AYBFou0h3TMzG22Ltuyes8xnckqa1EMJ0EqkJ+PuguXnCoETrmqz/piFA+pncRsDp3m
-	8nlBce+8y3Nmw2KI1ftZGQ1l7sPIJtvbZOytKnEgv+5jCgn/jCbj8NOuibZnhekI7oMYXstJ95+
-	t7Qla+WzgwFULGVcz1VDp3F/H74FW7cMJ7gjEu5h+9qr/JgI1mMYnHijv8NpIMiu6FJfsPQlrl5
-	QhgTUDzjd8CxtJgDI82p9Vzb1x//khU0xXJtCz1r5l0wFEgw0yrzvBSoFGYFYpQE6bn5d7HzK40
-	oL8Hc5eifikxET7tzaVJzDkt5azym2Lyc6AJ98GlNjsAA4ign5e98rcK4+NcUm7YpjS4nwP1PNM
-	TZOC5zWQieWLprqiiC01YaQa8YanSgFT2c6FEQwwhcZ/oq31h9GavRo+ZBF4HMGspYZ7PCZl95/
-	6DX6h7zn2u0VhZCrE537QD7fsMWscy316S0ydTQzMsIGKai4YshvdWMIVs4sV8RcKJDxqVpiy+p
-	W/rv7Oi/DAlQ4knzyWDoqYGuXdo/ZxyqTeRYUr5WVyRu/JmMHk+t5HEgte6Rsz740lZiQ1Lq8E7
-	GS2qKFQqKQR6W85hjleMNSXOR6P0rCc9Uu/0JWoKXeU//nJcPQ==
-X-Received: by 2002:a05:600c:a30a:b0:4ac:b0b2:fa12 with SMTP id 5b1f17b1804b1-4acb0b2fac0mr259956635e9.1.1793795183945;
-        Wed, 04 Nov 2026 04:26:23 -0800 (PST)
+        d=1e100.net; s=20260707; t=1793795186; x=1794399986;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Y460qay5LS+R/33REWXsFlmhxRCfcVfcAqdFzdNEv44=;
+        b=Bn3CzeT5n7y+P4CJIoqptg5aLxvXN3Ms2V88lGDUAdLzIUVOjfww0993aIo0Ubu+X8
+         tKdbgP9+DW3w/Z69ERZ/IeRxgErrICUIiob0LrJ59gTfza/g1s1djF/KZYjFeR2AolCD
+         Px0isisF7nnr5kke2w08cVFB+tHayZ0Wgt2h+FZCGcyvsol0iyEtJ22q/bLyElIwX4Kg
+         ZVx7j37U5SMyJvKwswvh4HjO00/1ByZ2KWrRNoXAyc5U+sIRpo3r2P04+oZOWbtSC+g1
+         XZqNWajP5u6s+s4lLYcgj5MzjDdL67uhHMbuz0aBgygDhQudmj5O7a5w5JXvRypLFyEI
+         7pBQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxdWW3jbLXz7odjnKBXx7+w3XzhbpuGfpTdJxVrqy0wIwEGZpqkuczrp/c4nr+lJpZZnM3DC4uq2cK8@vger.kernel.org
+X-Gm-Message-State: APuU4Z/vMSuVxGOLesaFnXxVlU3YwefvayatBJISCrFn9JbPaeSEp8U8
+	5qMhYHu3AQ67Ryknxy15SpnVdO0dPjZwMIbCbQk3FYRYZ+u+jpahl1cI
+X-Gm-Gg: AYBFou3zWPFUfVHMaXG6RzHGrePyPLC9Yq37H9SzjQ3cwAWJ5LI+0+3Hp4UBeVUbba5
+	nqItILVyVxUU/2c47nhnOisV8L9C3nEmlRXwBPXejTG19pyXnokF4BM6I/Wx9TvJG7ApMQxm5lA
+	oLrtcsOdhp/1RAVYPDteMYT/YiunpcOOITUUXn38AY1x85ZZZ73TOP8qbD/p64uOtOYZCT65yUD
+	iXt1h69GQmFIFH3TEempjopMIu2URV0nPqNkBBa7zASvL8j0zl30iTEnmwhD7OLMXEZNN9ayzLj
+	eyNhQELnY4FVH9nwsZe5DilAutZbXnRrZS/g4uIzTaF//vFcRTcLtCJZfh6OOC/AQH+2Krr2lbh
+	464e4Kdq54PURPDnyqQJPfsA+i7ETjKasZ5jXAqsOEbkpxodZ5PN93urnmQU5bB4O2jS1PdiDLP
+	4GmpQ/kExnIji7o9hyHjimlZJCeQvrmshu4JMXNRoJzPEnh3ATsOi0l6cMbDJquQ7vTNUBY6I9C
+	VomzAVl1OeVxw3UcVrLaGYtbqGGDxXycU/Eb1O6oaKD2RK9HIkS+xKBXUZtiBYkxFQZn/rrtGgx
+	1oNn9jk4UyOSmblmm2obJHyYLxC0m/vokwUcahukP2XzGr0aDA==
+X-Received: by 2002:a05:600c:698d:b0:4a1:d97e:cd60 with SMTP id 5b1f17b1804b1-4ac185bd1e2mr362326075e9.16.1793795186366;
+        Wed, 04 Nov 2026 04:26:26 -0800 (PST)
 Received: from xeon ([188.163.112.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b43da9825bsm50492415e9.15.2026.11.04.04.26.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b43da9825bsm50492415e9.15.2026.11.04.04.26.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Nov 2026 04:26:23 -0800 (PST)
+        Wed, 04 Nov 2026 04:26:25 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -97,10 +97,12 @@ Cc: devicetree@vger.kernel.org,
 	mfd@lists.linux.dev,
 	linux-leds@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH v13 0/7] mfd: Add support for Asus Transformer embedded controller
-Date: Wed,  4 Nov 2026 14:25:59 +0200
-Message-ID: <20261104122606.215629-1-clamor95@gmail.com>
+Subject: [PATCH v13 1/7] dt-bindings: embedded-controller: document ASUS Transformer EC
+Date: Wed,  4 Nov 2026 14:26:00 +0200
+Message-ID: <20261104122606.215629-2-clamor95@gmail.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261104122606.215629-1-clamor95@gmail.com>
+References: <20261104122606.215629-1-clamor95@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -110,168 +112,142 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add support for embedded controller used in Asus Transformers for
-managing power and input functions.
+Document embedded controller used in ASUS Transformer device series.
 
+Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-Changes in v2:
-- converted sysfs debug exports into debugfs
-- added kernel-doc comments for exposed functions
-- fixed minor typos and inconsistencies
-
-Changes in v3:
-- dropped DockRAM commits (both schema and driver)
-- integrated DockRAM functionality directly into the controller driver
-- EC schema moved to embedded controllers folder
-- removed all cell descriptions from the schema
-- removed all compatibles from the cell drivers
-- adjusted naming conventions to better align with the ASUS Transformers
-- defined EC variant sets to provide coverage for all known devices
-
-Changes in v4:
-- grouped known programming models of EC chronologically (both schema
-  and driver)
-- call debugfs init only if CONFIG_DEBUG_FS is enabled
-
-Changes in v5:
-- added asus,tf600t-ec-dock compatible to schema
-- rebased on top of v7.0
-- kzalloc > kzalloc_obj in keys and kbc
-
-Changes in v6:
-- removed asus_ec_handle_smi casting
-- asus_dockram_access_ctl > asus_ec_get_ctl in control_reg_*
-- fixed battery Kconfig description
-
-Changes in v7:
-- added status check of devm_kasprintf where missing
-- devm_asus_ec_register_notifier dropped, added .remove where it was used
-- removed cell_to_ec, asus_dockram_read, asus_dockram_write, asus_ec_* public API
-  asus_ec_i2c_command, devm_asus_ec_register_notifier, asus_ec_read, asus_ec_write
-- renamed asusec_info > asusec_core
-- ec-kbc: added packed size check
-	  ret > error
-	  improved key remap logic
-- ec-keys: improve formatting and comments 
-	   ret > error
-	   switched to dev_err_probe
-- ec-leds: reworked to register both leds via loop
-- ec-mfd: adjusted Kconfig description
-	  fixed smbus operation sizes
-	  fixed saving of EC fw model
-	  adjusted IRQ flags
-	  converted to use definer for set cell composition
-	  added factory mode states enum and handling
-	  defined some "magic" values
-	  self > client, info > ec, ecreq > ecreq_gpio, priv > ddata
-	  asus_ec_chip_data data > asus_ec_chip_info info
-	  ec_data > ec_buf, ctl_data > ctl_buf
-	  added and improved comments, added structure descriptions
-	  asus_ec_magic_debug > asus_ec_susb_on_status
-	  removed all dev_dbg and most of dev_info
-	  pronts with model, fw behavior, factory and susb state preserved
-	  switched to MFD_CELL_* macros
-	  removed debugfs
-- ec-battery: swithced to BIT macro
-	      lock usage moved to asus_ec_battery_get_value
-	      in asus_ec_battery_poll_work fixed possible rescheduling fail
-	      in asus_ec_battery_poll_work fixed missing not charging
-- ec-charger: POWER_SUPPLY_PROP_MODEL_NAME set as the first check
-
-Changes in v8:
-- added MODULE_ALIAS
-- renamed DOCKRAM_* to ASUSEC_*
-- ec-keys: input_handler moved into private structure
-- ec-leds: added brightness_get
-- ec-mdf:  fixed i2c_smbus_* return checks ()
-	   improved model storing
-- ec-batt: added status check of devm_kasprintf
-
-Changes in v9:
-- fixed i2c_smbus_read_i2c_block_data return check
-- blocking_notifier_chain_register moved before serio registration
-- adjusted get_unaligned_le16 bounds check
-- unsigned long long > u64
-- iterator vars made scoped
-- removed "magic" values from ec-mfd
-- simplified logging, detect split into detect and init
-- improved error logs formatting
-- adjusted handler in media keys to connect strictly to dock keyboard
-
-Changes in v10:
-- ec-kbc: fixed possible out of buffer reads
-- ec-kbc: set notifier_call before blocking_notifier_chain_register
-- ec-keys: dropped input_unregister_device which should be handled by devm_input_allocate_device
-
-Changes in v11:
-- applied changes from Florian Krischer (read_size parameterized and fix keyboard response framing)
-- ec-kbc: switch notifier and serio register calls
-- ec-keys: used WRITE_ONCE()/READ_ONCE() for priv->special_key_pressed
-
-Changes in v12:
-- removed unused includes
-- fixed kernel-doc warns
-- added check if dockram client and data are not NULL
-- replaced handler in media keys with Dmitry's implementation
-- calculate battery time props with unsigned value
-
-Changes in v13:
-- switch to PLATFORM_DEVID_AUTO
-- move notifier registration into input device open()/close()
-- remove code check in asus_ec_keys_setup_keymap()
-- register notifier before serio ports
-- wrap mfd and leds at 100 chars
-- moved retry in asus_ec_reset() into loop scope
-- removed asus_ec_leds_data from leds
-- removed platform_set_drvdata form leds probe
-- iterator remains i becuase name led is already taken by struct asus_ec_led pointer
-- unfolded driver struct fill in led platform_driver
-- minor formatting changes in serio and keyboard drivers
----
-
-Michał Mirosław (6):
-  mfd: Add driver for ASUS Transformer embedded controller
-  input: serio: Add driver for ASUS Transformer dock keyboard and
-    touchpad
-  input: keyboard: Add driver for ASUS Transformer dock multimedia keys
-  leds: Add driver for ASUS Transformer LEDs
-  power: supply: Add driver for ASUS Transformer battery
-  power: supply: Add charger driver for Asus Transformers
-
-Svyatoslav Ryhel (1):
-  dt-bindings: embedded-controller: document ASUS Transformer EC
-
- .../asus,tf201-ec-pad.yaml                    | 119 ++++
- drivers/input/keyboard/Kconfig                |  10 +
- drivers/input/keyboard/Makefile               |   1 +
- .../input/keyboard/asus-transformer-ec-keys.c | 216 +++++++
- drivers/input/serio/Kconfig                   |  15 +
- drivers/input/serio/Makefile                  |   1 +
- drivers/input/serio/asus-transformer-ec-kbc.c | 258 ++++++++
- drivers/leds/Kconfig                          |  11 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-asus-transformer-ec.c       | 114 ++++
- drivers/mfd/Kconfig                           |  16 +
- drivers/mfd/Makefile                          |   1 +
- drivers/mfd/asus-transformer-ec.c             | 551 ++++++++++++++++++
- drivers/power/supply/Kconfig                  |  22 +
- drivers/power/supply/Makefile                 |   2 +
- .../supply/asus-transformer-ec-battery.c      | 289 +++++++++
- .../supply/asus-transformer-ec-charger.c      | 208 +++++++
- include/linux/mfd/asus-transformer-ec.h       | 100 ++++
- 18 files changed, 1935 insertions(+)
+ .../asus,tf201-ec-pad.yaml                    | 119 ++++++++++++++++++
+ 1 file changed, 119 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/embedded-controller/asus,tf201-ec-pad.yaml
- create mode 100644 drivers/input/keyboard/asus-transformer-ec-keys.c
- create mode 100644 drivers/input/serio/asus-transformer-ec-kbc.c
- create mode 100644 drivers/leds/leds-asus-transformer-ec.c
- create mode 100644 drivers/mfd/asus-transformer-ec.c
- create mode 100644 drivers/power/supply/asus-transformer-ec-battery.c
- create mode 100644 drivers/power/supply/asus-transformer-ec-charger.c
- create mode 100644 include/linux/mfd/asus-transformer-ec.h
 
+diff --git a/Documentation/devicetree/bindings/embedded-controller/asus,tf201-ec-pad.yaml b/Documentation/devicetree/bindings/embedded-controller/asus,tf201-ec-pad.yaml
+new file mode 100644
+index 0000000000000..60b6375864aaf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/embedded-controller/asus,tf201-ec-pad.yaml
+@@ -0,0 +1,119 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/embedded-controller/asus,tf201-ec-pad.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ASUS Transformer's Embedded Controller
++
++description:
++  Several Nuvoton based Embedded Controllers attached to an I2C bus,
++  running a custom ASUS firmware, specific to the ASUS Transformer
++  device series.
++
++maintainers:
++  - Svyatoslav Ryhel <clamor95@gmail.com>
++
++properties:
++  compatible:
++    description:
++      The 'pad' suffix is used for the controller within the tablet, while
++      the 'dock' suffix refers to the controller in the mobile dock keyboard.
++    oneOf:
++      - enum:
++          - asus,sl101-ec-dock
++          - asus,tf101-ec-dock
++          - asus,tf201-ec-pad
++          - asus,tf600t-ec-dock
++          - asus,tf600t-ec-pad
++
++      - items:
++          - enum:
++              - asus,tf101g-ec-dock
++              - asus,tf201-ec-dock
++              - asus,tf300t-ec-dock
++              - asus,tf300tg-ec-dock
++              - asus,tf300tl-ec-dock
++              - asus,tf700t-ec-dock
++          - const: asus,tf101-ec-dock
++
++      - items:
++          - enum:
++              - asus,tf300t-ec-pad
++              - asus,tf300tg-ec-pad
++              - asus,tf300tl-ec-pad
++              - asus,tf700t-ec-pad
++          - const: asus,tf201-ec-pad
++
++      - items:
++          - enum:
++              - asus,tf701t-ec-dock
++          - const: asus,tf600t-ec-dock
++
++      - items:
++          - enum:
++              - asus,p1801-t-ec-pad
++              - asus,tf701t-ec-pad
++          - const: asus,tf600t-ec-pad
++
++  reg:
++    description:
++      The ASUS Transformer EC has a main I2C address and an associated
++      DockRAM device, which provides power-related functions for the
++      embedded controller. Both addresses are required for operation.
++    minItems: 2
++
++  reg-names:
++    items:
++      - const: ec
++      - const: dockram
++
++  interrupts:
++    maxItems: 1
++
++  request-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++
++allOf:
++  - $ref: /schemas/power/supply/power-supply.yaml
++  - if:
++      properties:
++        compatible:
++          not:
++            contains:
++              const: asus,tf600t-ec-dock
++    then:
++      required:
++        - interrupts
++        - request-gpios
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      embedded-controller@19 {
++        compatible = "asus,tf201-ec-dock", "asus,tf101-ec-dock";
++        reg = <0x19>, <0x1b>;
++        reg-names = "ec", "dockram";
++
++        interrupt-parent = <&gpio>;
++        interrupts = <151 IRQ_TYPE_LEVEL_LOW>;
++
++        request-gpios = <&gpio 134 GPIO_ACTIVE_LOW>;
++
++        monitored-battery = <&dock_battery>;
++      };
++    };
++...
 -- 
 2.53.0
 
