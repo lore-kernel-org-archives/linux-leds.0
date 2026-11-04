@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793795622;
-	b=Dp1NM/0R58VDtLFG9BsISgJsRsvx64ZdmaOlnnGxtS19aIrRjceB1FTXcf0NGco27cxO
-	 VsPpaNFjWHCWJgnWltsmL9UT6z6HYdCxFjMaXrPVvUhml5BrTvSq4PrWinBN1Rbs9d7UT
-	 FnuW7A1iXK9Sgor7bT+TVdk+aguySbZENfmNmNzuh820bhqpDHn8C4sBMrj8sAPlDFm/l
-	 rd9gmBAx3dM1NlXEYRHM3tT4kJAHe+0wB1tAXL4xOCFDsDp7DRHwOTVhtzYzJILur5fcc
-	 L7PEtMkEWYCO2IFvLYGSSobO1RVrnpXbwamO0y/qCr6bz9/w/alvvfmVOKNud/MP6Uw==
+	t=1793795743;
+	b=AB2c7pzPt7iiihqdRcQV71RUdIS8E9s4qLGkJh5atpFEYetSiOySz3MPbA+ZeRMTXEPx
+	 pSd4VXCGAdcZU8cRHBQnRioJVyeMzEUNH6gi7c2j8kVrQqdxiX24eqUyNgY7/Lsn/kI5N
+	 99KipMYhHABhZPlSHz9WxSRfs8jPE/MQCd1AF4JoKF6MQoy4iYuZL+W/cCd7xuLegLsRZ
+	 Q3yMEdcz07Ycz2pXXSTdSdRF24DlJ0fnbrh12Ja0VmoyKHby35+B7P7nXH6JjO6eTSDqE
+	 cfdOsEp/GOHaFfMCRY995Z5Z4m5qFHWMiQobULbD4kDv0WEXKtJ2Igv4gqLKqh+N9Qw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793795622;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793795743;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=QTXQSnEmVHKL+w8CQeZbmsm86dtqtVVOhk3Wr0h6/Ag=;
-	b=NjmZYO0Q+CDbuDFhFZWiSXAsHWthQya5tus1Kj1WEjFUHoy0ZrM+NbO76XJ3M9y3/NEl
-	 1KI1ZX5XTcgxOwWy2YxrYJch0H8ZGtzsdRINQyLMjMuuMfp7OJRVtR095BQgwoHPWLDZ2
-	 d8TeVBoBVuazLJR24tpKUsNIy7WzMObuvOf/U/AAOr3pWMlr5EMrT4y4RT8qJXRtIYYnL
-	 iF0GEaKOTqTnZG+5UN20NQ7WE/xlxgAd0ihFF0NY0/bgbrdXm5ElTkoKomjITw3rUaHPA
-	 SDWWQYDcRQHwPzLphuDz4LonmuVhrDrqZUX1JyFZ4lUY1lx+Z4Lc5LHFHEZCMLKyz3g==
+	bh=QSCnCJ90JMrWL8peCJBS8ZGTHYZR9I3NLOXuSAsQC2k=;
+	b=KBsfCP++qsrGWg1d7188QZ40VCoWLyPEbC0OHoqsjNrlb0JR3iHgIB+DxnsShjeNY79A
+	 9sfoZPYA824/DVFEOyEnSqIcL8pjL8iOiXQf7tYe+LovasOmG+BRfRdJdJ2nskaG1uA7j
+	 HsqD0k4UEYxS2v+/rl3UjfW9Y/1M/k71qwv3tG6vJT3ZCFDXIJDZZ+wRBwleJF1PB8L9V
+	 nwMKuR31pcV8Mrwn8nB4EB08epEWBnynXsSGyEmrNHW2h9Xywiz9sQJjjmRuFeYVTGOEH
+	 GpvveoJo0cUblWMkLqvqPNs7k8IvcOcJpM8n5aK4LtVKq+vAxo4c9JT0rEBZSz0z9YQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mWQrBa18;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mBXwyFm9;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A160B606A332;
-	Wed,  4 Nov 2026 12:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88190606A31B;
+	Wed,  4 Nov 2026 12:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mWQrBa18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09BC1F000C1;
-	Wed,  4 Nov 2026 12:33:41 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mBXwyFm9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81D91F0093A;
+	Wed,  4 Nov 2026 12:35:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793795622;
-	bh=QTXQSnEmVHKL+w8CQeZbmsm86dtqtVVOhk3Wr0h6/Ag=;
+	s=k20260515; t=1793795743;
+	bh=QSCnCJ90JMrWL8peCJBS8ZGTHYZR9I3NLOXuSAsQC2k=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=mWQrBa18FKsI6lxhWrrkrSSfuhMvddcRN+u6rup2OafUZPybmAhbWkM7RLKhgXfOr
-	 YyU/zMi96ebhuEsIPFTrlxd4sTs9ir6/BOO1MJU7ifdT/lgsLegD48RQqdppb5+ilO
-	 7iDA1IawvBfhfACpc92ndVn00Q8lS7mA66UP3tBI05ftKow5p7ah7SMQgR1avwAPtx
-	 ksPze51p02ZdGlWMifV5Ei9kydUk3Ikcg8grM/Hv3K2oF2j6GnZJ8Pn9d3PWwCfF5o
-	 Wuw0Ym1I3CSg8kv3hRZrpyvxh2oGdJE0YxbbASrmOF43JQXeBiQFI5UfnS5tYDDdaK
-	 eVDSysr3ZaPXg==
-Message-ID: <sashiko-outbox-197258@kernel.org>
+	b=mBXwyFm9RHmR7mQ5zLSzfdZ2aHL/LkNz69l+b9YkQzkAeOQJbpNFgkpFeMxAoN++G
+	 rV9ElGVle/N2HnvRkxpNUddiVz+oY3MaUDP0QwkkCLcip3B8jlufRJDTa6XJdjwL9e
+	 EFPNpP/PY0/NLempsW8zhN54v0LGGzF5OhdcukKRcomUKNDLS6r3ENJLOTe/3AZ+z9
+	 bQ2pvmgCv+N/pGcr3NPVcK5XP/Pmr2XbgaMs25lh1ak3PgA4J84bJzD3FgSVauITnE
+	 YSDvW9qN8Z/3pYikCwZV9nySMHWOkKnJ0ploofta93EP7hRWHtJZJ/98Mdm7pRINKI
+	 IOIeMeFW0D5Vw==
+Message-ID: <sashiko-outbox-197259@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v13 5/7] leds: Add driver for ASUS Transformer LEDs
+Subject: Re: [PATCH v13 7/7] power: supply: Add charger driver for Asus
+ Transformers
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-input@vger.kernel.org, mfd@lists.linux.dev, linux-leds@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, dmitry.torokhov@gmail.com, lee@kernel.org
-In-Reply-To: <20261104122606.215629-6-clamor95@gmail.com>
+Cc: mfd@lists.linux.dev, linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261104122606.215629-8-clamor95@gmail.com>
 References: <20261104122606.215629-1-clamor95@gmail.com>
- <20261104122606.215629-6-clamor95@gmail.com>
+ <20261104122606.215629-8-clamor95@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 04 Nov 2026 12:33:41 +0000
+Date: Wed, 04 Nov 2026 12:35:42 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,81 +61,19 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [Medium] leds: non-standard two-part LED name format in asus_ec_led_probe=
-()
-- [Low] leds: missing driver prefix in commit subject
---
+> From: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+>=20
+> Add support for charger detection capabilities found in the embedded
+> controller of ASUS Transformer devices.
+>=20
+> Suggested-by: Maxim Schwalm <maxim.schwalm@gmail.com>
+> Suggested-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
-commit 8625f763ce281e3f67385ab547a18ea8401f88e9
-Author: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-
-leds: Add driver for ASUS Transformer LEDs
-
-This commit adds an LED class driver for the green and amber charging
-indicator LEDs on the ASUS Transformer Pad and Dock embedded controllers.
-
->     leds: Add driver for ASUS Transformer LEDs
->    =20
->     ASUS Transformer tablets have a green and an amber LED on both the Pad
->     and the Dock.
->    =20
->     Co-developed-by: Svyatoslav Ryhel <clamor95@gmail.com>
->     Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->     Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-
-[Severity: Low]
-This isn't a bug, but LED subsystem commit subjects normally include the
-driver sub-prefix in the form "leds: <driver>: <Capitalized description>".
-Should the subject line be updated to something like:
-
-  leds: asus-transformer-ec: Add driver for ASUS Transformer LEDs
-
-[ ... ]
-
-> diff --git a/drivers/leds/leds-asus-transformer-ec.c b/drivers/leds/leds-=
-asus-transformer-ec.c
-> new file mode 100644
-> index 0000000000000..f797dcefd16e6
-> --- /dev/null
-> +++ b/drivers/leds/leds-asus-transformer-ec.c
-
-[ ... ]
-
-> +static int asus_ec_led_probe(struct platform_device *pdev)
-> +{
-> +	const struct asusec_core *ec =3D dev_get_drvdata(pdev->dev.parent);
-> +	struct device *dev =3D &pdev->dev;
-> +	struct asus_ec_led *leds;
-> +	int ret;
-> +
-> +	leds =3D devm_kcalloc(dev, ASUSEC_LED_MAX, sizeof(*leds), GFP_KERNEL);
-> +	if (!leds)
-> +		return -ENOMEM;
-> +
-> +	for (int i =3D 0; i < ASUSEC_LED_MAX; i++) {
-> +		const struct asus_ec_led_config *cfg =3D &asus_ec_leds[i];
-> +		struct asus_ec_led *led =3D &leds[i];
-> +
-> +		led->cdev.name =3D devm_kasprintf(dev, GFP_KERNEL, "%s:%s", ec->name, =
-cfg->name);
-
-[Severity: Medium]
-Does formatting led->cdev.name as "%s:%s" with ec->name ("pad" or "dock")
-and cfg->name ("amber" or "green") omit the function section expected by
-the LED class naming convention?
-
-Documentation/leds/leds-class.rst specifies the three-section
-devicename:color:function format (or color:function when devicename is
-omitted). When a two-section name containing a single colon such as
-"pad:amber" or "dock:green" is exposed in /sys/class/leds/, userspace
-tooling such as tools/leds/get_led_device_info.sh parses the first field
-(ec->name) as the color and the second field (cfg->name) as the function.
-
-Should led->cdev.name include the function segment as well (for example,
-using LED_FUNCTION_CHARGING to form "%s:%s:" LED_FUNCTION_CHARGING)?
+Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261104122606.2156=
-29-1-clamor95@gmail.com?part=3D5
+29-1-clamor95@gmail.com?part=3D7
+
