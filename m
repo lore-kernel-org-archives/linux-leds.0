@@ -1,100 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793812303;
-	b=lgKqlfdtPqZwOrKBrajCcnaq+nS7jE/aru9oDkHLKCjIvirfy0R58aZMdUbXIJt2y29I
-	 89F65wYSRivPUsemWCMOWR7OCMvBw/En2uVGfvW1t4kXDpWIOjuUnQkiHljTKnrsS2/Ji
-	 pK3nP5HuqEmn3ye6+944Q+5hihA9/319nEZ/8e/oUI39kjzaq7prw/3yXSoNpzzMpKrSs
-	 b2+56PKUbP/oIDwfv3h2c/8072WWU7oC0hCS/P3LIzmNQ9x1a5UaQP2Jp9SbnQzXZPgHE
-	 1xrxItC1R9B3DR+CuIgzCymc32aE1q5SiVSNKa16Uj9abuMtX0WprJTrOiqfV9AikDw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793812303;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793813053;
+	b=AunNWANX7L2AdPrLZA92F5rLTXgH/CYzJw8qidC7Xz17NFuDMMAlRmwMmF4tpTcO9b/t
+	 fCwcEFcm6MXGGy6BLHJvRwS3O4Iq5p2fay7Qecvp2ZE6fluTvQ0tA+DDmuSyLpLwCwuWb
+	 ZKp5AL+7zVocLsgRI5jAp44oGls3dtn6ugfI40QxQJQurRJygOdpEQZsLeJ5acOWDpCPl
+	 2SiwMYpxZ8aH2u2Dr0EHl0SkPWeR/XBgngBZBO7poejTWBhSsRLhXCOxxAS56RkAfrpS4
+	 CZ3rbI7PIYvu1dOwAPcUVDy4jbxN+XxxgdtWw+7J58YujNKJ6ii4ThBliA/E4yl8iQA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793813053;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
-	b=PNTiwaVTzXVhdvbUgOJV20eQ0bzmqa44sIiDZbQy95W5YDPijkgYrINUYKFX1bl2W8zh
-	 ipqwfZ/nP7Z6ZvMjR2BTB3z/jY5j/tGRpTDykppfnh5o7XzqKbCQLLYJOrvXMhuFCUQbQ
-	 ZRgYQCKlYWPDI9ImPELsdGUsfmpy85RUEJ5vFzUZAeb4gfplZCUoaBvi8zkX8U2aap0VP
-	 ZYCmPz6ZKbehxLprk7cMDqvbAsNIednW6+6ORyZe4MauGizDx1UvHYlpzHjPeP9tL4RC1
-	 sUcthBYUbiOGl/nzZqpTxRKy2HLjWE6pt9g97ifRIhgJR7cgj9KzhxC8AO8MElvrYjg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=KJ6VISWospHgYw8r3RLcWmStVXedmzrG4Mzjiqw8u3g=;
+	b=ycS9TBpbBw0iMw4EYUzfiJ2zYSG9xMNethWUhA+k487qj61TyZFTFCNFS3vzh2Hd9/jv
+	 s8LVq2lGT5ccutXo8VJfPWhkWO2NAL34132JfEayqkGqeOd6LfivpeXr1yCqbJH34N4op
+	 YjGKyOudly/IkbwT33woTpN+x60Cq/yTQ775sLOiFHoe6RYroziZvindpxxHcAsWHJQSK
+	 uPoQJmfDmZJ2A8NF2RbC+luNdZArF8vc6T87K3aTzFtE3hVJ0b9XtXj+pHyPokTLua6HQ
+	 eNkpn/D9smwgQe2WIGwAsJltoicRBxCSoGm52+Blx7SVz9WaYzH9wMN+hdr0sL4H+Xg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="g9e2/awe";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=74.125.82.182
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com [74.125.82.182])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wc+AbIDQ;
+	arc=none smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE3606A326
-	for <linux-leds@vger.kernel.org>; Wed,  4 Nov 2026 17:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 17AE3606A326
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC60606A326
+	for <linux-leds@vger.kernel.org>; Wed,  4 Nov 2026 17:24:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AAC60606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=g9e2/awe
-Received: by mail-dy1-f182.google.com with SMTP id 5a478bee46e88-353804b591eso1767185eec.0
-        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 09:11:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793812301; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Zp7Ij14RMqSMQ2DsJAPSRUPCQ0UVDl/NO5qZh4k0JfnQGL8zL2NkH7llD90f1/aoXZ
-         F8Yl4QBh5zZsFd25Bpd2WKTJ7U1erCrobxyx8Um2Moocql427jJXFCJNU3cfk3nnUNO1
-         2qLoJs9qCg1q4Kh+bWFgKoUBqHJlcdkuz0JqC3xw2Nkw9/z0oorrxJfJWEep0Hxukp23
-         Ep+mRQHrSs6zPfNZvbkahE08lSTi2WAaoCn+Dms3ha+mTjvUU59GozEbq0ZRaX6u/uLW
-         P5KwhMORAn3Ae/PvE3lIEv1p3d6dNCi/HaRkeIK/oiRjX0uLEd7PbDiOfSE9cEA0F3tD
-         CSYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
-        fh=FkVFHsiR6MeOD441yTuoRECNdmDexR2RXpbMmVeWkdk=;
-        b=Jxad1Dzpzr0baDlCYmf1jXEpmFE+i+w/XOM8RukcMpeVZw+7Ny0D89JxGyKBJq2XmT
-         2dgzdsvA0lNPEaJIQwa2ypRx7ep2JodwQSW6zPcOLaUGmYJkyGWByXcRYilaW/TH3BbU
-         W3duWEzjiRMdyrfSuy77JIdhZXo11N62bsrikyzCRwC/plkREAzXdm/PXHoMXWkUMXhb
-         Ih2I/amUBIgeW9vbIF451yIq/+fgVFNOgkXfdYX6Na/qe/cuPJZj3ahDzXejrbJubYen
-         hiFygePF+3s8ct4RgKqGnSh88R84Pkj/wCW+TpONt2u6VSNfiYt3IcdqYmJTIVp3UJKo
-         dk5A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Wc+AbIDQ
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48df54150dfso673935f8f.0
+        for <linux-leds@vger.kernel.org>; Wed, 04 Nov 2026 09:24:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793812301; x=1794417101; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=gmail.com; s=20260707; t=1793813051; x=1794417851; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
-        b=g9e2/aweCrDqLnLcITse1QShLZthHw8Mqly8wXXa91UBm+nSLtmAQ3UHIgYBJmnKtj
-         0yhmcIs65LXXpK/TecaTncBnPQ6sJmAdUo5dBvrO/TFuODZFLra0oQudzDKAMDuqJr2t
-         TDQ8NUjAJ68cNOlHjpilc4tahvoVwdNp0wz+uZBpmuL4lZNOuqKzyP6HNEGH6Zqlyiw5
-         V4R3x78vyrMlj3j8WWwkXUjqIfBpvmqX0J9tnyaO2rnPcBiTDH59ENZOQ1JixF1J6zkk
-         iRqCx7J8sXMkMx6I+MGWG/QE7cZ9pJIfbhyV7wHT5D/mV+54jTln0fAU6ifd4AOibU0z
-         BtJA==
+        bh=KJ6VISWospHgYw8r3RLcWmStVXedmzrG4Mzjiqw8u3g=;
+        b=Wc+AbIDQjwboDUfssHTFxKoUosrOYYPxrV6kw7i0TjQIco1rDmhZbhvR2S/o9h6Pe9
+         P0p44wk2wXLv77EKwW94aa1ng19+eBkLHdUzTl0DYRmYOwPP26pQ6vhXR32ZLkz7xVV4
+         9OlbVAowbknyKoxuzSv75cBsuSOrINYPhOlA3loBXpFokKPjbMMwYQ6dGl6HiXkBwfif
+         0GTznnKiLZ4gJKSRsoWi3AGCACiO18kHzLcGc5B5JEaFQgW3wJrXK+brQ5qc/COxSmg+
+         HDZOsjjHs50toWS8olorj+nY1B6DhZga8jMjByfPAxZhdJ45Oc6/Ec3WsUc1BdFhFXsW
+         FQuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793812301; x=1794417101;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1793813051; x=1794417851;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=vLpPSm7/G9CGwwl+f3j0Z0ukU9iAToPS+CRUPv/RJVM=;
-        b=oCN7UHnasqxMtJjENuhum93fxLHPdymQN4F6etZR8LmWTaU8tlMyxFL2ZiiVCbGWD9
-         XnZ6xNS0DNL1QEAO+EP22DLSB93ie8L1Ivz4JDAeWvpJ7uv0YH4GfqmxD808iGLzCSWm
-         Be3SPTx2hqvRQg1jxyMepkg6GqA2kIWfQzr7gremE2zlymowbLkFTIAYUGJd+mgvHO7B
-         VLsxg76MDthhKEvmiOeWZmwIT5VwUauLE4C4wW2SxumZMLL1rWZH7F4I0AdB/RREySkO
-         tV0GQQuFNzCaKmEa8PLK6+0VvicFoQwPfi0l1PAZXE5Lr2PBK4bLQVJrjwECKLR3uu54
-         +vSw==
-X-Forwarded-Encrypted: i=1; AKwUvBxwwjtWb4m0bjHqHy5WheWZoR0HnS4C6luZaTPUP6grvPNhjyStGevf0iOc7pOkl5QLsfRdF25hl+MB@vger.kernel.org
-X-Gm-Message-State: APuU4Z/4nmkPVeji/75ClPFXjELedy7UP9xAPCkf/NBE9oFa6t8B0J4P
-	2FjpoxYPaAY/HzFJB78S5pvDmd7BdMs+aqtRqjYjO9/ALDJiiD/9aro+1utMIKw3q5GXE2IAQWa
-	EF1hKeGM2WIYMLoSAeAGPuzFXOeoR09xOGw==
-X-Gm-Gg: AYBFou08TnFSN3iQg3O7V7oI03cv+A4vMWHrBoNV7pbBYbCgJU3hRYYIZfkYE9WwrqX
-	hhU9QxuehTd7PYkfMMU1ncbXWGd8Zr6XapNB1dA5LmVmNJs9sXHGNhhhGYabSzl1uFfQ1OPXzuh
-	lodt8YdU4wkHIkSN2f8SDqWhY7FkzlsIBgKqwupJ5yBGeX+l5UGUzO7zly03JfEcKeyV74MBgYf
-	fuwPIgAJCK9ZqOtbvcDGu3NfdrdNjWy/1CKaayUc047tR6hBtMg90e5gCfAHEAVPA3pw/5uF8+i
-	HTgifa+JW8PtTKrvnNxsEB2SB4xQAa1CCUZtwtn+lFm86g2NRcSsfloq5uirEJYfwJvAp7Y+jaZ
-	s0ZjIY5LaD3HNrwj9w7udXAsAI4rs8OkXN7tghGTGq1egOYszrcc8gq2tOgyGyXyXcFMQpO4=
-X-Received: by 2002:a05:701b:2094:20b0:15e:3a65:5b97 with SMTP id
- a92af1059eb24-1ac5b028805mr25800804c88.16.1793812300785; Wed, 04 Nov 2026
- 09:11:40 -0800 (PST)
+        bh=KJ6VISWospHgYw8r3RLcWmStVXedmzrG4Mzjiqw8u3g=;
+        b=uA4GtPQuxjzfcuHHGla8u9s/V5V0Kl9aC4hhokEKdrYjfoje8+7ea7DGFwFjbNq88z
+         8RR5QPi++K/OxXDiyMvYPVEkJEaKZMgtMssn1XC9i4TTeiy1a4ozSJZuPKQyGnbEfhMT
+         eXMZ+gXuxqcJa1aYYCtNsbtqoMreZ3oBmW749FmYcxUN25QFxbchq1LArydoyDwKCDg6
+         zAnwYtalLKRvzrAElRSyHVhxeVYAmIZ7axaW6BHMQSe6jH/jQ6cP5Is6NrNPN+uMJTQB
+         7IeR3P1i4rDCq/Pi89t1HsFZbFWm/6643x6YdzoBzlIC6qTS+U2KaJEbbn4zqbjThmn+
+         jIMw==
+X-Forwarded-Encrypted: i=1; AKwUvBwY8HsxFq0r8zfec99ht//ylvrtxttwtuG8wN68SaHa3/T+Y2Wae+exul5sXe8eni4j4CM8VEwYJXJk@vger.kernel.org
+X-Gm-Message-State: APuU4Z+XiI8IRtpyFoIeWjST6tcBjmtjY3DEijYLQBoQd1suQOoGK3os
+	nIRhPQ2t5/IKiBWYBp3yKnFOa8mAQ/yFBmnU8aImJVwiVnI00DFV4bPM
+X-Gm-Gg: AYBFou2n1us+mVhnQfoVv59Pgyxf0Bwsev7ijcxZB9BJi0YzXXJwnfEDKywlhNzokJx
+	VSrnWzXptPYO0lL3XpX2UaPBeV6sJFAnTyGD+qFEhsb77ywbodX6BFcSRsRV5xtWwYHJTLVAclq
+	Djq/YTOSzgpk8WOMxktIHi79ZHHJ2ybBjuRZlKBd8UTXj6/2vPA6XBNxzmNFtv3vrmK1aiSF2w1
+	nRSpJOU3tNOORoF5odDnGA7cVAUGfwHRqSQsh34Yd0la1JgKKmEoeel1I2py+XmXX8S1wBWBpMD
+	BaOFmm+akjqiiaKVHVOS+zHvHPpsjUCjhibz5HzOEDFlhSIV+/keglzRmB7Do1CAADjqoyVHmo8
+	45fPnqKUagTuWJtWypa49r3Qo1BdTQFDN8rv+vau/sGebOwyQab2uUgQ5LjOmRVjKn25D32uAP+
+	DgAUxDRkuaZmvnIGKPlFDmKzw7+WtY49BK+/Ds3+6wYp2ul7cbbSlxI2wyrQercRbOOG6WwyHIc
+	868dXLgBNHJDXMjbUbDoRaIEMl+yfm4Rz7ws6YtffiEwP+gytb2PMkj1fUDgraCKXLqdy62GVAF
+	fh+JNRnLvlpIP5HbgahOP8a+TnRLBdU6hDMNvFX127/xWO3EGtw+AaRssqfSr/0Hp/Hz824SK7f
+	hqyfw
+X-Received: by 2002:a5d:5f85:0:b0:490:d197:bde8 with SMTP id ffacd0b85a97d-490d1a700a0mr1652639f8f.0.1793813050825;
+        Wed, 04 Nov 2026 09:24:10 -0800 (PST)
+Received: from rillian-arch.localnet ([2a00:23a8:8f4:6a01:5ffc:da36:c891:cd3c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48fecac2772sm4779319f8f.18.2026.11.04.09.24.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Nov 2026 09:24:09 -0800 (PST)
+From: Rillian Grant <rillian.grant@gmail.com>
+To: Lee Jones <lee@kernel.org>, Ruslan Koreev <koreev.r@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v3 4/4] leds: flash: lm3643: Describe the LED on the Lenovo
+ ThinkPad X9-15 Gen 1
+Date: Wed, 04 Nov 2026 17:24:04 +0000
+Message-ID: <IvA-bOWrRpaeGbjjXz1l3w@gmail.com>
+In-Reply-To: <20261021144034.1636708-1-koreev.r@gmail.com>
+References:
+ <20261011191026.149338-1-rillian.grant@gmail.com>
+ <179198409516.839288.2293417415100693160@kernel.org>
+ <20261021144034.1636708-1-koreev.r@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -104,251 +107,208 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261027115006.86032-1-clamor95@gmail.com> <179318844110.3606039.5801345229436270811@kernel.org>
-In-Reply-To: <179318844110.3606039.5801345229436270811@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 4 Nov 2026 19:11:29 +0200
-X-Gm-Features: AclHuK-W6Ff7Myct4ijzugesQFIYDn63N4IFMyOx6cneGQ-BUwydTKZuesFNTiI
-Message-ID: <CAPVz0n3tR8R5xe_F20kChnHHrWG40o7prwY6kCYXM-UtYPFKLQ@mail.gmail.com>
-Subject: Re: [PATCH v4] leds: Add driver for MAX8907 LED cell
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org, mfd@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="nextPart3G_yHyoEQi2GJmRMCtpajw"
+Content-Transfer-Encoding: 7Bit
 
-=D1=81=D1=80, 4 =D0=BB=D0=B8=D1=81=D1=82. 2026=E2=80=AF=D1=80. =D0=BE 17:16=
- Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> --- checkpatch.pl (1 issue) ---
-> Line 38: WARNING: please write a help paragraph that fully describes the =
-config symbol with at least 4 lines
-> ----------------------------------
->
-> On Tue, 27 Oct 2026, Svyatoslav Ryhel wrote:
->
-> > Add a small driver to control the LED cell provided by the MAX8907 PMIC=
-.
-> > The LED does not require any specific configuration and is folded into =
-the
-> > PMIC's node.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> > Changes in v2:
-> > - rebased so patch is now applicable to linux/next
-> >
-> > Changes in v3:
-> > - added check if led is off for get callback
-> > - added dedicated MAX8907_REG_WLED_MODE_ON mask
-> > - switched to devm_led_classdev_register_ext
-> >
-> > Changes in v4:
-> > - platform_set_drvdata dropped
-> > - init_data.devicename dropped
-> > - added MODULE_ALIAS
-> > ---
-> >  drivers/leds/Kconfig        |  7 +++
-> >  drivers/leds/Makefile       |  1 +
-> >  drivers/leds/leds-max8907.c | 90 +++++++++++++++++++++++++++++++++++++
-> >  drivers/mfd/max8907.c       |  1 +
-> >  include/linux/mfd/max8907.h |  2 +-
-> >  5 files changed, 100 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/leds/leds-max8907.c
-> >
-> > diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> > index 788e689fe875c..3796c562919fe 100644
-> > --- a/drivers/leds/Kconfig
-> > +++ b/drivers/leds/Kconfig
-> > @@ -813,6 +813,13 @@ config LEDS_MAX77705
-> >       help
-> >         LED driver for MAX77705 PMIC from Maxim Integrated.
-> >
-> > +config LEDS_MAX8907
-> > +     tristate "LED support for MAX8907 PMIC"
-> > +     depends on LEDS_CLASS && MFD_MAX8907
-> > +     help
-> > +       This option enables support for on-chip LED drivers on
-> > +       MAXIM MAX8907 PMIC.
->
-> As requested on v3, please expand this help text to at least 4 lines to s=
-atisfy
-> 'checkpatch.pl'.
->
-> > +
-> >  config LEDS_MAX8997
-> >       tristate "LED support for MAX8997 PMIC"
-> >       depends on LEDS_CLASS && MFD_MAX8997
-> > diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-> > index 3da746279bb81..24efda3fbaa44 100644
-> > --- a/drivers/leds/Makefile
-> > +++ b/drivers/leds/Makefile
-> > @@ -67,6 +67,7 @@ obj-$(CONFIG_LEDS_LTC3220)          +=3D leds-ltc3220=
-.o
-> >  obj-$(CONFIG_LEDS_MAX5970)           +=3D leds-max5970.o
-> >  obj-$(CONFIG_LEDS_MAX77650)          +=3D leds-max77650.o
-> >  obj-$(CONFIG_LEDS_MAX77705)          +=3D leds-max77705.o
-> > +obj-$(CONFIG_LEDS_MAX8907)           +=3D leds-max8907.o
-> >  obj-$(CONFIG_LEDS_MAX8997)           +=3D leds-max8997.o
-> >  obj-$(CONFIG_LEDS_MC13783)           +=3D leds-mc13783.o
-> >  obj-$(CONFIG_LEDS_MENF21BMC)         +=3D leds-menf21bmc.o
-> > diff --git a/drivers/leds/leds-max8907.c b/drivers/leds/leds-max8907.c
-> > new file mode 100644
-> > index 0000000000000..a5c445f75d1b1
-> > --- /dev/null
-> > +++ b/drivers/leds/leds-max8907.c
-> > @@ -0,0 +1,90 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +
-> > +#include <linux/err.h>
-> > +#include <linux/leds.h>
-> > +#include <linux/mfd/max8907.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/property.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#define MAX8907_REG_WLED_MODE_ON     BIT(0)
-> > +
-> > +struct max8907_led_data {
-> > +     struct max8907 *max8907;
->
-> As asked on v3, what is 'max8907' used for?
->
-> > +     struct regmap *regmap;
-> > +     struct led_classdev cdev;
-> > +};
-> > +
-> > +static enum led_brightness max8907_led_get_brightness(struct led_class=
-dev *cdev)
-> > +{
-> > +     struct max8907_led_data *ddata =3D container_of(cdev, struct max8=
-907_led_data, cdev);
-> > +     unsigned int brightness_lvl;
-> > +     int ret;
-> > +
-> > +     ret =3D regmap_read(ddata->regmap, MAX8907_REG_WLED_MODE_CNTL, &b=
-rightness_lvl);
-> > +     if (ret || !(brightness_lvl & MAX8907_REG_WLED_MODE_ON))
-> > +             return LED_OFF;
-> > +
-> > +     ret =3D regmap_read(ddata->regmap, MAX8907_REG_WLED_CNTL, &bright=
-ness_lvl);
-> > +     if (ret)
-> > +             return LED_OFF;
-> > +
-> > +     return brightness_lvl;
-> > +}
-> > +
-> > +static int max8907_led_set_brightness(struct led_classdev *cdev,
-> > +                                   enum led_brightness brightness)
-> > +{
-> > +     struct max8907_led_data *ddata =3D container_of(cdev, struct max8=
-907_led_data, cdev);
-> > +     int brightness_lvl, ret;
-> > +
-> > +     brightness_lvl =3D clamp(brightness, LED_OFF, LED_FULL);
-> > +
-> > +     if (brightness_lvl) {
-> > +             ret =3D regmap_write(ddata->regmap, MAX8907_REG_WLED_CNTL=
-, brightness_lvl);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     return regmap_update_bits(ddata->regmap, MAX8907_REG_WLED_MODE_CN=
-TL,
-> > +                               MAX8907_REG_WLED_MODE_ON,
-> > +                               brightness_lvl ? MAX8907_REG_WLED_MODE_=
-ON : 0);
-> > +}
-> > +
-> > +static int max8907_led_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct max8907 *max8907 =3D dev_get_drvdata(dev->parent);
-> > +     struct led_init_data init_data =3D { };
-> > +     struct max8907_led_data *ddata;
-> > +
-> > +     ddata =3D devm_kzalloc(dev, sizeof(*ddata), GFP_KERNEL);
-> > +     if (!ddata)
-> > +             return -ENOMEM;
-> > +
-> > +     ddata->max8907 =3D max8907;
-> > +     ddata->regmap =3D max8907->regmap_gen;
-> > +
-> > +     init_data.fwnode =3D dev_fwnode(dev->parent);
->
-> This will evaluate to 'pmic'.  The sysfs attribute will be incorrect.
->
-> Since there is no child node, why not set 'ddata->cdev.name' directly
-> and use 'devm_led_classdev_register()'?
->
+This is a multi-part message in MIME format.
 
-This is required to be able to reference led in the device tree. Since
-led node is folded into pmic's node, pmic's node is used to bind led.
+--nextPart3G_yHyoEQi2GJmRMCtpajw
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-> > +
-> > +     ddata->cdev.brightness =3D LED_OFF;
-> > +     ddata->cdev.flags =3D LED_CORE_SUSPENDRESUME;
-> > +     ddata->cdev.max_brightness =3D LED_FULL;
-> > +
-> > +     ddata->cdev.brightness_get =3D max8907_led_get_brightness;
-> > +     ddata->cdev.brightness_set_blocking =3D max8907_led_set_brightnes=
-s;
-> > +
-> > +     return devm_led_classdev_register_ext(dev, &ddata->cdev, &init_da=
-ta);
-> > +}
-> > +
-> > +static struct platform_driver max8907_led_driver =3D {
-> > +     .driver.name =3D "max8907-leds",
->
-> Cute.  But please expand.
->
-> > +     .probe =3D max8907_led_probe,
-> > +};
-> > +module_platform_driver(max8907_led_driver);
-> > +
-> > +MODULE_ALIAS("platform:max8907-leds");
-> > +MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
->
-> Your name is misspelt here.
->
-> > +MODULE_DESCRIPTION("MAX8907 LED driver");
-> > +MODULE_LICENSE("GPL");
-> > diff --git a/drivers/mfd/max8907.c b/drivers/mfd/max8907.c
-> > index e282dd82ece69..826d7768fd8d0 100644
-> > --- a/drivers/mfd/max8907.c
-> > +++ b/drivers/mfd/max8907.c
-> > @@ -20,6 +20,7 @@
-> >  #include <linux/slab.h>
-> >
-> >  static const struct mfd_cell max8907_cells[] =3D {
-> > +     { .name =3D "max8907-leds", },
->
-> Separate patch.
->
-> >       { .name =3D "max8907-regulator", },
-> >       { .name =3D "max8907-rtc", },
-> >  };
-> > diff --git a/include/linux/mfd/max8907.h b/include/linux/mfd/max8907.h
-> > index e222250f0cc1e..35b2ede54f856 100644
-> > --- a/include/linux/mfd/max8907.h
-> > +++ b/include/linux/mfd/max8907.h
-> > @@ -112,7 +112,7 @@
-> >  #define MAX8907_REG_CHG_IRQ2_MASK    0x81
-> >  #define MAX8907_REG_CHG_STAT         0x82
-> >  #define MAX8907_REG_WLED_MODE_CNTL   0x84
-> > -#define MAX8907_REG_ILED_CNTL                0x84
-> > +#define MAX8907_REG_WLED_CNTL                0x85
-> >  #define MAX8907_REG_II1RR            0x8E
-> >  #define MAX8907_REG_II2RR            0x8F
-> >  #define MAX8907_REG_LDOCTL20         0x9C
-> > --
-> > 2.53.0
-> >
-> >
->
-> --
-> Lee Jones
+Hi Ruslan,
+
+On Wednesday, 21 October 2026 15:40:34 GMT Ruslan Koreev wrote:
+> Rillian, could you share the relevant SPB trace, including mode, current
+> and timeout writes, together with the installed driver version?
+
+Driver versions: the X9-15 Gen 1 values are from the Windows install on
+my machine. The X1 Carbon Gen 14 values are from the current package on
+Lenovo's support site.
+
+X9-15 Gen 1:
+- lm3643.inf/.sys 70.26100.2.18321 (02/20/2025)
+- IR sensor: HM1092, hm1092.inf 70.26100.2.18321
+- FlashLEDsIntensity = 0x3C64 (lm3643.inf)
+- IRFlashLedIntensity = 40 (hm1092.inf)
+
+X1 Carbon Gen 14:
+- lm3643.inf 71.26100.10.21060 (08/05/2026) however lm3643.sys contradicts
+  with 71.26100.23.21060
+- IR sensor: VD55G1, TBE0020A1.inf 71.26100.10.21060
+- FlashLEDsIntensity = 0x3C64 (lm3643.inf)
+- IRFlashLedIntensity = 30 (TBE0020A1.inf)
+
+Both lm3643.inf files bind ACPI\TXNW3643 and ACPI\INT347D. Apart from
+the version, they differ only in where DeviceCharacteristics/Security
+are written. The registry on the X9 matches the INF defaults.
+
+Before I submitted the DMI software node patch, I had seen that the
+Carbon had a different driver version and a different IRFlashLedIntensity.
+That is why I didn't reuse its values for the X9.
+
+I traced Microsoft-Windows-SPB-ClassExtension (analytic) during a
+Windows Hello face unlock on the X9. Every write to the LM3643 is
+preceded by a read of the same register. Register decodes are from
+SNVS967A.
+
+Start of the session (once, after the controller entered D0):
+  R 0x0A=00  R 0x0B=00  R 0x01=03  R 0x0C=02
+  R 0x07=09 -> W 0x07=09   boost config, POR default (2 MHz, 2.8 A ILIM,
+                           short detect on)
+  W 0x01=03                standby, LED1+LED2 enable, TX pin enable off
+                           (POR is 0x80)
+  W 0x08=00                no torch ramp, flash timeout 10 ms
+
+Per pulse (repeats every ~133 ms):
+  W 0x01=03                standby
+  W 0x08=0F                no torch ramp, flash timeout 400 ms
+  W 0x03=99                bit7 = LED2 flash current override (LED2 = LED1),
+                           code 0x19 -> 25 x 11.725 + 10.9 = ~304 mA per
+                           LED (~608 mA total)
+  W 0x01=0F                flash mode (M1,M0=11), LED1+LED2  <- LED on
+  ... ~65 ms ...
+  W 0x08=00                timeout set to 10 ms while the flash is running
+  W 0x01=03                standby                           <- LED off
+  R 0x0A=01  R 0x0B=00     Flags1 bit0 = flash time-out flag (0x00 after
+                           the first pulse, 0x01 after every later pulse)
+
+This unlock had 6 pulses. The last one was turned off after ~3 ms, once
+the face was recognised. The driver never wrote the torch registers
+(0x05/0x06) or the LED2 flash register (0x04), and never used IR mode,
+STROBE or TX. The only values written to 0x01 were 0x03 and 0x0F.
+
+The LM3643 transactions with timestamps are attached. The raw ETL/XML
+trace is available on request.
+
+--
+Rillian Grant
+--nextPart3G_yHyoEQi2GJmRMCtpajw
+Content-Disposition: attachment; filename="lm3643-trace.txt"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"; name="lm3643-trace.txt"
+
+10:47:24.493347  LM3643 W 0x0A | R 0x00
+10:47:24.493427  -- controller 0x3CF250DE2738 D-state 0x1
+10:47:24.504454  LM3643 W 0x0B | R 0x00
+10:47:24.504748  LM3643 W 0x01 | R 0x03
+10:47:24.505018  LM3643 W 0x0C | R 0x02
+10:47:24.505315  LM3643 W 0x07 | R 0x09
+10:47:24.505564  LM3643 W 0x0709
+10:47:24.505741  LM3643 W 0x01 | R 0x03
+10:47:24.506021  LM3643 W 0x0103
+10:47:24.506229  LM3643 W 0x01 | R 0x03
+10:47:24.506479  LM3643 W 0x01 | R 0x03
+10:47:24.506736  LM3643 W 0x0103
+10:47:24.507080  LM3643 W 0x08 | R 0x00
+10:47:24.507317  LM3643 W 0x0800
+10:47:24.507537  LM3643 W 0x01 | R 0x03
+10:47:24.507777  LM3643 W 0x0103
+10:47:24.507935  LM3643 W 0x01 | R 0x03
+10:47:24.508181  LM3643 W 0x0103
+10:47:24.552953  HM1092(IR) W 0x010000
+10:47:24.632548  HM1092(IR) W 0x010001
+10:47:24.669203  -- controller 0x3CF250DDE738 D-state 0x1
+10:47:24.675057  LM3643 W 0x01 | R 0x03
+10:47:24.675520  LM3643 W 0x0103
+10:47:24.675806  LM3643 W 0x08 | R 0x00
+10:47:24.676278  LM3643 W 0x080F
+10:47:24.676575  LM3643 W 0x03 | R 0x99
+10:47:24.676857  LM3643 W 0x0399
+10:47:24.677059  LM3643 W 0x01 | R 0x03
+10:47:24.677316  LM3643 W 0x010F
+10:47:24.681780  IMX471(RGB) W 0x010000
+10:47:24.741365  LM3643 W 0x08 | R 0x0F
+10:47:24.741647  LM3643 W 0x0800
+10:47:24.741872  LM3643 W 0x01 | R 0x0F
+10:47:24.742178  LM3643 W 0x0103
+10:47:24.742372  LM3643 W 0x0A | R 0x00
+10:47:24.742621  LM3643 W 0x0B | R 0x00
+10:47:24.742969  IMX471(RGB) W 0x010001
+10:47:24.807808  LM3643 W 0x01 | R 0x03
+10:47:24.808069  LM3643 W 0x0103
+10:47:24.808246  LM3643 W 0x08 | R 0x00
+10:47:24.808503  LM3643 W 0x080F
+10:47:24.808776  LM3643 W 0x03 | R 0x99
+10:47:24.809023  LM3643 W 0x0399
+10:47:24.809178  LM3643 W 0x01 | R 0x03
+10:47:24.809456  LM3643 W 0x010F
+10:47:24.874410  LM3643 W 0x08 | R 0x0F
+10:47:24.874691  LM3643 W 0x0800
+10:47:24.874913  LM3643 W 0x01 | R 0x0F
+10:47:24.875165  LM3643 W 0x0103
+10:47:24.875371  LM3643 W 0x0A | R 0x01
+10:47:24.875619  LM3643 W 0x0B | R 0x00
+10:47:24.940847  LM3643 W 0x01 | R 0x03
+10:47:24.941139  LM3643 W 0x0103
+10:47:24.941306  LM3643 W 0x08 | R 0x00
+10:47:24.941552  LM3643 W 0x080F
+10:47:24.941768  LM3643 W 0x03 | R 0x99
+10:47:24.942104  LM3643 W 0x0399
+10:47:24.942271  LM3643 W 0x01 | R 0x03
+10:47:24.942513  LM3643 W 0x010F
+10:47:25.007386  LM3643 W 0x08 | R 0x0F
+10:47:25.007683  LM3643 W 0x0800
+10:47:25.007896  LM3643 W 0x01 | R 0x0F
+10:47:25.008160  LM3643 W 0x0103
+10:47:25.008322  LM3643 W 0x0A | R 0x01
+10:47:25.008577  LM3643 W 0x0B | R 0x00
+10:47:25.073907  LM3643 W 0x01 | R 0x03
+10:47:25.074207  LM3643 W 0x0103
+10:47:25.074392  LM3643 W 0x08 | R 0x00
+10:47:25.074649  LM3643 W 0x080F
+10:47:25.074867  LM3643 W 0x03 | R 0x99
+10:47:25.075123  LM3643 W 0x0399
+10:47:25.075366  LM3643 W 0x01 | R 0x03
+10:47:25.075621  LM3643 W 0x010F
+10:47:25.140383  LM3643 W 0x08 | R 0x0F
+10:47:25.140639  LM3643 W 0x0800
+10:47:25.140858  LM3643 W 0x01 | R 0x0F
+10:47:25.141103  LM3643 W 0x0103
+10:47:25.141266  LM3643 W 0x0A | R 0x01
+10:47:25.141507  LM3643 W 0x0B | R 0x00
+10:47:25.206938  LM3643 W 0x01 | R 0x03
+10:47:25.207270  LM3643 W 0x0103
+10:47:25.207443  LM3643 W 0x08 | R 0x00
+10:47:25.207689  LM3643 W 0x080F
+10:47:25.207897  LM3643 W 0x03 | R 0x99
+10:47:25.208150  LM3643 W 0x0399
+10:47:25.208318  LM3643 W 0x01 | R 0x03
+10:47:25.208581  LM3643 W 0x010F
+10:47:25.273481  LM3643 W 0x08 | R 0x0F
+10:47:25.273782  LM3643 W 0x0800
+10:47:25.274032  LM3643 W 0x01 | R 0x0F
+10:47:25.274303  LM3643 W 0x0103
+10:47:25.274485  LM3643 W 0x0A | R 0x01
+10:47:25.274721  LM3643 W 0x0B | R 0x00
+10:47:25.339949  LM3643 W 0x01 | R 0x03
+10:47:25.340239  LM3643 W 0x0103
+10:47:25.340418  LM3643 W 0x08 | R 0x00
+10:47:25.340684  LM3643 W 0x080F
+10:47:25.340932  LM3643 W 0x03 | R 0x99
+10:47:25.341210  LM3643 W 0x0399
+10:47:25.341406  LM3643 W 0x01 | R 0x03
+10:47:25.341660  LM3643 W 0x010F
+10:47:25.344654  LM3643 W 0x08 | R 0x0F
+10:47:25.344956  LM3643 W 0x0800
+10:47:25.345171  LM3643 W 0x01 | R 0x0F
+10:47:25.345419  LM3643 W 0x0103
+10:47:25.345575  LM3643 W 0x0A | R 0x01
+10:47:25.345808  LM3643 W 0x0B | R 0x00
+10:47:25.473344  HM1092(IR) W 0x010000
+10:47:25.474241  LM3643 W 0x08 | R 0x00
+10:47:25.474501  LM3643 W 0x0800
+10:47:25.474715  LM3643 W 0x01 | R 0x03
+10:47:25.474956  LM3643 W 0x0103
+10:47:25.475106  LM3643 W 0x01 | R 0x03
+10:47:25.475403  LM3643 W 0x0103
+10:47:25.486367  LM3643 W 0x0A | R 0x01
+10:47:25.486763  LM3643 W 0x0B | R 0x00
+10:47:25.623971  IMX471(RGB) W 0x010000
+10:47:27.620034  -- controller 0x3CF250DE2738 D-state 0x4
+10:47:28.631808  -- controller 0x3CF250DDE738 D-state 0x4
+
+--nextPart3G_yHyoEQi2GJmRMCtpajw--
+
+
+
