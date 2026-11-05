@@ -1,105 +1,77 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.16
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793904682;
-	b=YO82llXL0e4W8o3w3OgZwpMsyp4seguiHQKNzaPQga6hrtH01D8/3d9xhXup+YK/yLsi
-	 02UfKTxtNZ/3xXy79Dx2edqCWNjgIasS0bZdfqval5LPiD17xH/soKk81K9cU6Rh9sbPp
-	 ICcj5BglgeqFKK9eHayZ1JvHMryxCIuy49XdV3Zx2o5yfP0FlKCwde7nVkUs0vgYI8tdK
-	 Jys+QgNWGS1DXFdu10JaDuAuDVaVMo4n7pFaBUyTxBxwym4e6zElKj+WQZl4S4LF656p0
-	 UqmzX9LU/3rV4aDXprnAijNS3neqkN+/dPcGkNp+LMceBJGgJ2oT9+Kl2gwdNOkxapQ==
+	t=1793914212;
+	b=Beyl5U3bab8N2pXRCIvZnNFxO+m72YaR4/Yk30LyGr/j3dWjEi2yiPWswRANEdh53dO0
+	 /kJlwoLSkcpNfXqdkyO5DryZS0GPYVECD/KRkr+mP639DyM71hkEAjrWZrGgWDx2e6iyy
+	 0WkiM2NR9SEzrFdPwNXxSvnIeHX/vRYi8Q7LsZZjzbMKs4M0t/okLNwpuFcTKbwpOFOO2
+	 yH4d5SudwzBx/K1SngITgI9dKZYdDWEnLWsc2E0LtNMBKKwAvUQr+5cokwhY/PN9ugC6/
+	 6MakS2vxTahMTg0VHW9Rbip03PuTBLQAAdh5wErMJOQ0RWJ8byzixyQEi65JkQMOoXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793904682;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=jnWVUTUnlmsJEpFB8nhtjDbr8Y+ZTWe/nqHnts4RQXs=;
-	b=GsEt2nGVJiJ8wS5vNgI7YNkUNmATyg5kNDDxtIhTyaFFNazNcRg28BG2f/GxM9WZeXWR
-	 Jyvjr5DEv5K+oDowdCM3+z/PIn7oyM8tMnJolV8auPJF/mfsGhQFYQl5oGyajasej46n6
-	 fTKvIjSUdRvvISMK/PeApeFYcloj1Q9pLOniEaUmHpnlyb5ZLIIzBQSDXTazTolU6hdei
-	 qiKIIBrbQ7nWMFkKaZArNIYo7xVn3LmoAdT4f1Z8UylQ1CDmAxvvTz7D9B2VzIBN+ivdJ
-	 wI6wldDSOkZv4TDhjVdDtm31HJO8FCdjxEktElQ4NPzh4qHGK6AxKx4jfs8LCnDiT6A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793914212;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:Received:Date:From:To:
+	 Cc:Subject:Message-ID:User-Agent;
+	bh=kbAMULgpvdcxuci6ZA98TI9liV++3FfDSO+ys0enRIw=;
+	b=1s2Mu0oQjSPWDtuwUtTcpdUCKNnBXm0Mdt8f/KRCkLbstn0TJQPGErwjGs14P27boRCA
+	 hCSWshqy8fLggLFiyvOs+he7Yqzj4JystQWG9lA3BrBTvTOIoyHkYuk+cRpnBztdn10Qy
+	 2sYlX3nsyXOkT8oKoAB1JbsWK/8QiL4Nd1YzG/A6dGL8pYGI1LfTgTDwcxyJMNEjDOrri
+	 92R96uJa7h9Xe+Jb1Fphl5dxlkYG2uSBfeSG1Fch21BxP4jgGoKvvn+UCkh3UnvTGS2s+
+	 AFQjCedHBFXkd88zbsgrswP0dewNDwJk2cHz3IbthQgweFdU74aKrSbJPwu7/Rh4CVA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	arc=none smtp.remote-ip=209.85.128.50
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=intel.com;
+	spf=pass smtp.mailfrom=intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RIhqKY55;
+	arc=none smtp.remote-ip=198.175.65.16
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAFE606A329
-	for <linux-leds@vger.kernel.org>; Thu,  5 Nov 2026 18:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0BAFE606A329
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4a20a37703bso17280775e9.1
-        for <linux-leds@vger.kernel.org>; Thu, 05 Nov 2026 10:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793904680; x=1794509480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jnWVUTUnlmsJEpFB8nhtjDbr8Y+ZTWe/nqHnts4RQXs=;
-        b=X8eqe9u/Aq1FrN4sMxD/pefIzG+YXzeOqvrZ8COqfqapO8Q/M1H0Sj1aD0TqhpMLI2
-         AmrBQacAjif6fdKpEU+BLEmLC+oewe604mdifwCPdOv8erlIeU5oNwnF3Iy9LL7J8sxq
-         PlQgueiT1Olwo5efl/bu6lKuYT85HXTali5gc9szgbGNdqyUrkeDjRdP7E95sVtqCTQI
-         VhOsWyufCye5KbdgYYFgpgWSlNKXELlW5y+xgS+Jikcq8fro9a4x/lZSZch5LBeP9NQn
-         Jg1xlrjJKhFDmxd+OR1rys5baX34Jvcf5xBAagOLSWMOBBAGXDlgEIq9UvZKeNhb4woY
-         BURg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793904680; x=1794509480;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jnWVUTUnlmsJEpFB8nhtjDbr8Y+ZTWe/nqHnts4RQXs=;
-        b=fPp4vh/hTvLbgzkW/QGcdvpERTTM51xJHG72rJES3xrPDYWfnDnjh/KuVs0YCRgiDz
-         LTnl3BEbkPt4W8rPMvp5Xd3oLtUnr8KcjCvTllx+EwnnCKpo2xkn+wzq08WKOFJtQWVq
-         DnZO85/aB8ymdFAR4vZvMANG5+4C3ASrjZGPNcIbeJ3KCHcOaM7zrJxkOly/IYF/oBUr
-         bsH37WTVGa0IICy4c3a+UfkuHBQG4Gao6KzM2cj3iiGmX3ysF9IQqULV8PlfMkbjm0CZ
-         HHSIk1VUpyoS1VcYDVw6FKOYGEXWoHburLvH415OJJHkXySO04qFk4cCpwiVWNlfO2DJ
-         sx9w==
-X-Forwarded-Encrypted: i=1; AKwUvBz3WcPIpBiTY4gTrGUsm/w9migx31tjp/AzcewzWZvUyKn50b3f1Unx7L1whMZ9ZSdHE0WEqmLHl+tm@vger.kernel.org
-X-Gm-Message-State: APuU4Z9E+uns4rzYeMnJCzkfsPrGT9ah2CZORJ0vR8JwSaFo+ebgxCEt
-	dfX4q/8Ycni53EesrfrFSEJurp+067d2gvqNJ1KwtagEbhQix5v63EIl
-X-Gm-Gg: AYBFou29iyYJTMWBfYlHCfblj0CRKP2QXjq9if5HQQGSegl9f0OU+7ZssIOrU4daULT
-	6dYie8HsO2CaNCQ557zHeRBaio3+RKanwEnH1bBapnJzlZ79jbhWD9a4biYHpCGnAJ4+QzoWUkw
-	5hBXI9FhuG7S2JT6EU/lu7b8Ghd9elZJJxd5F6uc8z50kxbZ97lS4icvpzujfFNlTEiLbVVAplQ
-	GCf40DlHX4mUfDSqOwD2keixUtLiC8lfTtK62QN3hdpStclXHQVXbAnJj3B4pwIaSzuLEhmjJh5
-	g4lGAg+ZJiXDSxqwg6abBB+AngUXpbzDaY1NNFcwy4vpw7XQY4kwwUTYDzkQt2YEOkGOk4cToIR
-	NbxYpfL1R3Jk+/8lLIrZTg6ulZHQcAYK1Cfz4iESayB9JwJ8Sm0cXMryKe3l1KS8AIKTHOSCpHu
-	tbRFyovlOPYDvynIvQ9wLtbIkx1FvycI2XXUGAtQzhvy9F9BBTeU+AkMJNvjZfij3y17/MIcuFP
-	QqcmzseeiSNHXfH/9We05IP61IxkO8QA+YuNuU8J9K6cYptVfSrSgG4fR2J9AmEdEz5itRpyRuX
-	NRQWLymmFluWAj9CDviPKdhAnZGmVaRs0ixoobu2i94tNbHHde6skYN8sKfkWNIJyW8amXRNTu/
-	NMx2fMLDV1eHmG8n1qSJPWdgi4dlC0A9dboLbPpMgm2YMQHHl7PROgEuxz7uYR1Cbt3+dYOSjOp
-	FEZDtkanqi8rcuexEM0trAG2iPEMJXha/hH/qNiDrdRRsFSdXpWYzMLyEP32ij7UvRAPISw1c/n
-	nc=
-X-Received: by 2002:a05:600c:46c8:b0:4a3:59c9:a744 with SMTP id 5b1f17b1804b1-4b6dd82aa22mr395975e9.7.1793904680202;
-        Thu, 05 Nov 2026 10:51:20 -0800 (PST)
-Received: from localhost.localdomain (dynamic-2a00-1028-8388-a84e-88bf-3a8a-f542-868c.ipv6.o2.cz. [2a00:1028:8388:a84e:88bf:3a8a:f542:868c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4b56e2ae72dsm137150875e9.3.2026.11.05.10.51.18
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 05 Nov 2026 10:51:19 -0800 (PST)
-From: Josef Schlehofer <pepe.schlehofer@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A995606A32D
+	for <linux-leds@vger.kernel.org>; Thu,  5 Nov 2026 21:30:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5A995606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=RIhqKY55
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1793914211; x=1825450211;
+  h=date:from:to:cc:subject:message-id;
+  bh=qDfvBMUKOJ7OJMf4SX9rF4SebBXTDazFnAOGUdsqTfM=;
+  b=RIhqKY55Of5RNLtMg/ZoWl/VX+sAVvWomX4KbHkDS7t0qbfVyBAsT0ci
+   2CM6joTPuqG+JOrPvkOPKdaZICuyEsQ64Ep0yfg9I+8agQuFrfz/KYZ95
+   m5PXcZN/EYtYQr/FimxjLXRZXRXWPK6/zKudL5qDdEjQLNat8jpx+Kxm6
+   bHaVeEuBBPYcg4JL2ivMPSc4iFjqmp5cL06HfavLuCQwyNtgjKPRRrfh4
+   DcD6FSJ13K2R++/o2Q6DRtIGW9NE9B3r4w/OH5FSNnk0bJ0RhurTlruEK
+   JocRG1rTRD6XJOb54AUArjTihEyADQrFl5W2mkcDkn+i54Flwm2wTYare
+   A==;
+X-CSE-ConnectionGUID: XX6TW8Y4QUK1MCni4eMZ9g==
+X-CSE-MsgGUID: ww766koiRgmrPK1qH5rlng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11957"; a="2714138"
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="2714138"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2026 13:30:11 -0800
+X-CSE-ConnectionGUID: Ol5wUDPGQ9CyzbEdmFJamg==
+X-CSE-MsgGUID: n3FzWWj9SeOIKWn/BQxIGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,197,1787036400"; 
+   d="scan'208";a="7432507"
+Received: from lkp-server01.sh.intel.com (HELO 0caa9d2d175c) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Nov 2026 13:30:08 -0800
+Received: from kbuild by 0caa9d2d175c with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1xP525-00000000mt5-47DE;
+	Thu, 05 Nov 2026 21:30:05 +0000
+Date: Fri, 06 Nov 2026 05:29:29 +0800
+From: kernel test robot <lkp@intel.com>
 To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-	=?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rong Zhang <i@rong.moe>,
-	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] leds: turris-1x: Add support for CZ.NIC Turris 1.x LEDs
-Date: Thu,  5 Nov 2026 19:51:17 +0100
-Message-ID: <20261105185117.83189-1-pepe.schlehofer@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20261104150229.GA1650678@google.com>
-References: <20261104150229.GA1650678@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-leds@vger.kernel.org
+Subject: [lee-leds:for-leds-next 18/34]
+ drivers/leds/leds-pca955x.c:562:32: warning: returning 'void *' from a
+ function with return type 'int' makes integer from pointer without a cast
+Message-ID: <202611060517.YOgU4Gr8-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -108,36 +80,86 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi Lee,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
+head:   a379f4e0adf2de7b11aa3ef87eeb7d9c838069b3
+commit: abeb74220fefe28ab68789659f554f49e3b4a51e [18/34] leds: pca955x: Take a reference on the child firmware node
+config: sh-randconfig-1000-20261105 (https://download.01.org/0day-ci/archive/20261106/202611060517.YOgU4Gr8-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20261106/202611060517.YOgU4Gr8-lkp@intel.com/reproduce)
 
-Thanks. v5 incorporates your style and driver name changes,
-dev_ext_attribute, and the layout of brightness_set(). It also drops
-led->on and the fixup. All includes are used, and string.h is new.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202611060517.YOgU4Gr8-lkp@intel.com/
 
-The global brightness files stay. Generic brightness is per LED, while
-this is a single CPLD dimmer for the whole panel, similar to
-device/brightness on Omnia. The level files expose the eight steps of
-its button.
+All warnings (new ones prefixed by >>):
 
-The reset flag also stays. The LED core reads LED_RETAIN_AT_SHUTDOWN
-only during unregister and calls led_classdev_suspend() only on PM
-suspend. At reboot, software triggers therefore keep writing after
-.shutdown. Unregistering the LEDs in .shutdown, as leds-sun50i-a100
-does, would also work. Let me know if you prefer that approach.
+   In file included from include/linux/of.h:20,
+                    from include/linux/irqdomain.h:14,
+                    from include/linux/gpio/driver.h:9,
+                    from drivers/leds/leds-pca955x.c:44:
+   drivers/leds/leds-pca955x.c: In function 'pca955x_parse_fwnode':
+   drivers/leds/leds-pca955x.c:544:44: error: 'client' undeclared (first use in this function)
+     544 |         device_for_each_child_node_scoped(&client->dev, child) {
+         |                                            ^~~~~~
+   include/linux/property.h:202:44: note: in definition of macro 'device_for_each_child_node_scoped'
+     202 |                 device_get_next_child_node(dev, NULL);                  \
+         |                                            ^~~
+   drivers/leds/leds-pca955x.c:544:44: note: each undeclared identifier is reported only once for each function it appears in
+     544 |         device_for_each_child_node_scoped(&client->dev, child) {
+         |                                            ^~~~~~
+   include/linux/property.h:202:44: note: in definition of macro 'device_for_each_child_node_scoped'
+     202 |                 device_get_next_child_node(dev, NULL);                  \
+         |                                            ^~~
+>> drivers/leds/leds-pca955x.c:562:32: warning: returning 'void *' from a function with return type 'int' makes integer from pointer without a cast [-Wint-conversion]
+     562 |                         return ERR_PTR(res);
+         |                                ^~~~~~~~~~~~
 
-The devm ordering stays as well. A failed probe unwinds like an unbind,
-with the LEDs released before the reset.
 
-v5 also preserves a dim level set before activating the hardware
-trigger, including across a colour change underneath it. This follows
-the behaviour of leds-turris-omnia, which I used as the implementation
-pattern.
+vim +562 drivers/leds/leds-pca955x.c
 
-Finally, scripts/checkpatch.pl reports only the 75-character warning
-from your list on the mails I sent. It is on a URL line in the cover
-letter.
+   532	
+   533	static int pca955x_parse_fwnode(struct pca955x *pca955x)
+   534	{
+   535		struct device *dev = &pca955x->client->dev;
+   536		u8 bits = pca955x->chipdef->bits;
+   537		struct pca955x_led *led;
+   538		int count;
+   539	
+   540		count = device_get_child_node_count(dev);
+   541		if (count > bits)
+   542			return -ENODEV;
+   543	
+   544		device_for_each_child_node_scoped(&client->dev, child) {
+   545			u32 reg;
+   546			int res;
+   547	
+   548			res = fwnode_property_read_u32(child, "reg", &reg);
+   549			if ((res != 0) || (reg >= bits))
+   550				continue;
+   551	
+   552			led = &pca955x->leds[reg];
+   553			if (led->fwnode)
+   554				devm_release_action(&client->dev, pca955x_fwnode_put,
+   555						    led->fwnode);
+   556			led->type = PCA955X_TYPE_LED;
+   557			led->fwnode = fwnode_handle_get(child);
+   558	
+   559			res = devm_add_action_or_reset(&client->dev,
+   560						       pca955x_fwnode_put, led->fwnode);
+   561			if (res)
+ > 562				return ERR_PTR(res);
+   563	
+   564			led->default_state = led_init_default_state_get(child);
+   565	
+   566			fwnode_property_read_u32(child, "type", &led->type);
+   567		}
+   568	
+   569		return 0;
+   570	}
+   571	
 
-Josef
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
