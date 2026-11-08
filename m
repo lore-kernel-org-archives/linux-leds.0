@@ -1,56 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.103
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.229
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794175589;
-	b=MPwN2YiXlOrpNJYpJPr5NhNtFuzzQ2mZZlcBGbNmST//1lWqIE4TKCDG3G9H9FpO3cVF
-	 ksFBSQBpS0IMO+76xBWtb8bP7R/f3s4JC3lt9jM9so24JaydlqtnPlKrF28Hh/OsVOdtg
-	 YZxAfJXcr6cpQ4ImoTlnJ1+2wJgYm0JH62Iav41uyZ8IzzGNGePZDmM8bfvDJAQlbU2H9
-	 9D5sS9l4Ss8hTEyKVa6Z71+jXX/6U+YWuPFaZqyBcIsM0JTU71jMw1+EeTGXW+CNfSVY3
-	 h8AIMsWvJYkYj2Urv3ypQcIvGEpQ53ksEYz2OSJyZS9OxnSNBw4z24XhyOK1VvmGMwg==
+	t=1794175708;
+	b=jMJ8tLLgiIzoNR4y11bQk4/TbDBOPgxYYlA7LlZwvz0K77OCU7dcRAsZhAs/rjmKr0XN
+	 hKYKiATv8qhGcmxzzRhdx0vNnSOdZRYJpJb7yS+FyHEBJpDYRmgTs0AKGq1jRKos20ejO
+	 4WHd273nkUW6em1z2+QETPViLhBPPSWfrV+P8ISuHhEEXcH+Bp0zAjnqESmUm1HI+ZLIu
+	 AYvOWg5Ni47Pc+b1gwpCTBkT3xFo93+4MRCoR+rwyBmIZo3fe90IuWWFH0f40w/h8ceRG
+	 znAoa4SJRfj7mTu/l3zI7hgrdQVFlJCAOFQLFWIkHE3nTIrGPq42X18l0fyxILn5PPA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794175589;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794175708;
 	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
 	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:Content-Language:From:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=v+T181MDNN1iBq6H0VhIHrJPTEvbTgHtlnvga6WuJCQ=;
-	b=1jW3iJL2JdtSbvuej78q+ok4LLOpAz3P0O/krFMrC3ndYrQUnmBa2Y5lJvdVK18/lkDv
-	 N6+jnqWjFBJS0ANMPycjpLRy6yzF7jzKDyeNZ7tW6uMjFlaviGrB8bLDAQ09LoboQ1eSt
-	 MJj060KhvTwrZjuGSfvA8X6q9ydVcwsXN55kcfmhhfUYDQvRKOiqDyakxzTYGbVobpFYN
-	 B7K0f42iaXCzM3Fj0bG2yOMVDEYjAhes+3Mck4EDiP9Tchdv0J1EE/560nAk8FzkbUlI2
-	 hoB3bpPFkgUyPdaSru+H29g15Vv1U3E6XL5pnGqeqGDOyXDzEO/XVWIvgXvTObVPEzg==
+	bh=mP+RLv7YA3xoEcSdhiubfekWgYbf7a4Mqt1EnFS2l2E=;
+	b=am57wERFL7cWDSwjbp1GoK9yNiF9Yjnsdu1B2pzLy7eElX7bg2KSQYYQ6SY9YjdumD8R
+	 xF63XM7Duj4zoNXMty+BKIMj/LFsO5v6YH5xewBYz60WzJ4agancA0baMjdSFT5UDrHu2
+	 YiBlqVS3TrMnaZZYNrkdctPja6kNus0f02pViRVdUFaTj5iXLusVYZCSem2jmgq5JUJjh
+	 sbMBtbF3XRyYoiKAvftdcaIZpYAxdvZdVDsG047xNgak2R9pLISy0osEsG1kX4b/LUFwR
+	 xMsQRaUAS08xug44Cuh88GqrSFS6rlTe1WnbFEn5SFBAu+m5mRMhyF4S1dvZ9AptyFw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=postmarketos.org;
 	spf=pass smtp.mailfrom=postmarketos.org;
-	dkim=pass header.d=postmarketos.org header.i=@postmarketos.org header.a=rsa-sha256 header.s=key1 header.b=ozDL2LBz;
-	arc=none smtp.remote-ip=95.215.58.103
-Received: from mta1.migadu.com (out-103.mta1.migadu.com [95.215.58.103])
+	dkim=pass header.d=postmarketos.org header.i=@postmarketos.org header.a=rsa-sha256 header.s=key1 header.b=I59MaAEe;
+	arc=none smtp.remote-ip=91.218.175.229
+Received: from mta0.migadu.com (out-229.mta0.migadu.com [91.218.175.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF621606A321
-	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 22:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DF621606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500D6606A330
+	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 22:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 500D6606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=postmarketos.org header.i=@postmarketos.org header.a=rsa-sha256 header.s=key1 header.b=ozDL2LBz
+	dkim=pass (2048-bit key, unprotected) header.d=postmarketos.org header.i=@postmarketos.org header.a=rsa-sha256 header.s=key1 header.b=I59MaAEe
 X-Envelope-To: linux-leds@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=TPWjkjB/iqSgnkr/uZ6p6HisufPl8VRbziOoj8jL4Gs=;
+DKIM-Signature: a=rsa-sha256; bh=E9GlFD/nkAV+QrkBwclW4eEowvk8rBIRknJho/hf9L8=;
  c=simple/simple; d=postmarketos.org;
  h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794175584; v=1; x=1794780384;
- b=ozDL2LBzOriRh6D6RtfqId41lW/ekQy8JFVHizOS89KTFMDc6jhfXLqgGqSzz8WZxx52ea3V
- s9eb6ocXlo0S5WBXpkDt7ew9qKxRqPH0OXyeAZvKMhguRmd8Vckcc3fVwCXZBF1oKmKJrVQHZ7j
- uH/UAADSJp8TmwgTb8CVi3rFpX4crL/pKwtaDXNUWIhJn2zpuBYHj/cpPSJDWpPnzCnHXmGdWno
- d/OjhkCU9orFrBdYu1d1cJqcbwECE/k/cMuibSCQf7llRYK5kUN6/bZ6aiLgSNxRnt+BZaXnxZ7
- hpGFtfw5JeRcrPB8J84DyPDO5Qr30q0InJlZe5hE7/Ssw==
+ t=1794175700; v=1; x=1794780500;
+ b=I59MaAEeCdaKCfMuUTHPbIyVzbfz3Pm73y6uowmDLnatoZBgMnAoNKXERlrLKeNuoF6PAiaa
+ gOWLTe5to8441RYieziKGyelF0YQZom3ZvDGCv+pkIdn8Nb15XvmMENYaWnWYTyesATF97ejHwH
+ iXXLkBh/ErBvRteDdtryUUWVITO3GowgFIKGpEN7DtgdW10I5ZeY8+HwDFt3cV5vX4ol2kZ8iZ/
+ /4gCPoSX3mKUghd2jKKcwZgViMqDFf37cg3amH63iwaTbP0/XL9EElS6bbVqrFuJTvhHkxDhzQW
+ WSCvT1EVtMvY1Mm7Ur/iqO2PvZQ10BO741gMI0kbQTgXA==
 X-Envelope-To: linux-leds@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id cb3952d11ac63f6b;
-	Sun, 08 Nov 2026 22:06:24 +0000
-X-Mizu-Trace-ID: cb3952d11ac63f6b
+Received: by smtp.migadu.com with ESMTPS id 7b8502a391023e8f;
+	Sun, 08 Nov 2026 22:08:20 +0000
+X-Mizu-Trace-ID: 7b8502a391023e8f
 X-Migadu-Flow: FLOW_OUT
-Message-ID: <df867081-9681-4b68-bcfd-9f7657942942@postmarketos.org>
-Date: Sun, 8 Nov 2026 15:06:22 -0700
+Message-ID: <ea9edcdb-cecb-4fe8-97d5-1dead1ea8fd1@postmarketos.org>
+Date: Sun, 8 Nov 2026 15:08:16 -0700
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,13 +61,17 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] leds: aw2013: Move assignment of chip->num_leds
-To: sashiko-reviews@lists.linux.dev
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- conor+dt@kernel.org, lee@kernel.org
+Subject: Re: [PATCH v4 0/4] leds: aw2013: Add AW2027 support
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>,
+ Alexey Min <alexeymin@minlexx.ru>, David Heidelberg <david@ixit.cz>,
+ Griffin Kroah-Hartman <griffin@kroah.com>
+Cc: Nikita Travkin <nikita@trvn.ru>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 References: <20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org>
- <20261108-aw2013-aw20xx-rename-v4-4-826529beeb52@postmarketos.org>
- <sashiko-outbox-204102@kernel.org>
 Content-Language: en-US
 From: Paul Sajna <sajattack@postmarketos.org>
 Autocrypt: addr=sajattack@postmarketos.org; keydata=
@@ -79,79 +83,17 @@ Autocrypt: addr=sajattack@postmarketos.org; keydata=
  QEgCn8S+S7t/3QvXt4dK4572qd+iTl7h4JX1FEV5XUs6AwEIB8J+BBgWCgAmFiEEv1E8AP7J
  5F2dJQd4hycszAKyDbsFAmlTXr4CGwwFCQlmAYAACgkQhycszAKyDbueJAD+IMjk8ztbONXz
  H7fieZc5LoR+6mHnddccacmQyPcGAvsA/0+5SkHEgIBuKwkzwrmKgDqcLhVuEs2f1H2GxKUX jqQI
-In-Reply-To: <sashiko-outbox-204102@kernel.org>
+In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2026-11-08 3:00 p.m., sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue to consider:
-> - [Medium] leds: aw2013: commit message rationale does not match driver
->    locking or code
-> --
-> 
-> commit 1ce6b90ecf6b0a7b5d8097b414e8e137a3fe0609
-> Author: Paul Sajna <sajattack@postmarketos.org>
-> 
->> leds: aw2013: Move assignment of chip->num_leds
->>
->> devm_led_classdev_register_ext() executes default triggers
->> synchronously, which call aw20xx_brightness_set().
->> aw20xx_chip_in_use() silently returns false, skipping chip enablement and
->> causing unbalanced regulator disables while probe is still running.
->>
->> Increment chip->num_leds inside the loop, so that each call gets the
->> correct value for it's default trigger.
->>
->> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
-> 
-> [Severity: Medium]
-> Does this commit message match the locking and execution flow in
-> leds-aw2013?
-> 
-> aw2013_probe_dt() sets brightness_set_blocking to aw2013_brightness_set()
-> and leaves brightness_set NULL, so default triggers activated during
-> devm_led_classdev_register_ext() queue set_brightness_work instead of
-> calling aw2013_brightness_set() synchronously.
-> 
-> Furthermore, aw2013_probe() holds chip->mutex across aw2013_probe_dt(), and
-> aw2013_brightness_set() locks chip->mutex before calling
-> aw2013_chip_in_use().  Any queued work therefore waits until
-> aw2013_probe_dt() has finished and chip->num_leds is already set.
-> 
-> Also, aw2013_chip_disable() returns early when !chip->enabled, preventing
-> an unbalanced regulator_bulk_disable() if aw2013_chip_enable() was skipped,
-> and the driver functions are named aw2013_brightness_set() and
-> aw2013_chip_in_use() rather than aw20xx_*.
-> 
+On 2026-11-08 2:49 p.m., Paul Sajna wrote:
+> I'll do my best to address all of Sashiko's comments, but it might take
+> me some time to circle back, don't bother reviewing until I've done
+> this.
 
-The robot is internally inconsistent and incoherent.
-Feel free to drop this patch if you don't find it necessary.
-See the robot's prior review here:
-https://lore.kernel.org/linux-leds/20260908000128.B92201F00A3A@smtp.kernel.org/
-
- > [ ... ]
-
- > -		led->cdev.brightness_set_blocking = aw2013_brightness_set;
- > -		led->cdev.blink_set = aw2013_blink_set;
- > +		led->cdev.brightness_set_blocking = aw20xx_brightness_set;
- > +		led->cdev.blink_set = aw20xx_blink_set;
- >
- >  		ret = devm_led_classdev_register_ext(&chip->client->dev,
- >  						     &led->cdev, &init_data);
-
- > [Severity: High]
- > This is a pre-existing issue, but does assigning chip->num_leds after
- > registering the LED class devices cause initialization problems?
- > Looking at aw20xx_probe_dt(), chip->num_leds is set to i after the loop
- > completes. However, devm_led_classdev_register_ext() executes default 
-triggers
- > synchronously, which call aw20xx_brightness_set(). If num_leds is 
-still 0,
- > aw20xx_chip_in_use() silently returns false, skipping chip enablement 
- > and causing unbalanced regulator disables while probe is still
- > running.
-
+Hello Lee, I believe I have addressed all the robot's comments, and this 
+is now ready for a proper review.
 
 -- 
 Hal: They're going for the kernel!
