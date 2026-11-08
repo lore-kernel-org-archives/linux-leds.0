@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794174754;
-	b=Q1E+ls1H26iS9zYLb6AXHcGDprugw3VND/isaKJ+nHPbT2BAepTpdn+RsgFKpG1+Jean
-	 wyXXj9GJp/Rdk+85BgaYCaCKNaSZMm4yAbO9TXDQcGsc4hqB23Ur5viizHatvKQCcYbty
-	 soq9QBrYj10hhF+9/zID02JRIO7pMOG5G5IVfIo2ln923XHs7JQC/FpN9aaXpPHC6gVv+
-	 h0Q0DMdbIhU/ptCKHLGJomXH+/yZOndFuo8hzGlN1JX/1pp8y/e8n1AOdbXFVwpYKwcwK
-	 RKMrmBpNCP8KoZgX1Bq1cjOPLjuq6gOctCXK9aiSRN1GqgLdKjMGK+QYlDu3UIsMHyQ==
+	t=1794174952;
+	b=iHjoXJEuzM4UsQAklRku+JQNgwRNcaHBBGdMNXfKLE0aVKpmx0Eb2YVPy7mKzBM5/df0
+	 qcgHYXHmTlLg/cV/rLRLw0mghq0oeGZEe/UTrVcCQXq0HD+hOfHYukx9v9cNbxgBOzYrx
+	 xoNuGAn2rqQbA73PrOH2/uM3AlEV5k20BQxQXAEyPlDdh4SFp4P7Q1Mi00sTBbQtv6rvD
+	 Xn2F+KVVeE0JLNSwhbSS121urZ5m/CnFe3PQC9dRdtq1OtMx93pXArK3uIrAkG7h+JEn/
+	 Zr1qatSt1F1kuP7vmJs1akp4q4pNFXepIl49AixpGE2ggUhLSHtzlL8+Pn3OEr40I+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794174754;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794174952;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=H7/Lyb1hasrv1Ji+/Q1Z62q+f8Wt0/4T8TfyrJhM4oA=;
-	b=FCLegmyOWWZgAw/oquq+mF7TBW8943yLd1rAe1jzCIWBq5SAf5HttQ8T51h2MtUNNNvE
-	 aoT/+oBh9aq4R+gDQNe4JMgrhZNqDQjxUZAr1OI06QQxcYXSG769y608jYNttY3Pp3Sdu
-	 C1NNFjWFvCZmYZpwok5ydsE4SZeJX6GT2nb1Zm9qmwjjNDBHb+wpXzABVPC4gezhlZ1UX
-	 +8gxd1Wks8WxnpmosJSf+ZjL5GOBZBNm0G/AwnxR+XAt+76lMxOuy1sbGm/IpyLhbRyp4
-	 zF+/zRLJ65q2Rgy26s7v9kfLxVLTYva76MRXQHl5esh/9CKqIcMSVHWU8rOWAY9H2Qg==
+	bh=kb1PTUV0xxtjhvtPn3EtVi5xcvAxODe2VIog1iimgY0=;
+	b=uq4SLbni/5v7fPQXaEaSc6xhT5yNjJM8BOx19Erf9xzPTA0IJj15rK0SvmCNGaSHvnHv
+	 mce56hNCxpO6a9mSA5DUTW/aiRHUCaYe/QkIrUgTQf169RBvO+0/516eebGN/ixHHrO30
+	 JnHPOY6Uh/2W1vov3T9hiBKILFTYZX8HO92P8Ii/+0kJntLKq1gj3b/bUjLnSrLJeZDmO
+	 fn2QXfCZjQ8Zk0LUk2GYapPPVThJZBlbR7Hnh4XkgHGdQ1/rXluHN3Dr7/D8dwj5dMM3c
+	 IUnmb0FdNtM8d9S23vteXUH0l79iCAvGGkl/i6t8M9no1wtYY2+dRQJAfXeUNg3tsKw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="DsXbp/1T";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c02vSH8w;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FEA606A31C
-	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 21:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E712606A334
+	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 21:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=DsXbp/1T
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72ACE1F0089F;
-	Sun,  8 Nov 2026 21:52:33 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c02vSH8w
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6EC1F008A1;
+	Sun,  8 Nov 2026 21:55:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794174753;
-	bh=H7/Lyb1hasrv1Ji+/Q1Z62q+f8Wt0/4T8TfyrJhM4oA=;
+	s=k20260515; t=1794174951;
+	bh=kb1PTUV0xxtjhvtPn3EtVi5xcvAxODe2VIog1iimgY0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=DsXbp/1T2L60pyOyEqj1UkV+Ms4YKXrWFomvv7/LNRRpjX2v9Y82CSsBimxmnmKeB
-	 O0/+d0qBqWCEUB6xiKXS9oZD8ahBPa/ccX9dNBeLFjXCrav8y99f7BIrw0BYLALEyD
-	 AdHtTYBn9gzn1qbv4gcrnI5aZTim+U/Z6G7vv6nPjMdaKrg5r9HEiMNpZhRFs0XZn3
-	 +SUKO3Ypnnb3ZfqG3mPvJmR+6EBlhTf49Ms/tfAf+5jiSHQ3c/X7AYkVc1lc4rm+g1
-	 H6FwIX0/iCFQ4pHkfse8l+3JaJv/gZ5WBOQSQig6bRMq4TxcxeyLmUVGFFpey+hdsW
-	 h/jt2UMiXpaeg==
-Message-ID: <sashiko-outbox-204094@kernel.org>
+	b=c02vSH8wlc1dGaNufmg0keKu0/SESI+5g9KEdHtUFQw0TjP8O05lFR0Zbyl7TLvKc
+	 ZrHcIEbKBF4+vS01VzmpMd+Xcu1MvPUE9Efv0XbtUncPgBp4OIyMB8G3lzHm8CCNiJ
+	 Hl+8kf2tFVJ8gS8Ay+fT7kE4t+PUkfHfOcZuATgbvIguxFRedvTVKUWBbOCHCnS7gT
+	 NTJb7VpvMHmSqjqcNia/vvheN9WbetLBfUOff/yhYBTPOJVTamuUVBRwGkbrggzjYg
+	 WRL9yaE094+Midn8pLANu8p7lj7I8y4kHM19qTnreRywoiahaaQtbShswn3r6qmfWt
+	 O2fXqcJ/3wTSw==
+Message-ID: <sashiko-outbox-204099@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 3/4] leds: aw2013: Use dev_err_probe
+Subject: Re: [PATCH v4 2/4] leds: aw2013: Add AW2027 support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Paul Sajna" <sajattack@postmarketos.org>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-3-826529beeb52@postmarketos.org>
+In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-2-826529beeb52@postmarketos.org>
 References: <20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org>
- <20261108-aw2013-aw20xx-rename-v4-3-826529beeb52@postmarketos.org>
+ <20261108-aw2013-aw20xx-rename-v4-2-826529beeb52@postmarketos.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 21:52:33 +0000
+Date: Sun, 08 Nov 2026 21:55:50 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,17 +60,27 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> Failure to use dev_err_probe() for regulator requests violates
-> LED subsystem guidelines. (At least according to sashiko [1])
+> The AW2027 is basically the same as the AW2013.
 >=20
-> The original driver didn't use it, but it's worth cleaning up
-> while I'm here.
+> It differs in:
+> - the max current (30mA rather than 15)
+> - the number of current levels for colour-mixing (16 rather than 4)
+> - the supply voltage max
+> - the charge indicator (unsupported by our driver at this time)
 >=20
-> [1]: https://github.com/sashiko-dev/sashiko/blob/main/third_party/prompts=
-/kernel/subsystem/leds.md?plain=3D1#L71
+> The max current register (imax) also moves from LCFG to GCR2, and the
+> selectable current levels for colour-mixing (LCFG_CUR) take their place.
 >=20
-> Reviewed-by: Griffin Kroah-Hartman <griffin@kroah.com>
-> Reviewed-by: David Heidelberg <david@ixit.cz>
+> The current driver implementation provided here sets the global imax to
+> it's maximum, and scales each led to the closest value using the local
+> imax. It's the best result achievable short of adding custom sysfs
+> entries and mucking up the linux interfaces.
+>=20
+> Comparison of all AW20XX chips https://www.awinic.com/en/productCompareLi=
+st?id=3D47&ids=3D1022,74,96,75,72,71,928,927,73,76,578
+> AW2027 datasheet: https://doc.awinic.com/doc/202507/77b87097-27bf-48cd-af=
+9b-9b615064c1e1.pdf
+> Vendor driver: https://www.awinic.com/en/driver/AW2027DNR/454
 >=20
 > Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 
@@ -78,5 +88,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261108-aw2013-aw2=
-0xx-rename-v4-0-826529beeb52@postmarketos.org?part=3D3
+0xx-rename-v4-0-826529beeb52@postmarketos.org?part=3D2
 
