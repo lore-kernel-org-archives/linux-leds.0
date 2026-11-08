@@ -1,56 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.153
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794174675;
-	b=MxSkwIAxX4wk38KmXumdtNXh+B4hKVX9UqK8oiZTHsoTbVseRCFVVAyBrV0VVFHRowBA
-	 y3hIat0OWVZM4cWxclXK71MwM69e9QUsMXUAmVNa3PWrkI99z690XW2VvqFflIdDv5eth
-	 Pff0jV889uy6AqRBTBs250zSXg0t162qu22pCso/226Ic45ByXm1NIjr+ljP937vPILYt
-	 sIDisTj2UjxhQHrISCGzi8Jrkp3wCQqhcrkHIt/oKxb9FUcvDbonxRHIKJ9EmlL5RQiKH
-	 c/oYqjW505vfNuDyQ96jdRrlQBqf3q7riZ5V4ZTLqyHn8pQDVMYkA6pj1MtJwn57c4w==
+	t=1794174708;
+	b=a7jNYcZgHsRxzaHutg7sSHANAOXtN0/Cwl+n95qjz/bjcX4y30RVeYjvTq51TydvifVt
+	 duXVDq6XY0KP0ixrLr6so01t3ivsSUVkkiw4Rl0b6XGLXKnJhKnvqLp4Qyu6JZn56hrl5
+	 qjXaxc+YUFzeMT2sVgpTU35d1AC17Nh/9yi3i/hxLUjQdIyPCjQrGQLcy37aJkd/8qukc
+	 Di20oqkrPuxt83FQ4JTvDUbMjuFxDDT0Z447j1Tiq23E8oKli9AEAnyCqLx2tOmXuq1nQ
+	 v/zQpHjKOeqdut56sEO3FGQtS4gtYkTDf4jsVCdrgMjIb4w1H51khGEzHCPcYGkjaHw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794174675;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:Autocrypt:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=kpUONmbT7hWv2Y7CdQy5xxfROFTeKUAU2jyoeqsZvoo=;
-	b=ERposMJZjE3L3cnIfHu+sKVGoY1lKC4SH+sRW/crgRdk76pNArSEjz6krE8dthG/Qmx8
-	 2HhfhF4qCHI7hjhNrWPJmTwyyF6rIZEnVEDqYp057gPZ4BjK2I9GsFNZspTCpBvO1WfYq
-	 UNsGW0MXGEzApjOxZ8Zq7vcUC45dk7/xnyeOzFx8l/WHIlDTJN1A4AUDTdL2hKCbYXCc7
-	 47UdAx5oi3IfLHcIfu5hq+MqSFjEqCbt3kUMudDRCJhrbcY1WsxufwWhPG1egdkL03Tn9
-	 B2HcolPrg9lk6hyjRz1GOhCZ0nIuUxj5+tTpqcX2MSqtnkMI8OgQe4GQq7yDnrtJu+g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794174708;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=qKxe7+csTxsV1yclT0/23YTBQERh4drFzeI28ypjLsw=;
+	b=jFJXX0PfSs21iq6OOBAw19E7nk2T8tKtmJm2MsqqF2KWOLVxZBbxsJwp+la50O7l9nBm
+	 7U2KTbH2tZaE1+G7hRlRyagBX8x5HhmWZA2aRp8jlgtgwNsiXL/TIliCAMxqSnuEUnVKp
+	 XQM2Ss6cx0S7dV0G10vxIZ9fqnpwhJuY+BoAFxml+7Kmj/3k8N8TVI1CHggqpZx3G/1Py
+	 nCGGnKvEwgHiOmOzjaR20JyM7i5EKFzbNzlP6YPAMRZjGUwsTJdJwhwxmQYUC/rHjudVF
+	 O3GOXQPyJRHtjjBUK7T0+hGmYnm9gpkxkI5wDVdYcNkHTTB9nNSmDqF23g0OY4lDqHQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=postmarketos.org;
-	spf=pass smtp.mailfrom=postmarketos.org;
-	dkim=pass header.d=postmarketos.org header.i=@postmarketos.org header.a=rsa-sha256 header.s=key1 header.b=rhS9qumP;
-	arc=none smtp.remote-ip=91.218.175.153
-Received: from mta0.migadu.com (out-153.mta0.migadu.com [91.218.175.153])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NcTXvXoC;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E461D606A31C
-	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 21:51:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E461D606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1752D606A31C
+	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 21:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=postmarketos.org header.i=@postmarketos.org header.a=rsa-sha256 header.s=key1 header.b=rhS9qumP
-X-Envelope-To: linux-leds@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=zn5fPGHHigpvJLucCOlqEpjKvVEKZ9N35Myfk0UnTS4=;
- c=simple/simple; d=postmarketos.org;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794174673; v=1; x=1794779473;
- b=rhS9qumPmAGrvfxmodyYdbUMW6q8h/Jgz3LA+O6NOoGWfHCWW5/dtSjtMisFwWTIjYKb7Y8d
- nnqNuG/Y0XB7OP5rfd0+GLHJ47RMOxS3uuGWjpEPsgXvc7LAKrFAji4/NLa2EEf7BLBoqgvTPAN
- zJoFeKtzdf9SgQQgkXMQRsDkdRkI2NCPA7lONapwYdHmbz5XblqDNIsSrZaTyKL9wxBGlRz37cO
- 0BeL8nuAFlh1x+ZBmsThWnuGNzNoE1XHovVkYpNt/AS5NRN4wpap8jC3J6wkY7Zq4pYy6rL5bYQ
- VTQ1DtocTdr3PVOmpjJZr5oizyypR6LAq7VRNUQslf5Fw==
-X-Envelope-To: linux-leds@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id cb03e027439b5384;
-	Sun, 08 Nov 2026 21:51:12 +0000
-X-Mizu-Trace-ID: cb03e027439b5384
-X-Migadu-Flow: FLOW_OUT
-Message-ID: <6f59d8b7-a4d4-4cf6-a6e8-0cd1542c44e1@postmarketos.org>
-Date: Sun, 8 Nov 2026 14:51:09 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NcTXvXoC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CAB31F0089F;
+	Sun,  8 Nov 2026 21:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794174707;
+	bh=qKxe7+csTxsV1yclT0/23YTBQERh4drFzeI28ypjLsw=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=NcTXvXoC4gHuFdVinS/VcXL3+V/OVbR+A1IZbrsG2MNKKn1KbEKIgMkRRMr/NOIa0
+	 PgLeFZLvQ6DnVYu7VR3cXuBZxVT2c08Q0qIFBts0TaYOFWJOJZF8cLaakTaL5j8Wa2
+	 OfqOAFOHSAcqs6tohk+ACS4hKv+MDIJf+AApcqqnkLCSuHGsW0ZTm2aMsdKEMWp2Ab
+	 c9k59QOFSQWSO1vTKp42f7juJ8vcay8yTDzy65NQttpbBaN5E9gTsruX0IKuMsXct+
+	 89NgFJDCuTRzGs4tsOGN4kGYRkPjmRnHLSdxeNDEe34Ms/6Yjw+EpERNAFdo4wjCdk
+	 nji11Z60dlueA==
+Message-ID: <sashiko-outbox-204093@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: leds: aw2013: Add awinic,aw2027
+ compatible
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Paul Sajna" <sajattack@postmarketos.org>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-1-826529beeb52@postmarketos.org>
+References: <20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org>
+ <20261108-aw2013-aw20xx-rename-v4-1-826529beeb52@postmarketos.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 08 Nov 2026 21:51:46 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,41 +60,19 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] leds: aw2013: Add AW2027 support
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>,
- Alexey Min <alexeymin@minlexx.ru>, David Heidelberg <david@ixit.cz>,
- Griffin Kroah-Hartman <griffin@kroah.com>
-Cc: Nikita Travkin <nikita@trvn.ru>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org>
- <20261108-aw2013-aw20xx-rename-v4-2-826529beeb52@postmarketos.org>
-Content-Language: en-US
-From: Paul Sajna <sajattack@postmarketos.org>
-Autocrypt: addr=sajattack@postmarketos.org; keydata=
- xjMEaVNevhYJKwYBBAHaRw8BAQdAjvGGprvrSn/CmlA1Bpjc4S5zJBNSz/6q0AESlS2JbdjN
- J1BhdWwgU2FqbmEgPHNhamF0dGFja0Bwb3N0bWFya2V0b3Mub3JnPsKZBBMWCgBBFiEEv1E8
- AP7J5F2dJQd4hycszAKyDbsFAmmt6twCGwMFCQlmAYAFCwkIBwICIgIGFQoJCAsCBBYCAwEC
- HgcCF4AACgkQhycszAKyDbv25QD9EdvXYqdH6vGQvB5HrUnMOsd37AZkKKgK87kMOXL/5tcA
- /jM3VLcq9mol+GstmBm1itIVAblXcm+H8g/wKoPXq/4LzjgEaVNevhIKKwYBBAGXVQEFAQEH
- QEgCn8S+S7t/3QvXt4dK4572qd+iTl7h4JX1FEV5XUs6AwEIB8J+BBgWCgAmFiEEv1E8AP7J
- 5F2dJQd4hycszAKyDbsFAmlTXr4CGwwFCQlmAYAACgkQhycszAKyDbueJAD+IMjk8ztbONXz
- H7fieZc5LoR+6mHnddccacmQyPcGAvsA/0+5SkHEgIBuKwkzwrmKgDqcLhVuEs2f1H2GxKUX jqQI
-In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-2-826529beeb52@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2026-11-08 2:49 p.m., Paul Sajna wrote:
-> +#define AW2016_23_27_33_CHIPID 0x09 /* vendor shared same chipid between several chips */
+> The aw2027 is largely the same as the aw2013, with the
+> exception of the way the max current is written to registers.
+> This exception makes it different enough to not work without
+> driver modifications, but similar enough to fall under the
+> umbrella of the same driver.
+>=20
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 
-I'm not sure if I should add compatibles for all of these variants.
-I would only be able to test 2027, but they should in theory all be 
-software compatible if they have the same chipid.
+Sashiko has reviewed this patch and found no issues.
 
--- 
-Hal: They're going for the kernel!
-Margo: Colonel Who?
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261108-aw2013-aw2=
+0xx-rename-v4-0-826529beeb52@postmarketos.org?part=3D1
+
