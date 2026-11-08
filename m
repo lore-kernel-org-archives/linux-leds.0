@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794174952;
-	b=iHjoXJEuzM4UsQAklRku+JQNgwRNcaHBBGdMNXfKLE0aVKpmx0Eb2YVPy7mKzBM5/df0
-	 qcgHYXHmTlLg/cV/rLRLw0mghq0oeGZEe/UTrVcCQXq0HD+hOfHYukx9v9cNbxgBOzYrx
-	 xoNuGAn2rqQbA73PrOH2/uM3AlEV5k20BQxQXAEyPlDdh4SFp4P7Q1Mi00sTBbQtv6rvD
-	 Xn2F+KVVeE0JLNSwhbSS121urZ5m/CnFe3PQC9dRdtq1OtMx93pXArK3uIrAkG7h+JEn/
-	 Zr1qatSt1F1kuP7vmJs1akp4q4pNFXepIl49AixpGE2ggUhLSHtzlL8+Pn3OEr40I+g==
+	t=1794175212;
+	b=cs3xxukQhrJ8zy/d8DoTez09m1mzb9OEeBPlHtBqaZErs5ian/1oKeo207B32d/fukr+
+	 g/MkZCVlqmTIt2UM6SLjWDILrn5Eyg0X646VH1A5ppmauXTyVRFekE93LsUwcDvEZ/I0B
+	 IZ7JwVBeYOQ/k3Q2lFL+OBIhinlcDlv/URpCzECbBaRdkZ8FUbX5tDaqj51aqbkPummVR
+	 XrNNe74pvmYl6EtZmbLNvkVRbhz+IhW9eZ93Rlk4h0jrhFP4sjjiRywvqsHGSdRvCUPPE
+	 Azkh3uQaT3ZKTWMKIkVRo0263kl88ZmehNjovbuyVt573mEnuWVv+sNt9dI43tZ9dCA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794174952;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794175212;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=kb1PTUV0xxtjhvtPn3EtVi5xcvAxODe2VIog1iimgY0=;
-	b=uq4SLbni/5v7fPQXaEaSc6xhT5yNjJM8BOx19Erf9xzPTA0IJj15rK0SvmCNGaSHvnHv
-	 mce56hNCxpO6a9mSA5DUTW/aiRHUCaYe/QkIrUgTQf169RBvO+0/516eebGN/ixHHrO30
-	 JnHPOY6Uh/2W1vov3T9hiBKILFTYZX8HO92P8Ii/+0kJntLKq1gj3b/bUjLnSrLJeZDmO
-	 fn2QXfCZjQ8Zk0LUk2GYapPPVThJZBlbR7Hnh4XkgHGdQ1/rXluHN3Dr7/D8dwj5dMM3c
-	 IUnmb0FdNtM8d9S23vteXUH0l79iCAvGGkl/i6t8M9no1wtYY2+dRQJAfXeUNg3tsKw==
+	bh=4vbH3Yk9icP6Ev4kqICoptnLr7WLybn+OoOluX5jTQU=;
+	b=utRM5fvt7Q9axnYpen+wpzRthAapZcNYhAxe3mcw+2b3GPjL93ODxEQQcpvYuvuZMqcL
+	 M6tmi6LPp8O0ZxH4Ym8fT+Hm3vVvkjz+cIDihTdiHYq+Gm3RvKzoL+dCMBCSP22QHbmAR
+	 Rr3xm3QXzO7vsKG2TIypv+7eJncP/AgmwnbAPc8qmvoJa8q1SDLavkYeIYku7CZxiYJ64
+	 RNnvSsT+tuJRvwbP8IvXyYFPpFYDCqwzhxBOO6Zm8ibXhtwflwSby7eLEuumR6J3bM+GH
+	 FJhqSQYGjigFJRpx+TrkTZgbJbEPa+BQ+QBaP2ghsMOkI11NdXgMQeur93hixVOBmng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c02vSH8w;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mIgmkp6I;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E712606A334
-	for <linux-leds@vger.kernel.org>; Sun,  8 Nov 2026 21:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EFA606A322;
+	Sun,  8 Nov 2026 22:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=c02vSH8w
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF6EC1F008A1;
-	Sun,  8 Nov 2026 21:55:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=mIgmkp6I
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36EF71F0089F;
+	Sun,  8 Nov 2026 22:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794174951;
-	bh=kb1PTUV0xxtjhvtPn3EtVi5xcvAxODe2VIog1iimgY0=;
+	s=k20260515; t=1794175211;
+	bh=4vbH3Yk9icP6Ev4kqICoptnLr7WLybn+OoOluX5jTQU=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=c02vSH8wlc1dGaNufmg0keKu0/SESI+5g9KEdHtUFQw0TjP8O05lFR0Zbyl7TLvKc
-	 ZrHcIEbKBF4+vS01VzmpMd+Xcu1MvPUE9Efv0XbtUncPgBp4OIyMB8G3lzHm8CCNiJ
-	 Hl+8kf2tFVJ8gS8Ay+fT7kE4t+PUkfHfOcZuATgbvIguxFRedvTVKUWBbOCHCnS7gT
-	 NTJb7VpvMHmSqjqcNia/vvheN9WbetLBfUOff/yhYBTPOJVTamuUVBRwGkbrggzjYg
-	 WRL9yaE094+Midn8pLANu8p7lj7I8y4kHM19qTnreRywoiahaaQtbShswn3r6qmfWt
-	 O2fXqcJ/3wTSw==
-Message-ID: <sashiko-outbox-204099@kernel.org>
+	b=mIgmkp6IaWcFqCdO1BsCj1lAfhQ5AxAT8kEZ7iLuFgpqv7Jy5xBv/xKRGEzJN6cA4
+	 g98jqIqdDOazsJG5d4livI8Qvy5+/RQlZ3d454zK/iLSifmmD7YE66jJKSe8Ouvue0
+	 07WrkSNRc3U2yyDtgL7uO9rGzrTGFmrIL+DxnM3NAv3h/R11/Zr3VwOP5HfTK1T/O3
+	 uiCeh3PyyxiqwB1r1WqVVCM/hK4Xu9Oi9z5fwL9bEhOiIy7uDGfaY24R5LGuGr0Zj7
+	 N+mO4CRvS/O1PPCNYOdO/FQ8s53pAVspBz5bQ3FYFzpvmr+1hFyII0dOaAOpEsE/nI
+	 ALPowuApmJ8SQ==
+Message-ID: <sashiko-outbox-204102@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/4] leds: aw2013: Add AW2027 support
+Subject: Re: [PATCH v4 4/4] leds: aw2013: Move assignment of chip->num_leds
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Paul Sajna" <sajattack@postmarketos.org>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-2-826529beeb52@postmarketos.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <20261108-aw2013-aw20xx-rename-v4-4-826529beeb52@postmarketos.org>
 References: <20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org>
- <20261108-aw2013-aw20xx-rename-v4-2-826529beeb52@postmarketos.org>
+ <20261108-aw2013-aw20xx-rename-v4-4-826529beeb52@postmarketos.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sun, 08 Nov 2026 21:55:50 +0000
+Date: Sun, 08 Nov 2026 22:00:10 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,33 +60,46 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> The AW2027 is basically the same as the AW2013.
->=20
-> It differs in:
-> - the max current (30mA rather than 15)
-> - the number of current levels for colour-mixing (16 rather than 4)
-> - the supply voltage max
-> - the charge indicator (unsupported by our driver at this time)
->=20
-> The max current register (imax) also moves from LCFG to GCR2, and the
-> selectable current levels for colour-mixing (LCFG_CUR) take their place.
->=20
-> The current driver implementation provided here sets the global imax to
-> it's maximum, and scales each led to the closest value using the local
-> imax. It's the best result achievable short of adding custom sysfs
-> entries and mucking up the linux interfaces.
->=20
-> Comparison of all AW20XX chips https://www.awinic.com/en/productCompareLi=
-st?id=3D47&ids=3D1022,74,96,75,72,71,928,927,73,76,578
-> AW2027 datasheet: https://doc.awinic.com/doc/202507/77b87097-27bf-48cd-af=
-9b-9b615064c1e1.pdf
-> Vendor driver: https://www.awinic.com/en/driver/AW2027DNR/454
->=20
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Medium] leds: aw2013: commit message rationale does not match driver
+  locking or code
+--
+
+commit 1ce6b90ecf6b0a7b5d8097b414e8e137a3fe0609
+Author: Paul Sajna <sajattack@postmarketos.org>
+
+> leds: aw2013: Move assignment of chip->num_leds
+>
+> devm_led_classdev_register_ext() executes default triggers
+> synchronously, which call aw20xx_brightness_set().
+> aw20xx_chip_in_use() silently returns false, skipping chip enablement and
+> causing unbalanced regulator disables while probe is still running.
+>
+> Increment chip->num_leds inside the loop, so that each call gets the
+> correct value for it's default trigger.
+>
 > Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 
-Sashiko has reviewed this patch and found no issues.
+[Severity: Medium]
+Does this commit message match the locking and execution flow in
+leds-aw2013?
+
+aw2013_probe_dt() sets brightness_set_blocking to aw2013_brightness_set()
+and leaves brightness_set NULL, so default triggers activated during
+devm_led_classdev_register_ext() queue set_brightness_work instead of
+calling aw2013_brightness_set() synchronously.
+
+Furthermore, aw2013_probe() holds chip->mutex across aw2013_probe_dt(), and
+aw2013_brightness_set() locks chip->mutex before calling
+aw2013_chip_in_use().  Any queued work therefore waits until
+aw2013_probe_dt() has finished and chip->num_leds is already set.
+
+Also, aw2013_chip_disable() returns early when !chip->enabled, preventing
+an unbalanced regulator_bulk_disable() if aw2013_chip_enable() was skipped,
+and the driver functions are named aw2013_brightness_set() and
+aw2013_chip_in_use() rather than aw20xx_*.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261108-aw2013-aw2=
-0xx-rename-v4-0-826529beeb52@postmarketos.org?part=3D2
-
+0xx-rename-v4-0-826529beeb52@postmarketos.org?part=3D4
