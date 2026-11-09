@@ -1,57 +1,68 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=54.206.34.216
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794208281;
-	b=iR0p/HyfLnARpfbnzv7Acb1EN7LzvSTBB+ln8zY7CEwQw61CvwErVKDwrTy8FtegSlIg
-	 XZ7tzQrgQThLP6iiDTh92QS5Nl1ilY9oU2nrRB58PWxrjJ1xu83SBTBx7fgpKhfTR+f6I
-	 /QvEnQwQhrVM3TNBWBGpFZmR2TUSJMH7UbriQGeBq3K8zfgEjJDy+nUZCI0wR3NQXAC1H
-	 U9MSeZl3ouAn09RMakDEG72KL009yWxpJXLP13zUI/je7hCyopk/Vv3t2e4B1YM0t0pVy
-	 MvMK3DD0lYnhLmpHpvaJukPKL644x5xAwniCb8POMu7F5hJoFwL0ufGE2SC8rMQx8+g==
+	t=1794214749;
+	b=BBNBYmkHcBWIxOFN6XVlz8Wg3imUVF1qnorTEiLLHaSGltEJGioZNa7jBBKdLGn6V4Oz
+	 /GNHtMobBCUwz/1o5PpwCXp8rusLPYFfav5XxibkZSkAbzXoF7FG7ydE9fmcu7b/IXAvG
+	 slzxosaq93ZiJeF/www55jhzEH/U2s3N4UuhoZOIpda+pR/BixJ+2iGIXmk7/jYmasY73
+	 SESnBgm8a26JSojLT4a+d2MBf5oCo/bQiJ8vTM4QRaxYQIbcsY/jdCtfKCOZCknFsNkvy
+	 Moe5Xp8Bk2takD2rUyshoW66adTIl6xedRja4CnpGPkEqeY2jmaeHdhtoEKo5R+0Xog==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794208281;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=2z/N5jLkrbPONB8X/HuMbly6PP1uv937O5YBdvWMIdI=;
-	b=SSdfzOioW+leO3tup4Pxl+EfSDdjsvLiHOiemuHSpL1guxcCWTf6c3Pdis/jN5Gq9gTy
-	 7qsCzccXfS91LGEdd1GGCBNOjmgxvmLjFNUOJsRPfVmGD+5C9qpZg0AEdLEQdpFWLO/o9
-	 7VhwvyZzjHHUJBIwVtox3j4DOWRTAbj4dJUv2aglmu3uViy5NqeIxHRsQp8stQUW4GrBQ
-	 qqY0FgO/ltHgrgOIzH5gkgkwnPBtp58OnvF7FSJiVCNzJn7WsVDbwFHYdvFQBVFduUEbe
-	 0bSR+bHl3LfjbrlGZyqK1iqkmyH37zZ5i2EENmwkuX6Xmd23mS3IYXMZRjsKvqeYosQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794214749;
+	h=DMARC-Filter:DKIM-Signature:X-QQ-mid:X-QQ-Originating-IP:Received:
+	 X-QQ-SSF:X-QQ-GoodBg:X-BIZMAIL-ID:EX-QQ-RecipientCnt:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-QQ-SENDSIZE:Feedback-ID:X-QQ-XMAILINFO:
+	 X-QQ-XMRINFO:X-QQ-RECHKSPAM;
+	bh=Ry0hvg/7ZvGS+5MJjvgAu1kOtMI7ERoCHasBUkDzBN8=;
+	b=pveIMtxvW0FDAL5uD1IklaiZY9fVGE5LEjbdZxsPl7hP3ym1F49/fK5gEPjB9az0NI/R
+	 UYWtAy4Dt8Se8II6P8VolUGRnOlm+Flttyn3GB1okxZ1TJRMR31ouYptOK76972DyVBXU
+	 PCkl3lm+Bw/JU3MB6KcaYEzXVBjWmgYsgtYTet0CWeMy2BNDdxR+wlhTx3IpbnNUIU0RO
+	 uZ8ZFs8uaucEqFMVopYdB/tUnRstM7FbjGHfWVSKVbNSkUO7hFeRMwVYbpqoMNMlXmEhZ
+	 liAbENJTkZtTEH3fV+Cs46N/uVxnNyXuiNnbwYdSbngWR1eG1BFMF4MwaXonqxGvNtw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="U/BosrJe";
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=uniontech.com;
+	spf=pass smtp.mailfrom=uniontech.com;
+	dkim=pass header.d=uniontech.com header.i=@uniontech.com header.a=rsa-sha256 header.s=onoh2408 header.b=FjWtxarp;
+	arc=none smtp.remote-ip=54.206.34.216
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD70606A31C
-	for <linux-leds@vger.kernel.org>; Mon,  9 Nov 2026 07:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6A8606A322;
+	Mon,  9 Nov 2026 08:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DD6A8606A322
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U/BosrJe
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134791F0089F;
-	Mon,  9 Nov 2026 07:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794208280;
-	bh=2z/N5jLkrbPONB8X/HuMbly6PP1uv937O5YBdvWMIdI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=U/BosrJeOoZwqJGEZIOI5C7mlQ52IYPn+EpidqlcViYutVBYwTFiKnE0zRb6uz3nY
-	 xX57f1BczlbHvRMrWtWXBtqieRBYctuVIlVcgnIntRv1lwkrEOp4PGzZEUfx6vDS/o
-	 PzrXcBgNxSOdB4pqQhYDES623MT34e7rrV5oKn6dFu7+CjOI/zot1hWhwW6WcujKM8
-	 ibyWtKjvtLuB1qgICbhbqfdrfPVFanJSIFGmVSGvSHGdQc3teOxiyl3Go66cjslEmG
-	 RJaV4rWnp02si3bSAjOMv3YF2ovELqPCMg2m1xk+xmaMaECFtt69lvRaNuUQ65odDG
-	 5Uy6+Hl7/YMzQ==
-Message-ID: <sashiko-outbox-204532@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] tools/leds/uledmon: reject device names that are too
- long
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Gu Bin" <gubin@cmss.chinamobile.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261109070539.1922-1-gubin@cmss.chinamobile.com>
-References: <20261106100614.2312-1-gubin@cmss.chinamobile.com>
- <20261109070539.1922-1-gubin@cmss.chinamobile.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 09 Nov 2026 07:11:19 +0000
+	dkim=pass (1024-bit key, unprotected) header.d=uniontech.com header.i=@uniontech.com header.a=rsa-sha256 header.s=onoh2408 header.b=FjWtxarp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1794214723;
+	bh=Ry0hvg/7ZvGS+5MJjvgAu1kOtMI7ERoCHasBUkDzBN8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=FjWtxarpGQYLRCOCRQROuFAxa5I+Rx9vIZj1+3+oNNgNb51CtF422YagaZnhVJoXe
+	 c+IL1rwqD1xAWjH+kcOmPR/wGjCutcpGKQKZxEablckzByZJZrn/rHcGJXn9tuaYd4
+	 JWP+ol0CKL/FplspIceiaxThwKIoA2TaaCJDz7c0=
+X-QQ-mid: zesmtpgz1t1794214705t0209eb0c
+X-QQ-Originating-IP: D0rEOGTZh2iXiPzAu13irFDdBHXbIhUPCQSjyhIRml4=
+Received: from PEN202512010004 ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 09 Nov 2026 16:58:23 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10624433642065870936
+EX-QQ-RecipientCnt: 8
+From: raoxu <raoxu@uniontech.com>
+To: lee@kernel.org
+Cc: pavel@kernel.org,
+	griffin@kroah.com,
+	Denis.Osterland@diehl.com,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	raoxu@uniontech.com,
+	stable@vger.kernel.org
+Subject: [PATCH] leds: pwm: Fix active-low brightness with default-state keep
+Date: Mon,  9 Nov 2026 16:58:22 +0800
+Message-ID: <9524E319B9AF9D1A+20261109085822.3755803-1-raoxu@uniontech.com>
+X-Mailer: git-send-email 2.50.1
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,25 +71,68 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: Ndw/mc8X39ObNJ1UWdOrfa1vxiINxy2GaUzWAH88ZNWCH5ChWve6hLOm
+	s+oP3xHmubqaqJevmq/QrB0JVxmdXAFAeR2tNsL9rBhkpDmeTSJf6M9O8izY4u2kiwjuIsc
+	JcGM7EXLkAEixrDZ14TunWRyR+nMVKGuuO7cqpwBnf/ddn4qrmG/8B6m2vTDz+MG3ptpStb
+	SS4C7Rar+fcq+J99k0bcAsrlJ9aazPbdq9AjQyeaKD9jseTVqTNxvO8H6CMzhRVwZvMfStR
+	mpAw8oOOm2PTiYK711GfAD9io3WWgEbIf/kkXIYAJElSXOPyU+SiIZNICeNPQoqQK5yK8Ce
+	bvrKD0Kd1DuaxHtKS1fOoSymIa6ujDlYtjV07ThJ85KIv36BY8jzOOvnED1YFZ9hvu7TQnx
+	uAnVztZAUsEJ+e1sVWjf8K1UaArVgBAOidvAMWgwwPeDp9DtCwK+dbJXcu1BzX3JWv32g/O
+	oulJhA+S8g2MV+yAqN98hOqoA4zY/1o29Gh12LaWNC8e9JrUwukS2FyTIayavva8vt7cawU
+	25ix6YP3Q7TD8QPBmOMT+mEgLk7eTri4DYr00N+XpHxwsyxOsFtmWnHmtHX/h3b69xQnSZA
+	Ii087HX4apOriJ6CQbD3KeLDL3GPjkxl9B+IuIr43KKxTVcbuV19dgsw9/TZXpbWZP+tv64
+	UoFRuCXPWSGoIpeG3fXUtPuAEhuxCsZTP3nJuHiy7ss63FBe/vpkZTX5xN/b78wjwrOlAi5
+	srYnC4R3KcRTzzJGyQ6/uU4AONU0ZuQjb9OZowH8ah5TWiu39ipE+OSsvrrhElmwf9md/FS
+	gTeIaW9wDnExkZKwSs2tQKn0Aiu2cea7v13/5hMsGvzRozcGfJCzYX5hCKClHmlfBBi6i/X
+	WzCOeu9Ga8EHbk2/PU5OHPo04mvQ9ClY0clckOTYbDknO1ZuE/++mykIsrunLJV7voLTi8i
+	oTsbySQfDqfrg27YT12bzA1i5pp6Tt5BXmIJoAIBDVGuY8DxRQCII/p0+YbMnbKIsvC9pmk
+	K925GYL69f5wLZj1UNuAg+Hz1KDW2TuWwdo4QJ7nfwZv/wCLpr7AnnNnw4NbU=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-RECHKSPAM: 0
 
-> strncpy() does not NUL-terminate when the source is at least as long
-> as the bound. uleds_dev.name is passed to the kernel with
-> write(fd, &uleds_dev, sizeof(uleds_dev)), so a >=3D LED_MAX_NAME_SIZE
-> byte argv[1] leaves name without a terminator and the write sends
-> trailing bytes that are not part of a valid device name.
->=20
-> Silently truncating such a name would create a device the user did
-> not ask for, so error out instead, like the other argument checks
-> already do.
->=20
-> Fixes: fa7f32422ea1 ("tools/leds: Add uledmon program for monitoring user=
-space LEDs")
-> Suggested-by: David Lechner <david@lechnology.com>
-> Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
+From: Xu Rao <raoxu@uniontech.com>
 
-Sashiko has reviewed this patch and found no issues.
+With default-state set to "keep", led_pwm_add() derives the initial
+brightness from the PWM duty cycle without accounting for active-low
+LEDs. However, led_pwm_set() inverts the duty cycle for these LEDs.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109070539.1922=
--1-gubin@cmss.chinamobile.com?part=3D1
+For an enabled active-low PWM with zero duty cycle, the LED is fully
+on but its cached brightness is set to zero. Conversely, a full duty
+cycle is reported as maximum brightness instead of off. This exposes
+an incorrect brightness to userspace and can restore the wrong value
+after suspend. With an optional enable GPIO, the incorrect brightness
+also causes the wrong initial GPIO level to be selected.
+
+Invert the computed brightness for active-low LEDs, matching the
+conversion used by led_pwm_set() while leaving the PWM state intact.
+
+The supplied fix was reviewed and this commit message prepared with
+OpenCode AI assistance.
+
+Fixes: 3d3d65bd2764 ("leds: pwm: add support for default-state device property")
+Signed-off-by: Xu Rao <raoxu@uniontech.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/leds/leds-pwm.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+index 6c1f2f50ff85..da307767dbe8 100644
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -131,6 +131,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+ 		brightness = led->max_brightness;
+ 		brightness *= led_data->pwmstate.duty_cycle;
+ 		do_div(brightness, led_data->pwmstate.period);
++		if (led_data->active_low)
++			brightness = led->max_brightness - brightness;
+ 		led_data->cdev.brightness = brightness;
+ 		}
+ 		break;
+--
+2.50.1
 
