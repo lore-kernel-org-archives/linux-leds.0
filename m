@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1794251370;
-	b=EbsPnikHrRvBGOhJtf/xZk7XRYSIQEDMPXVY3ARK5QV7W3YG8R9oUm2rP5HWit4d1eqd
-	 8Dlwj1LcxHYSaWkcO3W8K/jyANDBuV/8a4O/S9iGVYfjzqFuC854rwdpuaPGbyP7H+hbS
-	 SjVzI0j2mW7j7l0siikd4ibA6I8im7bqZvr44BdTf5cQW+44l+FaPUdItpFkeEOPFBf49
-	 rQngx0inq6GetwKavuDRAANelLDlMvuCXpAS9bfyvhGP9Sn9h2/1t6KpkPg/UbrDlctbh
-	 3DT9hINnzCDIULBlI60atpB1RIX7X5NfDaE+AGwAtrXn3FHvCGduhOWRvznnLG5ySKw==
+	b=4OiR2DXveb8/aSfbCCH2FfvpcS3doVJkCPDE1fGxanStNfloEALb0tf5pNhL4/ZodH+R
+	 6rv+zwo2/FovAo4sDkZYByVYNICMQxLf53asrDcLDq+w9ipL9J48Qu/bjTmmUmDjO+Hfn
+	 FrcBKeqMbmmaiIAL0rxaX+yrvgcT/J8K/rghu45lU3L9TvIoPkkaynJd2delIsofDVemd
+	 h5f0ltlZodJ3ZYqNvpSoL96nzo14WEiNQJ/nwKofiTNAlKj2N0TLBYKGpphvpdzt+pSfU
+	 iQMjiJGCo8ZbJQJU2BywxOKgsQovTv9/Yekp9Sz0GEe2pSJ6YF2EHT7RIgaC99iSswA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1794251370;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=89My3qdIAjdgbHkCl0m405z5qgQre7g9mWeS4ARG/C4=;
-	b=iCg/ge8DBpCJddlR4H5QZjAVxIhbWtlcE7PFE1GHavfGDPcYgppLhZNXTsuz2qkEklOl
-	 4Q+rzUSQdZgca5JmbHrSOQT8z7gADlTpyswqs7M3Jizivc/kbkka2iL23MIYC8cCMkkuC
-	 OAskYyB/qn9GIE0koEf/5QPx3Z90aRosaXrM+14nODAAW4o6psnAD/wBqiZEGXZu3WEGm
-	 4PvpoPg1UAJjd+H4LbuFg6q64jZFmgwOfP0nWkd6ZNzWnbUXXkdlJz7ajFSc4bLcIp4X+
-	 Rv5JDPJZJcz0EmsMvs/BvUJFQTWI6sdmwzx0LegmyjccPeChEPhMkeS9PfRRCsS5njA==
+	bh=c6WFir7+LyxByOo4f3V1cgUkCpXm7XRHRJvuyBUgj08=;
+	b=e5Bnmp04OTxpnQdZr/dCeMRo73GBvFkE1v6b0piQqMGR8FYaW/ZAV1sFntTvNw13ps4k
+	 IdbLEABOXBpu0TSH1R+AFOVUqCODuGXLMdwLXtx4TeAgO6YQu5DeRhUWFJSWPLvK0yypu
+	 lGIavL0iOm8pTNgKIHWMAtx/pklCbLNvU+kWZddjT/uGfqGDhr8PdXeU2lysratNG0wBl
+	 Io457W659VYsftD0QkqNusq6ZkKx1Th9JwGe70pk12io4HEK4E/COYKv6q5hWQuDfbCVA
+	 mO+tWs4QM9GUqK44gvWmX5yUUkRstOd4ZK0keT9pG0POdCuy9IdTjOwZfaHxCX54g2Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b4SeShKa;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vd8KSyTO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1945606A31C
-	for <linux-leds@vger.kernel.org>; Mon,  9 Nov 2026 19:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55254606A326
+	for <linux-leds@vger.kernel.org>; Mon,  9 Nov 2026 19:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b4SeShKa
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501981F0089F;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Vd8KSyTO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004761F008A1;
 	Mon,  9 Nov 2026 19:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794251369;
-	bh=89My3qdIAjdgbHkCl0m405z5qgQre7g9mWeS4ARG/C4=;
+	s=k20260515; t=1794251370;
+	bh=c6WFir7+LyxByOo4f3V1cgUkCpXm7XRHRJvuyBUgj08=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=b4SeShKaVIE2StixKemKxJivTtPZ1vOT8OGb29Lgo/0kEBwyBgY2snSf66dm70AgD
-	 DqPfm76aZ25PUsxa4av42yRWAvN/tsbQCvNuCFFAXBpqt4wpwqflMhEFxRz6lxEXkP
-	 YLcOjjwoN0/3Te/jMNO+mI0j9j5Tv7ByNq940bCVChK8d6KA5VKJo8wVN0NL7+xmf1
-	 Ymmg1f+Q9f28tKwDTzV2snXutRpsF1TXIQc9zICUVT3kDW964z5GhstWszma++QlL7
-	 29WSl9JXZqdyNgtx50obMOehbC98pssOazg0AFznv1mQeIQa9yFBlca7TUa/eyqhZ5
-	 FcAk2UCFKPGwg==
-Message-ID: <sashiko-outbox-205461@kernel.org>
+	b=Vd8KSyTOtI1gnaoo/vDcLX1qHWwiiuwelPd7KQVXnh+WtqVeYyBQH6yliwX7pPuha
+	 GlnKig2Ijp+foBF5pzboHqsl34yLo6qouUXqybdNoaRoGoTeGq5igk5oJ1Wzvuzebg
+	 YLiOQWhZanGQ58YOBok2hws932CECeO/nCEGW5ph5ua+plC02UCgUff/oXip4ztnPz
+	 n5mXo1OS02BB1/lonn8afwixkBV/3a++jqWJtVqLW2N7I1HAajnO7K9hXZH8Sz/3We
+	 SqUbRypojhMp8kfqtvE+1qiBxVgxH2ds4RLvvVlxPU6ZHecvxURqRH3EKSaWoXyjkb
+	 uyvZWaiec9RSg==
+Message-ID: <sashiko-outbox-205462@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 07/11] leds: rgb: ktd202x: Add Etek ET6326 support
+Subject: Re: [PATCH v2 04/11] leds: rgb: ktd202x: Fix a division by zero
+ with long blinks
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Joseph Telaak" <joseph@telaak.dev>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261109-ktd202x-et6326-v2-7-56e97c226658@telaak.dev>
+In-Reply-To: <20261109-ktd202x-et6326-v2-4-56e97c226658@telaak.dev>
 References: <20261109-ktd202x-et6326-v2-0-56e97c226658@telaak.dev>
- <20261109-ktd202x-et6326-v2-7-56e97c226658@telaak.dev>
+ <20261109-ktd202x-et6326-v2-4-56e97c226658@telaak.dev>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Mon, 09 Nov 2026 19:09:28 +0000
+Date: Mon, 09 Nov 2026 19:09:29 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,27 +63,27 @@ Precedence: list
 
 > From: Joseph Telaak <joseph@telaak.dev>
 >=20
-> The Etek ET6326 is a KTD2026 with a different flash period encoding:
-> Reg1 =3D n selects (n + 1) * 128 ms, from 128 ms to 16.38 s, where the
-> KTD202x selects 256 ms + n * 128 ms and uses Reg1 =3D 127 for one shot
-> mode.
+> blink_set() works out the on time as delay_on * 256 / (delay_on +
+> delay_off) in unsigned long, with delays straight from the timer
+> trigger's sysfs files:
 >=20
-> Move the number of LEDs and the flash period limits into per chip data
-> and add the ET6326, so the timer trigger gets the delays it asked for.
+> - when the two delays add up to exactly 2^32 on 32 bit, or 2^64 on
+>   64 bit, the sum wraps to 0 and the kernel divides by zero, for
+>   example with "echo 2147483648" into both delay_on and delay_off.
+>   That oopses on x86 and gives an arbitrary result on MIPS and arm64.
+> - on 32 bit the product already overflows once delay_on is above about
+>   4.6 hours, and a sum that wraps sets the wrong period, so long blinks
+>   get an arbitrary duty cycle
 >=20
-> Report the on time rounded to the nearest millisecond rather than down.
-> The shortest ET6326 period is 128 ms, and 1/256 of it rounded down is
-> 0 ms, which the timer trigger passes back with the next delay_off
-> write, where an on time of 0 turns the LED off. Rounded, the delays
-> read back also give the same on time when they are written again.
+> Saturate the sum, and compute the on time with mul_u64_u64_div_u64().
 >=20
-> Link: https://www.etekmicro.com/wp-content/uploads/datasheets/ET6326_data=
-sheet.pdf
+> Fixes: 0ebdb7210943 ("leds: Add ktd202x driver")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109-ktd202x-et=
-6326-v2-0-56e97c226658@telaak.dev?part=3D7
+6326-v2-0-56e97c226658@telaak.dev?part=3D4
 
