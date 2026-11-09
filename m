@@ -1,67 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794207955;
-	b=jNDSTBRynoG33cyXyxPOKCVtB4XtD6dqoAiup7z+EtyBSgyPYwy1Hm5QG/OW/jFhYw30
-	 /zFyt8ao+/mmQQnvAyWmKC7RRRP9aUAUaWTgHaMsWPd66dDseFPsm3P+9VI6/PzdQNbhl
-	 3qpnWQ4tw84rKVFxmie/zbUnv7Xs5FULeBJFrUI+A/E+XlC5AtS+4aEmsYglN2XbrsDb3
-	 ZYt+z1fDWf73rCw7K1PSh0gms1jd1+QJshYLec+AKUUgoNOCbtLEhvXZRPZQsStrs6wg2
-	 3qp8k99PQKifolF53nUsVj/zduTO+RQqI7yBs84VtRQpat+1rtYD5iFc+XrZ49dsFyA==
+	t=1794208281;
+	b=iR0p/HyfLnARpfbnzv7Acb1EN7LzvSTBB+ln8zY7CEwQw61CvwErVKDwrTy8FtegSlIg
+	 XZ7tzQrgQThLP6iiDTh92QS5Nl1ilY9oU2nrRB58PWxrjJ1xu83SBTBx7fgpKhfTR+f6I
+	 /QvEnQwQhrVM3TNBWBGpFZmR2TUSJMH7UbriQGeBq3K8zfgEjJDy+nUZCI0wR3NQXAC1H
+	 U9MSeZl3ouAn09RMakDEG72KL009yWxpJXLP13zUI/je7hCyopk/Vv3t2e4B1YM0t0pVy
+	 MvMK3DD0lYnhLmpHpvaJukPKL644x5xAwniCb8POMu7F5hJoFwL0ufGE2SC8rMQx8+g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794207955;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=W1ABmc3WTCzKJfUFhADUbSuXP+AhOfzoYuOow8/pfyY=;
-	b=Qe5uC9mODAtj95VSH3KQfoK4KuMgVDVLxJKFp0jlk0fstFl4fBtG7AtC5rn9mfadTIjr
-	 LNU0Os5k2rNoYKD7M/AGEKqb7tPXRfqCt8hyTXK6YG2tQNIvTgjLAbLVQZ+sdg4SMDNIh
-	 L0EtCv+xEtR0BhOlyCHFmn1sgDSrrlmHXYj36nWQML3EvQXUnujMY9qHgoEbzTKmAl429
-	 NZPdsDcReJkZfM2KHUWKQx6D4Qjl1Hp4tvyp3OMYIDzLI1eO9VFOlqE+DFWEbNtPgNwrx
-	 YMegW7aP7HHJBXa5DsYvP6iKVAWYmlRY7T3a/inkCqftJmVruA4ZyG9S4/SybAb3G7Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794208281;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=2z/N5jLkrbPONB8X/HuMbly6PP1uv937O5YBdvWMIdI=;
+	b=SSdfzOioW+leO3tup4Pxl+EfSDdjsvLiHOiemuHSpL1guxcCWTf6c3Pdis/jN5Gq9gTy
+	 7qsCzccXfS91LGEdd1GGCBNOjmgxvmLjFNUOJsRPfVmGD+5C9qpZg0AEdLEQdpFWLO/o9
+	 7VhwvyZzjHHUJBIwVtox3j4DOWRTAbj4dJUv2aglmu3uViy5NqeIxHRsQp8stQUW4GrBQ
+	 qqY0FgO/ltHgrgOIzH5gkgkwnPBtp58OnvF7FSJiVCNzJn7WsVDbwFHYdvFQBVFduUEbe
+	 0bSR+bHl3LfjbrlGZyqK1iqkmyH37zZ5i2EENmwkuX6Xmd23mS3IYXMZRjsKvqeYosQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=LDrslFLL;
-	arc=none smtp.remote-ip=111.22.67.151
-Received: from cmccmta8.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D38606A31C;
-	Mon,  9 Nov 2026 07:05:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 57D38606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="U/BosrJe";
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD70606A31C
+	for <linux-leds@vger.kernel.org>; Mon,  9 Nov 2026 07:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=LDrslFLL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=LDrslFLLqNIgvCuzNriJUhAkwu7D3DwSp2pSNdnRUqyf/EWSi3nMI6teREooLwwHrTlug78i/9V6g
-	 tCwOibfZOOpXbycvWl95lxpm98iKiQ0mvEiYjQ2XdHokbrpOt0x2UfA0M7ZttxjaJTFy56UK7B3a7j
-	 4rSTrLcbKeX/y1Hw=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee66af170ceda6-8e8e2;
-	Mon, 09 Nov 2026 15:05:51 +0800 (CST)
-X-RM-TRANSID:2ee66af170ceda6-8e8e2
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from FHB-W5100250 (unknown[36.137.216.21])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee26af170c6071-85b1c;
-	Mon, 09 Nov 2026 15:05:51 +0800 (CST)
-X-RM-TRANSID:2ee26af170c6071-85b1c
-From: Gu Bin <gubin@cmss.chinamobile.com>
-To: lee@kernel.org
-Cc: pavel@kernel.org,
-	david@lechnology.com,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tools/leds/uledmon: reject device names that are too long
-Date: Mon,  9 Nov 2026 15:05:38 +0800
-Message-ID: <20261109070539.1922-1-gubin@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20261106100614.2312-1-gubin@cmss.chinamobile.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U/BosrJe
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134791F0089F;
+	Mon,  9 Nov 2026 07:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794208280;
+	bh=2z/N5jLkrbPONB8X/HuMbly6PP1uv937O5YBdvWMIdI=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=U/BosrJeOoZwqJGEZIOI5C7mlQ52IYPn+EpidqlcViYutVBYwTFiKnE0zRb6uz3nY
+	 xX57f1BczlbHvRMrWtWXBtqieRBYctuVIlVcgnIntRv1lwkrEOp4PGzZEUfx6vDS/o
+	 PzrXcBgNxSOdB4pqQhYDES623MT34e7rrV5oKn6dFu7+CjOI/zot1hWhwW6WcujKM8
+	 ibyWtKjvtLuB1qgICbhbqfdrfPVFanJSIFGmVSGvSHGdQc3teOxiyl3Go66cjslEmG
+	 RJaV4rWnp02si3bSAjOMv3YF2ovELqPCMg2m1xk+xmaMaECFtt69lvRaNuUQ65odDG
+	 5Uy6+Hl7/YMzQ==
+Message-ID: <sashiko-outbox-204532@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] tools/leds/uledmon: reject device names that are too
+ long
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Gu Bin" <gubin@cmss.chinamobile.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261109070539.1922-1-gubin@cmss.chinamobile.com>
 References: <20261106100614.2312-1-gubin@cmss.chinamobile.com>
+ <20261109070539.1922-1-gubin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Nov 2026 07:11:19 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -70,51 +60,25 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-strncpy() does not NUL-terminate when the source is at least as long
-as the bound. uleds_dev.name is passed to the kernel with
-write(fd, &uleds_dev, sizeof(uleds_dev)), so a >= LED_MAX_NAME_SIZE
-byte argv[1] leaves name without a terminator and the write sends
-trailing bytes that are not part of a valid device name.
+> strncpy() does not NUL-terminate when the source is at least as long
+> as the bound. uleds_dev.name is passed to the kernel with
+> write(fd, &uleds_dev, sizeof(uleds_dev)), so a >=3D LED_MAX_NAME_SIZE
+> byte argv[1] leaves name without a terminator and the write sends
+> trailing bytes that are not part of a valid device name.
+>=20
+> Silently truncating such a name would create a device the user did
+> not ask for, so error out instead, like the other argument checks
+> already do.
+>=20
+> Fixes: fa7f32422ea1 ("tools/leds: Add uledmon program for monitoring user=
+space LEDs")
+> Suggested-by: David Lechner <david@lechnology.com>
+> Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
 
-Silently truncating such a name would create a device the user did
-not ask for, so error out instead, like the other argument checks
-already do.
+Sashiko has reviewed this patch and found no issues.
 
-Fixes: fa7f32422ea1 ("tools/leds: Add uledmon program for monitoring userspace LEDs")
-Suggested-by: David Lechner <david@lechnology.com>
-Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
----
-
-Changes in v2: reject over-long names with an error instead of
-silently truncating them, as suggested by David Lechner.
-
- tools/leds/uledmon.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/tools/leds/uledmon.c b/tools/leds/uledmon.c
-index c15a39c1f271..d38f5716c7f7 100644
---- a/tools/leds/uledmon.c
-+++ b/tools/leds/uledmon.c
-@@ -31,7 +31,13 @@ int main(int argc, char const *argv[])
- 		return 1;
- 	}
- 
--	strncpy(uleds_dev.name, argv[1], LED_MAX_NAME_SIZE);
-+	if (strlen(argv[1]) >= LED_MAX_NAME_SIZE) {
-+		fprintf(stderr, "Device name too long (max %d bytes)\n",
-+			LED_MAX_NAME_SIZE - 1);
-+		return 1;
-+	}
-+
-+	strcpy(uleds_dev.name, argv[1]);
- 	uleds_dev.max_brightness = 100;
- 
- 	fd = open("/dev/uleds", O_RDWR);
--- 
-2.55.0.windows.3
-
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261109070539.1922=
+-1-gubin@cmss.chinamobile.com?part=3D1
 
