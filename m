@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794339810;
-	b=BDZz+PYNAL/43GpHdI8hh9vZaGUEzxR9w9S0S99QKYtJg0ik3x7nXHMMOEXtIc4nMWIO
-	 dES13+E4W5nnm1sa+JF/TMyk5gEEEceInXpPzSLYtMhcjNQGxtAbjJBQoIDBHAhunD8XD
-	 iz9EbbpVtH9kCPgBVObhvgQzy9s5fSmMCKaou8De5Z6DeXFyHPaQTCDPFMTHmgLnSXRaw
-	 d8aDtqmQ9NjNSMDcM1BcVNunqdn9Gm3ePTFzQNYoep2g4ROjujauKDkUdQWe+G1MR5/tz
-	 xiTHzXELcK22pDnlEFHxXnmNj/gFTax3tn7FXYIxoiVCf4eKa5+/QDxoQ9GEdxl6jFA==
+	t=1794340151;
+	b=OGrGOiQ0PCqirGV3Xdr627Xtz7V+SZGrZ6UQ9KDTtFBOKvjAu8JiYcF6pjvZhGHTPywp
+	 AUJEVvGQ1P4WiAbGlxce2ZcuYnp91MWc4NiQRS95peG1lDHybf7Mf4fZs+6iSXcovizPX
+	 0sWV0SMMxgd6QRa6yhxAwfoeotlI2byZCgMXcRurkmOyruRP1NFQbveM3ml2V6k4qYBlT
+	 R9v0SvIT+4FPEqEjE85i7tW9E9faJ1elovkIN2vRHmu0z6zO/cdc9CeL5XQ3ri+w3/kgg
+	 7UYyis6kFAdPCE1u6LyC2lqcRvE233OgtHXq6WuKoCjXxaENnBc8Q9vdtKGZZq78sUg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794339810;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794340151;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=YZXer07S58Z/0jzPsNUlTX7+rJGU8w9a+K8zIIGwsN8=;
-	b=sLL3m9/i0Yd1XMfPnr+ghyb5QyrqHOfPg7sgkJRz7oWVdVWZ3L0HuAi1ZHtDwGUwUjiR
-	 rs2QoMSHk/PPBkTOucrAUhtib+Kr6t6QaRD1BqV16jKXx6z/+6UeZyrzMmTRXqXTw+rJk
-	 BYgqxTBqXzEU17xDIJg09F1qw86TgVeAJoj1SqhvetdHfmtswoGeXPsa41WaRjK2EuP6/
-	 aC76UfpB8OwM7VJvkmu8kr18SXm8g64S9PWZw23frZm4FMCEenvKqu8iJA15EL9TE+8bL
-	 GYCr/sYqFPnpzbd8sxOAka95/SK8upiiqOnT+bZrJB/Ip8VXO55VP5DsP1F8bDapbIA==
+	bh=XgFkiaalUYGH25eD9eEfRJdOi43ZuGo2ADVP/IUyemI=;
+	b=Y8qZoKLDUqyDAe+P+6e7uaX5Ylrwg91VASbwT9j6khpvLd+VfAUqoJLfJsy52nKDu2T6
+	 RqmaNJ1rBlxucBu8cg9NIRL3z+HE5JBaDbRTfIHabYcVt3DfUgo4wtK9tGxFFqJNgZe6r
+	 hxJP+pqFOsmr2EOEXHost+S/7azkTsmt+VY8E7J/jcWKw/6mrzOQRIVvdYrYve/dnoLLg
+	 H3kDWhL2qX061rh44BoEPAKQKQ4CA1aEpYF/ypwnCRS/fsN8+76rwdhunHQhZMrDRjy0c
+	 7dgZQPU1wIoDkSStYkRCWpVGqQzSNYWdQDzu91iNMoLAkUPbJbtIyH5uAXR8GWcgjTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Tirh/qzM";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dBEji5Ek;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A673606A31C
-	for <linux-leds@vger.kernel.org>; Tue, 10 Nov 2026 19:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630FF606A31C;
+	Tue, 10 Nov 2026 19:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Tirh/qzM
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C3A1F008A1;
-	Tue, 10 Nov 2026 19:43:29 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dBEji5Ek
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AEA1F0089F;
+	Tue, 10 Nov 2026 19:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794339810;
-	bh=YZXer07S58Z/0jzPsNUlTX7+rJGU8w9a+K8zIIGwsN8=;
+	s=k20260515; t=1794340151;
+	bh=XgFkiaalUYGH25eD9eEfRJdOi43ZuGo2ADVP/IUyemI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Tirh/qzM5nVJzdAF5oEJGeMPrw9982Ttd+YcrvPDLjo4ukh0i9DN5mdNB3pxZmkTI
-	 UQ9R9Lhbm0oeLhrpNPao2w7OSqxwGWrK0IsifY9ipg3pKR3/vsTDrHvxzNAmEqM3la
-	 R0zsAbv5Sb3a7BI1anvIZbLeD/BQ7yKv4M2RzP5O9YquF0t8A9nbzLKWaSF9XgTNhF
-	 Yu0wePhjW8l5cCRUFtQfbqg/BBDq4C1h0dA+gcmBxxQz0smbWVzok+1qL4uzu6uzx0
-	 P+ZX7igQTF84jwI6KLIo8uBpyS/ncoFBJRT8khOYi82UXRx7chf6sNyUa3TZkhPxnX
-	 F4R+Zdbiyt9GQ==
-Message-ID: <sashiko-outbox-207675@kernel.org>
+	b=dBEji5EktwQXVijgfeTc7chJnh47UX9U47ngoQUfa0S++uE6pUw4ke9IWrvhmIExF
+	 9EJrhpuzZiOh3U0m+CuyfkYp1WpQUjric1RqgR1sm6xyOa87DeOVHtmrS7l2jjMPaL
+	 WZ0OFzCgpu4EMETLyexjd4SHqjvSD3ZF8790dc13SToZ1QjoF1Zi+x2g0NSUHbmAUs
+	 jNq+eUynrGX+0gr680gi2O3B76Yfi0/pWI+WG4fMX38fMz8aLHMnxi2pOx4EHDrqiq
+	 gIK7bQdsVjkqT+6wuntnzhiOyVCI4Iri/46WfOMSDe6znhFvf81Dnj3s6CyMaq1EK5
+	 SReH+HoRbRGHg==
+Message-ID: <sashiko-outbox-207683@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: backlight: add Kinetic
- KTD3137
+Subject: Re: [PATCH v2 2/2] backlight: add ktd3137 support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Roman Vivchar" <rva333@protonmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261110-6768-ktd3137-v2-1-9496c51efea4@protonmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <20261110-6768-ktd3137-v2-2-9496c51efea4@protonmail.com>
 References: <20261110-6768-ktd3137-v2-0-9496c51efea4@protonmail.com>
- <20261110-6768-ktd3137-v2-1-9496c51efea4@protonmail.com>
+ <20261110-6768-ktd3137-v2-2-9496c51efea4@protonmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 10 Nov 2026 19:43:29 +0000
+Date: Tue, 10 Nov 2026 19:49:10 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,18 +60,38 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> From: Roman Vivchar <rva333@protonmail.com>
->=20
-> Kinetic KTD3137 is an LED IC, used in various mobile devices for the
-> display backlight. Add devicetree bindings documentation for this chip.
->=20
-> Datasheet: https://www.kinet-ic.com/uploads/KTD3137-04a.pdf
->=20
-> Signed-off-by: Roman Vivchar <rva333@protonmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] backlight: ktd3137: use named initializer in ktd3137_ids
+--
 
-Sashiko has reviewed this patch and found no issues.
+commit 8835810206d0f5ccda9a816dd64ce8c1128ef9b3
+Author: Roman Vivchar <rva333@protonmail.com>
+
+backlight: add ktd3137 support
+
+This commit adds an I2C backlight driver for the Kinetic KTD3137 display
+backlight IC.
+
+> diff --git a/drivers/video/backlight/ktd3137.c b/drivers/video/backlight/=
+ktd3137.c
+> new file mode 100644
+> index 0000000000000..1595aefd46e6c
+> --- /dev/null
+> +++ b/drivers/video/backlight/ktd3137.c
+> @@ -0,0 +1,258 @@
+
+[ ... ]
+
+> +static const struct i2c_device_id ktd3137_ids[] =3D {
+> +	{ "ktd3137" },
+> +	{ }
+> +};
+
+[Severity: Low]
+This isn't a bug, but new struct i2c_device_id entries should use named
+initializers ({ .name =3D "ktd3137" }).
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261110-6768-ktd31=
-37-v2-0-9496c51efea4@protonmail.com?part=3D1
-
+37-v2-0-9496c51efea4@protonmail.com?part=3D2
