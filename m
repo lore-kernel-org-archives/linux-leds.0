@@ -1,56 +1,87 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.175.65.21
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794301635;
-	b=Ar9pw+SxiCx7TE2rEsPoKHbLNxLCLsJgfHUxK4Lzpxkit5NqGTA0J7S31pAFvK6cBHnl
-	 gatQoAxbNNPesqFDQ/zjUM4e7d316NSVyC8/6Z95PZJa4oj4ECYTBTS+a2yRBgz/3ROLD
-	 iJCMDDiZLdr/CSkd584BK8qo412Nnw0Iulwl2AuldraH5cTPcc2tgtIn2bw+esMRIKN9K
-	 oqSE0vUdIaeIHI6mXPWzOYSHUAzQjY99tH+ytW0wB5I1+lwwXzDRqSatMfVtxYDp7c/6w
-	 HmAVyGGoEx0RRuGjmpW5RY+AL1dcIwnPg6FoDWspQp+Lr7DXk91dLNx3w3xOxAYqrnQ==
+	t=1794312161;
+	b=AzRlnR9Wx+G4WP5LgKgLSDnhuPF0l+QB5fTldR97eE0w6DeutqK97ZotefBQ4Zu0TfEx
+	 aqoq7L8XWXGZm90oNIV+rjuDTw5DnxRVXAszoYiFIUIgL0It09bIt4iI7R8iOPTro/7QN
+	 ovmN37YdcnNsFEc+P+uJD7m0r6GT9zVvCjkDH/aguOVy0GZbPuKMihylPGzPu+Y7uUz6N
+	 2SUk9bBW8L3FnJREH6o3AtyVHMS45/PRckBtl+y3og/azEAFzswKs+o4dUezNHlM83Z1D
+	 rNy0/T6D/YZMBggV831YnJBKt9kYyuErwjyURw/8WeSEkPRGr688GP/2W9eBnzKYXvQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794301635;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=OD0A0N5jCafTuhqB9U387BTo/UUFlEn4+AHiFajNJbc=;
-	b=P3mYBETiDKg5ZdSRYAyr/0F2pP4N+N2cCLgoqe8C8NDGqB++qjwVafXXoOW0k71l6bxv
-	 QsSbWY8iPZpmeVfpOUEdTEM4XhjjvDXmjO1G9JGVKmTuVnXLO5FzczQjyMmS8RYikN19K
-	 v4adT2gVmks8VVzk6sG/0a8lEUoIw/VIRH3jUQTl6GaxTgHwBp8G86vCIizQHsXeNFm5Y
-	 FB+0e+EeAT4cts4F1YPifJyQkY6MxWz/iWlJ58VxB/R8znLiNNVmOLunhCKq9dDRAmC0s
-	 8LIcWLtEATltA3fZ/p7TpFtClsIEwQa3yFxN5kUL5tUeHB2RpwoUbJQK7k1Kjx0lwnw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794312161;
+	h=DMARC-Filter:DKIM-Signature:X-CSE-ConnectionGUID:X-CSE-MsgGUID:
+	 X-IronPort-AV:X-IronPort-AV:Received:X-CSE-ConnectionGUID:
+	 X-CSE-MsgGUID:X-ExtLoop1:X-IronPort-AV:Received:From:Date:To:cc:
+	 Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type;
+	bh=SH/FoN6uZbvhXWx+mjNqxG+5UNI9GCQnZ6S37gnELZA=;
+	b=fBwTqWAwvVLPfMMTc+2PDh+orDURJcBgvoXun4RhsnBltlvIvhai1e8+Kvd8LSK5bM4n
+	 OHv1JngOZRINR0ovhVybyEv1W3Td4DWWCga/QrIrbCI/dGpFrhwNXBimL0T5m9l/H7IGK
+	 VInh6A7W8iofLOy4C3S5Xq1OcV7pz3u1G8DyqCi+9Q596qzFuU15X0skg+HEM7sEU2/TV
+	 DRW4R5G0Js25aTUDh4E8deif3hjU5MUFEm1mIKae2t+jf1uTVhRV/2PCoSrJOwCI3/S/i
+	 P6XOUlhv5l5plrkp8UMJn7sAL5p7QJBUi+YZb5j6M9R7+XmLAadPCSk0i8S+vGQ0GVg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EMe5Ued2;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linux.intel.com;
+	spf=pass smtp.mailfrom=linux.intel.com;
+	dkim=pass header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kUZTMrNx;
+	arc=none smtp.remote-ip=198.175.65.21
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B841606A31C;
-	Tue, 10 Nov 2026 09:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB425606A31C;
+	Tue, 10 Nov 2026 12:02:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AB425606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EMe5Ued2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4716F1F0089F;
-	Tue, 10 Nov 2026 09:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794301635;
-	bh=OD0A0N5jCafTuhqB9U387BTo/UUFlEn4+AHiFajNJbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EMe5Ued2ovNBDBFFJbHDxkdMQTtfxPaa/IcyHmBQZndOkHtQf56/hjPEe5d1pZD6U
-	 HvmQCaG47iKvJgBtUon4vIu7nAujZR+mdoe9KSz5X6yXMQds+KhlvOIaQdfnbm653+
-	 tzIdEy6J+Y+h2ZcCWjh25WM/W5oLOzXjWwX9ZY9A0d8KGcpl7eS9SAQB8VnU/eKTD4
-	 7m6pUBzLqFesDewE6PnFKgin7AZc0iLWI7caLyT1CwKhyCul+iREfEQrV26lYBo/fj
-	 OrXvl+wJ34PDFgqnoS78e+E1Eq3/ffwjKAZov3gTUTftGTNI4uXhlucI53iRjDUbhQ
-	 2pnZ+gLHIc1bg==
-Date: Tue, 10 Nov 2026 09:07:11 +0000
-From: Lee Jones <lee@kernel.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: sashiko-reviews@lists.linux.dev, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 08/10] leds: class: Split led_classdev_register_ext()
-Message-ID: <20261110090711.GC6323@joneslee-macbookpro.roam.internal>
-References: <20261018135339.1109271-1-W_Armin@gmx.de>
- <20261018135339.1109271-9-W_Armin@gmx.de>
- <sashiko-outbox-176189@kernel.org>
- <bc1371ba-1355-4e45-be2c-d3e806c485a9@gmx.de>
- <4d9e01c3-acaf-4f5c-bbc1-fc4c78582571@gmx.de>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.a=rsa-sha256 header.s=Intel header.b=kUZTMrNx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1794312161; x=1825848161;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=eMdM21hEmkcP8lpu6VNP1r22o5MSqJ/EL0i7jh9A8CU=;
+  b=kUZTMrNxJtILykmCCaIXMcwKq3QkLvaW0LIpMR1fXQY62mFaTQGHT5QD
+   rDBW0hlZwjAiw0z7w6xzqxUTfQzf/9a/oE23kojFP5LmugEEEp+1usTTd
+   kWe/Fb8xxlcsycjuEuBX8ZUMCWAcs1AkWOz82LahPdJkDHM0KBJ+mTGp1
+   kRYGV3H5qih5Crm/2YekOVHlwVrJSxhnIiEnxH1UGPO5SgB4vBMwg1h8x
+   8O7efVfrBV71obIM0mkE/FfS/Czz2Ygjj/6ds0he6rwuwvAbn410mCmEx
+   oMNuHk2pdC8+dLZJZIUk4cKFBQDxnfekP9JtTJ+in/eiaKsQ/VSN3XV79
+   Q==;
+X-CSE-ConnectionGUID: eVnBbn3bRc+y8uyAB+YlEA==
+X-CSE-MsgGUID: XhuOpTUeTUWURYnlL8hycA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11961"; a="3138909"
+X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
+   d="scan'208";a="3138909"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 04:02:40 -0800
+X-CSE-ConnectionGUID: xGdkc45iT5eGhiHxJBsghA==
+X-CSE-MsgGUID: 6/P5oL78RfKEQtOZQyxoMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,205,1787036400"; 
+   d="scan'208";a="8459686"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.34])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2026 04:02:32 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 10 Nov 2026 14:02:28 +0200 (EET)
+To: Lee Jones <lee@kernel.org>
+cc: Pavel Machek <pavel@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+    Shuah Khan <skhan@linuxfoundation.org>, 
+    =?ISO-8859-15?Q?Thomas_Wei=DFschuh?= <linux@weissschuh.net>, 
+    Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+    =?ISO-8859-15?Q?Marek_Beh=FAn?= <kabel@kernel.org>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+    Hans de Goede <hansg@kernel.org>, Ike Panhc <ikepanhc@gmail.com>, 
+    Rong Zhang <i@rong.moe>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+    Jakub Kicinski <kuba@kernel.org>, Vishnu Sankar <vishnuocv@gmail.com>, 
+    Vishnu Sankar <vsankar@lenovo.com>, linux-leds@vger.kernel.org, 
+    Netdev <netdev@vger.kernel.org>, linux-doc@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, chrome-platform@lists.linux.dev, 
+    platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v7 00/13] leds: Add support for hardware-initiated hardware
+ control trigger transition
+In-Reply-To: <20261110090105.GA6323@joneslee-macbookpro.roam.internal>
+Message-ID: <b19ef65f-c563-07f8-1be8-9a0a0689da22@linux.intel.com>
+References: <20260921-leds-trigger-hw-changed-v7-0-fe3cdb6dec51@rong.moe> <179425319974.10927.7190572777719580956.b4-ty@b4> <20261110090105.GA6323@joneslee-macbookpro.roam.internal>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,188 +91,97 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-1170544091-1794312148=:1229"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1170544091-1794312148=:1229
 Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d9e01c3-acaf-4f5c-bbc1-fc4c78582571@gmx.de>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On Sat, 07 Nov 2026, Armin Wolf wrote:
+On Tue, 10 Nov 2026, Lee Jones wrote:
 
-> Am 18.10.26 um 19:14 schrieb Armin Wolf:
-> 
-> > Am 18.10.26 um 16:15 schrieb sashiko-bot@kernel.org:
-> > 
-> > > Thank you for your contribution! Sashiko AI review found 2 potential
-> > > issue(s) to consider:
-> > > - [High] leds: dangling led_cdev->dev pointer on error in
-> > > led_classdev_init()
-> > > - [High] leds: premature device_set_node() in led_classdev_init()
-> > > breaks fw_devlink
-> > > -- 
-> > > 
-> > > commit 7efb333e9420ea13e705d9a114384e841e92d2b2
-> > > Author: Armin Wolf <W_Armin@gmx.de>
-> > > 
-> > > leds: class: Split led_classdev_register_ext()
-> > > 
-> > > This commit splits led_classdev_register_ext() into
-> > > led_classdev_init() and
-> > > led_classdev_add() so that LED class devices can be initialized before
-> > > being added to the subsystem.
-> > > 
-> > > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> > > > index 77a0fce039528..ace417a2388e0 100644
-> > > > --- a/drivers/leds/led-class.c
-> > > > +++ b/drivers/leds/led-class.c
-> > > [ ... ]
-> > > 
-> > > > @@ -539,23 +550,54 @@ int led_classdev_register_ext(struct
-> > > > device *parent,
-> > > >       if (!led_cdev->max_brightness)
-> > > >           led_cdev->max_brightness = LED_FULL;
-> > > >   -    mutex_lock(&led_cdev->led_access);
-> > > > -    led_cdev->dev = device_create_with_groups(&leds_class,
-> > > > parent, 0, led_cdev,
-> > > > -                          led_cdev->groups, "%s", final_name);
-> > > > -    if (IS_ERR(led_cdev->dev)) {
-> > > > -        mutex_unlock(&led_cdev->led_access);
-> > > > -        return PTR_ERR(led_cdev->dev);
-> > > > +    led_cdev->dev = kzalloc_obj(*led_cdev->dev);
-> > > > +    if (!led_cdev->dev)
-> > > > +        return -ENOMEM;
-> > > > +
-> > > > +    device_initialize(led_cdev->dev);
-> > > > +    led_cdev->dev->class = &leds_class;
-> > > > +    led_cdev->dev->parent = parent;
-> > > > +    led_cdev->dev->groups = led_cdev->groups;
-> > > > +    dev_set_drvdata(led_cdev->dev, led_cdev);
-> > > > +    ret = kobject_set_name(&led_cdev->dev->kobj, "%s", final_name);
-> > > > +    if (ret < 0)
-> > > > +    {
-> > > > +        put_device(led_cdev->dev);
-> > > > +        return ret;
-> > > >       }
-> > > [Severity: High]
-> > > Does this leave led_cdev->dev as a dangling pointer when
-> > > kobject_set_name()
-> > > fails here, or when led_classdev_add() fails in
-> > > led_classdev_register_ext()
-> > > below?
-> > > 
-> > > Previously, led_cdev->dev was assigned the return value of
-> > > device_create_with_groups(), so on any failure it remained either
-> > > NULL or an
-> > > ERR_PTR(). Commit 1dbb9fb4082ce2 ("leds: Allow to call
-> > > led_classdev_unregister() unconditionally") added an
-> > > IS_ERR_OR_NULL() check
-> > > to led_classdev_unregister() so drivers can call it unconditionally
-> > > in their
-> > > error and removal paths:
-> > > 
-> > > drivers/leds/led-class.c:led_classdev_unregister() {
-> > >     if (IS_ERR_OR_NULL(led_cdev->dev))
-> > >         return;
-> > > ...
-> > >     led_stop_software_blink(led_cdev);
-> > > ...
-> > >     flush_work(&led_cdev->set_brightness_work);
-> > > 
-> > >     device_unregister(led_cdev->dev);
-> > > 
-> > >     down_write(&leds_list_lock);
-> > >     list_del(&led_cdev->node);
-> > >     up_write(&leds_list_lock);
-> > > ...
-> > > }
-> > > 
-> > > Many drivers rely on this guarantee during error unwind or removal,
-> > > such as
-> > > asus_wmi_led_init() -> asus_wmi_led_exit() in
-> > > drivers/platform/x86/asus-wmi.c,
-> > > asus_led_init() -> asus_led_exit() in
-> > > drivers/platform/x86/asus-laptop.c, and
-> > > samsung_leds_init() -> samsung_leds_exit() in
-> > > drivers/platform/x86/samsung-laptop.c.
-> > > 
-> > > With this change, put_device(led_cdev->dev) frees the device via
-> > > led_classdev_release(), but led_cdev->dev is not reset to NULL. A
-> > > subsequent
-> > > call to led_classdev_unregister() will bypass the
-> > > IS_ERR_OR_NULL(led_cdev->dev)
-> > > check, operate on uninitialized blink_timer and set_brightness_work
-> > > structures
-> > > if kobject_set_name() failed before led_init_core(), trigger a
-> > > use-after-free
-> > > and double-free in device_unregister(led_cdev->dev), and crash in
-> > > list_del(&led_cdev->node).
-> > > 
-> > > >         if (init_data && init_data->fwnode)
-> > > >           device_set_node(led_cdev->dev, init_data->fwnode);
-> > > [Severity: High]
-> > > Could calling device_set_node() in led_classdev_init() before
-> > > device_add() is
-> > > called in led_classdev_add() break fw_devlink for child LED nodes?
-> > > 
-> > > Previously, device_create_with_groups() called device_add() while
-> > > led_cdev->dev->fwnode was still NULL, and device_set_node() was only
-> > > called
-> > > after device_add() returned. When the parent LED controller finished
-> > > probing,
-> > > device_links_driver_bound() ->
-> > > fw_devlink_pickup_dangling_consumers() marked
-> > > the child LED fwnodes with FWNODE_FLAG_NOT_DEVICE and attached
-> > > consumer links
-> > > to the parent LED controller device.
-> > > 
-> > > Now that led_cdev->dev->fwnode is populated before
-> > > led_classdev_add() calls
-> > > device_add(led_cdev->dev), this block in device_add() will trigger
-> > > during the
-> > > parent driver's probe:
-> > > 
-> > > drivers/base/core.c:device_add() {
-> > > ...
-> > >     if (dev->fwnode && !dev->fwnode->dev) {
-> > >         dev->fwnode->dev = dev;
-> > >         fw_devlink_link_device(dev);
-> > >     }
-> > > ...
-> > > }
-> > > 
-> > > Because led_cdev->dev is a class device that never binds to a driver:
-> > > 
-> > > 1. __fw_devlink_link_to_consumers(led_cdev->dev) converts consumer
-> > > fwnode_links
-> > >     on init_data->fwnode into managed device links with
-> > > led_cdev->dev as the
-> > >     supplier instead of the parent LED controller. During boot (while
-> > >     fw_devlink_drv_reg_done is false), consumers remain blocked with
-> > >     -EPROBE_DEFER until fw_devlink_drivers_done() runs, and are
-> > > never linked to
-> > >     the parent controller for runtime PM, suspend/resume, or unbind
-> > > ordering.
-> > > 
-> > > 2. __fw_devlink_link_to_suppliers(led_cdev->dev, fwnode) creates
-> > > managed device
-> > >     links with led_cdev->dev as the consumer for any supplier
-> > > properties on the
-> > >     child LED node (such as gpios in gpio-leds or pwms in pwm-leds).
-> > > Since
-> > >     led_cdev->dev never probes a driver, those links stay in
-> > > DL_STATE_AVAILABLE
-> > >     and prevent the GPIO or PWM suppliers from reaching sync_state().
-> > 
-> > I have no experience with devicetree, so i cannot verify if this is
-> > true, why do we call
-> > device_set_node() in the first place after having already registered the
-> > device?
-> > 
-> > Thanks,
-> > Armin Wolf
-> > 
-> Any thoughts on this?
+> On Mon, 09 Nov 2026, Ilpo J=E4rvinen wrote:
+>=20
+> > On Mon, 21 Sep 2026 03:40:14 +0800, Rong Zhang wrote:
+> >=20
+> > > Some laptops can tune their keyboard backlight according to ambient
+> > > light sensors (auto mode). This capability is essentially a hardware
+> > > control trigger. Meanwhile, such laptops also offer a shrotcut for
+> > > cycling through brightness levels and auto mode. For example, on
+> > > ThinkBook, pressing Fn+Space ("shortcut") cycles keyboard backlight
+> > > levels in the following sequence:
+> > >=20
+> > > [...]
+> >=20
+> > Thank you for your contribution, it has been applied to my local
+> > review-ilpo-next branch. Note it will show up in the public
+> > platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+> > local branch there, which might take a while.
+> >=20
+> > FYI [if applicable to your patch], as per Linus' policy change, also
+> > fixes are mostly routed through for-next unless the fix is for a
+> > commit introduced in the most recent cycle or is clearly a regression
+> > fix.
+> >=20
+> > The list of commits applied:
+> > [01/13] leds: class: Always protect brightness_show() with led_access
+> >         (no commit info)
+> > [02/13] leds: trigger: Move led_trigger_is_hw_controlled() to the right=
+ place
+> >         (no commit info)
+> > [03/13] leds: class: Remove hardware control trigger when writing brigh=
+tness
+> >         (no commit info)
+> > [04/13] leds: trigger: Move led_trigger_group to the right place
+> >         (no commit info)
+> > [05/13] leds: trigger: Add hw_offloaded() callback and provide trigger_=
+may_offload_to_hw attribute
+> >         (no commit info)
+> > [06/13] leds: cros_ec: Implement hw_offloaded() trigger callback
+> >         (no commit info)
+> > [07/13] leds: turris-omnia: Implement hw_offloaded() trigger callback a=
+nd declare hw_control_trigger
+> >         (no commit info)
+> > [08/13] leds: trigger: netdev: Implement hw_offloaded() callback
+> >         (no commit info)
+> > [09/13] leds: trigger: Enforce strict checks in led_trigger_is_hw_contr=
+olled()
+> >         (no commit info)
+> > [10/13] leds: trigger: Add led_trigger_notify_hw_control_changed() inte=
+rface
+> >         (no commit info)
+>=20
+> This is super confusing!
 
-You're talking to an AI.  =:-)
+I know it is but it's how b4 thankyou mails appear.
 
--- 
-Lee Jones
+> Where does this list come from?
+
+The list comes from the original series that b4 caches somewhere.
+I deleted the patches 1-10 and only applied mbox that contained patches=20
+11-13.
+
+When constructing thankyou mail, b4 seems to take the cached list of=20
+patches the series had and does not find 1-10 applied into my tree by me=20
+so it says (no commit info). The rest appear as expected:
+
+> > [11/13] platform/x86: ideapad-laptop: Serialize keyboard backlight trac=
+king
+> >         commit: d288a6f989b7b9e6a730140c601987b886af327e
+> > [12/13] platform/x86: ideapad-laptop: Decouple hardware & classdev brig=
+htness for keyboard backlight
+> >         commit: 7d6c073d181d7855561831cb4bba17dc9b7d4aa9
+> > [13/13] platform/x86: ideapad-laptop: Fully support auto keyboard backl=
+ight
+> >         commit: 5d805ca01382d63d54c9984e7f19922c4ae6f3dc
+
+Of course it would be much less confusing if it never showed those no=20
+commit info entries at all but unfortunately I don't think I can control=20
+that, sorry.
+
+--=20
+ i.
+
+--8323328-1170544091-1794312148=:1229--
