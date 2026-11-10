@@ -1,58 +1,146 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.15.19
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794324764;
-	b=Mb4HEOXL+krgAYy25/P29auSIXGjt0TDcgddOVkrCpiF0NiNBjfd2+OG/E34qTMCe4HP
-	 xlS8wK4qxw6t1i3TLsFcmHlFcLraNNi7nP43saAFhRBM/qg2wyzOV4tKZpRIL7aUkV+X+
-	 yMjG5HFG5CD6SfOgPsz0HpEre0Fh4uwempc7/GI/x9ujizDuQ94UFtAj9T8x/zsqBVAnO
-	 tnu89xcvTmtAjx4ocBiCFYPgtziRMZ6wE2McgmWVgWrKSqAHshOxx4zIv+mW05gSC611g
-	 1ylGNlo6QcDXpVbdHV26RrkAj2lUPKt0M1voM57zGK1rSNuaC8bSGbujPSALVTBFysA==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794324764;
-	h=DMARC-Filter:DKIM-Signature:X-UI-Sender-Class:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:From:To:Cc:References:
-	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
-	bh=8Jc28mt7CBz7Trdeso/0E0+lGXcH1tj1jqsPPdmxr4E=;
-	b=k4vP4ynprVD/JhJI9bhDoTHJA9ysiNahaJWPWS1BG9JrpFuI5DUiMwM4r8froH846c0f
-	 JlxgZS0nRGRQ5a8xUNCDYAQT4cvUbaSdufcUUbSPrAdbwtYkYAt/wxFZk+SRs7spJAVNr
-	 5S8Ho5XWhAZvKWqee53H2BAlWvm7Obc7A4o9cgC2pWDknhsSGu9/kOMB6sDoMc3pcgRnr
-	 Ys6+eXiJViTvqunUAcRBDYXeNdRyqIuAV8t20tHC3WevYIiOW6Xec3VMz4aLi1G9iNbiK
-	 WqoR6sR9LBwZBoVyX5yOHiuiYeyroRFWhJoEnZzo60sx7kM2b0V7IJpLWKLkZWv/ztA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmx.de;
-	spf=pass smtp.mailfrom=gmx.de;
-	dkim=pass header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=CQHUi08U;
-	arc=none smtp.remote-ip=212.227.15.19
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=148.163.135.77
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794325120;
+	b=yI/0WpBTVFBqtEJFbGIZhGhsP01NaU/fZamvW80EmBk9mrCnfTI9ERn8SAd2gu9e6Num
+	 4PQelN5KsNgainoTlxRyMmk1CldLnoG3KWEgg1d/ZWH8wRSN6yuQjhiHQYvhBkykusBXC
+	 yVG1/ZiS+xdxXOPXX38L9KTo4oIOZL2/3lOSz2DaDNle6qyL2cyWznq+VkEg1ikXn44cJ
+	 2frrQNzMtZuse5oXM6DNOHVc3SBEyLc9xfndhQrtAy82YIXM3QS5HBsAVlkA7sLnLdlVj
+	 IKYpP5ir4yY01ofY2ND73DCRtbCy5MyI4i6vUxqap4nM2cjFSSDxjv7DAUf18Sq3/WQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794325120;
+	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:Received:
+	 Received:Received:Date:From:To:Cc:Subject:Message-ID:References:
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
+	 X-OriginatorOrg:X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=NKYT9g5PeHo9rz1Xs7oNrSVftCpyKqKw0cqdvwF/aHM=;
+	b=jMy8xxaNr2GBrCsUyIkgmNkzl87SLDlHaa3XG00ULAakgSkhtR0VmetabGvGTU9P/T5X
+	 I4ur/luDy81wu8TsrqqSC1GRn5K8FmtX3Boub1iiFNr9+ylD6Vp25ZulC0Xpfhbso1jPU
+	 MExaDWwIVhbKTNHKrCpOfnKFobzh+WIi9rXuQ0A/iWDN3lzOR3Y//9ewJ7y0mhWN7Gs5K
+	 kwUHmYIKEcMKs/3IkFJoxZ0GyrlbCz7K69SpdW7UOkSwU7y0Aca/49B2H4jbANvSH2Guf
+	 pLtJIIED2VO7ebWWXBPGMlSyaIcQ0YY0WVTej8FArXlcIvCful03MzVRzoZ7eMKUwlQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=analog.com;
+	spf=pass smtp.mailfrom=analog.com;
+	dkim=pass header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=OQVSB9Gh;
+	dkim=pass header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=QDWlZPPv;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=148.163.135.77
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE751606A320;
-	Tue, 10 Nov 2026 15:32:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DE751606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA32606A321;
+	Tue, 10 Nov 2026 15:38:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7EA32606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=CQHUi08U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1794324757; x=1794929557; i=w_armin@gmx.de;
-	bh=8Jc28mt7CBz7Trdeso/0E0+lGXcH1tj1jqsPPdmxr4E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CQHUi08UYIJUm34i99LMf/GGxR5zlOH6N5gkxXSWMZIStIsIidJNBNwrdvGqEtuH
-	 /b/DSSX2MI0picNK6Lgv4sVJCsSEFxurn0W5heyAx9Kk0mVKl9Lz8+S6WMQp7QvDf
-	 HG2J6rzeAAMKaxopqRSmY4B8Zgwb5IWlKWZao/Q7ThYGNECzKtuev2gPFnFlfTohL
-	 ZUJiTQHmIIUJ/vUIfqalF4Bz+06EPQjI7RtMQIHB7lt+CQ8gyo/cmCZQATzaEHtQJ
-	 txLowDp/iRRxqtGTZhuw6pBJ6JvaFdXprCE19/RkHuThXZEv+ZlFgp1+AF7EDeUCv
-	 b8LG2Ilp6z91/CeDow==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from client.hidden.invalid by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MORAa-1x7bUR0cW6-00Iyf6; Tue, 10
- Nov 2026 16:32:37 +0100
-Message-ID: <983f521e-0e83-4600-b59b-08675a8d0d70@gmx.de>
-Date: Tue, 10 Nov 2026 16:32:36 +0100
+	dkim=pass (2048-bit key) header.d=vtelectron.com header.i=@vtelectron.com header.a=rsa-sha256 header.s=DKIM header.b=OQVSB9Gh;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.a=rsa-sha256 header.s=DKIM header.b=QDWlZPPv
+Received: from pps.filterd (m0516787.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AAFBALJ4188857;
+	Tue, 10 Nov 2026 10:38:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vtelectron.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	DKIM; bh=NKYT9g5PeHo9rz1Xs7oNrSVftCpyKqKw0cqdvwF/aHM=; b=OQVSB9G
+	hW55mimjtsBJnYSwTyX0+38NthMKQBRTo3jyz/NZ41Zk4bFBPrzV0bApMQQLBE1l
+	Vb6BzMB1WUuWsQM3cRxOVpln2fyTkyeRdoyntaV39cv+xVtZuyM0OwtWaukTJU9c
+	iRI1QpoeqFiOKjtoTpqhLB3sOf6BrLCL1cagh5IAaywUAqqm09JCsz/+TNXXmO6+
+	fv07AT+gtI/QjdIZrqbVzw+Ablqa35nXM0LELKWnTC6To0pRIlNTjIC1hrCp42BJ
+	Y6J3PyZHFWaztWkpd05rmypyPfzKGbI7qgrV9zLcQEV3oq/BJAPbc9npL6WVYIyp
+	jnhs9bEUcjNWV0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=NKYT9
+	g5PeHo9rz1Xs7oNrSVftCpyKqKw0cqdvwF/aHM=; b=QDWlZPPvfcOTa1AqqdFS9
+	02kPpHJoRdmoOhlgqjTY92woEQVfyoeMXCJm1te4gN9Kum1NUB+Qp9c1bM5b3otc
+	13iWVqiYaw9pklZDDpUVBuI0kn7atPZ+nfUgLZ3H0rZ+L+gyuYkwMu+b0mSeckwA
+	GSQOMgRl5tkSKiMso5zMxmPy7EdqT2Yv5x4QC3XwqMygeu6/o9A+VCcuAZ/NRS+5
+	KiXTiQdydXCqkZzNkz19DFQoBcI1WWDwIBLzKOHizLXSZcvQiQQdJkvnblA7/sWh
+	qwT/mfH82aGxaRL1f9A5F+Jz/Zrz/rKCW7rP0INpNeExoQplcq9GpjRieeQwOygJ
+	w==
+Received: from sa9pr02cu001.outbound.protection.outlook.com (mail-southcentralusazon11013014.outbound.protection.outlook.com [40.93.196.14])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4hv5pdr6rk-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 10 Nov 2026 10:38:01 -0500 (EST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NonMVmbxe8RNspZkfxL0t+i63k5Q4iPNq0X7QmsKoezGKIzq72QPFS8gI2ChFhWZ8njvGblPP7hTexO/g8zxw+AOL+4jwhKv1p6I+q1UKK3VqpBAfpyQ09COJYe5RDKDaXQAPuqd7XAVubXz4HtA1lTGsh26g2QdsbngCJIrGe75Gkj4KlRGkYSfP1ZMICY/tNmnUmyhgJP71zHwKzTn1FmYbWoRV6rDWMXzKSdHMcexJ6o0XD2HS3g9B1dYC1NcoJGqecBJ87q+4Slm+J62MMNOIxSVN/xskHgUubdqRezEAkBOw4H5oUfe5bjcB7G82YsOeq6s29bPAohVO5McKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NKYT9g5PeHo9rz1Xs7oNrSVftCpyKqKw0cqdvwF/aHM=;
+ b=rjcDdK6vng8EdPq89KIXo0gmbqwnLRaX4UnH3HRgZSlGft8u/xY3Bmh4jww6B9gw3xrKqp9B6QyqnuuFHys+nSuv3XZgy6dsz02VUfaHcF9sdM9gZuLsY7BZweOUkTF+nbfOKdCRA/BkChYVWjS/x6s+kDItr58efZkdW5FiAY43xgoiNOe3YjkXI8rzdMFlJ2Z/BfPxcl8q2oFnVz+Fa2WPoPsZRc56Qu5VKatcR5JpPkTwYthnW+gU1ZiopM9k1qi1nTImGhf1N6nknGrjWVJY1kq8LKOaRRkQ7L1R3krxnM8l5eGgqNB8Kjsg92ZZ3Ty5aiCCsa4FdiSvXW/uEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=analog.com;
+Received: from SJ0PR03MB5469.namprd03.prod.outlook.com (2603:10b6:a03:28a::17)
+ by CH5PR03MB7862.namprd03.prod.outlook.com (2603:10b6:610:216::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.592.13; Tue, 10 Nov
+ 2026 15:37:54 +0000
+Received: from SJ0PR03MB5469.namprd03.prod.outlook.com
+ ([fe80::2a19:76b2:e731:8c5a]) by SJ0PR03MB5469.namprd03.prod.outlook.com
+ ([fe80::2a19:76b2:e731:8c5a%6]) with mapi id 15.21.0592.012; Tue, 10 Nov 2026
+ 15:37:53 +0000
+Date: Tue, 10 Nov 2026 15:39:12 +0000
+From: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Svyatoslav Ryhel <clamor95@gmail.com>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Bartosz Golaszewski <brgl@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Daniel Thompson <danielt@kernel.org>, Helge Deller <deller@gmx.de>,
+        devicetree@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-fbdev@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>, linuxppc-dev@lists.ozlabs.org,
+        llvm@lists.linux.dev, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        mfd@lists.linux.dev, Michael Hennerich <michael.hennerich@analog.com>,
+        patches@opensource.cirrus.com, Pavel Machek <pavel@kernel.org>,
+        Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
+Message-ID: <avM5EnC9yujUZcCO@nsa>
+References: <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
+ <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+ <20260912232047.19c4cb10@jic23-hlaptop>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260912232047.19c4cb10@jic23-hlaptop>
+X-ClientProxiedBy: MA3P292CA0069.ESPP292.PROD.OUTLOOK.COM
+ (2603:10a6:250:49::9) To SJ0PR03MB5469.namprd03.prod.outlook.com
+ (2603:10b6:a03:28a::17)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,352 +150,172 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/10] leds: class: Split led_classdev_register_ext()
-From: Armin Wolf <W_Armin@gmx.de>
-To: lee@kernel.org, pavel@kernel.org
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261018135339.1109271-1-W_Armin@gmx.de>
- <20261018135339.1109271-9-W_Armin@gmx.de>
-Content-Language: en-US
-In-Reply-To: <20261018135339.1109271-9-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:z978PI3HclIqBbwl2wXDJf7t6DV2b/WaxqqHCFwH/oNhhy7/dvx
- 9QTUVIW6nV4I67QhYG0bI2GELgXtkUhyEll6E2YztjRMTMeY0CL/Oks5JT/Y5dqZCNKhDYR
- Z5iDFgMA75wXBJ6RHs0z98AIdjIgEwNnBkguXlXF83vNjzIjp/ZLHbs7FCQFawLM4aiQKiV
- g/jp9MLDVRMddZ7AxGtpA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LCxY9tapRnc=;Js2qzHs65vu6S+Y708PxnTvWTv1
- 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
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR03MB5469:EE_|CH5PR03MB7862:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44c1e083-4b3b-45a2-3c13-08df3f409584
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|7416014|18002099003|22082099003|10067099003|11063799006|261021135927099003|261028144727099003|261026121527099003|261009223027099003|261022075727099003|261022105027099003|261026140227099003|56012099006|261009221227099003|4143699003;
+X-Microsoft-Antispam-Message-Info:
+	r4iYqk8EHHH+i/qgK9yrK95M6PAOmp2cwmEY2M8D/7Tkj3vz75/Y+CUeY2I0RNhZNltTDfbsPLz3HvFd02ePt8rInHyMSvjQZ/KQ1Ored1Za4tGaJSCPCgAy52OC9JfRAhp3k7J9bRd8YWpXetCpGvBqofsp04YkOB7cDMtvD269OZYKA75g3kGuo2unSg27ZqKHwzqSKLZmsEnTShOux+3o/J8cnlzVN0gnkKS8nmKWYwKuequdVi+4d5g6foMugkmocOayYO0Ax3bqTeiPPfy8Z7+oi1UCZK+buvIp7am5Q40BxdK9rLDXnawlaUd5mFGn2OhISsPKiU3rveCVWpmAlvofcKUKd11L1BUx/dSKI/ir7vV3tal3MKADfg4sJeFMT1iKH7h+qIdoztNnRWYII9ZGec9eAzHliRZV7NKCmcv4IVpQ3pvDzN5n0Lt2Ole71quqeAnpJ9nn7nsrS7W1NjEGWDkEIX++ZwRruHLpdRts2yCrl5qYQJLqtKrtZogkL3oM7Ab8OyzNR/0Dm2F+ukXoO3eHcH5E/IHrODaFQ10ydnVni3tewcSL/4yvIuwiyIOs12S71RuwlPw7T1Z5H7hnH0KHZ8xzCzLF3UfO0td9rs4fPxgeXpSJ34Ek
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR03MB5469.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(7416014)(18002099003)(22082099003)(10067099003)(11063799006)(261021135927099003)(261028144727099003)(261026121527099003)(261009223027099003)(261022075727099003)(261022105027099003)(261026140227099003)(56012099006)(261009221227099003)(4143699003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SkJuTGZWZDhzdnoyb3BSeUd6Q2xTbnBGeTBUQ1l6THdoNjVWTXpwblVMK1h6?=
+ =?utf-8?B?eWJXbkh2WHZvSENJRjNZRWFjVzRzTTh5OWJZNGthM0lydFVSenFuT0UrNUlx?=
+ =?utf-8?B?Y1ZqQ1JjNWJIWFIrT3BQMHgzc1lHNkRKRnRKVHpxVkxQNk5zZDhqVW5lS0JZ?=
+ =?utf-8?B?TXRFbmowSlA4emlpZG9PMjVSRkxHM1l1SWFhaFRRa0Z3MHMwRUFNZWZrQ1JZ?=
+ =?utf-8?B?YzNNWFlTeW5wNE9BUzhnNWpOY2lWWERzeEZEMEFjbFNINEpyZkhGbE9HZ3g5?=
+ =?utf-8?B?YXhlaThBTkd0TzFHdDFKMk9GOGs1YXczNUdZRFQvc0Vwb1JBTDZwd0U1TDVG?=
+ =?utf-8?B?ckZmcjV3dlc2WDFMWCtoMlhQZGNtalZWZlpqcFlNTEtHb09MNGVPelA2dzEy?=
+ =?utf-8?B?K1c1TFNPem53aThEaUJRZEVYZTNId2prRW9GOHFLb1dpcXgwcWVCZWF3TG4v?=
+ =?utf-8?B?L1BUTTFZUk5rZUNFMS81eUt5ZnJ1Qjdpa0lIT0ZnSUNialI1NVgrZW9pTW1i?=
+ =?utf-8?B?eGRENEEyM2F5dFMwQU12VEZIRHJ5SHdOcFBGMzhuS245OW5YUUR0VFNLL3o3?=
+ =?utf-8?B?T25JRTRSeXlLRmx1aXErVzRZY29QRy8vNXJ1bFdNYU4zS25DYXlIV1daenRK?=
+ =?utf-8?B?Q1dYUHFFeUtVRUlwUmR5bTJRdHcrYTBZcTFmaGJXc1Y5M3BWTTgrdUJyUERt?=
+ =?utf-8?B?OVdmYjI3T0xOREdOQUtXcmZPazdOd3lEVmhwU20rTlNtMFNtOE92VHhvdUJV?=
+ =?utf-8?B?dk1Dc1NRSzcrdDZTYWYyQSs5VDFldVRWTG56VXVEY0NoSG9Bb0ZMcGlLelp2?=
+ =?utf-8?B?N0pzYkRGWXQ5NGZJNFZlSGI4Y0xGRjNqT01Cc0FqSDl5N0tBb2Q0RjY0WnBX?=
+ =?utf-8?B?SDlwODNNY1NjRHJSVDJ0cGNodUtvWndiNzQ1cm5aSFh6eTk4RHVPQi9KR3Fz?=
+ =?utf-8?B?YmNGVkRkRWlpUDU5TEYxdERNdTc1V2ZQV2xZdUxvSXBIK21SNGkwSnphOHVE?=
+ =?utf-8?B?WE1wV1NTcU5NOWZkR1VNUGdLOFFYWXlQdkxxTHlhekFUbW5wSTc2bDVYZk5N?=
+ =?utf-8?B?dE1MR3FyUDFWYjBxZkJXbXAwZXRheHFnM1Q2RXU4VHg1ZGZpWHdpaGtIaTAr?=
+ =?utf-8?B?TmZQZ1hoajhhbnNBN0ZpTWlEY3dMNWQ1ZjVuMWw5NEQwVHZTZ01YN1JjYmNF?=
+ =?utf-8?B?SU1yZmwra3UybWw0TXRCMXM4cDhmMUlZWHBLSWVzM1ZMU0xLWTk4SWxsSWxm?=
+ =?utf-8?B?MUZXZkRFcytXTS9vR1QxTjRsQTcwN0thMFJIYmFibjA2clVPOWQyOW1mZ0s4?=
+ =?utf-8?B?NDR4M2ZSczFWZWttaEVqcnMwTUVWZFFtRWNUZnlsM3cwSFc3dzJqNFNUR0xS?=
+ =?utf-8?B?VDZVM01sQk5ZS1lZcTZCUjdlVkxZRFc3VDB2ZjlFRDIrZW9YcWhpOE1SY2tw?=
+ =?utf-8?B?b2kxWUhiZ2paZjdsTXhoSkFNYkl1Wm42MmgycHp1d0JGNVI3VHk4SGVxSHJF?=
+ =?utf-8?B?Y0dQdXIvZkVzb0t3MENRbmVzZldMd3p2UDViTGtKdkpDeE4yWUFoTDRoZUF2?=
+ =?utf-8?B?ZTZsK296N0xaSVdWb0VWbkNyL3pHL2lBdFNhaWNoS2IydnFxRW0vQ01DcEI5?=
+ =?utf-8?B?YXpIYjVtWDNDZmZraWR0RlJ1cmFNekIxQVRDM3RXWDEwMjRWOUN3VzYwU2tq?=
+ =?utf-8?B?OVByeEpOcmJ3cTlpVlVXQXZWZnhKaU1yejhUWHh0YzY3c0wxSmdISjVEQ1cy?=
+ =?utf-8?B?c1dDY3F6QnluQVJvbndWeDNyemhSZWsvQ2greFBpZFIxNkUvRWg4RHVHMldI?=
+ =?utf-8?B?K0NkUWMzRy9zMGNtYU1CeElKcXUzZllNSWdiQ3ZjQldPM1FhdWdPSFBwOXo3?=
+ =?utf-8?B?ZGRDMENzTTc0ZlBtL0N4bEJJS2FWem1ldFpTKzZtNnRWV1N5ZnpXRk0reUx1?=
+ =?utf-8?B?cjJlTnpJRVgzZHZZRk43ZC9CTjdONnlLL09CVzBuQjduUjg5WjllazJOMW9t?=
+ =?utf-8?B?cVlEVnBmSFZDQmlXa0lteWFOUGRtZ2ZrRmljTXZLZkhDVDV5VGJZQzU1S21T?=
+ =?utf-8?B?cjNyMWNmOW1SeWV4cGt1THZRUU1yQkFoUUl1VGtMRUYzYWFLd29lQjJHVDF5?=
+ =?utf-8?B?dkU1MjgzQ1dCTjMwL1BoWDRpTHM3YmRyQXNwZTV0ZEptTVdneTNUNWZ3akNz?=
+ =?utf-8?B?dkJyeFdqaHVwR1BhUWE2VUlHRFlMVE96Q2JnK2ZxQVVDN21IQ0U2dHdMTFdJ?=
+ =?utf-8?B?SlJacFV2NHNZNU4rNEM3a3g4Qko3NmRGNTNZejhtcFJnVkk4d0x0S0RIT1U1?=
+ =?utf-8?B?ZlhLSlVlWExhT1dtMTkrVkVNRld6a3N5UTUwdXZTUG9FY1EwYzl2dz09?=
+X-Exchange-RoutingPolicyChecked:
+	Fg+4odflvOVg/qC3P0jcHuVvFP05frllrULlxzqWiA0rjJRtOCB7laUbrOKmNBlsobPk6qqFYc5dNMGNPTIMv3D9n/qaajEBGPKmXvJhW5QXfY1uVHj1qtBfl3RiZdF4/mKbbi3VPSkVjvVM23s8jn8TDewGkCV/2ocCz+x35DA4TP4SxxKHQkU/MvWGyy4cRDgd0NV01hdpyaZIqcd9cC2YEM0w7X1HD2CTlrLzahoEM9lGAhYtTbhjq94SILROlt98EzbW0Y7es9uujk7YF8jjl8RdFFsJrKbN7yKiJDjoNlnYOa0ZAEHbMrRNNio/Kvsn+rmDPPeKCUoAbq8cvw==
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44c1e083-4b3b-45a2-3c13-08df3f409584
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR03MB5469.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2026 15:37:53.1789
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 40YI0i0n9DrLFb8UnBhArvkQDq0TmY2CwSLUQ8JKLyyb0aZ0I5O5Jh5q9aRWmNPNDh68oDSdthtG2UlYbXpZcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH5PR03MB7862
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTEwMDA2MiBTYWx0ZWRfX8Buy1TM7wQUd
+ xaUZRKo88Fv4gDL1P/kcE4ud+LRnchUcG1Zf3RHHLpTdUrWKTqqierVfwn3Iz2HoN8EbmHptBAY
+ QnDzbghGPHXTXD01aZp5SO7vqUGC28ic+Cl7MUd8le7PQqzk09xw
+X-Authority-Analysis: v=2.4 cv=W/qtxhWk c=1 sm=1 tr=0 ts=6af33a59 cx=c_pps
+ a=hwAR686YzpmZ7aH69gEPcA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=M51BFTxLslgA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=0sLvza09kfJOxVLZPwjg:22 a=OmVn7CZJonkx5R5zMQLL:22
+ a=VwQbUJbxAAAA:8 a=bolBC-KKTCpxfz2DwocA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTEwMDA2MiBTYWx0ZWRfXw6vgjpF5SlYK
+ hHALji/BXTTq3OrYRC7QNQpd0MF3ibX/2RoazbDeK1k4NOtrAkvyDwr6CRK/yDegrLSMMCNKnps
+ kkb4VfGCuCn6k9PkFcgkMVLhW6B2babWEodJYRdUQ61t0f/3VXdqQKuhPeLwzcHIl+vry61AZCt
+ DjZLqDn187P8b6rAKCrNHWtvjl8Ycl+hewFd4soUdJfIkvRzU5GRu125hmGKTDnUlZQcbsZKhl7
+ FC2JOEx8JiIA6KikLDXaSHb5vjle9Hys4GkGUWcQrlt6E+MViszgVcG3YWO4CvU0Jn6+QfhKEAu
+ p4cUh/b0F4i+YCK9dwSFSiFXPnYJB0a+mob2xIeHQW9zIB73ZdZRBiD96RKCzqy+7iNAe/4rmAd
+ s6XsK0X9NU/+pxAhluumGHJ4kfPiGTGcPWeSQSw5HorW/quUKOXVwjC5YjVDTKVeh5LH/+d51iV
+ i6bZBurNd/goH3iiS2g==
+X-Proofpoint-GUID: xguw2edFALpIk2drdCtE7HoauRhX0SQQ
+X-Proofpoint-ORIG-GUID: xguw2edFALpIk2drdCtE7HoauRhX0SQQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-10_05,2026-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611100062
 
-Am 18.10.26 um 15:46 schrieb Armin Wolf:
-> Split led_classdev_register_ext() into two seperate internal functions
-> to prepare for future changes around LED class device initialization.
->=20
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->   drivers/leds/led-class.c | 105 +++++++++++++++++++++++++++++++--------
->   drivers/leds/leds.h      |   3 ++
->   2 files changed, 88 insertions(+), 20 deletions(-)
->=20
-> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-> index 77a0fce03952..ace417a2388e 100644
-> --- a/drivers/leds/led-class.c
-> +++ b/drivers/leds/led-class.c
-> @@ -228,9 +228,15 @@ static struct led_classdev *led_module_get(struct d=
-evice *led_dev)
->   	return led_cdev;
->   }
->  =20
-> +static void led_classdev_release(struct device *dev)
-> +{
-> +	kfree(dev);
-> +}
-> +
->   static const struct class leds_class =3D {
->   	.name =3D "leds",
->   	.dev_groups =3D led_groups,
-> +	.dev_release =3D led_classdev_release,
->   	.pm =3D &leds_class_dev_pm_ops,
->   };
->  =20
-> @@ -465,16 +471,21 @@ static int led_classdev_next_name(const char *init=
-_name, char *name,
->   }
->  =20
->   /**
-> - * led_classdev_register_ext - register a new object of led_classdev cl=
-ass
-> - *			       with init data.
-> - *
-> - * @parent: parent of LED device
-> + * led_classdev_init - Initialize a new LED class device.
-> + * @parent: parent of LED device.
->    * @led_cdev: the led_classdev structure for this device.
-> - * @init_data: LED class device initialization data
-> + * @init_data: LED class device initialization data.
-> + *
-> + * Initializes a new LED class device, but does not register with the
-> + * subsystem yet. Useful for performing additional initialization befor=
-e
-> + * adding the LED class device to the subsystem using led_classdev_add(=
-).
-> + * After calling this function put_device() needs to be called on the d=
-ev
-> + * field inside the LED class device in order to dispose it.
-> + *
-> + * Return: Zero on success or a negative error code on failure.
->    */
-> -int led_classdev_register_ext(struct device *parent,
-> -			      struct led_classdev *led_cdev,
-> -			      struct led_init_data *init_data)
-> +int led_classdev_init(struct device *parent, struct led_classdev *led_c=
-dev,
-> +		      struct led_init_data *init_data)
->   {
->   	char composed_name[LED_MAX_NAME_SIZE];
->   	char final_name[LED_MAX_NAME_SIZE];
-> @@ -539,23 +550,54 @@ int led_classdev_register_ext(struct device *paren=
-t,
->   	if (!led_cdev->max_brightness)
->   		led_cdev->max_brightness =3D LED_FULL;
->  =20
-> -	mutex_lock(&led_cdev->led_access);
-> -	led_cdev->dev =3D device_create_with_groups(&leds_class, parent, 0, le=
-d_cdev,
-> -						  led_cdev->groups, "%s", final_name);
-> -	if (IS_ERR(led_cdev->dev)) {
-> -		mutex_unlock(&led_cdev->led_access);
-> -		return PTR_ERR(led_cdev->dev);
-> +	led_cdev->dev =3D kzalloc_obj(*led_cdev->dev);
-> +	if (!led_cdev->dev)
-> +		return -ENOMEM;
-> +
-> +	device_initialize(led_cdev->dev);
-> +	led_cdev->dev->class =3D &leds_class;
-> +	led_cdev->dev->parent =3D parent;
-> +	led_cdev->dev->groups =3D led_cdev->groups;
-> +	dev_set_drvdata(led_cdev->dev, led_cdev);
-> +	ret =3D kobject_set_name(&led_cdev->dev->kobj, "%s", final_name);
-> +	if (ret < 0)
-> +	{
-> +		put_device(led_cdev->dev);
-> +		return ret;
->   	}
->  =20
->   	if (init_data && init_data->fwnode)
->   		device_set_node(led_cdev->dev, init_data->fwnode);
+On Sat, Sep 12, 2026 at 11:20:47PM +0100, Jonathan Cameron wrote:
+> On Thu, 10 Sep 2026 20:14:15 +0200
+> "Arnd Bergmann" <arnd@arndb.de> wrote:
+> 
+> > On Thu, Sep 10, 2026, at 18:40, Svyatoslav Ryhel wrote:
+> > > __ 
+> > > Hello Arnd! May you please spare AAT2870 from being removed? I have a 
+> > > device which uses aat2870 (LG Optimus 2X P990 Tegra 2, not upstreamed 
+> > > yet, but in process as well) and atm I am working on converting this 
+> > > driver to use OF. Thank you!  
+> > 
+> > Sure, I have removed this patch from my series now.
+> > 
+> > > P. S. If you are planning to remove more old drivers, please CC me in 
+> > > since I may be interested in some additional driver upgrades for 
+> > > devices I own.  
+> > 
+> > Please have a look at
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=board-remove-7.3
+> > 
+> > I tried to be careful about figuring out exactly which drivers are
+> > unused, but I'm sure there are still a few false positive and false
+> > negative ones in there. I've added the current list of driver files below,
+> > let me know if you see something that shouldn't be there.
+> Hi Arnd
+> 
 
-Sashiko has the following complain about this:
+...
 
-Because led_cdev->dev is a class device that never binds to a driver:
+> 
+> > drivers/iio/adc/ad7793.c
+> Maybe. Analog devices ack needed.
+> 
+> Production part but this one indeed fails to probe.  Analog
+> folk, do you want to fix this one up?
 
-1. __fw_devlink_link_to_consumers(led_cdev->dev) converts consumer
-fwnode_links
-     on init_data->fwnode into managed device links with
-led_cdev->dev as the
-     supplier instead of the parent LED controller. During boot (while
-     fw_devlink_drv_reg_done is false), consumers remain blocked with
-     -EPROBE_DEFER until fw_devlink_drivers_done() runs, and are
-never linked to
-     the parent controller for runtime PM, suspend/resume, or unbind
-ordering.
+Given it's production we should fix. Looking at platdata seems to nicely
+fir in DT. Issue is that I don't have HW with me to test. So I'll maybe
+just remove platdata and assume some defaults.
 
-2. __fw_devlink_link_to_suppliers(led_cdev->dev, fwnode) creates
-managed device
-     links with led_cdev->dev as the consumer for any supplier
-properties on the
-     child LED node (such as gpios in gpio-leds or pwms in pwm-leds).
-Since
-     led_cdev->dev never probes a driver, those links stay in
-DL_STATE_AVAILABLE
-     and prevent the GPIO or PWM suppliers from reaching sync_state().
+> 
+> > drivers/iio/adc/ad7887.c
+> No to dropping this.
+> 
+> Production part - should work fine with defaults in driver.
+> Could like the others drop the platform data handling.
+> 
+> > drivers/iio/adc/lp8788_adc.c
+> Probably
+> 
+> Sub driver of an MFD.  I'm fine with that going if we know
+> the mfd is no longer in use.
+> 
+> > drivers/iio/adc/lpc18xx_adc.c
+> > drivers/iio/dac/lpc18xx_dac.c
+> Probably
+> 
+> Likewise these two.
+> 
+> > drivers/iio/frequency/ad9523.c
+> Maybe. Analog Devices ack needed.
+> 
 
-I have no experience with devicetree, so i cannot verify if this is
-true, why do we call device_set_node() in the first place after having=20
-already registered the device?
+Hmm we definitely use this one and we have OF support out of tree with
+likely some DT abuse of what can be in DT or not. Not sure if I have
+some HW around but we'll need to fix it.
 
-Thanks,
-Armin Wolf
+In general for ADI parts, I think we can drop the ones that are not
+recommended for new designs. All the others I tempted to say we should
+keep. Naturally we need to fix all the drivers that do not compile
+without platdata. And for the ones with defaults we can also just remove
+platdata and use the plain defaults.
 
->  =20
-> -	led_update_brightness(led_cdev);
-> -
->   	led_cdev->wq =3D leds_wq;
->  =20
->   	led_init_core(led_cdev);
->  =20
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(led_classdev_init);
-> +
-> +/**
-> + * led_classdev_add - Add a new LED class device to the subsystem.
-> + * @led_cdev: the led_classdev structure for this device.
-> + *
-> + * Adds a new LED class device to the subsystem, allowing userspace app=
-lications
-> + * and/or kernel consumers to access it.
-> + *
-> + * Returns: Zero on success or a negative error code on failure.
-> + */
-> +int led_classdev_add(struct led_classdev *led_cdev)
-> +{
-> +	int ret;
-> +
-> +	guard(mutex)(&led_cdev->led_access);
-> +
-> +	ret =3D device_add(led_cdev->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	led_update_brightness(led_cdev);
-> +
->   	/* add to the list of leds */
->   	down_write(&leds_list_lock);
->   	list_add_tail(&led_cdev->node, &leds_list);
-> @@ -565,13 +607,36 @@ int led_classdev_register_ext(struct device *paren=
-t,
->   	led_trigger_set_default(led_cdev);
->   #endif
->  =20
-> -	mutex_unlock(&led_cdev->led_access);
-> -
-> -	dev_dbg(parent, "Registered led device: %s\n",
-> -			led_cdev->name);
-> +	dev_dbg(led_cdev->dev->parent, "Registered led device: %s\n", led_cdev=
-->name);
->  =20
->   	return 0;
->   }
-> +EXPORT_SYMBOL_GPL(led_classdev_add);
-> +
-> +/**
-> + * led_classdev_register_ext - register a new object of led_classdev cl=
-ass
-> + *                             with init data.
-> + *
-> + * @parent: parent of LED device.
-> + * @led_cdev: the led_classdev structure for this device.
-> + * @init_data: LED class device initialization data.
-> + */
-> +int led_classdev_register_ext(struct device *parent,
-> +                              struct led_classdev *led_cdev,
-> +                              struct led_init_data *init_data)
-> +{
-> +	int ret;
-> +
-> +	ret =3D led_classdev_init(parent, led_cdev, init_data);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =3D led_classdev_add(led_cdev);
-> +	if (ret < 0)
-> +		put_device(led_cdev->dev);
-> +
-> +	return ret;
-> +}
->   EXPORT_SYMBOL_GPL(led_classdev_register_ext);
->  =20
->   /**
-> diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-> index 6d00e6f44126..2d977c5a3520 100644
-> --- a/drivers/leds/leds.h
-> +++ b/drivers/leds/leds.h
-> @@ -18,6 +18,9 @@ static inline int led_get_brightness(struct led_classd=
-ev *led_cdev)
->   }
->  =20
->   void led_init_core(struct led_classdev *led_cdev);
-> +int led_classdev_init(struct device *parent, struct led_classdev *led_c=
-dev,
-> +		      struct led_init_data *init_data);
-> +int led_classdev_add(struct led_classdev *led_cdev);
->   void led_stop_software_blink(struct led_classdev *led_cdev);
->   void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned i=
-nt value);
->   void led_set_brightness_nosleep(struct led_classdev *led_cdev, unsigne=
-d int value);
+- Nuno Sá
 
