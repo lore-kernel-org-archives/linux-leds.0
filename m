@@ -1,65 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=195.135.223.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794400874;
-	b=dKmGKFTd4GvNFGgfWxKCL2pcTsz7Cvr01L7BuE2sPIk3Dj/8tAODbimf7wdX6QTcN3tt
-	 ho98kbK+A+CyiHrQ48H77eIh84c9dr4x+q9GEAVnm5Ua5fAyq9gsqKEZRDEH94isvfqDG
-	 o6zTv0mFXtxNJnpju5hJb02a2H3SiCbkgpMy0SxN187um+5tlC8vDpPI70MgGgOIjONkV
-	 tdqaI8RGKjqEheY8Ya4KITisVX4drzXYZQPKGbZ0i0ehSJUa3Cogn3imqy6sTPVN2xtZT
-	 teWcvsTHsOtn2ho/oQNXy1f0Ak+px7Qe7FFFO4op02Fut4S4wJ9nCCzMVOREy2YemXA==
+	t=1794402015;
+	b=FbR1zE01nDkGPU6H1tku1xZ6Us7U31X3/DU+EZRobt/F/TqRxd6uSiEL+KICy1Z/NMZ7
+	 FO28iYLFsC0tXeHoLbZVGd1GLOaOiCtabxHMkCe7hch5HK3aiyySxqCUJJIXLIu8MI0c9
+	 K+DfXytdXvSxwyjAYJV7Ed+d8CIykDaxGf7bdZmkHMWhi439D3LnWB/A1Q4N4ngzf/8JD
+	 kFR+CjKznfa8dH6QgQE40q6Wg6x+uBD0l2VjuROqqPE2zzguMjicUrvO0UZiVOe8WT6j1
+	 zQH5+KAxf2M1I5unV47o9VmMGAcfUkuPtNeDHJmowTHiTg3CSNFBLCno8GipChVOaJA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794400874;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=Hqw355eWcLP2IhrR1rvrrSe1NgJExHjFpju/gucphkg=;
-	b=YBx6GKnpWPXndXM4e2kx9pfx24WDsNViL4KINMusrRvIAmjwKsUIO4RRv8SiHSpGt/w7
-	 +CffS407ZManM8mUg46ZnRshVe9dg7qkK1apRQxRqZqXLH3cMJOXyg5yuHrsdroDvsQ/z
-	 8eiqkzXzG1E9wV4t/zycolFZDypADN/5d/T+LQhhYi2d6ogmOKcwrez5Qm2AtHs6EyBMR
-	 TqeujpARcy44R3EeoF3T4v5Jhk2DNR8LAoO5SVznVq6YxbhG0C07gQvvJx6hgCJfe02Ab
-	 mBZhcPR86b07XkIKzb4pEcWGwO2ZzbI9HxKaEhSixxECcowWqoQjX7OKJ6w7UeZrmBQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794402015;
+	h=DMARC-Filter:Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
+	 DKIM-Signature:Received:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:Autocrypt:
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Rspamd-Queue-Id:
+	 X-Spam-Level:X-Rspamd-Server:X-Rspamd-Action:X-Spam-Flag:
+	 X-Spamd-Result:X-Spam-Score;
+	bh=vckRnu8yhYPujC9czlRHD4eY30Ogbh/EdkpZK4P1gpY=;
+	b=AWOD9FgQVb5NbQfAeYzTTCpMRAIWX7HxNZuT4a68toFt6/lHwce9gsAGypMuR9kSCJ9e
+	 f4/k05cEi8m0t9AtMBNt88OHtkNiIi+n9fkD5ZH2srEURPbg9RqIpwG/4q3S9pGIngTHo
+	 hgDF9giBm9M+S7A/e9LfVi+o/o+EOhF2MYhmVBbrzOLuXgaZ8M6FJMXpceRoWJv5w3IVO
+	 ZSbmz5mr39tWDUDrTvj1SUn6Upx9KO4M5awwvopptjGV1zYfzzxjpRUgS17JCjoFcDORr
+	 QUgWcLVsiq6mKcUy42MFPTH7HNkUA+YFePTRPe3PPqwDSH6j36SVvMXUfJ1CQI/AdPQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sy+hubuP;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=suse.de;
+	spf=pass smtp.mailfrom=suse.de;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=otOxawUx;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=Fg+Nrul0;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=EhbSiBds;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=3pIOXjjl;
+	arc=none smtp.remote-ip=195.135.223.130
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315E606A321;
-	Wed, 11 Nov 2026 12:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0927606A331
+	for <linux-leds@vger.kernel.org>; Wed, 11 Nov 2026 13:00:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B0927606A331
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Sy+hubuP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46CA1F00A06;
-	Wed, 11 Nov 2026 12:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794400873;
-	bh=Hqw355eWcLP2IhrR1rvrrSe1NgJExHjFpju/gucphkg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Sy+hubuPvpqnweZrL1Lr/AyHyj/APQUd3Zs/ZrbyAcQSyBXHXqDU6zjU4tOgcsBm1
-	 FmhPevTIUrE9w4/YaRhi3MGMCslGVYVtuHwk9J/HVozCOoaRVOX4c6OaxPnZH/eFAa
-	 MYmtxX+TNenBy8yr+xsQ1ZsvbhZlEODydJ9UNXR4XMBp3L54R67m8mlrcCzTzy6KNf
-	 sn2zkzaupVd0HhXjoJF51dDE5wc+F562TtwfXfVBiVxwmhr+ZijITjkE0cygWF/sVU
-	 ndSF5uNTBPa4RGsBiUGtVSvW9b5XrK6wrO+7U/o8HWJQwKEmN4fAoatsAo/39wojJb
-	 2rAX/63GPBR+Q==
-Date: Wed, 11 Nov 2026 12:41:07 +0000
-From: Daniel Thompson <danielt@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Roman Vivchar <rva333@protonmail.com>, Lee Jones <lee@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: leds: backlight: add Kinetic KTD3137
-Message-ID: <avRiY-8Fw5ZdrkBH@aspen.lan>
-References: <20261102-6768-ktd3137-v1-0-b5b4f903c56e@protonmail.com>
- <20261102-6768-ktd3137-v1-1-b5b4f903c56e@protonmail.com>
- <aunqGVkX7-Y61iDA@aspen.lan>
- <_kyk4j6fx0PX5QqVrjAIGH-5fzUhj-fKhD8YT4F734mCOnQCDXui6wQB77AOka69_gblWOJN2SxzC5OSrH1lXiQeciLfVnWuPHS0JfaMKD4=@protonmail.com>
- <aunyu4ToQ0T3b2Mj@aspen.lan>
- <CmvbeteAqxtpenZUmJ4dqRvXYjjDzTTDevRB4NUlN0WGLOUk0jwzt2C3ZtuZ3Eb2UwBDEPUWpu9biU1OOhKGWQITolX96cFXolBTMgSyh1c=@protonmail.com>
- <auoVaaZjcnRTj1S9@aspen.lan>
- <3bbc1c1a-0435-4cde-a1a2-a408bd7a794a@kernel.org>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=otOxawUx;
+	dkim=pass header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=Fg+Nrul0;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.a=rsa-sha256 header.s=susede2_rsa header.b=EhbSiBds;
+	dkim=neutral header.d=suse.de header.i=@suse.de header.a=ed25519-sha256 header.s=susede2_ed25519 header.b=3pIOXjjl
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1077822163;
+	Wed, 11 Nov 2026 12:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1794401998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vckRnu8yhYPujC9czlRHD4eY30Ogbh/EdkpZK4P1gpY=;
+	b=otOxawUxw790/QFBjM3l+MFthA3861nlTmYALPAV8UroFCQPTuhWdqQLx2Bc1uIFTNjUSf
+	mnB6pWLs5IMmL/6Nh1C4bBTDNKUwUU7gS0QrpHdV+W4K35O9r7vi4hE7ol2MHfBI5rkx3k
+	JbleWrObvsXGVSk2sYZAGh9tC4q+53o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1794401998;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vckRnu8yhYPujC9czlRHD4eY30Ogbh/EdkpZK4P1gpY=;
+	b=Fg+Nrul0Jyo5LklpxiAuZ0HYrvjr7mnXZnx3MVHOfvH21g/exOhh1s1UL3D/FUe/akkrR2
+	wP4WfFpYZXc1TlDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=EhbSiBds;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=3pIOXjjl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1794401997; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vckRnu8yhYPujC9czlRHD4eY30Ogbh/EdkpZK4P1gpY=;
+	b=EhbSiBdsrSVaKSADwnL0R0h2FhNTtiQe8O4S+eqdUQd7Xrl3mwHjJ524yrql/BM+FAIbBh
+	HcAzG0kPGFOJOYhrbr+minyw5ZLHbacQpG6BNn1fmyvfN8AukapPIrVspm4teWxjv0DZBr
+	REDvjtoemSrILrH4izF8HUQ1q72PYZk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1794401997;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vckRnu8yhYPujC9czlRHD4eY30Ogbh/EdkpZK4P1gpY=;
+	b=3pIOXjjlSEb/Dd0pQ3rAW5PfZnnK2WJEDuZe2OvPfIrsqGCueoEmJPkiIgDh+2Aw4Jz8eq
+	hcEUcN+9syH0oIBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E94B11339F;
+	Wed, 11 Nov 2026 12:59:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id SHrxKstm9GqAMwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 11 Nov 2026 12:59:55 +0000
+Message-ID: <64a26d9d-664b-4443-8d71-b854bb01316d@suse.de>
+Date: Wed, 11 Nov 2026 13:59:55 +0100
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -69,37 +108,141 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bbc1c1a-0435-4cde-a1a2-a408bd7a794a@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/10] drm/gem: Switch to __nonnull_args() macro
+To: Dmitry Ilvokhin <d@ilvokhin.com>, Alex Deucher
+ <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Ryan Chen <ryan_chen@aspeedtech.com>, Billy Tsai
+ <billy_tsai@aspeedtech.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Kees Cook <kees@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Andy Whitcroft
+ <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-hardening@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+References: <cover.1793027261.git.d@ilvokhin.com>
+ <5bfdc1491d297b5e98cf42322c790f06481c28c7.1793027261.git.d@ilvokhin.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <5bfdc1491d297b5e98cf42322c790f06481c28c7.1793027261.git.d@ilvokhin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 1077822163
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-12.00 / 50.00];
+	SUSE_INTERNAL_BYPASS(-9.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[38];
+	FREEMAIL_TO(0.00)[ilvokhin.com,amd.com,gmail.com,ffwll.ch,linux.intel.com,intel.com,ursulin.net,kernel.org,jms.id.au,codeconstruct.com.au,aspeedtech.com,infradead.org,linux-foundation.org,canonical.com,perches.com,lwn.net,linuxfoundation.org];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,lists.infradead.org,lists.ozlabs.org,kvack.org,gmail.com];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLgosu6qu4h11rje89ht7rjgg5)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[ilvokhin.com:email,suse.de:dkim,suse.com:url,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -12.00
 
-On Wed, Nov 11, 2026 at 01:11:13PM +0100, Krzysztof Kozlowski wrote:
-> On 03/11/2026 18:10, Daniel Thompson wrote:
-> > On Tue, Nov 03, 2026 at 03:21:45PM +0000, Roman Vivchar wrote:
-> >>
-> >> In the driver I've used devm_regulator_get_enable(), rather than _optional(),
-> >> since my understanding is that the non-optional helper is a standard kernel
-> >> API for required supplies (with regulator core warning and fallback to dummy
-> >> regulator in case DT omits it).
-> >
-> > That dummy fallback essentially makes it optional. On a board with an
-> > always-on supply then there is no need to include vin-supply in the
-> > DTB. The driver will work just fine without it.
+
+
+Am 28.10.26 um 09:19 schrieb Dmitry Ilvokhin:
+> Commit 22302af28d3f ("cleanup: Annotate guard constructors with
+> nonnull") added the macro __nonnull_args() to wrap raw compiler
+> attribute.
 >
-> There is a need, because this device needs a supply. How you describe
-> that supply in DTS is a different story - can be always-on, can be
-> missing etc.
+> Replace __attribute__((nonnull)) with __nonnull_args() to standardize
+> nonnull attribute usage across the tree and keep the attribute's quirks
+> in one place rather than open-coded at every call site.
+>
+> Suggested-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
 
-If it is missing (but listed as required) then won't a DT that omits this
-property fail schema validation? If is legitimate for the property to
-be missing then I'd view this to be a spurious fail
+I've added this patch to drm-misc-next
 
-We certainly didn't list basic supplies as required in other recent
-backlight reviews:
-https://lore.kernel.org/all/20260529-topic-sm8650-ayaneo-pocket-s2-sy7758-v5-1-03aacd49747c@linaro.org/
+> ---
+>   include/drm/drm_gem.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+> index ed329408acbe..56dd15921c7a 100644
+> --- a/include/drm/drm_gem.h
+> +++ b/include/drm/drm_gem.h
+> @@ -566,7 +566,7 @@ static inline void drm_gem_object_get(struct drm_gem_object *obj)
+>   	kref_get(&obj->refcount);
+>   }
+>   
+> -__attribute__((nonnull))
+> +__nonnull_args()
+>   static inline void
+>   __drm_gem_object_put(struct drm_gem_object *obj)
+>   {
 
-Is this something DT maintainers want to see tightened up when new
-bindings are introduced?
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Stefan Gaiser, Jochen Jaser, Abhinav Puri, (HRB 36809, AG Nürnberg)
 
 
-Daniel.
