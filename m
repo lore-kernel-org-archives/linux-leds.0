@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794415685;
-	b=y6JCM9XZo7f3pL4/2mpT67WbEsF1ls/lO5xYjwQtQjuz/wgBrQ0N9sWJ21jdKHPPN6We
-	 QDSJxBJ+4kbk9CEKkBN8hWk2bQyoufFO8LKHTt64f7v+lsDGhuhFKPbBlUqnHgb7+Dlxs
-	 2Og1yoR7OCu0c1xwitB732NUkAG+E/T98K8Day9rJBhI5loWLTqN1CPBkIBj7CduQ3orm
-	 GdZAeaxmc/Hz75+pRH/2F6+CSYwRWMNbJ+v5HYRAe+WaBU+BReSLFo5pqACfPxbnsOsJY
-	 0v1nmjhlYsMO/MxwGqX0i/XtX+B0vv2EjCpGMsXoer1xIQ8dksFLcZcM/2VuSq8uyYQ==
+	t=1794415851;
+	b=Oqrinb31daMUAFuK+aoGg8ksMklyk44sbuMWniAOwU/jabOt7CTte12Tid8bC1Vy+UYU
+	 SbOAML1n2zux9fcNXPB6ASfMbHtdhGx7lhAxAi2ENYaZTlMJiuI8vu0O+Wtsf7jLkCpqh
+	 zWSuDfLu1LWgeY1/5wsdvi3UcFrwzbqbEWfbdOhaH2/9MhC+CX6EIhlDKkuKwOU9Bd95/
+	 ZruAa0/mZpNYa4FlMAxoggjMd8yuqTO1XCkqTSrSBsS0LL3/tP3sC5L4iZzaE1hckbMEQ
+	 8jlM2LF0KOFQhOqlNk3NsljO0/KwIndlvoeIZvwRLEk47natnjj5m5ucBPtwOk1TAGA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794415685;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794415851;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ocydYVWR6ROXvwa9zDyIEXYbUyDtVhGsde1xaEMoCPk=;
-	b=KlPy0MYqoxQiAJCXxNpztbysNLlxBde2FpOI87jEe3/fo18gB4Fo2Hb9teI8ff3kFDms
-	 NnjaJf/TDaKLzM4bcKBYjAQ6GpyeiRZnGney0KAxeWq2wAb2IZFR/j2d8FZXIu003iGkU
-	 9/2kILyvgnDg+0sRL/L27vT4MSWABtQ+4ubrLeMi1uCg869z1RvYGSKubWNjnNYqSHluf
-	 7qNsQFJXs28oMNFRHrn/7VeGGaXEXiSvA80QIcdV7/6OqyZZLULowIeI631gaDo8XB1JI
-	 3UJapOiLSZDZBB5YpOz9gyqoJOHR7QebpcScWLVlm1Y8L04UU0fJn0Qk0AVTSrq9SBA==
+	bh=6xrJTzSSyKqZvQGfkny25tpoePkdpY0Phx2z1KRT3rI=;
+	b=CgXYYaiAuBQc+TLSZ7LbGCOb4hk6o7JEMI5CwLGY9R22qrt5vhdDvecExOwssqsxmytE
+	 wZdM4NxegnOLIESeN+pWhU03IfzKflvcSpp1nWiWub5O4KleQjBoSawuXaDOcyvbn+qaW
+	 IUQEQyELSE74r/vx4HOhzEUjRwV/M8ZEmataT4WvUK31UCQm2WBlADP/e9soqKPIv8sSN
+	 rEAg+4uuUxZzf89eD4ORxIVyOmJSUwLauVut7Y5dvX+xDTgdcDCnKsRPINe9THHAewVf7
+	 mXkqv2x33xyDxvzaGoZIZsOgsUhenTr1j3WBbTto1gme/6NMz3XgadKmc7ssdYHl1tw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hWZnfJbT;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gECz+2QV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7DB606A32A
-	for <linux-leds@vger.kernel.org>; Wed, 11 Nov 2026 16:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00C606A321
+	for <linux-leds@vger.kernel.org>; Wed, 11 Nov 2026 16:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=hWZnfJbT
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FBB41F00A05;
-	Wed, 11 Nov 2026 16:48:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gECz+2QV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66AF1F00A05;
+	Wed, 11 Nov 2026 16:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794415684;
-	bh=ocydYVWR6ROXvwa9zDyIEXYbUyDtVhGsde1xaEMoCPk=;
+	s=k20260515; t=1794415850;
+	bh=6xrJTzSSyKqZvQGfkny25tpoePkdpY0Phx2z1KRT3rI=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hWZnfJbTpPPOQg03+VEJpc3DyZ8unaSJ1VRMZbxBf9fM8zmKpmn9EM8uCcgs8hMCX
-	 7Ap7Meh9GK7EOaBAyy47SaODyRTdEzvl9eVqlg5KvfcGvpaifc0E/SwOZUhc5fh0ka
-	 HUOmL5up2l7VhqN+49DG0+v2GmMWHDdUT/Q/8Qq1hzZyzD2nopKeriFN7sY0TjZs8+
-	 EUm3Qvr1H9XgAQFiiNBkbJbIfzEG2uMlH0WQJvpKdh5Jl/5baIu8XUUK1pehdc5aPR
-	 m2+D6PbIvSDhKtnMMF4aFlkQm9JsiBfW3kpU2DJkW51C7kY0iSEq6eHrmGqx5SPddj
-	 4FBDOeFARd0qg==
-Message-ID: <sashiko-outbox-209323@kernel.org>
+	b=gECz+2QVXVFexUw4LOLlJx47d+Sx3yZXn0Hbmz+RH1AczxdCx2CG9+c2doPcdSkzR
+	 hqDbkH5myOzSzTyamK3bKxVZXzCnENKfui+opmAALUBER/M2CYVdow3canvnyGcvC3
+	 7no0Ed1RdwrTAeAarlaho/yI5LhNgDS7b+N2g0JqL6mRTgCXaSTzSnsprFm9OX3IjX
+	 RSkO0wn1INmE5UnnXKfQbXbRcJdDcLc2OJLRy2fSNBOkp3UjHq/M4QANxYtzK0sBmi
+	 /Wiq0WUYcKHQ+66ltP/oW0h/+PjvAvusCZgMdmAdutgegz9VsJ8SqIWvi00TIjn/fm
+	 hBOC4IXLmoAuQ==
+Message-ID: <sashiko-outbox-209330@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: backlight: lm3630a: Add
- led-max-microamp
+Subject: Re: [PATCH v2 2/2] backlight: lm3630a: Allow setting the full-scale
+ current per bank
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Michiel van Beers" <michielvanbeers@gmail.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261111-lm3630a-led-max-microamp-v2-1-aff11756e7be@gmail.com>
+In-Reply-To: <20261111-lm3630a-led-max-microamp-v2-2-aff11756e7be@gmail.com>
 References: <20261111-lm3630a-led-max-microamp-v2-0-aff11756e7be@gmail.com>
- <20261111-lm3630a-led-max-microamp-v2-1-aff11756e7be@gmail.com>
+ <20261111-lm3630a-led-max-microamp-v2-2-aff11756e7be@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 11 Nov 2026 16:48:03 +0000
+Date: Wed, 11 Nov 2026 16:50:50 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -63,15 +63,18 @@ Precedence: list
 
 > From: Michiel van Beers <michielvanbeers@gmail.com>
 >=20
-> The LM3630A has a full-scale current setting per control bank, from
-> 5 mA to 28.25 mA in steps of 750 uA. Boards whose LED strings are rated
-> for less than the chip default of 28.25 mA have no way to describe that
-> limit.
+> The driver always programs the full-scale current of both control banks
+> to the maximum of 28.25 mA (code 0x1F). Boards whose LED strings are
+> rated for less have no way to lower it.
 >=20
-> Add the common led-max-microamp property to the led@0 and led@1 nodes,
-> and reference leds/common.yaml from them, where that property is
-> defined. The property is optional, so existing devicetrees remain
-> valid.
+> Read the optional led-max-microamp property of each led@ node and
+> program the full-scale current register of that bank with the matching
+> code, I_FS =3D 5 mA + code * 0.75 mA (datasheet SNVS974B, 7.3.1.11). The
+> code is rounded down, so the current never exceeds the requested value.
+> Values outside 5000 to 28250 uA are rejected with -EINVAL.
+>=20
+> Without the property the driver still programs 0x1F, so existing boards
+> are unaffected.
 >=20
 > Signed-off-by: Michiel van Beers <michielvanbeers@gmail.com>
 
@@ -79,5 +82,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261111-lm3630a-le=
-d-max-microamp-v2-0-aff11756e7be@gmail.com?part=3D1
+d-max-microamp-v2-0-aff11756e7be@gmail.com?part=3D2
 
