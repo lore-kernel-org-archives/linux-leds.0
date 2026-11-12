@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794467820;
-	b=V7DRjhiMf+m15Fm6HEMCuyCNR3Rd3oA+9RTD44EzJ+NJX3Zm+N8ico5Wt11b61z415D/
-	 T7pV95NfggDt84EGD90koyHh2Y2z8wywWirvaffyxX9vo40p47gzLEptqxyf8fseW1TX9
-	 Yxz2vX0MNVX799U+Kb6UR6Gkz1h9zopYMF5fY90sPG+IbhAigd6f1WUH7Y0YbTwYalf6v
-	 VjZ/ZMguZGi9cU6MQDZkm0Ub26c9qsoXIFrsuQ12+X7WICVMK6OMNNDbb/Rk/cEZTmoZu
-	 pCSRpb3JYlEBjFs8cBdsWybFQtGvjvef6lA+osBFpkTFuXynIWD4IDY0KRS2UM7vqTA==
+	t=1794467868;
+	b=Z5gSTsss5hbeoi7VGcpkZYsPf15VyewiEwLc5uLMnXs8KIWAVKbur1ElAVQdU/5hyJIf
+	 mcZq+BWuxUY0e0q63ONgV8pnW1zAQ4qAVkcioSda1KgAlcFdtF0Qz9LAn76JZtMGo/AD8
+	 3aw2H77tbuOW9jY5fI9uEaWtlLzexYcd3mnQDNDMsDswatOJ0aeYC1bivYBHevXZ3zMeg
+	 GTu5U3Y34adsw/6rAzNI7dVnomW1FVcycIYhhkJyR34iAvdZyZBwr4IwYqp798ta8+sKn
+	 eke0ywWQPmlAAyAc1egnv3Dta/vptsJMrTTBauj4Y/TXo831Govq+X/XgrKf0KGGNFA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794467820;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794467868;
 	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
 	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
 	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=UWW/G6XMnNWfiSfYl2DhNX7J93Cu/t+gsJr2k3ANG74=;
-	b=BEbJjHujEJsZ45+Buv3TlwxgpSOCbvTZvK4BjLvnn3JkdAGFriLDmlEHsfzdH1w+UHKp
-	 d5pvgBk2gQcJ/SgTQe7PqG1ZeJ4Zrd4YiE6wGxp/qU2zszjeZaucXzhOKYwbZ8Xn7D3OU
-	 1mU6anKlOTVbaXBDmvasajZ996VFLA5Q7NEYp84K+xCTGU8dwUkVfMa2b59LnPLY4lF9y
-	 BKBS5TNe1RS4M8PcryzJ5N8bnjLYXLQBIsCGESv/fqQp3iVd8kn3tfLXny4XD2PTd3xl2
-	 FD4PSd9NX5+eguzlpnaanQe1A5QvYB0LzGaG3H/stPmBMC/5RGKX1a13kP3Fu5y9E4w==
+	bh=uJA7Wh7hk5jvffnQvL6OPz2cDEhFA17BQBL1FxXlBmo=;
+	b=2EL3tSrDUR3FJztzAuO/mKAWyttxXrC0z0/d3X/DP8K3sgGxUt/mfM/Lb6imuGZxCIUX
+	 GjteVfMX6Inau1fIl562iTk1ttv8xKeLfzhBe1flTcMQZfHwrnlHtB5xT+g2jXRAKMwrR
+	 YZLNpxZQkekB933LLz3YGhsOKNyeCtndd8XckqXGAoMtuYNch2CdOvjn4KL+tGvoChhvy
+	 vdJNArOD64LSo54XS6A2vSys0N1eyNLJHwdCY8cx3xZU3YSvAyY482k3mr5zKdiFrTjL1
+	 3JZSnzYWns5Mzdw0ifKOxFmYYonMC2iOxF9YOIkYyARGOL01jb34wu1c5PEsXOwH+VQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=cmss.chinamobile.com;
 	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=oY9Nbj3F;
-	arc=none smtp.remote-ip=111.22.67.139
-Received: from cmccmta6.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CA5606A32D;
-	Thu, 12 Nov 2026 07:16:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47CA5606A32D
+	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ZJVtCjQf;
+	arc=none smtp.remote-ip=111.22.67.137
+Received: from cmccmta4.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AED9606A32E;
+	Thu, 12 Nov 2026 07:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4AED9606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=oY9Nbj3F
+	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ZJVtCjQf
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=cmss.chinamobile.com; s=default; l=0;
 	h=from:subject:message-id:to:cc:mime-version;
 	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=oY9Nbj3FCFnUjL/UU+WiwH0GNLAr0ijT3wasJeghGJtvNcUz8gjUW9gbGiGnZp45CotLS9fs3zUCE
-	 7Y6IRTl/0e3six3jNrznAnRBO9+E63NOw+ugtdLPnFEm/qE5PBq/M8g+o2sFjfA9uVYUrMWJ7+eX93
-	 J7zKAWgBe+SvzeiY=
+	b=ZJVtCjQfx2AfhZCphb5rHtRSdX/cGo+J3TRpQ9M27tDxpw9Kod0uMgwGKGB7Jb+wesMNzTIkzkMZI
+	 Bq2z5pgrILTuOuStFuL7C0Iy4Q2kY5O52UiOZfnpbAJnh4QUpOkWVByQ57mPNLzwprjqBrilhCFaLH
+	 +K2Z4H9GIsWRyOvM=
 X-RM-TagInfo: emlType=0                                       
 X-RM-SPAM-FLAG:00000000
 Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96af567e937a-e47d6;
-	Thu, 12 Nov 2026 15:16:58 +0800 (CST)
-X-RM-TRANSID:2ee96af567e937a-e47d6
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee86af5680ee57-7f0da;
+	Thu, 12 Nov 2026 15:17:34 +0800 (CST)
+X-RM-TRANSID:2ee86af5680ee57-7f0da
 X-RM-TagInfo: emlType=0                                       
 X-RM-SPAM-FLAG:00000000
 Received:from devin-VMware-Virtual-Platform.localdomain (unknown[10.55.1.72])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee46af567e9a75-f6e09;
-	Thu, 12 Nov 2026 15:16:57 +0800 (CST)
-X-RM-TRANSID:2ee46af567e9a75-f6e09
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee76af5680c91a-f6d45;
+	Thu, 12 Nov 2026 15:17:33 +0800 (CST)
+X-RM-TRANSID:2ee76af5680c91a-f6d45
 From: Zhu Jun <zhujun2@cmss.chinamobile.com>
 To: lee@kernel.org
 Cc: pavel@kernel.org,
@@ -57,9 +57,9 @@ Cc: pavel@kernel.org,
 	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Zhu Jun <zhujun2@cmss.chinamobile.com>
-Subject: [PATCH] leds: netxbig: Release the GPIO extension device after parsing
-Date: Thu, 12 Nov 2026 15:16:56 +0800
-Message-ID: <20261112071657.154479-1-zhujun2@cmss.chinamobile.com>
+Subject: [PATCH] leds: pca963x: Preserve SMBus errors in power management callbacks
+Date: Thu, 12 Nov 2026 15:17:32 +0800
+Message-ID: <20261112071732.154585-1-zhujun2@cmss.chinamobile.com>
 X-Mailer: git-send-email 2.51.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -72,33 +72,58 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-netxbig_leds_get_of_pdata() gets a device reference with
-of_find_device_by_node(). Error paths release it, but successful
-parsing returns without putting the device. The parsed platform data
-does not retain that device pointer.
+The suspend and resume callbacks store an SMBus read result in u8,
+discarding negative error codes, and then write the resulting value
+back to MODE1. They also ignore errors from that write. A failed read
+can therefore overwrite unrelated mode bits with an error-derived value.
 
-Route successful parsing through the existing device cleanup label.
+Keep the read result in an int, stop on a read error and return the
+write result to the PM core.
 
-Fixes: 2976b1798909 ("leds: netxbig: add device tree binding")
+Fixes: 46f02b681ba2 ("leds: pca963x: Add support for suspend and resume")
 Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 ---
- drivers/leds/leds-netxbig.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/leds/leds-pca963x.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index 6f59f91fac6c..7539389e4a29 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -593,8 +593,7 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
+index fa1721916963..80396f19767a 100644
+--- a/drivers/leds/leds-pca963x.c
++++ b/drivers/leds/leds-pca963x.c
+@@ -481,25 +481,25 @@ static int pca963x_register_leds(struct i2c_client *client,
+ static int pca963x_suspend(struct device *dev)
+ {
+ 	struct pca963x *chip = dev_get_drvdata(dev);
+-	u8 reg;
++	int reg;
  
- 	pdata->leds = leds;
- 	pdata->num_leds = num_leds;
+ 	reg = i2c_smbus_read_byte_data(chip->client, PCA963X_MODE1);
++	if (reg < 0)
++		return reg;
+ 	reg = reg | BIT(PCA963X_MODE1_SLEEP);
+-	i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
 -
 -	return 0;
-+	ret = 0;
++	return i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
+ }
  
- put_device:
- 	put_device(gpio_ext_dev);
+ static int pca963x_resume(struct device *dev)
+ {
+ 	struct pca963x *chip = dev_get_drvdata(dev);
+-	u8 reg;
++	int reg;
+ 
+ 	reg = i2c_smbus_read_byte_data(chip->client, PCA963X_MODE1);
++	if (reg < 0)
++		return reg;
+ 	reg = reg & ~BIT(PCA963X_MODE1_SLEEP);
+-	i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
+-
+-	return 0;
++	return i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
+ }
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(pca963x_pm, pca963x_suspend, pca963x_resume);
 -- 
 2.51.0
 
