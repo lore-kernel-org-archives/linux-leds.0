@@ -1,57 +1,66 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=109.224.244.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.139
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794425379;
-	b=WAeQNH9shaxZCx4ovY5Q9o1nms0Jq/cXtTfVw/idgxtejCMfczr/P8HFDZb3AHibCdZa
-	 bg0NBimWNn51oMJ+8UEJ2LDAhya6haSAreaQoy1NPu3jAzK3rz4giHGq5JPP0+xJKgYu0
-	 dxDaOXEOZmX8YsYBfMD6Y/iAGxjVA5BXsGyY7Doyb9LdcIrQkShTDUzWkKxxj6v+iJlMc
-	 Tkn/zniAYbVE3ohJpJMbgb2JslSqbkDtG51VG4kCIgqddk7WHS+MWzB43ltbm010usO33
-	 u4XD7BAAz0PlJA3YAD9HkhIgAiR2TMH4UGeDLXKcMMNHwDruzFRnpVMxMVZ42LDKgiQ==
+	t=1794467820;
+	b=V7DRjhiMf+m15Fm6HEMCuyCNR3Rd3oA+9RTD44EzJ+NJX3Zm+N8ico5Wt11b61z415D/
+	 T7pV95NfggDt84EGD90koyHh2Y2z8wywWirvaffyxX9vo40p47gzLEptqxyf8fseW1TX9
+	 Yxz2vX0MNVX799U+Kb6UR6Gkz1h9zopYMF5fY90sPG+IbhAigd6f1WUH7Y0YbTwYalf6v
+	 VjZ/ZMguZGi9cU6MQDZkm0Ub26c9qsoXIFrsuQ12+X7WICVMK6OMNNDbb/Rk/cEZTmoZu
+	 pCSRpb3JYlEBjFs8cBdsWybFQtGvjvef6lA+osBFpkTFuXynIWD4IDY0KRS2UM7vqTA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794425379;
-	h=DMARC-Filter:DKIM-Signature:Date:To:From:Cc:Subject:Message-ID:
-	 Feedback-ID:X-Pm-Message-ID:MIME-Version:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1794467820;
+	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
+	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
+	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=sii7KJFd1yk89kHGO+hNFF6TpKvTxmesQxNsd0TOM9A=;
-	b=biMChIDNaKrAvBBOp8Q4SRJ24ygmQb5XP4fubr+bxZsPohGBEVWzMNYBAe5rQ5lMv/mE
-	 O09y2UKoBRWcxASK4zNljyM/sPn8vJVcS0eFk0O37GjTtLIX/itgnnfnH8Rz8UiVABhoZ
-	 bowaSt1QvUGtzM5mX2zRr4JADddBhevKGFzR5GvWC7jucL/nJ58FXDqFc9HORmReVbu+S
-	 FO1NF86nxUskEQeeL0ZN3lgXxeyTEvARO8gtL4+Lt3M1tUUUoQvYplBH4hT2iSw9Ow+Jn
-	 iA5SWMFfSkiGzbyycdLjgFAokrACt5qBZxB2RxQFYf1GDWN5meK1g1jR9lld5m/l0Vw==
+	bh=UWW/G6XMnNWfiSfYl2DhNX7J93Cu/t+gsJr2k3ANG74=;
+	b=BEbJjHujEJsZ45+Buv3TlwxgpSOCbvTZvK4BjLvnn3JkdAGFriLDmlEHsfzdH1w+UHKp
+	 d5pvgBk2gQcJ/SgTQe7PqG1ZeJ4Zrd4YiE6wGxp/qU2zszjeZaucXzhOKYwbZ8Xn7D3OU
+	 1mU6anKlOTVbaXBDmvasajZ996VFLA5Q7NEYp84K+xCTGU8dwUkVfMa2b59LnPLY4lF9y
+	 BKBS5TNe1RS4M8PcryzJ5N8bnjLYXLQBIsCGESv/fqQp3iVd8kn3tfLXny4XD2PTd3xl2
+	 FD4PSd9NX5+eguzlpnaanQe1A5QvYB0LzGaG3H/stPmBMC/5RGKX1a13kP3Fu5y9E4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=protonmail.com;
-	spf=pass smtp.mailfrom=protonmail.com;
-	dkim=pass header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=JnTNGkOq;
-	arc=none smtp.remote-ip=109.224.244.18
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32D4606A321;
-	Wed, 11 Nov 2026 19:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F32D4606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	dmarc=pass header.from=cmss.chinamobile.com;
+	spf=pass smtp.mailfrom=cmss.chinamobile.com;
+	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=oY9Nbj3F;
+	arc=none smtp.remote-ip=111.22.67.139
+Received: from cmccmta6.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CA5606A32D;
+	Thu, 12 Nov 2026 07:16:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47CA5606A32D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=protonmail.com header.i=@protonmail.com header.a=rsa-sha256 header.s=protonmail3 header.b=JnTNGkOq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1794425374; x=1794684574;
-	bh=sii7KJFd1yk89kHGO+hNFF6TpKvTxmesQxNsd0TOM9A=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=JnTNGkOq2f60wERZWGvjJvCMp/0oDPiWK5WRWjbA7otYYKKDRUa5uD7A2mk8WOymP
-	 4yI7EZQJ7xmyCD0ofZ1SP3yJbrJDaslK/MeUt4P79guOq03ZHlqBS3z7e9rGjsn4WC
-	 qr2PW6NwBF2TOE37mtUN4x/061TL26i3jr8kf89ULsvvHIw1shpaKAXdsQixr3Y51P
-	 VB9tkWTLiIlT48sN+KkdkZPEs5+bDZ3nk1xcS3inCO2rbu/dKcsTGm1XtSbvKYCY3X
-	 oLplIBTkfj0g12jtE+RNH5At8yZKNJ6UBSwIhbsIu6IoPI/ypyrm5nQr4lGcyWt4JZ
-	 Iqg+QGDGAvgzQ==
-Date: Wed, 11 Nov 2026 19:29:31 +0000
-To: Rillian Grant <rillian.grant@gmail.com>
-From: Roman Vivchar <rva333@protonmail.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ruslan Koreev <koreev.r@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] leds: flash: Add support for the TI LM3643 dual LED flash driver
-Message-ID: <2f081600-58a2-47b3-808f-b578bb07d41f@protonmail.com>
-Feedback-ID: 173184497:user:proton
-X-Pm-Message-ID: 183375a4ed7eb3543fd73e854b6616bb40cc32ea
+	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=oY9Nbj3F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=cmss.chinamobile.com; s=default; l=0;
+	h=from:subject:message-id:to:cc:mime-version;
+	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+	b=oY9Nbj3FCFnUjL/UU+WiwH0GNLAr0ijT3wasJeghGJtvNcUz8gjUW9gbGiGnZp45CotLS9fs3zUCE
+	 7Y6IRTl/0e3six3jNrznAnRBO9+E63NOw+ugtdLPnFEm/qE5PBq/M8g+o2sFjfA9uVYUrMWJ7+eX93
+	 J7zKAWgBe+SvzeiY=
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee96af567e937a-e47d6;
+	Thu, 12 Nov 2026 15:16:58 +0800 (CST)
+X-RM-TRANSID:2ee96af567e937a-e47d6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from devin-VMware-Virtual-Platform.localdomain (unknown[10.55.1.72])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee46af567e9a75-f6e09;
+	Thu, 12 Nov 2026 15:16:57 +0800 (CST)
+X-RM-TRANSID:2ee46af567e9a75-f6e09
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: lee@kernel.org
+Cc: pavel@kernel.org,
+	griffin@kroah.com,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhu Jun <zhujun2@cmss.chinamobile.com>
+Subject: [PATCH] leds: netxbig: Release the GPIO extension device after parsing
+Date: Thu, 12 Nov 2026 15:16:56 +0800
+Message-ID: <20261112071657.154479-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.51.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,46 +70,37 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Rillian,
+netxbig_leds_get_of_pdata() gets a device reference with
+of_find_device_by_node(). Error paths release it, but successful
+parsing returns without putting the device. The parsed platform data
+does not retain that device pointer.
 
-On 10/11/26 22:09, Rillian Grant wrote:
-> The LM3643 is an I2C dual LED flash driver. Its two high-side current
-> sources share a synchronous boost converter and each supports torch and
-> flash modes with programmable current and flash timeout alongside fault
-> reporting.
->=20
-> It also supports connecting both sources together to supply one LED with
-> current up to the boost converter's 1.5A maximum. In that case the curren=
-t
-> will be split between each source symmetrically and the sources will be
-> enabled and disabled at the same time.
->=20
-> As strobing is toggled chip-wide the driver returns -EBUSY when a sibling
-> LED is active.
->=20
-> Flash timeouts do not have a constant step. The driver advertises the mos=
-t
-> granular step and rounds down to the nearest supported value.
->=20
-> Register behavior was taken from the datasheet (SNVS967A).
->=20
-> Co-developed-by: Ruslan Koreev <koreev.r@gmail.com>
-> Signed-off-by: Ruslan Koreev <koreev.r@gmail.com>
-> Signed-off-by: Rillian Grant <rillian.grant@gmail.com>
+Route successful parsing through the existing device cleanup label.
 
-I have tested this series on a Realme C3 phone, which uses Orient Chip=20
-OCP81373 IC (register-compatible clone of the LM3643, except the device=20
-ID is 0x3A instead of 0x00). I had to modify the driver to support=20
-multiple chips, since there's at least one more clone IC (Awinic=20
-AW3643). After applying modifications, flash and torch modes were=20
-confirmed to work correctly. Once this series is merged, I will send a=20
-small series to add support for the OCP81373.
+Fixes: 2976b1798909 ("leds: netxbig: add device tree binding")
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ drivers/leds/leds-netxbig.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Tested-by: Roman Vivchar <rva333@protonmail.com>
+diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
+index 6f59f91fac6c..7539389e4a29 100644
+--- a/drivers/leds/leds-netxbig.c
++++ b/drivers/leds/leds-netxbig.c
+@@ -593,8 +593,7 @@ static int netxbig_leds_get_of_pdata(struct device *dev,
+ 
+ 	pdata->leds = leds;
+ 	pdata->num_leds = num_leds;
+-
+-	return 0;
++	ret = 0;
+ 
+ put_device:
+ 	put_device(gpio_ext_dev);
+-- 
+2.51.0
 
-Best regards,
-Roman
+
 
