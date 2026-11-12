@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794518587;
-	b=YUewyGVFWjY+Xf/kteszKbbkOB/hSu9tJCO1qySa0FQyn1mqTAIizwE4KsBzudrEHnNx
-	 93NO3xveArHvnIaSu53Z+CZeO+v4NO/moY8FDUBe4JFwrM5StTYpI50KPA+ZlloIp9AoY
-	 0MfrRkqFWJqsQmuTQQEUL8DtxFWXIqjlKKqqmIL/EaZiRfQOcYa0HQukUlC5TIwU370vj
-	 EVCUs9fbUJ88TfvguuYcjJUJP34491csLeFUPh4Z26D62iViZ1FUbdtXOkzyB8Hr6YisH
-	 JpLimREvS0XGOcefDplwwLUWCdgX25oMkebaHyLLwUl2PhVKh34mw5ITl7eR8JmuSLw==
+	t=1794518588;
+	b=OpT8n5ms9ghgz2sXnAgsFKSEhGyzY/zfH8OtFB0u2KS09i1HVu7BuUpRxnDyrnmZSMha
+	 tEwTDcSzhdJ3wPS+webV2NBtaimj+U/SKfoT96UU9lNXSyWj9ZbXOeIE++7M4asogDv9G
+	 bI+J6lQpiAE1lx1T79EA2m2aOMC5MlqHlM0iYuQTb+NOCQQQmuayte1QfXwMHfG7zfg6q
+	 sPoFunsmF0ga4SrxGHsKA23aqUZ1x42NA0BMHskH8K994WxTz8fbSt7i5bhTgOqWKiCn0
+	 pBkVVXcPbVOnYW0FKuhI0MUa3dV9K2AkQumrlj2PY9NLBXyfjOxiMkGM+9h1fumnqiw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794518587;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Ct1fbDF1mb7Be3mEluDpAJNIkA18LafUdGDziI8jFKc=;
-	b=3aw3JsyWFeW/5eCujGE9TAO11Blv5KpjmqrIGb1vrubE+lL861rgnXpcBTeEZXxS3LrY
-	 4WucP7EDMbG7YD7lJ/Ufql6vl6gOdVfFL3WJKkcdSU7mXJ2Q8J5c+1h0k4f7+FUBNzuI8
-	 bwjv+KkRce86aa6i/T3CEdVLt8qK8hb3iJ7QzTnExiBe/b6M6Di+W08M9VjJPJK1mG5xO
-	 J32WTtLWc6SYIS32KfKxUOTcppVll+DHhAsmg1Ent9lG7pWQShfj/V6YlHn07ttu2RqWJ
-	 Tb6+8i109n8uf2Fpde4D5XaNlc1/qilB6hw7uDKAADhMTtzWnoVqyeip//lKAf6vd5w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794518588;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=JZusJj76ohhkq5gfXZKTsCb6m3cFYnTSdrTq9kHDIwM=;
+	b=SwsaS8ZmtKysq9LYI50pfr4rxUrXuN7+svsjcCkqojXi53YCCPqUmoADJAGjL65GA14k
+	 ISGls3/U5r2iHZ9OEQ+CoLdsS0LXxgjbr7CupIfdTezwQZAG1K5PrtxU/veimEgq+LGkM
+	 FkxfyC1AIzDmfCzGmHzQWlGN4GKIyO8+7e1J79duDgfu/j/6Pq9tuURhy8ykQ09OTzXYg
+	 pSZLdtRfKXVWqYgwyjHv2QPg9lkzYPgZ3XlwkK05C6Bg241HGI7uNTmvyAVvwAsveKkrp
+	 AnvodC8Jfpt6spyP07ovSX3AbgHwHt9e1AWGru4uinVy4Hp8x8YYkf9XqFDQWEKVxgw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Unl3pSA6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MtC2brEl;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9187F606A321;
-	Thu, 12 Nov 2026 21:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A08606A337;
+	Thu, 12 Nov 2026 21:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Unl3pSA6
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MtC2brEl
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
 	t=1794518587;
-	b=fykVVOtLZDO8Khr8kZxoNIuHgHRP9q/c1YX9aMZaBsXfDEZMRzQAcjvaEgzcYWPrgmvM
-	 DQNNckU2oLyMWNhwwxcVz9ivYRMvTWYYkV1X6j1YdPNQoejuM0RVlfVuLqwHnRT8RVSnD
-	 XrxMKUY1o76f0GLs1RBa8BWrqKdO702cGEK3JHOjygZQHKI13rOUzRsni9RBXSXExnyI+
-	 bm/vn0eNIWb9K/6CFqxw5jPfKoY22BEGmHRd0lbic6XBN6BeGPloPxtRACWSDJZL9/C2y
-	 SsNVAZMM9yfDso2X/xxObH4tqsrA/Lm+J14oWLjP+xCAdUhelHl68BS3rR6MIY2vp+w==
+	b=yYtSbZWSsAx3sTKsWWZE/WIeFHFID07RapOwECyUBe3sLIn3xPEB1fb/s5FerAZgHbBg
+	 pF4FogFh43Tkz+TZKxHVqTUNBH2jG4orLAW98Fgij5ujn9FVb6A+pxZNpzEcj3vlGACzd
+	 /m7zF4cIzSJ77M8OXF/4VqyyiTY+FatDM4y9hNs43xrlj9Ek1+aRWcgfMvBPTUjUGp0RX
+	 m7GIjH5dc9qz39syVuK16f4D1aKBKA1CgMJRYgH15YBvyOQF6y8FyvBBuXHRhPy3EIj7v
+	 rlHRqn/SvWDU9y81ZFU/SvmnA5OiFITB3xrLSyvR8lyGEAUS2AjZ7k20N6keIPYfKkA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
 	c=relaxed/relaxed; t=1794518587;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Ct1fbDF1mb7Be3mEluDpAJNIkA18LafUdGDziI8jFKc=;
-	b=GA29uu1q2zQzFXKM39Uz/C/6kosGWjyQVBa+BN4/E+uZDaKIx/oqZERwns+H7CK5skgN
-	 Zgqq0MNngmNfR6NbEH71n2XAbfp5qFjmCevXmy0WUP3bQ/c1b+TrqWgKcFXWm53Qlt/NW
-	 9xM9wLhOVqki1/I+6nn8hSnz/o2a2yHOTCa9lCa6gx3i0+tB5L37HkbC7C8OxYSSqE2Nz
-	 PLrCnspbfkcrZG70QMR4/XevKshrbG8cZkEN1D8E+zHzE+y+fWZWx2sWIEYCU2e9XEovf
-	 WBEKrcz6LnAV2Ajbtbd6doFOvYAnXsG9QjYOLCcHwWlpM99rO1x/HQBGtNlvhx9mmUw==
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=JZusJj76ohhkq5gfXZKTsCb6m3cFYnTSdrTq9kHDIwM=;
+	b=mRMn8sAqmWlReBgNiS3Hi6y/q6aDHEYrwy+t9HBtfA7tgOWw+Oyn2XoDtIOncVr6L/4c
+	 0Z6ahvele/L6udifJv22W1hHu4AXf6WfwvHDYdgKHmEEH/asm71CgvjH/iNRBUN9QAXvS
+	 kDhF+eh+/kjHFr8+iaxQQzNbMdUJiYU4I/BjFw1TKngpglDi+w+IJAaQu7N1atiCT2xPn
+	 Qpc5v6d/+t7XS6MG0CJjFGxJVDSgufWG6VYuwbnIPCs2rREPK7rmtxF98gdaCRzahxBDk
+	 mSI9NK0SfdOm8QIpfxGKhiS3oL+CKdFrJEX7kZfg6zlZXSuj6Bv8I4jGD859mJx6Rdw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id D4EF81F000C6;
+	by smtp.kernel.org (Postfix) with ESMTPS id B72431F000C4;
 	Thu, 12 Nov 2026 21:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1794518587;
-	bh=Ct1fbDF1mb7Be3mEluDpAJNIkA18LafUdGDziI8jFKc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=Unl3pSA6LuYn0oO/gVnOp7XqIgSJrg5vfjXhZQ2xtYK45xm8YPPKDIrwjXAcPXpnG
-	 bg/KG8fokOiDrIiRCscu2qzMyfoj9YypeEuGF4kpO+tZKQ/DxfvRn9/yv6O1irHTSK
-	 KDyNMIYWjBHDcx3CwA8TeUtACxeR2xntIGXFs8M3YHJrpSMjVBJOrIBtcFhBPyngch
-	 RBu2P0y0D6NM5c8MS7Oa0A5FkCgfwSplt2ddrtW2NX+rEKb+uE8Ks2Gd2itd4KBDZV
-	 EaX3zvkXYOPQ4UtFjRG1mHPPU3bMb3gy4AlBxr08O+lJs6nn9hqZ+Hsw9CKzqpa7YP
-	 7p2mzEinVIKpg==
+	bh=JZusJj76ohhkq5gfXZKTsCb6m3cFYnTSdrTq9kHDIwM=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=MtC2brEl+bcRg8poBwNegIuHxYHOJEhOpRO8kI6qXwYFinbivGLF1JUuAy7n55N9N
+	 vZ4/ioEKLZtnQIEmknv/g1uCyQd74N6S0w/RCcePn0C1VLozus0vnXAOocjvQVWXRz
+	 uAEX5Vu3oWqgG4JzDkm1GRJPaBo326hkRiiEVdgldQ6ADhRjjAb2JMIvvGBLICWAXv
+	 O/9gOT7q47kGOSspFbw14UujHBCxqi+4A/9mqrTH/+eiFYtVIPYUJ/GD/6dgE+2rRN
+	 ccGvY9IPa0KLhEZ483HipiXdC1nXZEcReS0IPnnsEgtjKjvuEkRj7zI/2qEuTH0wPm
+	 mq32QFYtGmuDA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 5E249474FE;
+	by lkml.kernel.org (Postfix) with ESMTP id 43FF2474FA;
 	Thu, 12 Nov 2026 21:23:06 +0000 (UTC)
 From: Paul Sajna via B4 Relay <devnull+sajattack.postmarketos.org@kernel.org>
-Date: Thu, 12 Nov 2026 14:22:56 -0700
-Subject: [PATCH v5 1/3] dt-bindings: leds: aw2013: Add awinic,aw2027
- compatible
+Subject: [PATCH v5 0/3] leds: aw2013: Add AW2027 support
+Date: Thu, 12 Nov 2026 14:22:55 -0700
+Message-Id: <20261112-aw2013-aw20xx-rename-v5-0-b2c5e323a90a@postmarketos.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -84,9 +84,13 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261112-aw2013-aw20xx-rename-v5-1-b2c5e323a90a@postmarketos.org>
-References: <20261112-aw2013-aw20xx-rename-v5-0-b2c5e323a90a@postmarketos.org>
-In-Reply-To: <20261112-aw2013-aw20xx-rename-v5-0-b2c5e323a90a@postmarketos.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XRwU7DMAwG4FeZcibIdpZm3Yn3QBySxt0itGYkp
+ RRNfXfSgoADESfrt5TPlnMTmVPgLI67m0g8hRziUIK+24nubIcTy+BLFgTUQAtG2jcCVFuZZ5l
+ 4sBeWvielOt0Sdo0oT6+J+zBv7ONTyeeQx5jetykTrt1/wAklyK61xvdI1gA+XGMeLzY98xjzf
+ UwnsboTfVsIoCsWFQvhwJ0rexqjK5b6ZSFVLLXuZR323oMG11Ss/Y9VJlesvUR5oEZT65idpj+
+ s5fOYiV9ey9eMXxddlg/hLym1uAEAAA==
+X-Change-ID: 20260907-aw2013-aw20xx-rename-df233c5921c6
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>, 
@@ -98,59 +102,93 @@ Cc: Nikita Travkin <nikita@trvn.ru>, linux-leds@vger.kernel.org,
  Paul Sajna <sajattack@postmarketos.org>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794518585; l=1313;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794518585; l=3073;
  i=sajattack@postmarketos.org; s=20250413; h=from:subject:message-id;
- bh=w/6qEc2cwOI6T/xUHNJh3OifoyGO3FRpW1FATx28UoM=;
- b=+n/fssUtnahXhwLA+TPDYrveXzn8paom4T2+5PLDQVoY9xyEsemgj/xnn0qVXDlP7Xgx2FUhU
- zAlRVX5yur/DiRAHYwoRU8Lvh4alLFhycVIX0RftSO2fgXLOIvuU7j5
+ bh=ghx1yKBekh/GVJRfqOPS1UW6mRfmE2JnepEDR+3pOo8=;
+ b=JaySK5geGCYVAKF4nLZ1ABXHCv8UM0ihMNy1g7Hb1AL8yHFBjBHVyZDGo8rO338MrgSSoA78J
+ ZD4QUvo53bQBD9PaQNvvgtk+2bK7sfQSsAa6QaF8aXyfIWwd/JEX6tV
 X-Developer-Key: i=sajattack@postmarketos.org; a=ed25519;
  pk=ZFE/UBqiz9Wr8b+zBL27opOjw5x5ket5JFqks/VQGeM=
 X-Endpoint-Received: by B4 Relay for sajattack@postmarketos.org/20250413
  with auth_id=1505
 X-Original-From: Paul Sajna <sajattack@postmarketos.org>
 Reply-To: sajattack@postmarketos.org
-Content-Transfer-Encoding: 7bit
 
-From: Paul Sajna <sajattack@postmarketos.org>
+Refer to PATCH 2 for a full description of the similarities and
+differences between AW2013 and AW2027.
 
-The aw2027 is largely the same as the aw2013, with the
-exception of the way the max current is written to registers.
-This exception makes it different enough to not work without
-driver modifications, but similar enough to fall under the
-umbrella of the same driver.
+I'm hoping the sashiko reviews about unbalanced regulators that I was
+struggling to fix are covered by
+https://lore.kernel.org/linux-leds/20261021123406.3163547-1-lee@kernel.org/
+and I can drop my failed attempts to fix them.
+Let me know if I misunderstood.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+I'll do my best to address all of Sashiko's comments, but it might take
+me some time to circle back, don't bother reviewing until I've done
+this.
+
+This PATCH resulted out of discussions pertaining to
+sdm660-mainline/linux, a close-to-mainline fork for Qualcomm Snapdragon 660
+devices, specifically for the BlackBerry KEY2 Keyboard Backlight,
+in the following GitHub PR: https://github.com/sdm660-mainline/linux/pull/218
+
 Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 ---
- Documentation/devicetree/bindings/leds/leds-aw2013.yaml | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Changes in v5:
+- Drop move of chip->num_leds
+- Make aw2013_microamp_to_imax more readable
+- rebase to next-20261112 for Lee's changes
+- Link to v4: https://lore.kernel.org/linux-leds/20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org/
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-index 26238446f2bd..1ad165cfe34a 100644
---- a/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-aw2013.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/leds/leds-aw2013.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: AWINIC AW2013 3-channel LED Driver
-+title: AWINIC AW2013/AW2027 3-channel LED Driver
- 
- maintainers:
-   - Nikita Travkin <nikitos.tr@gmail.com>
-@@ -15,7 +15,9 @@ description: |
- 
- properties:
-   compatible:
--    const: awinic,aw2013
-+    enum:
-+      - awinic,aw2013
-+      - awinic,aw2027
- 
-   reg:
-     maxItems: 1
+Changes in v4:
+- Drop sashiko fixes covered by https://lore.kernel.org/linux-leds/20261021123406.3163547-1-lee@kernel.org/
+- Rename the chip id register value to reflect that it covers more chips
+  (https://www.awinic.com/en/driver/AW2027DNR/640)
+- Address preliminary review comments from Lee Jones
+- Link to v3: https://lore.kernel.org/r/20261012-aw2013-aw20xx-rename-v3-0-cab1fdd050b6@postmarketos.org
 
--- 
-2.56.0
+Changes in v3:
+- Drop rename
+- Capitalize commit subject
+- Extra tweaks to cleanup patches (preventing more unbalanced regulator
+  stuff)
+- Whitespace fiddling
+- Link to v2: https://lore.kernel.org/r/20261005-aw2013-aw20xx-rename-v2-0-108ecbdf2775@postmarketos.org
+
+Changes in v2:
+- Reduce renames to internal driver scope, to prevent breaking compat
+- Address Sashiko Review Comments
+- Split renames into a separate commit to make the actual changes easier
+to identify
+- Change from RFC to PATCH
+- Link to v1: https://lore.kernel.org/r/20260907-aw2013-aw20xx-rename-v1-0-c9a7df12a701@postmarketos.org
+
+To: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@kernel.org>
+To: Griffin Kroah-Hartman <griffin@kroah.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Nikita Travkin <nikitos.tr@gmail.com>
+Cc: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Paul Sajna (3):
+      dt-bindings: leds: aw2013: Add awinic,aw2027 compatible
+      leds: aw2013: Add AW2027 support
+      leds: aw2013: Use dev_err_probe
+
+ .../devicetree/bindings/leds/leds-aw2013.yaml      |   6 +-
+ drivers/leds/leds-aw2013.c                         | 175 +++++++++++++++++----
+ 2 files changed, 146 insertions(+), 35 deletions(-)
+---
+base-commit: 6d582d78fad9d828e575ca0cdcff8ea47a77220b
+change-id: 20260907-aw2013-aw20xx-rename-df233c5921c6
+
+Best regards,
+--  
+Paul Sajna <sajattack@postmarketos.org>
 
 
