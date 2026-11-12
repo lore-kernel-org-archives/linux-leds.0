@@ -1,66 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794467868;
-	b=Z5gSTsss5hbeoi7VGcpkZYsPf15VyewiEwLc5uLMnXs8KIWAVKbur1ElAVQdU/5hyJIf
-	 mcZq+BWuxUY0e0q63ONgV8pnW1zAQ4qAVkcioSda1KgAlcFdtF0Qz9LAn76JZtMGo/AD8
-	 3aw2H77tbuOW9jY5fI9uEaWtlLzexYcd3mnQDNDMsDswatOJ0aeYC1bivYBHevXZ3zMeg
-	 GTu5U3Y34adsw/6rAzNI7dVnomW1FVcycIYhhkJyR34iAvdZyZBwr4IwYqp798ta8+sKn
-	 eke0ywWQPmlAAyAc1egnv3Dta/vptsJMrTTBauj4Y/TXo831Govq+X/XgrKf0KGGNFA==
+	t=1794468225;
+	b=Ig4348Vr0kNR1Kp52ARczBHLv2MFZs3lttiX4uVo3b1MTxZGN9Kal8skpz3I/9HKcXFi
+	 I5ATwKniDP2Ytd+QaxmSD305b38YUx69LX7JG8nLYGl7EyF0ug4+UpKKUan+aVQF7rBbF
+	 gVaMnDxNx7xGAhp0fcjcc8DssLhm/2SlvFU437Zu3RxKC/AVD9iPDa41OegCo/fBZH6dC
+	 rma9HatkC/896waquK/4uni42hKiuCjDjhI65VcSH7ETLSwLTI79AfptdCGGSxtSFPB35
+	 kv+vMCGt2c5gfdNpcD2EwBqKdav9rlfbUWvRF9ConaLZrGLE7rR8DkHeFh2EiYAVUAQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794467868;
-	h=DMARC-Filter:DKIM-Signature:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:
-	 X-RM-TRANSID:X-RM-TagInfo:X-RM-SPAM-FLAG:Received:X-RM-TRANSID:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=uJA7Wh7hk5jvffnQvL6OPz2cDEhFA17BQBL1FxXlBmo=;
-	b=2EL3tSrDUR3FJztzAuO/mKAWyttxXrC0z0/d3X/DP8K3sgGxUt/mfM/Lb6imuGZxCIUX
-	 GjteVfMX6Inau1fIl562iTk1ttv8xKeLfzhBe1flTcMQZfHwrnlHtB5xT+g2jXRAKMwrR
-	 YZLNpxZQkekB933LLz3YGhsOKNyeCtndd8XckqXGAoMtuYNch2CdOvjn4KL+tGvoChhvy
-	 vdJNArOD64LSo54XS6A2vSys0N1eyNLJHwdCY8cx3xZU3YSvAyY482k3mr5zKdiFrTjL1
-	 3JZSnzYWns5Mzdw0ifKOxFmYYonMC2iOxF9YOIkYyARGOL01jb34wu1c5PEsXOwH+VQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794468225;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=VhFkBTQ0gWGEREBPfkrqs8AQJoot+JAWCPpNT+ZLVy4=;
+	b=Fp2QbsUy0bKmem6QnPr0j1RrrgnZzcZn8RpywVmyzc2gUvZtX0u14TBmYtG2nBqNm+Dk
+	 0mnHVeDrlrcgtvcbKaJZqnu/24enEwJRfRenQdSw27fu09RqPLuew0nNHl3z3eSafXKAe
+	 Mua531+gXZgjC83bTXMEEkT3ebbRbzA/vcJzsBXo+TgbAkU2U2K9WI9MyMkwlt+S6bW0q
+	 QiMUceAe4P0RFM4Iqb+r/1F/ET8grlmC58vKxD9tgiQ4LMn/ayVnLiCg8RIwu5JEzFNrh
+	 SaPN3LVMt1I1GNicrtIZ+FRMImyiFwNDdUazzw+liibLTZDah26djwOWfM0kwT1cb8g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=cmss.chinamobile.com;
-	spf=pass smtp.mailfrom=cmss.chinamobile.com;
-	dkim=pass header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ZJVtCjQf;
-	arc=none smtp.remote-ip=111.22.67.137
-Received: from cmccmta4.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AED9606A32E;
-	Thu, 12 Nov 2026 07:17:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4AED9606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AbvkyAQ9;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B71606A31C
+	for <linux-leds@vger.kernel.org>; Thu, 12 Nov 2026 07:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cmss.chinamobile.com header.i=@cmss.chinamobile.com header.a=rsa-sha256 header.s=default header.b=ZJVtCjQf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=cmss.chinamobile.com; s=default; l=0;
-	h=from:subject:message-id:to:cc:mime-version;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	b=ZJVtCjQfx2AfhZCphb5rHtRSdX/cGo+J3TRpQ9M27tDxpw9Kod0uMgwGKGB7Jb+wesMNzTIkzkMZI
-	 Bq2z5pgrILTuOuStFuL7C0Iy4Q2kY5O52UiOZfnpbAJnh4QUpOkWVByQ57mPNLzwprjqBrilhCFaLH
-	 +K2Z4H9GIsWRyOvM=
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee86af5680ee57-7f0da;
-	Thu, 12 Nov 2026 15:17:34 +0800 (CST)
-X-RM-TRANSID:2ee86af5680ee57-7f0da
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from devin-VMware-Virtual-Platform.localdomain (unknown[10.55.1.72])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee76af5680c91a-f6d45;
-	Thu, 12 Nov 2026 15:17:33 +0800 (CST)
-X-RM-TRANSID:2ee76af5680c91a-f6d45
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: lee@kernel.org
-Cc: pavel@kernel.org,
-	griffin@kroah.com,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhu Jun <zhujun2@cmss.chinamobile.com>
-Subject: [PATCH] leds: pca963x: Preserve SMBus errors in power management callbacks
-Date: Thu, 12 Nov 2026 15:17:32 +0800
-Message-ID: <20261112071732.154585-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=AbvkyAQ9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E86781F00A05;
+	Thu, 12 Nov 2026 07:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794468225;
+	bh=VhFkBTQ0gWGEREBPfkrqs8AQJoot+JAWCPpNT+ZLVy4=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=AbvkyAQ9c/tJFd3x9vJOBUWpTf8Wof0ipewJPhJSW9OwRdRGvyICbIipGE7FbqGPU
+	 9zODVqIHSM6yGy0h21eFKX56qRrSjqC6gQ4wrZDjhcMkdbfR2Otw4froOFPU3LgYHC
+	 HXzKeFYFt3QdFWrNx9adcKBphjPW3mouGpkauWqXdEtzEUZYjZb1ZDyNU54PXXYEfm
+	 nUun45jvyo3XtR/+un5bd/sKlKxLd7KktWg7EgBG7jMPc6yaxZtbuXOgmD8elOyuHp
+	 2WSc7AtoLASHD9EegoDeb1MpD/4Fap83btt5kFkIqktf6PMtnPRqCy3rcCuLPVV7hi
+	 jHrcPW7BYtUcQ==
+Message-ID: <sashiko-outbox-210598@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH] leds: netxbig: Release the GPIO extension device after
+ parsing
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Zhu Jun" <zhujun2@cmss.chinamobile.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261112071657.154479-1-zhujun2@cmss.chinamobile.com>
+References: <20261112071657.154479-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Nov 2026 07:23:44 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -69,63 +59,39 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The suspend and resume callbacks store an SMBus read result in u8,
-discarding negative error codes, and then write the resulting value
-back to MODE1. They also ignore errors from that write. A failed read
-can therefore overwrite unrelated mode bits with an error-derived value.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] leds: netxbig: wrong Fixes tag for netxbig_leds_get_of_pdata()
+  leak
+--
 
-Keep the read result in an int, stop on a read error and return the
-write result to the PM core.
+commit e84470b4e5048a49d0dea30c99c1fa99f03b9fb5
+Author: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
-Fixes: 46f02b681ba2 ("leds: pca963x: Add support for suspend and resume")
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- drivers/leds/leds-pca963x.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+> leds: netxbig: Release the GPIO extension device after parsing
+>
+> netxbig_leds_get_of_pdata() gets a device reference with
+> of_find_device_by_node(). Error paths release it, but successful
+> parsing returns without putting the device. The parsed platform data
+> does not retain that device pointer.
+>
+> Route successful parsing through the existing device cleanup label.
+>
+> Fixes: 2976b1798909 ("leds: netxbig: add device tree binding")
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 
-diff --git a/drivers/leds/leds-pca963x.c b/drivers/leds/leds-pca963x.c
-index fa1721916963..80396f19767a 100644
---- a/drivers/leds/leds-pca963x.c
-+++ b/drivers/leds/leds-pca963x.c
-@@ -481,25 +481,25 @@ static int pca963x_register_leds(struct i2c_client *client,
- static int pca963x_suspend(struct device *dev)
- {
- 	struct pca963x *chip = dev_get_drvdata(dev);
--	u8 reg;
-+	int reg;
- 
- 	reg = i2c_smbus_read_byte_data(chip->client, PCA963X_MODE1);
-+	if (reg < 0)
-+		return reg;
- 	reg = reg | BIT(PCA963X_MODE1_SLEEP);
--	i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
--
--	return 0;
-+	return i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
- }
- 
- static int pca963x_resume(struct device *dev)
- {
- 	struct pca963x *chip = dev_get_drvdata(dev);
--	u8 reg;
-+	int reg;
- 
- 	reg = i2c_smbus_read_byte_data(chip->client, PCA963X_MODE1);
-+	if (reg < 0)
-+		return reg;
- 	reg = reg & ~BIT(PCA963X_MODE1_SLEEP);
--	i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
--
--	return 0;
-+	return i2c_smbus_write_byte_data(chip->client, PCA963X_MODE1, reg);
- }
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(pca963x_pm, pca963x_suspend, pca963x_resume);
--- 
-2.51.0
+[Severity: Low]
+Should the Fixes: tag reference 9af512e81964 ("leds: netxbig: Convert to use
+GPIO descriptors") instead?
 
+Commit 2976b1798909 ("leds: netxbig: add device tree binding") only parsed
+gpio_ext_np and did not call of_find_device_by_node().  That call was
+added in 9af512e81964 ("leds: netxbig: Convert to use GPIO descriptors"),
+and 311066aa9ebc ("leds: netxbig: add missing put_device() call in
+netxbig_leds_get_of_pdata()") later added put_device() on the error paths
+while leaving the success path returning early.
 
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112071657.1544=
+79-1-zhujun2@cmss.chinamobile.com?part=3D1
