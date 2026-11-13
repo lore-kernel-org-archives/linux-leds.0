@@ -1,55 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794567869;
-	b=ZZTKIkvZLffoq3Nopmr6LhPkA8WLvlCIvPem30DvV4NxxQ33E6xi4/Y/9WQ+jfXG6kEz
-	 WDc5O0CIzlz1fCHbDNkPi5iC7GzrmnQA4L7J8+vgMISYAyF+rTeNKbCQLbyx1T/9VW+nq
-	 wVMl0LtfC/kijNek29bI29J0wxfseila3Ccbwc9Ew6glnI7NdgTMUfChaaTj1VgMjeCQr
-	 hYEl4CAyuQYCGoCdg2PzkwPuVq1xTFlC4GW6DN0HgI9VCnxww/32PlfceLNMimoF1yXYM
-	 y/7Viju/ZisxU0ShLNoUnuUTGvct4oSHSTlQWDKFdLxLOpjQT0vrQ3/ErhR58jxOr7w==
+	t=1794567953;
+	b=tqTTRbImOjQ0/hhNKF2gyp/7B/bWRpcbM29LQzsGp1Ov+9h9i/bF+/nSofgvJvAz99Wt
+	 WQdsEvgQTix6TDMWPHMDwpbVumhe8Eza0TA7BaOeLK4p29kYScuMV53iihbMCAgm+Lf+T
+	 0xxDt8auQnbEEbxgt5gBkUkOMQTXRx4B/gs/03f+vcVvm6pnzgxynjp3HhICLp2qpLJum
+	 JjK/hLs/taptbjr2u4997G3H2QNq178ez2wIMaQHlqF74sDS5FkWWcfrNhE0lUQmVxHmt
+	 cOBSWNoFqP7MO01lL3Ah8ScaXVHs59cnM9q7Pz3lFizxlmOdOeQWv++02osRg/UMXFQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794567869;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-	 X-AI-Review-Draft;
-	bh=Tzsq2n8RplKbUlpe/9h0GwJcShGQgY/jvlUwuF0uX6s=;
-	b=A9w6WHGIw5ewyc4K5/qF3tLFzvJA8aueeKLwMSYfPWJR0FI21yoQZ2ukwaOm/lU5dTdg
-	 8K2HAlKDNcZuRuw29swvQkZNcpkQLBN+iUqDwtRCaiNUsLJ3da5fax06Fe/F0h9l7o+0o
-	 I3LoUGoyUzl+IwEKPyn27EcHdDYM6GxUaJxyRZO7xxzDDt6YIIidb9Yr2eCaLZLGT6R07
-	 o+BelQxgyjQzhMDPYc0AElrN+4YOXOTVMVF+n+7GRZPGdeV185in0DABRwlL/85eRddRo
-	 mX84infGt/XZLsakwak5Eyrgaog11N1XK0U92kOxJJncSkyJxlWAjd3AsCYrSTIHPMw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794567953;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=sIczx4EcJP0tNqiNCagmfdESXjTqKCY2sjQfBlgdqoY=;
+	b=RUxoaDkUYWK9BFvaNCcsLw9pgLnudECJCj9KKavl4oj0mWWkIsOe83PJhuArh4jJ5wL8
+	 qBQOU7n34gRLPZ17EmLO2An1Dx0i5X8/m+xN0U/VBU1pEaK/4IyyhXggbP5uEV1JFXmRs
+	 jstD7kEFe1/s2uzJ5ZFr0aCjBmXjT6V7rnT5xodDuqJFXU2KsyMBjN3IM6lQ8AhZtJDpG
+	 uS6+TKDLZ6IN9n6bhM2kr5SFYZRjKg6jKkUiRZfy95i9kQTROJ1jCDChLDQNq52VyrOpH
+	 xKAkVQfZQ+iptHPJ9MTY8C4SX7c9w2pDCHYjkfto2gJ3tNJ7w0U+pZohFBELehL6NAw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VPHBaQJE;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pTrJM5N5;
+	arc=none smtp.remote-ip=209.85.167.54
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B09606A31C;
-	Fri, 13 Nov 2026 11:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37C606A327
+	for <linux-leds@vger.kernel.org>; Fri, 13 Nov 2026 11:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CD37C606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VPHBaQJE
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99E2E1F000C4;
-	Fri, 13 Nov 2026 11:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794567868;
-	bh=Tzsq2n8RplKbUlpe/9h0GwJcShGQgY/jvlUwuF0uX6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=VPHBaQJEmcqHzQV5aGGYqsCn7EasKTdDWPt0FJ7YLe7rHP5mNqwS3E7BKLV088ZR5
-	 BgX/yb9z5KuxrvtcLhZF2swjPNDtHMqpnujAxFhxG2tGdMVz8Fr/YFWPB2NPpKn/I2
-	 5kce2Vmh6VYKh+ppy8ECVO+0SIKrARvomn+1L4kVuCnEsqKPmqb6LxWm3eDqlwbqd0
-	 3G+6IrWV5AXk6ppwRF79F6/+v0cMHHMrYhx9RsFtkTys0OFXbS8bPsurcE6b5MUz11
-	 KlBIG1Ikp/IefrQ3TVFmgp2OeWd2UNVKy0paJZshx5nHdOZaEaPmmde8OpmJy435oK
-	 JCq0T2I99xolg==
-Date: Fri, 13 Nov 2026 11:04:24 +0000
-From: Lee Jones <lee@kernel.org>
-To: Yige Jiang <yigejiang86@gmail.com>
-Cc: linux-leds@vger.kernel.org, Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] leds: pwm-multicolor: Manage the multi-led node
- reference
-Message-ID: <179370050695.793788.4199070054904484695@kernel.org>
-References: <20261030020521.9399-1-yigejiang86@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=pTrJM5N5
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5be53e5fce1so1154072e87.1
+        for <linux-leds@vger.kernel.org>; Fri, 13 Nov 2026 03:05:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794567951; x=1795172751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sIczx4EcJP0tNqiNCagmfdESXjTqKCY2sjQfBlgdqoY=;
+        b=pTrJM5N56JwLitY8jMA6aeAQED3ILcDksDAzVeMg7z+Pb40AzV+vriwY9m1oXzTIDg
+         HNnq0dE5w0sV94AlLlGZeS5rvx7HDP/f0LVqvKamh98XrWMprTEwjX+FNwspkbByavRc
+         VHNqX30dBy8VBpRBqCNrRrhomiwHGXmk21ItMlOhyqFAvs6h6JA3oGaCb2NUWj++a27I
+         0JMty6SVln9aWctIzGZK0N2Iwlt0dx4U1x9y9pR6oI8+unczMJ6TLxZ+KsIdTTFwDElH
+         j9Q/OYNf3v4Ga04FaKONKLv0jy8CY9tYUsp+hst2Eldnf370JJRGKTolOANfYza5osym
+         UBtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794567951; x=1795172751;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sIczx4EcJP0tNqiNCagmfdESXjTqKCY2sjQfBlgdqoY=;
+        b=24NkL761AWyuytu11cg4IlGI8PpLyH5xSTtUDbEeuzV4VxRWLOwPfFFRBsC9BijWdm
+         MLKR9INvAPZOjzRq8LLGy0u6QPNsk0yg/eTwyVCgbG5LEayQuGuXZ6ucuxNeczQArZss
+         gQIKzNlhtQ/Roh+4+9tZmxLjCguvdcANyUZkZi3UwlW3C2LF0lsRT6iJueJHok0AUfta
+         0sZW7xPEWQS97bkZtuGdeAXjUQu/uE2xqGHG/0v2Ldz1OSUOPm8+4iarBOmgT7fXz1OJ
+         ncfnw8M1IG+NmolGOwjxesSpg7ZFPc7YUpq4KylSgXOWxjNQgjCkyaAnqSwzxUQ4n+hP
+         ZFqQ==
+X-Forwarded-Encrypted: i=1; AL+hErHYa23OF2dPtoA1RsaYsUel2OCoAKxdBf3l3OnJGcp+2Mj4Xi3F7SoywFccNubFGAEAbM2ykTCDmfI7@vger.kernel.org
+X-Gm-Message-State: APuU4Z84jJgNx9RWuh1TF2GsjuIsfZBBTKcXZN3Xq2IXEEOcFcNXxw6J
+	mtIH+f9/JjdM/eH5IGZCaENqxbZ7j7ScEVvV2BxA99xvKd7bbayzTEKq
+X-Gm-Gg: AYBFou2AmdhG72YSV2aCkPmyBmS7kvk2zkSFEiYHnzaO607LbcHc01cie4bC2hqUpNO
+	elA+0trBoQp4aZxToWer/XQOyBQFvAG6JR4L9azwAEgiYgePERAeAJLMHkcAGQ9VJTgQ9t8FeVO
+	6gw1AkAAVng3OHizjIBoMDUi+IjMABZiMbTZ/36awI2d7d+GGFXBmQpCrCkmZNgxzLyIrrSInb3
+	tild4Z45avoT66UrKwGv1RQMGK6HQnZox1oBLo02iFauWjWWe6pAylKFIvhRTbENLKkP6IZH2i5
+	8dtbb4tIpQpCp1cXbSdZFNvstIdPDf5/XVCJ0BS3AI8Kvms4OQLvNMo31ML1gfD0Ur/8aB3DRbC
+	2qXQZr0RmaacByOEo7txWW37s078/Wo7MfiAxmj91mHmh+mbwjOsM8odTXvB5+zli8HWypBDf+J
+	OwhDIeXDWWuHsjfCzNbveHSEoGOuC5gEVh2Sj9Opqkz1SmRhX3kcziZoKb7WczytWckYmdddj+0
+	aZU+VqsfjWDu6aPsNa18vOAVARPm1gqiJ522ArFugSE0ALOLQAOSTcTkd4Q43skcjgFyuJM31I0
+	fhFdOt463iKzoX2kTvAMyYgvkJibanjYewCZZToUZK6w9Rs=
+X-Received: by 2002:a05:6512:15a8:b0:5c0:ca1:46c3 with SMTP id 2adb3069b0e04-5c170b1c76fmr842803e87.22.1794567950691;
+        Fri, 13 Nov 2026 03:05:50 -0800 (PST)
+Received: from NB-6746.corp.yadro.com ([188.243.183.76])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c17133371asm610997e87.21.2026.11.13.03.05.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Nov 2026 03:05:49 -0800 (PST)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	maxime.chevallier@bootlin.com,
+	pavel@ucw.cz,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Cc: Artem Shimko <a.shimko.dev@gmail.com>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next 0/3] net: phy: dap8211r: add LED hardware control
+Date: Fri, 13 Nov 2026 14:05:42 +0300
+Message-ID: <20261113110546.173624-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,138 +108,62 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261030020521.9399-1-yigejiang86@gmail.com>
-X-AI-Review-Draft: <20261030020521.9399-1-yigejiang86@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, 30 Oct 2026, Yige Jiang wrote:
+Hello,
 
-> led_pwm_mc_probe() leaks the multi-led node reference on successful
-> probe and if the final PWM update fails. LED registration borrows
-> the node, so it must remain valid until the LED is unregistered.
->
-> Register a managed put action before LED registration. Reverse devres
-> order then unregisters the LED before releasing the node on unbind
-> or probe failure. Drop the manual error-path put and return directly
-> on probe errors, leaving the reference cleanup to devres.
->
-> Fixes: 9fa2762110dd ("leds: Add PWM multicolor driver")
-> Assisted-by: LLM
+This series adds support for hardware-controlled LEDs on the DAP8211R
+Gigabit Ethernet PHY.
 
-I thought we dropped these now?
+The first patch documents the optional "leds" node in the Device Tree
+binding. The second patch introduces a small helper to write extended
+registers, since the LED registers are accessed indirectly via
+EXT_ADD/EXT_DATA. The third patch implements the three LED callbacks
+required by the PHY library.
 
-> Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
-> ---
-> Changes in v2:
-> - Capitalize the subject description to follow the LED subsystem style.
-> - Remove the redundant release_mcnode label and return directly from
->   the probe error paths.
->
-> v1: https://lore.kernel.org/r/rc-review-20261029-ai27-27-2c77ed65cec2@gmail.com
->
-> Based on linux-next next-20261016 (2efb7a11f1aa).
-> Compile-tested: arm64, GCC 14.2.0, W=1, CONFIG_OF_DYNAMIC=y.
-> COMPILE_TEST=y.
-> The object was rebuilt from this exact base with v2 applied.
-> No full kernel or module-link, hardware or runtime test was performed.
->
->  drivers/leds/rgb/leds-pwm-multicolor.c | 31 +++++++++++++-------------
->  1 file changed, 16 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/leds/rgb/leds-pwm-multicolor.c b/drivers/leds/rgb/leds-pwm-multicolor.c
-> index 6365459ec27f17187804153cde6cb1805eca33e9..10527a64d1982733a43b76bd8bc123aba95b6f72 100644
-> --- a/drivers/leds/rgb/leds-pwm-multicolor.c
-> +++ b/drivers/leds/rgb/leds-pwm-multicolor.c
-> @@ -106,6 +106,11 @@ release_fwnode:
->  	return ret;
->  }
->
-> +static void led_pwm_mc_put_node(void *data)
-> +{
-> +	fwnode_handle_put(data);
-> +}
+$ make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+  CHKDT   ./Documentation/devicetree/bindings
+  LINT    ./Documentation/devicetree/bindings
+  STYLE   ./Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/net/dptel,dap8211r.example.dts
+  DTC [C] Documentation/devicetree/bindings/net/dptel,dap8211r.example.dtb
 
-What about?
+Required:
+CONFIG_NEW_LEDS=y
+    CONFIG_LEDS_CLASS=y
+    CONFIG_LEDS_TRIGGERS=y
+        CONFIG_LEDS_TRIGGER_NETDEV=y
 
-    struct fwnode_handle *mcnode __free(fwnode_handle) =
-        device_get_named_child_node(&pdev->dev, "multi-led");
+Testing:
+$ ip link set eth1 up
+$ ls /sys/class/leds/
+stmmac-1:01:amber:lan  stmmac-1:01:green:lan
+$ echo eth1 > /sys/class/leds/stmmac-1:01:green:lan/device_name
+$ echo 1 > /sys/class/leds/stmmac-1:01:green:lan/link_1000
+$ cat /sys/class/leds/stmmac-1:01:green:lan/offloaded
 
-> +
->  static int led_pwm_mc_probe(struct platform_device *pdev)
->  {
->  	struct fwnode_handle *mcnode;
-> @@ -121,22 +126,22 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
->  		return dev_err_probe(&pdev->dev, -ENODEV,
->  				     "expected multi-led node\n");
->
-> +	ret = devm_add_action_or_reset(&pdev->dev, led_pwm_mc_put_node, mcnode);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* count the nodes inside the multi-led node */
->  	count = fwnode_get_child_node_count(mcnode);
->
->  	priv = devm_kzalloc(&pdev->dev, struct_size(priv, leds, count),
->  			    GFP_KERNEL);
-> -	if (!priv) {
-> -		ret = -ENOMEM;
-> -		goto release_mcnode;
-> -	}
-> +	if (!priv)
-> +		return -ENOMEM;
->  	mutex_init(&priv->lock);
->
->  	subled = devm_kcalloc(&pdev->dev, count, sizeof(*subled), GFP_KERNEL);
-> -	if (!subled) {
-> -		ret = -ENOMEM;
-> -		goto release_mcnode;
-> -	}
-> +	if (!subled)
-> +		return -ENOMEM;
->  	priv->mc_cdev.subled_info = subled;
->
->  	/* init the multicolor's LED class device */
-> @@ -144,14 +149,14 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
->  	ret = fwnode_property_read_u32(mcnode, "max-brightness",
->  				 &cdev->max_brightness);
->  	if (ret)
-> -		goto release_mcnode;
-> +		return ret;
->
->  	cdev->flags = LED_CORE_SUSPENDRESUME;
->  	cdev->brightness_set_blocking = led_pwm_mc_set;
->
->  	ret = iterate_subleds(&pdev->dev, priv, mcnode);
->  	if (ret)
-> -		goto release_mcnode;
-> +		return ret;
->
->  	init_data.fwnode = mcnode;
->  	ret = devm_led_classdev_multicolor_register_ext(&pdev->dev,
-> @@ -161,7 +166,7 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev,
->  			"failed to register multicolor PWM led for %s: %d\n",
->  			cdev->name, ret);
-> -		goto release_mcnode;
-> +		return ret;
->  	}
->
->  	ret = led_pwm_mc_set(cdev, cdev->brightness);
-> @@ -172,10 +177,6 @@ static int led_pwm_mc_probe(struct platform_device *pdev)
->
->  	platform_set_drvdata(pdev, priv);
->  	return 0;
-> -
-> -release_mcnode:
-> -	fwnode_handle_put(mcnode);
-> -	return ret;
->  }
->
->  static const struct of_device_id of_pwm_leds_mc_match[] = {
->
-> base-commit: 2efb7a11f1aa4d2dc285fe2680cca22cb9f72f64
->
+$ echo eth1 > /sys/class/leds/stmmac-1:01:amber:lan/device_name
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/tx
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/rx
+$ cat /sys/class/leds/stmmac-1:01:amber:lan/offloaded
+
+$ ip addr add PEER_IP_ADDR dev eth1
+$ ping -I eth1 ELP_ID_ADDR
+
+--
+Best regards,
+artem shimko
+
+Artem Shimko (3):
+  dt-bindings: net: dptel,dap8211r: add led nodes
+  net: phy: dap8211r: add extended register write helper
+  net: phy: dap8211r: add led hardware control support
+
+ .../bindings/net/dptel,dap8211r.yaml          |  38 ++++
+ drivers/net/phy/dap8211r.c                    | 207 ++++++++++++++++++
+ 2 files changed, 245 insertions(+)
 
 -- 
-Lee Jones
+2.43.0
+
