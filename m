@@ -1,60 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794596551;
-	b=D5EfYak6Sa8I4L1uXoIi7A5RgUYSOXqjRYP1F0ybMdHWp/yF0WF8NG0XOajHa4H/p7z+
-	 Dxsffvd4x/wmHcS1av/JH3NHmwADRI8gIWu3lUmAyaQ5cIw9ykc1LM4TsepfqysYnnnnV
-	 xQiDX16Wdt7Vg3KrwaM9m2xFGfpqbzvZfDJMRv9R4gBmkkgotvKtE/ZDqTaKPGAxGo9U6
-	 NFdNyN3T8oybIwHdKcemeyML/K8heQ3BY4B/0Qytudcf29XJNS3/HlBJyZcCKpWrngsdz
-	 PkriwPF8Wr+eFdiMg2h5lVEhtkw8Brg1X/dn8Tx4X4xR3TdycdIxnL8EhQtLCSQT4jA==
+	t=1794596773;
+	b=L9cslxqOWrEk+Ae59G2niZ/Qyoc5PtZHpmXcHw5SWlz4mTS2NR8oSbc75NiqVCnXY75s
+	 QVt56G0Fla5t9LBkEzWXAjnaoy12BfHGFjBSS1qvZcrntAsQ78GnJwcPnfwl4Jy0iNfkx
+	 dFjM8RZa8GeuVl/Rjjzlz0oVIOY9skGNjbnHasBke36hBMMo5SN7/ZLqAnBLuzu0LhL5o
+	 WS3hzNVzp1BvE3cQQnHu6W16Gz8EkOeHFlPtcYG8qVcaFwaSIaH0LfvBP3vGUFl//1uhW
+	 RWjGfldVLUwL6ydBQQ9cAqzm2DcXQjClrx24S1KHl+v55ABCKf6+YbYb6SwNNljFZFg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794596551;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794596773;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:
 	 Content-Transfer-Encoding:In-Reply-To;
-	bh=tBSGBArV0TzzQ40XhlsgJfzi9SG/oFg7XPpNBnzEA6M=;
-	b=K0M6kB8ceGO8Q0fo6tBCxYHHGuSExwOg0i48t3kJsCXeFX1m19n51ODpdzmoVVbqw0bU
-	 6lVlIkDUNUHhHc0cmIo6K5XeG7y5P5EMscEx57VDQBJ+BXNGPw2SPoCbWiFZYNjGNTpxr
-	 NYAqaKjTh2s6XuKZzKV1VmWcF4o8M6Pv5B+ON5hOHc0su8dhKEh4+rmj7nV6qFHxWWnMQ
-	 ypfBaenoFES1Vj0J2SEhJXUmuj1v0Gzih0XuwIshzNzQkoclT+kVKfbKc1nM5yMvT7G+N
-	 iUrdAsCoA7Y4rWrEeRZ/CeJcGEU6WDIZ3jXmeuDaQ3hJ1tiWoF+XiScSND/+HTXTSrQ==
+	bh=cL8S/XqxcRvYdatGqNCRqCS1nB5EOhT90pF+3yj6n8I=;
+	b=B1qTBtvW6NagWvvhqSrN+klhDa8QRDpSFCasnwFN3FYygpAekL7dS+eUK5yQ2RcAwDFf
+	 22KMqaxuaRZMx11gPxVn2Lc2an0YgRLiLMw+IGnm1R+rdai9Z5kiDc0cXvWWOery5D3Z/
+	 wM+OL/kzdLzfJ+s52UCmOSPTnoi2YW/Xc88bcI4wAcTT//++5RwlBZl/nJYj6atHhsP6m
+	 Ol09v/vpRWSjJGgeop47gwrBGF35KvkNJIQUkKdKRQUWPtTPkfvYAbLO4tLMZW8LzVV9U
+	 rknb4UoVpKzm4ZhNTqi5pKlP9mCE7FktbUCmWF2vAgJ2Iwn0OwHAKbf3HwBVK8FBfmg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=arP2LL2V;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jQ30UlO6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAA7606A331;
-	Fri, 13 Nov 2026 19:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A92606A327;
+	Fri, 13 Nov 2026 19:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=arP2LL2V
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CA391F000C4;
-	Fri, 13 Nov 2026 19:02:29 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jQ30UlO6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C51F1F000C4;
+	Fri, 13 Nov 2026 19:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794596551;
-	bh=tBSGBArV0TzzQ40XhlsgJfzi9SG/oFg7XPpNBnzEA6M=;
+	s=k20260515; t=1794596773;
+	bh=cL8S/XqxcRvYdatGqNCRqCS1nB5EOhT90pF+3yj6n8I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=arP2LL2Vdl3fZtDnnpwenurVheQkYnFtnW15Oa39dLTSFZhAwlMe2OV05y0OPxLmt
-	 7nmJzUYBLm6wgm9xiTnY68KPGRA8S8Nm2ujvjQ0609ysXChkC0nlqktaHEXkOIzRla
-	 kqZRidbMBM3wGr90bn0jcCHBoA7/v7pT084euyy7EJV0pHEDQYkCrxegKh9msgmftn
-	 HRu8ZLzV3OtE+f9rxm6CUboTeXcs7mOzSc3wED9cHRGdcAm6XC+d/8EhSGM6Vbzin6
-	 IeU8BJVsgqYbWFdZj5q5AqefyHbjLe31bgx1FE02Mi8Ah8M5m/LbCZn1QRmtdLY/UE
-	 DhmoDArUVLdng==
-Date: Fri, 13 Nov 2026 19:02:26 +0000
+	b=jQ30UlO6deD0sM8Ipvji+bfs6IOnwdbfvWVbGqkrnOCID5EjlBCEHkCef2wm3rtiv
+	 BORlIW690dLvWNYzzpaxS+tGFV/W+yGtfDZLYY8syXThsvlc62Ib+zP4rVWqKmSETl
+	 F5ZQVPw+ImyJAZS3bD6wIDIj7Ell9Ry3G0WeGCIKwvyG58TWsgGVY4JvPnQdio5Crh
+	 r/wxnGbIJyoHHtYN8rJcOnlgdLqtCn70OUalFXuvBjkE/aW1sbnq2tlqKj0oSv3ow/
+	 3mL6T8XrcpSboGtxK8/UT3Oi8k7pgmtyb49sER4xOee+XZeiVLTABHkwHQQoQfkzMh
+	 A//XszwPrFLdw==
+Date: Fri, 13 Nov 2026 19:06:08 +0000
 From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Fl=E1vio?= Amieiro <flavio@amieiro.net>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
 Cc: Pavel Machek <pavel@kernel.org>,
 	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] leds: is31f132xx: Add support for is31fl3206
-Message-ID: <20261113190226.GJ6323@joneslee-macbookpro.roam.internal>
-References: <20261028-add-is31fl3206-support-v4-0-e331cee9fcb3@amieiro.net>
- <20261028-add-is31fl3206-support-v4-2-e331cee9fcb3@amieiro.net>
- <179370064610.793788.8239015594326628135@kernel.org>
- <87cxs87jyt.fsf@berlin>
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v1] video: leds: backlight: lm3533: Support getting LED
+ sources from DT
+Message-ID: <20261113190608.GK6323@joneslee-macbookpro.roam.internal>
+References: <20261101142435.130520-1-clamor95@gmail.com>
+ <179370032880.793788.4424159880220279586@kernel.org>
+ <CAPVz0n1E2bLOzKEC6_2iiPM5ZZ6-NOXuOkwx+jQYn8BRvPXwSw@mail.gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -64,52 +64,52 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87cxs87jyt.fsf@berlin>
+In-Reply-To: <CAPVz0n1E2bLOzKEC6_2iiPM5ZZ6-NOXuOkwx+jQYn8BRvPXwSw@mail.gmail.com>
 
-On Fri, 13 Nov 2026, Fl�vio Amieiro wrote:
+On Fri, 13 Nov 2026, Svyatoslav Ryhel wrote:
 
-> 
-> Thank you very much for the review.
-> 
-> > Lee Jones <lee@kernel.org> writes:
-> > --- checkpatch.pl (1 issue) ---
-> > Line 83: WARNING: DT compatible string "issi,is31fl3206" appears un-documented -- check ./Documentation/devicetree/bindings/
-> > ----------------------------------
+> пт, 13 лист. 2026 р. о 16:53 Lee Jones <lee@kernel.org> пише:
+> >
+> > Drop the 'video: ' part of the subject line.
+> >
+> > Please review, explain or fix the Sashiko review(s).
+> >
+> > > Add Control Bank to HVLED/LVLED muxing support based on the led-sources
+> > > defined in the device tree.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
+> > > ---
+> > > This was part of the original LM3533 controller DT/OF conversion patchset,
+> > > but it appears to have been accidentally separated during the final iteration.
+> > > Therefore, I am sending it as a follow-up.
+> > > ---
+> > >  drivers/leds/leds-lm3533.c          | 60 +++++++++++++++++++++++++++++
+> > >  drivers/video/backlight/lm3533_bl.c | 45 ++++++++++++++++++++++
+
+[...]
+
+> > > +     if (bl->num_leds) {
+> > > +             for (int i = 0; i < bl->num_leds; i++) {
+> > > +                     if (bl->led_strings[i] >= LM3533_HVCTRLBANK_COUNT)
+> > > +                             continue;
+> > > +
+> > > +                     output_cfg_val |= ctrlbank << bl->led_strings[i];
+> > > +                     output_cfg_mask |= BIT(bl->led_strings[i]);
+> > > +             }
+> >
+> > This for loop doesn't need to be in the if statement.
 > >
 > 
-> This is documented in the first patch of the series, as requested as
-> part of the review for v1[1].
-> 
-> > On Wed, 28 Oct 2026, Flavio Amieiro wrote:
-> >
-> >> + * @enable_bit_offset_in_led_control_reg determines the offset of the
-> >> + * enable bits from the least significant bit of the LED control
-> >
-> > Make sure you run W=1, particularly when changing Kerneldoc.
-> >
-> 
-> I checked and get no warnings with `make W=1
-> ./drivers/leds/leds-is31fl32xx.o`, `./scripts/checkpatch.pl --strict`,
-> and `./scripts/kernel-doc -N drivers/leds/leds-is31fl32xx.c`. Am I
-> missing some other check here?
+> It is in if statement because if node has no "led-sources"
+> LM3533_REG_OUTPUT_CONF1 should not be touched and must be left in its
+> default state.
 
-Ah, it's because the first one is spelt correctly.
-
-This mention however, is not:
-
-@enable_bit_offset_in_led_control_reg
-
-> Again, thank you very much for the review. I will address the other
-> points and send a v5 as soon as possible.
-> 
-> Best regards,
-> Fl�vio Amieiro
-> 
-> 
-> [1]: https://lore.kernel.org/all/20261013-jolly-salamander-of-tact-7cf46e@quoll/
+But it won't iterate if (!bl->num_leds), so it's being indented for no
+reason.
 
 -- 
 Lee Jones
