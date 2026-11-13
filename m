@@ -1,60 +1,75 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.171
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794596773;
-	b=L9cslxqOWrEk+Ae59G2niZ/Qyoc5PtZHpmXcHw5SWlz4mTS2NR8oSbc75NiqVCnXY75s
-	 QVt56G0Fla5t9LBkEzWXAjnaoy12BfHGFjBSS1qvZcrntAsQ78GnJwcPnfwl4Jy0iNfkx
-	 dFjM8RZa8GeuVl/Rjjzlz0oVIOY9skGNjbnHasBke36hBMMo5SN7/ZLqAnBLuzu0LhL5o
-	 WS3hzNVzp1BvE3cQQnHu6W16Gz8EkOeHFlPtcYG8qVcaFwaSIaH0LfvBP3vGUFl//1uhW
-	 RWjGfldVLUwL6ydBQQ9cAqzm2DcXQjClrx24S1KHl+v55ABCKf6+YbYb6SwNNljFZFg==
+	t=1794599618;
+	b=n1fK8iRMOmajR3mXVJY96SblW5u3r72swa7P4fia8GlgGNjEhlymeMQMyhPYhzSusYXS
+	 36isE17DsxUkrWd1ke/QE86+FNMYJZGGlVDXZJlZ57NPxiaAgCmwPMzW0yDct2HWPLSep
+	 OOQfwkX+YWEZayotQRrAJlEA3K8aGwePA7SAi6xSyZGbwgXh19N1NOjT9k6pN66agUmEe
+	 ffxJUGTjvpDZtEIKZpRF5pn8aKzOdcCFX7KVGjh0UH1IyW/5k+H//1KmflUZ4PaNisT3e
+	 TgTegwxiWfksrzYiX1gXNXtT7Tza7MBaFI91u2hG6lCVPPhEUcnx8EmRdpR8hx9LqQA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794596773;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=cL8S/XqxcRvYdatGqNCRqCS1nB5EOhT90pF+3yj6n8I=;
-	b=B1qTBtvW6NagWvvhqSrN+klhDa8QRDpSFCasnwFN3FYygpAekL7dS+eUK5yQ2RcAwDFf
-	 22KMqaxuaRZMx11gPxVn2Lc2an0YgRLiLMw+IGnm1R+rdai9Z5kiDc0cXvWWOery5D3Z/
-	 wM+OL/kzdLzfJ+s52UCmOSPTnoi2YW/Xc88bcI4wAcTT//++5RwlBZl/nJYj6atHhsP6m
-	 Ol09v/vpRWSjJGgeop47gwrBGF35KvkNJIQUkKdKRQUWPtTPkfvYAbLO4tLMZW8LzVV9U
-	 rknb4UoVpKzm4ZhNTqi5pKlP9mCE7FktbUCmWF2vAgJ2Iwn0OwHAKbf3HwBVK8FBfmg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794599618;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:In-Reply-To:
+	 References:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-Rspamd-Queue-Id;
+	bh=dwKbjIwix86xARbJdD4uRnizYgxLzRiRFRGveKCQ+EA=;
+	b=nM2bEBdfcTau0sCaOIBXvCkf1uthgR8/AY+ee3+dIWpJWgzu6Jc+uSd0D5TXRAypAFqV
+	 OUnd9iDyYT/v8pXBMlzzomq4y2ZO20QDaxFuBqKx4cCD4oygPty91mhanhc7yU+kpQodz
+	 V5Gi/fMg5EjpTT3ZaFqH0KNdWtsTxYEaR/rk/Pp5pG5yIKZPygqz08ezd4WSyq22YtSKD
+	 JtfOEES8DdvoYQ0w9BfsBehWzkwTwlyyXstTGUFkcIDWDPtd54oNW6OZrLji4Xw62rXHl
+	 EBhunOl1NZuUP7z8Olwvoz8zRKgbqb2upwpr+M5Bu7WHf5kBYZGvZAmBCdo6CVaEoTA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jQ30UlO6;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=amieiro.net;
+	spf=pass smtp.mailfrom=amieiro.net;
+	dkim=pass header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=YMuvZiRM;
+	arc=none smtp.remote-ip=80.241.56.171
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A92606A327;
-	Fri, 13 Nov 2026 19:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89D2606A330;
+	Fri, 13 Nov 2026 19:53:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A89D2606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=jQ30UlO6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C51F1F000C4;
-	Fri, 13 Nov 2026 19:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794596773;
-	bh=cL8S/XqxcRvYdatGqNCRqCS1nB5EOhT90pF+3yj6n8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jQ30UlO6deD0sM8Ipvji+bfs6IOnwdbfvWVbGqkrnOCID5EjlBCEHkCef2wm3rtiv
-	 BORlIW690dLvWNYzzpaxS+tGFV/W+yGtfDZLYY8syXThsvlc62Ib+zP4rVWqKmSETl
-	 F5ZQVPw+ImyJAZS3bD6wIDIj7Ell9Ry3G0WeGCIKwvyG58TWsgGVY4JvPnQdio5Crh
-	 r/wxnGbIJyoHHtYN8rJcOnlgdLqtCn70OUalFXuvBjkE/aW1sbnq2tlqKj0oSv3ow/
-	 3mL6T8XrcpSboGtxK8/UT3Oi8k7pgmtyb49sER4xOee+XZeiVLTABHkwHQQoQfkzMh
-	 A//XszwPrFLdw==
-Date: Fri, 13 Nov 2026 19:06:08 +0000
-From: Lee Jones <lee@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v1] video: leds: backlight: lm3533: Support getting LED
- sources from DT
-Message-ID: <20261113190608.GK6323@joneslee-macbookpro.roam.internal>
-References: <20261101142435.130520-1-clamor95@gmail.com>
- <179370032880.793788.4424159880220279586@kernel.org>
- <CAPVz0n1E2bLOzKEC6_2iiPM5ZZ6-NOXuOkwx+jQYn8BRvPXwSw@mail.gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=YMuvZiRM
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4jR7H22QFBzMlbq;
+	Fri, 13 Nov 2026 20:53:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
+	t=1794599614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dwKbjIwix86xARbJdD4uRnizYgxLzRiRFRGveKCQ+EA=;
+	b=YMuvZiRMKzNxbpSl5/mB9AwmF6NrJczmqaXrE1yLtMIJLF8naU6klrAtgwvSBOSlhsNrWP
+	s4lWwl08YsbUoa4R2EhcFJOKU1KuYb8URGZ2OGEwd9qDTyBI15W0TTUYa5ER71cDOEL8up
+	/vuR2RI/GnALmHREhbCLyLZvqyUBdM5HEad7Q6s5EWCYMbuj9d65vgo9wLp6mA8JFNQNSy
+	VuMzeZGeGhMMwp2mCLTI/dVOyWXRMBykaQkdg+f3ft++RvMtt4dI3gMGLVB/Ng1Vt5pLpU
+	iUJ/320UOhA4eixqYuPxazOyrkO2qHB2CpMz8ryqiUoXurk4VuSXjqsBbAUaAA==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=flavio@amieiro.net
+From: =?utf-8?Q?Fl=C3=A1vio?= Amieiro <flavio@amieiro.net>
+To: Lee Jones <lee@kernel.org>
+Cc: Pavel Machek <pavel@kernel.org>, Griffin Kroah-Hartman
+ <griffin@kroah.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] leds: is31f132xx: Add support for is31fl3206
+In-Reply-To: <20261113190226.GJ6323@joneslee-macbookpro.roam.internal>
+References: <20261028-add-is31fl3206-support-v4-0-e331cee9fcb3@amieiro.net>
+ <20261028-add-is31fl3206-support-v4-2-e331cee9fcb3@amieiro.net>
+ <179370064610.793788.8239015594326628135@kernel.org>
+ <87cxs87jyt.fsf@berlin>
+ <20261113190226.GJ6323@joneslee-macbookpro.roam.internal>
+Date: Fri, 13 Nov 2026 16:52:46 -0300
+Message-ID: <8733t45x0x.fsf@berlin>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -65,51 +80,20 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n1E2bLOzKEC6_2iiPM5ZZ6-NOXuOkwx+jQYn8BRvPXwSw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 4jR7H22QFBzMlbq
 
-On Fri, 13 Nov 2026, Svyatoslav Ryhel wrote:
+Lee Jones <lee@kernel.org> writes:
+> Ah, it's because the first one is spelt correctly.
+>
+> This mention however, is not:
+>
+> @enable_bit_offset_in_led_control_reg
+>
 
-> пт, 13 лист. 2026 р. о 16:53 Lee Jones <lee@kernel.org> пише:
-> >
-> > Drop the 'video: ' part of the subject line.
-> >
-> > Please review, explain or fix the Sashiko review(s).
-> >
-> > > Add Control Bank to HVLED/LVLED muxing support based on the led-sources
-> > > defined in the device tree.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org>
-> > > ---
-> > > This was part of the original LM3533 controller DT/OF conversion patchset,
-> > > but it appears to have been accidentally separated during the final iteration.
-> > > Therefore, I am sending it as a follow-up.
-> > > ---
-> > >  drivers/leds/leds-lm3533.c          | 60 +++++++++++++++++++++++++++++
-> > >  drivers/video/backlight/lm3533_bl.c | 45 ++++++++++++++++++++++
+I'm sorry I missed that. I'll also fix it in v5.
 
-[...]
+Thank you!
 
-> > > +     if (bl->num_leds) {
-> > > +             for (int i = 0; i < bl->num_leds; i++) {
-> > > +                     if (bl->led_strings[i] >= LM3533_HVCTRLBANK_COUNT)
-> > > +                             continue;
-> > > +
-> > > +                     output_cfg_val |= ctrlbank << bl->led_strings[i];
-> > > +                     output_cfg_mask |= BIT(bl->led_strings[i]);
-> > > +             }
-> >
-> > This for loop doesn't need to be in the if statement.
-> >
-> 
-> It is in if statement because if node has no "led-sources"
-> LM3533_REG_OUTPUT_CONF1 should not be touched and must be left in its
-> default state.
-
-But it won't iterate if (!bl->num_leds), so it's being indented for no
-reason.
-
--- 
-Lee Jones
+--
+Fl=C3=A1vio Amieiro
