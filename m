@@ -1,56 +1,52 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794578578;
-	b=B3HeAu/INZXs8w8UH2/pwnaZh7COpspaxdDmfvepRv4epj+F0rPeJviMNvSTDmmdmxja
-	 spB2oMEOhw6+uaxAkghjfJ1Tma1eRfzyNOUwRRtNOnX2gRWWJdBbZAI4c2RzvCK4vNGOU
-	 U9ZsAvOLUnE/EGDOqQnxGXTPy4cHfyp5a7lM5F5auSDqtzhpIKvKjj6uNK7qKWJa483Nc
-	 syAxXvmU79UNishBqU8F+mnBuYwFRumEqiXT2XzJCk8WRkHXKHmvsBMrHVta7D2hIYCEn
-	 uTU7+KH/VeNfs7fwELAOC3PzC79JCV0UTHCA9vbGvCjMo6xlHYwEUXBBZigye0kYyWg==
+	t=1794580812;
+	b=ifJs2XN9JgIUz6IqOCUv1R3daozK1ltMq+FszjLpOJGmM/IRxwSGZPP6ZZyoznrtoCgA
+	 Z5qfWuDh9EduB6z3qPNnLhH1b08j+LyZMMSXoaEVj7dFdj1F2pwJxZmiwLQVfvJmZ4eQm
+	 Dy7/Ah49CBlZ6JV6Ymjd1E4GG7DTfYFhz70UvqDIfSsPoekiVTczSfvdb5w/T7qa2S3d1
+	 T/TB0Otq3/GPNju4gP7YaO/E9bReFdjP+BNAl5RKDwXqVezuwYpkoF66OMSCAP+K65ESF
+	 ol6JmqucuYnPx3ruw+kfPF4ePVqOVocZD2iTFPG+821B+uEFKJL1rZioKbOFOZc0K8Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794578578;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=/fbjR0FB4BAWUr2HeOsNbueQrcbGaG3Lu+OG+3A37GI=;
-	b=s8/n1pb4J4et3ncEjcjINglTdM35nnIK9XfFOm3Ufq4afpKgSFWMXX34K4DrqaaUeH84
-	 bA+bNrn+5Jm/QLvp36s1DUqOvj5K5FqA/IIIRvB/RbKaeZvwvTVH/ISE1aJQiUZQ6CYST
-	 g5cRWcROy3EAzArkuXSeBiaCQHEUuoEi0F2ysXnZsEjo22zurY8/HB0fZWa3WTe3zYART
-	 WQ4K5bydhx+Cg/hA4epPcogNGe4JVp3YNUvYWS9Rg0v0CgMKH8dPT87H60SpsW2Mer81M
-	 p7/Oj14ap07kZma/tNe7AmmgCKHaRu2gNSxuTHITKuPD9ZvWmPnGvN/MyosA9Y7pT8w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794580812;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-AI-Review-Draft;
+	bh=bAzO2jvsh+10OE+xcVZSWOnug3m6lHgzg9OsPp9k7zM=;
+	b=dr/xxe23hjvv5EOBFud26U+B4jyRR9wmYxtgc1APTKKHIRO+0E6aoILFt+cAFmkLAaMU
+	 /hFmIXPntuGIbOXQpqlg0HatT670Tiy3OK/z5u+3/OFQ0FBxu4ivqw6s7KF3zJOZLYi8T
+	 SNdoT9cO/YTDzX/CU4i/hHk8ebbFFODsjpWUd+HBki1a0qXDT0P9/tJQsg4hQ4J3umlr6
+	 F8Ge5Dtwfrk+CHoFXPmkz6srQ83qNMCAdfDNI+J5OVpb14GRBjy2FH3Ca59qi57CFxBz0
+	 NIwGVyZo6QRmHVR28ppPae/3eP6KLH5gSZv3v5NPXuG7LLREVZ7VxZSgzkb1C17SNSg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U4uiZ9D+;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aDbosVdi;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8EE606A32E;
-	Fri, 13 Nov 2026 14:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2B3606A327
+	for <linux-leds@vger.kernel.org>; Fri, 13 Nov 2026 14:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=U4uiZ9D+
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0759B1F000C4;
-	Fri, 13 Nov 2026 14:02:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aDbosVdi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F161F000C4;
+	Fri, 13 Nov 2026 14:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794578578;
-	bh=/fbjR0FB4BAWUr2HeOsNbueQrcbGaG3Lu+OG+3A37GI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=U4uiZ9D+3gThqMX0+8rSKzxCoEYftI/XyTvYV0Y4kX67ggtlKpmajr/l+23dDJTDs
-	 xS/XMdUP02DffkEWjtmkrBQZ7SdcNu9ggNBed0pVtghD3sI59IFPP31zPIbFfwc5Ta
-	 s1BiDbzxbRlrKLpbMK5U58WMo9lYa4nPWg3+VYPmxa2uXjanfNMfC/j/6w29IcFWhR
-	 XOZ/owujo1dX7HBmxNBg9TOeZiqumBU15ZaeIJQRSLst9jmRW7tMafcHCEfX8CFCyc
-	 nro/b2SC9X+AjK7Z3hK3VSDEFYE+GBllRiBQH57j/6SSmfEv79oqTzacxvEv5EeB6d
-	 0j0EQhOFtb0RQ==
-Message-ID: <sashiko-outbox-212951@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v28 1/4] rust: leds: Add basic led classdev abstractions
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Markus Probst" <markus.probst@posteo.de>
-Cc: linux-leds@vger.kernel.org, linux-pci@vger.kernel.org, lee@kernel.org, ojeda@kernel.org, gary@garyguo.net
-In-Reply-To: <20261113-rust_leds-v28-1-b8cf2f74fa57@posteo.de>
-References: <20261113-rust_leds-v28-0-b8cf2f74fa57@posteo.de>
- <20261113-rust_leds-v28-1-b8cf2f74fa57@posteo.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 14:02:57 +0000
+	s=k20260515; t=1794580812;
+	bh=bAzO2jvsh+10OE+xcVZSWOnug3m6lHgzg9OsPp9k7zM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=aDbosVdixYXb2BTAH8C5wgZ+thlJZYkWsNJ5UCtcq5/LntONDb+Neb+OrHPq+63kT
+	 HgPtqVNspKn9tcbdswcJtS+bXTDTA7u0qTJTnOnJ+szMBpofiAH82xzxHpHS4KwdkC
+	 gBwAuO/ruUhZS/CvoYIQczL6r/pbB5cxcSqfqkXagFEtBvt9124Sgo5uPPBN23Cb/1
+	 kco9KzslMFieFdBI4NFGM5Mi0f/PnJhIJ2BALGcjXAsfeNql92dgjJcr8wvoD060cp
+	 zxvmFeIDP5UsZUuB/2cBwd88alZNqEg21DDlRldfSJ2T9kEBL4BQoYU5+ijvs9RJ9L
+	 y+qL24eLyVpmw==
+Date: Fri, 13 Nov 2026 14:40:08 +0000
+From: Lee Jones <lee@kernel.org>
+To: Ch1rpy <ch1rpys0116@gmail.com>
+Cc: linux-leds@vger.kernel.org, pavel@kernel.org
+Subject: Re: [PATCH 1/2] leds: flash: qcom: correct the cleanup indexing
+Message-ID: <179370042783.793788.16881227943544790052@kernel.org>
+References: <179350178518.4281.3598581494157134937@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,291 +55,94 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <179350178518.4281.3598581494157134937@gmail.com>
+X-AI-Review-Draft: <179350178518.4281.3598581494157134937@gmail.com>
 
-Thank you for your contribution! Sashiko AI review found 5 potential
-issues to consider:
-- [High] rust: leds: kCFI failure in Adapter callbacks due to u32
-  brightness type
-- [Medium] rust: leds: unsound safe DeviceBuilder::build() allows
-  forgetting Device
-- [Medium] rust: leds: missing Kconfig guard on led module and missing
-  linux/leds.h include
-- [Medium] rust: leds: aliased mutable references in
-  Adapter::blink_set_callback()
-- [Low] rust: leds: missing #[inline] on Color::try_from() and
-  Device::deref()
---
+--- checkpatch.pl (1 issue) ---
+Line 12: WARNING: Please use correct Fixes: style 'Fixes: <12+ chars of sha1> ("<title line>")' - ie: 'Fixes: 96a2e242a5dc ("leds: flash: Add driver to support flash LED module in QCOM PMICs")'
+----------------------------------
 
-commit 3ca798e46e685904b91dd1d2cbeeeb11efdd4ebe
-Author: Markus Probst <markus.probst@posteo.de>
+On Sun, 01 Nov 2026, Ch1rpy wrote:
 
-rust: leds: Add basic led classdev abstractions
+> The cleanup of the flash controller walks the registered LEDs and frees
+> the slots it finds. It counted the entries first and decremented the
+> count before it used the index, so the last entry was left registered
+> and the next registration reused the slot.
+>
+> Do not stop the cleanup on a NULL slot: torch-only LEDs and
+> configurations without the V4L2 wrapper may leave NULL entries, which
+> v4l2_flash_release() already accepts.
 
-This commit adds core Rust abstractions for LED class devices, including
-the LedOps trait, DeviceBuilder, and the Device wrapper around struct
-led_classdev.
+This commit message describes a completely different change (which appears to
+already be upstream as commit 75565a889829 ("leds: flash: leds-qcom-flash:
+Release all V4L2 flash devices")) from the brightness/intensity conversion
+changes in the diff below.
 
-> diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
-> new file mode 100644
-> index 0000000000000..deda8cc548a8c
-> --- /dev/null
-> +++ b/rust/kernel/led.rs
+> Fixes: 96a2e242a5dc ("leds: flash: qcom: Fix cleanup of LED flash
+> device on the platform with multiple LEDs")
 
-[ ... ]
+Please don't wrap Fixes: lines, also the commit ID doesn't match the
+subject?  What on earth is going on with this commit?
 
-> +impl TryFrom<u32> for Color {
-> +    type Error =3D Error;
+> Original patch by slwyts <slwyts@foxmail.com>.
+> Link: https://github.com/slwyts/Project-SunUEFI/commit/34a31774179abd53cb226e3726ed1f6234edcc82
+>
+> Signed-off-by: Ch1rpy <ch1rpys0116@gmail.com>
+
+Please use your full, real name in the 'Signed-off-by:' tag (and 'From:'
+header), as required by Documentation/process/submitting-patches.rst.
+
+> ---
+>  drivers/leds/flash/leds-qcom-flash.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
+> index b03a6833e3e3..b5844504aefb 100644
+> --- a/drivers/leds/flash/leds-qcom-flash.c
+> +++ b/drivers/leds/flash/leds-qcom-flash.c
+> @@ -654,7 +654,11 @@ qcom_flash_intensity_to_led_brightness(struct v4l2_flash *v4l2_flash, s32 intens
+>  	if (!current_ma)
+>  		return LED_OFF;
+>
+> -	return (current_ma * LED_FULL) / led->max_torch_current_ma;
+> +	/* brightness_set() converts back with integer division. Round this
+> +	 * encoding up so an exact 5mA/channel control step is not lost to a
+> +	 * second truncation. The PMIC still rounds current down to its step.
+> +	 */
+
+This is an incorrect multi-line comment format.
+
+> +	return DIV_ROUND_UP(current_ma * LED_FULL, led->max_torch_current_ma);
+>  }
+>
+>  static s32 qcom_flash_brightness_to_led_intensity(struct v4l2_flash *v4l2_flash,
+> @@ -662,8 +666,19 @@ static s32 qcom_flash_brightness_to_led_intensity(struct v4l2_flash *v4l2_flash,
+>  {
+>  	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
+>  	struct qcom_flash_led *led = flcdev_to_qcom_fled(fled_cdev);
+> +	u32 current_ma, steps;
 > +
-> +    fn try_from(value: u32) -> core::result::Result<Self, Self::Error> {
-> +        if value < bindings::LED_COLOR_ID_MAX {
-> +            // SAFETY:
-> +            // - `Color` is represented as `u32`
-> +            // - the static_assert above guarantees that no additional c=
-olor has been added
-> +            // - `value` is guaranteed to be in the color id range
-> +            Ok(unsafe { transmute::<u32, Color>(value) })
-> +        } else {
-> +            Err(EINVAL)
-> +        }
-> +    }
-> +}
+> +	if (!brightness)
+> +		return 0;
+>
+> -	return (brightness * led->max_torch_current_ma * UA_PER_MA) / LED_FULL;
+> +	/* Mirror brightness_set() then set_flash_current(): the total mA are
+> +	 * split per channel, and ITARGET=0 is a nonzero 5mA minimum. Return the
+> +	 * quantized total, not the unrepresentable LED scale fraction. Thermal
+> +	 * limiting can still reduce the current during brightness_set().
+> +	 */
+> +	current_ma = brightness * led->max_torch_current_ma / LED_FULL;
+> +	steps = (current_ma * UA_PER_MA / led->chan_count + 1) / TORCH_IRES_UA;
+> +	return max_t(u32, steps, 1) * TORCH_IRES_UA * led->chan_count;
+>  }
+>
+>  static const struct v4l2_flash_ops qcom_v4l2_flash_ops = {
+> -- 
+> 2.54.0 (Apple Git-157)
+>
 
-[Severity: Low]
-Could Color::try_from() and Device::deref() in rust/kernel/led/normal.rs
-be marked #[inline], matching other small functions in the kernel crate?
-
-[ ... ]
-
-> diff --git a/rust/kernel/led/normal.rs b/rust/kernel/led/normal.rs
-> new file mode 100644
-> index 0000000000000..a22c29cfd2628
-> --- /dev/null
-> +++ b/rust/kernel/led/normal.rs
-> @@ -0,0 +1,222 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Led mode for the `struct led_classdev`.
-> +//!
-> +//! C header: [`include/linux/leds.h`](srctree/include/linux/leds.h)
-> +
-> +use core::ops::Deref;
-> +
-> +use super::*;
-> +
-> +/// The led class device representation.
-> +///
-> +/// This structure represents the Rust abstraction for a led class devic=
-e.
-> +#[pin_data(PinnedDrop)]
-> +pub struct Device<'bound, T: 'bound =3D ()> {
-> +    #[pin]
-> +    ops: T,
-> +    #[pin]
-> +    classdev: Opaque<bindings::led_classdev>,
-> +    _p: PhantomData<&'bound ()>,
-> +}
-> +
-> +impl<'init, S: DeviceBuilderState> DeviceBuilder<'init, S> {
-> +    /// Registers a new [`Device`].
-> +    pub fn build<'bound: 'init, T: LedOps + 'bound>(
-> +        self,
-> +        parent: &'bound device::Device<Bound>,
-> +        ops: impl PinInit<T, Error> + 'init,
-> +    ) -> impl PinInit<Device<'bound, T>, Error> + 'init {
-
-[ ... ]
-
-> +                // SAFETY:
-> +                // - `parent.as_raw()` is guaranteed to be a pointer to =
-a valid `device`.
-> +                // - `ptr` is guaranteed to be a pointer to an initializ=
-ed `led_classdev`.
-> +                to_result(unsafe {
-> +                    bindings::led_classdev_register_ext(
-> +                        parent.as_raw(),
-> +                        ptr,
-> +                        if self.name.is_none() {
-> +                            &raw mut init_data
-> +                        } else {
-> +                            core::ptr::null_mut()
-> +                        },
-> +                    )
-> +                })?;
-> +
-> +                core::mem::forget(self.fwnode); // keep the reference co=
-unt incremented
-> +
-> +                Ok::<_, Error>(())
-> +            }),
-> +            _p: PhantomData,
-> +        })
-> +    }
-> +}
-
-[Severity: Medium]
-What prevents safe code from initializing Device<'bound, T> in a KBox and
-passing it to core::mem::forget()?
-
-Because led_classdev_unregister() is only called in PinnedDrop::drop(),
-forgetting the Device leaves the C led_classdev registered after parent
-unbinds and 'bound expires.  Subsequent sysfs accesses or trigger events
-then invoke Adapter::<T> callbacks on dangling 'bound references in T, and
-led_module_get() or led_put() dereferences led_cdev->dev->parent->driver
-after parent->driver becomes NULL.  Other lifetime-bound in-place
-registrations Either mark construction unsafe or register cleanup via
-devres.
-
-[ ... ]
-
-> +impl<T: LedOps> Adapter<T> {
-> +    /// # Safety
-> +    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded =
-within a
-> +    /// `led::Device`.
-> +    /// This function is called on setting the brightness of a led.
-> +    unsafe extern "C" fn brightness_set_callback(
-> +        led_cdev: *mut bindings::led_classdev,
-> +        brightness: u32,
-> +    ) {
-> +        // SAFETY: The function's contract guarantees that `led_cdev` is=
- a valid pointer to a
-> +        // `led_classdev` embedded within a `led::Device`.
-> +        let classdev =3D unsafe { Device::<T>::from_raw(led_cdev) };
-> +
-> +        let _ =3D classdev.brightness_set(brightness);
-> +    }
-> +
-> +    /// # Safety
-> +    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded =
-within a
-> +    /// `led::Device`.
-> +    /// This function is called on setting the brightness of a led immed=
-iately.
-> +    unsafe extern "C" fn brightness_set_blocking_callback(
-> +        led_cdev: *mut bindings::led_classdev,
-> +        brightness: u32,
-> +    ) -> i32 {
-> +        from_result(|| {
-> +            // SAFETY: The function's contract guarantees that `led_cdev=
-` is a valid pointer to a
-> +            // `led_classdev` embedded within a `led::Device`.
-> +            let classdev =3D unsafe { Device::<T>::from_raw(led_cdev) };
-> +
-> +            classdev.brightness_set(brightness)?;
-> +            Ok(0)
-> +        })
-> +    }
-> +
-> +    /// # Safety
-> +    /// `led_cdev` must be a valid pointer to a `led_classdev` embedded =
-within a
-> +    /// `led::Device`.
-> +    /// This function is called on getting the brightness of a led.
-> +    unsafe extern "C" fn brightness_get_callback(led_cdev: *mut bindings=
-::led_classdev) -> u32 {
-
-[Severity: High]
-Will brightness_set_callback(), brightness_set_blocking_callback(), and
-brightness_get_callback() trip a kCFI failure under CONFIG_CFI_CLANG?
-
-In include/linux/leds.h, struct led_classdev declares these callbacks
-with enum led_brightness rather than u32:
-
-include/linux/leds.h:
-	void		(*brightness_set)(struct led_classdev *led_cdev,
-					  enum led_brightness brightness);
-	int		(*brightness_set_blocking)(struct led_classdev *led_cdev,
-						   enum led_brightness brightness);
-	enum led_brightness (*brightness_get)(struct led_classdev *led_cdev);
-
-Clang kCFI encodes enum led_brightness by its enum type name
-(14led_brightness) rather than as a plain integer.  Because these Rust
-callbacks use u32 and enum led_brightness is not listed as a
---newtype-enum in rust/bindgen_parameters, indirect calls from
-led_update_brightness() or __led_set_brightness() will fail the kCFI type
-check and panic.
-
-[ ... ]
-
-> +    unsafe extern "C" fn blink_set_callback(
-> +        led_cdev: *mut bindings::led_classdev,
-> +        delay_on: *mut usize,
-> +        delay_off: *mut usize,
-> +    ) -> i32 {
-> +        from_result(|| {
-> +            // SAFETY: The function's contract guarantees that `led_cdev=
-` is a valid pointer to a
-> +            // `led_classdev` embedded within a `led::Device`.
-> +            let classdev =3D unsafe { Device::<T>::from_raw(led_cdev) };
-> +
-> +            classdev.blink_set(
-> +                // SAFETY: The function's contract guarantees that `dela=
-y_on` points to a `usize`
-> +                // and is exclusive for the period of this function.
-> +                unsafe { &mut *delay_on },
-> +                // SAFETY: The function's contract guarantees that `dela=
-y_off` points to a `usize`
-> +                // and is exclusive for the period of this function.
-> +                unsafe { &mut *delay_off },
-> +            )?;
-> +            Ok(0)
-> +        })
-> +    }
-> +}
-
-[Severity: Medium]
-Can blink_set_callback() create aliased &mut usize references to
-led_cdev->blink_delay_on and led_cdev->blink_delay_off?
-
-In drivers/leds/trigger/ledtrig-timer.c, led_delay_on_store() passes
-&led_cdev->blink_delay_off directly to led_blink_set() without holding a
-lock:
-
-drivers/leds/trigger/ledtrig-timer.c:led_delay_on_store() {
-    ...
-	led_blink_set(led_cdev, &state, &led_cdev->blink_delay_off);
-	led_cdev->blink_delay_on =3D state;
-    ...
-}
-
-CPU0                                  CPU1
-led_delay_on_store()                  led_delay_on_store()
-  led_blink_set()                       led_blink_set()
-    ...                                   ...
-      blink_set_callback()                  blink_set_callback()
-        &mut *delay_off                       &mut *delay_off  <-- aliased =
-&mut
-
-Concurrent writes to delay_on or delay_off, unlocked sysfs reads in
-led_delay_on_show() and led_delay_off_show(), or
-led_stop_software_blink() zeroing both fields from set_brightness_delayed()
-all access those fields without synchronization while &mut usize is live,
-causing undefined behavior.
-
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 1ab41129d557a..3b831cb6488d7 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -98,6 +98,7 @@
->  pub mod jump_label;
->  #[cfg(CONFIG_KUNIT)]
->  pub mod kunit;
-> +pub mod led;
->  pub mod list;
->  pub mod maple_tree;
->  pub mod mem;
-
-[Severity: Medium]
-Does unconditionally compiling pub mod led break the build when
-CONFIG_NEW_LEDS is disabled or CONFIG_LEDS_CLASS is not built-in?
-
-Color::as_c_str() calls led_get_color_name() (built under CONFIG_NEW_LEDS)
-and DeviceBuilder::build() and PinnedDrop::drop() call
-led_classdev_register_ext() and led_classdev_unregister() (built under
-tristate CONFIG_LEDS_CLASS), none of which have inline stubs in
-include/linux/leds.h.  In addition, rust/bindings/bindings_helper.h does
-not explicitly include linux/leds.h, relying on a transitive include.
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113-rust_leds-=
-v28-0-b8cf2f74fa57@posteo.de?part=3D1
+-- 
+Lee Jones
