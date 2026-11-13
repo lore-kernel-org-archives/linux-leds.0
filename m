@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794528214;
-	b=TgwjIOIeF5Zy9DdQgXHKgqRXkoTxY0HMvKjI4f1/rBBdkVr5m3Ri+vSasADHg0nUOi+i
-	 qzetCbKK+U4WGgt1Qj/W+vgG2aIk7xQBHiyPiXgmu/xV8yiviYr1nGUcx0h635Ho7LKd/
-	 9L041eQM4i6tQUvOG8oppIbMy8NX5nUuGlPPaednb+dra+6eBb7QaPcrIYr9IVPyGdgW5
-	 I4NAOw9PFK7m0SL8c6gmwBIn3kpzKW40mgA5DaOojKSnCRaQTHyUm7AC0wxrlcE01nx9i
-	 UySxxwry+OwAeEQsvJeas6LL790SBP3bn2nbEpdU7rN37ZPqQ2dAZtqe+asNSKcjtVQ==
+	t=1794528555;
+	b=5deErMInAKVlPvTAyGiQs28rtSn4vrjpW2BsKsllmIdSh49VNdunCVg4OCZdqzJZXHpl
+	 kYSuyIcjlkP4yWHDyOv2O+QYYlgeCjSpafhZqfogIqaViH5l8chXvBuPuZLrudXLWhte5
+	 vHnyKcE/HZNA9veghYVidhnMHMFXXSbYpVhP7He1GnkZ9c29A+5VDX/WCtfXVWXY3fGF3
+	 0m5+m+uVrNx1yHuV65pmbdRXw2uRh1xZFBHa4RT1NGRYqZZvh0HW6zKBFsj2fl5o7tiH0
+	 uKgdOCAYRZdn3zmEZTT8MUHvnXBYtIdf548/RFGZFlvL8anScr7uA2zrYoLM75p0m/g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794528214;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794528555;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=MfqWgYZHrt379FPVWCUOLxR/30Fz8SppQWjQktvFWR8=;
-	b=pedzR+zGzd6n88VvoCkM4BwrT7Y2f5nH7b+6yCSuRRVQx82trfUvgLjDhoVEhIKCOyox
-	 dhBxD/lA8Iuyx7VIhZPT49oDzbyMqv/zc0i6NIdgjBvvsMcpz3IAFjKi5O58sDuaL3b+8
-	 lXe9s2Yp6InKIEpa7uAQXxgaP6i68i+zSqBX9mVa36U6u79PIJSYMt3aPyY4Y4fll8Q0S
-	 hUrbYfmzkSJeKp9EVkktSfyfwiaruwpJ4SSqZrfv/p3DwhH27B6wIAPgSr9d1ctP8BS5x
-	 bI7GQtR+k6PMW7oz7+nTFJUhypE5recb5nReD8gTJwqLFgRXSSfZCANK+GBTMoc8dkw==
+	bh=ebRpGpdB2hTTtbG3QpuXVZMpD6cJsrogmkEi5stzfis=;
+	b=WniqfJAmqW61qfRIUJDKHD7HvFvHT4xOsEPGNrmIL/wox6/zQZqtiC9wV8hm9SXwopw0
+	 OUxQs873RoKKLr9ZxjKw2TOyfKHxXEXuYrIlCgk8qK11N9V9KcnWEHm6y6r8zROOranv7
+	 usO5voMgSt6TN6Rrt3PdLyiJ/gwFhnFNPJISgIIMEtZgZWTVPMZC3o/YnUYTx+tEjR9Cu
+	 /ie95JrC86T1aEfwJaFOTFfkWWxq03q/L5l6P8HlHiWabppaam+o6QMZrH+QXkJuIxt54
+	 6HTbCARQKthALe6ZxXMCUt3CTbLzwpgntIUwcq1I9JrWRkR9MYkYVlenDJMwkTBat4w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TQjJcp8V;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n9FP4GqN;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE6F606A885
-	for <linux-leds@vger.kernel.org>; Fri, 13 Nov 2026 00:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0EF606A31C;
+	Fri, 13 Nov 2026 00:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TQjJcp8V
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E101F000C6;
-	Fri, 13 Nov 2026 00:03:34 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n9FP4GqN
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563541F000C4;
+	Fri, 13 Nov 2026 00:09:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794528214;
-	bh=MfqWgYZHrt379FPVWCUOLxR/30Fz8SppQWjQktvFWR8=;
+	s=k20260515; t=1794528554;
+	bh=ebRpGpdB2hTTtbG3QpuXVZMpD6cJsrogmkEi5stzfis=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=TQjJcp8V5mgqbYS25y4Y1zMVMf+3sHhr5D1awqdF8leN0swsKOtBKQVZt4HkiLfAE
-	 Gqtrr13ccXx1cF56E5ovzdhnsTpA8OI+ULNssF5c/QRQ8ljWPlORGkCTYAziEL8TT0
-	 yiFEqix5+LwRCa0Fg/uzYLjX0F19bBeX21meUryB2WoXvvo+WRlbP7DJyZWUAcP20p
-	 uRkTawGEreIRpXj17aSMiONxa0l6Rr27D6TcfiE+nxRFx5tJW76M0zvGWaLYXcZ0Vv
-	 1Y2hEX/mws1iBOQ1Fb8nNTit5zhxeX/cg12qgf+hdURyLznXBKVM3MP7bsuSo1yZvd
-	 Zbv0zpuNIe7LA==
-Message-ID: <sashiko-outbox-211973@kernel.org>
+	b=n9FP4GqNx1HUAt2L8wDS3VCD5V247eepy51hMsErXvvHGf3uGLAvEikhaHxEraRVv
+	 hyMKc6hldI3ByxbPj/4oMq4bQUuKC0von6vRXYng9BE7QUdVOinLIogzyaRukChs1n
+	 UhLNx3onzI4ap6J6PGPW5jeN2IvSMEGVfJ/VEfLNk0boTVDuQC0aaGsPtzSqrOO/j2
+	 VypzDFgDgQeLRayLwsEFDgyvKSZwhTF/5F2OT7/K//5W8bGpl8dDzN0fVdeEkRlXef
+	 o53hjMpMdQ/0bQ8fQzgDAjJAfi9pqEGwSVeNZyrkSHZmuscBYLpK6dkYkO3toCyZEW
+	 8SdCsA9Dd6o7w==
+Message-ID: <sashiko-outbox-211975@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 1/3] dt-bindings: leds: aw2013: Add awinic,aw2027
- compatible
+Subject: Re: [PATCH v6 3/3] leds: aw2013: Use dev_err_probe
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Paul Sajna" <sajattack@postmarketos.org>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261112-aw2013-aw20xx-rename-v6-1-251eca340abc@postmarketos.org>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <20261112-aw2013-aw20xx-rename-v6-3-251eca340abc@postmarketos.org>
 References: <20261112-aw2013-aw20xx-rename-v6-0-251eca340abc@postmarketos.org>
- <20261112-aw2013-aw20xx-rename-v6-1-251eca340abc@postmarketos.org>
+ <20261112-aw2013-aw20xx-rename-v6-3-251eca340abc@postmarketos.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 00:03:34 +0000
+Date: Fri, 13 Nov 2026 00:09:13 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,20 +60,82 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> From: Paul Sajna <sajattack@postmarketos.org>
->=20
-> The aw2027 is largely the same as the aw2013, with the
-> exception of the way the max current is written to registers.
-> This exception makes it different enough to not work without
-> driver modifications, but similar enough to fall under the
-> umbrella of the same driver.
->=20
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] leds: aw2013: I2C write in aw2013_probe_dt() while regulators
+  are disabled
+- [Low] leds: aw2013: missed dev_err_probe() conversion in
+  aw2013_probe()
+--
 
-Sashiko has reviewed this patch and found no issues.
+commit 82b1ad2c2b840e1ab229066538d745664fd9ce9b
+Author: Paul Sajna <sajattack@postmarketos.org>
+
+leds: aw2013: Use dev_err_probe
+
+This commit converts error logging in aw2013_probe() from dev_err() to
+dev_err_probe().
+
+> diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
+> index 5ff9887086a61..f1106456d4edc 100644
+> --- a/drivers/leds/leds-aw2013.c
+> +++ b/drivers/leds/leds-aw2013.c
+
+[ ... ]
+
+> @@ -509,30 +508,29 @@ static int aw2013_probe(struct i2c_client *client)
+
+[ ... ]
+
+>  	if (chipid !=3D chip->cdef->chip_id) {
+> -		dev_err(&client->dev, "Chip reported wrong ID: %x\n",
+> -			chipid);
+> -		ret =3D -ENODEV;
+> +		ret =3D dev_err_probe(&client->dev, -ENODEV,
+> +				    "Chip reported wrong ID: %x\n",
+> +				     chipid);
+>  		goto error_reg;
+>  	}
+
+[Severity: Low]
+Should the regmap_write(chip->regmap, AW2013_RSTR, AW2013_RSTR_RESET) error
+path immediately following this block also use dev_err_probe() for
+consistency with the rest of aw2013_probe()?
+
+> @@ -545,8 +543,8 @@ static int aw2013_probe(struct i2c_client *client)
+>  	ret =3D regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
+>  				     chip->regulators);
+>  	if (ret) {
+> -		dev_err(&client->dev,
+> -			"Failed to disable regulators: %d\n", ret);
+> +		ret =3D dev_err_probe(&client->dev, ret,
+> +				    "Failed to disable regulators\n");
+>  		goto error;
+>  	}
+
+[Severity: High]
+Does aw2013_probe_dt() write to AW20XX_GCR2 over I2C after
+regulator_bulk_disable() has powered down the vcc and vio supplies?
+
+drivers/leds/leds-aw2013.c:aw2013_probe_dt() {
+	...
+	if (chip->cdef->gcr2_imax) {
+		mutex_lock(&chip->mutex);
+		ret =3D aw2027_set_global_imax(chip);
+		if (ret) {
+			mutex_unlock(&chip->mutex);
+			return ret;
+		}
+		mutex_unlock(&chip->mutex);
+	}
+	...
+}
+
+On AW2027 boards with switchable vcc or vio regulators, this I2C access
+While the supplies are disabled will fail and abort probe.  Since
+aw2013_chip_init() already calls aw2027_set_global_imax() after enabling
+the regulators and the chip, the call in aw2013_probe_dt() can be dropped.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112-aw2013-aw2=
-0xx-rename-v6-0-251eca340abc@postmarketos.org?part=3D1
-
+0xx-rename-v6-0-251eca340abc@postmarketos.org?part=3D3
