@@ -1,75 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.136.64.225
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794599618;
-	b=n1fK8iRMOmajR3mXVJY96SblW5u3r72swa7P4fia8GlgGNjEhlymeMQMyhPYhzSusYXS
-	 36isE17DsxUkrWd1ke/QE86+FNMYJZGGlVDXZJlZ57NPxiaAgCmwPMzW0yDct2HWPLSep
-	 OOQfwkX+YWEZayotQRrAJlEA3K8aGwePA7SAi6xSyZGbwgXh19N1NOjT9k6pN66agUmEe
-	 ffxJUGTjvpDZtEIKZpRF5pn8aKzOdcCFX7KVGjh0UH1IyW/5k+H//1KmflUZ4PaNisT3e
-	 TgTegwxiWfksrzYiX1gXNXtT7Tza7MBaFI91u2hG6lCVPPhEUcnx8EmRdpR8hx9LqQA==
+	t=1794601191;
+	b=XgUa0l31nPhR2Aege/JpUEf/yxy0UxNEDY1cNiSpzHr9dyS1AaSjk+WY4eA4BRU4c7ea
+	 Mr7svCLBAtndcmBwxwq5GmUizfqMEHIxklOMsLexdDTkeDE+iQ45cdmpWln68EeuGcq90
+	 qM0XBr5t2RomjYOZV8CTCBg9qAZF3fxKCUOSqQQXCdShYHshBMM/t0+HdFgLpUq37yAu/
+	 jh++BlSeugeJ7PFSltmGXSR4XV8aPNskrR3bXhXRzHOuGWW5Fi7DxEp4QEERCDQR+/fGZ
+	 ZWOWvd2c+2ft4NSGMwNm2HgVL3peI9dPQij27gEjK2AFKj6WOeJ17OuLJhm2dsVnTWg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794599618;
-	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:In-Reply-To:
-	 References:Date:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-Rspamd-Queue-Id;
-	bh=dwKbjIwix86xARbJdD4uRnizYgxLzRiRFRGveKCQ+EA=;
-	b=nM2bEBdfcTau0sCaOIBXvCkf1uthgR8/AY+ee3+dIWpJWgzu6Jc+uSd0D5TXRAypAFqV
-	 OUnd9iDyYT/v8pXBMlzzomq4y2ZO20QDaxFuBqKx4cCD4oygPty91mhanhc7yU+kpQodz
-	 V5Gi/fMg5EjpTT3ZaFqH0KNdWtsTxYEaR/rk/Pp5pG5yIKZPygqz08ezd4WSyq22YtSKD
-	 JtfOEES8DdvoYQ0w9BfsBehWzkwTwlyyXstTGUFkcIDWDPtd54oNW6OZrLji4Xw62rXHl
-	 EBhunOl1NZuUP7z8Olwvoz8zRKgbqb2upwpr+M5Bu7WHf5kBYZGvZAmBCdo6CVaEoTA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794601191;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-Flowmailer-Platform:Feedback-ID;
+	bh=AzCrmtgJvnx68leHyyaS6Vl9kEi+cLVWz3k7UVid4QI=;
+	b=SGUUPwpggFfc6pH/LQXFIG6iBQS+tX3bJDlGIFv1KbbID+E3Ig+o2TV4dWVPdRd3CM4N
+	 OyyLd/q1q0dK/safUJvV21ik9reocM1BWdZvHxMO1m2sUXACFm+7RMUwCAjMr9VLe+pSA
+	 1CrmCwBbuCjbdwjarMZh3pA/a1EEWZUU+BkGzisjo9V0ALc9uZLViG3+GaeHR3i/zxS3m
+	 HD+kRlSUsPgylJZWKxweV1ovmdxAeKqafCk1+lqyeq7MCtiOLBokS6Tr9mhAbkNHOnOSK
+	 EDCpRcAPrHu0T95ymSfkwt4VN3uhGMPJQSixnu4EcDhrgA7QZueoQ1n9UOssMHnmDzQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amieiro.net;
-	spf=pass smtp.mailfrom=amieiro.net;
-	dkim=pass header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=YMuvZiRM;
-	arc=none smtp.remote-ip=80.241.56.171
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=siemens.com;
+	spf=pass smtp.mailfrom=rts-flowmailer.siemens.com;
+	dkim=pass header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=DlS3J0QL;
+	arc=none smtp.remote-ip=185.136.64.225
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89D2606A330;
-	Fri, 13 Nov 2026 19:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A89D2606A330
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amieiro.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amieiro.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E338F606A323
+	for <linux-leds@vger.kernel.org>; Fri, 13 Nov 2026 20:19:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E338F606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amieiro.net header.i=@amieiro.net header.a=rsa-sha256 header.s=MBO0001 header.b=YMuvZiRM
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4jR7H22QFBzMlbq;
-	Fri, 13 Nov 2026 20:53:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amieiro.net; s=MBO0001;
-	t=1794599614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dwKbjIwix86xARbJdD4uRnizYgxLzRiRFRGveKCQ+EA=;
-	b=YMuvZiRMKzNxbpSl5/mB9AwmF6NrJczmqaXrE1yLtMIJLF8naU6klrAtgwvSBOSlhsNrWP
-	s4lWwl08YsbUoa4R2EhcFJOKU1KuYb8URGZ2OGEwd9qDTyBI15W0TTUYa5ER71cDOEL8up
-	/vuR2RI/GnALmHREhbCLyLZvqyUBdM5HEad7Q6s5EWCYMbuj9d65vgo9wLp6mA8JFNQNSy
-	VuMzeZGeGhMMwp2mCLTI/dVOyWXRMBykaQkdg+f3ft++RvMtt4dI3gMGLVB/Ng1Vt5pLpU
-	iUJ/320UOhA4eixqYuPxazOyrkO2qHB2CpMz8ryqiUoXurk4VuSXjqsBbAUaAA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of flavio@amieiro.net designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=flavio@amieiro.net
-From: =?utf-8?Q?Fl=C3=A1vio?= Amieiro <flavio@amieiro.net>
-To: Lee Jones <lee@kernel.org>
-Cc: Pavel Machek <pavel@kernel.org>, Griffin Kroah-Hartman
- <griffin@kroah.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] leds: is31f132xx: Add support for is31fl3206
-In-Reply-To: <20261113190226.GJ6323@joneslee-macbookpro.roam.internal>
-References: <20261028-add-is31fl3206-support-v4-0-e331cee9fcb3@amieiro.net>
- <20261028-add-is31fl3206-support-v4-2-e331cee9fcb3@amieiro.net>
- <179370064610.793788.8239015594326628135@kernel.org>
- <87cxs87jyt.fsf@berlin>
- <20261113190226.GJ6323@joneslee-macbookpro.roam.internal>
-Date: Fri, 13 Nov 2026 16:52:46 -0300
-Message-ID: <8733t45x0x.fsf@berlin>
+	dkim=pass (2048-bit key, unprotected) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.a=rsa-sha256 header.s=fm1 header.b=DlS3J0QL
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20261113201940562764f32f00020707
+        for <linux-leds@vger.kernel.org>;
+        Fri, 13 Nov 2026 21:19:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=AzCrmtgJvnx68leHyyaS6Vl9kEi+cLVWz3k7UVid4QI=;
+ b=DlS3J0QL9rg184nKTwozO15R39YojUzbZuCd10cJ55QyjNF5L4+2T4yIzGhiHak2vd6Kmj
+ LCzH26gAcACQCzbMvgX1yAsk9DxDhLKZSkWPQMqWtGJp0oCILex7prVlwWRucGwSn96tN70k
+ vqDWk5tsGYvSQkmJ/YKJyVw1BhCeOPH0xjXbTjUFlGvVzR8KIHMGXY5JzLjQRdVxj/CUYzjG
+ q7H7YeneDAftFdKLYCqBYqCVi8oWdNjFwOdvR2DFxZRfjXkisTC/kK6njMrH0zv/Fe7lWhOL
+ 2Qx9ubBZY+WaS2THCsFzYXpkaz7cA6vNDpeTAqLUWfjpsLUS+/MMrLfw==;
+From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To: linux-leds@vger.kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"Mike Marciniszyn (Meta)" <mike.marciniszyn@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v7 3/3] leds: trigger: netdev: Report invalid interval to user space
+Date: Fri, 13 Nov 2026 21:19:32 +0100
+Message-ID: <20261113201936.2645736-4-alexander.sverdlin@siemens.com>
+In-Reply-To: <20261113201936.2645736-1-alexander.sverdlin@siemens.com>
+References: <20261113201936.2645736-1-alexander.sverdlin@siemens.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -79,21 +71,63 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 4jR7H22QFBzMlbq
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 
-Lee Jones <lee@kernel.org> writes:
-> Ah, it's because the first one is spelt correctly.
->
-> This mention however, is not:
->
-> @enable_bit_offset_in_led_control_reg
->
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-I'm sorry I missed that. I'll also fix it in v5.
+interval_store() silently accepts out-of-range values: a write outside
+the [5, 10000] ms bounds returns the full count as if it succeeded, yet
+the interval is left unchanged.
 
-Thank you!
+Reject out-of-range values with -EINVAL instead.
 
---
-Fl=C3=A1vio Amieiro
+Cc: stable@vger.kernel.org
+Fixes: 06f502f57d0d ("leds: trigger: Introduce a NETDEV trigger")
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+Changelog:
+v7:
+- rebased onto for-leds-next as of 687615faae92
+v6:
+- patch introduced
+
+ drivers/leds/trigger/ledtrig-netdev.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 601c4d9e0198a..870b374fd9c48 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -509,6 +509,10 @@ static ssize_t interval_store(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
++	/* impose some basic bounds on the timer interval */
++	if (value < 5 || value > 10000)
++		return -EINVAL;
++
+ 	mutex_lock(&trigger_data->lock);
+ 
+ 	if (trigger_data->hw_control) {
+@@ -516,13 +520,10 @@ static ssize_t interval_store(struct device *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* impose some basic bounds on the timer interval */
+-	if (value >= 5 && value <= 10000) {
+-		cancel_delayed_work_sync(&trigger_data->work);
++	cancel_delayed_work_sync(&trigger_data->work);
+ 
+-		atomic_set(&trigger_data->interval, msecs_to_jiffies(value));
+-		set_baseline_state(trigger_data);	/* resets timer */
+-	}
++	atomic_set(&trigger_data->interval, msecs_to_jiffies(value));
++	set_baseline_state(trigger_data);	/* resets timer */
+ 
+ 	mutex_unlock(&trigger_data->lock);
+ 
+-- 
+2.56.0
+
