@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794528555;
-	b=5deErMInAKVlPvTAyGiQs28rtSn4vrjpW2BsKsllmIdSh49VNdunCVg4OCZdqzJZXHpl
-	 kYSuyIcjlkP4yWHDyOv2O+QYYlgeCjSpafhZqfogIqaViH5l8chXvBuPuZLrudXLWhte5
-	 vHnyKcE/HZNA9veghYVidhnMHMFXXSbYpVhP7He1GnkZ9c29A+5VDX/WCtfXVWXY3fGF3
-	 0m5+m+uVrNx1yHuV65pmbdRXw2uRh1xZFBHa4RT1NGRYqZZvh0HW6zKBFsj2fl5o7tiH0
-	 uKgdOCAYRZdn3zmEZTT8MUHvnXBYtIdf548/RFGZFlvL8anScr7uA2zrYoLM75p0m/g==
+	t=1794528695;
+	b=zMJaeNbnJqDh/rFrpETe2Piq7x9yhwMhhdM+MDDw3pJahiwjgzHonLgek8ZqMDoQmEqL
+	 gK/JS/9+SIuIKdroy8C4w0hxr25uC4b7cweuniWpnhixWK8Dfd+5f87RCOHmBn1sS+ZhA
+	 oSdVxUISrvTvKqfstunfVOZhDkDjFobTY8r1ub+gcZYxzW421SzGh++ff44odBuf32swp
+	 cMEppYpRtm63J0SPJuSnV43+id+eGCvPEGqmvYf6pop/WsWhtZ7sCQuOo12wX3yG3jeDk
+	 ss+3uVFTAahLyILWGNqViU280ZIvc2n8/sLeb8cQacbZM1TdL/4wrJiJrzB2tBkZ9Cw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794528555;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794528695;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ebRpGpdB2hTTtbG3QpuXVZMpD6cJsrogmkEi5stzfis=;
-	b=WniqfJAmqW61qfRIUJDKHD7HvFvHT4xOsEPGNrmIL/wox6/zQZqtiC9wV8hm9SXwopw0
-	 OUxQs873RoKKLr9ZxjKw2TOyfKHxXEXuYrIlCgk8qK11N9V9KcnWEHm6y6r8zROOranv7
-	 usO5voMgSt6TN6Rrt3PdLyiJ/gwFhnFNPJISgIIMEtZgZWTVPMZC3o/YnUYTx+tEjR9Cu
-	 /ie95JrC86T1aEfwJaFOTFfkWWxq03q/L5l6P8HlHiWabppaam+o6QMZrH+QXkJuIxt54
-	 6HTbCARQKthALe6ZxXMCUt3CTbLzwpgntIUwcq1I9JrWRkR9MYkYVlenDJMwkTBat4w==
+	bh=7i5Tp1P6e5z8WC2/DnjTRSfB9SMleWfl656xQfdIIao=;
+	b=1ZQaGF5EvqWqNRHtlspzpMo/ZQ6Y4m5eJvzXN/aNwvxiSO7sV0XallhfCRPFoip12rl6
+	 XEValTyaXFvMSrSEwXKY5JVx6FtmarqmiZvUNzrMIWMkYAuhyJSWDgtSjRSrP0qAgCEcC
+	 y+7VyZ1H2qcpzGQq4dIlFko0k4OELEycfxiUqYstRqX6tW2n8FOF6LOlr5atlaZwutVKs
+	 QMDasYFJuRrFu5ypWdSOouIMkfTRnooiQEvD0ONvdGigsPyQv6Zlpx/Mp2z7d8Cp2/RrE
+	 lIWzYppHEmSJmNZexN2i4Ps9IZvqr6uz7dQ1j68F1PeQ0sYrrMT/1WLzdIIK26tcK3Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n9FP4GqN;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IGebCxqj;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0EF606A31C;
-	Fri, 13 Nov 2026 00:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951F7606A321;
+	Fri, 13 Nov 2026 00:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n9FP4GqN
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 563541F000C4;
-	Fri, 13 Nov 2026 00:09:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IGebCxqj
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32281F000C4;
+	Fri, 13 Nov 2026 00:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794528554;
-	bh=ebRpGpdB2hTTtbG3QpuXVZMpD6cJsrogmkEi5stzfis=;
+	s=k20260515; t=1794528695;
+	bh=7i5Tp1P6e5z8WC2/DnjTRSfB9SMleWfl656xQfdIIao=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=n9FP4GqNx1HUAt2L8wDS3VCD5V247eepy51hMsErXvvHGf3uGLAvEikhaHxEraRVv
-	 hyMKc6hldI3ByxbPj/4oMq4bQUuKC0von6vRXYng9BE7QUdVOinLIogzyaRukChs1n
-	 UhLNx3onzI4ap6J6PGPW5jeN2IvSMEGVfJ/VEfLNk0boTVDuQC0aaGsPtzSqrOO/j2
-	 VypzDFgDgQeLRayLwsEFDgyvKSZwhTF/5F2OT7/K//5W8bGpl8dDzN0fVdeEkRlXef
-	 o53hjMpMdQ/0bQ8fQzgDAjJAfi9pqEGwSVeNZyrkSHZmuscBYLpK6dkYkO3toCyZEW
-	 8SdCsA9Dd6o7w==
-Message-ID: <sashiko-outbox-211975@kernel.org>
+	b=IGebCxqjV4ZGan9+YXIVLovq20GZG6ws00k7cxgqiNNSAa/ntRRP8J4bFfFFyXB0I
+	 KR+tCjDYBh/Tz9OlvONH9lDJBz+qzN4DrafpgDvj2YbSnPL/wxKz3X1iW5h2RINCWk
+	 tFPkzXgzhVQyzseluX5kVN1Mc/k3BP3ni4fYgWcXGbKZ4vts7NQJ6KE4WFmlJNk+vf
+	 HRHAXZHggMHCOhbD1MEAv6VS3dk1Nil9sOZnZcZQpQoUodwc9QCwZmKXIB3N5CqOwc
+	 SNMaHJiiHG8DbGK6rPnDVoLOc3dLZDnfXShe9xdYZYTA0kSBi9f2O3LZKPcaYZ9yrE
+	 AOlMIMXjZv78w==
+Message-ID: <sashiko-outbox-211976@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v6 3/3] leds: aw2013: Use dev_err_probe
+Subject: Re: [PATCH v6 2/3] leds: aw2013: Add AW2027 support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Paul Sajna" <sajattack@postmarketos.org>
 Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261112-aw2013-aw20xx-rename-v6-3-251eca340abc@postmarketos.org>
+In-Reply-To: <20261112-aw2013-aw20xx-rename-v6-2-251eca340abc@postmarketos.org>
 References: <20261112-aw2013-aw20xx-rename-v6-0-251eca340abc@postmarketos.org>
- <20261112-aw2013-aw20xx-rename-v6-3-251eca340abc@postmarketos.org>
+ <20261112-aw2013-aw20xx-rename-v6-2-251eca340abc@postmarketos.org>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 13 Nov 2026 00:09:13 +0000
+Date: Fri, 13 Nov 2026 00:11:34 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,80 +62,100 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 2 potential
 issues to consider:
-- [High] leds: aw2013: I2C write in aw2013_probe_dt() while regulators
-  are disabled
-- [Low] leds: aw2013: missed dev_err_probe() conversion in
-  aw2013_probe()
+- [High] leds: aw2013: unpowered I2C access in aw2013_probe_dt() via
+  aw2027_set_global_imax()
+- [Low] leds: aw2013: pass-by-value of struct aw2013_led in
+  aw2027_set_local_imax()
 --
 
-commit 82b1ad2c2b840e1ab229066538d745664fd9ce9b
+commit a83734f3f7807e1e9702a5495a99e5cba9b2c327
 Author: Paul Sajna <sajattack@postmarketos.org>
 
-leds: aw2013: Use dev_err_probe
+leds: aw2013: Add AW2027 support
 
-This commit converts error logging in aw2013_probe() from dev_err() to
-dev_err_probe().
+This commit adds support for the Awinic AW2027 3-channel LED controller to
+the aw2013 driver, introducing chip definition structures and configuring
+both global and per-channel maximum current registers.
 
 > diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
-> index 5ff9887086a61..f1106456d4edc 100644
+> index cf20e94920fd6..5ff9887086a61 100644
 > --- a/drivers/leds/leds-aw2013.c
 > +++ b/drivers/leds/leds-aw2013.c
-
 [ ... ]
-
-> @@ -509,30 +508,29 @@ static int aw2013_probe(struct i2c_client *client)
-
+> @@ -60,19 +72,99 @@ struct aw2013_led {
 [ ... ]
-
->  	if (chipid !=3D chip->cdef->chip_id) {
-> -		dev_err(&client->dev, "Chip reported wrong ID: %x\n",
-> -			chipid);
-> -		ret =3D -ENODEV;
-> +		ret =3D dev_err_probe(&client->dev, -ENODEV,
-> +				    "Chip reported wrong ID: %x\n",
-> +				     chipid);
->  		goto error_reg;
->  	}
+> +static int aw2027_set_local_imax(struct aw2013 *chip, struct aw2013_led =
+led, u32 imax)
+> +{
+> +	int ret;
+> +
+> +	ret =3D regmap_update_bits(chip->regmap,
+> +				 AW2013_LCFG(led.num),
+> +				 AW2027_LOCAL_IMAX_MASK,
+> +				 imax);
+> +
+> +	return ret;
+> +}
 
 [Severity: Low]
-Should the regmap_write(chip->regmap, AW2013_RSTR, AW2013_RSTR_RESET) error
-path immediately following this block also use dev_err_probe() for
-consistency with the rest of aw2013_probe()?
+Does aw2027_set_local_imax() need to take struct aw2013_led by value?
+struct aw2013_led embeds struct led_classdev, so each call copies the entire
+structure onto the stack just to read led.num, while also passing led.imax
+as a separate argument.  Passing a const struct aw2013_led *led pointer (or
+unifying the AW2013_LCFG update using a mask from struct aw2013_chipdef)
+would avoid the stack copy and duplicate loops.
 
-> @@ -545,8 +543,8 @@ static int aw2013_probe(struct i2c_client *client)
->  	ret =3D regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
->  				     chip->regulators);
->  	if (ret) {
-> -		dev_err(&client->dev,
-> -			"Failed to disable regulators: %d\n", ret);
-> +		ret =3D dev_err_probe(&client->dev, ret,
-> +				    "Failed to disable regulators\n");
->  		goto error;
->  	}
+[ ... ]
+
+> @@ -271,6 +388,16 @@ static int aw2013_probe_dt(struct aw2013 *chip)
+>  	if (!count || count > AW2013_MAX_LEDS)
+>  		return -EINVAL;
+> =20
+> +	if (chip->cdef->gcr2_imax) {
+> +		mutex_lock(&chip->mutex);
+> +		ret =3D aw2027_set_global_imax(chip);
+> +		if (ret) {
+> +			mutex_unlock(&chip->mutex);
+> +			return ret;
+> +		}
+> +		mutex_unlock(&chip->mutex);
+> +	}
 
 [Severity: High]
-Does aw2013_probe_dt() write to AW20XX_GCR2 over I2C after
-regulator_bulk_disable() has powered down the vcc and vio supplies?
+Does aw2027_set_global_imax() perform an I2C register access here while the
+chip is unpowered?
 
-drivers/leds/leds-aw2013.c:aw2013_probe_dt() {
-	...
-	if (chip->cdef->gcr2_imax) {
-		mutex_lock(&chip->mutex);
-		ret =3D aw2027_set_global_imax(chip);
-		if (ret) {
-			mutex_unlock(&chip->mutex);
-			return ret;
-		}
-		mutex_unlock(&chip->mutex);
+aw2013_probe() resets the chip and disables the vcc and vio regulators via
+regulator_bulk_disable() right before calling aw2013_probe_dt(), with
+chip->enabled still false:
+
+drivers/leds/leds-aw2013.c:aw2013_probe() {
+    ...
+	ret =3D regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
+				     chip->regulators);
+	if (ret) {
+		dev_err(&client->dev,
+			"Failed to disable regulators: %d\n", ret);
+		goto error;
 	}
-	...
+
+	mutex_unlock(&chip->mutex);
+
+	ret =3D devm_add_action(&client->dev, aw2013_chip_disable_action, chip);
+	if (ret)
+		return ret;
+
+	return aw2013_probe_dt(chip);
+    ...
 }
 
-On AW2027 boards with switchable vcc or vio regulators, this I2C access
-While the supplies are disabled will fail and abort probe.  Since
-aw2013_chip_init() already calls aw2027_set_global_imax() after enabling
-the regulators and the chip, the call in aw2013_probe_dt() can be dropped.
+Because aw2027_regmap_config has no register cache, calling
+aw2027_set_global_imax() at the start of aw2013_probe_dt() issues an I2C
+transaction to AW20XX_GCR2 while vcc and vio are disabled, causing probe to
+fail when those supplies are gated.  Since aw2013_chip_init() already calls
+aw2027_set_global_imax() once aw2013_chip_enable() powers on the chip, can
+this block in aw2013_probe_dt() be dropped?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261112-aw2013-aw2=
-0xx-rename-v6-0-251eca340abc@postmarketos.org?part=3D3
+0xx-rename-v6-0-251eca340abc@postmarketos.org?part=3D2
