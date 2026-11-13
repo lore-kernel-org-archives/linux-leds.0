@@ -1,63 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794601983;
-	b=pcF7RG8IS3EMSSFpMZIRmmSm5/Mikee87YqPohYTaUnwK1Oy7ynGzX+C3sYeSORIjKhr
-	 yIFH/5O3T93JxgPVIO5GriMmyeunUHRWXGO1MudUwnhBX4rVHHEPISauzcNmr/hRU92Wz
-	 QN0nJ+LfnJiaMcODPtCaTTsKLsYK+6hit1Rt9pIYBn7+Lk09Zh6Yt1+IKRrcs7/G4tIcA
-	 HGoivNKH3Wt/LW+7rsjG5B1x9pY7P9EnjENz8zos8+yYf6tmMUWniV/froPPd8c3vo70m
-	 GShV0W4SZ0ptmkP/VHTzHDwdOxJFqT3dLHtQEu738mmJnyj4GAf0wel5bUAKz+6KyAA==
+	t=1794602478;
+	b=Rw3i1C0Hiit1vp2VQu8FJa8CdEdXWqLFsr2hfyirZg/vq9b+f8pnMintqlFvd6yrR4hM
+	 tHTxrVGcwu7VCnqizdkG4nSWWTQpRFJziqnLeu01oSeSx/3wrZAAFi7nD+yXMl64BXLxR
+	 iNRXUuLHaphGWxDeDWA5CyuH3uhNDnVTGnXo6W0mqjE9hoWovuGEulf/DAgqVc7cNnlrc
+	 Ll/l7BeyRWfyMUTMED9KCv+U+u6dZsOyBKdTgpi1g00SjJYTunEZV11TrEQPpwCu8u+sV
+	 G4MIdWSK3k55pfirHbxYIi7V9kdilgaJtR68zwFTqnZYDs/3tFFop27GKRUmuj4F7VA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794601983;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=KB3jO2Uh980sYfYogP8Ce6aR0qJaY2oratJHAC8zDpM=;
-	b=JeD2j9t+o+BNSyNpdMe+97V5P7rmGrbCmbkZDS7RHR7a0DcqtqMXZBa3m5VS7xe6MUBO
-	 kXuGSxlEyIwfjE7jsGF8j7gyshmxJoRRBHWYxFpKBpJi/FiyA3T+u9jxxSb7X37JQ4dOO
-	 QumST+WSDj5cXjQYYDlIJc7OEUJUpDzv8/6ejFShKeyipspMo3Yi8sBe4RNakO19HIlM0
-	 RM/tpXzhC5Wx89sjul2V0EonqvxByNz1rFVGGIrwg9kjIc5juPI2APUg/s2sKgG1aVhLm
-	 v0WJJ+2dNhe2ooWjyzP56vpF1DAefnkWZa0V6113sVCbIoLAuILNW7QjOpqUha3QRWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794602478;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=5bWcwo4KShlb6XpUM8K1EKfPIxJcAEY/1VT0W5hqkmg=;
+	b=wWH/gmDxZEN7rChNVZYPG02vC60+MS+VJo7q0jC+bSMraTMD+11U6Pg5lUPv96WqzP/U
+	 pwEAGwTc8KS/wMz7NpR3FFG4Kns7MrLbCUjindTn1ZtC6tXGXtIN6nIYw/3WCfQJAoTX9
+	 cE91lIS4x7FICknzYqaUQa1Pv4wxBM40KgtCL+teyJ0hSkQAWmReorK8FgXrURrk5oEl1
+	 +XpP2lDKZPhYJrEn8T3x8/uATKxn0oN20UIsjlDPv7CnuKLtolHJw6++t2O7oz9+EKiud
+	 qt7G2BSAKm+GChoJi+EtpgHvU5aWHmMW37WvUA4AIowVVBngvsObiWIafvR6yPQ0Nmg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=lunn.ch;
-	spf=pass smtp.mailfrom=lunn.ch;
-	dkim=pass header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=bckuey0Z;
-	arc=none smtp.remote-ip=156.67.10.101
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ocYtIwGi;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538A1606A327;
-	Fri, 13 Nov 2026 20:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 538A1606A327
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C90606A339
+	for <linux-leds@vger.kernel.org>; Fri, 13 Nov 2026 20:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=bckuey0Z
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=KB3jO2Uh980sYfYogP8Ce6aR0qJaY2oratJHAC8zDpM=; b=bckuey0Z9y3l43ZbikGRihLCKL
-	alpuVFssHwH4Vcv4s1nhWQILNGHj15E7P7hUv8oqbcqyWcjaTA12NdS+xvH5ogkyUvfBiPii+VfHY
-	5DxWfBoejA3LNErUg71EDJ4j5cSxdmFG0eWYIP7M2HZG6hxwJJWqInJo1DrbO9sOteMc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1xRxx9-00GMIW-Eu; Fri, 13 Nov 2026 21:32:55 +0100
-Date: Fri, 13 Nov 2026 21:32:55 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Artem Shimko <a.shimko.dev@gmail.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	maxime.chevallier@bootlin.com, pavel@ucw.cz,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] net: phy: dap8211r: add led hardware
- control support
-Message-ID: <8ef5b0a7-58f6-4c62-8153-6a9c8d3703f7@lunn.ch>
-References: <20261113110546.173624-1-a.shimko.dev@gmail.com>
- <20261113110546.173624-4-a.shimko.dev@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ocYtIwGi
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF9AA1F000C4;
+	Fri, 13 Nov 2026 20:41:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794602478;
+	bh=5bWcwo4KShlb6XpUM8K1EKfPIxJcAEY/1VT0W5hqkmg=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ocYtIwGirb9d88sWVP9/nBblIq/VRBy+8Q/UUC9Va8DTQ+994s1H6SJb6P0molQaO
+	 fHGqsWWUwp2HlYfOrPTSFbJtP5JTHtEQFv3xsH4jRg6wR682iOdqwj6e8aB9u2XpTf
+	 KCW2/wyJNcR4AZ46LQ8TuUvsCdrQ3TQ5To5Z9AUQxlIL2gYqCtadXky40Ovem+iD9c
+	 O5X4nkcWmF5n2LONnF90F00LirqOybHg+CAfYuLyEB3ysLZpu9Fo6WTQXQ5calAlJ/
+	 bq0fjHCCW7XjA3xiKaiPuAuGyXLRgApRo1qp4CByC2HiAA6H9V0ginXS/gA+bCRS4U
+	 rOJPVMHrdbICw==
+Message-ID: <sashiko-outbox-213665@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v7 2/3] leds: trigger: netdev: Fix sysfs_update_group()
+ races
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "A. Sverdlin" <alexander.sverdlin@siemens.com>, linux-leds@vger.kernel.org
+Cc: lee@kernel.org
+In-Reply-To: <20261113201936.2645736-3-alexander.sverdlin@siemens.com>
+References: <20261113201936.2645736-1-alexander.sverdlin@siemens.com>
+ <20261113201936.2645736-3-alexander.sverdlin@siemens.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 13 Nov 2026 20:41:17 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -66,37 +60,33 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261113110546.173624-4-a.shimko.dev@gmail.com>
 
-> +#define DAP8211R_LED_ACT_BLINK		BIT(13)
-> +#define DAP8211R_LED_FULL_DUPLEX	BIT(12)
-> +#define DAP8211R_LED_HALF_DUPLEX	BIT(11)
-> +#define DAP8211R_LED_TX			BIT(10)
-> +#define DAP8211R_LED_RX			BIT(9)
-> +#define DAP8211R_LED_LINK_1000		BIT(6)
-> +#define DAP8211R_LED_LINK_100		BIT(5)
-> +#define DAP8211R_LED_LINK_10		BIT(4)
+> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+>=20
+> The link_speed attribute group was listed in netdev_led_trigger.groups,
+> so the LED core creates and destroys it via device_add_groups() /
+> device_remove_groups() in led_trigger_set() (under trigger_lock), while
+> the trigger also refreshes it with sysfs_update_group() from
+> netdev_trig_notify() and device_name writes. With no shared lock this was
+> observed as a sysfs splat when the trigger is re-armed during PHY link-up:
+>=20
+>   sysfs: cannot create duplicate filename '...green:lan/link_10'
+>=20
+>     CPU 0 (led_trigger_set)        CPU 1 (linkwatch workqueue)
+>     -----------------------        ---------------------------
+>     activate():
+>       register_netdevice_notifier()
+> [ ... ]
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 06cdca014eca ("leds: trigger: netdev: Display only supported link =
+speed attribute")
+> Acked-by: Lee Jones <lee@kernel.org>
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Do any of these bits allow forced on/off?
+Sashiko has reviewed this patch and found no issues.
 
-> +static int dap8211r_led_hw_is_supported(struct phy_device *phydev, u8 index, unsigned long rules)
-> +{
-> +	switch (index) {
-> +	case DAP8211R_LED_ID_0:
-> +		fallthrough;
-> +	case DAP8211R_LED_ID_1:
-> +		fallthrough;
-> +	case DAP8211R_LED_ID_2:
-> +		break;
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113201936.2645=
+736-1-alexander.sverdlin@siemens.com?part=3D2
 
-You can collapse case statements, without fallthrough, if there is no
-code.
-
-It is also possible to do:
-
-case DAP8211R_LED_ID_0..DAP8211R_LED_ID_2:
-
-     Andrew
