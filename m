@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.227.137
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.227.130
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794678973;
-	b=cAMdtXA0iooUVQ9d75UfWb/XdWmEU0Ph0A/+8RElli2M9phkRha1njZ2gEou1+kQZYlG
-	 23gxDhPnOwKICCToNt38TBiUV7ELBqJLfwP4MF2yG4Gd1d+qlA1fTRCZXbHP5GrmQvesm
-	 Jlbsra9/AN33zuihQxU0XXk7M8nmugxUkxdnNORIYR7SEwZ5oTiNEHwd1Y/ItPp1i/JcD
-	 r5Q+tzgvTjD/C2GDT80fcV9vJdHqZI0V0bMB7eh+Vi3M4KkqdGVuAhxiWgeGI1uyRYpK8
-	 o+roJB9gjUytbuQkCPTEelNzMv8CvsQbEXEd6bKi+DNbj/5ToqmVjUyIB3ptVHGOGQA==
+	t=1794678988;
+	b=ea8sQ+T5RNNbwatXoUHEXhqc8uxdoGJvFZejEOeZ97/aMk2+HTxNfS4/4yRbaHXQgcRn
+	 i586HUStTgicP5mhcLrKvlPvBwU+IDEbx/jf1Aqih6CcIkUrHx1qKT85D2XuXmYJHGe6k
+	 I1wSOi4YvXlKrD8X07UXi81aWrc3S8XdqM4IoR5TTCUEwhawMaMpBESsFmrFmU5Xoz4FM
+	 eLSXOPAP+G56Vu3bMzev80DU5yYXaEvr+hY2KJbtcl9z14ttwQeWe+RNxFTu3yz18ZiED
+	 5WL8hlukAdyHlkPzOEVRWMJvFsZGkjRau28JIYT/sV1CDyKbaVFRnxJbAtikSi35+1g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794678973;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794678988;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=kIKHVOEd3tU00uERKFZyOFTP43KxgnJgprh9ek+lcMA=;
-	b=u9t9cYCdo4w2cu+L/iDF8QsRsn417v3Y3ej71jWv2DHyS8gayFwUzLc8ZODReulSxtP9
-	 eD3u7Kr6Jh++dQuzmey0OtlR5+HX618FuSFimB4tFRtEWKCjtuBc+DZ4zGstM9qNUBmsI
-	 x4xy2VJoa4rMjcX1TGiresbayRwRz+ZebCNKhMcd4hKHcQu0IqAx5AbPVRmpVIu+hzd6X
-	 SRys8PKEz2mevWdrTdse9Y7TgBhbY8pqK3il8uMghCayLKQIgyTLZ+oZepn2ZUBn9EEnQ
-	 ZCdI9HhVwvuFtedMpgzMeN8ak32u9ag4+EK+wQsnE9qqs4gp0daYH9c4Hbw3fhPGiug==
+	bh=i710EDxhs1HHbZwQVt63v1uAh/hL+lpRmvt+Vbo8iM8=;
+	b=PTvOS7pY2dC7XfIIjCUgpk7WJgFAyHVkhUPyGz1MWsYFWBxPrBSQFu9PTbd+F5u+8ffc
+	 T2Zyo3yJAI6lYd2dMAtbZ7Rko433tzj6VlO9dTydojJTienWqw/vq0t0SwnHVwEL8qzdy
+	 EFmqfcNRrjVIsDPOIv6MXIMj1ndVN0IvfoKSm0ErJjl2uuXqL47MZl+TeRxFOcxbITOz8
+	 DGMeBlCY2XnoYc9cPl5FNWern6l51Tkkjul4zY4G0J+XdYDhlflvpFSz3m5OS1e9OJAO0
+	 HmbooVQ1wihOET7KNY3XRgNRh7z4L8s9rcfVM5Y5wOOHKN9+Ksi8Ypn9JxqnePlw6aA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Apu20ChO;
-	arc=none smtp.remote-ip=74.125.227.137
-Received: from mail-pj2-f9.google.com (mail-pj2-f9.google.com [74.125.227.137])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HWETsPea;
+	arc=none smtp.remote-ip=74.125.227.130
+Received: from mail-pj2-f2.google.com (mail-pj2-f2.google.com [74.125.227.130])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C33606A32D
-	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 17:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 83C33606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DB6606A32E
+	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 17:56:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 79DB6606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Apu20ChO
-Received: by mail-pj2-f9.google.com with SMTP id 98e67ed59e1d1-3b18c01238eso541626a91.1
-        for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 09:56:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HWETsPea
+Received: by mail-pj2-f2.google.com with SMTP id 98e67ed59e1d1-3b1478f06e3so456012a91.0
+        for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 09:56:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794678972; x=1795283772; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794678988; x=1795283788; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=kIKHVOEd3tU00uERKFZyOFTP43KxgnJgprh9ek+lcMA=;
-        b=Apu20ChOFv2qZwX/V1h/s55KMW9ThG/rNwR6dD60Pv7Z/D8MksZ/3qEL8w18TIsw3u
-         Nb9qmnoKkNNw4J/g4L3dxxJdmBCsdDllF9wAeV6Zdd+iDecquyZHCAs+todRo/V+2YDM
-         /261WLUuhu8j07gRH555XiVmAbgyIXZc5aSfEuTpcnH8b/I23Lfa06YwzW0zi4bl3QRL
-         OtmX+hWcZiC6FvJdbterzs3vmLHDCE80dLRaPTNMmaQ741wRTn850pzRhGHGGPPNCJkF
-         HZykVJAqMiBKfBc7oXupBP0ayU1zWSE22NuJ0U8eays8pc7aB6oWAYZt37UfVEzqxZLT
-         WrYA==
+        bh=i710EDxhs1HHbZwQVt63v1uAh/hL+lpRmvt+Vbo8iM8=;
+        b=HWETsPeag+bFtE+dRjzmPX4oXUDvXcr1yPp6iuiC2K9aRI90hNzOpKjddkBhlmGFU5
+         IfW3DrJ3cMFK+1y4ggpGyIyyk6xDe7id+7rgJ0YMcchbzOSL+GGQ2E653jcFq7oMLpTP
+         BPMZ/yTMr60Q1mY0x2oKj5i8cmpm8mFaSozBSsdr2BRosfeLuw+NqrvbJSu75HKngLyA
+         X4w2NbMkx63qiAteY+gaY0QwxJ1QAfQnzO79DPaSpJ948IOpAMjOv1M50AumrisJQuTN
+         MJGiQPy5t8ns7SuIIVyZC5ed2I9+b0aA2KkxnoyeSTEGNwmkp3esqZszJg+faGLFp5zs
+         Vq1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794678972; x=1795283772;
+        d=1e100.net; s=20260707; t=1794678988; x=1795283788;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=kIKHVOEd3tU00uERKFZyOFTP43KxgnJgprh9ek+lcMA=;
-        b=eRysJpgY4+mLwDfN4MtsNMjklTkClcUG4Y7mAu/rDQOpF+7yd8cV91ZYY0FfwgrPj4
-         DKvoW7ujraTfr3sxLKBf6OuFLi8mxmLCs5qzO51xb1rQFxp0gDDrxNe0WDMCzJg/JM14
-         xzYTlMPtTUFvGMKUeS9xzmOJ6pLWEY0sDA0vUHGKJrASYweedKfxvC+eVjeDXaPT3RD0
-         fCrkGtGKTllCpseF9DxC6Vams7SCoQ3p3zt7s4jVMXWfVzZovcz/y7UVVSJnPnfQouG9
-         OiFaZTo4UddzExgiKa4KEHHCwCSbAs5KwUMILTC+QX68YbgU3Fqf+m1eGVAhGkpNQOo7
-         0vng==
-X-Forwarded-Encrypted: i=1; AL+hErF8YTxvbrl33UO8jqIqTnKVzaxag7Svu79nlrxHccHAmN59AVBtWMyTR5nPGaZhUEkUQxqCnkT7znJC@vger.kernel.org
-X-Gm-Message-State: APuU4Z9Uh3f2WUbG4x9RznGPrdKmiaCkvTHi8qIeppgczz7DUITz4lSU
-	sl/55xheJw07yYWSz6z0rmL/+fk/0xk9vopsweT3nL73bbkjRVpdrmOf
-X-Gm-Gg: AYBFou2SQVuyoeq4dsQzAtK/QigoPLsoVlmQzdk0M81Qxno+LCgZKleJIGEhvQJRev7
-	2B+3b3XSgfsHspz6/0CeFUujub58s3h99Brqi/U4YK3UW2cMvpl3HKZ+i/5rlznZK/cPl0qY7yx
-	A/PisTW7yXkCNFsj1FH8sQQIbm/vxn1sTYkOf7mged3ZR4PjzWsaJ7ImqfV5njrGw6R2IRaJvLT
-	BcUwMpJW/w4M41UJq0NGAwiFQT4torX2ZU/y+iRUMTWfptr57FseZAj44IIcz5QLzs2KxnJgGmP
-	CfPzdCAyNYsGHmdkX5nLvyPvvsK5e8+NCWqHW0mrYiM0JGjS8ZQFPLKQSmoVaZw9oa/5SACUE9I
-	uZTaywOs9lAmqT79IW7JAGyB+1QltnGa7f1jr8poQIyLaqrLGqA3izNQqwupQnOuQHv5VyO+vJO
-	NcjcHi81h409jWbxMM9L2d8Z+vs+fa/9wir/iXtkmdCe7L3Jtvbh50YPcsls69h8QojdejZgOAz
-	yonMlaJ9pwCPNufk40tgDbFCWnYF6AjY9uKwRQMv53SxTSOrvQsPeA3yljy2aQ+5WNObZ1zYO7S
-	bL5abzKx0wwVmN31YMKhTf0QEcp8pQ==
-X-Received: by 2002:a17:90b:54cb:b0:3b0:ce1c:e74f with SMTP id 98e67ed59e1d1-3b1b0a3a251mr5483199a91.27.1794678972435;
-        Sat, 14 Nov 2026 09:56:12 -0800 (PST)
+        bh=i710EDxhs1HHbZwQVt63v1uAh/hL+lpRmvt+Vbo8iM8=;
+        b=1ta0lssCZQhKcsvCtiQuXeUGVelkjByFirc7CZLpvIdeUvN4511rWu3tND5FNuxYwK
+         ir9zFOXfzc1RJ84WFTZWZZaXEVdb7vqYAyIfJkKR+useZ64iH5N23cdu0FBCF2IOvOE2
+         c+AtgwQP0J68wO4ZllHArE3R7MpMUWpJpvNL23YR5/yulN5/B6bsf8PEVdpYrc2dUAUl
+         LHXvLzXr33PHNyVTKCdIyR9gMgZyN4OHA3wisXMTdrF4o1Zbt0fyhbKj6L+C22uoNAKs
+         kuAhGStrBCHog8hfnyJa+rfb2b2vJYtJ9VMW/bWev6HRPltlhqUFDVrwqwdoLrkRauoQ
+         EKww==
+X-Forwarded-Encrypted: i=1; AL+hErExntjHAXJZi/ylR88b55yA5oN2hqKRnQvY1aS8ymgk5NVIzM3vQXPpHwWA0PpTv0rQS9vvYDJ9QXON@vger.kernel.org
+X-Gm-Message-State: APuU4Z+jLLcow3M9bKgXWjTUnVD2y5c3YqTlk4JQch3LR35r+8A9hMJb
+	gVmHTp9sKQtsTSlSg4stEzAeakos+SzIAGA0wdvPGgEiaDhYB7Sn7+TJ
+X-Gm-Gg: AYBFou1FqXZtuFBMn6ula2x1bCUSKkh4FxmUoi0PYExuGrsQU1B6ox4jzHqOKnVJpPB
+	iVt0d+kj9hGWQgUK1cioZknfshUlwMJp3ixGQF8kc4Mj/jSV0L/DSIaQKIi8Jt/JWQl7D2VV9sP
+	x+XrQHTizG5DPYLpeUe9QkEYLJKqSiwD+nWeQesN3Ib/nDnIrGlnWJOo6N+rOardfhoGtsNqddG
+	Sqhh0PF1Lxa26O10J3nREYY7pv7+rJsJ1UyfdjWmlnp339WbmyIXyyEwg3pjjXCQOPqTwgo9KOb
+	HW7457+v37cm9vOVm+0/E9jxVry0rvBm85YxqimWH1f2D573P6mHJUGz4omUo2mLRK20JrM6I4M
+	WZDzZ0T/cTyowZcxGNSkHGQBACOtVqmcA1W8VmP0G18XW4VXAenm+Kl7W948SLsRt39XHsFjSGQ
+	ssB5Rm6CwS3ytt1ox1OXUPX8pcSSDx2fXDVGvfVyxSVFIMAnPniwPyyoOpcj9LjPjbJEJuCKLZQ
+	4PWyVsiZTzvaEilgDZRr3iLwYkOM1tRADBdEti81kOfEHcpECyT8/51Bi9yLAQ1u67m03widw+G
+	L7roo7ESqcxTXxpMgJHU31+xPXxI
+X-Received: by 2002:a17:90b:5608:b0:3ac:adce:60a9 with SMTP id 98e67ed59e1d1-3b1b07ef0camr5928750a91.9.1794678987564;
+        Sat, 14 Nov 2026 09:56:27 -0800 (PST)
 Received: from ThinkPad ([192.220.23.71])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197c6c9c5sm14569383a91.1.2026.11.14.09.56.06
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197c6c9c5sm14569383a91.1.2026.11.14.09.56.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Nov 2026 09:56:12 -0800 (PST)
+        Sat, 14 Nov 2026 09:56:27 -0800 (PST)
 From: Qiling Zhu <kmatzkaczor244@gmail.com>
 To: Mark Pearson <mpearson-lenovo@squebb.ca>,
 	"Derek J. Clark" <derekjohn.clark@gmail.com>,
@@ -96,9 +96,9 @@ Cc: Andrea Rabbaglietti <rabbagliettiandrea@gmail.com>,
 	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Qiling Zhu <kmatzkaczor244@gmail.com>
-Subject: [PATCH v3 2/7] platform/x86: thinkpad_acpi: Extract kbdlight_notify_change() helpers
-Date: Sun, 15 Nov 2026 01:48:09 +0800
-Message-ID: <20261114174814.62153-3-kmatzkaczor244@gmail.com>
+Subject: [PATCH v3 3/7] platform/x86: thinkpad_acpi: Sync LED core state on level writes
+Date: Sun, 15 Nov 2026 01:48:10 +0800
+Message-ID: <20261114174814.62153-4-kmatzkaczor244@gmail.com>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261114174814.62153-1-kmatzkaczor244@gmail.com>
 References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
@@ -114,81 +114,96 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-TP_HKEY_EV_KBD_LIGHT handling in tpacpi_driver_event() reads back the EC
-level, updates the cached brightness and notifies the LED core inline.
-Extract this block into separate kbdlight_notify_level() and
-kbdlight_notify_change() helpers, in preparation for reusing the former
-when writing a level through the proc interface in a subsequent change.
+kbdlight_set_level_and_update() pokes the led_classdev brightness cache
+directly after writing the new EC level, without notifying userspace and
+without any locking.  Commit 06da5325d02e ("platform/x86: thinkpad_acpi:
+Stop setting led_classdev brightness directly") already removed this
+pattern from the sysfs path but had to keep it for the proc interface,
+which has no LED core path of its own.
 
-kbdlight_notify_level() expects the caller to hold kbdlight_mutex;
-kbdlight_notify_change() queries the EC and notifies under the same
-mutex, like the original inline code did.
+Move the LED core state update into kbdlight_notify_level(): stop
+updating the cached level in kbdlight_set_level() and have both the
+sysfs and the proc write paths go through kbdlight_set_level_and_update(),
+which writes the EC level and updates the cache under kbdlight_mutex,
+and reports the new level through the LED core, like commit
+07f48f668fac ("platform/x86: ideapad-laptop: add FnLock LED class
+device") did for the ideapad FnLock LED.
 
-No functional change intended.
+As a result, writing a level through either interface now emits a
+brightness_hw_changed notification, so userspace listeners see level
+changes from both of them.
 
 Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
 ---
- drivers/platform/x86/lenovo/thinkpad_acpi.c | 40 +++++++++++++--------
- 1 file changed, 26 insertions(+), 14 deletions(-)
+ drivers/platform/x86/lenovo/thinkpad_acpi.c | 23 +++++++++++++--------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-index 2c3f8cf32..c8098f317 100644
+index c8098f317..657a19d11 100644
 --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
 +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-@@ -5317,6 +5317,31 @@ static void kbdlight_resume(void)
- 	led_classdev_resume(&tpacpi_led_kbdlight.led_classdev);
- }
+@@ -5108,17 +5108,17 @@ static struct ibm_struct video_driver_data = {
+ static enum led_brightness kbdlight_brightness;
+ static DEFINE_MUTEX(kbdlight_mutex);
  
 +/*
 + * Caller must hold kbdlight_mutex.
 + */
-+static void kbdlight_notify_level(int level)
-+{
-+	struct led_classdev *led_cdev = &tpacpi_led_kbdlight.led_classdev;
+ static int kbdlight_set_level(int level)
+ {
+ 	if (!hkey_handle)
+ 		return -ENXIO;
+ 
+-	guard(mutex)(&kbdlight_mutex);
+-
+ 	if (!acpi_evalf(hkey_handle, NULL, "MLCS", "dd", level))
+ 		return -EIO;
+ 
+-	kbdlight_brightness = level;
+ 	return 0;
+ }
+ 
+@@ -5183,10 +5183,12 @@ static bool kbdlight_is_supported(void)
+ 	return status & BIT(9);
+ }
+ 
++static int kbdlight_set_level_and_update(int level);
 +
-+	/*
-+	 * Check the brightness actually changed, setting the brightness
-+	 * through kbdlight_set_level() also triggers this event.
-+	 */
-+	if (level == kbdlight_brightness)
-+		return;
+ static int kbdlight_sysfs_set(struct led_classdev *led_cdev,
+ 			enum led_brightness brightness)
+ {
+-	return kbdlight_set_level(brightness);
++	return kbdlight_set_level_and_update(brightness);
+ }
+ 
+ static enum led_brightness kbdlight_sysfs_get(struct led_classdev *led_cdev)
+@@ -5245,18 +5247,21 @@ static void kbdlight_exit(void)
+ 	led_classdev_unregister(&tpacpi_led_kbdlight.led_classdev);
+ }
+ 
++static void kbdlight_notify_level(int level);
 +
-+	kbdlight_brightness = level;
-+	led_classdev_notify_brightness_hw_changed(led_cdev, level);
-+}
+ static int kbdlight_set_level_and_update(int level)
+ {
+ 	int ret;
+-	struct led_classdev *led_cdev;
 +
-+static void kbdlight_notify_change(void)
-+{
 +	guard(mutex)(&kbdlight_mutex);
-+
-+	kbdlight_notify_level(kbdlight_sysfs_get(NULL));
-+}
-+
- static struct ibm_struct kbdlight_driver_data = {
- 	.name = "kbdlight",
- 	.read = kbdlight_read,
-@@ -11586,20 +11611,7 @@ static bool tpacpi_driver_event(const unsigned int hkey_event)
- 		return false;
- 	case TP_HKEY_EV_KBD_LIGHT:
- 		if (tp_features.kbdlight) {
--			enum led_brightness brightness;
--
--			guard(mutex)(&kbdlight_mutex);
--
--			/*
--			 * Check the brightness actually changed, setting the brightness
--			 * through kbdlight_set_level() also triggers this event.
--			 */
--			brightness = kbdlight_sysfs_get(NULL);
--			if (kbdlight_brightness != brightness) {
--				kbdlight_brightness = brightness;
--				led_classdev_notify_brightness_hw_changed(
--					&tpacpi_led_kbdlight.led_classdev, brightness);
--			}
-+			kbdlight_notify_change();
- 		}
- 		/* Key events are suppressed by default hotkey_user_mask */
- 		return false;
+ 
+ 	ret = kbdlight_set_level(level);
+-	led_cdev = &tpacpi_led_kbdlight.led_classdev;
++	if (ret)
++		return ret;
+ 
+-	if (ret == 0 && !(led_cdev->flags & LED_SUSPENDED))
+-		led_cdev->brightness = level;
++	kbdlight_notify_level(level);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int kbdlight_read(struct seq_file *m)
 -- 
 2.56.1
 
