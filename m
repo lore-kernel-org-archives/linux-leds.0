@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794654365;
-	b=BVBuIVvZ15x9HJpphjTbskktg+Jph2RRf2IVQAOIXAMa4xkJo0xzsMwHZhuzS0otN/Kc
-	 BR86gojl4y33HWXuhDaDS5Egrd5M8V/NjlZw0zOx0WoR89tUhZUj8xSLemEGXLCO+ciem
-	 TYsj/rdk/7dvxjhBR3rBPBMNuYJ2J8hgYTel7G/K4FyknMvKVWWIPSTGpZZmbVAiyfuv2
-	 kBS3EZhapelf4ulRQqF5gjgorlpPZm5HI+jnGwD2upieoGAiglubgp+ZflQE1K2ECPV7z
-	 CtKgcCQI1cbDe5u1K/+Cejo8w8QKEu+4L2IyoJTulh2cXvm/WEPMDH+BjPvkmrQm4ig==
+	t=1794654366;
+	b=NRifSSSr05Hw6C/TjYA2NfEuq7+l9H5dDh5WguksmpWmh2GHme4ZVRdeK8wFXJioEYro
+	 zDJXSqy0MfiysJ6I/LvrdDtN5D3AG8jXqp8W+q10OiL72/KfG6tuXtDQg9+A1sZ9Lv1xr
+	 jzlULiylinyp3D4Vn2dRrWFRtKPzRmAq4xL+85f485EjYBhiWzWODX+NKOtQfsDG4OlXN
+	 mNCTHCihWwOBR5jdt+YPPRH7ao6EIMOlSf89R54ZDrTboAlk06Ebgvl3fISZPOg9WpoFy
+	 1FQbIJv1kSGXPfnLtzKnhCPEuu6CZWQimR2c/ehdxFuWdMyuOqRL0w0l3RBFHs6AcOg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794654365;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794654366;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=9U0khN7iql6VpfwzDkAJHrz0gkCeu5UEO7KKcMCN05E=;
-	b=BpLwuO854xDVy8LB0Kv+44mfeOrb1xlSkcSh2FbBXLYfHnUaLhsPbnbzsL9hMzFBDyBW
-	 vy76mr9x1luoL/cIJuPjp449lOi4Z1jG3waz3cOp60KJvsnWB+1DCZs74Oboo94oQ+Ypf
-	 z9uSdzFJifs2fbd0vXHlTUeS6B93ghyEP0JgT6b/2MqW0AClTEmRbz/Ulljzt6/rfPDqC
-	 w50ajhSHH4VJtPkNJNdRW84z48AjBAtGvBw/tFXQH9XiPpvO/2PIcCY3dB31a43YyOj+K
-	 x4/dc9LmJpzUXmm/ZHXc9DlwtqbLr42AwFBLM+vFEcmlHOy7v+J1DkqfRQ3j5oZ9fmA==
+	bh=mRw8XwkFRNBNrg8GsjmrXIwA4dtcyBv4FNY7NNh4OAk=;
+	b=anui6qYPiy4dcte74tiELiKdUTKILE4pwji6p4lrRcSMOOEtB+7yvUwwNUMukimcjLGx
+	 sKegSwoRl/9nayBw5pP2sECvlisyDWmjgtbK8fIr79/5IUfLnEtbrCTY3PkAK4a4pmBQb
+	 b9eXuIk3AGv7X/+fnFh7cccVTQewQ0Q2PDcnd6nomeZ0hnTqdt1nH8chEfSi6X87XebVz
+	 8BfeT2V6/ATZbODLgvbdPdkPTrtd+Qo43+kfvUzYlAkPLmbnJHKlFaq+jxX3NOdWAsSc6
+	 I96zJTwHRQbBfSz94mqgHEGF669b5hSN0tOAt9nS9BclNK3gqVhlSWnDVOeswaPuiTQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nKWQcb4U;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FFeMNeEb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928DF606A32E;
-	Sat, 14 Nov 2026 11:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319BF606A32E;
+	Sat, 14 Nov 2026 11:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=nKWQcb4U
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F1A1F000C4;
-	Sat, 14 Nov 2026 11:06:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=FFeMNeEb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A62A91F000C5;
+	Sat, 14 Nov 2026 11:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794654365;
-	bh=9U0khN7iql6VpfwzDkAJHrz0gkCeu5UEO7KKcMCN05E=;
+	s=k20260515; t=1794654366;
+	bh=mRw8XwkFRNBNrg8GsjmrXIwA4dtcyBv4FNY7NNh4OAk=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=nKWQcb4UeZcTXa1DPnS3z5RPKiauJB+6caMuVeehI633M3lss6mrFxfQPOt2JdHg8
-	 VxXHKBUMa8KQPhkZXIDrKa8qGx8HscCOjxfb1zkeNkh18iyYG4fWe5BAkQ9XpnFrwZ
-	 Ka5n35xz7XOJn77a6BKC4rtDv4KRtPDxGxUuzMTibt4lNxQOSMSUC3jrm31nHfBhgk
-	 j5TvHAtx1G+PYcfuGeIaBKoDztoDdcb8Bz8ADsi2wXXISukWMFzyZkbTBnkw1otJAH
-	 m6kD3Z7l6+C0zOt9VTjJ261TBWNAQASnHleaM/UlAoU3htiw6SR7KHIMp3Nz6rFfPr
-	 8GPJOy9WrzQOQ==
-Message-ID: <sashiko-outbox-214381@kernel.org>
+	b=FFeMNeEbKfkybzczamHcFQBcoPPyiys8sSY6C18RnaMHGf4kpDLrUlCD3fDMkxlUA
+	 +TQ8S0S24CI1xYLK3P25wqAaPw/LbjuHWRFYnj3qkeyhP8VNgcGT05oe8fk8tx3t35
+	 I6ZkaBKb5jx4Kpuooi49rYb5OAtLqTnua2hQikKFBrVQo9lEX9kAI1mMBdPDEnb6xW
+	 C9p0f1Eb5BM1h8ICFlqEQcl7mbgx5df2/llefy0D3OmOC+W049Q3AFxyNAYrLe/cx9
+	 mVrxi1gl/0h680bfgX2sfj0WdpzcYTXcCN7GfHErwkJir7IYjhTFL0sqgMJBT44gnb
+	 TFibrx/EF/1bw==
+Message-ID: <sashiko-outbox-214382@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net-next 1/3] dt-bindings: net: dptel,dap8211r: add led
- nodes
+Subject: Re: [PATCH net-next 2/3] net: phy: dap8211r: add extended register
+ write helper
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Artem Shimko" <a.shimko.dev@gmail.com>, devicetree@vger.kernel.org, linux-leds@vger.kernel.org
 Cc: robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <20261113110546.173624-2-a.shimko.dev@gmail.com>
+In-Reply-To: <20261113110546.173624-3-a.shimko.dev@gmail.com>
 References: <20261113110546.173624-1-a.shimko.dev@gmail.com>
- <20261113110546.173624-2-a.shimko.dev@gmail.com>
+ <20261113110546.173624-3-a.shimko.dev@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 11:06:04 +0000
+Date: Sat, 14 Nov 2026 11:06:05 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -63,67 +63,60 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Medium] dt-bindings: net: dptel,dap8211r: invalid and ineffective
-  leds node schema
+- [Low] net: phy: dap8211r: inverted locking comment on
+  dap8211r_write_ext()
 --
 
-commit b253b1562298deb66ca7a0d9739c668ef65e6592
+commit 80c461dbd61c7143cfae371b80c6ab5797de75b3
 Author: Artem Shimko <a.shimko.dev@gmail.com>
 
-dt-bindings: net: dptel,dap8211r: add led nodes
+net: phy: dap8211r: add extended register write helper
 
-This commit documents the optional leds node and adds an example for the
-DAP8211R PHY binding.
+This commit adds the dap8211r_write_ext() helper to write extended PHY
+registers via indirect addressing.
 
-> diff --git a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml b/=
-Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
-> index 4cd0f9730d954..43425fc8e96e0 100644
-> --- a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
-> +++ b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
-
-[ ... ]
-
-> @@ -28,6 +29,22 @@ properties:
->    compatible:
->      const: ethernet-phy-id0008.011b
+> diff --git a/drivers/net/phy/dap8211r.c b/drivers/net/phy/dap8211r.c
+> index 0bf770f8ebbb4..4eb50c26397fb 100644
+> --- a/drivers/net/phy/dap8211r.c
+> +++ b/drivers/net/phy/dap8211r.c
+> @@ -88,6 +88,32 @@ static int dap8211r_read_ext(struct phy_device *phydev=
+, u16 reg)
+>  	return ret;
+>  }
 > =20
-> +  leds:
-> +    type: object
-> +    description:
-> +      Optional node describing the three configurable LEDs of the PHY.
-> +      Each LED can be assigned a color, function and default trigger
-> +      (e.g. "netdev" for link/activity indication).
-> +    patternProperties:
-> +      '^led@[0-2]$':
-> +        type: object
-> +        properties:
-> +          reg:
-> +            maxItems: 1
-> +        required:
-> +          - reg
-> +        additionalProperties: true
+> +/**
+> + * dap8211r_write_ext() - Write extended register
+> + * @phydev: PHY device structure
+> + * @reg: Extended register address
+> + * @data: Data to write
+> + *
+> + * Writes a PHY extended register using the indirect access method.
+> + * The caller must hold the MDIO bus lock.
+> + *
+> + * Return: 0 on success, or negative error code
+> + */
+> +static int dap8211r_write_ext(struct phy_device *phydev, u16 reg, u16 da=
+ta)
+> +{
+> +	int ret;
+> +
+> +	phy_lock_mdio_bus(phydev);
+> +	ret =3D __phy_write(phydev, DAP8211R_EXT_ADD, reg);
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	ret =3D __phy_write(phydev, DAP8211R_EXT_DATA, data);
+> +out:
+> +	phy_unlock_mdio_bus(phydev);
+> +	return ret;
+> +}
 
-[Severity: Medium]
-Does this leds schema pass dt_binding_check or enforce the 0..2 LED index
-limit?
-
-The leds object omits additionalProperties: false (as well as
-#address-cells and #size-cells), and ^led@[0-2]$ sets
-additionalProperties: true without a compatible property, both of which
-fail DT meta-schema validation.
-
-Because ethernet-phy.yaml# is included in allOf and already defines leds
-with ^led@[a-f0-9]+$, leaving additionalProperties unset on leds allows
-child nodes outside ^led@[0-2]$ (such as led@3) to pass validation via
-ethernet-phy.yaml#, while reg under ^led@[0-2]$ only specifies maxItems: 1
-without restricting the value to 0..2.
-
-Either drop the leds property block to inherit the definition from
-ethernet-phy.yaml#, or define #address-cells, #size-cells, and
-additionalProperties: false on leds and reference
-/schemas/leds/common.yaml# with unevaluatedProperties: false and
-maximum: 2 on reg under ^led@[0-2]$.
+[Severity: Low]
+Does the kernel-doc comment for dap8211r_write_ext() state the opposite of
+its locking requirement?  dap8211r_write_ext() takes the MDIO bus mutex via
+phy_lock_mdio_bus(phydev), so a caller that already holds the lock will
+deadlock.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261113110546.1736=
-24-1-a.shimko.dev@gmail.com?part=3D1
+24-1-a.shimko.dev@gmail.com?part=3D2
