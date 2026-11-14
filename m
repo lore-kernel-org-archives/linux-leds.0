@@ -1,95 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794682367;
-	b=fcM8dCD9FN5RU0IQ7Xp8i29lm+kWnpzsg/xtm6yrW7ag8MfKH7zQcFVOKKJTDTfsa9NH
-	 GBZRKp/yHOoJQlHmeAe8TLVVf0tcmf4L7quPTvMQOkOWMzdAzjQvqaKwmy01VR0Fq9MnA
-	 1tdMCdGScJfXiu4TQisw7CpVxbMSV/GMmYci6H8UHfhB4DAhclEzYYj47ZaJKTULpNFaX
-	 8sfkCpfVo/H95xwhAPUSus2AFjJWfFJ1PZzhQQll63jKSDFl1p0VFbnGfc0ntiH57L4w2
-	 W8zaw3K39cr/jl0xoMvXOkvF8pZApIUVAiJmDmD3dNPz/VTK4Za08HmhuXx2stzXO9A==
+	t=1794683204;
+	b=vgN8DhQDWqZ0AXbAnmzm9aOQU3tAN6DesrtN8Lyl4f0pwa5BSEKLWCuUmOfCYotRGpHi
+	 NTLft260/+tKwSOX5NVrULLCtYO7KoiMx7AV7lHwD/WnGscv2IaZ0xMRpD3TlT2FUADMM
+	 cVjV/wtQ0uHYUaDpv7HsLbKIUjsXcN/UW+DTvPITh/fggcYk3LueDYjSCTFKRZ/zNrE20
+	 yT97m78EyLRne9JFiTyi7eQrtCXA5mgDjxKdYaOO/BI/1Q1QL6/4Tox/3xYlKzS0sZdk4
+	 oVtFLIxfSNGkteIxFqNcr/+SghO6sXfzc3OICQHrxBfm9G4GNw6Qj/00SzBBbzGe6Eg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794682367;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=CEKYonBic6UINzzlaHsnI5KCf6ygTszLUf3F+RQKa0I=;
-	b=Rv/XRt8mNjcF9LhVW2WAmBc/Xdy1UuwDPoadSvfVxo7dDfwEHmaBk/jjGi9XsgVDkaJF
-	 59unt/8v+Mhhn6Nfxux2cTBwuNIgywbZAtJVQaUU5K9a2O3vwos1g+uOkvJpNZW207TGJ
-	 e8I4FLgeIxjbMvn22oh7lV67eUTWvYp6YbKQ9HJxK1hdZawwNH0V0MdtWofH8vpnpA3be
-	 Yj+PmwCDAXkuKetFJDZuqyDq9KOAJpjZATq0JLkFGU0gTJEkyaohVt3STSj6XMM7p7Czh
-	 rFv4Mt3l8BqgNnWrOHzu/PZGpaP8HBfKIL+lZOA4/uLMXNjGLiZDQKVG7ufFaXrRd3w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794683204;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=xhgN+TKQr9ogkPk4QvstdKLafDVYQ/GXO+YrEsAwOSk=;
+	b=kuGV/SrgKQmSUbmAttv4J1ju3kA0VskEdh8Vhr3L3dxNTeHQgoyxZ8nTRkki+874c4l6
+	 6PgjcQW2OP9hRbQc+raczrhkJdzk32NfYUn7TI8FOUVY9dmUpgPvAaxvCbkT+ga+9agWs
+	 t6Zp3bjhMek6QXz9g0SXdy3r4bH5/iRs/1Xzi2ECf/krQcXm7DdDovUeCe9m+sv9WnOyR
+	 cviUkFNZh3c4YDwR8nnehtHMakbx4IRba38bxqjXGTmOkaKWDW/Dku2QlB8JuTL5Rnp4d
+	 INsmUN7F0Y4UJLhz5FABF78ZPAb5poO1Zb9mU2xoEHQ4/FuQgTtwLFMmqIL60SCltoQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CWiqr0A0;
-	arc=none smtp.remote-ip=209.85.221.52
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=obEvgIzk;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34864606A323
-	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 18:52:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 34864606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D01606A323
+	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 19:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=CWiqr0A0
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48e10a70540so1078527f8f.1
-        for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 10:52:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794682365; x=1795287165; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=CEKYonBic6UINzzlaHsnI5KCf6ygTszLUf3F+RQKa0I=;
-        b=CWiqr0A0mzceIYhWYJL1VDMvtc8rSmoYyZONljntWPRxMUQtTLlagDla7if7rZWamT
-         kgYG+Cr+elM7LrsoTkErd06QsvJxMVwTAn0a5xYUfK/2qHkRPjhBmzX0PAJMX/nxceKh
-         jbeVPkB8dOp11bX+9TIKQfnasG5qSVix6bW2zb+L3uK6kXOZCt3mhqVXgRLDBid4hb1r
-         0kYp8BUX+nAfpK5RReBUdTT7lOPM6yGFLQU1Z4e726Qa0PE67IyuyDiY8nbnnZxaO3/j
-         ACPk1IQ9M5kqH5nIBjv68o89kZkUTodJpZ6mdh8jT65wSHqbHDFn0++vHN5lcx+wBr+o
-         xzzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794682365; x=1795287165;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=CEKYonBic6UINzzlaHsnI5KCf6ygTszLUf3F+RQKa0I=;
-        b=hPMqz0zmyiSojGEzDikQAEIzkfT5PFx20g0mvR0GtqBRdf1zTthUomycRnC/UE9fVy
-         4Ptnq4nGEI3+36eVIpAkFIzEndGmSnMpFTrGDTTmJUkffs934SPU52q6zpkGf7mh897g
-         rhZDTx0d8eDiQrnhSI+3imzjjFEGq4hTwz47NUkRXSuxO4Yrhk49K5WFHvUJk25rmIxi
-         I9rd06Cbo/BUGxK81rOIEkMbxYNjia9oBRJqH9DfM+k3SEq+REr5S6Hr13/VAxWogN6z
-         hovdTanNBDzv608VCxwmyrYO1KY3l0QTP68u21RvmT/olpdL52TsO9rfIn3EMgtT4jdp
-         aiRg==
-X-Gm-Message-State: APuU4Z8opWhdUcqXDCaR3fzbJxKqZP3oQwK1/rLmJ6536o20q7EwlUu9
-	wuqWMtgV36LqcjfPnxslQSdt3yo1199j3HWSeJtpvxq6Z6HRa2NjNFFrViG/hT4SAJc=
-X-Gm-Gg: AYBFou2RmIpbeAUo/NcY3cbmkL3BSaxCYd19bt3Kbqviy6R5SyPcnl18j6XnQVVVujs
-	FwWn4PU8MLOCbedNgIpEJ6lXXBQdnR1kNLnCGsMn5CWYgOVfM/Sbp8pzHVN9dVUoZF/WVYOwD6V
-	gk+ql/O2t3yP1d5COPde7SzgVES/N2kwUkP2T6lynUw2Hf0PK+O2axwLTPfvCG8V0tfWw9ToKoe
-	YHAmmzpfx6bTumqHiuVgf3jH+56kTndHgEjonYfPZ5jBDMQBnZb/pLXKY3GDzaZ6hpDSYgJulCT
-	I7dJdFMZXhVVwD70LEfnCg9C0gAXUY9ppz2qI++Yi2ChvnTzBivFq2j0I4qu4qLnZCN1HOn46G3
-	6RGHzXY5ZHnDYbvNIZ2fFHJwFhF2JW9BzAL3HxgHeebkqC5dqwwky4uYBL9GyRGPmkh/tSkl9Gf
-	2Yohapwp49F8mOe7+7rVoJeSV/yQP+NN7Jtd9gqiphgbjRrhMOyM1LlmsdwFI1y27El4szTRjRw
-	3/Jz8TDLMskTX4t7xxFdf0UKmPjBK2if9EQDfJPovJVj43zDoGHDFzKmZT2E/4FjwTwWXRtNGeX
-	2E8o5t/KtnFdRXkxiQ==
-X-Received: by 2002:a05:6000:4557:b0:490:197:5de7 with SMTP id ffacd0b85a97d-49c741b155dmr9247533f8f.45.1794682364406;
-        Sat, 14 Nov 2026 10:52:44 -0800 (PST)
-Received: from averion.play.pl ([2a02:a313:21ec:9380::e204])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c608d10b2sm21048733f8f.44.2026.11.14.10.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Nov 2026 10:52:43 -0800 (PST)
-From: Daniil Demakov <t3127430@gmail.com>
-To: linux-leds@vger.kernel.org
-Cc: lee@kernel.org,
-	pavel@kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Daniil Demakov <t3127430@gmail.com>
-Subject: [PATCH v4] leds: pca9532: Propagate I2C errors
-Date: Sat, 14 Nov 2026 18:52:01 +0000
-Message-ID: <20261114185201.30519-1-t3127430@gmail.com>
-X-Mailer: git-send-email 2.56.0
-In-Reply-To: <20261114141926.92737-1-t3127430@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=obEvgIzk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741EA1F000C4;
+	Sat, 14 Nov 2026 19:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794683203;
+	bh=xhgN+TKQr9ogkPk4QvstdKLafDVYQ/GXO+YrEsAwOSk=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=obEvgIzkxcyIhai3zP8WTcvf1ptDHIbP7GNcVT6DCK0lFhb6KrE9ikux1H9XkLEq1
+	 hNlEzbPu5ZOf8XmPH1oXtBbcGLIy3jpPWJerwH/kSVff8tJ2+CfLjwg/FWQxVHANGs
+	 X/e/PvcaskVC8L1Empud37/LMzOx03JFc+PdPdatDK21j9+DvmgY6HWMi9iBKvmnTA
+	 a8OhXLqYjhjP185W+aG1zQ5rWN+46f0yAyNBLX2A2AuC9C055zycnaJ36RsMGhqR+O
+	 nKdQuUtfyITG8uCGBlM+5ny/V29xdVaxJQY6RZINtbxrRz3POo4kFusnnY4sTErlU/
+	 whKXoFKTR59Ew==
+Message-ID: <sashiko-outbox-214953@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v4] leds: pca9532: Propagate I2C errors
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Daniil Demakov" <t3127430@gmail.com>, linux-leds@vger.kernel.org
+Cc: lee@kernel.org
+In-Reply-To: <20261114185201.30519-1-t3127430@gmail.com>
 References: <20261114141926.92737-1-t3127430@gmail.com>
+ <20261114185201.30519-1-t3127430@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 14 Nov 2026 19:06:43 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -98,590 +59,21 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Check return values from SMBus read and write operations and
-propagate errors through LED, PWM, blink and GPIO operations.
+> Check return values from SMBus read and write operations and
+> propagate errors through LED, PWM, blink and GPIO operations.
+>=20
+> Restore previous LED and PWM state when hardware updates fail.
+> Protect shared LED and PWM state with the update mutex.
+>=20
+> Check register writes during device initialization and register
+> LED class devices only after successfully configuring the hardware.
+>=20
+> Signed-off-by: Daniil Demakov <t3127430@gmail.com>
 
-Restore previous LED and PWM state when hardware updates fail.
-Protect shared LED and PWM state with the update mutex.
+Sashiko has reviewed this patch and found no issues.
 
-Check register writes during device initialization and register
-LED class devices only after successfully configuring the hardware.
-
-Signed-off-by: Daniil Demakov <t3127430@gmail.com>
----
- drivers/leds/leds-pca9532.c | 336 +++++++++++++++++++++++++++++-------
- 1 file changed, 270 insertions(+), 66 deletions(-)
-
-diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-index c8085427696f..19b993d9ac9f 100644
---- a/drivers/leds/leds-pca9532.c
-+++ b/drivers/leds/leds-pca9532.c
-@@ -14,6 +14,7 @@
- #include <linux/leds.h>
- #include <linux/input.h>
- #include <linux/mutex.h>
-+#include <linux/spinlock.h>
- #include <linux/workqueue.h>
- #include <linux/leds-pca9532.h>
- #include <linux/gpio/driver.h>
-@@ -42,6 +43,9 @@ struct pca9532_data {
- 	struct i2c_client *client;
- 	struct pca9532_led leds[16];
- 	struct mutex update_lock;
-+	/* Protects beep_pwm between the event callback and workqueue. */
-+	spinlock_t beep_lock;
-+	u8 beep_pwm;
- 	struct input_dev *idev;
- 	struct work_struct work;
- #ifdef CONFIG_LEDS_PCA9532_GPIO
-@@ -144,68 +148,147 @@ static int pca9532_calcpwm(struct i2c_client *client, int pwm, int blink,
- 	return 0;
- }
- 
--static int pca9532_setpwm(struct i2c_client *client, int pwm)
-+static int __pca9532_setpwm(struct i2c_client *client, int pwm)
- {
- 	struct pca9532_data *data = i2c_get_clientdata(client);
- 	u8 maxleds = data->chip_info->num_leds;
-+	int ret;
- 
--	mutex_lock(&data->update_lock);
--	i2c_smbus_write_byte_data(client, PCA9532_REG_PWM(maxleds, pwm),
--		data->pwm[pwm]);
--	i2c_smbus_write_byte_data(client, PCA9532_REG_PSC(maxleds, pwm),
--		data->psc[pwm]);
--	mutex_unlock(&data->update_lock);
--	return 0;
--}
-+	if (pwm < 0 || pwm > 1)
-+		return -EINVAL;
-+
-+	ret = i2c_smbus_write_byte_data(client,
-+					PCA9532_REG_PWM(maxleds, pwm),
-+					data->pwm[pwm]);
-+	if (ret < 0) {
-+		dev_warn(&client->dev,
-+			 "Failed to write PWM register: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = i2c_smbus_write_byte_data(client,
-+					PCA9532_REG_PSC(maxleds, pwm),
-+					data->psc[pwm]);
-+	if (ret < 0)
-+		dev_warn(&client->dev,
-+			 "Failed to write PSC register: %d\n", ret);
- 
-+	return ret;
-+}
- /* Set LED routing */
--static void pca9532_setled(struct pca9532_led *led)
-+static int __pca9532_setled(struct pca9532_led *led)
- {
- 	struct i2c_client *client = led->client;
- 	struct pca9532_data *data = i2c_get_clientdata(client);
- 	u8 maxleds = data->chip_info->num_leds;
--	char reg;
-+	int reg;
-+	int ret;
- 
--	mutex_lock(&data->update_lock);
- 	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
-+	if (reg < 0) {
-+		ret = reg;
-+		dev_warn(&client->dev, "Failed to read LED register: %d\n", ret);
-+		return ret;
-+	}
-+
- 	/* zero led bits */
--	reg = reg & ~LED_MASK(led->id);
-+	reg &= ~LED_MASK(led->id);
-+
- 	/* set the new value */
--	reg = reg | (led->state << LED_SHIFT(led->id));
--	i2c_smbus_write_byte_data(client, LED_REG(maxleds, led->id), reg);
-+	reg |= led->state << LED_SHIFT(led->id);
-+
-+	ret = i2c_smbus_write_byte_data(client, LED_REG(maxleds, led->id), reg);
-+
-+	if (ret < 0)
-+		dev_warn(&client->dev, "Failed to write LED register: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int pca9532_setled(struct pca9532_led *led)
-+{
-+	struct pca9532_data *data = i2c_get_clientdata(led->client);
-+	int ret;
-+
-+	mutex_lock(&data->update_lock);
-+	ret = __pca9532_setled(led);
- 	mutex_unlock(&data->update_lock);
-+
-+	return ret;
- }
- 
- static int pca9532_set_brightness(struct led_classdev *led_cdev,
--	enum led_brightness value)
-+				  enum led_brightness value)
- {
--	int err = 0;
- 	struct pca9532_led *led = ldev_to_led(led_cdev);
-+	struct pca9532_data *data = i2c_get_clientdata(led->client);
-+	int old_state;
-+	u8 old_pwm;
-+	u8 old_psc;
-+	bool pwm_updated = false;
-+	int restore_err;
-+	int err = 0;
-+
-+	mutex_lock(&data->update_lock);
-+	old_state = led->state;
-+	old_pwm = data->pwm[PCA9532_PWM_ID_0];
-+	old_psc = data->psc[PCA9532_PWM_ID_0];
- 
- 	if (value == LED_OFF) {
- 		led->state = PCA9532_OFF;
- 	} else if (led->state == PCA9532_PWM1) {
--		return 0; /* Non-zero brightness shall not stop HW blinking */
-+		goto out;
- 	} else if (value == LED_FULL) {
- 		led->state = PCA9532_ON;
- 	} else {
--		led->state = PCA9532_PWM0; /* Thecus: hardcode one pwm */
--		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0, 0, value);
-+		led->state = PCA9532_PWM0;
-+		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0,
-+				      0, value);
- 		if (err)
--			return err;
-+			goto restore_state;
-+	}
-+
-+	if (led->state == PCA9532_PWM0) {
-+		pwm_updated = true;
-+		err = __pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
-+		if (err < 0)
-+			goto restore_state;
- 	}
--	if (led->state == PCA9532_PWM0)
--		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
--	pca9532_setled(led);
-+
-+	err = __pca9532_setled(led);
-+	if (err < 0)
-+		goto restore_state;
-+
-+	goto out;
-+
-+restore_state:
-+	led->state = old_state;
-+	data->pwm[PCA9532_PWM_ID_0] = old_pwm;
-+	data->psc[PCA9532_PWM_ID_0] = old_psc;
-+
-+	if (pwm_updated) {
-+		restore_err = __pca9532_setpwm(led->client,
-+					       PCA9532_PWM_ID_0);
-+		if (restore_err < 0)
-+			dev_warn(&led->client->dev,
-+				 "Failed to restore PWM settings: %d\n",
-+				 restore_err);
-+	}
-+out:
-+	mutex_unlock(&data->update_lock);
- 	return err;
- }
- 
- static int pca9532_update_hw_blink(struct pca9532_led *led,
--				   unsigned long delay_on, unsigned long delay_off)
-+				   unsigned long delay_on,
-+				   unsigned long delay_off)
- {
- 	struct pca9532_data *data = i2c_get_clientdata(led->client);
- 	unsigned int psc;
--	int i;
-+	unsigned long period;
-+	u8 old_pwm = data->pwm[PCA9532_PWM_ID_1];
-+	u8 old_psc = data->psc[PCA9532_PWM_ID_1];
-+	int i, ret;
- 
- 	/* Look for others LEDs that already use PWM1 */
- 	for (i = 0; i < data->chip_info->num_leds; i++) {
-@@ -223,29 +306,64 @@ static int pca9532_update_hw_blink(struct pca9532_led *led,
- 		}
- 	}
- 
--	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
--	if (psc > U8_MAX) {
--		/* Blink period too long to be handled by hardware */
-+	if (delay_on > ULONG_MAX - delay_off)
- 		return -EINVAL;
-+
-+	period = delay_on + delay_off;
-+
-+	if (!delay_on || !delay_off)
-+		return -EINVAL;
-+
-+	if (period > ((U8_MAX + 1) * 1000) /
-+		     PCA9532_PWM_PERIOD_DIV)
-+		return -EINVAL;
-+
-+	psc = (period * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-+
-+	data->psc[PCA9532_PWM_ID_1] = psc;
-+	data->pwm[PCA9532_PWM_ID_1] =
-+		(delay_on * PCA9532_PWM_DUTY_DIV) / period;
-+
-+	ret = __pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-+	if (ret < 0) {
-+		data->pwm[PCA9532_PWM_ID_1] = old_pwm;
-+		data->psc[PCA9532_PWM_ID_1] = old_psc;
-+
-+		if (__pca9532_setpwm(data->client, PCA9532_PWM_ID_1) < 0)
-+			dev_warn(&data->client->dev,
-+				 "Failed to restore PWM settings\n");
-+
-+		return ret;
- 	}
- 
- 	led->state = PCA9532_PWM1;
--	data->psc[PCA9532_PWM_ID_1] = psc;
--	data->pwm[PCA9532_PWM_ID_1] = (delay_on * PCA9532_PWM_DUTY_DIV) / (delay_on + delay_off);
- 
--	return pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-+	return 0;
- }
- 
- static int pca9532_set_blink(struct led_classdev *led_cdev,
--	unsigned long *delay_on, unsigned long *delay_off)
-+			     unsigned long *delay_on,
-+			     unsigned long *delay_off)
- {
- 	struct pca9532_led *led = ldev_to_led(led_cdev);
- 	struct i2c_client *client = led->client;
- 	struct pca9532_data *data = i2c_get_clientdata(client);
-+	int old_state;
-+	int restore_err;
-+	u8 old_pwm;
-+	u8 old_psc;
- 	int err;
- 
--	if (!data->hw_blink)
--		return -EINVAL;
-+	mutex_lock(&data->update_lock);
-+
-+	old_state = led->state;
-+	old_pwm = data->pwm[PCA9532_PWM_ID_1];
-+	old_psc = data->psc[PCA9532_PWM_ID_1];
-+
-+	if (!data->hw_blink) {
-+		err = -EINVAL;
-+		goto out;
-+	}
- 
- 	if (*delay_on == 0 && *delay_off == 0) {
- 		/* led subsystem ask us for a blink rate */
-@@ -255,26 +373,47 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
- 
- 	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
- 	if (err)
--		return err;
-+		goto restore_state;
-+
-+	err = __pca9532_setled(led);
-+	if (err < 0) {
-+		led->state = old_state;
-+		data->pwm[PCA9532_PWM_ID_1] = old_pwm;
-+		data->psc[PCA9532_PWM_ID_1] = old_psc;
-+
-+		restore_err = __pca9532_setpwm(client, PCA9532_PWM_ID_1);
-+		if (restore_err < 0)
-+			dev_warn(&client->dev,
-+				 "Failed to restore PWM settings: %d\n",
-+				 restore_err);
-+	}
- 
--	pca9532_setled(led);
-+	goto out;
- 
--	return 0;
-+restore_state:
-+	led->state = old_state;
-+out:
-+	mutex_unlock(&data->update_lock);
-+	return err;
- }
- 
- static int pca9532_event(struct input_dev *dev, unsigned int type,
--	unsigned int code, int value)
-+			 unsigned int code, int value)
- {
- 	struct pca9532_data *data = input_get_drvdata(dev);
-+	unsigned long flags;
- 
- 	if (!(type == EV_SND && (code == SND_BELL || code == SND_TONE)))
- 		return -1;
- 
--	/* XXX: allow different kind of beeps with psc/pwm modifications */
-+	spin_lock_irqsave(&data->beep_lock, flags);
-+
- 	if (value > 1 && value < 32767)
--		data->pwm[PCA9532_PWM_ID_1] = 127;
-+		data->beep_pwm = 127;
- 	else
--		data->pwm[PCA9532_PWM_ID_1] = 0;
-+		data->beep_pwm = 0;
-+
-+	spin_unlock_irqrestore(&data->beep_lock, flags);
- 
- 	schedule_work(&data->work);
- 
-@@ -286,27 +425,48 @@ static void pca9532_input_work(struct work_struct *work)
- 	struct pca9532_data *data =
- 		container_of(work, struct pca9532_data, work);
- 	u8 maxleds = data->chip_info->num_leds;
-+	unsigned long flags;
-+	u8 old_pwm;
-+	u8 pwm;
-+	int ret;
-+
-+	spin_lock_irqsave(&data->beep_lock, flags);
-+	pwm = data->beep_pwm;
-+	spin_unlock_irqrestore(&data->beep_lock, flags);
- 
- 	mutex_lock(&data->update_lock);
--	i2c_smbus_write_byte_data(data->client, PCA9532_REG_PWM(maxleds, 1),
--		data->pwm[PCA9532_PWM_ID_1]);
-+
-+	old_pwm = data->pwm[PCA9532_PWM_ID_1];
-+	data->pwm[PCA9532_PWM_ID_1] = pwm;
-+
-+	ret = i2c_smbus_write_byte_data(data->client,
-+					PCA9532_REG_PWM(maxleds, 1), pwm);
-+	if (ret < 0) {
-+		data->pwm[PCA9532_PWM_ID_1] = old_pwm;
-+		dev_warn(&data->client->dev,
-+			 "Failed to write PWM register: %d\n", ret);
-+	}
-+
- 	mutex_unlock(&data->update_lock);
- }
- 
--static enum pca9532_state pca9532_getled(struct pca9532_led *led)
-+static int pca9532_getled(struct pca9532_led *led)
- {
- 	struct i2c_client *client = led->client;
- 	struct pca9532_data *data = i2c_get_clientdata(client);
- 	u8 maxleds = data->chip_info->num_leds;
- 	int reg;
--	enum pca9532_state ret = PCA9532_OFF;
-+	int ret;
- 
- 	mutex_lock(&data->update_lock);
- 	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
--	if (reg >= 0)
-+
-+	if (reg >= 0) {
- 		ret = (reg & LED_MASK(led->id)) >> LED_SHIFT(led->id);
--	else
--		dev_warn(&client->dev, "failed to read LED register: %d\n", reg);
-+	} else {
-+		ret = reg;
-+		dev_warn(&client->dev, "Failed to read LED register: %d\n", ret);
-+	}
- 	mutex_unlock(&data->update_lock);
- 	return ret;
- }
-@@ -328,33 +488,42 @@ static int pca9532_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
- {
- 	struct pca9532_data *data = gpiochip_get_data(gc);
- 	struct pca9532_led *led = &data->leds[offset];
-+	int old_state;
-+	int ret;
-+
-+	mutex_lock(&data->update_lock);
-+	old_state = led->state;
- 
- 	if (val)
- 		led->state = PCA9532_OFF;
- 	else
- 		led->state = PCA9532_ON;
- 
--	pca9532_setled(led);
-+	ret = __pca9532_setled(led);
-+	if (ret < 0)
-+		led->state = old_state;
- 
--	return 0;
-+	mutex_unlock(&data->update_lock);
-+
-+	return ret;
- }
- 
- static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
- {
- 	struct pca9532_data *data = gpiochip_get_data(gc);
--	unsigned char reg;
-+	int reg;
- 
- 	reg = i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset));
- 
-+	if (reg < 0)
-+		return reg;
-+
- 	return !!(reg & (1 << (offset % 8)));
- }
- 
- static int pca9532_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
- {
--	/* To use as input ensure pin is not driven */
--	pca9532_gpio_set_value(gc, offset, 1);
--
--	return 0;
-+	return pca9532_gpio_set_value(gc, offset, 1);
- }
- 
- static int pca9532_gpio_direction_output(struct gpio_chip *gc, unsigned offset, int val)
-@@ -394,40 +563,57 @@ static int pca9532_configure(struct i2c_client *client,
- 	struct pca9532_data *data, struct pca9532_platform_data *pdata)
- {
- 	int i, err = 0;
-+#ifdef CONFIG_LEDS_PCA9532_GPIO
- 	int gpios = 0;
-+#endif
- 	u8 maxleds = data->chip_info->num_leds;
- 
--	for (i = 0; i < 2; i++)	{
-+	for (i = 0; i < 2; i++) {
- 		data->pwm[i] = pdata->pwm[i];
- 		data->psc[i] = pdata->psc[i];
--		err = i2c_smbus_write_byte_data(client, PCA9532_REG_PWM(maxleds, i),
-+
-+		err = i2c_smbus_write_byte_data(client,
-+						PCA9532_REG_PWM(maxleds, i),
- 						data->pwm[i]);
- 		if (err < 0)
- 			return err;
--		err = i2c_smbus_write_byte_data(client, PCA9532_REG_PSC(maxleds, i),
-+
-+		err = i2c_smbus_write_byte_data(client,
-+						PCA9532_REG_PSC(maxleds, i),
- 						data->psc[i]);
- 		if (err < 0)
- 			return err;
- 	}
- 
- 	data->hw_blink = true;
-+
- 	for (i = 0; i < data->chip_info->num_leds; i++) {
- 		struct pca9532_led *led = &data->leds[i];
- 		struct pca9532_led *pled = &pdata->leds[i];
-+
- 		led->client = client;
- 		led->id = i;
- 		led->type = pled->type;
-+
- 		switch (led->type) {
- 		case PCA9532_TYPE_NONE:
- 			break;
- 		case PCA9532_TYPE_GPIO:
-+#ifdef CONFIG_LEDS_PCA9532_GPIO
- 			gpios++;
-+#endif
- 			break;
- 		case PCA9532_TYPE_LED:
--			if (pled->state == PCA9532_KEEP)
--				led->state = pca9532_getled(led);
--			else
-+			if (pled->state == PCA9532_KEEP) {
-+				err = pca9532_getled(led);
-+				if (err < 0)
-+					goto exit;
-+
-+				led->state = err;
-+			} else {
- 				led->state = pled->state;
-+			}
-+
- 			led->name = pled->name;
- 			led->ldev.name = led->name;
- 			led->ldev.default_trigger = pled->default_trigger;
-@@ -435,6 +621,15 @@ static int pca9532_configure(struct i2c_client *client,
- 			led->ldev.brightness_set_blocking =
- 						pca9532_set_brightness;
- 			led->ldev.blink_set = pca9532_set_blink;
-+
-+			err = pca9532_setled(led);
-+			if (err < 0) {
-+				dev_err(&client->dev,
-+					"couldn't set LED %s state\n",
-+					led->name);
-+				goto exit;
-+			}
-+
- 			err = led_classdev_register(&client->dev, &led->ldev);
- 			if (err < 0) {
- 				dev_err(&client->dev,
-@@ -442,19 +637,26 @@ static int pca9532_configure(struct i2c_client *client,
- 					led->name);
- 				goto exit;
- 			}
--			pca9532_setled(led);
- 			break;
- 		case PCA9532_TYPE_N2100_BEEP:
- 			/* PWM1 is reserved for beeper so blink will not use hardware */
- 			data->hw_blink = false;
- 			BUG_ON(data->idev);
-+
- 			led->state = PCA9532_PWM1;
--			pca9532_setled(led);
-+			err = pca9532_setled(led);
-+			if (err < 0) {
-+				dev_err(&client->dev,
-+					"couldn't set beeper state\n");
-+				goto exit;
-+			}
-+
- 			data->idev = devm_input_allocate_device(&client->dev);
- 			if (data->idev == NULL) {
- 				err = -ENOMEM;
- 				goto exit;
- 			}
-+
- 			data->idev->name = pled->name;
- 			data->idev->phys = "i2c/pca9532";
- 			data->idev->id.bustype = BUS_HOST;
-@@ -467,6 +669,7 @@ static int pca9532_configure(struct i2c_client *client,
- 			data->idev->event = pca9532_event;
- 			input_set_drvdata(data->idev, data);
- 			INIT_WORK(&data->work, pca9532_input_work);
-+
- 			err = input_register_device(data->idev);
- 			if (err) {
- 				cancel_work_sync(&data->work);
-@@ -498,8 +701,8 @@ static int pca9532_configure(struct i2c_client *client,
- 			dev_warn(&client->dev, "could not add gpiochip\n");
- 		} else {
- 			dev_info(&client->dev, "gpios %i...%i\n",
--				data->gpio.base, data->gpio.base +
--				data->gpio.ngpio - 1);
-+				 data->gpio.base, data->gpio.base +
-+				 data->gpio.ngpio - 1);
- 		}
- 	}
- #endif
-@@ -591,6 +794,7 @@ static int pca9532_probe(struct i2c_client *client)
- 	i2c_set_clientdata(client, data);
- 	data->client = client;
- 	mutex_init(&data->update_lock);
-+	spin_lock_init(&data->beep_lock);
- 
- 	return pca9532_configure(client, data, pca9532_pdata);
- }
--- 
-2.56.0
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114185201.3051=
+9-1-t3127430@gmail.com?part=3D1
 
