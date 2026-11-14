@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.45
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794663446;
-	b=MWPApFwWwRFb7En6D2ELKjUVYY9sZhul4JMKzMJuRuNgkHjmeBgkmRV7sY4luaSN5WGU
-	 9OlWxHKjMPU7XGq3EaszgyMN2Xfv3kS9vHeP5bvEhHlinZbOC/T7WmQEvS+UZ6EdrCB2m
-	 bGA5EmSoiy9ErVOSea7dL+UhlQNlG1yCr8rTOJZvSiQgzlGUzvpo4ggmsv3t/2V+/fEEu
-	 vFxH4mo1ynUOfyZiPwLjKZ2kWdJ+uvx6Vi4GbFzHJ77s/OtnZR1amSSOeJWTk87OViI/3
-	 1VDydXzoDwdG1QHfkd/Lx/hJ+88qAiUpdRNz9QjlhAueH/myDO5MY4Qd/uYgWB0OkmQ==
+	t=1794664097;
+	b=JCQgFrWtmmdBGKxrRp3WyhkccaZm0Q6sJnudjWP95WGHYsch48DVYiSx/MMiANNr6Sij
+	 63+je9UPm6FirALtlagVdbSbPSYRP4XImPGtdnBonZUVh4KOHbntkZay31ZmZTPUE+c6n
+	 KBU+9J/1MN0PRjO8QU855OnNdl0bK9tG+WUovjBJueoCkEYSMbf8W+GPUjVXevKF2njPl
+	 Dt4nUGZsee+hBeOlY5Qm530bwvMTa6T1xp+AipMutX+huFI7L/wfCpuVOepX1pFvfrzI2
+	 3ABhKLxJnOv4Bsj5qJCooK7Sgm+m8vpIVuCY7C+uVD1WWeNNemkp6LBoVmlNTYUgqyw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794663446;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794664097;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
 	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=d1dGGKhX00LCOKp0RTB4V4U0p/3/TPwG7x8i8TvKBao=;
-	b=uNPGRmd77bFuYFdAkwwF+vlQNqCAxyuJ23aNV2RYTeYrU8S4tZ2r0ncz0Cj2SBZ9ps99
-	 Ih3OEmcws/KOMppcDK8lv/ZPrDobyXcoGWPDi0m3zj8zWgz1ccrBaOuKDnMma/G8tK2Fx
-	 anmMhZv885BZNe+62T84Z13oJiDGvcrvsYQdlfgCmXAu+68F/v9r0FrRng1leE0/Zh6RD
-	 +VQcV6Lbbpdv3q7DSV4+t33G4TWI4O94eyNNmonIVvxS+VRpRrWK2cCwmhr5XRfWh7z7f
-	 ztjUDLEDt3+ft7qiYVZBv4nAZ8JjCXy9/1D97amfPPfvY2frpj0p1SY/ccNXjcYSMlA==
+	bh=uV9w4XdeJBMVabGCuGulxAnon3qiDUPy4KI5C/5BU4A=;
+	b=kvrxMr1lQufZrE1SCWoJ7cfliFJCwXVIZhZHdW1H0aU/PTdsovhCsvALOZSVkueiwGGI
+	 9Ff6ddByTgGbj0QlYmPZKLjWyvtsQHUlhsOSAPOqhbqcIjRJaHaINAsEsfC5j+Bo9TutL
+	 AE+GN+R63S6Y1kExAOY+sCbYb4exONXQmIVoZy+JG81pVoZvAgwY7YkQtBn1shggaHzhf
+	 dIXd6mau33kRUltkPUAvx04GDyFlqS0Bacti0j1m2sZ1bMjmV5IAssMUVh8tLVFFQgoCf
+	 TxmF+nAaF2nMEX78snakLwpeZbfYsVJhvmzwcNeiZ0qhddDKYF2bibfAoE7VLitM50A==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=V0DVzrQ3;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.53
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=i1lZRvJK;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.45
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1437606A330
-	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 13:37:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A1437606A330
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F77606A32E
+	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 13:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A3F77606A32E
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=V0DVzrQ3
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c50a2efbe1dso329040966b.3
-        for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 05:37:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794663444; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=i1lZRvJK
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-c50abd5b4fcso138318566b.1
+        for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 05:48:16 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794664095; cv=none;
         d=google.com; s=arc-20260327;
-        b=aOjsTUg3Ct6TZV/bvlDXS2RUBWgPPK4RcxN3KOEQ1LixSW9mD1GXqpORKiScabQC/k
-         cLjnj/C34zvZnwJfkt8y0h2mynhODc6fM4D86f9RXwInExluEoYfldXH4R+NiDHypvAW
-         +s0A80oGD/xTdN86At3yHhgNFNqmvQvmSXHXHHNMWEBCyYVtu12YeYtjiI6o5QZecV7+
-         Z2TvfVEFbxEK3exdoUed90ksobblwlwp4ypwQHJwwkd2zbgrCKwDTz7jw2SaoERyRbLZ
-         TDpcAgyhdNOmlEADQcBQEC/yZHXC8yh96EFYV1U+D+gilmpdpKE6OpmrYtIUmx6czo1p
-         gzpA==
+        b=X0zv3ncfhktiXRysypSevp9uVk9zXwUmEeNwbmvaMasX5ulhHu3pmw2im4n+fsmSqr
+         /cJDn2Of4Mddnfu2uCi7B54UkKz5FdkJgII0FF9cMbkACymGka39DnJMz8x2mFTIh4r8
+         yEf/vKZ//Ml+mGuaeCrhmCI4vJhJAP117eO3H1bEc9H7YfFzqihzJK3Nxhwaapt8C3Mg
+         aNpNZD7j60MalJeUOxTxkZshB4K5MyZtE75anM22NhB5S7vp6nnw4aiL/2z5P5cHjwZ/
+         wZ8I2beiSZzFsV7HkvuOepz8YZrqllB6dKOjb8ECvtGX67GIUdWl2E1tRLvZrtvDFeGt
+         kODg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=d1dGGKhX00LCOKp0RTB4V4U0p/3/TPwG7x8i8TvKBao=;
-        fh=noNKBNRylU9t7E058f7gAN8v7B7BGib0TfQmd32KOY8=;
-        b=Vl3hTWZ4JNhHtBzViYxLceucWkEM2xciXT60gjl4tE1GzJ3wSDSjAkeDy7LmTPVYxQ
-         hQnxmfOW/Zh/HyLURtsXokx+xb1hOkS+wOc9juWdA9NYbEJS6o1mGzbOLZ9Mt55rp336
-         vDziuGD90LKPAE7cVPQt5EQdq9zyXeTQMsoPE6ed+m35eFvvZTGxAiNyPgxmYIv/Onnz
-         8VHLo/uO0uHrnI5XO04dQI14ywNOTZqG50kxXwwGAq+K9GQWG5u4Ib4NY0kpiDSYS07q
-         eCOOCxGsM1Apno1zTOoUG4+2RvguQwROsiNN1P0t2f/BRnnUy6NqbJqWFI2n2JoNVcyg
-         zymw==;
+        bh=uV9w4XdeJBMVabGCuGulxAnon3qiDUPy4KI5C/5BU4A=;
+        fh=ntEwppHzuPGz203uwLVm7x3jQTmvPTsoVaZylUJni1g=;
+        b=p9NjyseyVaFkgtjldC9/jrmrCqT8q83TMswDJzALsQqUpuPsri95Nvy3XOEXXsq8S0
+         rVx4VVSyumsgwh57XSpzgy8C482Aimx6bco+m70/ePf+un8w/jxmi6CORXwVRfY9ylBN
+         rPEpBDtiSQPikt9TQdrzxMxQXFHwh0OkLcNHm6pHR2a1T4JtFOMGY+BWC9Eyy8crZJST
+         7635nitf1lh4qwf6IAjiOnbaouI73wCdElaRrX2ekYfwDZ+gIqHou8E7e39h6jLDdCD3
+         pX68wqxejQhIHpgQW3z5PJUHt5Dt7we3siVXeCfVCdTjUS+Xd57B0RHyfF4rQVMAB72n
+         gpPA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794663444; x=1795268244; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794664095; x=1795268895; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=d1dGGKhX00LCOKp0RTB4V4U0p/3/TPwG7x8i8TvKBao=;
-        b=V0DVzrQ3UtNS2CGItTaibnG4J77tS7qMIR3c3C2ZUlh81GURnIp8X/IHvzSGRyT9ls
-         zjvCcMSGfVsCr6PaYL7s/vQfBw5Mif7+7tUD0srSf73nlG5orBcEr38slNFK3s40BEI2
-         7P3tnLj21L2r9iq1fBalGmh9cWBfRaIGzosEYay/i4E+/pcIFFHj2aP00nst0S6qHd6J
-         o/X6UWXAn5i2xjeOmvPTXT6Ku4VxLGqH9IukfZrHdwmQeffXKQ1EEEj4+Y8Ud/51mgzP
-         hYSzzU0nDdx3vWOvn6HCLUOcY6VNwAbS3mh+1q0boLKaBCkOkU/W8ctopAqNAKKW/Jrn
-         WAgw==
+        bh=uV9w4XdeJBMVabGCuGulxAnon3qiDUPy4KI5C/5BU4A=;
+        b=i1lZRvJKI4pxHI/KEdEuK/CRwqVzQapKRUGOfPtVjMvx4zhIWjT+w33rNSJeqmvXlo
+         8XpnZS5ORoj1BzxD47pEaEpJvTnlYATebqClXpn6sdm8qF9gfzCNzJVnMkdCT7ESZZuS
+         VsYzkkaxeHMVlAZVdjqDP3smlo9CHctLUcByBQQT/T/XuEanH5/RNOpbr1uavF8GfUTE
+         rUht9LK1bkXx+Cv4YR0A5nq/89lX14A4KTDDiq3FS9DuNTsjjZ6JvwMjOqu49UhwOkM1
+         8tChAF6M9Xnq8sA/DjxVY73Lo9MvIuvm1DRZvCeFXRv1qaZlpm7exLUsbKHlUyAqHT0v
+         Gw3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794663444; x=1795268244;
+        d=1e100.net; s=20260707; t=1794664095; x=1795268895;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=d1dGGKhX00LCOKp0RTB4V4U0p/3/TPwG7x8i8TvKBao=;
-        b=wyycVEKrPETMlJe+fwBoJR5mozx6mvt8/WFvYqOBe2ycVmxXs19bl8XLPpQxDymjFP
-         mAdt41yeIdQWr3wk/8fJjRIb4tDSoVjZjyANjVnVpHw4U3VkYYAXXI2lbttn/AyO+wsI
-         QA5o8AoNnLLh8OdqoKG/fBs9zALuoisaBveTsEysJudCblAT/prErkdhmYT4mMK53XRH
-         dNbe2ykzET6byRwslcxHC0LZ+jADmJQl38zO8vczSHgUev/rPTQkcBA/OAaALGpaGv7L
-         lkTPCnxLqucdoAjQFdvEJ2mMsIrmid7BUg1i2CAa8ZsKlmn7+n9vgSWN6gqIJ+/TSdKN
-         71fQ==
-X-Forwarded-Encrypted: i=1; AL+hErGU1Uo/E4lKzjRug8AFwpR5qDh3S8j+HDx/+vyCCRHnTfzUDlVAuNWZOp5JAuIe5/zCMMXvh0szbSRn@vger.kernel.org
-X-Gm-Message-State: APuU4Z8Jun1IcbN8S/KqXnZHbPU+FvhC6K/fhLvp3knWi0+02oJbQtVR
-	IIk/eSjqgxQ9VObMKsHduaFaIBGLnWf68up9VXYTAJUrF5jhJTZlOven61GV7ZefSVaF2oE0jxc
-	qITIbel+Q+64ky36AUyYIgE2OIaxXEt0=
-X-Gm-Gg: AYBFou2ugzetVfCV1AxkaKyuvweqKQhap/rPF6BRWV2XX+ch2sQnZG8cf6e8wFFwyeS
-	HxDcKzrPZK4wtOqaC35MafqNOYoarRsVAd6Urb93N8bRhh0L8ETbFnbkym0/5UyJ664GQVXDpV6
-	2WurqPA8a9TWSkOoW4y9O+eUOL8M/RRFGD2McHTmM/7UgO4ud7jtbFkpsC7TKnoeETiC4aTP1B2
-	/YqoQg/UuIBokalONv6hegln5yugkH4PXttb3v8Z5+g8tvA+unroEnJeV9waamY8mxfgrRVZ31I
-	yrRGrDl+6WaUUsXcofGkZdKb1HTgSjJJJvqYY+J94wNQl8/t5cfKB2D5Qh/+N8zIi2QtbwwJYmu
-	FsPyq+p0Si5FDFfzVduFEVldlSlg7eJ7EaEnVqw==
-X-Received: by 2002:a17:907:3e1f:b0:c3e:f39b:2286 with SMTP id
- a640c23a62f3a-c5095db45d8mr475395466b.0.1794663443789; Sat, 14 Nov 2026
- 05:37:23 -0800 (PST)
+        bh=uV9w4XdeJBMVabGCuGulxAnon3qiDUPy4KI5C/5BU4A=;
+        b=gEkd4XXJH7OmtRVwpRoABITqHaXL9EQm5FgMuU3y9zOeZ50NTaI5hMuVuzqHNx/d+0
+         wQZbcr+YI8ot5mFqA71xIrMmjebD1Ak/7cIj8azwSqdOmIh5ReaaMyBU+vc0Pm+KNV8y
+         bp0AYU+SqHEjuripYsxq/Bq+hNm36jdvTMQNbsJ5RdUtFoWqOirjusAmuyiOJPcrbmi2
+         NRBBqzML7H6Grx/twVk/H0PAjs9vQfbeliDJLEno9eITu9x/tT/LQvMUZ93S6sBKHw4V
+         GXQeFSA/FLSnchN2F9p3P26caMQHW6c0Sh099RRH50j0+PA2I/yukHj+0G2gYLC+5TDx
+         fQFg==
+X-Forwarded-Encrypted: i=1; AL+hErEgNFrRatV06Lz4rHfi8oeYCKenw8bncUUTrMrvmtz8Y+6ZgiAry0PE9L+gyNJEuAAOheKH7pXv0Q7p@vger.kernel.org
+X-Gm-Message-State: APuU4Z9EFjiMDRGtMIvEeIhj+/FqMJ74KbRUWqYU/UzqeAYNoglw+9Gv
+	jIOPSElM6P/tAhBkY1H6eGalTY4B23ph+qtPiqv6HIxX3oaTnNPIE1qpQ7npfi1MZTY8AD2g5H4
+	I/tVwKnb/cdiXBs8A42+3wzth2pdVaLo=
+X-Gm-Gg: AYBFou05yi98IJfuz/R/UhLypb1M/gbciTMc/WT0xj2BH9/qRZSVNQWC17cUMFdVjAi
+	BTEj1wj23f1isXKkc+VM+AU6oqD6mglPVyR9lkuebF2lKBc3DxBMkPOB0zQMHBj9geH/4qinHXG
+	ktHYYaOOl3oarMj5JGme1EDqEtg3V5VYTqOhM5aasqyDjJjfbMzHXJevkh+RO01MRqe2JTvPKEQ
+	85najN+/WZfoMAmLPt+6MDWCUvEMkt6hdFG2+LEToukdnNowva+zUNwi5ZbLo6NxwxqHM2RuQUy
+	oqWHFKJFcFeAawyXA1FrZkOZdpQIkUotVeM37E7N29N9ZK/FtFK86FErkFZHF3Qx4ZUhiLt29yx
+	e7BefCr04lmkQro27nMMFgaB9UEmBOXibEYcFjE4=
+X-Received: by 2002:a17:907:2d1e:b0:c4d:28c7:eb21 with SMTP id
+ a640c23a62f3a-c50963967fcmr464257666b.29.1794664094926; Sat, 14 Nov 2026
+ 05:48:14 -0800 (PST)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -105,27 +105,54 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 References: <20261113110546.173624-1-a.shimko.dev@gmail.com>
- <20261113110546.173624-4-a.shimko.dev@gmail.com> <8ef5b0a7-58f6-4c62-8153-6a9c8d3703f7@lunn.ch>
-In-Reply-To: <8ef5b0a7-58f6-4c62-8153-6a9c8d3703f7@lunn.ch>
+ <20261113110546.173624-4-a.shimko.dev@gmail.com> <sashiko-outbox-214383@kernel.org>
+In-Reply-To: <sashiko-outbox-214383@kernel.org>
 From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Sat, 14 Nov 2026 16:37:12 +0300
-X-Gm-Features: AclHuK8XI7bnok_ObDtOfMHWf2vbfB49mnYymQ3JtOPklAmq8NLX7LejygF9N-8
-Message-ID: <CAOPX745=Mx9Q+Wijt9+=Mmjtdk4fsenEeV2h0gPCvNpqc8kN=A@mail.gmail.com>
+Date: Sat, 14 Nov 2026 16:48:03 +0300
+X-Gm-Features: AclHuK9MsmyVhAUhfYgzoV6y_gIsPjRJJ1_oeWNNQdGoTcpp9jpoFerTmOwCi6c
+Message-ID: <CAOPX745DWr_y5VfuCGoyJDKj=mXOpxWsA8TyzETwpVjeOjPEHg@mail.gmail.com>
 Subject: Re: [PATCH net-next 3/3] net: phy: dap8211r: add led hardware control support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, maxime.chevallier@bootlin.com, 
-	pavel@ucw.cz, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org
+To: sashiko-reviews@lists.linux.dev
+Cc: devicetree@vger.kernel.org, linux-leds@vger.kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, lee@kernel.org, Andrew Lunn <andrew@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
-
-On Fri, Nov 13, 2026 at 11:32=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
-:
+On Sat, Nov 14, 2026 at 2:06=E2=80=AFPM <sashiko-bot@kernel.org> wrote:
 >
+> Thank you for your contribution! Sashiko AI review found 2 potential
+> issues to consider:
+> - [Medium] net: phy: dap8211r: link trigger rejected in
+>   dap8211r_led_hw_is_supported()
+> - [Medium] net: phy: dap8211r: LED register not cleared in
+>   dap8211r_led_hw_control_set()
+> --
+>
+> commit 7e5f0824bef63e117be29a9ce8d9c67d5c813bfa
+> Author: Artem Shimko <a.shimko.dev@gmail.com>
+>
+> net: phy: dap8211r: add led hardware control support
+>
+> This commit adds hardware LED control support to the DAP8211R PHY driver =
+by
+> implementing the led_hw_is_supported(), led_hw_control_set(), and
+> led_hw_control_get() callbacks.
+>
+> > diff --git a/drivers/net/phy/dap8211r.c b/drivers/net/phy/dap8211r.c
+> > index 4eb50c26397fb..2e371c231d32c 100644
+> > --- a/drivers/net/phy/dap8211r.c
+> > +++ b/drivers/net/phy/dap8211r.c
+> [ ... ]
+> > @@ -57,6 +58,33 @@
+> >   */
+> >  #define DAP8211R_DEFAULT_DEL_SEL     0xD
+> >
+> > +#define DAP8211R_LED_ID_0            0
+> > +#define DAP8211R_LED_ID_1            1
+> > +#define DAP8211R_LED_ID_2            2
+> > +#define DAP8211R_LED_0                       0xA00C
+> > +#define DAP8211R_LED_1                       0xA00D
+> > +#define DAP8211R_LED_2                       0xA00E
 > > +#define DAP8211R_LED_ACT_BLINK               BIT(13)
 > > +#define DAP8211R_LED_FULL_DUPLEX     BIT(12)
 > > +#define DAP8211R_LED_HALF_DUPLEX     BIT(11)
@@ -134,39 +161,101 @@ On Fri, Nov 13, 2026 at 11:32=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
 > > +#define DAP8211R_LED_LINK_1000               BIT(6)
 > > +#define DAP8211R_LED_LINK_100                BIT(5)
 > > +#define DAP8211R_LED_LINK_10         BIT(4)
+> > +
+> > +#define DAP8211R_LED_LINK            (DAP8211R_LED_LINK_10   | \
+> > +                                     DAP8211R_LED_LINK_100   | \
+> > +                                     DAP8211R_LED_LINK_1000)
+> > +
+> > +#define DAP8211R_LED_SUPPORTED_TRG   (BIT(TRIGGER_NETDEV_LINK_10)    |=
+ \
+> > +                                     BIT(TRIGGER_NETDEV_LINK_100)    |=
+ \
+> > +                                     BIT(TRIGGER_NETDEV_LINK_1000)   |=
+ \
+> > +                                     BIT(TRIGGER_NETDEV_TX)          |=
+ \
+> > +                                     BIT(TRIGGER_NETDEV_RX)          |=
+ \
+> > +                                     BIT(TRIGGER_NETDEV_HALF_DUPLEX) |=
+ \
+> > +                                     BIT(TRIGGER_NETDEV_FULL_DUPLEX))
 >
-> Do any of these bits allow forced on/off?
+> [Severity: Medium]
+> Should DAP8211R_LED_SUPPORTED_TRG include BIT(TRIGGER_NETDEV_LINK)?
+>
+> Without it, dap8211r_led_hw_is_supported() returns -EOPNOTSUPP whenever
+> TRIGGER_NETDEV_LINK is requested, so enabling the netdev link trigger on =
+a
+> DAP8211R LED fails and the TRIGGER_NETDEV_LINK handling in
+> dap8211r_led_hw_control_set() is never reached.
 
-These bits only control the indication of connection status, speed,
-duplex mode, and activity.
+agreed
 
-The LED_COMCON register does include "force-on/force-off" bits,
-but i have intentionally chosen not to use them here.
-To be honest, i=E2=80=99m not yet convinced that they need to be added.
-
-In any case, if you think they are needed, i'll add them.
-
-> > +static int dap8211r_led_hw_is_supported(struct phy_device *phydev, u8 =
-index, unsigned long rules)
+>
+> > @@ -142,6 +170,156 @@ static int dap8211r_modify_ext(struct phy_device =
+*phydev, u16 reg, u16 mask, u16
+> [ ... ]
+> > +static int dap8211r_led_hw_control_set(struct phy_device *phydev, u8 i=
+ndex, unsigned long rules)
 > > +{
+> > +     u16 led_mode =3D 0, led_reg;
+> > +
 > > +     switch (index) {
 > > +     case DAP8211R_LED_ID_0:
-> > +             fallthrough;
-> > +     case DAP8211R_LED_ID_1:
-> > +             fallthrough;
-> > +     case DAP8211R_LED_ID_2:
+> > +             led_reg =3D DAP8211R_LED_0;
 > > +             break;
+> > +     case DAP8211R_LED_ID_1:
+> > +             led_reg =3D DAP8211R_LED_1;
+> > +             break;
+> > +     case DAP8211R_LED_ID_2:
+> > +             led_reg =3D DAP8211R_LED_2;
+> > +             break;
+> > +     default:
+> > +             return -EINVAL;
+> > +     }
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_LINK, &rules))
+> > +             led_mode |=3D DAP8211R_LED_LINK;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
+> > +             led_mode |=3D DAP8211R_LED_LINK_10;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
+> > +             led_mode |=3D DAP8211R_LED_LINK_100;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
+> > +             led_mode |=3D DAP8211R_LED_LINK_1000;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_RX, &rules))
+> > +             led_mode |=3D DAP8211R_LED_RX | DAP8211R_LED_ACT_BLINK;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_TX, &rules))
+> > +             led_mode |=3D DAP8211R_LED_TX | DAP8211R_LED_ACT_BLINK;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_HALF_DUPLEX, &rules))
+> > +             led_mode |=3D DAP8211R_LED_HALF_DUPLEX;
+> > +
+> > +     if (test_bit(TRIGGER_NETDEV_FULL_DUPLEX, &rules))
+> > +             led_mode |=3D DAP8211R_LED_FULL_DUPLEX;
+> > +
+> > +     if (!led_mode)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     return dap8211r_write_ext(phydev, led_reg, led_mode);
+> > +}
 >
-> You can collapse case statements, without fallthrough, if there is no
-> code.
+> [Severity: Medium]
+> Does returning -EOPNOTSUPP when led_mode is 0 leave the previous trigger =
+bits
+> enabled in the PHY register when all trigger rules are cleared?
 >
-> It is also possible to do:
->
-> case DAP8211R_LED_ID_0..DAP8211R_LED_ID_2:
+> When the last active netdev trigger rule is disabled (rules =3D=3D 0),
+> dap8211r_led_hw_is_supported() returns 0, so set_baseline_state() in
+> drivers/leds/trigger/ledtrig-netdev.c calls hw_control_set() with mode =
+=3D=3D 0
+> to turn off the hardware triggers.  Returning -EOPNOTSUPP here skips
+> dap8211r_write_ext(), leaving the old configuration active in led_reg.
 
-Agreed =3D)
+yeah, this check is no need and causes issues with rules =3D=3D 0 case.
 
-Thank you for your review.
-
-Best regards,
-artem
+I'll fix in v2. Thanks.
