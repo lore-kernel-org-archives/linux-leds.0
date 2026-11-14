@@ -1,56 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.227.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794678018;
-	b=G0TzL3ix/kbc57etFtayJhTxyCaaIeaUAE0NXvj/VvNRN0k7qD7/242J6hsabbh9UM1U
-	 QvfpyURNOQ+mHsk3IhfLNRE7KLh4+PL3/XJv31bic1In8AyMax0IE1YpTRlFgixm/owkj
-	 3gq35eXfhy5XgyM3WLCGrXRB6ISmhqbQ45Bdv6br2En0ET0SuwPrWNnZ0vEE1dzZ6fFA0
-	 HUqh3glXI3yRy//U00LKRa+ttuF4YqKaMtFJg+FnAC36Id90ezl1yRu1K8wXElllhGKOG
-	 BNZY3Co4XjjFJCz/aa5XavYENtfHr6v5i3h2xqWv21nRMAIpJxCYFTxCpVwDe35QRuQ==
+	t=1794678611;
+	b=oMdXbYZqDfbbrkUualnWdk2IcSTAvHiF2A6hh9cUnHJL+cUTHO7wL4KthN1e55J3EF7f
+	 Kcg5PPG25IfUB2fmQ9vyZArVCU1O2iDPZ3DvXpDiICzRtH+FgTKM+qEC0U1zoALe4hiU/
+	 vfKeFdnFlB3/vLjZlwVLvSs8dEr559OVY5sYftQKFCPaX64Y6pxcrmnhIlHHJihZ5DNtE
+	 LKFB5+oZUEFzAoDK7Wc/hWkf5rz3mtzFvoDwxtMyjC/o7mCJkKOdoJqlY3vW3fwC01kI3
+	 Y8bT8isJTvAMOvDQkIy3BwhV3A86wEsiTAO4HxHuYyzpNn1q6rrBkgbOhwj7pqEokpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794678018;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=sM3GW1AexIKtlERHr17ooXNtAnZUUAS+RHEopAND2Uc=;
-	b=1GeAI1pBTMkB0m3gaMkg/kTEbSWZK4IimvmtuEFRsyB3Wncd1b8O4ST1e+rWcwW2o46y
-	 lujLtyb4YVeNkM3HPxPXtdcLz1w/zrrgljM/dMhFaYzfBsWastvCE/aCaKHlSFMg4APXX
-	 5zkJtABhliK2WqNF6AuIsTOZNtegR2G8g5XjnRQZByJgzh1/P9s0bY7FWDFIdkz4rcsuQ
-	 KG+kHvo9ljztlmvtIHhGbvumlm3XN4Cj/X0rCRKSXlkDEQ1p9nqLyOK7aEQC0kBy6/HXy
-	 OXNi5SxxgB11vGxyIzQaqPCMFe1JBAigKjJaMXKV/ju+2SiBlS2Us/YkWBFlTVbesKA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794678611;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=EmcviWPYqTHYUpdenTWoXsDvHVqyudI3P29XUYf6ckM=;
+	b=qfAKXHbQMiwC6mI3GO8+f5CHDEaynV744bj6xbLgdZz/ADbah66IxAZAal3KJwCIpZ9X
+	 6HZbQGYAMXWMLorWVDa6FRPKav+D0bT59N+kHZ142uXN98X0sxTkgIvjVupBH0WotF3A8
+	 lKa2pJvfZQunY90d8bAhcCHr4g9SBmW2WsXuzyTL1SBp3dL5WNZToRRvaaq2XE9ziKHuU
+	 f+MVRH1CQU0jqk6BuGs5h0J31GalNoXl09JjO/bMUgfqf6HJ0fdSZ+xFfJrqoAwaqK0Qb
+	 dxQ0S8unMTpnt+om3wQQTVxH6is/xH0uGws5BnjS0f1oXNRL6D4p/xNUIPLTDrGJvOQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fbvwdPY2;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gkhylkuy;
+	arc=none smtp.remote-ip=74.125.227.137
+Received: from mail-pj2-f9.google.com (mail-pj2-f9.google.com [74.125.227.137])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AC0606A331
-	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 17:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089F2606A329
+	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 17:50:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 089F2606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fbvwdPY2
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA3C1F000C4;
-	Sat, 14 Nov 2026 17:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794678017;
-	bh=sM3GW1AexIKtlERHr17ooXNtAnZUUAS+RHEopAND2Uc=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=fbvwdPY2cw8tSD/8OzR9XQLA4GRN7MPLkmJjXN8J+1KWOEI7d/JzhvhRsTsCcbigf
-	 tikfm1Lg9oPg5Lz7bPDB/tssP4xDlCzB3PZPzv3iBwSFu2kFof0XBJLjnGnvX3rHFu
-	 OVLbVT36oVNW/XJIaAixR3zLewpm0gFnSXYsXvuur9QC50Q9U2lhZAc4l8Krib6I/H
-	 GTWqEdMhBhLBBXzdYXp0kVtO5Q/SQvessq17jeGhsItiOTfx3oI+1oTdcsmwRjKwyz
-	 Sxn4oA8DA9LXOCoGHtrTeipN0i59K/GpjBSuexGkdbKFF1gfmbO33vu84aR0DjLAc4
-	 4ZXsraO/OkNbw==
-Message-ID: <sashiko-outbox-214848@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2] leds: pca9532: Propagate I2C errors
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Daniil Demakov" <t3127430@gmail.com>, linux-leds@vger.kernel.org
-Cc: lee@kernel.org
-In-Reply-To: <20261114172431.11075-1-t3127430@gmail.com>
-References: <20261114141926.92737-1-t3127430@gmail.com>
- <20261114172431.11075-1-t3127430@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 17:40:17 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Gkhylkuy
+Received: by mail-pj2-f9.google.com with SMTP id 98e67ed59e1d1-3b196fefa1fso988269a91.1
+        for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 09:50:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794678610; x=1795283410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EmcviWPYqTHYUpdenTWoXsDvHVqyudI3P29XUYf6ckM=;
+        b=GkhylkuyhAEELYpG7D/hOS3gmTHFDpRRiCfGU6Xf/2klyAEtwynUhORjNycnuIwB5l
+         9QUSnrtp6OzNT+LJ4A3RgX9ZyTYvpGix9aH96FXR6x74C0TQhl5UufozqHJMr6rMGHpG
+         Vi5eAr5yeykrj7VtNYNWIGZhqO16Gx29YbsCmAIFQazS1VzMIuMeowsk1ft93A70lsDz
+         gy/RdYdJ/pvrB/coi/3+PCjEUw93AdyXAdfBq+t0Wukj1woGnDlqfDLQR5E2Vplp98GM
+         z/QOQJLCRXzQ3y4Xc0pj4iymT+xTxoV+76W7fkx9z0JyaV24+puoZ1Ex3lMnzKGUXS9z
+         RpGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794678610; x=1795283410;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EmcviWPYqTHYUpdenTWoXsDvHVqyudI3P29XUYf6ckM=;
+        b=FcinizziXX2YHyh/gPNfY22jeCEvl2m9IbEBt/f42gLY73rXkUD5hs6ZXLgdQLK2Xh
+         Nkzza8kwlFiWDLjIetEwmKCANUj1ambWTQXXSJD5WcgjaLttZmHq5JrBk41Q2hO53ByZ
+         GaDkN0w2nk+gRMcbw8x5lDWJNSXu6ICyZ0nFiZN7qM/rK+WBeWW+mUSWrGrgUxwcZtZF
+         Y6xPr0h1q15lTUaJDoAqq962e85HQUL00YFEWSAFe2aePemVoQDQu/WdSZpw5gcRPfpo
+         9OY4NdahxOgCxQ26XKm3B9G1e3HGilk3xIHO6KYoMWQ44dIqiuJiWxb1cXDJnWAJudUC
+         5rcg==
+X-Forwarded-Encrypted: i=1; AL+hErFmbaPdYTiwha0akuGHTE3ik0M8XMOAINAhz8VStfhL+rWHGawW1QUcVIb+XvA8cffB/pyTECgROTLH@vger.kernel.org
+X-Gm-Message-State: APuU4Z//NOORUckNbt3MLxsMv4XUIqtlRxq1aDG6OcmNYYarL3pux2tK
+	n0LJ5E0h8vDb98NKk5K7vhOXZhKorG5t1nSas7xqqgjE4wSN6FTo+eFf
+X-Gm-Gg: AYBFou2/dQoRzBeyWBdBhGKZtXGPKRHTiSaULz7n6/JQ3hNGQk1rLUDGCRmPhmbC6Di
+	QtDoKknSySQegc1+Y29/d0lSIyQ5jPBXrU1ci2xUMwnkYNT6Xq3KLZRJmeYGzjuIRnL0PFgmfgY
+	aqhmD4KxohPDPj/r4rjqtBVanZiuWHuo5ky7u5yW0eOxG12iiMHZTyy0ekzu60eABdljCFzYmrp
+	bzBZyTX0OI7DjnzntkjHd19UzjcQ6hd8gwhibH3gEkM9zMPAa7+45nvnRzUtRbqcJAfWzNS7W7V
+	u07mkdSMzY4EngWtLeUfoblGGB29juCNpAxjOptOoNFPBefC+A6CUSuRA3FqX61jUprXw5hxCxu
+	3vDy+QFjhef1fCLslKuqUQEEUc7oC2ha4zSVUokqQ8Y+jrGsNbto07HQRrgEF1P+9c+ZZ4YqVDa
+	/sNOyVUPWdESFh9C1kvGPg8h7Ho6sUC8rvehwpoDc51Mnu2FMGIxytD9AB177rHLr95jckf5uY4
+	NB2RMGBav951Hp+QnkHKIOmdQMdy5rqy5pmEfZNCH42J214x/5JB6pHos9eRc1xcF418wTBRY25
+	cRs9/fDQ+iEQMv2OR+yoe2gkq/8p
+X-Received: by 2002:a17:90b:3912:b0:3ac:9d83:8856 with SMTP id 98e67ed59e1d1-3b1b087c1b3mr6348390a91.9.1794678610160;
+        Sat, 14 Nov 2026 09:50:10 -0800 (PST)
+Received: from ThinkPad ([192.220.23.71])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b197c6c9c5sm14569383a91.1.2026.11.14.09.50.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Nov 2026 09:50:09 -0800 (PST)
+From: Qiling Zhu <kmatzkaczor244@gmail.com>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Rong Zhang <i@rong.moe>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Cc: Andrea Rabbaglietti <rabbagliettiandrea@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	vishnuocv@gmail.com,
+	vsankar@lenovo.com,
+	platform-driver-x86@vger.kernel.org,
+	ibm-acpi-devel@lists.sourceforge.net,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] platform/x86: thinkpad_acpi: Add support for auto keyboard backlight
+Date: Sun, 15 Nov 2026 01:48:07 +0800
+Message-ID: <20261114174814.62153-1-kmatzkaczor244@gmail.com>
+X-Mailer: git-send-email 2.56.1
+In-Reply-To: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
+References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,186 +109,124 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [Medium] leds: pca9532: u8 duty-cycle truncation in
-  pca9532_update_hw_blink()
-- [Medium] leds: pca9532: unlocked state updates and rollbacks outside
-  update_lock
-- [Low] leds: pca9532: LED registered before hardware init in
-  pca9532_configure()
---
+Hi all,
 
-commit 97438085718f3f15d211a12a646ef74e8799f047
-Author: Daniil Demakov <t3127430@gmail.com>
+Thanks, Rong, for the two rounds of detailed review, Vishnu and Mark
+for the firmware-side answers, and Andrea for the bug report that
+became the first patch. This v3 addresses the feedback in full; the
+series grew from two to seven patches to pick up the suggested
+structure and to make the fixes independently backportable.
 
-leds: pca9532: Propagate I2C errors
+The series in short:
 
-This commit checks SMBus read and write return values across LED, PWM,
-blink, GPIO, and initialization paths, and restores the previous LED state
-when I2C transfers fail.
+  1/7  Report auto mode as brightness 0 instead of 3          (stable fix)
+  2/7  Extract kbdlight_notify_change() helpers               (refactor)
+  3/7  Sync LED core state on level writes          (write-path sync)
+  4/7  Detect auto-mode capability via MLCG bit 20            (groundwork)
+  5/7  Skip LED suspend/resume on auto-mode machines
+  6/7  Add support for auto keyboard backlight                 (the feature)
+  7/7  Reconcile EC level on resume
 
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index c8085427696ff..0856c06657071 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
+Changes since v2, by comment:
 
-[ ... ]
+* The notification path is now split as suggested: a helper that accepts
+  a level and a wrapper that queries the EC (2/7), and the proc write
+  path goes through it (3/7), like commit 07f48f668fac did for the
+  ideapad FnLock LED. The manual check-then-act trigger removal is gone
+  entirely; leaving auto mode through either interface now drops the
+  trigger through the LED core.
 
-> @@ -223,17 +273,32 @@ static int pca9532_update_hw_blink(struct pca9532_l=
-ed *led,
->  		}
->  	}
-> =20
-> -	psc =3D ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-> -	if (psc > U8_MAX) {
-> -		/* Blink period too long to be handled by hardware */
-> +	if (delay_on > ULONG_MAX - delay_off)
-> +		return -EINVAL;
-> +
-> +	period =3D delay_on + delay_off;
-> +
-> +	if (!period)
-> +		return -EINVAL;
-> +
-> +	if (period > ((U8_MAX + 1) * 1000) /
-> +		     PCA9532_PWM_PERIOD_DIV) {
->  		return -EINVAL;
->  	}
-> =20
-> -	led->state =3D PCA9532_PWM1;
-> +	psc =3D (period * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-> +
->  	data->psc[PCA9532_PWM_ID_1] =3D psc;
-> -	data->pwm[PCA9532_PWM_ID_1] =3D (delay_on * PCA9532_PWM_DUTY_DIV) / (de=
-lay_on + delay_off);
-> +	data->pwm[PCA9532_PWM_ID_1] =3D
-> +		(delay_on * PCA9532_PWM_DUTY_DIV) / period;
+* LED suspend/resume is skipped entirely on machines that support auto
+  mode, keyed on the capability bit rather than the current level (5/7),
+  as suggested. My testing confirms the firmware restores the previous
+  level on its own in all cases except auto mode across hibernation;
+  less state remains in the driver, and the class of races around
+  LED_SUSPENDED disappears.
 
-[Severity: Medium]
-Does this truncate the duty cycle to 0 in u8 data->pwm[PCA9532_PWM_ID_1]
-when delay_off is 0?
+* activate() is now a one-liner with no read-back verification (6/7);
+  it only writes the level, using the plain set helper. I did not use
+  the updating wrapper there on purpose: the trigger core is in the
+  middle of its own activation flow at that point, and the 0x1012 event
+  that follows the level change is expected to bring the state back in
+  sync through the regular notify path.
 
-pca9532_set_blink() already replaces (0, 0) with (500, 500) and overflow
-is rejected above, so period is never 0 here and the !period check is
-unreachable.  When a caller such as delay_off_store() sets delay_off to 0
-with a non-zero delay_on, period equals delay_on and the quotient is
-PCA9532_PWM_DUTY_DIV (256), which wraps to 0 in u8 and turns the LED off
-instead of returning -EINVAL so led_set_software_blink() can handle a
-zero delay.  Conversely, when delay_on is 0 and delay_off > 0, this
-programs a 0% duty cycle and places the LED into PCA9532_PWM1, causing
-subsequent non-zero pca9532_set_brightness() calls to return early at
-led->state =3D=3D PCA9532_PWM1.
+* Trigger registration is gated on MLCG bit 20 as per Vishnu's
+  confirmation (4/7 + 6/7).
 
-Checking if (!delay_on || !delay_off) instead of if (!period) would reject
-both cases for software fallback.
+* Andrea's report is fixed by 1/7, which reports auto mode as 0 to the
+  LED classdev and is marked for stable. It is deliberately minimal -
+  a single check, no further splitting - to keep backporting easy.
 
-> +
-> +	ret =3D pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-> +	if (ret < 0)
-> +		return ret;
-> =20
-> -	return pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-> +	led->state =3D PCA9532_PWM1;
-> +
-> +	return 0;
->  }
-> =20
->  static int pca9532_set_blink(struct led_classdev *led_cdev,
-> @@ -242,6 +307,7 @@ static int pca9532_set_blink(struct led_classdev *led=
-_cdev,
->  	struct pca9532_led *led =3D ldev_to_led(led_cdev);
->  	struct i2c_client *client =3D led->client;
->  	struct pca9532_data *data =3D i2c_get_clientdata(client);
-> +	int old_state =3D led->state;
->  	int err;
-> =20
->  	if (!data->hw_blink)
-> @@ -257,16 +323,17 @@ static int pca9532_set_blink(struct led_classdev *l=
-ed_cdev,
->  	if (err)
->  		return err;
-> =20
-> -	pca9532_setled(led);
-> +	err =3D pca9532_setled(led);
-> +	if (err < 0)
-> +		led->state =3D old_state;
-> =20
-> -	return 0;
-> +	return err;
->  }
+* On the proc attribute deprecation: I support the idea, deferring to
+  the thinkpad_acpi maintainers.
 
-[Severity: Medium]
-Can updating and rolling back led->state and data->pwm[]/data->psc[]
-outside data->update_lock race across concurrent brightness, blink, and
-GPIO calls?
+One addition that was not in v2: testing showed that the firmware does
+not restore auto mode across hibernation - the EC comes back with the
+backlight off, without an event. Rather than re-attaching the trigger
+from the pre-suspend state, 7/7 simply re-reads the EC level on resume
+and routes it through the regular notification path. If the firmware
+exits auto mode across hibernation, the driver simply reflects the
+resulting EC state rather than restoring the previous mode: it stays
+out of the firmware's way and only synchronizes, which keeps the code
+simple. Happy to hear opinions.
 
-data->update_lock is only held inside the leaf helpers pca9532_setpwm()
-and pca9532_setled(), while pca9532_set_brightness(),
-pca9532_update_hw_blink(), pca9532_set_blink(), and
-pca9532_gpio_set_value() read old_state, mutate led->state and shared PWM
-parameters, sleep on I2C transfers, and write back old_state without the
-lock:
+A few notes on the result:
 
-CPU0                                  CPU1
-pca9532_set_brightness(led0)
-  old_state =3D led0->state
-  led0->state =3D PCA9532_PWM0
-  pca9532_setpwm()
-                                      pca9532_gpio_set_value(led0)
-                                        old_state =3D PCA9532_PWM0
-                                        led0->state =3D PCA9532_ON
-                                        pca9532_setled(led0)
-  pca9532_setled(led0) -> fails
-  led0->state =3D old_state  <-- clobbers CPU1's state
+* Writing a level through either interface now also emits
+  brightness_hw_changed: both write paths share the same notify helper,
+  which keeps the LED core and userspace listeners consistent with the
+  new level no matter which interface was used. Rewriting the current
+  level emits nothing, matching the firmware's own
+  no-event-on-same-level semantics. Extending the notification to
+  userspace-initiated changes seemed reasonable to me - the OSD then
+  also reflects echo-based changes - but I'm happy to restrict it to
+  hardware-initiated transitions if that is considered the better
+  semantics.
 
-Moving led->state =3D PCA9532_PWM1 to after the sleeping pca9532_setpwm()
-call in pca9532_update_hw_blink() also allows two concurrent
-pca9532_set_blink() calls on different LEDs with conflicting delays to
-both pass the other->state =3D=3D PCA9532_PWM1 check and overwrite
-data->psc[PCA9532_PWM_ID_1] and data->pwm[PCA9532_PWM_ID_1].  In addition,
-if pca9532_setled() fails in pca9532_set_brightness() or
-pca9532_set_blink(), restoring only led->state leaves data->pwm[],
-data->psc[], and the hardware PWM/PSC registers modified.
+* All state transitions now run under kbdlight_mutex in single
+  critical sections (query + reconcile, write + reconcile), with the
+  set and notify helpers expecting the caller to hold it. On the
+  ordering with the LED core's trigger_lock, my reasoning is that the
+  trigger callbacks (activate, hw_offloaded) are reached with
+  trigger_lock held and then take kbdlight_mutex, while the
+  notification helper is lock-free (it only queues the worker), so I
+  don't see a reverse nesting. Extra eyes on this are welcome.
 
-[ ... ]
+* The cached level is now the raw EC level including auto mode, so the
+  kbdlight_brightness name has drifted a bit from what it holds.
+  Renaming it would touch quite a few places; I left it as is for now
+  and can do the rename as a follow-up if preferred.
 
-> @@ -435,6 +531,7 @@ static int pca9532_configure(struct i2c_client *clien=
-t,
->  			led->ldev.brightness_set_blocking =3D
->  						pca9532_set_brightness;
->  			led->ldev.blink_set =3D pca9532_set_blink;
-> +
->  			err =3D led_classdev_register(&client->dev, &led->ldev);
->  			if (err < 0) {
->  				dev_err(&client->dev,
-> @@ -442,19 +539,35 @@ static int pca9532_configure(struct i2c_client *cli=
-ent,
->  					led->name);
->  				goto exit;
->  			}
-> -			pca9532_setled(led);
-> +
-> +			err =3D pca9532_setled(led);
-> +			if (err < 0) {
-> +				dev_err(&client->dev,
-> +					"couldn't set LED %s state\n",
-> +					led->name);
-> +				led_classdev_unregister(&led->ldev);
-> +				goto exit;
-> +			}
+One open question, mainly for Mark and Vishnu: the skip of LED
+suspend/resume assumes the firmware turns the backlight off on suspend
+and restores it on resume on all auto-mode capable machines, which is
+what I observed here for manual levels (suspend and hibernation), auto
+across suspend, and auto across hibernation coming back off. My belief
+is that most machines handle this fine, but more testing on other
+models or a look at the EC documentation from the Lenovo side would be
+needed to be sure; if an exception turns up, a DMI quirk could restore
+the old path for that machine.
 
-[Severity: Low]
-Should pca9532_setled() be called before led_classdev_register(), as
-PCA9532_TYPE_N2100_BEEP does below?
+Tested on my ThinkPad X1 Carbon Gen 14 (linux-next next-20261030).
 
-led_classdev_register() exposes sysfs attributes and activates
-default_trigger before pca9532_setled() writes the initial state, and if
-pca9532_setled() fails, led_classdev_unregister() calls
-led_set_brightness(LED_OFF) and flushes set_brightness_work, issuing a
-second pca9532_setled() transfer on the failing I2C device.
+I'm still learning the ways of upstream; thank you all for your time
+and reviews, and any further comments are most welcome.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114172431.1107=
-5-1-t3127430@gmail.com?part=3D1
+This series was developed with LLM assistance; I reviewed every design
+decision against the framework sources and validated the behavior on
+real hardware myself.
+
+Regards,
+Qiling Zhu
+
+Qiling Zhu (7):
+  platform/x86: thinkpad_acpi: Report auto keyboard backlight mode as off
+  platform/x86: thinkpad_acpi: Extract kbdlight_notify_change() helpers
+  platform/x86: thinkpad_acpi: Sync LED core state on level writes
+  platform/x86: thinkpad_acpi: Detect auto-mode capability via MLCG
+  platform/x86: thinkpad_acpi: Skip LED suspend/resume on auto-mode machines
+  platform/x86: thinkpad_acpi: Add support for auto keyboard backlight
+  platform/x86: thinkpad_acpi: Reconcile EC level on resume
