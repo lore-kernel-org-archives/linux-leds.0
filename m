@@ -1,58 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794679220;
-	b=JYXK/rUjpLIDTkFqewU5MyBg3ZOsQvQPgcVe8WyVS/Pdq9t8bcFei3ODiet5KuQbKAYa
-	 rNsp94GigtIheSK68RX4U/JARhK5Jvg/EOD7/GSYGpY0xpMppaf6X7f/nhbPLmMNWVc+u
-	 oUjJoWZSqdO8rRxXULXauGwdV9dc07fza+bfd7jXHqE3QYq25ACfZC7eK4WjOL+gwBJnh
-	 rNZYzt9bTgQ36nFlGL8eRtuQVM/naDU78ptk5aXBGS44t8VVZi/Bdl/YTL3E+lQfnBYcN
-	 PlU9mURdGSHD1ra1jiqAxYdWCwvRWEvJvR7yiXUcXRJkl2EkJuvKSllAb+3LMyiNSlg==
+	t=1794679379;
+	b=CelmYozaR2kCiaFdt996wP0R7zEI4VExctdD8ErkR87CdbHsxBz9qGMnimCajz3enXdz
+	 m19rsyLByzNOeT5BWdq6y+u2PfY2NmCL1p1bt7oIa4Z96OqYrPWkJR14846h6lVlwUggI
+	 5ZZl3oceVdV2+AJR2JKP3T2x6xLLqSZAaaZQDEOHJxXIWEZO8PC244cnmMIIjs9GsP3MT
+	 c6kCTj18SnOdBjscs0CRWf4/X1XRhrfuDC3mgaC9K8rgBypyLa7jyrt32ulLO2JbSiBzX
+	 lsIV5pl9mJn90OZYCs7RN8r+4Wl5j+Dm1Q41vG4j63p+qMr7jJDag8LQ+Vhj0TWZItg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794679220;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794679379;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=ARlFR/45+KtOteIRmg87KCvdzOBQDdgaKd3NalzQY0A=;
-	b=at1zpxr2woVDfYB67gv6Ae8VQIJFccE0wzpOuR8KedWwg//Rfcq70NewV1mlmzvskIrr
-	 Y0ZLviNWI4J7KaGLg9ktYA0m1T4ywhheoZR2y+GUGUJyn0SQ6NiVkquGDHt18j/PUO+jO
-	 +CxgNv/EvbHBlC1MbCa+akZfx3uirMjKzkCpOSuj5TWufpSy0mt4Hi5LK2M5op9NsiFxG
-	 KTyvm/UOR6ZLrFo+Up8ZGIV0UvPCQbrg8d/dvxdtJ/nWLGfMSuLu2dsMWNez0uFv0C/hW
-	 cf9Ju0qt6SEHYvu6p5o9r0X1HdtESK8T13DeXAL2KvxF3i15H690/WlR0V7HdgYatMA==
+	bh=RUfOJpnNls/r+XMOkiOpnwWHBUVirl+gc1rDRvZGpFw=;
+	b=sg5eT49FzgfllUasJzlxsXu9gSqI3kvlN7c0htDKzOT4HhI/uIKnOFw+yERn1YRviwPt
+	 pOpIzu4u9RhMub29mzrJUVcbpRUQ10yTVsextyp16S1oT+szS4q8ZxJOMtiMlBLmwwe/b
+	 W/yaqJRFLwpf9SShip8XnyXe1qeKzTDv/8EnxUwXPDVCyaY4yNh4kzCfbZPEgY+xfII+L
+	 t5ri/dgtfSF/frvbrc9tJ+qEgOkTL7yXwAmJJzKrx4tSkKrGkP8Vcwa46vUn8UndG+e1e
+	 CQzSwP/ak/vrw0TdJ2wqatgMY4vQgb9wnFQKlUFqZgYhlJBAFsA3SnOO3H4I/LzokMg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VzwQ9BJP;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YvFhL5AW;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FE7606A327
-	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 18:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2AC606A323
+	for <linux-leds@vger.kernel.org>; Sat, 14 Nov 2026 18:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VzwQ9BJP
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D1311F000C4;
-	Sat, 14 Nov 2026 18:00:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YvFhL5AW
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0CE1F000C4;
+	Sat, 14 Nov 2026 18:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794679219;
-	bh=ARlFR/45+KtOteIRmg87KCvdzOBQDdgaKd3NalzQY0A=;
+	s=k20260515; t=1794679378;
+	bh=RUfOJpnNls/r+XMOkiOpnwWHBUVirl+gc1rDRvZGpFw=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=VzwQ9BJPV+WTIGpraxJ5jpKbvSh1FdHXl+9PNp0TdTcwzRWBvgwO1vdQdwtCyz4gm
-	 +4SIzBxESYr3UF19gxXc3wwKn0VOBpRhYIR0r+GOhX0LVf5B93H4URMuxqrJW3JE+r
-	 fWDze2Mme/rcOYFBw6IrH/EGKdzrs8ktpfbOWKeIMwzycGwlveDlZ8lKcFtPM3Aq8Q
-	 pYs0Y59vxhK5yGA3RHrcCH1k3xcLYhmVdnTuqX7KLc4QIyiM0zNP+qhWI0HRpJFZeH
-	 FUh2KPoIfWtC++ljnhWamHiuvRo8VgO/8grVHXFViqW1Wht6VawxwzT4jyCLxj117B
-	 e+72pUgBfD6RA==
-Message-ID: <sashiko-outbox-214864@kernel.org>
+	b=YvFhL5AWeP3u4qffmKD7yG+wL9+pEsQ4wnLNnysxEZvf0zjTGAVgxku/vfaQcHrx9
+	 zeRoD7e108g8LhnjED6vW2BjsHA7wjW0APDp3GHS+5qTnefd1eLerV7fvKIt+Y8bt3
+	 Mml5tItshpRPe+Z5CVviQo9fZXXyJUWY5XxYk5XdtNPhIZmLofhcQNj7daSFMOUBjb
+	 VQr0OHNqjVMSD/cE2ULOyMBcH3YiwhyQRMjtlR283n+Ib/XwW/e5pejmbtmazTdFC7
+	 cSyuRrA8BwuZ3JEEIGcizMbtG1/LkQH09P67L689e6Djc3tgjvmQmeg2LfYMuvt7J6
+	 IzCIWGkpwU+hQ==
+Message-ID: <sashiko-outbox-214867@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 2/7] platform/x86: thinkpad_acpi: Extract
- kbdlight_notify_change() helpers
+Subject: Re: [PATCH v3 4/7] platform/x86: thinkpad_acpi: Detect auto-mode
+ capability via MLCG
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Qiling Zhu" <kmatzkaczor244@gmail.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261114174814.62153-3-kmatzkaczor244@gmail.com>
+In-Reply-To: <20261114174814.62153-5-kmatzkaczor244@gmail.com>
 References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
  <20261114174814.62153-1-kmatzkaczor244@gmail.com>
- <20261114174814.62153-3-kmatzkaczor244@gmail.com>
+ <20261114174814.62153-5-kmatzkaczor244@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 14 Nov 2026 18:00:19 +0000
+Date: Sat, 14 Nov 2026 18:02:57 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -62,23 +62,23 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> TP_HKEY_EV_KBD_LIGHT handling in tpacpi_driver_event() reads back the EC
-> level, updates the cached brightness and notifies the LED core inline.
-> Extract this block into separate kbdlight_notify_level() and
-> kbdlight_notify_change() helpers, in preparation for reusing the former
-> when writing a level through the proc interface in a subsequent change.
+> The upper bits of the MLCG return value carry capability information.
+> Bit 20 indicates whether the EC supports the auto mode of the keyboard
+> backlight (0 =3D manual levels only, 1 =3D auto mode available), as defin=
+ed
+> by the firmware.
 >=20
-> kbdlight_notify_level() expects the caller to hold kbdlight_mutex;
-> kbdlight_notify_change() queries the EC and notifies under the same
-> mutex, like the original inline code did.
+> Record it in tp_features.kbdlight_auto, in preparation for using it to
+> gate the auto-mode trigger registration and the LED suspend/resume
+> skipping in subsequent changes.
 >=20
-> No functional change intended.
->=20
+> Link: https://lore.kernel.org/r/CABxCQKuEP5wMSstO0MK1MhaqXTKrPhUSN3V2mrE_=
+42j4cXsXZQ@mail.gmail.com
 > Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261114174814.6215=
-3-1-kmatzkaczor244@gmail.com?part=3D2
+3-1-kmatzkaczor244@gmail.com?part=3D4
 
