@@ -1,53 +1,72 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.141.101.25
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794720436;
-	b=5RDrabMhTI9nNraPF6GYrz6edNMaFAO9lVTCx5gJX6V0aA07L6TFysRThg7E7NfLyCx7
-	 O+Fr5csdKBBiBz8OnMPcmnDKYuvWQ2MrYQy8rK4FlRpe1g2FPItCoYroq1RC0XusiGQ57
-	 owltTi2xr1GnXXY2XqMAB6KRecLa3dHHanoPwPNiuH6I1eCuzmCbpPgPPdFleBhwZXp4E
-	 e8nhnobYi8Sn53wkzsmr1GaeRFZIRXaf5ki/2UJS+FlFDvD6Lxjm0nOd6AbhT4iTklmrG
-	 pWFiD8GIZl98Uu9KdAkow+QeU5wo7L4iW1AjKMV8FR+n8LiXcFMF/wDzn7SMx4OfTMw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794720436;
-	h=DMARC-Filter:DKIM-Signature:Received:MIME-Version:Date:From:To:Cc:
-	 Subject:In-Reply-To:References:Message-ID:X-Sender:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=Pz2I1H+FFLdgKPcJQPNDy28vCVFHrdUmqgl/udqEkpw=;
-	b=3YlOxru8wYG8iWydKOs76HeC6wHzPNgNDqdHwGWbBMR8uKc9cYqN+V63FBSZdss0UoB2
-	 NoNe9JLeZkEDZvSVqQL3NDNAp2UOdARMSCKSrMA0rCbblXY2kak2R07eyg31D//KuIToE
-	 4Yyo5K2sqdd6iNWVXG0Z3qZl6hy+nLKXtxNLH9zZT1Pbe/DN1+PUtkMUoYFzH+bE0cWee
-	 ZbNVyRMuCB3JX8hH+t0DicNUhDba8sQIuVUDHx9ZqJXn6jU03vBePyCVTYQu73YHjnaAy
-	 J+v2gHglHnQidj0+OehcODHcDAR9fiXFfGCZE+uKGph6f1IL0C/A4TQ+FIfozhoO0PA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=trvn.ru;
-	spf=pass smtp.mailfrom=trvn.ru;
-	dkim=pass header.d=trvn.ru header.i=@trvn.ru header.a=rsa-sha256 header.s=mail header.b=Ov8GhGDA;
-	arc=none smtp.remote-ip=45.141.101.25
-Received: from box.trvn.ru (box.trvn.ru [45.141.101.25])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794729498;
+	b=WeGzt63SXz0P+ZumCWP1pFXp8ym681TNOso8AlQO5KynbQfmIgREnJ/wguutqdMOV3YZ
+	 EwW1Kult8O+vlpipM9AgGswdrwhLI4tQw9PDdA9gPsuOsxiRZJNJfLZOYIlTV0bC/lmwJ
+	 7Ea1yGmyH7j8/zAM2cK8d3z9Fwi9xxUekeBOcrJ4ztnjvxfJwpEFmWBxln3tkLZfw4SfN
+	 sxIuDIVDd/8Ef7O8CneuFFNNiI+2S68RCleQff4QZWC8M/Lwo+6Bn/8g+9F9Wl876BSjq
+	 90T2IWKc7iRK2w41Etv+uvM8cKvUNFO2WzjNuceFtrpLxCIH5IxoqKnj0EZFGKF3zYg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794729498;
+	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
+	 MIME-Version:User-Agent:X-ZohoMailClient;
+	bh=05IOe9HqJkWhqKvUBJVfU/SAL+xPCR/Byzx9O7+JrPI=;
+	b=TblDrCG36J7mvVd0o/cCUBva543HOPMIjSqi8ojwt2fq8sK1F4AtwX1ZJCGlsZS2U4yV
+	 de2VD6MvsHSf8dJ3fs0Dh+WS/DTY2GVizW7yufVRogtGbcC0gWi6PoSMEcoNpxNoRC1pK
+	 P+dmpK8ImUMN07tKLdqoSl7XVjH8btskxAkvtg0HojSgFQG334vNCzy1dVhurQaEH8VS2
+	 0Y702+aQCtk7wLr10o4h60dHWlATmhiJBr7BgfcGNS3KB9c0plCLArH6wcOQmYyVwzhpf
+	 iet+nZJeJcY5IcQVS9xF2llp6YHHP4xsxIL5iGUKO+IJWkGOJIfoQA+W8PaxkE/ypaA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=rong.moe;
+	spf=pass smtp.mailfrom=rong.moe;
+	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=nU6PyZVn;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED59B606A323;
-	Sun, 15 Nov 2026 05:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED59B606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB9B606A31D;
+	Sun, 15 Nov 2026 07:58:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BBB9B606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=trvn.ru header.i=@trvn.ru header.a=rsa-sha256 header.s=mail header.b=Ov8GhGDA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-	t=1794720425; bh=WTXTUdPtV6ViRvE0Ed+yjTNip3GcFyNhmMw9gGT4HGQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ov8GhGDAkfxGwh3WyIBHM6kCQKNgdKSd9HOS8EZJnRPvC3wPbCjwUOqDkPghyXyOH
-	 ZZW20BMjbM9xlXXs9UYTBKmwdKZM91Cxku7ojfaj8+7+irV+dpOxKmWb25at7QTOfx
-	 uUCRvKGZQr3oJ2hqMjdoSHfUNEh9+k5Ufo5xVBNn/OLyOsrA7Ra1DR8E5aqdK4Ggda
-	 SzjlQT7EGwnhxy151QGUxvm2ZfqaSObSDiryG9woE/tsBSLFRAzYXQx2o2fCr7phW1
-	 gsWaIkEfe8hF6PkSt2SJ480q/oPDLAvVmUtkiH8HnJVWHARdayWoN1FPK+h7NGgS/o
-	 sAJrTRLQqU30w==
-Received: from authenticated-user (box.trvn.ru [45.141.101.25])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by box.trvn.ru (Postfix) with ESMTPSA id B86C41E9D9;
-	Sun, 15 Nov 2026 10:27:05 +0500 (+05)
+	dkim=pass (2048-bit key, unprotected) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=nU6PyZVn
+ARC-Seal: i=1; a=rsa-sha256; t=1794729471; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XPA4K2S0K4QuFahjL33GNLMjMak11iOF+0O3K8CZzyVUxt63zy9FOfgQRgUJnlaMP2PsqjMkKnGgcnvw8lBU8MU4Jp79rfw6GHXAXELvkZd/Kxne3nKKQo72T/fK/X8xPu4Ec3vGaoBqboYP/JTD1vuqy0wtiNiOgO4+BuaJVF0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1794729471; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=05IOe9HqJkWhqKvUBJVfU/SAL+xPCR/Byzx9O7+JrPI=; 
+	b=b8vkkqmjt9GPNV3u/hMyltOfymeSXgcfyMjj50ofBBdOwHichO+29yWNFb8MCPjYFXF/rIEkII4/Zx78SUUqaPfSg/RnFx/iTwcOkqVE91J2OCEYhTqfuJPPLxWdqZMnUqRSpzxuC75HXVBaGsh/12Rw1OvCWTS+sRGEO8zpu4U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: a=rsa-sha256; b=nU6PyZVnjwX2D9OAqkeq7xjUUrh0RJSnsJuLLguBdBZwkMqI7put65BfMZ5iw3DaAu1/Kny0M/z/Mq+weG1QIFAIuV/N5LaYfshAvFOEwaq7cNnyp+X9XzUwbg3YKf3544bYjFbWNyMOJ63XX0CGT5JDBZoj9RVet7KdGfDjuwnH5HNT8jlnR77ypJKy0UV0q+AKAcN0fn/l4G/EUFTXsHsxcLT+rjY8d9S9oclBpZBhm4fSbUBTrl2d9qNSKcgC1uQ1YKvIsTzUDGaE0pu31HIQTTVkRv5G2xGZ9Jg9nEo0U5ErRgRKS8RxdC6qYLg91Hz7y1w70+JHlP78vRlTqg==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=05IOe9HqJkWhqKvUBJVfU/SAL+xPCR/Byzx9O7+JrPI=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zohomail.com with SMTPS id 1794729468897515.208258334714;
+	Sat, 14 Nov 2026 23:57:48 -0800 (PST)
+Message-ID: <230263171c25c322d97fa29439a01922db47f913.camel@rong.moe>
+Subject: Re: [PATCH v3 0/7] platform/x86: thinkpad_acpi: Add support for
+ auto keyboard backlight
+From: Rong Zhang <i@rong.moe>
+To: Qiling Zhu <kmatzkaczor244@gmail.com>, Mark Pearson	
+ <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
+ Hans de Goede <hansg@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,  Henrique de Moraes Holschuh	
+ <hmh@hmh.eng.br>
+Cc: Andrea Rabbaglietti <rabbagliettiandrea@gmail.com>, Lee Jones
+	 <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Griffin Kroah-Hartman
+	 <griffin@kroah.com>, vishnuocv@gmail.com, vsankar@lenovo.com, 
+	platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20261114174814.62153-1-kmatzkaczor244@gmail.com>
+References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
+	 <20261114174814.62153-1-kmatzkaczor244@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 15 Nov 2026 15:52:36 +0800
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -57,406 +76,158 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Date: Sun, 15 Nov 2026 10:27:05 +0500
-From: Nikita Travkin <nikita@trvn.ru>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>, Alexey Min
- <alexeymin@minlexx.ru>, David Heidelberg <david@ixit.cz>, Griffin
- Kroah-Hartman <griffin@kroah.com>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v7 4/4] leds: aw2013: Add AW2027 support
-In-Reply-To: <20261114-aw2013-aw20xx-rename-v7-4-ea5a3113a479@postmarketos.org>
-References: <20261114-aw2013-aw20xx-rename-v7-0-ea5a3113a479@postmarketos.org>
- <20261114-aw2013-aw20xx-rename-v7-4-ea5a3113a479@postmarketos.org>
-Message-ID: <63a6e2eb3f676dbaf2ebfe5d905fbc4e@trvn.ru>
-X-Sender: nikita@trvn.ru
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Evolution 3.62.1-3 
+X-ZohoMailClient: External
 
-Paul Sajna писал(а) 15.11.2026 03:55:
-> The AW2027 is basically the same as the AW2013.
-> 
-> It differs in:
-> - the max current (30mA rather than 15)
-> - the number of current levels for colour-mixing (16 rather than 4)
-> - the supply voltage max
-> - the charge indicator (unsupported by our driver at this time)
-> 
-> The max current register (imax) also moves from LCFG to GCR2, and the
-> selectable current levels for colour-mixing (LCFG_CUR) take their place.
-> 
-> The current driver implementation provided here sets the global imax to
-> it's maximum, and scales each led to the closest value using the local
-> imax. It's the best result achievable short of adding custom sysfs
-> entries and mucking up the linux interfaces.
-> 
-> Comparison of all AW20XX chips https://www.awinic.com/en/productCompareList?id=47&ids=1022,74,96,75,72,71,928,927,73,76,578
-> AW2027 datasheet: https://doc.awinic.com/doc/202507/77b87097-27bf-48cd-af9b-9b615064c1e1.pdf
-> Vendor driver: https://www.awinic.com/en/driver/AW2027DNR/454
-> 
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+Hi Qiling,
 
-See some nits below, but regardless,
+Thanks for working on this.
 
-Reviewed-by: Nikita Travkin <nikita@trvn.ru>
+On Sun, 2026-11-15 at 01:48 +0800, Qiling Zhu wrote:
+> Hi all,
+>=20
+> Thanks, Rong, for the two rounds of detailed review, Vishnu and Mark
+> for the firmware-side answers, and Andrea for the bug report that
+> became the first patch. This v3 addresses the feedback in full; the
+> series grew from two to seven patches to pick up the suggested
+> structure and to make the fixes independently backportable.
 
-> ---
->  drivers/leds/leds-aw2013.c | 206 ++++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 175 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
-> index 7fe7e9dae903..f62f977e2bfe 100644
-> --- a/drivers/leds/leds-aw2013.c
-> +++ b/drivers/leds/leds-aw2013.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0+
-> -// Driver for Awinic AW2013 3-channel LED driver
-> +// Driver for Awinic AW20XX 3-channel LED drivers
->  
->  #include <linux/i2c.h>
->  #include <linux/leds.h>
-> @@ -20,13 +20,15 @@
->  #define AW2013_GCR 0x01
->  #define AW2013_GCR_ENABLE BIT(0)
->  
-> +#define AW20XX_GCR2 0x04
-> +
->  /* LED channel enable register */
->  #define AW2013_LCTR 0x30
->  #define AW2013_LCTR_LE(x) BIT((x))
->  
->  /* LED channel control registers */
->  #define AW2013_LCFG(x) (0x31 + (x))
-> -#define AW2013_LCFG_IMAX_MASK (BIT(0) | BIT(1)) // Should be 0-3
-> +#define AW2013_IMAX_MASK (BIT(0) | BIT(1)) // Should be 0-3
->  #define AW2013_LCFG_MD BIT(4)
->  #define AW2013_LCFG_FI BIT(5)
->  #define AW2013_LCFG_FO BIT(6)
-> @@ -51,6 +53,16 @@
->  
->  #define AW2013_TIME_STEP 130 /* ms */
->  
-> +/* AW2027-specific defines */
-> +#define AW2016_23_27_33_CHIPID 0x09 /* vendor shared same chipid between several chips */
-> +#define AW2027_REG_MAX 0x7f /* copied from vendor driver, but only up to 0x3F is documented */
-> +#define AW2027_LOCAL_IMAX_MASK GENMASK(3, 0)
-> +
-> +#define AW2027_GLOBAL_IMAX_15MA 0
-> +#define AW2027_GLOBAL_IMAX_30MA 1
-> +#define AW2027_GLOBAL_IMAX_5MA  2
-> +#define AW2027_GLOBAL_IMAX_10MA 3
-> +
->  struct aw2013;
->  
->  struct aw2013_led {
-> @@ -60,16 +72,88 @@ struct aw2013_led {
->  	unsigned int imax;
->  };
->  
-> +struct aw2013_chipdef {
-> +	u8 chip_id;
-> +	const struct regmap_config *regmap_cfg;
-> +	u32 default_imax;
-> +	bool gcr2_imax;
-> +	unsigned int current_levels;
-> +	unsigned int current_max_ua;
-> +};
-> +
->  struct aw2013 {
->  	struct mutex mutex; /* held when writing to registers */
->  	struct regulator_bulk_data regulators[2];
->  	struct i2c_client *client;
->  	struct aw2013_led leds[AW2013_MAX_LEDS];
->  	struct regmap *regmap;
-> +	const struct aw2013_chipdef *cdef;
->  	int num_leds;
->  	bool enabled;
->  };
->  
-> +static const struct regmap_config aw2013_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = AW2013_REG_MAX,
-> +};
-> +
-> +static const struct regmap_config aw2027_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = AW2027_REG_MAX,
-> +};
-> +
-> +static const struct aw2013_chipdef aw2013_chipdef = {
-> +	.chip_id = AW2013_RSTR_CHIP_ID,
-> +	.regmap_cfg = &aw2013_regmap_config,
-> +	.default_imax = 1, /* 5mA */
-> +	.gcr2_imax = false,
-> +	.current_levels = 4,
-> +	.current_max_ua = 15000,
-> +};
-> +
-> +static const struct aw2013_chipdef aw2027_chipdef = {
-> +	.chip_id = AW2016_23_27_33_CHIPID,
-> +	.regmap_cfg = &aw2027_regmap_config,
-> +	.default_imax = 3, /* 6mA */
-> +	.gcr2_imax = true,
-> +	.current_levels = 16,
-> +	.current_max_ua = 30000,
-> +};
-> +
-> +/**
-> + * aw2013_microamp_to_imax() - Finds the closest current step to the given microamp
-> + * @microamp: Desired current in microamps
-> + * @cdef: Chip definition
-> + *
-> + * Return: The closest current-step to the given microamp, rounded down
-> + * and limited by the max current step possible for the chip.
-> + */
-> +static inline u32 aw2013_microamp_to_imax(u32 microamp, const struct aw2013_chipdef *cdef)
-> +{
-> +	u32 max_current_step = cdef->current_levels - 1;
-> +	u32 closest_current_step_floor = (microamp * max_current_step) / cdef->current_max_ua;
-> +
-> +	return min_t(u32, closest_current_step_floor, max_current_step);
-> +}
-> +
-> +static int aw2027_set_global_imax(struct aw2013 *chip)
-> +{
-> +	return regmap_update_bits(chip->regmap,
-> +				 AW20XX_GCR2,
-> +				 AW2013_IMAX_MASK,
-> +				 AW2027_GLOBAL_IMAX_30MA);
-> +}
-> +
-> +static int aw2027_set_local_imax(struct aw2013 *chip, struct aw2013_led *led, u32 imax)
-> +{
-> +	return regmap_update_bits(chip->regmap,
-> +				 AW2013_LCFG(led->num),
-> +				 AW2027_LOCAL_IMAX_MASK,
-> +				 imax);
-> +}
-> +
->  static int aw2013_chip_init(struct aw2013 *chip)
->  {
->  	int ret;
-> @@ -81,17 +165,47 @@ static int aw2013_chip_init(struct aw2013 *chip)
->  		return ret;
->  	}
->  
-> -	for (int i = 0; i < chip->num_leds; i++) {
-> -		ret = regmap_update_bits(chip->regmap,
-> -					 AW2013_LCFG(chip->leds[i].num),
-> -					 AW2013_LCFG_IMAX_MASK,
-> -					 chip->leds[i].imax);
-> +	if (chip->cdef->gcr2_imax) {
-> +		/*
-> +		 * AW2027 supports 4-step global imax, and also a 16-step control for limiting
-> +		 * individual current per LED. This doesn't map to the single value the
-> +		 * devicetree provides super well, so set global imax to maximum, and
-> +		 * local imax to whatever gets us closest to the value in the devicetree.
-> +		 */
-> +		ret = aw2027_set_global_imax(chip);
+The next time when you send a series (i.e., PATCH x/n, n > 1), please do
+not reply to the previous thread to keep it tidy.
 
-Following Lee's point (that sashiko has reiterated on this revision too),
-perhaps you could move if/else branch into aw20xx_set_imax()? and then
-get rid of if/else here and down in probe_dt()?
+>=20
+> The series in short:
+>=20
+>   1/7  Report auto mode as brightness 0 instead of 3          (stable fix=
+)
+>   2/7  Extract kbdlight_notify_change() helpers               (refactor)
+>   3/7  Sync LED core state on level writes          (write-path sync)
+>   4/7  Detect auto-mode capability via MLCG bit 20            (groundwork=
+)
+>   5/7  Skip LED suspend/resume on auto-mode machines
+>   6/7  Add support for auto keyboard backlight                 (the featu=
+re)
+>   7/7  Reconcile EC level on resume
+>=20
+> Changes since v2, by comment:
+>=20
+> * The notification path is now split as suggested: a helper that accepts
+>   a level and a wrapper that queries the EC (2/7), and the proc write
+>   path goes through it (3/7), like commit 07f48f668fac did for the
+>   ideapad FnLock LED. The manual check-then-act trigger removal is gone
+>   entirely; leaving auto mode through either interface now drops the
+>   trigger through the LED core.
+>=20
+> * LED suspend/resume is skipped entirely on machines that support auto
+>   mode, keyed on the capability bit rather than the current level (5/7),
+>   as suggested. My testing confirms the firmware restores the previous
+>   level on its own in all cases except auto mode across hibernation;
+>   less state remains in the driver, and the class of races around
+>   LED_SUSPENDED disappears.
+>=20
+> * activate() is now a one-liner with no read-back verification (6/7);
+>   it only writes the level, using the plain set helper. I did not use
+>   the updating wrapper there on purpose: the trigger core is in the
+>   middle of its own activation flow at that point, and the 0x1012 event
+>   that follows the level change is expected to bring the state back in
+>   sync through the regular notify path.
+>=20
+> * Trigger registration is gated on MLCG bit 20 as per Vishnu's
+>   confirmation (4/7 + 6/7).
+>=20
+> * Andrea's report is fixed by 1/7, which reports auto mode as 0 to the
+>   LED classdev and is marked for stable. It is deliberately minimal -
+>   a single check, no further splitting - to keep backporting easy.
+>=20
+> * On the proc attribute deprecation: I support the idea, deferring to
+>   the thinkpad_acpi maintainers.
+>=20
+> One addition that was not in v2: testing showed that the firmware does
+> not restore auto mode across hibernation
+>=20
 
->  		if (ret) {
->  			dev_err(&chip->client->dev,
-> -				"Failed to set maximum current for led %d: %d\n",
-> -				chip->leds[i].num, ret);
-> +				"Failed to set maximum global current: %d\n",
-> +				ret);
->  			return ret;
->  		}
-> +		/*
-> +		 * This still needs to be here despite also being in aw2013_probe_dt,
-> +		 * for cases where chip is disabled and re-enabled.
-> +		 */
+How about s2idle? And what if hw brightness =3D [0,2] before hibernation?
 
-nit: I'm not sure this comment adds value TBH
+Meanwhile, could you test s2idle, hibernation and cold boots with
+thinkpad_acpi blacklisted to see if hw brightness ([0,2] and 3) is
+preserved? We need the raw behavior to determine our strategy.
 
-Thanks for taking your time to improve this driver!
-Nikita
+>  - the EC comes back with the
+> backlight off, without an event. Rather than re-attaching the trigger
+> from the pre-suspend state,=C2=A0
+>=20
 
-> +		for (int i = 0; i < chip->num_leds; i++) {
-> +			ret = aw2027_set_local_imax(chip, &chip->leds[i], chip->leds[i].imax);
-> +			if (ret) {
-> +				dev_err(&chip->client->dev,
-> +					"Failed to set maximum current for led %d: %d\n",
-> +					chip->leds[i].num, ret);
-> +				return ret;
-> +			}
-> +		}
-> +	} else {
-> +		/* AW2013 only supports 4-step individual current per LED */
-> +		for (int i = 0; i < chip->num_leds; i++) {
-> +			ret = regmap_update_bits(chip->regmap,
-> +						 AW2013_LCFG(chip->leds[i].num),
-> +						 AW2013_IMAX_MASK,
-> +						 chip->leds[i].imax);
-> +			if (ret) {
-> +				dev_err(&chip->client->dev,
-> +					"Failed to set maximum current for led %d: %d\n",
-> +					chip->leds[i].num, ret);
-> +				return ret;
-> +			}
-> +		}
->  	}
->  
->  	return ret;
-> @@ -291,9 +405,9 @@ static int aw2013_probe_dt(struct aw2013 *chip)
->  		init_data.fwnode = of_fwnode_handle(child);
->  
->  		if (!of_property_read_u32(child, "led-max-microamp", &imax)) {
-> -			led->imax = min_t(u32, imax / 5000, 3);
-> +			led->imax = aw2013_microamp_to_imax(imax, chip->cdef);
->  		} else {
-> -			led->imax = 1; // 5mA
-> +			led->imax = chip->cdef->default_imax;
->  			dev_info(&chip->client->dev,
->  				 "DT property led-max-microamp is missing\n");
->  		}
-> @@ -303,14 +417,30 @@ static int aw2013_probe_dt(struct aw2013 *chip)
->  
->  		mutex_lock(&chip->mutex);
->  		chip->num_leds = ++i;
-> -		if (chip->enabled) {
-> +		/*
-> +		 * needs to be here and in aw2013_chip_init because chip->num_leds increments
-> +		 * just above here while we're parsing the devicetree, and chip->enabled
-> +		 * ensures chip_init runs as little as possible.
-> +		 * Requires this function to have regulators enabled.
-> +		 */
-> +		if (chip->cdef->gcr2_imax) {
-> +			ret = aw2027_set_local_imax(chip, led, led->imax);
-> +			if (ret) {
-> +				mutex_unlock(&chip->mutex);
-> +				return dev_err_probe(&chip->client->dev, ret,
-> +						     "Failed to set maximum current for led %d\n",
-> +						     led->num);
-> +			}
-> +		} else {
->  			ret = regmap_update_bits(chip->regmap,
->  						 AW2013_LCFG(led->num),
-> -						 AW2013_LCFG_IMAX_MASK,
-> +						 AW2013_IMAX_MASK,
->  						 led->imax);
->  			if (ret) {
->  				mutex_unlock(&chip->mutex);
-> -				return ret;
-> +				return dev_err_probe(&chip->client->dev, ret,
-> +						     "Failed to set maximum current for led %d\n",
-> +						     led->num);
->  			}
->  		}
->  		mutex_unlock(&chip->mutex);
-> @@ -332,18 +462,18 @@ static void aw2013_chip_disable_action(void *data)
->  	aw2013_chip_disable(data);
->  }
->  
-> -static const struct regmap_config aw2013_regmap_config = {
-> -	.reg_bits = 8,
-> -	.val_bits = 8,
-> -	.max_register = AW2013_REG_MAX,
-> -};
->  
->  static int aw2013_probe(struct i2c_client *client)
->  {
->  	struct aw2013 *chip;
-> +	const struct aw2013_chipdef *cdef;
->  	int ret;
->  	unsigned int chipid;
->  
-> +	cdef = device_get_match_data(&client->dev);
-> +	if (!cdef)
-> +		return -ENODEV;
-> +
->  	chip = devm_kzalloc_obj(&client->dev, *chip);
->  	if (!chip)
->  		return -ENOMEM;
-> @@ -355,9 +485,10 @@ static int aw2013_probe(struct i2c_client *client)
->  	mutex_lock(&chip->mutex);
->  
->  	chip->client = client;
-> +	chip->cdef = cdef;
->  	i2c_set_clientdata(client, chip);
->  
-> -	chip->regmap = devm_regmap_init_i2c(client, &aw2013_regmap_config);
-> +	chip->regmap = devm_regmap_init_i2c(client, chip->cdef->regmap_cfg);
->  	if (IS_ERR(chip->regmap)) {
->  		ret = dev_err_probe(&client->dev, PTR_ERR(chip->regmap),
->  				    "Failed to allocate register map\n");
-> @@ -390,7 +521,7 @@ static int aw2013_probe(struct i2c_client *client)
->  		goto error_reg;
->  	}
->  
-> -	if (chipid != AW2013_RSTR_CHIP_ID) {
-> +	if (chipid != chip->cdef->chip_id) {
->  		ret = dev_err_probe(&client->dev, -ENODEV,
->  				    "Chip reported wrong ID: %x\n",
->  				     chipid);
-> @@ -403,21 +534,28 @@ static int aw2013_probe(struct i2c_client *client)
->  		goto error_reg;
->  	}
->  
-> +	mutex_unlock(&chip->mutex);
-> +
-> +	ret = devm_add_action(&client->dev, aw2013_chip_disable_action, chip);
-> +	if (ret)
-> +		goto error_reg_no_mutex;
-> +
-> +	ret = aw2013_probe_dt(chip);
-> +	if (ret) {
-> +		dev_err_probe(&client->dev, ret,
-> +			      "Failed to parse devicetree\n");
-> +		goto error_reg_no_mutex;
-> +	}
-> +
->  	ret = regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
->  				     chip->regulators);
->  	if (ret) {
->  		dev_err_probe(&client->dev, ret,
->  			      "Failed to disable regulators\n");
-> -		goto error;
-> -	}
-> -
-> -	mutex_unlock(&chip->mutex);
-> -
-> -	ret = devm_add_action(&client->dev, aw2013_chip_disable_action, chip);
-> -	if (ret)
->  		return ret;
-> +	}
->  
-> -	return aw2013_probe_dt(chip);
-> +	return 0;
->  
->  error_reg:
->  	regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
-> @@ -426,10 +564,16 @@ static int aw2013_probe(struct i2c_client *client)
->  error:
->  	mutex_unlock(&chip->mutex);
->  	return ret;
-> +
-> +error_reg_no_mutex:
-> +	regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
-> +			       chip->regulators);
-> +	return ret;
->  }
->  
->  static const struct of_device_id aw2013_match_table[] = {
-> -	{ .compatible = "awinic,aw2013", },
-> +	{ .compatible = "awinic,aw2013", .data = &aw2013_chipdef },
-> +	{ .compatible = "awinic,aw2027", .data = &aw2027_chipdef },
->  	{ /* sentinel */ },
->  };
->  
-> @@ -446,5 +590,5 @@ static struct i2c_driver aw2013_driver = {
->  module_i2c_driver(aw2013_driver);
->  
->  MODULE_AUTHOR("Nikita Travkin <nikitos.tr@gmail.com>");
-> -MODULE_DESCRIPTION("AW2013 LED driver");
-> +MODULE_DESCRIPTION("AW20XX LED driver");
->  MODULE_LICENSE("GPL v2");
+"re-attaching"
+
+I am not familiar with hibernation, so I am not sure if the LED core
+would detach the trigger before entering hibernation. If not, why did you
+say that?
+
+Thanks,
+Rong
+
+> 7/7 simply re-reads the EC level on resume
+> and routes it through the regular notification path. If the firmware
+> exits auto mode across hibernation, the driver simply reflects the
+> resulting EC state rather than restoring the previous mode: it stays
+> out of the firmware's way and only synchronizes, which keeps the code
+> simple. Happy to hear opinions.
+>=20
+> A few notes on the result:
+>=20
+> * Writing a level through either interface now also emits
+>   brightness_hw_changed: both write paths share the same notify helper,
+>   which keeps the LED core and userspace listeners consistent with the
+>   new level no matter which interface was used. Rewriting the current
+>   level emits nothing, matching the firmware's own
+>   no-event-on-same-level semantics. Extending the notification to
+>   userspace-initiated changes seemed reasonable to me - the OSD then
+>   also reflects echo-based changes - but I'm happy to restrict it to
+>   hardware-initiated transitions if that is considered the better
+>   semantics.
+>=20
+> * All state transitions now run under kbdlight_mutex in single
+>   critical sections (query + reconcile, write + reconcile), with the
+>   set and notify helpers expecting the caller to hold it. On the
+>   ordering with the LED core's trigger_lock, my reasoning is that the
+>   trigger callbacks (activate, hw_offloaded) are reached with
+>   trigger_lock held and then take kbdlight_mutex, while the
+>   notification helper is lock-free (it only queues the worker), so I
+>   don't see a reverse nesting. Extra eyes on this are welcome.
+>=20
+> * The cached level is now the raw EC level including auto mode, so the
+>   kbdlight_brightness name has drifted a bit from what it holds.
+>   Renaming it would touch quite a few places; I left it as is for now
+>   and can do the rename as a follow-up if preferred.
+>=20
+> One open question, mainly for Mark and Vishnu: the skip of LED
+> suspend/resume assumes the firmware turns the backlight off on suspend
+> and restores it on resume on all auto-mode capable machines, which is
+> what I observed here for manual levels (suspend and hibernation), auto
+> across suspend, and auto across hibernation coming back off. My belief
+> is that most machines handle this fine, but more testing on other
+> models or a look at the EC documentation from the Lenovo side would be
+> needed to be sure; if an exception turns up, a DMI quirk could restore
+> the old path for that machine.
+>=20
+> Tested on my ThinkPad X1 Carbon Gen 14 (linux-next next-20261030).
+>=20
+> I'm still learning the ways of upstream; thank you all for your time
+> and reviews, and any further comments are most welcome.
+>=20
+> This series was developed with LLM assistance; I reviewed every design
+> decision against the framework sources and validated the behavior on
+> real hardware myself.
+>=20
+> Regards,
+> Qiling Zhu
+>=20
+> Qiling Zhu (7):
+>   platform/x86: thinkpad_acpi: Report auto keyboard backlight mode as off
+>   platform/x86: thinkpad_acpi: Extract kbdlight_notify_change() helpers
+>   platform/x86: thinkpad_acpi: Sync LED core state on level writes
+>   platform/x86: thinkpad_acpi: Detect auto-mode capability via MLCG
+>   platform/x86: thinkpad_acpi: Skip LED suspend/resume on auto-mode machi=
+nes
+>   platform/x86: thinkpad_acpi: Add support for auto keyboard backlight
+>   platform/x86: thinkpad_acpi: Reconcile EC level on resume
