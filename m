@@ -1,110 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.150
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794779903;
-	b=VRkOA7FHDMluRLWtsdD9SGO9mVvAVQNUk06vLWLiha0eTH71Aw++p9RcYRrG/20OgSYS
-	 sVW1GDW/0YxgASCOmj/kmgMtvwEHWHEFc7hmKAZ5whCh/hNluo7q4I19+67Cx1Imda+AB
-	 Sg0uNgTtuWaiL3lmlDOOMv4CGVB4H4Adp6SPoZ4uh/nKCZrGsBtoPZUwYOSzw5hfiV7wo
-	 pejXEc82LruXgbTAsULjtsZvIn5eoiSmg05q383md+7TKEeFO9QKv/1f7n3KHnu9wKC3Y
-	 sHi3vfMsayU7QC/n5i9GOaVByUfSwDAbb8SayUCjlwo4/znu92NkxHO6cQlP4f0ngyA==
+	t=1794780439;
+	b=xcCD1TgRXiuNbosCMpO7BgVECnUBI2RYMAbzQUON/8DsMAxHgFdjFP3+a2zb0XAD3tqp
+	 HiJ94KVdcsl0bgKlx9sUDinwqXsaftLjOuEnWOKZKIrXObtp6Al2Qg2hGqd9iduHHxrgs
+	 pw2+kKL7fMLm0HQJplIW03nXltLfhgVxovJyDIY6KX+myBZNb2vT3vliUX8wCE8Gip6vj
+	 w7QhFtiYSP/5UWiqFFYYve76T6ylUT27AwJ5fJhm5b6DanIRv+Ln++2Tdcba8QZZ1H6db
+	 VCJSZWdajLM6C6yRwfyXcUIEoQ7vUdt4cEPUwNrqDESn6bSCIzEGoMqhu35AfWNmSmA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794779903;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794780439;
 	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
 	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
 	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
 	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
 	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=omemX1lEWnfDDXO42qPUhNXOBFAKGZAy0xUrDaXsUY8=;
-	b=448PJPfN432hEkmA00K9DnxSqeaseriiNunkwPkTzjgYR3nZipaO1C3a/1c4U/KQZzOT
-	 UQxDKSQ7M/g+Jm8trIjvg1+SClYJTHl5VoTzH5VwPFpTI8AKYkOvLPZrIlhXA6gUAy9Mm
-	 Dyt3EWex9OCbPa7k8ziAxiO7jEoP4QqxkZEgC4XmFHHU5uddqurNcPlm1taGyZQVyPrRB
-	 lis6oRl8uwsICFE49Xt5N785U74/cPAt7EHkNeriw7m+cTUNZXKd/VhFZ5P8IlphZiJdR
-	 m94K1V/NGXinr+YxBXs8ug6PhiZ5JX0D0J2TBv1Y48iYElH0O0SiVR4jLNLLRwPfveA==
+	bh=5W01Jex11VQtppQbL033Zph4yYpJZEMJCMwbW5eknkA=;
+	b=rOV5iDuSkGTjhYzM+ZJhUvRGCr1KFqpn/1xibMZ+fdDJ+NyX5dj8QJqc7Y27MwdQXYk9
+	 1yNWmWcONkrgLKBrxjj/EsOoj8W0uK90SF0uGO4/tz1EOgnjb2S8NYy9c3DqYXEt29DsG
+	 XpGXHuztyjqWmu5SnHNP8hQ5YfCuf+OtjNonzq5EHHPiMaUOdouLJkAQpz1DM+3Ds0wP+
+	 NoWUode/BTVVAFejL7KnvgYElkdCFeyb+84PTXrz2WmdgP69JFX+NSzblpoKgraWXn5No
+	 tX2FumO2OUjzwKgCxNvys2e2WiTQReZD7OOogysDrpUtYW+urJ6WHeZ5qd8X8ILtj2Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=squebb.ca;
 	spf=pass smtp.mailfrom=squebb.ca;
-	dkim=pass header.d=squebb.ca header.i=@squebb.ca header.a=rsa-sha256 header.s=fm1 header.b=WEErMtaU;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=dJ4Zyajo;
-	arc=none smtp.remote-ip=202.12.124.152
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass header.d=squebb.ca header.i=@squebb.ca header.a=rsa-sha256 header.s=fm1 header.b=mc88zSGs;
+	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=05SdAPkl;
+	arc=none smtp.remote-ip=202.12.124.150
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D4A606A332
-	for <linux-leds@vger.kernel.org>; Sun, 15 Nov 2026 21:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14D4A606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C610D606A329
+	for <linux-leds@vger.kernel.org>; Sun, 15 Nov 2026 22:07:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C610D606A329
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=squebb.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=squebb.ca header.i=@squebb.ca header.a=rsa-sha256 header.s=fm1 header.b=WEErMtaU;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=dJ4Zyajo
+	dkim=pass (2048-bit key, unprotected) header.d=squebb.ca header.i=@squebb.ca header.a=rsa-sha256 header.s=fm1 header.b=mc88zSGs;
+	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=05SdAPkl
 Received: from stl-compute-04.internal (stl-compute-04.internal [10.204.2.64])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 897CF7A0120
-	for <linux-leds@vger.kernel.org>; Sun, 15 Nov 2026 16:58:22 -0500 (EST)
+	by mailfout.stl.internal (Postfix) with ESMTP id 1D5391D00109
+	for <linux-leds@vger.kernel.org>; Sun, 15 Nov 2026 17:07:18 -0500 (EST)
 Received: from stl-imap-02 ([10.204.2.93])
-  by stl-compute-04.internal (MEProxy); Sun, 15 Nov 2026 16:58:22 -0500
+  by stl-compute-04.internal (MEProxy); Sun, 15 Nov 2026 17:07:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1794779902;
-	 x=1794866302; bh=omemX1lEWnfDDXO42qPUhNXOBFAKGZAy0xUrDaXsUY8=; b=
-	WEErMtaUqeQAvKf6Yp8PWn8UBJNZVYpcGwHfOsWikMaP5mxPmPLbxxvlT8pVtLjJ
-	nSS9OgtMvm+Y+kcvw5Wq2zmJohgnlQxtNo7f6vxY4I2k/Rym9ADVXHFHgaLn5Iwx
-	QrTl+huJ99OCYEjKdHI8SSiwOarf1YNM2DflBDidSjQj12YYTcOTtNswbK2JIkdB
-	641sFkZBo3AXBTzT406auQFscTIbmE9lCMUK2GF//ZBS3zJwao5LwGtWprcdv6Zr
-	uWhNXCIJGxAQHmIHOh672J+0yrvcUeKRW6ySYUp1LT3lksMYDFj+sWqQYXIKJEkI
-	MZaID1IZ2Wu9YhXoOrNaSQ==
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1794780437;
+	 x=1794866837; bh=5W01Jex11VQtppQbL033Zph4yYpJZEMJCMwbW5eknkA=; b=
+	mc88zSGs9nmztGJJ+zV6pW3mZZj3pGgxnjODpgPGzoHx8ldpQtVDSJwsAiQFVDII
+	bKX5qxAcdkxXhjFt1Y0Qa3pD/sNbBLMK+a0waAUBNpcq4l3koASt0ilS/5jdNuLx
+	6yAkJMjt4E+aEOs9e2GGplzBtTmS0NWLrl5lnMLyI8eOE6HsmWTtuqEwXbGr0etN
+	WL1M0zqNuDjDTLUb/LSetENPh2yzG9v+lfHj3V8VVFTrYZJmlsPdtkc3u+zE6byi
+	oRrMdRuFwbEohWFClpc9CQObomquZH0ZHZ32AaDXLLdU8m7uvPTyT/sp73G4kQti
+	6cmTvI691brh3hDMcv/aGg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794779902; x=
-	1794866302; bh=omemX1lEWnfDDXO42qPUhNXOBFAKGZAy0xUrDaXsUY8=; b=d
-	J4ZyajogEFpilkDbhmqCgmlwrt7qKpLQQ0mxAic5emsijZZmvHQNuqoYSo+vQqts
-	Sd8DCzKrp0XWRyk6hgsdWJRK2YBsGFUjGaTY6zQc9uQVFMxepp9OBrRdmTyIdBpQ
-	edXg9lkKK7/IFhF8vUu1jptQ3odWFQuopkvDsFYcOTtIbWoMv2oDm+HCVov6q4gP
-	OPs6IC1i7N3+DncuL0kQnz1FQdTLIR2HkLuQdyA2UpjaXtiraEORpnkEqBZEbAZA
-	PVHlLoMD14ue+nlHcUBtA7/OCcfPR2BhbiUDSON6QAagA3JNhDMNcj4/zl94gOOw
-	U4vtZkyMYl1gJo5p1RwOA==
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1794780437; x=
+	1794866837; bh=5W01Jex11VQtppQbL033Zph4yYpJZEMJCMwbW5eknkA=; b=0
+	5SdAPklVZXNeazpTPqZntoIwgQWyptqVkNjHNTGnM0PS4cc3Y9NFuW75oya+y2as
+	eWo2ybFGnW4X3R43XpWZ8koKIEBymYsuFzy44Fwy5vQg4Junov+jZwDQimp2Cje0
+	x4rHSKWCmGyerfqJzWAcQY7wRCU0QZORknWfzrTxSwtPFvygM0g0ZuuJYlAV45K4
+	M9WdbBURq5UWzROfw8rawivBC0Ha4Odnbdr96ihkfyrbs1ZdU6+gqwtjieGxZEyB
+	7PwpcI9qnheJjHc8KuX+MbI2FKds16ICVJqt8LW5EiZDhoIE6rUOT6zfdhyJ35Mv
+	Uy6XZRsNtXuFl055QqcVQ==
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
 	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
 	action=sign d=squebb.ca a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1794779902; d=squebb.ca;
+DKIM2-Signature: i=1; m=1; t=1794780437; d=squebb.ca;
 	mf=PG1wZWFyc29uLWxlbm92b0BzcXVlYmIuY2E+;
 	rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm1:rsa-sha256:L3+Ka5eSZqY8Fyhyz/3Hrtiem8eZAnfZLyJ8nFucvRff/3H
-	1dRKirYa/POSi3tleiU7zUV7JvL88STUqLEV6acvksBIyNMEJLk3LHc7xLhq9IJj
-	wjnimcrAwFBsKT52kgZ7pGrJZQdXFBOiN6pYfGVttdLmFD9y7CFy197CNk/9RMAj
-	K24lnh2QG9H0kylP1IuZuOrD19rjLgMcT8ZnJrW8SqF4PNfq5n5lekMS2DdFo7de
-	hrjttpYDtlh+6lcxeVwOPsadCapRKefDtOE201hpr/31MRbwL7hXjRss/hr9i3Gc
-	gssxLZOAkTfOP7NoKyqOYuCqA7L85lBwQpcwXAA==;
+	s=fm1:rsa-sha256:PrU5OHPH5IytlkajIn/bV7FsUIGkhyCzOcmZK/VS3++BV8C
+	XIa5iNHAbU99HLQG2IfHm4+Ji5rxvkeiaMWBw5R4X6O0Ie23HvEsUTe2HH16x1bo
+	gLn1QqGtfVmpd6DZZFtDaNrZ9UUl3Q1/4SX7x8WehpMFhPYidCBQMLbqDiJAUMy+
+	aJOaGzl/EsC4P4YeCkFTrabkcT5w+uX+x42U+GCN/wAr7vTAdgYZLWHW7B3491xT
+	1Q7NigWj20zAYi8bf8viDwZ0/xK3A3MbRm5fbb+4HVLvN2iQ83NsOtsclTXHglKQ
+	bAdYtW/ItYp1OVe3EJE/F4GdGPYz77QXHwYDddQ==;
 X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
 	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
 	action=mi-m=1; hc=12;
 	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
 	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:hy4kCm7rEcW1x2k8CCtDuRbOCBVxwxxXtw84rHG5ZvU=:ZfHLVqPQyUu91y0xuPm+KeHdUeMYrUpfFxJgHf2U/p4=;
-X-ME-Sender: <xms:_Sr6arFeD3UWfiHtgjrUU7NfOnoRcYrFHO6Mz32z4Wl_H0OBolB6_Q>
-    <xme:_Sr6ajIrWUvpcSN4s3gXA1p75NLSQMQEzoJqit4AGxYI7dnG_PxLYWhpzA-G0c530
-    LSj8CpkKkmZ_EqDFy-VzKNCm6ioDQtPYK06HRcB6TR1zRP7hbmaXSZV>
-X-ME-Proxy-Cause: dmFkZTGxVtkuemJOOutN4FdlbA+YFcEEVkgzLoncpn576eBZBAV7P3UgWrOD13fw7PiOqb
-    vAU3pWCwQ7jFRa9S+u7adtz7YeoLm/4JpxLzmfhu7I5C3HxyEHigXMcn5zk4f6BWkkFzQe
-    a6rQZCJ99zmyV/9XMOwMv0F98JrE7bTugN2+8ylTKG6aLK3Uu9+g8HynlP0heVKB6s4evh
-    id35K8pT2Xnx6jCHIAJsBP1iBCvbO+JH9SokySQI3i34oa3laBSNsTVoZYBkEKTFcZzxqx
-    tXK96JnUqnhQOn92TguRc0f1QAAugBQoQ78y5IVqBiVCj6KleTSDiR/FB/saMlHL75nOR8
-    ocYmDtlu4z3skyexI/Euj0HgbnffQnQ7OHG0hghXGnFSboj+2fOezWDL8/0ZlvSn2Aq8Cj
-    CbfbS//ibgl7J9CBWxr2rCqonmqk/mX3q2s1YNKMyXWIKtJgaD1O+UGoQg6bPAp+6I98t2
-    ZnsT04/WXPGwmVbUvSEBcR06npCA3VnWS2PxiSeZYa9koFoSDvDUqN5KpRRZln1tJcpKQB
-    p7AmJ5N3G95+gmJ5U7sBpoqCWMX5vVdyvmKxLwb9p6PQgmmLYLC/d04KZJvcwjeakOfF1w
-    AcXMOhZ+5ioaXsuXmnucUeJlPDyG/OEQFDTRaWHPhmZlNAfdUxzKCp1c550Q
-X-ME-Proxy: <xmx:_Sr6ajk0QHz_xPSFSe6BL0pc8klZR3yspzKNQUQgSek-4gqyGWc5QA>
-    <xmx:_Sr6ajI8T9acnMPKSpKbRaK0JAm6UotmRCGASpdB5hZmv2_d9X3qKQ>
-    <xmx:_Sr6arQv3wNQLZdCYvQ0mzDAHopTNkfkl1ilU_WEE11qM2FR3BtIDg>
-    <xmx:_Sr6aovGF4Z13iHTyE4bfcbTgV_nSbeNu6MGVuF6pKwIkp4K4cjTZw>
-    <xmx:_ir6al2OoFtbvaKcL43WbSMFbxTX4_FDSaWsyYbGt5aZbqqRvdbqB2lg>
+Message-Instance: m=1; h=sha256:Pt0CFkdgPMlEc2VAsDgUwpz89PHbAVOPKiU8IbEFVGI=:ZSNZo0+hChThxLpKlQUJ174hlSoBCxsNplUkPEIpqMQ=;
+X-ME-Sender: <xms:FC36amqvWr8xs5EjNvWu4Amw59oZMIDn5xacFAW6KUhUQqL4PePzdA>
+    <xme:FC36ave_fHAKe0sLoH3OyOZJ-k3EV3gz-t4XSgLeztiHg6CgC4I9DlEvQoMh-eNDp
+    ra6qmzv1nHZacof5BDuw1lHppAALq-Ys_RutbRHVviCCJGLj8wzQDbe>
+X-ME-Proxy-Cause: dmFkZTEIQE6KcsOrNFJqF7WeLEWNoLGQ8ajl9vzMqe2ynHyuUugJ6xwqqdUT6/IVHtuD35
+    XOdJ4TP+jciU9bPs5GBFqcFGEHmkTa8SJquEUiWk+ZJBsOJF7cY1LHxv5ic2XGlAGY7kCB
+    /fmYpkFGvUjhHucbuTPqo0s1gjJutM8XF3UQLjLBGq62WcQNmiKrzXNrSwWIq6yoouYDUb
+    yXef7ugmyeyfTa6fYXSOODlNMbsgTZ9b2D4nsPPM3sKgGVHZqu/M236IJtfxoUAKMLRVIe
+    /wHMcMayIEn+I5p5zpe/7reNOyXawGo2AnuiXBVZNGq4Bhv+YB8WQKsUypHKrGPZQf7qlX
+    eIiEYl46UtomK+fSvaj3skIW/LOVuye3/hGtTLb8ERoSUiDHb670n+fDJy1wkL5l+V53vi
+    HtBhWJ2eZBMmUJMaenjXGz4T2oF7VmpjVAl1tIC3+Et1TEmsgZEX2LA34OwnXbU3QOj1Yw
+    XfbIHlx3JFO9M2LFZO5waOT+UpsaIC2ppPTPSiPXFB/Ph8czsrpb1yS07+hiwKTQywMt5i
+    pzq9n4wMcu3Pe9RX3H6Wmlh46bRBIDqKZ0vdXX9VycF+nDBcjdpF0UQQi6N+F/t4tgTmwc
+    OYjJ3unITZ9q4Xvna0gBfgh5SYew1cDxqetWeKs6ApQp6M6i9jdThCsKmn3A
+X-ME-Proxy: <xmx:FS36aspJPiosGkVEmwlZWkJEXCeTfpWB6L4EctTKfovAcBJX-k_oOA>
+    <xmx:FS36au-witJWUAtvc4yeuTI_V_2f4wZnGuirIBrtLHnmpp87UKcfoA>
+    <xmx:FS36ai2yTVh4wvxhTODHaCFyWCjGLWKSaj3SehDJVNRkGy0imd5lSA>
+    <xmx:FS36ahAK6vfktcNan94528F3j30v6GMoNNpDlin5478daikwL45Igg>
+    <xmx:FS36apov10NU0FCRQE8P2IuiuYZMGdZID9dl1VdifWqHLS_WHh8nJKok>
 Feedback-ID: ibe194615:Fastmail
 Received: by mailuser.stl.internal (Postfix, from userid 501)
-	id 9B0862C00085; Sun, 15 Nov 2026 16:58:21 -0500 (EST)
+	id BE50F2C00085; Sun, 15 Nov 2026 17:07:16 -0500 (EST)
 X-Mailer: MessagingEngine.com Webmail Interface
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
@@ -115,11 +115,11 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AoH_4y8sCjjc
-Date: Sun, 15 Nov 2026 16:58:01 -0500
+X-ThreadId: AKLRvfems1kF
+Date: Sun, 15 Nov 2026 17:06:56 -0500
 From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Rong Zhang" <i@rong.moe>, "Qiling Zhu" <kmatzkaczor244@gmail.com>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
+To: "Qiling Zhu" <kmatzkaczor244@gmail.com>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, "Rong Zhang" <i@rong.moe>,
  "Hans de Goede" <hansg@kernel.org>,
  =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
  "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>
@@ -130,77 +130,65 @@ Cc: "Andrea Rabbaglietti" <rabbagliettiandrea@gmail.com>,
  "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
  ibm-acpi-devel@lists.sourceforge.net, linux-leds@vger.kernel.org,
  linux-kernel@vger.kernel.org
-Message-Id: <31d80e19-0330-4a87-abda-1e134e4c4b63@app.fastmail.com>
-In-Reply-To: <64525e6fc8bd29dab836a5f6a4249523ef285012.camel@rong.moe>
+Message-Id: <4fdab3d8-4ea5-40f4-bf91-9ce4caf028e3@app.fastmail.com>
+In-Reply-To: <20261114174814.62153-5-kmatzkaczor244@gmail.com>
 References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
  <20261114174814.62153-1-kmatzkaczor244@gmail.com>
- <20261114174814.62153-2-kmatzkaczor244@gmail.com>
- <64525e6fc8bd29dab836a5f6a4249523ef285012.camel@rong.moe>
-Subject: Re: [PATCH v3 1/7] platform/x86: thinkpad_acpi: Report auto keyboard backlight
- mode as off
+ <20261114174814.62153-5-kmatzkaczor244@gmail.com>
+Subject: Re: [PATCH v3 4/7] platform/x86: thinkpad_acpi: Detect auto-mode capability
+ via MLCG
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
 
 
-On Sun, Nov 15, 2026, at 2:53 AM, Rong Zhang wrote:
-> Hi Qiling,
+On Sat, Nov 14, 2026, at 12:48 PM, Qiling Zhu wrote:
+> The upper bits of the MLCG return value carry capability information.
+> Bit 20 indicates whether the EC supports the auto mode of the keyboard
+> backlight (0 = manual levels only, 1 = auto mode available), as defined
+> by the firmware.
 >
-> On Sun, 2026-11-15 at 01:48 +0800, Qiling Zhu wrote:
->> The EC keyboard backlight level 3, which selects the auto mode, is
->> passed to the LED classdev verbatim by kbdlight_sysfs_get().  The LED
->> then reports a brightness of 3 with max_brightness 2, both through the
->> brightness sysfs attribute and through brightness_hw_changed
->> notifications.
->> 
->> This is not only cosmetic: UPower 1.91.x treats the out-of-range value as
->> invalid and stops watching brightness_hw_changed altogether, so the desktop
->> stops following the Fn+Space hotkey once auto mode has been entered.
->> 
->> The auto mode is not a brightness level.  Map it to 0, the value it is
->> reported as most of the time anyway, in line with what ideapad-laptop
->> already does for its auto mode.
->> 
->> Fixes: bb28f3d51ff5 ("thinkpad_acpi: Add support for keyboard backlight")
->> Reported-by: Andrea Rabbaglietti <rabbagliettiandrea@gmail.com>
->> Closes: https://lore.kernel.org/r/CAENjc+w0Rqy=kDSew7XtNJCSvyPiXPJ5faWdmCr5RGYFhpunCA@mail.gmail.com
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
+> Record it in tp_features.kbdlight_auto, in preparation for using it to
+> gate the auto-mode trigger registration and the LED suspend/resume
+> skipping in subsequent changes.
 >
-> Reviewed-by: Rong Zhang <i@rong.moe>
+> Link: 
+> https://lore.kernel.org/r/CABxCQKuEP5wMSstO0MK1MhaqXTKrPhUSN3V2mrE_42j4cXsXZQ@mail.gmail.com
+> Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
+> ---
+>  drivers/platform/x86/lenovo/thinkpad_acpi.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 >
-> Thanks,
-> Rong
->
->> ---
->>  drivers/platform/x86/lenovo/thinkpad_acpi.c | 6 +++++-
->>  1 file changed, 5 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platform/x86/lenovo/thinkpad_acpi.c
->> index 4f81855ad..2c3f8cf32 100644
->> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
->> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
->> @@ -5102,6 +5102,9 @@ static struct ibm_struct video_driver_data = {
->>   * Keyboard backlight subdriver
->>   */
->>  
->> +/* EC level that selects the auto mode for the keyboard backlight */
->> +#define TPACPI_KBD_LIGHT_AUTO_LEVEL 3
->> +
->>  static enum led_brightness kbdlight_brightness;
->>  static DEFINE_MUTEX(kbdlight_mutex);
->>  
->> @@ -5191,7 +5194,8 @@ static enum led_brightness kbdlight_sysfs_get(struct led_classdev *led_cdev)
->>  	int level;
->>  
->>  	level = kbdlight_get_level();
->> -	if (level < 0)
->> +	/* Auto mode is not a brightness level; report it as off. */
->> +	if (level < 0 || level == TPACPI_KBD_LIGHT_AUTO_LEVEL)
->>  		return 0;
->>  
->>  	return level;
+> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c 
+> b/drivers/platform/x86/lenovo/thinkpad_acpi.c
+> index 657a19d11..681b340a1 100644
+> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
+> @@ -363,6 +363,7 @@ static struct {
+>  		TP_HOTKEY_TABLET_USES_GMMS,
+>  	} hotkey_tablet;
+>  	u32 kbdlight:1;
+> +	u32 kbdlight_auto:1;
+>  	u32 light:1;
+>  	u32 light_status:1;
+>  	u32 bright_acpimode:1;
+> @@ -5161,6 +5162,13 @@ static bool kbdlight_is_supported(void)
+>  	}
+> 
+>  	vdbg_printk(TPACPI_DBG_INIT, "kbdlight MLCG returned 0x%x\n", status);
+> +
+> +	/*
+> +	 * MLCG bit 20 indicates auto mode support: 0 = manual levels only,
+> +	 * 1 = auto mode available (per the firmware definition).
+> +	 */
+> +	tp_features.kbdlight_auto = !!(status & BIT(20));
+> +
+>  	/*
+>  	 * Guessed test for keyboard backlight:
+>  	 *
+> -- 
+> 2.56.1
 
-Looks good to me
+Looks good to me.
 Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 Mark
