@@ -1,56 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794734000;
-	b=PcGJbtivWzQkyoyndCPM5i0TktEPmswQwCEBiEzAVeK7skfS3uWYPJ78naCycdVMbcFI
-	 dxzZ+USW0f5G8zPd9/OP+GhQK9yQXmzEOQljBLGg9ctnNfLvFpX2P0NcScNjILg3KtGuJ
-	 4xmKDo0GtjtY5/HiItT4wmd1NpnUYE/8nGMa1vibwtbD415o7hm7BfU3+hGUuHQbcu0HN
-	 M1YNPO1exe+E5HITu4WuWWI09glMPKGQxzvmVI9Z2eG2hAet2usnYscACZFKGxpJjLpt6
-	 CFca4ZY6HF0nBWDyFopoORtH54gbkJ4LwRkXF2nfQnUs1Q/KRBfCZ5chiL4w1rbqiGg==
+	t=1794742758;
+	b=at5IDAnFx1QPE/P0GgdHbsrqo1P32iSqoE3oZbXoiVTdSNriRlv8DSgyQjdf4RAs/UOd
+	 TFzjiFzRvdPJexldoU23pZotCJAZ0mGIi/PTisHOR5PkuhtqRtZPkBYsgaQp37qaifIuI
+	 wBZ/eTjSnQvh3+7k7vFjPcggj0cpujZgBJPeZSCySns8WKxN9L5ovBee/tFfrFXsgz7Jm
+	 7FiiyWxsoqwgAZoFqWB+Vxtr8HGoBCHbpVJ6oWHt5Ub3p/OslJRNkXccJJXuDq+Hk1ZWk
+	 c6D8t8rOKpjJ4oKNi70G9HlnN3dGiLsWhSvUC4lKQSVoa3Ig6T1yOsj8AE85FAKrTbA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794734000;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=6bPeUePB3ff5V0dRLimJVVrrgqf9AGX+qYNtQzN8OqQ=;
-	b=DGCMv4RFtW+SoIJm2tJjExMRLg/6rbbwXc5biDsUl9a8cpFSeJqJsIEr7OjUMGRqw9O1
-	 hyXEXiV/fHWg5z8WI7cd0oILWnPewUq2U328lyLe+VsSVBPQQRXXoak8tskDoiO0x6sGz
-	 FRQPaxCg7mAZbhB3FGai/jQGCz8uYxIEFBQW/5WB+mO6eq/FNmgkjVWFNorOzfSXYFBop
-	 2vDbNgpa4m2Ss4cr/ui6s85LNVKnVolY8+kak/WcxnLJxJWD5NM9YelKAU2awYEUeejRO
-	 2Il6rf0Q1WgpNpgna4ivLwX23tgzoAB2KtUaw61QJrXeZPhJ23qNp+MFClZejlZZLDA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794742758;
+	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 X-Cookie;
+	bh=GAIraa4PzFWLg6UhGswjPe5UPHKE4vtWfL9FAp0+yGY=;
+	b=mI7fEhwp61pSpLOxApcxhFIdv2e9ZLl7M3oG7oSqEJ1L8ILTh1882gy2gJpyDJyomdKt
+	 5uPtd2Pr7FaDB3Ccnp+sTbcBowBtoCb/ep7YgnkYOMIZvJTljRhhZEnAl8uZULoTt0PXn
+	 1c41b82c1vNkeKxZsOESzwKCKSm0W/6RTyUEkTqmQOJ7qhluHl+zTLfZmOvbtOk1rEQmH
+	 T+kHqvyR7WgRTzQJLHHouNTVnHDFU6CznlHylldywO6RwhdHJBRiI9ihPZFloyMYDWH2/
+	 a2WN5E65hJH6158l7YBoPWiWoV7KPY6n+mYc2ZjytnJEkhzzSxG/yeLY8TiMdKQ677A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cmCeFLeK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IW7smJ6v;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D83606A31A;
-	Sun, 15 Nov 2026 09:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75533606A323;
+	Sun, 15 Nov 2026 11:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=cmCeFLeK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA481F000C4;
-	Sun, 15 Nov 2026 09:13:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IW7smJ6v
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19DB81F000C4;
+	Sun, 15 Nov 2026 11:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794733999;
-	bh=6bPeUePB3ff5V0dRLimJVVrrgqf9AGX+qYNtQzN8OqQ=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=cmCeFLeKKrVVv5f8lH2bUU/Vl6porKZdOcLhNQElwKcEtP59/0r6HWpliH/yibmQ9
-	 PPIBI71JKWoMFVgAEJu5QDLsaCdNrvd0RSeP8YrV/j0sQOisN3bq4C8q6KPh4kZYva
-	 Hh5sNRxsKOkIiMEYcjLEzk7kDKI0qDZaPIwdBNt42i01kkBsPRJWnxNmiKdAkE+VkT
-	 c9ll+uUd/0dI/EIirAQR1KBTMaatBruxv6xCtcrxx13HBWTwzDA9zrK6YBeJiB9CrO
-	 QlKi2GZqDjd8x8Na4V2USKPk6CP8/iBlhoU+m5TGCwyWfUCkz3FixqkKKxx329eEL5
-	 JZ2yC7TYrz3bw==
-Message-ID: <sashiko-outbox-215333@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v7 3/4] mfd: aat2870: Convert to use OF bindings
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>
-Cc: linux-leds@vger.kernel.org, mfd@lists.linux.dev, lee@kernel.org
-In-Reply-To: <20261115085826.89641-4-clamor95@gmail.com>
-References: <20261115085826.89641-1-clamor95@gmail.com>
- <20261115085826.89641-4-clamor95@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 09:13:19 +0000
+	s=k20260515; t=1794742758;
+	bh=GAIraa4PzFWLg6UhGswjPe5UPHKE4vtWfL9FAp0+yGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IW7smJ6vy0hdpqFnlaE7InL7y154C+zROv72lq4JoVMqMXReLiUSLcf/4Dzk7zNCl
+	 UdWgOG0++6l/1QQNhA+k/UZVxe/JPv84HpgM67UKl0yjAHFF1m7/F7RAgP8WqN44Zo
+	 fk79HADrUK8XL4TFpyNXQq5KuWiHDy86+2PKOXQP0A/yzJfZxdNo6bWdBgnWlpvqOe
+	 6IttZ5l/gmzRQFJbpVyKSBNIsRhq7e908C93E7o6e4fxbq8hgizMohFKgGs0+k0TsY
+	 w7GsxG6H+xpmQlNYF7yP5h0oehwVN10dEHXByLe2d5+/F5xfPVN4GuzhMEZK2pi1wl
+	 XGLIa+pBAQOJQ==
+Received: by traversing.sirena.org.uk (Postfix, from userid 1000)
+	id A7258334D279; Sun, 15 Nov 2026 11:39:15 +0000 (GMT)
+Date: Sun, 15 Nov 2026 11:39:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Griffin Kroah-Hartman <griffin@kroah.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org, mfd@lists.linux.dev
+Subject: Re: [PATCH v6 1/3] regulator: dt-bindings: maxim,max8907: Document
+ LED support
+Message-ID: <0670d537-0f9a-43dd-9d48-90272f04f1e2@sirena.org.uk>
+References: <20261115090520.102216-1-clamor95@gmail.com>
+ <20261115090520.102216-2-clamor95@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,38 +65,32 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OiwUGip2trYydk2B"
+Content-Disposition: inline
+In-Reply-To: <20261115090520.102216-2-clamor95@gmail.com>
+X-Cookie: A watched clock never boils.
 
-> Conversion of the AAT2870 driver to use OF bindings requires a few complex
-> changes that should be done simultaneously.
->=20
-> The AAT2870 essentially provides two functions via child devices:
-> backlight and regulators. Both functions are fairly self-sufficient and
-> may not be populated on the final board. Consequently, the MFD
-> registration API was replaced with of_platform_populate(), and each
-> sub-device was given its own compatible string.
->=20
-> Additionally, aat2870-core utilizes an enable GPIO. Obtaining this GPIO
-> was converted to use modern gpiod/OF helpers, allowing the redundant
-> aat2870_enable() and aat2870_disable() helpers to be removed.
->=20
-> The aat2870-regulator driver was updated to register each of the four LDOs
-> from a dedicated OF node using modern regulator framework.
->=20
-> The aat2870-backlight driver was changed to populate all required
-> properties from a dedicated Device Tree node. Its channel map was updated
-> to use u8 instead of int. Furthermore, because the maximum current is now
-> parsed as an absolute value rather than an enum entry, the calculation and
-> application of the maximum current were updated accordingly.
->=20
-> All of the changes above allow platform data to be removed entirely.
->=20
-> Reviewed-by: Daniel Thompson (RISCstar) <danielt@kernel.org> # for backli=
-ght
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 
-Sashiko has reviewed this patch and found no issues.
+--OiwUGip2trYydk2B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261115085826.8964=
-1-1-clamor95@gmail.com?part=3D3
+On Sun, Nov 15, 2026 at 11:05:18AM +0200, Svyatoslav Ryhel wrote:
+> The Maxim MAX8907 PMIC supports a single LED; document it.
 
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--OiwUGip2trYydk2B
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQReagvpf3TrrA7BoYYv73Ows9A4iQUCavmZ4wAKCRAv73Ows9A4
+ieqxAP439ipWRWMgyk+tkBafSc5m5DKtVkYKSBxXqRc7DTfp9gD/RPAOD+XfauK3
+RyMNdYLGzSQ/zNSeJYyFYtNZLnSgVAc=
+=d4M/
+-----END PGP SIGNATURE-----
+
+--OiwUGip2trYydk2B--
