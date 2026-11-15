@@ -1,73 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794729626;
-	b=kaB09Gh78OfBS5LhASB/LrJA1OcD9eqwFN4bVIPCQC3Gvz6JzjXzYQ4cr7lpy6St1/Sf
-	 ZnM8JBIDUrverZM3oZkjDWDe/xOHsL/hLVK2InpOVJMh2JSiXJSgS3Zz69QytK665Rdvv
-	 5T9HkMjXq+TnC1DFAdRTmvW97HHCfbWh536z0AWY4wmqHWOnqOc3KWtxH+kphMob8q7Yu
-	 Gyc7RcAl8JQ1Ob28FM4B1Ihb2sQkEHyIl6VGyekE7V8EP+bIs1tjiPEFl1wb2RXpvErPl
-	 1oxeKwt5MbMY7NigVhUZJpZzgMR+zA9U0+w5I25dUUGd+iaVfgmXIqqs6BeWBc6eCrg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794729626;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-ZohoMailClient;
-	bh=myjoLXazwLDRkDTG3hloKil1Y8hRKK3sJ0fuXOKFC4I=;
-	b=aKaQe5wDqzrhPSuydSa3ojChNbsrpjz65ONjt2+DpWknM1236saSMbLbHoLhPTN4p9yO
-	 zJsYhMt6xCGtAMMgjg0uJ2KcJ9HGZnIFfmYIrs5nj9Kso6USFpJelm2mgjpHuxfwSZUgV
-	 1kowqMBA1NfI8Gx/i5f0hSxU3Yw8YMyYp855M3UOGVSKD/tFyVjClchqsaC+HLpMKxSfH
-	 CL0bK1EBHwpbNdUJuKKIz15lUdhXkZ1+kASQI6OmNsheok6nriWN4vy6ew6+kPOnNtDl2
-	 hf7coGHBpQk6pBLepJPZvFp7iTcntfIPwp1yiKTo9iYBwmpSjgj3izGC8HLxDeCQePg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rong.moe;
-	spf=pass smtp.mailfrom=rong.moe;
-	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=jBMuGrT6;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=136.143.188.112
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=117.135.210.2
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794729757;
+	b=rUv1Rayh1tIr0bUQl5TWP976XfGnqICLYPd8nb/bRP9MREl6EFyPsN+DA+1ezdL25GeE
+	 YbOENfb8VRhRVeMu1WhL5vv1Z5nOoW43fQG7U+A4ZZJZcCeETx0E+uvk3ZwVHr0Iw+CUD
+	 tNB4FlRZ0yTW+UyoIjOSjkujZNKM4VR+vE/v2nfP0oMrRd8JbWdXpYTOGs6iysuZU/6Fj
+	 9Haz0vRjkBtZJaIbZFdgmteAmCQcgxRKKqey9MrG+0WJgRum6DBvfKuweczsJbsw5d9hO
+	 12cme1K2+A6NcjEm0NWAJrmxvHWKY7XCxsDe8X7xpDFLvDgvqwMykCdFPMp2D/aGJvA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794729757;
+	h=DMARC-Filter:DKIM-Signature:Received:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-CM-TRANSID:X-Coremail-Antispam:X-CM-SenderInfo;
+	bh=3fQFDkrdsCA7N+Ly9z4DF7jBxsWW1klAti6PabpR7rc=;
+	b=yK06bhWLYBOQQ0yYM22cxA1HXuyKCLGzbmD9DOK6efrMz5VkqjDlSk7E+bQDOa1bF4gD
+	 fxzHO/FQmSG/zy6SNt8sD/jvoQ6Jv9F3Jl/0M2mFe8E9sXZEzq8ZZu85DcHpZ+dwJSZ3W
+	 fg74OYcJYfS8PA0rdaVPURtMZiFKtiscW3hKrMFLlDh1o1pVB8bfVkNn4wbLAqDBRatyR
+	 ro8gjsRA7VzxxOOb1kQWYJKnApI3zJWAUzg9BFwWnVvuPGJ9YRGtn8GwBPSFVPX9rpmrI
+	 QP7zgaQdVIJLWsyjpxHE5E+bw9pmDp1FKEeUXmylmw0q6TwAYMrqQHw3x4k08hqbZ2A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=163.com;
+	spf=pass smtp.mailfrom=163.com;
+	dkim=pass header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=NxlK0myy;
+	arc=none smtp.remote-ip=117.135.210.2
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325AC606A880;
-	Sun, 15 Nov 2026 08:00:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 325AC606A880
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76786606A8A7;
+	Sun, 15 Nov 2026 08:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 76786606A8A7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=jBMuGrT6
-ARC-Seal: i=1; a=rsa-sha256; t=1794729597; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Zybz6GG/9n4CpLrvLN/T23j/kwqAi63vqgXhKFQxXalMBnUUs2XaULc1/atztLOEMrP5z7Ary2FhAJwse3XRiZfbi6LEaFomo+5qYpPhJLc1t07wmkibdyvWJzBmdam2DYzHR2jZrPOF5Qgy7jrnPxaC+aPVWWpZYZUt6KP1IHc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1794729597; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=myjoLXazwLDRkDTG3hloKil1Y8hRKK3sJ0fuXOKFC4I=; 
-	b=JaEfl/UZoUdZ8RoNvCpkVjjb+aWg0/HAv0faoP0K88YLnelsspOUir8PBXWZeMzBw+RaOhrrXM9y9sTklVP/ZKRP2x6Nbelp5qJGQR3oBbtsih9zWiBKKAjBj5Y8SYvFO32iNBxTyj08CftPMwJZba1dhbCmVUopzJ+87VN6/vU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: a=rsa-sha256; b=jBMuGrT6NDMeabv6H6M7VUvobawAYc6M9b3MtXULJmEHKnqTf+LK4/sZEvrUmRqkRFOAoZwKcPr785fKO0pQtajmZ2WF6xf31pHM6/06f5WkwflVsY2Net+MEZrws3JYJEQ8zaR+21YHywBA7OMx6axIa8kaiLWd4zZ8IcS82Jech0ZDPrRgVtfcikLh5VXsFXmb6+iu9lEH91sBXMAVM9tLPLEmVap2crFN1u25sSeGWZ1kSJLs+wHrg4KKx5Ww+0r3tkk1QRm982okc9Clrj/G2gGn69StO78XiKNTUOlP3VcqbHX8QOiblGQFkZl0wocwpOa+/FKJHelxrJjxjw==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=myjoLXazwLDRkDTG3hloKil1Y8hRKK3sJ0fuXOKFC4I=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1794729595779702.6758341281636;
-	Sat, 14 Nov 2026 23:59:55 -0800 (PST)
-Message-ID: <ac0a08c2f831dab0e08fe0097ddfa77a32b8b04d.camel@rong.moe>
-Subject: Re: [PATCH v3 2/7] platform/x86: thinkpad_acpi: Extract
- kbdlight_notify_change() helpers
-From: Rong Zhang <i@rong.moe>
-To: Qiling Zhu <kmatzkaczor244@gmail.com>, Mark Pearson	
- <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Hans de Goede <hansg@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,  Henrique de Moraes Holschuh	
- <hmh@hmh.eng.br>
-Cc: Andrea Rabbaglietti <rabbagliettiandrea@gmail.com>, Lee Jones
-	 <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Griffin Kroah-Hartman
-	 <griffin@kroah.com>, vishnuocv@gmail.com, vsankar@lenovo.com, 
-	platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, 
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20261114174814.62153-3-kmatzkaczor244@gmail.com>
-References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
-	 <20261114174814.62153-1-kmatzkaczor244@gmail.com>
-	 <20261114174814.62153-3-kmatzkaczor244@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 15 Nov 2026 15:53:16 +0800
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.a=rsa-sha256 header.s=s110527 header.b=NxlK0myy
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=3f
+	QFDkrdsCA7N+Ly9z4DF7jBxsWW1klAti6PabpR7rc=; b=NxlK0myy/+HIdUmRzy
+	vi5coMGxFaYla/+d3+5mh3ljOcq7FocZ82tEnnLIWSJitEALNVB3VQXZsGWHXEG1
+	wW6jyN8ZRQLmd0yY9YgiC9tjDDNxVfs1xycmjvRnUHRE/1WX7ul2WWOOMR2L+Kfg
+	Z+lbBv6BpjZzgAy7ExrB8pxKw=
+Received: from user-VMware-Virtual-Platform.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3P+EFZ_lqIm43HQ--.51631S2;
+	Sun, 15 Nov 2026 16:02:14 +0800 (CST)
+From: Ziheng Wei <zihengw03@163.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] leds: lm3642: Fix container_of() member confusion in pin attributes
+Date: Sun, 15 Nov 2026 16:02:13 +0800
+Message-ID: <20261115080213.910112-1-zihengw03@163.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -77,104 +61,90 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.62.1-3 
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3P+EFZ_lqIm43HQ--.51631S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCFyDZw1xKr1xGr47Ary3twb_yoW5Zr45pF
+	Z8Ca4Ykrs3tw1kCryDXrWxua4fAF4kAFy3KF48Kw17Zw15Way0qFy5Ka4YyFy5G3yxArnI
+	vF45Wryxta1DJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j_o7NUUUUU=
+X-CM-SenderInfo: p2lkv0ljzqjqqrwthudrp/xtbC7gbzRGr5ZwaifQAA3y
 
-Hi Qiling,
+The strobe_pin and torch_pin sysfs attributes are registered on the
+flash and torch LED class devices respectively, but their store
+callbacks recover the chip data by container_of() on cdev_indicator.
 
-You are extracting two helpers with different names. Let's retitle:
+dev_get_drvdata() in the attribute callbacks returns the led_classdev
+that owns the attribute group:
 
-   Extract kbdlight notify helpers
+  - strobe_pin is in lm3642_flash_groups, so drvdata is &chip->cdev_flash
+  - torch_pin is in lm3642_torch_groups, so drvdata is &chip->cdev_torch
 
-On Sun, 2026-11-15 at 01:48 +0800, Qiling Zhu wrote:
-> TP_HKEY_EV_KBD_LIGHT handling in tpacpi_driver_event() reads back the EC
-> level, updates the cached brightness and notifies the LED core inline.
-> Extract this block into separate kbdlight_notify_level() and
-> kbdlight_notify_change() helpers, in preparation for reusing the former
-> when writing a level through the proc interface in a subsequent change.
->=20
-> kbdlight_notify_level() expects the caller to hold kbdlight_mutex;
-> kbdlight_notify_change() queries the EC and notifies under the same
-> mutex, like the original inline code did.
->=20
-> No functional change intended.
->=20
-> Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
-> ---
->  drivers/platform/x86/lenovo/thinkpad_acpi.c | 40 +++++++++++++--------
->  1 file changed, 26 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platfo=
-rm/x86/lenovo/thinkpad_acpi.c
-> index 2c3f8cf32..c8098f317 100644
-> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> @@ -5317,6 +5317,31 @@ static void kbdlight_resume(void)
->  =09led_classdev_resume(&tpacpi_led_kbdlight.led_classdev);
->  }
-> =20
-> +/*
-> + * Caller must hold kbdlight_mutex.
+Both strobe_pin_store() and torch_pin_store() however use
+container_of(led_cdev, struct lm3642_chip_data, cdev_indicator).
 
-Annotate it with lockdep instead of comments.
+cdev_indicator comes after cdev_flash and cdev_torch in struct
+lm3642_chip_data, so the resulting pointer lands before the start of
+the structure (by 1536 bytes for strobe_pin and 768 bytes for
+torch_pin on x86_64). The callbacks then write chip->strobe_pin or
+chip->torch_pin into unrelated memory and pass whatever is found at
+the chip->regmap offset to regmap_update_bits().
 
-> + */
-> +static void kbdlight_notify_level(int level)
-> +{
-> +=09struct led_classdev *led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
-> +
-> +=09/*
-> +=09 * Check the brightness actually changed, setting the brightness
-> +=09 * through kbdlight_set_level() also triggers this event.
-> +=09 */
-> +=09if (level =3D=3D kbdlight_brightness)
-> +=09=09return;
-> +
-> +=09kbdlight_brightness =3D level;
-> +=09led_classdev_notify_brightness_hw_changed(led_cdev, level);
-> +}
-> +
-> +static void kbdlight_notify_change(void)
-> +{
-> +=09guard(mutex)(&kbdlight_mutex);
-> +
-> +=09kbdlight_notify_level(kbdlight_sysfs_get(NULL));
-> +}
-> +
->  static struct ibm_struct kbdlight_driver_data =3D {
->  =09.name =3D "kbdlight",
->  =09.read =3D kbdlight_read,
-> @@ -11586,20 +11611,7 @@ static bool tpacpi_driver_event(const unsigned i=
-nt hkey_event)
->  =09=09return false;
->  =09case TP_HKEY_EV_KBD_LIGHT:
->  =09=09if (tp_features.kbdlight) {
-> -=09=09=09enum led_brightness brightness;
-> -
-> -=09=09=09guard(mutex)(&kbdlight_mutex);
-> -
-> -=09=09=09/*
-> -=09=09=09 * Check the brightness actually changed, setting the brightnes=
-s
-> -=09=09=09 * through kbdlight_set_level() also triggers this event.
-> -=09=09=09 */
-> -=09=09=09brightness =3D kbdlight_sysfs_get(NULL);
-> -=09=09=09if (kbdlight_brightness !=3D brightness) {
-> -=09=09=09=09kbdlight_brightness =3D brightness;
-> -=09=09=09=09led_classdev_notify_brightness_hw_changed(
-> -=09=09=09=09=09&tpacpi_led_kbdlight.led_classdev, brightness);
-> -=09=09=09}
-> +=09=09=09kbdlight_notify_change();
->  =09=09}
+Writing strobe_pin on an lm3642 instantiated on an emulated I2C
+adapter (QEMU, KASAN, v7.3.1) faults the kernel:
 
-Remove the {}.
+  Oops: general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+  KASAN: null-ptr-deref in range [0x00000000000000a0-0x00000000000000a7]
+  RIP: 0010:regmap_update_bits_base+0x4e/0x1c0
+  Call Trace:
+   strobe_pin_store+0x15d/0x240 [leds_lm3642]
+   dev_attr_store+0x5d/0xc0
+   sysfs_kf_write+0xfb/0x180
 
-With them fixed,
+The other three container_of() users in the driver already pick the
+member matching the LED class device they are called for.
 
-Reviewed-by: Rong Zhang <i@rong.moe>
+Use cdev_flash in strobe_pin_store() and cdev_torch in
+torch_pin_store().
 
-Thanks,
-Rong
+Found by LLM-assisted static analysis. Not tested on real hardware;
+no in-tree board provides lm3642 platform data.
 
->  =09=09/* Key events are suppressed by default hotkey_user_mask */
->  =09=09return false;
+Fixes: 8b7cfbec052d ("leds: Add new LED driver for lm3642 chips")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ziheng Wei <zihengw03@163.com>
+---
+
+Notes:
+    The changelog was drafted with an AI assistant from my analysis;
+    I have reviewed the code, the fix and the text.
+
+ drivers/leds/leds-lm3642.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/leds/leds-lm3642.c b/drivers/leds/leds-lm3642.c
+index 9af8b8e47..91ea41a7c 100644
+--- a/drivers/leds/leds-lm3642.c
++++ b/drivers/leds/leds-lm3642.c
+@@ -173,7 +173,7 @@ static ssize_t torch_pin_store(struct device *dev,
+ 	ssize_t ret;
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 	struct lm3642_chip_data *chip =
+-	    container_of(led_cdev, struct lm3642_chip_data, cdev_indicator);
++	    container_of(led_cdev, struct lm3642_chip_data, cdev_torch);
+ 	unsigned int state;
+ 
+ 	ret = kstrtouint(buf, 10, &state);
+@@ -219,7 +219,7 @@ static ssize_t strobe_pin_store(struct device *dev,
+ 	ssize_t ret;
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+ 	struct lm3642_chip_data *chip =
+-	    container_of(led_cdev, struct lm3642_chip_data, cdev_indicator);
++	    container_of(led_cdev, struct lm3642_chip_data, cdev_flash);
+ 	unsigned int state;
+ 
+ 	ret = kstrtouint(buf, 10, &state);
+
+base-commit: 97d73c8251226cf27cc6656b4c542869bb8c69fa
+-- 
+2.43.0
+
