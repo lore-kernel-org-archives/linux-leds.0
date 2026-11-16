@@ -1,53 +1,94 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.53
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794833030;
-	b=KZ24CQaXCLveob3xRffseRSRrBLmyUyTVgYKmQSeAKeRh9aOh6zrN3oavMj/eGjxLqwJ
-	 b+RR8dVCQu1RlrBF5sKXrExGxkAkzeTRcJHV7lQO/CFyXYoYRhKhaHAkwZ/uWKiFlktEu
-	 ckicdkauRf9nzdfjMCYIPnicpUN7em2HisZ21bd129gvOckLiQqMW9qx+2q2IEz0Fp+Vc
-	 8NphdJv9jkATK0XZb2lSqBCHbKicUElYVJ4wKy6OcNC8q8KjcFSJsaAcwlB0MrJM0cfas
-	 uLr6jJhphZyOVgOHeKEkP/Z/L3OojaXEhO3z1/lVdMuM6wmLN2n554dUjFpkH9Of8pg==
+	t=1794852502;
+	b=tNpb6N15lYLp5aSySOt7oqiORGtj5JYeGTl7phBq83ILSBIzw9iJ1zPS0plhyUcqtEAj
+	 5OhFS6ZlgCF47TRBwXU8adNmbJHCMe1WjUtkfr4TNVeJ7jW8EEobqoHp4s1Nbmtt5Z8e1
+	 eX1EOkYuYS5mww1fFJIA6jFamR1g6p0nkel6pQRbOxh4bJ6k3VbnPFEqp3BEUzrWm1znl
+	 7yrBeIB+X8Q+3x6NPdQdvwPM7cdZoAax3toNkMdwCHlvrK3zuUk2lmmFRBw094B+eQdR0
+	 WaW4TggEz1NPWPFZAdmRiJvn3+oaXE5Hr6o4i17gIgiDIqiI/5hOHQ+zFyy0Z1MdZfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794833030;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=urIVqAaFnFIHT9JGVNJy2ZG+PANfR+BVWX9qgyiwtQA=;
-	b=zbl5PBBDy5Bd++GbeTnUaan1fXM6eN+1oTYbXQvfcjNnXTsDwcnTjHEy6Wm+CMg2+ljT
-	 hbT6n4PEPcENMukE26Pj4Q+NuzKnpfjSXAaHys9NXgx5HGmpX8ZNObg/N6wDFpVQC6AON
-	 OjqX0LduL9W+H3RpWJsc4a7LrZXnGbICyYroWAj5oP1X8/YhO0Gtd/Fa9fH4G290M3Cxb
-	 DVYV8bYEYbICzJXq9sUemRD4ToXIjmmHy39H3u3ICajuJdklzek9EOqyrZw3HyAcgqVIp
-	 jyeCcj+tnlpDwhYlIq1hHUtv/7XpXVw8mf3VHQ9e4H2BcB23OjCyTKHCl3+RMCiqDRA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794852502;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=t92aTLgSQFgAtbZh31ucXDF90ij9OtvpoozTmZs6UUA=;
+	b=DqmFW3QSMx9TXDXbpbkweOABQE05Dy/Za11u9D2pwRbwx9WDUrIBEDaLc5+KwvkRZrf+
+	 96MUx4e/5qbgrDm7jaWpZGGsOd7Uf3WmAXb549b7SGRAChLCzJbQnmAxlnSoGu9it2mSd
+	 oj+Q06v2lPpaQsJc8mJ3kU1DuyjxKad0vzQAfHOExtYJtpUV6D4q4VKtiaEK0axFRoVOY
+	 qmrptJLKZehPqyDTGMGS/USCVjidyEM6OgE9y2tsqITnuSrXVAqQmYbt5hWosQeVQwput
+	 UndfoNm6NzHcsFGvDvnMcD/5xJDx7+zrS6KqK9hGL3rd49O5BrCknAwBxXLLqwoX5Fw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N3ffCp4l;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=opvy84eW;
+	arc=none smtp.remote-ip=209.85.221.53
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066E7606A332;
-	Mon, 16 Nov 2026 12:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64061606A31C
+	for <linux-leds@vger.kernel.org>; Mon, 16 Nov 2026 18:08:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 64061606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N3ffCp4l
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74AAF1F000CC;
-	Mon, 16 Nov 2026 12:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794833029;
-	bh=urIVqAaFnFIHT9JGVNJy2ZG+PANfR+BVWX9qgyiwtQA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=N3ffCp4lPtR0iCLPq6GX/hhh2lHoIpNQVrKCZSAf0KDSey2D/Y0oI4aLbDaMYTS6o
-	 OmNlFkWqmulv2yVfUL9Fn+9PcEvSZb2ahEj/Dud9A0qbnuN+peCnIbyI9Ra96fbh+e
-	 zEeNu66F+q/Lu0TYuMsx9MTuJYU/+R5mYaxPBx1tg+3gOrDWov9Jd21Wzqqh8wDSmH
-	 FCHpOdZqdSVNVhPdl1anUa1HaoVdmXqJq11H2P4pBmWFQCAtHOjfCAZROFZ1kFH5oe
-	 V7TnorOZsCxurm7DUGyQWF4Sn+W4LCApaNwiX9I51J8goU5HF7sXrQPtvYVyGg32Xg
-	 MAzrfn/VFQ4Og==
-Date: Mon, 16 Nov 2026 12:43:45 +0000
-From: Lee Jones <lee@kernel.org>
-To: Daniil Demakov <t3127430@gmail.com>
-Cc: linux-leds@vger.kernel.org, pavel@kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] leds: pca9532: Propagate I2C errors
-Message-ID: <20261116124345.GN6323@joneslee-macbookpro.roam.internal>
-References: <20261114141926.92737-1-t3127430@gmail.com>
- <20261114185201.30519-1-t3127430@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=opvy84eW
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-491f34b4e0fso1632726f8f.2
+        for <linux-leds@vger.kernel.org>; Mon, 16 Nov 2026 10:08:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794852501; x=1795457301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=t92aTLgSQFgAtbZh31ucXDF90ij9OtvpoozTmZs6UUA=;
+        b=opvy84eWgM09ln+Ti/gMANDD6ipJROun+dkh7c/5GC/3H4VxqGtFQu4qPioAheU+Te
+         CeR3uV4cvQb2EWNeFzaBDvVQ0AfX/vjjE5gOyOfbUVXBUw+3klb6bUuJI4YJA0ngGjPC
+         FSBuizks6p4m7kv8DKGpZ2gSQYQeelqRu+6Y9V7oulQ4S0hqm7OKhhAUtDYAVd9eExim
+         NUAf6fngUqnC5MvZFOW1uwELcOyxoTJi+HiLbU91GVZRcZpwjOsuyNLQezc6my5cUipe
+         JGZp+KapWQzMdEvCPr/A10EgYFdedZvZJX+YEgFRf2QxealoI9ENFuWfzKYrpH6z8iU7
+         gosg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794852501; x=1795457301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=t92aTLgSQFgAtbZh31ucXDF90ij9OtvpoozTmZs6UUA=;
+        b=INgv6v/yTbWNnYP60GHiWHgQocq4Fk/0G5Wg2pB0aMJNQ6IMQSiEZIcTdyxbjRQObb
+         Z/BZM1UdlW4VcaOP4a36sXmYQOz7gkmFrSPFy4vrntfoM8K23MN1VrgD1almQNI3kaB5
+         KiGftDUwege1Y3dQex3ySDFaEgP8O4XsWVdg8AFXORn1TckRdy9c8Efxq8O9F6oKBM1E
+         ok5dwnq67wSC3FXxKd3k5T+vilgO287gRleb65U+NJhrt0QS/wWYq88xp9WhDdb+93/7
+         oo+uIgeuc/rZXmi36u5uNWjk5JZYRLCHltYB+RepCAIqNcCdJEu7x9xhBWSjvoGlMCT8
+         bIDw==
+X-Forwarded-Encrypted: i=1; AL+hErEgQplKwpHrvphmO8JyQVMhTeZ1moH4A58T+LgEZ6s7YHvwgjQMXOMpxT/onvehWYNnKesuL3qhhN6N@vger.kernel.org
+X-Gm-Message-State: APuU4Z9dR+QlRxDxfmTNPQN3tIg+Exl61Wld6EOu2R2ZfVmeXaE0ObtM
+	RbbFtdH/w+MVpH7PMFte+qAlcvGJO6L2VAKXxO918QNkkGtXmNtsGAG9
+X-Gm-Gg: AZFdTZew4g8q0uCzmpikvlWA7D5ExEyPd9bcc+XMQAxgvGxtM6xMAHbozOnSoWiyLqZ
+	5S7srLzWirkKadXCh2unNtSSpJFFhduo32RtjaOpHiEMl5JO6P0++O0BPZO8I8GwLNohED0KCS+
+	UVOJDnVTRUDHMsGdu+6hWAMTSN8MPvTEW8DZiSStELKrSJ5ehyItxTxs7N1Sil5DYhszmdDwTm3
+	UX624zPGkDDzPDKYerY4CCebs2LefcuCCmtqQuxxeg0Z76lZP4HjVa9e5jACex25+dHLhuIyFHT
+	mSAEC7nhFuoJcVEXhbkBG/kECS0pbn+XZxpNbwBgeTBmwn8ThfGriSagaep+/2TO3b/5X1gfMjN
+	Tc0hoxQ6OZxHkcwTg0V+XB656oL7yBx6+dRlxEcoZJgTcfHsf5BLC4iCoSgM8ozRECLEDW7h2F5
+	/Xf8oLU/ypSlBTo4uoglnBU+P++GHXCJ6+2PmN9JzJancQeD3CU1N0OYbYuW/x7D2skT59wWqvF
+	csLr/Lk4DtbXfOjAuoxBuPK/ADU+R6QNrBNjdDBNGuiTfhVtocvGRdw+Jtd/u2DtTdYkjfih9Iq
+	U6+IvAwRXMcNcK9l2VSYQF+P3C1KRYQRoaT+BeBAUrIMfw==
+X-Received: by 2002:a05:6000:1626:b0:498:be72:6365 with SMTP id ffacd0b85a97d-49c73164876mr17893053f8f.16.1794852500691;
+        Mon, 16 Nov 2026 10:08:20 -0800 (PST)
+Received: from Kyiv.home.arpa ([2a0e:1d47:4093:b600:498f:88ac:2ca1:60d5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-49c608d10b2sm39025291f8f.44.2026.11.16.10.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Nov 2026 10:08:20 -0800 (PST)
+From: Volodymyr Chapman <volodymyrchapman@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Griffin Kroah-Hartman <griffin@kroah.com>,
+	Hans de Goede <hansg@kernel.org>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Volodymyr Chapman <volodymyrchapman@gmail.com>
+Subject: [PATCH] leds: flash: Add driver for the TI LM3554
+Date: Mon, 16 Nov 2026 18:08:09 +0000
+Message-ID: <20261116180809.26946-1-volodymyrchapman@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -57,602 +98,447 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261114185201.30519-1-t3127430@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-INTENTIONAL TOP POST
+The Texas Instruments LM3554 is a flash LED driver with two current
+sources for a flash LED, used together, and an indicator LED output,
+controlled over I2C. It is used for the rear camera flash of the Lenovo
+ThinkPad 10 (20C1/20C3), where the firmware describes it as ACPI device
+INTCF1C, at I2C address 0x53, with the STROBE, TORCH and HWEN GPIOs
+listed in that order and without names.
 
-Submitting patches as reply-to gets real confusing, real fast.
+An atomisp specific driver for the LM3554 was removed in commit
+f1aa35ab5943 ("media: atomisp: Drop the atomisp custom lm3554 flash
+driver"), which suggested re-implementing it with the LED flash class
+API if needed. This is such a driver, written from the datasheet and
+using the removed driver as a reference for the ACPI GPIO order.
 
-Please resubmit the latest version as an orthogonal patch/set.
+The driver controls the LED over I2C only and keeps the STROBE and TORCH
+inputs low. It registers a flash LED class device with 8 torch levels
+(34 to 295 mA), a flash current of 71 to 1037 mA and a flash timeout of
+32 to 512 ms. The chip allows up to 1191 mA and 1024 ms, but the
+firmware does not describe the LED's ratings, so the flash current and
+timeout are limited to the chip's power-on defaults. Faults are read
+from the flags register. The indicator output is not supported, it is
+not connected on the ThinkPad 10.
 
-On Sat, 14 Nov 2026, Daniil Demakov wrote:
+Tested on a Lenovo ThinkPad 10 (20C3, Atom Z3795), with the driver and
+led-class-flash built out of tree against a 7.2.15 kernel: torch at
+levels 1 and 8, flash at 71 mA / 256 ms (the flash ends by itself and
+the timeout fault is reported) and at 365 mA / 96 ms, s2idle suspend and
+resume with the torch on (the LED is off while suspended and on again
+after resume) and off, and unloading. This was also build-tested with
+W=1 on top of for-leds-next and media.git next.
 
-> Check return values from SMBus read and write operations and
-> propagate errors through LED, PWM, blink and GPIO operations.
-> 
-> Restore previous LED and PWM state when hardware updates fail.
-> Protect shared LED and PWM state with the update mutex.
-> 
-> Check register writes during device initialization and register
-> LED class devices only after successfully configuring the hardware.
-> 
-> Signed-off-by: Daniil Demakov <t3127430@gmail.com>
-> ---
->  drivers/leds/leds-pca9532.c | 336 +++++++++++++++++++++++++++++-------
->  1 file changed, 270 insertions(+), 66 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
-> index c8085427696f..19b993d9ac9f 100644
-> --- a/drivers/leds/leds-pca9532.c
-> +++ b/drivers/leds/leds-pca9532.c
-> @@ -14,6 +14,7 @@
->  #include <linux/leds.h>
->  #include <linux/input.h>
->  #include <linux/mutex.h>
-> +#include <linux/spinlock.h>
->  #include <linux/workqueue.h>
->  #include <linux/leds-pca9532.h>
->  #include <linux/gpio/driver.h>
-> @@ -42,6 +43,9 @@ struct pca9532_data {
->  	struct i2c_client *client;
->  	struct pca9532_led leds[16];
->  	struct mutex update_lock;
-> +	/* Protects beep_pwm between the event callback and workqueue. */
-> +	spinlock_t beep_lock;
-> +	u8 beep_pwm;
->  	struct input_dev *idev;
->  	struct work_struct work;
->  #ifdef CONFIG_LEDS_PCA9532_GPIO
-> @@ -144,68 +148,147 @@ static int pca9532_calcpwm(struct i2c_client *client, int pwm, int blink,
->  	return 0;
->  }
->  
-> -static int pca9532_setpwm(struct i2c_client *client, int pwm)
-> +static int __pca9532_setpwm(struct i2c_client *client, int pwm)
->  {
->  	struct pca9532_data *data = i2c_get_clientdata(client);
->  	u8 maxleds = data->chip_info->num_leds;
-> +	int ret;
->  
-> -	mutex_lock(&data->update_lock);
-> -	i2c_smbus_write_byte_data(client, PCA9532_REG_PWM(maxleds, pwm),
-> -		data->pwm[pwm]);
-> -	i2c_smbus_write_byte_data(client, PCA9532_REG_PSC(maxleds, pwm),
-> -		data->psc[pwm]);
-> -	mutex_unlock(&data->update_lock);
-> -	return 0;
-> -}
-> +	if (pwm < 0 || pwm > 1)
-> +		return -EINVAL;
-> +
-> +	ret = i2c_smbus_write_byte_data(client,
-> +					PCA9532_REG_PWM(maxleds, pwm),
-> +					data->pwm[pwm]);
-> +	if (ret < 0) {
-> +		dev_warn(&client->dev,
-> +			 "Failed to write PWM register: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = i2c_smbus_write_byte_data(client,
-> +					PCA9532_REG_PSC(maxleds, pwm),
-> +					data->psc[pwm]);
-> +	if (ret < 0)
-> +		dev_warn(&client->dev,
-> +			 "Failed to write PSC register: %d\n", ret);
->  
-> +	return ret;
-> +}
->  /* Set LED routing */
-> -static void pca9532_setled(struct pca9532_led *led)
-> +static int __pca9532_setled(struct pca9532_led *led)
->  {
->  	struct i2c_client *client = led->client;
->  	struct pca9532_data *data = i2c_get_clientdata(client);
->  	u8 maxleds = data->chip_info->num_leds;
-> -	char reg;
-> +	int reg;
-> +	int ret;
->  
-> -	mutex_lock(&data->update_lock);
->  	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
-> +	if (reg < 0) {
-> +		ret = reg;
-> +		dev_warn(&client->dev, "Failed to read LED register: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	/* zero led bits */
-> -	reg = reg & ~LED_MASK(led->id);
-> +	reg &= ~LED_MASK(led->id);
-> +
->  	/* set the new value */
-> -	reg = reg | (led->state << LED_SHIFT(led->id));
-> -	i2c_smbus_write_byte_data(client, LED_REG(maxleds, led->id), reg);
-> +	reg |= led->state << LED_SHIFT(led->id);
-> +
-> +	ret = i2c_smbus_write_byte_data(client, LED_REG(maxleds, led->id), reg);
-> +
-> +	if (ret < 0)
-> +		dev_warn(&client->dev, "Failed to write LED register: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int pca9532_setled(struct pca9532_led *led)
-> +{
-> +	struct pca9532_data *data = i2c_get_clientdata(led->client);
-> +	int ret;
-> +
-> +	mutex_lock(&data->update_lock);
-> +	ret = __pca9532_setled(led);
->  	mutex_unlock(&data->update_lock);
-> +
-> +	return ret;
->  }
->  
->  static int pca9532_set_brightness(struct led_classdev *led_cdev,
-> -	enum led_brightness value)
-> +				  enum led_brightness value)
->  {
-> -	int err = 0;
->  	struct pca9532_led *led = ldev_to_led(led_cdev);
-> +	struct pca9532_data *data = i2c_get_clientdata(led->client);
-> +	int old_state;
-> +	u8 old_pwm;
-> +	u8 old_psc;
-> +	bool pwm_updated = false;
-> +	int restore_err;
-> +	int err = 0;
-> +
-> +	mutex_lock(&data->update_lock);
-> +	old_state = led->state;
-> +	old_pwm = data->pwm[PCA9532_PWM_ID_0];
-> +	old_psc = data->psc[PCA9532_PWM_ID_0];
->  
->  	if (value == LED_OFF) {
->  		led->state = PCA9532_OFF;
->  	} else if (led->state == PCA9532_PWM1) {
-> -		return 0; /* Non-zero brightness shall not stop HW blinking */
-> +		goto out;
->  	} else if (value == LED_FULL) {
->  		led->state = PCA9532_ON;
->  	} else {
-> -		led->state = PCA9532_PWM0; /* Thecus: hardcode one pwm */
-> -		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0, 0, value);
-> +		led->state = PCA9532_PWM0;
-> +		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0,
-> +				      0, value);
->  		if (err)
-> -			return err;
-> +			goto restore_state;
-> +	}
-> +
-> +	if (led->state == PCA9532_PWM0) {
-> +		pwm_updated = true;
-> +		err = __pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
-> +		if (err < 0)
-> +			goto restore_state;
->  	}
-> -	if (led->state == PCA9532_PWM0)
-> -		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
-> -	pca9532_setled(led);
-> +
-> +	err = __pca9532_setled(led);
-> +	if (err < 0)
-> +		goto restore_state;
-> +
-> +	goto out;
-> +
-> +restore_state:
-> +	led->state = old_state;
-> +	data->pwm[PCA9532_PWM_ID_0] = old_pwm;
-> +	data->psc[PCA9532_PWM_ID_0] = old_psc;
-> +
-> +	if (pwm_updated) {
-> +		restore_err = __pca9532_setpwm(led->client,
-> +					       PCA9532_PWM_ID_0);
-> +		if (restore_err < 0)
-> +			dev_warn(&led->client->dev,
-> +				 "Failed to restore PWM settings: %d\n",
-> +				 restore_err);
-> +	}
-> +out:
-> +	mutex_unlock(&data->update_lock);
->  	return err;
->  }
->  
->  static int pca9532_update_hw_blink(struct pca9532_led *led,
-> -				   unsigned long delay_on, unsigned long delay_off)
-> +				   unsigned long delay_on,
-> +				   unsigned long delay_off)
->  {
->  	struct pca9532_data *data = i2c_get_clientdata(led->client);
->  	unsigned int psc;
-> -	int i;
-> +	unsigned long period;
-> +	u8 old_pwm = data->pwm[PCA9532_PWM_ID_1];
-> +	u8 old_psc = data->psc[PCA9532_PWM_ID_1];
-> +	int i, ret;
->  
->  	/* Look for others LEDs that already use PWM1 */
->  	for (i = 0; i < data->chip_info->num_leds; i++) {
-> @@ -223,29 +306,64 @@ static int pca9532_update_hw_blink(struct pca9532_led *led,
->  		}
->  	}
->  
-> -	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-> -	if (psc > U8_MAX) {
-> -		/* Blink period too long to be handled by hardware */
-> +	if (delay_on > ULONG_MAX - delay_off)
->  		return -EINVAL;
-> +
-> +	period = delay_on + delay_off;
-> +
-> +	if (!delay_on || !delay_off)
-> +		return -EINVAL;
-> +
-> +	if (period > ((U8_MAX + 1) * 1000) /
-> +		     PCA9532_PWM_PERIOD_DIV)
-> +		return -EINVAL;
-> +
-> +	psc = (period * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
-> +
-> +	data->psc[PCA9532_PWM_ID_1] = psc;
-> +	data->pwm[PCA9532_PWM_ID_1] =
-> +		(delay_on * PCA9532_PWM_DUTY_DIV) / period;
-> +
-> +	ret = __pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-> +	if (ret < 0) {
-> +		data->pwm[PCA9532_PWM_ID_1] = old_pwm;
-> +		data->psc[PCA9532_PWM_ID_1] = old_psc;
-> +
-> +		if (__pca9532_setpwm(data->client, PCA9532_PWM_ID_1) < 0)
-> +			dev_warn(&data->client->dev,
-> +				 "Failed to restore PWM settings\n");
-> +
-> +		return ret;
->  	}
->  
->  	led->state = PCA9532_PWM1;
-> -	data->psc[PCA9532_PWM_ID_1] = psc;
-> -	data->pwm[PCA9532_PWM_ID_1] = (delay_on * PCA9532_PWM_DUTY_DIV) / (delay_on + delay_off);
->  
-> -	return pca9532_setpwm(data->client, PCA9532_PWM_ID_1);
-> +	return 0;
->  }
->  
->  static int pca9532_set_blink(struct led_classdev *led_cdev,
-> -	unsigned long *delay_on, unsigned long *delay_off)
-> +			     unsigned long *delay_on,
-> +			     unsigned long *delay_off)
->  {
->  	struct pca9532_led *led = ldev_to_led(led_cdev);
->  	struct i2c_client *client = led->client;
->  	struct pca9532_data *data = i2c_get_clientdata(client);
-> +	int old_state;
-> +	int restore_err;
-> +	u8 old_pwm;
-> +	u8 old_psc;
->  	int err;
->  
-> -	if (!data->hw_blink)
-> -		return -EINVAL;
-> +	mutex_lock(&data->update_lock);
-> +
-> +	old_state = led->state;
-> +	old_pwm = data->pwm[PCA9532_PWM_ID_1];
-> +	old_psc = data->psc[PCA9532_PWM_ID_1];
-> +
-> +	if (!data->hw_blink) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
->  
->  	if (*delay_on == 0 && *delay_off == 0) {
->  		/* led subsystem ask us for a blink rate */
-> @@ -255,26 +373,47 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
->  
->  	err = pca9532_update_hw_blink(led, *delay_on, *delay_off);
->  	if (err)
-> -		return err;
-> +		goto restore_state;
-> +
-> +	err = __pca9532_setled(led);
-> +	if (err < 0) {
-> +		led->state = old_state;
-> +		data->pwm[PCA9532_PWM_ID_1] = old_pwm;
-> +		data->psc[PCA9532_PWM_ID_1] = old_psc;
-> +
-> +		restore_err = __pca9532_setpwm(client, PCA9532_PWM_ID_1);
-> +		if (restore_err < 0)
-> +			dev_warn(&client->dev,
-> +				 "Failed to restore PWM settings: %d\n",
-> +				 restore_err);
-> +	}
->  
-> -	pca9532_setled(led);
-> +	goto out;
->  
-> -	return 0;
-> +restore_state:
-> +	led->state = old_state;
-> +out:
-> +	mutex_unlock(&data->update_lock);
-> +	return err;
->  }
->  
->  static int pca9532_event(struct input_dev *dev, unsigned int type,
-> -	unsigned int code, int value)
-> +			 unsigned int code, int value)
->  {
->  	struct pca9532_data *data = input_get_drvdata(dev);
-> +	unsigned long flags;
->  
->  	if (!(type == EV_SND && (code == SND_BELL || code == SND_TONE)))
->  		return -1;
->  
-> -	/* XXX: allow different kind of beeps with psc/pwm modifications */
-> +	spin_lock_irqsave(&data->beep_lock, flags);
-> +
->  	if (value > 1 && value < 32767)
-> -		data->pwm[PCA9532_PWM_ID_1] = 127;
-> +		data->beep_pwm = 127;
->  	else
-> -		data->pwm[PCA9532_PWM_ID_1] = 0;
-> +		data->beep_pwm = 0;
-> +
-> +	spin_unlock_irqrestore(&data->beep_lock, flags);
->  
->  	schedule_work(&data->work);
->  
-> @@ -286,27 +425,48 @@ static void pca9532_input_work(struct work_struct *work)
->  	struct pca9532_data *data =
->  		container_of(work, struct pca9532_data, work);
->  	u8 maxleds = data->chip_info->num_leds;
-> +	unsigned long flags;
-> +	u8 old_pwm;
-> +	u8 pwm;
-> +	int ret;
-> +
-> +	spin_lock_irqsave(&data->beep_lock, flags);
-> +	pwm = data->beep_pwm;
-> +	spin_unlock_irqrestore(&data->beep_lock, flags);
->  
->  	mutex_lock(&data->update_lock);
-> -	i2c_smbus_write_byte_data(data->client, PCA9532_REG_PWM(maxleds, 1),
-> -		data->pwm[PCA9532_PWM_ID_1]);
-> +
-> +	old_pwm = data->pwm[PCA9532_PWM_ID_1];
-> +	data->pwm[PCA9532_PWM_ID_1] = pwm;
-> +
-> +	ret = i2c_smbus_write_byte_data(data->client,
-> +					PCA9532_REG_PWM(maxleds, 1), pwm);
-> +	if (ret < 0) {
-> +		data->pwm[PCA9532_PWM_ID_1] = old_pwm;
-> +		dev_warn(&data->client->dev,
-> +			 "Failed to write PWM register: %d\n", ret);
-> +	}
-> +
->  	mutex_unlock(&data->update_lock);
->  }
->  
-> -static enum pca9532_state pca9532_getled(struct pca9532_led *led)
-> +static int pca9532_getled(struct pca9532_led *led)
->  {
->  	struct i2c_client *client = led->client;
->  	struct pca9532_data *data = i2c_get_clientdata(client);
->  	u8 maxleds = data->chip_info->num_leds;
->  	int reg;
-> -	enum pca9532_state ret = PCA9532_OFF;
-> +	int ret;
->  
->  	mutex_lock(&data->update_lock);
->  	reg = i2c_smbus_read_byte_data(client, LED_REG(maxleds, led->id));
-> -	if (reg >= 0)
-> +
-> +	if (reg >= 0) {
->  		ret = (reg & LED_MASK(led->id)) >> LED_SHIFT(led->id);
-> -	else
-> -		dev_warn(&client->dev, "failed to read LED register: %d\n", reg);
-> +	} else {
-> +		ret = reg;
-> +		dev_warn(&client->dev, "Failed to read LED register: %d\n", ret);
-> +	}
->  	mutex_unlock(&data->update_lock);
->  	return ret;
->  }
-> @@ -328,33 +488,42 @@ static int pca9532_gpio_set_value(struct gpio_chip *gc, unsigned int offset,
->  {
->  	struct pca9532_data *data = gpiochip_get_data(gc);
->  	struct pca9532_led *led = &data->leds[offset];
-> +	int old_state;
-> +	int ret;
-> +
-> +	mutex_lock(&data->update_lock);
-> +	old_state = led->state;
->  
->  	if (val)
->  		led->state = PCA9532_OFF;
->  	else
->  		led->state = PCA9532_ON;
->  
-> -	pca9532_setled(led);
-> +	ret = __pca9532_setled(led);
-> +	if (ret < 0)
-> +		led->state = old_state;
->  
-> -	return 0;
-> +	mutex_unlock(&data->update_lock);
-> +
-> +	return ret;
->  }
->  
->  static int pca9532_gpio_get_value(struct gpio_chip *gc, unsigned offset)
->  {
->  	struct pca9532_data *data = gpiochip_get_data(gc);
-> -	unsigned char reg;
-> +	int reg;
->  
->  	reg = i2c_smbus_read_byte_data(data->client, PCA9532_REG_INPUT(offset));
->  
-> +	if (reg < 0)
-> +		return reg;
-> +
->  	return !!(reg & (1 << (offset % 8)));
->  }
->  
->  static int pca9532_gpio_direction_input(struct gpio_chip *gc, unsigned offset)
->  {
-> -	/* To use as input ensure pin is not driven */
-> -	pca9532_gpio_set_value(gc, offset, 1);
-> -
-> -	return 0;
-> +	return pca9532_gpio_set_value(gc, offset, 1);
->  }
->  
->  static int pca9532_gpio_direction_output(struct gpio_chip *gc, unsigned offset, int val)
-> @@ -394,40 +563,57 @@ static int pca9532_configure(struct i2c_client *client,
->  	struct pca9532_data *data, struct pca9532_platform_data *pdata)
->  {
->  	int i, err = 0;
-> +#ifdef CONFIG_LEDS_PCA9532_GPIO
->  	int gpios = 0;
-> +#endif
->  	u8 maxleds = data->chip_info->num_leds;
->  
-> -	for (i = 0; i < 2; i++)	{
-> +	for (i = 0; i < 2; i++) {
->  		data->pwm[i] = pdata->pwm[i];
->  		data->psc[i] = pdata->psc[i];
-> -		err = i2c_smbus_write_byte_data(client, PCA9532_REG_PWM(maxleds, i),
-> +
-> +		err = i2c_smbus_write_byte_data(client,
-> +						PCA9532_REG_PWM(maxleds, i),
->  						data->pwm[i]);
->  		if (err < 0)
->  			return err;
-> -		err = i2c_smbus_write_byte_data(client, PCA9532_REG_PSC(maxleds, i),
-> +
-> +		err = i2c_smbus_write_byte_data(client,
-> +						PCA9532_REG_PSC(maxleds, i),
->  						data->psc[i]);
->  		if (err < 0)
->  			return err;
->  	}
->  
->  	data->hw_blink = true;
-> +
->  	for (i = 0; i < data->chip_info->num_leds; i++) {
->  		struct pca9532_led *led = &data->leds[i];
->  		struct pca9532_led *pled = &pdata->leds[i];
-> +
->  		led->client = client;
->  		led->id = i;
->  		led->type = pled->type;
-> +
->  		switch (led->type) {
->  		case PCA9532_TYPE_NONE:
->  			break;
->  		case PCA9532_TYPE_GPIO:
-> +#ifdef CONFIG_LEDS_PCA9532_GPIO
->  			gpios++;
-> +#endif
->  			break;
->  		case PCA9532_TYPE_LED:
-> -			if (pled->state == PCA9532_KEEP)
-> -				led->state = pca9532_getled(led);
-> -			else
-> +			if (pled->state == PCA9532_KEEP) {
-> +				err = pca9532_getled(led);
-> +				if (err < 0)
-> +					goto exit;
-> +
-> +				led->state = err;
-> +			} else {
->  				led->state = pled->state;
-> +			}
-> +
->  			led->name = pled->name;
->  			led->ldev.name = led->name;
->  			led->ldev.default_trigger = pled->default_trigger;
-> @@ -435,6 +621,15 @@ static int pca9532_configure(struct i2c_client *client,
->  			led->ldev.brightness_set_blocking =
->  						pca9532_set_brightness;
->  			led->ldev.blink_set = pca9532_set_blink;
-> +
-> +			err = pca9532_setled(led);
-> +			if (err < 0) {
-> +				dev_err(&client->dev,
-> +					"couldn't set LED %s state\n",
-> +					led->name);
-> +				goto exit;
-> +			}
-> +
->  			err = led_classdev_register(&client->dev, &led->ldev);
->  			if (err < 0) {
->  				dev_err(&client->dev,
-> @@ -442,19 +637,26 @@ static int pca9532_configure(struct i2c_client *client,
->  					led->name);
->  				goto exit;
->  			}
-> -			pca9532_setled(led);
->  			break;
->  		case PCA9532_TYPE_N2100_BEEP:
->  			/* PWM1 is reserved for beeper so blink will not use hardware */
->  			data->hw_blink = false;
->  			BUG_ON(data->idev);
-> +
->  			led->state = PCA9532_PWM1;
-> -			pca9532_setled(led);
-> +			err = pca9532_setled(led);
-> +			if (err < 0) {
-> +				dev_err(&client->dev,
-> +					"couldn't set beeper state\n");
-> +				goto exit;
-> +			}
-> +
->  			data->idev = devm_input_allocate_device(&client->dev);
->  			if (data->idev == NULL) {
->  				err = -ENOMEM;
->  				goto exit;
->  			}
-> +
->  			data->idev->name = pled->name;
->  			data->idev->phys = "i2c/pca9532";
->  			data->idev->id.bustype = BUS_HOST;
-> @@ -467,6 +669,7 @@ static int pca9532_configure(struct i2c_client *client,
->  			data->idev->event = pca9532_event;
->  			input_set_drvdata(data->idev, data);
->  			INIT_WORK(&data->work, pca9532_input_work);
-> +
->  			err = input_register_device(data->idev);
->  			if (err) {
->  				cancel_work_sync(&data->work);
-> @@ -498,8 +701,8 @@ static int pca9532_configure(struct i2c_client *client,
->  			dev_warn(&client->dev, "could not add gpiochip\n");
->  		} else {
->  			dev_info(&client->dev, "gpios %i...%i\n",
-> -				data->gpio.base, data->gpio.base +
-> -				data->gpio.ngpio - 1);
-> +				 data->gpio.base, data->gpio.base +
-> +				 data->gpio.ngpio - 1);
->  		}
->  	}
->  #endif
-> @@ -591,6 +794,7 @@ static int pca9532_probe(struct i2c_client *client)
->  	i2c_set_clientdata(client, data);
->  	data->client = client;
->  	mutex_init(&data->update_lock);
-> +	spin_lock_init(&data->beep_lock);
->  
->  	return pca9532_configure(client, data, pca9532_pdata);
->  }
-> -- 
-> 2.56.0
-> 
+The driver was written with the help of an AI coding assistant (Claude);
+the testing was done on the hardware by the submitter.
 
+Signed-off-by: Volodymyr Chapman <volodymyrchapman@gmail.com>
+---
+ MAINTAINERS                      |   6 +
+ drivers/leds/flash/Kconfig       |  12 ++
+ drivers/leds/flash/Makefile      |   1 +
+ drivers/leds/flash/leds-lm3554.c | 337 +++++++++++++++++++++++++++++++
+ 4 files changed, 356 insertions(+)
+ create mode 100644 drivers/leds/flash/leds-lm3554.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index af302622c..6382ea861 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -27685,6 +27685,12 @@ F:	include/linux/dma/k3-udma-glue.h
+ F:	include/linux/dma/ti-cppi5.h
+ X:	drivers/dma/ti/cppi41.c
+ 
++TEXAS INSTRUMENTS LM3554 FLASH LED DRIVER
++M:	Volodymyr Chapman <volodymyrchapman@gmail.com>
++L:	linux-leds@vger.kernel.org
++S:	Maintained
++F:	drivers/leds/flash/leds-lm3554.c
++
+ TEXAS INSTRUMENTS TPS25990 HARDWARE MONITOR DRIVER
+ M:	Jerome Brunet <jbrunet@baylibre.com>
+ L:	linux-hwmon@vger.kernel.org
+diff --git a/drivers/leds/flash/Kconfig b/drivers/leds/flash/Kconfig
+index 9b6dd3f1f..bfc1f8888 100644
+--- a/drivers/leds/flash/Kconfig
++++ b/drivers/leds/flash/Kconfig
+@@ -31,6 +31,18 @@ config LEDS_KTD2692
+ 
+ 	  Say Y to enable this driver.
+ 
++config LEDS_LM3554
++	tristate "LED support for the TI LM3554 flash LED driver"
++	depends on ACPI && I2C && GPIOLIB
++	select REGMAP_I2C
++	help
++	  This option enables support for the Texas Instruments LM3554
++	  flash LED driver, as used for the rear camera flash of the
++	  Lenovo ThinkPad 10 (20C1/20C3).
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called leds-lm3554.
++
+ config LEDS_LM3601X
+ 	tristate "LED support for LM3601x Chips"
+ 	depends on LEDS_CLASS && I2C
+diff --git a/drivers/leds/flash/Makefile b/drivers/leds/flash/Makefile
+index 44e6c1b4b..90afe6583 100644
+--- a/drivers/leds/flash/Makefile
++++ b/drivers/leds/flash/Makefile
+@@ -5,6 +5,7 @@ obj-$(CONFIG_LEDS_MT6370_FLASH)	+= leds-mt6370-flash.o
+ obj-$(CONFIG_LEDS_AAT1290)	+= leds-aat1290.o
+ obj-$(CONFIG_LEDS_AS3645A)	+= leds-as3645a.o
+ obj-$(CONFIG_LEDS_KTD2692)	+= leds-ktd2692.o
++obj-$(CONFIG_LEDS_LM3554)	+= leds-lm3554.o
+ obj-$(CONFIG_LEDS_LM3601X)	+= leds-lm3601x.o
+ obj-$(CONFIG_LEDS_MAX77693)	+= leds-max77693.o
+ obj-$(CONFIG_LEDS_QCOM_FLASH)	+= leds-qcom-flash.o
+diff --git a/drivers/leds/flash/leds-lm3554.c b/drivers/leds/flash/leds-lm3554.c
+new file mode 100644
+index 000000000..70c526df3
+--- /dev/null
++++ b/drivers/leds/flash/leds-lm3554.c
+@@ -0,0 +1,337 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Texas Instruments LM3554 flash LED driver
++ *
++ * The LM3554 drives a flash LED through two current sources (LED1, LED2),
++ * which are used together, and an indicator LED (LEDI). It is used e.g. for
++ * the rear camera flash of the Lenovo ThinkPad 10 (20C1/20C3), where the
++ * firmware describes it as ACPI device INTCF1C.
++ *
++ * Copyright (C) 2026 Volodymyr Chapman <volodymyrchapman@gmail.com>
++ */
++
++#include <linux/acpi.h>
++#include <linux/bits.h>
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/led-class-flash.h>
++#include <linux/leds.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/regmap.h>
++
++#define LM3554_REG_TORCH		0xa0
++#define   LM3554_TORCH_CURRENT		GENMASK(5, 3)
++#define LM3554_REG_FLASH		0xb0
++#define   LM3554_FLASH_CURRENT		GENMASK(6, 3)
++/* Bits [2:0] of the torch and flash registers are shared */
++#define   LM3554_MODE			GENMASK(2, 0)
++#define   LM3554_MODE_SHUTDOWN		0
++#define   LM3554_MODE_TORCH		2
++#define   LM3554_MODE_FLASH		3
++#define LM3554_REG_DURATION		0xc0
++#define   LM3554_TIMEOUT		GENMASK(4, 0)
++#define LM3554_REG_FLAGS		0xd0
++#define   LM3554_FLAG_TIMEOUT		BIT(0)
++#define   LM3554_FLAG_THERMAL_SHUTDOWN	BIT(1)
++#define   LM3554_FLAG_LED_FAULT		BIT(2)
++#define   LM3554_FLAG_LED_THERMAL	BIT(5)
++#define   LM3554_FLAG_VIN_MONITOR	BIT(7)
++#define LM3554_REG_CONFIG1		0xe0
++#define LM3554_REG_CONFIG2		0xf0
++
++#define LM3554_TIMEOUT_STEP_US		32000
++#define LM3554_TIMEOUT_MIN_US		32000
++/* Power-on default, the chip allows up to 1024 ms */
++#define LM3554_TIMEOUT_MAX_US		512000
++
++/*
++ * 8 torch current settings, LED1 + LED2 together: 34, 71, 108, 146, 180, 218,
++ * 256 and 295 mA.
++ */
++#define LM3554_TORCH_LEVELS		8
++
++/* Total of LED1 + LED2, for the 16 flash current settings */
++static const u32 lm3554_flash_ua[] = {
++	71000, 146000, 218000, 295000, 365000, 441000, 518000, 596000,
++	652000, 729000, 805000, 881000, 960000, 1037000, 1113000, 1191000,
++};
++
++/* Power-on default (13), the chip allows up to 1191 mA */
++#define LM3554_FLASH_MAX_UA		1037000
++
++struct lm3554 {
++	struct led_classdev_flash fled_cdev;
++	struct regmap *regmap;
++	struct gpio_desc *enable_gpio;
++	/* Serialises register access between the LED and flash callbacks */
++	struct mutex lock;
++};
++
++static struct lm3554 *fled_cdev_to_lm3554(struct led_classdev_flash *fled_cdev)
++{
++	return container_of(fled_cdev, struct lm3554, fled_cdev);
++}
++
++static bool lm3554_volatile_reg(struct device *dev, unsigned int reg)
++{
++	/* The mode bits clear themselves when a flash times out */
++	return reg == LM3554_REG_TORCH || reg == LM3554_REG_FLASH ||
++	       reg == LM3554_REG_FLAGS;
++}
++
++static const struct regmap_config lm3554_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = LM3554_REG_CONFIG2,
++	.volatile_reg = lm3554_volatile_reg,
++};
++
++static int lm3554_set_mode(struct lm3554 *lm3554, unsigned int mode)
++{
++	return regmap_update_bits(lm3554->regmap, LM3554_REG_TORCH,
++				  LM3554_MODE, mode);
++}
++
++static int lm3554_brightness_set(struct led_classdev *led_cdev,
++				 enum led_brightness brightness)
++{
++	struct led_classdev_flash *fled_cdev = lcdev_to_flcdev(led_cdev);
++	struct lm3554 *lm3554 = fled_cdev_to_lm3554(fled_cdev);
++	int ret;
++
++	guard(mutex)(&lm3554->lock);
++
++	if (brightness == LED_OFF)
++		return lm3554_set_mode(lm3554, LM3554_MODE_SHUTDOWN);
++
++	ret = regmap_update_bits(lm3554->regmap, LM3554_REG_TORCH,
++				 LM3554_TORCH_CURRENT,
++				 FIELD_PREP(LM3554_TORCH_CURRENT, brightness - 1));
++	if (ret)
++		return ret;
++
++	return lm3554_set_mode(lm3554, LM3554_MODE_TORCH);
++}
++
++static int lm3554_flash_brightness_set(struct led_classdev_flash *fled_cdev,
++				       u32 brightness)
++{
++	struct lm3554 *lm3554 = fled_cdev_to_lm3554(fled_cdev);
++	unsigned int i;
++
++	/* Use the highest setting which does not exceed the requested current */
++	for (i = ARRAY_SIZE(lm3554_flash_ua) - 1; i > 0; i--)
++		if (lm3554_flash_ua[i] <= brightness)
++			break;
++
++	guard(mutex)(&lm3554->lock);
++
++	return regmap_update_bits(lm3554->regmap, LM3554_REG_FLASH,
++				  LM3554_FLASH_CURRENT,
++				  FIELD_PREP(LM3554_FLASH_CURRENT, i));
++}
++
++static int lm3554_timeout_set(struct led_classdev_flash *fled_cdev, u32 timeout)
++{
++	struct lm3554 *lm3554 = fled_cdev_to_lm3554(fled_cdev);
++
++	guard(mutex)(&lm3554->lock);
++
++	return regmap_update_bits(lm3554->regmap, LM3554_REG_DURATION,
++				  LM3554_TIMEOUT,
++				  FIELD_PREP(LM3554_TIMEOUT,
++					     timeout / LM3554_TIMEOUT_STEP_US - 1));
++}
++
++static int lm3554_strobe_set(struct led_classdev_flash *fled_cdev, bool state)
++{
++	struct lm3554 *lm3554 = fled_cdev_to_lm3554(fled_cdev);
++	unsigned int flags;
++	int ret;
++
++	guard(mutex)(&lm3554->lock);
++
++	if (!state)
++		return lm3554_set_mode(lm3554, LM3554_MODE_SHUTDOWN);
++
++	/* Clear old flags, the timeout flag would otherwise stay set */
++	ret = regmap_read(lm3554->regmap, LM3554_REG_FLAGS, &flags);
++	if (ret)
++		return ret;
++
++	return lm3554_set_mode(lm3554, LM3554_MODE_FLASH);
++}
++
++static int lm3554_strobe_get(struct led_classdev_flash *fled_cdev, bool *state)
++{
++	struct lm3554 *lm3554 = fled_cdev_to_lm3554(fled_cdev);
++	unsigned int val;
++	int ret;
++
++	guard(mutex)(&lm3554->lock);
++
++	ret = regmap_read(lm3554->regmap, LM3554_REG_TORCH, &val);
++	if (ret)
++		return ret;
++
++	*state = FIELD_GET(LM3554_MODE, val) == LM3554_MODE_FLASH;
++
++	return 0;
++}
++
++static int lm3554_fault_get(struct led_classdev_flash *fled_cdev, u32 *fault)
++{
++	struct lm3554 *lm3554 = fled_cdev_to_lm3554(fled_cdev);
++	unsigned int flags;
++	int ret;
++
++	guard(mutex)(&lm3554->lock);
++
++	/* Reading the flags register clears it */
++	ret = regmap_read(lm3554->regmap, LM3554_REG_FLAGS, &flags);
++	if (ret)
++		return ret;
++
++	*fault = 0;
++	if (flags & LM3554_FLAG_TIMEOUT)
++		*fault |= LED_FAULT_TIMEOUT;
++	if (flags & LM3554_FLAG_THERMAL_SHUTDOWN)
++		*fault |= LED_FAULT_OVER_TEMPERATURE;
++	if (flags & LM3554_FLAG_LED_FAULT)
++		*fault |= LED_FAULT_SHORT_CIRCUIT;
++	if (flags & LM3554_FLAG_LED_THERMAL)
++		*fault |= LED_FAULT_LED_OVER_TEMPERATURE;
++	if (flags & LM3554_FLAG_VIN_MONITOR)
++		*fault |= LED_FAULT_INPUT_VOLTAGE;
++
++	return 0;
++}
++
++static const struct led_flash_ops lm3554_flash_ops = {
++	.flash_brightness_set	= lm3554_flash_brightness_set,
++	.strobe_set		= lm3554_strobe_set,
++	.strobe_get		= lm3554_strobe_get,
++	.timeout_set		= lm3554_timeout_set,
++	.fault_get		= lm3554_fault_get,
++};
++
++/*
++ * The ACPI resources list the STROBE, TORCH and HWEN (enable) GPIOs in this
++ * order, without names.
++ */
++static const struct acpi_gpio_params lm3554_strobe_gpio = { 0, 0, false };
++static const struct acpi_gpio_params lm3554_torch_gpio = { 1, 0, false };
++static const struct acpi_gpio_params lm3554_enable_gpio = { 2, 0, false };
++
++static const struct acpi_gpio_mapping lm3554_acpi_gpios[] = {
++	{ "strobe-gpios", &lm3554_strobe_gpio, 1 },
++	{ "torch-gpios", &lm3554_torch_gpio, 1 },
++	{ "enable-gpios", &lm3554_enable_gpio, 1 },
++	{ }
++};
++
++static void lm3554_power_off(void *data)
++{
++	struct lm3554 *lm3554 = data;
++
++	lm3554_set_mode(lm3554, LM3554_MODE_SHUTDOWN);
++	gpiod_set_value_cansleep(lm3554->enable_gpio, 0);
++}
++
++static int lm3554_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct led_flash_setting *setting;
++	struct led_classdev *led_cdev;
++	struct gpio_desc *gpio;
++	struct lm3554 *lm3554;
++	unsigned int val;
++	int ret;
++
++	lm3554 = devm_kzalloc(dev, sizeof(*lm3554), GFP_KERNEL);
++	if (!lm3554)
++		return -ENOMEM;
++
++	ret = devm_mutex_init(dev, &lm3554->lock);
++	if (ret)
++		return ret;
++
++	ret = devm_acpi_dev_add_driver_gpios(dev, lm3554_acpi_gpios);
++	if (ret)
++		return ret;
++
++	/*
++	 * This driver only controls the LED over I2C. Keep the STROBE and
++	 * TORCH inputs low so that they do not turn on the LED.
++	 */
++	gpio = devm_gpiod_get_optional(dev, "strobe", GPIOD_OUT_LOW);
++	if (IS_ERR(gpio))
++		return dev_err_probe(dev, PTR_ERR(gpio), "getting strobe GPIO\n");
++
++	gpio = devm_gpiod_get_optional(dev, "torch", GPIOD_OUT_LOW);
++	if (IS_ERR(gpio))
++		return dev_err_probe(dev, PTR_ERR(gpio), "getting torch GPIO\n");
++
++	lm3554->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
++	if (IS_ERR(lm3554->enable_gpio))
++		return dev_err_probe(dev, PTR_ERR(lm3554->enable_gpio),
++				     "getting enable GPIO\n");
++
++	lm3554->regmap = devm_regmap_init_i2c(client, &lm3554_regmap_config);
++	if (IS_ERR(lm3554->regmap))
++		return PTR_ERR(lm3554->regmap);
++
++	ret = devm_add_action_or_reset(dev, lm3554_power_off, lm3554);
++	if (ret)
++		return ret;
++
++	/* Check that the chip is there, this also clears its flags */
++	ret = regmap_read(lm3554->regmap, LM3554_REG_FLAGS, &val);
++	if (ret)
++		return dev_err_probe(dev, ret, "reading flags register\n");
++
++	lm3554->fled_cdev.ops = &lm3554_flash_ops;
++
++	setting = &lm3554->fled_cdev.timeout;
++	setting->min = LM3554_TIMEOUT_MIN_US;
++	setting->max = LM3554_TIMEOUT_MAX_US;
++	setting->step = LM3554_TIMEOUT_STEP_US;
++	setting->val = LM3554_TIMEOUT_MAX_US;
++
++	setting = &lm3554->fled_cdev.brightness;
++	setting->min = lm3554_flash_ua[0];
++	setting->max = LM3554_FLASH_MAX_UA;
++	setting->step = 1;
++	setting->val = LM3554_FLASH_MAX_UA;
++
++	led_cdev = &lm3554->fled_cdev.led_cdev;
++	led_cdev->name = "white:" LED_FUNCTION_FLASH;
++	led_cdev->max_brightness = LM3554_TORCH_LEVELS;
++	led_cdev->brightness_set_blocking = lm3554_brightness_set;
++	led_cdev->flags |= LED_DEV_CAP_FLASH | LED_CORE_SUSPENDRESUME;
++
++	return devm_led_classdev_flash_register(dev, &lm3554->fled_cdev);
++}
++
++static const struct acpi_device_id lm3554_acpi_match[] = {
++	{ "INTCF1C" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, lm3554_acpi_match);
++
++static struct i2c_driver lm3554_driver = {
++	.driver = {
++		.name = "leds-lm3554",
++		.acpi_match_table = lm3554_acpi_match,
++	},
++	.probe = lm3554_probe,
++};
++module_i2c_driver(lm3554_driver);
++
++MODULE_DESCRIPTION("Texas Instruments LM3554 flash LED driver");
++MODULE_AUTHOR("Volodymyr Chapman <volodymyrchapman@gmail.com>");
++MODULE_LICENSE("GPL");
+
+base-commit: 3fc9303dba01676c2090768126e5327e341b7761
 -- 
-Lee Jones
+2.43.0
+
