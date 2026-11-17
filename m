@@ -1,58 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794916099;
-	b=FUZ3/cVbwA3W/+VAPg/yylGOX/4wp4RTqy7AwB7m9WctNkxsHbV7r+X0z3AIJMXeyS6m
-	 4eT71kY0jQwy5XXXPUhvmPQouDf3yxthTYkOnQK7m5MGFdEJzqz1O5Yo4ZWAsGuWutWhN
-	 VR3HZ080ibTjBvCmCUaO5xO+bPwX0odSMVoUnODFXBrIxlGOM1lp8alQhALoFgFRPqnGI
-	 f/K4X2mS9JkCjryCHFO3gK87zsYKphWp4Xz8IGR2pVBk9rMrMgX0mNqs98AbqYO5fQkvn
-	 V3djGYwDFg5sCkpuEfGEVMxJVbLlPBLRic2H3mI8UVf1Q3+fqb9xF8QXN2fqv/P5ssQ==
+	t=1794916484;
+	b=eEL+zzOoIgFsk+jxFLwfwM1WE0ZLrniDe+3ylfNZiaZrjLVcdcyuvmre6AJ6wnlrHEI9
+	 5+ykI6v7hgu00UKnuPL3gmapVozKNlG+EWAn+knGnyKJFciYFDYfGOfdg8IZMnhNjMcYP
+	 hc/fPj8KeuRBTn6QwWDCc9Xm3Lz7mbB83pM4Xa4hvtdEdmD2aRjv1yO/Xb941L4KvYKMa
+	 VT3uHowwoGYH+3xcgeVBPuSRSfuYmtauRSn6ZBXj+weD8oDCSRK53wkOaXszUTunSu/YB
+	 ayMnc7ie/YdCa6jhEbqqSx9OTTtQ1fv0ozNo7Tr62ovR8NxgVQc1Tyb0PHaUatbzWzA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794916099;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=hafnD3hdUTBG+I//74sAT7NVLzBxbLqlDm9QdAgelSE=;
-	b=pjC09BUNDmdp4FBLskebNFaEZtQokgCljOOkhXm5rkEypOnVjI9e7/e2TatD4k54j6Qb
-	 Vv/HqY2ZGG73f9mQ9+EbHAiPeKzNzh4YqCJp/8hfQOD4x0wufPQQvEFcnBC5euM3K3bLE
-	 sPxxsTOIvwtP57XtAgUexKxUztaNM5ycpgvE1fpjbDd4Qv0pZjInZjkts6Xgx4ENFvEw5
-	 p9tie85Ito4qEC+x4wRnGvp/YCRkSsLNLKuIZ6INewsOt+Jtz1aR8iXXHYuiVVZKquNpJ
-	 eUSc4yT3klhfKta/WUE2H6JFkSBmkWII+Tk2BIes3e79vy6lP5QK4j67NLWQWjIUoJg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794916484;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=lss1ePYo9p/xM9RukjfdvyCi0ZnMK6Lil9J96em0jBA=;
+	b=FPVO+mrkDPORW9WkzHVqLvraU/JKgB1pO0EVQeNrEOcQYO0NKN9tm0frOtJVuZW70cNY
+	 /jN6J1n/4bFcTRsVUr3kGEOHyPpBziW7hgL8m+8P+fFDMsYXECkOAHGwhRmOHKGihP7Vy
+	 zTstb4MMITIARnEqKHu3MHBtVgGrjTao1n4QOT/C4GSBV3iVFbwp8QvKvb0cU6VXVMGKh
+	 JYKwP+GVM9N5k1UEqoP+uXovK4uRZFWW1Tm9NO2SZSBtzdsq9a2z3KBsx8x2B9TbS56Jd
+	 pDFwMyD7zuYQC6pRQA4mHw20pnuzgBkbbE0sHMOTl4WqOnnhASlPsRZLm/2Atnrnn8w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="e2l/Fhwm";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oY6SuauL;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5694D606A31C;
-	Tue, 17 Nov 2026 11:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E734A606A31C
+	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 11:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=e2l/Fhwm
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431531F000C4;
-	Tue, 17 Nov 2026 11:48:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oY6SuauL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CAA01F000C4;
+	Tue, 17 Nov 2026 11:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794916099;
-	bh=hafnD3hdUTBG+I//74sAT7NVLzBxbLqlDm9QdAgelSE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=e2l/FhwmqDsqIpOXc2DiDweTCvIlhO5eZxg80E5sDHB29tuj3bO2tpMuXpU2M0pgF
-	 MNC1qPWbUL5ALiuPNHHCsdvWd3VvhWNbHERELXvj4ZRMiCQ/cy2mIgzBllGU+h5b0e
-	 WN/mq09UhF96wCJhsFxXYljBBSJvbN5zyBLzo7ve2vWQ7qf8pE3REl6pb8TY0e0ZEw
-	 yQrdK/TSWxZu6xn4BtH69TipnTwWuxBoioB/PT3jMqbFQXCGTfLoJ0CZhdOoIqUw5F
-	 dRA4li7wOyQIPqhJGzlx+TXYyHA75mER4lbChkadnXqCIJbSiZnSKQwEjPzCLHxB/D
-	 63YT9iaxj+1jw==
-From: Lee Jones <lee@kernel.org>
-To: Nam Tran <trannamatk@gmail.com>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Liang Haowen <nbg2974@gmail.com>, 
- Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Griffin Kroah-Hartman <griffin@kroah.com>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20261104142415.676757-1-arnd@kernel.org>
-References: <20261104142415.676757-1-arnd@kernel.org>
-Subject: Re: (subset) [PATCH] leds: asus-aura-scsi: add CONFIG_SCSI_DH
- dependency
-Message-Id: <179491609700.90264.12365494305888968428.b4-ty@b4>
-Date: Tue, 17 Nov 2026 11:48:17 +0000
+	s=k20260515; t=1794916483;
+	bh=lss1ePYo9p/xM9RukjfdvyCi0ZnMK6Lil9J96em0jBA=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=oY6SuauLGLUE5AdLXqbApMPbjJfaZxnkb2OF7RfizoVwpGIbuUxPfXAS2e5Mq4mbY
+	 KWg+mdW0Boq8BbtEqhn1Y5HxU1LXK/PVOdsQm0sVJzNnVK5wHFTBR2n2WlUNp7t2Az
+	 RTWy5jcUu1+/LtO9v4GW3cFeX0CdcGlEISwXKqwJIAdyOrC+I0oSuOIy40eio++jIs
+	 RDtxld6m7ysYShlmlg0ui4O658y7bM2qKoOkXQ6XXkZ4eqc+kcIDQ3TDB6ZQSCtPPO
+	 5Rp7FCYmnl97brLMZnqTpZWTH6iVRy9AZFG2MUZto1mjZzG9Ncw71f+z0rywVhC0u+
+	 HG4kkQItnwM6A==
+Message-ID: <sashiko-outbox-218738@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH net-next v2 1/4] net: phy: dap8211r: fix kernel-doc
+ comments for extended register helpers
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Artem Shimko" <a.shimko.dev@gmail.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261117114432.2794961-2-a.shimko.dev@gmail.com>
+References: <20261117114432.2794961-1-a.shimko.dev@gmail.com>
+ <20261117114432.2794961-2-a.shimko.dev@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 17 Nov 2026 11:54:42 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,26 +60,20 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
 
-On Wed, 04 Nov 2026 14:20:56 +0100, Arnd Bergmann wrote:
-> Without the device handler support, the driver fails to link:
-> 
-> ERROR: modpost: drivers/leds/rgb/leds-asus-aura-scsi.ko: symbol 'scsi_register_device_handler' undefined!
-> 
-> Add a Kconfig dependency to only show the symbol if it can
-> be enabled.
-> 
-> [...]
+> The kernel-doc comments for dap8211r_read_ext() and dap8211r_modify_ext()
+> incorrectly state that the caller must hold the MDIO bus lock.
+>=20
+> Remove the misleading sentence from both comments since the functions
+> lock MDIO internally by themselves.
+>=20
+> Fixes: d90265e75584d ("net: phy: add DAPU Telecom DAP8211R(I) Gigabit Eth=
+ernet PHY driver")
+> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
 
-Applied, thanks!
+Sashiko has reviewed this patch and found no issues.
 
-[1/1] leds: asus-aura-scsi: add CONFIG_SCSI_DH dependency
-      commit: 1b5298e11965bbac7e903314db1789dc736a1668
-
---
-Lee Jones [李琼斯]
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117114432.2794=
+961-1-a.shimko.dev@gmail.com?part=3D1
 
