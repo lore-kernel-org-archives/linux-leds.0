@@ -1,56 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.67.10.101
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794920907;
-	b=npG9uK5Coi09nUjdisTxOCjmUn6jSQ8piYI943D3QeIl8RYFMbHtaFi/1z9B97m4O8S+
-	 R1aL6Mr4GIpYPK6YqdiXr42Xgi0kyN4uXxsSaXYAvc2QkHPPQ6FO4iOKgImrTu77B/6gX
-	 T2uUjW1Aim3LxMGmroMhjx445TpNVAGNsxtNqt5K8gNX9vlA7OjDWQeuDcHe/yiT6kZHk
-	 R0W/n8SXr8teqYZxC1gv4+WL+XGwfYf57PltNCRYAYAhx1yRYY9QQ58r7GV4PTetubOSs
-	 qm0AieT+7FcnTMiWYHmaklwkSXHuCXrzpgJSthLEbmMOtgDul6dOGZhnjcTD3jPzKRg==
+	t=1794922192;
+	b=4NkvePCXtX0n3dhPEYolvtFaSqLCZTAlO9FlyMW3hTY1DD1tfZRvdH5rySC7OqWaUChL
+	 fE5YhyTy9zabdmzrAows8qDtlduzgJGSx+Ztp1nKd4eKE5STMCfg0oz9cAJ879j5o2MfP
+	 qRlj+q5J+5Qt3upEdVse/V/0GA2vDmXh074PG6dbo2xioJLFB+BM+dsNhuFwPFO8bOxAz
+	 KY1nBIdaL27+A1pVto5oiF3VDqW3I507UhEAh0ponaWNrNirYmDEqSMSBbJCp4jN9fxti
+	 oBeG4Dc2R6CCtuTlqpip0OGRFOARgqVz9sjHmmrIQNgI/vnmhA/boipxG1tLWAgS4/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794920907;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=r3fOCQdjHLQtrv80w46oYG+ZzeQD38zM0ynHLGL06zg=;
-	b=N3T57GStAEM6bI4VpZwEA2s6RoQLRXFUuLRPgvVd61soyo+0XKSaSdygh6IQlQmWvviV
-	 inEsLBT16Ph4Jk+KEpUZoIY2xcaxfxPRVu6Iu8ZgamqXyWAhEKAmRUUO34OSi8n/nps9v
-	 NIWKaUE7Rodqvj9GxujdnhZPYRfBlXEl9nY0rYBsvTqwmgbc7AgtfOvqAPPn2CmtqBgTX
-	 yLEjYkJ1dHKfJXoCng6BrcjZGCnNn6DAZ+qDufIyTas4AGiYoC6SaPiJf1UmXEkOHmoyz
-	 cNIte99XY3z8U6cInvY22dMbeK5khxonaVH4t67ezcz/1XGobcMdLket3ipqHSnDuwQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794922192;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=bsVnX1KyDIRRck/Ge0hH5qDt8MGbiPeNYR9hz7k7iFM=;
+	b=5Qd5GNHlTQQjGQTg+Dq45GdT+Njwj8WyCZlKvO/w6FkbMvS8uwryHwCMkI8298RE1q+I
+	 RskqPY3y/9j3wBSzf6D01MgM/53DfREk8ZG1IJA4v+Saks+lTcguWmxUiEB0oXrjr+L8s
+	 xrh29+h5vgA6vSwQnkkRvFez7X1vodEkA39F7TiQ5EBj8ka4hP3jgD9ufGvBj9JixygPS
+	 kFo6IPBag6iyXfrqFuhSPuIyWvhfD5lasgDmpjAQ2e/+S7OeDjr9jEDTIXDeAYHJ0B6zC
+	 czx3IpVV8hsolpTUPPoBjOiy3AhYPEZHmKC1/4tFBbK32PeMxzjbrRvuNWwVeMU5gIg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eODroBU1;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=lunn.ch;
+	spf=pass smtp.mailfrom=lunn.ch;
+	dkim=pass header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=FtRU4gpj;
+	arc=none smtp.remote-ip=156.67.10.101
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B7E606A323;
-	Tue, 17 Nov 2026 13:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D865E606A31C;
+	Tue, 17 Nov 2026 13:29:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D865E606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eODroBU1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4812A1F000CA;
-	Tue, 17 Nov 2026 13:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794920906;
-	bh=r3fOCQdjHLQtrv80w46oYG+ZzeQD38zM0ynHLGL06zg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=eODroBU1dABEtH7DPElFrq6ojWYH/JUk1tDrenPyOgangSHitSnkBEzIJbxKtiscP
-	 LoZ1g84TwXo0rSzjzehxISA49c39ReBEj8KWj6bCxc/mBv0uIpLbjafpiCHBOPqnnf
-	 K47EBkOigwykyTHGYWlgSZXsza7LJZBbi7M7Ywm2ajOMW7UqZBlPen8vRe81DfJ7y1
-	 p0Kwxb8ipPxPIxJLRayDyhoX+N3t+K1mqA7sTRELJT3xsYq7uH3CdHM0CC2HxI3Tpl
-	 0+8DstV7PKjJH9jerX6M0gl/d8SIbpT2rAEeHZbl9wGCUZ4MzRCPJAo8yvyBKV2ntP
-	 aar3zqpz5Buuw==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Danish Khateeb <danishkhateeb03@gmail.com>
-Cc: Andrew Davis <afd@ti.com>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20261104193038.91614-1-danishkhateeb03@gmail.com>
-References: <20261104193038.91614-1-danishkhateeb03@gmail.com>
-Subject: Re: (subset) [PATCH v4] leds: tca6507: Fix use-after-free on
- unbind
-Message-Id: <179492090504.5831.10534337417357138621.b4-ty@b4>
-Date: Tue, 17 Nov 2026 13:08:25 +0000
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=FtRU4gpj
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bsVnX1KyDIRRck/Ge0hH5qDt8MGbiPeNYR9hz7k7iFM=; b=FtRU4gpjS1lpGg1R2l8qnzEPAI
+	SKThOQRP/sgJXqt7nF/r29HzZTyIUEjMfCbol4olR3q65+GRW6qWOL/5I5mTTQ9MWcXHd9cUIta4w
+	ecfzw2eriODAzLj4UutuwL5CiqwCGaF35uz0KyXz1/JudVvpLXTp2xYHp/LtKO4aBQE8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1xTJFn-00H9t2-1T; Tue, 17 Nov 2026 14:29:43 +0100
+Date: Tue, 17 Nov 2026 14:29:43 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Artem Shimko <a.shimko.dev@gmail.com>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	maxime.chevallier@bootlin.com, pavel@ucw.cz,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/4] net: phy: dap8211r: fix kernel-doc
+ comments for extended register helpers
+Message-ID: <3918164a-f1db-4dc5-9adc-23c224a1d98b@lunn.ch>
+References: <20261117114432.2794961-1-a.shimko.dev@gmail.com>
+ <20261117114432.2794961-2-a.shimko.dev@gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,36 +67,20 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261117114432.2794961-2-a.shimko.dev@gmail.com>
 
-On Wed, 04 Nov 2026 13:30:38 -0600, Danish Khateeb wrote:
-> Since the LEDs are registered with devm_led_classdev_register(), they
-> are unregistered only after tca6507_remove() has cancelled the work.
-> Unregistering an LED that is on turns it off, which queues the work
-> again from led_assign(), and the work then runs after devres has freed
-> the chip:
+On Tue, Nov 17, 2026 at 02:44:27PM +0300, Artem Shimko wrote:
+> The kernel-doc comments for dap8211r_read_ext() and dap8211r_modify_ext()
+> incorrectly state that the caller must hold the MDIO bus lock.
 > 
->   BUG: KASAN: slab-use-after-free in assign_work+0x414/0x5b0
->   Read of size 8 at addr ffff888010d5c0c0 by task kworker/1:2/65
->   ...
->   Last potentially related work creation:
->    ...
->    queue_work_on+0xb6/0xc0
->    led_assign+0x223/0x340 [leds_tca6507]
->    led_classdev_unregister+0x26b/0x340
->    release_nodes+0xb3/0x140
->    devres_release_group+0x247/0x470
->    i2c_device_remove+0xbf/0x1b0
+> Remove the misleading sentence from both comments since the functions
+> lock MDIO internally by themselves.
 > 
-> [...]
+> Fixes: d90265e75584d ("net: phy: add DAPU Telecom DAP8211R(I) Gigabit Ethernet PHY driver")
+> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
 
-Applied, thanks!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-[1/1] leds: tca6507: Fix use-after-free on unbind
-      commit: c92d6666ffaca04015e91df3b1789c15c965e3d2
-
---
-Lee Jones [李琼斯]
-
+    Andrew
