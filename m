@@ -1,100 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794932670;
-	b=VvBJdd4uwmcGTowrqmceUfsYvD80ovAeV3Bzx+xgl5RQ9+RGKhCzfYiF1rm7V6eAwdkp
-	 XNIPNBQ2r56P4uWA597GO8OMO4uQcIwBtKMqNBB842iYjerf7ZRJVebCmS2RruMDEAxVn
-	 cNV3Zv9W0Ak/YPmuAwtG7RnKX/aFdSVLBJYyco9hPdAFBY38onCB+7EQiSVDwUrWttu27
-	 mzqXBbk3CRx4Bz/2Oxr/rbjyjy9wufFFpcnbfC5y8HYAvtgYUnNLXYDbSu5i8uF+qg+SJ
-	 /hWZn5MVSy5mKBJ2+A+o8o+rpfNP9ufCVutOwnGPGDYGjUnLkMtrX7wdWbrUn7EGGYg==
+	t=1794937269;
+	b=wWdwA+ldmlI03FsnKfhNpU4d6h75HijqUz4OF1cTxvaU6SSM0iL8VhlOwQY0BxVGsoCQ
+	 mCs8u735mfRtIWHW+Jl78wknkCK1Mc99LGLg9u8UPl44/clV8a0mzKFIOFEmL/XqN0vYU
+	 CVj4ZXW00XPyXixq1hY7/7aEl1ZinIHy47FM4oWnVFVIEJLQ5PraBvqvTbbCNwUtvyw39
+	 82+OMeaWt2C3mRUbTlz56p3B5nFu3YeA+L7KRHnbTAFiJ3yDGfxNr1Mtrd0xyKQv/JqCN
+	 bRb+518Svkbq7uQXD/ceg34uTPnfRRt47rxaGEjHOKCvSq7KMiEq+0fBrnEHKZKtoCQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794932670;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=Wxewv3rmU3Q16rUyybTo0MlmIExqFujl8iHouonYjT0=;
-	b=2pXbTMKt/Vn1sNQPVVA0EkjCANY0SngQDg8+60yPnXWjV03f4EMjGU44cAeb+i2ctfcu
-	 cO+lDNTdvKXGgOLA/l0onsuGVhURvotYwv0HEBi0K8MzUS7zBPHpdAQbnSq8dMKVWB97m
-	 TECRVMzLQ6pxvQKtQLdRkoA0iPdE/DLLIA+ANFsfbmINFAJIjyQcNjdSPsJuqQ7q+qqCK
-	 eyUvLoaAdnLQ9kdP6/uRlLECXKqE5MRHzlJkIu1iLI50VI9sEZcx8e8kvyq/eN7nJ/cuU
-	 0Hn70yMEDDMv+L09eIIfHEfbnOjWxNOCpDlSZyriMNLidopmzQlMCpu8ylnPm2zNT0Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794937269;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=YXlDBZaIvHo1e8VAiEashHwtglIY0Ep4HLvUXrdMPlw=;
+	b=0mdiy90FQh0Sl9z/uQRCZLBIWnRSlhNlFy7AIJZ6BfxBsMQeEnrC3Cb70XK+ZMMjH/aC
+	 B74DVJgmezMwjfWt/ByXEsKYWXEdOrkaDLuTgz1e9rvJy5MJaUnBgEIc9KtBY7WkIVgg1
+	 OYCf6Hx/xd/yfduFV30OXGBGvS/7r3MOmdiukFXMgGc2I4h07PqHxHqbZ0ec8fn47DmWQ
+	 2ZkRYdDvu3JLabFkDSDRlMtw0ylNxAEZhpMnGBemnNJ5CAO6DUDXcG/OWMvcoS795uroC
+	 31A1vjPgbiJ4/KnFPAL+MO5tjkc1RiGkZcRh7F3c7CsuSTHVMEsIn/pIBmVwKimY7fA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cdqQd8jv;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.51
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RYkSyXjE;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1944606A32F;
+	Tue, 17 Nov 2026 17:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RYkSyXjE
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794937269;
+	b=I0BVdHDi2BfYv90RhlOr9Lr0bOayMAlSSAQ8LiPWg88locaZPtZ9G4xu0tGuvNFlEdiB
+	 BFuxfOzHEJGWw1bHBB+LAMkn/4NVxhqtW184YA+od36nlNfv9pPO8iGXiHWIfuxZBUrKP
+	 jVvTJ72JBMRYp+o+6c49SQqa7SMmyfxk/Qx8YSL/WkOBfhKCTGFRD6hNXPySiCHl5uV4T
+	 BPtC2/wm2CvmnQqNJ4lwIA+Tf9YSAryb3NN2d11vKClbxhALxkzrGoiNvbsczs6TkbrWt
+	 Nx1JvYJwRokemJkc+JOZjpMOW0DskjXJeB76QuKyGayNFSOWe1sMFaFFiDnE26DDvNw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794937269;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=YXlDBZaIvHo1e8VAiEashHwtglIY0Ep4HLvUXrdMPlw=;
+	b=r9XvizCuHIf6GQXjeb5Qt67MAs0cSRPs1EJzQ/U/BhvqbD4oeIiGogCJ2UYJR7tWHT0i
+	 RYLJUr/qK9oaCFWBoBS6f5Cqo+Igr9kCks2i09tGh+M12CcObPdZQPLkOLthFeyxLMbZH
+	 1PGBjB2p+3//VpSVypBfoWa60oyQp/s47dR8gG1uZ5lMqgjhD1iETFssArU1GgYfrT3av
+	 qV+lcX9Su7iBp/jwpCLwnxTjsjwzvBeZQT+ncBDlmPXRzlYPdc1Fv+lTLdYWss7OWU+2R
+	 0TU/4a7kcNx+w9gmfphnH7soFP5g1hIMsnIbgW5tWKs9LrA6Urjb0gmYfZHl+D8mkHg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67BF606A32C
-	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 16:24:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E67BF606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=cdqQd8jv
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c50e26763a4so359021166b.1
-        for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 08:24:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1794932668; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Fyu6eR2vSfAV59O+jVW1MUcgQT8a6dZBg2Vf9PkUFCAGHfeLJUFzdGYOIl7CD4TxIF
-         CMr1f9nXi35t1loBKdkqwbjVn2O9ZhzNfE4JjlpflGAlYA5GsVIrzRJInC3VvQ/KuwxD
-         VvRcSE9qGbGGYsvq9VpkvCPySwuKM0pOIpYn0GxEk1XV0VvUj6j/N7lgB8WkdhrICDiM
-         0RIDwWezJ+R22oA+bPDVq6TUucvXf2IKAXKiQYEtnhI6wUt36NmAHWnKE+49uXXUGsYe
-         2CmyHHSSfbUbNSKkzJpmz8gi7C2CLlivvhE9i7P9bZefxkUfpYKoilcPD0NAtb/lpOhl
-         hQBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Wxewv3rmU3Q16rUyybTo0MlmIExqFujl8iHouonYjT0=;
-        fh=RkAdjbqilLYA8J3/pu9wS+n4sVL0dNjo6iu9F7hjcXw=;
-        b=YuYQ64vuTeE9/927GX+hGJHJdi0EeDbjsFpVdeWoclOtCYnHdOB4hsHG6vkNTYIQ6y
-         0AEQPo6iCQA9T4xRG02T7fe7rZYy3Y13RvUm2fN3jhhb6olPUaOIXChHQDBInNMkGbaJ
-         /4O1QzneKDBZy2ev9s5cdGuTkgHjGrz2T/u4cf+nbVuRS7IfnIRiulHjN+2cXY5ZhIXh
-         XQkPnoCDRbBdI6aQXHxZBsxVjCfEQFNUbbp1KrDYr4CC7k7cTD1BRth/BHxnG4n32/8n
-         o13PjPSKinuVJi+0exJMQQOvTsHtPLNg15NpjlTdFQwigI//P7/++pfbxZnoFT5mO7rE
-         /18Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794932668; x=1795537468; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Wxewv3rmU3Q16rUyybTo0MlmIExqFujl8iHouonYjT0=;
-        b=cdqQd8jvojBdqf5S+ZlBYnRBB0iv9NrxVYWGKdwsf3qISFsmdiLHOpl+UNMQAzU5Ho
-         liy/ffvLgOjWoCC0QMtIRtCSaVqYHa8IArufbSdRmDatd8CHbeYDI8B2a59M2Wrb8O29
-         5NvqLtv4LgJz/k1d6g/ZfQrzTO47WvsKobB2eTGboiH6qTmucj3NIxw06T+MZKY4mOTH
-         seB2ppD/Pobdk//WYyirPBedKHZ3i6zq8BB2cxTSK/1zF1XG4JeHqeQQ/WrdtMt+RNK3
-         5yuPyjkXC22spPcEmapMTeUxRVzMVVw38Bm3+Ce+ODpNYfXU3pJjuC4IOnDK36O1bFx8
-         gTiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794932668; x=1795537468;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Wxewv3rmU3Q16rUyybTo0MlmIExqFujl8iHouonYjT0=;
-        b=vJ/GQGAvIktQ4AAyZgM7zo52WetW1gJCLy9KTN4eyWIXx8EJg4Wz+s2S2bCvu8jjXV
-         k/a6L0Fgrw/NOGivstgNjAH4rsiwL8jA/GKwIh9/WqGzw14hHNg01MzNLXMLthBufti/
-         /LTi/9Qft6y4OMVKkkYfTACD69iddNq6k0Edy8b5+1AZpxC9GPAZOr6CA4Z+5O/JPmud
-         IfYoHXm0XsytUZ0a2WtyO1bo15QKIvuEicAIxjSL9LMQxvXCRZhb8nS4/iCBPTqp+edn
-         glejwnRDmKyED8a31SaRLGhcFKxy6/fkOxFNijnJkotBUawce0S0bdWp+EkSqx/FiY56
-         B7fg==
-X-Forwarded-Encrypted: i=1; AL+hErGoDI6sHZ3D0n1+H4TRo4kiljq/kHg+jYFs3XnuRTlpShRXEtGUwNZLK09NYFBtbF9C4/kxvhyW0ndQ@vger.kernel.org
-X-Gm-Message-State: APuU4Z/AjwUO/82bZTZ/qBUuefKqXOZRumMZH+N9c1TX/LF7k91/Gyoz
-	3vFD3Lugl3D32bTHMDalmZkgfq/wl9THHl71aPye22O9bfPiRl3cls/xhir2YokhD50ZN8PUmgt
-	ij5gFhicqToHhNRHwqCIpZGXK46h/ow4=
-X-Gm-Gg: AYBFou3tpmIZ0+L+Sbcdvm2r/v+K2/kGCRu7jUANX8LcjwhZr00jCTqkUtslMMKMLqx
-	38r57parvXCp/xN8GsbjxFaS0wEdReH3TQPyTXUAsYdTcUGoGMFHOwsnJk8Ddt22/G97rIoCkeo
-	LLDpYfqBN/u+f3iiS4saA7BrlAY52KZIYGXEHfVSzMzQkqD9hcszlgBwS8hcDXlNaQRlwVfaVA9
-	x9LSHLWkqbXa1v+WYl85kscoRhaW5Qh0OtXmmtT4Ldcp0Gr77tkHjTRTwnQeEfQoC/e5I69kuTi
-	s7gelA/PGEt6aowjUjA2C2EnNByP4OuGfepjI8XF4yYdZlWYKmEma3t0S9nm6ftmhnmOCgZr9J8
-	4jZDjtiUD/SrBTqpW9hJdf2JibtKUGrRub3U79jbxnp9ljue/7X68JSN2T2YM
-X-Received: by 2002:a17:907:d308:b0:c40:f9ea:7387 with SMTP id
- a640c23a62f3a-c5096110ee7mr1203048466b.6.1794932668009; Tue, 17 Nov 2026
- 08:24:28 -0800 (PST)
+	by smtp.kernel.org (Postfix) with ESMTPS id EE7131F000C6;
+	Tue, 17 Nov 2026 17:41:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794937269;
+	bh=YXlDBZaIvHo1e8VAiEashHwtglIY0Ep4HLvUXrdMPlw=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=RYkSyXjE9IAgeydM0LPE1fBgolP7L1M15dIEyE+OUkh1gfjutGEyAZA9406V/gtEm
+	 gbELMh/Oz9Te5GdelpTeIH0FNDS7GQO3CWpbDyY7EoQWNtsCGtNNzIqhoheaYnCKi/
+	 zqYLLjgtJDd4ZIc/7jKAFNG9SeFRL34qcpMUFjv3xKHMhv/FwgsTymuLkyIzjMr02E
+	 U5/RvpPSxs8sRfuX4qNJvRh9Q8oT9m5AM2N0+PQxuI73puYGJaVkn1Osp7ahTR/y+g
+	 QdSG/bhd/rzN6hC+HhNzbVANhFK3rOTZ1lsTMC526mARaCq/kuBLe1YwI1JuxNGKmi
+	 kcx0h5Mm701UQ==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 4C6824AA16;
+	Tue, 17 Nov 2026 17:41:08 +0000 (UTC)
+From: Roman Vivchar via B4 Relay <devnull+rva333.protonmail.com@kernel.org>
+Subject: [PATCH v3 0/2] backlight: add ktd3137 support
+Date: Tue, 17 Nov 2026 19:40:57 +0200
+Message-Id: <20261117-6768-ktd3137-v3-0-b4fd957e3b00@protonmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -104,38 +83,78 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261117114432.2794961-1-a.shimko.dev@gmail.com>
- <20261117114432.2794961-5-a.shimko.dev@gmail.com> <052adff8-b1d4-4cf2-941c-cfb2725d13a0@lunn.ch>
- <CAOPX745DQDpYh=PNQxDkH1DbfwMRwD8DV81TaX33mNk-9aX3oQ@mail.gmail.com> <6b2ffa4d-b99c-42d1-8729-00f180b955b2@lunn.ch>
-In-Reply-To: <6b2ffa4d-b99c-42d1-8729-00f180b955b2@lunn.ch>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Tue, 17 Nov 2026 19:24:16 +0300
-X-Gm-Features: AclHuK_kxuMbS-JfA12If6aJeq6DU7qmi51H7ZrXORdCaUCFkepguGc-ovdSkpg
-Message-ID: <CAOPX74709XiLXLoioDJStTSzzhstC2sHpM4GieAO=3-37E18pw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 4/4] net: phy: dap8211r: add PHY LED control support
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, maxime.chevallier@bootlin.com, 
-	pavel@ucw.cz, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XNTQ7CIBCG4asY1mL4aWlx5T2MC6BTi9rSABJN0
+ 7tL68ZoXL7JN89MKIC3ENB+MyEPyQbrhhx8u0GmU8MZsG1yI0aYoJQwLCpR42tsOOUVLsDIkoi
+ 61UKhfDJ6aO1j5Y6nd4e7voCJi7EsOhui88/1X6LL7g+dKCZYl7poJeGmFHAYvYtu6JW97Yzr0
+ eIn9iFQ8iWwLMhCClNSaEEVP8I8zy+sGjsXAQEAAA==
+X-Change-ID: 20261102-6768-ktd3137-4ec95068fb6a
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org, Roman Vivchar <rva333@protonmail.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794937267; l=1886;
+ i=rva333@protonmail.com; s=20260510; h=from:subject:message-id;
+ bh=FSVxmo57BknMiKWx0HlL7rvM1SWImH1ToEyr5Lg5KGA=;
+ b=6xP59/Y/AqYpXNqfijQP8uk+tItfqsnD/vfknkIo3xT6XvOWTesQ/9sLKcMSIUDVjHwFf5zuP
+ CVa7id8j4z9C+ndMYh7N5W4ZntdP/oHZI02bEPzdMo6rJGO3juJZXtN
+X-Developer-Key: i=rva333@protonmail.com; a=ed25519;
+ pk=zww/nWjBGoQ4POXCG0BV6fx2iuXK6jx77rsKPA5YK5Y=
+X-Endpoint-Received: by B4 Relay for rva333@protonmail.com/20260510 with
+ auth_id=777
+X-Original-From: Roman Vivchar <rva333@protonmail.com>
+Reply-To: rva333@protonmail.com
 
-On Tue, Nov 17, 2026 at 4:49=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > Sashiko said only [1]: Sashiko has reviewed this patch and found no iss=
-ues
-> > For some reason it replied only to me and linux-leds.
->
-> There are two different bots. The netdev one send emails using
-> netdev-bot+sashiko@kernel.org, and it gets the reply addresses
-> correct. It is also more accurate, less false positives.
+This patch series adds support for Kinetic KTD3137 backlight IC. It
+supports linear brightness range from 0 to 2047.
 
-Oh, okay, nice
+While the chip supports PWM and MSB modes, they weren't included, since
+MSB mode supports only 8-bit brightness range, and PWM is not enabled on
+this board. I have checked other Xiaomi vendor kernels, and their
+configuration appear to be the same as on my board. I'm not aware if any
+device uses PWM mode with this chip.
 
-Will wait =3D)
+This series was developed and tested on the Xiaomi Redmi Note 9 board.
 
---
-Best Regards,
-artem
+Signed-off-by: Roman Vivchar <rva333@protonmail.com>
+---
+Changes in v3:
+- dt-bindings: bring back vin-supply (Krzysztof)
+- Driver:
+    - Move enable_gpio from the struct to local variable
+    - Use .name for i2c match (Sashiko)
+- Link to v2: https://patch.msgid.link/20261110-6768-ktd3137-v2-0-9496c51efea4@protonmail.com
+
+Changes in v2:
+- dt-bindings: drop vin-supply from required list (Daniel)
+- Driver:
+    - Drop val variable in ktd3137_init() (Daniel)
+    - Replace KTD3137_DEFAULT_BRIGHTNESS with KTD3137_MAX_BRIGHTNESS (Daniel)
+    - Drop gpiod_set_value_cansleep() in ktd3137_remove() (Daniel)
+- Link to v1: https://patch.msgid.link/20261102-6768-ktd3137-v1-0-b5b4f903c56e@protonmail.com
+
+---
+Roman Vivchar (2):
+      dt-bindings: leds: backlight: add Kinetic KTD3137
+      backlight: add ktd3137 support
+
+ .../bindings/leds/backlight/kinetic,ktd3137.yaml   |  64 +++++
+ MAINTAINERS                                        |   6 +
+ drivers/video/backlight/Kconfig                    |  11 +
+ drivers/video/backlight/Makefile                   |   1 +
+ drivers/video/backlight/ktd3137.c                  | 257 +++++++++++++++++++++
+ 5 files changed, 339 insertions(+)
+---
+base-commit: 5e6de6a2b522f659defacb1551d0465ba6ce13cf
+change-id: 20261102-6768-ktd3137-4ec95068fb6a
+
+Best regards,
+--  
+rva3 <rva333@protonmail.com>
+
+
