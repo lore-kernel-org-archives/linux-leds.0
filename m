@@ -1,63 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.67.10.101
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794922575;
-	b=xETgKiau9VWxS415JI8HcJhQxsnJI2m8S8eLiNouUwCJpIn+Wspdp/Jo8Ybp77DbAOBY
-	 KZbPwKE67UFMlmcpxWWCR99OOJKVnp2nnpDl3MdK7v7JmR2MEZq/VBUjOCUF7JDrakVLx
-	 L8sBXa3bIIGjnDJ0geYcwWkCmtxkCPcYH88DC5klESYY3qYVZgl+FTHp3Hm186wHncaWO
-	 aGPnQc87vq6yLcNX3AdHjdJ0JNDkccJnkaP/+TDrIqhKZ9R1TT6IrWDVwGF1HxNeOKluy
-	 VzTuz0mE/RujxjyaM5ocYZfG3iLS6xT3rEWDexQITxMVA5Q8W3gmffIrL0rWClDrTdw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794922575;
-	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To;
-	bh=X/2BPYcmOvPNZZbRU++v01rC+kIhnNmGpFqU4z7Oxsc=;
-	b=OWFIslVyWA5bsSF8U6yx+HAB+edKsG2oh9s3EU8jr4mffZRaBsUulNc06ltnloZ4Hofx
-	 WBjGEOe4QbAyuR+rVwPMKdvRbB/+HFO3mtByxTKw1YCOhlizD3w2IhXNeI12eibATrCpr
-	 MJDci2254A81hyfIT9g5hHJ/JHFvCasLVo0rKQX9t111lSm91hKAmeC1WBca06ZajCwA8
-	 jf/dTKeUf9lbnmMRuGL37yKM8DMtx3BMTaT/KYUKgmBFZY/b4vueJ05qLipTNHFH6h+gS
-	 y0jeenx5UMDK3A81r8Y3OthdKupeumiotXkXfbSgmb6s8/WDgxv/TQlvY6P7nbYh9bQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=lunn.ch;
-	spf=pass smtp.mailfrom=lunn.ch;
-	dkim=pass header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=cHa5pIYV;
-	arc=none smtp.remote-ip=156.67.10.101
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.47
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794922888;
+	b=CmwQCHPDBgIGCo8v0e9UGRqzsubgymD0fpI7Mzdzmebu3XJW7f7rqAlADNqNts/CMYfJ
+	 Re2bxVipCwKNJoECEyjM5x3e+qtOqMtWVDpxwPtiZACXUWtqDHxIDmRV+4BHmcL6XLmyc
+	 KYeKbOuWMcJ5Rdkf49GZkJUUxbgrOL2d/FnLkpy40x1pVJb0YkC0qrqdniDt48XXEqWVE
+	 ho1vKzfnrk394CD4dn4PMWPRRSXy4PnJ1L3iXInilJFoOPVv9rBl1ZCoAfHubFpv3ultU
+	 JFfsBBWWg1kIkhiF/g/YjsncquzL6LHZswmJEb4Xtw16MdfPSdTuVGnMga4I/1qItNQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794922888;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=7Wpg3cT5I6s6GnyI0QhfON8nAL8HSLyzxKK2eKgU8bw=;
+	b=BAi4aOsdaz2+q6qLAka7gtnpL1cN5znr9F6LEKlvY1tQQAsVMzsrw9aLob5KaFaf5KFj
+	 3CDhHce/RoyjpxBxwvaUhpD38IW2AYtV3l+RXk4UHJRH+DzHTOxM/OQ/+xOIwBjUYuCSQ
+	 ZTYEY/QvKOwgXcLe3TU7b1nzO2Q7ah1u9zLnBVeU2Y3bsRcP5KqdenuzVRRa7r5ymWI+Z
+	 BQAkIkXJMpbndG0bVOqeH+Cs1H5edQh8Zvflrm9KayyblvlPH75Rs26UhBx68KQMLzHhF
+	 5zibD+v9vhjcUHBAHB8bT5J8pvRYxEcGYH2VFb7pvABjZjlUVMVYdxNUpq2W4RQFOjA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HXZD6+bO;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.47
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF21A606A32F;
-	Tue, 17 Nov 2026 13:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AF21A606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550CA606A33B
+	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 13:41:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 550CA606A33B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=cHa5pIYV
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=X/2BPYcmOvPNZZbRU++v01rC+kIhnNmGpFqU4z7Oxsc=; b=cHa5pIYVEjGDKHP3a9oo/XSAMY
-	2karsmE33psxJFXv8KK2DfED1Zj3HSwk75ikjjSKNI8ZV1AouUUOO88LanyGgtLj18gL/l7ijN/3r
-	av65dgsjmxHm/jjLGVte3ew15zvZUb+iI3X+6sCLYbiyKdS73wIDWu+RqGsXbZHGwSlc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1xTJLx-00H9yH-47; Tue, 17 Nov 2026 14:36:05 +0100
-Date: Tue, 17 Nov 2026 14:36:05 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Artem Shimko <a.shimko.dev@gmail.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	maxime.chevallier@bootlin.com, pavel@ucw.cz,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 4/4] net: phy: dap8211r: add PHY LED control
- support
-Message-ID: <052adff8-b1d4-4cf2-941c-cfb2725d13a0@lunn.ch>
-References: <20261117114432.2794961-1-a.shimko.dev@gmail.com>
- <20261117114432.2794961-5-a.shimko.dev@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=HXZD6+bO
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6b570ff3dfdso4703565a12.3
+        for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 05:41:28 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794922887; cv=none;
+        d=google.com; s=arc-20260327;
+        b=HIuJcJwigM5GnBRH+KlzxCV8Nj+Z1sOyJe18v1Z/6ERuO7V+33NoHe2kwt7X2m7hLB
+         xF4Dn7xWZ5Phoi3nu2SN9IHirfBL5jXN8FuUEDc4ALrlCcB5g2r81wQh7FQ5GVQmO6Rf
+         6NlCkz2RWvm5hPPqSJ5hUPTz1aZn3xNkf0HAOR2ZcxoAkWV9bDsR8SzgyFv12nIoGJqx
+         TpFusVU8V8HR+CwFx0/hA4a+EhQ0mbYLZADDjpjFFXWRxHTT96+xXKOf7yy3JPQjhO5M
+         XRQCHuLjV1oFlcMvJnR4wkAw6Eh5nKaZLq+iYn57qBh14gvR2okIG1Kbb3Eor17MM4Tj
+         yXMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=7Wpg3cT5I6s6GnyI0QhfON8nAL8HSLyzxKK2eKgU8bw=;
+        fh=MZFqL8LMQN0oYFsZfSyUkYWKeXRWWpNaG83HrzFX5oU=;
+        b=D1aM5TLoNFUwj7kqksaRc37KVrXRVRygBfhuINbz67Kq5jNZPdd6bgMrL2gV2AVHNM
+         n+o5S8ShfEUGtQJAyuQ3/LRGlLz6ChspYEy/bcc+Glr4dpUbfG0+JQB0r+ZiNFtJGFJT
+         V265A8NYSkW+e5FmKhNBAMFPAfQea0zi9Lkje+hbbynPO7V7SP1KiWSaL7y3xgu0RKkH
+         DT59wpuTC+8S8KWDqQ04hQkd5DkQVIcLUQeFECtm5WZxM+AHuCJaICQuTOXTBTQrjEql
+         zrg7R8PDVLxMnkOgX1IMDSHQX4j/Sm7vvYRnUOHuw5dEBLyLTnIqi/P/YowWsm9fKL7B
+         q4tw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794922887; x=1795527687; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7Wpg3cT5I6s6GnyI0QhfON8nAL8HSLyzxKK2eKgU8bw=;
+        b=HXZD6+bOfJsqVWxCIDhCrOX0w0tZU6Qb/j1uDssVapw+Ww7+0R3+poAelpj8hd30Uk
+         NRHXrhn4tct1eSaoNp46WjRi+tv91i99TN22b1qevYVL8cvYI0iyYdiFa5yTKzolgHGk
+         8sMne0X5x8cIw0Bn+YjBIpGqXPeglmO0o3KddQI5WHKRGiS6xUDAvsFwtqDTgSDDmUSL
+         MUkHm4nVBccOcAud4fo/vDh8WhsTW0pzO74y9BjVQkHMK8lO86VC/EoMAjY/vl22CH/Q
+         ECbYDcJOPfeAOCjCZgumewFmNWl431+UgM8dmy1CPsxOhFPEuqJuAjaGLdXJ/yTGpMMN
+         GXlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794922887; x=1795527687;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7Wpg3cT5I6s6GnyI0QhfON8nAL8HSLyzxKK2eKgU8bw=;
+        b=LqtKChl7FrjT+IqFXPH0ImBONDfmAkyi+vheiz8K30JYmfVlpJYo96lYmDPW+HwMk5
+         QZy6vUFhJxtFHSGOdl9DL+b1thHPEkMOWbtmDWnsmEzvQVZhU5JP7R1uSW2xd92/rISF
+         gW7+uSPzQloUKIihGrP/V5ErELqOUPeuaLCH1RV/52MxaibabqXM/bdf/qRJMxAf38us
+         ltF6XUqtyjnWsXpGXnHi09egfQciDIX42A2CtoA0qjausylNt/C+7onSiaSlwW/kdXid
+         J/QNt9G4EV/Oizxk+DOjjTN+Fz/C9oxXeDXbZQ5Mkb25YAFlO8PduklgY7F1Xu9JhKMf
+         D96Q==
+X-Forwarded-Encrypted: i=1; AL+hErHiIhk3Z4Gxm3EVgCKNiFyje61kozljiserpH+1nrr0JiNtghJOIx4a1AjXhAKRfg3z5BJ2/b8gqPsL@vger.kernel.org
+X-Gm-Message-State: APuU4Z8Fjix5iWvYA366X1oX7MMuRObhMRzmKvutZqAayjEd/ggg+tas
+	dtyH0Xh+OsQzsOx+kD7WKbfWOJDfu2opDp/PQwqM7t5zAvBUfL0F/98Mx9toEMcL+d5n3w14u7k
+	T7WWyS9u6mpYDvhzoDFD51qFjD6dYols=
+X-Gm-Gg: AYBFou3eqFZk33aFnjPxY3tdJUJANgOtzQXOCwZ2cHUJpRxIGsVn4sN7ek649VrSh+Q
+	IpxDM5T98aX2Kpq0Ux8d5gc5TvgCkM5drIa4BOiaZR7yin0KCmdNcBa0DbUIT2jD08/h3j+xANZ
+	ptsJpcWx+2spx/lUSc1y1n5Iml8M54bgK36KFiP1tInmkTJ/7Nvjor9sE3kIU59t6XyKaDANgD4
+	x1tUmH07cOakS/r+V4U9Y0ecyJKgK2YOkus7Bh+TiK9lfD+O6kMXcv+h5Q4BhEvTmE06Qts8xed
+	BOG88OOhZ8aXE4yyWqdsQvmBq5266fgytGAtyW+MQilFTl6jUaZ3PsjJ1HpqZD1+/FEVMVNd4g7
+	/RqYX9HZiiYbDjY//Z6t4dGrF+1fMiDd7Lghv0g==
+X-Received: by 2002:a05:6402:22d0:b0:6b6:966f:28c with SMTP id
+ 4fb4d7f45d1cf-6b7c0bbe6f0mr8200959a12.11.1794922886352; Tue, 17 Nov 2026
+ 05:41:26 -0800 (PST)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -67,23 +104,52 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261117114432.2794961-5-a.shimko.dev@gmail.com>
+References: <20261117114432.2794961-1-a.shimko.dev@gmail.com>
+ <20261117114432.2794961-5-a.shimko.dev@gmail.com> <052adff8-b1d4-4cf2-941c-cfb2725d13a0@lunn.ch>
+In-Reply-To: <052adff8-b1d4-4cf2-941c-cfb2725d13a0@lunn.ch>
+From: Artem Shimko <a.shimko.dev@gmail.com>
+Date: Tue, 17 Nov 2026 16:41:15 +0300
+X-Gm-Features: AclHuK9B7NyGEv7s06EQ-PBXvC_X_ioRVUg7CDZFlHxN77tZjCz1y9ac7S-od64
+Message-ID: <CAOPX745DQDpYh=PNQxDkH1DbfwMRwD8DV81TaX33mNk-9aX3oQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 4/4] net: phy: dap8211r: add PHY LED control support
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, maxime.chevallier@bootlin.com, 
+	pavel@ucw.cz, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +/*
-> + * LED_COMCON force mode bits:
-> + * bit 2   - FORCE_EN (enable force mode for this LED)
-> + * bit 1:0 - FORCE_MODE (00 = OFF, 01 = ON, 10/11 = blink mode1/mode2)
-> + *
-> + * Only ON/OFF is supported.
-> + */
-> +#define DAP8211R_LED_COMCON		0xA00B
-> +#define DAP8211R_LED_FORCE_EN_BIT	BIT(2)
-> +#define DAP8211R_LED_FORCE_ON_BIT	BIT(0)
+Hi Andrew,
 
-Given your comment, this last one is not strictly correct.
+On Tue, Nov 17, 2026 at 4:36=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > +/*
+> > + * LED_COMCON force mode bits:
+> > + * bit 2   - FORCE_EN (enable force mode for this LED)
+> > + * bit 1:0 - FORCE_MODE (00 =3D OFF, 01 =3D ON, 10/11 =3D blink mode1/=
+mode2)
+> > + *
+> > + * Only ON/OFF is supported.
+> > + */
+> > +#define DAP8211R_LED_COMCON          0xA00B
+> > +#define DAP8211R_LED_FORCE_EN_BIT    BIT(2)
+> > +#define DAP8211R_LED_FORCE_ON_BIT    BIT(0)
+>
+> Given your comment, this last one is not strictly correct.
+>
+> Otherwise, this looks O.K. Lets see what the LLM says.
 
-Otherwise, this looks O.K. Lets see what the LLM says.
+Sashiko said only [1]: Sashiko has reviewed this patch and found no issues
+For some reason it replied only to me and linux-leds.
 
-	   Andrew
+I'll fix the comment and make v3.
+
+Thank you.
+--
+Best Regards,
+artem
+
+ [1] https://sashiko.dev/#/patchset/20261117114432.2794961-1-a.shimko.dev@g=
+mail.com?part=3D4
