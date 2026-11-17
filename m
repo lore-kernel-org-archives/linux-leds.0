@@ -1,84 +1,56 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794892223;
-	b=qBxJnTu/I6X+vE3O5y/rJC7OKgsu0eKXE8t3TgxyCgSjZxGC2VknY09d+Lyjc0AeVJ+f
-	 TVT2hqYqejC86a5bLxKPN9fx4u15ZQUTCXzaW0I/Ycm1UyQhX7persAAp19WtJ4QdbNN6
-	 RuAIS2JUmygSPX4SgIQIsHBQ9ktUIyBZXBdjrmXEPipG3tyR7RDfYZCjIkcXd9PXG6G8/
-	 6dxYC/iXQctBJu/hHme3IBY6mFaGNgHsW8Xhkg1G5h9gg2xgKk2p5ONtKDj7pdl7iIqy0
-	 Xv35EXX11BdtkBy3rQlifDdcMpxO3cULk99YwZjXQlxbjL1ZJihGjvDPxWIhzGelg3w==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794892223;
-	h=Received:DKIM-Signature:Received:From:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID:X-Mailer:X-Developer-Signature:
-	 X-Developer-Key:X-Endpoint-Received:X-Original-From:Reply-To:
-	 Content-Transfer-Encoding;
-	bh=RRjbzyTimWQxTJrhIgcvAax5Lb9Qz/LwWuZkxpcO20g=;
-	b=eIzEc7/yE+bAE/aJygoXY+hcIdNqPdLHBkbHqXBImYX+SSUiSTMwbmIMK4cmCIyaZp20
-	 KRmUDm+oS+lp4xxZqgevct+RzIQKb8lqJT7VAz93RXTZw2w28evCR4vjpf8HL3hf3Dqio
-	 ZHdBGpgzQWxyenItBlueevh6rrAp6zn9SrAS/NIvL8Pb6aSNkmJIjxV9ZxLQ6jJo5aqX+
-	 PBQUR+SApX/rlfcMq/Ff6xLWIXVqnDhjJ43oD9MpF2D0zExzM0W+UJTCYV+fJ2zea67eo
-	 OY0C9we9dCPa2dJo8PytW8X0frLyJLXyJXIVXX0mAPQ9zKwQWZPptDlqLDgDCVpz/Rg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l1KSRpg4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794892847;
+	b=hW82zZr10Rgzbxc/r1aBQeKFvlfZyqydAz0KUKvZ//jH3QDI2f29F0KIwHmuDHqzh9rR
+	 8rXcrVnDY4JvsahuWqguEYqMlSwvaQy34hGCrQpbuYamLVB3a4nT3lxgosD3p+eM23fL4
+	 8LySmX02lmJIxiYCsmFcQ+W5gy99QVlRWZlmIqXUtIwlnbE0t2wrtNqGkKM5/espU50mz
+	 B9emO9kfFsQNiWcGtJ9tnr8MYE/NGg7gnfbCaksje0dBg2f+OXz0SH1P8SqD0wKBPUeWr
+	 Td9Y7sX2DfDNl2jxAOHkyMBMsAk0Ax+7oInSuM6nuRNI8r1W1hzk8Ol+Tl6y8+mtqzg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794892847;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=6XP1P1MaUHqmBLx1P7JlXwdoH9Xb14V9Uo/hAccbf/E=;
+	b=qQrXogOldKtj7LmGhMs4HDDXgUVnrntbvzXVNP09EaB+V5nQZe2DmoE5frdNd994fsPD
+	 Byzl9GsBVxbax4OY0r9EOG0WVsOcBOJdeW2u7Bw0ODpUG3/s7zNbIUGNDsbNb2An8fnRo
+	 A/tH6ZdDUB3OT9WYih3HUnoOq7VasLODkxKygcUDYemfGy/TCZUikpGHdFuS0wEHDB0Nt
+	 lMq5dmeJQqD+OUZyL3xYkJDP1UzadHIRSfVgcv041NaM/CJXpzcgvbY7+aFXJxzgY0NDm
+	 fbCHDDIYysyZaBpAHWn253ODZf3TWMfdhK5iSQOeblaXYRzQIray8eIoK5/uvqfdmjg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n5PpOO67;
+	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F790606A32C;
-	Tue, 17 Nov 2026 05:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB26E606A31C;
+	Tue, 17 Nov 2026 05:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l1KSRpg4
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1794892223;
-	b=U/XNVTAkdEXEHEb4UWz4PaQJRG6zGvvH98G0+FbBAYAyB2iju/PrCxXknK4bOvvL9f/q
-	 KIxaDg9EDM+qfJhzWbxCs6cc7bcTHPTqy9GtWhwtjR1w/XC3r0ZzQK527mi9Ef5+qrrjB
-	 Cjtsx2PBGlqf+umdBpECpu5xsq/pcZj6zJ8aNs/g+lfHfcl4Cn9DjwKy7NavTbA7ngjnv
-	 HaOf3BCYgUbCnrBVWbKJM5+vgnvdTdVEsGTiGfM0p/+hGfIbSm5U5TvGM2Q0z/9iEJUIn
-	 ezAwhE1CaTtgmCF2e3Hl6Pq8tsbZnfuw9AJpD/fEpyTv5UzxNmnpT4u+SLYjSIzunvw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1794892223;
-	h=DKIM-Signature:Received:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To:
-	 Content-Transfer-Encoding;
-	bh=RRjbzyTimWQxTJrhIgcvAax5Lb9Qz/LwWuZkxpcO20g=;
-	b=il0O7rS5kg76sY187SmH+g6BS1humd6mzRw8LmKfT9dKZd7npUhu6wgbxdCVuTSf8Q5y
-	 lQFClg8IB05ak6sRLX98HwhlVkTREv2MuUYmfUOm7GUoEXhS+DYGGrPxCG06PCI7aWsii
-	 4EPpXlJLIsPgbgTdtfe1qb/DDGeP++EMtJb0dwH5OBR0cRJqdY+c/krrcn7R0h1/HOPXN
-	 nWMkAL9WRWPXculOuH2021pSB6Jd2cAjYmVGstVPYgWF3QmAvYwifVh55CQSKqS+aHGaT
-	 Jaod7xoRPuOo6rsqyzvpDmdemVaNFIDDlXhfGKvMQOSAbTOIfjhT4oXgGX597LWRRiA==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 910D91F000C4;
-	Tue, 17 Nov 2026 05:10:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n5PpOO67
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E65331F000C4;
+	Tue, 17 Nov 2026 05:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794892223;
-	bh=RRjbzyTimWQxTJrhIgcvAax5Lb9Qz/LwWuZkxpcO20g=;
-	h=From:To:Cc:Subject:Date:Reply-To;
-	b=l1KSRpg4E7h0I/Yd1aP+MxC0M4E30OKqSsF3BOu/l8WAS2tz+PUpWcJQKA1qTOpGk
-	 jEqgxEtF2cNn6pGYIbRq4f2vICK0JyxtI7AryEpRkkPaLHoljl6X8tRTiIA41kPCkz
-	 RKW9yhYM/JuV00r2+8JtiGh33p89xkjTRUpIVjSLnlNmcH+jjgD0D5nd+djN3WvM94
-	 HkGjVycJjIkQBW8kmr2QBootNjcXoqO97ACFggKIsdI49PRo6j5hwsABDej0sN/JyM
-	 XOGsyB+l8gc3BlvvbniNHX4BCHIrVxZERFZP271rkdjZVFeZU0z+bYJOko5EQehg1k
-	 5QDTtNkheDxGQ==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id E46014A6C5;
-	Tue, 17 Nov 2026 05:10:21 +0000 (UTC)
-From: Cristian Filipescu via B4 Relay <devnull+filipescu.cristian.gmail.com@kernel.org>
-To: linux-leds@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Griffin Kroah-Hartman <griffin@kroah.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev
-Subject: [PATCH RFC] leds: DT: migrating existing labels to function/color
+	s=k20260515; t=1794892847;
+	bh=6XP1P1MaUHqmBLx1P7JlXwdoH9Xb14V9Uo/hAccbf/E=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=n5PpOO67vAII8Vmjmnfi00D1cDngDkuHMFrN5cf8c0AruftqI7sZsQUqHdMMYKBh0
+	 jhO+gzgCpeymbyGl6m8xnlyjTYwxR+6cWhY1doKlBzhSg31ME9kvk0+hNDSzgumJpo
+	 ALg+S+ZLAhhHYLZdKfpfGs+xrpyqiAorSfzTh8K8zBNYoK2lSqbRMwyxUZBWGnKygh
+	 u0pYu494DmsTtxwFZLYG/oKL5ar/5zlxuY4Rl2zzWVcBP91oTsbicq76TZLuzzDV7V
+	 93KQkx6xaOPJEoZtEyiL2/6r7m3g6sWQ2sG5rv8KbnAWEszTIVn/t6t9yfcD8l/Dbe
+	 +rZeZxhDH1OKg==
+Message-ID: <sashiko-outbox-218197@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH RFC] leds: DT: migrating existing labels to
+ function/color
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Cristian Filipescu" <filipescu.cristian@gmail.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-sunxi@lists.linux.dev, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
+In-Reply-To: <179489221679.1.1429296960451969532.led-label-policy-rfc@gmail.com>
+References: <179489221679.1.1429296960451969532.led-label-policy-rfc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 17 Nov 2026 05:20:46 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -87,117 +59,131 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Date: Tue, 17 Nov 2026 05:10:16 +0000
-Message-ID: <179489221679.1.1429296960451969532.led-label-policy-rfc@gmail.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1794892216; l=3129;
- i=filipescu.cristian@gmail.com; s=uboot-20261021;
- h=from:subject:message-id;
- bh=yDEyHZ0vBr1PYekgAZguFVDD5Tfxmd/H6LQWci3XaNg=;
- b=32idoKYdXJ1Ued9e/Rgjim6ANtMlStXIm10OgKqlPw2EMFMZ/SznqoucCcuTAOxOsu0hQZisi
- jDVVG9zh0wMAOikJzP57ueY4ADZfIgpij6bsK1fqzx34t2eJlqUtHpO
-X-Developer-Key: i=filipescu.cristian@gmail.com; a=ed25519;
- pk=o7Ui0tU3x+X/6Pq6PZHmd2KFtOdPWttoPuNFOvdD8t0=
-X-Endpoint-Received: by B4 Relay for
- filipescu.cristian@gmail.com/uboot-20261021 with auth_id=1255
-X-Original-From: Cristian Filipescu <filipescu.cristian@gmail.com>
-Reply-To: filipescu.cristian@gmail.com
-Content-Transfer-Encoding: 7bit
 
-From: Cristian Filipescu <filipescu.cristian@gmail.com>
+Thank you for your contribution! Sashiko AI review found 3 potential
+issues to consider:
+- [High] arm64: dts: allwinner: missing Signed-off-by trailer and RFC
+  commit format
+- [Medium] arm64: dts: allwinner: removing LED label changes sysfs and
+  GPIO names
+- [Low] arm64: dts: allwinner: inaccurate DTB count and Orange Pi 3 LTS
+  claim in log
+--
 
-Hi,
+commit 9235c19cbef601645f52663823784ba072327e48
+Author: Cristian Filipescu <filipescu.cristian@gmail.com>
 
-The common LED binding deprecates label in favour of function and color.
-Is removing existing labels desirable when it changes established LED class
-names, or should existing board descriptions retain them for compatibility?
+> leds: DT: migrating existing labels to function/color
+>
+> Hi,
+>
+> The common LED binding deprecates label in favour of function and color.
+> Is removing existing labels desirable when it changes established LED cla=
+ss
+> names, or should existing board descriptions retain them for compatibilit=
+y?
+>
+> For example, the Orange Pi H6 descriptions could replace their labels with
+> LED_FUNCTION_POWER/STATUS and LED_COLOR_ID_RED/GREEN. With gpio-leds, this
+> would change the names under /sys/class/leds:
+>
+>   orangepi:red:power    -> red:power
+>   orangepi:green:status -> green:status
+>
+> The example below changes two files and affects Orange Pi 3, 3 LTS, Lite2
+> and One Plus. GPIOs, polarity, pinctrl, defaults and triggers are unchang=
+ed.
+> All four DTBs compile before and after; comparison found only the intended
+> label/function/color changes. The renamed LEDs have not been tested on
+> hardware.
 
-For example, the Orange Pi H6 descriptions could replace their labels with
-LED_FUNCTION_POWER/STATUS and LED_COLOR_ID_RED/GREEN. With gpio-leds, this
-would change the names under /sys/class/leds:
+[Severity: Low]
+Is the list of four affected DTBs accurate?
 
-  orangepi:red:power    -> red:power
-  orangepi:green:status -> green:status
+arch/arm64/boot/dts/allwinner/Makefile only builds three H6 Orange Pi DTBs:
+sun50i-h6-orangepi-3.dtb (from sun50i-h6-orangepi-3.dts) and
+sun50i-h6-orangepi-lite2.dtb and sun50i-h6-orangepi-one-plus.dtb (which
+include sun50i-h6-orangepi.dtsi).  There is no Orange Pi 3 LTS device tree
+in the kernel tree.
 
-The example below changes two files and affects Orange Pi 3, 3 LTS, Lite2
-and One Plus. GPIOs, polarity, pinctrl, defaults and triggers are unchanged.
-All four DTBs compile before and after; comparison found only the intended
-label/function/color changes. The renamed LEDs have not been tested on
-hardware.
+> I was thinking of converting all the deprecated LED labels, but I wanted
+> to see if this was something maintainers wanted, since it would touch a l=
+ot
+> of files. Would you prefer retaining existing labels (potentially adding
+> function and color alongside them), or reviewing migrations with the name
+> changes explicitly documented?
+>
+> This is a discussion example, not a patch for inclusion. Preparation and
+> static checks were assisted by OpenAI Codex.
+>
+> Thanks,
+> Cristian
 
-I was thinking of converting all the deprecated LED labels, but I wanted
-to see if this was something maintainers wanted, since it would touch a lot
-of files. Would you prefer retaining existing labels (potentially adding
-function and color alongside them), or reviewing migrations with the name
-changes explicitly documented?
+[Severity: High]
+This commit has no Signed-off-by: trailer, uses an RFC email body instead
+of a declarative changelog, and uses "leds: DT: ..." rather than the
+"arm64: dts: allwinner: h6: ..." subject prefix.
 
-This is a discussion example, not a patch for inclusion. Preparation and
-static checks were assisted by OpenAI Codex.
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arc=
+h/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> index ce82aa265cfd1..8e411705769b1 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> @@ -8,6 +8,7 @@
+>  #include "sun50i-h6-gpu-opp.dtsi"
+> =20
+>  #include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/leds/common.h>
+> =20
+>  / {
+>  	model =3D "OrangePi 3";
+> @@ -45,13 +46,15 @@ leds {
+>  		compatible =3D "gpio-leds";
+> =20
+>  		led-0 {
+> -			label =3D "orangepi:red:power";
+> +			function =3D LED_FUNCTION_POWER;
+> +			color =3D <LED_COLOR_ID_RED>;
+>  			gpios =3D <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
+>  			default-state =3D "on";
+>  		};
+> =20
+>  		led-1 {
+> -			label =3D "orangepi:green:status";
+> +			function =3D LED_FUNCTION_STATUS;
+> +			color =3D <LED_COLOR_ID_GREEN>;
+>  			gpios =3D <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
+>  		};
+>  	};
 
-Thanks,
-Cristian
+[Severity: Medium]
+Does removing label here and in sun50i-h6-orangepi.dtsi cause a userspace
+regression by renaming the sysfs entries and GPIO consumer names?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index ce82aa265..8e4117057 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -8,6 +8,7 @@
- #include "sun50i-h6-gpu-opp.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
- 
- / {
- 	model = "OrangePi 3";
-@@ -45,13 +46,15 @@ leds {
- 		compatible = "gpio-leds";
- 
- 		led-0 {
--			label = "orangepi:red:power";
-+			function = LED_FUNCTION_POWER;
-+			color = <LED_COLOR_ID_RED>;
- 			gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
- 			default-state = "on";
- 		};
- 
- 		led-1 {
--			label = "orangepi:green:status";
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_GREEN>;
- 			gpios = <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
- 		};
- 	};
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-index 57b137755..49f3d2fc8 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-@@ -9,6 +9,7 @@
- #include "sun50i-h6-gpu-opp.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
- 
- / {
- 	model = "OrangePi One Plus";
-@@ -45,13 +46,15 @@ leds {
- 		compatible = "gpio-leds";
- 
- 		led-0 {
--			label = "orangepi:red:power";
-+			function = LED_FUNCTION_POWER;
-+			color = <LED_COLOR_ID_RED>;
- 			gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
- 			default-state = "on";
- 		};
- 
- 		led-1 {
--			label = "orangepi:green:status";
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_GREEN>;
- 			gpios = <&r_pio 0 7 GPIO_ACTIVE_HIGH>; /* PL7 */
- 		};
- 	};
+When gpio_leds_create() registers these nodes without label,
+led_compose_name() formats the LED names as "red:power" and "green:status"
+instead of "orangepi:red:power" and "orangepi:green:status", and passes the
+new kobject name to gpiod_set_consumer_name().  That breaks userspace
+scripts and board configurations that rely on the existing /sys/class/leds/
+paths and GPIO consumer labels on Orange Pi 3, Lite2, and One Plus.
 
+Documentation/devicetree/bindings/leds/common.yaml leaves "deprecated: true"
+off the label property so existing device trees can keep their established
+names without dtbs_check warnings.  Note also that adding function alongside
+an existing label has no effect, because led_parse_fwnode_props() returns
+immediately after reading label:
 
+drivers/leds/led-core.c:led_parse_fwnode_props() {
+	...
+	if (fwnode_property_present(fwnode, "label")) {
+		ret =3D fwnode_property_read_string(fwnode, "label", &props->label);
+		if (ret)
+			dev_err(dev, "Error parsing 'label' property (%d)\n", ret);
+		return;
+	}
+	...
+}
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/179489221679.1.1429=
+296960451969532.led-label-policy-rfc@gmail.com?part=3D1
