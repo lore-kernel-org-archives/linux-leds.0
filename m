@@ -1,57 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794908448;
-	b=pfH/t0jW14hMzp0pYPnXJBRQruqIxHLsWK/xoKsifsgqFYRJsLaSqmcwS7PL6y16iEhZ
-	 dvAh0NsNkSZqnjBb0a7V6W8FokhJOchCHVuO/IBDzBtloeL79/4VI6ZcOVL8Ku28XjqwO
-	 cAOw49L3u11J/eNcdp1g0aUX6yaUGoUS7fbc2VFgwWeKwpQzdhJvAoCcfG0NKtLFZzAY7
-	 ssV3Qcj+c+gvPWl9zdRY5JrvjLQfRnVNHi3iE3IbgZx3ViT/239WXDvi2knUdvE3LACJd
-	 3ILfxVUf88kO8V/TiT65stuV2jzawwS2Z4KQaapA10b2ToTmhpW0NQymeciwACm9f1w==
+	t=1794908775;
+	b=Y9Fq49+XAA8hpJYPrqz+K5G9ssWixyGnkoPyHJVCehiar2wKKxF71V/nn5h4R24HgbwL
+	 4url1uQNvlFMvZxBMe46ozs7kcmaCrMGwmeYHTmBnBLb2aGOeLFcZGbN7i7rPyobchwW0
+	 hF24zXSU0sRhr6JIA4eDSCz8KdR/SMSMOIbNVZg654EhiUlwrgdeqVg1DVJg6UkZ+f+0l
+	 W6eSja6XDc111Z/5mQ4CwF/DrCwK/X3lg4Alotbmkqyxcb8lbhSUl+RZIBY6E1dRABsDt
+	 8nZMK+2DmP9pdX8JTR82IkJig46FV70pC83wXrpXth2Isoj83z41HWGiYzH3wEklR/Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794908448;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794908775;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=VTR1r3e2F7VEcFoy94PWDeScai3boA+V/TEdD+MoFpM=;
-	b=WqDdGQDKUmxsfzqEgAe7DN7ICs88ikLdA+Olg6h7+VoSuHG7zRwP0AZNK30D2JAWymrQ
-	 EcpU20TxZSXMT7skBzSU7l+Ucn4rIqdQNrYx5Zz72KLsYRdrSV4wrwb3fhmnhB/Rz6Mzo
-	 PmEuRoELXq/2/DFtOpsl5pWNkDMFK+i4r75ohFlNSHvzLqhZqLBP+K66jYyiUFsBwQOBl
-	 6+m7B6JfYxTpsnzl+4iVXp0KbyRv2ZO3lB3gAphhVivux7+3eEC6TpTKd2q7sixt8i3Lf
-	 9f9awKgntAA7kxuXhowBWVK2hg90cgLnlSNT6Gqckx6URPwvXP8QCBISE9eSGVkArpg==
+	bh=VDMDPqsetkT83j5WarKOPeVvpO4q2HO21pojhwjepk0=;
+	b=Px7lvJCh/bSIVJStcqIyAPKPMUEjE3jEH/czHjzffed/66Eg5cvHPTTubKyTSWFtNpzg
+	 3PlbeFZQCf6pENqdv9Li4r+/RlQYUtj1KvCnuoEm/M7cUB07MI/0+0JHlhVilW6i1qEDn
+	 14EuaC/f+FUuQWkaW0ZSejb27HlxAcmMni4Su6wEaPzi3hxPTsD/ZpBMXZaqV8X7SChd9
+	 xCbLuf+JN4rFqVEDCV/5foWD3zyYy7KB6in0+djWmYz/MFXYOORnlFYMZ7/PUT2W7xsCp
+	 VE8tQD/HHgxDIIl5qIIFEyaiG46LXY72U58Bq9AJJPmnp28KX9leXyfzBDR9rDjS9aw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IZQtgwz0;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EKkSlLTV;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAF8606A323
-	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 09:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B523E60A2600
+	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 09:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IZQtgwz0
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D261F000C5;
-	Tue, 17 Nov 2026 09:40:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EKkSlLTV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3AB1F000C4;
+	Tue, 17 Nov 2026 09:46:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794908447;
-	bh=VTR1r3e2F7VEcFoy94PWDeScai3boA+V/TEdD+MoFpM=;
+	s=k20260515; t=1794908775;
+	bh=VDMDPqsetkT83j5WarKOPeVvpO4q2HO21pojhwjepk0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=IZQtgwz0qviDS6y5JmZJlLJB6ex76xoKyVjJyyKAbqjdrmlRhI7RAe8mDt35z16Hz
-	 zjv2MnbkcxZpmY6o5bIMRz9zOkBIut74sqBn20nQxyq2pG8IOlz0QmEMvlMoipehjF
-	 Zv04fgc4cl1nSlLxuurkQulDEYtpd1GKeaaynE/CaD301QZvCHnay4zPAdsW4Mh2YV
-	 4+0s4tCfYhl8jTeazpsk2+k3n3tjCc67QyvU13BktPZjrXyEFF59mXKDIKy7RW45go
-	 hlk7Zg4H1mAEpUfhzrLVCM1cy/hqewOWXqoySQpKaOfmhdNQju8Sg4bOW0p7KdUttK
-	 tkEelg+gXtVyA==
-Message-ID: <sashiko-outbox-218501@kernel.org>
+	b=EKkSlLTVWdS/wZ1I18JTOvOuLeTSW2NrbMuA6XIDwI2o6kawp1vxlLaF9gujYoG77
+	 LtIlMCml8uECBbwxrPuMWsZNZq29PyfTyuSM0cde1xJKZsykcNUB6j72T93NNhak7h
+	 xLwq7WSuUz4L65jV36ozRrJbnpgWRUB/YWUb9yj7JomBty5qStefJqC0OWyIjDgGAD
+	 AJa7dZBol8m2VwkCAAxn3pwh/opsxooMtf/O/8JtKCiFcxQ5k1/4tIRGJ13LAo/Ki4
+	 BDQmnXbQOPQSGaH/J3WpxjI9m5SfHhrBNTwAGK2DpC3phb2MwemiV30lxAh2v6hT/Q
+	 xuqrpRJ01E4cg==
+Message-ID: <sashiko-outbox-218519@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/4] leds: rgb: leds-qcom-lpg: add mutex lock in
- lpg_pwm_get_state()
+Subject: Re: [PATCH 1/4] leds: rgb: leds-qcom-lpg: Fix single-entry LUT leak
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Fenglin Wu" <fenglin.wu@oss.qualcomm.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-3-7a862240683f@oss.qualcomm.com>
+In-Reply-To: <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-1-7a862240683f@oss.qualcomm.com>
 References: <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-0-7a862240683f@oss.qualcomm.com>
- <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-3-7a862240683f@oss.qualcomm.com>
+ <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-1-7a862240683f@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 09:40:46 +0000
+Date: Tue, 17 Nov 2026 09:46:14 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -63,41 +62,59 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [Low] leds: rgb: leds-qcom-lpg: subject capitalization and commit msg
-  rationale
+- [Medium] leds: rgb: leds-qcom-lpg: single-entry LUT still treated as
+  no pattern
 --
 
-commit 836798f643edbd8121d300d8532e2745d0e06b99
+commit 75c60a80d1268626e9de041f3218e5d2d8274c04
 Author: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 
-> leds: rgb: leds-qcom-lpg: add mutex lock in lpg_pwm_get_state()
->=20
-> Guard mutex lock at the top of lpg_pwm_get_state(), to make the
-> register read atomic against the register write in lpg_pwm_apply().
->=20
-> Fixes: 24e2d05d1b68 ("leds: Add driver for Qualcomm LPG")
-> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+leds: rgb: leds-qcom-lpg: Fix single-entry LUT leak
 
-[Severity: Low]
-Is the commit message accurate about what lpg->lock serializes against in
-mainline?
+This commit adds a has_lut flag to struct lpg_channel to track LUT
+ownership separately from the pattern index range so that single-entry
+LUT allocations are freed when clearing a pattern.
 
-Since 1cc2e1faafb3 ("pwm: Add more locking"), the PWM core serializes
-chip->ops->apply() and chip->ops->get_state() under chip->nonatomic_lock
-in pwm_apply_might_sleep() and pwm_get_state_hw(), so lpg_pwm_get_state()
-and lpg_pwm_apply() cannot run concurrently.  Taking lpg->lock in
-lpg_pwm_get_state() still serializes pwm_dbg_show() -> pwm_get_state_hw()
-against LED callbacks such as lpg_brightness_single_set(),
-lpg_brightness_mc_set() and lpg_blink_set(), which program channel
-registers via lpg_apply() under lpg->lock without holding
-chip->nonatomic_lock (in addition to fixing the race with lpg_pwm_apply()
-on stable kernels prior to 1cc2e1faafb3 ("pwm: Add more locking")).
+> diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qco=
+m-lpg.c
+> index 24ffe079f2215..e14a3316bf221 100644
+> --- a/drivers/leds/rgb/leds-qcom-lpg.c
+> +++ b/drivers/leds/rgb/leds-qcom-lpg.c
+[ ... ]
+> @@ -1118,6 +1124,8 @@ static int lpg_pattern_set(struct lpg_led *led, str=
+uct led_pattern *led_pattern,
+> =20
+>  		chan->pattern_lo_idx =3D lo_idx;
+>  		chan->pattern_hi_idx =3D hi_idx;
+> +		/* The 1st channel owns the LUT while other channels share it */
+> +		chan->has_lut =3D i =3D=3D 0;
+>  	}
 
-Also, per LED subsystem convention, the subject description after the
-driver prefix should be capitalized ("leds: rgb: leds-qcom-lpg: Add mutex
-lock in lpg_pwm_get_state()").
+[Severity: Medium]
+Can a 2-step palindrome pattern actually run when ping_pong compresses
+it to a single LUT entry with lo_idx =3D=3D hi_idx?
+
+Although lpg_lut_free() now checks chan->has_lut, the pattern activation
+paths still check whether chan->pattern_lo_idx !=3D chan->pattern_hi_idx:
+
+drivers/leds/rgb/leds-qcom-lpg.c:lpg_brightness_set() {
+    ...
+		if (brightness =3D=3D LED_OFF) {
+			chan->enabled =3D false;
+			chan->ramp_enabled =3D false;
+		} else if (chan->pattern_lo_idx !=3D chan->pattern_hi_idx) {
+    ...
+}
+
+lpg_apply_control() and lpg_apply_lut_control() check the same condition,
+so a single-entry LUT never enables the ramp generator and falls back to
+static full-brightness PWM output.  In addition, the comment earlier in
+lpg_pattern_set() notes that a pattern of length 1 causes the hardware
+to iterate through the entire LUT, suggesting ping_pong compression
+should not reduce a 2-step pattern to actual_len =3D=3D 1 in the first plac=
+e.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117-led-qcom-l=
 eds-multiple-fixes-and-pwm-fm-support-v1-0-7a862240683f@oss.qualcomm.com?pa=
-rt=3D3
+rt=3D1
