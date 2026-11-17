@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794908775;
-	b=Y9Fq49+XAA8hpJYPrqz+K5G9ssWixyGnkoPyHJVCehiar2wKKxF71V/nn5h4R24HgbwL
-	 4url1uQNvlFMvZxBMe46ozs7kcmaCrMGwmeYHTmBnBLb2aGOeLFcZGbN7i7rPyobchwW0
-	 hF24zXSU0sRhr6JIA4eDSCz8KdR/SMSMOIbNVZg654EhiUlwrgdeqVg1DVJg6UkZ+f+0l
-	 W6eSja6XDc111Z/5mQ4CwF/DrCwK/X3lg4Alotbmkqyxcb8lbhSUl+RZIBY6E1dRABsDt
-	 8nZMK+2DmP9pdX8JTR82IkJig46FV70pC83wXrpXth2Isoj83z41HWGiYzH3wEklR/Q==
+	t=1794909036;
+	b=a9orbibFeiSABka9vB7Lu9XBoRDPFaBCOZwGmA8UGqdo5nWkWATWk+qTlNp+chixBsQS
+	 tk5EJkjGUuRz3tmF85sLNTtE4T6CxQztkHOI8KJt44NMUdUG4ltxNjHWZiR8ANIxzXg8Z
+	 GVdqWEA6QFcTfQo8jk0gAMsMoSZ1TcDFwFJpZpt+wOEr6iOPFVi/gnfXpOyLj7bpQ0Z4v
+	 9YAa5M68BonhcgqTaEio3WfEwpCntR9YE3UtIY0vj4c3BgdUDF6bOL1Ww3NQoNaD9W7ru
+	 WzmLOUkzpgZotqLrAWdox9YFi4iRhORJtdXH+I6ZECoXbArx744/M42uDppk5s/qHnw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794908775;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794909036;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=VDMDPqsetkT83j5WarKOPeVvpO4q2HO21pojhwjepk0=;
-	b=Px7lvJCh/bSIVJStcqIyAPKPMUEjE3jEH/czHjzffed/66Eg5cvHPTTubKyTSWFtNpzg
-	 3PlbeFZQCf6pENqdv9Li4r+/RlQYUtj1KvCnuoEm/M7cUB07MI/0+0JHlhVilW6i1qEDn
-	 14EuaC/f+FUuQWkaW0ZSejb27HlxAcmMni4Su6wEaPzi3hxPTsD/ZpBMXZaqV8X7SChd9
-	 xCbLuf+JN4rFqVEDCV/5foWD3zyYy7KB6in0+djWmYz/MFXYOORnlFYMZ7/PUT2W7xsCp
-	 VE8tQD/HHgxDIIl5qIIFEyaiG46LXY72U58Bq9AJJPmnp28KX9leXyfzBDR9rDjS9aw==
+	bh=QvpCjy4EEIFquFZTvE4EbfcVt0taNTxD+5YOWag/6zA=;
+	b=b2/0QGQBcn/Jsa1rcktfdpwdHf4JX1nMpx+Y/AQRx/JT0pqFvrXgEP6S7pYqnP/jq9Ye
+	 ZvPGvuIBMdJ1OJYqFBxUiS1+AdLK+tHArMiSGMQcrfshm5sBz6ae+NgBQiqToX0t9ocw2
+	 3nmimpShKb+aqV4cDACyV3CqYW15XYORcKzPtM9Wtoi/IfovAFd+0jTaCj0oVhkQiCn/+
+	 V0+925dgBi7vB66mw6LWdYIk/n33xfkkAEfpxXcStQp6u6D4+3Waev8bf9yBFanNbSv2A
+	 2F7UJT/KAm6Viu+JhH2SA02m+CTmkmabCISR6bX3hymg0tL+yAQrMOyktpvBRMqNuvw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EKkSlLTV;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pm60ej+6;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B523E60A2600
-	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 09:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12816606A32F
+	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 09:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EKkSlLTV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3AB1F000C4;
-	Tue, 17 Nov 2026 09:46:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pm60ej+6
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 650BE1F000C4;
+	Tue, 17 Nov 2026 09:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794908775;
-	bh=VDMDPqsetkT83j5WarKOPeVvpO4q2HO21pojhwjepk0=;
+	s=k20260515; t=1794909035;
+	bh=QvpCjy4EEIFquFZTvE4EbfcVt0taNTxD+5YOWag/6zA=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=EKkSlLTVWdS/wZ1I18JTOvOuLeTSW2NrbMuA6XIDwI2o6kawp1vxlLaF9gujYoG77
-	 LtIlMCml8uECBbwxrPuMWsZNZq29PyfTyuSM0cde1xJKZsykcNUB6j72T93NNhak7h
-	 xLwq7WSuUz4L65jV36ozRrJbnpgWRUB/YWUb9yj7JomBty5qStefJqC0OWyIjDgGAD
-	 AJa7dZBol8m2VwkCAAxn3pwh/opsxooMtf/O/8JtKCiFcxQ5k1/4tIRGJ13LAo/Ki4
-	 BDQmnXbQOPQSGaH/J3WpxjI9m5SfHhrBNTwAGK2DpC3phb2MwemiV30lxAh2v6hT/Q
-	 xuqrpRJ01E4cg==
-Message-ID: <sashiko-outbox-218519@kernel.org>
+	b=Pm60ej+6OHNiodCETmBmnsDbSVcIlS50iKusBPxUTrLMLUiDl8VB1Rx5cRZ8PT95j
+	 9pJpSzRP+OYrSYDWP5Ge+hDnmzoj9slg0f3eqby1h8sXX9c6H6E2a/S1zA3ILFK9QA
+	 ZlYnyvpl5tqeoVCirmBS8AgFTwtY3fcogR9GWgiVr+OuMJfllUJNm7NYhgRw7zPnPu
+	 g2/xr+RC+KMpDUQ4/ktmg7WArNI9L6Ky6Sl7t0AH7DXRVT1ejiwm5vMbKa+V0R6OWV
+	 kHY+ydRthuYrEeJshaOzt7AFYQFF7J8jyjEe0KfPYz3tArrr3VeF+fnwzd0tFt2eFR
+	 DgR1QodHkRALw==
+Message-ID: <sashiko-outbox-218529@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/4] leds: rgb: leds-qcom-lpg: Fix single-entry LUT leak
+Subject: Re: [PATCH 2/4] leds: rgb: leds-qcom-lpg: Fix LED color balancing
+ in HW pattern mode
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Fenglin Wu" <fenglin.wu@oss.qualcomm.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-1-7a862240683f@oss.qualcomm.com>
+In-Reply-To: <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-2-7a862240683f@oss.qualcomm.com>
 References: <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-0-7a862240683f@oss.qualcomm.com>
- <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-1-7a862240683f@oss.qualcomm.com>
+ <20261117-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v1-2-7a862240683f@oss.qualcomm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 17 Nov 2026 09:46:14 +0000
+Date: Tue, 17 Nov 2026 09:50:34 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,61 +61,168 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [Medium] leds: rgb: leds-qcom-lpg: single-entry LUT still treated as
-  no pattern
+Thank you for your contribution! Sashiko AI review found 2 potential
+issues to consider:
+- [High] leds: qcom-lpg: unupdated brightness in lpg_pattern_mc_set()
+  stops pattern
+- [Medium] leds: qcom-lpg: lpg_pattern_mc_update() scales LUTs by
+  intensity not brightness
 --
 
-commit 75c60a80d1268626e9de041f3218e5d2d8274c04
+commit a4d32f1ef168124af51072d5038cd7e0df021524
 Author: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 
-leds: rgb: leds-qcom-lpg: Fix single-entry LUT leak
+leds: rgb: leds-qcom-lpg: Fix LED color balancing in HW pattern mode
 
-This commit adds a has_lut flag to struct lpg_channel to track LUT
-ownership separately from the pattern index range so that single-entry
-LUT allocations are freed when clearing a pattern.
+This commit scales multicolor hardware patterns per LPG channel and caches
+the normalized pattern so per-channel LUTs can be rebuilt when brightness
+or multi_intensity changes.
 
 > diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qco=
 m-lpg.c
-> index 24ffe079f2215..e14a3316bf221 100644
+> index e14a3316bf221..175b3680766f1 100644
 > --- a/drivers/leds/rgb/leds-qcom-lpg.c
 > +++ b/drivers/leds/rgb/leds-qcom-lpg.c
 [ ... ]
-> @@ -1118,6 +1124,8 @@ static int lpg_pattern_set(struct lpg_led *led, str=
-uct led_pattern *led_pattern,
+> @@ -876,18 +900,25 @@ static int lpg_brightness_single_set(struct led_cla=
+ssdev *cdev,
+>  	return 0;
+>  }
 > =20
->  		chan->pattern_lo_idx =3D lo_idx;
->  		chan->pattern_hi_idx =3D hi_idx;
-> +		/* The 1st channel owns the LUT while other channels share it */
-> +		chan->has_lut =3D i =3D=3D 0;
->  	}
+> +static int lpg_pattern_mc_update(struct lpg_led *led);
+> +
+>  static int lpg_brightness_mc_set(struct led_classdev *cdev,
+>  				 enum led_brightness value)
+>  {
+>  	struct led_classdev_mc *mc =3D lcdev_to_mccdev(cdev);
+>  	struct lpg_led *led =3D container_of(mc, struct lpg_led, mcdev);
+> +	int ret =3D 0;
+> =20
+> -	mutex_lock(&led->lpg->lock);
+> +	guard(mutex)(&led->lpg->lock);
+> =20
+>  	led_mc_calc_color_components(mc, value);
+> -	lpg_brightness_set(led, cdev, mc->subled_info);
+> +	if (led->pattern.len) {
+> +		ret =3D lpg_pattern_mc_update(led);
+> +		if (ret)
+> +			return ret;
+> +	}
+> =20
+> -	mutex_unlock(&led->lpg->lock);
+> +	lpg_brightness_set(led, cdev, mc->subled_info);
+> =20
+>  	return 0;
+>  }
+[ ... ]
+> @@ -1152,24 +1197,133 @@ static int lpg_pattern_single_set(struct led_cla=
+ssdev *cdev,
+[ ... ]
+> +/* Caller must hold lpg->lock. */
+> +static int lpg_pattern_mc_update(struct lpg_led *led)
+> +{
+> +	struct led_classdev_mc *mc =3D &led->mcdev;
+> +	struct led_classdev *cdev =3D &mc->led_cdev;
+> +	struct lpg_pattern *pattern =3D &led->pattern;
+> +	struct led_pattern *scaled =3D led->scaled_pattern;
+> +	struct lpg *lpg =3D led->lpg;
+> +	struct lpg_channel *chan;
+> +	unsigned int lo_idx, hi_idx;
+> +	unsigned int i, j;
+> +	int ret;
+> +
+> +	ret =3D lpg_pattern_stop(led);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i =3D 0; i < led->num_channels; i++)
+> +		lpg_lut_free(led->channels[i]);
+> +
+> +	/* Rebuild each channel from the unscaled pattern and current intensity=
+. */
+> +	for (i =3D 0; i < led->num_channels; i++) {
+> +		chan =3D led->channels[i];
+> +		if (!mc->subled_info[i].brightness)
+> +			continue;
+> +
+> +		for (j =3D 0; j < pattern->len; j++) {
+> +			scaled[j].brightness =3D DIV_ROUND_CLOSEST(
+> +				(u32)pattern->data[j].brightness * mc->subled_info[i].intensity,
+> +				cdev->max_brightness);
+> +			scaled[j].delta_t =3D pattern->data[j].delta_t;
+> +		}
 
 [Severity: Medium]
-Can a 2-step palindrome pattern actually run when ping_pong compresses
-it to a single LUT entry with lo_idx =3D=3D hi_idx?
+Should scaled[j].brightness multiply by mc->subled_info[i].brightness
+instead of mc->subled_info[i].intensity?
 
-Although lpg_lut_free() now checks chan->has_lut, the pattern activation
-paths still check whether chan->pattern_lo_idx !=3D chan->pattern_hi_idx:
+When lpg_brightness_mc_set() runs, led_mc_calc_color_components() stores
+the brightness-adjusted channel values in mc->subled_info[i].brightness,
+leaving mc->subled_info[i].intensity unchanged.  Using .intensity here
+means changing brightness while a pattern is active never scales the
+programmed LUT values; instead, channels stay at full intensity until
+mc->subled_info[i].brightness rounds down to 0 and abruptly shuts the
+channel off, skewing the color balance.
 
-drivers/leds/rgb/leds-qcom-lpg.c:lpg_brightness_set() {
-    ...
-		if (brightness =3D=3D LED_OFF) {
-			chan->enabled =3D false;
-			chan->ramp_enabled =3D false;
-		} else if (chan->pattern_lo_idx !=3D chan->pattern_hi_idx) {
-    ...
-}
+[ ... ]
+> +static int lpg_pattern_mc_set(struct led_classdev *cdev,
+> +			      struct led_pattern *led_pattern, u32 len,
+> +			      int repeat)
+> +{
+> +	struct led_classdev_mc *mc =3D lcdev_to_mccdev(cdev);
+> +	struct lpg_led *led =3D container_of(mc, struct lpg_led, mcdev);
+> +	struct lpg *lpg =3D led->lpg;
+> +	struct lpg_pattern pattern;
+> +	int ret;
+> +
+> +	ret =3D lpg_prepare_pattern(lpg, led_pattern, len, repeat, &pattern);
+>  	if (ret < 0)
+>  		return ret;
+> =20
+> +	struct led_pattern *prep_data __free(kfree) =3D pattern.data;
+> +
+> +	if (pattern.len > lpg->lut_size)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&lpg->lock);
+> +
+> +	memcpy(led->pattern.data, prep_data, pattern.len * sizeof(*prep_data));
+> +	pattern.data =3D led->pattern.data;
+> +	led->pattern =3D pattern;
+> +	led->pattern_oneshot =3D repeat !=3D -1;
+> +
+>  	led_mc_calc_color_components(mc, LED_FULL);
+> +	ret =3D lpg_pattern_mc_update(led);
+> +	if (ret) {
+> +		led->pattern.len =3D 0;
+> +		return ret;
+> +	}
+> +
+>  	lpg_brightness_set(led, cdev, mc->subled_info);
+> =20
+>  	return 0;
+>  }
 
-lpg_apply_control() and lpg_apply_lut_control() check the same condition,
-so a single-entry LUT never enables the ramp generator and falls back to
-static full-brightness PWM output.  In addition, the comment earlier in
-lpg_pattern_set() notes that a pattern of length 1 causes the hardware
-to iterate through the entire LUT, suggesting ping_pong compression
-should not reduce a 2-step pattern to actual_len =3D=3D 1 in the first plac=
-e.
+[Severity: High]
+Does leaving cdev->brightness at 0 in lpg_pattern_mc_set() cause a later
+multi_intensity write to stop the running pattern?
+
+cdev->brightness is set to 0 when the pattern trigger activates (or at
+probe when default-state is not "on"), and pattern_trig_start_pattern() ->
+lpg_pattern_mc_set() never updates it.  If userspace then writes to
+multi_intensity while the pattern is running, multi_intensity_store()
+calls led_set_brightness(cdev, cdev->brightness) with 0, which invokes
+lpg_brightness_mc_set(cdev, 0), zeroes every mc->subled_info[i].brightness,
+frees all per-channel LUTs in lpg_pattern_mc_update(), and disables all
+channels.
+
+Also, on LUT-backed LPG hardware where cdev->max_brightness is 511
+(LPG_RESOLUTION_9BIT - 1), passing LED_FULL (255) instead of
+cdev->max_brightness to led_mc_calc_color_components() rounds
+mc->subled_info[i].brightness down to 0 when intensity is 1, leaving that
+channel disabled.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117-led-qcom-l=
 eds-multiple-fixes-and-pwm-fm-support-v1-0-7a862240683f@oss.qualcomm.com?pa=
-rt=3D1
+rt=3D2
