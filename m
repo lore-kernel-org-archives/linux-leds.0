@@ -1,107 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.58
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794897841;
-	b=JIaZh3QLk+sQlIgAjIbc8WatHVR+6bdO3ke0VYJ/wPFTtN43S4RCxlu2IVDdKVadUG5n
-	 87ZHBR317VBcezyI3RAoj+lPHI2chMaoKzwtVrCMelujQ2LTuMd5tDh5j7C+duycSm4fD
-	 AzeZXIwcXhD3Df5k1zfJayswZq8Z/zr7R+cVR2gxKH4q2JAAQJ5cBRoaT0QrwEBoyHraP
-	 WAPsu6JkhaWLKEebSr7uE9ClkokKptlIm4nTMAfwsU815C+J5fTgr+Ar+cpWrtsOYvoJd
-	 fvUlgS6bmn+op8ZZKH0yKh1b2/+jYu+VuJ+ybjcUS+KXNX+8U5T4LASy5VXfWbGS3OQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794897841;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:X-OriginalArrivalTime:
-	 X-EOPAttributedMessage:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:Content-Type:
-	 X-MS-Office365-Filtering-Correlation-Id:X-SET-LOWER-SCL-SCANNER:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=0u2PuPNVO3nTAQcaPsd7bGTquDyctWW/0JCudtITLd8=;
-	b=ocwotKc8G0KAqttFxCbcyDIMw6wsFDfqfpY1QkJqUmOnz03YnIgkuSKByA7BVu/UxmwX
-	 6VOoYW7RsHGRT5ZjQKfqeLcvnOUWlzZ+E+bsYLdyhAS1mSGsim/iwE9YSQhjyy4avBnZ6
-	 w+afG10MLjhlAychC6+8H74Cg2DgxGNcdgrcpJT61I0lZP1lLgqPQ/yaB5y6hOB9D+B9p
-	 Xe4ReXTPXGVo6qWq04dhCkipCvYehEu+xg/AETSolN2p64SUzia5WVbFg8XqT9QaMBu2/
-	 n+kykiFCnafQbh7EzsPfbXzk90YQwfsebqG/sHbF+r/wwCKlRATKcIkh4Y6JkBa7B4Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=leica-geosystems.com;
-	spf=fail smtp.mailfrom=leica-geosystems.com;
-	dkim=pass header.d=leica-geosystems.com header.i=@leica-geosystems.com header.a=rsa-sha256 header.s=selector1 header.b=G8KggSnL;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.58
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013058.outbound.protection.outlook.com [52.101.83.58])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794899022;
+	b=ctIn127WZeX7BGaHVKdQHoSaovGTcoCu9WZPnt13JKZMX06NlGRhUHpv30RnEbfKfiz2
+	 P6LTgK1uX3vyUhKfAfYD2fbra5Yekb4xg+eT2XWBuordo5wBv/5PZKPVla2b6kSMXz1Uu
+	 P5Wbf0KXzz6hGEnSmJB2xDySgy2b1rutbyCQkRqRskah5fxfn7mQdA+uPnS1GZVkAssPa
+	 ccBT0Vaeo9LpwACeZyWTJhbJ11kfQOngPF+9cUgyZ3qWNt60Qwhe5tIFibJAMUpL3Xe1f
+	 Bl0/38VvDFiMAhNwa0yEKEo2pkbUknZUJpsAZ5D1X/4c/vT1SRXECGd0MEZ2W+gV2VQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794899022;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=u5FRxG87DyyxMxV7Ld+dAeUJyImEXGgOQ8BNjZ4DJ+g=;
+	b=2tsyrJ9ujszCuOPCI0hUGKryQoneqkz0uy7SLgez1R/2ISe1pNp6WtLs1oMkV3T+c0jX
+	 PQ0DQ/iah61oDyJ2yWrawyZPgVwJpH2JrDnxtZSF7mfw+y4QMe+PLgBITWOG8K00LQtn3
+	 HbJMZ8Vc4B8GOsBh5o03szuPv/T81ECKasRQaVCPgwY3QPSq+6PxmFGKBRFI0S5Nu+now
+	 07vbdHWZbzOmaFO94fwemjmXLUxBm2yNoosVXRQWXXqCFDYkysaQWKSvaH9liSMwZyGQL
+	 RdBiCWeH/qqTIkF6zh7AEL43qnnIoNpnCu/lchepCATypL6XpdPNRV2l55ydC3vqY4A==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Er7qy64H;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6A7606A338;
-	Tue, 17 Nov 2026 06:44:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C6A7606A338
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD93606A31C
+	for <linux-leds@vger.kernel.org>; Tue, 17 Nov 2026 07:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.a=rsa-sha256 header.s=selector1 header.b=G8KggSnL
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jWSeCSn0o7xXQKlGTqUecDaUuJai2GL3Oueshm76CLQh1d7NhAvh6V8TUxuAzzuy+i3NjzUP0avCdj4/h377vtnqddDvab+moHn/tILJfMmrgI8n9bzMUjLwjqYZOQBKtfeMrvyTlMwfeH/S/Tjo0dLKXQ+LhBTIbfmsEzetDGrpW7aVVRMQLDWzlYEYvKZYZf2kh/qAvHBVVGZdLISIVDOm8COLijPUEm4H7pf7hI0wfuQhTVu0UU3yVc+x+GgprvsiyAVhZadQFRJzDtueyu1NAfh4sx4+tDxhGGTJLXtUfi6nRqf+OCXK/rZRmc0cIUrJ28ATvqPEYH9C23jN2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0u2PuPNVO3nTAQcaPsd7bGTquDyctWW/0JCudtITLd8=;
- b=b9u/jKkxFgChJvlPNOsgU1AlHjQ2Kkml7p3QZxS1Rp9vRFb8KuZeI5mQtnH8k5fm7AfXdXCKASF2daniZHzye8luRhTmhsXRkVPV0qtAV+jIYYgbLP9cjdZlDPy2pb1j0KPBoWbCD/6OPU3aXKdE9rIUqBIHzXF3372fBvJabDM5CuBtivlutRmEyMNFuC6igmsx/J/zaAEscjPlDOD4CQWiLizaUli0xJ0+jxTld8K1+lJjNEcSyzYEANdoPN65X8dQliyq1gZQeV+znF6KI2wt74gX+pSYrRELVJS5mvVIQjx53BzkLXzZgZ3UPBQBDNDtHkdlFujCAb8Ih/nOZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.99) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0u2PuPNVO3nTAQcaPsd7bGTquDyctWW/0JCudtITLd8=;
- b=G8KggSnLc3xocLib0FI5gKLJttudhbsEVugWh9+xyqDSVSQlXQvKUhfBTq7ILV5+DJKFp/5PmoBMg3FtLZicpJQuMQcKj8NQHeGb0+Wx+IY0yLT6oI84G9UEyCg3QdVXQI7jn+MKPQYkt8yvg5SRJeUXO6DJSEWXXsqHi5wz3M8=
-Received: from AS4P190CA0010.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:5de::20)
- by AM8PR06MB7649.eurprd06.prod.outlook.com (2603:10a6:20b:356::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.615.14; Tue, 17 Nov
- 2026 06:43:56 +0000
-Received: from AMS1EPF00000094.eurprd05.prod.outlook.com
- (2603:10a6:20b:5de:cafe::5a) by AS4P190CA0010.outlook.office365.com
- (2603:10a6:20b:5de::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.615.10 via Frontend Transport; Tue,
- 17 Nov 2026 06:43:56 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 193.8.40.99) smtp.mailfrom=leica-geosystems.com; dkim=none (message not
- signed) header.d=none;dmarc=pass action=none
- header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.99 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.99; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.99) by
- AMS1EPF00000094.mail.protection.outlook.com (10.167.242.91) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.615.4 via Frontend Transport; Tue, 17 Nov 2026 06:43:56 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.61.228.61]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Tue, 17 Nov 2026 07:43:56 +0100
-From: jiegu <jie.gu@leica-geosystems.com>
-To: Matthias Fend <matthias.fend@emfend.at>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gujie <jie.gu@leica-geosystems.com.cn>
-Subject: [PATCH 2/2] leds: tps6131x: clear torch brightness cache on flash takeover
-Date: Tue, 17 Nov 2026 06:43:28 +0000
-Message-ID: <20261117064328.4096518-3-jie.gu@leica-geosystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20261117064328.4096518-1-jie.gu@leica-geosystems.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Er7qy64H
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 945421F000C4;
+	Tue, 17 Nov 2026 07:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794899021;
+	bh=u5FRxG87DyyxMxV7Ld+dAeUJyImEXGgOQ8BNjZ4DJ+g=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Er7qy64Hyr8cpyJiOhyLXb+acWPRNIgWgWbXplYsxifxaaHevahk1b+xZ/j9P0unF
+	 SchGUf26ClwemtY5K2dKnxIxMs+G/UK33SrPFVtIZqeg6TeUoevzqWEXPTpamOgfQp
+	 6Q3+VRf6Qw1CiYvPhe8quYo4R41+eldr+BNlQTNpUNPGh3jVhX32nPW7bnSNMdKX1m
+	 DzPVTKZPu2R0nZNkCklbSMUYe1j8SuKx4xEurL+EosKOHpXZF+lCptjBzN/y7MPUPA
+	 Eh4nlBYyXaexv271bR9wudaUR2iWc6cddhdn4LFjY+tcH/825Pz+HxottMiew+8UCl
+	 h75ttqf4/pbDQ==
+Message-ID: <sashiko-outbox-218289@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/2] leds: tps6131x: clear torch brightness cache on
+ flash takeover
+Reply-To: sashiko-reviews@lists.linux.dev
+To: jiegu <jie.gu@leica-geosystems.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261117064328.4096518-3-jie.gu@leica-geosystems.com>
 References: <20261117064328.4096518-1-jie.gu@leica-geosystems.com>
+ <20261117064328.4096518-3-jie.gu@leica-geosystems.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 17 Nov 2026 07:03:41 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -110,102 +60,175 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 17 Nov 2026 06:43:56.0693 (UTC) FILETIME=[04E2DC50:01DD765F]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS1EPF00000094:EE_|AM8PR06MB7649:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2e3dc295-cdff-4710-e556-08df44762773
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|23010399003|82310400026|376014|61400799027|261022105027099003|261102123227099003|261028144727099003|261021123027099003|261021121427099003|261026121527099003|261026140227099003|11063799006|56012099006|10067099003|18002099003|16102099003|22082099003|261009223327099003|261009223027099003|261009220027099003|261009221727099003|261009221227099003|3023799007|43062017;
-X-Microsoft-Antispam-Message-Info:
-	ZIysNjxGqh5MRDhTG7HD/YyVbNi9ZDDKs8cGexF0pHSkPygsax+3IThOPH7UGpFmOTpdALQwsnjbeFb+RhVv6AX/CwubMVV8AIaW6DxH9Rh2ylLlmio30hW8TeRac2TNeqYbDiNVwO7FXnjWoB50zY/ChJf5b0nUu8R528tF6DsXzoCMVPJn6qnA7vveOXC+CoP8pVhjXLY/IT0zhI0OxIB0rkGxzd/Ho/e8c4dpzYF9mKIPk28VtmpeC+bTnnSv/Jji36AAVG/uJs4eDaJREKjaqdzf4JJLe6ZeYTJr5HTtsKLBbQRxyhVLaMcU93dc9qAjWHDHlfnoO8bdIvDExrU0qhqI45yzoKAvGeZ2KiAQumDYa6RoimpvgMyOlPTWYi7pzmVFMHxJBn1rK2n830vzaSqupkffJwtqFKp4yf1rG1rMOin/kT/ES/rsSrGjkuvE/f1GZAGXcQoylLCeslSDgUKkHE6SOsiwxs8sJeoqDe2Qe+YkgSDKVdRYBJw1dq805bKOI9WBVcMfGX+hvKCrikZ0rLSbnnTkZlwF5hj2MqkA92qmz6m5peX4/tm2Iykwyp5VYabzMSuRN+rLOTJ1EMmKgW1LoTBnHaYjkqXRDuaxDUBvIrVoN6n/Si79+V7//jgLKzSjUoW6THdE9RVHM5pmZy9XswPFbdLiv3RAy6e3W9U3qZoWDsDUT9JftLnF4bYuCeimXraJF0iafrAgSHZ1Wt5M3ISgMZqqmb8EsAK7UEI4pe6+9jeiRfwo
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.99;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom51.leica-geosystems.com;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(82310400026)(376014)(61400799027)(261022105027099003)(261102123227099003)(261028144727099003)(261021123027099003)(261021121427099003)(261026121527099003)(261026140227099003)(11063799006)(56012099006)(10067099003)(18002099003)(16102099003)(22082099003)(261009223327099003)(261009223027099003)(261009220027099003)(261009221727099003)(261009221227099003)(3023799007)(43062017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	sLRSg25899JdF18GBpd9GTnBwlUbODCsepVoqTjiGEjKjmHWG0XkrDCrEKkN2938fUrqurrGg3B34zDGxuSIRmqEciVnxd6e0Ac4k+quE2VhdaCdDSTil9KKPGrDsnOddYOcwp2y2RPiXT/CizUiFlhxA9zc9Q4BwU6or3DlOwHFJNAHP5CSupPOKDhqC5xfqJNwuKIVEMcgV5PTOcmNenjNIPrsRM66sBjt7gucHtHQaOjLJt7AKwSBszxilkfqFGA2qD+ollX2SZt/ubWWi+f6cJMMkzb7sAc+yozBzDaeag9d2nj+Vo8NGt9RYyx3VBITkowF9z1whnh7Wd3jUaqS6f/TdeEbI06ethJo0BzMRWYJXXLsQ98zSxvP3FHVO2044j2PEW5/ck0BaK1hwlWrBOWASIOktliQhUoclh2mrtjoLJXuR46Xk2/G51Lo
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2026 06:43:56.7722
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e3dc295-cdff-4710-e556-08df44762773
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.99];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF00000094.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR06MB7649
 
-From: gujie <jie.gu@leica-geosystems.com.cn>
+Thank you for your contribution! Sashiko AI review found 5 potential
+issues to consider:
+- [High] leds: tps6131x: Signed-off-by trailer uses handle instead of
+  real name
+- [Medium] leds: tps6131x: race between torch brightness work and flash
+  takeover
+- [Low] leds: tps6131x: missing Fixes trailer for commit b338a2ae9b31
+- [Low] leds: tps6131x: lowercase commit subject description after
+  prefix
+- [Low] leds: tps6131x: stale torch brightness on error in
+  tps6131x_strobe_set()
+--
 
-When the device switches from torch mode to flash or external strobe
-mode, the hardware torch output is disabled, but the LED class
-brightness cache may still keep the previous non-zero torch value.
+commit f89ca151830eb0b217f7a4d48fff59fc543e3ca3
+Author: gujie <jie.gu@leica-geosystems.com.cn>
 
-This leaves sysfs brightness reporting an enabled torch state even
-though the light is already off.
+> leds: tps6131x: clear torch brightness cache on flash takeover
 
-Update the cached LED brightness to LED_OFF when flash control takes
-over so userspace state matches the actual hardware state.
+[Severity: Low]
+Per LED subsystem conventions, the description after the "leds: tps6131x: "
+prefix should be capitalized ("leds: tps6131x: Clear torch brightness cache
+on flash takeover").
 
-Signed-off-by: gujie <jie.gu@leica-geosystems.com.cn>
----
- drivers/leds/flash/leds-tps6131x.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+>
+> When the device switches from torch mode to flash or external strobe
+> mode, the hardware torch output is disabled, but the LED class
+> brightness cache may still keep the previous non-zero torch value.
+>
+> This leaves sysfs brightness reporting an enabled torch state even
+> though the light is already off.
+>
+> Update the cached LED brightness to LED_OFF when flash control takes
+> over so userspace state matches the actual hardware state.
+>
+> Signed-off-by: gujie <jie.gu@leica-geosystems.com.cn>
 
-diff --git a/drivers/leds/flash/leds-tps6131x.c b/drivers/leds/flash/leds-tps6131x.c
-index 823e0462939c..4f708cf56178 100644
---- a/drivers/leds/flash/leds-tps6131x.c
-+++ b/drivers/leds/flash/leds-tps6131x.c
-@@ -294,6 +294,11 @@ static int tps6131x_set_mode(struct tps6131x *tps6131x, enum tps6131x_mode mode,
- 				       NULL, false, force);
- }
- 
-+static void tps6131x_sync_torch_brightness_off(struct tps6131x *tps6131x)
-+{
-+	tps6131x->fled_cdev.led_cdev.brightness = LED_OFF;
-+}
-+
- static void tps6131x_torch_refresh_handler(struct work_struct *work)
- {
- 	struct tps6131x *tps6131x = container_of(work, struct tps6131x, torch_refresh_work.work);
-@@ -398,6 +403,8 @@ static int tps6131x_strobe_set(struct led_classdev_flash *fled_cdev, bool state)
- 	if (ret)
- 		return ret;
- 
-+	tps6131x_sync_torch_brightness_off(tps6131x);
-+
- 	return 0;
- }
- 
-@@ -697,12 +704,19 @@ static int tps6131x_flash_external_strobe_set(struct v4l2_flash *v4l2_flash, boo
- {
- 	struct led_classdev_flash *fled_cdev = v4l2_flash->fled_cdev;
- 	struct tps6131x *tps6131x = fled_cdev_to_tps6131x(fled_cdev);
-+	int ret;
- 
- 	cancel_delayed_work_sync(&tps6131x->torch_refresh_work);
- 	guard(mutex)(&tps6131x->lock);
- 
--	return tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
--				 false);
-+	ret = tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6131X_MODE_SHUTDOWN,
-+				false);
-+	if (ret)
-+		return ret;
-+
-+	tps6131x_sync_torch_brightness_off(tps6131x);
-+
-+	return 0;
- }
- 
- static const struct v4l2_flash_ops tps6131x_v4l2_flash_ops = {
--- 
-2.43.0
+[Severity: High]
+The Signed-off-by trailer and Author header use a single-word handle
+("gujie") instead of a full real human name, which does not meet the
+Developer's Certificate of Origin requirements in
+Documentation/process/submitting-patches.rst.
 
+[Severity: Low]
+Since this fixes a bug introduced with the driver, should it include a
+Fixes tag?
+
+  Fixes: b338a2ae9b31 ("leds: tps6131x: Add support for Texas Instruments T=
+PS6131X flash LED driver")
+
+> diff --git a/drivers/leds/flash/leds-tps6131x.c b/drivers/leds/flash/leds=
+-tps6131x.c
+> index 704c3e7dfcda0..4b36fd2e3778b 100644
+> --- a/drivers/leds/flash/leds-tps6131x.c
+> +++ b/drivers/leds/flash/leds-tps6131x.c
+> @@ -294,6 +294,11 @@ static int tps6131x_set_mode(struct tps6131x *tps613=
+1x, enum tps6131x_mode mode,
+>  				       NULL, false, force);
+>  }
+> =20
+> +static void tps6131x_sync_torch_brightness_off(struct tps6131x *tps6131x)
+> +{
+> +	tps6131x->fled_cdev.led_cdev.brightness =3D LED_OFF;
+> +}
+> +
+>  static void tps6131x_torch_refresh_handler(struct work_struct *work)
+>  {
+>  	struct tps6131x *tps6131x =3D container_of(work, struct tps6131x, torch=
+_refresh_work.work);
+> @@ -398,6 +403,8 @@ static int tps6131x_strobe_set(struct led_classdev_fl=
+ash *fled_cdev, bool state)
+>  	if (ret)
+>  		return ret;
+> =20
+> +	tps6131x_sync_torch_brightness_off(tps6131x);
+> +
+>  	return 0;
+>  }
+
+[Severity: Low]
+Can fled_cdev.led_cdev.brightness still remain stale if a TPS6131X_REG_3
+update fails in tps6131x_strobe_set()?
+
+drivers/leds/flash/leds-tps6131x.c:tps6131x_strobe_set() {
+    ...
+	ret =3D tps6131x_set_mode(tps6131x, state ? TPS6131X_MODE_FLASH : TPS6131X=
+_MODE_SHUTDOWN,
+				true);
+	if (ret < 0)
+		return ret;
+
+	if (state) {
+		ret =3D regmap_update_bits_base(tps6131x->regmap, TPS6131X_REG_3, TPS6131=
+X_REG_3_SFT,
+					      TPS6131X_REG_3_SFT, NULL, false, true);
+		if (ret)
+			return ret;
+	}
+    ...
+}
+
+Once tps6131x_set_mode() succeeds, the hardware torch output is already
+disabled.  If either subsequent regmap_update_bits_base() call on
+TPS6131X_REG_3 fails, returning before tps6131x_sync_torch_brightness_off()
+leaves fled_cdev.led_cdev.brightness reporting a non-zero torch value while
+the torch is off.  Similarly, because cancel_delayed_work_sync() runs
+before tps6131x_set_mode() here and in tps6131x_flash_external_strobe_set(),
+a failure in tps6131x_set_mode() leaves torch_refresh_work canceled so the
+hardware watchdog shuts the torch down after 13 seconds without updating
+fled_cdev.led_cdev.brightness.
+
+> @@ -697,12 +704,19 @@ static int tps6131x_flash_external_strobe_set(struc=
+t v4l2_flash *v4l2_flash, boo
+>  {
+>  	struct led_classdev_flash *fled_cdev =3D v4l2_flash->fled_cdev;
+>  	struct tps6131x *tps6131x =3D fled_cdev_to_tps6131x(fled_cdev);
+> +	int ret;
+> =20
+>  	cancel_delayed_work_sync(&tps6131x->torch_refresh_work);
+>  	guard(mutex)(&tps6131x->lock);
+> =20
+> -	return tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS61=
+31X_MODE_SHUTDOWN,
+> -				 false);
+> +	ret =3D tps6131x_set_mode(tps6131x, enable ? TPS6131X_MODE_FLASH : TPS6=
+131X_MODE_SHUTDOWN,
+> +				false);
+> +	if (ret)
+> +		return ret;
+> +
+> +	tps6131x_sync_torch_brightness_off(tps6131x);
+> +
+> +	return 0;
+>  }
+
+[Severity: Medium]
+Can a concurrent torch brightness update race with flash takeover and
+re-enable hardware torch mode after fled_cdev.led_cdev.brightness has been
+reset to LED_OFF?
+
+Because tps6131x_led_class_setup() registers brightness_set_blocking,
+writing a non-zero value to sysfs brightness updates led_cdev.brightness
+immediately and queues set_brightness_work to run tps6131x_brightness_set()
+asynchronously.  In addition, tps6131x_strobe_set() and
+tps6131x_flash_external_strobe_set() call cancel_delayed_work_sync() on
+torch_refresh_work before acquiring tps6131x->lock, whereas
+tps6131x_brightness_set() schedules torch_refresh_work under tps6131x->lock:
+
+CPU0 (kworker)                    CPU1 (strobe / v4l2)
+tps6131x_brightness_set()
+  guard(mutex)(&tps6131x->lock)
+  tps6131x_set_mode(..., TORCH)
+                                  tps6131x_strobe_set()
+                                    cancel_delayed_work_sync(...)
+                                    guard(mutex)(&tps6131x->lock)
+  schedule_delayed_work(...)
+                                    tps6131x_set_mode(..., FLASH)
+                                    tps6131x_sync_torch_brightness_off()
+                                      led_cdev.brightness =3D LED_OFF
+tps6131x_torch_refresh_handler()
+  tps6131x_set_mode(..., TORCH)  <-- torch re-enabled while brightness =3D=
+=3D 0
+
+The same mismatch happens if set_brightness_work runs
+tps6131x_brightness_set() with a queued non-zero delayed_set_value right
+after tps6131x_strobe_set() or tps6131x_flash_external_strobe_set() clears
+led_cdev.brightness: the hardware switches back to TPS6131X_MODE_TORCH
+while sysfs brightness still reports LED_OFF.
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261117064328.4096=
+518-1-jie.gu@leica-geosystems.com?part=3D2
