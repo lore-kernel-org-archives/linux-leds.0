@@ -1,55 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795031632;
-	b=A7svBr63bDcDw9OY9KTjl0V30i+zZsQwwEmPpNXYVuVLgykbLYRbW/G3G71koWQ7YeFY
-	 sxqiOaTdTatyLSY5mVxaZBqIawxysI2JHX1nqjOUayzcJVDYK02gqspxL5x26s5pVBQ77
-	 mN4ALXiyQWgChOFam/hJ5Luk6OoHzp5q1yK1imlJ0WkkQmLpN3iDxJYjw30qVWWVgI1sO
-	 Hh9JR6s9u8ezyEPRHwZXImbVjV0w55jn/sJ/H5GETeNI+X8IYUdDB+WOua8RYgthTdr0S
-	 HlFZaZ3IvurkPRDFJGqC1jSymDPRgKFDt056yZeOZGPdWVs9/jsKF6clQf6Gvj2GXdA==
+	t=1795031767;
+	b=hsMgUYk4B6bb0UxHkUC6880TQ/BoAY6iPpBoZzs3jvRgu92UiI5qkxfv5hj7tetaWANz
+	 lY6dxuTfJswx/qxluFBsPXT+4NcY6pjyzVWFwdswRD7g1Y1b2eJxxVRiSbdVFsZBD0fo8
+	 F5Yx0OVMx7xoNE+Opz/04J5U7NbhiHr+R9qChxdL6pb8VIqhdQd/MkzOyIaTBWnTuV8+0
+	 r4MpnvhFerz23wlVh4kz0ChCLT/lYwqVhtsy3ygXoBFioiU3tPDpFM6M9xXG2O6ZinTFp
+	 BNj1JIv/CEs1vHtnUUEcElEmbvhlVU50jVU6RbK4j+HjY/LEIHr9gJ77QpNYx4OEoAA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795031632;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795031767;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-AI-Review-Draft;
-	bh=L8aeIn77kmUyIOS+jkSoBrVDylUSGYP6BjjCfuAAKC4=;
-	b=lQ9ySPGbYPAH0szEmemXVLNcWI8P5bv9h5h9itoyVNIqi29FWUKwqwNLmNkauWBLytXf
-	 e6FF0Ta/38jdUYJefuKyqqQnaT5r9tkoj7p5hzoBqjEcjoWhzBN/1mjKhPgDpyW4m+Bqe
-	 jQ782dJsQniqmzOnEg4s4Sjo7VAbvBwfqyOFxaSTmh20Z9mgkXGi9GGrTuVwwalg53WPz
-	 iRdYKO/fnuWMkzV//yJuMLp9eVR+CHqwQQaypB0AAfcm+Xz9JEYb2p9dWIxI7OMOVD+kU
-	 PokXNeBAyag7T4YTDXePzNIw4Eg8mjZysuT13sq4g2FHifEJmgQaDxGYcuBGIvu1VSw==
+	bh=wLT03LeZbhXOksmBn0t9WgkTSVA4EyoTOXmG+C7EJso=;
+	b=GGshy7xaEjlvy/qozLw20ymQt46jS4G6NuAdZbOFBFs4Go+kS7pGgvMMPnoCvWfOYQzG
+	 LxopCg5VfIvgD3ts8PX0l8J1DrbHb+/PF7tVY2bwo+H3GIqmyf5tZCM3mzfk/bIIhnd3q
+	 Bv5IkpmByjh0Ehh7AItXXAzX+/vMzzOPM4I+NNYtu8yffDXJ3sikWJKYhutFOCNI4BYAV
+	 +GbWxyKiCHQBOP8o9VRpSNxmlhC/VqiyUICviT4u8mhYVwS4YxGrPwM05Y9fubcaoSrlx
+	 S+2GoV832g/Ntu5YKgxWRYmIoteWfEkBf4zT+byA+nU5znwNp1i38cd7MRsSVH2jeuw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kd3l8iBn;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EIw+gViG;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81860606A31C;
-	Wed, 18 Nov 2026 19:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F8C606A320;
+	Wed, 18 Nov 2026 19:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kd3l8iBn
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 239C41F000C4;
-	Wed, 18 Nov 2026 19:53:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EIw+gViG
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434DF1F000C4;
+	Wed, 18 Nov 2026 19:56:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795031632;
-	bh=L8aeIn77kmUyIOS+jkSoBrVDylUSGYP6BjjCfuAAKC4=;
+	s=k20260515; t=1795031766;
+	bh=wLT03LeZbhXOksmBn0t9WgkTSVA4EyoTOXmG+C7EJso=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kd3l8iBn5/QQQ6cLIUXbD9bvNgKiNtFRh8v9/5QKf3WnOyLfMAb/FKQoZPTY3THUd
-	 yUAWA0Y+5nR/Cbah2LbGiKNv55Cj6/jghtCCU3P8QdTEcFJCYExvKxNqAV1SSVHoGI
-	 q3nN3OhHSm9J2FEZaUbxJYFV/UOAgM6zx6FUC2UY1Z6EHEsgrnE+Op9uQKbRwjock2
-	 gzNIu8rex+RYvt3z6HcOLkC+d3bQYhYoZoVQxUKe1VQ7Ags7Yndzg/3JD4W7baW/yo
-	 kEUSaR6ayCiWD55yaB+LyHDdhqbUoEEy0iwBzgu/O3/vzgb/aqKQOiDEEJwKt3Cd/x
-	 sY5lfMr83Sv3w==
-Date: Wed, 18 Nov 2026 19:53:48 +0000
+	b=EIw+gViGE8D7VwnZsn8W/ubXDjUPTNj+64H2VX8P5CPyEG1LuK9h5t3f2JRFirDcq
+	 p64dTmAq/DtVY/hny3ZUkho89kN3GjuOono+7BkJjJAgMEGzxcMYx5ZGTeCgZgBQez
+	 1FgTSExKpjuAkp6JSESRjy0lX31sUPwsh/B5OvPTnmGZOugo2F9/Udy9WpKDPFG25q
+	 CRdZfANDDyvRTHQbvkXwky4faVKExy0s+FjUtWPBPrk32gyPfaC9GVCGs5Bmf7ngMJ
+	 H2+7XShNmoDsbAKn9LD/EkRVKFCn9dFuFWHNqDLO5PxdfqWrntgqkI7HQrEYTl8Rzv
+	 PbA+EwJxrdBZg==
+Date: Wed, 18 Nov 2026 19:56:02 +0000
 From: Lee Jones <lee@kernel.org>
-To: Gu Bin <gubin@cmss.chinamobile.com>
-Cc: pavel@kernel.org, david@lechnology.com, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tools/leds/uledmon: reject device names that are too
- long
-Message-ID: <179442104215.44545.2144163087581820120@kernel.org>
-References: <20261106100614.2312-1-gubin@cmss.chinamobile.com>
- <20261109070539.1922-1-gubin@cmss.chinamobile.com>
+To: raoxu <raoxu@uniontech.com>
+Cc: pavel@kernel.org, griffin@kroah.com, Denis.Osterland@diehl.com,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] leds: pwm: Fix active-low brightness with default-state
+ keep
+Message-ID: <179442106213.44545.9829809278369376980@kernel.org>
+References: <9524E319B9AF9D1A+20261109085822.3755803-1-raoxu@uniontech.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,67 +61,65 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261109070539.1922-1-gubin@cmss.chinamobile.com>
-X-AI-Review-Draft: <20261109070539.1922-1-gubin@cmss.chinamobile.com>
+In-Reply-To: <9524E319B9AF9D1A+20261109085822.3755803-1-raoxu@uniontech.com>
+X-AI-Review-Draft: <9524E319B9AF9D1A+20261109085822.3755803-1-raoxu@uniontech.com>
 
-On Mon, 09 Nov 2026, Gu Bin wrote:
+On Mon, 09 Nov 2026, raoxu wrote:
 
-> strncpy() does not NUL-terminate when the source is at least as long
-> as the bound. uleds_dev.name is passed to the kernel with
-> write(fd, &uleds_dev, sizeof(uleds_dev)), so a >= LED_MAX_NAME_SIZE
-> byte argv[1] leaves name without a terminator and the write sends
-> trailing bytes that are not part of a valid device name.
+> From: Xu Rao <raoxu@uniontech.com>
 >
-> Silently truncating such a name would create a device the user did
-> not ask for, so error out instead, like the other argument checks
-> already do.
+> With default-state set to "keep", led_pwm_add() derives the initial
+> brightness from the PWM duty cycle without accounting for active-low
+> LEDs. However, led_pwm_set() inverts the duty cycle for these LEDs.
 >
-> Fixes: fa7f32422ea1 ("tools/leds: Add uledmon program for monitoring userspace LEDs")
-> Suggested-by: David Lechner <david@lechnology.com>
-> Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
+> For an enabled active-low PWM with zero duty cycle, the LED is fully
+> on but its cached brightness is set to zero. Conversely, a full duty
+> cycle is reported as maximum brightness instead of off. This exposes
+> an incorrect brightness to userspace and can restore the wrong value
+> after suspend. With an optional enable GPIO, the incorrect brightness
+> also causes the wrong initial GPIO level to be selected.
+>
+> Invert the computed brightness for active-low LEDs, matching the
+> conversion used by led_pwm_set() while leaving the PWM state intact.
+>
+> The supplied fix was reviewed and this commit message prepared with
+> OpenCode AI assistance.
+
+This should not end up in the commit message.
+
+If you want it, move it under the '---'.
+
+> Fixes: 3d3d65bd2764 ("leds: pwm: add support for default-state device property")
+> Signed-off-by: Xu Rao <raoxu@uniontech.com>
+> Cc: stable@vger.kernel.org
 > ---
+>  drivers/leds/leds-pwm.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> Changes in v2: reject over-long names with an error instead of
-> silently truncating them, as suggested by David Lechner.
->
->  tools/leds/uledmon.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/leds/uledmon.c b/tools/leds/uledmon.c
-> index c15a39c1f271..d38f5716c7f7 100644
-> --- a/tools/leds/uledmon.c
-> +++ b/tools/leds/uledmon.c
-> @@ -31,7 +31,13 @@ int main(int argc, char const *argv[])
->  		return 1;
->  	}
->
-> -	strncpy(uleds_dev.name, argv[1], LED_MAX_NAME_SIZE);
-> +	if (strlen(argv[1]) >= LED_MAX_NAME_SIZE) {
-> +		fprintf(stderr, "Device name too long (max %d bytes)\n",
-> +			LED_MAX_NAME_SIZE - 1);
-> +		return 1;
-> +	}
-> +
-> +	strcpy(uleds_dev.name, argv[1]);
+> diff --git a/drivers/leds/leds-pwm.c b/drivers/leds/leds-pwm.c
+> index 6c1f2f50ff85..da307767dbe8 100644
+> --- a/drivers/leds/leds-pwm.c
+> +++ b/drivers/leds/leds-pwm.c
+> @@ -131,6 +131,8 @@ static int led_pwm_add(struct device *dev, struct led_pwm_priv *priv,
+>  		brightness = led->max_brightness;
+>  		brightness *= led_data->pwmstate.duty_cycle;
+>  		do_div(brightness, led_data->pwmstate.period);
+> +		if (led_data->active_low)
+> +			brightness = led->max_brightness - brightness;
 
-Doesn't replacing strcpy() leave the remaining bytes of 'uleds_dev.name'
-uninitialised on the stack?
+One from the bot:
 
-Since 'uleds_dev' is passed to:
+  What happens if 'pwm_get_state()' returns a state where
+  '!led_data->pwmstate.enabled' or 'duty_cycle > period' from the
+  bootloader/hardware?  Should we check 'led_data->pwmstate.enabled'
+  before deriving a non-zero brightness for an active-low LED with
+  'duty_cycle == 0'?
 
-  write(fd, &uleds_dev, sizeof(uleds_dev))'
-
-... why doesn't this leak uninitialised stack memory to the kernel?
-
-Either zero-initialise 'uleds_dev' or keep strncpy() as it is.
-
->  	uleds_dev.max_brightness = 100;
->
->  	fd = open("/dev/uleds", O_RDWR);
-> -- 
-> 2.55.0.windows.3
->
->
+>  		led_data->cdev.brightness = brightness;
+>  		}
+>  		break;
+> --
+> 2.50.1
 >
 
 -- 
