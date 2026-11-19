@@ -1,74 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.112
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795098440;
-	b=I5AoyXIAEsvExugt63DLFD17zIEP+OXcpsRRx+nvQTdYfV2kRgBlfiSi/269rOwA0hhl
-	 OcBQ8Zwwfyi23lRyYkH/X7gpIYEoOog0XBW+iochVJgJqFBmc8rZOBQvmSMHanfCr59wg
-	 qUbxGGJBuji4Z428rNQXtxBscKO6En+YDSoCVzqnQct4Pvk4Yy1C6fjyBlZ2/kSz72vqd
-	 tfS7UHUZJzn+Lr+4aAxMEmp7c188wbeGoBBGRbw9axmQ9JdYBXaYZPbB7RFT41NwbVcmx
-	 qaamTAk92bIky3U3LWajnhGvD6SrjxceCmwstO9TrdroQEaOGd3689+3TYczx/Cyymg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795098440;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-ZohoMailClient;
-	bh=yeZaOOJQmxIdsD84RVLJrAVDq+lcoQB9tL9dTj0IG0U=;
-	b=GQBsbEdR65QWU9U29TtXXoF3i1q7S6XSUSGgqMahKQLKFRp8k9n+VPeiZOKcwZwkoy93
-	 9cNryXVb1ko5OqAa9omr6YioiyA0dlbZcFdhyyor9E/y0E/MRXHlj1Ww8O04ZyoiaPeOr
-	 PBYCwvCKwKXy+A4nB5pNgKDsvgsolY2ZKlVS4VWwQTb5CfD8Ig/0mc6oGoMzFpdy7grNZ
-	 NCse2Mf51au5Cr6ffVG3dH9aQ72PbsRaSqOHpfHnQxAkINaUBxICwTV4blIUySJGhJ4M9
-	 jjkpSSaA7D0npMxEKFlFNT03WlIpciwmCuPKn8w3nBQOEhzpaP31BkNd51hcoOAhZTA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rong.moe;
-	spf=pass smtp.mailfrom=rong.moe;
-	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=digZSmql;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.112
-Received: from sender6-pp-f112.zoho.com (sender6-pp-f112.zoho.com [165.173.180.112])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795100964;
+	b=X5dIbeQkyu5AzV+fSE2x6wyc4wCcVtcKxkVFQo3geKCaeEiho8mW0R7WfV5nogyKl1+W
+	 mZNDJsBPHdJI3OfYVKyQx12FMv6tOQ4WP0w+SBCr1ayQ5Dm2ArjPtN995XfBg5EaihRkf
+	 AJCTJVHtwcVyC8kosHpFAQ0XowxsfEB/lmUjNWxR6fGaFZO4GaBQd46iTkJd92K1iDbFg
+	 pL25+K0SkdAARwepg1oNFGBCfsru980Hs5iMFvD8piMBSSsyX+Ar518bdU2yFBOpoBxpC
+	 x8I7kPDrMR2Zzn3gMa2owYs6uBQfrBZVTZVBkOXVR7al4Riag0SgCSJyEF0BJ4MfHWQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795100964;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=hrSUTpE+XTUM3SLfQy7lBS71+DWUqoUVA9m66TJmz+o=;
+	b=d3YgXwv2FYmsJqL3SJu50IGbJltWTXI6lNGNmELW+m1YHgF7Or8mF6O30wGZjk1HZV9w
+	 1EuXW/QkadCvUxUfzoyapC+nkHim/qATJ2ElWnHu8iwxfAb35PO6ZzfmITOlUGdb3ju15
+	 Q3p9HlMQOue4C5gMPMhUQz/tqyhrVmDNpVprMW6u5tXw83YBqvEesKWR6b9zQ5vqpS5Bn
+	 II10Fe0ZCQTeK2amrb4bvJz7GME/O+dGwGFBR2xZEMpf8p3gCGsiXxMw3sd9fVmhdy2ef
+	 udaITLWMzpWA8tK7AIdQAKRX2u4zhVNTR3ftFGvz60yG+ZCfJ9M+x3myaU2/egWAOgA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Up0TrIjX;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBA4606A320;
-	Thu, 19 Nov 2026 14:27:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5DBA4606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3476C606A338;
+	Thu, 19 Nov 2026 15:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=digZSmql
-ARC-Seal: i=1; a=rsa-sha256; t=1795098413; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Daq+THbxZb077fjeH+m9cljFpBxsmOQxeJmFZv/Il/aJcd6krl6BBDkwKTb7cw77SNSuy5VOGr6q1Olnoma40hPeFS13HBWunC3fxoCtZ5pcCV5xtFKArXV2DKd9S/e3yqdHp9cF/pyQ3dyrq01eSN1GNeuIb9mtm53EmMVenXg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1795098413; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=yeZaOOJQmxIdsD84RVLJrAVDq+lcoQB9tL9dTj0IG0U=; 
-	b=E7VqDoqUkc4Zy2ZilY8NPvnTpBrQIlH8DSRwwNz8Nv3kzf1zxoKo7iUJEx+95S0vJ2cl63YTUrYnvkx4x/palfLVNbChDgCr93BOogQVwflBS2sroEws0UeuZDslzs7iYF8qdVRgOTFt394FfsY2pz+NKZwBlToUxBqj7o9y0jY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: a=rsa-sha256; b=digZSmqlcdfB19lz34NtCtjnRYz7rHa/+yXX/eqC/0D/rhQSED1yP4Zc9Em+BRI5YAzVJibOdHzihOWSX/rjfxqKSponX+Jk+Q+Gl69LNQbScp+7GJMBdKgDgLmZK5R3UReOpCfwJPX6lng2CsWBlvuhXTxcyxaAvKmtFXvHOJ4i3qYDpu1LX2Hg+BHhdoLT0DZ1HKmP5c3RkbR9rKbdeZDEHD5gl3sZKDCsc5zz6Zlbv2spqdt4b0dw1OoNPfkQ4573QOByhx3nf49KuSwlq52nveaj0+qI+SotCIQz4npI+FpsdaSzoBZAhDjdh4Pi0w3OAwW4Sd5NXgx7+124eQ==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=yeZaOOJQmxIdsD84RVLJrAVDq+lcoQB9tL9dTj0IG0U=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1795098411700405.2739567587512;
-	Thu, 19 Nov 2026 06:26:51 -0800 (PST)
-Message-ID: <be1dc7e529d82725e6fc528975a9ba0126436a73.camel@rong.moe>
-Subject: Re: [PATCH v3 0/7] platform/x86: thinkpad_acpi: Add support for
- auto keyboard backlight
-From: Rong Zhang <i@rong.moe>
-To: Qiling Zhu <kmatzkaczor244@gmail.com>
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>, "Derek J. Clark"	
- <derekjohn.clark@gmail.com>, Hans de Goede <hansg@kernel.org>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Henrique de
- Moraes Holschuh <hmh@hmh.eng.br>, Andrea Rabbaglietti	
- <rabbagliettiandrea@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek	
- <pavel@kernel.org>, Griffin Kroah-Hartman <griffin@kroah.com>, 
-	vishnuocv@gmail.com, vsankar@lenovo.com,
- platform-driver-x86@vger.kernel.org, 	ibm-acpi-devel@lists.sourceforge.net,
- linux-leds@vger.kernel.org, 	linux-kernel@vger.kernel.org
-In-Reply-To: <av14Sp6_nKwU5F-i@ThinkPad>
-References: <20261102151211.40701-1-kmatzkaczor244@gmail.com>
-	 <20261114174814.62153-1-kmatzkaczor244@gmail.com>
-	 <230263171c25c322d97fa29439a01922db47f913.camel@rong.moe>
-	 <av14Sp6_nKwU5F-i@ThinkPad>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 19 Nov 2026 22:21:42 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Up0TrIjX
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165F21F000C8;
+	Thu, 19 Nov 2026 15:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795100964;
+	bh=hrSUTpE+XTUM3SLfQy7lBS71+DWUqoUVA9m66TJmz+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Up0TrIjXfbo2Qs0NGGdkwqxHS2D4oBMjzts+k6lZ+3a/0sU0wrqKnYrHGgvqcOfwh
+	 Jgt4U57W15cHr5T5t95XIftj3fQ1ub/SCfE36gnT8ht0HtZxPK14Zfuc6QMb/HRV4b
+	 KAkbzCWL6zVo5RaOXWMf5n/avQYXO9hk3dE3fGBR/x60/ekmjwVbHrBxe6yWIc9RC4
+	 jpIEbyuTcYiHsHPMZc6/pe7GGi3H7m92IrdgrGr2XesUH5rnFbTc6UJJedI4vifWtD
+	 uPt8LuU5EvZz5ye1+u3UkBZXZCcWiAkPI91XTUpCtS/0TcP20qElEhRFdCMBPwACo6
+	 bLbIluWs8+P1w==
+Date: Thu, 19 Nov 2026 15:09:20 +0000
+From: Lee Jones <lee@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: pavel@kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/10] leds: class: Split led_classdev_register_ext()
+Message-ID: <20261119150920.GU98456@joneslee-macbookpro.roam.internal>
+References: <20261018135339.1109271-1-W_Armin@gmx.de>
+ <20261018135339.1109271-9-W_Armin@gmx.de>
+ <983f521e-0e83-4600-b59b-08675a8d0d70@gmx.de>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -78,204 +58,178 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.62.1-3 
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <983f521e-0e83-4600-b59b-08675a8d0d70@gmx.de>
 
-Hi Qiling,
+--- checkpatch.pl (3 issues) ---
+Line 4: WARNING: 'seperate' may be misspelled - perhaps 'separate'?
+Line 55: ERROR: open brace '{' following function definitions go on the next line
+Line 79: ERROR: that open brace { should be on the previous line
+----------------------------------
 
-On Wed, 2026-11-18 at 19:02 +0800, Qiling Zhu wrote:
-> Hi Rong, Mark,
->=20
-> On Sun, Nov 15, 2026 at 03:52:36PM +0800, Rong Zhang wrote:
-> > The next time when you send a series (i.e., PATCH x/n, n > 1), please d=
-o
-> > not reply to the previous thread to keep it tidy.
->=20
-> First, my apologies for sending v3 as a reply to the v2 thread. I caught
-> that mistake shortly after sending it out, and I will make sure v4 starts
-> a clean thread. Please do let me know if I am getting anything else wrong
-> with the workflow; I am still learning the process and really appreciate
-> your guidance.
->=20
-> Thank you both for the reviews, Rong for another patient and detailed
-> round, and Mark for the Reviewed-by tags and the sleep/wake input. I will
-> apply all the requested changes in v4 (including moving
-> kbdlight_level_to_brightness() with an int return type into 1/7, adding
-> the lockdep annotations and symbolic macro, fixing the helper placements
-> and indentation, updating kbdlight_brightness in
-> kbdlight_set_level_and_update() and using it in
-> kbdlight_auto_trigger_activate(), and adding the note below '---' for
-> Sashiko's report).
->=20
-> > > One addition that was not in v2: testing showed that the firmware doe=
-s
-> > > not restore auto mode across hibernation
-> >=20
-> > How about s2idle? And what if hw brightness =3D [0,2] before hibernatio=
-n?
-> >=20
-> > Meanwhile, could you test s2idle, hibernation and cold boots with
-> > thinkpad_acpi blacklisted to see if hw brightness ([0,2] and 3) is
-> > preserved? We need the raw behavior to determine our strategy.
->=20
-> Here is the raw hardware behavior data you asked for.
->=20
-> Test setup:
-> - Machine: ThinkPad X1 Carbon Gen 14 (21V8A028CD), BIOS N4OET53W (1.16),
->   EC N4OHT42W.
-> - Kernels: 7.3.4-arch1-2 and 7.3.0-next-20261030 (identical results).
-> - Method: For the s2idle and hibernation cycles, thinkpad_acpi was
->   unloaded with rmmod before each cycle so the driver was absent
->   throughout sleep and wakeup (my kernels are built as UKIs with a
->   baked-in cmdline, so I used rmmod rather than a boot-time blacklist).
->   Backlight levels were cycled only via Fn+Space and read back by
->   evaluating MLCG directly via acpi_call. This machine only exposes
->   s2idle (no S3), so "suspend" below means s2idle/S0ix.
->=20
-> Results without the driver loaded:
->=20
-> - s2idle: The firmware turns the backlight off on suspend and restores th=
-e
->   previous level on resume across all levels (0, 1, 2, and 3/auto).
->=20
-> - Hibernation (S4): The firmware turns the backlight off on entry, and on
->   resume the EC comes back at level 0 for every pre-sleep level, manual
->   levels 1 and 2 included. My apologies for the wrong statement in the v3
->   cover letter where I said manual levels survived S4 on their own; my
->   earlier test was likely interfered with when the driver/userspace was
->   still active. Please take this clean test as the accurate result, which
->   also aligns with the concerns you both raised.
->=20
-> - Cold boot and warm reboot: The EC always initializes to level 0. Since
->   kbdlight_init() only reads MLCG without writing MLCS, and the pre-resum=
-e
->   hibernation logs show the same reset to 0, this is firmware behavior.
->=20
-> So on this machine, the firmware handles s2idle by itself, and S4 resume
-> is the case where the driver needs to restore the pre-sleep level.
->=20
-> Regarding S3: as far as I could find in public sources, modern ThinkPads
-> essentially only support s2idle and S4 (ThinkPads moved to S0ix-only
-> around Gen 11 in 2023). I do not have an older S3-capable machine to
-> test, so I can only speak for this platform.
->=20
-> (One small side observation from logging raw MLCG values: bit 22 was 1
-> whenever level 3/auto was active and 0 across manual levels 0-2 on this
-> machine. Just sharing as a single-machine data point in case it is useful=
-.)
+On Tue, 10 Nov 2026, Armin Wolf wrote:
 
-Let me conclude in short:
+> Am 18.10.26 um 15:46 schrieb Armin Wolf:
+> > Split led_classdev_register_ext() into two seperate internal functions
 
-- S0ix preserves everything
-- S4/S5 resets everything
+Typo: 'seperate' should be 'separate'.
 
->=20
-> > >  - the EC comes back with the
-> > > backlight off, without an event. Rather than re-attaching the trigger
-> > > from the pre-suspend state,
-> >=20
-> > "re-attaching"
-> >=20
-> > I am not familiar with hibernation, so I am not sure if the LED core
-> > would detach the trigger before entering hibernation. If not, why did y=
-ou
-> > say that?
->=20
-> Sorry for the poor wording in my cover letter. The LED core does not
-> detach the trigger across hibernation; what I meant to say was "writing
-> level 3 back to the EC", not re-attaching the trigger in the LED core.
->=20
-> Following the comments from you and Mark on 7/7, I agree that restoring t=
-he
-> cached level in the driver on resume is the right approach: calling
-> kbdlight_set_level(kbdlight_brightness) in kbdlight_resume() without
-> emitting notifications. Since the LED core's own brightness cache only
-> stores the translated brightness (where auto mode is 0), restoring from
-> kbdlight_brightness in the driver handles both manual and auto modes
-> cleanly. I prototype-tested this on my machine: after S4 resume the EC
-> was restored to the pre-hibernation level for both manual levels and
-> auto mode; when the pre-sleep level was auto, the auto trigger stayed
-> attached across the whole cycle; and on s2idle resume, rewriting the
-> unchanged level was a harmless no-op.
+> > to prepare for future changes around LED class device initialization.
+> > 
+> > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> > ---
+> >   drivers/leds/led-class.c | 105 +++++++++++++++++++++++++++++++--------
+> >   drivers/leds/leds.h      |   3 ++
+> >   2 files changed, 88 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> > index 77a0fce03952..ace417a2388e 100644
+> > --- a/drivers/leds/led-class.c
+> > +++ b/drivers/leds/led-class.c
+> > @@ -228,9 +228,15 @@ static struct led_classdev *led_module_get(struct device *led_dev)
+> >   	return led_cdev;
+> >   }
+> > +static void led_classdev_release(struct device *dev)
+> > +{
+> > +	kfree(dev);
+> > +}
+> > +
+> >   static const struct class leds_class = {
+> >   	.name = "leds",
+> >   	.dev_groups = led_groups,
+> > +	.dev_release = led_classdev_release,
+> >   	.pm = &leds_class_dev_pm_ops,
+> >   };
+> > @@ -465,16 +471,21 @@ static int led_classdev_next_name(const char *init_name, char *name,
+> >   }
+> >   /**
+> > - * led_classdev_register_ext - register a new object of led_classdev class
+> > - *			       with init data.
+> > - *
+> > - * @parent: parent of LED device
+> > + * led_classdev_init - Initialize a new LED class device.
+> > + * @parent: parent of LED device.
+> >    * @led_cdev: the led_classdev structure for this device.
+> > - * @init_data: LED class device initialization data
+> > + * @init_data: LED class device initialization data.
+> > + *
+> > + * Initializes a new LED class device, but does not register with the
+> > + * subsystem yet. Useful for performing additional initialization before
+> > + * adding the LED class device to the subsystem using led_classdev_add().
+> > + * After calling this function put_device() needs to be called on the dev
+> > + * field inside the LED class device in order to dispose it.
+> > + *
+> > + * Return: Zero on success or a negative error code on failure.
+> >    */
+> > -int led_classdev_register_ext(struct device *parent,
+> > -			      struct led_classdev *led_cdev,
+> > -			      struct led_init_data *init_data)
+> > +int led_classdev_init(struct device *parent, struct led_classdev *led_cdev,
+> > +		      struct led_init_data *init_data)
+> >   {
+> >   	char composed_name[LED_MAX_NAME_SIZE];
+> >   	char final_name[LED_MAX_NAME_SIZE];
+> > @@ -539,23 +550,54 @@ int led_classdev_register_ext(struct device *parent,
+> >   	if (!led_cdev->max_brightness)
+> >   		led_cdev->max_brightness = LED_FULL;
+> > -	mutex_lock(&led_cdev->led_access);
+> > -	led_cdev->dev = device_create_with_groups(&leds_class, parent, 0, led_cdev,
+> > -						  led_cdev->groups, "%s", final_name);
+> > -	if (IS_ERR(led_cdev->dev)) {
+> > -		mutex_unlock(&led_cdev->led_access);
+> > -		return PTR_ERR(led_cdev->dev);
+> > +	led_cdev->dev = kzalloc_obj(*led_cdev->dev);
+> > +	if (!led_cdev->dev)
+> > +		return -ENOMEM;
+> > +
+> > +	device_initialize(led_cdev->dev);
+> > +	led_cdev->dev->class = &leds_class;
+> > +	led_cdev->dev->parent = parent;
+> > +	led_cdev->dev->groups = led_cdev->groups;
+> > +	dev_set_drvdata(led_cdev->dev, led_cdev);
+> > +	ret = kobject_set_name(&led_cdev->dev->kobj, "%s", final_name);
+> > +	if (ret < 0)
 
-Yeah, we don't need to differentiate S0ix and S4, but simply restore hw
-brightness regardless.
+Please use if (ret) to check for errors, not if (ret < 0), as positive return
+values do not have a specific meaning here.
 
->=20
-> Regarding your suggestion on 7/7 about dropping led_classdev_suspend() an=
-d
-> led_classdev_resume() across all models: since I only have this one
-> machine to test, my tentative plan is to keep the new behavior gated on
-> tp_features.kbdlight_auto (so non-auto machines stay on
-> led_classdev_{suspend,resume}(), while auto-capable machines skip
-> kbdlight_suspend() and restore kbdlight_brightness in kbdlight_resume()).
-> If you and Mark prefer replacing led_classdev_{suspend,resume}() across
-> all models and handling suspend/resume in the driver ourselves, I am happ=
-y
-> to widen it.
+> > +	{
 
-AFAICS, the reason why thinkpad_acpi's current implementation needs to
-call led_update_brightness() and led_classdev_{suspend,resume}() is
-exactly because it pokes led_cdev->brightness.
+The open brace '{' following an 'if' statement should be on the previous line.
 
-Since your series will remove the fragile behavior and track hw
-brightness using kbdlight_brightness, we no longer need to rely on the
-LED core to store and resume the last brightness for us. That's why I
-prefer to unify the routine among all models.
+> > +		put_device(led_cdev->dev);
+> > +		return ret;
+> >   	}
+> >   	if (init_data && init_data->fwnode)
+> >   		device_set_node(led_cdev->dev, init_data->fwnode);
+> 
+> Sashiko has the following complain about this:
+> 
+> Because led_cdev->dev is a class device that never binds to a driver:
+> 
+> 1. __fw_devlink_link_to_consumers(led_cdev->dev) converts consumer
+> fwnode_links
+>     on init_data->fwnode into managed device links with
+> led_cdev->dev as the
+>     supplier instead of the parent LED controller. During boot (while
+>     fw_devlink_drv_reg_done is false), consumers remain blocked with
+>     -EPROBE_DEFER until fw_devlink_drivers_done() runs, and are
+> never linked to
+>     the parent controller for runtime PM, suspend/resume, or unbind
+> ordering.
+> 
+> 2. __fw_devlink_link_to_suppliers(led_cdev->dev, fwnode) creates
+> managed device
+>     links with led_cdev->dev as the consumer for any supplier
+> properties on the
+>     child LED node (such as gpios in gpio-leds or pwms in pwm-leds).
+> Since
+>     led_cdev->dev never probes a driver, those links stay in
+> DL_STATE_AVAILABLE
+>     and prevent the GPIO or PWM suppliers from reaching sync_state().
+> 
+> I have no experience with devicetree, so i cannot verify if this is
+> true, why do we call device_set_node() in the first place after having
+> already registered the device?
 
-You might still call led_classdev_{suspend,resume}() to set/clear
-LED_SUSPENDED if you would like to gate brightness changes from the LED
-core somehow to make our jobs undisturbed. But I am very unsure if we
-really need to gate changes from the LED core like that...
+As requested:
 
->=20
-> Lastly, I have two small questions on 3/7 and 6/7 to make sure I
-> understand everything properly:
->=20
-> 1. Calling kbdlight_notify_level() in kbdlight_write() vs. sysfs writes
->    (patch 3/7):
->    I will change kbdlight_write() to call kbdlight_notify_level() and hav=
-e
->    kbdlight_set_level_and_update() only update kbdlight_brightness as
->    requested. Just for my own understanding of the design principle here
->    (and in commit 07f48f668fac): since leds-class.rst describes
->    brightness_hw_changed as being for hardware-initiated changes, is the
->    idea that a legacy out-of-band interface like /proc/acpi/ibm/kbdlight
->    changes the level behind the LED core's back (so the LED core and
->    UPower need to be notified to stay in sync), whereas sysfs writes
->    already go through the LED core and shouldn't echo a notification back
->    to userspace?
+  Sashiko is spot on here.
+  
+  Previously, led_classdev_register_ext() used device_create_with_groups(), which
+  calls device_add() internally before returning.  Because of that,
+  device_set_node() was only ever called *after* device_add() had already run with
+  a NULL 'fwnode', meaning fw_devlink_link_device() was completely bypassed.
+  
+  The fwnode still needs to be attached to 'led_cdev->dev' so that in-kernel LED
+  consumers (such as of_led_get() / fwnode_led_get() via
+  class_find_device_by_fwnode()) can look up the LED class device by its DT/fwnode
+  handle, and so the 'of_node' sysfs symlink can be populated.
+  
+  However, moving device_set_node() before device_add() causes device_add() ->
+  fw_devlink_link_device() to see a non-NULL 'fwnode' on a class device that has
+  no 'bus' and never binds to a driver:
+  
+  1. 'init_data->fwnode->dev' gets set to 'led_cdev->dev' before registration,
+  hijacking consumer fwnode links away from the parent controller device (which
+  actually probes a driver) onto the driverless class device.  2. Any supplier
+  properties on the child LED node (like 'gpios' or 'pwms') get linked with
+  'led_cdev->dev' as the consumer, leaving those device links stuck in
+  'DL_STATE_AVAILABLE' forever and blocking suppliers' sync_state() callbacks.
+  
+  Notice also that setting the node after device_add() was the reason
+  'drivers/leds/led-class.c' historically never got the automatic 'of_node' sysfs
+  link created during device_add() unless handled carefully, and why 'fwnode->dev'
+  remained NULL (as device_add() is what assigns 'dev->fwnode->dev = dev' when
+  'fwnode->dev' is not yet set!).
+  
+  To preserve the existing behaviour and avoid breaking fw_devlink(), keep the
+  device_set_node() call in led_classdev_add() *after* device_add() (or pass
+  'fwnode' into led_classdev_add()), rather than calling it in
+  led_classdev_init().
 
-Exactly.
 
->=20
-> 2. Keeping the default_trigger check in kbdlight_init() (patch 6/7):
->    Since the EC resets to 0 on cold and warm boots on my machine, I agree
->    that no LED_RETAIN_AT_SHUTDOWN / exit-retention logic is needed.
->    However, if a user presses Fn+Space into auto mode before the driver
->    loads (for example, at the BIOS or disk-encryption password prompt,=C2=
-=A0or
->    while the module is unloaded between rmmod and modprobe,=C2=A0which I =
-hit
->    during testing), setting default_trigger keeps the initial trigger
->    state synchronized with the EC. Would it be okay to keep that check in
->    kbdlight_init() for those cases, or would you prefer dropping it?
 
-Makes sense. For this specific use case you can keep the default_trigger
-probing routine, with a brief comment explaining the purpose.
-
-Thanks,
-Rong
-
->=20
-> (One minor hardware note: occasionally my unit retries entering S4 a few
-> times before succeeding, and resumes after those aborted attempts can sho=
-w
-> timing oddities. All data above comes from clean hibernate cycles, but I
-> am happy to dig into the retry case if it is of interest.)
->=20
-> Thanks again to both of you for your time and patience; I have learned a
-> lot from your reviews.
->=20
-> Best regards,
-> Qiling
+-- 
+Lee Jones
