@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795119142;
-	b=dLJRc+eL/iFKrWBlck0SmVts8n/Xx4UHT1HpWp2xMoMrnPKjmfkvy0Q65eIAANjvc+XP
-	 rhzbRopJdM/RXK2bcgpxOYqsg4ErI2BE+6kNiMenWpK0NSUzG5KoouVku9GbCx4dEbblI
-	 h0REDkuF0TVt0TWONvP9moz9mLxLdMZM2WSX1ZQxOVgd2HHd0rX/FKeXEPzSniCAhEwKa
-	 vQ6yZK7ozvcPpdzjJYeCyLRBphE4/flZnN/b8klgNr1gp7tEpW3DMmhbCxFjbYAV7NFrq
-	 6Ok7V51W175m/U0NjXqsFUAHBuPx5Iv3NWwyWJ61ImG9qbt+fmS8UPBI+ScrokKvFFg==
+	t=1795119145;
+	b=AkQUEI+/xGGzNAlLGRvTLGvvRJxFjO6hdJihUplfT2Wljzb6SfA3MQx7vkXZa/4Oa4XT
+	 Y1z+7med4N2mAc9qYPI4suf7I1BYWpEDwb3/bsXufR6zDS/+hT194xNFJpINwaz9xbS/j
+	 wMZFuT1DVAfAgh99X82LKWAFSAzB24gjX6D887BPNtttu87kfdNokzLBpLeBm8/3ZpLgm
+	 SJY2XBWynhXlsdD9OD2Cq8Jhu/d614fwLNr7NRIBVho1v2wi7EhXdQ4nvW+H9fTNGbiVS
+	 1MZB26xDL9t6UEA3KH3R90jZuZwY+M755ZXjKpqBhdrpTsN7Wm78RdnuUbYWXMKPKfA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795119142;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795119145;
 	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
 	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 X-Mailer;
-	bh=uHbtmVn3WCiJsKx99HiPQBxwCJQW2CEBzVShvMVnXSs=;
-	b=CeRh0gLR/dClUb4/gHspqSI9+U7hY0YxKkICjdumvIPiB5ulCwDje4LaTXiqPIxZ50f+
-	 j83x7kkmDIMAnYEePXNoP6iM1HOU+zt/8+b8kFNkqmd4mQpjVHWC0r4AaG43Y6tDRvvp6
-	 t4NrSpx/rsSEO++w1yrNrKdrD/LtrUWaXo86004OuzuIuKxZD7bXKTfAUnPXBuofSBmMh
-	 e7wGttLnL2kl8fGIx/+2OjM9YYBoLkmms4cM+KNzb82CATWNQUZgfB5ZZoljo1nWPzN90
-	 mEkv1pg4xHW5Wn5X6X+qdK+RmkjxR6POpw4XBjr6QJDmCsP39FTdz2oyBTatWawmdlw==
+	bh=gsNWYPWJvejq7SSvzRjWM6x0/H+p0xaup/q/PIT4JJ4=;
+	b=vNPbbt/uDQpFKbpoA7BZQfJcW7pDchByL88C7sDYZJ2Iu/hJugnTBb62BFfi2OIYhgBN
+	 nYDSJLX0FHM+4gpGSjekbS/Jai2hdcDE8Mmyjv1CvMWqiThkJMmBjD3NUMqhH7ACXx7U3
+	 MIJkHbH87slDhpcKdVTmmQl1fWD0sRVAYetwcu7J57v5ANGrR3UHjQIev2w1O/9yW6V2i
+	 Y6CQ7kueQWVoWbQMNYRJK6nUi7VE4BqTgH0F0xaBxD9u/ARfuePcBM71lc2ozhTg2G0jJ
+	 +3sPcW40fDbB+JShd34EB2POavkuXBTrMPcLY2xh6qpMSWfRmr9mOYq1sQqoAueB9yw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M7+Bbcna;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fQk3U+1d;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914D6606A33D;
-	Thu, 19 Nov 2026 20:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0E860A261F;
+	Thu, 19 Nov 2026 20:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M7+Bbcna
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 641961F000C6;
-	Thu, 19 Nov 2026 20:12:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=fQk3U+1d
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 066B81F000EC;
+	Thu, 19 Nov 2026 20:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795119142;
-	bh=uHbtmVn3WCiJsKx99HiPQBxwCJQW2CEBzVShvMVnXSs=;
+	s=k20260515; t=1795119145;
+	bh=gsNWYPWJvejq7SSvzRjWM6x0/H+p0xaup/q/PIT4JJ4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=M7+Bbcnacjnt/BQ6vPQ9RE8tg49RANL4gkNJAmOp1SlOoXea4IGSeDhQP6+5Csog8
-	 lme1brZA+wZwJX4w1AfZQyqh19JxvdR1Nmp9+GAsV178ZTwW3sTxc7uun3aCCn4JmJ
-	 wQIIY9qn+BIOjgjmfhuyYM25z0jqmHW6qwPGv0oG1vXJMNuEx91aPAyE9dJEZhMNCI
-	 1sidXUe3lNR+oypO0Ftsi4p9SVgbNasYppFElpLC7tktU/CNdU0N34xn5Yo4xB2v0W
-	 W6pkuXKNV4sS7RJbc2eDduhvFBirGkdjOp/LFghEORSUIYfhRUx0VJUCVtUKBBt2EN
-	 oAWBTKyJMq3Cw==
+	b=fQk3U+1dJxvQ/PQ/obrX49PsNj6Uf5iKPokorZbAHbYYiGmA7fqedKKr1fyZBfJnI
+	 xpD8enkZ1DGmUEDdOqh21lYXynG0RmY/CGzbUfHazQ5TxNvmRvo3QIwE0dfIcvfDft
+	 ULcrXiBkwCDlP2qrbYoykKwJoLcgV2vJns04SwAH0C5OdlqqWawLyWlvUdlwtRBOgh
+	 C+jEwClVnz8wyb7bLvWYrVMf4NcHShuloN18E1fEQVo70jZp+7mQM7pfq06QeFXcq9
+	 hQXvCS2FjOVc6L+/aWiHRWjww6vYdaKQQyY3jnr5Gxppjxf3lWwJkVrl2GRvpl+eCl
+	 eynUYJ5HngW/Q==
 From: Lee Jones <lee@kernel.org>
 To: linux-leds@vger.kernel.org, 
  "A. Sverdlin" <alexander.sverdlin@siemens.com>
@@ -49,12 +49,12 @@ Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
  Jakub Kicinski <kuba@kernel.org>, Kees Cook <kees@kernel.org>, 
  =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>, 
  Christian Marangi <ansuelsmth@gmail.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <20261027113349.383147-1-alexander.sverdlin@siemens.com>
-References: <20261027113349.383147-1-alexander.sverdlin@siemens.com>
-Subject: Re: [PATCH v6 0/5] leds: trigger: netdev: fix sysfs_update_group()
+In-Reply-To: <20261113201936.2645736-1-alexander.sverdlin@siemens.com>
+References: <20261113201936.2645736-1-alexander.sverdlin@siemens.com>
+Subject: Re: [PATCH v7 0/3] leds: trigger: netdev: fix sysfs_update_group()
  races
-Message-Id: <179511914014.11890.3233057035317468566.b4-ty@b4>
-Date: Thu, 19 Nov 2026 20:12:20 +0000
+Message-Id: <179511914275.11890.9282347584280922354.b4-ty@b4>
+Date: Thu, 19 Nov 2026 20:12:22 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -68,7 +68,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.16-dev-ad80c
 
-On Tue, 27 Oct 2026 12:33:40 +0100, A. Sverdlin wrote:
+On Fri, 13 Nov 2026 21:19:29 +0100, A. Sverdlin wrote:
 > From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 > 
 > The netdev LED trigger refreshes the link_speed attribute group with
@@ -81,18 +81,14 @@ On Tue, 27 Oct 2026 12:33:40 +0100, A. Sverdlin wrote:
 
 Applied, thanks!
 
-[0/5] leds: trigger: netdev: fix sysfs_update_group() races
+[0/3] leds: trigger: netdev: fix sysfs_update_group() races
       (no commit info)
-[1/5] leds: trigger: netdev: Put netdev on activate error path
+[1/3] leds: trigger: netdev: Put netdev on activate error path
       commit: 3b92b8f851e2e9414580790a99d9c5871786d2bb
-[2/5] leds: trigger: netdev: Access net_dev under trigger_data->lock in the worker
-      (no commit info)
-[3/5] leds: trigger: netdev: Fix sysfs_update_group() races
+[2/3] leds: trigger: netdev: Fix sysfs_update_group() races
       commit: fca550b96ec607a03de0690b9fbd562743fd6ba2
-[4/5] leds: trigger: netdev: Report invalid interval to user space
+[3/3] leds: trigger: netdev: Report invalid interval to user space
       commit: c016466c8c8b01af27ac66d97b64fa9c9e431a3d
-[5/5] leds: trigger: netdev: Serialize mode/interval stores with trigger lock
-      (no commit info)
 
 --
 Lee Jones [李琼斯]
