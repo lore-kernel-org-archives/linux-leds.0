@@ -1,54 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795101510;
-	b=ogkAAQTNrm7A5lJRrKLRA1nwMzGJeCIRtQYYd+jkI/S7/spMnpSq2kipFDc7ZDTLLFtu
-	 dA0dJ7b9OhFfOAxZ520d6bDlyX36AvFNn71edlnLeh1rgrPfHdcAykTDcc/MXG+vwV1rp
-	 Mu4h5nw1nKeq8hBYLB1aX4UhXdLcpgJt35auirVjF6IPP9p7ALuf+YUfe/Nzu4kXyTbLh
-	 2ZlloSfOGt3dGf91DLvoTZhF3g9XeyFvnoVB0LMJdrhMp4YXowycwlat+bKntiVG0A5LQ
-	 60A2gdtx4A84jNH4ICWR4jZTB35L8zFSQMn9dLuctrG/oXhLiNn44W6Pq26r+/Wj2/g==
+	t=1795104047;
+	b=xsCm55y2ToGQpXFM/cMZpgNiLfnPwNj2JaX81QkFzpWDqLqqqJLh23qds+FuGStzkGdw
+	 6LNXftIyu129hE54t3mGRCcW4zIQ1D+JFzOpYfxKTdZbYI6guGYftskMeVQpslkTslHh5
+	 trZdHoxHoPY6pdG9vU7RAqlUSGF6zfo1D+AOascJqRvQ5aWsJPUQBXCthHS/u6nspObWm
+	 lMC+815GoVPRqsRVa3i1/PY5Z3Bp1Em/VY4tuznCwROa8BJ+3rZB71NMq6kbXRU2Yt5l0
+	 6nfib9vsDzIvKOtAKdDyT+wramZm3DtUviSbgOzLwxr5Ogg6ifDzGRIkBzfjIHuXKRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795101510;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To;
-	bh=IUUJPEmTzYkY3/TzsjBEJSQcE+ncdhB18Qrnxb2Dat0=;
-	b=TApgyHGfNK09Ybzb5xAX8q66OokYsOmZk+5T8/f/m0MODtmghSGLbBBFjl+so0DKD57I
-	 akQefFDlKLFiz8Fo1QbURyfgrh3i8k5P/O+upsbuvNOwQxmossKSc+DdhZlLGycF6SJtm
-	 WY5QrX9wLz9DgX1RNSKXuSmyCWRxT68b2gBO8Ol4Dc2nKRbEK2nZMTsZpF0U+TkIRORRL
-	 uS8ZzYlWT8dGtoJ6FdJud/RydxJ/7aFibV6xWKOXCcyiD+s7U7fOBeG1JRqoag5RRwZwY
-	 LYqLRqfyxy8V7reDVsRpWs1Kmypt5elvwoY8MEhyrsap1h+J4HeZNdSrYi9KltvYx7A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795104047;
+	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
+	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 X-Mailer;
+	bh=a5qv5meWRFQXm/nofYc9pt2fADrMYHdZQ+ZjoDkttNM=;
+	b=ghElgrcG6c8glfMwOE0BnmAf8wK9P8mcK/ZGCi9J06PMUbtsWp2UFulc2i8yh9avaUhq
+	 lsRq1g3MU8bkoWwJplndc8R/0PVSjYyr4TNK8Lk+2qUcRzVzhLhqWdZkQESC9roKN1iDC
+	 9MSxkJpTAPbmaBl8uhvrzOVMP8LIhhtRlBTu9rQ7xK3wrPaoQX3FFyGATFSGVa0HwoDrJ
+	 Ac2TmJOYgC/4UG9zs1yznDNJuk59WN96s+PEL0wRgRknjy5CtqRQUsBBL0DeUWCcqWSvU
+	 MvKDOgdN2uzHiW7sm25voT7seoa4zHGxbQ73AAJQlVfLL2URGiRW6AmDODfvcOI+bKA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Io/fEkl9";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TA0NqdRL;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8A606A324;
-	Thu, 19 Nov 2026 15:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5424E606A320;
+	Thu, 19 Nov 2026 16:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Io/fEkl9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4144A1F000C7;
-	Thu, 19 Nov 2026 15:18:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TA0NqdRL
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BED471F000C4;
+	Thu, 19 Nov 2026 16:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795101510;
-	bh=IUUJPEmTzYkY3/TzsjBEJSQcE+ncdhB18Qrnxb2Dat0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Io/fEkl9qIE9/NnySG2Fi7/StYaODPKRElVGBpEPK8SEoTSTf419V+1DzUcHFdsRM
-	 Yxbla6n2Q5w8ActHOIWt/Y6XKg8bojS7gu2qdFTdk4+eoRD57RvH0ImppukNTirrIU
-	 MX5ExNksJB3TNQ7iRI1colUe5h6Q/53OMGbmcvSpyN3gpoWXGWnU8NISG2i3RuFL1L
-	 mHvQgkoTlm7BZqKg7ZzuRhIh+Vx+XbTabEZgm+c/6Bf0rXbLUPZy6b52cXwhuZ4umK
-	 XaQ2iUFDjPyaP/1h0e69L+evVn+2ZNOo1Vh47NoHVTX63ZM+xuSyhE8fZl2d4GMqta
-	 XsWBNRcCDHiPg==
-Date: Thu, 19 Nov 2026 15:18:26 +0000
+	s=k20260515; t=1795104046;
+	bh=a5qv5meWRFQXm/nofYc9pt2fADrMYHdZQ+ZjoDkttNM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=TA0NqdRL0ApPzBxMnNaLp+dBXRJqMfZazi0srwjzLR1n8SC7oq51rsVMm+wrp2H68
+	 LvuvM0DTKtx3M1U6dEZemZKYmB/9MWVNPJCd8W0+XpGJwlLEKvesQCuHSNmlIfrcoK
+	 GUQ+2MxRy12gxtrZyFOO4Xcx8ZMMnUcL1J86Xg3PP9oVM5Yl+pcIvN4mAJCUduvKVy
+	 YtPgBSvwEKh+GE74x8jaWm/zZ+57A9SDX8jcWlt0IekLgU+7w6htVIQo0FkdZJnO7m
+	 fPwYQPh3ND21902/1qdgZ8F6w3157yvufqAn/PmYdlw7C01VZQ4IVplIDTE22aYIAU
+	 71M+4JTqv7ZJA==
 From: Lee Jones <lee@kernel.org>
-To: sashiko-reviews@lists.linux.dev
-Cc: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds: netxbig: Release the GPIO extension device after
- parsing
-Message-ID: <20261119151826.GW98456@joneslee-macbookpro.roam.internal>
-References: <20261112071657.154479-1-zhujun2@cmss.chinamobile.com>
- <sashiko-outbox-210598@kernel.org>
+To: lee@kernel.org, Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: pavel@kernel.org, griffin@kroah.com, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20261112071732.154585-1-zhujun2@cmss.chinamobile.com>
+References: <20261112071732.154585-1-zhujun2@cmss.chinamobile.com>
+Subject: Re: (subset) [PATCH] leds: pca963x: Preserve SMBus errors in power
+ management callbacks
+Message-Id: <179510404552.71039.1312785430890420370.b4-ty@b4>
+Date: Thu, 19 Nov 2026 16:00:45 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -58,52 +59,26 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <sashiko-outbox-210598@kernel.org>
+X-Mailer: b4 0.16-dev-ad80c
 
-On Thu, 12 Nov 2026, sashiko-bot@kernel.org wrote:
-
-> Thank you for your contribution! Sashiko AI review found 1 potential
-> issue to consider:
-> - [Low] leds: netxbig: wrong Fixes tag for netxbig_leds_get_of_pdata()
->   leak
-
-Please review, explain or fix the Sashiko review(s).
-
-If this is a set, this request includes the other patches too.
-
-> --
+On Thu, 12 Nov 2026 15:17:32 +0800, Zhu Jun wrote:
+> The suspend and resume callbacks store an SMBus read result in u8,
+> discarding negative error codes, and then write the resulting value
+> back to MODE1. They also ignore errors from that write. A failed read
+> can therefore overwrite unrelated mode bits with an error-derived value.
 > 
-> commit e84470b4e5048a49d0dea30c99c1fa99f03b9fb5
-> Author: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> Keep the read result in an int, stop on a read error and return the
+> write result to the PM core.
 > 
-> > leds: netxbig: Release the GPIO extension device after parsing
-> >
-> > netxbig_leds_get_of_pdata() gets a device reference with
-> > of_find_device_by_node(). Error paths release it, but successful
-> > parsing returns without putting the device. The parsed platform data
-> > does not retain that device pointer.
-> >
-> > Route successful parsing through the existing device cleanup label.
-> >
-> > Fixes: 2976b1798909 ("leds: netxbig: add device tree binding")
-> > Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> 
-> [Severity: Low]
-> Should the Fixes: tag reference 9af512e81964 ("leds: netxbig: Convert to use
-> GPIO descriptors") instead?
-> 
-> Commit 2976b1798909 ("leds: netxbig: add device tree binding") only parsed
-> gpio_ext_np and did not call of_find_device_by_node().  That call was
-> added in 9af512e81964 ("leds: netxbig: Convert to use GPIO descriptors"),
-> and 311066aa9ebc ("leds: netxbig: add missing put_device() call in
-> netxbig_leds_get_of_pdata()") later added put_device() on the error paths
-> while leaving the success path returning early.
-> 
-> -- 
-> Sashiko AI review � https://sashiko.dev/#/patchset/20261112071657.154479-1-zhujun2@cmss.chinamobile.com?part=1
+> [...]
 
--- 
-Lee Jones
+Applied, thanks!
+
+[1/1] leds: pca963x: Preserve SMBus errors in power management callbacks
+      commit: 304e198fb358e0a8bf446a2750074af6c737c1b1
+
+--
+Lee Jones [李琼斯]
+
