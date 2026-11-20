@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795162732;
-	b=NEKL0y8M8WDeqoeUw1MEqe8FmxzL4nEITtKmvH651isrqWwPRRZVXfyQV3w8Aw88m6k5
-	 ijwlPC3gvZ1TqEBEOHlj1FKnxFavPrBRSZzYPTkLEyJmYuv4r+fLRd56L0/EMjzb/UWpc
-	 QVkvxWooW/X7i1aSzGOKdCOvfae4mgl4ieZH8VuhE1tlY8/CBQlXfnYjA/HvFjfOswgPj
-	 c5djXQ8N9Ouu2GYB5rasaL81fz47qj6AtlbnMe1EvT6tDlHG5tuHVGx2V+2G0ijGUzIC9
-	 CNum7r0aNPJ/BCd814TNPApXLj6bk81Oeb9NZ6WxnHSHSvNdWHRaBwJuf4IdILbePGQ==
+	t=1795162733;
+	b=MbcqYRqDlhridAhHmi3XuGeJp80tBnwwRYAeLwnt88aVD4N+kAlXaQIHMKXBrJGQKy1V
+	 TPeB79aXdhVQQXOVg3JorwDcd/hEve67eNjejpvNDJgkJ7CK+rb/PwGrBsgcZTuXCYXXr
+	 EXOlct7Vcgbujd4r027J/VioeMvEFpTvAdzScsCmKeYvtzxcc0Gp0zSxZM9E4lNhwC5sq
+	 bAq5jBe4RyoOz0ExAKgfHUzyXxkU/pblZdyhgn9ctYnNDS0OJ2ALpPEu3E4/rVKll2YZR
+	 Pg92jvpSPBzFE7pvbxqUVyZw8PHNDvmwcuLBbnQAkKBsz/8DBHXgiK+SGIzV8/PxIGQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795162732;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795162733;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Y7Pu4jNNqALcp+i2zZnd+rG6O/fRzAoQJVeFNp61v/o=;
-	b=OoWPSRQVA8DkvxHDi4c80peDO5wyo6rYKuu3zHEFBi7VqFxK/+0NTxEflra5Ay+9ug1I
-	 0+/SI279aM3p47NIgfy+JbWBrKVJU+kMZjKhK8VBcqVFbe7Fhx+MU+uTHBosLUeIjd0/6
-	 RiWxQ126gn+HqeGquElCIgtbKSZFYxJEMDGL4siMjXRUlOLvs5Y+Cp1EP1cPhbZqC5/9m
-	 3e4e4+xeJ6JnuUO99y3eFSiTgs2MeRVm8XCPWd0qhf4aJNLfSNZ4+vfW/tRHP5zWIXFpQ
-	 fnjIp0uOmb+SvvF4+rJU6/bPtL1JTtKZHSG3E7M6+JuSJbQkh+DIycg47+Ram29y9bg==
+	bh=pUldvkrP5dn+sctpXnUyCT+PSP9XS4DRPiMs5tA3imQ=;
+	b=yOox1yHx9AGOtRKF9ocPF8gfQd7w2dgElgQc2tkpG1+YM6pwzPba2c7CrGYEpA6OBXTs
+	 +H+GzLluGuBZrohbvsXR3/DYpkn43N9IDC49/lDOIkTSh2hgNViBU1sxPTuAohWZFoCne
+	 qNnjYqNpeUqopdQyQaLgLOZxbkrDGyAfgQRlPnornN8BOLQLiXN8q+ZsMKCoLZgDmt1pz
+	 QbzOnTtAY10o6eq3ChQjJKdf2ESB9fQYRVvUQbEAU6+v5XSHSq7eKI4SqixR56qLHhO5I
+	 t9YfWliE3JtrxL4dDHnfBlzLSH77seLtpm9njp8En5JxA6GUqvhEYRgXEZYGxeDgGAg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XUwBKPBU;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CcX9vmv2;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07A9606A32C
-	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 08:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0BB606A320
+	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 08:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=XUwBKPBU
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0D51F000D1;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=CcX9vmv2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E1F1F000D1;
 	Fri, 20 Nov 2026 08:18:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795162732;
-	bh=Y7Pu4jNNqALcp+i2zZnd+rG6O/fRzAoQJVeFNp61v/o=;
+	s=k20260515; t=1795162733;
+	bh=pUldvkrP5dn+sctpXnUyCT+PSP9XS4DRPiMs5tA3imQ=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=XUwBKPBUiil/PpQcc5maM8WMtH5PsjMqp2A+vHj4eCywAhRA1FF0b8I2AyvM2OePp
-	 i6vLKVv48zziY8IOcYuCHP0psqaBnB6J906M0qlwl0OCUm4FEvTuQo8+NrvNFGJTaN
-	 bNKJkRKp4M+4eGYliQPjgB4pyypSWVoNYbJDi2PJSQYpMgNoGpXLQw1jiZbABJI7jp
-	 ypL+UB3klQIDPGX81ub6arZWPSno8UKXjBBbtkt/y7WJSs0hr8ygwoqae7ycqvIbVB
-	 x2KnogOfM3xleGgT7ipIlDPIJKjA+wkCneNWEDD7OBuxtn1nK4ZWlgeraCrrlGnHQ/
-	 /0LZRhFnmBTBA==
-Message-ID: <sashiko-outbox-224706@kernel.org>
+	b=CcX9vmv2KCfPFFL5OeZFcQriLtvTY1xjDPKIvYm1XTC0Fhkyo5Z311bTXMfLh4XP+
+	 XgO4S9biNVAd5YuFdnIrPwRDKE5/4LiHFhOrTtZH5pOhEX1+mTDu7Z05FhGBfWGdnl
+	 NzbPdpt88QJNB2ctYVcZJmQCWceqDklW1agS/UoIH10r9h+ETLJ4fODj87Q1QWLinr
+	 YOFMS9mG468Jo4GK6wDGXjKpZuJZsLQYKAerZMmnZ9cTkJsJ/zdcj5sPXx8js/1U4q
+	 Bc7gn4FPZtzZ56n2ZcH35K5Cj+i2Ku/e4I5htlV9cbnco8BTPs+dlJt8HoYaVDaKYk
+	 SGxvrzeBr4TFQ==
+Message-ID: <sashiko-outbox-224707@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net-next v3 3/4] net: phy: dap8211r: add extended
- register write helper
+Subject: Re: [PATCH net-next v3 4/4] net: phy: dap8211r: add PHY LED control
+ support
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Artem Shimko" <a.shimko.dev@gmail.com>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261120081106.2919010-4-a.shimko.dev@gmail.com>
+In-Reply-To: <20261120081106.2919010-5-a.shimko.dev@gmail.com>
 References: <y> <20261120081106.2919010-1-a.shimko.dev@gmail.com>
- <20261120081106.2919010-4-a.shimko.dev@gmail.com>
+ <20261120081106.2919010-5-a.shimko.dev@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 08:18:51 +0000
+Date: Fri, 20 Nov 2026 08:18:52 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,10 +61,12 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-> Add dap8211r_write_ext() to write extended registers via the indirect
-> access registers of the PHY.
+> Add support for hardware-controlled LEDs and brightness on the DAP8211R
+> PHY. The chip exposes three LEDs that can be programmed to react to link,
+> speed, duplex, and TX/RX activity or be driven via the force mode.
 >=20
-> This will be used to write extended registers of the DAP8211R.
+> Implement callbacks for led_brightness_set(), led_hw_is_supported(),
+> led_hw_control_set(), led_hw_control_get().
 >=20
 > Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
 
@@ -72,5 +74,5 @@ Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261120081106.2919=
-010-1-a.shimko.dev@gmail.com?part=3D3
+010-1-a.shimko.dev@gmail.com?part=3D4
 
