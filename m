@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795133259;
-	b=nx77N3OdmgU6VM2GXpx4gUCC2P5CTJ3lx5SSnHqrzM3ks7PSE22pDupc4ilw6J5jfGdt
-	 qdSRDH2m1JAbjbvRzqFlDX9lHnK6JrvJq/wqcGDM3RN4JSdxws3wS9RaWUdn1ELNlLxQP
-	 aUwRtnBmxU3eHc2jxO1K0DE23HRcvM2UqXfNbeP0JNTe5wtkgtJMQo69vWc/YDKz3Ej+J
-	 xZG6djxhwHTJigszFtmzy0MfXOutSoD3njBKa9Fx+rWZNFq70ndc7u87yaHzvKH/g4KWR
-	 +QA85dzhSWKCU92bgwQxL9f1zihCLCj2DXWjD+0B4NrtudCUoT/m6Vj74gnyHkOjGMg==
+	t=1795133260;
+	b=yZZ55Hmcg/faCUPJaRde532JSskv9kjHiVJJ6ptptmmKAsvT/nWoRlMn36zdyWFmLPZE
+	 R97lui5Q7UtHuILryqMcKfRXVYxrFLJON3NTszX5XPP3KAcryqFILXfEJrfXE9tD/RxuK
+	 erPjbSypN2IVerv2jyrBMi72+Y7/PyjPReASESJsGPDfyIJAKifnLVQHsAXUS0uQtimY9
+	 nPYMJ/vJ6QBhga3ZF+CT/3B3D4VAKSYpNwo0YgkzH+YGai6wBO2adbF22b7bS4THD9rDt
+	 iH3zS5LsAxyXmwJ8fUTbboEgYTajQsAkjPn8qyfH5zzglKVUDyS7uNMW4yLD3Rze2ZA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795133259;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795133260;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=t16WbR9EuyIgGzZ3JCCn7Z8O5VU3QQzc3GYSV66MtMg=;
-	b=PHcKqgt0RvLNhhnbQkekvBMMPxy/MI7Ew+eILGOb//MJRdR9x0FlBzN11fCttkBbfg5o
-	 9FwddzdfrCvUWKrszkxyVG1KI0+YZeHWbAUWL/llML4buqqgKgbecGPbsnr0nblvBdlpO
-	 25mOnIvMJJBvNOWwO8YiLyWw5U1HElDFG9Kcus5ptbD9+RsWER5eLLvEyNzsIN64JVvQa
-	 F4d4Ybx/08LPfO0fJUtMdj6xRRLf2wf6P7C06Fk/LrhpaqYqWIU41/3hYUgwPvB7Zc4vh
-	 AwKpKChZOr35YNUfNpb09/DCn3b3nq6wgwA9wt722sd4tm7El6AQ3FVovC1MJhzTAtQ==
+	bh=Jc0nPylsr1rL1f2PPi36sYoBqXj53o2+7e6SqClsDLU=;
+	b=SjH/ho6sGcTEyQG/d+TrwR7MxqfAI7b+kHwhwCGx1dI02agTyu108YKT7mPlmihvD97r
+	 23Ac/yEIcH8RKzcBqrWdg8/6F78TPEpXWoQrKExjk+9moxEKemIUzi72zsYFtgH6pyX5u
+	 /jXgQ9Hdlxmkwp3cvlHUE33K0U85Ix8uBRNROX1iOiFnnL/5NOxoRMfyJThBheVNrgaD+
+	 w4jj8GFcyDLhdEy5isy2/NRKY3EwvAEo1wjbZumkYnBdE6PdZ0t5yG3d3IWKIr2uaM4an
+	 2QJSM2AQVOhmmpvlOy9eQMQkgTBffX0PmbvcRzppb701aCyhF8Ma/Qu0CB1/Js46ncw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZVAidGIK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M9RQoE0n;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DE960A3828;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F330860A3835;
 	Fri, 20 Nov 2026 00:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZVAidGIK
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=M9RQoE0n
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795133258;
-	b=XAwAESCNtltCyGo3sJiko55EmeibI6q4vJhCf/bIUVrPwx6cM6XqqocARqCKsTQGf4tk
-	 JxF1pqQnIxqqgQHxyN6RaLqqz+NisqEnLWB3GRhGfWvdBsZnEoNRfLLAWseM1TKzKcq7b
-	 Xzb7s4tp+czeF0R+oGyw3UmfTe18XWCocHtBHuFBafCfRvA1Nkc+3nb3bEaWuAX3RMSqj
-	 UwRrQDDjE+qjg1GvtnwzJiaZJ73NQZSRzMGenM0yal9uMWmom8ud1ZZ6lDxCUgHPnc3mX
-	 LGmYzHZH3UyVanxo6T5nADqIwdPmcKncssQZxg4k3yx3gdT8LZmT6x3qENT+YpBSTUg==
+	t=1795133259;
+	b=I5PRYBT75liYndJe6hHDL/IEBBZTwiiDeXs/mcSUgq6BBrbDBV8L6diJAAq857CluaYH
+	 9uG8FcvfD83rkcMmUaL6FfD4dCBWpHWKCCNYqA2TsZKCrzx1JAOiwyodmpOWZ4o/CPaS8
+	 bNA6vmNOvo+4NYrxMRY8HpKUPJNfRJzHs3ByPvoLaxFUS4S91E22xwNcSxVdLojZX48Sp
+	 wJdBcIvcDEvJIQMIpxRX+BubHoTR0+ERsVFvI1Pe176uSSBddU1GBSuK1kUxTK4JuSfi7
+	 BpTqUYCAFr5mMli4rUuqVDmladWx4a7rHg1K2Pcqx+Gz7+/aqiMb3bhn5zpGkOolFbg==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795133258;
+	c=relaxed/relaxed; t=1795133259;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=t16WbR9EuyIgGzZ3JCCn7Z8O5VU3QQzc3GYSV66MtMg=;
-	b=mWvLKPIGgDvCrFPPncbinsxfK7pERcvOfg4Vi5BbRkob3BrFTh2Pk05VREckcWmQHI6E
-	 B1s+/WMEGj6zMJyJueHr4b584W+rZQ98XTu6sj7K1Oh74dUYtZOtR4f30rThTEv2Ro1rZ
-	 DA+6GOzaSrO0FsC3Un7uHZlt/73lzKyVV+9Eml1ZU8AIxANa4REEdiiiUupXrdF4b6VtA
-	 ZOKeTI+VgnOnoOQ21TTKdkJ2QZAq3jfk3pPRQnT6WZaW53018Bhe+s1FE6BguDNQjx41T
-	 9tqL+0p/WpFI+jzYtL/f1L0qtk95WRgD81j1xLeneKuIMMqi1D8siP3mR0x28I5LkEQ==
+	bh=Jc0nPylsr1rL1f2PPi36sYoBqXj53o2+7e6SqClsDLU=;
+	b=c5Xf3FtEjo43FxEwmXR9P4jxlP/1XsQ3cSh41s6joxN7e5O+U8+Ao/T8thmy+xLVV1nC
+	 DhtKfb7DsLMmMXmIDzbNF/4K0YqY0QTvf62Z4fNWI4L0kt4WJAqtMlwmdiLiI+Rl8tG2e
+	 8twY5YD5ugWS+TFdQFPJb7+84wKeo2OVS7zekhbizVe3oLyn7cOxv6q0dyLjl/40YB8fb
+	 r8MqhSmj3BPylHLZO5pPYNZW8w0MbLayKjnHiZd4yiWSr4YytR0FZsOCtXt6PigKIGE+B
+	 gsr40VtznXcF/zWa7tDNgFHarQyc/YyWFvvz9d4ZrZgOOYJVz1dSoMeZFwQGTIRA5xw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 1B9C41F000D4;
+	by smtp.kernel.org (Postfix) with ESMTPS id C24131F000CF;
 	Fri, 20 Nov 2026 00:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795133258;
-	bh=t16WbR9EuyIgGzZ3JCCn7Z8O5VU3QQzc3GYSV66MtMg=;
+	s=k20260515; t=1795133259;
+	bh=Jc0nPylsr1rL1f2PPi36sYoBqXj53o2+7e6SqClsDLU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=ZVAidGIKzOWOrwqluafNNOvxXPt80Rsds4HZdPFYTBAU5HyeKE8pZl3a9mWuH48nC
-	 7JYuB+2rb3bEFRHh/1q5p8yRqoquA1C5Dhqf9bLqVeIfHuzICVcHGtzMqSo3iS6Co+
-	 IMzlfec1BvFaSYssTq7rHN/Do2lDobr/wslfn/9DxAlZRMD/26cIa0/Rk0jPiImzMb
-	 GtB1oInyYABC8JjACQv2bbxqATcr2e2JuzRi+oKKwfkycW6C3or+7Qy0I+TbcCe0//
-	 seC0agSQTzWU6qAXdUsuwOJ+I/EnUDE96A474oJro7FTu0/22rbK6RN08xgmYXT+JI
-	 PC78r0xL+elDg==
+	b=M9RQoE0nv9j4rbZXlhry3i0Z39Qy5YN2DWE40eZKXH6ok7VwwE14dxjJh2AXCAEsA
+	 h+jCwC48l7Xz3OkDgadEsBp9dSJngiji+SiJGqrE8c55G4zXxlDKuTGpYy70G8aiv0
+	 Ng0NXruyR54uwiiLDCDa9CSdOt7+QXNM66eP9mpI9WluRLW+fjVrOrZV51XsJtBInZ
+	 RQhscEMerG6dF0jQATroTNCYApq3IfcFhMnLKj+LhmXrdSUToLDa7tDjldQXszIkJr
+	 U6+9hrS8Usnni2s4lFSXXTpQDTWqp72wN5UM0nC/KJRgvnjt2oM+35YJ3kSHpcscYo
+	 rb0MLZ3Egg4dg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id F3ADA424F3;
-	Fri, 20 Nov 2026 00:07:35 +0000 (UTC)
+	by lkml.kernel.org (Postfix) with ESMTP id 62CEE42508;
+	Fri, 20 Nov 2026 00:07:36 +0000 (UTC)
 From: Joseph Telaak via B4 Relay <devnull+joseph.telaak.dev@kernel.org>
-Date: Thu, 19 Nov 2026 19:07:28 -0500
-Subject: [PATCH v3 06/11] dt-bindings: leds: kinetic,ktd202x: Add Etek
- ET6326
+Date: Thu, 19 Nov 2026 19:07:32 -0500
+Subject: [PATCH v3 10/11] leds: rgb: ktd202x: Fail the probe when the chip
+ does not answer
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261119-ktd202x-et6326-v3-6-98b836b1cddc@telaak.dev>
+Message-Id: <20261119-ktd202x-et6326-v3-10-98b836b1cddc@telaak.dev>
 References: <20261119-ktd202x-et6326-v3-0-98b836b1cddc@telaak.dev>
 In-Reply-To: <20261119-ktd202x-et6326-v3-0-98b836b1cddc@telaak.dev>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -97,15 +97,13 @@ To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
  Randy Dunlap <rdunlap@infradead.org>
 Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-hardening@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
- Joseph Telaak <joseph@telaak.dev>
+ linux-doc@vger.kernel.org, Joseph Telaak <joseph@telaak.dev>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795133254; l=1708;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795133254; l=1869;
  i=joseph@telaak.dev; s=20261104; h=from:subject:message-id;
- bh=a87pmZOYciXu8wPOBt9hfD/vnlp8BaUGzhCLXazMciY=;
- b=HP4JIq6MUbGx3fHK3VijWHbKvet9/Oah7AjmTiwjM/6JTsz/6AvlyMf9GPB5iSVaFeeKbAA/0
- gKhSEZOLzwwBR9oNXl0uNZqYl+snfGRdpz4kpFJ79APxGRVTiFwJacP
+ bh=OJe/EYmuFIG8R4e+vz1BB2LHRGry4ICpQG555k8sYHU=;
+ b=HI4e7R0kulxw8jyu6welwE9+MnABBrSknENG7F2CL+tCb6NdZFjP+9Y/EqwNULco68oRzo19i
+ atU8ceU3E94DeUP+9/gv6uO6En//nXi2jSthhqHdSwe7as7rgDWkKbB
 X-Developer-Key: i=joseph@telaak.dev; a=ed25519;
  pk=oQI+UfddlZ0wK2ac4WKOGNjUl1ZEN8j9ZVFSqEDoNP0=
 X-Endpoint-Received: by B4 Relay for joseph@telaak.dev/20261104 with
@@ -116,48 +114,56 @@ Content-Transfer-Encoding: 7bit
 
 From: Joseph Telaak <joseph@telaak.dev>
 
-The Etek ET6326 is a 3 channel LED driver with the register map, the I2C
-address and the current steps of the KTD2026. It only differs in the
-flash period, which is (n + 1) * 128 ms instead of 256 ms + n * 128 ms
-for a period setting of n, so a KTD2026 driver runs it with blink
-periods that are 128 ms off. Document it with the KTD2026 as fallback.
+The driver never reads from the chip: the register cache starts from the
+defaults. So with a wrong address, or no chip at all, the LEDs get
+registered anyway, and every later write fails.
 
-The ET6326 drives the status LED of the GL.iNet GL-SFT1200 (Opal).
+The reset write can't tell: the KTD202x does not ACK the byte that
+resets it, and its data sheet says to ignore that. So once the reset
+is done, put the chip to sleep, as ktd202x_chip_disable() does, and
+fail the probe when that write fails.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 ---
- .../devicetree/bindings/leds/kinetic,ktd202x.yaml         | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/leds/rgb/leds-ktd202x.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
-index 832c030a5acf..b13c71721853 100644
---- a/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
-+++ b/Documentation/devicetree/bindings/leds/kinetic,ktd202x.yaml
-@@ -15,11 +15,20 @@ description: |
-   The data sheet can be found at:
-     https://www.kinet-ic.com/uploads/KTD2026-7-04h.pdf
+diff --git a/drivers/leds/rgb/leds-ktd202x.c b/drivers/leds/rgb/leds-ktd202x.c
+index a95910817e76..c9f1a5234d6e 100644
+--- a/drivers/leds/rgb/leds-ktd202x.c
++++ b/drivers/leds/rgb/leds-ktd202x.c
+@@ -738,20 +738,29 @@ static int ktd202x_probe_fw(struct ktd202x *chip)
+ {
+ 	struct device *dev = chip->dev;
+ 	int count;
++	int ret;
+ 	int i = 0;
  
-+  The Etek ET6326 is a 3 channel variant that is register compatible with
-+  the KTD2026, but encodes the flash period differently. Its data sheet can
-+  be found at:
-+    https://www.etekmicro.com/wp-content/uploads/datasheets/ET6326_datasheet.pdf
-+
- properties:
-   compatible:
--    enum:
--      - kinetic,ktd2026
--      - kinetic,ktd2027
-+    oneOf:
-+      - enum:
-+          - kinetic,ktd2026
-+          - kinetic,ktd2027
-+      - items:
-+          - const: etekmicro,et6326
-+          - const: kinetic,ktd2026
+ 	count = device_get_child_node_count(dev);
+ 	if (!count || count > chip->num_leds)
+ 		return -EINVAL;
  
-   reg:
-     maxItems: 1
++	/* The KTD202x does not ACK the byte that resets it, so ignore the result */
+ 	regmap_write(chip->regmap, KTD202X_REG_RESET_CONTROL, KTD202X_RSTR_RESET);
+ 
+ 	/* Allow the device to execute the complete reset */
+ 	usleep_range(200, 300);
+ 
+-	device_for_each_child_node_scoped(dev, child) {
+-		int ret = ktd202x_add_led(chip, child, i);
++	/*
++	 * Nothing is read back, so a failed write is the only sign of a missing
++	 * chip. Leave it asleep until a LED is turned on.
++	 */
++	ret = regmap_write(chip->regmap, KTD202X_REG_RESET_CONTROL, KTD202X_ENABLE_CTRL_SLEEP);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to reach the chip\n");
+ 
++	device_for_each_child_node_scoped(dev, child) {
++		ret = ktd202x_add_led(chip, child, i);
+ 		if (ret)
+ 			return ret;
+ 
 
 -- 
 Git-155)
