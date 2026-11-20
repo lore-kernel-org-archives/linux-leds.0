@@ -1,82 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=212.227.17.20
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795209896;
-	b=WSR3QCGOzN1IyN0zJtLGKaoxkXC95Yz2/dD2oWa9MkKsIcaBKKCQcbZ4ABLXu2Y89NBa
-	 I6eKxzgoyBxSiKxYjzpka/stdSZc1RuK4scnSOptPcDyS4AVj2uhWMVD74FoIxMDt8tPt
-	 DDObwEBZptwA3BM0F4S7tI2SifLcImUUuuNv0IweSBLJrZFGDKRSbfHN2htoj/Rbvptzt
-	 zItcpxQ08DXN0GTsVIKDtva97VZ/7Mhb0Sygl2JLXeN6EImo8sNSiqx5MXG1bFgWRqG2q
-	 X4ST3uP2deJ/Qj0r0aE1ZgElPn4fLe3cUDfnfihB6oOyioN9lBZ/aKe77ECS04AyGLw==
+	t=1795209900;
+	b=4JkV6AjVWlW6a2ud5vkUnRKgf4UY6TISV2sNbO6yU6CZI03blxIHYseo+cakABCZoIpL
+	 wkZpud1UDNk0ZCPZWFIiTwK4e9EWyvnFE2MAjnrkjOXvNF3FYdRajshaB5q7wBMBz18Cu
+	 4UFbpIrbagar5Y8WUJgy6bSI8/LddMyMc21fBs6UfFy3WgME6TEjFafiDnlQaDkkxGc6x
+	 MGeliO0BzO7iK5G6TrGqHWV6j5tivqnRrxgr0buk2Flhanu5uvOk9aUEpVuZT9AwR4qjG
+	 85GxlJNFrkJBEoj8Fvv2NcqnHZ0KU2GPcaO4dX/Iss6emZ1GvXrueGtYmnK7++Ncbcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795209896;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795209900;
 	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
 	 X-UI-Sender-Class:Received:From:To:Cc:Subject:Date:Message-ID:
 	 X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
-	bh=Orog7m6TOQKEyMMEMq5a9QTXkEyeDSNBXEAS54S/OTY=;
-	b=3RaNAcOTOGcxfrbohw9EsDWlR/BfR8KXh61mn2XH0lc4UE3nIP5vGoAiTvzMIudSDILx
-	 RdBa2S7ndiUrypdYkGUjhlFKmSiN9FAbC5z0F06RE38v+15FXG1zNZ8PREvDuTBF+xkuq
-	 9baPFLLG7ViGVTqe9PYVaGv0hoAdXjLi28HlB7KftkK0axnGcpMB+mdEk8dXavf4furIp
-	 udPR02UEOO5qxA4kQsG3H9kqcpqORlaWhDQdwRcdNf6ZjdkvN/tTzbk2ZeovpKX+3InMy
-	 ni+uSPF0Y7ru8AuhJtJGMXsnPE0PA3ere0jbQRXapCUv4u4FgD7B1L8MZVto9tA/HdA==
+	bh=vUnzDee9sJwUTkOsyIotnbDeN6IQg0zu8SoD8/lkv3c=;
+	b=3/O9Iau/oOIyV9gKMoZoPPucO9iU5/F+j97fi3ADW5EufWudIU7P7ox+KnMMExc2nwC3
+	 r9b853ObkEp3csKbXhdJiLxyq08dEGxF2imzKH6Wbe7R2ndjJIWNVzmhUgWOvx8Fwty/C
+	 VbR0meSFW5E8iuPLQXpqwTST+/HXksG/TtzvvFh4SygJjWpgJYBVkg12PXpqa8CCApURz
+	 CkvS6EjFGVqvwhh5ZG3pNhH0wkOYoWSs+eT+uKnS+8IMo1xyo2y34O7mzg3UFHiCvFvNL
+	 oM9DyiAZSh/U3HHUZpY9roxCBciOQFKPKpsYkFeYB2C5MceRdCv7bzq6BYeR9CiTrZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmx.de;
 	spf=pass smtp.mailfrom=gmx.de;
-	dkim=pass header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=Y8YESUED;
-	arc=none smtp.remote-ip=212.227.17.21
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=EGFqyZxy;
+	arc=none smtp.remote-ip=212.227.17.20
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB04606A69F
-	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 21:24:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7EB04606A69F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9311E606A6B6
+	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 21:24:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9311E606A6B6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=Y8YESUED
-DKIM2-Signature:  i=1; m=1; t=1795209889;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.a=rsa-sha256 header.s=s31663417 header.b=EGFqyZxy
+DKIM2-Signature:  i=1; m=1; t=1795209895;
  mf=PFdfQXJtaW5AZ214LmRlPg==;
  rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
  d=gmx.de;
- s=s31663417:rsa-sha256:mpNUoaH33cAG4lAKiMP5waR6VAiT
-   9qkyRaS9ED2IZh1arv8SS5gr0RPkJgwfmZoXKlOd322BmqGvEWmo/mZQQnXauefa3WnhZhFBJcy
-   VttE98RngqNlsNZosJK/CQepxVZMgW3vHZMYu45ABjQJdZAFgG0J0J34B5kopzcFOhL3HsRGR8P
-   seAv9hLUa5pu2Dlo1U9OrnQH9peJzCkamjINtMyT2uYtdy5pB24sO3MQYK7A/kFdhIjQNIBj2OV
-   sG3VUKMiEnMC5HHZxodkyiCYqSWxuaRSLYJlc3IMyAYh8rBs19VZ1qlkbgmiA7xWxdFW2Vm3GU8
-   HvvSYb/bY8+9xg==;
+ s=s31663417:rsa-sha256:sDKCWCZA68fk6NkW8uq2bkrllf1U
+   j4wEbUrF64WwlyR7sTTaHvNJOuHoPnEXPLqmumARkbVMJtfn5XRsNZAPQUeA7YNIuGLp9lo6sWQ
+   XZjASOCH40fjFf1t/znEs5yEtrmcC7rvbmRtaWvJap5bxjskl/LFNAbo+kXWCuljMWXBLRFA4Pq
+   RTIh9XlGJZEkmFlAoJKkQtPyIFcrDEk4M4KMTRWC15jEWikvBsZ22Oj3Zm5dx18QeBx0h2rnTVF
+   n6iRSv6Y1W4B6LTTMOz3mNf8sxsOHYDjTZQ2Ao8xwN8SXfdU3rJ7vfXhw+O7WIpH0fSp3HMnVi7
+   r1AsXSpaJWgn2w==;
 Message-Instance:  m=1;
  h=sha256:
-   w/dglnXmm1wBhEZN33a1EMIg0RAK4+OItElVQ+XPKXA=:
-   xTGGlCO+n2+p7F2sKqld0/McoACE7MVGxt86pyq1e40=,
+   TUd+tHv2Y4S8bVHTDCtSPOm03FHFkWdBJNwJUCfAJBE=:
+   yAoy/0tQ9kbXRY1vnazjGstaI2PMDJlNR8r956Zkwr8=,
   sha512:
-   RJJmZZTvEQLjLdYCy8KxHO6czg6sY+K96S4VrV0Iwh9GgXFI44ONHguoxUcMQIUL5bxAD8+0pMPNZL70CQFMhw==:
-   hAWRNxHdYmLbJtQbTGVt048yHT14aJhqXvHSDWYwIjeRt929cunANWu5Gxk4FKpUS+MyvpuVMn7vExvjrLQEJw==;
+   O1qhhUvPq0tL8pfVpqDJiUnVL8NScx/ywi1LjnVixHLXDkjEmuw8xk0YBRCjXhJ9O9M0DRKi6ku8vokoLq9L0Q==:
+   B3beKPHEydch0f4Jdi4bd6Hq+cGZwKHG/WabaXTbho93JwFVlxQzjVkRBQsP35yKp/83iztQ/tqkJEtTatj5kw==;
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1795209881; x=1795814681; i=w_armin@gmx.de;
-	bh=Orog7m6TOQKEyMMEMq5a9QTXkEyeDSNBXEAS54S/OTY=;
+	s=s31663417; t=1795209888; x=1795814688; i=w_armin@gmx.de;
+	bh=vUnzDee9sJwUTkOsyIotnbDeN6IQg0zu8SoD8/lkv3c=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=Y8YESUEDBGpy/x8LxBg6/+nTyBHoItGN6onfN6GWb5MEp15syzvSPzwkDCfVGFO6
-	 potfqC5usSCJqO0H5Ky3Igma8+va1J1323P7qZKYi1cVjseX2ZH+Fu6+pNFMCrsyE
-	 GnTQ8cnceB9oaWYwZPGN0Xxmr+S0SlLHZVaOY94LFeCdvzTYBOMHUria6ynNpAb5y
-	 ztBjLfYNCJIKAmvMVTCz9A5McGllmDdcsxgrL5rLHYiBqnLVR/2VFe1cFtTRkLX/M
-	 K/6jqvZKVQiJ9nIOsbTMZ/MWORG+RwHpeI3yhrXsSF9IReZ6E/ZtDwtlWhLU3VEXY
-	 ssRQd5XX1rPRfoJKgw==
+	b=EGFqyZxyNFbGrHrJhK08rc7gVlUpbHAFR4Tj16vTImcJl/7q8xZZu3nKe0yBVd8+
+	 gocFU6zMcbSZQTWAtlmUkb5RvfLTOWPtKhWk/Ch8fqzlJlJo1Si6RDKtyYQGWN+HS
+	 M9rJeaIyTk/2WvnaCY6MlYS+Fe5BGNX6lsRrQQvNalGfJJyt2ZwxsA5pPl4XYczXW
+	 IEe5EzIy6RvujqdCL1a41fBHOmIb26/25S6zSv08QkQeqJqxiH2ZPifCWf0HTxIbv
+	 nckOWJ5RD2El82tkNloqBBhl3wgftrI+jX7iNjppTp7hVxRBekbYethOhfOzyNcMR
+	 hRz/wZQF4InSHaur3w==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from client.hidden.invalid by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MtwUm-1yOXWn2Vp6-014QB0; Fri, 20
- Nov 2026 22:24:41 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MtwUm-1yOXWl2GuC-014X0W; Fri, 20
+ Nov 2026 22:24:47 +0100
 From: Armin Wolf <W_Armin@gmx.de>
 To: lee@kernel.org,
 	pavel@kernel.org
 Cc: linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	i@rong.moe
-Subject: [PATCH v3 03/11] leds: flash: Constify sysfs attributes
-Date: Fri, 20 Nov 2026 22:22:20 +0100
-Message-ID: <20261120212431.152081-4-W_Armin@gmx.de>
+Subject: [PATCH v3 06/11] leds: class: Access brightness_hw_changed exactly once
+Date: Fri, 20 Nov 2026 22:22:23 +0100
+Message-ID: <20261120212431.152081-7-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.56.1
 In-Reply-To: <20261120212431.152081-1-W_Armin@gmx.de>
 References: <20261120212431.152081-1-W_Armin@gmx.de>
@@ -90,310 +90,152 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RAhMzK9n/dd8AqWlMUJ+kfqJ/PcnXXt0MWAq6URpLKh8IdC3zDN
- hQ0haYQKwc4ODbIflOxyzcZ05JDCpMx2K4mVEXl+AcavOo4YeeDFr0x9pnDczlfJOlTfffH
- P6tSRWSS9ag6wSa6YGhZ1wKnh6jsU1AtojGyz+uvZeCZwOTjhmKQ91tDniArEqiVmXwVxYS
- 0ZXVEb6+on03X+xCuKvlw==
+X-Provags-ID: V03:K1:wsLQC2jdtpsUwLIYlzxt606YdwUwE9UtWRDPcc1HurDsGlvePV1
+ HSvLAAcc+XOqIwL8vy3GozS/qBywQjyj7ItjgVPzpLW2Fmake07nL5PsxOKFl7dF+I41gMW
+ bt3iChafYoblzHUigkNZ+tUy+pm3+6gSgEkpo6Hjd92LfI0tkbUz8Kpk3WMLqMXo86Bxlj1
+ X6TKNMiB4pytyUIhbyqQQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:78senGpjauk=;nIL8Xhu1srToKeIWP77FGGCDe0D
- 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
+UI-OutboundReport: notjunk:1;M01:P0:YBLSBp5vTyk=;lPqWJDyBn3WJsawy/BO3/WwQvus
+ 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
 
-Mark all sysfs attributes as const to ensure that they are placed
-in readonly memory to prevent accidental/malicious modification.
+Reading the brightness_hw_changed field needs to take care against
+concurrent writes by led_classdev_notify_brightness_hw_changed().
+Use WRITE_ONCE()/READ_ONCE() to ensure that the value does not get
+corrupted by concurrent writes.
 
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/leds/led-class-flash.c | 62 +++++++++++++++++-----------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+ drivers/leds/led-class.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/leds/led-class-flash.c b/drivers/leds/led-class-flash=
-.c
-index b641788c5a28..33cfc5d082c1 100644
-=2D-- a/drivers/leds/led-class-flash.c
-+++ b/drivers/leds/led-class-flash.c
-@@ -12,6 +12,7 @@
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
-=20
- #define has_flash_op(fled_cdev, op)				\
- 	(fled_cdev && fled_cdev->ops->op)
-@@ -34,7 +35,8 @@ static const char * const led_flash_fault_names[] =3D {
- };
-=20
- static ssize_t flash_brightness_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t size)
-+				      const struct device_attribute *attr, const char *buf,
-+				      size_t size)
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index fa9803e2ae6d..8494a1ca0353 100644
+=2D-- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -102,11 +102,13 @@ static ssize_t brightness_hw_changed_show(struct dev=
+ice *dev, const struct devic
+ 					  char *buf)
  {
  	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-@@ -62,8 +64,8 @@ static ssize_t flash_brightness_store(struct device *dev=
-,
- 	return ret;
++	unsigned int brightness_hw_changed;
+=20
+-	if (led_cdev->brightness_hw_changed =3D=3D -1)
++	brightness_hw_changed =3D READ_ONCE(led_cdev->brightness_hw_changed);
++	if (brightness_hw_changed =3D=3D -1)
+ 		return -ENODATA;
+=20
+-	return sysfs_emit(buf, "%u\n", led_cdev->brightness_hw_changed);
++	return sysfs_emit(buf, "%u\n", brightness_hw_changed);
  }
 =20
--static ssize_t flash_brightness_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
-+static ssize_t flash_brightness_show(struct device *dev, const struct dev=
-ice_attribute *attr,
-+				     char *buf)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-@@ -73,20 +75,20 @@ static ssize_t flash_brightness_show(struct device *de=
-v,
+ static const DEVICE_ATTR_RO(brightness_hw_changed);
+@@ -169,7 +171,7 @@ void led_classdev_notify_brightness_hw_changed(struct =
+led_classdev *led_cdev, un
+ 	if (WARN_ON(!led_cdev->brightness_hw_changed_kn))
+ 		return;
 =20
- 	return sysfs_emit(buf, "%u\n", fled_cdev->brightness.val);
+-	led_cdev->brightness_hw_changed =3D brightness;
++	WRITE_ONCE(led_cdev->brightness_hw_changed, brightness);
+ 	sysfs_notify_dirent(led_cdev->brightness_hw_changed_kn);
  }
--static DEVICE_ATTR_RW(flash_brightness);
-+static const DEVICE_ATTR_RW(flash_brightness);
-=20
--static ssize_t max_flash_brightness_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
-+static ssize_t max_flash_brightness_show(struct device *dev, const struct=
- device_attribute *attr,
-+					 char *buf)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-=20
- 	return sysfs_emit(buf, "%u\n", fled_cdev->brightness.max);
- }
--static DEVICE_ATTR_RO(max_flash_brightness);
-+static const DEVICE_ATTR_RO(max_flash_brightness);
-=20
--static ssize_t flash_strobe_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t size)
-+static ssize_t flash_strobe_store(struct device *dev, const struct device=
-_attribute *attr,
-+				  const char *buf, size_t size)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-@@ -116,8 +118,7 @@ static ssize_t flash_strobe_store(struct device *dev,
- 	return ret;
- }
-=20
--static ssize_t flash_strobe_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
-+static ssize_t flash_strobe_show(struct device *dev, const struct device_=
-attribute *attr, char *buf)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-@@ -131,10 +132,10 @@ static ssize_t flash_strobe_show(struct device *dev,
-=20
- 	return sysfs_emit(buf, "%u\n", state);
- }
--static DEVICE_ATTR_RW(flash_strobe);
-+static const DEVICE_ATTR_RW(flash_strobe);
-=20
--static ssize_t flash_timeout_store(struct device *dev,
--		struct device_attribute *attr, const char *buf, size_t size)
-+static ssize_t flash_timeout_store(struct device *dev, const struct devic=
-e_attribute *attr,
-+				   const char *buf, size_t size)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-@@ -162,28 +163,27 @@ static ssize_t flash_timeout_store(struct device *de=
-v,
- 	return ret;
- }
-=20
--static ssize_t flash_timeout_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
-+static ssize_t flash_timeout_show(struct device *dev, const struct device=
-_attribute *attr,
-+				  char *buf)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-=20
- 	return sysfs_emit(buf, "%u\n", fled_cdev->timeout.val);
- }
--static DEVICE_ATTR_RW(flash_timeout);
-+static const DEVICE_ATTR_RW(flash_timeout);
-=20
--static ssize_t max_flash_timeout_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
-+static ssize_t max_flash_timeout_show(struct device *dev, const struct de=
-vice_attribute *attr,
-+				      char *buf)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-=20
- 	return sysfs_emit(buf, "%u\n", fled_cdev->timeout.max);
- }
--static DEVICE_ATTR_RO(max_flash_timeout);
-+static const DEVICE_ATTR_RO(max_flash_timeout);
-=20
--static ssize_t flash_fault_show(struct device *dev,
--		struct device_attribute *attr, char *buf)
-+static ssize_t flash_fault_show(struct device *dev, const struct device_a=
-ttribute *attr, char *buf)
- {
- 	struct led_classdev *led_cdev =3D dev_get_drvdata(dev);
- 	struct led_classdev_flash *fled_cdev =3D lcdev_to_flcdev(led_cdev);
-@@ -205,44 +205,44 @@ static ssize_t flash_fault_show(struct device *dev,
- 	ret +=3D sysfs_emit_at(buf, ret, "\n");
- 	return ret;
- }
--static DEVICE_ATTR_RO(flash_fault);
-+static const DEVICE_ATTR_RO(flash_fault);
-=20
--static struct attribute *led_flash_strobe_attrs[] =3D {
-+static const struct attribute *const led_flash_strobe_attrs[] =3D {
- 	&dev_attr_flash_strobe.attr,
- 	NULL,
- };
-=20
--static struct attribute *led_flash_timeout_attrs[] =3D {
-+static const struct attribute *const led_flash_timeout_attrs[] =3D {
- 	&dev_attr_flash_timeout.attr,
- 	&dev_attr_max_flash_timeout.attr,
- 	NULL,
- };
-=20
--static struct attribute *led_flash_brightness_attrs[] =3D {
-+static const struct attribute *const led_flash_brightness_attrs[] =3D {
- 	&dev_attr_flash_brightness.attr,
- 	&dev_attr_max_flash_brightness.attr,
- 	NULL,
- };
-=20
--static struct attribute *led_flash_fault_attrs[] =3D {
-+static const struct attribute *const led_flash_fault_attrs[] =3D {
- 	&dev_attr_flash_fault.attr,
- 	NULL,
- };
-=20
- static const struct attribute_group led_flash_strobe_group =3D {
--	.attrs =3D led_flash_strobe_attrs,
-+	.attrs_const =3D led_flash_strobe_attrs,
- };
-=20
- static const struct attribute_group led_flash_timeout_group =3D {
--	.attrs =3D led_flash_timeout_attrs,
-+	.attrs_const =3D led_flash_timeout_attrs,
- };
-=20
- static const struct attribute_group led_flash_brightness_group =3D {
--	.attrs =3D led_flash_brightness_attrs,
-+	.attrs_const =3D led_flash_brightness_attrs,
- };
-=20
- static const struct attribute_group led_flash_fault_group =3D {
--	.attrs =3D led_flash_fault_attrs,
-+	.attrs_const =3D led_flash_fault_attrs,
- };
-=20
- static void led_flash_resume(struct led_classdev *led_cdev)
+ EXPORT_SYMBOL_GPL(led_classdev_notify_brightness_hw_changed);
 =2D-=20
 2.56.1
 
