@@ -1,57 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795133356;
-	b=0QWadPoJ+BTkXHl8ruTjYicwSo2QNQTk3MQ20E0HNKroneDYHxyG09GK9vEL67XX5HLW
-	 xfjcycQuOKvXs2IPNEMEHts7MMNyTFGU29fjZj+vZ6bI8ToO13q5rzEsWWAsc0fHaVl5q
-	 4RS3iP3o8BjRa0LcbGAHbRY8Ki03QVcemkRMlYKi7lc0MTNmCdB4tpjManpuDdeEIG92k
-	 PBM38WufSLSMEvJHhMe72ZO2aVxE8F2mXDD53B+jTvc9qHAiddUsmX5vHFVk8sEq+youn
-	 8VAFASwFsrtiYKEsa6qJcYwtq+3BFA9y8vtApGQAaXN5TG76QJQSXtpsVC5bDhnIhOg==
+	t=1795133406;
+	b=VBT7EpiITMTtl8DN3jPO/2XpsZWNj4SGK7Fyz3OzjQtt1hHsrgPY+IXnqTTZs048rXF+
+	 /uc8ipDS6wXHRVl3jeyGHoZgb00f2EbGVue0Gh0jaS9bVfDUPQX9cyFp0AeULY/DXQ+eM
+	 quSIOSqahxmZ2q+G4JMEOIEaQFNs+QrR+Irp5YI3yBjLIbUeOQtQgZ3ztemIo8jtxkjPG
+	 Y0raRndkh9/uRL5oI+57yCMgeYJZbgLFl5UqbJq60DDSoZlf/GBH65AnoVy+DBFfW92LB
+	 FyZj+RRZNwvHPBJisNYoBsKs6dn3eJB9b7hHeS84bjwGRbG1QDFJwR4w6WcqYBWxSdw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795133356;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795133406;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=7SkqXEpRAFnPcMtWXMxjbQVlRGFkEhwuuahID8c08Fo=;
-	b=L4NuMTQOXdm+ixnvGVM7mUYqHVbuOYLUmcPAt8lzDDHG0qLcPHmrr7Vzwrz4Y33qg/Hj
-	 lGtnEh8w7OmHWgZszI9amC/ughBjnIak+lElIimDbqUsfiCm+IOiCdEaF7gvXt+a5WNrB
-	 1jvFNH07r2RYFwuw1qMaWmuhLRolAJdfImAWeWbwKomM6cIFPXe3ccsJXIOr9+95TyXtc
-	 J50r+7yjaDuhWbRr7lh+NDqQeTkuJ2wvQIY/P4qmOKH0vwh61UP0rCkPqoZmY3Ug6/FnL
-	 wBLkldFx8AeEvebXGDRkl1tM73f0tP6YyMShsYthMHMvKa8V/tXtbvfTkLwnlqa6vjg==
+	bh=i+vlCfIa9pm69BZK8EDwVkYbyYPh0rrJPNvQdA1HmeQ=;
+	b=vZRRZeI/O1TAl7AhnN4VRIDkyX2ckZZuVlFgF1592RWmVCflcWNb+Z2I+8LSKoYaPFNb
+	 GJKlYur3zyeKiSGOpyuAyYKZyz2sF4p2azgsgm0UHq6h28MfTTRZadrCAuX8iNXFyCntZ
+	 oIgruh9tWTu8oNSayasfRASroBQYbevkfVL1yTBL/ry1P9wxzW/40iee++gBvij6awdGO
+	 FjCifqvqu+zKxDTpuk9r2QzulIZBk34jyxFI+TYU5Ng1F4RAR3jNNWDIHv6iN346w318f
+	 2lsB74iHyAa4JQtnNFftYdWoF9ITkKJG3MzfIH/aIQTk+z+wrX4+i+KA/79nBGOIHNg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jog+DFiz;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WsN5KZXO;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9D8606A33A
-	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 00:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C866760A2615
+	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 00:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jog+DFiz
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B74831F000C4;
-	Fri, 20 Nov 2026 00:09:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=WsN5KZXO
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCA51F000C6;
+	Fri, 20 Nov 2026 00:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795133355;
-	bh=7SkqXEpRAFnPcMtWXMxjbQVlRGFkEhwuuahID8c08Fo=;
+	s=k20260515; t=1795133406;
+	bh=i+vlCfIa9pm69BZK8EDwVkYbyYPh0rrJPNvQdA1HmeQ=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Jog+DFizpQIbvmh5LdXTXVLu0NLYdQs7I2hPT6IPsv/gVXhQxZjZpyJbyOAA9ElJp
-	 2TcEtAYp2NiavS/IPucUEekSDA4HYypPW/UJEtdXL7gsSYTBKoeNVTIR+sJVM79hsJ
-	 wNoljmNDJ2eeA8ISE59R9dsmUZnofi4HeFgdiQIHRSbcqkGzd0gL7ECj1fOfZ42EkZ
-	 VdZLUdacxgMYx3lw4mmy9t3t+PqNrIK59gWXI9bpunVk8PiSUCkYq0E/6xhfKSB4Jg
-	 EGFfa+4PCy/yj/r/YqfkI3WTJcR32ncJpig2ekRCJdcNGeV6KEwmpRDF5xk+iG1NRr
-	 lGGwv1BsWpVNQ==
-Message-ID: <sashiko-outbox-224241@kernel.org>
+	b=WsN5KZXOnJ1iDuJQ8GSAS7+615CRkTDs5ynFyNgdXuZlkEns3fCVahhrwn91/wRVa
+	 fBhGuaSxTmX9KvwIZQ65OGo0fDLSVgs8xKVLH6R3PmtOgxdoQxJ2LSLAjguEenVerR
+	 PIDoPxSvHDE/stYSvPMDZSR+VfL0ZhifsoySp1LBSHEO+3Bw91BqNo7N1mFBX+dBsD
+	 20L0ftIyGOW31xxVYH0Axk3OYAf02D6+Tu2JL6Nh0miGosdgf6rM5EzCRtsVnMBkPA
+	 c69qMgt15OWkBlQWqlMqPGXZWJHrohf99DHtRtfR0Dh2E1btSKBdE1cAZaDyLLziLo
+	 0QuZ7yrJTJ1Cw==
+Message-ID: <sashiko-outbox-224244@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 06/11] dt-bindings: leds: kinetic,ktd202x: Add Etek
- ET6326
+Subject: Re: [PATCH v3 01/11] leds: rgb: ktd202x: Fix the flash period of
+ short blinks on 32 bit
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Joseph Telaak" <joseph@telaak.dev>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261119-ktd202x-et6326-v3-6-98b836b1cddc@telaak.dev>
+In-Reply-To: <20261119-ktd202x-et6326-v3-1-98b836b1cddc@telaak.dev>
 References: <20261119-ktd202x-et6326-v3-0-98b836b1cddc@telaak.dev>
- <20261119-ktd202x-et6326-v3-6-98b836b1cddc@telaak.dev>
+ <20261119-ktd202x-et6326-v3-1-98b836b1cddc@telaak.dev>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 00:09:14 +0000
+Date: Fri, 20 Nov 2026 00:10:06 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -63,20 +63,21 @@ Precedence: list
 
 > From: Joseph Telaak <joseph@telaak.dev>
 >=20
-> The Etek ET6326 is a 3 channel LED driver with the register map, the I2C
-> address and the current steps of the KTD2026. It only differs in the
-> flash period, which is (n + 1) * 128 ms instead of 256 ms + n * 128 ms
-> for a period setting of n, so a KTD2026 driver runs it with blink
-> periods that are 128 ms off. Document it with the KTD2026 as fallback.
+> When delay_on + delay_off is below 256 ms, the unsigned subtraction of
+> KTD202X_FLASH_PERIOD_MIN_MS wraps. On 64 bit the result truncates to -1
+> or -2 and gets clamped to the shortest period, but on 32 bit it
+> truncates to 33554431 or 33554430 and gets clamped to the longest one,
+> so asking for a fast blink gives a blink every 16 seconds.
 >=20
-> The ET6326 drives the status LED of the GL.iNet GL-SFT1200 (Opal).
+> Compare before subtracting.
 >=20
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Fixes: 0ebdb7210943 ("leds: Add ktd202x driver")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Joseph Telaak <joseph@telaak.dev>
 
 Sashiko has reviewed this patch and found no issues.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261119-ktd202x-et=
-6326-v3-0-98b836b1cddc@telaak.dev?part=3D6
+6326-v3-0-98b836b1cddc@telaak.dev?part=3D1
 
