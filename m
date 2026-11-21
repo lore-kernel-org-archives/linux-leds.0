@@ -1,55 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795247437;
-	b=hltnvLvCodvrnwDMMg6m6nERLxl1QUijjIahp5Ww08Via+GXdV2ZwHcnntFZ4HxbG3J7
-	 o0EZr2PCL/vFzcmt0mct1zd8oqhvGXkhdO1kMFp8Uoh2Ltu62gUbUBUaRx2yx0U9cXp2p
-	 RkfhDZ/m4aTLTYUgGriZzKtac2Wh3WFIOVDxT9GmqYHpS4LMTqsLpzTD/qhTZbbPlyxz1
-	 pKYP+67sMhAQ6j+eNKdH91EeRzEPZTanD3pflCYw7090ri9/C7m+REf5uwlM56X++YWSm
-	 Fmg+PG1LMA8Q9lA9kww5XQDKcqWCV8Lsx9HrOcwGndViBhn7CZlj8PjLoVwGU9IxUwA==
+	t=1795247462;
+	b=n3czI09T9VgC9rjkVyur2/I3bOMdylWIoygadYc9iJ7i38tNiUwG/6h9MAh+oz3O68sI
+	 qBjegBhDr3VmHRPUIUaNPnRd+Nsv5dNUbp2OLZ614AQQuN8ej/fHzpQYXma0QJJtuNei1
+	 HSgWNp1AARpjyNXKM85VR4bUJqmd/J39mz8AbU7QL5jz+Snk2QlVHSHOiKoXrfNXBawvl
+	 F3tiqSsdJRGq+Qjt+z2oTcMPzR9DwZsKiNKgECfwjru96KnfkhBZAKOv8/aUywGWqhmdR
+	 1clkvB5T7dEIJabd6vcHrVl62kUorrPrebURxGKoaG6D4s4VhwdRIT24uNWZVVGgJhw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795247437;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795247462;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Y83cxzfKjByJ3ToN6GvDg7DqYnrDUY9AB4W5cuF4h/4=;
-	b=KBOGBLjirHL6uZkFmQs7jMuG+NLEA0KK0sNZq73L62g+CiQXPQCbXHcqfCHh2clgeud9
-	 NLjgcCY4wLHD/cMlbUK7CGEqklV6qBE5gXGmfbyPqEZibxtkPPPwLIjLglRaG3Bt6x8Nm
-	 NQmJ6NEena6rQeBtiDRXFC51H/ilaguArjwamBIwBOP7XUsKe5SQFAHr2/RhOir+q2g/6
-	 KTx6hMaF6sd0qmU1Iumkyv7Am3rga+B6YVl2FIePqYxHfUQUwfEpoSvYVHF44nieFTxa6
-	 fLDYfXI9z3zkGqS/EAd62fEX8QLewTJkDUqE4AHx+eEpnqedU8FOzEIDt8h9gk2STWQ==
+	bh=c8zkgzDres/Cakr2STnzkW2DefTmwpRRc34Kv0puNIs=;
+	b=W98WMFp3E9tAC8mwtrIQjO0d0iwYu7dV9hVS9bkjbVhRdgK4f5dTUS8+qQYtzRNQE3v0
+	 RrZSXYOLKquy4pmqrbIcqyD/ugup5jWA4wuM1TNOXU8FTfkMqb2fQJGYHB9X+4l8GXneL
+	 K7Kwlfacr38CfqW/l0rqTXx/Mg4YjJPnjHP2OAHO8QrQZb8hEvbbb3aRvCe5jrLQQhOWY
+	 AVSOmIXpneTNNbrKvZ+jDG87zyBAXVrhb+Y4VD1BfL/ZhJEIUkqV1RA+m3vKv5474+zdv
+	 XPE2+SV8NK1KU1NDKgNF4S5DahqBK4es9vSGssP0opUW2CiwPwaSbPUJTrd/UaK9iLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KsAZmVn9;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kx5Qy84Q;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAB0606A325
-	for <linux-leds@vger.kernel.org>; Sat, 21 Nov 2026 07:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14E3606A320
+	for <linux-leds@vger.kernel.org>; Sat, 21 Nov 2026 07:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KsAZmVn9
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502A61F000C4;
-	Sat, 21 Nov 2026 07:50:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kx5Qy84Q
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220621F000C0;
+	Sat, 21 Nov 2026 07:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795247436;
-	bh=Y83cxzfKjByJ3ToN6GvDg7DqYnrDUY9AB4W5cuF4h/4=;
+	s=k20260515; t=1795247462;
+	bh=c8zkgzDres/Cakr2STnzkW2DefTmwpRRc34Kv0puNIs=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KsAZmVn9Rb6L2pECbT4R2DW3X4Lbx4atCXIzcX4frb641vv7/PWoodf5VCOdj6PMQ
-	 Kvy94WnT1+KtFJ5GQzLrGj+LqzinGJ6ou8ooom+vADyxIoZkBKN3c4ND3rfbqOW7UV
-	 vdlaOn8SypFUyaJ/ay3USwz40YbsDjD6zXKlCZKWwI7jEMETrEV8VGcJJQ1j9ECEzp
-	 2Dez5AEVdfxRazsNwTF0AtMRtt5DRgiji4htxZbsYlssF4ntRYxy3d4axztw2OOvKz
-	 CfmeMOOxono/32mVHhCiIN5Fd+2RMFsXviCA3/bt0SV4MSnUI+PG3cJozyUvygDvwn
-	 CXBJsvMeL8Guw==
-Message-ID: <sashiko-outbox-226805@kernel.org>
+	b=kx5Qy84QhbQZjfqRxwEIr7/yDEdPiaoU0MJrZU8DWvI7pi/OleZPSabBZBlfEtrPo
+	 UsL9SVuVFjSRhmH4u69jE26qUoW5uvmsehEdfn70iB1G8mHpxuX3tgGxf+fql/8k67
+	 aK2kXs5dPtpan560tiXEWUo4Vd96rueoXJ5NsZqRdbDzeXDpb4Aa7Q+ZMs8GvB5hlq
+	 ekFGrDaLrYhr/VzT1FIiIagoX074O14Mfn4ZaxHZ9cx2NUXsUbgQwjbd+ZuMx03shY
+	 BZmH4u5NPIHX8wds4hueEj5aQorO3MOWmlYwCJfw571i9fvDDQPBhCv+LJB2Pt0wqo
+	 zhGkl/IugXpnQ==
+Message-ID: <sashiko-outbox-226806@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 1/2] leds: leds-mc13783: use unified device property API
+Subject: Re: [PATCH 2/2] leds: leds-mc13783: enable driver for deferred
+ probe
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Alexander Kurz" <akurz@blala.de>
 Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261121074239.8745-1-akurz@blala.de>
+In-Reply-To: <20261121074239.8745-2-akurz@blala.de>
 References: <20261121074239.8745-1-akurz@blala.de>
+ <20261121074239.8745-2-akurz@blala.de>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Sat, 21 Nov 2026 07:50:35 +0000
+Date: Sat, 21 Nov 2026 07:51:01 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -61,52 +63,58 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 1 potential
 issue to consider:
-- [High] leds: mc13783: wrong fsl,led-control property name in
-  mc13xxx_led_probe_dt()
+- [High] leds: leds-mc13783: wrong DT property fsl,led-control breaks
+  probe
 --
 
-commit 68fd5224b7b684d27cc41e7ff6cfe1fa69173623
+commit 192aa62c8f136ce683903471ddceeeabc5b01f1f
 Author: Alexander Kurz <akurz@blala.de>
 
-leds: leds-mc13783: use unified device property API
+leds: leds-mc13783: enable driver for deferred probe
 
-This commit replaces OF-specific API calls in mc13xxx_led_probe_dt() with
-the unified fwnode device property API.
+This commit replaces module_platform_driver_probe() with
+module_platform_driver() and drops __init from the probe functions so that
+mc13xxx-led can probe after the parent MFD device is registered.
 
 > diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-> index 19c1b51475db6..c3bbbc8ef946b 100644
+> index c3bbbc8ef946b..042cefde7853c 100644
 > --- a/drivers/leds/leds-mc13783.c
 > +++ b/drivers/leds/leds-mc13783.c
-
-[ ... ]
-
-> @@ -122,34 +122,34 @@ static struct mc13xxx_leds_platform_data __init *mc=
-13xxx_led_probe_dt(
->  	if (!pdata)
->  		return ERR_PTR(-ENOMEM);
+> @@ -109,7 +109,7 @@ static int mc13xxx_led_set(struct led_classdev *led_c=
+dev,
+>  }
 > =20
-> -	struct device_node *parent __free(device_node) =3D
-> -		of_get_child_by_name(dev_of_node(dev->parent), "leds");
-> +	struct fwnode_handle *parent __free(fwnode_handle) =3D
-> +		device_get_named_child_node(dev->parent, "leds");
->  	if (!parent)
->  		return ERR_PTR(-ENODATA);
-> =20
-> -	ret =3D of_property_read_u32_array(parent, "led-control",
-> +	ret =3D fwnode_property_read_u32_array(parent, "fsl,led-control",
->  					 pdata->led_control,
->  					 leds->devtype->num_regs);
->  	if (ret)
->  		return ERR_PTR(ret);
+>  #ifdef CONFIG_OF
+> -static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
+> +static struct mc13xxx_leds_platform_data *mc13xxx_led_probe_dt(
+>  	struct platform_device *pdev)
+>  {
+>  	struct mc13xxx_leds *leds =3D platform_get_drvdata(pdev);
 
 [Severity: High]
-Does changing the property name from "led-control" to "fsl,led-control"
-break Device Tree probing?  The binding in
-Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml and all in-tree
-Device Trees define this property as "led-control", so
-fwnode_property_read_u32_array() will return -EINVAL and abort
-mc13xxx_led_probe_dt().
+Does mc13xxx_led_probe_dt() fail with -EINVAL on all Device Tree boards
+now that mc13xxx_led_probe() can run?
+
+The preceding commit "leds: leds-mc13783: use unified device property API"
+changed the property lookup in mc13xxx_led_probe_dt() from "led-control"
+to "fsl,led-control":
+
+drivers/leds/leds-mc13783.c:mc13xxx_led_probe_dt() {
+    ...
+	ret =3D fwnode_property_read_u32_array(parent, "fsl,led-control",
+					 pdata->led_control,
+					 leds->devtype->num_regs);
+	if (ret)
+		return ERR_PTR(ret);
+    ...
+}
+
+However, the binding in
+Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml (which sets
+additionalProperties: false on the leds node) and all in-tree DTS files
+use "led-control" without a vendor prefix, so
+fwnode_property_read_u32_array() fails and aborts probe.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121074239.8745=
--1-akurz@blala.de?part=3D1
+-1-akurz@blala.de?part=3D2
