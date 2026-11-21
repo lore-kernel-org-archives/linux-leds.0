@@ -1,51 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.160.73.65
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795246995;
-	b=N5XbzTvf/HhFi5bkmkW3o2Q1Z/aV1UAkIu4vTImYwE+Qh123NWlipzfceCG3hW0wTmQG
-	 CNjRL9+nKpguqoVrSEtYMKdmyqQw2+Qp3oLCftxRo6sg8fBmfXWrQs3Sg7e/gLlvGbCdt
-	 btuYYo2VWIS+gX66mLx73gEpqKi6O3Esbg52bhHNB+Za/3o23Lb191Xs2JuQIzmgaVD4L
-	 1Iqh+8s/3tL8PCW7Pp0yX3mlImOGia5Nm/1GaJKC5MFJ0V6JqxFutDldvTGCXrxI1xfq1
-	 4TWpW3jTqY/DbwB7hybNhwmR42n1F+DS0MvmfPfBQTMiXixaWOjjccfob736u3dgzng==
+	t=1795247437;
+	b=hltnvLvCodvrnwDMMg6m6nERLxl1QUijjIahp5Ww08Via+GXdV2ZwHcnntFZ4HxbG3J7
+	 o0EZr2PCL/vFzcmt0mct1zd8oqhvGXkhdO1kMFp8Uoh2Ltu62gUbUBUaRx2yx0U9cXp2p
+	 RkfhDZ/m4aTLTYUgGriZzKtac2Wh3WFIOVDxT9GmqYHpS4LMTqsLpzTD/qhTZbbPlyxz1
+	 pKYP+67sMhAQ6j+eNKdH91EeRzEPZTanD3pflCYw7090ri9/C7m+REf5uwlM56X++YWSm
+	 Fmg+PG1LMA8Q9lA9kww5XQDKcqWCV8Lsx9HrOcwGndViBhn7CZlj8PjLoVwGU9IxUwA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795246995;
-	h=DMARC-Filter:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=YQMD6P455roWznDvZidE7Y9pltP2O8Ucc6Aqgok7dcY=;
-	b=nLivZEiNlL5RE0oXON8yqI/uYbM30XpOmIJ8J/M1u6txiPl+qwT/1DZZO3wJzo3n+bHV
-	 YHJBC5/rGR3dVcttqs78P1fkt+vbsCWejJP29Lv/UoJLlWXwazSAiVPhho86fV1NHTgDc
-	 VaY60qdNdodwG2Xb8EwbC6QM72C2GppnLZq+vC8JLRXLzdy8adFpK/fLTUWGLYg0I36/j
-	 khj63enC+OE0ntiDFThesCbEQNl1pH3D/dJwQGXgP3oEtiwi+amomjSA3+V1pBwkNVgCE
-	 8pFYJhh9uqXViXsQ6S4zVYDKYUHkH8BZPbv/tGjP5W6KaJmP8R4SVJphz/OywyBjiig==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795247437;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=Y83cxzfKjByJ3ToN6GvDg7DqYnrDUY9AB4W5cuF4h/4=;
+	b=KBOGBLjirHL6uZkFmQs7jMuG+NLEA0KK0sNZq73L62g+CiQXPQCbXHcqfCHh2clgeud9
+	 NLjgcCY4wLHD/cMlbUK7CGEqklV6qBE5gXGmfbyPqEZibxtkPPPwLIjLglRaG3Bt6x8Nm
+	 NQmJ6NEena6rQeBtiDRXFC51H/ilaguArjwamBIwBOP7XUsKe5SQFAHr2/RhOir+q2g/6
+	 KTx6hMaF6sd0qmU1Iumkyv7Am3rga+B6YVl2FIePqYxHfUQUwfEpoSvYVHF44nieFTxa6
+	 fLDYfXI9z3zkGqS/EAd62fEX8QLewTJkDUqE4AHx+eEpnqedU8FOzEIDt8h9gk2STWQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=blala.de;
-	spf=pass smtp.mailfrom=blala.de;
-	arc=none smtp.remote-ip=213.160.73.65
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KsAZmVn9;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E115606A325;
-	Sat, 21 Nov 2026 07:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2E115606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.18.1/8.18.1/Debian-6) with ESMTP id 6AL7gqYQ008761;
-	Sat, 21 Nov 2026 07:42:52 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.18.1/8.18.1/Submit) id 6AL7gpqB008760;
-	Sat, 21 Nov 2026 07:42:51 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-        Griffin Kroah-Hartman <griffin@kroah.com>
-Cc: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
-Subject: [PATCH 1/2] leds: leds-mc13783: use unified device property API
-Date: Sat, 21 Nov 2026 07:42:38 +0000
-Message-ID: <20261121074239.8745-1-akurz@blala.de>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAB0606A325
+	for <linux-leds@vger.kernel.org>; Sat, 21 Nov 2026 07:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KsAZmVn9
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502A61F000C4;
+	Sat, 21 Nov 2026 07:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795247436;
+	bh=Y83cxzfKjByJ3ToN6GvDg7DqYnrDUY9AB4W5cuF4h/4=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=KsAZmVn9Rb6L2pECbT4R2DW3X4Lbx4atCXIzcX4frb641vv7/PWoodf5VCOdj6PMQ
+	 Kvy94WnT1+KtFJ5GQzLrGj+LqzinGJ6ou8ooom+vADyxIoZkBKN3c4ND3rfbqOW7UV
+	 vdlaOn8SypFUyaJ/ay3USwz40YbsDjD6zXKlCZKWwI7jEMETrEV8VGcJJQ1j9ECEzp
+	 2Dez5AEVdfxRazsNwTF0AtMRtt5DRgiji4htxZbsYlssF4ntRYxy3d4axztw2OOvKz
+	 CfmeMOOxono/32mVHhCiIN5Fd+2RMFsXviCA3/bt0SV4MSnUI+PG3cJozyUvygDvwn
+	 CXBJsvMeL8Guw==
+Message-ID: <sashiko-outbox-226805@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 1/2] leds: leds-mc13783: use unified device property API
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Alexander Kurz" <akurz@blala.de>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261121074239.8745-1-akurz@blala.de>
+References: <20261121074239.8745-1-akurz@blala.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 21 Nov 2026 07:50:35 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -54,83 +58,55 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-As preparation for a fix regarding deferred probing, replace OF-specific
-API calls with the unified device property variants.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [High] leds: mc13783: wrong fsl,led-control property name in
+  mc13xxx_led_probe_dt()
+--
 
-Signed-off-by: Alexander Kurz <akurz@blala.de>
----
- drivers/leds/leds-mc13783.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+commit 68fd5224b7b684d27cc41e7ff6cfe1fa69173623
+Author: Alexander Kurz <akurz@blala.de>
 
-diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index 19c1b51475db..c3bbbc8ef946 100644
---- a/drivers/leds/leds-mc13783.c
-+++ b/drivers/leds/leds-mc13783.c
-@@ -16,8 +16,8 @@
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/leds.h>
--#include <linux/of.h>
- #include <linux/mfd/mc13xxx.h>
- 
- struct mc13xxx_led_devtype {
-@@ -114,7 +114,7 @@ static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
- {
- 	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
- 	struct mc13xxx_leds_platform_data *pdata;
--	struct device_node *child;
-+	struct fwnode_handle *child;
- 	struct device *dev = &pdev->dev;
- 	int i = 0, ret = -ENODATA;
- 
-@@ -122,34 +122,34 @@ static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
- 	if (!pdata)
- 		return ERR_PTR(-ENOMEM);
- 
--	struct device_node *parent __free(device_node) =
--		of_get_child_by_name(dev_of_node(dev->parent), "leds");
-+	struct fwnode_handle *parent __free(fwnode_handle) =
-+		device_get_named_child_node(dev->parent, "leds");
- 	if (!parent)
- 		return ERR_PTR(-ENODATA);
- 
--	ret = of_property_read_u32_array(parent, "led-control",
-+	ret = fwnode_property_read_u32_array(parent, "fsl,led-control",
- 					 pdata->led_control,
- 					 leds->devtype->num_regs);
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	pdata->num_leds = of_get_available_child_count(parent);
-+	pdata->num_leds = fwnode_get_child_node_count(parent);
- 
- 	pdata->led = devm_kzalloc_objs(dev, *pdata->led, pdata->num_leds);
- 	if (!pdata->led)
- 		return ERR_PTR(-ENOMEM);
- 
--	for_each_available_child_of_node(parent, child) {
-+	fwnode_for_each_child_node(parent, child) {
- 		const char *str;
- 		u32 tmp;
- 
--		if (of_property_read_u32(child, "reg", &tmp))
-+		if (fwnode_property_read_u32(child, "reg", &tmp))
- 			continue;
- 		pdata->led[i].id = leds->devtype->led_min + tmp;
- 
--		if (!of_property_read_string(child, "label", &str))
-+		if (!fwnode_property_read_string(child, "label", &str))
- 			pdata->led[i].name = str;
--		if (!of_property_read_string(child, "linux,default-trigger",
-+		if (!fwnode_property_read_string(child, "linux,default-trigger",
- 					     &str))
- 			pdata->led[i].default_trigger = str;
- 
--- 
-2.39.5
+leds: leds-mc13783: use unified device property API
 
+This commit replaces OF-specific API calls in mc13xxx_led_probe_dt() with
+the unified fwnode device property API.
+
+> diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+> index 19c1b51475db6..c3bbbc8ef946b 100644
+> --- a/drivers/leds/leds-mc13783.c
+> +++ b/drivers/leds/leds-mc13783.c
+
+[ ... ]
+
+> @@ -122,34 +122,34 @@ static struct mc13xxx_leds_platform_data __init *mc=
+13xxx_led_probe_dt(
+>  	if (!pdata)
+>  		return ERR_PTR(-ENOMEM);
+> =20
+> -	struct device_node *parent __free(device_node) =3D
+> -		of_get_child_by_name(dev_of_node(dev->parent), "leds");
+> +	struct fwnode_handle *parent __free(fwnode_handle) =3D
+> +		device_get_named_child_node(dev->parent, "leds");
+>  	if (!parent)
+>  		return ERR_PTR(-ENODATA);
+> =20
+> -	ret =3D of_property_read_u32_array(parent, "led-control",
+> +	ret =3D fwnode_property_read_u32_array(parent, "fsl,led-control",
+>  					 pdata->led_control,
+>  					 leds->devtype->num_regs);
+>  	if (ret)
+>  		return ERR_PTR(ret);
+
+[Severity: High]
+Does changing the property name from "led-control" to "fsl,led-control"
+break Device Tree probing?  The binding in
+Documentation/devicetree/bindings/mfd/fsl,mc13xxx.yaml and all in-tree
+Device Trees define this property as "led-control", so
+fwnode_property_read_u32_array() will return -EINVAL and abort
+mc13xxx_led_probe_dt().
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261121074239.8745=
+-1-akurz@blala.de?part=3D1
