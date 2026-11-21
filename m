@@ -1,56 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.160.73.65
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795210639;
-	b=qC3L6IcWr5JmjY3xOyrwH/B9bdttInrZ2+kD5WxdMGCxpBzFnJyyR5ejUVbfXk/pbSTG
-	 MjuFVsibx4wQDQu/N+DEubZq2V8brdulQslALTF9frXRBa2DBvv8+meZZritWXpl/4j7u
-	 PIrbu63wvpNn11PG2vVwPpwjtIujFXxQqys+zgN5FTI2+Z5MLk6uE8gyRYwmzWhycjP+z
-	 UgAlFGOyb0nQKhLyu+I/h5mofwXx5Km2YBhwOtFmufNVHqFKiYV+7ufCmdioQe9W7Sf3a
-	 f/deZKd+862AnnULqGyBU8rhpX56QXKqZtCJ7DDbuwhf0zYZdzJ84iAzy4+mSzk9Qhw==
+	t=1795246994;
+	b=bDITxD4CuHXlbi3cVvGvfcj5sqzQLU/lCmSfnzX0lA59Cm/U/FaBW1EkSDiVKXmEfsYx
+	 K3yQS6JsvVupVpiG1EJMLAgFRD29EKKksMiHL5wCN/WZ7AP3Z0Kt1noUxzD1mtKc9Fura
+	 t0T73DL7rKNUkJ3BXUO4ya33CjQG579cH1E0yGLIN3wYadjlEgkPFurgFEr1Edk17Nx4o
+	 CQUNhIK1ZhsV37FBIrRbqTjkfsRavDv1hhgZnUB3C0XBwJfCs7HbKfng8ULBnT9aO/yN1
+	 TTV4mcTTucIxUl+MSBMs2G0Wd9eHvidZfIzMAyHM/zqRhQTPrqBlw3PrvPb3jkHjYkw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795210639;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=5bXVEhQHcSz5UE1oP5PM79CXexc4JZLDl8FrOUpl5o4=;
-	b=of3LS9vv2OdZNM8ZVyjGQmdmlUbxne+0cVPJ3SQ9ZWarP3oo9uVk0GWGSfcc+8ULdY+6
-	 rhlkDHInd8GcZn2VxbBm7MSPvILprRDiwhtjy0utItociKIZm/pIuhIIZ1U/ZLIUEJqb4
-	 GPzoos1VXp+2Zq/EBfMxRBfSgG4Ig2eBmqchzE5w2M9u/K79XMGHjA7uQa4LevP16xjvi
-	 LQeA6+VcQP0lg2Dr7Poh1fA7rzTPdAaWWgemO4w9BUt1VZocvX75/+s0g4u706oS06opR
-	 PCFtk+7UdzQf9EjhGnMD1dT+BnPjC172DkFVjruc+KDwvMOlSsQI9nm6XYt9giv9ULw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795246994;
+	h=DMARC-Filter:Received:Received:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=TfZDmxUS3f9DwEGJSoQXaI/7hT5azmRVE2pM5ktJupM=;
+	b=obse2D5zDd3MJlJJr63/DPd/D+xKalIzDHObKI6s6TZYDFY7hNCzye/vcULkW0hD4n49
+	 6FPWZxAnBLtxLydcsGdJi6YxE4XPn3/6kixm6z1BZAFIvecqtb5Y+vp0an/QLg6zY52nV
+	 XdAVCg4uditOgRx08X4FkIV54+wUL/JuuoGCOpbTFNxsCG0RSoz286x5MJz5PvusCB8EJ
+	 2p60YnX+FKM4BM7QmbbLGN9vyrqfbSjarQ52iMBUUDNwhiDGSyievvpk6MmHc1cqxTK7+
+	 LfA1tnehEBTWpI+O5GUcjdAZCU23/AbpL8/GonZnbMmm542dyY7iyggtiAgjl41ppKg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RljceKPk;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=none header.from=blala.de;
+	spf=pass smtp.mailfrom=blala.de;
+	arc=none smtp.remote-ip=213.160.73.65
+Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF25A606A333
-	for <linux-leds@vger.kernel.org>; Fri, 20 Nov 2026 21:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=RljceKPk
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F3B1F000CA;
-	Fri, 20 Nov 2026 21:37:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795210639;
-	bh=5bXVEhQHcSz5UE1oP5PM79CXexc4JZLDl8FrOUpl5o4=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=RljceKPkO8R+/3FiTevb5a5W7iPjSvBl8PD1L/G0eSdMhb512AUzeGZ7Vkmo64rGJ
-	 w3/0A3E8r2KFXtaHbFcPHqpnH7s5DMuMp9Ru5zYzIsjzM6iQ9NBP+mQ+rm0gK9BOG/
-	 M0bx5hq7nU5IdgunTIDyNWgGy7elY6hdVYdrV7Dl96f6+GvMNsIZqx1+JQK8Sxrjdo
-	 jA982wsh3y44vV36KI4kOdI8q9AjdDPhBHBbEcnYju8xSuXyfGORUOh4ELkz1jHpmR
-	 X7/TqiDOUJ09dYQA7fYIZ1KvJw66KdiF6lzJs6dc6vHcc6ObbShWmFqL3kcBB2PXIa
-	 bFA61PhFJ+wEA==
-Message-ID: <sashiko-outbox-226201@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3 00/11] leds: class: Support custom sysfs groups on
- multicolor and flash LEDs
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Armin Wolf" <W_Armin@gmx.de>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261120212431.152081-1-W_Armin@gmx.de>
-References: <20261120212431.152081-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 20 Nov 2026 21:37:18 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0A7606A320;
+	Sat, 21 Nov 2026 07:43:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2E0A7606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
+Received: from blala.de (localhost [127.0.0.1])
+	by vs81.iboxed.net (8.18.1/8.18.1/Debian-6) with ESMTP id 6AL7gr0X008770;
+	Sat, 21 Nov 2026 07:42:53 GMT
+Received: (from akurz@localhost)
+	by blala.de (8.18.1/8.18.1/Submit) id 6AL7grtD008769;
+	Sat, 21 Nov 2026 07:42:53 GMT
+From: Alexander Kurz <akurz@blala.de>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        Griffin Kroah-Hartman <griffin@kroah.com>
+Cc: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
+Subject: [PATCH 2/2] leds: leds-mc13783: enable driver for deferred probe
+Date: Sat, 21 Nov 2026 07:42:39 +0000
+Message-ID: <20261121074239.8745-2-akurz@blala.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261121074239.8745-1-akurz@blala.de>
+References: <20261121074239.8745-1-akurz@blala.de>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,17 +57,69 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sashiko has finished reviewing this 11-patch series:
+The probe order between mfd and leds has been changed with commit
+78efa53e715e ("leds: Init leds class earlier") so that mc13xxx-led
+driver was not registered any more due to the missing mfd instance.
+Use module_platform_driver() to replace module_platform_driver_probe().
+The former utilizes platform_driver_register(), which allows the driver
+to defer probing when it doesn't acquire the necessary resources from
+the mfd device due to probe order.
 
-- Patches 1-3, 5-9, and 11: no issues found.
-- Patch 4 ("leds: class: Create "brightness_hw_changed" attribut..."): 1
-  potential issue (1 Low)
-- Patch 10 ("leds: rgb: ktd202x: Initialize max_brightness before..."):
-  1 potential issue (1 Medium)
+Fixes: 78efa53e715e ("leds: Init leds class earlier")
+Signed-off-by: Alexander Kurz <akurz@blala.de>
+---
+ drivers/leds/leds-mc13783.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Detailed reviews have been sent as separate replies to patches 4 and 10.
+diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
+index c3bbbc8ef946..042cefde7853 100644
+--- a/drivers/leds/leds-mc13783.c
++++ b/drivers/leds/leds-mc13783.c
+@@ -109,7 +109,7 @@ static int mc13xxx_led_set(struct led_classdev *led_cdev,
+ }
+ 
+ #ifdef CONFIG_OF
+-static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
++static struct mc13xxx_leds_platform_data *mc13xxx_led_probe_dt(
+ 	struct platform_device *pdev)
+ {
+ 	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
+@@ -163,14 +163,14 @@ static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
+ 	return pdata;
+ }
+ #else
+-static inline struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
++static inline struct mc13xxx_leds_platform_data *mc13xxx_led_probe_dt(
+ 	struct platform_device *pdev)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+ #endif
+ 
+-static int __init mc13xxx_led_probe(struct platform_device *pdev)
++static int mc13xxx_led_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(dev);
+@@ -296,13 +296,14 @@ static const struct platform_device_id mc13xxx_led_id_table[] = {
+ MODULE_DEVICE_TABLE(platform, mc13xxx_led_id_table);
+ 
+ static struct platform_driver mc13xxx_led_driver = {
++	.probe = mc13xxx_led_probe,
+ 	.driver	= {
+ 		.name	= "mc13xxx-led",
+ 	},
+ 	.remove		= mc13xxx_led_remove,
+ 	.id_table	= mc13xxx_led_id_table,
+ };
+-module_platform_driver_probe(mc13xxx_led_driver, mc13xxx_led_probe);
++module_platform_driver(mc13xxx_led_driver);
+ 
+ MODULE_DESCRIPTION("LEDs driver for Freescale MC13XXX PMIC");
+ MODULE_AUTHOR("Philippe Retornaz <philippe.retornaz@epfl.ch>");
+-- 
+2.39.5
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261120212431.1520=
-81-1-W_Armin@gmx.de
