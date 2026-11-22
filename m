@@ -1,53 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=213.160.73.65
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795367200;
-	b=qBv1fa78rSzmO7NTSlkRMqY3DocEJTN78W9KgPswPZkUzmqpBlRsAYzA/5tJtH/OHxPY
-	 HKRy0s4JAEp9Fgl/luC3EZkyX0JVFnfBvu9ova0XaTIh/lYxP5I/z1VBcMkBc/cXprucd
-	 La/o+YOIShLqfwmmSjW+tuAtmhtEdftpgbNNU+eirLt13La95ORqZt8x9n5yJo4LU0q30
-	 lfo/sntlG5fNxQFDveDPvD9c6C1/5dzu2HkDUPM2N2ZcUAF9fFaQ9mgTJ+1v39Slbfxe8
-	 tFni2ognc3k//covP34sd/m/i7s+zGD0cYrjNG4bay3/AMXuwCYQv2irgHyR0sYh0MQ==
+	t=1795367578;
+	b=f/idFiH10wRdLBhRq289Gq1DmRPs68UwCekBdUyXjNuyENoOPvA92YZlwZ6eWduj03Zv
+	 NXdENATp8cw3XPq0xhTrMbglnhAbp4IJIO7/8E4Lz1nowYn5g/20dBAtdEwDXIe2VUxZc
+	 xZpv8fzIKa3NR+sTikVFIRhEDVGoxtMezJ0/yWzZm6bk04drkii5HWeWTxIO8lHEg2EHy
+	 0nCtYPESbwGjRvoZ0b52bYaNR7vZQXNoiWfk01kJHC9glnCWErmI2PsmBKObETpHeT7gw
+	 vfIVDCpy1ChF5LEjKwhvyH/DsQupn90ePSTcSMpUhZLzUOC0xZnCsgBEyLPqin5xWxQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795367200;
-	h=DMARC-Filter:Received:Received:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=xKJU8r8LgWpb+YbX2NKqLQcLCQkJ8708QhgDAlQe+d8=;
-	b=cunmFwgY02Qf+UuJuB4kFPtx7n9Dgv6s4iV4XGMtBKVripO/MIUTKKOntLUN+SWWpr7x
-	 a3QAGltw1SApstOVeteHssPMkHNLnRKFuEk4/6IDfeH/gYtnII4JwkXizI9+UUWo8J8FI
-	 Q/SEcEliJmmaHY7h3DMXxs/XDlWmQJ+T0PFdI1vM3D8Egu5XFrhLgZI+uhst6RJgOSw0R
-	 EvODGhrSMKk70a2Rkeu2LWYFqJxpaxdKV3UJNm1CjnyHxiMM6c5e5ZO+5iUDVTLKOsJWa
-	 ZUI34zNake/m6NIm/Ck6tH6BzwKbpIO/tdiAO+TCeu05DOQuFBu3bLhuyNA+EfnfiCw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795367578;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=IORnO1hd/mnHKJmnQWRw7c/upoPlgP/5GSuO0bj6nh0=;
+	b=wlyjErDVuMnDzr2VIIdhHwq8v5oGHS1GaVA7ArjVjxSTsJHArmwPX0H9M6K3qBODpjME
+	 tJ2rHLnB2INLL8PTw+8d+wtQGoi8U/krpGN2Dx4sVn653+47FEcrE++dKKqAGBgqSdfA4
+	 h7SIfWmw+y+5m9zcgGQcJSbsjqjcuuPrEfJS83wbnUzwlsGbZqOx4rZBHXChpeA8vOD0V
+	 fcA3V5YpOFRF1P+MxEYgsELkbk3yPAak5PfUCl+DK7urSgq7Q6CXuEnjOVqQlBS39SOWp
+	 eUCl7vv36JZ/dQvI4cyIvgTxGkehrgtrTV9e1zqZ9CkCHBXhye+vcPe4o0omSxaQIgg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=blala.de;
-	spf=pass smtp.mailfrom=blala.de;
-	arc=none smtp.remote-ip=213.160.73.65
-Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EP21BpHF;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0A5606A680;
-	Sun, 22 Nov 2026 17:06:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4C0A5606A680
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
-Received: from blala.de (localhost [127.0.0.1])
-	by vs81.iboxed.net (8.18.1/8.18.1/Debian-6) with ESMTP id 6AMH6I5V031738;
-	Sun, 22 Nov 2026 17:06:18 GMT
-Received: (from akurz@localhost)
-	by blala.de (8.18.1/8.18.1/Submit) id 6AMH6Iom031737;
-	Sun, 22 Nov 2026 17:06:18 GMT
-From: Alexander Kurz <akurz@blala.de>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-        Griffin Kroah-Hartman <griffin@kroah.com>
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexander Kurz <akurz@blala.de>
-Subject: [PATCH v3 2/2] leds: leds-mc13783: enable driver for deferred probe
-Date: Sun, 22 Nov 2026 17:06:15 +0000
-Message-ID: <20261122170615.31710-3-akurz@blala.de>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261122170615.31710-1-akurz@blala.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA94606A320
+	for <linux-leds@vger.kernel.org>; Sun, 22 Nov 2026 17:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=EP21BpHF
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760441F000CA;
+	Sun, 22 Nov 2026 17:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795367577;
+	bh=IORnO1hd/mnHKJmnQWRw7c/upoPlgP/5GSuO0bj6nh0=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=EP21BpHFAKV1qs3tG6d1RdKtfqoler7VOElXgpS0eYRgkAwi2JpqgqCEd9ZDzubGa
+	 R1w1mBr5u4EEMlhq6SB0XKp/bvYiGN077RdL245ZUJrS5UcTjQzwhY57GC42cNgg8W
+	 +gdysYymyv/CcRg5eIq0Q9fgyiGyup5HmTlO/nCNYUgjxeHdPqwqNpVVFB46uXyj6r
+	 omH0bJVgzCrqPeXIHJwi8sGIEeKTqiEMqUb/X6UkwsRYDZoP0YSVN2D0J5vQDvcb4S
+	 2sFrtm52blQLcTqCa/fF2hXH99NdZM2yfTXgVv1JOmQy9YUNmVHphUY+0W2Vnk0puC
+	 AYLqbdZJ/So8A==
+Message-ID: <sashiko-outbox-228124@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 2/2] leds: leds-mc13783: enable driver for deferred
+ probe
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Alexander Kurz" <akurz@blala.de>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261122170615.31710-3-akurz@blala.de>
 References: <20261122170615.31710-1-akurz@blala.de>
+ <20261122170615.31710-3-akurz@blala.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 22 Nov 2026 17:12:57 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -56,61 +60,31 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The probe order between mfd and leds has been changed with commit
-78efa53e715e ("leds: Init leds class earlier") so that mc13xxx-led
-driver was not registered any more due to the missing mfd instance.
-Use module_platform_driver() to replace module_platform_driver_probe().
-The former utilizes platform_driver_register(), which allows the driver
-to defer probing when it doesn't acquire the necessary resources from
-the mfd device due to probe order.
+Thank you for your contribution! Sashiko AI review found 1 potential
+issue to consider:
+- [Low] leds: mc13783: commit subject does not follow subsystem
+  convention
+--
 
-Fixes: 78efa53e715e ("leds: Init leds class earlier")
-Signed-off-by: Alexander Kurz <akurz@blala.de>
----
- drivers/leds/leds-mc13783.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+commit b8ac1cfe2fa4a0a99d769fe01464d2b424da4bcd
+Author: Alexander Kurz <akurz@blala.de>
 
-diff --git a/drivers/leds/leds-mc13783.c b/drivers/leds/leds-mc13783.c
-index 0882c7f6b649..538f5794410a 100644
---- a/drivers/leds/leds-mc13783.c
-+++ b/drivers/leds/leds-mc13783.c
-@@ -108,7 +108,7 @@ static int mc13xxx_led_set(struct led_classdev *led_cdev,
- 			value << shift);
- }
- 
--static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
-+static struct mc13xxx_leds_platform_data *mc13xxx_led_probe_dt(
- 	struct platform_device *pdev)
- {
- 	struct mc13xxx_leds *leds = platform_get_drvdata(pdev);
-@@ -162,7 +162,7 @@ static struct mc13xxx_leds_platform_data __init *mc13xxx_led_probe_dt(
- 	return pdata;
- }
- 
--static int __init mc13xxx_led_probe(struct platform_device *pdev)
-+static int mc13xxx_led_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(dev);
-@@ -288,13 +288,14 @@ static const struct platform_device_id mc13xxx_led_id_table[] = {
- MODULE_DEVICE_TABLE(platform, mc13xxx_led_id_table);
- 
- static struct platform_driver mc13xxx_led_driver = {
-+	.probe = mc13xxx_led_probe,
- 	.driver	= {
- 		.name	= "mc13xxx-led",
- 	},
- 	.remove		= mc13xxx_led_remove,
- 	.id_table	= mc13xxx_led_id_table,
- };
--module_platform_driver_probe(mc13xxx_led_driver, mc13xxx_led_probe);
-+module_platform_driver(mc13xxx_led_driver);
- 
- MODULE_DESCRIPTION("LEDs driver for Freescale MC13XXX PMIC");
- MODULE_AUTHOR("Philippe Retornaz <philippe.retornaz@epfl.ch>");
--- 
-2.39.5
+leds: leds-mc13783: enable driver for deferred probe
 
+This commit replaces module_platform_driver_probe() with
+module_platform_driver() and drops the __init annotations on
+mc13xxx_led_probe() and mc13xxx_led_probe_dt() so the mc13xxx-led driver
+can defer probing until the parent MFD device is registered.
+
+> leds: leds-mc13783: enable driver for deferred probe
+
+[Severity: Low]
+This isn't a bug, but LEDs subsystem commit subjects follow the form
+"leds: <driver>: <Capitalized description>", so this should drop the
+redundant "leds-" prefix and capitalize "Enable" (for example,
+"leds: mc13783: Enable driver for deferred probe").
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261122170615.3171=
+0-1-akurz@blala.de?part=3D2
