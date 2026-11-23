@@ -1,54 +1,62 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795438475;
-	b=oim4zbw5YT9czOr7g/zNZsnn64ARWzeQmjgi3BLoUF2ZFj1gvgy4Eh3Zw7Pefm/u8Avz
-	 1Qfcvq5G5ZINwvXY1lEw8TJHNWrQ5CyCfD2cUXTCAM7XTniEB4ecyiB/lgsiBAzKE0Jdk
-	 MjVOw37MpNylWb2SVzf1Hj1NUbueefju5LmTzFbM+7+3BLpuSn7vi88Sm+nyJgbrYP1rS
-	 LgKULGQyp30rM6COHdXgcu9pfciHlpXwXKaq4AgddNrLtT5UCVTphFX1/BA47syPqiC7g
-	 BrmOq+Ccu4WZxch7FErhs1O9LjNnt6abITES83ERRqGh76LFTGHUrVLcFrjq8+deegg==
+	t=1795439983;
+	b=P0clN17SAzZwB/WawE3qW5NU8xXFLWayfyqvVDEQHBHyGYvZYYlU6E/vvhqCdT6cHbC0
+	 01zh5Mmjw3E/Dm7D/Utm1SNVln4Iv/tTco6FBCzqrufhP5062njNclNh5QmK07O+VbaKj
+	 Rk+YlOzu4xGiLl9/UJvO7NsbuKD3OuahPBtcAw24XRy3YZiZ7E0dRqHPTaDns3Fjtcubx
+	 e7LYyz25tBcf8e9V6957NxBiOVkJv3tVI0k4dH9mWU9r+QamxbEnglg/Qcgw4nWA8EyyR
+	 zhrXdG2e7MPAZdXB2rOKMNqVYNh2oEAk5OnBHMZ6CyQ84Dxi2mxWkGN+0YhtgFZ0k5A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795438475;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=kWxY/9Gy9tdFT6OWvCFyl6yJaFdu+XKvTwj6mE7HBww=;
-	b=okBWgQm8LWh1PbjoHDTKRrnNvi3CiVutdovrr5+jmQIDn1SW36JZCx8NsUF91eA+7A9K
-	 y83E44d6tvekE31JS0/fhfs+w57uUludQTnCZSUaHyMVO/u9uTKo5dhit18vWS9yGqEqL
-	 w8pP0y8XBFSFH8Mnr+frFDdB+B8Oj7D4FVV6EECI55ravGnQLfAMtIqvsODECaFoMId4p
-	 bX2naiEsBXV7Tw0Wc4MjUV2y4q1vT2y5dtf0H3J5Moi1ay6WVEn0KK0TOHzePW4j2MEHr
-	 XRAqrSajJaJutNn4K/aXpu9ymOMeOtOvwjkVFf6Z/xdwKrCHV6sCaGTHMZoWPVWZzvQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795439983;
+	h=Received:DKIM-Signature:Subject:From:To:Cc:Date:Message-ID:
+	 In-Reply-To:References:X-sashiko-severity:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	bh=iYol7kGJlUO6lLn9bESn6OVQpRDCyh7pQI9vssz5C9A=;
+	b=Cd7Qrr6Hq80VoCZLEUEuiyhCBiXrcxXiMQ8wOwBoF7ybL6H6VNnczYdwHBww0ZdqF3uE
+	 b8Wh22lCJGtQyAcDGhwlL/y9FR2tqeG6TgkBs7VqrnOJR+ZyRJyM0KcgIN01v4BZjCt9M
+	 UUAQ/IFPdcEW3X0ByHPpTgwSQqHE2vXw/UcjM6Z1v1/1F94mmz4+IK9+lc6jJSSxVr5Gf
+	 5MFhfN9qKv9Sqbs8+RfOsswty5+JPm+xNoziev+ARc0Sx3pNw129FO+CjnxStf51tpUHG
+	 T4OBmYrKEDopyt2a6xmRM8bwJQyByrPIcJxl2R3xD6UnQ+s/eiyUUapWK0htWo17YBg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=1sDsPVVb;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLaoyFtf;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CB9606A31E;
-	Mon, 23 Nov 2026 12:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55614606A31A;
+	Mon, 23 Nov 2026 13:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.a=rsa-sha256 header.s=korg header.b=1sDsPVVb
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A271F000EE;
-	Mon, 23 Nov 2026 12:54:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1795438474;
-	bh=kWxY/9Gy9tdFT6OWvCFyl6yJaFdu+XKvTwj6mE7HBww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=1sDsPVVboH7NmxwdRmVEd0TcjCN7LYzy7dgVzIQKmi0fNAA6/cvcuBErRKjoVt5we
-	 A65Qb6iL4GtJSVF6I2bGfR4RuLZpVHDBSkV0fPawuyNmDpv1NOgWYMQbdOF0fbHPdO
-	 3B58m3Bo7z0+h3k7VIpS6M7FIZjXLl2MKrGlFops=
-Date: Mon, 23 Nov 2026 13:54:55 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@kernel.org>,
-	Christer Weinigel <christer@weinigel.se>,
-	Jim Cromie <jim.cromie@gmail.com>, x86@kernel.org,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 0/3] Convert National Semiconductor GPIO drivers to
- gpiolib
-Message-ID: <2026112347-bamboo-chatty-b633@gregkh>
-References: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iLaoyFtf
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 084381F000C4;
+	Mon, 23 Nov 2026 13:19:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795439982;
+	bh=iYol7kGJlUO6lLn9bESn6OVQpRDCyh7pQI9vssz5C9A=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=iLaoyFtfoyh/456qrViWqYmHM3K8JVMSIU7ppDp6t/1LPf1Dt++eLcVWM+4L9HSna
+	 ApkEasYZJ9vx3wpAcYxzSuGPiDnI85omKzTtfXgG4zR40HTsNAca+eDNiW0VqNFWLV
+	 0sd86e4eorF4r5QeNZfkBzcMOTRet0cTvIi3CCkMEMFAqLtcWCUC8O10VsRMAFtzpH
+	 NcS0y5vrXw9m2Wy8WMvKNePeS9c+RHJr0RtVWiBBFQu+RB9mIYk81j+vPtO/kk2IAF
+	 A57wdSSYSopLD2W/Zol/gwKuBS9ll7QbmQBdYUu35S/Dcs/wRihv0y4RYnMnhiEDbU
+	 LTK6Gcp3RQiWw==
+Subject:
+ Re: [PATCH net-next v4 2/3] dt-bindings: net: dptel,dap8211r: add LED nodes
+From: netdev-bot+sashiko@kernel.org
+To: a.shimko.dev@gmail.com
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ maxime.chevallier@bootlin.com, pavel@ucw.cz, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Mon, 23 Nov 2026 13:19:41 +0000
+Message-ID: <179543998153.3135.2533998901272176773@kernel.org>
+In-Reply-To: <20261122131900.2951586-3-a.shimko.dev@gmail.com>
+References: <20261122131900.2951586-3-a.shimko.dev@gmail.com>
+X-sashiko-severity: Low
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -58,29 +66,107 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
 
-On Mon, Nov 23, 2026 at 01:29:52PM +0100, Linus Walleij wrote:
-> This is an obvious attack patch to see if anyone is really using
-> the custom API from these deviant drivers/char/* GPIO drivers
-> from the early 2000s.
-> 
-> Probe PC8736x through the ISA bus API and create the SCx200 GPIO device
-> from its PCI bridge. Register both controllers with gpiolib using port
-> I/O. Describe the net48xx and WRAP LED GPIOs with software nodes and
-> switch both LED drivers to descriptors.
-> 
-> Remove the private GPIO API and per-pin character devices. We assume
-> there are no remaining users of the old NSC GPIO userspace ABI.
-> 
-> An LLM assisted in the implementation and x86-32 build checks.
-> 
-> ---
-> Linus Walleij (3):
->       gpio: convert PC8736x to gpiolib
->       gpio: convert SCx200 to gpiolib and use descriptors for board LEDs
->       gpio: remove the legacy NSC GPIO API
+Thank you for your contribution! Sashiko AI review found more severe
+issue(s) in other patches of this series. This mail is only an FYI, in case
+you want to address the nit picks below when you respin.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Low priority / nit picks for your consideration:
+
+- [Low] The new `leds` block in
+  Documentation/devicetree/bindings/net/dptel,dap8211r.yaml mostly…
+
+--
+
+dt-bindings: net: dptel,dap8211r: add LED nodes
+
+This commit documents an optional leds node in the DAP8211R PHY binding.
+The PHY has three LED outputs, and each can be given a color, a function
+and a default trigger. The commit also adds an example with two LED nodes.
+
+> diff --git a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+> index 4cd0f9730d954..772329feda059 100644
+> --- a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+> +++ b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+
+[ ... ]
+
+> @@ -45,10 +46,40 @@ properties:
+>      maximum: 2250
+>      default: 1950
+>  
+> +  leds:
+> +    type: object
+> +
+> +    description:
+> +      Optional node describing the three configurable LEDs of the PHY.
+> +      Each LED can be assigned a color, function and default trigger
+> +      (e.g. "netdev" for link/activity indication).
+> +
+> +    properties:
+> +      '#address-cells':
+> +        const: 1
+> +      '#size-cells':
+> +        const: 0
+> +
+> +    patternProperties:
+> +      '^led@[0-2]$':
+> +        type: object
+> +
+> +        $ref: /schemas/leds/common.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          reg:
+> +            items:
+> +              maximum: 2
+> +
+> +    additionalProperties: false
+> +
+
+[Severity: Low]
+This isn't a bug, but does most of this block need to be here? The binding
+already gets a leds definition from allOf: - $ref: ethernet-phy.yaml#:
+
+Documentation/devicetree/bindings/net/ethernet-phy.yaml:
+  leds:
+    type: object
+
+    properties:
+      '#address-cells':
+        const: 1
+
+      '#size-cells':
+        const: 0
+
+    patternProperties:
+      '^led@[a-f0-9]+$':
+        $ref: /schemas/leds/common.yaml#
+        ...
+        required:
+          - reg
+
+        unevaluatedProperties: false
+
+    additionalProperties: false
+
+Most of the new block repeats ethernet-phy.yaml: the type: object keys, the
+cell constraints, the common.yaml $ref and unevaluatedProperties: false.
+
+Only two constraints are new. The '^led@[0-2]$' node name pattern, combined
+with the local additionalProperties: false, rejects led@3 and above. The
+reg items maximum of 2 limits the LED index.
+
+Could the block be cut down to just the constraints that limit the PHY to
+three LEDs?
+
+The commit message also says:
+
+  Document the optional "leds" node supported by the DAP8211R PHY.
+
+Before this patch, a leds node with LED children already passed validation
+for this PHY through ethernet-phy.yaml. Would it be clearer for the message
+to say that the change limits the LED nodes to indices 0-2?
+
+-- 
+Sashiko AI review · https://netdev-ai.bots.linux.dev/sashiko/#/patchset/20261122131900.2951586-1-a.shimko.dev%40gmail.com
