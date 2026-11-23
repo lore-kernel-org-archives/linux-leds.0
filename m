@@ -1,113 +1,113 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795415320;
-	b=O5ypd2hsp6XHrwqGxa5vfE/8b09zLRfsqNng7JT5Wtj70Ki7D7iew5/0cfS4vZN5TJWU
-	 M6p/OhAgDt3449hSyRDDxkXCB1UuLYD08Xy9yG1tdQSIWwI21QF5/P1Z0XA1X/Pj1WpBB
-	 tDDqcW1yABTag1HOOcOOk3fokS67SN54GtvqDBJet9VTJFip5fuU6fOWT7Jr7IODkPyhi
-	 /Q0qLVAZ/sfphURMbjfIsuog/nAXOwSPdjhXvbU/XeKGAiSHVJteB6kHXZoPttLTAfNkM
-	 JlIWk9ZfRNeC7hAV38WRgpkRNVGjoMg360NnQrFQtl5H4D2Zjc11IoKgTkdZfyFgBKg==
+	t=1795415322;
+	b=oT4ZwWjpMVsbQRYuwnuegEgB2PaCiD4MgB3iHVl+pk91Dmg1SxLNyIHXcaKcQXOUR+M8
+	 lBl+3m2kiv7OhtuiJmXCCTLR/AqxCuv3hnxusAkn1/pffU+CokkcZKeT2n0SdQARKa2uW
+	 Gg9KYgXBGUlf3Yuz3nX0T+zdGpq0jDc8u7UR5jj2B+LcpLgWNl028VXw3X0ut1bK5cJSm
+	 7/OcN8vfBnwNW1SrzarJ4kcLoFFEeMksW1SAkkoXrdklQ3DMgHnPsahwdV0HG7o0icMsd
+	 KJ9v5n63ZYJVuLRDQ7mGYVfkvQbYNp9ixNn8lYHu0hoTs6SRLsrz+WEyDJSnkHIhQtQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795415320;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795415322;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
 	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
-	 X-Proofpoint-GUID:X-Authority-Analysis:X-Proofpoint-Virus-Version:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=jwGxMG/C3v39eSC4moyR8ZIujjL6DmGjyvze/IZ2Re0=;
-	b=SELGSQlYSnwaQJIhgZwGjJlvAak0fDiJZ/l6SUSNfPQOoGIp/G94pToxPkVBdx9ALr6C
-	 blQO5bWj60yA4p97JetILS48YiPIhsHJpvo/wAioTkCQXjnnVqjDU6YjMtF4NUhHz11Sx
-	 N5sAA+fPBnAy5hDtcysfkWj7k2t5RCxa1BsFDJYxWn7MONSHjrUQGHY8Rr9TYd15RJnAv
-	 iLD3YVmQNx22YbTtoba0wJzs04JF+tA1uKgSWdY7h0p7OBr8XuWAY8GALkJi5PG9ZcMfs
-	 GpOgb9Ys1Zb9aVQCTcDy2j96sbPY85GWGQbk5Po8xQQQ9q+6NmKKJUu2EtAg57PLnhw==
+	bh=FV2kvxs1IFwwuAIX4a7ofc1Xp++52aPBEPq6MOE4ur4=;
+	b=mMhYvKzMeqsHmGxcFAY55IbinnX3wVqbCKA6erXPrP5D6xGvsdvcw51rBsBOgD9KuqQt
+	 1nTZJP/hB8g4Kvb351jFN7KFOOtY/nyug7gDESvlIECfWNqlLp7rgACX8nlMyalsLQ4wl
+	 pcujtAyafYrIgNUvoEPNvdwvE7l0T63zqht7nXUoz/wLWKgUVzYXfGOq1nHloepn7gVZ0
+	 W7EaaCHCU1+lCeS1/WUwxpcRow/bpexetgshP2Y0QNx82wO4eFDvhkE1NOEPHxltqFyaC
+	 YR83tM1D8LO0Ul4+05q2yVkQgDaFebz6TMjutyLgS4gldqg+n1CEG0bW8T3qQijvTLA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="b/4OeZ0X";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=kEXeHNRJ;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=UMJg+wre;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ilfybtdj;
 	arc=none smtp.remote-ip=205.220.168.131
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE0F606A697
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 06:28:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ECE0F606A697
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E105606A6B0
+	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 06:28:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E105606A6B0
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=b/4OeZ0X;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=kEXeHNRJ
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AN698UB2372570
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 06:28:38 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=UMJg+wre;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ilfybtdj
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AN6Dm4L1422326
+	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 06:28:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jwGxMG/C3v39eSC4moyR8ZIujjL6DmGjyvze/IZ2Re0=; b=b/4OeZ0XW3KLy02w
-	uA8qM6chu67pIK7vjgua79vOEt1UhyhkoYuZ8jW+5TpToHmJtaU/+R/oX7BnoMhL
-	x9eO5Dan9CQ2E0HvaYbxxFduxKjZTDAIarsBUZuwUIG5V9r3d7jCV2iXug861YgH
-	IOQ6vI0OK5oGtWx3UW7ZYSqqBm8rGoZTaSc3OYMkj37RypyJte3V00FodbKh/MIX
-	jYEDIuJaAOtgeLy2ebEzFeo7/QgdAken2HltzwC1rZg1xFeOW3Bp6l0wBHyfCV7t
-	nnBeLDH82vIYqXlRVA7r8/hFv0vbqr0gTvGhLxgFTA9YMHa+gbnCBj0vtMS7gH9H
-	OI6eUA==
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4fyd0251-1
+	FV2kvxs1IFwwuAIX4a7ofc1Xp++52aPBEPq6MOE4ur4=; b=UMJg+wrePNQB4HQ4
+	CdCBhvAGR1de5EDesyuJAadNtMsVccQJOT+ColTZY+Rx+pSwjJnl8aS+HKauA+85
+	39uy0BsKabIRnxod5eDJLtybcA9KukxNqvCcdCIqUMCvtEwLzqVKYqDsfYbCHoqn
+	4cE7lKCMqpWQFqyz7GtTonfioPwBuKiR68m8b1QDQ+lw3qckN+2rCRtcG4H5yzGs
+	U8+knegZlINqlde3jKlAK0sj6UO59owJgxvQUXmUht8FgIQqNxU3nJBzaClxpvhR
+	JO3uOccGBP8Y3jIVe0lbH+JaN+bFLMuMKzMwI4aASFCjN8JFLdYiezckQxCpbee0
+	QtHyVA==
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j4g1p81f7-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 06:28:37 +0000 (GMT)
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-45ecb9dd589so2362815fac.0
-        for <linux-leds@vger.kernel.org>; Sun, 22 Nov 2026 22:28:37 -0800 (PST)
+	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 06:28:41 +0000 (GMT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-4c467e19391so4480518b6e.3
+        for <linux-leds@vger.kernel.org>; Sun, 22 Nov 2026 22:28:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795415317; x=1796020117; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1795415320; x=1796020120; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=jwGxMG/C3v39eSC4moyR8ZIujjL6DmGjyvze/IZ2Re0=;
-        b=kEXeHNRJS/dtyFpexO4f/PLo6GGQx4Z4HJeOm9BZB94HkalLDCxI0btQEXLpz5BU7y
-         9E9bgPZTdZfuK3PnJlPxWudvAFsK/DHg65OOXABwqDcGYV7+rVJ0DdoeTE2DydXzt4NK
-         PDhYVkq+l34xcd6ozM2IhVMq/8jclT14wghnjbWplSo87FplGbDkI0LAL5mXRup6Vy7B
-         EFvWFwc+BN7Z+mN8+yqnv/Su2AsQ4xhPoxhjSs7ITozJnKvG5yE4NPCD7kJMNra59uD1
-         1JHsXaFFqceXxaZsl9VF2eeNDeSHH23eHJsK9++SnUrpShulxzTaJ1krCH4f6foVWVHJ
-         /UhQ==
+        bh=FV2kvxs1IFwwuAIX4a7ofc1Xp++52aPBEPq6MOE4ur4=;
+        b=ilfybtdjJjTH4p4WzZTQmWfirlFAZo6w0oPe1W2nMx6lKi6UKs8t6g1gnfjhRMmb6v
+         TBXwk6rGScH8fyn1wopWgAfaLdZzYA7icsb7g0g+hhlkGqoWeeuRfqpeKzJ6wgPG09to
+         UkoQoGvrVayl3IItYoypI9iCLTQVsyHqV8hhYrHYaYdMXcIYv1g1xDXEZVohNje6f/KT
+         /tqxpC18eUznAs5SGrwNETH42yCntmdsOAgjos3Nz6C0EuHzgevbQx3wf4S2dxtOZYyt
+         H91k9vBEhfEDbPyoKT7yM8Tp8T6O0KXdjL+C611/HFVTwgso9rzq6f7daFVBq9YSmuNw
+         UKFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795415317; x=1796020117;
+        d=1e100.net; s=20260707; t=1795415320; x=1796020120;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=jwGxMG/C3v39eSC4moyR8ZIujjL6DmGjyvze/IZ2Re0=;
-        b=csAVvxgDqvJv+5SN2cR9qrgccfweM95eI1wT9UCy5MQ9T7XDSL6Grrn1LrCaBjxEW/
-         0jYvWeu9EcnZ2HVAsTDVDmCw3NhrYb9kpOiHKCWBR9bNcj0c1v7crmE3QpR2MeM0OcWB
-         fabgUVWBBsnuoMy4Lt0YjEoD7DWnCZN+eartGq9KA7Pz04wO1FO6wllTEqAiMNW4AzNo
-         MMIY9xQsmcWCA/7saCNweXmcDRiRbXqMJWsXUOCnwXXu0lGZWMi0LOFzRm2CMte571HX
-         Gxe9tT/ipqOKjv4haK5KVYAFJWEinAgaDw6mWtcauZ3YY2+p1SlwyUDkD1db3nfCbgpH
-         Tvvw==
-X-Forwarded-Encrypted: i=1; AL+hErGiLHCwAGZ/9AHATtcQXHRNVwOmzNPkLVBXPRGgjll9JYrW+YC627cTLnRoryqpOSNDw24FmACNLfIk@vger.kernel.org
-X-Gm-Message-State: APuU4Z8gFVS6A60OfL3TCYmaqvQcWJl0mjKyT9Yjig0KeJgh/6FGGrGT
-	rktecusGMbXY5VPs6beEuqD3pu4jBBlgLM6pGqQ6YJpjkPIOJ2ImF0vPYGsBwEsG9ejUBQwO0o/
-	18MCyGrBDnBfF9Y1jPz8/4bxonnKRtvTcfJw2uBWMLO2ccgR43dvvTC6P/UK9hkQeE6j02YjP
-X-Gm-Gg: AZFdTZcvniEnjo0HyaHkVKXzRv527qMPXLz2mRJaS+E77hP4UpVRfManVhKaga0pBOK
-	a45oMeYLbSBle3Mnf403FrN5sI13o0CF/0ikzR9cet5lc4W7iFZ+fRWnNPPrBvu1rc+nfwp65+B
-	L35g2RJRbIppDSc5NzoHCPNsR89wJ6DURC1yzgL3nYeLp7PY5imxTx5CQiymfLod8r8TlIQOH+C
-	TPSNYzsEnXGwNfN8NBqtrxGuZO30FPFboMZ7nVV4j4Fcq9SGih9H1hoHEbXEw0VLDB9xl9qrzuH
-	E6vXMQ52xCYrmgYcy+r9XHn+eA3TYkVPu9ml6d4XC3vquxtC74VnZafwrtjcnL5QSjkjJOaAb+0
-	qRSpIdiBCvti1+wv8YYIt+XyeS2DfeeE3F7X8BfPL9jcbPniN12MdQn8Da/PtxQ1urt8G2Cuw6z
-	kh94keRSZHIDN7DvRlXFMk4RmHFQ==
-X-Received: by 2002:a05:6808:6410:b0:574:16ef:89c6 with SMTP id 5614622812f47-57a0ab2e12amr12078995b6e.35.1795415316806;
-        Sun, 22 Nov 2026 22:28:36 -0800 (PST)
-X-Received: by 2002:a05:6808:6410:b0:574:16ef:89c6 with SMTP id 5614622812f47-57a0ab2e12amr12078973b6e.35.1795415316278;
-        Sun, 22 Nov 2026 22:28:36 -0800 (PST)
+        bh=FV2kvxs1IFwwuAIX4a7ofc1Xp++52aPBEPq6MOE4ur4=;
+        b=sjWb4L9DeHdYwuRNnQmqYVJpMPgkuSkdfQsUSrPdH6eocHhIFcIhoL2vG3sr/uCldJ
+         3/iA1dzJaaWdtOolWvLilO+5dsglDq0QsJf/IxIlJ//4d7bwQD0490nIOVwXLsBzIGHE
+         C2y1bI8KOQCTx0kHgYOdcHGuzZCV7lapWaLcrVdeqb3fWhhkeU5pYaLsJIhDxh+wCm3Y
+         /DsPgwdDXjn9j5FnfW49XbpHE7hm8jLHJxwU7dWV9qK5CYyNCeNigr0/QwjhMYvBtqYP
+         ZZEmqIbaSZaYqKZ4cjpF8+jzooSHr+klLWby9ed9zQubA2JSSnSc2cbBqUDFHxFu1xDc
+         SswQ==
+X-Forwarded-Encrypted: i=1; AL+hErG4CEGTwW7gUhQicui3ukBHvKDfzed3yl4v2yrdpE77iIdp3TwtbvCqqO3K8YKtFcfRBX5PZ3iZOSqs@vger.kernel.org
+X-Gm-Message-State: APuU4Z9dm+ZHcz9Lu7fliSEhKpJ9aNAy/5nQJl4AYz7C1CNevv1OzQPZ
+	v5DzuFGgdSMosXL5IHil8Z9MF8cBZMolcoOOxuq/Jj62fGmx+HpQLGKWH6ZlJmTLD3142KDacTN
+	K6TtwTTy6b/Mds0KFK3lBiZAXbvEQAzbet7r9mrIqz20FO3Lt56p7lNvxTZBDETh9
+X-Gm-Gg: AZFdTZc2zrdql0TNgt1HNunfF0pD0PTbZZS3SNOR1GeH/ejAgw5OFqKnF/2S0y7KSVR
+	XcC70mWkihAvRH+MrAmKBOStaBQEqKD3DuEUVvZQXH83V8YhWSCOoPh+2ua6yioG4TK9ZEZbaGv
+	j7aLYfXFEKW1aUnO7k8yRMIzwZb5aWv2mKeZF50MDn8VvkW+gX60Zr/v2zagRD+EAH5s95At2UO
+	XWnzfcHeuFtOc15KI0jOf0zLmQ9CEH4ZM2vGzuxc+t/irHtcC/60/xJrnKjvuokLJakmtLu6Rt4
+	ZEsKUHPTOUdwGf37cbfYrAxv69GO5F0CjKnzmpPbi9NQUf+gCUxeZdkUgpyv31s8oCWe4Tui9ak
+	H3h7LYT/bPzLlIRP8YO+12HS9fmBjJTTyFB8RCT9wxtLS/kdSXseJmfRStqwP2SAIxI9lmIHEIA
+	/eRLUx5JikQ0k4+hWpoXGvQu4BBQ==
+X-Received: by 2002:a05:6808:198d:b0:577:2888:47a9 with SMTP id 5614622812f47-57a065045c3mr12137599b6e.7.1795415320319;
+        Sun, 22 Nov 2026 22:28:40 -0800 (PST)
+X-Received: by 2002:a05:6808:198d:b0:577:2888:47a9 with SMTP id 5614622812f47-57a065045c3mr12137576b6e.7.1795415319816;
+        Sun, 22 Nov 2026 22:28:39 -0800 (PST)
 Received: from hu-fenglinw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-57a362575fbsm8762533b6e.17.2026.11.22.22.28.34
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-57a362575fbsm8762533b6e.17.2026.11.22.22.28.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 22:28:35 -0800 (PST)
+        Sun, 22 Nov 2026 22:28:39 -0800 (PST)
 From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Date: Sun, 22 Nov 2026 22:28:08 -0800
-Subject: [PATCH v2 2/4] leds: rgb: leds-qcom-lpg: Fix LED color balancing
- in HW pattern mode
+Date: Sun, 22 Nov 2026 22:28:10 -0800
+Subject: [PATCH v2 4/4] leds: rgb: leds-qcom-lpg: Add PWM frequency mode
+ support
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -119,7 +119,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261122-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v2-2-2e885f60fbeb@oss.qualcomm.com>
+Message-Id: <20261122-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v2-4-2e885f60fbeb@oss.qualcomm.com>
 References: <20261122-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v2-0-2e885f60fbeb@oss.qualcomm.com>
 In-Reply-To: <20261122-led-qcom-leds-multiple-fixes-and-pwm-fm-support-v2-0-2e885f60fbeb@oss.qualcomm.com>
 To: linux-arm-msm@vger.kernel.org, Lee Jones <lee@kernel.org>,
@@ -140,596 +140,558 @@ Cc: David Collins <david.collins@oss.qualcomm.com>,
         linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-doc@vger.kernel.org, Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 X-Mailer: b4 0.16-dev-17187
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795415311; l=17695;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795415311; l=16928;
  i=fenglin.wu@oss.qualcomm.com; s=20260324; h=from:subject:message-id;
- bh=7+e5WqVc6H4RVeHqBvXwkGYJJj9toPAUjHlG7OR55Rg=;
- b=qeMP6Lapyn4VGY7fc6d+uekauwLkcVCQPwr7VMAUrxShF/4VBWaafBAOKkHwUvvsKEOUT71ob
- 48Q5innJXO5BF2UoJf4tKMGUXCv1jJuA3E9aqaWXGL0lDi2stqipUHP
+ bh=BIhHuQSThaJwecK9SHOzTn+hC8MMlKDwp57dhc/SqWU=;
+ b=IWB8PvVKNqRgueuh2sqVdOvKzfRqjxtorhlfQV6agzGyOE1dWMxjgp9x1/bWq6elU4iunmwAT
+ 4PQOzpu8s8GCUr99DgCWbtYsh6og8/SQCGWQoMzv9/4rqoiCMLXs/nx
 X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
  pk=hJdt3E7o54lql+miD2GaxwF74cDyhgNwMbmFOZ46bRU=
-X-Proofpoint-ORIG-GUID: rr9fftyrDDuESZxY47cxjZlHAklx2NJm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDAyNSBTYWx0ZWRfX2ttZygTd6w31
- pB/T6zn4Vqm5DbYrYzFDuk0GDCwIxLXIPH/68hDQqGgHL59MR+DiU7aJK1NmkZ1VzxWzLLyNyab
- UgAGPcbdAYzuttfTBPgMNHueq1UR0kM46bYUU2JtKhrw7/ik4qjU6Qpye5TMP5SpOeLZmViIt2Y
- hAkLdt3LdCOryUb8GRLKaDv61rwh0rZlejXEVWVZxZ1UCJ8+zoWSV6eYLci/4G9L+aUB9n4zkHf
- 9ToDUS8BU3q5ZPXKoxPjmnTzIfnvs3RThLwuzGAS5ShOpCO98E9IZteSEWyaOTlNZmJhDsMs38e
- AeNGnY6aG9dz9AaAX/dWP7nDl7CV6zIVZ18PbIest2GrFbibe5Qs2R9u8uUnZmIerGDtm3cBsPL
- wWrhwfZgVzUiQ+7MrhVoy5+RFoGJ6ZPDcI3GFK2oQRIcgSQzZlyBO0tDHVyMc9YWZ7gI6iGJIyF
- P7YfUL2aFfMXeVXHJgA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDAyNSBTYWx0ZWRfX6LV/3+t9XwmZ
- qI5y8Yxz4dxBL03AKXn99zFfGje26/3Yug8+wpKRYk3pXnHhTIxH3s2Kje+ILHnoX41vTLpwh9r
- dIIbrl9uuygVJOjI13Dcx9jg0OFvf9A=
-X-Proofpoint-GUID: rr9fftyrDDuESZxY47cxjZlHAklx2NJm
-X-Authority-Analysis: v=2.4 cv=Aol7T+9P c=1 sm=1 tr=0 ts=6b03dd15 cx=c_pps
- a=zPxD6eHSjdtQ/OcAcrOFGw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIzMDAyNSBTYWx0ZWRfXzJz88P+AMELb
+ TrlXBZ3CDdsilcg6m0SskSid4NtHb14RbK9VH0guCjpKUABlj9x87IRWGrd5Be4k+0bUh6JGWAL
+ y7R3dvN3Xy3ymmLNEy2slQ4fS7pZHrE43tFZFTobaVJ0EZjUNyhQqWiBnWFXvu7GtZMv3rt0hWj
+ tFOdd+EavnqxakUFgTQpgSQJySTbVwk2X6Aa1+23Irm977feADyGpr3JkTZ78jOHSpP4bCJLEUt
+ 7E/hKJxix89lQLMC1S48oFrhKMIGdHnwTEah5VZuqdnD/9nkObAN5t+c8zFnuMfxDX7RPrXjOCK
+ PpNJHB9woJvdg6zkn8tJi84x0aHbPwm9vMOGBmwwnHThsWkdX3MI4UBPQoaftqwp2YBsYpw1DxX
+ 80KC62Ltdf5MYaMoyXSu9lE+byphQveN7TvT09NvoSAQykalQ4MI0cyE/eCKKpqdKqUkUDLfJfR
+ Xfqm0jGntVVdyMlS5fw==
+X-Authority-Analysis: v=2.4 cv=AeIkjHXG c=1 sm=1 tr=0 ts=6b03dd19 cx=c_pps
+ a=yymyAM/LQ7lj/HqAiIiKTw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=ZLilY_8t9WCuVEyZRTcA:9 a=QEXdDO2ut3YA:10
- a=y8BKWJGFn5sdPF1Y92-H:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=EUspDBNiAAAA:8 a=NSaPA566YKEXnaOw_k0A:9 a=QEXdDO2ut3YA:10
+ a=efpaJB4zofY2dbm2aIRb:22
+X-Proofpoint-GUID: Ww_n6PQPppWeXrnhOSourHcUNm71cpJC
+X-Proofpoint-ORIG-GUID: Ww_n6PQPppWeXrnhOSourHcUNm71cpJC
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIzMDAyNSBTYWx0ZWRfXw94OQb+q6ht1
+ 422GoZcHDjNIsNBFCLUVhtf9SbzKvadWO4MsZYVM/+8HQNxDwGHiHFENpC6uT0uR67ICWSet+BJ
+ sPpHHZBrUioMT1RBH4z8QcFfmx31pp0=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
  definitions=2026-11-23_01,2026-11-22_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- spamscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611230025
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611230025
 
-The multicolor hardware-pattern path has two related issues.
+Certain PWM channels on a PMIC (e.g. PM8350C PWM4) support a Frequency
+Mode (FM) that can generate waveforms with more frequency points than
+the standard LPG PWM mode. The trade-off is that the duty cycle can
+only be fixed at 50%. Add the FM support and try to use it when the
+PWM channel is requested to set a duty cycle to exactly 50%.
 
-First, lpg_pattern_set() programs one unscaled LUT and assigns it to
-every LPG channel. RGB and multicolor LEDs therefore replay identical
-brightness values regardless of multi_intensity, making the output
-white-balanced rather than preserving the requested color.
+Instead of always selecting the frequency mode which might generate
+the PWM waveform with less timing accuracy, the Codex AI suggested
+and implemented an update that compares the PWM period and duty timing
+accuracy in standard PWM mode versus frequency mode, then selects
+the better option.
 
-Fix this by normalizing the requested pattern once, scaling its
-brightness values for each enabled sub-LED, and allocating and
-programming a separate LUT range for every active LPG channel. Stop the
-channels before replacing or releasing their LUTs, and roll back all
-per-channel allocations if an update fails.
+The change was tested on the Maili QRD device with pmh0101 by exercising
+the pwm4 channel with a fixed 50% duty cycle and a period range of 40us
+to 55us in 0.5us steps, and confirmed in the log that correct frequency
+mode configuration was selected.
 
-Second, a pattern is scaled only when it is installed. Updating
-brightness or multi_intensity while it is active leaves already-enabled
-channels with stale LUT values. A channel that was disabled when the
-pattern was installed has no LUT and falls back to static PWM when it is
-enabled later.
-
-Fix this by caching the normalized, unscaled pattern and repeat state.
-On each multicolor brightness callback, stop the running pattern,
-release its per-channel LUTs, rebuild them from the current sub-LED
-intensities, and restart the active channels. Clear the cached active
-state when the pattern is removed.
-
-The second issue was identified and fixed by OpenAI Codex when I used
-it to review the original change.
-
-Both of the fixes have been tested on a Maili QRD device and confirmed
-that the HW pattern of a multicolor LED could be scaled and refreshed
-correctly whenever hw_pattern, brightness, multi_intensity were updated.
-
-Fixes: 24e2d05d1b68 ("leds: Add driver for Qualcomm LPG")
-Fixes: 6ab1f766a80a ("leds: rgb: leds-qcom-lpg: Add support for PPG through single SDAM")
-Fixes: 5e9ff626861a ("leds: rgb: leds-qcom-lpg: Include support for PPG with dedicated LUT SDAM")
 Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 ---
- Documentation/leds/leds-qcom-lpg.rst |   9 +
- drivers/leds/rgb/leds-qcom-lpg.c     | 324 ++++++++++++++++++++++++++++-------
- 2 files changed, 275 insertions(+), 58 deletions(-)
+ drivers/leds/rgb/leds-qcom-lpg.c | 349 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 330 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/leds/leds-qcom-lpg.rst b/Documentation/leds/leds-qcom-lpg.rst
-index d6a76c38c581..e83d8dde7eab 100644
---- a/Documentation/leds/leds-qcom-lpg.rst
-+++ b/Documentation/leds/leds-qcom-lpg.rst
-@@ -39,6 +39,15 @@ described below). As the LPG hardware is not able to perform the linear
- transitions expected by the leds-trigger-pattern format, each entry in the
- pattern must be followed a zero-length entry of the same brightness.
- 
-+For multicolor LEDs, each pattern brightness value is scaled by the component
-+brightness calculated from the global ``brightness`` and ``multi_intensity``
-+values. A component whose calculated brightness is zero does not have a LUT
-+range allocated. Consequently, if ``hw_pattern`` is configured while global
-+brightness is zero, the pattern is cached but no LUT range is programmed until
-+a brightness or intensity update produces a nonzero component brightness.
-+Changing either value while a hardware pattern is active rebuilds the
-+per-component LUT ranges.
-+
- Simple pattern::
- 
-     "255 500 255 0 0 500 0 0"
 diff --git a/drivers/leds/rgb/leds-qcom-lpg.c b/drivers/leds/rgb/leds-qcom-lpg.c
-index 5d0d015d67e7..763d6379bd2e 100644
+index 5d8f82ed228a..0858001f5ae3 100644
 --- a/drivers/leds/rgb/leds-qcom-lpg.c
 +++ b/drivers/leds/rgb/leds-qcom-lpg.c
-@@ -151,11 +151,32 @@ struct lpg_channel {
+@@ -22,6 +22,8 @@
+ #define  LPG_SUBTYPE_PWM	0xb
+ #define  LPG_SUBTYPE_HI_RES_PWM	0xc
+ #define  LPG_SUBTYPE_LPG_LITE	0x11
++#define PWM_STATUS1_REG		0x08
++#define  PWM_FM_PRESENT		BIT(0)
+ #define LPG_PATTERN_CONFIG_REG	0x40
+ #define LPG_SIZE_CLK_REG	0x41
+ #define  PWM_CLK_SELECT_MASK	GENMASK(1, 0)
+@@ -43,6 +45,10 @@
+ #define PWM_SEC_ACCESS_REG	0xd0
+ #define PWM_DTEST_REG(x)	(0xe2 + (x) - 1)
+ 
++/* offset 0x50: PWM_FM_MODE_REG on LPG_SUBTYPE_PWM */
++#define PWM_FM_MODE_REG		0x50
++#define  PWM_FM_ENABLE		BIT(7)
++
+ #define SDAM_REG_PBS_SEQ_EN		0x42
+ #define SDAM_PBS_TRIG_SET		0xe5
+ #define SDAM_PBS_TRIG_CLR		0xe6
+@@ -111,6 +117,8 @@ struct lpg_data;
+  * @ramp_hi_pause_ms: pause (in milliseconds) after iterating over pattern
+  * @pattern_lo_idx: start index of associated pattern
+  * @pattern_hi_idx: last index of associated pattern
++ * @freq_mode_capable: hardware supports Frequency Mode
++ * @enable_freq_mode: set the period using Frequency Mode
+  * @has_lut: channel uses the associated LUT allocation
+  */
+ struct lpg_channel {
+@@ -148,6 +156,8 @@ struct lpg_channel {
+ 
+ 	unsigned int pattern_lo_idx;
+ 	unsigned int pattern_hi_idx;
++	bool freq_mode_capable;
++	bool enable_freq_mode;
  	bool has_lut;
  };
  
-+/**
-+ * struct lpg_pattern - The LPG pattern normalized from the LED pattern
-+ * @data:	The pattern data array
-+ * @len:	number of entries to write to the LUT
-+ * @delta_t:	common step duration in ms
-+ * @lo_pause:	low-pause duration in ms
-+ * @hi_pause:	high-pause duration in ms
-+ * @ping_pong:	true if the pattern support reverse
-+ */
-+struct lpg_pattern {
-+	struct led_pattern *data;
-+	unsigned int len;
-+	unsigned int delta_t;
-+	unsigned int lo_pause;
-+	unsigned int hi_pause;
-+	bool ping_pong;
-+};
-+
- /**
-  * struct lpg_led - logical LED object
-  * @lpg:		lpg context reference
-  * @cdev:		LED class device
-  * @mcdev:		Multicolor LED class device
-+ * @pattern:		unscaled active multicolor pattern; zero length when inactive
-+ * @scaled_pattern:	scratch buffer for per-channel LUT updates
-+ * @pattern_oneshot:	whether the cached pattern is played only once
-  * @channels:		list of channels associated with the LED
-  * @num_channels:	number of @channels
+@@ -249,11 +259,13 @@ struct lpg {
+  * @sdam_offset:	Channel offset in LPG SDAM
+  * @base:		base address for PWM channel registers
+  * @triled_mask:	bitmask for controlling this channel in TRILED
++ * @freq_mode_capable:	channel hardware supports Frequency Mode
   */
-@@ -164,6 +185,9 @@ struct lpg_led {
+ struct lpg_channel_data {
+ 	unsigned int sdam_offset;
+ 	unsigned int base;
+ 	u8 triled_mask;
++	bool freq_mode_capable;
+ };
  
- 	struct led_classdev cdev;
- 	struct led_classdev_mc mcdev;
-+	struct lpg_pattern pattern;
-+	struct led_pattern *scaled_pattern;
-+	bool pattern_oneshot;
+ /**
+@@ -450,6 +462,116 @@ static const unsigned int lpg_pre_divs[] = {1, 3, 5, 6};
+ static const unsigned int lpg_pwm_resolution[] = {6, 9};
+ static const unsigned int lpg_pwm_resolution_hi_res[] = {8, 9, 10, 11, 12, 13, 14, 15};
  
- 	unsigned int num_channels;
- 	struct lpg_channel *channels[] __counted_by(num_channels);
-@@ -179,6 +203,7 @@ struct lpg_led {
-  * @lut_base:	base address of the LUT block (optional)
-  * @lut_size:	number of entries in the LUT block
-  * @lut_bitmap:	allocation bitmap for LUT entries
-+ * @lut_bitmap_tmp: scratch bitmap for LUT allocation preflight
-  * @pbs_dev:	PBS device
-  * @lpg_chan_sdam:	LPG SDAM peripheral device
-  * @lut_sdam:	LUT SDAM peripheral device
-@@ -203,6 +228,7 @@ struct lpg {
- 	u32 lut_base;
- 	u32 lut_size;
- 	unsigned long *lut_bitmap;
-+	unsigned long *lut_bitmap_tmp;
- 
- 	struct pbs_dev *pbs_dev;
- 	struct nvmem_device *lpg_chan_sdam;
-@@ -876,18 +902,25 @@ static int lpg_brightness_single_set(struct led_classdev *cdev,
- 	return 0;
- }
- 
-+static int lpg_pattern_mc_update(struct lpg_led *led);
-+
- static int lpg_brightness_mc_set(struct led_classdev *cdev,
- 				 enum led_brightness value)
- {
- 	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
- 	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
-+	int ret = 0;
- 
--	mutex_lock(&led->lpg->lock);
-+	guard(mutex)(&led->lpg->lock);
- 
- 	led_mc_calc_color_components(mc, value);
--	lpg_brightness_set(led, cdev, mc->subled_info);
-+	if (led->pattern.len) {
-+		ret = lpg_pattern_mc_update(led);
-+		if (ret)
-+			return ret;
-+	}
- 
--	mutex_unlock(&led->lpg->lock);
-+	lpg_brightness_set(led, cdev, mc->subled_info);
- 
- 	return 0;
- }
-@@ -966,23 +999,16 @@ static int lpg_blink_mc_set(struct led_classdev *cdev,
- 	return ret;
- }
- 
--static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
--			   u32 len, int repeat)
-+static int lpg_prepare_pattern(struct lpg *lpg,
-+			       struct led_pattern *led_pattern, u32 len,
-+			       int repeat, struct lpg_pattern *prep)
- {
--	struct lpg_channel *chan;
--	struct lpg *lpg = led->lpg;
--	struct led_pattern *pattern;
- 	unsigned int brightness_a;
- 	unsigned int brightness_b;
--	unsigned int hi_pause = 0;
--	unsigned int lo_pause = 0;
- 	unsigned int actual_len;
- 	unsigned int delta_t;
--	unsigned int lo_idx;
--	unsigned int hi_idx;
- 	unsigned int i;
- 	bool ping_pong = true;
--	int ret = -EINVAL;
- 
- 	/* Hardware only support oneshot or indefinite loops */
- 	if (repeat != -1 && repeat != 1)
-@@ -1002,15 +1028,16 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
- 	if (len % 2)
- 		return -EINVAL;
- 
--	pattern = kzalloc_objs(*pattern, len / 2);
-+	struct led_pattern *pattern __free(kfree) = kzalloc_objs(*pattern, len / 2);
-+
- 	if (!pattern)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < len; i += 2) {
- 		if (led_pattern[i].brightness != led_pattern[i + 1].brightness)
--			goto out_free_pattern;
-+			return -EINVAL;
- 		if (led_pattern[i + 1].delta_t != 0)
--			goto out_free_pattern;
-+			return -EINVAL;
- 
- 		pattern[i / 2].brightness = led_pattern[i].brightness;
- 		pattern[i / 2].delta_t = led_pattern[i].delta_t;
-@@ -1023,7 +1050,7 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
- 	 * through the entire LUT, so prohibit this.
- 	 */
- 	if (len < 2)
--		goto out_free_pattern;
-+		return -EINVAL;
- 
- 	/*
- 	 * The LPG plays patterns with at a fixed pace, a "low pause" can be
-@@ -1080,13 +1107,13 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
- 			 * specify hi pause. Reject other variations.
- 			 */
- 			if (i != actual_len - 1)
--				goto out_free_pattern;
-+				return -EINVAL;
- 		}
- 	}
- 
- 	/* LPG_RAMP_DURATION_REG is a 9bit */
- 	if (delta_t >= BIT(9))
--		goto out_free_pattern;
-+		return -EINVAL;
- 
- 	/*
- 	 * Find "low pause" and "high pause" in the pattern in the LUT case.
-@@ -1094,44 +1121,65 @@ static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
- 	 * duration of all steps.
- 	 */
- 	if (lpg->lut_base || lpg->lut_sdam) {
--		lo_pause = pattern[0].delta_t;
--		hi_pause = pattern[actual_len - 1].delta_t;
-+		prep->lo_pause = pattern[0].delta_t;
-+		prep->hi_pause = pattern[actual_len - 1].delta_t;
- 	} else {
- 		if (delta_t != pattern[0].delta_t || delta_t != pattern[actual_len - 1].delta_t)
--			goto out_free_pattern;
-+			return -EINVAL;
-+		prep->lo_pause = 0;
-+		prep->hi_pause = 0;
- 	}
- 
-+	prep->data = no_free_ptr(pattern);
-+	prep->len = actual_len;
-+	prep->delta_t = delta_t;
-+	prep->ping_pong = ping_pong;
- 
--	mutex_lock(&lpg->lock);
-+	return 0;
-+}
-+
-+static int lpg_pattern_set(struct lpg_led *led, struct led_pattern *led_pattern,
-+			   u32 len, int repeat)
++/*
++ * Compare exact physical durations without rounding to whole nanoseconds.
++ * Return positive if the candidate is longer, negative if the best is longer,
++ * and zero if both durations are equal.
++ */
++static int lpg_pwm_compare_candidate_duration(u64 candidate_duration_numerator,
++					      unsigned int candidate_clk_rate,
++					      u64 best_duration_numerator,
++					      unsigned int best_clk_rate)
 +{
-+	struct lpg_channel *chan;
-+	struct lpg *lpg = led->lpg;
-+	struct lpg_pattern pattern;
-+	unsigned int lo_idx;
-+	unsigned int hi_idx;
-+	unsigned int i;
-+	int ret;
++	u32 candidate_remainder;
++	u32 best_remainder;
++	u64 candidate_whole_ns;
++	u64 best_whole_ns;
++	u64 candidate_fraction;
++	u64 best_fraction;
 +
-+	ret = lpg_prepare_pattern(lpg, led_pattern, len, repeat, &pattern);
-+	if (ret < 0)
-+		return ret;
++	candidate_whole_ns = div_u64_rem(candidate_duration_numerator,
++					 candidate_clk_rate,
++					 &candidate_remainder);
++	best_whole_ns = div_u64_rem(best_duration_numerator, best_clk_rate,
++				    &best_remainder);
++	candidate_fraction = (u64)candidate_remainder * best_clk_rate;
++	best_fraction = (u64)best_remainder * candidate_clk_rate;
 +
-+	struct led_pattern *prep_data __free(kfree) = pattern.data;
++	if (candidate_whole_ns != best_whole_ns)
++		return candidate_whole_ns > best_whole_ns ? 1 : -1;
 +
-+	guard(mutex)(&lpg->lock);
- 
- 	if (lpg->lut_base)
--		ret = lpg_lut_store(lpg, pattern, actual_len, &lo_idx, &hi_idx);
-+		ret = lpg_lut_store(lpg, prep_data, pattern.len, &lo_idx, &hi_idx);
- 	else
--		ret = lpg_lut_store_sdam(lpg, pattern, actual_len, &lo_idx, &hi_idx);
-+		ret = lpg_lut_store_sdam(lpg, prep_data, pattern.len, &lo_idx, &hi_idx);
- 
- 	if (ret < 0)
--		goto out_unlock;
-+		return ret;
- 
- 	for (i = 0; i < led->num_channels; i++) {
- 		chan = led->channels[i];
- 
--		chan->ramp_tick_ms = delta_t;
--		chan->ramp_ping_pong = ping_pong;
-+		chan->ramp_tick_ms = pattern.delta_t;
-+		chan->ramp_ping_pong = pattern.ping_pong;
- 		chan->ramp_oneshot = repeat != -1;
- 
--		chan->ramp_lo_pause_ms = lo_pause;
--		chan->ramp_hi_pause_ms = hi_pause;
-+		chan->ramp_lo_pause_ms = pattern.lo_pause;
-+		chan->ramp_hi_pause_ms = pattern.hi_pause;
- 
- 		chan->pattern_lo_idx = lo_idx;
- 		chan->pattern_hi_idx = hi_idx;
- 		chan->has_lut = true;
- 	}
- 
--out_unlock:
--	mutex_unlock(&lpg->lock);
--out_free_pattern:
--	kfree(pattern);
--
- 	return ret;
- }
- 
-@@ -1151,50 +1199,196 @@ static int lpg_pattern_single_set(struct led_classdev *cdev,
- 	return 0;
- }
- 
--static int lpg_pattern_mc_set(struct led_classdev *cdev,
--			      struct led_pattern *pattern, u32 len,
--			      int repeat)
-+/* Caller must hold lpg->lock. Stop all readers before releasing their LUTs. */
-+static int lpg_pattern_stop(struct lpg_led *led)
- {
--	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
--	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
-+	struct lpg *lpg = led->lpg;
-+	struct lpg_channel *chan;
- 	unsigned int triled_mask = 0;
--	int ret, i;
-+	unsigned int i;
-+	int ret;
- 
- 	for (i = 0; i < led->num_channels; i++)
- 		triled_mask |= led->channels[i]->triled_mask;
--	triled_set(led->lpg, triled_mask, 0);
--
--	ret = lpg_pattern_set(led, pattern, len, repeat);
--	if (ret < 0)
-+	ret = triled_set(lpg, triled_mask, 0);
-+	if (ret)
- 		return ret;
- 
--	led_mc_calc_color_components(mc, LED_FULL);
--	lpg_brightness_set(led, cdev, mc->subled_info);
-+	for (i = 0; i < led->num_channels; i++) {
-+		chan = led->channels[i];
-+		ret = lpg_sdam_configure_triggers(chan, 0);
-+		if (ret < 0)
-+			return ret;
-+		ret = regmap_update_bits(lpg->map, chan->base + PWM_ENABLE_CONTROL_REG,
-+					 LPG_ENABLE_CONTROL_OUTPUT |
-+					 LPG_ENABLE_CONTROL_RAMP_GEN, 0);
-+		if (ret)
-+			return ret;
-+		ret = lpg_clear_pbs_trigger(lpg, chan->lut_mask);
-+		if (ret)
-+			return ret;
-+
-+		chan->enabled = false;
-+		chan->ramp_enabled = false;
-+	}
- 
- 	return 0;
- }
- 
--static int lpg_pattern_clear(struct lpg_led *led)
-+/* Caller must hold lpg->lock. */
-+static int lpg_pattern_mc_preflight(struct lpg_led *led)
- {
-+	struct led_classdev_mc *mc = &led->mcdev;
-+	struct lpg_pattern *pattern = &led->pattern;
-+	struct lpg *lpg = led->lpg;
- 	struct lpg_channel *chan;
-+	unsigned int idx;
-+	unsigned int i;
-+	int len;
-+
-+	bitmap_copy(lpg->lut_bitmap_tmp, lpg->lut_bitmap, lpg->lut_size);
-+
-+	for (i = 0; i < led->num_channels; i++) {
-+		chan = led->channels[i];
-+		if (!chan->has_lut)
-+			continue;
-+
-+		len = chan->pattern_hi_idx - chan->pattern_lo_idx + 1;
-+		bitmap_clear(lpg->lut_bitmap_tmp, chan->pattern_lo_idx, len);
-+	}
-+
-+	for (i = 0; i < led->num_channels; i++) {
-+		if (!mc->subled_info[i].brightness)
-+			continue;
-+
-+		idx = bitmap_find_next_zero_area(lpg->lut_bitmap_tmp, lpg->lut_size,
-+						 0, pattern->len, 0);
-+		if (idx >= lpg->lut_size)
-+			return lpg->lut_base ? -ENOMEM : -ENOSPC;
-+
-+		bitmap_set(lpg->lut_bitmap_tmp, idx, pattern->len);
-+	}
++	if (candidate_fraction != best_fraction)
++		return candidate_fraction > best_fraction ? 1 : -1;
 +
 +	return 0;
 +}
 +
-+/* Caller must hold lpg->lock. */
-+static int lpg_pattern_mc_update(struct lpg_led *led)
++/*
++ * Period calculation for PWM working in Frequency mode:
++ *
++ *          (pwm_value + 1) * 2^(exponent + 1) * NSEC_PER_SEC
++ * period = --------------------------------------------------
++ *                            clock_rate
++ *
++ * The duty cycle is fixed at half of the period.
++ */
++#define PWM_FM_PERIOD_NUMERATOR(exponent, pwm_value) \
++	(((u64)((pwm_value) + 1) << ((exponent) + 1)) * NSEC_PER_SEC)
++
++static int lpg_calc_freq_in_freq_mode(struct lpg_channel *chan, u64 period_ns, u64 duty_ns)
 +{
-+	struct led_classdev_mc *mc = &led->mcdev;
-+	struct led_classdev *cdev = &mc->led_cdev;
-+	struct lpg_pattern *pattern = &led->pattern;
-+	struct led_pattern *scaled = led->scaled_pattern;
- 	struct lpg *lpg = led->lpg;
--	int i;
-+	struct lpg_channel *chan;
-+	unsigned int lo_idx, hi_idx;
-+	unsigned int i, j;
++	unsigned int best_clk_sel = 0;
++	unsigned int best_pwm_exp = 0;
++	unsigned int best_pwm_value = 0;
++	u64 best_period_numerator = 0;
++	u64 max_period_ns;
++
++	max_period_ns = div_u64(PWM_FM_PERIOD_NUMERATOR(LPG_MAX_M, U8_MAX),
++				lpg_clk_rates[1]);
++	period_ns = min(period_ns, max_period_ns);
++	duty_ns = min(duty_ns, max_period_ns / 2);
++
++	for (unsigned int clk_sel = 1;
++	     clk_sel < ARRAY_SIZE(lpg_clk_rates); clk_sel++) {
++		for (unsigned int pwm_exp = 0; pwm_exp <= LPG_MAX_M; pwm_exp++) {
++			u64 duty_counter_length;
++			u64 counter_length;
++			u64 period_numerator;
++
++			counter_length = div64_u64(period_ns * lpg_clk_rates[clk_sel],
++						   (u64)NSEC_PER_SEC << (pwm_exp + 1));
++			duty_counter_length = div64_u64(duty_ns * lpg_clk_rates[clk_sel],
++							(u64)NSEC_PER_SEC << pwm_exp);
++			/* The counter must satisfy both period and fixed 50% duty bounds. */
++			counter_length = min(counter_length, duty_counter_length);
++			counter_length = min(counter_length, (u64)U8_MAX + 1);
++			if (!counter_length)
++				continue;
++
++			period_numerator =
++				PWM_FM_PERIOD_NUMERATOR(pwm_exp, counter_length - 1);
++			/*
++			 * All candidates are within the requested bounds, so the
++			 * longest period has the smallest timing error.
++			 */
++			if (!best_clk_sel ||
++			    lpg_pwm_compare_candidate_duration(period_numerator,
++							       lpg_clk_rates[clk_sel],
++							       best_period_numerator,
++							       lpg_clk_rates[best_clk_sel]) > 0) {
++				best_clk_sel = clk_sel;
++				best_pwm_exp = pwm_exp;
++				best_pwm_value = counter_length - 1;
++				best_period_numerator = period_numerator;
++			}
++		}
++	}
++
++	if (!best_clk_sel)
++		return -EINVAL;
++
++	chan->clk_sel = best_clk_sel;
++	chan->pre_div_exp = best_pwm_exp;
++	chan->pwm_value = best_pwm_value;
++	/* Frequency mode does not use PRE-DIV and PWM resolution settings. */
++	chan->pre_div_sel = 0;
++	chan->pwm_resolution_sel = 0;
++	chan->period = DIV_ROUND_UP_ULL(best_period_numerator,
++					lpg_clk_rates[best_clk_sel]);
++
++	return 0;
++}
++
+ static int lpg_calc_freq(struct lpg_channel *chan, uint64_t period)
+ {
+ 	unsigned int i, pwm_resolution_count, best_pwm_resolution_sel = 0;
+@@ -577,6 +699,112 @@ static void lpg_calc_duty(struct lpg_channel *chan, uint64_t duty)
+ 	chan->pwm_value = min(val, max);
+ }
+ 
++static u64 lpg_pwm_duration_numerator(const struct lpg_channel *chan, bool duty_cycle)
++{
++	unsigned int resolution;
++	unsigned int pwm_value;
++
++	if (chan->enable_freq_mode) {
++		u64 period_numerator;
++
++		period_numerator = PWM_FM_PERIOD_NUMERATOR(chan->pre_div_exp, chan->pwm_value);
++		return duty_cycle ? period_numerator / 2 : period_numerator;
++	}
++
++	if (chan->subtype == LPG_SUBTYPE_HI_RES_PWM)
++		resolution = lpg_pwm_resolution_hi_res[chan->pwm_resolution_sel];
++	else
++		resolution = lpg_pwm_resolution[chan->pwm_resolution_sel];
++
++	pwm_value = duty_cycle ? chan->pwm_value : BIT(resolution) - 1;
++	return (u64)NSEC_PER_SEC * pwm_value * lpg_pre_divs[chan->pre_div_sel] *
++		BIT(chan->pre_div_exp);
++}
++
++static bool lpg_pwm_config_has_smaller_timing_error(const struct lpg_channel *candidate,
++						    const struct lpg_channel *best)
++{
++	const unsigned int *clk_rates;
++	unsigned int candidate_clk_rate;
++	unsigned int best_clk_rate;
++	u64 candidate_duration_numerator;
++	u64 best_duration_numerator;
++	int period_comparison;
++	int duty_comparison;
++
++	clk_rates = candidate->subtype == LPG_SUBTYPE_HI_RES_PWM ?
++		lpg_clk_rates_hi_res : lpg_clk_rates;
++	candidate_clk_rate = clk_rates[candidate->clk_sel];
++	best_clk_rate = clk_rates[best->clk_sel];
++
++	/*
++	 * Both configurations are within the requested bounds, so the longer
++	 * period has the smaller error. Use duty only to break a period tie.
++	 */
++	candidate_duration_numerator =
++		lpg_pwm_duration_numerator(candidate, false);
++	best_duration_numerator =
++		lpg_pwm_duration_numerator(best, false);
++	period_comparison =
++		lpg_pwm_compare_candidate_duration(candidate_duration_numerator,
++						   candidate_clk_rate,
++						   best_duration_numerator,
++						   best_clk_rate);
++	if (period_comparison)
++		return period_comparison > 0;
++
++	candidate_duration_numerator =
++		lpg_pwm_duration_numerator(candidate, true);
++	best_duration_numerator =
++		lpg_pwm_duration_numerator(best, true);
++
++	duty_comparison =
++		lpg_pwm_compare_candidate_duration(candidate_duration_numerator,
++						   candidate_clk_rate,
++						   best_duration_numerator,
++						   best_clk_rate);
++
++	return duty_comparison > 0;
++}
++
++static int lpg_calc_pwm_state(struct lpg_channel *chan,
++			      const struct pwm_state *state)
++{
++	struct lpg_channel standard = *chan;
++	struct lpg_channel frequency = *chan;
++	u64 half_period_ns = state->period / 2;
 +	int ret;
- 
--	mutex_lock(&lpg->lock);
-+	ret = lpg_pattern_mc_preflight(led);
-+	if (ret)
-+		return ret;
- 
--	chan = led->channels[0];
--	lpg_lut_free(chan);
-+	ret = lpg_pattern_stop(led);
-+	if (ret)
-+		return ret;
 +
-+	for (i = 0; i < led->num_channels; i++)
-+		lpg_lut_free(led->channels[i]);
- 
- 	for (i = 0; i < led->num_channels; i++) {
- 		chan = led->channels[i];
--		lpg_sdam_configure_triggers(chan, 0);
--		lpg_clear_pbs_trigger(chan->lpg, chan->lut_mask);
--		chan->pattern_lo_idx = 0;
--		chan->pattern_hi_idx = 0;
--		chan->has_lut = false;
++	standard.enable_freq_mode = false;
++	ret = lpg_calc_freq(&standard, state->period);
++	if (!ret)
++		lpg_calc_duty(&standard, state->duty_cycle);
 +
-+		/* Ignore pattern config for 0 brightness channel */
-+		if (!mc->subled_info[i].brightness)
-+			continue;
-+
-+		/* Rebuild the pattern based on component brightness. */
-+		for (j = 0; j < pattern->len; j++) {
-+			scaled[j].brightness =
-+				DIV_ROUND_CLOSEST((u32)pattern->data[j].brightness *
-+						  mc->subled_info[i].brightness,
-+						  cdev->max_brightness);
-+			scaled[j].delta_t = pattern->data[j].delta_t;
++	if (chan->freq_mode_capable &&
++	    (state->duty_cycle == half_period_ns ||
++	     state->duty_cycle == half_period_ns + (state->period & 1)) &&
++	    !lpg_calc_freq_in_freq_mode(&frequency, state->period,
++					 state->duty_cycle)) {
++		frequency.enable_freq_mode = true;
++		if (ret) {
++			*chan = frequency;
++			return 0;
 +		}
 +
-+		if (lpg->lut_base)
-+			ret = lpg_lut_store(lpg, scaled, pattern->len, &lo_idx, &hi_idx);
++		if (lpg_pwm_config_has_smaller_timing_error(&standard, &frequency))
++			*chan = standard;
 +		else
-+			ret = lpg_lut_store_sdam(lpg, scaled, pattern->len, &lo_idx, &hi_idx);
-+		if (ret < 0)
-+			goto out_free;
++			*chan = frequency;
 +
-+		chan->ramp_tick_ms = pattern->delta_t;
-+		chan->ramp_ping_pong = pattern->ping_pong;
-+		chan->ramp_oneshot = led->pattern_oneshot;
-+		chan->ramp_lo_pause_ms = pattern->lo_pause;
-+		chan->ramp_hi_pause_ms = pattern->hi_pause;
-+		chan->pattern_lo_idx = lo_idx;
-+		chan->pattern_hi_idx = hi_idx;
-+		chan->has_lut = true;
- 	}
- 
--	mutex_unlock(&lpg->lock);
-+	return 0;
++		return 0;
++	}
 +
-+out_free:
-+	for (i = 0; i < led->num_channels; i++)
-+		lpg_lut_free(led->channels[i]);
++	if (!ret)
++		*chan = standard;
++
 +	return ret;
 +}
 +
-+static int lpg_pattern_mc_set(struct led_classdev *cdev,
-+			      struct led_pattern *led_pattern, u32 len,
-+			      int repeat)
-+{
-+	struct led_classdev_mc *mc = lcdev_to_mccdev(cdev);
-+	struct lpg_led *led = container_of(mc, struct lpg_led, mcdev);
-+	struct lpg *lpg = led->lpg;
-+	struct lpg_pattern pattern;
-+	int ret;
+ static void lpg_apply_freq(struct lpg_channel *chan)
+ {
+ 	unsigned long val;
+@@ -817,11 +1045,50 @@ static void lpg_apply_dtest(struct lpg_channel *chan)
+ 		     chan->dtest_value);
+ }
+ 
+-static void lpg_apply(struct lpg_channel *chan)
++static int lpg_apply_freq_mode(struct lpg_channel *chan)
+ {
++	struct lpg *lpg = chan->lpg;
++	bool enable_freq_mode = false;
 +
-+	ret = lpg_prepare_pattern(lpg, led_pattern, len, repeat, &pattern);
-+	if (ret < 0)
-+		return ret;
++	if (!chan->freq_mode_capable || !chan->enabled)
++		return 0;
 +
-+	struct led_pattern *prep_data __free(kfree) = pattern.data;
++	if (chan->enable_freq_mode && chan->enabled)
++		enable_freq_mode = true;
 +
-+	if (pattern.len > lpg->lut_size)
-+		return -EINVAL;
-+
-+	guard(mutex)(&lpg->lock);
-+
-+	memcpy(led->pattern.data, prep_data, pattern.len * sizeof(*prep_data));
-+	pattern.data = led->pattern.data;
-+	led->pattern = pattern;
-+	led->pattern_oneshot = repeat != -1;
-+
-+	ret = lpg_pattern_mc_update(led);
-+	if (ret) {
-+		led->pattern.len = 0;
-+		return ret;
-+	}
-+
-+	lpg_brightness_set(led, cdev, mc->subled_info);
-+
-+	return 0;
++	return regmap_update_bits(lpg->map, chan->base + PWM_FM_MODE_REG,
++				  PWM_FM_ENABLE,
++				  enable_freq_mode ? PWM_FM_ENABLE : 0);
 +}
 +
-+static int lpg_pattern_clear(struct lpg_led *led)
++static int __lpg_apply(struct lpg_channel *chan, bool check_freq_mode)
 +{
-+	struct lpg *lpg = led->lpg;
-+	unsigned int i;
++	bool enable_freq_mode = chan->enable_freq_mode && chan->enabled;
++	unsigned int val;
 +	int ret;
 +
-+	guard(mutex)(&lpg->lock);
+ 	lpg_disable_glitch(chan);
 +
-+	ret = lpg_pattern_stop(led);
++	if (check_freq_mode && chan->freq_mode_capable) {
++		ret = regmap_read(chan->lpg->map,
++				  chan->base + PWM_FM_MODE_REG, &val);
++		if (ret)
++			goto out_glitch;
++
++		if (!!(val & PWM_FM_ENABLE) != enable_freq_mode) {
++			ret = regmap_update_bits(chan->lpg->map,
++						 chan->base + PWM_ENABLE_CONTROL_REG,
++						 LPG_ENABLE_CONTROL_OUTPUT, 0);
++			if (ret)
++				goto out_glitch;
++		}
++	}
++
+ 	lpg_apply_freq(chan);
+ 	lpg_apply_pwm_value(chan);
++	ret = lpg_apply_freq_mode(chan);
++	if (ret && check_freq_mode)
++		goto out_glitch;
+ 	lpg_apply_control(chan);
+ 	lpg_apply_sync(chan);
+ 	if (chan->lpg->lpg_chan_sdam)
+@@ -829,6 +1096,17 @@ static void lpg_apply(struct lpg_channel *chan)
+ 	else
+ 		lpg_apply_lut_control(chan);
+ 	lpg_enable_glitch(chan);
++
++	return 0;
++
++out_glitch:
++	lpg_enable_glitch(chan);
++	return ret;
++}
++
++static void lpg_apply(struct lpg_channel *chan)
++{
++	__lpg_apply(chan, false);
+ }
+ 
+ static void lpg_brightness_set(struct lpg_led *led, struct led_classdev *cdev,
+@@ -1433,28 +1711,30 @@ static int lpg_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+ {
+ 	struct lpg *lpg = lpg_pwm_from_chip(chip);
+ 	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
++	struct lpg_channel config;
+ 	int ret = 0;
+ 
+ 	if (state->polarity != PWM_POLARITY_NORMAL)
+ 		return -EINVAL;
+ 
+-	mutex_lock(&lpg->lock);
++	guard(mutex)(&lpg->lock);
+ 
++	config = *chan;
++	config.enable_freq_mode = false;
+ 	if (state->enabled) {
+-		ret = lpg_calc_freq(chan, state->period);
+-		if (ret < 0)
+-			goto out_unlock;
+-
+-		lpg_calc_duty(chan, state->duty_cycle);
++		ret = lpg_calc_pwm_state(&config, state);
++		if (ret)
++			return ret;
+ 	}
+-	chan->enabled = state->enabled;
+ 
+-	lpg_apply(chan);
++	config.enabled = state->enabled;
++	ret = __lpg_apply(&config, true);
 +	if (ret)
 +		return ret;
+ 
+-out_unlock:
+-	mutex_unlock(&lpg->lock);
++	*chan = config;
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+@@ -1462,8 +1742,10 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ {
+ 	struct lpg *lpg = lpg_pwm_from_chip(chip);
+ 	struct lpg_channel *chan = &lpg->channels[pwm->hwpwm];
++	bool freq_mode_enabled = false;
+ 	unsigned int resolution;
+ 	unsigned int pre_div;
++	unsigned int clk_idx;
+ 	unsigned int refclk;
+ 	unsigned int val;
+ 	unsigned int m;
+@@ -1477,7 +1759,7 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		return ret;
+ 
+ 	if (chan->subtype == LPG_SUBTYPE_HI_RES_PWM) {
+-		unsigned int clk_idx = FIELD_GET(PWM_CLK_SELECT_HI_RES_MASK, val);
++		clk_idx = FIELD_GET(PWM_CLK_SELECT_HI_RES_MASK, val);
+ 
+ 		if (clk_idx >= ARRAY_SIZE(lpg_clk_rates_hi_res))
+ 			return -EINVAL;
+@@ -1485,7 +1767,8 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		refclk = lpg_clk_rates_hi_res[clk_idx];
+ 		resolution = lpg_pwm_resolution_hi_res[FIELD_GET(PWM_SIZE_HI_RES_MASK, val)];
+ 	} else {
+-		refclk = lpg_clk_rates[FIELD_GET(PWM_CLK_SELECT_MASK, val)];
++		clk_idx = FIELD_GET(PWM_CLK_SELECT_MASK, val);
++		refclk = lpg_clk_rates[clk_idx];
+ 		resolution = lpg_pwm_resolution[FIELD_GET(PWM_SIZE_SELECT_MASK, val)];
+ 	}
+ 
+@@ -1501,9 +1784,28 @@ static int lpg_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
+ 		if (ret)
+ 			return ret;
+ 
+-		state->period = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * ((1 << resolution) - 1) *
+-						 pre_div * (1 << m), refclk);
+-		state->duty_cycle = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC * pwm_value * pre_div * (1 << m), refclk);
++		if (chan->freq_mode_capable) {
++			ret = regmap_read(lpg->map, chan->base + PWM_FM_MODE_REG, &val);
++			if (ret)
++				return ret;
 +
-+	for (i = 0; i < led->num_channels; i++)
-+		lpg_lut_free(led->channels[i]);
-+	led->pattern.len = 0;
++			freq_mode_enabled = !!(val & PWM_FM_ENABLE);
++		}
++
++		if (freq_mode_enabled) {
++			u64 period_numerator;
++
++			pwm_value &= 0xff;
++			period_numerator = PWM_FM_PERIOD_NUMERATOR(m, pwm_value);
++			state->period = DIV_ROUND_UP_ULL(period_numerator, refclk);
++			state->duty_cycle = DIV_ROUND_UP_ULL(period_numerator / 2,
++							     refclk);
++		} else {
++			state->period = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC *
++					((1 << resolution) - 1) * pre_div * (1 << m), refclk);
++			state->duty_cycle = DIV_ROUND_UP_ULL((u64)NSEC_PER_SEC *
++					pwm_value * pre_div * (1 << m), refclk);
++		}
+ 	} else {
+ 		state->period = 0;
+ 		state->duty_cycle = 0;
+@@ -1691,7 +1993,8 @@ static int lpg_init_channels(struct lpg *lpg)
+ {
+ 	const struct lpg_data *data = lpg->data;
+ 	struct lpg_channel *chan;
+-	int i;
++	unsigned int status;
++	int ret, i;
+ 
+ 	for (i = 0; i < data->num_channels; i++) {
+ 		chan = &lpg->channels[i];
+@@ -1703,6 +2006,14 @@ static int lpg_init_channels(struct lpg *lpg)
+ 		chan->sdam_offset = data->channels[i].sdam_offset;
+ 
+ 		regmap_read(lpg->map, chan->base + LPG_SUBTYPE_REG, &chan->subtype);
++
++		if (chan->subtype == LPG_SUBTYPE_PWM && data->channels[i].freq_mode_capable) {
++			ret = regmap_read(lpg->map, chan->base + PWM_STATUS1_REG, &status);
++			if (ret < 0)
++				return ret;
++
++			chan->freq_mode_capable = !!(status & PWM_FM_PRESENT);
++		}
+ 	}
  
  	return 0;
- }
-@@ -1433,6 +1627,17 @@ static int lpg_add_led(struct lpg *lpg, struct fwnode_handle *fw)
+@@ -2029,7 +2340,7 @@ static const struct lpg_data pm8350c_pwm_data = {
+ 		{ .base = 0xe800, .triled_mask = BIT(7), .sdam_offset = 0x48 },
+ 		{ .base = 0xe900, .triled_mask = BIT(6), .sdam_offset = 0x56 },
+ 		{ .base = 0xea00, .triled_mask = BIT(5), .sdam_offset = 0x64 },
+-		{ .base = 0xeb00 },
++		{ .base = 0xeb00, .freq_mode_capable = true },
+ 	},
+ };
  
- 		/* Register pattern accessors if we have a LUT block or when using PPG */
- 		if (lpg->lut_base || lpg->lpg_chan_sdam) {
-+			led->pattern.data = devm_kcalloc(lpg->dev, lpg->lut_size,
-+							 sizeof(*led->pattern.data), GFP_KERNEL);
-+			if (!led->pattern.data)
-+				return -ENOMEM;
-+
-+			led->scaled_pattern = devm_kcalloc(lpg->dev, lpg->lut_size,
-+							   sizeof(*led->scaled_pattern),
-+							   GFP_KERNEL);
-+			if (!led->scaled_pattern)
-+				return -ENOMEM;
-+
- 			cdev->pattern_set = lpg_pattern_mc_set;
- 			cdev->pattern_clear = lpg_pattern_mc_clear;
- 		}
-@@ -1549,6 +1754,9 @@ static int lpg_init_lut(struct lpg *lpg)
- 	lpg->lut_bitmap = devm_bitmap_zalloc(lpg->dev, lpg->lut_size, GFP_KERNEL);
- 	if (!lpg->lut_bitmap)
- 		return -ENOMEM;
-+	lpg->lut_bitmap_tmp = devm_bitmap_zalloc(lpg->dev, lpg->lut_size, GFP_KERNEL);
-+	if (!lpg->lut_bitmap_tmp)
-+		return -ENOMEM;
- 
- 	return 0;
- }
 
 -- 
 2.43.0
