@@ -1,57 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795424655;
-	b=k3v8m2ff8CG0ougyfqMExY4c2quLmpa2Q66/zS1aPignEtG5IbPkk2Mj9R+odX/DdsX7
-	 xX2iWfBloHPQjDbQQ6bLTTVYXvbRQXSqMLhUGynUyROhZ1tzQRTozxUxwIBw0QpXP8uCS
-	 GKvqxvV9Q8TeLqOEHnmCEinwWTCC00GsFDJDmQKOH/VuIB08w9Jx0h3vjrQd6CzSMaDBM
-	 kGtR8cQxI69CF3GtKV4YHar/XkAb2KkYWQH4tY0q0P/00BdB4COOWR///ZH+dCXOdr+IW
-	 6frRbtpEcdR+6eeNY/dG4nMXB5/M+59Rbeotw1gO6ULeDzqUwm8hqE6spsOzOZnqrLA==
+	t=1795436999;
+	b=BP+1ZnD/0p5NYsCvu3L5eSPZyMrdxHQbr7lLL9fs/0TtfQVGBMQzEdmDfl53x/bZo0/t
+	 KseiT0P7aKEerzeyD6x3dvf+5riD7u/EvnzRHtZ9C+s2ASlkfOl83vce2m2NOCV2aRdAZ
+	 GC3ESgRzauFI4vFhd+d3A2uWNUWMpeGfA6TFjnp0lTcCkn89iiQgyQSMZn6WGDObIYKGT
+	 MVsEEYnQiUT1I85p1jL5hmIsy1ZGTh0WRaxKZoEn2QyKoaUm7hcrz/o32cGq4o9zh0qAq
+	 GSED0jtO/G2LXnFYH9tarGfaQPT/BsrSjIKDGe8kQxs47Iu6oJCSHvC0T1zXqQ23p5A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795424655;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=Em63qeFZn/R98yzJQCTDD1RX5sQJgpirUmXf880NUQg=;
-	b=vEutJrGAarYb9q+EbtV//wdm2LyiZGRGbgbSwMWlbc49zhu9Krk7HhipH8lPuikDqhhL
-	 3cik9JR/34rAmzKhLobmfnl7JMT/xlLcy621IjYds5ATZmW4hPPt1LO6YZbrmRp6gLJpA
-	 B0aXuyrf/lUtORR7Stynla2rt2PAQJpJmpvm9vMcVzcyE9q+cccKcUMbkXYJN/2FtHFQm
-	 z6S5FDRpLtp2VFzCQGt7kkqlTo9fnT2c+XtmMx34CZaUO/eJPCMpL12whu9Yos9KvNtGF
-	 4eFNFnttmOrnBeK1yVHR2Q4O4YQNeJz9sNadxcRUXRi9sxPpSYx6Mcwcf6siyAsVoKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795436999;
+	h=Received:DKIM-Signature:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer;
+	bh=iiN7DcPSkiAudM715K7PGA4r2cpiHl8VcHMJZAmlc6o=;
+	b=YtDp6y1QVjT5QBXl/xDjZRnw6yOxrnWKaVLQeYF6QpJ6ALizjaH2uYxNJ5di81EutMlY
+	 rhVAQY153GZeXyk23QU4TbcEcNERM+H6jnSkVgJ3r72m7BobsLSn3O64xalLmq+N+iGUs
+	 X0DMncIxWNPTIzfQE5BaAu/YSCxg3CTgV6oLzW7Y3+LI2kfGqF6p2iWm73ajB/vktuPjB
+	 P6cF0yD60yU/ckfNrOeKTOT8Zuwf8CXJwpCpGbaqi3NkuEyhJogd3rwTV6HCw6DUyIOMg
+	 UKbB7dMDjQl9PiWM7gJqgWtKmPhS4UfMukXXN88028OJN4BgC69F4++lmogQFeMbaZw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LtdHzCrO;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZHy6mXu+;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D3E606A31A
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 09:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6254606A331;
+	Mon, 23 Nov 2026 12:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=LtdHzCrO
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A27E1F000D8;
-	Mon, 23 Nov 2026 09:04:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZHy6mXu+
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE921F000D1;
+	Mon, 23 Nov 2026 12:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795424654;
-	bh=Em63qeFZn/R98yzJQCTDD1RX5sQJgpirUmXf880NUQg=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=LtdHzCrOxm73TdwpgiLqWmULmRVpI8djWzLurw2KeFj/2mC476T7xClwhyfEViMCe
-	 moof59PbffiEqaI6OOHxahb+oH/FkYXE/Iwr6T0l8nWmoDZak0E8Qbvm3vm604t6Dz
-	 9E6gvkrCcWcnRDhbyJyvBRoE37agkD9qNfsAdKIc/kG336M5mJDFp6ve06/1A0U4o4
-	 l5A8W5xWiWQKyylW28mVRmX6B5/FXHL5yGukQhwradMc7AjSS2i/RbrzhiGh4wBid6
-	 gF2/tXC/ULxMiAQmaiFgT/+nU5OeSAG1EHrBJli5N39ciuSRvmmXsu8OfIWkcEs07e
-	 Xz+j+wWyXrmqg==
-Message-ID: <sashiko-outbox-228927@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v3] tools/leds/uledmon: reject device names that are too
- long
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Gu Bin" <gubin@cmss.chinamobile.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261123090055.2508-1-gubin@cmss.chinamobile.com>
-References: <179442104215.44545.2144163087581820120@kernel.org>
- <20261123090055.2508-1-gubin@cmss.chinamobile.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 23 Nov 2026 09:04:13 +0000
+	s=k20260515; t=1795436999;
+	bh=iiN7DcPSkiAudM715K7PGA4r2cpiHl8VcHMJZAmlc6o=;
+	h=From:Subject:Date:To:Cc;
+	b=ZHy6mXu+LKwzrFh9y/z3uQ9Z330W8dy5p2EXVYUc42G529PX+x3aE9jasPGGVjgrw
+	 uzTATw9K1bnS6xDK/lTW+SEnFiws1BLQpBOvCXch8mQ2NYUZA/aA/SlaG7vTOGHWZV
+	 JxdXJU4x0LN+KBiCvY7bHE9TL4NNIg3VcwlaF8aO6Jaws3TK+E5gddt9uzbRhw2Ccu
+	 sS1U8PERXdVC6rRwY381g/5+0wltg0MGoREEHnlqZ5K3f9l4abYrSkTAXW6CaAJACx
+	 YLORBNNo8+hRhlPyC1pgPWBV42f9FJrWIkI10joKYQzh1uxO8yKCCmSkxmgBstfd3B
+	 JW1EzZq1SKa3w==
+From: Linus Walleij <linusw@kernel.org>
+Subject: [PATCH 0/3] Convert National Semiconductor GPIO drivers to gpiolib
+Date: Mon, 23 Nov 2026 13:29:52 +0100
+Message-Id: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,24 +52,64 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAA/x3MUQqEIBAG4KsM/3MDae4aXiV6SHesebFQiIXo7
+ kHfAb4LTapKQ6ALVU5tuhcEMh0hbUtZhfWHQLC9/RpjB46OS0u8Hrrz6D/O5xizjw4d4aiS9f9
+ u03zfD/h21n5dAAAA
+X-Change-ID: 20261123-b4-nsc-gpio-87547fbbf7b4
+To: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ Christer Weinigel <christer@weinigel.se>, Jim Cromie <jim.cromie@gmail.com>, 
+ x86@kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ Griffin Kroah-Hartman <griffin@kroah.com>
+Cc: linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
+X-Mailer: b4 0.16.0
 
-> strncpy() does not NUL-terminate when the source is at least as long
-> as the bound. uleds_dev.name is passed to the kernel with
-> write(fd, &uleds_dev, sizeof(uleds_dev)), so a >=3D LED_MAX_NAME_SIZE
-> byte argv[1] leaves name without a terminator and the write sends
-> trailing bytes that are not part of a valid device name.
->=20
-> Silently truncating such a name would create a device the user did
-> not ask for, so error out instead, like the other argument checks
-> already do.
->=20
-> Fixes: fa7f32422ea1 ("tools/leds: Add uledmon program for monitoring user=
-space LEDs")
-> Suggested-by: David Lechner <david@lechnology.com>
-> Signed-off-by: Gu Bin <gubin@cmss.chinamobile.com>
+This is an obvious attack patch to see if anyone is really using
+the custom API from these deviant drivers/char/* GPIO drivers
+from the early 2000s.
 
-Sashiko has reviewed this patch and found no issues.
+Probe PC8736x through the ISA bus API and create the SCx200 GPIO device
+from its PCI bridge. Register both controllers with gpiolib using port
+I/O. Describe the net48xx and WRAP LED GPIOs with software nodes and
+switch both LED drivers to descriptors.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261123090055.2508=
--1-gubin@cmss.chinamobile.com?part=3D1
+Remove the private GPIO API and per-pin character devices. We assume
+there are no remaining users of the old NSC GPIO userspace ABI.
+
+An LLM assisted in the implementation and x86-32 build checks.
+
+---
+Linus Walleij (3):
+      gpio: convert PC8736x to gpiolib
+      gpio: convert SCx200 to gpiolib and use descriptors for board LEDs
+      gpio: remove the legacy NSC GPIO API
+
+ MAINTAINERS                          |   6 +-
+ arch/x86/platform/scx200/scx200_32.c |  90 ++++-----
+ drivers/char/Kconfig                 |  33 ----
+ drivers/char/Makefile                |   3 -
+ drivers/char/nsc_gpio.c              | 126 -------------
+ drivers/char/pc8736x_gpio.c          | 352 -----------------------------------
+ drivers/char/scx200_gpio.c           | 138 --------------
+ drivers/gpio/Kconfig                 |  22 +++
+ drivers/gpio/Makefile                |   2 +
+ drivers/gpio/gpio-pc8736x.c          | 264 ++++++++++++++++++++++++++
+ drivers/gpio/gpio-scx200.c           | 245 ++++++++++++++++++++++++
+ drivers/leds/leds-net48xx.c          |  85 +++++----
+ drivers/leds/leds-wrap.c             | 143 +++++++-------
+ include/linux/nsc_gpio.h             |  41 ----
+ include/linux/scx200.h               |   1 +
+ include/linux/scx200_gpio.h          |  89 ---------
+ 16 files changed, 697 insertions(+), 943 deletions(-)
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261123-b4-nsc-gpio-87547fbbf7b4
+
+Best regards,
+--  
+Linus Walleij <linusw@kernel.org>
+
