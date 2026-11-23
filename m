@@ -1,111 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=103.168.172.153
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795444320;
-	b=1J5f4/x+R+FrKEzW6xIAs9AbJsVuCyRBkMIT/j1j/Hxee0XZFCVzHsMer6oYNumstpzV
-	 pMMIlW2c0C4QRi0xLST2vikBlOaJjHsvGoA0jTYu8Qmx7CiMrJ7N9nm/mTvw1tEpYBgbg
-	 Izb9TLn4/zcRJGAyXG3Y8Og8HY+A3i51v6wXfXpiY3r+Uztkl5Yi9cDB3tY0cbAKD+Kzb
-	 6DhjmacV/Nq0Ir2DXBFgZz8yYuTWGxPcZE2g8UK6nT79dWghLn6dScbiTkjeG718DnoeB
-	 FxzWuScrjmWvdLywWzNNZf25+FRZVStwDeHzxrkaiQ3eW0hbC+yzXTRn3zes6SZbyag==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795444320;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=3aJ2WxA8jh4RxwYEHwBXqWo8xD2DNp/kebAnomZYj58=;
-	b=HLDV8kIzaalFskEpf0+2hi4Vghlw/LRTAmWU+c8KaFDy7D9XtCSyq+uY9uZeX7gPwr41
-	 TBIMf3rVOAUzPL+YB5/NKKC5HTEH2O1+clMi7Bdyec8259AwOmpusovLmvaEeCPzG5NIY
-	 /EL/UWrMsT9j2ek6Qj8WsKLSahwxADT0xQnaSuC0A/qJVz0hIhgqZ6Et2USxlF+p2TKZk
-	 ffbTWYpXvmdSJYcsH6fLdCGY+g4fjz/Af7gbYBpWzZG/WBcawkr6s12F3PUovRyXn9Uof
-	 qzTZvrxQeiDFK3YRsbPQ5pp/H+bvXi/SwoGBXkX1rXxQsRmks575wvMonewGAqFuz4w==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=arndb.de;
-	spf=pass smtp.mailfrom=arndb.de;
-	dkim=pass header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=ST5z6jde;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b="Yt/Ed2tI";
-	arc=none smtp.remote-ip=103.168.172.153
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.42
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795449819;
+	b=z3UfVqjnJuzmzRwMRc7tKidBatQ+B6oLx4J8EA/S/its85JSlLSBg+fWjsEydA6KaV0f
+	 M0RcqyUPlxHnpYcl0sVFHDTMR0Z8rcqUGlFdrC5FhEc/f+NSI7a5hPRiIT5LGXFOgUZyn
+	 q+NIEeTMgzL2rAaxykJl3JREUx2X32O31T/v2GQ3V1HPJHWF4zIdtagJ1lxDgNJ6kDq+m
+	 TI1MHA2KYMpj+GKZjjZwmQLsGuxOimih/CFONMMU/qZ1C7lbhCn+I69RM+rr6jtwPdUJM
+	 t0dqv4W7RJ/BwE7zeeCa4RnI5m5GYQuhSDqvi0z0+OXynpzAfUZedL+ds8vaS5c/s8A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795449819;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=cIkb6giW2DZQeI3EoSHegibeOoJUT8zoX5bP63zRKds=;
+	b=zwrsYWZ8GV6vnfSK5OAFqENjnhcB6wYjZslygChunavcz7+TZnsmYoSTdavxnoXJ4se5
+	 FH1Vyojww+jZ97h48kVKdBGfEmhQmPurbBOAc/yV8UBPNNXiyaHCLJUL9R+WEu+Oe3XZg
+	 qQM3ey8vLEXLFc292tY+G+5eoHkVJYKqfMu2Sl7IiKAYsUWsyTJtH/vapZeRNK81HzRYn
+	 4DldNcKKPgmriNI/4i5xbDrcc2A3INgopGhZ5XvQwvKuOmljQvAoWfk+UVT0zo2O2lJ6c
+	 euTn9Shn2rZ5o78gArgLAVBiJSQiHoZ8XQlPrlogBRtZ7Nn0aCM460QdncL68qgTkpA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kPxbmlxH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.42
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DF5606A31E
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 14:31:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 98DF5606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80901606A31A
+	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 16:03:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 80901606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=arndb.de header.i=@arndb.de header.a=rsa-sha256 header.s=fm2 header.b=ST5z6jde;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=Yt/Ed2tI
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B592D14003BC
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 09:31:58 -0500 (EST)
-Received: from ams-imap-03 ([10.64.2.23])
-  by ams-compute-02.internal (MEProxy); Mon, 23 Nov 2026 09:31:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1795444313;
-	 x=1795530713; bh=3aJ2WxA8jh4RxwYEHwBXqWo8xD2DNp/kebAnomZYj58=; b=
-	ST5z6jdeak6z/EK0/SOUcGHs3i92NuRlxsC47wPqFx+SwVKhkhWykfjD/iLmRC4K
-	LrfviMWaZUR9yQoEH5on9M8+dqgeuIsmaZQF66DG64a1uPkFb9XqtfZ3n46m3pAA
-	2LsG9Jst4W8oWvVKCGuAUBr4TWovOufkhybi+JeCBRIe9UKcjMmTKEJw4C8a32yO
-	lopP89LDLbFfsmtAghmBY6f/T/VRQSd8C0gvxdWGs9L9oHaYtDBjDTk0WHDDKWJs
-	iIokkotmC4ra18AI3JGDksr2+QbwRHOU88rdB8CdiKxhd8H3QKnK0XFbmzekNpKw
-	UaiNR7+gWpQ/7y+4lFQ1dQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795444313; x=
-	1795530713; bh=3aJ2WxA8jh4RxwYEHwBXqWo8xD2DNp/kebAnomZYj58=; b=Y
-	t/Ed2tImUcelEISsIuYx38roYgkCaLYrEFVGXM+ELy5psYrrcQVB19DAP6LxpiEs
-	viZiujLz09rzOwiKWnucyI2aXMyWep4GhO6TF8FHAJPke3ZITiswlsVsqddegKMy
-	9BB2ZjHmhHW++e/0jWvHyPFPVRy+Udc7S/BVC8W9HX4Y3eqG6KoyYqxr4l+D2g5G
-	i78bg5cB2Fwmx/eHK3Cndb8cxTCfEV8VZD+2axyQVxa4sxjQzwhWht3BIYw6PLNi
-	ytOV305oK6SGydair8AAD2d/gjaNienGtpZrFuh7lZPw7qeuJitG95/6Lq6LSDj2
-	FiGwNUOhI99F1iCpzGeMg==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=arndb.de a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795444313; d=arndb.de;
-	mf=PGFybmRAYXJuZGIuZGU+;
-	rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm2:rsa-sha256:kdXbEB4fNuNxtswP1JsVv1BwgniI3F3sa81B6vv4ZR4j/DK
-	OrR2I912ipKIH8ysnHLHTd5mgRNANe0g19WRA2Y9cySiRcQjN7piuA2T56QUBjKu
-	/NTrg1lfYaZ/gq6EXk2FKJNDNYE62kMU+CKTqGkVvvxEJ4f5ayo6yk9rFlzk2tcY
-	9H55wZDrrYSY7UEV0180cAUpC1+iBIwibhdL+torbZR8ECPGr5f3UubgbLQ23fmG
-	pPLSZx6ZrS1FDVvuLvUx1a0mK8s+Q5UqsHoOVFp5RmA8YmFmqVzQuQmbQPTsRMR9
-	nfjwJR8Dqi0YMvk4AH5n6nN6HJjlTz1DqIDBSGQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:MJdHtbIH2A+R1Jb71Tzq2a8hopT1FWQO1fjXAFbq/Pk=:2zeJSwUnb4LKEaN1eEgNXUm5/zAB221ydnHGNFi1WxM=;
-X-ME-Sender: <xms:VU4Eaysu8B9hlFjCV4E9nYXL0zO8ce52vT0OdZ8dcRnzuSgH9IucNQ>
-    <xme:VU4EayQe8RfTM5LROu9Pz6pb3lw42Z4aDA9sAMBMewNcI6AOnXyuq55CLZhv1tnfe
-    eIR5W3tsTlqt3wWGzfnwwULS08X-h3GfU2zgWq2EWMpLulcLj0Q-7o3>
-X-ME-Proxy-Cause: dmFkZTFH2ouQDqR3X+IG0eO6K/1a9wLBHvzj7UuSgjFK65fbDHV5Sippt0Li9nfYKwHmYn
-    /40ZYHzme+8Zva+P2dzsuKRqfOELBlWfgmnFF4/VyTashoOpDBfx2s37X0VUOZXgP0GqE8
-    rIuoqoQ3jN4pUV9EulP0xzW4HLsSiRR8HCgUasw7kivmjEgNoGzSmig3wCc2QsJcys9jcx
-    HmBJNMecNTjez41LfvpvntwmsF2dQbwcCzNnERjAmwXm9V+5GyZrjYuIRpOMVFT6MDoGAw
-    Ood5iwhw2SBCZxDlCVJAP6nzve+7UvoNjfOIzwJI0qtFhMMZGEp540AFN+uhIq4hw75aix
-    XhdGCmDd100u64/W3sJhS4EUtLgAPxOw6lvziyG64qmvs+aVubos8q56u127nkJidPwNkx
-    8ApMvb/J6Cpf8zdSvYkjOcik6wC7nRJKYqf4hBbyUfwzvXjfBxhtTeUWPG/YMQG56oCCdL
-    5vSM/HOzVYH09TIKETOIJcM9zOvgMGA/8JviOqNqCqThPJkRiIHEMmThWDbTkbBxuYzX+/
-    ggQo7fTAZMCEZHR4LI89tSXiKWQuTfaLQ5cmlhE3hso3gTksgO1554OMi9elU5IniTovyN
-    OjEQd2YKktSK9eBD2AuZ9JbpNdHQsDvz1Dgv1xVd0tCPCKnk3LoPjm84cvhg
-X-ME-Proxy: <xmx:V04Ea2RoeifjrdayPXfNPJcqkzqzgHX1WgRjG_a9YrZYz7kSd7stuQ>
-    <xmx:V04Ea3od_bMsr40lFXluKV0Mncy79SuHJy0WjyLQ0QNkWUABEyK5YA>
-    <xmx:V04Eaw1EhNMrH-eD8rQlSF7IQpuW5a8VRWTynYQXlrooDX71z3qAfg>
-    <xmx:V04Ea24SoqPz9RhaQ00SIOl1LVlFfmH9uDXQdoFrRJBwiuoSrTuNNA>
-    <xmx:WU4EazwhetjYDvhtGcFIIx4LttV9oKqTEPpyVwD-O4kTHbfvq5KvOzjt>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id D471F32A0099; Mon, 23 Nov 2026 09:31:49 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kPxbmlxH
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c4203bbb1e9so569507566b.3
+        for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 08:03:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795449817; cv=none;
+        d=google.com; s=arc-20260327;
+        b=sOhQULaMbavOvPZUAel9xFekp09+QCY14VGHCiSUc3q9QHz1J4GXrTi8lzEkkzjN9Y
+         2dgCuaiiD6dCPcnJFK+Yrh1CgdWuTRIgRo2a9eTBGoL66sm3uE1n6Hq0zsX4dfdeiqCh
+         Kuw9ordE22fwW2Xxexeg3i33xotnu1NN57zfcJTqMWPViFV7TkRRTdv4nJWBDc/PedPw
+         5k9sw4G8zIPZJRIm46YYTn5An9nBUTbDbMg5kvY4Z9LCddWRqFJIAFJF5RarbRHdN7qQ
+         mpLIuafGUxu5aduoNCp5XrIZFxqpNHIQlxMcYOWkRpE5UUI45Ce9fBD5tljv+nT9PiwD
+         2IQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=cIkb6giW2DZQeI3EoSHegibeOoJUT8zoX5bP63zRKds=;
+        fh=1rAeaMlvTUNXU/iE2TRH4DMt/pkpPR/YRrkVCKnrsFA=;
+        b=hffpxEHlPldW9qVOILzKZBVWBJQaZg5yra2HwT6vJ+h/Dqp7nmbG3FKE13IFDWzk7K
+         hLZRXQxCH9MdyGXBcyLPm6YapXRxXQAow4ILxNSvkJc6qmRRso6tAL/0aAxEZx1OSQuU
+         EfcHJYbPW1is9Pqy/GpERexzLXCce7mYfZQrbLTub73QxlU6zH8PKLtCVeltrHxbO/mO
+         hsHr/epaM2+Tte698j7HC+eVaRcQelk5DyhPUSn0nMmIgIPcqxJEFtRVCP+jdvaMPA0Y
+         4uFg0uf8hJvRRcGb+bFCRkFyjlaU6eWVCA5l6C5jzwEh8rFmkpDQadHBl7f56ZP8jd2Z
+         scfQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795449817; x=1796054617; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=cIkb6giW2DZQeI3EoSHegibeOoJUT8zoX5bP63zRKds=;
+        b=kPxbmlxH36KRhpUs3rX2kF9cu8fs6nKcvV2Ep5Yd1SAPElzfO4U0yee+eyo4yYjKG9
+         bVabsqjgWrVObshBsNWmZu0Kc8SGNvonY7/47W6xWPu+XZzUut9DZVDasYOasQeH9Kb/
+         cxLOB1EaAVkrHLcauEnwPg9EXJ3MPHywPaLoCpTE0FTTIAii7phK7Avi7MNPjJVN89DP
+         s8LFLj0Mqsxb9tOW2pKJn+UDcZJsxmwmdbWgLBk3GXWSXPM0Y4SECfoiTVmHq/AsVfEi
+         eK10GDKZe/X/rTJwTT3GnOPtaNslesh71E73eFd/jgj3heXtLGBeR0+t6FPE8tiFDqrG
+         Ouyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795449817; x=1796054617;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cIkb6giW2DZQeI3EoSHegibeOoJUT8zoX5bP63zRKds=;
+        b=GFPPB/Aa269yci+Vv+UHqX9aM4hlfSd0s1QmWfsQ3phld5shgwXJ4DJcAyC+UOQuur
+         VEDlgKU2JDp2FeFrWLdvrOf43h3eCVdIC6wJ6JGAyEgmn97S+4fuxlfuZ58oCmla1hBJ
+         IPMoZj43/BgSFZS59Q4agT/vOm1yt+lGqC/EmRVqRH3DH9T5luXTIVoLtLJ9CkxltPuU
+         3I08wTBrkPi7rzZ+aFDlcWuJ0sQCEx0ydMkvhR8TLkdJcsbXOyt/Vqn/fIGK/TMzKMBz
+         /S8xB1d+vA3Az+YMaMeULggCxHi19oz0huZraNzvT2VPFVq0KPOZjX3leZJcOakIRCfy
+         S8Jw==
+X-Forwarded-Encrypted: i=1; AL+hErFY2e1S2bCuxFubX2J81AoMoaCVVTXwbswefDuH1EstgXuWDJkcDbf2uFMd4+bzS41I6ulOEDX73MJm@vger.kernel.org
+X-Gm-Message-State: APuU4Z/C8+T2r11UiRtqzIkmcjc8mc2x+U2XmMYS0hITbKX0t+shts3b
+	sTGSCNVz3OSzL2DyxEy3s8HwaJyAROz04sqmQ8DGA742264tqu98xQcw2qmbgDP80+LThXdyJfM
+	BZCvl51rXfJUpHx2Qy7QsSRjv3cb6F9M=
+X-Gm-Gg: AZFdTZcBjzK8QvR1rW4LORNg59bvHDwWC3Jk3ypKqD2jfrBgHGEv4j/xCS/qe/cHNPB
+	piEdxCRX+qaJPKCUraQ2x9iWJhNt8J+OwbWkUwZz6TfgZtLOZbL5CzPuMeXYT0/Y3vRG/wpbb8b
+	PM0XydW4JoF4enn8uEgUpF4GwyW0sWBw9ZIGBrWlAm2DltwzaMtenO2gZvFXM3Rq03u4b2khyv2
+	/xTLvlVZ/DyQielck1fxN2LCNu9j7I1cEj6H39JOgyjaafD63C3hfbd/l8APCCV2t1PUNqMN1Zn
+	1vHEs86E0MRwNcGhGrhC4SkrXaVKGKU5aXoCaN18JcshiGIbKw2U5lMbm6upe32+zPx/kZKnjg9
+	U1jJ6nz7WQIIasFwEFpThDQq6kES/WDt39IWbw2A=
+X-Received: by 2002:a17:906:9555:b0:c50:52b5:e17 with SMTP id
+ a640c23a62f3a-c513a5e1d53mr819834666b.13.1795449816568; Mon, 23 Nov 2026
+ 08:03:36 -0800 (PST)
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -115,45 +104,144 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: AYaYkjhCxsms
-Date: Mon, 23 Nov 2026 15:31:29 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Walleij" <linusw@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>,
- "Christer Weinigel" <christer@weinigel.se>,
- "Jim Cromie" <jim.cromie@gmail.com>, x86@kernel.org,
- "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>,
- "Griffin Kroah-Hartman" <griffin@kroah.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-leds@vger.kernel.org
-Message-Id: <4588af48-d69a-4b8b-af73-18c49139ba45@app.fastmail.com>
-In-Reply-To: <20261123-b4-nsc-gpio-v1-1-b2d97eba2662@kernel.org>
-References: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
- <20261123-b4-nsc-gpio-v1-1-b2d97eba2662@kernel.org>
-Subject: Re: [PATCH 1/3] gpio: convert PC8736x to gpiolib
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20261122131900.2951586-3-a.shimko.dev@gmail.com> <179543998153.3135.2533998901272176773@kernel.org>
+In-Reply-To: <179543998153.3135.2533998901272176773@kernel.org>
+From: Artem Shimko <a.shimko.dev@gmail.com>
+Date: Mon, 23 Nov 2026 19:03:25 +0300
+X-Gm-Features: Aa3M54qYkFzn2AliFXf9fRcB52n5j1nfOYqfcsg4MxuHxjWphZmjYJahIu9j42A
+Message-ID: <CAOPX745BjECumVGmNOg3HqagFVz=Bcz=x8-shzjyGjHmN8+NSQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 2/3] dt-bindings: net: dptel,dap8211r: add LED nodes
+To: netdev-bot+sashiko@kernel.org
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	maxime.chevallier@bootlin.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-leds@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 23, 2026, at 13:29, Linus Walleij wrote:
-> Move the PC8736x over to gpiolib.
+On Mon, Nov 23, 2026 at 4:19=E2=80=AFPM <netdev-bot+sashiko@kernel.org> wro=
+te:
 >
-> Keep the legacy character device during the conversion. Both interfaces
-> use the same register access and locking.
+> Thank you for your contribution! Sashiko AI review found more severe
+> issue(s) in other patches of this series. This mail is only an FYI, in ca=
+se
+> you want to address the nit picks below when you respin.
 >
-> Link: https://dtsheet.com/doc/85223/nsc-pc87365
-> Link: https://datasheet4u.com/pdf/36121/PC87366.pdf
-> Signed-off-by: Linus Walleij <linusw@kernel.org>
+> Low priority / nit picks for your consideration:
+>
+> - [Low] The new `leds` block in
+>   Documentation/devicetree/bindings/net/dptel,dap8211r.yaml mostly=E2=80=
+=A6
+>
+> --
+>
+> dt-bindings: net: dptel,dap8211r: add LED nodes
+>
+> This commit documents an optional leds node in the DAP8211R PHY binding.
+> The PHY has three LED outputs, and each can be given a color, a function
+> and a default trigger. The commit also adds an example with two LED nodes=
+.
+>
+> > diff --git a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml =
+b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+> > index 4cd0f9730d954..772329feda059 100644
+> > --- a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+> > +++ b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+>
+> [ ... ]
+>
+> > @@ -45,10 +46,40 @@ properties:
+> >      maximum: 2250
+> >      default: 1950
+> >
+> > +  leds:
+> > +    type: object
+> > +
+> > +    description:
+> > +      Optional node describing the three configurable LEDs of the PHY.
+> > +      Each LED can be assigned a color, function and default trigger
+> > +      (e.g. "netdev" for link/activity indication).
+> > +
+> > +    properties:
+> > +      '#address-cells':
+> > +        const: 1
+> > +      '#size-cells':
+> > +        const: 0
+> > +
+> > +    patternProperties:
+> > +      '^led@[0-2]$':
+> > +        type: object
+> > +
+> > +        $ref: /schemas/leds/common.yaml#
+> > +        unevaluatedProperties: false
+> > +
+> > +        properties:
+> > +          reg:
+> > +            items:
+> > +              maximum: 2
+> > +
+> > +    additionalProperties: false
+> > +
+>
+> [Severity: Low]
+> This isn't a bug, but does most of this block need to be here? The bindin=
+g
+> already gets a leds definition from allOf: - $ref: ethernet-phy.yaml#:
+>
+> Documentation/devicetree/bindings/net/ethernet-phy.yaml:
+>   leds:
+>     type: object
+>
+>     properties:
+>       '#address-cells':
+>         const: 1
+>
+>       '#size-cells':
+>         const: 0
+>
+>     patternProperties:
+>       '^led@[a-f0-9]+$':
+>         $ref: /schemas/leds/common.yaml#
+>         ...
+>         required:
+>           - reg
+>
+>         unevaluatedProperties: false
+>
+>     additionalProperties: false
+>
+> Most of the new block repeats ethernet-phy.yaml: the type: object keys, t=
+he
+> cell constraints, the common.yaml $ref and unevaluatedProperties: false.
+>
+> Only two constraints are new. The '^led@[0-2]$' node name pattern, combin=
+ed
+> with the local additionalProperties: false, rejects led@3 and above. The
+> reg items maximum of 2 limits the LED index.
+>
+> Could the block be cut down to just the constraints that limit the PHY to
+> three LEDs?
 
-The driver looks fine and I'm glad to have the old one out of
-drivers/char. 
+ok, i'll fix it.
 
-In the changelog text, please mention that you don't actually use
-the hardware and link to the last time we discussed this one at
+> The commit message also says:
+>
+>   Document the optional "leds" node supported by the DAP8211R PHY.
+>
+> Before this patch, a leds node with LED children already passed validatio=
+n
+> for this PHY through ethernet-phy.yaml. Would it be clearer for the messa=
+ge
+> to say that the change limits the LED nodes to indices 0-2?
 
-https://lore.kernel.org/all/CAJfuBxztAe3vzzviGH3QJnhU7F68ecrafTLUoaR4BMskMp__3Q@mail.gmail.com/
+I'll keep the current wording for now, since
+the message describes what the patch does (adds LED nodes and an
+example) and the restriction to 0..2 is visible in the diff itself.
+If the maintainers prefer a different wording, i'll adjust in a
+follow-up.
 
-so that the next time we consider removing it, your patch does
-not give the impression that you actually need the driver.
-
-      Arnd
+--
+Best regards,
+artem
