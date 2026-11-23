@@ -1,48 +1,151 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795437010;
-	b=PBrS9S1VVInZ3X6HghbmlOxQ4YrDgqeQHoQNNT+StEIVrcVb5EW5nMLANDt5AOBUzhjv
-	 jWb1d55BZa5qga25/XjX35eltobvepgtA2p1keFYM1Gb52Vp6pzFNX0HoB8ehEJmE8BCU
-	 CGKUVYlzfw4sxqiwzGA4Ywch1uKohIUHuK1GXv4UfC1ip0zOIcTPajDyxREdMqRjo3Un3
-	 paLIaYNV1kWNBAjqLO9Sxr0QhO+TMIjVGnSBs9LiM3r1clydaFsFw+822Q77BRv+4QBY8
-	 Enc0tqZ6e7s2woMZ4mfn12ZE8EzMh69aLhFbVcKwdnOuU5ZYV/a+cdeqWs3Gb4yucjQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795437010;
-	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
-	 X-Mailer;
-	bh=CtGMmO0BB729UC5xD7u3gEqCBxOyYL2pLXOXwao4TWw=;
-	b=OMt6PFc7I6w3SAZxL9XBOQUX+gsdz0lTEBnxoDScOMdxEas2ZUWvn6pY5APH42vdkXZm
-	 OmbKSVBZbFolEjAEzhaFU5v8IE5Er2gEszXuB5DiuhI/V5IoXiRHGzLmIIhqMbXH+mZf5
-	 THEylhu9sJrUDBy3ZVCrqOntJG7QhqYDEh7T8CeepSBeJb2mNXwZ/77RVV6NsNWv8x14e
-	 ohAdqJO33w1g9fuO6IRWPXqXAQCiSy6mtj1djpFe7dktIju93wa69+g5cZu51ve7+m22S
-	 xkFFZezoj2Is5JZQOO1/lqWnXjMT18o3xkjRLUWg6xYpu8Q1Nqt9ga2FEWH7jsSWeYw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MEMkLRpc;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.36
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795437372;
+	b=gaxCuHU+K8sLFSBxgW23G1dKgmoiF0c8pZVD8EZ00D78Yi23ERwJu6yEtIII6Mqw7OVW
+	 hyflLD5wTt6NaJqQMBbipKM8x/Ja93qw3PkeTSbexloNrO90UtCrr4/4w1xbD1q15ukvu
+	 7JHGUB1ImmTmgdZ8bGg4/MPvOjTT0jN9wBqfuajybQE+jwhVs5EeA977/zXLEM4uXfGwx
+	 gH9/rI/hYvqr9JyjFZHgtIYytJH/kt3yHZvLDTas5LJPfjjvCGoUWr2lUDypo9nzVLkcj
+	 k/Kvd9cHsrmAjqx42S64HD9nnVq6MRUFzRrY2l5g0eFUuV9s9Up7vLEwtBHptF5ZJ0A==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795437372;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:CC:Subject:
+	 Thread-Topic:Thread-Index:Date:Message-ID:References:In-Reply-To:
+	 Accept-Language:Content-Language:X-MS-Has-Attach:X-MS-TNEF-Correlator:
+	 x-ms-publictraffictype:x-ms-traffictypediagnostic:
+	 x-ms-office365-filtering-correlation-id:x-ms-exchange-senderadcheck:
+	 x-ms-exchange-antispam-relay:x-microsoft-antispam:
+	 x-microsoft-antispam-message-info:x-forefront-antispam-report:
+	 x-ms-exchange-antispam-messagedata-chunkcount:
+	 x-ms-exchange-antispam-messagedata-0:Content-Type:Content-ID:
+	 Content-Transfer-Encoding:MIME-Version:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-AuthAs:X-MS-Exchange-CrossTenant-AuthSource:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-originalarrivaltime:
+	 X-MS-Exchange-CrossTenant-fromentityheader:
+	 X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
+	 X-MS-Exchange-CrossTenant-userprincipalname:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=YrNRlfhHaQJ0yq71K5dw/GxGP3wATlqR2LjkRNUMiV4=;
+	b=vB+K9lG8FY8gkpp8Ya33uiwjBzyN83u9UsdD0M7LdrVaeySJ8/bnyGHGrzTNldLWiPJB
+	 7eO8mhPSsHs1RIXzaZ2+sycEC5SVUjuPBB6Y5gPFG7xPM7bUqKb+IP+HHyeL8f66xN5m2
+	 8t3jys9Wn6jfmdMVmDB6vBEOjvAHIUOwdcH8mt0/xkQV88PiPDhlsHuG09Vbz2Ydafl8m
+	 Gf8o98EG2Na9y/HQsX1CI3hluDhOu2QCRoVGLf/YQR9U6Qq+7uhJ7jLp3x05sv37X5Xoz
+	 1BIwyx2BvCFM0q6QKpljWB4wh9Sa38XpHdJZ+X/9WtL5eFqF6EL0L3xZUd4sRN05X+Q==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=axis.com;
+	spf=pass smtp.mailfrom=axis.com;
+	dkim=pass header.d=axis.com header.i=@axis.com header.a=rsa-sha256 header.s=selector1 header.b=qRrSjYls;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.36
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013036.outbound.protection.outlook.com [52.101.72.36])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25CD606A32E;
-	Mon, 23 Nov 2026 12:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9582606A330;
+	Mon, 23 Nov 2026 12:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B9582606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=MEMkLRpc
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8F7F1F000E6;
-	Mon, 23 Nov 2026 12:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795437010;
-	bh=CtGMmO0BB729UC5xD7u3gEqCBxOyYL2pLXOXwao4TWw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=MEMkLRpcgS5HYNVDunpWDCODhmum65I0y/wB1J9Xi0CK62//7d6wm/zhUBNHhMz33
-	 AwS5idiGE2Fjr3J4egYXx5FpfN6uRVch+YvOtYVtKdUGeGKJqziOMvCYS8NEwuKrEd
-	 dKtpR2naEZH6A+UceJiQUiPcDdboZ4MZsnxHWxPDa5AP2GXhh/sU48FGa4yRhlLVD3
-	 HcpyYzbECWlim8n6MeG2xbifWEozf4+a8W+eYupQrzSvD2ycFGyxKwUd3rk8E8lHrT
-	 +umvosowMVV5o8t2Qrnt0NQvr35bZtQNghMpgk9Rh13rAPCJEOtEuKm3Ti4wIzZpnz
-	 J36hQa23kWtmg==
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 23 Nov 2026 13:29:55 +0100
-Subject: [PATCH 3/3] gpio: remove the legacy NSC GPIO API
+	dkim=pass (1024-bit key, unprotected) header.d=axis.com header.i=@axis.com header.a=rsa-sha256 header.s=selector1 header.b=qRrSjYls
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sCcG2Pk/gMrrszcaQocPF+2uYL7N0oXbri4eI2qizD9eDWpm7dZ43Iq7QIuFAXMFjOpm4bDiBrtTSyGUgaDfyk8yvS2ITVMLccMAgeTWGrLQ6yaSB0mzukEsyIQU534tKubY/wU7Kc2qpocxTbHjH5/TlPCmexcXgxYFyPxkxFcZyN01FP0n7nD0DDjtlZWW5pRUF7QRFLP7nFcP0I1BLiHeGY+FXpVhX6JMJF+h8hrQ7S+7WhUXLxIIm+QnByqHbqDwLHna1wkpCMeTVYFzmwrIogWJFvdoFq+XZvFjqJBYRxod+9cZZaWYMmHJK39vCXnK7ZpPEiYB189V17iWDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YrNRlfhHaQJ0yq71K5dw/GxGP3wATlqR2LjkRNUMiV4=;
+ b=GwXkt98nHSAY4jpkEbvZAQGk6u74pKWln6XCN+Gvsol6WJxqaq5i+H8KIvK7bzuRz8wx257pxyVIzyZDN/vIXt3bWwBNoVi6blVFQO7S94LvgYPR18IzDxHQwy/ipH4wZWbkc9UKYQuQwcg9GNUGo2wI8ZxZTST1HPnaeAhPZVY6DAUZkWSHm5jRJ2RsxONnGTaXmxjVk4OCegUN9/ireMvp56+mutYnuqlB6HtWAGL2mS/JlUFSo8es9lmS9LYWSqGNBQllrNcz2OAVekHg91EPDsMCexoTj85URcEfNqhCBLP3Nl+nyKmubCl2LOR0DNkg/o43bJwFXSyBMzwt0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YrNRlfhHaQJ0yq71K5dw/GxGP3wATlqR2LjkRNUMiV4=;
+ b=qRrSjYlsgOAB6AaPz6apf2eJXG0TzL4X0TuTJRzZpKDyI2+kl4Ht1DEUi66yc7OK7OyIDDXTr7KagphG8VwErpK8PpivbzTJR8KERD0+iCnoVPhlf7jxUknToSzVbghuTCKqQ4OQ6f85tAphf17vthBFQ3AeSJLmRPH8hkGqswg=
+Received: from MI9PR02MB105101.eurprd02.prod.outlook.com (2603:10a6:290:c2::7)
+ by DBAPR02MB6470.eurprd02.prod.outlook.com (2603:10a6:10:194::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Mon, 23 Nov
+ 2026 12:36:08 +0000
+Received: from MI9PR02MB105101.eurprd02.prod.outlook.com
+ ([fe80::f9b9:80ec:3b7b:b78c]) by MI9PR02MB105101.eurprd02.prod.outlook.com
+ ([fe80::f9b9:80ec:3b7b:b78c%4]) with mapi id 15.21.0639.012; Mon, 23 Nov 2026
+ 12:36:07 +0000
+From: Tobias Johansson <Tobias.Johansson@axis.com>
+To: "lee@kernel.org" <lee@kernel.org>, Tobias Johansson
+	<Tobias.Johansson@axis.com>
+CC: "pavel@kernel.org" <pavel@kernel.org>, "linux-leds@vger.kernel.org"
+	<linux-leds@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Kernel <Kernel@axis.com>
+Subject: Re: [PATCH] leds: lp50xx: Read default intensity from devicetree
+Thread-Topic: [PATCH] leds: lp50xx: Read default intensity from devicetree
+Thread-Index: AQHdcEoVLWveDNBko0+c6hFWkPlQW7c1Nr8AgAZ3FwA=
+Date: Mon, 23 Nov 2026 12:36:07 +0000
+Message-ID: <4d98d460cc5db453139e6dc2953988ca6282a06f.camel@axis.com>
+References:
+ <20261109-b4-leds-lp50xx-default-intensity-v1-1-0a04a3533df6@axis.com>
+	 <179442102947.44545.9103121805533352120@kernel.org>
+In-Reply-To: <179442102947.44545.9103121805533352120@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MI9PR02MB105101:EE_|DBAPR02MB6470:EE_
+x-ms-office365-filtering-correlation-id: cc4448ba-4cdb-43fe-a131-08df495e5889
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|366016|23010399003|1800799024|38070700021|10067099003|4143699003|11063799006|56012099006|261009223027099003|261022075727099003|261026140227099003|261022105027099003|261028144727099003|22082099003|18002099003;
+x-microsoft-antispam-message-info:
+ MH5eqe5J6hTJBHvQ5ayTt1Oihh3oJqDPm/Ra8hRb6NEiFUWU1wa8+OMD2smCcXyZYnaPr73g1Ep9tB4UcIc3bPOaIMm0L0kR+rp41Tom/zuhNP5jH5cKhfiW4gMaN940stMyr/vSkU0QjZO3RfRANfpgpre2fd8AHdlDNINvmBq4pHhXOWX07qrudHyk57+DyPLmwDqcmkpfSq3BF3TOSh5J3MF6iC202642fsJI7mW9Zsjm5cS5awRqsyweaR/Jk/PqkpHaaJ9ZIzIcDUESLo6+5HOMyAndj1n94ht7u7iqB7ZCdwZLlow4sxm1+BuSIZYK/W/UQdiuCn0V70+93uakIf2ioNL8nv3bslRa0krXZSa31QV/6Uq5snLHgym+WLW5ZUQ2L2fc11u2TnVSbbumuFzj/L97MUeUWilSLooLBJR6wgVKL4L3O76WgJ9tGJnw4ZTO9NSQRanzfCxGdN8vuAwF4wjsQUEYzsx6D3MLptlUmL84eZZLMyEF9U0kEqQ4b3kRrna1GiKptLopjACFuO4J1EnSswRh0orkJ8iVA5D4G87mqcIWo4EAVrYqGjOkB7wMKs2/8Pyfd7kOA52RKUaS8OFnETdNkOkUlHoz2SygTdjvG9TzD1fWT+Xegu9YyxDZZROdcIBMh45VXrhkBMn7705zNj5rLQFxxB4/TTLuZBHgpvLNyw9hHK3ZBTq295j8JxaREYZpmEcfFT4qm2dT65l81j6UlNbR75s=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI9PR02MB105101.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(23010399003)(1800799024)(38070700021)(10067099003)(4143699003)(11063799006)(56012099006)(261009223027099003)(261022075727099003)(261026140227099003)(261022105027099003)(261028144727099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aFdZMmVpMVVTSCtHL21RbUJOMzJ6Y1VrMDc0RE5TakNHTURqdmdSeDBvaDRa?=
+ =?utf-8?B?TFVHN3JRQXFVanpkV2dLTXN6Um5UQTY4NDBNMW5SN2ZYR2puQzUxb3paYlFG?=
+ =?utf-8?B?TkRPSHloU0t2VHJlc1h2d05nZHFqekU2SFlUVW1yK0FYVmhRUzFITTE0Kzd2?=
+ =?utf-8?B?WEtTUXRyMG5SNmd2eWVPbklLRlNYN09YOW9kZWhmK1F6YzRyRHVsM05DWDNM?=
+ =?utf-8?B?OXNXUEZOajBFaW1NSS9ncmJ3OG0zVlEwM1NlUE1vc1BtNXFCakRXc29tenZr?=
+ =?utf-8?B?cmVnTHJ2aHdyenhpZ2w4UXRxZGlSaGt3WnZyZTNQelNFbnNjZW5YUEFnTzVI?=
+ =?utf-8?B?WFJzNVpkdENBRDV2R3RUSDIzZzN2V091RmVJVFh0c3ptQngwcWlDY1Rwd09p?=
+ =?utf-8?B?cnVXWHR1UGNNOWxiMHNIUXJEVVhCalNsTW44UmpneC9wMnhudnJENTkybENk?=
+ =?utf-8?B?NWkxeGVha2c2Mlp4MzdWYy9mS0EwQ0MvVXhaVVZnZkJKTDl3QlBsMVROZHBF?=
+ =?utf-8?B?ZmlpbFFWV3BUbCtOOVNBeDd1cnhyZlFkSGt6S3ErOGVoYk16S0UybWhuNHA0?=
+ =?utf-8?B?bFBKYjhoSG9VT2F3b0ozQTNOcWVweTl3ZnVhUDNvenk5OVcxc21NMmN4bE5R?=
+ =?utf-8?B?ckt6ZDVTNkdGeHh1RWpUWlkxZlFrM0pHMU1Lajh6ZFVaQ3hPQ1lVVS9YR3E4?=
+ =?utf-8?B?Zy9ydlRSajdUTko4VDVtVzhndmhSY2tiTzE1WG1pQ3QxT0NsMHg4VnNZeW1R?=
+ =?utf-8?B?VjVRMDZEUUo3QUVZc2ozdmk5WFM4VExIZWpNN1dCbU9tTUUvWlY5Q2c2bTEy?=
+ =?utf-8?B?NlRiZ2xCTGJKdFlLYkhLQnRYMkh6YldGc0RhRlp5bkd1QnN3NUdpUkcxNXJa?=
+ =?utf-8?B?WC9Uam1EeEsvVlRrZzVHS2wzMHhIbjBWRWlNNC9MM2h4L3d6NFp3T3VpeGN6?=
+ =?utf-8?B?U1ljLytyMFdHdUtBTmlzWE1kZnEvaXlwV2Nudzh0WWFCRVBJRkNWRXJhcU5C?=
+ =?utf-8?B?akFwTWhHV0xGT0dTWlNmZ2t1eFJqZ3RGeURvZ1pJZ3h5NDAyeTh4dUx2N2tj?=
+ =?utf-8?B?dHJpOVRORkM4YUVsTHkxbzJobFBzRHh6TFlJNzhLanRBbVE3ditIaitiRzd3?=
+ =?utf-8?B?UDMvZ29KRzVabEpSME5xWXJFNjFGNHRBOEpINkhybUpGanlVYTQ4N1JxQjRD?=
+ =?utf-8?B?RjY4UGhXUzJHUzU3L0RORTN6bWU4bVg0K3hZTGV5Zm1ScXpQT1VGNkNEU0Ux?=
+ =?utf-8?B?dXE5TElVQ29TdDU5N0hmZHJjWFdIeUtWS3VRVVN5NWlWcDZDMGt4aXNNbWEy?=
+ =?utf-8?B?K2Nqb3JuUEhpbW5haytHb1g4eElBQkFhdURTa2lzZmw2blEyejlZVnYwTVVz?=
+ =?utf-8?B?TmtXSnc3WU5NMUhyL0lINVVvQmxoa0ZPNjJKdFJiREQ1aVRxbytaMFB0NW5a?=
+ =?utf-8?B?SmpWdzlIZC9xVCtjcUszcm1RV21JZlA2eWlxdXFkTlNFR3l1K2JpaEovZjZD?=
+ =?utf-8?B?S3ZIYldtMTQ1c1hDdWRYdUV5bTVQRnlJUzhEVGJoR1hGWWlGb1N2dk1FTWR6?=
+ =?utf-8?B?TURkY1pSS29lUXNZNU5aM0x3RnR0NFMwQmM3cGtNMnQwV1NpZFJiUkZxdnN6?=
+ =?utf-8?B?ZDVEYXlyK09yTkVTWG5SbDRDTEVtRzlqU0FBcnlQTnNLWno0Zm9hNWJoYnIv?=
+ =?utf-8?B?VXlCNi9URmpvQUFlRmg3RDU2bCswYnFaQWNPd1lkTENTT20yTzNMZ1RwRm10?=
+ =?utf-8?B?TnFYVlI1YTg1WHRlTy9sVmwxWHp6cGpJSUR5b1IwZ2tXcGE1aE16SEd3K0pL?=
+ =?utf-8?B?YkJyZmp2VFVlcFltT2JITkVPMjAyV2hiNXVvV3VualRneE44c2lSckNXeUdL?=
+ =?utf-8?B?QTNTZDZqSi9zeDNQcjNoMUVqZFM3Nm9TcUlMRVVzTHVrdVhMSHpsNU1nUERJ?=
+ =?utf-8?B?UEs1STJHRWgzNU55QU1GTWpwdUVteGNxb2VvcG1NRkg5ZHp0THBTUlFaWGVE?=
+ =?utf-8?B?NTE5TVBZVUJlQnN3bXpMeEFDUUduNFRmRXhpcXpTYWlxV1hJOWJQQ3RNSENN?=
+ =?utf-8?B?aFExekkvaXM1Y2dUNU9FOCtYZzNINVhXTGt1NTQxWmRTbzFhUFBTUzUxc1pT?=
+ =?utf-8?B?Wk5xQ0JobHA4OENOUDY5NDFlWFJBaWhkTFVhR0k0SE1RVjdXN0JyY29sOS9W?=
+ =?utf-8?B?K3JDZkpVYTM3enpXbmt1cE1LRjJWT3JseVV5UjNNdXE5cWp6bHhqN1gwazBj?=
+ =?utf-8?B?L0w5UHNMZkFLcG5uSDQ0U1U0aFMvNHQwOUFOQ09YRHFzaWZFZHdmREdTMlN0?=
+ =?utf-8?B?NVlQbFVrMU96QTZvUzRVeldYd0UxdEgzL1pxbCtSa1BHZnFuRFB3QT09?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <27C267FEA2972349BE0DA1F26C85EB91@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -52,647 +155,37 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261123-b4-nsc-gpio-v1-3-b2d97eba2662@kernel.org>
-References: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
-In-Reply-To: <20261123-b4-nsc-gpio-v1-0-b2d97eba2662@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
- Christer Weinigel <christer@weinigel.se>, Jim Cromie <jim.cromie@gmail.com>, 
- x86@kernel.org, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Griffin Kroah-Hartman <griffin@kroah.com>
-Cc: linux-gpio@vger.kernel.org, linux-leds@vger.kernel.org
-X-Mailer: b4 0.16.0
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MI9PR02MB105101.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc4448ba-4cdb-43fe-a131-08df495e5889
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2026 12:36:07.1054
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: M/Ko1h2ENqVXtZU3lYA2tjXHAH9j/j/6DawaYiIsmkSrKkya1LMUf74Pty2mPZcUawLj02YaibHeSj7fJN/bAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR02MB6470
 
-Both controllers now expose the standard GPIO character-device ABI,
-and the net48xx and WRAP LED drivers use GPIO descriptors. Remove the
-per-pin character devices and their shared file operations.
-
-We assume there are no remaining users of the old NSC GPIO userspace
-ABI.
-
-Signed-off-by: Linus Walleij <linusw@kernel.org>
----
- drivers/char/Kconfig        |  10 ---
- drivers/char/Makefile       |   1 -
- drivers/char/nsc_gpio.c     | 126 -----------------------------------
- drivers/gpio/Kconfig        |   2 -
- drivers/gpio/gpio-pc8736x.c | 114 +------------------------------
- drivers/gpio/gpio-scx200.c  | 159 +-------------------------------------------
- include/linux/nsc_gpio.h    |  41 ------------
- 7 files changed, 3 insertions(+), 450 deletions(-)
-
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index 09cc9b271e93..073ac08d08d2 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -223,16 +223,6 @@ config SONYPI
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called sonypi.
- 
--config NSC_GPIO
--	tristate "NatSemi Base GPIO Support"
--	depends on X86_32
--	# selected by SCx200_GPIO and PC8736x_GPIO
--	# what about 2 selectors differing: m != y
--	help
--	  Common support used (and needed) by scx200_gpio and
--	  pc8736x_gpio drivers.  If those drivers are built as
--	  modules, this one will be too, named nsc_gpio
--
- config DEVMEM
- 	bool "/dev/mem virtual device support"
- 	default y
-diff --git a/drivers/char/Makefile b/drivers/char/Makefile
-index b743732c525c..e388a7cbad84 100644
---- a/drivers/char/Makefile
-+++ b/drivers/char/Makefile
-@@ -26,7 +26,6 @@ obj-$(CONFIG_HW_RANDOM)		+= hw_random/
- obj-$(CONFIG_PPDEV)		+= ppdev.o
- obj-$(CONFIG_NWBUTTON)		+= nwbutton.o
- obj-$(CONFIG_NWFLASH)		+= nwflash.o
--obj-$(CONFIG_NSC_GPIO)		+= nsc_gpio.o
- obj-$(CONFIG_TELCLOCK)		+= tlclk.o
- 
- obj-y				+= agp/
-diff --git a/drivers/char/nsc_gpio.c b/drivers/char/nsc_gpio.c
-deleted file mode 100644
-index 2c9b12b85435..000000000000
---- a/drivers/char/nsc_gpio.c
-+++ /dev/null
-@@ -1,126 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/* linux/drivers/char/nsc_gpio.c
--
--   National Semiconductor common GPIO device-file/VFS methods.
--   Allows a user space process to control the GPIO pins.
--
--   Copyright (c) 2001,2002 Christer Weinigel <wingel@nano-system.com>
--   Copyright (c) 2005      Jim Cromie <jim.cromie@gmail.com>
--*/
--
--#include <linux/fs.h>
--#include <linux/module.h>
--#include <linux/errno.h>
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/nsc_gpio.h>
--#include <linux/platform_device.h>
--#include <linux/uaccess.h>
--#include <asm/io.h>
--
--#define NAME "nsc_gpio"
--
--void nsc_gpio_dump(struct nsc_gpio_ops *amp, unsigned index)
--{
--	/* retrieve current config w/o changing it */
--	u32 config = amp->gpio_config(index, ~0, 0);
--
--	/* user requested via 'v' command, so its INFO */
--	dev_info(amp->dev, "io%02u: 0x%04x %s %s %s %s %s %s %s\tio:%d/%d\n",
--		 index, config,
--		 (config & 1) ? "OE" : "TS",      /* output-enabled/tristate */
--		 (config & 2) ? "PP" : "OD",      /* push pull / open drain */
--		 (config & 4) ? "PUE" : "PUD",    /* pull up enabled/disabled */
--		 (config & 8) ? "LOCKED" : "",    /* locked / unlocked */
--		 (config & 16) ? "LEVEL" : "EDGE",/* level/edge input */
--		 (config & 32) ? "HI" : "LO",     /* trigger on rise/fall edge */
--		 (config & 64) ? "DEBOUNCE" : "", /* debounce */
--
--		 amp->gpio_get(index), amp->gpio_current(index));
--}
--
--ssize_t nsc_gpio_write(struct file *file, const char __user *data,
--		       size_t len, loff_t *ppos)
--{
--	unsigned m = iminor(file_inode(file));
--	struct nsc_gpio_ops *amp = file->private_data;
--	struct device *dev = amp->dev;
--	size_t i;
--	int err = 0;
--
--	for (i = 0; i < len; ++i) {
--		char c;
--		if (get_user(c, data + i))
--			return -EFAULT;
--		switch (c) {
--		case '0':
--			amp->gpio_set(m, 0);
--			break;
--		case '1':
--			amp->gpio_set(m, 1);
--			break;
--		case 'O':
--			dev_dbg(dev, "GPIO%d output enabled\n", m);
--			amp->gpio_config(m, ~1, 1);
--			break;
--		case 'o':
--			dev_dbg(dev, "GPIO%d output disabled\n", m);
--			amp->gpio_config(m, ~1, 0);
--			break;
--		case 'T':
--			dev_dbg(dev, "GPIO%d output is push pull\n", m);
--			amp->gpio_config(m, ~2, 2);
--			break;
--		case 't':
--			dev_dbg(dev, "GPIO%d output is open drain\n", m);
--			amp->gpio_config(m, ~2, 0);
--			break;
--		case 'P':
--			dev_dbg(dev, "GPIO%d pull up enabled\n", m);
--			amp->gpio_config(m, ~4, 4);
--			break;
--		case 'p':
--			dev_dbg(dev, "GPIO%d pull up disabled\n", m);
--			amp->gpio_config(m, ~4, 0);
--			break;
--		case 'v':
--			/* View Current pin settings */
--			amp->gpio_dump(amp, m);
--			break;
--		case '\n':
--			/* end of settings string, do nothing */
--			break;
--		default:
--			dev_err(dev, "io%2d bad setting: chr<0x%2x>\n",
--				m, (int)c);
--			err++;
--		}
--	}
--	if (err)
--		return -EINVAL;	/* full string handled, report error */
--
--	return len;
--}
--
--ssize_t nsc_gpio_read(struct file *file, char __user * buf,
--		      size_t len, loff_t * ppos)
--{
--	unsigned m = iminor(file_inode(file));
--	int value;
--	struct nsc_gpio_ops *amp = file->private_data;
--
--	value = amp->gpio_get(m);
--	if (put_user(value ? '1' : '0', buf))
--		return -EFAULT;
--
--	return 1;
--}
--
--/* common file-ops routines for both scx200_gpio and pc87360_gpio */
--EXPORT_SYMBOL(nsc_gpio_write);
--EXPORT_SYMBOL(nsc_gpio_read);
--EXPORT_SYMBOL(nsc_gpio_dump);
--
--MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
--MODULE_DESCRIPTION("NatSemi GPIO Common Methods");
--MODULE_LICENSE("GPL");
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b78d0cf0781b..7b1ed87747f0 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1098,7 +1098,6 @@ config PC8736x_GPIO
- 	depends on X86_32
- 	default SCx200_GPIO
- 	select ISA_BUS_API
--	select NSC_GPIO
- 	help
- 	  Support the GPIO controller in the National Semiconductor
- 	  PC87365 and PC87366 Super I/O chips. The GPIO logical device
-@@ -1109,7 +1108,6 @@ config PC8736x_GPIO
- config SCx200_GPIO
- 	tristate "NatSemi SCx200 GPIO support"
- 	depends on SCx200 && HAS_IOPORT
--	select NSC_GPIO
- 	help
- 	  Support the GPIO controller on National Semiconductor SCx200 and
- 	  SC1100 processors. The first bank is exposed to GPIO consumers
-diff --git a/drivers/gpio/gpio-pc8736x.c b/drivers/gpio/gpio-pc8736x.c
-index 5c18903b1add..507100a45ada 100644
---- a/drivers/gpio/gpio-pc8736x.c
-+++ b/drivers/gpio/gpio-pc8736x.c
-@@ -8,20 +8,16 @@
-  */
- 
- #include <linux/bitops.h>
--#include <linux/cdev.h>
- #include <linux/cleanup.h>
--#include <linux/fs.h>
- #include <linux/gpio/driver.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/isa.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
--#include <linux/nsc_gpio.h>
- #include <linux/pinctrl/pinconf-generic.h>
- 
- #define DRVNAME			"gpio-pc8736x"
--#define LEGACY_NAME		"pc8736x_gpio"
- 
- #define SIO_BASE1		0x2e
- #define SIO_BASE2		0x4e
-@@ -39,7 +35,6 @@
- 
- #define PC8736X_GPIO_RANGE	16
- #define PC8736X_NGPIO		29
--#define LEGACY_NGPIO		32
- #define PC8736X_GPIO_PORT_OUT		0
- #define PC8736X_GPIO_PORT_IN		1
- #define PC8736X_GPIO_OUTPUT_ENABLE	BIT(0)
-@@ -203,103 +198,10 @@ static int pc8736x_gpio_set_config(struct gpio_chip *gc, unsigned int offset,
- 	return pc8736x_gpio_update_config(gpio, old_config, mask, value);
- }
- 
--static int major;
--module_param(major, int, 0);
--MODULE_PARM_DESC(major, "Major device number for the legacy interface");
--
--static struct pc8736x_gpio *pc8736x_legacy_gpio;
--static struct cdev pc8736x_gpio_cdev;
--static dev_t pc8736x_devt;
--static u8 pc8736x_legacy_shadow[ARRAY_SIZE(port_offset)];
--
--static u32 pc8736x_legacy_config(unsigned int offset, u32 mask, u32 value)
--{
--	struct pc8736x_gpio *gpio = pc8736x_legacy_gpio;
--	u8 config;
--
--	guard(mutex)(&gpio->lock);
--	config = pc8736x_select_pin(gpio, offset);
--	pc8736x_gpio_update_config(gpio, config, ~mask, value);
--	return config;
--}
--
--static int pc8736x_legacy_get(unsigned int offset)
--{
--	struct pc8736x_gpio *gpio = pc8736x_legacy_gpio;
--
--	return pc8736x_gpio_get(&gpio->gc, offset);
--}
--
--static void pc8736x_legacy_set(unsigned int offset, int value)
--{
--	struct pc8736x_gpio *gpio = pc8736x_legacy_gpio;
--	unsigned int port = offset / 8;
--
--	guard(mutex)(&gpio->lock);
--	pc8736x_gpio_write(gpio, offset, value);
--	pc8736x_legacy_shadow[port] =
--		inb_p(gpio->base + port_offset[port] + PC8736X_GPIO_PORT_IN);
--}
--
--static int pc8736x_legacy_current(unsigned int offset)
--{
--	return !!(READ_ONCE(pc8736x_legacy_shadow[offset / 8]) & BIT(offset % 8));
--}
--
--static struct nsc_gpio_ops pc8736x_legacy_ops = {
--	.gpio_config = pc8736x_legacy_config,
--	.gpio_dump = nsc_gpio_dump,
--	.gpio_get = pc8736x_legacy_get,
--	.gpio_set = pc8736x_legacy_set,
--	.gpio_current = pc8736x_legacy_current,
--};
--
--static int pc8736x_legacy_open(struct inode *inode, struct file *file)
--{
--	file->private_data = &pc8736x_legacy_ops;
--	return nonseekable_open(inode, file);
--}
--
--static const struct file_operations pc8736x_legacy_fops = {
--	.owner = THIS_MODULE,
--	.open = pc8736x_legacy_open,
--	.read = nsc_gpio_read,
--	.write = nsc_gpio_write,
--};
--
--static int pc8736x_legacy_register(struct pc8736x_gpio *gpio)
--{
--	int ret, port;
--
--	for (port = 0; port < ARRAY_SIZE(port_offset); port++)
--		pc8736x_legacy_shadow[port] =
--			inb_p(gpio->base + port_offset[port] + PC8736X_GPIO_PORT_OUT);
--
--	if (major) {
--		pc8736x_devt = MKDEV(major, 0);
--		ret = register_chrdev_region(pc8736x_devt, LEGACY_NGPIO, LEGACY_NAME);
--	} else {
--		ret = alloc_chrdev_region(&pc8736x_devt, 0, LEGACY_NGPIO, LEGACY_NAME);
--	}
--	if (ret)
--		return ret;
--
--	pc8736x_legacy_gpio = gpio;
--	pc8736x_legacy_ops.dev = gpio->gc.parent;
--	cdev_init(&pc8736x_gpio_cdev, &pc8736x_legacy_fops);
--	pc8736x_gpio_cdev.owner = THIS_MODULE;
--	ret = cdev_add(&pc8736x_gpio_cdev, pc8736x_devt, LEGACY_NGPIO);
--	if (ret)
--		unregister_chrdev_region(pc8736x_devt, LEGACY_NGPIO);
--
--	return ret;
--}
--
- static int pc8736x_gpio_probe(struct device *dev, unsigned int id)
- {
- 	struct pc8736x_gpio *gpio;
- 	unsigned int sio, base;
--	int ret;
- 
- 	if (pc8736x_present(SIO_BASE1))
- 		sio = SIO_BASE1;
-@@ -345,32 +247,18 @@ static int pc8736x_gpio_probe(struct device *dev, unsigned int id)
- 		.set_config = pc8736x_gpio_set_config,
- 	};
- 
--	ret = devm_gpiochip_add_data(dev, &gpio->gc, gpio);
--	if (ret)
--		return ret;
--
--	return pc8736x_legacy_register(gpio);
--}
--
--static void pc8736x_gpio_remove(struct device *dev, unsigned int id)
--{
--	cdev_del(&pc8736x_gpio_cdev);
--	unregister_chrdev_region(pc8736x_devt, LEGACY_NGPIO);
-+	return devm_gpiochip_add_data(dev, &gpio->gc, gpio);
- }
- 
- static struct isa_driver pc8736x_gpio_driver = {
- 	.driver = {
- 		.name = DRVNAME,
- 		.owner = THIS_MODULE,
--		/* An open legacy GPIO file pins the module, but not the chip. */
--		.suppress_bind_attrs = true,
- 	},
- 	.probe = pc8736x_gpio_probe,
--	.remove = pc8736x_gpio_remove,
- };
- module_isa_driver(pc8736x_gpio_driver, 1);
- 
- MODULE_AUTHOR("Jim Cromie <jim.cromie@gmail.com>");
- MODULE_DESCRIPTION("NatSemi/Winbond PC87365/PC87366 GPIO driver");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS(LEGACY_NAME);
-diff --git a/drivers/gpio/gpio-scx200.c b/drivers/gpio/gpio-scx200.c
-index 5c0e86474481..0174cc7c0e97 100644
---- a/drivers/gpio/gpio-scx200.c
-+++ b/drivers/gpio/gpio-scx200.c
-@@ -6,15 +6,11 @@
-  */
- 
- #include <linux/bitmap.h>
--#include <linux/cdev.h>
- #include <linux/cleanup.h>
--#include <linux/fs.h>
- #include <linux/gpio/driver.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
--#include <linux/nsc_gpio.h>
- #include <linux/pci.h>
- #include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
-@@ -23,7 +19,6 @@
- #include <linux/spinlock.h>
- 
- #define DRVNAME			"gpio-scx200"
--#define LEGACY_NAME		"scx200_gpio"
- #define SCX200_NGPIO		32
- 
- #define SCX200_DATA_OUT		0x00
-@@ -185,137 +180,6 @@ static int scx200_gpio_init_valid_mask(struct gpio_chip *gc,
- 	return 0;
- }
- 
--static int major;
--module_param(major, int, 0);
--MODULE_PARM_DESC(major, "Major device number for the legacy interface");
--
--static struct cdev scx200_legacy_cdev;
--static dev_t scx200_legacy_devt;
--
--/* Protects the legacy frontend against provider detach during file I/O. */
--static DEFINE_MUTEX(scx200_legacy_lock);
--static struct scx200_gpio *scx200_legacy_gpio;
--
--static u32 scx200_legacy_config(unsigned int offset, u32 mask, u32 value)
--{
--	struct scx200_gpio *gpio = scx200_legacy_gpio;
--	u32 config;
--
--	guard(raw_spinlock_irqsave)(&gpio->lock);
--	config = scx200_gpio_read_config(gpio, offset);
--	scx200_gpio_update_config(gpio, config, ~mask, value);
--	return config;
--}
--
--static int scx200_legacy_get(unsigned int offset)
--{
--	return scx200_gpio_get(&scx200_legacy_gpio->gc, offset);
--}
--
--static void scx200_legacy_set(unsigned int offset, int value)
--{
--	scx200_gpio_set(&scx200_legacy_gpio->gc, offset, value);
--}
--
--static int scx200_legacy_current(unsigned int offset)
--{
--	return !!(inl(scx200_legacy_gpio->base + SCX200_DATA_OUT) & BIT(offset));
--}
--
--static struct nsc_gpio_ops scx200_legacy_ops = {
--	.gpio_config = scx200_legacy_config,
--	.gpio_dump = nsc_gpio_dump,
--	.gpio_get = scx200_legacy_get,
--	.gpio_set = scx200_legacy_set,
--	.gpio_current = scx200_legacy_current,
--};
--
--static int scx200_legacy_open(struct inode *inode, struct file *file)
--{
--	guard(mutex)(&scx200_legacy_lock);
--	if (!scx200_legacy_gpio)
--		return -ENODEV;
--
--	file->private_data = &scx200_legacy_ops;
--	return nonseekable_open(inode, file);
--}
--
--static ssize_t scx200_legacy_read(struct file *file, char __user *buf,
--				  size_t len, loff_t *ppos)
--{
--	guard(mutex)(&scx200_legacy_lock);
--	if (!scx200_legacy_gpio)
--		return -ENODEV;
--
--	return nsc_gpio_read(file, buf, len, ppos);
--}
--
--static ssize_t scx200_legacy_write(struct file *file, const char __user *buf,
--				   size_t len, loff_t *ppos)
--{
--	guard(mutex)(&scx200_legacy_lock);
--	if (!scx200_legacy_gpio)
--		return -ENODEV;
--
--	return nsc_gpio_write(file, buf, len, ppos);
--}
--
--static const struct file_operations scx200_legacy_fops = {
--	.owner = THIS_MODULE,
--	.open = scx200_legacy_open,
--	.read = scx200_legacy_read,
--	.write = scx200_legacy_write,
--};
--
--static void scx200_legacy_detach(void *data)
--{
--	guard(mutex)(&scx200_legacy_lock);
--	if (scx200_legacy_gpio == data) {
--		scx200_legacy_gpio = NULL;
--		scx200_legacy_ops.dev = NULL;
--	}
--}
--
--static int scx200_legacy_attach(struct scx200_gpio *gpio)
--{
--	struct device *dev = gpio->gc.parent;
--	dev_t devid;
--	int ret;
--
--	ret = devm_add_action(dev, scx200_legacy_detach, gpio);
--	if (ret)
--		return ret;
--
--	guard(mutex)(&scx200_legacy_lock);
--	if (scx200_legacy_gpio)
--		return -EBUSY;
--
--	if (!scx200_legacy_devt) {
--		if (major) {
--			devid = MKDEV(major, 0);
--			ret = register_chrdev_region(devid, SCX200_NGPIO, LEGACY_NAME);
--		} else {
--			ret = alloc_chrdev_region(&devid, 0, SCX200_NGPIO, LEGACY_NAME);
--		}
--		if (ret)
--			return ret;
--
--		cdev_init(&scx200_legacy_cdev, &scx200_legacy_fops);
--		scx200_legacy_cdev.owner = THIS_MODULE;
--		ret = cdev_add(&scx200_legacy_cdev, devid, SCX200_NGPIO);
--		if (ret) {
--			unregister_chrdev_region(devid, SCX200_NGPIO);
--			return ret;
--		}
--
--		scx200_legacy_devt = devid;
--	}
--
--	scx200_legacy_gpio = gpio;
--	scx200_legacy_ops.dev = dev;
--	return 0;
--}
--
- static void scx200_gpio_remove_swnode(void *data)
- {
- 	device_remove_software_node(data);
-@@ -365,11 +229,7 @@ static int scx200_gpio_probe(struct platform_device *pdev)
- 		.init_valid_mask = scx200_gpio_init_valid_mask,
- 	};
- 
--	ret = devm_gpiochip_add_data(dev, &gpio->gc, gpio);
--	if (ret)
--		return ret;
--
--	return scx200_legacy_attach(gpio);
-+	return devm_gpiochip_add_data(dev, &gpio->gc, gpio);
- }
- 
- static struct platform_driver scx200_gpio_driver = {
-@@ -377,24 +237,9 @@ static struct platform_driver scx200_gpio_driver = {
- 	.probe = scx200_gpio_probe,
- };
- 
--static int __init scx200_gpio_init(void)
--{
--	return platform_driver_register(&scx200_gpio_driver);
--}
--module_init(scx200_gpio_init);
--
--static void __exit scx200_gpio_exit(void)
--{
--	platform_driver_unregister(&scx200_gpio_driver);
--	if (scx200_legacy_devt) {
--		cdev_del(&scx200_legacy_cdev);
--		unregister_chrdev_region(scx200_legacy_devt, SCX200_NGPIO);
--	}
--}
--module_exit(scx200_gpio_exit);
-+module_platform_driver(scx200_gpio_driver);
- 
- MODULE_AUTHOR("Christer Weinigel <wingel@nano-system.com>");
- MODULE_DESCRIPTION("NatSemi/AMD SCx200 GPIO driver");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS("platform:" DRVNAME);
--MODULE_ALIAS(LEGACY_NAME);
-diff --git a/include/linux/nsc_gpio.h b/include/linux/nsc_gpio.h
-deleted file mode 100644
-index d7a04a6e3783..000000000000
---- a/include/linux/nsc_gpio.h
-+++ /dev/null
-@@ -1,41 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/**
--   nsc_gpio.c
--
--   National Semiconductor GPIO common access methods.
--
--   struct nsc_gpio_ops abstracts the low-level access
--   operations for the GPIO units on 2 NSC chip families; the GEODE
--   integrated CPU, and the PC-8736[03456] integrated PC-peripheral
--   chips.
--
--   The GPIO units on these chips have the same pin architecture, but
--   the access methods differ.  Thus, scx200_gpio and pc8736x_gpio
--   implement their own versions of these routines; and use the common
--   file-operations routines implemented in nsc_gpio module.
--
--   Copyright (c) 2005 Jim Cromie <jim.cromie@gmail.com>
--
--   NB: this work was tested on the Geode SC-1100 and PC-87366 chips.
--   NSC sold the GEODE line to AMD, and the PC-8736x line to Winbond.
--*/
--
--struct nsc_gpio_ops {
--	struct module*	owner;
--	u32	(*gpio_config)	(unsigned iminor, u32 mask, u32 bits);
--	void	(*gpio_dump)	(struct nsc_gpio_ops *amp, unsigned iminor);
--	int	(*gpio_get)	(unsigned iminor);
--	void	(*gpio_set)	(unsigned iminor, int state);
--	void	(*gpio_change)	(unsigned iminor);
--	int	(*gpio_current)	(unsigned iminor);
--	struct device*	dev;	/* for dev_dbg() support, set in init  */
--};
--
--extern ssize_t nsc_gpio_write(struct file *file, const char __user *data,
--			      size_t len, loff_t *ppos);
--
--extern ssize_t nsc_gpio_read(struct file *file, char __user *buf,
--			     size_t len, loff_t *ppos);
--
--extern void nsc_gpio_dump(struct nsc_gpio_ops *amp, unsigned index);
--
-
--- 
-2.56.1
-
+T24gVGh1LCAyMDI2LTExLTE5IGF0IDA5OjUyICswMDAwLCBMZWUgSm9uZXMgd3JvdGU6DQo+IE9u
+IE1vbiwgMDkgTm92IDIwMjYsIFRvYmlhcyBKb2hhbnNzb24gd3JvdGU6DQo+IA0KPiBQbGVhc2Ug
+cmV2aWV3LCBleHBsYWluIG9yIGZpeCB0aGUgU2FzaGlrbyByZXZpZXcocykuDQo+IA0KDQpUaGUg
+aXNzdWUgU2FzaGlrbyBmbGFnZ2VkIGlzIGEgcmVhbCBwcmUtZXhpc3RpbmcgYnVnOiBudW1fY29s
+b3JzIGlzDQppbmNyZW1lbnRlZCBmb3IgZXZlcnkgY2hpbGQgbm9kZSwgc28gYSBkZXZpY2V0cmVl
+IHdpdGggbW9yZSB0aGFuIHRocmVlDQpzdWItTEVEIG5vZGVzIHJldXNpbmcgdmFsaWQgcmVnIGlu
+ZGljZXMgbWFrZXMgbnVtX2NvbG9ycyBleGNlZWQgdGhlDQpzdWJsZWRfaW5mbyBhbGxvY2F0aW9u
+LiBJIGNhbiBmaXggdGhpcyBieSByZWplY3RpbmcgTEVEIG5vZGVzIHdpdGggbW9yZQ0KdGhhbiBM
+UDUwWFhfTEVEU19QRVJfTU9EVUxFIGNoaWxkcmVuLg0KDQo+ID4gKwkJCWZ3bm9kZV9wcm9wZXJ0
+eV9yZWFkX3UzMihsZWRfbm9kZSwNCj4gPiAiZGVmYXVsdC1pbnRlbnNpdHkiLA0KPiA+ICsJCQkJ
+CQkNCj4gPiAmbWNfbGVkX2luZm9bbXVsdGlfaW5kZXhdLmludGVuc2l0eSk7DQo+IA0KPiAobXVs
+dGlfaW5kZXggPj0gTFA1MFhYX0xFRFNfUEVSX01PRFVMRSkgb25seSB0ZXN0cyBmb3IgdmFsdWVz
+IHRvbw0KPiBsYXJnZS4NCj4gDQo+IFdoYXQgaGFwcGVucyBpZiBgbXVsdGlfaW5kZXhgIGlzIDwg
+MD/CoCBPT0I/DQo+IA0KDQpZZXMsIGdvb2QgY2F0Y2guIG11bHRpX2luZGV4IGlzIHJlYWQgd2l0
+aCBmd25vZGVfcHJvcGVydHlfcmVhZF91MzIoKQ0KaW50byBhIHNpZ25lZCBpbnQsIHNvIHZhbHVl
+cyB3aXRoIHRoZSBoaWdoIGJpdCBzZXQgYmVjb21lIG5lZ2F0aXZlIGFuZA0KYnlwYXNzIHRoZSB1
+cHBlci1ib3VuZCBjaGVjaywgY2F1c2luZyBhbiBPT0Igd3JpdGUuIEkgY2FuIGNoYW5nZQ0KbXVs
+dGlfaW5kZXggdG8gdTMyIHNvIHRoZSBleGlzdGluZyBjaGVjayBjb3ZlcnMgaXQuDQoNClNpbmNl
+IGJvdGggaXNzdWVzIGFyZSBwcmUtZXhpc3RpbmcgYW5kIGNhdXNlZCBieSBtYWxmb3JtZWQgZGV2
+aWNldHJlZXMsDQpJIGNhbiBzZW5kIHVwIGEgbmV3IHBhdGNoIHNlcmllcyB0byBmaXggdGhlc2Ug
+dHdvIGlzc3VlcyBob3BlZnVsbHkNCnNvbWV0aW1lIHRoaXMgd2Vlay4NCj4gDQoNClRoYW5rcywN
+ClRvYmlhcw0K
