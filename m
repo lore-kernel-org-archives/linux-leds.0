@@ -1,113 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795527502;
-	b=TgHV/IPKgeWqZIzA3z9UnJi7Fafh5kCkWImENc4/iyoUBpYVW4jm3LRDjzP0mcFbyc63
-	 DJSa3b9XYkuvcX+G0VvStnNO8ULoCWTWeOzve7cHcqiVmA/2U8rzFW8VEykFSWTUfx8U8
-	 0OyY8h5kdo3jvpEZdc7v8kQ4IJImyqSykd1kv2VduR9Zre1XaiujlxMGbQ31wbowijlUZ
-	 dkyvVbdX7K/OdWwYpfn4DEcqse6d6jTLVO3qihhy/UXGx7FSyqWK5CEeFVKvET96JyIKu
-	 zuzxoGdiDOXTY6Oo/4dEUq5Ozv+oadE8Q6f6l6gb7tyVt25qEp+zpTYzXykCVzuleyQ==
+	t=1795527613;
+	b=hhEE/OvgkJZ315CMsoY3lDI2fg0Msp29KHLdwgYmsPKAC5tBsqf5le0xBkvlGFBuN1L4
+	 /UIM6kqo/bwfcHScWkyyEmRHVS9zvI/wIlwUbZMkP3weWtoYExnaoirU9jBHp0lc+btcx
+	 XOXSPQFcMmR3m1TuTiyu15lPoxJYuTXS8XxJzzXbzJqD2j7P3lnL/xgBsSR2gHqSgrH6X
+	 gKunKvQDi6K0N+EHETKX5j6S6er5aXutVMN9mPn97reL3c2/YcyE1dcWHn1iy/CW/v+Ov
+	 HQJicPgysFbl6AABaG2a2DK+pASFnBqbFtedesgIVIHs40j2ydRC21Pkz4Iq9DUgTmA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795527502;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795527613;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 Mail-Followup-To:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Cookie;
-	bh=hBb7CziwmaEve0HjYdLhPP8A5dGN2yZ/4+i68vOpPLA=;
-	b=vJuqxpx/TtiGo1GNlwXIoKnW47ZGRw8Sqd2uXwbCVuJbBERu+3bOJxqeJr/J1uocHSuw
-	 Da6yHVEGPOjcCdtyBUhYJenLG2t4RN/ANWGiVK4NtMT5+3M8hPM+5G74o9e1rvC9tUd6w
-	 f3vqd1mv/lq0h7By4s2Ez6AATF3szGhqeDeRNAQ0hHrspD5G1h6A3+18ZjEKoQ5LdVk3s
-	 oX/uY6mZk1nXXVUwnbnmRduWRa+EVOdkWscfywwgNXz5gDvWQZNpn8sAia1sj7g+9oKYQ
-	 NlRZLF9+H3b9yHDl1h36ENYDE/gN0YZ1lbOkU+B7KhXwqPZ/vjYCLuAGCNK0cdqhkCQ==
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=LXiFx+L5CCwKVruNwA9sXl2NhTIyj3jvkEbySanPels=;
+	b=ZOVvkVLihVAp59sguoN1tV8IwHNeimrosL9vT+5FWkEOrY2YAooQytD7gkEtI9WfKVKL
+	 6Mf7J07/5NU1D88IlqvLuxzcrqyw5ZRHujYnXjH014M8ASQT/YpYabupqXLCD9snQW3ro
+	 3hXC3gX0PNoxSob6jNN7vJhW5n2wtN0AxrPYkfhi+//3wKMVSGP7Txhz0b0unt6lXnxUJ
+	 KyszoRcfY9h10li8Zd2lBIvlMhvLMZ4ityJJPeQeNPt54PfTxh8zVyf8+Iftlin24ArPf
+	 PbHs5BR8FiEXtxqBgAVPudA0hmYWWlgev7p8gTQqWrJ/uuQzJZ4Dtb6m76vvEREEJNA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oEvA9JlK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BhmZVsm1;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100E1606A321;
-	Tue, 24 Nov 2026 13:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E99606A31E;
+	Tue, 24 Nov 2026 13:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=oEvA9JlK
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C48451F000C0;
-	Tue, 24 Nov 2026 13:38:11 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=BhmZVsm1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791031F000CA;
+	Tue, 24 Nov 2026 13:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795527501;
-	bh=hBb7CziwmaEve0HjYdLhPP8A5dGN2yZ/4+i68vOpPLA=;
+	s=k20260515; t=1795527612;
+	bh=LXiFx+L5CCwKVruNwA9sXl2NhTIyj3jvkEbySanPels=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=oEvA9JlKinpj4CLa0YM6Nnu6QLmPew7urXHJpo4ZY1RapqnGsMeZoiTJ7ejlAh1wB
-	 z/4fG12dJSX006iBcFfaePI0M82vQ/1lbBDsYhXFPYLKOy6787YEbjgE2NTsh2LOnd
-	 YYS8P8FaEZ84WtS/L5EnxkSVgHxjjzXXJgJzz7UaNIBflVYxmWx/jPSoJ67DFMin7B
-	 48FH10YLDBmkTcl4sT4odtP5IxcWGp7FR81EE+8XK88PyG8uKCTLcwZHYiH8ilxH3V
-	 D8dFdk3x8iZiHSxDB1qrRh2eAI+U+TXTP3MiPubiQm0VUBtbo99xI2tQapnHz6R5jC
-	 CTkpyiMWVUWdg==
-Date: Tue, 24 Nov 2026 13:38:09 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Helge Deller <deller@gmx.de>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-	Jarkko Nikula <jarkko.nikula@bitmer.com>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	b=BhmZVsm1F03k1gQhR42vPYWI3yvM5KqUr5TzQXRw69br9dDrzS24ACF0CW0cWStRv
+	 nhKYE5mMbiV3T0C0P2suHiRK1UxBghW8geD2ZwEdC+Bn5QnjyZwO8yABHU4x68W4+d
+	 Qkgzn/NMNWWuG+VM8hzD6q2X5loLeFUE6JKU+/VBu3Fvm3WFNY/wQLESZnWRvp1c6z
+	 sb9dHgjUZ9PYK4q8Vua/64XIVO6yl12N7xmwdf9HBqGBeJkKCmNL74J5/f8NjyJYdj
+	 VcZU3nKP5JWCkgoWZUUEwoneTHW2xF12oB56sa7R+p3llx6MG3LtW7wGvIQEqDRsAs
+	 Y4u96/vQvkDmQ==
+Date: Tue, 24 Nov 2026 07:40:09 -0600
+From: Rob Herring <robh@kernel.org>
+To: sashiko-reviews@lists.linux.dev
+Cc: "H. Nikolaus Schaller" <hns@goldelico.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
 	linux-leds@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: Re: [PATCH v2 00/20] ARM: omap3: pandora: Modernize audio and
- backlight to use Device Tree to finally remove pdata-quirks
-Message-ID: <f31b5adb-f6e8-4cab-8d92-17645bf1b69a@sirena.org.uk>
-Mail-Followup-To: "H. Nikolaus Schaller" <hns@goldelico.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Helge Deller <deller@gmx.de>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-	Jarkko Nikula <jarkko.nikula@bitmer.com>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	letux-kernel@openphoenux.org, kernel@pyra-handheld.com
+	conor+dt@kernel.org, lee@kernel.org
+Subject: Re: [PATCH v2 06/20] dt-bindings: sound: Document OpenPandora sound
+ card
+Message-ID: <20261124134009.GA43712-robh@kernel.org>
 References: <cover.1795505160.git.hns@goldelico.com>
+ <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
+ <sashiko-outbox-230655@kernel.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -117,52 +61,81 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nSbMoxGlmoiutN4J"
-Content-Disposition: inline
-In-Reply-To: <cover.1795505160.git.hns@goldelico.com>
-X-Cookie: Real Users never use the Help key.
-
-
---nSbMoxGlmoiutN4J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <sashiko-outbox-230655@kernel.org>
 
-On Tue, Nov 24, 2026 at 08:25:40AM +0100, H. Nikolaus Schaller wrote:
-> PATCH V2 2026-11-24 08:26:00:
-> Changes in V2:
-> The series has been reworked and expanded from 16 to 20 patches,
-> addressing review feedback and issues identified during hardware testing.
+On Tue, Nov 24, 2026 at 07:40:31AM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 3 potential
+> issues to consider:
+> - [Medium] dt-bindings: sound: openpandora sound-dai omits mcbsp4 and
+>   twl4030 DAIs
+> - [Low] dt-bindings: sound: openpandora sound-dai lacks per-entry items
+>   list
+> - [Low] dt-bindings: sound: openpandora example has status property and
+>   wrong order
+> --
+> 
+> commit a7d9248344c1d8736a83ed4cfd8b21aad87db0cb
+> Author: H. Nikolaus Schaller <hns@goldelico.com>
+> 
+> dt-bindings: sound: Document OpenPandora sound card
+> 
+> This commit adds a Device Tree binding schema for the OpenPandora OMAP3
+> audio subsystem connecting OMAP3 McBSP, the PCM1773 DAC, and the TWL4030
+> codec.
+> 
+> > diff --git a/Documentation/devicetree/bindings/sound/openpandora,omap3pandora-sound.yaml b/Documentation/devicetree/bindings/sound/openpandora,omap3pandora-sound.yaml
+> > new file mode 100644
+> > index 0000000000000..6c4d69ffc1c50
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/sound/openpandora,omap3pandora-sound.yaml
+> 
+> [ ... ]
+> 
+> > +  sound-dai:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +    minItems: 2
+> > +    maxItems: 2
+> > +    description:
+> > +      Phandles to the audio CPU DAI (OMAP3 McBSP) and the codec DAI.
+> 
+> [Severity: Low]
+> Should sound-dai define an items list with a per-entry description for
+> each phandle instead of using minItems/maxItems with a free-form
+> description?
 
-> Audio and power management:
-> ===========================
+This would be why you broke everyone else. sound-dai already has a type.
 
-> PWM and backlight:
-> ==================
+> 
+> [ ... ]
+> 
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +
+> > +    sound {
+> > +        compatible = "openpandora,omap3pandora-sound";
+> > +        status = "okay";
+> > +
+> > +        label = "OpenPandora";
+> > +
+> > +        amp-gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+> > +        amp-supply = <&aux_5v>;
+> > +
+> > +        widgets =
+> > +            "Line", "Line Out",
+> > +            "Line", "Line In",
+> > +            "Headphone", "Headphone Jack",
+> > +            "Microphone", "Mic (internal)",
+> > +            "Microphone", "Mic (external)";
+> 
+> [Severity: Low]
+> DT binding examples normally omit status = "okay", and the property
+> order in the example node (widgets, routing, sound-dai) does not match
+> the order declared under properties: in the schema (sound-dai, routing,
+> widgets).
 
-> Device Tree and general cleanup:
-> ================================
+Also correct comments.
 
-This is dealing with several tangentially related topics over multiple
-subsystems in a single series, this makes it a lot less digestable and
-results in a huge series with an extremely large CC list and murky merge
-strategy.  Please split things out into separate serieses, even within
-the various subsystems there are batches of independent work which
-really do not need to be in the same series.
-
---nSbMoxGlmoiutN4J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmsFk0AACgkQJNaLcl1U
-h9C5/gf8Cm0A5yFYJVQeo/T7StRW0pHrKh1EmIz06r7u8NK09DP+BhXT8qRk1I41
-F7QT+nveX8OD+3Wz+Zyw7iAN7DdNLpIpci7jqzm/9hHAIeCU9h5mbXgGLRZXlLLy
-MJ/MIEGdSDswMSbHdd1qbOAph080P7loJJrXcVFvWHRwH6+Gc6umpSBfu7uLM+D0
-W+mM6fRvvz0Ou0YBcV+gvdp/18n0MiQ11v7dn3UsQaFHkJfTZzKZh6WOuUZ3JdKr
-H1DtRqRYCJooQcaZpUWdRGDHEAMHXgW1+o7r3gEfGTklbsyY+xeOhXEBbU7jQLjd
-SS7bE1b2Y0pMX5XKGAjMXMyqtG/2dg==
-=LtHo
------END PGP SIGNATURE-----
-
---nSbMoxGlmoiutN4J--
+Rob
