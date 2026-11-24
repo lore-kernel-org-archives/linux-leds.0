@@ -1,56 +1,57 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795505846;
-	b=BXeIw0WEKG4f7DrSWM5P6Z/TqXpTabadShd+NY9QqXHtFcCQBLzXd5UhedcgNeU2/qx8
-	 oOiCiUzs+8dE9ENxR2AanFsG9oU1tMYkGsXSJwqIvBD21YfzLDpPy5hmvdMUAqCq2ZBJ+
-	 /r3CXxsf4vxMQOMUayHK/PMVtrgVeYx7IbMnw751s3g9UYUtYm7+U0zzUpKu1WC53q6bi
-	 z7P7G6aC7YkNL4dd/k/ERJefh7h3qzQ/hkY9XVfURqSRUA9aa6Tad0uLbgNkTyzkzQnmo
-	 Jt9i4E7Vh7Wtc4dJ/Q5jHSV3+dyh5PLEw1StgmGmCNxxJoPeLpRknIAuJa3f6RpBI2Q==
+	t=1795506032;
+	b=RSrLjXSEZhzS8orRDkeIwgCkJP/BIa+y7ZALosDZ/DJLe0X1JDBstF00nzMABJTkg6Ij
+	 Od9c3Z9HFcQm4D6qzVjWbOQp8w7WUnO4uCnxbfdGcGBr8nZIIiCQkUx0H1phEy/4+Ui9T
+	 LKzhfTRur4e6RMF9Ws7ASqmTJDpsO1RhGGWa7VauHFytZcV2Ob2Ymd86/pFELZB00rYL5
+	 m9cNudxj4mBy5u1Juzj+AQ7Du+iicu72GUXDr5BoSURkWX8tkgkOCrrrI9MmFJI7v/3gB
+	 XGglFKBVLSNr6iarACjtKmHk+7X+X1y0jX1j3q5+ZR9Ap4oZUDSjXMRUdCwoqqi8N6A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795505846;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795506032;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=CXYUU2uRuU2m1NOGcdl2MUJjIMsS4b/pKjOrCLsrDwA=;
-	b=ErJsA5YoiLUrCTNxiVHpGNyWOVnHAWyQDHOulFb4Me+SwFzxU+RkTgd3MhlLdzQflLPR
-	 VH3sVlGcG/Um3GU9wxQ56ISWsdog39UDXpCRn/0SUDk9Ife3jVSDfqFNmA6CGn5G7sQQI
-	 0EmeAfVuZm3ZwKJRnM1061KmLPp32t4K8l05q7yuulWD8KzHHzrFM6w0/f8DX2P08KVly
-	 gVPHuvMKb+cwyAY/GdfVS2gx4Im+dB/d9K929Qp44NTsa2KR2NDqku5qKEMSadn3E3Rb2
-	 NkRPJk20a21CG/FEeV/c6g8NdrCYfjmLpz+xL3dRF+qQiQTUM2jn42EwqYaqwhg5xGA==
+	bh=1LevJtmKfjqye0X/IH+VwjyhHGPkDVR9ieTbL1FhTzE=;
+	b=ZmmasuTWWqUdR/M+jFawdjaw3QQ0A+qLjHSZ8H0G7V1fph1M0gjWIwsD1FOoDRVBEjiL
+	 DOBjqR4Fp3sgGfpC9A5spb+p+NrIVnhPDiROe6HgsAp9UkT/ReZY6NM4V3jNkvq7sxTuq
+	 eIZSzZ6DDC9L/lgE7HPkaqVMqk/rMolrX6yxzd3/MaaWEk+5r0qkotHgCN1X1kBDCgtPv
+	 rLb+vl7hqLVhFwCyDewxLTxZpd3ABf0HAiKrx2ArisMRyko7s2NaNr4IM8oTM4Sczsaku
+	 zGzzYoEdkEX6BhbFcw+UrrqiDRFx8rhAWYQOHcidVx9TA5dpR5T9fEYUQdzvJvU/niw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iD6FMO50;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="I/jse2Rk";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D99606A32D;
-	Tue, 24 Nov 2026 07:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88804606A326;
+	Tue, 24 Nov 2026 07:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iD6FMO50
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5004C1F000CF;
-	Tue, 24 Nov 2026 07:37:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=I/jse2Rk
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF621F000D0;
+	Tue, 24 Nov 2026 07:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795505845;
-	bh=CXYUU2uRuU2m1NOGcdl2MUJjIMsS4b/pKjOrCLsrDwA=;
+	s=k20260515; t=1795506032;
+	bh=1LevJtmKfjqye0X/IH+VwjyhHGPkDVR9ieTbL1FhTzE=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=iD6FMO503IqpZs1HdOiQHrLcUQqiXIqTT4CbBWe85OfpPSHssW53Apu2ssoM3ey4V
-	 rCu3iTGzrq5NOYMevRPD1fXvgbx+enCWqzAmNsnas/9etTPz4ooX940yTehaF0XYhD
-	 JYCSBNxt8Py4cfxl+gHnZP+vZeiebaHqP1jgHEGYbM4Zg/K5XMJBa561PDPYhm9EaO
-	 CXFFFNBufRe59YXeY7i6Gqjjqocshh8Lqkjkil9JjUy0bxbonvVGM2YNLQxwa+LYGY
-	 UVNO7HShgLTrKKn1atiUG+snvjrhYbpYA59mBbuh7igXQFb7cyVWvPSotETeQtmBYx
-	 RdbC3dANTDt9A==
-Message-ID: <sashiko-outbox-230650@kernel.org>
+	b=I/jse2RkgI2YYsBRMes2VH4YJvITooyzzp5bcMJMf+r+XG5NPHXyqLTmOnZwusaEH
+	 xiEjGAZZYLFbjUvGFwn0XfmjoFWOCdhNd+YYYggeIYMsT2po5Mvsxhkv/PdRrX2Noo
+	 WiPLaNeKZhkANFX+eEKxidjxtcfqTeLcr5EVftkJCL4e8G3HaHwiwlmHJsV6e6paNf
+	 xtuyqn9Wml3XzXavg6VtwS2p4CJhPrucw4j1J+kZ+kCHp8bAQpWN+VCicM2f12NR/3
+	 Dl8QGMYfsLEyPF5szG22VyICKlmkb8KFQLPNG74gj02AI+RArAdqkfIFwAT3n23zH1
+	 oKAy+83C9h9iQ==
+Message-ID: <sashiko-outbox-230655@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 09/20] pwm: twl: Support 64-cycle PWM frame
+Subject: Re: [PATCH v2 06/20] dt-bindings: sound: Document OpenPandora sound
+ card
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "H. Nikolaus Schaller" <hns@goldelico.com>
 Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-sound@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <59fa3a5ee1a0d0bf13c85c08160c5acdaa95b7a4.1795505160.git.hns@goldelico.com>
+In-Reply-To: <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
 References: <cover.1795505160.git.hns@goldelico.com>
- <59fa3a5ee1a0d0bf13c85c08160c5acdaa95b7a4.1795505160.git.hns@goldelico.com>
+ <5c6f7deca16f70f1f19cb40c57d70e30068d6000.1795505160.git.hns@goldelico.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 07:37:24 +0000
+Date: Tue, 24 Nov 2026 07:40:31 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,72 +61,107 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 1 potential
-issue to consider:
-- [High] pwm: twl: 64-cycle mode in twl_pwm_config() scales and clamps
-  to 127 not 63
+Thank you for your contribution! Sashiko AI review found 3 potential
+issues to consider:
+- [Medium] dt-bindings: sound: openpandora sound-dai omits mcbsp4 and
+  twl4030 DAIs
+- [Low] dt-bindings: sound: openpandora sound-dai lacks per-entry items
+  list
+- [Low] dt-bindings: sound: openpandora example has status property and
+  wrong order
 --
 
-commit 9c38629d98d044b0860bfc5ea8bf71a8a5b8a626
+commit a7d9248344c1d8736a83ed4cfd8b21aad87db0cb
 Author: H. Nikolaus Schaller <hns@goldelico.com>
 
-pwm: twl: Support 64-cycle PWM frame
+dt-bindings: sound: Document OpenPandora sound card
 
-This commit adds support for the ti,twl4030-pwm-frame-64 device tree
-property to select a 64-clock-cycle PWM frame on TWL4030.
+This commit adds a Device Tree binding schema for the OpenPandora OMAP3
+audio subsystem connecting OMAP3 McBSP, the PCM1773 DAC, and the TWL4030
+codec.
 
-> diff --git a/drivers/pwm/pwm-twl.c b/drivers/pwm/pwm-twl.c
-> index 99c1caf4f19c8..70567d5805f43 100644
-> --- a/drivers/pwm/pwm-twl.c
-> +++ b/drivers/pwm/pwm-twl.c
+> diff --git a/Documentation/devicetree/bindings/sound/openpandora,omap3pan=
+dora-sound.yaml b/Documentation/devicetree/bindings/sound/openpandora,omap3=
+pandora-sound.yaml
+> new file mode 100644
+> index 0000000000000..6c4d69ffc1c50
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/openpandora,omap3pandora-so=
+und.yaml
+
 [ ... ]
-> @@ -56,13 +60,35 @@ static inline struct twl_pwm_chip *to_twl(struct pwm_=
-chip *chip)
->  	return pwmchip_get_drvdata(chip);
->  }
-> =20
-> +/*
-> + * Note: this hardware (and driver) does not honor arbitrary periods.
-> + * Only the duty ratio is implemented; the frame length is either
-> + * 128 clock cycles (default) or - if selected through device tree -
-> + * 64 clock cycles. Consumers requiring an accurate period must verify
-> + * the actually provided period.
-> + */
->  static int twl_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
->  			  u64 duty_ns, u64 period_ns)
->  {
-> +	struct twl_pwm_chip *twl =3D to_twl(chip);
->  	int duty_cycle =3D DIV64_U64_ROUND_UP(duty_ns * TWL_PWM_MAX, period_ns)=
- + 1;
-> +	bool frame_64 =3D twl_class_is_4030() && twl->twl4030_frame_64;
->  	u8 pwm_config[2] =3D { 1, 0 };
->  	int base, ret;
-> =20
-> +	if (frame_64)
-> +		pwm_config[0] |=3D TWL4030_PWM_ON_FRAME_64;
+
+> +  sound-dai:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    minItems: 2
+> +    maxItems: 2
+> +    description:
+> +      Phandles to the audio CPU DAI (OMAP3 McBSP) and the codec DAI.
+
+[Severity: Low]
+Should sound-dai define an items list with a per-entry description for
+each phandle instead of using minItems/maxItems with a free-form
+description?
+
+[ ... ]
+
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
 > +
-> +	/*
-> +	 * In the 64-cycle frame the OFF counter wraps at 64. A requested
-> +	 * duty_cycle of 64 (full duty) would therefore wrap to a constant
-> +	 * high output. Saturate to the largest value that still produces
-> +	 * a low pulse (OFF =3D 63, approximately 62/64 high) instead.
-> +	 * This also applies to full-duty requests from PWM consumers.
-> +	 */
-> +	if (frame_64 && duty_cycle > TWL_PWM_MAX)
-> +		duty_cycle =3D TWL_PWM_MAX;
+> +    sound {
+> +        compatible =3D "openpandora,omap3pandora-sound";
+> +        status =3D "okay";
+> +
+> +        label =3D "OpenPandora";
+> +
+> +        amp-gpios =3D <&gpio1 14 GPIO_ACTIVE_HIGH>;
+> +        amp-supply =3D <&aux_5v>;
+> +
+> +        widgets =3D
+> +            "Line", "Line Out",
+> +            "Line", "Line In",
+> +            "Headphone", "Headphone Jack",
+> +            "Microphone", "Mic (internal)",
+> +            "Microphone", "Mic (external)";
 
-[Severity: High]
-Does twl_pwm_config() scale and clamp duty_cycle against 127 instead of 63
-when frame_64 is enabled?
+[Severity: Low]
+DT binding examples normally omit status =3D "okay", and the property
+order in the example node (widgets, routing, sound-dai) does not match
+the order declared under properties: in the schema (sound-dai, routing,
+widgets).
 
-TWL_PWM_MAX is defined as 0x7f (127), which is the counter limit for the
-128-cycle frame.  In 64-cycle mode, scaling duty_ns by TWL_PWM_MAX and
-clamping to TWL_PWM_MAX produces pwm_config[1] values up to 127 rather
-than 63.  As a result, the 6-bit OFF counter wraps around at roughly 50%
-requested duty cycle (reaching OFF =3D 64 -> 0 and OFF =3D 65 -> 1, which
-matches ON =3D 1 for constant high output) and repeats the duty ramp a
-second time across the upper half of the range.
+> +
+> +        routing =3D
+> +            "DAC1", "APLL Enable",
+> +            "DAC2", "APLL Enable",
+> +            "Headphone Amplifier", "VOUTL",
+> +            "Headphone Amplifier", "VOUTR",
+> +            "Line Out", "VOUTL",
+> +            "Line Out", "VOUTR",
+> +            "Headphone Jack", "Headphone Amplifier",
+> +            "AUXL", "Line In",
+> +            "AUXR", "Line In",
+> +            "MAINMIC", "Mic (internal)",
+> +            "Mic (internal)", "Mic Bias 1",
+> +            "SUBMIC", "Mic (external)",
+> +            "Mic (external)", "Mic Bias 2";
+> +
+> +        sound-dai =3D <&mcbsp2>, <&dac>;
+> +    };
+
+[Severity: Medium]
+Does constraining sound-dai to two phandles omit the second DAI link for
+OMAP3 McBSP4 and the TWL4030 codec?
+
+The OpenPandora audio complex (sound/soc/ti/omap3pandora.c) uses two DAI
+links: McBSP2 connected to the PCM1773 DAC for playback, and McBSP4
+connected to the TWL4030 codec for capture and APLL clocking.  The
+schema description and the example routing table both include the
+TWL4030 widgets (APLL Enable, AUXL, AUXR, MAINMIC, SUBMIC, Mic Bias 1,
+Mic Bias 2), but sound-dai only allows two entries and lists only
+<&mcbsp2> and <&dac>.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1795505160.gi=
-t.hns@goldelico.com?part=3D9
+t.hns@goldelico.com?part=3D6
