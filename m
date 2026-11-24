@@ -1,100 +1,138 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.124
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795451066;
-	b=f2lYo5vSB9iNaYY++PcpnW+TwLOvmLcwtDTDS3yksMdnZMZoRyzdB/PrsHozoMBOPEAP
-	 MuRRU0Dy1Z0BWoR3Z0DwWVhVuWsgoIW1EoGz+9XXCxC6TzXQBESoT9aCSpZ5YoUyXNpf9
-	 Q1Rdeg1rb5VyzKTMPa0pT2Xw72Fy5/g9RFqEqZA00gMEYiH1pRuLe1ZyrqsyYMwvXz6Y5
-	 BmJd49Bx9r3343+GUQJh08g2O7Y8X9TFxRQmcCxn7pfy983iRVLRSoxO+P7mKvvMAws5K
-	 o3x32cc/+VTgnn7Ki0jF+UubgqRch3H1Jx85mZzJifXwUKzJdRcQgRcC+H1Ds0rYfJg==
+	t=1795505223;
+	b=KNL3UnKpJ0Bmt3D+DCyk1IBpGfkAu2pgJ0uZgkyo0tJ970z1vGf45TnOstW0216eav4q
+	 lQD/hngHHotsdJX6RoMgW6Yt0mUXTypKsz08zd+MXIoAEqSaNkfIC8dgYjxbY8iHw6qKT
+	 M0xsfwYX3q9BkdMezUxvGkHlh9lTKEqCQ5Oavr42sLO/hMyGIkz6eCnA0x+yXJUVXa6Bx
+	 +eTh8ADysTWg5a29N6J/RNrUFHJc0Z6IE7+ssRFT8ofNCLO+yzUi3B5SD/ngeU9yKIPMi
+	 2CrL2liewyKhI5NQmuVeqf30qW2H/lfx4Mbs+XckWeBKzqWU2ztjPeDzWHhddzNWkRA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795451066;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=CNJ5tMPn49GAcvDTSuAR0rimcoVMJYlaC808t8jK4Ww=;
-	b=vbEhCnTzuVcv53p1hQikOhP+HmqzcGVmNI2m9AVIkgvh2JVBJYdGDFfMwi1oy+OCqa+a
-	 jRs1aZAceSqx0AY47Had78A8QjbniKFtoJiqgg5gLuak/VfVYX2EdxZ48CFTn8N23s8w/
-	 190aqI51T9Pj01S89x7TN73SZSDj/2O+q2w4xQyUVQACzgjmsKRX/hgBKSeDs/TqrpjuZ
-	 5txBp+NodhL8fErWvVMzpvDpiwTFKbvnQbYLMpWbCESKPPnoJsJoBUvCmFEgu2e8PiImf
-	 +LbzBDX18FWsWrWtfjec8ZQeCLJbq0F12mX0bX0saetCDct9RcLbc5hSDIWnS96Tm/A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795505223;
+	h=DMARC-Filter:X-RZG-CLASS-ID:DKIM-Signature:DKIM-Signature:X-RZG-AUTH:
+	 Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:Content-Type;
+	bh=Ot92D5MoHTIRkYUwhd3d4KUBwDJQHCkfAJL/CWKuxWM=;
+	b=M6Y4VS5kUhOtJkCezWd3WiQjlVXZOL/dGiR/ozSi8Z39AynNWx0crK2+X0KSaIPCyCsr
+	 v5FBnElipVGRsDt/Pn5uN1XeawSyDKxvOGojitG4zpGCXJptCCPmT5YC1/pBK6ap9j0t0
+	 eRTM6RwDIAEOhDjaXTXzPT/hG2QQcosGUyQk1h3LNGBBfDkXyHUUh0MxuW5khbHbLR3Xf
+	 9x00UJ0hKoayfA3+rsj/ipdsRlyDWWwTEEg5r/0zxzQwrKvhpjl6WGP1W+FrFDPgq6vSe
+	 8GfHceFDxf+Cc/ZU1itcBF1IEyAMbW/UuLTsIflqYWtm4YvWZwAm4/JPzGsXBNYjIMQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kGG61wye;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.53
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=goldelico.com;
+	spf=pass smtp.mailfrom=goldelico.com;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b="Q/GgECb/";
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=CFkLt1iY;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=85.215.255.124
+Received: from mo4-p04-ob.smtp.rzone.de (mo4-p04-ob.smtp.rzone.de [85.215.255.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778C5606A31E
-	for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 16:24:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 778C5606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95BA606A33F;
+	Tue, 24 Nov 2026 07:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org A95BA606A33F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=kGG61wye
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c5118deebcfso512447366b.1
-        for <linux-leds@vger.kernel.org>; Mon, 23 Nov 2026 08:24:25 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795451064; cv=none;
-        d=google.com; s=arc-20260327;
-        b=L7HyUZ7ELA53smElHMFaQJ0onFueTJTkn56PGJX5J23NqHDkD+lizLodLGo1d2cV1c
-         KBFZMkPXrm8Tj0QmfQGwHIcHqNCWWKKmPgzL8sV1jM9WGWQARAY204Rqyqw95PpAW7K9
-         cULvq2UNXx4piu2QrrOqpGUoIL+iLqnySbnKMHNGXHXvy4R3yN21GSBPm4BWnDcAGmnQ
-         mteFs9HuTwDMlC1opuVPbNk5pSYbBboC/WgZl3Py/bTIT0XqixkicenooaHABD6NZ+gq
-         7lsebRlAPsJXwEvkbtvVJIsDBVy1vRWNZX0ZrfuKw5/qik+qAutUjSvQLaCQJA3+Mtii
-         7OfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=CNJ5tMPn49GAcvDTSuAR0rimcoVMJYlaC808t8jK4Ww=;
-        fh=UciDZBLTCeO5MpiJo+Kjjn7WnULwRdmeMONlCc54BWI=;
-        b=fFUHWHqMTX95aUBlJ5ETJ60kK1J3ZpBMhlQMWwFl85ESUH2KBFt3wgEuvKHIwjfI7K
-         3sxXkSg1iwhd83HYTj/DO4zgARdwi2zOSGpnQ36lVSlXxVgiddWv210p1eL5twEgj0TS
-         /Ve2C5ETATU09RErXh+83MH7c5kzLVV4uNcm2a/GYn7GxkoYtc3LizU8QRfupC/pPXmw
-         9fSJCi2F+3fMq/voYPJaXlu72qJXfxbMWhOQfteWwTs3Iapo3KK9zQFpWns6DsgRWmb3
-         cTWP/48Tunf0oQcFk29undBhzUswq1B19jcCnRZREzwbqg5PLamGFrAvXq74oFOBprHC
-         +BOw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795451064; x=1796055864; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=CNJ5tMPn49GAcvDTSuAR0rimcoVMJYlaC808t8jK4Ww=;
-        b=kGG61wye3HV3NP7BQ17KP5dlch87le463+NAUdJ0Azg5wUYimKiAXVX7T+vAKgW4n4
-         USmVJ6ccq1JiCOBFkF238YbF4N9Al3OehytGod9mVZIrZDCu8bHXwPxRDjfQgB/x1z4S
-         dG37hmDbqD1JMdGkG1LnHRi44iWi199K6o3DAbckMhYBQRRZb2X7RzPY1yIFuQ2nrFL+
-         xwLWYkuR8i2t4oLid/D0xml/jOJL9hY+et8bBtzEkPqj9JXq1XxiW3yn4r+SFuAmmJfe
-         thBHf/UcvioFJlCVfIwSXNxW6mzt9E7sOVMxo03V5lZZZh/KAq2Dfgx06TI7XBA0z2Zw
-         G++g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795451064; x=1796055864;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CNJ5tMPn49GAcvDTSuAR0rimcoVMJYlaC808t8jK4Ww=;
-        b=WvFlneEGaxfcm4gg9DSqHBTtmzz26awgQuAN8IBs0/Lu9OuMIYxjc6lhaB963WYkpR
-         E67Fzo+d2CK01YbVYqStIKaShrUi7LuxtDiqNO7PEsJHJNR+z9/GqKuxIkTAe+QC7e1p
-         U5fnlxXMp1XbhbGQ4Fs+HV1MtEzyz+ZkHTV3YANGIwz95hvFTKrmQqg4BsB2LZWdyX1K
-         NGwA+7YVKPd2A2byQ1Y6BS7nsIHHLM0AnIXMuMPP+KBnxUYZevQ/Liu3ElFMcmQbATTG
-         MyxJgwNuSmc7Lk0Q/ed1DXx4xGA7QeyiSmxOwNpPMaPqj+0GlezQ9UIv5XWuybdcY6ML
-         MZjg==
-X-Forwarded-Encrypted: i=1; AL+hErHWN057TfehVX/xogx7067deQqCv5jdxMMJQNkhMxCBMHuShA6tlaUrl2uJlrYOm9VrbMelgIjR5iht@vger.kernel.org
-X-Gm-Message-State: APuU4Z/+q0GgvNEa83MmECak1WnamDcSaVIEMtuT4Qqtlg3LVnt3oPIn
-	Gz2W/tubwhFNA2mG2gl1Fcv/mpR0W7pyKi3MPmXoU/LRnnSp7NCkRajCvRTlCkoKdfO0bmNpuSG
-	ZFhBDH8gedb/MXRbGe/3Hl6Z+yP11F2BMD+zJ
-X-Gm-Gg: AZFdTZdQqFLVTLhR/RygqxvOTFEt93CnhrFSnLaUjXd4nu62eqG7IXl9CsxAQhegXqz
-	Xdsl9w1pVQujUy2rw3ZA7MXN+ogi34rkFxktduAH+fMuCT7PfeJC2U5m2/jUaxs4AIr3cdKvezZ
-	0CjZYe6UAN7ZZbpEfnLVPfB9oXlDjzJT2wNnG4Pl8SCHJT5QcDhirVOfid0NpcPHjP3uu6rz8OJ
-	Czf+ITaRMGRpaBarAxEWcACsqLuvYVPDr06eHTaGV5AGvHwwBz/v88fL+fA05SogvYJNysm84uK
-	CTXKFHDdpVF3s1bx9RkcFrca2BCfJNkB176P+D3yZ6S4TRaEKUZI0h5D/KtKG0mVikshlDRZ7YC
-	QkldtRfJnFE7jmxZ0zcNN5VqESD67hqZyyBzS5g==
-X-Received: by 2002:a17:906:231a:b0:c42:4750:8d49 with SMTP id
- a640c23a62f3a-c513aad2400mr684425566b.25.1795451063824; Mon, 23 Nov 2026
- 08:24:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.a=rsa-sha256 header.s=strato-dkim-0002 header.b=Q/GgECb/;
+	dkim=pass header.d=goldelico.com header.i=@goldelico.com header.a=ed25519-sha256 header.s=strato-dkim-0003 header.b=CFkLt1iY
+ARC-Seal: i=1; a=rsa-sha256; t=1795505184; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=CJIxscNam66olrJ/AaAQZ1O8YhFitO9TT2ljpy/sXfZPTch1cD3AfFf0WxYSUCqZnU
+    FwN+sHXQOQ51N4RGNsycAYnvcdAogg1jJhZE7gvCk8AIYRhJLFLA06llegG9glbElZFU
+    kA4kLU9Bp/f2DXo0GqV+NezWyx4AX+/mQpYUYbphFshKjKzsPP0COsHi2zzcIJmyXvrm
+    J64SGwFyzpfUSzElQ4xVxcT7KlCVQrTbVxxd+TIoydCFYx53bG7T+5hWQfPXRLdQaSkK
+    c1c0mLX4yBrJK4gmQBV7XT/UZzAFVRK+s17ELnNQyTOQRpuuY6xrLfB4M3XwZoCJZXEO
+    7UUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505184;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=Ot92D5MoHTIRkYUwhd3d4KUBwDJQHCkfAJL/CWKuxWM=;
+    b=TWyW/tNPVK7vlrSnoxT9nHuoDx3GcJqgrFSGaRG4JiDqaEElUPUgeTiYWWNTfSzwq0
+    LB5NFY2KBpXB3UPF4KFsNgplrfM3MvwrR9Va+zLQCsRTQeOS8lFhJY9gv+/zkJjZfmJp
+    7xwKAXwLMpUcLCrt/HD232+H85GEnAVLn0t7qWAZkJD0Gjbn4C1QQjh4iQp7p64FP0eX
+    ZfvnOfl8amPyseK/7XOZB6rI2w4/9Eg/G60M3Smg84HMdwbrhRoPcYLNDi3si3m/niFl
+    EFrv4iK9XU9OuB4ASeZj3ECo/HYuzjytgW0ZURUOEL6MiCywB/JHGAf2cM67OkTAdOIw
+    zoLw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo04
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1795505184;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=Ot92D5MoHTIRkYUwhd3d4KUBwDJQHCkfAJL/CWKuxWM=;
+    b=Q/GgECb/Jt9opnm8iAGQaiyDog/+KIMozneFyCYr8WoHhAf/+AZIeyMV80fa54u9oq
+    FJDrTOMKu2NXfHHnrMAhhIw4JEGIbqgMlC9+MW018vtupk/D0LQrGMytl999FODByxmB
+    hP7T6jMGgOgB1UwGA1DS3UkVBEgKG9FPARVCzdDvJZx43KGKT4gQVDiDS3bHrA3cyvzf
+    ChKZYvQucBpupLmoxLuU9zROQlXF01Fm7Q5ewjeQZJBv/yF4L1lvVen0a7wtFrBkmHEh
+    6uuz9lV80o4S5loxyJGtklOFSHOs89u81AKJ0P/sHLr3uGNQzRnLmfSVT1aPD/j0kbjq
+    LMSQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1795505184;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=Ot92D5MoHTIRkYUwhd3d4KUBwDJQHCkfAJL/CWKuxWM=;
+    b=CFkLt1iYWD0LCR2302eGIJe2rOj81bNZlfQjh7vrmBTgCorrItqEi3AM0UfGsUqDNi
+    YNcEW0Lvuy0Z3qgW/kAQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9qVpwcQVkPW4I1HrV3poLlciNVTQoM6kVxzKyrKzkpjcAwdDfiN49"
+Received: from iMac.fritz.box
+    by smtp.strato.de (RZmta 55.6.3 AUTH)
+    with ESMTPSA id Qb56a22AO7QN1HW
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Tue, 24 Nov 2026 08:26:23 +0100 (CET)
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+	Jarkko Nikula <jarkko.nikula@bitmer.com>
+Cc: Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pwm@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	letux-kernel@openphoenux.org,
+	kernel@pyra-handheld.com,
+	"H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [PATCH v2 18/20] ARM: dts: omap3pandora: Switch backlight to PWM
+Date: Tue, 24 Nov 2026 08:25:58 +0100
+Message-ID: <40321eb9223453f39536092d7095d3eff9901188.1795505160.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.56.0
+In-Reply-To: <cover.1795505160.git.hns@goldelico.com>
+References: <cover.1795505160.git.hns@goldelico.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -104,147 +142,81 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261122131900.2951586-4-a.shimko.dev@gmail.com> <179543998366.3135.8537500779592480863@kernel.org>
-In-Reply-To: <179543998366.3135.8537500779592480863@kernel.org>
-From: Artem Shimko <a.shimko.dev@gmail.com>
-Date: Mon, 23 Nov 2026 19:24:12 +0300
-X-Gm-Features: Aa3M54pFMGCEqfrknuxTm9QQEvcIIV5arWsj3tZLkp59n888HFnWQSHbf7MxHro
-Message-ID: <CAOPX747Whtrpa-aP=AhtaFfqMpqHHYVMJ7jNZWCdgmMc1_GYag@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 3/3] net: phy: dap8211r: add PHY LED control support
-To: netdev-bot+sashiko@kernel.org
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	maxime.chevallier@bootlin.com, pavel@ucw.cz, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-leds@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Nov 23, 2026 at 4:19=E2=80=AFPM <netdev-bot+sashiko@kernel.org> wro=
-te:
->
-> Thank you for your contribution! Sashiko AI review found 2 potential
-> issue(s) to consider.
->
-> Critical: 0 =C2=B7 High: 0 =C2=B7 Medium: 1 =C2=B7 Low: 1
->
-> If you believe none of the issues are legitimate, please reply to each
-> issue of Medium severity or higher and explain why the AI is wrong.
-> If any of them are legitimate and you plan to respin, please let patchwor=
-k
-> know by including "pw-bot: cr" as a separate line at the end of your repl=
-y
-> (one such reply per series is enough).
->
-> - [Medium] In drivers/net/phy/dap8211r.c, dap8211r_led_hw_control_get()
->   (lines 312-351) does not undo what dap8211r_led_hw_control_set()=E2=80=
-=A6
-> - [Low] dap8211r_led_hw_control_set() in drivers/net/phy/dap8211r.c first
->   clears FORCE_EN(index) in LED_COMCON (0xA00B) with=E2=80=A6
->
-> --
->
-> net: phy: dap8211r: add PHY LED control support
->
-> This adds PHY LED support for the three LEDs on the DAP8211R. It adds a
-> dap8211r_write_ext() helper for indirect extended register writes. It als=
-o
-> implements the led_brightness_set, led_hw_is_supported, led_hw_control_se=
-t
-> and led_hw_control_get callbacks, using force mode for brightness and the
-> LED_x_CON registers for hardware triggers.
->
-> > diff --git a/drivers/net/phy/dap8211r.c b/drivers/net/phy/dap8211r.c
-> > index 1fe20efd394d7..b0fb3cf89b55a 100644
-> > --- a/drivers/net/phy/dap8211r.c
-> > +++ b/drivers/net/phy/dap8211r.c
->
-> [ ... ]
->
-> > +static int dap8211r_led_hw_control_set(struct phy_device *phydev, u8 i=
-ndex, unsigned long rules)
-> > +{
-> > +     u16 led_mode =3D 0, led_reg;
-> > +     int ret;
-> > +
-> > +     switch (index) {
-> > +     case DAP8211R_LED_ID_0 ... DAP8211R_LED_ID_2:
-> > +             led_reg =3D DAP8211R_LED_0_CON + index;
-> > +             break;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     ret =3D dap8211r_modify_ext(phydev, DAP8211R_LED_COMCON, DAP8211R=
-_LED_FORCE_EN(index), 0);
-> > +     if (ret)
-> > +             return ret;
->
-> [Severity: Low]
->
-> Force mode is cleared in LED_COMCON here, but the new rules are only
-> written to LED_x_CON later by a separate dap8211r_write_ext() call. Each
-> helper takes and drops the MDIO bus lock on its own. In between, won't th=
-e
-> LED follow whatever LED_x_CON held before (power-on, bootloader, or
-> previous trigger rules)?
->
-> If the final dap8211r_write_ext() fails, the function returns an error bu=
-t
-> leaves force mode off and the stale rules active. set_baseline_state() in
-> drivers/leds/trigger/ledtrig-netdev.c ignores the return value:
->
->     led_cdev->hw_control_set(led_cdev, trigger_data->mode);
->
-> so the trigger would assume the new mode is in effect.
->
-> Would it work to write LED_x_CON first and clear FORCE_EN afterwards? The
-> rule register has no visible effect while force mode is on.
+Replace the legacy Pandora backlight platform device with a
+pwm-backlight device-tree node using TWL4030 PWM0.
 
-Agreed. mxl86110_led_hw_control_set() does exactly this. I'll reorder the c=
-alls
-in dap8211r_led_hw_control_set() the same way in v5,
+Use the 64-cycle PWM frame and retain the experimentally determined
+brightness table. Request full duty for a 10 ms startup guard before
+normal PWM dimming begins. The TWL4030 64-cycle encoding limits the
+actual duty to approximately 62/64, retaining short low intervals
+during the TPS61161 mode-detection window.
 
-> [Severity: Medium]
->
-> Does dap8211r_led_hw_control_get() return the same rules that
-> dap8211r_led_hw_control_set() writes? I see three mismatches.
->
-> First, hw_control_set() turns TRIGGER_NETDEV_LINK into LINK_10 | LINK_100=
- |
-> LINK_1000. This function only reports the three speed bits and never
-> reports TRIGGER_NETDEV_LINK.
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+---
 
-i'll add it, thanks
+Notes:
+    Changes against V1:
+    - Describe the 10 ms full-duty request and the actual TWL4030 output.
+    - Brightness levels remain unchanged; duty is capped by the TWL4030
+      PWM provider in 64-cycle mode (patch 09), not by patch 11.
+    - Code and commit-message review assisted by ChatGPT.
 
-> Second, hw_control_set() always sets DAP8211R_LED_ACT_BLINK along with
-> TX/RX, but bit 13 is never checked here. The kernel-doc on hw_control_set=
-()
-> says the LED does not blink on traffic without ACT_BLINK unless another
-> rule is active. A register with TX/RX set, ACT_BLINK clear and no
-> link/duplex bit would still be reported as tx/rx offload.
+ .../dts/ti/omap/omap3-pandora-common.dtsi     | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-i.e., if ACT_BLINK =3D=3D 0 but txrx are active (by some reason), then
--EOPNOTSUPP should be
-returned, because the register state does not correspond to an
-operational state. Oh, that's
-important i think. Yes, it should be fixed.
+diff --git a/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi b/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi
+index a5633d93547a3..6bdfbd80b9fcd 100644
+--- a/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi
++++ b/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi
+@@ -53,6 +53,25 @@ lcd_5v: fixed-regulator-lcd-5v {
+ 		vin-supply = <&aux_5v>; /* logical enable dependency */
+ 	};
+ 
++	backlight: pwm-backlight {
++		compatible = "pwm-backlight";
++		pwms = <&twl_pwm 0 1922710>;
++		/*
++		 * TPS61161 analog dimming window: duty must stay above
++		 * ~20-25 % (below that the regulator drops out, LED off)
++		 * and the startup waveform must avoid long low intervals
++		 * that could trigger EasyScale detection. The enable guard
++		 * requests full duty; TWL4030 limits it to about 62/64.
++		 * These levels were determined experimentally.
++		 */
++		brightness-levels = <
++			  0 24 30 36 42 49 58 68 80 94 110 129 255
++		>;
++		default-brightness-level = <11>;
++		/* TPS61161: cover startup mode-detection window (10 ms) */
++		pwm-enable-guard-period-us = <10000>;
++	};
++
+ 	tv: connector {
+ 		compatible = "connector-analog-tv";
+ 		label = "tv";
+@@ -505,6 +524,10 @@ MATRIX_KEY(7, 4, KEY_LEFTBRACE )
+ 	 >;
+ };
+ 
++&twl_pwm {
++	ti,twl4030-pwm-frame-64;
++};
++
+ /* backup battery charger */
+ &charger {
+ 	ti,bb-uvolt = <3200000>;
+@@ -737,6 +760,8 @@ lcd: lcd@1 {
+ 		reset-gpios = <&gpio5 29 GPIO_ACTIVE_LOW>;	/* GPIO_157 */
+ 		vcc-supply = <&lcd_5v>;
+ 
++		backlight = <&backlight>;
++
+ 		port {
+ 			lcd_in: endpoint {
+ 				remote-endpoint = <&dpi_out>;
+-- 
+2.56.0
 
-> Third, any other LED_x_CON bits are silently ignored, and 0 is returned
-> anyway.
->
-
-ok
-
-> rtl8211f_led_hw_control_get() in the realtek driver reports
-> TRIGGER_NETDEV_LINK when all three speed bits are set. Could the same
-> approach be used here?
-
-Yes, i think so
-
---
-Best regards,
-artem
-
-pw-bot: cr
