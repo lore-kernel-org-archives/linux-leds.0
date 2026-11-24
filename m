@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795506467;
-	b=39jxtyPW6DhKUNd0kfy9LBxeu52yLsDHaOM9unlZOcTcXRg1U9dNo49MJR66la+RtNhw
-	 rGnXeaJKVFRSadbGWP1Lh2203YFGQgmbd0jln4EaVexcghH2EPqEsvDZ0auWYdXmMXeIw
-	 1nuiHga5EEwkovBW30dbQFO3Qyj3w4gzd+7cKmL64WEmJ9kh8QiKzJkqjwfdMZI3ExI+3
-	 cgMtvMFnjtv82vVhrZ4FHiT1zHzjzNgLUk1O8q+g1Q2p0zk6uak9QqYuUhktS9/pBcdW5
-	 wgRGZWBRHSrEQ5QXzPPE0V+BMfkMdS+EvOkpE7wH5cqwwaZEGIBFYwhdgiIzoe2FHtQ==
+	t=1795506473;
+	b=MLBSnWxtX9OX8esdq0+z9pyBgixwq2h8cuKVvho1BE+aHKrLWHCt5Xjz8+W4KafU5mpA
+	 Oce5oF1M6LTbM+L/ax7+YZ0gVj2+xyXphbZay3YSrQXF54mQGaI30AQUn2sDbd3p6HixO
+	 oBgvIiCGi/AU8DwwDU7EbvSD66/u/WyohQe5Vohsc8tDu05gl7X+Bt5+LfxjI5GSlkzrc
+	 hpY4mqqLo+BXKXxag8CmXHuxtGnCjN4++rvTUhI568ByqFQDz652m0X6S5W9RjgVWIyjC
+	 rf8GBpe0ywgiVrUTEgu30nD+kPJh+q7lbM9hZU3IXe+2umlnG1qeWI//aFE4L4kXhzQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795506467;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795506473;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=OTP7w9ZiHM/lSydigi/3xg0xnFIH5CNg9KINKRpIhqo=;
-	b=cH+0Nm7dE0idJDvRBpPPyCDj3n6BLI+2z40ITT7H2hFL4/y67s9gt5myFbpS+En0kxdD
-	 F61q0n9Y+SJeCZEpQiBfMqFPEgtHiG/FXlMqUOnzxF4v7c3BEmucVvEGpn4zXR19V0jkH
-	 XAZOrNvzJOk952FBKydtItiV3qL57mU+fFpYKLPDeKQwOCpv43TXIp8BHbJRV5aBYAxll
-	 /ZliZmGqdl0nwrmrLmk59JbVPf6sFqaQI4HeVuob+3HAC2QOp1A3ov1Spcl2HAXa7Wojx
-	 hGRWJIOeFEEv7erAt9OvkaGW6gjiLnmqIqaeBxjyJxH75EAl5YUA+65g640ZXZnE+OQ==
+	bh=Opb1OVIShkw+D6CD5QzKTIBLPCWVm02nLoRZroW026k=;
+	b=j52lchLrRwVX1vobnc/Hq5qeNe6h/O1lEODIeGVeSsy6Kf0DuznyF0pFz+2B1ohBq+6W
+	 LKei1Oo+UZIGNdTaC1s9Qu+QsTs3OcxDns89oZ+5ucCn48qv2neH58nkf827BXFk9KgPx
+	 zcqpTxKOCIrecDvbQWaOUpKr1pFI3ZX4oCDyfCD1AnxEeLBQkGZsLai81et3taq4mlUlp
+	 Sj28PZW0YNFJXktHoMFWAG6JDuwRt+6BRktXoMKjX/xrFX16azMjgQywaajnOYJik38oM
+	 RtHlvSB7MVW/kfYCCYiWgudGOEw8WIUaHN/NFZe3CBkySuv40496A5KVoF8WID9wEDg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C8OlA3nJ;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J7PAttrU;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F917606A31E;
-	Tue, 24 Nov 2026 07:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAC2606A31E
+	for <linux-leds@vger.kernel.org>; Tue, 24 Nov 2026 07:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=C8OlA3nJ
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 715841F000C6;
-	Tue, 24 Nov 2026 07:47:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J7PAttrU
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01481F000CA;
+	Tue, 24 Nov 2026 07:47:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795506466;
-	bh=OTP7w9ZiHM/lSydigi/3xg0xnFIH5CNg9KINKRpIhqo=;
+	s=k20260515; t=1795506472;
+	bh=Opb1OVIShkw+D6CD5QzKTIBLPCWVm02nLoRZroW026k=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=C8OlA3nJGgJOPEuTgFE6g3O/1WYphIIs5vWScHSdTx61yTdpw4qYJFTFB1uI7SZJA
-	 MppJLC0/0VIssitZoNqKhk5a+dai8i9qQ+PEIzxiu6mFIIyoQbkEmjXVilaC+sW2Fm
-	 lie1tyUCU0rptJQbhtrPiJKbgKuH5w6UmUUHcVdMYMcoBSBHKEAWmzAZE6Fkg0LR5C
-	 US1V9fA4B/FI2b01o2mRDWO4jglQEullBUnkqvyrj1rpvuO36qXzdPYFeCYblKqS6i
-	 CMs5y5oALaeq3wdjPh/GqppBQpj7IE1PtVDoxDSIa1FMlmjS4uGVRW7GdaCMYaF8N7
-	 9nmDuIFWTRWCQ==
-Message-ID: <sashiko-outbox-230672@kernel.org>
+	b=J7PAttrUdnnm5ar8N93Nw9pNYfSOKXnUNr8JODO8kQvr65QjQ61t2wvjZzq/fBL3t
+	 SY0jSSbKT/Lc0SxxkHF7+rSbLu6uLIsjaSCPPE/kyiShsg7iaVxx4Sj8hbCvss8Vok
+	 +KWD+takMwqtL7sVWdS8OQeM+Cf4yRDex27e2eupjirlHAKi0/o+Rm2XAtkzL8w+sI
+	 V/l88j7I12rqbRYFjwqqD8PhCHUDki0CQQABv4CWSxh0S8A6IC/hCksszQAJwIfMfY
+	 gIzHK9VlS+thBM4q56RMTkvbi5XtmxpkGJ4Df3tvlMXVUSfsaqmybpz0NInMnIrFOf
+	 YEl6AoVBG4j0w==
+Message-ID: <sashiko-outbox-230673@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 17/20] ARM: dts: omap3pandora: Describe sound card
+Subject: Re: [PATCH v2 00/20] ARM: omap3: pandora: Modernize audio and
+ backlight to use Device Tree to finally remove pdata-quirks
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, linux-sound@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, lee@kernel.org
-In-Reply-To: <0269f30c3f766431c0c20a36fd6e2b2dce1b3f2f.1795505160.git.hns@goldelico.com>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <cover.1795505160.git.hns@goldelico.com>
 References: <cover.1795505160.git.hns@goldelico.com>
- <0269f30c3f766431c0c20a36fd6e2b2dce1b3f2f.1795505160.git.hns@goldelico.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 24 Nov 2026 07:47:46 +0000
+Date: Tue, 24 Nov 2026 07:47:52 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,123 +60,31 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 
-Thank you for your contribution! Sashiko AI review found 3 potential
-issues to consider:
-- [Medium] ARM: dts: omap3pandora: incomplete and unused sound-dai
-  property on sound node
-- [Medium] ASoC: ti: omap3pandora: built-in driver fails to bind DT
-  McBSP DAIs
-- [Low] ARM: dts: omap3pandora: redundant clocks properties on mcbsp2
---
+Sashiko has finished reviewing this 20-patch series:
 
-commit 51a8d5eee5be53980684a82cdf4795c967918b82
-Author: Stefan Leichter <sle85276@gmx.de>
+- Patches 1, 3-5, 8, 10, 12, 13, 15, 19, and 20: no issues found.
+- Patch 2 ("gpio: twl4030: Support REGEN GPIO"): 2 potential issues (1
+  High, 1 Medium)
+- Patch 6 ("dt-bindings: sound: Document OpenPandora sound card"): 3
+  potential issues (1 Medium, 2 Low)
+- Patch 7 ("ASoC: ti: omap3pandora: Convert sound card to DT"): 8
+  potential issues (2 High, 4 Medium, 2 Low)
+- Patch 9 ("pwm: twl: Support 64-cycle PWM frame"): 1 potential issue (1
+  High)
+- Patch 11 ("backlight: pwm: Support enable guard period"): 4 potential
+  issues (3 Medium, 1 Low)
+- Patch 14 ("ARM: dts: omap3-pandora: Model LCD power enable depe..."):
+  4 potential issues (1 High, 3 Low)
+- Patch 16 ("ARM: dts: omap3pandora: Describe PCM1773"): 1 potential
+  issue (1 Low)
+- Patch 17 ("ARM: dts: omap3pandora: Describe sound card"): 3 potential
+  issues (2 Medium, 1 Low)
+- Patch 18 ("ARM: dts: omap3pandora: Switch backlight to PWM"): 3
+  potential issues (1 High, 1 Medium, 1 Low)
 
-ARM: dts: omap3pandora: Describe sound card
-
-This commit adds the OpenPandora sound card node and McBSP2 DAI properties
-to omap3-pandora-common.dtsi.
-
-> diff --git a/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi b/arch/a=
-rm/boot/dts/ti/omap/omap3-pandora-common.dtsi
-> index 6e349f7ae6936..a5633d93547a3 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi
-> +++ b/arch/arm/boot/dts/ti/omap/omap3-pandora-common.dtsi
-> @@ -69,6 +69,41 @@ dac: pcm1773-codec {
->  		vcc-supply =3D <&vsim>;
->  		enable-gpios =3D <&gpio4 22 GPIO_ACTIVE_HIGH>; /* GPIO 118 */
->  		status =3D "okay";
-> +		#sound-dai-cells =3D <0>;
-> +	};
-> +
-> +	sound: sound {
-> +		compatible =3D "openpandora,omap3pandora-sound";
-> +		status =3D "okay";
-> +
-> +		label =3D "OpenPandora";
-> +
-> +		amp-gpios =3D <&gpio1 14 GPIO_ACTIVE_HIGH>;
-> +		amp-supply =3D <&aux_5v>;
-> +
-> +		widgets =3D
-> +			"Line", "Line Out",
-> +			"Line", "Line In",
-> +			"Headphone", "Headphone Jack",
-> +			"Microphone", "Mic (internal)",
-> +			"Microphone", "Mic (external)";
-> +
-> +		routing =3D
-> +			"DAC1", "APLL Enable",
-> +			"DAC2", "APLL Enable",
-> +			"Headphone Amplifier", "VOUTL",
-> +			"Headphone Amplifier", "VOUTR",
-> +			"Line Out", "VOUTL",
-> +			"Line Out", "VOUTR",
-> +			"Headphone Jack", "Headphone Amplifier",
-> +			"AUXL", "Line In",
-> +			"AUXR", "Line In",
-> +			"MAINMIC", "Mic (internal)",
-> +			"Mic (internal)", "Mic Bias 1",
-> +			"SUBMIC", "Mic (external)",
-> +			"Mic (external)", "Mic Bias 2";
-> +
-> +		sound-dai =3D <&mcbsp2>, <&dac>;
-
-[Severity: Medium]
-Is sound-dai here both incomplete for the capture link and unused by
-omap3pandora_probe()?
-
-The sound card has both a playback link (McBSP2 to PCM1773) and a capture
-link (McBSP4 to TWL4030), but sound-dai and #sound-dai-cells only cover
-&mcbsp2 and &dac, omitting &mcbsp4 and the TWL4030 codec.  In addition,
-omap3pandora_probe() in sound/soc/ti/omap3pandora.c only parses label,
-widgets and routing, and never reads sound-dai to populate the CPU,
-platform or codec of_node pointers in omap3pandora_dai[].  As a result,
-component matching still relies on hardcoded device names in
-omap3pandora_dai[], including the non-generic pcm1773-codec DT node name.
-
-[Severity: Medium]
-Can this sound card probe when CONFIG_SND_SOC_OMAP3_PANDORA=3Dy?
-
-Because omap3pandora_probe() does not populate dai_link->cpus->of_node or
-dai_link->platforms->of_node from sound-dai, ASoC matches the McBSP DAIs
-using the hardcoded names in omap3pandora_dai[] from commit "ASoC: ti:
-omap3pandora: Convert sound card to DT":
-
-sound/soc/ti/omap3pandora.c:
-#if IS_BUILTIN(CONFIG_SND_SOC_OMAP3_PANDORA)
-SND_SOC_DAILINK_DEFS(out,
-	DAILINK_COMP_ARRAY(COMP_CPU("omap-mcbsp.2")),
-	DAILINK_COMP_ARRAY(COMP_CODEC("pcm1773-codec", "pcm1773")),
-	DAILINK_COMP_ARRAY(COMP_PLATFORM("omap-mcbsp.2")));
-
-SND_SOC_DAILINK_DEFS(in,
-	DAILINK_COMP_ARRAY(COMP_CPU("omap-mcbsp.4")),
-	DAILINK_COMP_ARRAY(COMP_CODEC("twl4030-codec", "twl4030-hifi")),
-	DAILINK_COMP_ARRAY(COMP_PLATFORM("omap-mcbsp.4")));
-#else /* IS_BUILTIN(CONFIG_SND_SOC_OMAP3_PANDORA) */
-
-On a Device Tree boot, the McBSP devices are always registered as
-49022000.mcbsp and 49026000.mcbsp regardless of whether the sound driver
-is built-in or modular, so a built-in driver will never find omap-mcbsp.2
-or omap-mcbsp.4 and card registration will defer indefinitely.
-
-[ ... ]
-
-> @@ -736,6 +771,9 @@ &mcbsp1 {
->  /* audio DAC */
->  &mcbsp2 {
->  	status =3D "okay";
-> +	#sound-dai-cells =3D <0>;
-> +	clocks =3D <&mcbsp2_fck>, <&mcbsp2_ick>;
-> +	clock-names =3D "fck", "ick";
->  };
-
-[Severity: Low]
-This isn't a bug, but clocks and clock-names on &mcbsp2 duplicate the
- exact same properties already defined in the base mcbsp2 node in
-arch/arm/boot/dts/ti/omap/omap3.dtsi.
+Detailed reviews have been sent as separate replies to patches 2, 6, 7,
+9, 11, 14, and 16-18.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/cover.1795505160.gi=
-t.hns@goldelico.com?part=3D17
+t.hns@goldelico.com
