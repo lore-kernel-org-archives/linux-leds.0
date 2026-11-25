@@ -1,76 +1,104 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795619726;
-	b=4thww0iOlrtbt7jCrjBxs60V3WfPksti23IjXdObWNeGnuspu17RPaTwv4QO4CgROJxo
-	 UyJy9xpIbL57x+jvW9kvwMSdxfN8EizNifITrqJgQxiVxZsJ7lOOvcx0b6OjeA5uqDBJv
-	 AZTplGCWIG1HJbA1IW3i9lG16NACUzivPGGme48j9cyTLYZ4DGZJhDwFyEMx3Go+p+ZRj
-	 AgmVi6j4PB+msRhobQPEeV/V7PCGqGO32UlwujpqVqEfmO1V62ihxq7Lm4eR0Cp1OM0Xm
-	 70FrUGU9Lb2ZJu5JbFpPF+bY9BciXcGiIU7sxoY80PIOb7QlDdHHlZoV3FnscHfo/mg==
+	t=1795631869;
+	b=p2kS+4cmJrsYICrk+Umou2MTCWGwuGSZjXlo8daL3wm3qWfM6R3D8Md8ivduJKKvMLwe
+	 zTIffyE1Zpa1vjzlCpF3WBmRsiSDpfmKmQtYPl/VsXQVQ6wZS5Uw59V7MapepedzklU8C
+	 GEbAPQnaoO93xhIk6JuO94MR3WM2W7PwfkxyXtmXTmJWMl6VFnLuK/2Fkel9Oc4lC1fKR
+	 vvV16JQv4OXLLLt6VyFS1GfAokIZUvpP+SuLEDyEN6q3CRIDUMkbEixQb0B/rQ/sTISQX
+	 lXTa7YuvAbF/aVwEBHAXk03ePICx4Ap2FDUxsRbJ09zHkDJHeQYe4k1u+nu9rVye/SA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795619726;
-	h=DMARC-Filter:DKIM2-Signature:Message-Instance:DKIM-Signature:
-	 X-UI-Sender-Class:Received:Message-ID:Date:MIME-Version:User-Agent:To:
-	 References:Subject:Content-Language:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Provags-ID:X-Spam-Flag:UI-OutboundReport;
-	bh=y8j7aXDev46rOLRUgp/4Ho2/hVfzUJxZimVf/AzcDtg=;
-	b=JO9DKzKl9yYEF7gpMn59HKUkKEuyrFjQAKyMgJwCZZzAqfMzIyzGbPPkvKHJ2bBG6/OB
-	 lCdJwEgJe3xidjcU+hiVPhMt+NE87Q7jn0PpmpLhaSMK8fA9pcQWSS8kzMqKLXr0Ks7wm
-	 EdlqM4IiNlxgCv2saYvnSo5czSTeyYWRmYW417Cee4uvN13qLniqZdpQKr5BRFOvkwutF
-	 bCiIF2HrqK+JNiWvdoqrqIMohexbyY8VmnhmnG4URZWY6lBVKayAiABlxU6um2D/W/3uX
-	 qqPyOzEn/UCIdYC7LLfC9sDg4ttfA60EAtZTJM3OUddboaT1gtGahtDEetssmUdRuTw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795631869;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=xksOV9aqopJGkGV2R/R/SK9xwhAwgR81ELO68UFIWf4=;
+	b=p9KRyJ23LeEmrQswhOHI2OmHmT/zcvlGQ/X8Bt3QI3OyKsLQBKB+jAeRxGGaLP3iOVqx
+	 UWbSa6+yWTvboISE6QozWFFv7qS+YSgZT286b77ImJObU47Jr8D8eksIpVLBenDuOYrf4
+	 1uMRy90S7lzlQAbh8orXt4LX4r4+pq0q4PYvlme06BzEf3mvUN7P8iiDwBkfdDUiZCAqL
+	 d6IKKeYfYkOrXrHLo5clc4o32z+nwbYTcOkSvgZxlLvlQ2e90BzhgXg4ITIzZE3/RNPwC
+	 6Z+l1kZPFvdyWlucjE34PhS0wVcmjY7lln/aar/zaQ1Ej+Q6a3222W4UvriqSP/hIDw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=web.de;
-	spf=pass smtp.mailfrom=web.de;
-	dkim=pass header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=qa7Yk19Z;
-	arc=none smtp.remote-ip=217.72.192.78
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PB5MIJGF;
+	arc=none smtp.remote-ip=209.85.167.54
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07792606A32E
-	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 15:15:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07792606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91324606A323
+	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 18:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91324606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.a=rsa-sha256 header.s=s29768273 header.b=qa7Yk19Z
-DKIM2-Signature:  i=1; m=1; t=1795619724;
- mf=PE1hcmt1cy5FbGZyaW5nQHdlYi5kZT4=;
- rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
- d=web.de;
- s=s29768273:rsa-sha256:jqYhEe2VlTz7/CnhFAC6/8ZCFS7A
-   WsJSZVWswM4Foj5JPtIYnvM6sjQyJpW7qe4nV+PesZzcGrvPHGj5SBjDYk1vs5Vv7WfiwqkQ+t+
-   cPgrOCZVnyUg9kYi39JEXrE0wQLlKNRq5ybi1Q57UxVnI/yLFpg0z8GAzNbl18bboL9idIKk3Uz
-   3dMkyacJqN3Tjci/jgQz3U8tRwKFQ9QIyuEIaBvRM26ajh1s4z8BrRqvyfx/B5dYW0GnI1evSMI
-   EeXg7V5FWAYg6FdLLvEj3YO3zMExOsdQkbg4GchWvL+ufOnFeBY0q4oWrG12AZGEFGuwP9qgQOC
-   ZtKiVIS4y8c1jw==;
-Message-Instance:  m=1;
- h=sha256:
-   QLGNTxKHL1jRcTK9DxSYCyQ/va0XLqYDEUB4r2OIpWY=:
-   y8j7aXDev46rOLRUgp/4Ho2/hVfzUJxZimVf/AzcDtg=,
-  sha512:
-   Fe4O/V9Z/6L6pEdPChEMiz9NuTstXjZl/F1GLG7aSWbzbydceRVoHyIxvVM2NNKYYWdgDI3x4Ohu3ts5uSorHw==:
-   MiKwUWFRKlXBKQx+IrHAUtkSHmyiaK/PVxa1E70K1+12QeIe2tvY+MHiAa39qbRVSTTo1kfYYu/ZIdgEiSRH0w==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1795619720; x=1796224520; i=markus.elfring@web.de;
-	bh=y8j7aXDev46rOLRUgp/4Ho2/hVfzUJxZimVf/AzcDtg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
-	 Subject:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qa7Yk19ZO5VrHZTKgj3tePgELl0uByZLt0v0P9vOM6Bsstz1+Vi5+rEvocr4VlMe
-	 UjW5erSh9vZEwCW28Z9VGGu6jsJox3HEkkA/5Cv3JB0WsmHfAkPzTt/3B4q9JOu8j
-	 PIJmp0XojfoGJxu0PxSujV+rDeBYF83KMJVZovG92ZB4LEyM3YNwKK6deE1b8YaHw
-	 ffsP3U2dDEeINXOM3xw5K6xtw8wGtZBNdeNkBJPJq0dqYoidwUCM1EAkZ1pqwQvAb
-	 69g7900QAzf+ZwTFQYSOCMF4SQK0xgi2TkVb18mhnn01Be3dDPrPSgqeL19L7/vRz
-	 WjeJwbYxhmlddoFhMg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from client.hidden.invalid by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1yCxvo18Im-00nV8g; Wed, 25
- Nov 2026 16:15:20 +0100
-Message-ID: <366470ae-41ae-4e3f-9170-8b2f67cfe7fe@web.de>
-Date: Wed, 25 Nov 2026 16:15:18 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=PB5MIJGF
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5c1c0c8d61aso4116042e87.1
+        for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 10:37:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795631867; x=1796236667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xksOV9aqopJGkGV2R/R/SK9xwhAwgR81ELO68UFIWf4=;
+        b=PB5MIJGFsSGsLnz/41wkgUtlP2knNJBhBc4t3c30++a/pzxcSozvH6zFtS0WbcTzx4
+         miR6zzP9eKDqvOGNPLKqMKyhsXIyF7PtfEVS61tELJ9fWv7+oY4VZdoxOtYQsocOkzhC
+         tCD6DhrsCOJf+c69+3iDF3O2awLsxADq9iwbqzk1p91A8GTqp20mI9zYjJMLAT27JQv/
+         W9LJkUpvQ/mRfWRIlNkzfa/xWdFU6rbNk9m+xOzh6OuKLqXlJk/ibOEnOVmmpdhQYYMp
+         ts6X2S/KulVHQhGtaBNcmudaglk9aHsSDxlVBSw8r2wJNH5ODXb6sFZ51+YDB7NiGAsi
+         scCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795631867; x=1796236667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=xksOV9aqopJGkGV2R/R/SK9xwhAwgR81ELO68UFIWf4=;
+        b=Gi1jChxmr1tBZwUj5x7OfFR7wnlDMiDHT65Kd5TpG0Emk5xLVD0PSwBTcjbLOSe6GJ
+         oThrxf869sMimWCRAULYyWvCDQcgEjNVkI6UOfQACRPRfdcSdYruMrO87FEke6cbCzw1
+         BrohwKwj/Uqxj+0o+JX2pxe0aVJpi6M6A01Xn8lxC++LAsflRquDbo78uB1exROhxLiR
+         ymPIZLWx09Fm/Ti65kNY24F560QwTGQqOZSvnXRO/0wy6DAwjc1C79LQn9pzBW7B6oFv
+         di+8puHx9nNSRlTI90w1SgW1VhqO3xkcovrLttLJemDt3ZKWoENWKSsdEQJ7cDrY6OvL
+         OHsA==
+X-Forwarded-Encrypted: i=1; AL+hErG6ggwffyqKwJVTWLQywM9hfmgZ9zJ6VEe6ZK/JD47z2Z+K+AIcQmAWr87RX4HJ02vQw8honAYwAhTo@vger.kernel.org
+X-Gm-Message-State: APuU4Z+acTywVZYeq81CeFFv0tIVPetO/a+jkcb7anGESyye8jcS5W5O
+	s0ZFvlhe39EpDMxllXa7fEX9tp4twoU265W0iAOKpsoHLZ89nlAMSbrw
+X-Gm-Gg: AZFdTZct+W/BVvdq+tuN9YVgYomtVoZHxdy7kzllm3hPdq/5CjB0qUppFVJB5NIXh0e
+	A24M+R6xnX8ieU60yiBxaQ3GfzSEWm3Mx9DfjZKyQMUOfhT3x8X+r6LnXeaAopanpW2IoPeFeby
+	bg2Z6g2PFuv1q9YUFF14HPvONH/mrQmCyZrfVYZEH9twiB/X96lfdKfD1KoSr1ifiJroVLQHYR4
+	iYYvUWlwpr4HxQ+x1BdXfG7D9bk8OypifI6PeZl5v0o+pElVRPmbnJd2iuDVgsl8A8k4GCkRd5F
+	UNLwBieLLWT5JNl/StQoL2xBqOuROw1py8ze5RmLrOqgKKtMPfZ9eDsu57XB/xpd8O/To8cT586
+	Pvohimh2OqovPVCPRyG/ODNysbu6OpBiD3FuI4jmGgcIXdMlubSBSlb3oydAtuYvEbNRvlxmrcu
+	3TplJEgBBp6jB/Kh++1YGnUIXUzGmD5xoRwhf+jTveVUaO8UpI8Szb0kWdW553Jv1UrNiaZFXHh
+	9IF3q4P8SBwa/epRoTWIrJk6NEgq5U7vpc09dFvozfN01HXSIfn5Aj0dURrCk2jdpmCBEqx5Aru
+	OWIgQPAivCLZM2x2oK1EKZ7E5RF43mZkUM5/8PSMRUfWOkU=
+X-Received: by 2002:a05:6512:1393:b0:5c0:b5c:4044 with SMTP id 2adb3069b0e04-5c1bc690966mr5240993e87.1.1795631866318;
+        Wed, 25 Nov 2026 10:37:46 -0800 (PST)
+Received: from NB-6746.corp.yadro.com ([188.243.183.76])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd05051bsm4650755e87.62.2026.11.25.10.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2026 10:37:46 -0800 (PST)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	maxime.chevallier@bootlin.com,
+	pavel@ucw.cz
+Cc: Artem Shimko <a.shimko.dev@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v6 0/3] net: phy: dap8211r: add LED control support
+Date: Wed, 25 Nov 2026 21:37:35 +0300
+Message-ID: <20261125183742.3039752-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -80,144 +108,126 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Cong Nguyen <congnt264@gmail.com>, linux-leds@vger.kernel.org,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-References: <20261125134013.2692510-1-congnt264@gmail.com>
-Subject: Re: [PATCH] leds: sgm3140: Put the child node reference on success
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Luca Weiss <luca@lucaweiss.eu>
-In-Reply-To: <20261125134013.2692510-1-congnt264@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JM8AuLr4co4Q8o1ZLZFkqcCpMjQ5sHnGfbO2QVguGsO2hfWItlK
- up5GK2WMZub1ppMsSVF1N1GiuGHoUetq1pobrkcsJeBqKtHEuaoB9avy70D4g4rX6/cHSIi
- tUdrsSSFjHzLsp/M4KHRx52I8lAach9P+SHvjcZjLRbLKCyKtmc6gPIFNhd00+nzsRvEck7
- xbS5IaLhHLAJoIzj+JAYw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9PZc+tpHEhE=;2B7+Xu5HKegz+yJU1P86DWwdUeB
- 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
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Put the reference before returning success.
+Hello,
 
-Please avoid a bit of duplicate source.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv7.4-rc4#n526
+This series adds support for LEDs on the DAP8211R
+Gigabit Ethernet PHY.
 
+The first patch fixes mistakes in function comments about locking mdio.
+The second patch documents the optional "leds" node in the Device Tree
+binding. 
+The third patch introduces a small helper to write extended
+registers, since the LED registers are accessed indirectly via
+EXT_ADD/EXT_DATA and implements the three LED callbacks
+required by the PHY library.
 
-How do you think about to apply the attribute =E2=80=9C__free(fwnode_handl=
-e_put)=E2=80=9D
-also in the implementation of the function =E2=80=9Csgm3140_probe=E2=80=9D=
-?
-https://elixir.bootlin.com/linux/v7.4-rc1/source/include/linux/property.h#=
-L229
-https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/leds/flash/leds-s=
-gm3140.c#L185-L281
+$ make dt_binding_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/net/dptel,dap8211r.yaml 
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+  CHKDT   ./Documentation/devicetree/bindings
+  LINT    ./Documentation/devicetree/bindings
+  STYLE   ./Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/net/dptel,dap8211r.example.dts
+  DTC [C] Documentation/devicetree/bindings/net/dptel,dap8211r.example.dtb
+$ yamllint Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+$ grep -i "dap8211r" Documentation/devicetree/bindings/processed-schema.json
+    "http://devicetree.org/schemas/net/dptel,dap8211r.yaml": {
+        "$filename": "/home/a-shimko/patchwork/linux/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml",
+        "$id": "http://devicetree.org/schemas/net/dptel,dap8211r.yaml#",
+        "title": "DAPU Telecom DAP8211R(I) Gigabit Ethernet PHY",
 
-Regards,
-Markus
+Required:
+CONFIG_NEW_LEDS=y
+    CONFIG_LEDS_CLASS=y
+    CONFIG_LEDS_TRIGGERS=y
+        CONFIG_LEDS_TRIGGER_NETDEV=y
+
+Testing:
+$ ip link set eth1 up
+$ ls /sys/class/leds/
+stmmac-1:01:amber:lan  stmmac-1:01:green:lan
+$ echo netdev > /sys/class/leds/stmmac-1:01:green:lan/trigger
+$ echo eth1 > /sys/class/leds/stmmac-1:01:green:lan/device_name
+$ echo 1 > /sys/class/leds/stmmac-1:01:green:lan/link_1000
+$ cat /sys/class/leds/stmmac-1:01:green:lan/offloaded
+$ ip addr add 192.168.5.100/24 dev eth1
+$ ping -I eth1 192.168.5.1
+
+$ echo netdev > /sys/class/leds/stmmac-1:01:amber:lan/trigger
+$ echo eth1 > /sys/class/leds/stmmac-1:01:amber:lan/device_name
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/tx
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/rx
+$ cat /sys/class/leds/stmmac-1:01:amber:lan/offloaded
+
+$ echo none > /sys/class/leds/stmmac-1:01:amber:lan/trigger
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/brightness
+
+$ echo netdev > /sys/class/leds/stmmac-1:01:amber:lan/trigger
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/tx
+$ echo 1 > /sys/class/leds/stmmac-1:01:amber:lan/rx
+$ ip addr add 192.168.5.100/24 dev eth1
+$ ping -I eth1 192.168.5.1
+
+--
+Best regards,
+artem
+
+ChangeLog:
+  v6:
+    - Return -EOPNOTSUPP in dap8211r_led_hw_control_get() if DAP8211R_LED_ACT_BLINK
+    does not match the presence of DAP8211R_LED_RX or DAP8211R_LED_TX,
+    preventing incomplete rule reporting and register clobbering.
+  v5:
+    - Drop redundant $ref to common.yaml and inner unevaluatedProperties: false
+    from the led@[0-2] subnode, as they are already inherited from
+    ethernet-phy.yaml.
+    - Move write of LED_x_CON first and clear FORCE_EN afterwards in
+    dap8211r_led_hw_control_set().
+    - Report TRIGGER_NETDEV_LINK instead of individual speed flags in
+    dap8211r_led_hw_control_get() when all three link speed bits are set, as
+    netdev trigger rejects reporting them together. Based on [1].
+    - Add checking of DAP8211R_LED_ACT_BLINK alongside TX/RX bits in
+    dap8211r_led_hw_control_get().
+    - Add -EOPNOTSUPP in dap8211r_led_hw_control_get() if unsupported
+    hardware bits are set in LED_x_CON.
+    - Link: [1] https://lists.infradead.org/pipermail/linux-arm-kernel/2026-September/1172246.html
+    - Link: https://lore.kernel.org/all/179560033613.3135.13122318439070700886@kernel.org/T/#u
+  v4:
+    - squash extended register write helper into the LED control patch to
+    fix netdev/build_32bit, netdev/build_allmodconfig_warn, netdev/build_clang
+    fails (patchwork.kernel.org)
+    - add andrew+netdev@lunn.ch to Cc of dt-bindings patch to fix
+    netdev/cc_maintainers warning (patchwork.kernel.org)
+  v3:
+    - fix kernel-doc comment for DAP8211R_LED_FORCE_MODE_ON and
+    DAP8211R_LED_FORCE_MODE_MASK
+    - use FIELD_PREP() for DAP8211R_LED_FORCE_MODE_ON 
+    - Link: https://lore.kernel.org/all/20261120081106.2919010-1-a.shimko.dev@gmail.com/T/#t
+  v2:
+    - add a commit fixing kernel-doc comments for dap8211r_read_ext() and dap8211r_modify_ext()
+    - move LED child node down below tx-internal-delay-ps in dptel,dap8211r.yaml
+    - add blank lines in dptel,dap8211r.yaml
+    - restrict LED reg index to 0..2 and fix schema properties in dptel,dap8211r.yaml
+    - fix kernel-doc comment for dap8211r_write_ext()
+    - add LED brightness (force mode) support to driver
+    - remove rules == 0 statement
+    - add TRIGGER_NETDEV_LINK to DAP8211R_LED_SUPPORTED_TRG for dap8211r_led_hw_is_supported()
+    - clean up switch (index) statements
+    - Link: https://lore.kernel.org/all/CAOPX74709XiLXLoioDJStTSzzhstC2sHpM4GieAO=3-37E18pw@mail.gmail.com/T/#u
+  v1:
+    - Link: https://lore.kernel.org/all/20261113110546.173624-1-a.shimko.dev@gmail.com/T/#t
+
+Artem Shimko (3):
+  net: phy: dap8211r: fix kernel-doc comments for extended register
+    helpers
+  dt-bindings: net: dptel,dap8211r: add LED nodes
+  net: phy: dap8211r: add PHY LED control support
+
+ .../bindings/net/dptel,dap8211r.yaml          |  41 +++
+ drivers/net/phy/dap8211r.c                    | 265 +++++++++++++++++-
+ 2 files changed, 304 insertions(+), 2 deletions(-)
+
+-- 
+2.43.0
+
