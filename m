@@ -1,72 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.112
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795613054;
-	b=ozGHW/ac2GIQDr4Q02A4g1LqtVb2AJ7M/lptiyMSfnofa/iE2jdwoD2+K+6Iu+XSinpb
-	 /toMm0ib2CsfAy2BOf7TcwiorYaRbkAwp3vcprJQxX/JwjDsjg/QGDmUjzHK3aD05EgDY
-	 OZj6l1/7MCe3La59uHN2qiqqwtq9DfORXndVHVrmQLTItE4wxg4aMfODExGFo6cvvQdAD
-	 Ze9owlZxMJMgO1vRwNZYvOoOTJBUDyCF74SWwJbJ+u92jO/I7K2sfSAXQEYpwGMuGT9Y4
-	 hC2Kr5NeYGiAbOSQKJcvB4NqfuVKTCtdDDNlyvaRWR9Enj9hXA/g6E0RYRrd0imVvTQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795613054;
-	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
-	 MIME-Version:User-Agent:X-ZohoMailClient;
-	bh=WE+SmlVXVxbbJ8UnH6T5uVaQqHJ2e47Mld0et5owo0s=;
-	b=DxSAuVwzEklOUzfeAis9xZATZ9elmTxLbBHYVlPwh7/kFCO6p57lzKmTsIpNdE+1gj8F
-	 VXwAl5rX8O+/YGivJD8Kvwm0wTu8A4JZBd5qsM30W/XqDWCuyeIiniyX4ZkBz6y08fgIk
-	 SNaq1dxFfqoHLzA0zhqXNGUj0X11jv6gxKfzDcPWoEFYZW+n99pVtxpXzmqDckm5Dhd3H
-	 4p5CHABe9+cvB3IGIbB2aCxA+wgAAsvyaa8YDKLFZh5gLRmNH9eFBHkkzH8OQCvp8J2UF
-	 3e2murP5mFlVkbtTFpIHN9KCHQXlptTqMmBKWAAhizb+/ar46K8+vYVyqMZdNJfF+ew==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=rong.moe;
-	spf=pass smtp.mailfrom=rong.moe;
-	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=JT2zTUTm;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.112
-Received: from sender6-pp-f112.zoho.com (sender6-pp-f112.zoho.com [165.173.180.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.54
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795614023;
+	b=1w6W0uGrCVC8r0AzSB40HR8C5ZEPiGcWa/8JHZdRghrE2VtY16qhL+gCj5BXKEhvElhV
+	 OrmbGr7W+qr77AC4TL0fFgG9zuNozNOcpR3lfaqxu64buXj+E2ESYVMKhUnOc2Tr+BM3g
+	 um3Fz7vzKKr9jcgXaeQQwUDZLiWKmmSjL8NmwndCOYqBdoLxCJHSituKR46puMT7DDA7Y
+	 I/bXMsMLyzziJCDo+HaVncRa9A5jrCp9czucGthbdxU3nhTqTuB2TRkVpqS50s63cOKbn
+	 VRa9MuPBmaadEBbXv8TVr5imdw9muwpT08xjMsMM103aJQy7yseOInkzZTkMU48Jypg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795614023;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=JB8xYtba48EdonovEH96/gnrjsat71I+BpeZ0UxS0NM=;
+	b=vFOJdC3fmj5qWir9zMHVIc8+nvDAgdbqy2luDDbVc5qt+uG1OR8rdq7u7xpzw5wCk94M
+	 a8OJ4G1wUj2y6b333OSdkYpKgO8HFM72tZWT9Pk5/OKiJ413EIFsmKmu9nkgwdq4qG3wD
+	 GRLQE/HA+B8bkRAaQjWKu35NP3c+y9Ylld1vjLL/rYLwZtyOx0yb1JsZLqjqtfbRooruu
+	 NLbcnd5o8RW6KCTVp16oEsKfTscQeHCW+10fISwbipxXDw7D1s/UgmRudnTo77b+QE/uY
+	 bQKmU4T8j80dDDhLRlXXzeBOLxovRWqfwL/2KdHhoYj51sVWw3Sf2dANUCrlK0Qyscw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ExbJpLiT;
+	arc=none smtp.remote-ip=74.125.82.54
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA7606A687;
-	Wed, 25 Nov 2026 13:24:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7FA7606A687
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB2E606A31E
+	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 13:40:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BAB2E606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=JT2zTUTm
-ARC-Seal: i=1; a=rsa-sha256; t=1795613008; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=e2Gzu/8lC4qn9aK0C+Fvx7CwCKFdjAHP1qFYORoAvYukCzfXZxhKR/s2C9vuWZ7ZV3pCnfvBfDy+ssOFsJirdC8e8EGwB2fS6M1RlvqxjhoygxzhZCqpJXWoTUkQi0mIVd+NYuuAvjAlKTm++hv5yhkVGo6BVO+CzEQ9PhsuciA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1795613008; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WE+SmlVXVxbbJ8UnH6T5uVaQqHJ2e47Mld0et5owo0s=; 
-	b=V1arQyiUNjGQRfdLv0OGbL/ajYTe8rG0DQGXH6MLONyJ+d7jXg4n+/I3a/kG/cmtRZ+L0iKcEDh//kk9cgFmzSGCpzK9P8vtIl8jmQqyHj0glaF6Bu5QUpOAVrHGqgPu8QA1zzx1sGpXl8rcCsYtJSpYQP4hSQ09Zp2k5sPvgrs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: a=rsa-sha256; b=JT2zTUTmeU65YOSrGvsXhhk/ak8GCV7TOakb8M8K0YFfo2bUvzBQGAyIlGPIaCJQ70snxZZ9EwB9HvAqxEjalMhRleRgWaEvuoXZUR+RAh+lprxzE1UVIXMiFTkX7LaZAMuCTYOIar4I2HyFowikKxWmUP9cc/sH/ptFcWgQKYcv539iDSsS3X6vs1hrAb6En8Av5xuYai4N0e6MY5DXpWUjTbnD0MJImV7/r7XlQaN/4+tf1kkOCqN7SsdSYHB2/+L12sZu3Ju7hlwxmCwXYd5Og73VchqGchIKZZ6xKjQJr80BnCRirEzNUtOzJr4ob3w0ls0Wsc5lXACYMxdy8w==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=WE+SmlVXVxbbJ8UnH6T5uVaQqHJ2e47Mld0et5owo0s=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 17956130066665.927232731429285;
-	Wed, 25 Nov 2026 05:23:26 -0800 (PST)
-Message-ID: <806cda3d6b490e1b0930aaa97fd3a3df50f54dff.camel@rong.moe>
-Subject: Re: [PATCH v4 6/6] platform/x86: thinkpad_acpi: Add a keyboard
- backlight auto-mode trigger
-From: Rong Zhang <i@rong.moe>
-To: Qiling Zhu <kmatzkaczor244@gmail.com>, Mark Pearson	
- <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
- Hans de Goede <hansg@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>,  Henrique de Moraes Holschuh	
- <hmh@hmh.eng.br>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ibm-acpi-devel@lists.sourceforge.net, Lee Jones <lee@kernel.org>, Pavel
- Machek	 <pavel@kernel.org>, Griffin Kroah-Hartman <griffin@kroah.com>, 
-	linux-leds@vger.kernel.org, vishnuocv@gmail.com, vsankar@lenovo.com, Andrea
- Rabbaglietti <rabbagliettiandrea@gmail.com>
-In-Reply-To: <20261125084644.137506-7-kmatzkaczor244@gmail.com>
-References: <20261125084644.137506-1-kmatzkaczor244@gmail.com>
-	 <20261125084644.137506-7-kmatzkaczor244@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 21:17:29 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ExbJpLiT
+Received: by mail-dl1-f54.google.com with SMTP id a92af1059eb24-1b50a4bd2f3so3392742c88.1
+        for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 05:40:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795614022; x=1796218822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=JB8xYtba48EdonovEH96/gnrjsat71I+BpeZ0UxS0NM=;
+        b=ExbJpLiTwp8PXqLdPNTio4e+83foQx5U7PYRqrLMzEDMYkXhXZyYuWrN2bvf/c7eNi
+         49N768n3Xi2RC12UuVuk18uxbZMC1FOKJTLCYzLQc43E43OavFo6EyLXmI3shbDRkuV0
+         sZ+KxuN2KBuzW3Sa1CC2clLskQHqN/TYggmHO5oUO4WAdhbrK8bAU+nNk1sJolSmL35V
+         l3FN/+EqO06ar0tqrJOYeo8g0ULTvRXcdrD44GKC5z+YE2wE11aC5qupFkWChc9LPvT+
+         0Hvg1niGOV7Te7tF7o676PRVOfdSSr/oVkWxe3ksot4f+Gwhru/QF3Gix757Vupqf2pB
+         teVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795614022; x=1796218822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=JB8xYtba48EdonovEH96/gnrjsat71I+BpeZ0UxS0NM=;
+        b=u2qIB2zOVjqYDp3F9Lf3N9UcUrFUeNENiHz7W3BqmZu3YYPSlkyP9s0q6RNKmdnzCd
+         Hrsj8RZCw5hWlyZnUW6XCqlFBnVCyTpy1LaDhLaAzl0y9gihTDPldHWCLdVW3Bkkw8px
+         4ZdPm+0s4cQBOAQgcDNaJpT3NRE7WWYO8l74o1ISDE0///3zwo8EalSY0rwRoq9kbzGu
+         b0cWzAUIYbn31/0+rBvvD9zNm8NYyfm7wgBjitmBW9AHLsBIUJBK3Pk1sBIEUfuZbkjQ
+         hRlGuuG1zHvRmMouKeGJ1dstWIDdQVxezGf7QkLCFlPwgWR/JRbvAU4xMa26n6oqhzUR
+         p7Eg==
+X-Forwarded-Encrypted: i=1; AL+hErEF3e+jc3m1epylZMmjMwJ5ld6qKmcIg/aOtKxxiVc00Clc6FBIVqx0jdm1iXMf5L0bVpdQl66GKqYg@vger.kernel.org
+X-Gm-Message-State: APuU4Z93sqxodnd0h06TJh5i8dGUU20t1Vjc58piBad1eLmzlOsRz5bn
+	rRv8Gs79PM5WN+GrX0TbGzNAH+ZY8v1p0seTes3w6+amiDY7RSWhbaAb
+X-Gm-Gg: AZFdTZfKX3Drf4wLZwdnGohYmvjy8K1VjGQLS6gpKUzugcvka1gBbPhvzWPMU2d9RXc
+	/icKA1TLgPaz4p4TCn0mVj3+SYS8vs/tEruyMVkLZVIsOGWPSmBF2KmV/l79vAIf0gE4+G70QUx
+	OluesP80fF2jC4OM1qkG2jwEnvwjPklNh9ailbMqCMU9f6rf1eqgbmeeI/YTOwXKtNHcf5g/D6D
+	sTMrW4SzyOucohdShpXxIya9sejG3aXq87tFx5d8KbJoSr7UHYInSo/FrXMIxr2fW+nDwIwmoOK
+	ic/n1GEdPO7K2lcoY6bAUeZ1s2d411tR5U5bYNfECFOZP/ruOjsDVLHjrbIecyB1pkEZtUxttTI
+	mYTozKBwzW3yp9UGuOqLJbb/Zu3ZMCacqepZ1J37CLXns24+PwNIFigNYY5F6UJHeZndxInOfpk
+	aHh1rzTcQIJ6TJlHoNpVwkFWoQYr43ID3jvZEXGKtPPx9vWOR9WTVc5miMkT3vf+h86RGoKRpts
+	rpMc7TaSRYo98gTf+tWZUQFBmHwXYP2g6x+pTSH04k+fVFWiFSeDc2jWxGoi41F0NuDcrKk5dYg
+	JZgzx1qHWnhan1l8EESUQkmzbs83TUquB5Q7YmdJdGadeaQ=
+X-Received: by 2002:a05:7023:a8b:b0:18c:e014:6f1d with SMTP id a92af1059eb24-1b5567ab595mr19131681c88.1.1795614021736;
+        Wed, 25 Nov 2026 05:40:21 -0800 (PST)
+Received: from SGN-LDSENG.tasernet.com ([2405:4800:5cc3:11a:1ac0:4dff:fe8b:4a69])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-385666e7f59sm56251563eec.6.2026.11.25.05.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2026 05:40:21 -0800 (PST)
+From: Cong Nguyen <congnt264@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Luca Weiss <luca@lucaweiss.eu>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] leds: sgm3140: Put the child node reference on success
+Date: Wed, 25 Nov 2026 20:40:13 +0700
+Message-Id: <20261125134013.2692510-1-congnt264@gmail.com>
+X-Mailer: git-send-email 2.25.1
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -76,159 +96,37 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Evolution 3.62.1-4 
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi Qiling,
+sgm3140_probe() gets the LED child node with device_get_next_child_node(),
+which returns it with its reference count raised. The error path puts the
+reference, but a successful probe returns before reaching that code, so the
+reference is never dropped. The v4l2 flash sub-device takes its own
+reference on the node, and the LED class device only stores the pointer,
+so nothing else needs the probe's reference after probe returns.
 
-On Wed, 2026-11-25 at 16:46 +0800, Qiling Zhu wrote:
-> On ThinkPads that advertise the auto mode in MLCG bit 20, expose EC
-> level 3 as a private LED trigger named "tpacpi-kbd-auto".  Select
-> LEDS_TRIGGERS so that the trigger is available in stripped-down
-> configurations.  If registering the trigger fails, register the
-> keyboard backlight LED as before.
->=20
-> Activating the trigger writes EC level 3 and records it in the cached
-> level; whether the LED is hardware-controlled is derived from that
-> cached level, so reading brightness returns -ENODATA while the trigger
-> is active and the EC is in auto mode.  If the EC is already in auto
-> mode when the driver loads, make the trigger the default one, to
-> reflect a selection made before the driver was loaded.
->=20
-> A sysfs brightness write leaves auto mode through the LED core's own
-> trigger removal.  With CONFIG_LEDS_TRIGGERS_HW_CHANGED enabled, the LED
-> core also switches between "none" and the trigger in response to
-> Fn+Space, or to a procfs write that leaves auto mode.
->=20
-> Deliberately unchanged: max_brightness stays 2.
->=20
-> Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
+Put the reference before returning success.
 
-Reviewed-by: Rong Zhang <i@rong.moe>
+Fixes: cef8ec8cbd21 ("leds: add sgm3140 driver")
+Signed-off-by: Cong Nguyen <congnt264@gmail.com>
+---
+ drivers/leds/flash/leds-sgm3140.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Rong
+diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sgm3140.c
+index 107d02c3137f..5bc21b192d74 100644
+--- a/drivers/leds/flash/leds-sgm3140.c
++++ b/drivers/leds/flash/leds-sgm3140.c
+@@ -273,7 +273,8 @@ static int sgm3140_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	return ret;
++	fwnode_handle_put(child_node);
++	return 0;
+ 
+ err:
+ 	fwnode_handle_put(child_node);
+-- 
+2.25.1
 
-> ---
->  drivers/platform/x86/lenovo/Kconfig         |  1 +
->  drivers/platform/x86/lenovo/thinkpad_acpi.c | 60 +++++++++++++++++++++
->  2 files changed, 61 insertions(+)
->=20
-> diff --git a/drivers/platform/x86/lenovo/Kconfig b/drivers/platform/x86/l=
-enovo/Kconfig
-> index 516594993..77d159a3a 100644
-> --- a/drivers/platform/x86/lenovo/Kconfig
-> +++ b/drivers/platform/x86/lenovo/Kconfig
-> @@ -83,6 +83,7 @@ config THINKPAD_ACPI
->  =09select NVRAM
->  =09select NEW_LEDS
->  =09select LEDS_CLASS
-> +=09select LEDS_TRIGGERS
->  =09select INPUT_SPARSEKMAP
->  =09help
->  =09  This is a driver for the IBM and Lenovo ThinkPad laptops. It adds
-> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platfo=
-rm/x86/lenovo/thinkpad_acpi.c
-> index ee8f7429d..f9a835fe2 100644
-> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> @@ -5222,6 +5222,27 @@ static bool kbdlight_is_supported(void)
->  =09return status & BIT(9);
->  }
-> =20
-> +static struct led_hw_trigger_type kbdlight_auto_trigger_type;
-> +
-> +static int kbdlight_auto_trigger_activate(struct led_classdev *led_cdev)
-> +{
-> +=09return kbdlight_set_level_and_update(TPACPI_KBD_LIGHT_AUTO_LEVEL);
-> +}
-> +
-> +static bool kbdlight_auto_trigger_hw_offloaded(struct led_classdev *led_=
-cdev)
-> +{
-> +=09guard(mutex)(&kbdlight_mutex);
-> +
-> +=09return kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
-> +}
-> +
-> +static struct led_trigger kbdlight_auto_trigger =3D {
-> +=09.name=09=09=3D "tpacpi-kbd-auto",
-> +=09.trigger_type=09=3D &kbdlight_auto_trigger_type,
-> +=09.activate=09=3D kbdlight_auto_trigger_activate,
-> +=09.hw_offloaded=09=3D kbdlight_auto_trigger_hw_offloaded,
-> +};
-> +
->  static int kbdlight_sysfs_set(struct led_classdev *led_cdev,
->  =09=09=09enum led_brightness brightness)
->  {
-> @@ -5249,6 +5270,35 @@ static struct tpacpi_led_classdev tpacpi_led_kbdli=
-ght =3D {
->  =09}
->  };
-> =20
-> +static void __init kbdlight_init_auto_trigger(void)
-> +{
-> +=09struct led_classdev *led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
-> +=09int rc;
-> +
-> +=09rc =3D devm_led_trigger_register(&tpacpi_pdev->dev, &kbdlight_auto_tr=
-igger);
-> +=09if (rc) {
-> +=09=09/*
-> +=09=09 * Auto-mode trigger unavailable; basic backlight
-> +=09=09 * control keeps working.
-> +=09=09 */
-> +=09=09dev_warn(&tpacpi_pdev->dev, "auto-mode trigger unavailable\n");
-> +=09=09return;
-> +=09}
-> +
-> +=09led_cdev->flags |=3D LED_TRIG_HW_CHANGED;
-> +=09led_cdev->trigger_type =3D &kbdlight_auto_trigger_type;
-> +=09led_cdev->hw_control_trigger =3D kbdlight_auto_trigger.name;
-> +
-> +=09/*
-> +=09 * The EC does not keep the level across boots, but it may already
-> +=09 * be in auto mode when the driver loads: Fn+Space works at the
-> +=09 * BIOS or disk-encryption prompt, and while the module is
-> +=09 * unloaded.  Sync the initial trigger state with the EC then.
-> +=09 */
-> +=09if (kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL)
-> +=09=09led_cdev->default_trigger =3D kbdlight_auto_trigger.name;
-> +}
-> +
->  static int __init kbdlight_init(struct ibm_init_struct *iibm)
->  {
->  =09int rc;
-> @@ -5269,6 +5319,9 @@ static int __init kbdlight_init(struct ibm_init_str=
-uct *iibm)
-> =20
->  =09tp_features.kbdlight =3D 1;
-> =20
-> +=09if (tp_features.kbdlight_auto)
-> +=09=09kbdlight_init_auto_trigger();
-> +
->  =09rc =3D led_classdev_register(&tpacpi_pdev->dev,
->  =09=09=09=09   &tpacpi_led_kbdlight.led_classdev);
->  =09if (rc < 0) {
-> @@ -5289,6 +5342,7 @@ static void kbdlight_exit(void)
->  static void kbdlight_notify_level(int level)
->  {
->  =09struct led_classdev *led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
-> +=09bool was_auto, is_auto;
-> =20
->  =09lockdep_assert_held(&kbdlight_mutex);
-> =20
-> @@ -5299,6 +5353,12 @@ static void kbdlight_notify_level(int level)
->  =09if (level =3D=3D kbdlight_brightness)
->  =09=09return;
-> =20
-> +=09was_auto =3D kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
-> +=09is_auto =3D level =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
-> +
-> +=09if (is_auto !=3D was_auto && led_cdev->hw_control_trigger)
-> +=09=09led_trigger_notify_hw_control_changed(led_cdev, is_auto);
-> +
->  =09kbdlight_brightness =3D level;
->  =09led_classdev_notify_brightness_hw_changed(led_cdev, kbdlight_level_to=
-_brightness(level));
->  }
