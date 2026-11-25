@@ -1,111 +1,119 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795633790;
-	b=WOq6oi6EljYQwM54SKYeWx6r5oz9zNVJ4KBIk5jpt2MR3S6p27RuArySEExIwvSo7qeb
-	 jOPkHso2g1YXf1cYbft8P9cuInTySwPQucaKCZTxCQH9ZqlgzkyBABdMbudYaPwNgAmzl
-	 M7etcBnU9tlHr2qfVxYLl9ylTiwg1xXopF6IRL7/qKRH1nPoPpviPGK7F4TFrIT7VvllK
-	 ERgEkbAfXUeWpIifzGDvQ/pIT5SJUbsoqYNInax0fqY2lnTYWdfTS20JVM5uQKhttsnFd
-	 dIEkfsIhb4e/G2zjle8BAljpbWATr9ATaj1aXmzdgtuG8FbxCOXYIyUlOH1oagmOxvg==
+	t=1795636362;
+	b=NvKyJ4nDQsB5pEmvNOxkK8q4qawdjpMJpggPjW2gwktGIHmlNLeiNYnI4ChTk3DZxe1O
+	 10MJvUoB7WZQouv9dbmgt9qd6ayGDQq9GfUQccXV9Z/WvmMQaqbe4WZZpIVJg+GQlH+zL
+	 WHQOphZAXdgTqkDwbpxh4maE06tuSYIz6zLaubvuowonrBpLHR7FiA0ZR0lkDc2Oyc1cB
+	 5Lf9J2LJonZkZKojikZKHaNpRejrVlRcvG9LJECBAILSgV6qsG826GG8N49tEcNlu+4Lq
+	 MIIgL7vcpFwZWbZuZ4glFEym3jqDR5dfpmeBN1WHd5O4d4pB5+CyEN/JRwnza8oRVvg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795633790;
-	h=DMARC-Filter:Received:Received:DKIM-Signature:DKIM-Signature:
-	 X-DKIM2-Info:DKIM2-Signature:X-DKIM2-Info:Message-Instance:
-	 X-ME-Sender:X-ME-Proxy-Cause:X-ME-Proxy:Feedback-ID:Received:X-Mailer:
-	 MIME-Version:X-ThreadId:Date:From:To:Cc:Message-Id:In-Reply-To:
-	 References:Subject:Content-Type:Content-Transfer-Encoding;
-	bh=j66RKb5l2l5mpAtY8HXgIUDK8pcSYZliet/rKrMgG/A=;
-	b=HcYe5j7RPrVMsrUhkxdZ0DpN/dsyyPflDmIJpMWKulPF/4pFrv3b8sP4p/BXb7CCD0Vd
-	 Z2AOMlIDKLtYleBAHmUXpSYKsb8DIDIheKgawxAoCmLH7PrcEzKAtXSNKPfQlWQU2Bu78
-	 DR4P+03Cp7c0eRlQPqkLODatu2IlwvNTxRprEGMsFmMm090bG+q6a0jbTUm3RYY87fbcF
-	 l4nwGwhgXfkbMHom6Dfl2MYpXEZc6Xy/6bM6R26h7dY3wEj6ngyAF2YS0JWyddcvQPxx9
-	 PUCU8HtukJ8XzUsJq4jZsqQ1a+vl/bwG1LV/rLnithZWN8Hy5bfQDxfBgBgzmbFKXKw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795636362;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:To:Cc:
+	 Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding:X-Authority-Analysis:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=lRl8a2c+F775fiXICpW/PScHe8VmAp8qGYbgkcFxwMA=;
+	b=fTBFLbQUwOjFKg9XSynA3yAD1k8ewvWp+BReC/n7/5nPiOvIzK1KcAsfpV7f0w1Zqae4
+	 aJx7zGAis6CIREVdV/31Zylw3bXy0Su3NOT+JXvrp705ECwLnf9wXo/v6VoJptTnajKQ8
+	 bD3RqBtHdD3kAHaI6xvmEAu7MGKCBOaR45spsc0kYWTrpDJ6qtrFEjK0O3SFNePftMIZm
+	 7YTO8huLPgJME7NUfpW6i0MsC6NvNYpMADr/HGLqPln2Lh82Uazng+/5h7otfzwhYwnKk
+	 ogGesH1x1CKIifMO70OqxvmvQXHooWfC7+qFZs94jn4BEhNaDEGlsLYy0KUL5JilpkQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=squebb.ca;
-	spf=pass smtp.mailfrom=squebb.ca;
-	dkim=pass header.d=squebb.ca header.i=@squebb.ca header.a=rsa-sha256 header.s=fm1 header.b=CuOaT4KK;
-	dkim=pass header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b="I/OulOiy";
-	arc=none smtp.remote-ip=202.12.124.157
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="H/LTMWGw";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=EDvZgpZP;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E030A606A323
-	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 19:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E030A606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB5C606A332
+	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 19:52:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AEB5C606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=squebb.ca header.i=@squebb.ca header.a=rsa-sha256 header.s=fm1 header.b=CuOaT4KK;
-	dkim=pass (2048-bit key, unprotected) header.d=messagingengine.com header.i=@messagingengine.com header.a=rsa-sha256 header.s=fm3 header.b=I/OulOiy
-Received: from stl-compute-04.internal (stl-compute-04.internal [10.204.2.64])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 5B6197A05A4
-	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 14:09:48 -0500 (EST)
-Received: from stl-imap-02 ([10.204.2.93])
-  by stl-compute-04.internal (MEProxy); Wed, 25 Nov 2026 14:09:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1795633788;
-	 x=1795720188; bh=j66RKb5l2l5mpAtY8HXgIUDK8pcSYZliet/rKrMgG/A=; b=
-	CuOaT4KKTqlIOPru7/uoGPENJDMQb5GSnTAkfzeSYI/sug4i9G1YjV22O0io7aW6
-	SOaFOxYMUFOd4qnyXA3TNb3UB0uiqBm46hy1Ka/9ALaPf4KfuMOug5X4MlVGwZre
-	+Ptswu151wTOTt4lLGOdIUHu5ac/FEXqP276TjMj6z9WVi3ixS8Vymn0W7gRzPER
-	pdWK4RUc07yjp3G4FRNhl6dm4q0lSxOB1WJGDjDlkoJ/Fd2zT0ydluzD0NN/UEr3
-	DCiLIKem8hemBIaPHEbGNdXSl2p8wGeK28cEfva1CIdFDvxSKqbaq/31kIbbGIa/
-	msl2BkE//j5+9G/ztxce8A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1795633788; x=
-	1795720188; bh=j66RKb5l2l5mpAtY8HXgIUDK8pcSYZliet/rKrMgG/A=; b=I
-	/OulOiyatYVPhKL1fmm+ClcF3feVeR5/A0Mq5Rjsbqu1buVNTZsLMw8Xq0LLgVkE
-	BjNlnQ0IqY9LEOoTF76LY2qDEJqJqe9ADvim24Sa7uHRPBbIk+fRPsnMNPdyTjD3
-	/43UvDfslveRy9J6eWNVEbLcsFN3iePqCHK1rjAELr2BuPB/+BsOATGb9uH8sFU2
-	d8odCIsBKRgWYfRIQnl1bFeqESw+x/EOJ0lNbk58Ly5PU9inTBUY5YT3ZRpWXvQu
-	mmCBDajnF890Wse8vzdl6YNwDz998FZTD5ssIqkPplDG7d9Yjk2GIS2KSXvtmKGv
-	znlFLle15b0+bbD7zhsFw==
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=sign d=squebb.ca a=rsa-sha256;
-DKIM2-Signature: i=1; m=1; t=1795633788; d=squebb.ca;
-	mf=PG1wZWFyc29uLWxlbm92b0BzcXVlYmIuY2E+;
-	rt=PGxpbnV4LWxlZHNAdmdlci5rZXJuZWwub3JnPg==;
-	s=fm1:rsa-sha256:eN125p7/3xSVbxZfh+okPUs2PbxZtBPgsouPrtK86Tu2f3o
-	my8a1q0GtlMcYsgzASM5mMF3mLk9mGeegoiAfziYbU6czqllP5gPg55Webj73pi8
-	RFoOQ/MHUORPZPOWBTbUyAAIc5bwuCpxK6oXflOiALwcpF4389cTIjMTRw+YPOOh
-	qBIwN4YNHynx8ryYXWIXBozDiSyC0vdcIXllM3FPGI+26jVXf/nHcOFog7pzhhs8
-	TkJcNqDf64w+psehf8JALtn0GLuiZl+2uaPodYXcai+FOv4tGWKCba49FtY5o2Tl
-	A2l4z9syI/58urpvMfv2na6LwgskA1WBJjlkTBQ==;
-X-DKIM2-Info: draft=ietf-dkim-dkim2-spec-09;
-	repo=github.com/dkim2wg/interop; date=2026-11-03; sw=lmtpprox;
-	action=mi-m=1; hc=12;
-	hn=cc,content-transfer-encoding,content-type,date,feedback-id,
-	from,in-reply-to,message-id,mime-version,references,subject,to;
-Message-Instance: m=1; h=sha256:yfuBIi7hVYPol6wkIi7AhdvxOOzxGOf95xvy7CATZ2U=:cDOxVkY4CKLQwsW+7YbuB/+Y4dELsoW9itMN7kM1y4s=;
-X-ME-Sender: <xms:ezIHa4FBndDCl-r6GtGB67uDLGutDP9I-b8yfPqFF_N6y5XbY4rAYA>
-    <xme:ezIHa8KdSTgDeIYjgp1mw5UEBRe_kQ9tMWyzCQn52w1AkFx-wozB9HXzlt60yOV0T
-    TjTuJILaXtPN7XBqU29oLIXfByKYNx17_6YRFC8YaQGzhfVtDyGAs1y>
-X-ME-Proxy-Cause: dmFkZTEAS9i35RwxKrEukZh+BUpLuXgL+MPQH1yJv3Iuj20lOBTFeojOWEwWkQHa+hR1db
-    XR+t/qzQPuZIophWefuEorAkc4cSX9KB8DmDon57BLE1t9ENQkCYj1EqnqERu2nMu+4zHG
-    /0x0dcH3sTbg9iwB1ylIHcJ9Q/hLDAC5XAnad6kRyw1vW/9oHrFm1mC3+5ipj2ZVVGGZcz
-    G4Ky01Z0U4THkD6Jbxv0NmJ4BtQX86bkgc8a0LdLZksWcFUtczQPFI0HVW1TAQMrMsThyu
-    b9oXHe/ODwvKIziL1zzUNF5Nb6N7HvxACQ6LeeuQ3jgZHsP0aCLWljhrMPI4TZTRGj81cg
-    miP9Z9zx12w+UZlQ6GPoBvXiTa39Bc6Kg57keC47Mab2bFy1OD2fxiBrl+PI4t9YZY4hPS
-    gvWl5bENP8jnXR+zb6T1zN4ReuxufWvTkAmq2xhZbX0aDo80qO2pXUr5MbSKm2g1l3BsVq
-    iQ6+Dkl8t5RNSlJ4KmQGxSve7WlyTl7QynVg6Cum6XasCam+YIKY48i5k8PNwunvojAV15
-    7FvWH26idSUlxig26BDH6DVvFqfcMLnbqgenERQ+A0EILFJupBsJnRV5BO89oIcY+biHTy
-    p+8EcC4kZGY/hfhhe8o1/3OhZyGXJ21zHh96Sx/3NE6ttKnW78F5NHjrX1rg
-X-ME-Proxy: <xmx:ezIHa4nyVui12v4JVG58PonCnRTDKzHYkALgCUodnucuzA6dHX16Sw>
-    <xmx:ezIHa0IkuhwKdgpF8djMM3_hVcpXkV6e9eV-o8he4H1m080H4tAltw>
-    <xmx:ezIHa4ReotrRg6Gk5T3pFCPD2MA2sY3t8A-QYNJnJtkfwZAcbe42Rw>
-    <xmx:ezIHaxuVAdtLAoaZKTpXSVaCVMATyJez2WpkhwHZnTy6VrKUWrjU_g>
-    <xmx:fDIHa23ereAQZwqItLv5vLTCeOxC61RFtVSHKWXyytc8kJi9yFvhNqet>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.stl.internal (Postfix, from userid 501)
-	id 59EB92C00085; Wed, 25 Nov 2026 14:09:47 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=H/LTMWGw;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=EDvZgpZP
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6APJBH52689584
+	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 19:52:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=lRl8a2c+F775fiXICpW/PScHe8VmAp8qGYb
+	gkcFxwMA=; b=H/LTMWGwpLj4JnzWOodswvm27tbYjNKHCSyk3agPibFXS44LUs/
+	SLl2ElF0+fpNXQaCXxFEs2zZlPGR328IJSf1iRk4e74gNARICRzRUC9Dp08wh26b
+	xpLeEKtHT4b713wC2YE3IZUahzLIXXA15+VyOT6qkbM39879E/u7K1vajUAOkqpF
+	j2u/Bg7PKqnHKSCEt78iG++qT9PbmJwCBu0MbO5rIeS9S8ZU9+N1g2UZV+ODESpj
+	beGBkB9DwhLkxJFcoqvkam1+6py1H9qhUSLAdZ+B9Hc4vx0bBWROYQ9d4TYpqLLX
+	707wqksJm2IWlDddM/A8eVTBf0oOVzamM/w==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j5mc2ck43-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 19:52:39 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-9211d51dcefso114722146d6.3
+        for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 11:52:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795636358; x=1796241158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=lRl8a2c+F775fiXICpW/PScHe8VmAp8qGYbgkcFxwMA=;
+        b=EDvZgpZP/8Wy2yKHCu/KzpebFeNF6c0ZFMzytVNHzSo49GNvDSNfJWWdNeHKvOsAWv
+         gRXLElZVT4AcRc0yViP/C+cnFDm6WJeFLEZFzhDc5PyG9/1eEzZfrxr4RxrDGLZ0S6XA
+         GYyCxbn96zqG12KiXMiaPPBaEA7csLpd5fqdbU2bXKD5yboGewGm0gSggDPC9seM+ikb
+         s4DYamKaLqCCvbYFKkcxswoD0X4Q2hS7yM/wuI6gfuhul6oPtUAdt5rNFKLE2ERQuSoj
+         T+xBpwirvTc8OBl+72bqCpEIU2SZTQ+6RQECRsLmPaDcZs2Z9bZfTtEbWnX4AjJ6RkoC
+         VPXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795636358; x=1796241158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=lRl8a2c+F775fiXICpW/PScHe8VmAp8qGYbgkcFxwMA=;
+        b=KZ480QsyuiNdu2k01PC6Dyxb4HezYGF0vQpOQv+5xR+llXRfzSIIUcfR1RG4cd5NUP
+         sRjhS4pIC2oTU0v6lJara6BxGy64xIbFdBkL8qy8I93shDPJjyhgWBy3PUJcR8VpPhFP
+         PeWFgxq5kcqRE9huTuxh1gLH6cATBS04tSwQeHt202j9se/iUj5YGJc60+h/PGbdSq/j
+         POdnghK6pEG/6yC7Cz4Q5etqUiCXdvE1OmxWo3p+R+5x4S7tSsNTSZJX+ZSWvP5WgZz/
+         ZkWgT1l6/MDe1sK6FqSK6hPoBiXaNJCvbdClPhR1gv3/tGL5GoSSE8XSmTuwMR4DyeAa
+         U+6A==
+X-Forwarded-Encrypted: i=1; AL+hErEdCYL0spqvxc+P6T74N7MfjVzzZ4KjMRTstTnt5PSewQcudAUYaWITAWK1+2LCR1AzV98R7rAFzavC@vger.kernel.org
+X-Gm-Message-State: APuU4Z8iT7BecEVOTJWWuSLWMeD2o4iVzAoppORr6f9x+pKzlaBaX128
+	0jgZqaeTlFj1orfMMB/fP0xosvtSK/k6dekBSLI0AdIFdH0+Vt+gtiNVRruCKSCe5ijfjkYHio6
+	LEdjfND9qIKkTpH8qETTtrnKfjXbl4f8Py+DNkmX8t34J8gvHZbWbbsrEoaWFWQI+
+X-Gm-Gg: AZFdTZfst1TS46lEclCESY4YSAgb++X8iWfo4niW/9irqJNwuG/9d3kfQTV4ZaT4Njr
+	CGyoQjlrFRjRw0gxiPHObkERRVNYW4F5ZmneOr350bHFALDTnzrA7wB780IbL0wISuB6CadxKHX
+	mrrr9JMGNJ4q8SSnc7nLYLCanXn53qOJanRaWoTISCM2K1tgjyXGG31hpjx30kBWchVXpNi8Jxh
+	khdYf6vSbof24uWp8ykp6obOvoY/BW/38U/1XmcfsFT1+/T4KQeLUpH+5Pxpt8saJJBueGJmy4O
+	YlfSagoZZd9QIk/BwFFRK2IoB61cQIXwqc2fbDvdQTuLeqh082BVQ8X2gwOM2rDa84gznorjdJm
+	KY/z43gEdEr3ofBAxHpi6Ry+7NJPDaNdGTao/yhnZ1T6dmat5TY7pEsYoTZ9PkS71
+X-Received: by 2002:a05:620a:260a:b0:947:7f5e:2b64 with SMTP id af79cd13be357-949ba969faemr3131218185a.18.1795636358449;
+        Wed, 25 Nov 2026 11:52:38 -0800 (PST)
+X-Received: by 2002:a05:620a:260a:b0:947:7f5e:2b64 with SMTP id af79cd13be357-949ba969faemr3131214785a.18.1795636358031;
+        Wed, 25 Nov 2026 11:52:38 -0800 (PST)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884ab091sm774316205e9.11.2026.11.25.11.52.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2026 11:52:37 -0800 (PST)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Griffin Kroah-Hartman <griffin@kroah.com>,
+        Luke Macken <luke@phorex.org>, Srinivas Kandagatla <srini@kernel.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH v2 0/3] qcom: PMK8850 LPG backlight on Mahua T14s
+Date: Wed, 25 Nov 2026 19:52:23 +0000
+Message-ID: <20261125195226.1563577-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -115,118 +123,68 @@ List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-ThreadId: ACbI3-LYI2HV
-Date: Wed, 25 Nov 2026 14:09:27 -0500
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Qiling Zhu" <kmatzkaczor244@gmail.com>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>, "Rong Zhang" <i@rong.moe>,
- "Hans de Goede" <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>
-Cc: 
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- linux-kernel@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
- "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>,
- "Griffin Kroah-Hartman" <griffin@kroah.com>, linux-leds@vger.kernel.org,
- "Vishnu Sankar" <vishnuocv@gmail.com>, "Vishnu Sankar" <vsankar@lenovo.com>,
- "Andrea Rabbaglietti" <rabbagliettiandrea@gmail.com>
-Message-Id: <fa3ebfcf-ae2d-4075-b61a-93559f0e3e6c@app.fastmail.com>
-In-Reply-To: <20261125084644.137506-3-kmatzkaczor244@gmail.com>
-References: <20261125084644.137506-1-kmatzkaczor244@gmail.com>
- <20261125084644.137506-3-kmatzkaczor244@gmail.com>
-Subject: Re: [PATCH v4 2/6] platform/x86: thinkpad_acpi: Extract kbdlight notify
- helpers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=aPJlOr9m c=1 sm=1 tr=0 ts=6b073c88 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=eNx2SGrOvgKyolGvBP8A:9 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: j9CoA-CaGdonhNO12-a-ekWFsnPbUiVb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI1MDA3OSBTYWx0ZWRfX3G/+dJmEfsut
+ R9tmscl6y7AU6/gDXO5H6KSdzx2zSPnizab+AUvH6FOjC6jxEhAnnlGGFD0Cmd5Ble6Vam/p0eN
+ rvJyrq+6CqaVwqdJZAfALSPnYxeg2zOZmPhXQsaqIQx8uFIi2geVPYWvPMSfIoGXV78UUYJLWJa
+ cI/iXTieRQTZ4A7+1HOmExhAUjZ/kCBGPqIC7zUrdrGReHOdUzagnU1508sc2SC4IuE60pTGTXu
+ 8RqG90nZ9NO5yFMdpiN2mZLmN9BknAl8IJlDczPQBLN0Aey+wugXebWLbSnyhHYhAVpydbx21k7
+ RDMHTIXt38MSLLqTVnPhUJmA/eJdAeiha2yRK3ClmBjPurRNPYx2ZRgc1C3C8u6fTQGo+cGOd4K
+ SOHl6g7BLIBUSdJeVq07jpwCnIKAPw93kac5uAbaCXbw3hYTSLVqtM4W4QqD3CNmnQPrAmikYab
+ lhTIzGg68TKRnjkf96Q==
+X-Proofpoint-ORIG-GUID: j9CoA-CaGdonhNO12-a-ekWFsnPbUiVb
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI1MDA3OSBTYWx0ZWRfX/KRjKx2ZfQtC
+ JcrosolZ3uwF7DbfZdZIZMpESDkaaZfq72ufpdkto4oMtyfwNU5KiuEz21KkkqP4lCDJHoUbBXp
+ /DxJE2/4UgxKkQD74Eky/IrktOnmB2E=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-25_05,2026-11-25_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 phishscore=0 lowpriorityscore=0
+ adultscore=0 spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611250079
+
+Wire the eDP backlight on the Lenovo ThinkPad T14s Gen 7 (Mahua) through
+the LPG/PWM channel on the PMK8850 sleep-clock PMIC. The PMK8850 PWM
+block is register-compatible with PMK8550, so list qcom,pmk8550-pwm as
+a fallback compatible; no new driver match entry is needed.
+
+Changes in v2:
+- 1/3 binding: use qcom,pmk8550-pwm as a fallback compatible for
+      qcom,pmk8850-pwm instead of listing it as a standalone compatible
+      (Lee). Krzysztof's v1 Acked-by dropped since the compatible
+      structure changed; re-requesting ack. Tested-by not applied
+      here (bindings have nothing runtime to test).
+- Drop the driver patch; the fallback compatible matches the existing
+  qcom,pmk8550-pwm entry in lpg_of_table[] (Lee).
+- 2/3 pmk8850 dtsi: use the two-string fallback form "qcom,pmk8850-pwm",
+      "qcom,pmk8550-pwm"; pick up Reviewed-by from Konrad and Tested-by
+      from Luke.
+- 3/3 mahua-t14s: pick up Reviewed-by from Konrad and Tested-by from
+      Luke.
+
+v1: https://lore.kernel.org/all/20261015194732.64428-1-srinivas.kandagatla@oss.qualcomm.com
+
+Srinivas Kandagatla (3):
+  dt-bindings: leds: qcom-lpg: add qcom,pmk8850-pwm compatible
+  arm64: dts: qcom: pmk8850: add PWM node
+  arm64: dts: qcom: mahua-t14s: wire backlight through pmk8850 pwm
+
+ .../bindings/leds/leds-qcom-lpg.yaml          |  4 +++
+ .../mahua-lenovo-thinkpad-t14s-gen7-lcd.dts   | 26 ++++++++++++++++---
+ arch/arm64/boot/dts/qcom/pmk8850.dtsi         |  7 +++++
+ 3 files changed, 33 insertions(+), 4 deletions(-)
 
 
-On Wed, Nov 25, 2026, at 3:46 AM, Qiling Zhu wrote:
-> TP_HKEY_EV_KBD_LIGHT handling in tpacpi_driver_event() reads back the
-> brightness, compares it with the cached value and notifies the LED core
-> inline.  Extract this block into two helpers: kbdlight_notify_level()
-> takes a brightness, compares it with the cached value, updates the cache
-> and notifies the LED core; kbdlight_notify_change() reads the brightness
-> back and calls the former under kbdlight_mutex, like the original inline
-> code did.
->
-> kbdlight_notify_level() expects the caller to hold kbdlight_mutex, so
-> that the proc write path can reuse it with the brightness it has just
-> written in a subsequent change.
->
-> No functional change intended.
->
-> Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
-> Reviewed-by: Rong Zhang <i@rong.moe>
-> ---
->  drivers/platform/x86/lenovo/thinkpad_acpi.c | 42 +++++++++++++--------
->  1 file changed, 26 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c 
-> b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> index 31d3721bb..b4b3d7dcc 100644
-> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> @@ -5267,6 +5267,30 @@ static int kbdlight_set_level_and_update(int 
-> level)
->  	return ret;
->  }
-> 
-> +static void kbdlight_notify_level(int level)
-> +{
-> +	struct led_classdev *led_cdev = &tpacpi_led_kbdlight.led_classdev;
-> +
-> +	lockdep_assert_held(&kbdlight_mutex);
-> +
-> +	/*
-> +	 * Check the level actually changed, setting the level
-> +	 * through kbdlight_set_level() also triggers this event.
-> +	 */
-> +	if (level == kbdlight_brightness)
-> +		return;
-> +
-> +	kbdlight_brightness = level;
-> +	led_classdev_notify_brightness_hw_changed(led_cdev, level);
-> +}
-> +
-> +static void kbdlight_notify_change(void)
-> +{
-> +	guard(mutex)(&kbdlight_mutex);
-> +
-> +	kbdlight_notify_level(kbdlight_sysfs_get(NULL));
-> +}
-> +
->  static int kbdlight_read(struct seq_file *m)
->  {
->  	int level;
-> @@ -11593,22 +11617,8 @@ static bool tpacpi_driver_event(const unsigned 
-> int hkey_event)
->  		/* Key events are suppressed by default hotkey_user_mask */
->  		return false;
->  	case TP_HKEY_EV_KBD_LIGHT:
-> -		if (tp_features.kbdlight) {
-> -			enum led_brightness brightness;
-> -
-> -			guard(mutex)(&kbdlight_mutex);
-> -
-> -			/*
-> -			 * Check the brightness actually changed, setting the brightness
-> -			 * through kbdlight_set_level() also triggers this event.
-> -			 */
-> -			brightness = kbdlight_sysfs_get(NULL);
-> -			if (kbdlight_brightness != brightness) {
-> -				kbdlight_brightness = brightness;
-> -				led_classdev_notify_brightness_hw_changed(
-> -					&tpacpi_led_kbdlight.led_classdev, brightness);
-> -			}
-> -		}
-> +		if (tp_features.kbdlight)
-> +			kbdlight_notify_change();
->  		/* Key events are suppressed by default hotkey_user_mask */
->  		return false;
->  	case TP_HKEY_EV_DFR_CHANGE_ROW:
-> -- 
-> 2.56.1
+base-commit: 9437046953b2fb3bf55b36582450ea0267df82a7
+-- 
+2.53.0
 
-Looks good to me
-Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-Mark
