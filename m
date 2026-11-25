@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.112
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.112
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795613028;
-	b=Um5KQTXFV1Xp8wuq0W9D3bHuEyBJzQ+pT7Shhd24YkK27ntBHxdm/pPZd/yINOPGlO4T
-	 M5DS8gM06AgsQ5SQVEpl97BuIrhhInhTRhtlAMjoNcs+KTrMG62cynA1YnQsf9f83yoqy
-	 tZMmRGSpwHxLhmbRXDl+B+y1uxRWODCDWuTNjKiAtX+duFdHZInwzm1OVKoazJ+pcvAjs
-	 lbOfJKNuAqGt2CdbIfeJdZUyy5mFtJu3RpcHue0YUKe5T2Si2o9J/Fvt95W82mcndYT5Y
-	 McX5ou1rzwxeYy4tVDLGFa49zGgefF1DXaGHaw5WoXzyAZoOXZi7UPB4C93f/aTvjRQ==
+	t=1795613054;
+	b=ozGHW/ac2GIQDr4Q02A4g1LqtVb2AJ7M/lptiyMSfnofa/iE2jdwoD2+K+6Iu+XSinpb
+	 /toMm0ib2CsfAy2BOf7TcwiorYaRbkAwp3vcprJQxX/JwjDsjg/QGDmUjzHK3aD05EgDY
+	 OZj6l1/7MCe3La59uHN2qiqqwtq9DfORXndVHVrmQLTItE4wxg4aMfODExGFo6cvvQdAD
+	 Ze9owlZxMJMgO1vRwNZYvOoOTJBUDyCF74SWwJbJ+u92jO/I7K2sfSAXQEYpwGMuGT9Y4
+	 hC2Kr5NeYGiAbOSQKJcvB4NqfuVKTCtdDDNlyvaRWR9Enj9hXA/g6E0RYRrd0imVvTQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795613028;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795613054;
 	h=DMARC-Filter:DKIM-Signature:Received:Message-ID:Subject:From:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:
 	 MIME-Version:User-Agent:X-ZohoMailClient;
-	bh=rDIlJeLiW1UM0feLkzAHATTJDCWCHt9MGJP9CMm7LWU=;
-	b=Yf/J+bSPEy+f1WvE2zC2ILCWyIynaI2iz2RG/k6/zVYbV/5WtzGGZ7Ix9BQnNlxwlCEb
-	 fQKVDFnwaXWhDagofRMRh+zW0IzMB3g+cYH7rzjRZxV6Lc1BFBQj9Tdy/XyERIQaGHq3i
-	 1tTUtb4MGNLlPNUJfkGYQJ5VPDsFNLMauc5SXJXGKyrRUJM83J5Uj2jf1JiaV8lGQnNvx
-	 0tQNjDriQhV7iXY9AeUZO4/R88JvGZKsYKxXQmVNgl0WdzZEYTjZqRkKcJCw7BNZJY6s+
-	 t9MrcUaE4sL0a+64cYg7jGOw3qoRa+R79MmnNBhdyl85rZIocfsicyU51YAoUyysSHg==
+	bh=WE+SmlVXVxbbJ8UnH6T5uVaQqHJ2e47Mld0et5owo0s=;
+	b=DxSAuVwzEklOUzfeAis9xZATZ9elmTxLbBHYVlPwh7/kFCO6p57lzKmTsIpNdE+1gj8F
+	 VXwAl5rX8O+/YGivJD8Kvwm0wTu8A4JZBd5qsM30W/XqDWCuyeIiniyX4ZkBz6y08fgIk
+	 SNaq1dxFfqoHLzA0zhqXNGUj0X11jv6gxKfzDcPWoEFYZW+n99pVtxpXzmqDckm5Dhd3H
+	 4p5CHABe9+cvB3IGIbB2aCxA+wgAAsvyaa8YDKLFZh5gLRmNH9eFBHkkzH8OQCvp8J2UF
+	 3e2murP5mFlVkbtTFpIHN9KCHQXlptTqMmBKWAAhizb+/ar46K8+vYVyqMZdNJfF+ew==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=rong.moe;
 	spf=pass smtp.mailfrom=rong.moe;
-	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=OZEnA9vL;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.182.112
-Received: from sender5-pp-f112.zoho.com (sender5-pp-f112.zoho.com [165.173.182.112])
+	dkim=pass header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=JT2zTUTm;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=165.173.180.112
+Received: from sender6-pp-f112.zoho.com (sender6-pp-f112.zoho.com [165.173.180.112])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929F0606A32C;
-	Wed, 25 Nov 2026 13:23:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 929F0606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA7606A687;
+	Wed, 25 Nov 2026 13:24:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7FA7606A687
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=OZEnA9vL
-ARC-Seal: i=1; a=rsa-sha256; t=1795612995; cv=none; 
+	dkim=pass (2048-bit key) header.d=rong.moe header.i=@rong.moe header.a=rsa-sha256 header.s=zmail2048 header.b=JT2zTUTm
+ARC-Seal: i=1; a=rsa-sha256; t=1795613008; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Qsx5OVDVgo639ewVViD4Yk9sTWn5lMKBKUiKShF4HHyTOl7dtEzwZj6hDxtpTwI/1/KPpWq/d7LzDXug+92af8IP1XEtn7OD7TAwv9EDTX2FirfoscJVSZdsx2cwOkTZWDGRhym1MIkOXkMp+wwtSyh1pfKvDutG4xk3hoPsxcY=
+	b=e2Gzu/8lC4qn9aK0C+Fvx7CwCKFdjAHP1qFYORoAvYukCzfXZxhKR/s2C9vuWZ7ZV3pCnfvBfDy+ssOFsJirdC8e8EGwB2fS6M1RlvqxjhoygxzhZCqpJXWoTUkQi0mIVd+NYuuAvjAlKTm++hv5yhkVGo6BVO+CzEQ9PhsuciA=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1795612995; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rDIlJeLiW1UM0feLkzAHATTJDCWCHt9MGJP9CMm7LWU=; 
-	b=CLdeOlU47OAnXKrIhEOftcPJUPu58tR1E9HCfbhUKgkHpG2l5ou+ocSobcpdGbgcZ1fzlKjOZwWcOo4sr8s+vWqx9uSyfFm2BA5aoK7wrbOiRrUiI55Jsg0riD73fC44imAuaxldRM2hw43EK2nYW11aadvMLFcUX04+SSG8zkU=
+	t=1795613008; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=WE+SmlVXVxbbJ8UnH6T5uVaQqHJ2e47Mld0et5owo0s=; 
+	b=V1arQyiUNjGQRfdLv0OGbL/ajYTe8rG0DQGXH6MLONyJ+d7jXg4n+/I3a/kG/cmtRZ+L0iKcEDh//kk9cgFmzSGCpzK9P8vtIl8jmQqyHj0glaF6Bu5QUpOAVrHGqgPu8QA1zzx1sGpXl8rcCsYtJSpYQP4hSQ09Zp2k5sPvgrs=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=rong.moe;
 	spf=pass  smtp.mailfrom=i@rong.moe;
 	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: a=rsa-sha256; b=OZEnA9vLUYhUow5p1G+oGZ5H/L0sxFuIfzr3P6OQhGbjFL6XksHUnx4rT1BxgIH6/qwPpJ9Xo32BUIQ7tEycM5/vzmLxuf2iWEeheETRo6ynkKo4lLuNLYtLZZS5i84p+dUjND2OZ2M4QZ+g06y+3vqttX7llIXDE0eBram2tt0HW4TMd27//zpCP/kosUFe6x79WLtsXxRqZu0S9RBuk6ussDC7k7LXuhdi8Hp4QAnZJK8ehai0D8LyxyD+NL42UlfG4ngdVgwIYieK0ePvww3mT+c0CFJfWVLzRmpTtnOdimoJuRVKOO3IOZkel6/WnNKy7F24zhTPr1w9LJmkcw==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=rDIlJeLiW1UM0feLkzAHATTJDCWCHt9MGJP9CMm7LWU=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
-Received: by smtp.zohomail.com with SMTPS id 1795612992723857.8540790151453;
-	Wed, 25 Nov 2026 05:23:12 -0800 (PST)
-Message-ID: <bef9953c3e33e4ae38cce4464912088808240540.camel@rong.moe>
-Subject: Re: [PATCH v4 5/6] platform/x86: thinkpad_acpi: Detect auto-mode
- capability via MLCG
+DKIM-Signature: a=rsa-sha256; b=JT2zTUTmeU65YOSrGvsXhhk/ak8GCV7TOakb8M8K0YFfo2bUvzBQGAyIlGPIaCJQ70snxZZ9EwB9HvAqxEjalMhRleRgWaEvuoXZUR+RAh+lprxzE1UVIXMiFTkX7LaZAMuCTYOIar4I2HyFowikKxWmUP9cc/sH/ptFcWgQKYcv539iDSsS3X6vs1hrAb6En8Av5xuYai4N0e6MY5DXpWUjTbnD0MJImV7/r7XlQaN/4+tf1kkOCqN7SsdSYHB2/+L12sZu3Ju7hlwxmCwXYd5Og73VchqGchIKZZ6xKjQJr80BnCRirEzNUtOzJr4ob3w0ls0Wsc5lXACYMxdy8w==; c=relaxed/relaxed; s=zmail2048; d=rong.moe; v=1; bh=WE+SmlVXVxbbJ8UnH6T5uVaQqHJ2e47Mld0et5owo0s=; h=Content-Description:Content-ID:Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:List-Subscribe:List-Post:List-Owner:List-Id:List-Archive:List-Help:List-Unsubscribe:MIME-Version:Message-ID:Resent-Sender:Resent-Cc:Resent-Date:Resent-To:Reply-To:Resent-Message-ID:Resent-From:Sender:Subject:To:Date:From:Message-Id:Reply-To:Subject:To:Cc;
+Received: by smtp.zohomail.com with SMTPS id 17956130066665.927232731429285;
+	Wed, 25 Nov 2026 05:23:26 -0800 (PST)
+Message-ID: <806cda3d6b490e1b0930aaa97fd3a3df50f54dff.camel@rong.moe>
+Subject: Re: [PATCH v4 6/6] platform/x86: thinkpad_acpi: Add a keyboard
+ backlight auto-mode trigger
 From: Rong Zhang <i@rong.moe>
 To: Qiling Zhu <kmatzkaczor244@gmail.com>, Mark Pearson	
  <mpearson-lenovo@squebb.ca>, "Derek J. Clark" <derekjohn.clark@gmail.com>, 
@@ -61,12 +61,12 @@ Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
  Machek	 <pavel@kernel.org>, Griffin Kroah-Hartman <griffin@kroah.com>, 
 	linux-leds@vger.kernel.org, vishnuocv@gmail.com, vsankar@lenovo.com, Andrea
  Rabbaglietti <rabbagliettiandrea@gmail.com>
-In-Reply-To: <20261125084644.137506-6-kmatzkaczor244@gmail.com>
+In-Reply-To: <20261125084644.137506-7-kmatzkaczor244@gmail.com>
 References: <20261125084644.137506-1-kmatzkaczor244@gmail.com>
-	 <20261125084644.137506-6-kmatzkaczor244@gmail.com>
+	 <20261125084644.137506-7-kmatzkaczor244@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 21:17:04 +0800
+Date: Wed, 25 Nov 2026 21:17:29 +0800
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -82,76 +82,153 @@ X-ZohoMailClient: External
 Hi Qiling,
 
 On Wed, 2026-11-25 at 16:46 +0800, Qiling Zhu wrote:
-> MLCG bit 20 indicates whether the EC supports the auto mode of the
-> keyboard backlight (0 =3D manual levels only, 1 =3D auto mode available),=
- as
-> defined by the firmware.
+> On ThinkPads that advertise the auto mode in MLCG bit 20, expose EC
+> level 3 as a private LED trigger named "tpacpi-kbd-auto".  Select
+> LEDS_TRIGGERS so that the trigger is available in stripped-down
+> configurations.  If registering the trigger fails, register the
+> keyboard backlight LED as before.
 >=20
-> Record it in tp_features.kbdlight_auto, for use when registering the
-> auto-mode trigger in a subsequent change.
+> Activating the trigger writes EC level 3 and records it in the cached
+> level; whether the LED is hardware-controlled is derived from that
+> cached level, so reading brightness returns -ENODATA while the trigger
+> is active and the EC is in auto mode.  If the EC is already in auto
+> mode when the driver loads, make the trigger the default one, to
+> reflect a selection made before the driver was loaded.
 >=20
-> Link: https://lore.kernel.org/r/CABxCQKuEP5wMSstO0MK1MhaqXTKrPhUSN3V2mrE_=
-42j4cXsXZQ@mail.gmail.com
+> A sysfs brightness write leaves auto mode through the LED core's own
+> trigger removal.  With CONFIG_LEDS_TRIGGERS_HW_CHANGED enabled, the LED
+> core also switches between "none" and the trigger in response to
+> Fn+Space, or to a procfs write that leaves auto mode.
+>=20
+> Deliberately unchanged: max_brightness stays 2.
+>=20
 > Signed-off-by: Qiling Zhu <kmatzkaczor244@gmail.com>
-> Reviewed-by: Rong Zhang <i@rong.moe>
->=20
-> ---
-> Mark Pearson's Reviewed-by was given on the v3 version of this patch,
-> which tested BIT(20) directly.  The symbolic name was added at Rong's
-> request, so the tag is not carried over.
 
-Usually you don't need to drop a tag when your implementation doesn't
-change a lot. Adding a symbolic macro is just a trivial change to improve
-readability and maintainability.
-
-> ---
->  drivers/platform/x86/lenovo/thinkpad_acpi.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platfo=
-rm/x86/lenovo/thinkpad_acpi.c
-> index 764b1efa6..ee8f7429d 100644
-> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
-> @@ -363,6 +363,7 @@ static struct {
->  =09=09TP_HOTKEY_TABLET_USES_GMMS,
->  =09} hotkey_tablet;
->  =09u32 kbdlight:1;
-> +=09u32 kbdlight_auto:1;
->  =09u32 light:1;
->  =09u32 light_status:1;
->  =09u32 bright_acpimode:1;
-> @@ -5105,6 +5106,9 @@ static struct ibm_struct video_driver_data =3D {
->  /* EC level that selects the auto mode for the keyboard backlight */
->  #define TPACPI_KBD_LIGHT_AUTO_LEVEL 3
-> =20
-> +/* MLCG bit that indicates whether the EC supports the auto mode */
-> +#define TPACPI_KBD_LIGHT_AUTO_CAPABLE_BIT 20
-> +
->  /*
->   * Cached EC level, including TPACPI_KBD_LIGHT_AUTO_LEVEL.  All state
->   * tracking compares EC levels; the auto mode is translated to a
-> @@ -5189,6 +5193,13 @@ static bool kbdlight_is_supported(void)
->  =09}
-> =20
->  =09vdbg_printk(TPACPI_DBG_INIT, "kbdlight MLCG returned 0x%x\n", status)=
-;
-> +
-> +=09/*
-> +=09 * MLCG bit 20 indicates auto mode support: 0 =3D manual levels only,
-> +=09 * 1 =3D auto mode available (per the firmware definition).
-> +=09 */
-
-Usually you don't need to repeat what has been expressed by the code and
-symbolic name themselves, so this comment can be dropped in favor of the
-comment of TPACPI_KBD_LIGHT_AUTO_CAPABLE_BIT.
+Reviewed-by: Rong Zhang <i@rong.moe>
 
 Thanks,
 Rong
 
-> +=09tp_features.kbdlight_auto =3D !!(status & BIT(TPACPI_KBD_LIGHT_AUTO_C=
-APABLE_BIT));
+> ---
+>  drivers/platform/x86/lenovo/Kconfig         |  1 +
+>  drivers/platform/x86/lenovo/thinkpad_acpi.c | 60 +++++++++++++++++++++
+>  2 files changed, 61 insertions(+)
+>=20
+> diff --git a/drivers/platform/x86/lenovo/Kconfig b/drivers/platform/x86/l=
+enovo/Kconfig
+> index 516594993..77d159a3a 100644
+> --- a/drivers/platform/x86/lenovo/Kconfig
+> +++ b/drivers/platform/x86/lenovo/Kconfig
+> @@ -83,6 +83,7 @@ config THINKPAD_ACPI
+>  =09select NVRAM
+>  =09select NEW_LEDS
+>  =09select LEDS_CLASS
+> +=09select LEDS_TRIGGERS
+>  =09select INPUT_SPARSEKMAP
+>  =09help
+>  =09  This is a driver for the IBM and Lenovo ThinkPad laptops. It adds
+> diff --git a/drivers/platform/x86/lenovo/thinkpad_acpi.c b/drivers/platfo=
+rm/x86/lenovo/thinkpad_acpi.c
+> index ee8f7429d..f9a835fe2 100644
+> --- a/drivers/platform/x86/lenovo/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/lenovo/thinkpad_acpi.c
+> @@ -5222,6 +5222,27 @@ static bool kbdlight_is_supported(void)
+>  =09return status & BIT(9);
+>  }
+> =20
+> +static struct led_hw_trigger_type kbdlight_auto_trigger_type;
 > +
->  =09/*
->  =09 * Guessed test for keyboard backlight:
->  =09 *
+> +static int kbdlight_auto_trigger_activate(struct led_classdev *led_cdev)
+> +{
+> +=09return kbdlight_set_level_and_update(TPACPI_KBD_LIGHT_AUTO_LEVEL);
+> +}
+> +
+> +static bool kbdlight_auto_trigger_hw_offloaded(struct led_classdev *led_=
+cdev)
+> +{
+> +=09guard(mutex)(&kbdlight_mutex);
+> +
+> +=09return kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
+> +}
+> +
+> +static struct led_trigger kbdlight_auto_trigger =3D {
+> +=09.name=09=09=3D "tpacpi-kbd-auto",
+> +=09.trigger_type=09=3D &kbdlight_auto_trigger_type,
+> +=09.activate=09=3D kbdlight_auto_trigger_activate,
+> +=09.hw_offloaded=09=3D kbdlight_auto_trigger_hw_offloaded,
+> +};
+> +
+>  static int kbdlight_sysfs_set(struct led_classdev *led_cdev,
+>  =09=09=09enum led_brightness brightness)
+>  {
+> @@ -5249,6 +5270,35 @@ static struct tpacpi_led_classdev tpacpi_led_kbdli=
+ght =3D {
+>  =09}
+>  };
+> =20
+> +static void __init kbdlight_init_auto_trigger(void)
+> +{
+> +=09struct led_classdev *led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
+> +=09int rc;
+> +
+> +=09rc =3D devm_led_trigger_register(&tpacpi_pdev->dev, &kbdlight_auto_tr=
+igger);
+> +=09if (rc) {
+> +=09=09/*
+> +=09=09 * Auto-mode trigger unavailable; basic backlight
+> +=09=09 * control keeps working.
+> +=09=09 */
+> +=09=09dev_warn(&tpacpi_pdev->dev, "auto-mode trigger unavailable\n");
+> +=09=09return;
+> +=09}
+> +
+> +=09led_cdev->flags |=3D LED_TRIG_HW_CHANGED;
+> +=09led_cdev->trigger_type =3D &kbdlight_auto_trigger_type;
+> +=09led_cdev->hw_control_trigger =3D kbdlight_auto_trigger.name;
+> +
+> +=09/*
+> +=09 * The EC does not keep the level across boots, but it may already
+> +=09 * be in auto mode when the driver loads: Fn+Space works at the
+> +=09 * BIOS or disk-encryption prompt, and while the module is
+> +=09 * unloaded.  Sync the initial trigger state with the EC then.
+> +=09 */
+> +=09if (kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL)
+> +=09=09led_cdev->default_trigger =3D kbdlight_auto_trigger.name;
+> +}
+> +
+>  static int __init kbdlight_init(struct ibm_init_struct *iibm)
+>  {
+>  =09int rc;
+> @@ -5269,6 +5319,9 @@ static int __init kbdlight_init(struct ibm_init_str=
+uct *iibm)
+> =20
+>  =09tp_features.kbdlight =3D 1;
+> =20
+> +=09if (tp_features.kbdlight_auto)
+> +=09=09kbdlight_init_auto_trigger();
+> +
+>  =09rc =3D led_classdev_register(&tpacpi_pdev->dev,
+>  =09=09=09=09   &tpacpi_led_kbdlight.led_classdev);
+>  =09if (rc < 0) {
+> @@ -5289,6 +5342,7 @@ static void kbdlight_exit(void)
+>  static void kbdlight_notify_level(int level)
+>  {
+>  =09struct led_classdev *led_cdev =3D &tpacpi_led_kbdlight.led_classdev;
+> +=09bool was_auto, is_auto;
+> =20
+>  =09lockdep_assert_held(&kbdlight_mutex);
+> =20
+> @@ -5299,6 +5353,12 @@ static void kbdlight_notify_level(int level)
+>  =09if (level =3D=3D kbdlight_brightness)
+>  =09=09return;
+> =20
+> +=09was_auto =3D kbdlight_brightness =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
+> +=09is_auto =3D level =3D=3D TPACPI_KBD_LIGHT_AUTO_LEVEL;
+> +
+> +=09if (is_auto !=3D was_auto && led_cdev->hw_control_trigger)
+> +=09=09led_trigger_notify_hw_control_changed(led_cdev, is_auto);
+> +
+>  =09kbdlight_brightness =3D level;
+>  =09led_classdev_notify_brightness_hw_changed(led_cdev, kbdlight_level_to=
+_brightness(level));
+>  }
