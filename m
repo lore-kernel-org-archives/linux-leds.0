@@ -1,55 +1,65 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=156.67.10.101
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795614319;
-	b=toyqjqUondNP6GP9/1SJEfxUlLnqxKXBGgr5sB9ebWGvTKLWYEXYLG0FenO8zB+l9M8t
-	 wdfHdJ5ld8xjUSOWaG9PbukWUasuYgXcyyKq0ozQkAP1ZJrrlVfXTV+4ICbj+cfHnYpcP
-	 xApkf9+dYz4KLucDBu3mtjO/XCGeWF52DCMbFQL0PYahlaeEk7js2d0YdpWn4YWICxREZ
-	 L8alC/UcG/iHKssZSbarHzCFKp3L7o0/dW/Q6KGHAVQeOvK9ECFVPibLvgLpklUFehFuw
-	 Dgr7VZWX9Cl8WBkPV7qnxgN2r1W+/l66kiSQuSvGmU4rRGPrkPNcGcgbDIwPhC6bH3Q==
+	t=1795615793;
+	b=GftX91jR455GUvGDDm9EZFlrVHRqNtUUFDK0Zrt5nnpAsUKE0VMJvbFvelvE54+wdi6k
+	 4fHikrG7t/fSzeBPDebuZLKSHZtDga5wkxvfw7n3d/qQU7ELI7Hs/Usq055OOcIY3Tf5R
+	 YYDCtb8i1DN77oIQ7KxkcldikFrL33wA1jvfOiu/JKz0kxpSweFucII9j7LVv+eWXJZ14
+	 9kPj0J0Y2GfupJDIomjrgxJiykC8VUwHC9I90oLBKbf5fuOFqB/2mMubs/4KpdfIVCopM
+	 rxx9d6JzNVeMkBebwxT9z69ETK5cFjLuY1HXKNyESDqAeGCFURGQGz0JQ5+C5CZo54g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795614319;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=MV6thWkbd5qiWnJwLmMr5SqIWXDcMURkK2/X+KzbMdA=;
-	b=ns/0tPWDbugKWc5AOVZbVFdfYJX40qcLFIROtRpCqDVGeeQe9UjKiqpPCSL3UDrqeHiC
-	 Nf3BY0zepbE6mScd1EcDTximj7Gs1bZZTFN/xzHrJGmnmTl22zHkG0en9+IHHliTQfy+L
-	 anKbROb/S2jD/1RNkR0ShHKbdjqk0o9XvJPwdEhQrKzWFJxZm46sWZmNSi7DgMi53P2OA
-	 p2FjJY4uw4Zg7Omb6TXUOkM253NwgH1+eD5tYzkiRFeknSqMotpPBcyYavy40YO5gD4dT
-	 Fm4UxwXWpoVehpPe1vcISDLSmbQjHegMmuSk3xhGW2w22D55bmKcy4Imx01vE5BbtQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795615793;
+	h=DMARC-Filter:DKIM-Signature:Received:Date:From:To:Cc:Subject:
+	 Message-ID:References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To;
+	bh=MEDiE0EtY6Ww+VSau1jpIn77kDb/DjLU14yNGzDHLWU=;
+	b=uelUOCzGmv6SFOGA91L18Fma7iP2I+tFqCbT28PTtyzqxNpg7Z0ocWBU/p/0UWJ9Zhfs
+	 tIlF0ZyhZ8z2AzdmS2oKyxV7jXLcBURC0A41B8nVW8pheZ1XAZoyhCCo1I2yWCYha/xQN
+	 0uuoXmc4maDE14Xh7DCy+D5RUFuPt7aZ46P97au+rgVcWJ/oTuQtLaqq2K8gp0VuPNMTn
+	 /jk2TU3rp0cm7uwqbKVSJXXaF1O7A5ynGkk84JhbRTw/ai3yy8xyCq4ar2sqd2dXFR880
+	 UTBr1pGiukTf1bEC5pDN+zFFiHihczrCbHkH7hBDz5Pd6Unzv7fx/1h0jXi/iCH7wYA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k1Lp0Nev;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=lunn.ch;
+	spf=pass smtp.mailfrom=lunn.ch;
+	dkim=pass header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=kN2n7W4y;
+	arc=none smtp.remote-ip=156.67.10.101
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4375D606A326
-	for <linux-leds@vger.kernel.org>; Wed, 25 Nov 2026 13:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D7E606A337;
+	Wed, 25 Nov 2026 14:09:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 07D7E606A337
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k1Lp0Nev
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA8E31F000C0;
-	Wed, 25 Nov 2026 13:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795614318;
-	bh=MV6thWkbd5qiWnJwLmMr5SqIWXDcMURkK2/X+KzbMdA=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=k1Lp0Nev2aP04Hl9CQdPM7w3R+zkXQ4iUjzSkUY+ZXDPnOm5Nh5XT+ULSD2xB1pbM
-	 Y6VA94iGKr++PkBG98zqYbCmTXvuwthVZmIfFHad2bpljoeU9iuRRGGzEY9LY0m3Jk
-	 bIAhp5XBkpf10Lv5awr05kHX0PJEn9yHE4Tvv9/SASbG8KuDG3x53U6BRSmqlAx8Gy
-	 OKMsfnW7X5S2FsEXxKEXTsF55SsNScQJtbtkFYx4KTkvFCAwwaolRWzspfz3olwyK3
-	 Fkhq8jVVkMU5Z57hxBGp8jpTKUuQTwz9lo9tLu6uAcKkL8aFkxAmP8wMwN+YS+CzuF
-	 1g2jVmQEu/sTw==
-Message-ID: <sashiko-outbox-233500@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH] leds: sgm3140: Put the child node reference on success
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Cong Nguyen" <congnt264@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261125134013.2692510-1-congnt264@gmail.com>
-References: <20261125134013.2692510-1-congnt264@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 25 Nov 2026 13:45:18 +0000
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.a=rsa-sha256 header.s=20171124 header.b=kN2n7W4y
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=MEDiE0EtY6Ww+VSau1jpIn77kDb/DjLU14yNGzDHLWU=; b=kN2n7W4y0544Knr65YDO/WCCDs
+	C6DoCtCMNfqYiB+3Jq3vxcCoLa2ubFOo4FvUGaU75DyfEfiLPr6jGlrhJ50B0QTAM/SaWZ6wKPRJt
+	OJxLth2pYKn0eREVHF0v9f3WSI+jyb5Xt4Xex4B5cVRFinpxwNX8s+K4qb13D2WedYm8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1xWDgq-001KcA-3s; Wed, 25 Nov 2026 15:09:40 +0100
+Date: Wed, 25 Nov 2026 15:09:40 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Artem Shimko <a.shimko.dev@gmail.com>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	maxime.chevallier@bootlin.com, pavel@ucw.cz,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v5 3/3] net: phy: dap8211r: add PHY LED control
+ support
+Message-ID: <2a0b5242-ff8a-4612-95a6-da008ee6f22f@lunn.ch>
+References: <20261124094914.2993988-1-a.shimko.dev@gmail.com>
+ <20261124094914.2993988-4-a.shimko.dev@gmail.com>
+ <977f8fec-4cae-4003-b878-a7eb5aeee48c@lunn.ch>
+ <CAOPX746TNm7m6d6G-WyUzDptEVRJR0AuUzKa_Hg=P7s8CchhHw@mail.gmail.com>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -58,22 +68,21 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOPX746TNm7m6d6G-WyUzDptEVRJR0AuUzKa_Hg=P7s8CchhHw@mail.gmail.com>
 
-> sgm3140_probe() gets the LED child node with device_get_next_child_node(),
-> which returns it with its reference count raised. The error path puts the
-> reference, but a successful probe returns before reaching that code, so t=
-he
-> reference is never dropped. The v4l2 flash sub-device takes its own
-> reference on the node, and the LED class device only stores the pointer,
-> so nothing else needs the probe's reference after probe returns.
->=20
-> Put the reference before returning success.
->=20
-> Fixes: cef8ec8cbd21 ("leds: add sgm3140 driver")
-> Signed-off-by: Cong Nguyen <congnt264@gmail.com>
+> May i keep your Reviewed-by tag on
+> v6, given that this is a small, targeted fix?
 
-Sashiko has reviewed this patch and found no issues.
+Yes.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261125134013.2692=
-510-1-congnt264@gmail.com?part=3D1
+I have somewhat changed how i do reviews now that we also have LLM
+reviews. I look more at the architecture, is the general solution
+correct, and a bit at coding style etc. Your patch has passed my
+criteria for that, and it is unlikely you are going to mess that up
+fixing an LLM report.
+
+       Andrew
+
