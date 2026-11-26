@@ -1,78 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795717256;
-	b=0irtah3aLHDl8n3WKv2m9nTBTrJwaFS0rGcdgEJJREpo9I+YKX5aPGQDa4wzXgv2CnQQ
-	 KKGJgrd+tZcC6vA5aA5Doj67gYFvISCHKglvLPtukxcy8/m1DAj1KqqRyEuB/t5jqHOlI
-	 PrFgzi/LVIpY1NlnDNlyP93OAfoj8iMwNWPF2er5ba1Oi10TRHjhEAAE+Vi6aN3pMteYE
-	 UtCWPnOTTYQq9EgCvsQe44fPFIF8vzd2xbXSleRdpBVg5a2s8KTh2ZvYS7mDSO3h7gnq4
-	 s4Y963Il2IPTdqFw0v3KT6S7UsE/cZA1sbuC+h5GsVD0FBqDEmpNak6glBDSh4oTOew==
+	t=1795717255;
+	b=bawdhm2f0LfQwrSW/VHuoX5uvMHDzm7CjDRAGY3Seq950t7XGFlWLBUIc9O5IAyfGJFQ
+	 l/bIfXpQdCfpevnjP3So00qi+54zC0efPJ+cuKAx2XoZ3SZwnv1ZkWXJvBYjCiFfuPd4G
+	 uWAwGtt+EyCTcpeE4LdQajpLycHcLdcT0fdkb/+86jjH4add//G8Mg+oAx6YTzZfHtRa3
+	 67NP/dLkq8ZQtAgFYX+sEAbi5X5CtnOg/QtX+C6N95uuCcEhctlGZxkoWG8wlsXlLoDci
+	 j94z2OYwzGpy0pO67xHOTRDiZmxNEAvOfh7BTwXuprAJhe1R5HTh4Sp2r/qb7RGsXKQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795717256;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=iF8Vq1DyGPbjtEtflzljG7HvzK18XClKIFJBzHSKSfA=;
-	b=P/kybMmhmG5UfmcbAMfRmcmb797LvOzI7N9yK8qAwQsMNjyqGhXzn+p8tEN7phO5yGPl
-	 5ROYdZdjoM8w9S3ND6dYIPDgtQIux7p7QS7DagPKRGbnLMSL7IIEV5+5xLeE9mpKk4inj
-	 FOhsRJfF+cd/Gc1jO18Mhmh4IulywaKZkEB/aZPIruOQQCCfrQlPZJ1NzIWTzQKeNtT5t
-	 Zf99zmbUch38T8iURugckLftfPRycyOPgxnKev1ErHnh2NHggX2KbVHT344VA4MCijHBL
-	 zQxXizjyK1xxnE4Otb0bfG6etfsgdAdcoLn0WyN0/C8qK6U3I/JCBVx6uREOSKDNR2g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795717255;
+	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
+	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-Endpoint-Received:X-Original-From:Reply-To;
+	bh=Ogw05hHsTnJ91zRaAKXUyRr0NlZ6+4/CFeX9bCNs/sY=;
+	b=OULCoTzO8CDGJhecpSQd2++ffkTODMoOgpJNTy8hXt+O1W8a9EY0NfQfhQhWOJb99AWU
+	 EyoQLE/F31cFctGPU9S7yaSGAHQXxsY93unImxWyQdcVGSttjMMdiwX09j7oQ4WgtgwzO
+	 z7Z+8Pk9reE29mTsdA0tx7Sg2kmvnHfJPgDp+yBRX+bA6I30syWTD0oeE8/iAaNkGfEXa
+	 kHj0+9LbOWyUnWBnpOlqElYYu3DAoM5cORLU2kR6bVqXFd3oXA8MFc18ZXmsEeH9Ddzlj
+	 z52HmYO/gFnyI451QwuE5Ygt3Z52+2DLTf9g432Z1TSVgVnzBNt5Vgk+HnHBEWQFciA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NKNxlCmv;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z15H9VPC;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D00606A33B;
-	Thu, 26 Nov 2026 18:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15D8606A31E;
+	Thu, 26 Nov 2026 18:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NKNxlCmv
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z15H9VPC
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795717256;
-	b=cjpia5h6t6D6sFLGTEphtLOhiOtMVddQ8AmnSDSWLmEoWaXldkMnpyhUAtjyVfXEMEi5
-	 bfdNwouSftIAvdu9+4M52ytJvGfTFu6QXz46vBrGZUiRRJiumImJt9R2AnTdkqyg0KAJb
-	 p29EbCqutEgXlBaKrbvpJn5u4nT7HLz54yTARxqwW9yDaAjxltcKPnmMr2KnOsNOzyrzs
-	 jLjh150MKylHXhkxUy+Ktrnh9C9CRzetssp1WpTYt6ZhcRhjJbi+uXh4vTr9pmDPfk9Wm
-	 5fHF0t4PEOirWiy2FQrBc/qFzElp1nFZXPq2rctn7sJCpWYfi4TnIQe6lF78kEgIdhw==
+	t=1795717255;
+	b=V2xgYWf6jZwSdm6yedadwpfpTj1aFnrA47DNzjiNbee065XNb6TbKbZJmDIBapfqch1t
+	 JmkDkDlQf9X8lMslkdCItjy/T08hR3Plls+5AUDJT/F+q9TzmRKZaeoOBkudxU+RUAr1W
+	 4FhIRnocMghLpnxQ7D7PhlIzgrF0jUBPEAY+9/rLa4Er7yq3I+jukL753i+ZMmjX0PPWU
+	 PiYVQ/eVzxEqAam5Dl+0O5GV2WF72+5c8ZAaYH6sPhxM1ehf7IrRjGjUB98hZbkkAdNyQ
+	 JxD9919CbU3P8/GcC7LYSvI54JM4aggTeKgx0xwaZBNJPTTkUhXhMds5qMAsVDRjfsw==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795717256;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=iF8Vq1DyGPbjtEtflzljG7HvzK18XClKIFJBzHSKSfA=;
-	b=CEZTIbqyancN8/VgzbtAm3gGQW1bTIv7YrHMnVDlibaPYeYeJCgw0xqRBZdm8ibe8MAf
-	 bf0Zfp0oL0OwxYRb4uRPlO3DJbzKFChWaT7/H1EcmdF75vc1z4EjB0dEgo44l2Oa2BWH9
-	 SrENLnCTFiwLab34Xr2/oPlK11zTP02SlYEpBk2pO5XhaDNmQzVTcNYunTH8sQi9rDkZ5
-	 21ntVAcZUBrPWyxKNFBNHq3I4RSQRYY3ikTS44lT24MlmPZGDhDPAkck34+zV6L77UGn4
-	 jJDtFqlYD01NexrG+2JXipJEiY+us8rTb7xQSDuo8kzDxaPQ1k1PTbWGMC21rvyJ4+Q==
+	c=relaxed/relaxed; t=1795717255;
+	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
+	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To;
+	bh=Ogw05hHsTnJ91zRaAKXUyRr0NlZ6+4/CFeX9bCNs/sY=;
+	b=Ab2DKMVRGkQ28TRNx90pgjkz6OsCH9bCBmjb7sOswF1LCQoVhutIbqTz2iyf4dG8Do8f
+	 NwypiJ1VZpDhOgk44y0Hkyt2e5hC1V+0b8GzAN6j7lULaExmqgHZPVbDmxXJkzSQ3Z3mt
+	 U53N1w68Qxkl7nQNFWLWiRWYppfcW2kevYY16P/dGJ3pf3DvS2tsRwaG+M6pBpfZxoQLH
+	 nSLmflgPOITXii7hc1YJMgnBOksyJe9jbvc2ZYTB/sCTP26uDNyduGVdWcxb822p50dpI
+	 BZjEeKlQlB11UcmPdc2oZD3pwkgRiDg15yL+qT3brnhxiuovWd58BpfYv6vfsmlUlWQ==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E07901F000CF;
+	by smtp.kernel.org (Postfix) with ESMTPS id B6ECF1F000C4;
 	Thu, 26 Nov 2026 18:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795717256;
-	bh=iF8Vq1DyGPbjtEtflzljG7HvzK18XClKIFJBzHSKSfA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=NKNxlCmvqRHWrMSNmE1dSRCvRgsjy+n/hvtcjzgQJWcxEbFHLV9b3O/uAQAx9wzH+
-	 its122aYbqTmEnQ2bN3P5S1lUthvCLqRxKsV4PAr3TaftHZnD9JsCbJvBCbiTqChYF
-	 Yw4tfLUJ1ODzNqg5ImKwE0aZzGxKZ3i48ui3J11qiMr5PnhcrAa4jjXl4WmTSQViJJ
-	 jlbzzXtleEtTG2Rfu6D0yXC2tL357TbrN0wg2o+Rm7YK69/Wk1hwhqSM7gHXcwemO0
-	 F0cu/WjfWSv8duK/iSMkU+hbfNjD/O5uXd44ULn98YXh70i1el1dEpK4iNaxvkna/i
-	 frL45Dsl+lw+Q==
+	s=k20260515; t=1795717254;
+	bh=Ogw05hHsTnJ91zRaAKXUyRr0NlZ6+4/CFeX9bCNs/sY=;
+	h=From:Subject:Date:To:Cc:Reply-To;
+	b=Z15H9VPC0DracMwZsLmfOuhxaGe5gMOjQWICYDWeXUAepFJgbjhFARCiSl1E59rAA
+	 Fy5YDtbKVlj9HqljHZOTe1uA+YCkLh5EHJO8KfqAEPLpuR0UY42c064Fpo35Wef5Vp
+	 cKeX4d8iSrzD6OJiJdbxeMt7or+zrF4owApfvzPJ3brnwmQPX+POIyXYMFlJ6E0GZY
+	 I7zpH9RWScuQ4CgHpvFWi6p3iZGkFEDkUWoKW1uYQqNGW0Vk9j6GN2vOEcQZFRc7Zm
+	 3iRXS7oHiy6UYgV1wxluKkn5d3d13Cw9aJx+HEfDhIkbrRSTw9ex0433AJHOCmGWul
+	 c3X+RNPE8qqew==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 6A8514D790;
+	by lkml.kernel.org (Postfix) with ESMTP id 13EEB4D78C;
 	Thu, 26 Nov 2026 18:20:46 +0000 (UTC)
 From: Paul Sajna via B4 Relay <devnull+sajattack.postmarketos.org@kernel.org>
-Date: Thu, 26 Nov 2026 11:20:46 -0700
-Subject: [PATCH v8 2/4] leds: aw2013: Use dev_err_probe
+Subject: [PATCH v8 0/4] leds: aw2013: Add AW2027 support
+Date: Thu, 26 Nov 2026 11:20:44 -0700
+Message-Id: <20261126-aw2013-aw20xx-rename-v8-0-b6960baa102c@postmarketos.org>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -83,9 +84,14 @@ List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261126-aw2013-aw20xx-rename-v8-2-b6960baa102c@postmarketos.org>
-References: <20261126-aw2013-aw20xx-rename-v8-0-b6960baa102c@postmarketos.org>
-In-Reply-To: <20261126-aw2013-aw20xx-rename-v8-0-b6960baa102c@postmarketos.org>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/43SwU7DMAwG4FeZcibIdppk3Yn3QByc1N0qtHWkp
+ RRNfXfSgWAHIjhFfyR//g++qEFSJ4PabS4qydQNXX/KYXu3UfHAp73orslZEZCDGrzmNwI012e
+ edZITH0U3LRkTbU0Yncqj5yRtN1/Zx6ecD90w9un9umXC9fcPcEINOtbsmxaJPeDDuR/GI6dnG
+ fvhvk97tboTfVsIYAsWZQthKzHknt7bgmVuLKSCZdZeHLBtGrAQXMGqfqy8uWBVGvWWnKU6iAR
+ LBcveWMVeNvcKFK0YMlwDFyz3H8tliyxKZFMBh1iw/K1VFSyfLWHLBtFw5etfrOXzYJK8vObzG
+ 7+uZlk+AET2SNCcAgAA
+X-Change-ID: 20260907-aw2013-aw20xx-rename-df233c5921c6
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Nikita Travkin <nikitos.tr@gmail.com>, 
@@ -94,115 +100,123 @@ To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
 Cc: Nikita Travkin <nikita@trvn.ru>, linux-leds@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Paul Sajna <sajattack@postmarketos.org>
+ Paul Sajna <sajattack@postmarketos.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795717245; l=2927;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795717245; l=4284;
  i=sajattack@postmarketos.org; s=20250413; h=from:subject:message-id;
- bh=rIyhe4A4huXwEKMyPwjJskxf3n5dD7r22StUzeRvRTw=;
- b=zs3fl+sSAXBO5fGR1BaMl0N1Z5C+hR+lpbyFlPmO4TWTNMGAAkWp3gBzwvSO/kbIRtmD53NZh
- n6zKO3oWjiDArI5Q0NoR1DqABRBPfqR8zAim9SElgKi5IQXCMF8xL1G
+ bh=DaMBc1I+vyjS2XIQqBToYqHwD3JDgEqh/8IYfGmPB4s=;
+ b=hxfYpf21WjnrxDYcUt46H6Hj7AR2vKFn/OdZ79Nww+IkzPOcS/yRQ1RGoOaXcwcu/Qvj1GVKs
+ Ex1ad0/Fpq2Av1pDEK6zEr+JS4M/OsfDX99bHVi1+/N6rGLAsxgDwrt
 X-Developer-Key: i=sajattack@postmarketos.org; a=ed25519;
  pk=ZFE/UBqiz9Wr8b+zBL27opOjw5x5ket5JFqks/VQGeM=
 X-Endpoint-Received: by B4 Relay for sajattack@postmarketos.org/20250413
  with auth_id=1505
 X-Original-From: Paul Sajna <sajattack@postmarketos.org>
 Reply-To: sajattack@postmarketos.org
-Content-Transfer-Encoding: 7bit
 
-From: Paul Sajna <sajattack@postmarketos.org>
+Refer to PATCH 4 for a full description of the similarities and
+differences between AW2013 and AW2027.
 
-Failure to use dev_err_probe() for regulator requests violates
-LED subsystem guidelines. (At least according to sashiko [1])
+I'm hoping the sashiko reviews about unbalanced regulators that I was
+struggling to fix are covered by
+https://lore.kernel.org/linux-leds/20261021123406.3163547-1-lee@kernel.org/
+and I can drop my failed attempts to fix them.
+Let me know if I misunderstood.
 
-The original driver didn't use it, but it's worth cleaning up
-while I'm here.
+I'll do my best to address all of Sashiko's comments, but it might take
+me some time to circle back, don't bother reviewing until I've done
+this.
 
-[1]: https://github.com/sashiko-dev/sashiko/blob/main/third_party/prompts/kernel/subsystem/leds.md?plain=1#L71
-
-Reviewed-by: Griffin Kroah-Hartman <griffin@kroah.com>
-Reviewed-by: David Heidelberg <david@ixit.cz>
+This PATCH resulted out of discussions pertaining to
+sdm660-mainline/linux, a close-to-mainline fork for Qualcomm Snapdragon 660
+devices, specifically for the BlackBerry KEY2 Keyboard Backlight,
+in the following GitHub PR: https://github.com/sdm660-mainline/linux/pull/218
 
 Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
 ---
- drivers/leds/leds-aw2013.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+Changes in v8:
+- Fix commit subject for c99 for loops commit
+- Combine local imax setting for both chips into a single function,
+  reduce duplicate loops
+- Remove excessive comments
+- simplify mutex unlock in aw2013_probe_dt
+- Link to v7: https://lore.kernel.org/r/20261114-aw2013-aw20xx-rename-v7-0-ea5a3113a479@postmarketos.org
 
-diff --git a/drivers/leds/leds-aw2013.c b/drivers/leds/leds-aw2013.c
-index cf20e94920fd..2937a0f92d92 100644
---- a/drivers/leds/leds-aw2013.c
-+++ b/drivers/leds/leds-aw2013.c
-@@ -361,9 +361,8 @@ static int aw2013_probe(struct i2c_client *client)
- 
- 	chip->regmap = devm_regmap_init_i2c(client, &aw2013_regmap_config);
- 	if (IS_ERR(chip->regmap)) {
--		ret = PTR_ERR(chip->regmap);
--		dev_err(&client->dev, "Failed to allocate register map: %d\n",
--			ret);
-+		ret = dev_err_probe(&client->dev, PTR_ERR(chip->regmap),
-+				    "Failed to allocate register map\n");
- 		goto error;
- 	}
- 
-@@ -373,45 +372,44 @@ static int aw2013_probe(struct i2c_client *client)
- 				      ARRAY_SIZE(chip->regulators),
- 				      chip->regulators);
- 	if (ret < 0) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&client->dev,
--				"Failed to request regulators: %d\n", ret);
-+		dev_err_probe(&client->dev, ret,
-+			      "Failed to request regulators\n");
- 		goto error;
- 	}
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(chip->regulators),
- 				    chip->regulators);
- 	if (ret) {
--		dev_err(&client->dev,
--			"Failed to enable regulators: %d\n", ret);
-+		dev_err_probe(&client->dev, ret,
-+			      "Failed to enable regulators\n");
- 		goto error;
- 	}
- 
- 	ret = regmap_read(chip->regmap, AW2013_RSTR, &chipid);
- 	if (ret) {
--		dev_err(&client->dev, "Failed to read chip ID: %d\n",
--			ret);
-+		dev_err_probe(&client->dev, ret,
-+			      "Failed to read chip ID\n");
- 		goto error_reg;
- 	}
- 
- 	if (chipid != AW2013_RSTR_CHIP_ID) {
--		dev_err(&client->dev, "Chip reported wrong ID: %x\n",
--			chipid);
--		ret = -ENODEV;
-+		ret = dev_err_probe(&client->dev, -ENODEV,
-+				    "Chip reported wrong ID: %x\n",
-+				     chipid);
- 		goto error_reg;
- 	}
- 
- 	ret = regmap_write(chip->regmap, AW2013_RSTR, AW2013_RSTR_RESET);
- 	if (ret) {
--		dev_err(&client->dev, "Failed to reset chip: %d\n", ret);
-+		dev_err_probe(&client->dev, ret, "Failed to reset chip\n");
- 		goto error_reg;
- 	}
- 
- 	ret = regulator_bulk_disable(ARRAY_SIZE(chip->regulators),
- 				     chip->regulators);
- 	if (ret) {
--		dev_err(&client->dev,
--			"Failed to disable regulators: %d\n", ret);
-+		dev_err_probe(&client->dev, ret,
-+			      "Failed to disable regulators\n");
- 		goto error;
- 	}
- 
+Changes in v7:
+- Fix multiple imax setting/regulators per Sashiko
+- Small description updates to AW20XX per Heidelberg
+- Reorder dev_err_probe commit so that introducing new code using
+  dev_err_probe is cleaner
+- Simplify dev_err_probe, prevent unneccessary assignment
+- Revert early return / else suggested by Heidelberg, Travkin and I both
+  prefer else
+- Lower Hex
+- split c99 for-loops to separate commit
+- simplify aw2027_set_local_imax and aw2027_set_global_imax
+- Link to v6: https://patch.msgid.link/20261112-aw2013-aw20xx-rename-v6-0-251eca340abc@postmarketos.org
 
--- 
-2.56.0
+Changes in v6:
+- Fix the compile error introduced by my unchecked hasty rebase
+- Some adjustments per David Heidelberg's comments
+- Link to v5: https://patch.msgid.link/20261112-aw2013-aw20xx-rename-v5-0-b2c5e323a90a@postmarketos.org
+
+Changes in v5:
+- Drop move of chip->num_leds
+- Make aw2013_microamp_to_imax more readable
+- rebase to next-20261112 for Lee's changes
+- Link to v4: https://lore.kernel.org/linux-leds/20261108-aw2013-aw20xx-rename-v4-0-826529beeb52@postmarketos.org/
+
+Changes in v4:
+- Drop sashiko fixes covered by https://lore.kernel.org/linux-leds/20261021123406.3163547-1-lee@kernel.org/
+- Rename the chip id register value to reflect that it covers more chips
+  (https://www.awinic.com/en/driver/AW2027DNR/640)
+- Address preliminary review comments from Lee Jones
+- Link to v3: https://lore.kernel.org/r/20261012-aw2013-aw20xx-rename-v3-0-cab1fdd050b6@postmarketos.org
+
+Changes in v3:
+- Drop rename
+- Capitalize commit subject
+- Extra tweaks to cleanup patches (preventing more unbalanced regulator
+  stuff)
+- Whitespace fiddling
+- Link to v2: https://lore.kernel.org/r/20261005-aw2013-aw20xx-rename-v2-0-108ecbdf2775@postmarketos.org
+
+Changes in v2:
+- Reduce renames to internal driver scope, to prevent breaking compat
+- Address Sashiko Review Comments
+- Split renames into a separate commit to make the actual changes easier
+to identify
+- Change from RFC to PATCH
+- Link to v1: https://lore.kernel.org/r/20260907-aw2013-aw20xx-rename-v1-0-c9a7df12a701@postmarketos.org
+
+To: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@kernel.org>
+To: Griffin Kroah-Hartman <griffin@kroah.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Nikita Travkin <nikitos.tr@gmail.com>
+Cc: linux-leds@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+Paul Sajna (4):
+      dt-bindings: leds: aw2013: Add awinic,aw2027 compatible
+      leds: aw2013: Use dev_err_probe
+      leds: aw2013: Leverage C99 for-loops
+      leds: aw2013: Add AW2027 support
+
+ .../devicetree/bindings/leds/leds-aw2013.yaml      |   6 +-
+ drivers/leds/leds-aw2013.c                         | 216 +++++++++++++++------
+ 2 files changed, 165 insertions(+), 57 deletions(-)
+---
+base-commit: 6d582d78fad9d828e575ca0cdcff8ea47a77220b
+change-id: 20260907-aw2013-aw20xx-rename-df233c5921c6
+
+Best regards,
+--  
+Paul Sajna <sajattack@postmarketos.org>
 
 
