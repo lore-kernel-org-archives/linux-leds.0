@@ -1,56 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795718066;
-	b=p+l1m1MoL4stFxZG+fTkRajlFbMxUqIetOE488svT5SlmJ+cnBGQU1uFEHKWoUpJPMWu
-	 F7da181JH8bxVqNL3gfFTwLzHljaqkqgp3nGbuLlv0bFrJqQbacLgYHEHvgNq1Nach4zw
-	 7toYJbPsylMAh83SzKQATW3w+M6m6v0JAIJfKcZx/Hs2+ntweesxXDmxip1vAYznNwQVu
-	 n/xpnW+5VSKpW0y3JlhhL4sLq5FKY+8uDRkg3xclOMK2j2ZafLAT1zzbZ09IvKyvI3K7b
-	 Cxmv7qu3fFFZJyFnARKzQKjnKn+lheG9TFunQLuM4rf262l+cy625xF19VVYJkAAIGg==
+	t=1795718109;
+	b=rqqWoVpSq9TVMfuRAcVx+v0RkiTqpy1AGxTf5NKK1v14PJOFJfsc6cHVgIHolenIiFbx
+	 g0idnSyyuqXC1ZYVUoDLRy7VhS7NBcZPTyKl76wUFK2s5plN9Vy5hmM87Oj3uh3PKkP5G
+	 yCcT8NDGvodDVX48Tspt4dmjSINfq1U+MjSbukjRSdhxghgxpEGeSGXmvCfOyek6hqY02
+	 mbrRFgpt3ieZYrF87uBA1KJ1UZeYvxEElzizRLVESq2Uo23b1PvhNeqbjXxyHTMR/9HVA
+	 kBeLL9/kWvXQZFBYSg2q3MMded/uVCQHjHNo7+Be9KuBiOZTJBty0Kt0aeKVn6TgvhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795718066;
-	h=Received:DKIM-Signature:From:To:Cc:In-Reply-To:References:Subject:
-	 Message-Id:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 X-Mailer;
-	bh=fsIgPAQQdoiLECPqvwRwT3HVRoUgsXzd1UJ+VBGYznA=;
-	b=1th+DhIqSJDUtBGd7BZnkh73T9Kh3mPU9GrwZRb+qxMeXTyG9lKmCxlvucWyWvMcbwzA
-	 S1yTolGGIut/rL5F15NvR7wu8nkrUqREvC/fo0SBfciDhODdCqMt+dXjq/mdJRLA+DCdT
-	 qIw3hrWWfHKUH/N6Rmy3ujaH5cTkc10eUYayocj429bmcHFsqhygJ/qnQ+7kBb+KnUrJD
-	 wUkuna/tqFdSap+WAyU08WLn4kscHlW3y/lQ46GJVehAa3g+V1FB4HSJ/O8fhWvvH3Qk8
-	 l0XOGNSbOyk8Ij9zHv29TIOsPzVQ71SBdZ1vzeTPQP5hmvT1laDhbG6QP5V0uNp9hRA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795718109;
+	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
+	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
+	bh=wYaT9GheDJwTt44VqFOiTwZ9DtNIu2zOtXmO6oqTiDw=;
+	b=WRnpry2+uVMNWXOEsH1jyw5XnNkloDp+1MdzwrxTkCulrlQ/ij3AL7LhIavC6GMkOkFL
+	 MkxB6CFywtfPMFp+jXSCPqpqnxQRPlpPHKnp8UqFih5nMsrKNGhIjsQz2MSOhEJ7Ro+EI
+	 /xJBp2eGTd2l42pieNbjbUVbRFANVMtglMAGOW6aPSJHf5NAq0aYCJbog9if3JcHmGjLA
+	 2ydm20Ze8sVr8oBzmD5easEkkS36qXZPMxR6hEPBYer/oEMRdF6ytj63H7gwu9FFQYb/l
+	 2SFGwy4h8aXNoljQU9RAAFDAGguuK8XYpXSXCGAC2SunY76Y/sFQjMPyxxPYqJ26ZGw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jo6ZqnPH;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZO+TgZnm;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EC9606A31C;
-	Thu, 26 Nov 2026 18:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE79606A31C
+	for <linux-leds@vger.kernel.org>; Thu, 26 Nov 2026 18:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Jo6ZqnPH
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB44B1F000C0;
-	Thu, 26 Nov 2026 18:34:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZO+TgZnm
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3481F000C0;
+	Thu, 26 Nov 2026 18:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795718066;
-	bh=fsIgPAQQdoiLECPqvwRwT3HVRoUgsXzd1UJ+VBGYznA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Jo6ZqnPHFmqviNCGtHjMYbh1feJqtEhYCPHoFTnqA2XoRhaxoWFN1uaARy6IlQmyS
-	 RxRoqZagFlDu9F+YPbxmlBAf3/oK2cKsQfT5f6+iaA6svQnmC3VxZxQhE1Im51a1bZ
-	 rFq2YEKiejqk1BKh4PYaQOYgcis5LOO0Et4MB76XnPshDWmm7nu7NjJYp0E/881kv1
-	 8KEefXlCo8PkuF2uGNEqTzGAgu6RceRUOq6NpRpcRBhUjw+4qj4DJ4Dxhmh32ibSgX
-	 w0qdmnLF+IGRLoX36yWk5EMhlxVWMyN0aHRYXdlCPX77W3jp9sy09J45xG+KwgU8OL
-	 NgLQS0lgCmXSQ==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org, raoxu <raoxu@uniontech.com>
-Cc: pavel@kernel.org, griffin@kroah.com, Denis.Osterland@diehl.com, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org
-In-Reply-To: <3EE90AC92BE07EA9+20261119023351.3933065-1-raoxu@uniontech.com>
-References: <3EE90AC92BE07EA9+20261119023351.3933065-1-raoxu@uniontech.com>
-Subject: Re: (subset) [PATCH v2] leds: pwm: Fix active-low brightness with
- default-state keep
-Message-Id: <179571806459.14218.7457047485618205628.b4-ty@b4>
-Date: Thu, 26 Nov 2026 18:34:24 +0000
+	s=k20260515; t=1795718108;
+	bh=wYaT9GheDJwTt44VqFOiTwZ9DtNIu2zOtXmO6oqTiDw=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=ZO+TgZnmdaj+Rx1eOmZI4UiDe2VugssnLzJLZCM3EF8xhEs/fGfamdrFZPzplvU+5
+	 6SpJFRcLH3ATnBgSwlPvt6QAqiJJ2s9kc+2pjB0WRpwDa9zFl3Fj4Cep1hxZoreaeQ
+	 3tH3p6V2q5hM055co6NzK+vS/zFuQIXtRoDpqikzQdbcYQe1sEVQZQMIZwN7CGnoxZ
+	 ylxlnjqKIzi4Sw1DimjqBujpjdfB20/Bk9y4UU00EZz9No3We1AEL+sSoOsEuV549i
+	 4ApdZPR4J7nNElLbqz3sujyvZyqEKlyVJ9U4AmnUdbwSBwkFi9G2HDquL1xMGoLbNd
+	 jSWKn/1u3zUmQ==
+Message-ID: <sashiko-outbox-236026@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v8 0/4] leds: aw2013: Add AW2027 support
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Paul Sajna" <sajattack@postmarketos.org>
+Cc: linux-leds@vger.kernel.org, lee@kernel.org
+In-Reply-To: <20261126-aw2013-aw20xx-rename-v8-0-b6960baa102c@postmarketos.org>
+References: <20261126-aw2013-aw20xx-rename-v8-0-b6960baa102c@postmarketos.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 26 Nov 2026 18:35:08 +0000
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,30 +58,9 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
 
-On Thu, 19 Nov 2026 10:33:51 +0800, raoxu wrote:
-> With default-state set to "keep", led_pwm_add() derives the initial
-> brightness from the PWM duty cycle without accounting for active-low
-> LEDs. However, led_pwm_set() inverts the duty cycle for these LEDs.
-> 
-> For an enabled active-low PWM, zero duty corresponds to maximum LED
-> brightness, while full duty corresponds to off. The current calculation
-> reports the opposite values. This exposes an incorrect cached brightness
-> to userspace and can restore the wrong value after suspend. With an
-> optional enable GPIO, the cached brightness also determines the initial
-> GPIO value.
-> 
-> [...]
+Sashiko has reviewed this 4-patch series and found no issues.
 
-Applied, thanks!
-
-[1/1] leds: pwm: Fix active-low brightness with default-state keep
-      commit: 81cc7da655d64d452c1346f1cf33ebe78dcf3ec7
-
---
-Lee Jones [李琼斯]
-
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261126-aw2013-aw2=
+0xx-rename-v8-0-b6960baa102c@postmarketos.org
