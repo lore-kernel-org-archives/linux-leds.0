@@ -1,56 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795761877;
-	b=nhJZUwra0vxroFRFBCUGjPmZOQjc9/MaTLtlE+1qZs/XzxZ2Diy+hljOSRpoP7ce5UhA
-	 anAHcxI2ld22rKTtZHGAMg4HkQVOAc+awySEq4/ZsifeN4zttcow86vEc3Wb97NGDOvd8
-	 k7GN27rfWlInIuXO7YJbQ5bcItw1zCRKQS2EoNdMH1pP0GRDSjIjDHXVIWnUN1BH7SmDx
-	 aUFYqLnO9CUh9u+6vhovayaXItQY+IkkVeu/a34nc0DtAhpdejrLV44H0gWBJ4kdneviz
-	 RRiUidlq1jcNUw4sDsz+VIQfoa+st9wG3sxyRtOxmbgn/YCH74Jwgc9zra2NAP1K6cw==
+	t=1795763919;
+	b=xCk8LShMrcLeBG8POGVCMqcyznwJRizr6OvWR6LArqFsisSsmCFUTR1kyeSWNiELRtHE
+	 PLPQpS1BEV6uZ6nmTXY+EyeKnurrwP56zpwJ70xjVe2LO10nOqpVNu1e4CXNIaesuWRHI
+	 w8U80+mqDknCuXm50RK4W/Qr46lfdjzMOKC3mlVYvRAiGQUi8ipHCxMGW6EJaDPhKvqzl
+	 89V9idE7yii9oGH2oFxYQRxJsYpHk1pPJ3sSXPgRNe0wErV3vBAoByD/FT55cYixSsTLk
+	 4dKv+cW0/pWw/nReaiRb5tD9T6oWgux2kk5RvnhuA4lxJGaOL/N/DREqOO2cgyPX3QQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795761877;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=+UwEWUze64Gn6VlsD/f9swgneYTUwaEG2ACkNVxdqpo=;
-	b=DsqlHIRiwMeIXCrwT7OW3QWhujObDIOvvsfhU3zEkJidOH2c25/j9+FgD77NVv3SJ7m4
-	 bS5wgQw0s5eTkJ2WIllTyEXWoIOfa1CJLC3Mtw7X+4eKWJu5eoJW8gd6I95t/KLMjTvY0
-	 P8E/5mfqH0w6hRY6OFUcJEhPnyyl+/3gHMat/SEwkiJTFrG1NnulmN2ldBG+jlFaZgvEt
-	 cp3KSe0dtlxDwWp2nMuj5Hg/zkcDZolq5OZqua/TNHGnq97TDcc8BSf36xKNSPVS7ZnFp
-	 gNv4RccXcI5E57aLPCdNtmen7ggA4niuuuiddcNusBx1m4CbMQDvnlziOMcCCLqGttQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795763919;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=4aq30QWobXQ2txyzbMoYSdHGyuTaadPcHWj998/7oSY=;
+	b=mxujVnZn56DAQVs8mI1DhT2fTmQTjpr5qMnzmy2flucJRPKqOgpy55m3HVq4PvZR5m2z
+	 nLy46l/0G26VVGwhzXo3GHINBeKHMDjRzSwyXYSDSRfL/pNDzUPec9HTmQxIWptXz3NrE
+	 20bFMvt2XjGNV5HACZQ6BP4Ax+SwVBz8SgFRyPdwIIQw09xLBq1X/sNe873yP6/n3fgQU
+	 XkWUztctH4zqG8zpvcvqklxir2/IYZvIjRay0d2RwNOcDEfXXVrInthLHeNadLbCKiHy8
+	 iYukbufc0UVPI3R7YJC3lZOhCy51iYLBSiW9D7fyLrIJM9ri3ZCLH1oodiBIlwSLvUA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b3E+MZBs;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yAcmMtP0;
+	arc=none smtp.remote-ip=74.125.82.41
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF08606A321
-	for <linux-leds@vger.kernel.org>; Fri, 27 Nov 2026 06:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D90606A31C
+	for <linux-leds@vger.kernel.org>; Fri, 27 Nov 2026 07:18:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 10D90606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=b3E+MZBs
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA51B1F00931;
-	Fri, 27 Nov 2026 06:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795761876;
-	bh=+UwEWUze64Gn6VlsD/f9swgneYTUwaEG2ACkNVxdqpo=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=b3E+MZBsQPVXnei8c5YH396D2dm63UnQMx0giA3YX4zFeusoYToFpuJS1hSe5H5vo
-	 jz6SCkcLkFBW2yVvLWx4YG28PUVVinOgxzbeo/mvDdyxIELrsEyZrmpwdSSypDYWV9
-	 ehphw/8lACu8Om0CewCv/zxzQtr0HoUVqW/NNFYtbgtLvXBRJ27j7hZD3n5f4UTJFG
-	 BPE7J8WkN/Kg9BozEveuLOeDcxOf4i6Av7KiWdP0CdewOeg9Nde0BUt8eP1vpchuB3
-	 MyOBtOg+nDME22kQqi2KEtaNOyFjqYIrpqi0Nsd0uhJt94huJdV39FvhtcgRhFrjNI
-	 tk8PeWK3tqdxQ==
-Message-ID: <sashiko-outbox-236759@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH net-next v7 0/3] net: phy: dap8211r: add LED control
- support
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Artem Shimko" <a.shimko.dev@gmail.com>
-Cc: linux-leds@vger.kernel.org, lee@kernel.org
-In-Reply-To: <20261127063708.3074433-1-a.shimko.dev@gmail.com>
-References: <20261127063708.3074433-1-a.shimko.dev@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Nov 2026 06:44:36 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yAcmMtP0
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-1b59dfe466bso59592c88.1
+        for <linux-leds@vger.kernel.org>; Thu, 26 Nov 2026 23:18:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795763918; x=1796368718; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4aq30QWobXQ2txyzbMoYSdHGyuTaadPcHWj998/7oSY=;
+        b=yAcmMtP0mYoV3BZXmu4pqDeTMQvjtRv6Dddg/HkjvBB7KwR03pflT+rvM8zoWPSleP
+         7UhWIKkEbYDj94B8mnvL1rl6+lmiEt46+dWAX4eyofPUvPGm8xOTZY9PlnUIyLAQRh+V
+         v8I/8AaJnY0ZPxrxF3nP5XEkaulBn+ctkSku8jX5Tls8hzi9UTVP+ofjSWUhx0ZzbeMm
+         8aS/wEtdX5GEbm3O5aFspkSwdbpncM7hT+5KG1Y7mj/R9ydHbFL7v948Rtpi63ReUvkG
+         AlABBQGtM40+XQ78Tl2VVOirHRGXIvscnujJqaCPjN+VcIcYaizfaIUxgo4pOqEn57ea
+         i5wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795763918; x=1796368718;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4aq30QWobXQ2txyzbMoYSdHGyuTaadPcHWj998/7oSY=;
+        b=FGRZ0Ez77lH6VJcO0wFQC8mPid5jg3ot/kvLripLxNp7nxuFUgWhcsb2eX66T7sL+y
+         zkvWYk4jHHYRlhjKiBu/p1+H5V9md9L2k5Z5ZsOVinnotepSTIXb1zZp0K2PtrAp6hR4
+         g2OQXn02HDAEt5491QUdmcWO/P9fMTwYeYJINcEvrgum6vvLSGQ4R+D3+ogAvE4+i1Ds
+         qSaDuM9eSzKIPJ6G7cc1WMGboiTRmrcxTJKUGm0vgwrpHNy06+Bp/osUONKorLC574Bv
+         5MRrhfxWSzsEIdNPHWcdZLcdWi896XmMWFZ5nrQ4XOKtP3WAc/+yZbxugQAM4HNG5uwT
+         WUNg==
+X-Forwarded-Encrypted: i=1; AL+hErEAFuJXnDeNqUATK1ERKiLPp5ADRWRmfScEQEAiN+DHll81XwJ6GivoeS+JapGiecNF3JopaeHYN1Hd@vger.kernel.org
+X-Gm-Message-State: APuU4Z9+JRpCACelTW9mAjF5w80v6WKaFGi32YobDdCOI7Jej+LqY2nw
+	9gQwdZkLNYxfECnyQe/nkfYTDvzXyEmKE+UVfvzl7GbNTXcu6draPp9/
+X-Gm-Gg: AZFdTZe9BusETLwNRoyG/5XkcuWMWLSP4zgSeSTWW4s9bi7t0M3vt5LfpT3pVtbuibb
+	eK6AvwCKA/HKf35843CNb8tDW4YFLy47k+ZH0AM1RTHbfdYhNGeRJSXKfYO6GnpGSj/K6OmtSDf
+	8eSV2lc7HgN5UR1xbfzgptfIIoh6GpH6IACfw/88ghH1wH3RMRMmAeWdJhc1O+oAWXsEzgUVUKw
+	AqT9uGMjWmP1zqfRJlhXCT2iRW61stNatX+w6e/WMfxlBYEknEf0AwlVL12gfhY+cs+bI1jXDD/
+	D3WPAEwq/YxZZQu1gTM/im7qVumR7Z9ZvmfcsHxp6dZ+PWyFbm+HSVsSLASws8Yr9uYSxU91XnY
+	1Y1CQ9Yn3pFIZd3nlYzkN8cCD5xLVYmLhtlpiEGAaYK4k3LHOXDcXss4DMhwxPhedVYvaxJSkEc
+	8aJpCPvXz9logsHUtu2ORF7g+pRgvuWyuvNPvyO1hSV1aKvDaxuQ9DNtNU1Lwkgg+4fmKDw5alc
+	BgUvPRlWNwcyYVC457NExp9vHfjjZ3mNxndBcQHcBESE0ZZiGwPjw2K8kSr4HbcVUM9jMQ7du5u
+	HyUEUVlTZ05Q8dOXTw6BvPCopMj3o+NxzDV1NZayPZAitdo=
+X-Received: by 2002:a05:7022:906:b0:1a4:c892:b14f with SMTP id a92af1059eb24-1b556904c50mr30443195c88.29.1795763918073;
+        Thu, 26 Nov 2026 23:18:38 -0800 (PST)
+Received: from SGN-LDSENG.tasernet.com ([2405:4800:5cc3:11a:1ac0:4dff:fe8b:4a69])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b5568592adsm53260893c88.15.2026.11.26.23.18.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Nov 2026 23:18:37 -0800 (PST)
+From: Cong Nguyen <congnt264@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Luca Weiss <luca@lucaweiss.eu>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] leds: sgm3140: Put the child node reference on success
+Date: Fri, 27 Nov 2026 14:18:31 +0700
+Message-Id: <20261127071831.136694-1-congnt264@gmail.com>
+X-Mailer: git-send-email 2.25.1
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -59,9 +96,56 @@ List-Subscribe: <mailto:linux-leds+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-leds+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-leds+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sashiko has reviewed this 3-patch series and found no issues.
+sgm3140_probe() gets the LED child node with device_get_next_child_node(),
+which returns it with its reference count raised. The error path puts the
+reference, but a successful probe returns before reaching that code, so the
+reference is never dropped. The v4l2 flash sub-device takes its own
+reference on the node, and the LED class device only stores the pointer,
+so nothing else needs the probe's reference after probe returns.
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127063708.3074=
-433-1-a.shimko.dev@gmail.com
+Remove the early return so that success also goes through the common
+exit that puts the reference. ret is 0 on that path. The goto before the
+label then jumps to the next statement, so drop it.
+
+Fixes: cef8ec8cbd21 ("leds: add sgm3140 driver")
+Signed-off-by: Cong Nguyen <congnt264@gmail.com>
+---
+Changes in v3:
+- Drop the label rename. v2 did not build on the leds tree, where
+  another goto err exists.
+- Drop the redundant goto before the label.
+
+Changes in v2:
+- Use the common exit for the success path instead of a second
+  fwnode_handle_put(), as suggested by Markus Elfring.
+
+v1: https://lore.kernel.org/r/20261125134013.2692510-1-congnt264@gmail.com
+v2: https://lore.kernel.org/r/20261126122516.1198461-1-congnt264@gmail.com
+---
+ drivers/leds/flash/leds-sgm3140.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/leds/flash/leds-sgm3140.c b/drivers/leds/flash/leds-sgm3140.c
+index 107d02c3137f..14568ac21289 100644
+--- a/drivers/leds/flash/leds-sgm3140.c
++++ b/drivers/leds/flash/leds-sgm3140.c
+@@ -268,12 +268,8 @@ static int sgm3140_probe(struct platform_device *pdev)
+ 					   child_node,
+ 					   fled_cdev, NULL,
+ 					   &v4l2_sd_cfg);
+-	if (IS_ERR(priv->v4l2_flash)) {
++	if (IS_ERR(priv->v4l2_flash))
+ 		ret = PTR_ERR(priv->v4l2_flash);
+-		goto err;
+-	}
+-
+-	return ret;
+ 
+ err:
+ 	fwnode_handle_put(child_node);
+-- 
+2.25.1
+
