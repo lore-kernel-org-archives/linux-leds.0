@@ -1,54 +1,55 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795789800;
-	b=TPYBnTxg+syuzR2CoTSBB6hsWHn9yc1L3DXwVMqkRpNYdC+ivsFlPQNtTB7d5JHffyZ4
-	 qo5LQnqGwEMdEEvMJNkvu9ESy4B9ivcidC+skJJ2ZBFY8r9S5I1Ds16MuvkVXquTD/Ezi
-	 PRF/NHdVd59lEz9DwS+6XlQ+LTct4RxrpONnJ9M+iIB6cutjtT55oWaN5Bxl9w1PXNGOw
-	 OJuU4FHcWh4JfuXLwJabUs9IpaXAvEPmAzxRxX067pKxUgZiYH5jLzqdOXgvh2ewy7sQ4
-	 JbZ5GJFL/yzi9wTa0yoh9FW/Ya4zp3Qo4nHayj2f+426L6Tpx+EpdsFtsoqJM6uSgyg==
+	t=1795790278;
+	b=ctKoyWDUnZWi59Kx3FDRut/5YeX4YC3ZHr3KNgHf1m2SXzjeQk0E7As8uWMum0BhgNVP
+	 K1JTPrvrf/QQ0g7sFoCdOklXo8DaYPmoydQkpf4Wgsq9G4UU7aWo552ELCFpQ43fDKwwj
+	 9Rr/P1D3WNN2FNnsmX1f6snW6fkXn/w5k57rZ3Lc3Ba11rO7DYideaZmNc4hTyHU3pl4g
+	 qAgUVH1M/VY2lNrIOeZopXJnApJncdj18EZE2pn+FVwILYKJc0eAkKMaOgRJIzfuOorXV
+	 SGt9NZmPEJVA6r+y1Mrk8MHrteAPhbkzPiNZqkrd8LCW6ov43y1R8NnZSszx+Qu5Mvw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795789800;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795790278;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
 	 X-AI-Review-Draft;
-	bh=OV62amTqoqN+ewSTRfp0O1PNmNfTA8XKczw4DCF9VmM=;
-	b=QvZYRHfuw1xCOyczYz7qNZtG1cbEOPFB/mRBwWM15LGM0y8ItM0KC0GbRlt5Xt7XpnM5
-	 KDwtVsLbBuHdjPS+afO15SXYy0I/MO3OvXREX8xibVwEExyRGwE/rBzKeuYO5TNqCaKvZ
-	 YdQZ/ohcxH88v3yw2JDy5sCNc2XI37rM7EI06XcL7+r+UKWs2UiX5ldYIo3qrT6MZrC2N
-	 hHLah41KHEVRiRaP82lKrzbOYBj1koTv6xRSZi0ogVoro74ddg20ho3pqDivRfCMl5qWv
-	 DwMV/CdYXSSSknc6LYmup1OndH3KKYYKJqNhd56PCU+CfTiebcjdUKw6ChV/Supccgg==
+	bh=J+Q+IQl7AcKa06Ttj3ntD1c4YWHxPDBduwfBT3xpo+U=;
+	b=eA+jqTmuUHaxrcmRJHKAvsSIbZKxQKcHJes2GT/EsCYU+5uzHSHiYGBtieR6DPbx42b2
+	 ZeP6TAnEGFqYiHSwZsb8c1YZw41tgOvEhdM73+IX+n6H/rMJEfwjO9zVAhtNkFunRxTsQ
+	 AQfQMW5OmAMmElFJ1kkhPpH7CORyVrBGXz+vXtt1ZhApEAqG+GTSUcDA/PlLdf/Qbt96Y
+	 uQkV7AZFsYeXfDkP0NdVJMefku/hsZV+NqONlxdp218auGWBWsi3tvfUyslI17Y/+kH1F
+	 /RJ/RvurW3RQEs5jK0KbrYRPNMUQ2ldv+/Gfd16X5JUP7kSyCMc1nSK0TnJ8Vx99Siw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z1QKsWqy;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ROoUYmfb;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2D1606A32D;
-	Fri, 27 Nov 2026 14:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C23E606A6BE;
+	Fri, 27 Nov 2026 14:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z1QKsWqy
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A07B91F00898;
-	Fri, 27 Nov 2026 14:29:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ROoUYmfb
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741AC1F00893;
+	Fri, 27 Nov 2026 14:37:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795789799;
-	bh=OV62amTqoqN+ewSTRfp0O1PNmNfTA8XKczw4DCF9VmM=;
+	s=k20260515; t=1795790277;
+	bh=J+Q+IQl7AcKa06Ttj3ntD1c4YWHxPDBduwfBT3xpo+U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Z1QKsWqyCGev7jYT+VXVHzNFLCcUdi8BOFQxcEJmzyp5Y1XZbmaeBgGuYZ96fJPl6
-	 kU2Bwm/aq7ypeuhDtYw9mqs3AIPI0QQ1WMtE1MeAyLWLqa0qsFmtyKH9zCcEcP5vuY
-	 9iI9zZxPyyEjMibcBxM9L8gVFLQpEcToK5lywOg/WXhDcmr8faB9o5lFbZt1LHd831
-	 OHhKk7XmjVXnbXwWvvVMzhXVPy1P9YLrKQXHzS1chsHZ6zV9n2g1QjBUiUsrZRyFia
-	 BOUFlWHeLcj+vngnv16RC8gGqB0I6msO9KpL+MXQ6yG8V6+TYqpRL/Jk0xVLxHC+d/
-	 k6V+zw+gWsKtQ==
-Date: Fri, 27 Nov 2026 14:29:45 +0000
+	b=ROoUYmfb6bUAMjtubiYwilLd5XBqZScIwDq0AnQpgBKfhd2sNWebUgLJzzzesTOjh
+	 QrNtiiSdEXCoT1JeIEP1kGPnmxYl2UPNWSAdk8cbEJGuYIyK1PZJElICqu9zX8ESuN
+	 zMZizIPM3J4YJ85mTbQsogJR0UaqB8yFPWUv9hlD7ySBac6h9pllehfELvpw+8R32C
+	 l+niKRJVOFWevxOBmZohzeuB4kiYPkixqg4yOCP7hDTkCeRF4TafqmNs+dHbRZiKfl
+	 HWKd0DU6zcUn3oAfIirxialVBRRzRnLBKJUcXLjf14DtsRQ099+enFXfUgkFE5s9m4
+	 Suy+GZ1NhrB+Q==
+Date: Fri, 27 Nov 2026 14:37:53 +0000
 From: Lee Jones <lee@kernel.org>
-To: pladow@gmail.com
-Cc: Nam Tran <trannamatk@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2] leds: lp5860: Add I2C interface support
-Message-ID: <179568570057.32537.6911328929277957458@kernel.org>
-References: <20261120-add-i2c-support-for-lp5860-v2-1-bcb2ce00a7f5@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: pavel@kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org, i@rong.moe
+Subject: Re: [PATCH v3 11/11] leds: multicolor: Adjust maximum subled
+ intensity during initialization
+Message-ID: <179568582896.32537.166831565181132392@kernel.org>
+References: <20261120212431.152081-1-W_Armin@gmx.de>
+ <20261120212431.152081-12-W_Armin@gmx.de>
 X-Mailing-List: linux-leds@vger.kernel.org
 List-Id: <linux-leds.vger.kernel.org>
 List-Post: <mailto:linux-leds@vger.kernel.org>
@@ -60,272 +61,108 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261120-add-i2c-support-for-lp5860-v2-1-bcb2ce00a7f5@gmail.com>
-X-AI-Review-Draft: <20261120-add-i2c-support-for-lp5860-v2-1-bcb2ce00a7f5@gmail.com>
+In-Reply-To: <20261120212431.152081-12-W_Armin@gmx.de>
+X-AI-Review-Draft: <20261120212431.152081-12-W_Armin@gmx.de>
 
-On Fri, 20 Nov 2026, Peter LaDow via B4 Relay wrote:
+--- checkpatch.pl (1 issue) ---
+Line 77: ERROR: that open brace { should be on the previous line
+----------------------------------
 
-> From: Peter LaDow <pladow@gmail.com>
+On Fri, 20 Nov 2026, Armin Wolf wrote:
+
+> The maximum brightness of a LED device is fixed after having called
+> led_classdev_init(), so performing the adjustment during runtime is
+> no longer necessary.
 >
-> This patch adds I2C bus support to the Texas Instruments LP5860 RGB LED
-
-Just tell us what's happening.  No "This patch ...".
-
-> matrix driver.
->
-> The LP5860 supports both SPI and I2C interfaces depending on the hardware
-> IFS pin configuration, but the existing driver only implements the SPI
-> bus interface (leds-lp5860-spi).
->
-> Changes include:
-> - Adding the leds-lp5860-i2c bus driver module to handle the LP5860's
->   10-bit register addressing scheme over I2C.
-> - Updating Kconfig and Makefile so I2C and SPI bus support can be built
->   independently or together.
-
-This is also not expected / wanted.
-
-Take a look at the Git history to see how we usually describe changes.
-
-> Tested on ZymqMP (ZU3) with an LP5860 connected over an AXI IIC at
-> base address 0x40 (A1=0, A0=0) at 400kHz.
->
-> Signed-off-by: Peter LaDow <pladow@gmail.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 > ---
-> Changes in v2:
-> - Use designated initializer (.name = "lp5860") in i2c_device_id table
-> - Link to v1: https://patch.msgid.link/20261120-add-i2c-support-for-lp5860-v1-1-30bc97dcbf78@gmail.com
+>  drivers/leds/led-class-multicolor.c | 40 ++++++++++++-----------------
+>  1 file changed, 16 insertions(+), 24 deletions(-)
 >
-> To: Nam Tran <trannamatk@gmail.com>
-> To: Lee Jones <lee@kernel.org>
-> To: Pavel Machek <pavel@kernel.org>
-> To: Griffin Kroah-Hartman <griffin@kroah.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-leds@vger.kernel.org
-> ---
->  drivers/leds/rgb/Kconfig           |  12 ++++
->  drivers/leds/rgb/Makefile          |   1 +
->  drivers/leds/rgb/leds-lp5860-i2c.c | 139 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 152 insertions(+)
+> diff --git a/drivers/leds/led-class-multicolor.c b/drivers/leds/led-class-multicolor.c
+> index 0656ca2361b3..09c52bc1a55a 100644
+> --- a/drivers/leds/led-class-multicolor.c
+> +++ b/drivers/leds/led-class-multicolor.c
+> @@ -14,24 +14,6 @@
+>  #include <linux/uaccess.h>
+>  #include "leds.h"
 >
-> diff --git a/drivers/leds/rgb/Kconfig b/drivers/leds/rgb/Kconfig
-> index 3f6786616a7d..5dfca8949464 100644
-> --- a/drivers/leds/rgb/Kconfig
-> +++ b/drivers/leds/rgb/Kconfig
-> @@ -78,6 +78,18 @@ config LEDS_LP5860_SPI
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called leds-lp5860-spi.
+> -static unsigned int led_mc_get_max_intensity(struct led_classdev_mc *mcled_cdev, size_t index)
+> -{
+> -	unsigned int max_intensity;
+> -
+> -	/*
+> -	 * The maximum global brightness value might still be changed by
+> -	 * led_classdev_register_ext() using devicetree properties. This
+> -	 * prevents us from changing subled_info[X].max_intensity when
+> -	 * registering a multicolor LED class device, so we have to do
+> -	 * this during runtime.
+> -	 */
+> -	max_intensity = mcled_cdev->subled_info[index].max_intensity;
+> -	if (max_intensity)
+> -		return max_intensity;
+> -
+> -	return mcled_cdev->led_cdev.max_brightness;
+> -}
+> -
+>  int led_mc_calc_color_components(struct led_classdev_mc *mcled_cdev,
+>  				 enum led_brightness brightness)
+>  {
+> @@ -53,12 +35,10 @@ static ssize_t multi_max_intensity_show(struct device *dev,
+>  {
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>  	struct led_classdev_mc *mcled_cdev = lcdev_to_mccdev(led_cdev);
+> -	unsigned int max_intensity;
+>  	int len = 0;
 >
-> +config LEDS_LP5860_I2C
-> +	tristate "LED Support for TI LP5860 I2C LED driver chip"
-> +	depends on I2C
-> +	depends on OF
-> +	select LEDS_LP5860_CORE
-> +	help
-> +	  If you say yes here you get support for the Texas Instruments
-> +	  LP5860 LED driver for I2C bus connections.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called leds-lp5860-i2c.
-> +
->  config LEDS_NCP5623
->  	tristate "LED support for NCP5623"
->  	depends on I2C
-> diff --git a/drivers/leds/rgb/Makefile b/drivers/leds/rgb/Makefile
-> index a59c13396a22..0e35bf16d615 100644
-> --- a/drivers/leds/rgb/Makefile
-> +++ b/drivers/leds/rgb/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_LEDS_KTD202X)		+= leds-ktd202x.o
->  obj-$(CONFIG_LEDS_LP5812)		+= leds-lp5812.o
->  obj-$(CONFIG_LEDS_LP5860_CORE)		+= leds-lp5860-core.o
->  obj-$(CONFIG_LEDS_LP5860_SPI)		+= leds-lp5860-spi.o
-> +obj-$(CONFIG_LEDS_LP5860_I2C)		+= leds-lp5860-i2c.o
->  obj-$(CONFIG_LEDS_NCP5623)		+= leds-ncp5623.o
->  obj-$(CONFIG_LEDS_PWM_MULTICOLOR)	+= leds-pwm-multicolor.o
->  obj-$(CONFIG_LEDS_QCOM_LPG)		+= leds-qcom-lpg.o
-> diff --git a/drivers/leds/rgb/leds-lp5860-i2c.c b/drivers/leds/rgb/leds-lp5860-i2c.c
-> new file mode 100644
-> index 000000000000..97948cde54a9
-> --- /dev/null
-> +++ b/drivers/leds/rgb/leds-lp5860-i2c.c
-> @@ -0,0 +1,139 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/property.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +#include "leds-lp5860.h"
-> +
-> +#define LP5860_I2C_NUM_PAGES	4
-> +
-> +struct lp5860_i2c {
-> +	struct i2c_client *clients[LP5860_I2C_NUM_PAGES];
-> +};
-> +
-> +static int lp5860_i2c_reg_read(void *context, unsigned int reg, unsigned int *val)
-> +{
-> +	struct lp5860_i2c *i2c = context;
-> +	int ret;
-> +
-> +	ret = i2c_smbus_read_byte_data(i2c->clients[reg >> 8], reg & 0xff);
+> -	for (int i = 0; i < mcled_cdev->num_colors; i++) {
+> -		max_intensity = led_mc_get_max_intensity(mcled_cdev, i);
+> -		len += sysfs_emit_at(buf, len, "%u", max_intensity);
+> +	for (unsigned int i = 0; i < mcled_cdev->num_colors; i++) {
 
-What prevents 'reg >> 8' from exceeding 'LP5860_I2C_NUM_PAGES - 1' if a caller
-or debugfs passes an out-of-range register?  Setting 'max_register' in
-'lp5860_i2c_regmap_config' bounds normal regmap accesses as long as
-'LP5860_MAX_REG' is strictly less than 0x400, but guarding or masking the page
-index (or checking 'LP5860_MAX_REG') makes the invariant explicit.
+How many colours are you expecting?
 
-Also, no magic numbers.  You should define these.
+It's usual (although not unheard of) to use unsigned for this.
 
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*val = ret;
-> +	return 0;
-> +}
-> +
-> +static int lp5860_i2c_reg_write(void *context, unsigned int reg, unsigned int val)
-> +{
-> +	struct lp5860_i2c *i2c = context;
-> +
-> +	return i2c_smbus_write_byte_data(i2c->clients[reg >> 8], reg & 0xff, val);
-> +}
-> +
-> +static const struct regmap_bus lp5860_i2c_regmap_bus = {
-> +	.reg_read = lp5860_i2c_reg_read,
-> +	.reg_write = lp5860_i2c_reg_write,
-> +};
-> +
-> +static const struct regmap_config lp5860_i2c_regmap_config = {
-> +	.name = "lp5860",
-> +	.reg_bits = 16,
-> +	.val_bits = 8,
-> +	.max_register = LP5860_MAX_REG,
-> +};
-> +
-> +static int lp5860_i2c_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev = &client->dev;
-> +	struct lp5860_i2c *i2c;
+> +		len += sysfs_emit_at(buf, len, "%u", mcled_cdev->subled_info[i].max_intensity);
+>  		if (i < mcled_cdev->num_colors - 1)
+>  			len += sprintf(buf + len, " ");
+>  	}
+> @@ -98,8 +78,8 @@ static ssize_t multi_intensity_store(struct device *dev,
+>  		goto err_out;
+>  	}
+>
+> -	for (int i = 0; i < mcled_cdev->num_colors; i++) {
+> -		max_intensity = led_mc_get_max_intensity(mcled_cdev, i);
+> +	for (unsigned int i = 0; i < mcled_cdev->num_colors; i++) {
+> +		max_intensity = mcled_cdev->subled_info[i].max_intensity;
+>  		mcled_cdev->subled_info[i].intensity = min(intensity_value[i], max_intensity);
+>  	}
+>
+> @@ -187,6 +167,18 @@ int led_classdev_multicolor_register_ext(struct device *parent,
+>  	if (ret < 0)
+>  		return ret;
+>
+> +	/*
+> +	 * The maximum global brightness value might have been changed by
+> +	 * led_classdev_init() using devicetree properties. Because of this
+> +	 * we can only adjust subled_info[X].max_intensity after said function
+> +	 * was called.
+> +	 */
+> +	for (unsigned int i = 0; i < mcled_cdev->num_colors; i++)
+> +	{
 
-'i2c' makes this sound like it's part of the I2C API, and it only
-contains an array of i2c_clients, making the whole thing superfluous.
+Nit: Misplaced '{'.
 
-Why not just:
-
-	clients = devm_kcalloc(dev, LP5860_I2C_NUM_PAGES, sizeof(*clients), GFP_KERNEL);
-
-> +	struct lp5860 *lp5860;
-> +	unsigned int multi_leds;
-> +	unsigned int page;
-> +	int ret;
-> +
-> +	if ((client->flags & I2C_CLIENT_TEN) ||
-> +	    client->addr < 0x40 || client->addr > 0x4c || (client->addr & 0x03))
-
-Please define the magic numbers.
-
-Use tabs not spaces - and they are 8 not 4.
-
-> +		return dev_err_probe(dev, -EINVAL,
-> +				     "Use the page-zero I2C address (0x40, 0x44, 0x48 or 0x4c).\n");
-
-Don't list out raw values in user-facing documentation like this.
-
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-> +		return dev_err_probe(dev, -EOPNOTSUPP,
-> +				     "SMBus byte-data transactions are not supported.\n");
-> +
-> +	multi_leds = device_get_child_node_count(dev);
-> +	if (!multi_leds)
-> +		return dev_err_probe(dev, -ENODEV, "LEDs are not defined in Device Tree!\n");
-> +
-> +	if (multi_leds > LP5860_MAX_LED)
-> +		return dev_err_probe(dev, -EINVAL, "Too many LEDs specified.\n");
-> +
-> +	lp5860 = devm_kzalloc(dev, struct_size(lp5860, leds, multi_leds), GFP_KERNEL);
-> +	if (!lp5860)
-> +		return -ENOMEM;
-> +
-> +	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
-> +	if (!i2c)
-> +		return -ENOMEM;
-> +
-> +	i2c->clients[0] = client;
-> +	for (page = 1; page < LP5860_I2C_NUM_PAGES; page++) {
-
-for (int page = 1; ...
-
-> +		i2c->clients[page] = devm_i2c_new_dummy_device(dev, client->adapter,
-> +							       client->addr | page);
-
-This last part needs a comment.
-
-> +		if (IS_ERR(i2c->clients[page]))
-> +			return dev_err_probe(dev, PTR_ERR(i2c->clients[page]),
-> +					     "Failed to reserve I2C register page %u.\n", page);
+> +		if (!mcled_cdev->subled_info[i].max_intensity)
+> +			mcled_cdev->subled_info[i].max_intensity = led_cdev->max_brightness;
 > +	}
 > +
-> +	lp5860->regmap = devm_regmap_init(dev, &lp5860_i2c_regmap_bus, i2c,
-> +					  &lp5860_i2c_regmap_config);
-> +	if (IS_ERR(lp5860->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(lp5860->regmap),
-> +				     "Failed to initialise Regmap.\n");
-> +
-> +	lp5860->dev = dev;
-> +
-> +	ret = devm_mutex_init(dev, &lp5860->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	i2c_set_clientdata(client, lp5860);
-> +
-> +	return lp5860_device_init(dev);
-> +}
-> +
-> +static void lp5860_i2c_remove(struct i2c_client *client)
-> +{
-> +	lp5860_device_remove(&client->dev);
-> +}
-> +
-> +static const struct of_device_id lp5860_i2c_of_match[] = {
-> +	{ .compatible = "ti,lp5860" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, lp5860_i2c_of_match);
-> +
-> +static const struct i2c_device_id lp5860_i2c_ids[] = {
-> +	{ .name = "lp5860" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i2c, lp5860_i2c_ids);
-> +
-> +static struct i2c_driver lp5860_i2c_driver = {
-> +	.driver = {
-> +		.name = "lp5860-i2c",
-> +		.of_match_table = lp5860_i2c_of_match,
-> +	},
-> +	.probe = lp5860_i2c_probe,
-> +	.remove = lp5860_i2c_remove,
-> +	.id_table = lp5860_i2c_ids,
-> +};
-> +module_i2c_driver(lp5860_i2c_driver);
-> +
-> +MODULE_DESCRIPTION("TI LP5860 RGB LED I2C driver");
-> +MODULE_LICENSE("GPL");
+>  	led_cdev->dev->type = &led_multicolor_device_type;
 >
-> ---
-> base-commit: c016466c8c8b01af27ac66d97b64fa9c9e431a3d
-> change-id: 20261120-add-i2c-support-for-lp5860-97f38b2ebe1c
->
-> Best regards,
-> --  
-> Peter LaDow <pladow@gmail.com>
+>  	return led_classdev_add(led_cdev, init_data);
+> -- 
+> 2.56.1
 >
 >
 
