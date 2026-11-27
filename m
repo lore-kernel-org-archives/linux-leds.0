@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795761442;
-	b=dnahkuaEzMpY2tro+8ZW15pZNkcH6jIGS1sIcqLGlHi33M4S9mWzkVsMSZuHI+4xST7g
-	 EQdEbbcpF8RRXfazG10Crt3qy1D02dFP+ncVMhSlwF0vk9hKS8A3HsO9xE1rzJI3no3dg
-	 S0o07C6qS5Bd2WW++YW0m5AsbVjvUf1vklZ8/fKZzkupPQcHAGl1Xl+EUhsQrDEShxLfJ
-	 wGBe5ntOX7l31Y8AZ6C2qmqyngweCgAatHzYo5DJmfSWLR61TcbZfMSIkYA9GTatzIb7d
-	 ueQfRbN8R0AJV0YkDwqE3NL/7mBtGWNyep9ymbofv5P/hA2N2omr2qeBovJPNEHxFLw==
+	t=1795761445;
+	b=LWaJZd0BX499CsGDAsHzTzfV6+EtTbEmZb4iPrE/X7oSHAnWTuxVaGPeBOnWUqqp8Fx6
+	 9CEiQcnmyrZYjK38l2/oGJi4tlRll0xcR56DmBRFqpO3u74FXq/VVwInLNfQ0iHi4Qnrd
+	 oQCMKAVBXdq6mgbzz7zFbSvmHRAMQ030HYOAlEJelnzIptOVrUlywFQYYZSyPWktmMIEP
+	 La8LDNr6aWkRpemoMh46FfGh/rD7Jf5DRd5o6pAAB8Hh+PPDfSBTCHR2p5w30VsbnL2wJ
+	 z1RRGdHXbM6rbjbWskLnzhzgJWRlKC7MXipYv7FpKwxyqQvoi1HieL++YuPEjJumkzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795761442;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795761445;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=Bsh30DvD4dl6hdEqW7rttLHSnbuBwkW1mxeTuDyZlIY=;
-	b=Bp7sfKPW18CWeusdpm7ScoaNK9wSL347WVePmCGAN15KRsf5tRMqrfmAmrQ5n2EDKtts
-	 KzaPdYS5p9TLycexLGvvGSZsz+aSF2OHKteH+D4rTzhoFakq+Le7ne+oLKzXgu/fi4wpX
-	 GZiwZGSn5Z0UF3Kg0bR2SkMDoXyH6O09u7Fo02PBrH0Z9UiF6w3Mtnfd+pxYUs24wzizp
-	 35ovLeCeMaM6EYfy6OEYuUOrl5cGIoBuwQ4f38rtSzA/oy6/tdcMQmBgQLoEv24PY2NC8
-	 e1IRylXHOpNlua119Kut09b6tZj9MM08SZUxPLOJP6+jYnPlJL6KZjtlZTJQzK8zVyw==
+	bh=knC024n2z1HHgEDh5UtAMH0ytfWSe/W5ghZpBaB64ZY=;
+	b=PmcMDFln+VlHmdIF5wtYXyf+JKJT6u3JVyqUV++oEEDJ+55E4mbJWsbniOCCX9aaD1RS
+	 OZmdIvapAjv3x0qbhQj1YbTwdqofiUug4TvJP6rmwT6IJmM878y6AyP8KTA+Cpz4uSfDs
+	 M6yZ4ddUBYvBoG4GXLCF4afsgOHZtNjUSF6MLgnvqGwbQRR1WKKjGBixHp8i7GlvfUBd+
+	 /VzJur3xLElYa4s/nWc2bimOhMmuCcv5GuTmtoOfsuIoKIA/NAbmealeaxsBHmu3akxib
+	 Q5m/OVZgj69wLOWNViJ587ab3C1cczC254lJH1CYX9WkPKtVnjeVEdez79Sb7b+yBHA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="ucztA/QJ";
-	arc=none smtp.remote-ip=209.85.208.170
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=JbstO9eA;
+	arc=none smtp.remote-ip=209.85.167.47
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB15C606A31E
-	for <linux-leds@vger.kernel.org>; Fri, 27 Nov 2026 06:37:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EB15C606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1408606A327
+	for <linux-leds@vger.kernel.org>; Fri, 27 Nov 2026 06:37:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F1408606A327
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ucztA/QJ
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3ae854fd0f5so58397861fa.3
-        for <linux-leds@vger.kernel.org>; Thu, 26 Nov 2026 22:37:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=JbstO9eA
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5c10dc41270so8131987e87.2
+        for <linux-leds@vger.kernel.org>; Thu, 26 Nov 2026 22:37:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795761440; x=1796366240; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795761443; x=1796366243; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Bsh30DvD4dl6hdEqW7rttLHSnbuBwkW1mxeTuDyZlIY=;
-        b=ucztA/QJ143mwCYe3kf7A2RaycBZd2xoYXbvWqsW5cbri3/pQzV93kPcHYN9CCaW2l
-         bnnQmXcGSWufUwLRWXIDFAM+WQkX6R5SuJomY1IMK3SQbYT/XVX/VcTCtiqRpPM4oVSR
-         3r0Ax1FV8YKaxt+rwSQo8jYYBpMRb28Zt6Pz6uutC8KtVETt3fvPjcGdJVuf/uyWZRQV
-         ML19RqqoRhgfjNVj+xSLTceTW5eOy3/VT5jUSlptVfHdtOdaZKYBdBV68si5wd8ViWCd
-         iyM0U9S3MHMfjBoSum/p2e3pKQpX8IAChJUayLm/CwfyRn4+qsNlxaOdvUVImhb07gmI
-         c32Q==
+        bh=knC024n2z1HHgEDh5UtAMH0ytfWSe/W5ghZpBaB64ZY=;
+        b=JbstO9eA44E3bBWgMfke9c3iAS4NCqV8AdRs6I+r8195W90yk4G+cM0lHvrsM2RGLY
+         fVLIjmdyKg8cJPUyg9F6r7Z2zSOE0Pcg4/4D4OyOl/TAGDAYBU0nptGlvgko9e9PUYdD
+         PDG6qsaQul3sXhXdMxWkkIYNv+QqEU/32ylJ0uhoioJEWq03jUJqFbmG5weCg3toEe74
+         JuaslaHwfnCi3IMEUh9Sh87FOEyiwSsLXJxj5svnEy/nXwzP20/k3NmD+C4JzTZbESwg
+         BOf6+yVq7my7WLW8h3q519c0PbtFIramMTL7gF52B3R47qcoVGe32TI1fiO8fMONgSqf
+         cYgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795761440; x=1796366240;
+        d=1e100.net; s=20260707; t=1795761443; x=1796366243;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Bsh30DvD4dl6hdEqW7rttLHSnbuBwkW1mxeTuDyZlIY=;
-        b=tj1AvHlUB5viMocpsTC+2zoSWQcdeCbha0vP3IMWWpN0uBtAuz2CGBiEWmLOyL9ubN
-         FmRx5IrDg+qqoHb5gZdRkCZIEShkx5xxnXccvsRKv1te7Emq2VYfwNxZJC7surwEcb3E
-         594sgg8/K2l0BGDZ7CbhylMR1+hHrdRDkaoZAt69u2HUgCzvC3FipUML3Fba5DA8FDs0
-         rT8JehgbEzOMNPwpBJC6zaUe25R+90/bCiHPVNtpGojQm3IR8xhYhIsMGjMOMburDMxs
-         WvM4HtxcG8DAFmRQmZcdh3vepLGItuYUlriACx/11GRIAZpYcjUHg86eSVYdp6wRRvL3
-         Vc6Q==
-X-Forwarded-Encrypted: i=1; AL+hErFMRgtPgzPZBnV+85ZvM7U2xdhF/GrzzhwkUYMpTNB/0MLriXk35Lb/TC3rvpvYimDx/DYci97naCaM@vger.kernel.org
-X-Gm-Message-State: APuU4Z+udE0h7ENq/D4GXHFNe1gvtUUe8gwZCz0DXPmqmnKIK2dm7ASS
-	DLLVRkrMcLxFP5g0w3ohzZox7G6TYZ0ZkZ6mCy4Sjb78zLCOqx3zaxDS
-X-Gm-Gg: AZFdTZfmNGEGZ1Zi4iBvmGuhmkK0zbHCnflsf1QossCsGTS0tVygBqs9YL8OqlL0BZM
-	4t3PoB/PI/OyIJkdHIn6tLVh5L4a0og7EwmNBbE5sVtg5WK5LPHRkuRzVP6vIj3T42U+/zhDU0/
-	6SYC8+OPfrM7hijULBqx0Nek5yEgM6ukNqZ1ZPZ83r0o4QLSgLXwg9EFNPCvJ/2fBeL+JJP7nSF
-	Q3hvjcEIpY+BQUXbXggxNJpDhCXrTx50mmW0pxqrrf28s/yViP9xa3zfG4Z/r2MbQOm6cHUzBDu
-	9+SkQgujpu510ULDkQL8q1Kx+s1K9Tz5i2gMAj8LE4yAj8pZvsvYdyuN5fEjrU4rPgD5T7w44u4
-	+HDi+MF7e21p0BwARz3xtnvmIj55QXqgTdwQbK1QX71XC1h+LQYk+L0efRSUyMu5zCWTy0wucwf
-	esdl8H/ggb1U+L4tOJsCEmbiHd569NiOlOzEGUBTKu8hyIxj8Sn1ru0lovTgxi4W8sP+bwChsKd
-	RklLEP/2JA+KipeMscl9eMLjLUCIn5tByWA3lAZSkfKnqKGDRigfYwl0ou+7v9eRikJG+P38+/l
-	udLfZrfmO1T5S0TMxDCv1SyggCDAzQ==
-X-Received: by 2002:a05:6512:2249:b0:5bf:cea4:b26a with SMTP id 2adb3069b0e04-5c1bc86048dmr6197622e87.48.1795761439922;
-        Thu, 26 Nov 2026 22:37:19 -0800 (PST)
+        bh=knC024n2z1HHgEDh5UtAMH0ytfWSe/W5ghZpBaB64ZY=;
+        b=V3O3luI1iVgd+z2io1/ubd9sYUOTLlF5yugohWNcWgONoJpuqN58XgSfibjbcIRUgM
+         mSpvPSe6BrJ45ebi7toD/BkM9z75gawERQLUfBeTObF0D1lSNAplfVTLwZsvWSFOYKLI
+         pFQKX7+7iDA1XSG9BCc+tLNzcMRWEWKi9fC81wqPu0EDEbYyMs6qOyHdjDKksxL83Isi
+         UBBW40x2i1pfMDPoWk+f27vXqZkukVQq+MkFZU3IIzeZIO/7vt2CBY1uEOV7SWu3zaPk
+         gdyjUvcF2xWbOT7t+tA6T4CUxJt9zHO7F7IIvZDua3dELRYePgk3u6ayVDMD31UL1Irg
+         e0MQ==
+X-Forwarded-Encrypted: i=1; AL+hErHef78ZmeOsJE1rGwKa8BDt/pKeFo3jCkh+N624A60e8N3aRILmvOCYhcb52kfMleZMUT7zl1YIgH1z@vger.kernel.org
+X-Gm-Message-State: APuU4Z9IwgwJyVj7VUkIkRJZVmk+uyOXSFuOOR8MNbWJKn2rn9T3EtT/
+	9/zbsqLmjMOfBiQbn3yS8P1V4G0ia69VIYNwM4v6E1Y3t+kjDxo8Bv7K
+X-Gm-Gg: AZFdTZdHUu4eFw/gEYRuun2y2y6oxIJpLtI0iex7fdxr7gtYWCWWbq7G0PrpwVXBrVt
+	CS1FayGJ0oXvyfIKkzofqKTeT2ALQEMsORsp+KfDbm5e0L9fzpNgja30DP8XoQPO9ry6pj5P+AQ
+	D1IL2+gf7HoLqkgbEpnnvCuKWntaSbejHQYIqXOKHoqxMkFZeIIG+At2/zcWre/bJWxSlDkgy/a
+	PLfWCif5CQLsgZXWceYqMNMTTScgPL5LP5cZpNsr9QDoPXeugW9TA+P/LdFDrk/XkdXIh5YQh73
+	8pJOTBfK2kJQuvGC3ERzz2xfKJn26LKNfo+CC8PS5/GRHIfe7A6VR0zSwmuKlzznzG166anoiSr
+	7N7QiurY41bs9Qerb4SGNaaM6z+6qBYdwKZ/S+Is7o96ethZcBMCMA1zmelFQoDgmK8DPspzgLt
+	ivqAwT0mnQmUeqLV4sY3yDQEHWgYIc43VDurdhGU1nUcVYT23LHzPtkmI914ru8xYPDmcy69il+
+	/1bTxvdbClP0A2JSmkRc2sB/1uCYbKSEr++jx+lw/55i6p8i/69kJRQinECNcL2W9+ddXWEovw5
+	8KemQczBqReS7yDjLA4xQzqPdVOXiA==
+X-Received: by 2002:a05:6512:3c8e:b0:5c0:ea4c:faf1 with SMTP id 2adb3069b0e04-5c1bc6907e7mr6613134e87.7.1795761443064;
+        Thu, 26 Nov 2026 22:37:23 -0800 (PST)
 Received: from NB-6746.. ([188.243.183.76])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd01772esm5618994e87.39.2026.11.26.22.37.18
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd01772esm5618994e87.39.2026.11.26.22.37.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 22:37:19 -0800 (PST)
+        Thu, 26 Nov 2026 22:37:22 -0800 (PST)
 From: Artem Shimko <a.shimko.dev@gmail.com>
 To: andrew@lunn.ch,
 	hkallweit1@gmail.com,
@@ -95,10 +95,11 @@ Cc: Artem Shimko <a.shimko.dev@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-leds@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v7 1/3] net: phy: dap8211r: fix kernel-doc comments for extended register helpers
-Date: Fri, 27 Nov 2026 09:37:03 +0300
-Message-ID: <20261127063708.3074433-2-a.shimko.dev@gmail.com>
+	netdev@vger.kernel.org,
+	andrew+netdev@lunn.ch
+Subject: [PATCH net-next v7 2/3] dt-bindings: net: dptel,dap8211r: add LED nodes
+Date: Fri, 27 Nov 2026 09:37:04 +0300
+Message-ID: <20261127063708.3074433-3-a.shimko.dev@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261127063708.3074433-1-a.shimko.dev@gmail.com>
 References: <20261127063708.3074433-1-a.shimko.dev@gmail.com>
@@ -113,39 +114,85 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The kernel-doc comments for dap8211r_read_ext() and dap8211r_modify_ext()
-incorrectly state that the caller must hold the MDIO bus lock.
+Document the optional "leds" node supported by the DAP8211R PHY.
 
-Remove the misleading sentence from both comments since the functions
-lock MDIO internally by themselves.
+The PHY exposes three configurable LED outputs, each of which can be
+assigned a color, a function and a default trigger.
 
-Fixes: d90265e75584d ("net: phy: add DAPU Telecom DAP8211R(I) Gigabit Ethernet PHY driver")
 Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/net/phy/dap8211r.c | 2 --
- 1 file changed, 2 deletions(-)
+ .../bindings/net/dptel,dap8211r.yaml          | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/drivers/net/phy/dap8211r.c b/drivers/net/phy/dap8211r.c
-index 0bf770f8ebbb..1fe20efd394d 100644
---- a/drivers/net/phy/dap8211r.c
-+++ b/drivers/net/phy/dap8211r.c
-@@ -69,7 +69,6 @@ static const int dap8211r_internal_delay[] = {0, 150, 300, 450, 600, 750, 900,
-  * @reg: Extended register address
-  *
-  * Reads a PHY extended register using the indirect access method.
-- * The caller must hold the MDIO bus lock.
-  *
-  * Return: Register value on success, or negative error code
-  */
-@@ -97,7 +96,6 @@ static int dap8211r_read_ext(struct phy_device *phydev, u16 reg)
-  *
-  * Modifies a PHY extended register using the indirect access method.
-  * New value = (old value & ~mask) | set.
-- * The caller must hold the MDIO bus lock.
-  *
-  * Return: 0 on success, or negative error code
-  */
+diff --git a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+index 4cd0f9730d95..84efee27400e 100644
+--- a/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
++++ b/Documentation/devicetree/bindings/net/dptel,dap8211r.yaml
+@@ -20,6 +20,7 @@ description: |
+     - IEEE 802.3az-2010 Energy Efficient Ethernet
+     - IEEE 1588 SyncE support
+     - Internal packet generator and checker for link diagnostics
++    - Three configurable LEDs (link, speed, duplex, TX/RX activity)
+ 
+ allOf:
+   - $ref: ethernet-phy.yaml#
+@@ -45,10 +46,31 @@ properties:
+     maximum: 2250
+     default: 1950
+ 
++  leds:
++    type: object
++
++    properties:
++      '#address-cells':
++        const: 1
++      '#size-cells':
++        const: 0
++
++    patternProperties:
++      '^led@[0-2]$':
++        type: object
++        properties:
++          reg:
++            items:
++              maximum: 2
++
++    additionalProperties: false
++
+ unevaluatedProperties: false
+ 
+ examples:
+   - |
++    #include <dt-bindings/leds/common.h>
++
+     mdio {
+         #address-cells = <1>;
+         #size-cells = <0>;
+@@ -58,5 +80,24 @@ examples:
+             reg = <1>;
+             rx-internal-delay-ps = <1950>;
+             tx-internal-delay-ps = <1950>;
++
++            leds {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                led@0 {
++                    reg = <0>;
++                    color = <LED_COLOR_ID_GREEN>;
++                    function = LED_FUNCTION_LAN;
++                    linux,default-trigger = "netdev";
++                };
++
++                led@1 {
++                    reg = <1>;
++                    color = <LED_COLOR_ID_AMBER>;
++                    function = LED_FUNCTION_LAN;
++                    linux,default-trigger = "netdev";
++                };
++            };
+         };
+     };
 -- 
 2.43.0
 
